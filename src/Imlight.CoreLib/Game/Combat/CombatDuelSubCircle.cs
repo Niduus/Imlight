@@ -866,6 +866,11 @@ public class CombatDuelSubCircle {
     }
 
     internal void HealParticipant(int heal) {
+        // Healing never brings a defeated participant back.
+        if (!IsAlive) {
+            return;
+        }
+
         // If the participant is a player, update their health.
         if (_wizard is not null && !IsSandboxed) {
             var currentHealth = ParticipantGameStats.m_currentHitpoints;

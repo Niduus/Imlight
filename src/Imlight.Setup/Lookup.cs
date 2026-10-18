@@ -64,7 +64,7 @@ internal sealed class Lookup {
     internal static readonly LookupEntry[] COMMANDS = [
         // Your character.
         Command("Level up", ".mod levelup", QA, "Raises your character by one level. Also .mod lvlup."),
-        Command("Set level", ".mod level <level>", QA, "Sets your character's level, such as .mod level 50."),
+        Command("Set level", ".level MAX or .level <level>", QA, "Sets your character to the max level, or to the level you type, such as .level 50. Also .mod level."),
         Command("Add experience", ".mod addxp <amount>", QA, "Gives your character experience points."),
         Command("Run speed", ".mod speed <multiplier>", QA, "Changes how fast you run, such as .mod speed 3. Use .mod speed 1 for normal."),
         Command("Give item", ".mod additem <item ID>", QA, "Puts an item in your backpack. Find the ID by searching for the item in this tab."),
