@@ -315,6 +315,14 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    public void EquipTeleportEffect(uint effect) {
+        GameStats.m_equippedTeleportEffect = effect;
+        MagicSchoolBehavior.EquippedTeleportEffect = effect;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterTeleportEffect(this);
+    }
+
     /// <summary>
     /// Gives the wizard shadow magic of their own: shadow pip slots, the shadow gauge and shadow pips in battle,
     /// even with [Battle] ShadowPips off.
