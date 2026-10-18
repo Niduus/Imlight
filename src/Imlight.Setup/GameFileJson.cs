@@ -54,6 +54,21 @@ internal static class GameFileJson {
         }
     }
 
+    /// <summary>
+    /// Decodes a zone's gamedata.bin: its WizZoneData (placed NPCs and objects, named places), stored
+    /// without the BINd header.
+    /// </summary>
+    internal static PropertyClass? DecodePlain(byte[] data) {
+        try {
+            return new ObjectSerializer(true, SerializerFlags.None).Deserialize<PropertyClass>(data, (PropertyFlags) 7, out var decoded)
+                ? decoded
+                : null;
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
     internal static bool IsBind(ReadOnlySpan<byte> data)
         => data.Length >= 4 && data[0] == 'B' && data[1] == 'I' && data[2] == 'N' && data[3] == 'd';
 

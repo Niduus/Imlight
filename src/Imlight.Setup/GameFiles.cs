@@ -204,7 +204,7 @@ internal sealed class GameFiles(string installFolder) {
             progress.Report($"Reading {i + 1} of {wads.Count}: {wadName} ({report.Decoded:N0} data files decoded so far)…");
             WithArchive(wads[i], archive => {
                 var names = archive.Files.Keys
-                    .Where(n => !s_skipped.Contains(Path.GetExtension(n)) && !n.EndsWith(".lang", StringComparison.OrdinalIgnoreCase))
+                    .Where(n => IsZoneData(n) || (!s_skipped.Contains(Path.GetExtension(n)) && !n.EndsWith(".lang", StringComparison.OrdinalIgnoreCase)))
                     .ToList();
                 Parallel.ForEach(names, new ParallelOptions { CancellationToken = cancel }, name => {
                     try {
@@ -232,8 +232,8 @@ internal sealed class GameFiles(string installFolder) {
             return;
         }
 
-        if (GameFileJson.IsBind(data)) {
-            var decoded = GameFileJson.Decode(data);
+        if (GameFileJson.IsBind(data) || IsZoneData(name)) {
+            var decoded = IsZoneData(name) ? GameFileJson.DecodePlain(data) : GameFileJson.Decode(data);
             if (decoded is null) {
                 report.Failed(wadName, name);
 
@@ -275,6 +275,9 @@ internal sealed class GameFiles(string installFolder) {
             read(archive);
         }
     }
+
+    /// <summary>A zone's gamedata.bin: the NPCs and objects placed in it and its named places.</summary>
+    private static bool IsZoneData(string name) => name.Equals("gamedata.bin", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsEnglishText(string name)
         => name.EndsWith(".lang", StringComparison.OrdinalIgnoreCase)
@@ -350,6 +353,12 @@ internal sealed class GameFiles(string installFolder) {
                 "Where creatures and objects appear in each zone, and how often."),
             ("Zones", ["Zone file", "Zone", "Type", "Teleporters", "Places", "Player limits", "Details"],
                 "Every zone: its doors to other zones (teleporters), named places and player limits."),
+            ("NPCs and objects", ["Zone", "Placed as", "Template ID", "Name", "X", "Y", "Z", "Facing", "Start state", "Object ID", "Loading"],
+                "Every NPC and object placed in each zone, with where it stands and which way it faces (Facing is the turn in radians)."),
+            ("Zone places", ["Zone", "Place", "X", "Y", "Z", "Facing"],
+                "Named spots in each zone, such as where wizards arrive from a door or a teleport."),
+            ("Houses", ["Template ID", "Name", "Shown as", "House zone", "Preview zone", "Item limit", "Building ID", "File"],
+                "Every house deed: the zone the house is in, how many items can be placed and the house building that goes with it."),
             ("Pets", ["Template ID", "Name", "Shown as", "School", "Race", "Egg", "Wow factor", "Hatch rate", "Max stats", "Talents", "Derby talents", "File"],
                 "Every pet with its stats, talent pool and derby talents."),
             ("Pet talents", ["Talent", "Shown as", "Description", "Rank", "What it does", "File"],
@@ -467,6 +476,13 @@ internal sealed class GameFiles(string installFolder) {
                 }
             }
 
+            if (id.Length > 0 && json["m_behaviors"] is JsonArray deeds
+                    && deeds.OfType<JsonObject>().FirstOrDefault(b => GameFileJson.ClassOf(b) == "DeedBehaviorTemplate") is { } deed
+                    && GameFileJson.Text(deed, "m_lotWorldZone").Length > 0) {
+                Row("Houses", id, objectName, Shown(GameFileJson.Text(json, "m_displayName")), GameFileJson.Text(deed, "m_lotWorldZone"),
+                    GameFileJson.Text(deed, "m_previewWorldZone"), GameFileJson.Text(deed, "m_itemLimit"), GameFileJson.Text(deed, "m_structureTemplateID"), where);
+            }
+
             switch (cls) {
                 case "PetTalentTemplate" or "PetDerbyTalentTemplate":
                     Row("Pet talents", GameFileJson.Text(json, "m_talentName"), Shown(GameFileJson.Text(json, "m_displayName")),
@@ -506,6 +522,23 @@ internal sealed class GameFiles(string installFolder) {
                     }
 
                     break;
+                case "WizZoneData":
+                    foreach (var placed in (json["m_objectList"] as JsonArray ?? []).OfType<JsonObject>()) {
+                        var placedId = GameFileJson.Text(placed, "m_templateID");
+                        Row("NPCs and objects", wad, GameFileJson.Text(placed, "m_zoneTag"), placedId,
+                            _templateNames.TryGetValue(placedId, out var placedName) ? placedName : "",
+                            GameFileJson.Text(placed["m_location"], "X"), GameFileJson.Text(placed["m_location"], "Y"), GameFileJson.Text(placed["m_location"], "Z"),
+                            GameFileJson.Text(placed["m_orientation"], "Z"), GameFileJson.Text(placed, "m_startState"),
+                            GameFileJson.Text(placed, "m_nObjectID"), GameFileJson.Text(placed, "m_loadingType"));
+                    }
+
+                    foreach (var place in (json["m_locationList"] as JsonArray ?? []).OfType<JsonObject>()) {
+                        Row("Zone places", wad, GameFileJson.Text(place, "m_locName"),
+                            GameFileJson.Text(place["m_location"], "X"), GameFileJson.Text(place["m_location"], "Y"), GameFileJson.Text(place["m_location"], "Z"),
+                            GameFileJson.Text(place["m_orientation"], "Z"));
+                    }
+
+                    goto case "ZoneData";
                 case "ZoneData":
                     var teleporters = (json["m_teleportList"] as JsonArray ?? []).OfType<JsonObject>()
                         .Select(t => $"{GameFileJson.Text(t, "m_targetZone")} @ {GameFileJson.Text(t, "m_targetLocation")}");
@@ -570,6 +603,11 @@ internal sealed class GameFiles(string installFolder) {
         internal void Write(string keyFolder, string readableFolder, int wadCount) {
             foreach (var (name, columns, _) in s_tables) {
                 var rows = _tables.TryGetValue(name, out var bag) ? bag.ToList() : [];
+                if (name == "Zones") {
+                    // A zone can have both ZoneData.xml and gamedata.bin: keep the fuller row.
+                    rows = rows.GroupBy(r => r[0]).Select(g => g.OrderByDescending(r => string.Concat(r).Length).First()).ToList();
+                }
+
                 rows.Sort((a, b) => string.Compare(string.Join("\t", a), string.Join("\t", b), StringComparison.OrdinalIgnoreCase));
                 WriteCsv(Path.Combine(keyFolder, name + ".csv"), columns, rows);
             }
