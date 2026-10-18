@@ -352,6 +352,16 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.Crowns"/>.
+    /// </summary>
+    public static void UpdateCharacterCrowns(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.Crowns = wizard.Crowns;
+            existingCharacter.StartingCrownsGiven = wizard.StartingCrownsGiven;
+        });
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.Overdose"/>.
     /// </summary>
     public static void UpdateCharacterOverdose(Wizard wizard) {

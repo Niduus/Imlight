@@ -251,6 +251,23 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         });
 
         GiveStartingPotions();
+        GiveCrowns();
+    }
+
+    // [Character] StartingCrowns: crowns every wizard starts with. RefillCrowns: crowns go back up to that
+    // amount every time the wizard arrives somewhere.
+    private static readonly int s_startingCrowns
+        = Math.Max(0, ConfigurationManager.GetValue("Character.StartingCrowns", 100_000_000));
+    private static readonly bool s_refillCrowns = ConfigurationManager.GetValue("Character.RefillCrowns", true);
+
+    private void GiveCrowns() {
+        if (!_wizard.StartingCrownsGiven || (s_refillCrowns && _wizard.Crowns < s_startingCrowns)) {
+            _wizard.SetCrowns(Math.Max(_wizard.Crowns, s_startingCrowns));
+        }
+
+        if (CrownsMessage.Create(_wizard.Crowns) is { } crownsMsg) {
+            SendToSocket(crownsMsg);
+        }
     }
 
     // [Character] StartingPotions: every wizard has at least this many potion bottles. New bottles come full,

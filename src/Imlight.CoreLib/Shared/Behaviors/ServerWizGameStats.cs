@@ -239,6 +239,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         return chances;
     }
 
+    private static readonly bool s_memberBenefits = ConfigurationManager.GetValue("Character.MemberBenefits", true);
+
     /// <summary>
     /// Returns a minimalist <see cref="WizGameStats"/> object that only contains base level/magic school stats.
     /// Expects that the caller will fill in the rest of the stats.
@@ -288,7 +290,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
                 : m_shadowPipMax,
             m_fishingLevel = m_fishingLevel,
             m_fishingXP = m_fishingXP,
-            m_subscriberBenefitFlags = m_subscriberBenefitFlags,
+            // [Character] MemberBenefits: the game treats every wizard as a member with every member benefit.
+            m_subscriberBenefitFlags = s_memberBenefits ? uint.MaxValue : m_subscriberBenefitFlags,
             m_elixirBenefitFlags = m_elixirBenefitFlags,
             m_monsterMagicLevel = m_monsterMagicLevel,
             m_monsterMagicXP = m_monsterMagicXP,

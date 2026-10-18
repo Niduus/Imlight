@@ -66,6 +66,9 @@ public class Wizard {
     public string PreviousZone { get; set; }
 
     public ulong InteriorStowedMountId { get; set; }
+    // Crowns, and whether the starting crowns were given ([Character] StartingCrowns).
+    public int Crowns { get; set; }
+    public bool StartingCrownsGiven { get; set; }
     // .overdose: every battle starts with Quickening already cast on this wizard.
     public bool Overdose { get; set; }
     // Badges earned, by badge ID (the hash of the badge's name).
@@ -315,6 +318,14 @@ public class Wizard {
 
         // Persistent save.
         WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    public void SetCrowns(int crowns) {
+        Crowns = Math.Max(0, crowns);
+        StartingCrownsGiven = true;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterCrowns(this);
     }
 
     public void SetOverdose(bool on) {
