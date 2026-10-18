@@ -194,6 +194,38 @@ internal static class HouseDeeds {
     }
 
     /// <summary>
+    /// Gets a character ready to enter one of their houses the way Home does: the house item exists, and the house is
+    /// stored. A teleport request is not answered by the client for a house it was only just given, a deed request is.
+    /// </summary>
+    /// <param name="wizard">The character.</param>
+    /// <param name="templateId">The house template.</param>
+    /// <param name="entry">What the zone transfer needs when this returns <c>true</c>.</param>
+    /// <param name="failure">Why the character cannot enter when this returns <c>false</c>.</param>
+    /// <returns><c>false</c> when the backpack cannot hold the item or the house cannot be stored.</returns>
+    internal static bool TryPrepareHouse(Wizard wizard, uint templateId, out HouseEntry entry, out HouseGrantFailure failure) {
+        entry = null;
+        var grant = Issue(wizard, templateId);
+        failure = grant.Failure;
+        if (!grant.Succeeded) {
+            return false;
+        }
+
+        var item = FindItem(wizard, templateId);
+        var house = HouseRegistry.GetOrCreate(wizard, templateId, out _);
+        if (item is null || house is null || !HouseTemplates.TryGet(templateId, out var template)) {
+            Logger.Error("Character {CharId} has no house for template {TemplateId} and none could be stored.",
+                Logger.Args(wizard.CharId, templateId));
+            failure = HouseGrantFailure.Unavailable;
+
+            return false;
+        }
+
+        entry = HouseEntry.ForDeed(house.LotGid, house.OwnerCharId, template, item.m_globalID, [.. grant.Created.Select(created => (ulong) created.m_globalID)]);
+
+        return true;
+    }
+
+    /// <summary>
     /// Points every house item the character holds at its lot, and issues a lot to a house item that has none, so
     /// whatever way the item came, the client reads its lot from it.
     /// </summary>

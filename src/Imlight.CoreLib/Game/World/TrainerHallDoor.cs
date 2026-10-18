@@ -22,7 +22,6 @@ using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
-using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -84,19 +83,12 @@ internal static class TrainerHallDoor {
             return;
         }
 
-        if (!HouseTemplates.TryGet(s_houseTemplateId, out var house)) {
-            Logger.Error("The trainer hall house {TemplateId} is not a house.", Logger.Args(s_houseTemplateId));
-
-            return;
-        }
-
-        // The wizard needs the house as their own before the game can load its zone.
-        var grant = HouseDeeds.Issue(wizard, s_houseTemplateId);
-        if (!grant.Succeeded) {
+        // The wizard needs the house as their own before the game can load its zone, and enters it like Home does.
+        if (!HouseDeeds.TryPrepareHouse(wizard, s_houseTemplateId, out var entry, out var failure)) {
             Logger.Information("{0} could not be given the trainer hall house: {1}.",
-                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), grant.Failure));
+                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), failure));
             session.Tell(new GAME_5_PROTOCOL.MSG_CLIENTNOTIFYTEXT {
-                NotifyText = grant.Failure == HouseGrantFailure.BackpackFull
+                NotifyText = failure == HouseGrantFailure.BackpackFull
                     ? "Make room in your backpack to enter the trainer hall."
                     : "The trainer hall could not be opened.",
                 Type = 0,
@@ -105,16 +97,14 @@ internal static class TrainerHallDoor {
             return;
         }
 
-        foreach (var item in grant.Created) {
-            ItemSync.SendAdded(session, wizard, item);
-        }
-
         Logger.Information("{0} walked through the trainer hall door.", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName()));
         session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-            DestinationZone = house.LotZone,
+            DestinationZone = entry.Zone,
             DestinationLocation = HouseDeeds.EntryLocation,
             SendToClient = true,
-            OwnerCharId = wizard.CharId,
+            IsPrivate = true,
+            OwnerCharId = entry.OwnerCharId,
+            HouseEntry = entry,
         });
     }
 
