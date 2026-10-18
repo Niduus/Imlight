@@ -80,7 +80,7 @@ internal static class PatchServerFascade {
                 .Result
                 .FileStream;
 
-            return true;
+            return fileStream is not null;
         }
         catch (Exception ex) {
             if (ex.Message.ToLower().Contains("task was cancelled")) {
