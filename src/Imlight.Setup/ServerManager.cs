@@ -198,11 +198,7 @@ internal sealed partial class ServerManager(string installFolder) {
     /// The end of the newest log file, with runs of the same message folded into one line and a count.
     /// </summary>
     internal List<LogLine> ReadLog() {
-        var logs = Path.Combine(ServerFolder, "logs");
-        var file = Directory.Exists(logs)
-            ? new DirectoryInfo(logs).EnumerateFiles().Where(f => f.Extension is ".txt" or ".log")
-                .OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
-            : null;
+        var file = NewestLogFile();
         if (file is null) {
             return [];
         }
@@ -369,6 +365,37 @@ internal sealed partial class ServerManager(string installFolder) {
     private const string AUTO_UPDATE_OFF_FILE = "auto-update-off.txt";
 
     internal string LogFolder => Path.Combine(ServerFolder, "logs");
+
+    /// <summary>
+    /// The log file the server is writing now, or null before it has written one.
+    /// </summary>
+    internal FileInfo? NewestLogFile() {
+        var logs = LogFolder;
+
+        return Directory.Exists(logs)
+            ? new DirectoryInfo(logs).EnumerateFiles().Where(f => f.Extension is ".txt" or ".log")
+                .OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
+            : null;
+    }
+
+    /// <summary>
+    /// Copies the whole newest log to the desktop, ready to drag into a chat. Returns the copy's path.
+    /// </summary>
+    internal string SaveLogToDesktop() {
+        var file = NewestLogFile() ?? throw new PanelException("There is no log yet. Start the server first.");
+        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        if (string.IsNullOrEmpty(desktop) || !Directory.Exists(desktop)) {
+            desktop = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+
+        var target = Path.Combine(desktop, $"Imlight log {DateTime.Now:yyyy-MM-dd HH-mm-ss}.txt");
+        using (var source = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+        using (var copy = File.Create(target)) {
+            source.CopyTo(copy);
+        }
+
+        return target;
+    }
 
     internal string ConfigFolder => Path.GetDirectoryName(ConfigFile)!;
 
