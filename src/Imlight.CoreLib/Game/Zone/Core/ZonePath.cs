@@ -314,6 +314,9 @@ public sealed class ZonePath : ZoneEntity {
         var creatureObj = CoreObjectFactory.FinalizeCoreObject(spawnItemInfo, template);
         spawnItemInfo.m_templateID = originalTemplateId;
         creatureObj = CoreObjectFactory.InitializeCoreObjectBehaviors(creatureObj, template);
+        if (templateId != originalTemplateId) {
+            Randomizer.RememberReplacedCreature(creatureObj.m_globalID, originalTemplateId);
+        }
         if (isWisp) {
             Logger.Debug("Wisp {0} spawned on path {1}.", Logger.Args((template as GameObjectTemplate)?.m_objectName, _template.m_name));
         }

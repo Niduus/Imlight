@@ -30,7 +30,9 @@ Enabled = true
 These rolls are truly random and differ every time. They use every battle spell in the game files (treasure cards, gardening, fishing and cantrips are left out), not just trainer spells.
 
 :::warning
-`RandomizeCreatures` can make quests that ask you to defeat a specific creature impossible to finish, which is why it is off by default.
+With `RandomizeCreatures` on, a swapped creature still counts for quests as the creature it replaced: if a quest asks for Rotting Fodder and a Fire Elf stands where the Fodder would be, defeating that Fire Elf counts. Creatures that a quest spawns on its own (some bosses and dungeon fights) are not swapped.
+
+`Tame` (default `false`) is the questing mode: with it on, creatures, creature decks, pips and shadow pips all stay normal whatever their own switches say, so every quest can be finished and fights are as hard as usual. Schools, spells, drops, starting spells and the spell you win after a battle still shuffle. In ImlightManager it is the "Randomizer: tame mode" switch.
 :::
 
 ## How it stays balanced

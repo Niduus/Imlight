@@ -82,6 +82,10 @@ public static class Randomizer {
 
     internal static readonly bool Enabled
         = ConfigurationManager.GetValue("Randomizer.Enabled", false);
+    // Tame mode keeps everything that battles and quests depend on: creatures, their decks and pips stay as they
+    // are, so every "defeat" quest can be done and fights are as hard as normal. Schools, spells and drops still shuffle.
+    internal static readonly bool Tame
+        = Enabled && ConfigurationManager.GetValue("Randomizer.Tame", false);
     internal static readonly bool RandomizeSchool
         = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeSchool", true);
     internal static readonly bool RandomizeSpells
@@ -89,15 +93,15 @@ public static class Randomizer {
     internal static readonly bool RandomizeDrops
         = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeDrops", true);
     internal static readonly bool RandomizeCreatures
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeCreatures", false);
+        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatures", false);
     private static readonly bool s_creaturesEverySpawn
         = ConfigurationManager.GetValue("Randomizer.CreaturesChangeEverySpawn", true);
     internal static readonly bool RandomizeCreatureDecks
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeCreatureDecks", true);
+        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatureDecks", true);
     internal static readonly bool RandomizeItemCards
         = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeItemCards", true);
     internal static readonly bool RandomizePips
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizePips", true);
+        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizePips", true);
     // The [Trainers] switches work with or without randomizer mode.
     internal static readonly bool RandomizeSpellRequirements
         = ConfigurationManager.GetValue("Trainers.RandomizeSpellRequirements", false);
@@ -139,8 +143,8 @@ public static class Randomizer {
             return;
         }
 
-        Logger.Information("Randomizer mode is on. School: {School}, spells: {Spells}, drops: {Drops}, creatures: {Creatures}.",
-            Logger.Args(RandomizeSchool, RandomizeSpells, RandomizeDrops, RandomizeCreatures));
+        Logger.Information("Randomizer mode is on{Tame}. School: {School}, spells: {Spells}, drops: {Drops}, creatures: {Creatures}.",
+            Logger.Args(Tame ? " (tame)" : "", RandomizeSchool, RandomizeSpells, RandomizeDrops, RandomizeCreatures));
         Logger.Information("Randomizer battles. Creature decks: {Decks}, item cards: {ItemCards}, pips: {Pips}, spell after a win: {Chance}%.",
             Logger.Args(RandomizeCreatureDecks, RandomizeItemCards, RandomizePips, s_spellAfterBattleChance));
 
@@ -202,6 +206,33 @@ public static class Randomizer {
             ? s_creatures.Value.Pick(templateId, Random.Shared)
             : s_creatures.Value.Map(templateId, SeededShuffle.Mix(s_seed ^ SeededShuffle.Fnv1a("creatures")));
     }
+
+    // The creature each swapped spawn replaced, by the spawn's global id, so quests still count it as that creature.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, ulong> s_replacedCreatures = new();
+    private const int MAX_REMEMBERED_CREATURES = 50_000;
+
+    /// <summary>
+    /// Remembers which creature a swapped spawn stands in for.
+    /// </summary>
+    /// <param name="spawnGlobalId">The global id of the spawned creature.</param>
+    /// <param name="originalTemplateId">The template the spawn point asked for.</param>
+    internal static void RememberReplacedCreature(ulong spawnGlobalId, ulong originalTemplateId) {
+        // Spawns that never end in a won battle are never forgotten, so the list is emptied now and then.
+        if (s_replacedCreatures.Count >= MAX_REMEMBERED_CREATURES) {
+            s_replacedCreatures.Clear();
+        }
+
+        s_replacedCreatures[spawnGlobalId] = originalTemplateId;
+    }
+
+    /// <summary>
+    /// Finds the creature a swapped spawn stands in for, and forgets it.
+    /// </summary>
+    /// <param name="spawnGlobalId">The global id of the defeated creature.</param>
+    /// <param name="originalTemplateId">The template the spawn point asked for.</param>
+    /// <returns>False if the creature was not swapped.</returns>
+    internal static bool TryTakeReplacedCreature(ulong spawnGlobalId, out ulong originalTemplateId)
+        => s_replacedCreatures.TryRemove(spawnGlobalId, out originalTemplateId);
 
     /// <summary>
     /// Returns a random spell of the same type and pip cost for a creature's deck. Different every spawn.
