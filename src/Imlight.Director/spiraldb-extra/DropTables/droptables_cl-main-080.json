@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-080",
+  "Description": "Celestia quest Stir of Echoes",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 195,
+  "MaxGold": 195,
+  "ExperienceAmount": 2750,
+  "TrainingPoints": 0,
+  "Items": []
+}

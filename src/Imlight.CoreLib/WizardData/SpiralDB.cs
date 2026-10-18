@@ -25,6 +25,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +48,11 @@ public static class SpiralDB {
         = ConfigurationManager.Settings["Database.SpiralDBFetchTimeout"].AsInt();
     private static readonly bool s_rollbackOnFailure
         = ConfigurationManager.Settings["Database.SpiralDBRollbackOnFailure"].AsBool();
+
+    // Our own additions (Celestia's quests, for example), laid over SpiralDB's data. A file here replaces
+    // SpiralDB's file of the same name, and SpiralDB's updates never touch this folder.
+    private static readonly string s_extraPath
+        = ConfigurationManager.GetValue("Database.SpiralDBExtraPath", "./spiraldb-extra");
 
     private static readonly JsonSerializerOptions s_jsonOptions = SpiralJsonOptions.Options;
 
@@ -187,6 +193,26 @@ public static class SpiralDB {
                 () => Interlocked.Add(ref filesLoaded, LoadZoneData(basePath, zoneData))
             );
 
+            var extraPath = Path.GetFullPath(s_extraPath);
+            var extraFiles = 0;
+            if (Directory.Exists(extraPath)) {
+                extraFiles += LoadCreatureSpellbooks(extraPath, spellbooks);
+                extraFiles += LoadDropTables(extraPath, dropTables);
+                extraFiles += LoadNpcInventories(extraPath, npcInventories);
+                extraFiles += LoadNpcSpellInventories(extraPath, npcSpellInventories);
+                extraFiles += LoadNpcDropTables(extraPath, npcDropTables);
+                extraFiles += LoadTreasureCardInventories(extraPath, treasureCardInventories);
+                extraFiles += LoadQuestTemplates(extraPath, questTemplatesBag, questTemplatesByName);
+                extraFiles += LoadZoneData(extraPath, zoneData);
+                filesLoaded += extraFiles;
+                Logger.Information("Loaded {0} extra SpiralDB files from {1}.", Logger.Args(extraFiles, extraPath));
+            }
+
+            // An extra quest replaces SpiralDB's quest of the same name.
+            var questTemplates = questTemplatesBag
+                .Where(q => !questTemplatesByName.TryGetValue(q.m_questName, out var kept) || ReferenceEquals(kept, q))
+                .ToList();
+
             // Atomically swap.
             s_creatureSpellbooks = spellbooks;
             s_dropTables = dropTables;
@@ -194,7 +220,7 @@ public static class SpiralDB {
             s_npcInventories = npcInventories;
             s_npcSpellInventories = npcSpellInventories;
             s_npcDropTables = npcDropTables;
-            s_questTemplates = [.. questTemplatesBag];
+            s_questTemplates = questTemplates;
             s_questTemplatesByName = questTemplatesByName;
             s_zoneData = zoneData;
             s_treasureCardInventories = treasureCardInventories;

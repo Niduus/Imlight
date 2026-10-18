@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-008",
+  "Description": "Celestia quest Breathing Room",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 65,
+  "MaxGold": 65,
+  "ExperienceAmount": 4260,
+  "TrainingPoints": 0,
+  "Items": []
+}

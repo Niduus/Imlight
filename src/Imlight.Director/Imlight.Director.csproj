@@ -25,6 +25,10 @@
     <Content Include="spiraldb-cache\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Our own world data (Celestia's quests), laid over SpiralDB's. -->
+    <Content Include="spiraldb-extra\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-021",
+  "Description": "Celestia quest Reference Materials",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 245,
+  "MaxGold": 245,
+  "ExperienceAmount": 4970,
+  "TrainingPoints": 0,
+  "Items": []
+}
