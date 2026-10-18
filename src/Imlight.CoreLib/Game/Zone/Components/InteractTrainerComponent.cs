@@ -188,7 +188,15 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
                 }
             }
 
-            TestTrainerKind? kind = IsExtractSpell(name) ? TestTrainerKind.Extracts
+            // Every copy of an Extract card belongs to Burke; the enchanted copies ("CollectEssenceGobbler 100")
+            // count as enchantments, so they are left out instead of landing on Mr. Lincoln.
+            var isExtractCopy = name.StartsWith("CollectEssence", System.StringComparison.OrdinalIgnoreCase)
+                || shown.StartsWith("Extract ", System.StringComparison.OrdinalIgnoreCase);
+            if (isExtractCopy && !IsExtractSpell(name)) {
+                continue;
+            }
+
+            TestTrainerKind? kind = isExtractCopy ? TestTrainerKind.Extracts
                 : isEnchantment ? TestTrainerKind.Enchantments
                 : s_vanillaShadowSpells.Contains(name) || (!isBoss && !spell.m_Treasure && IsShadowSpell(spell, name)) ? TestTrainerKind.Shadow
                 : isBoss && !spell.m_Treasure ? TestTrainerKind.Boss
