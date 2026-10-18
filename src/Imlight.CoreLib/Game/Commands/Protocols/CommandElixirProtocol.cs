@@ -28,6 +28,7 @@ using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Models.Player;
 
