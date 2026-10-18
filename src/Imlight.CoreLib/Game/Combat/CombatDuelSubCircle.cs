@@ -273,18 +273,28 @@ public class CombatDuelSubCircle {
         }
 
         _overdoseApplied = true;
-        if (s_quickening.Value is not { } quickening) {
-            Logger.Warning("Overdose: no Quickening spell was found.");
+        try {
+            if (s_quickening.Value is not { } quickening) {
+                Logger.Warning("Overdose: no Quickening spell was found.");
 
-            return;
+                return;
+            }
+
+            var effects = quickening.m_effects ?? [];
+            Logger.Information("Overdose: {0} starts the battle with {1} ({2}).", Logger.Args(_wizard.CharId,
+                (string) quickening.m_name, string.Join(", ", effects.Select(e => $"{e?.m_effectType} {e?.m_effectParam}"))));
+            foreach (var effect in effects) {
+                // A copy, so nothing changes the shared spell. Effects the battle can't take on are skipped.
+                if (effect is null || effect.m_effectTarget == kEffectTarget.kGlobal) {
+                    continue;
+                }
+
+                CombatEffectApplicator.ApplyEffect(effect with { m_effectTarget = kEffectTarget.kSelf }, [], this, [this]);
+            }
         }
-
-        var effects = quickening.m_effects ?? [];
-        Logger.Information("Overdose: {0} starts the battle with {1} ({2}).", Logger.Args(_wizard.CharId,
-            (string) quickening.m_name, string.Join(", ", effects.Select(e => $"{e.m_effectType} {e.m_effectParam}"))));
-        foreach (var effect in effects) {
-            // A copy, so nothing changes the shared spell.
-            CombatEffectApplicator.ApplyEffect(effect with { }, [], this, [this]);
+        catch (Exception e) {
+            // Never let this take the battle (or the server) down.
+            Logger.Error("Overdose failed for {0}: {1}", Logger.Args(_wizard.CharId, e.ToString()));
         }
     }
 
