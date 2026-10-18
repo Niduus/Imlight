@@ -103,6 +103,8 @@ internal sealed class ManagerWindow : Window {
         ("Battle", "CreatureShadowPips", "Creatures can get shadow pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "RandomCreatureShadowPips", "Creatures get shadow magic only by chance (chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
+        ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Character", "MemberBenefits", "Every wizard is a member with all member benefits", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
     ];
