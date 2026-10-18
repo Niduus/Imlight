@@ -810,6 +810,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         // The school pip gauge only shows when the duel says how full it can get.
         m_maxArchmasteryTeam0 = CombatDuelSubCircle.SchoolGaugeOn ? 100f : 0f,
         m_maxArchmasteryTeam1 = CombatDuelSubCircle.SchoolGaugeOn ? 100f : 0f,
+        // TODO: boss cheats. No boss has scripted behavior yet: combat triggers are always empty and
+        // NPCBehaviorTemplate.m_triggerList is never read. Needs a trigger hook (round start, spell cast, health
+        // thresholds) and a script per boss. Not to be taken from Wizard101 Central (Justin, 2026-10-18).
         m_duelModifier = new DuelModifier() {
             m_battlefieldEffects = [],
             m_combatTriggers = [],
