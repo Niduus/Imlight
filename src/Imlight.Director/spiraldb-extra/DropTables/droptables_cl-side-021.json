@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-021",
+  "Description": "Celestia quest Ground Sharks",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 175,
+  "MaxGold": 175,
+  "ExperienceAmount": 2760,
+  "TrainingPoints": 0,
+  "Items": []
+}

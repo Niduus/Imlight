@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-073",
+  "Description": "Celestia quest To the Solarium!",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 35,
+  "MaxGold": 35,
+  "ExperienceAmount": 795,
+  "TrainingPoints": 0,
+  "Items": []
+}
