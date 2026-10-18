@@ -119,6 +119,8 @@ internal static class Program {
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini")
         );
         Logger.Information("Imlight configuration loaded.");
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            Logger.Fatal("The server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
 
         // =============================================================
         // AKKA.NET CONFIGURATION
@@ -162,8 +164,16 @@ internal static class Program {
         StartGameServers(loginServer);
 
         // Force load dragon database. Create a dud account if the database ends up using the embedded database.
-        _ = PlayerDatabase.Instance.Store;
-        CreateEmbeddedDatabaseAccounts();
+        try {
+            _ = PlayerDatabase.Instance.Store;
+            CreateEmbeddedDatabaseAccounts();
+        }
+        catch (Exception ex) {
+            Logger.Fatal("The player database did not start, so nobody can log in. {Message}", Logger.Args(ex.GetBaseException().Message));
+            Environment.ExitCode = 1;
+
+            return;
+        }
 
         OnlinePlayerCollection.Clear();
         LoginWarmup.Run();
