@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty, Joji
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -50,6 +50,7 @@ using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.Game.Badges;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Game.WizBang;
@@ -105,15 +106,34 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         var playerWizard = GetActiveWizard();
         var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(itemTemplateID);
-        var item = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(itemTemplateID);
-        item.m_primaryColor = message.texture;
-        item.m_secondaryColor = message.decal;
+        var isPet = PetFactory.IsPetTemplate(itemTemplateID);
+
+        if (BadgeGate.Blocks(template?.m_purchaseRequirements, itemTemplateID, SessionActor.ActorRef, GetActiveGameObject(), playerWizard, SessionActor.GetZoneActor())) {
+            Logger.Warning("{0} tried to buy item {1} without the badge it requires.",
+                Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        WizClientObjectItem item;
+        if (isPet) {
+            if (!TryCreatePurchasedPet(playerWizard, template, message, out item)) {
+                SendShopDenyMessage();
+
+                return;
+            }
+        } else {
+            item = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(itemTemplateID);
+            item.m_primaryColor = message.texture;
+            item.m_secondaryColor = message.decal;
+        }
 
         var goldCost = CalculateItemCost(template);
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold >= goldCost) {
-            ProcessSuccessfulPurchase(playerWizard, item, itemTemplateID, goldCost);
+            ProcessSuccessfulPurchase(playerWizard, item, itemTemplateID, goldCost, isPet);
 
             return;
         }
@@ -163,7 +183,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID) as WizItemTemplate;
-        if (template is null || !IsValidDye(item, template, message)) {
+        if (template is null || !IsValidDye(item, template, message.texture, message.decal, message.decal2)) {
             Logger.Warning("Rejected dye {0}/{1}/{2} for item {3} (template {4})",
                 Logger.Args(message.texture, message.decal, message.decal2, item.m_globalID, item.m_templateID.Full));
 
@@ -369,9 +389,8 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
     }
 
-    private static bool IsValidDye(WizClientObjectItem item, WizItemTemplate template,
-                                   WIZARD_12_PROTOCOL.MSG_DYEREQUEST message) {
-        if (!IsDyeInRange(message.texture) || !IsDyeInRange(message.decal) || !IsDyeInRange(message.decal2)) {
+    private static bool IsValidDye(WizClientObjectItem item, WizItemTemplate template, int texture, int decal, int decal2) {
+        if (!IsDyeInRange(texture) || !IsDyeInRange(decal) || !IsDyeInRange(decal2)) {
             return false;
         }
 
@@ -380,9 +399,42 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         // A pet's colors are its template's own texture choices, so no dye beyond them is offered.
-        return IsPetLayerDye(message.texture, item.m_primaryColor, template.m_numPrimaryColors)
-            && IsPetLayerDye(message.decal, item.m_secondaryColor, template.m_numSecondaryColors)
-            && IsPetLayerDye(message.decal2, item.m_pattern, template.m_numPatterns);
+        return IsPetLayerDye(texture, item.m_primaryColor, template.m_numPrimaryColors)
+            && IsPetLayerDye(decal, item.m_secondaryColor, template.m_numSecondaryColors)
+            && IsPetLayerDye(decal2, item.m_pattern, template.m_numPatterns);
+    }
+
+    private static bool TryCreatePurchasedPet(Wizard wizard, WizItemTemplate template,
+                                              WIZARD_12_PROTOCOL.MSG_SHOPBUYREQUEST message, out WizClientObjectItem pet) {
+        pet = PetFactory.CreateHatchedPet(wizard.CharId, template.m_templateID);
+        if (pet is null) {
+            return false;
+        }
+
+        if (!IsValidDye(pet, template, message.texture, message.decal, message.decal2)) {
+            Logger.Warning("Rejected dye {0}/{1}/{2} for the purchase of pet template {3}",
+                Logger.Args(message.texture, message.decal, message.decal2, template.m_templateID));
+
+            return false;
+        }
+
+        pet.m_primaryColor = message.texture;
+        pet.m_secondaryColor = message.decal;
+        pet.m_pattern = message.decal2;
+
+        // The name keys are zero when the client did not open the naming window, which keeps the factory default.
+        if (message.petName == 0) {
+            return true;
+        }
+
+        if (!WizardNameBank.IsValidPetName(message.petName) || !PetFactory.TrySetPetName(pet, message.petName)) {
+            Logger.Warning("Rejected name keys {0} for the purchase of pet template {1}",
+                Logger.Args(message.petName, template.m_templateID));
+
+            return false;
+        }
+
+        return true;
     }
 
     private static bool IsDyeInRange(int dye) => dye is >= 0 and <= MaxDye;
@@ -399,23 +451,27 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(shopDenyMsg);
     }
 
-    private void ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost) {
-        // Serialize the item without behaviors.
-        if (!s_itemSerializer.Serialize(item, 1, out var serializedItemWithoutBehaviors)) {
-            Logger.Error("Failed to serialize item {0} for purchase", 
-                Logger.Args(item.m_globalID));
+    private void ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost,
+                                           bool isPet) {
+        var added = isPet ? playerWizard.AddPetToInventory(item) : playerWizard.AddItemToInventory(item);
+        if (!added) {
+            Logger.Warning("Could not add purchased item {0} to the inventory of {1}.",
+                Logger.Args(itemTemplateID, playerWizard.CharId));
+            SendShopDenyMessage();
 
             return;
         }
-        playerWizard.AddItemToInventory(item);
-        playerWizard.RemoveGold(goldCost);
 
         // Inform the game client that a new item has been added to the player's inventory.
-        var addItemMsg = new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-            GlobalID = playerWizard.GameObjectID,
-            SerializedItem = serializedItemWithoutBehaviors,
-        };
-        SendToSocket(addItemMsg);
+        if (!ItemSync.SendAdded(SessionActor.ActorRef, playerWizard, item)) {
+            playerWizard.RemoveItemFromInventory(item.m_globalID);
+            WizardItemCollection.RemoveItem(playerWizard.CharId, item.m_globalID);
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        playerWizard.RemoveGold(goldCost);
 
         // Inform the game client that the player has acquired a new item.
         var itemAcqMsg = new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
@@ -460,6 +516,12 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
     private static int CalculateItemCost(WizItemTemplate template) {
         var goldCost = (int) template.m_baseCost;
+
+        // The client's shop window shows a pet's base price whatever its texture choices are.
+        if (PetFactory.IsPetTemplate(template.m_templateID)) {
+            return goldCost;
+        }
+
         if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
             goldCost = (int) Math.Ceiling(goldCost * DYED_ITEM_COST_MULTIPLIER) + 1;
         }

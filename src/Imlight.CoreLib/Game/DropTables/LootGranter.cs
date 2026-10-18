@@ -21,12 +21,14 @@
  * 
  * PURPOSE:
  * Grants a rolled DropTableResult to a player (gold, XP, training points,
- * items, potion slot) and shows the loot popup. Shared by the quest reward
- * path (ResDropTableHandler) and the mob-defeat path (CombatService).
+ * items, reagents, treasure cards, potion slot) and shows the loot popup.
+ * Shared by the quest reward path (ResDropTableHandler) and the mob-defeat
+ * path (CombatService).
  * 
  * USAGE EXAMPLE:
  * Both reward paths roll their drop tables and hand the result to
- * LootGranter.GrantAndDisplay.
+ * LootGranter.GrantAndDisplay. A caller with its own reward window calls
+ * LootGranter.Grant instead, which sends no loot popup.
  * 
  * NOTE:
  * All sends go to the player's SessionActor, which routes them to the right
@@ -37,7 +39,7 @@
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 08/22/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -49,6 +51,7 @@ using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Packets;
@@ -65,6 +68,7 @@ namespace Imlight.CoreLib.Game.DropTables;
 public static class LootGranter {
 
     private const uint LOOT_LIST_SERIALIZATION_FLAGS = 4;
+    private const uint ReagentAddSerializationFlags = 27;
     private const uint INVENTORY_ADD_SERIALIZATION_FLAGS =
         (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
     private static readonly ConcurrentDictionary<ulong, byte> s_warnedTemplateIds = new();
@@ -78,6 +82,35 @@ public static class LootGranter {
     /// <param name="results">The rolled drop table results to grant.</param>
     /// <param name="xpScale">Multiplies the experience, in the grant and in the popup.</param>
     public static void GrantAndDisplay(IActorRef playerActor, Wizard wizard, DropTableResult results, float xpScale = 1f) {
+        GrantRewards(playerActor, wizard, results, xpScale);
+        SendLootInfoToClient(playerActor, results, wizard);
+
+        if (results.GrantsPotionSlot) {
+            UpdateWizardPotionMax(playerActor, wizard);
+        }
+    }
+
+    /// <summary>
+    /// Grants every reward in <paramref name="results"/> to the player without showing the loot popup.
+    /// </summary>
+    /// <param name="playerActor">The player's SessionActor, which routes the messages.</param>
+    /// <param name="wizard">The player wizard data receiving the rewards.</param>
+    /// <param name="results">The rolled drop table results to grant.</param>
+    /// <param name="xpScale">Multiplies the experience in the grant.</param>
+    /// <returns>
+    /// <paramref name="results"/>, now listing only what was actually granted, for the caller's own reward display.
+    /// </returns>
+    public static DropTableResult Grant(IActorRef playerActor, Wizard wizard, DropTableResult results, float xpScale = 1f) {
+        GrantRewards(playerActor, wizard, results, xpScale);
+
+        if (results.GrantsPotionSlot) {
+            UpdateWizardPotionMax(playerActor, wizard);
+        }
+
+        return results;
+    }
+
+    private static void GrantRewards(IActorRef playerActor, Wizard wizard, DropTableResult results, float xpScale) {
         if (xpScale != 1f) {
             results.ExperienceAmount = (int) (results.ExperienceAmount * xpScale);
         }
@@ -88,14 +121,63 @@ public static class LootGranter {
 
         // Only what was actually granted is shown in the loot popup.
         UpdateCharacterItems(playerActor, wizard, results);
-        SendLootInfoToClient(playerActor, results, wizard);
-
-        if (results.GrantsPotionSlot) {
-            UpdateWizardPotionMax(playerActor, wizard);
-        }
     }
 
-    private static void UpdateWizardGold(IActorRef playerActor, Wizard wizard, int goldDelta) {
+    internal static void GrantMana(IActorRef playerActor, Wizard wizard, int amount) {
+        if (amount == 0) {
+            return;
+        }
+
+        // Adds to the current mana, unlike the quest result handler, which sets it.
+        var mana = Math.Clamp(wizard.GameStats.m_currentMana + amount, 0, wizard.GameStats.m_baseMana);
+        wizard.UpdateMana(mana);
+
+        playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEMANA() {
+            Mana = mana,
+            MaxMana = wizard.GameStats.GetClientTypeAlternative().m_baseMana,
+            DisplayDiff = 1
+        });
+    }
+
+    internal static int GrantReagent(IActorRef playerActor, Wizard wizard, ulong templateId, int quantity) {
+        // The wizard adds one unit per call and refuses at the stack cap, so the count is what fit.
+        // A fresh one-unit object per call: the stored stack grows by the quantity of the object passed.
+        var granted = 0;
+        while (granted < quantity && wizard.AddReagent(CreateReagentUnit(wizard, templateId))) {
+            granted++;
+        }
+
+        if (granted == 0) {
+            return 0;
+        }
+
+        var reagent = wizard.AlchemyBehavior.GetReagent(templateId);
+        if (!s_itemSerializer.Serialize(reagent, ReagentAddSerializationFlags, out var serializedReagent)) {
+            Logger.Error("Failed to serialize reward reagent {0} for reagent-add.",
+                Logger.Args(reagent.m_globalID.Full));
+
+            return granted;
+        }
+
+        playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_REAGENTADD {
+            GlobalID = wizard.GameObjectID,
+            Data = serializedReagent,
+        });
+        playerActor.Tell(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+            ItemGlobalID = reagent.m_globalID,
+            ItemTemplateID = (uint) reagent.m_templateID,
+            ItemLocation = 1
+        });
+        playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE {
+            GlobalID = wizard.GameObjectID,
+            ItemID = reagent.m_globalID,
+            Quantity = reagent.m_quantity
+        });
+
+        return granted;
+    }
+
+    internal static void UpdateWizardGold(IActorRef playerActor, Wizard wizard, int goldDelta) {
         if (goldDelta == 0) {
             return;
         }
@@ -173,6 +255,14 @@ public static class LootGranter {
 
             // A drop table entry may name an item, a spell or something else; resolve it first.
             switch (CoreObjectFactory.GetCoreTemplate(itemGuid)) {
+                case ReagentItemTemplate:
+                    var grantedQuantity = GrantReagent(playerActor, wizard, itemGuid, item.Quantity);
+                    if (grantedQuantity > 0) {
+                        item.Quantity = grantedQuantity;
+                        grantedItems.Add(item);
+                    }
+
+                    break;
                 case ItemTemplate:
                     if (GrantItem(playerActor, wizard, item, itemGuid)) {
                         grantedItems.Add(item);
@@ -191,7 +281,18 @@ public static class LootGranter {
         }
     }
 
-    private static bool GrantItem(IActorRef playerActor, Wizard wizard, DropItemResult item, ulong templateId) {
+    private static ClientReagentItem CreateReagentUnit(Wizard wizard, ulong templateId) {
+        if (CoreObjectFactory.FinalizeCoreObject(templateId) is not ClientReagentItem unit) {
+            return null;
+        }
+
+        unit.m_characterId = (GID) wizard.CharId;
+        unit.m_quantity = 1;
+
+        return unit;
+    }
+
+    internal static bool GrantItem(IActorRef playerActor, Wizard wizard, DropItemResult item, ulong templateId) {
         if (!wizard.AddItemToInventory(templateId, out var addedItem)) {
             Logger.Error("Failed to add item {0} to wizard {1}'s inventory.",
                 Logger.Args(item.ItemId, wizard.CharId));
@@ -210,7 +311,10 @@ public static class LootGranter {
         SpellTemplate spellTemplate, uint templateId, int quantity) {
         if (spellTemplate.m_Treasure) {
             // Treasure cards (booster pack contents) go to the treasure card book, never the spellbook.
-            GrantTreasureCards(playerActor, wizard, spellTemplate, templateId, quantity);
+            var grantedCards = GrantTreasureCards(playerActor, wizard, spellTemplate, templateId, quantity);
+            if (grantedCards > 0) {
+                results.TreasureCards.Add(new DropTreasureCardResult { SpellId = templateId, Quantity = grantedCards });
+            }
 
             return;
         }
@@ -220,12 +324,13 @@ public static class LootGranter {
         }
     }
 
-    private static void GrantTreasureCards(IActorRef playerActor, Wizard wizard,
+    internal static int GrantTreasureCards(IActorRef playerActor, Wizard wizard,
         SpellTemplate spellTemplate, uint templateId, int quantity) {
         var spellHash = StringHash.Compute(spellTemplate.m_name);
+        var cardCount = Math.Max(1, quantity);
 
         // Same path as buying a treasure card: the wizard's treasure book, persisted, then the client.
-        for (var i = 0; i < Math.Max(1, quantity); i++) {
+        for (var i = 0; i < cardCount; i++) {
             wizard.SpellbookBehavior.AddTreasureCard(templateId);
             WizardCollection.AddTreasureCard(wizard, templateId);
 
@@ -234,6 +339,8 @@ public static class LootGranter {
                 EnchantmentID = 0,
             });
         }
+
+        return cardCount;
     }
 
     private static void WarnSkippedOnce(ulong templateId, string reason) {

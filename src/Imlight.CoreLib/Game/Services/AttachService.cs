@@ -36,7 +36,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/10/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -51,6 +51,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -325,6 +326,43 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         });
     }
 
+    private (string ZoneName, string Location) GetReattachDestination(string zoneName, string location) {
+        // A pending transfer saves the source zone until its attach succeeds, so the message names the truth.
+        var pendingTransfer = QueryFallback(countTimeout: false);
+        if (pendingTransfer is not null && pendingTransfer.Found) {
+            Logger.Information("Session {SessionId} Reattach=1: transfer from {SourceZone} is pending, keeping destination {Zone}",
+                Logger.Args(SessionActor.SessionID, pendingTransfer.FallbackZone, zoneName));
+
+            return (zoneName, location);
+        }
+
+        if (string.IsNullOrEmpty(_wizard.Zone)) {
+            Logger.Information("Session {SessionId} Reattach=1: no saved zone for {CharId}, keeping {Zone}",
+                Logger.Args(SessionActor.SessionID, _wizard.CharId, zoneName));
+
+            return (zoneName, location);
+        }
+
+        Logger.Information("Session {SessionId} Reattach=1: using saved zone {SavedZone} instead of {Zone}",
+            Logger.Args(SessionActor.SessionID, _wizard.Zone, zoneName));
+
+        return (_wizard.Zone, Util.GetCompactStringFromVector(_wizard.Location, _wizard.Orientation));
+    }
+
+    private void CloseStaleSession() {
+        if (!TryGetOnlinePlayer(_wizard.CharId, out var onlinePlayer)
+            || onlinePlayer.SessionId == SessionActor.SessionID) {
+            return;
+        }
+
+        Logger.Information("Session {SessionId} Reattach=1: closing session {StaleSessionId} of {CharId}",
+            Logger.Args(SessionActor.SessionID, onlinePlayer.SessionId, _wizard.CharId));
+
+        SessionActor.ServerRef.Tell(new SERVER_100_PROTOCOL.MSG_KICKSESSION {
+            SessionID = onlinePlayer.SessionId
+        });
+    }
+
     private void ValidateAttach(GAME_5_PROTOCOL.MSG_ATTACH message) {
         if (!ValidateLoginKey(message.LoginKey, message.UserID, out var account)) {
             SendToSocket(new GAME_5_PROTOCOL.MSG_ATTACHFAILED() {
@@ -391,11 +429,13 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     }
 
     private ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP InternalZoneTransfer(string zoneName, string location) {
+        var hasAssignedOwner = ZoneInstanceOwners.TryGetOwner(_wizard.CharId, zoneName, out var assignedOwner);
         var zoneMsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = zoneName,
             DestinationLocation = location,
             SendToClient = false,
-            OwnerCharId = _wizard.CharId,
+            OwnerCharId = hasAssignedOwner ? assignedOwner : _wizard.CharId,
+            IsPrivate = hasAssignedOwner || ZoneInstanceOwners.IsAlwaysPrivate(zoneName),
         };
 
         return AskOtherService<ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP>(zoneMsg);

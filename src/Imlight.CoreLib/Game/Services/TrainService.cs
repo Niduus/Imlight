@@ -33,13 +33,14 @@
  * 
  * Created by: Joji
  * Version: KALI 1.0
- * Last Updated: 3/18/2025
+ * Last Updated: 10/14/2026
  */
 
 using Akka.Actor;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Badges;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Game.Spells;
@@ -96,6 +97,13 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
             ? (uint) spellEntry.TemplateID
             : Randomizer.MapSpell(wizard, (uint) spellEntry.TemplateID);
         var spellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(spellId);
+
+        if (BadgeGate.Blocks(spellTemplate?.m_purchaseRequirements, spellEntry.TemplateID, SessionActor.ActorRef, GetActiveGameObject(), wizard, SessionActor.GetZoneActor())) {
+            Logger.Warning("Wizard {0} attempted to train spell {1} without the badge it requires.",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellEntry.TemplateID));
+
+            return;
+        }
 
         // Determine if the wizard has enough training points to learn the spell.
         // Wizards that are of the same magic school as the spell they are training have a cost of 0.

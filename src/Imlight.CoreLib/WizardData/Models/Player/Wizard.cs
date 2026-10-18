@@ -110,6 +110,7 @@ public class Wizard {
     public ServerWizGameStats GameStats { get; set; }
     public ServerPetOwnerBehavior PetOwnerBehavior { get; set; }
     public ServerQuestBehavior QuestBehavior { get; set; }
+    public ServerBadgeBehavior BadgeBehavior { get; set; } = new();
 
     [JsonIgnore] public Account Account;
     // Holds character data before attachment and is replaced by the initialized player object.
@@ -441,6 +442,10 @@ public class Wizard {
     }
 
     public bool AddItemToInventory(ulong itemId, out WizClientObjectItem item) {
+        if (itemId <= uint.MaxValue && PetFactory.IsPetTemplate((uint) itemId)) {
+            return AddHatchedPetToInventory((uint) itemId, out item);
+        }
+
         // The template may be a spell, a missing template or anything else that is not an item.
         item = CoreObjectFactory.FinalizeCoreObject(itemId) as WizClientObjectItem;
         if (item is null) {
@@ -463,6 +468,16 @@ public class Wizard {
         }
 
         CoreObjectFactory.InitializeCoreObjectBehaviors(item, item.m_templateID);
+
+        return AddInitializedItemToInventory(item);
+    }
+
+    public bool AddInitializedItemToInventory(WizClientObjectItem item) {
+        if (item is null) {
+            Logger.Warning("Cannot add item to inventory because that item does not exist.");
+
+            return false;
+        }
 
         // Ensure that the item is associated with this Wizard.
         item.m_characterId = (GID) CharId;
@@ -490,6 +505,10 @@ public class Wizard {
             return false;
         }
 
+        return AddPetToInventory(pet);
+    }
+
+    public bool AddPetToInventory(WizClientObjectItem pet) {
         if (!InventoryBehavior.AddItem(pet)) {
             Logger.Warning("Could not add pet {0} to player {1}'s inventory.",
                 Logger.Args(pet.m_globalID, PlayerNameBehavior.GetWizardName()));
