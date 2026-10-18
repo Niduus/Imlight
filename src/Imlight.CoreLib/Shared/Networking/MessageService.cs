@@ -38,19 +38,24 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/09/2026
+ * Last Updated: 10/15/2026
  */
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
+using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Misc;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -76,6 +81,40 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
         }
 
         SessionActor.ActorRef.Tell(message);
+    }
+
+    /// <summary>
+    /// Plays a sound on the client using its template ID or sound asset path.
+    /// </summary>
+    /// <param name="soundAsset">The sound asset string.</param>
+    protected void PlaySound(string soundAsset) {
+        if (string.IsNullOrWhiteSpace(soundAsset)) {
+            return;
+        }
+
+        var cleanPath = soundAsset.Contains('|')
+            ? soundAsset.Split('|', StringSplitOptions.RemoveEmptyEntries).Last()
+            : soundAsset;
+
+        if (Path.HasExtension(cleanPath)) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_PLAYSOUND {
+                SoundFilename = cleanPath
+            });
+            return;
+        }
+
+        if (!uint.TryParse(cleanPath, out var templateId)) {
+            if (!CoreObjectFactory.TryGetCoreTemplateID(x =>
+                x.m_filename.ToString().Contains(cleanPath, StringComparison.OrdinalIgnoreCase), out templateId)) {
+                return;
+            }
+        }
+
+        if (templateId != 0) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_PLAYSOUND {
+                SoundID = new GID(templateId)
+            });
+        }
     }
 
     /// <summary>
@@ -166,6 +205,16 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
 
         return task;
     }
+
+    /// <summary>
+    /// Takes an equipped item off the active wizard through the EquipmentService, which also removes its effects
+    /// and dismisses a summoned pet.
+    /// </summary>
+    /// <param name="itemId">The global id of the equipped item.</param>
+    /// <returns>True when the item is no longer equipped.</returns>
+    protected bool UnequipItem(ulong itemId)
+        => AskOtherService<CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEMRSP>(
+            new CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEM { ItemId = itemId }).Success;
 
     /// <summary>
     /// Asks the server the SessionActor is connected to.
@@ -278,14 +327,20 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
     /// <param name="makePrivate">Specifies whether the zone should be private or not. Default is false.</param>
     /// <param name="ownerCharId">The character ID of the owner. Default is self.</param>
     /// <param name="destinationLocation">The location to transfer to. Default is "Start".</param>
+    /// <param name="houseEntry">
+    /// How to ask the client to load the zone when the destination is a house. The transfer is then private to the
+    /// house's owner. A house destination without an entry is refused.
+    /// </param>
     protected void Teleport(string destinationZone,
                             bool doTeleportEffects = true,
                             bool makePrivate = false,
                             ulong ownerCharId = 0,
-                            string destinationLocation = "") {
+                            string destinationLocation = "",
+                            HouseEntry houseEntry = null) {
         // If the destination location is nothing, default it to "Start."
         var location = destinationLocation == "" ? "Start" : destinationLocation;
-        var ownerId = ownerCharId == 0 ? GetActiveWizard().CharId : ownerCharId;
+        var ownerId = houseEntry?.OwnerCharId ?? (ownerCharId == 0 ? GetActiveWizard().CharId : ownerCharId);
+        var isPrivate = makePrivate || houseEntry is not null;
 
         if (doTeleportEffects) {
             var teleportEffectsMsg = new CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS();
@@ -297,8 +352,9 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
             var delayMsg = new SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY {
                 DestinationZone = destinationZone,
                 DestinationLocation = location,
-                MakePrivate = makePrivate,
-                OwnerCharId = ownerId
+                MakePrivate = isPrivate,
+                OwnerCharId = ownerId,
+                HouseEntry = houseEntry
             };
             Timers.StartSingleTimer("teleport-delay", delayMsg, TimeSpan.FromSeconds(2));
 
@@ -306,22 +362,23 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
         }
 
         // No effects — transfer immediately.
-        DoTeleport(destinationZone, location, makePrivate, ownerId);
+        DoTeleport(destinationZone, location, isPrivate, ownerId, houseEntry);
     }
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY))]
     protected void OnTeleportDelay(SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY msg) {
-        DoTeleport(msg.DestinationZone, msg.DestinationLocation, msg.MakePrivate, msg.OwnerCharId);
+        DoTeleport(msg.DestinationZone, msg.DestinationLocation, msg.MakePrivate, msg.OwnerCharId, msg.HouseEntry);
     }
 
     private void DoTeleport(string destinationZone, string destinationLocation,
-                            bool makePrivate, ulong ownerCharId) {
+                            bool makePrivate, ulong ownerCharId, HouseEntry houseEntry) {
         var zoneTransfer = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationLocation = destinationLocation,
             DestinationZone = destinationZone,
             SendToClient = true,
             IsPrivate = makePrivate,
-            OwnerCharId = ownerCharId
+            OwnerCharId = ownerCharId,
+            HouseEntry = houseEntry
         };
         TellOtherServices(zoneTransfer);
     }

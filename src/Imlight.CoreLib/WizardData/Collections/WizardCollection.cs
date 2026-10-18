@@ -21,11 +21,18 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Imcodec.Math;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Databases;
+using Imlight.CoreLib.WizardData.Models.Player;
 using Raven.Client.Documents;
 using Raven.Client.Exceptions;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.WizardData.Databases;
 using Imlight.CoreLib.WizardData.Models.Player;
 using Imcodec.ObjectProperty.TypeCache;
@@ -156,9 +163,12 @@ public static class WizardCollection {
             // Delete related items/dynamods/quests data/etc.
             WizardItemCollection.DeleteInventory(id);
             WizardPetSnackCollection.DeleteSnackBag(id);
+            WizardPetCollection.DeleteAll(id);
             DynamodCollection.DeleteAllDynamodSets(id);
             WizardReagentCollection.DeleteReagentBag(id);
 
+            // The houses and the attic belong to the character, and go with them in the same transaction.
+            DeleteHousing(session, character);
             session.Delete(character);
             session.SaveChanges();
             s_documentIdByCharId.TryRemove(id, out _);
@@ -286,6 +296,35 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Records the lot of a house the character was issued, unless the character already has a lot for the template.
+    /// </summary>
+    /// <param name="character">The character to update; its in-memory lots follow the stored ones.</param>
+    /// <param name="templateId">The template of the deed or structure item.</param>
+    /// <param name="lotGid">The lot of the issued item.</param>
+    /// <returns><c>true</c> when the character's lot for the template is <paramref name="lotGid"/> now.</returns>
+    public static bool TryAddHouseLot(Wizard character, uint templateId, ulong lotGid) {
+        var matches = false;
+        UpdateCharacterWithSession(character.CharId, (_, existingCharacter) => {
+            existingCharacter.HouseLots ??= [];
+            if (existingCharacter.HouseLots.TryGetValue(templateId, out var storedLot)) {
+                matches = storedLot == lotGid;
+
+                return false;
+            }
+
+            existingCharacter.HouseLots[templateId] = lotGid;
+            matches = true;
+
+            return true;
+        });
+        if (matches) {
+            character.HouseLots[templateId] = lotGid;
+        }
+
+        return matches;
+    }
+
+    /// <summary>
     /// Updates the location and orientation of a character.
     /// </summary>
     /// <param name="character">The character to update.</param>
@@ -322,12 +361,28 @@ public static class WizardCollection {
     /// Updates the equipment of a character in the wizard collection.
     /// </summary>
     /// <param name="wizard">The wizard object containing the updated equipment.</param>
-    public static void UpdateCharacterItems(Wizard wizard) {
-        UpdateCharacter(wizard.CharId, existingCharacter => {
+    /// <returns>False when the character is not stored.</returns>
+    public static bool UpdateCharacterItems(Wizard wizard) => UpdateCharacterItems(wizard, []);
+
+    /// <summary>
+    /// Updates the equipment of a character and stores the documents of the items that entered it, in one
+    /// transaction, so an item is never stored without being listed or listed without being stored.
+    /// </summary>
+    /// <param name="wizard">The wizard object containing the updated equipment.</param>
+    /// <param name="addedItems">New items that are stored nowhere yet.</param>
+    /// <returns>False when the character is not stored, in which case nothing was written.</returns>
+    public static bool UpdateCharacterItems(Wizard wizard, IReadOnlyCollection<WizClientObjectItem> addedItems) {
+        return UpdateCharacterWithSession(wizard.CharId, (session, existingCharacter) => {
             existingCharacter.InventoryBehavior = wizard.InventoryBehavior;
+            existingCharacter.StorageBehavior = wizard.StorageBehavior;
             existingCharacter.EquipmentBehavior = wizard.EquipmentBehavior;
             existingCharacter.PetSnackBehavior = wizard.PetSnackBehavior;
             existingCharacter.AlchemyBehavior = wizard.AlchemyBehavior;
+            foreach (var item in addedItems) {
+                WizardItemCollection.StoreInSession(session, item);
+            }
+
+            return true;
         });
     }
 
@@ -444,6 +499,15 @@ public static class WizardCollection {
     public static void UpdateCharacterGameStats(Wizard wizard) {
         UpdateCharacter(wizard.CharId, existingCharacter =>
             existingCharacter.GameStats = wizard.GameStats);
+    }
+
+    /// <summary>
+    /// Updates the privacy options of a wizard.
+    /// </summary>
+    /// <param name="wizard">The wizard whose privacy options should be persisted.</param>
+    public static void UpdateCharacterPrivacyOptions(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.PrivacyOptions = wizard.PrivacyOptions);
     }
 
     /// <summary>
@@ -583,6 +647,18 @@ public static class WizardCollection {
         }
     }
 
+    private static void DeleteHousing(IDocumentSession session, Wizard character) {
+        var houseIds = (character.HouseLots ?? []).Values.Distinct().Select(House.GetDocumentId).ToList();
+        if (houseIds.Count > 0) {
+            // A lot is only the character's when its house says so.
+            foreach (var house in session.Load<House>(houseIds).Values.Where(house => house is not null && house.OwnerCharId == character.CharId)) {
+                session.Delete(house);
+            }
+        }
+
+        session.Delete(Attic.GetDocumentId(character.CharId));
+    }
+
     private static void LoadEquippedItems(IDocumentSession session, Wizard wizard) {
         if (wizard.EquipmentBehavior.EquippedItemIds is not { Count: > 0 }) {
             wizard.EquipmentBehavior.EquippedItems = [];
@@ -614,6 +690,13 @@ public static class WizardCollection {
             .Contains(i.m_globalID))
         ];
 
+        // The bank items are stored the same way, with their ids in the StorageBehavior.
+        wizard.StorageBehavior ??= new ServerWizStorageBehavior();
+        wizard.StorageBehavior.Items = [.. items
+            .Where(i => wizard.StorageBehavior.BankItemIds
+            .Contains(i.m_globalID))
+        ];
+
         // Load the character's equipment.
         // The equipped items are stored as global IDs in the character's EquipmentBehavior.
         // Find any items in the inventory that match the equipped item IDs.
@@ -634,6 +717,19 @@ public static class WizardCollection {
             .Where(r => wizard.AlchemyBehavior.ReagentItemIds
             .Contains(r.m_globalID))
         ];
+
+        // The snack bag stacks are stored in the `WizardPetSnacks` collection, keyed by the character.
+        var snacks = session.Query<ClientPetSnackItem>(collectionName: WizardPetSnackCollection.CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .Where(x => x.m_characterId == wizard.CharId)
+            .ToList();
+
+        wizard.PetSnackBehavior ??= new();
+        wizard.PetSnackBehavior.Snacks = snacks;
+        wizard.PetSnackBehavior.SnackItemIds = [.. snacks.Select(snack => snack.m_globalID.Full)];
+
+        // Synchronize active elixir behaviors with their remaining playtime seconds from SlotList.
+        wizard.EquipmentBehavior.SyncActiveElixirTimes();
 
         // The friends list is expanded to include a 'relationship' model
         // which helps keep track of the relationship between two players for moderation purposes.

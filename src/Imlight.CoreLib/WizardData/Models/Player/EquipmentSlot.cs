@@ -35,7 +35,12 @@ public enum EquipmentSlotType {
     Ring,
     Pet,
     Mount,
-    Deck
+    Deck,
+
+    // The client names a house's equipment slots like this (FurniturePageWindow::UpdateStructureForEquippedIsland 0x140fa60a0).
+    Islands,
+    Structure,
+    Elixir
 
 }
 
@@ -46,6 +51,7 @@ public class EquipmentSlot : IClientTypeProvider<EquippedSlotInfo> {
     public string ItemName { get; set; }
     public GID ItemId { get; set; }
     public DateTime EquippedSince { get; set; }
+    public uint RemainingSeconds { get; set; }
 
     public EquippedSlotInfo GetClientTypeAlternative() {
         // Remove the prefix from the slot type.

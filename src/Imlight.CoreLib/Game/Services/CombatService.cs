@@ -37,7 +37,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/09/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -50,6 +50,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -145,6 +146,20 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         TellOtherServices(hubMsg);
     }
 
+    [MessageHandler(typeof(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATVICTORY))]
+    private void ReceiveVictorySceneDone(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATVICTORY message) {
+        // The client sends this when its victory scene is over; a PvP duel waits for it before it lets everyone go.
+        _currentDuelActor?.Tell(new COMBAT_106_PROTOCOL.MSG_PVPVICTORYSEEN { Actor = SessionActor.ActorRef });
+    }
+
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_PVPDUELENDED))]
+    private void ReceivePvPDuelEnded(COMBAT_106_PROTOCOL.MSG_PVPDUELENDED message) {
+        // A PvP duel grants no experience or loot and sends nobody to a hub; the director sends the players back.
+        GetActiveWizard().IsInDuel = false;
+        _currentDuelActor = null;
+        EquipMount();
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatVictory(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
         GetActiveWizard().IsInDuel = false;
@@ -167,6 +182,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             XP = xpGained,
         };
         TellOtherServices(msg);
+
+        PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
         GrantMobLoot(message.MobTemplateIds);
         TeachSpellAfterBattle();
@@ -284,17 +301,27 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
 
         // The spell target given by the client is logarithmic. We need to convert it to a linear scale.
-        // A selection of 0 means a target of self.
-        int actualSelection = (int) Math.Log(message.SpellTarget, 2);
+        // If it's a single-bit power of 2, convert to 0-based circle slot. Otherwise keep raw value.
+        // Check SpellTarget before Log2, because Log2(0) results in -Infinity!
+        uint actualSelection;
+        if (message.SpellTarget > 0 && (message.SpellTarget & (message.SpellTarget - 1)) == 0) {
+            actualSelection = (uint) Math.Log2(message.SpellTarget);
+        }
+        else {
+            actualSelection = message.SpellTarget;
+        }
 
         var msg = new COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE {
             Actor = SessionActor.ActorRef,
             MoveType = message.MoveType,
             SpellSelection = message.SpellSelection,
-            SpellTarget = (uint) actualSelection,
+            SpellTarget = actualSelection,
             RawSpellTarget = message.SpellTarget,
-            TimeLeft = message.TimeLeft
+            TimeLeft = message.TimeLeft,
+            ShadowPactTarget = message.ShadowPactTarget, // -1 (If not used(?))
+            SelectedTieredSpellID = message.SelectedTieredSpellID
         };
+
         _currentDuelActor.Tell(msg);
     }
 
@@ -337,6 +364,12 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
 
         var wizard = GetActiveWizard();
+        if (!wizard.InventoryBehavior.HasItem(_cachedMountId)) {
+            _cachedMountId = 0;
+
+            return;
+        }
+
         var wizEquipmentBehavior = wizard.EquipmentBehavior;
         var slot = wizEquipmentBehavior.GetSlotOfItem(_cachedMountId);
 
@@ -366,6 +399,12 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
 
         var wizard = GetActiveWizard();
+        if (!wizard.InventoryBehavior.HasItem(_cachedMountId)) {
+            _cachedMountId = 0;
+
+            return;
+        }
+
         if (!wizard.InventoryToEquipmentTransfer(_cachedMountId, out var addedEffects, out var _)) {
             Logger.Warning("Equip failed on item {0}", Logger.Args(_cachedMountId));
             return;

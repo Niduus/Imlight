@@ -23,6 +23,8 @@ using Imcodec.Math;
 using Imcodec.IO;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Combat;
+using Imlight.CoreLib.Game.PvP;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -519,6 +521,34 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by the <see cref="PvPDirector"/> to an arena zone once every player of a PvP match arrived: the
+    /// zone's PvP sigil seats the roster on its circles.
+    /// </summary>
+    public sealed class MSG_STARTPVPMATCH : IServerMessage {
+
+        public byte MessageOrder { get; } = 83;
+        public byte ServiceID { get; } = 102;
+
+        public ulong MatchId;
+        public uint TournamentNameId;
+        internal IReadOnlyList<PvPRosterEntry> Roster;
+
+    }
+
+    /// <summary>
+    /// Sent by an <see cref="World.InstanceContainer"/> of a PvP match to its <see cref="World.GameWorld"/> when its
+    /// last zone is dropped: the world removes the container.
+    /// </summary>
+    public sealed class MSG_INSTANCECONTAINEREMPTY : IServerMessage {
+
+        public byte MessageOrder { get; } = 84;
+        public byte ServiceID { get; } = 102;
+
+        public ulong OwnerId;
+
+    }
+
+    /// <summary>
     /// Called by a <see cref="PathMovementComponent"/> to itself to indicate the interval to check for interactions.
     /// </summary>
     public sealed class MSG_CREATUREFISHINTERACTIONINTERVAL : IServerMessage {
@@ -692,6 +722,16 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// rejoining the old one. Never set by re-attach or recall transfers.
         /// </summary>
         public bool ResetInstance;
+
+        /// <summary>
+        /// How the client is asked to load the house zone the player is entering. Null for every ordinary zone.
+        /// </summary>
+        public HouseEntry HouseEntry;
+
+        /// <summary>
+        /// The lot of the house the player is entering. Zero for every ordinary zone.
+        /// </summary>
+        public ulong HouseLotGid => HouseEntry?.LotGid ?? 0;
 
     }
 
@@ -1288,6 +1328,20 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 102;
 
         public ulong CharId;
+
+    }
+
+    /// <summary>
+    /// Sent to a player's session by a house door the player walked up to: the session works out the house on the
+    /// other side and starts the zone transfer.
+    /// </summary>
+    public sealed class MSG_HOUSEDOOR : IServerMessage {
+
+        public byte MessageOrder { get; } = 80;
+        public byte ServiceID { get; } = 102;
+
+        public ulong DoorGid;
+        public string LocationName;
 
     }
 

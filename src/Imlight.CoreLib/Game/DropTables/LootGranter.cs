@@ -53,6 +53,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -69,8 +70,6 @@ public static class LootGranter {
 
     private const uint LOOT_LIST_SERIALIZATION_FLAGS = 4;
     private const uint ReagentAddSerializationFlags = 27;
-    private const uint INVENTORY_ADD_SERIALIZATION_FLAGS =
-        (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
     private static readonly ConcurrentDictionary<ulong, byte> s_warnedTemplateIds = new();
     private static readonly CoreObjectSerializer s_itemSerializer = new(behaviors: SerializerFlags.None);
 
@@ -293,18 +292,20 @@ public static class LootGranter {
     }
 
     internal static bool GrantItem(IActorRef playerActor, Wizard wizard, DropItemResult item, ulong templateId) {
-        if (!wizard.AddItemToInventory(templateId, out var addedItem)) {
-            Logger.Error("Failed to add item {0} to wizard {1}'s inventory.",
+        if (!wizard.TryCreateItem(templateId, out var createdItem)) {
+            Logger.Error("Failed to create item {0} for wizard {1}.",
                 Logger.Args(item.ItemId, wizard.CharId));
 
             return false;
         }
 
-        // The attach payload (which carries the inventory) was already sent, so push each
-        // item to the client explicitly or the reward stays invisible this session.
-        SendInventoryAdd(playerActor, wizard, addedItem);
+        // The attach payload (which carries the inventory) was already sent, so push each item
+        // to the client explicitly or the reward stays invisible this session. An item that
+        // overflows into the bank is told before the loot popup, which shows it with the bank wording.
+        var placement = ItemPlacement.Place(wizard, createdItem);
+        ItemPlacement.Announce(playerActor, wizard, createdItem, placement);
 
-        return true;
+        return placement != Placement.Lost;
     }
 
     private static void GrantSpell(IActorRef playerActor, Wizard wizard, DropTableResult results,
@@ -349,20 +350,6 @@ public static class LootGranter {
         }
 
         Logger.Warning("Skipping drop table entry {0}: template {1}.", Logger.Args(templateId, reason));
-    }
-
-    private static void SendInventoryAdd(IActorRef playerActor, Wizard wizard, WizClientObjectItem item) {
-        if (!s_itemSerializer.Serialize(item, INVENTORY_ADD_SERIALIZATION_FLAGS, out var serializedItem)) {
-            Logger.Error("Failed to serialize reward item {0} for inventory-add.",
-                Logger.Args(item.m_globalID.Full));
-
-            return;
-        }
-
-        playerActor.Tell(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-            GlobalID = wizard.GameObjectID,
-            SerializedItem = serializedItem,
-        });
     }
 
     private static void UpdateWizardPotionMax(IActorRef playerActor, Wizard wizard) {

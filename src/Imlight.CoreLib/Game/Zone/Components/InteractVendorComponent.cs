@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 3/18/2025
+ * Last Updated: 10/14/2026
  */
 
 using System.Collections.Generic;
@@ -66,6 +66,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     public string InteractWizBang => "Registrar";
     public string DisplayKey      => "GUI_ShopOptionEquipment";
 
+    private const string DefaultShopTitle = "KrocNPC_00000013";
+
     private List<GID> _inventory;
     private string _shopTitle = "Unknown Shop";
     private int _shopType = 0;
@@ -97,6 +99,10 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _shopType = shoppingBehavior.m_shopType;
             _csrTestShop = shoppingBehavior.m_CSRTestShop;
         }
+
+        if (!string.IsNullOrWhiteSpace(inventory.ShopTitle)) {
+            _shopTitle = inventory.ShopTitle;
+        }
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
@@ -120,7 +126,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private void SendShopOfferings(IActorRef playerActor) {
         var shopOffering = new WizShopOffering() {
             m_sellModifier = 0.05f,
-            m_shopTitle = _shopTitle,
+            m_shopTitle = string.IsNullOrWhiteSpace(_shopTitle) || _shopTitle == "Unknown Shop" ? DefaultShopTitle : _shopTitle,
             m_shopList = _inventory,
             // Changes the type of currency that is used
             // 0 - Gold

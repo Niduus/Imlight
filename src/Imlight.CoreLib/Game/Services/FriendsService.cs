@@ -90,7 +90,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/15/2026
  */
 
 using System;
@@ -103,6 +103,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
@@ -566,6 +567,20 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_GOTOPLAYER))]
     private void ReceiveGoToPlayer(GAME_5_PROTOCOL.MSG_GOTOPLAYER message) {
         var targetID = message.TargetCharacterID;
+        var wizard = GetActiveWizard();
+
+        // The friends list only offers Go To for friends.
+        if (!BuddyRelationshipCollection.AreFriends(wizard.CharId, targetID)) {
+            Logger.Warning("Player {0} tried to teleport to character ID {1}, who is not a friend.",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
+
+            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
+                TargetCharacterID = targetID,
+                Error = 1
+            });
+
+            return;
+        }
 
         // Check if the target is online.
         if (!TryGetOnlinePlayer(targetID, out var onlinePlayer)) {
@@ -590,13 +605,29 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         if (queryResult is not null) {
             var coordinates = Util.GetCompactStringFromVector((Vector4) queryResult.Wizard.Location);
 
+            // A friend inside a house is visited through the house's lot, which only the house's owner may allow.
+            HouseEntry houseEntry = null;
+            if (queryResult.Wizard.AttachedLotGid != 0 && !HouseVisits.TryPrepare(wizard, queryResult.Wizard, out houseEntry, out var failure)) {
+                Logger.Information("Player {0} cannot go to character ID {1} in a house: {2}.",
+                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID, failure));
+
+                SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
+                    TargetCharacterID = targetID,
+                    Error = 1
+                });
+
+                return;
+            }
+
             Teleport(
                 destinationZone: onlinePlayer.CurrentZone,
                 destinationLocation: coordinates,
                 doTeleportEffects: true,
-                ownerCharId: targetID
+                ownerCharId: targetID,
+                houseEntry: houseEntry
             );
-        } else {
+        }
+        else {
             Logger.Error("Failed to query the target wizard for teleportation.");
         }
     }
@@ -668,7 +699,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         var msg = new GAME_5_PROTOCOL.MSG_IGNORELIST {
             ListOwnerGID = wizard.GameObjectID,
             ListData = listBytes,
-            Add = add ? (byte)1 : (byte)0
+            Add = add ? (byte) 1 : (byte) 0
         };
         SendToSocket(msg);
     }

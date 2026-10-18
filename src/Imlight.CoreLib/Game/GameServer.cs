@@ -44,7 +44,6 @@ using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Commands;
-using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Processes;
 using Imlight.CoreLib.Shared.Cryptography;
@@ -384,7 +383,7 @@ public class GameServer : Server {
         public ulong UserId;
         public ulong CharId;
         public string FallbackZone;
-        public uint FallbackZoneId;
+        public ulong FallbackZoneId;
         public string FallbackLocation;
         public string GameServerIp;
         public ushort GameServerPort;

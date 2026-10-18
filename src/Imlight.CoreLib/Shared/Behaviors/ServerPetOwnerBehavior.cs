@@ -38,8 +38,7 @@ public class ServerPetOwnerBehavior : IClientBehaviorProvider<ClientPetOwnerBeha
 
     [JsonIgnore] public bool NoTransfer { get; set; } = false;
 
-    public readonly int EnergyTickIntervalInSeconds = ConfigurationManager
-        .Settings["Character.PetEnergyTickInSeconds"].AsInt();
+    [JsonIgnore] public int EnergyTickIntervalInSeconds => Imlight.CoreLib.Game.Pet.AdvancedPetsConfig.EnergyTickInSeconds;
 
     public byte MaxSlots { get; set; }
     public uint LastEnergyTickEpoch { get; private set; }

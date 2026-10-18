@@ -92,9 +92,10 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     public int m_cantripXP;
     public int m_levelScaled;
     public int m_baseGoldPouch;
+    public int m_baseEventCurrency1Pouch;
+
 
     // These are stats that we can calculate from other data, and don't need to be stored in the player's character data.
-    [JsonIgnore] public int m_baseEventCurrency1Pouch;
     [JsonIgnore] public int m_baseEventCurrency2Pouch;
     [JsonIgnore] public int m_basePvPCurrencyPouch;
     [JsonIgnore] public int m_energyMax;
@@ -172,6 +173,19 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         Level = level;
 
         m_baseGoldPouch = ConfigurationManager.Settings["Character.BaseGoldPouch"].AsInt();
+        m_baseEventCurrency1Pouch = ConfigurationManager.Settings["Character.BaseLunariPouch"].AsInt();
+    }
+
+    /// <summary>
+    /// Copies the stats of the wizard with full health and mana. A duel that must not change the wizard fights with
+    /// the copy.
+    /// </summary>
+    internal ServerWizGameStats CopyForDuel() {
+        var copy = (ServerWizGameStats) MemberwiseClone();
+        copy.m_currentHitpoints = m_baseHitpoints;
+        copy.m_currentMana = m_baseMana;
+
+        return copy;
     }
 
     internal void SetBaseStats() {

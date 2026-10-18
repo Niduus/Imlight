@@ -52,6 +52,7 @@ using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 using Imlight.CoreLib.Game.Badges;
 using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.Rentals;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Game.WizBang;
 
@@ -116,6 +117,15 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // The client refuses a second rental of one type; a forged or racing request gets the same answer.
+        if (RentalItems.TryGetRentalTemplate(template, out var rentalTemplate) && RentalItems.OwnsType(playerWizard, rentalTemplate)) {
+            Logger.Warning("{0} tried to buy rental {1} while owning a rental of the same type.",
+                Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
+            SendShopDenyMessage();
+
+            return;
+        }
+
         WizClientObjectItem item;
         if (isPet) {
             if (!TryCreatePurchasedPet(playerWizard, template, message, out item)) {
@@ -129,7 +139,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             item.m_secondaryColor = message.decal;
         }
 
-        var goldCost = CalculateItemCost(template);
+        var goldCost = PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold >= goldCost) {
@@ -182,7 +192,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             }
         }
 
-        var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID) as WizItemTemplate;
+        var template = ItemHelper.GetDisplayTemplate(item);
         if (template is null || !IsValidDye(item, template, message.texture, message.decal, message.decal2)) {
             Logger.Warning("Rejected dye {0}/{1}/{2} for item {3} (template {4})",
                 Logger.Args(message.texture, message.decal, message.decal2, item.m_globalID, item.m_templateID.Full));
@@ -512,21 +522,6 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         return goldValue;
-    }
-
-    private static int CalculateItemCost(WizItemTemplate template) {
-        var goldCost = (int) template.m_baseCost;
-
-        // The client's shop window shows a pet's base price whatever its texture choices are.
-        if (PetFactory.IsPetTemplate(template.m_templateID)) {
-            return goldCost;
-        }
-
-        if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
-            goldCost = (int) Math.Ceiling(goldCost * DYED_ITEM_COST_MULTIPLIER) + 1;
-        }
-
-        return goldCost;
     }
 
 }

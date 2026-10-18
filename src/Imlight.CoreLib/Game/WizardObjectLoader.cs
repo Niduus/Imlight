@@ -19,6 +19,7 @@
 using System;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -53,6 +54,7 @@ public static class WizardObjectLoader {
         SetEquipmentBehavior(clientObject, character);
         SetPlayerNameBehavior(clientObject, ref character);
         SetInventoryBehavior(clientObject, ref character);
+        SetStorageBehavior(clientObject, ref character);
         SetMagicSchoolBehavior(clientObject, ref character);
         SetSpellbookBehavior(clientObject, ref character);
         SetMountOwnerBehavior(clientObject, ref character);
@@ -60,6 +62,7 @@ public static class WizardObjectLoader {
         SetPetOwnerBehavior(clientObject, ref character);
         SetAlchemyBehavior(clientObject, ref character);
         SetBadgeBehavior(clientObject, ref character);
+        SetAtticBehavior(clientObject, character);
 
         return clientObject;
     }
@@ -88,6 +91,18 @@ public static class WizardObjectLoader {
         }
         else {
             throw new Exception("Behavior ClientWizInventoryBehavior not found!");
+        }
+    }
+
+    public static void SetStorageBehavior(WizClientObject clientObject, ref Wizard character) {
+        if (CoreObjectFactory.FindBehaviorInstance<ClientWizStorageBehavior>(clientObject, out var storageBehavior)) {
+            var idx = clientObject.m_inactiveBehaviors.IndexOf(storageBehavior);
+            var clientBehavior = character.StorageBehavior.ToClientBehavior(character.Account?.SharedBank?.Limit ?? BankConfig.MaxSharedBankItems);
+            clientBehavior.m_behaviorTemplateNameID = storageBehavior.m_behaviorTemplateNameID;
+            clientObject.m_inactiveBehaviors[idx] = clientBehavior;
+        }
+        else {
+            throw new Exception("Behavior ClientWizStorageBehavior not found!");
         }
     }
 
@@ -175,6 +190,14 @@ public static class WizardObjectLoader {
         }
         else {
             throw new Exception("Behavior ClientPetOwnerBehavior not found!");
+        }
+    }
+
+    public static void SetAtticBehavior(WizClientObject clientObject, Wizard character) {
+        // The container and the count are what the client shows before the attic is opened. Nothing is stored in the object.
+        if (CoreObjectFactory.FindBehaviorInstance<ClientAtticBehavior>(clientObject, out var atticBehavior)) {
+            atticBehavior.m_containerGID = (GID) character.AtticContainerGid;
+            atticBehavior.m_atticItemCount = character.AtticItemCount;
         }
     }
 
