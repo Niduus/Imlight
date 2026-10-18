@@ -504,8 +504,16 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
             return;
         }
 
+        // Logged once per kind per session, so the log shows what the game asks for that the server can't do yet.
+        if (_unhandledClientMessages.Add(packet.GetType())) {
+            Logger.Information("SessionActor {0}: the game sent {1}, which the server does not handle yet.",
+                Logger.Args(SessionID, packet.GetType().Name));
+        }
+
         Unhandled(packet);
     }
+
+    private readonly HashSet<Type> _unhandledClientMessages = [];
 
     private void SendPreDisposeToServices() {
         // Iterate through each service and send them a pre-dispose message. This lets a service gracefully handle

@@ -21,7 +21,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// Test unlocks with no group: `.givemetpstyle`.
+/// Test unlocks with no group: `.givemetpstyle` and `.intothedarkness`.
 /// </summary>
 internal class CommandGiveProtocol : CommandProtocol {
 
@@ -34,6 +34,14 @@ internal class CommandGiveProtocol : CommandProtocol {
         Context.Character.UnlockAllTeleportEffects();
 
         InformSenderClient("Unlocked every teleport effect. Relog to see them.");
+    }
+
+    [Command("intothedarkness")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void UnlockShadowMagicCommand() {
+        Context.Character.UnlockShadowMagic();
+
+        InformSenderClient("You now have shadow magic: shadow pip slots, the shadow gauge and shadow pips in battle. Relog to see it.");
     }
 
 }

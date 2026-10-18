@@ -321,7 +321,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var allOptions = new List<ServiceOptionBase>();
         var componentsWithOptions = new List<IServiceComponent>();
         foreach (var component in _serviceComponents) {
-            var componentOptions = component.GetServiceOptions(playerCharacter).ToList();
+            var componentOptions = OptionsFor(component, playerCharacter);
             if (componentOptions.Count > 0) {
                 componentsWithOptions.Add(component);
             }
@@ -384,6 +384,26 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         };
     }
 
+    private readonly HashSet<string> _failedComponents = [];
+
+    /// <summary>
+    /// A component's options for this player. One component that throws must not take away the NPC's other
+    /// services or its icon, so it counts as having none (and is logged once).
+    /// </summary>
+    private List<ServiceOptionBase> OptionsFor(IServiceComponent component, Wizard wizard) {
+        try {
+            return [.. component.GetServiceOptions(wizard) ?? []];
+        }
+        catch (Exception ex) {
+            if (_failedComponents.Add(component.GetType().Name)) {
+                Logger.Error("{0} on NPC {1} failed to list its services: {2}",
+                    Logger.Args(component.GetType().Name, Entity.ActiveGameObject?.m_debugName, ex));
+            }
+
+            return [];
+        }
+    }
+
     private void SendWizBang(IActorRef playerActor, Wizard playerWizard) {
         if (_serviceComponents.Count <= 0) {
             return;
@@ -392,8 +412,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // Collect wizbangs from components that have service options for this player.
         var activeWizBangs = new List<WizBangs>();
         foreach (var component in _serviceComponents) {
-            var serviceOptions = component.GetServiceOptions(playerWizard);
-            if (serviceOptions.Any()) {
+            var serviceOptions = OptionsFor(component, playerWizard);
+            if (serviceOptions.Count > 0) {
                 activeWizBangs.Add(component.WizBang);
             }
         }

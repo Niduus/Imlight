@@ -313,6 +313,17 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    /// <summary>
+    /// Gives the wizard shadow magic of their own: shadow pip slots, the shadow gauge and shadow pips in battle,
+    /// even with [Battle] ShadowPips off.
+    /// </summary>
+    public void UnlockShadowMagic() {
+        GameStats.m_shadowMagicUnlocked = true;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void SetMaxGold(int maxGold) {
         GameStats.m_baseGoldPouch = maxGold;
 

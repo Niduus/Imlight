@@ -976,6 +976,16 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message that removes a wisp dropped after a battle when nobody picked it up.
+    /// </summary>
+    public sealed class MSG_BATTLEDROPEXPIRED : IServerMessage {
+
+        public byte MessageOrder { get; } = 90;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
     /// Timer-fired message that releases a mobile ID back to the pool after a cooldown,
     /// preventing races between MSG_REMOVEOBJECT delivery and mobile ID reuse.
     /// </summary>

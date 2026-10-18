@@ -633,6 +633,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         m_rK0 = _sigilTemplate.m_rK0PvE,
         m_rN0 = _sigilTemplate.m_rN0PvE,
         m_flatParticipantList = [],
+        // The school pip gauge only shows when the duel says how full it can get.
+        m_maxArchmasteryTeam0 = CombatDuelSubCircle.SchoolGaugeOn ? 100f : 0f,
+        m_maxArchmasteryTeam1 = CombatDuelSubCircle.SchoolGaugeOn ? 100f : 0f,
         m_duelModifier = new DuelModifier() {
             m_battlefieldEffects = [],
             m_combatTriggers = [],
@@ -1490,6 +1493,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         });
 
         PostMonsterKilledEvents(adjectivesPerDefeatedMob);
+
+        // A won battle (not one everybody fled) leaves health, mana and gold wisps behind.
+        BattleDrops.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location);
     }
 
     private void PostMonsterKilledEvents(List<List<string>> adjectivesPerDefeatedMob) {
