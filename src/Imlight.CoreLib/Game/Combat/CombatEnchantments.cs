@@ -49,7 +49,31 @@ internal static class CombatEnchantments {
     /// True when the spell is an enchantment: every effect it has changes another card.
     /// </summary>
     internal static bool IsEnchantment(SpellTemplate template)
-        => template?.m_effects is { Count: > 0 } effects && effects.All(e => IsCardModifier(e.m_effectType));
+        => Leaves(template?.m_effects).ToList() is { Count: > 0 } effects && effects.All(e => IsCardModifier(e.m_effectType));
+
+    /// <summary>
+    /// The plain effects of a spell, looking inside effect lists, random, variable, count based and conditional
+    /// effects (some enchantments, such as Nightbringer, keep their card changes inside those).
+    /// </summary>
+    internal static IEnumerable<SpellEffect> Leaves(IEnumerable<SpellEffect> effects) {
+        foreach (var effect in effects ?? []) {
+            var children = effect switch {
+                ConditionalSpellEffect conditional => conditional.m_elements?.Select(e => e?.m_pEffect).ToList(),
+                _ => Children(effect),
+            };
+            if (children is null) {
+                if (effect is not null) {
+                    yield return effect;
+                }
+
+                continue;
+            }
+
+            foreach (var leaf in Leaves(children)) {
+                yield return leaf;
+            }
+        }
+    }
 
     private static bool IsCardModifier(kSpellEffects type) => type is kSpellEffects.kModifyCardCloak
         or kSpellEffects.kModifyCardDamage or kSpellEffects.kModifyCardAccuracy or kSpellEffects.kModifyCardMutation
@@ -101,7 +125,7 @@ internal static class CombatEnchantments {
         changed = false;
         var result = spell with { m_effects = [.. spell.m_effects ?? []] };
 
-        foreach (var modifier in enchantment.m_effects ?? []) {
+        foreach (var modifier in Leaves(enchantment.m_effects)) {
             var amount = modifier.m_effectParam;
             switch (modifier.m_effectType) {
                 case kSpellEffects.kModifyCardAccuracy:
@@ -208,6 +232,7 @@ internal static class CombatEnchantments {
                 RandomSpellEffect random => random with { m_effectList = copies },
                 VariableSpellEffect variable => variable with { m_effectList = copies },
                 EffectListSpellEffect list => list with { m_effectList = copies },
+                CountBasedSpellEffect counted => counted with { m_effectList = copies },
                 _ => effect,
             };
         }
@@ -225,6 +250,7 @@ internal static class CombatEnchantments {
         RandomSpellEffect random => random.m_effectList,
         VariableSpellEffect variable => variable.m_effectList,
         EffectListSpellEffect list => list.m_effectList,
+        CountBasedSpellEffect counted => counted.m_effectList,
         _ => null,
     };
 
