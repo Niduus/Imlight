@@ -1255,6 +1255,12 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
                         spellTarget, rawSpellTarget, target is null ? "no such card" : target.m_templateID.ToString()));
 
         if (target is null || !CombatEnchantments.Enchant(target, enchantment)) {
+            var targetTemplate = target is null ? null : CoreObjectFactory.GetCoreTemplate(target.m_templateID) as SpellTemplate;
+            Logger.Information("Duel {0} | Slot {1} | {2} did not enchant {3}. Enchantment effects: {4}. Card effects: {5}.",
+                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, enchantTemplate.m_name.ToString(),
+                            targetTemplate?.m_name.ToString() ?? "no card",
+                            string.Join(", ", CombatEnchantments.Leaves(enchantTemplate.m_effects).Select(e => $"{e.m_effectType} {e.m_effectParam}")),
+                            string.Join(", ", CombatEnchantments.Leaves(targetTemplate?.m_effects).Select(e => $"{e.m_effectType} {e.m_effectParam}"))));
             SendCurrentCombatHand(caster);
 
             return true;
