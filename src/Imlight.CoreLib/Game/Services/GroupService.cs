@@ -40,7 +40,7 @@
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/15/2026
  */
 
 using System;
@@ -49,7 +49,9 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Groups;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -198,11 +200,22 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // A group mate inside a house is visited through the house's lot, which only the house's owner may allow.
+        HouseEntry houseEntry = null;
+        if (targetCharacter.Wizard.AttachedLotGid != 0 && !HouseVisits.TryPrepare(wizard, targetCharacter.Wizard, out houseEntry, out var failure)) {
+            Logger.Information("Character {CharId} cannot go to group mate {TargetCharId} in a house: {Failure}.",
+                Logger.Args(wizard.CharId, targetCharId, failure));
+            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+
+            return;
+        }
+
         Teleport(
             destinationZone: target.CurrentZone,
             destinationLocation: Util.GetCompactStringFromVector((Vector4) targetCharacter.Wizard.Location),
             doTeleportEffects: true,
-            ownerCharId: targetCharId
+            ownerCharId: targetCharId,
+            houseEntry: houseEntry
         );
     }
 

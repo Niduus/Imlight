@@ -46,6 +46,7 @@ using Akka.Actor;
 using Akka.Util.Internal;
 using Imcodec.Cryptography;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -83,6 +84,8 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         NpcSpellInventoryCollection.PreloadNpcSpellInventories();
         CreatureSpellbookCollection.PreloadSpellbooks();
         NpcDropTableCollection.PreloadDropTables();
+        HouseZoneIndex.Preload();
+        HouseTemplates.ValidateStarters();
     }
 
     public static Props Props(GameServer server)

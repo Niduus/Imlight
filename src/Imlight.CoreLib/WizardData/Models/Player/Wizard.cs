@@ -77,6 +77,12 @@ public class Wizard {
     public string MarkedZoneDisplayName { get; set; }
     public uint LastLoginTime { get; set; }
     public long TimeHomeLastClicked { get; set; }
+
+    /// <summary>
+    /// The lot of every house the character was issued, by the template of the deed or structure item.
+    /// </summary>
+    public Dictionary<uint, ulong> HouseLots { get; set; } = [];
+
     public byte World { get; set; }
     public PrivacyOptions PrivacyOptions { get; set; } = new();
     public Vector3 Location {
@@ -143,6 +149,10 @@ public class Wizard {
     [JsonIgnore] public ushort GameServerPort;
     [JsonIgnore] public string QueuedZoneName;
     [JsonIgnore] public string QueuedZoneLocation;
+    [JsonIgnore] public ulong AttachedLotGid;
+    [JsonIgnore] public ulong AtticContainerGid;
+    [JsonIgnore] public int AtticItemCount;
+    [JsonIgnore] public ulong QueuedLotGid;
     [JsonIgnore] internal DynamodSet DynamodSet { get; set; }
     [JsonIgnore] internal bool IsInCombatGrace { get; set; }
     [JsonIgnore] internal bool IsInDuel { get; set; }
@@ -357,6 +367,13 @@ public class Wizard {
     public void UnlockShadowMagic(int slots = 1) {
         GameStats.m_shadowMagicUnlocked = true;
         GameStats.m_shadowPipSlots = slots;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    public void SetInvisibleToFriends(bool invisible) {
+        GameStats.m_invisibleToFriends = invisible;
 
         // Persistent save.
         WizardCollection.UpdateCharacterGameStats(this);

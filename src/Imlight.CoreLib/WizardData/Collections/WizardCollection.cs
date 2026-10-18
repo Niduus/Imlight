@@ -161,6 +161,8 @@ public static class WizardCollection {
             DynamodCollection.DeleteAllDynamodSets(id);
             WizardReagentCollection.DeleteReagentBag(id);
 
+            // The houses and the attic belong to the character, and go with them in the same transaction.
+            DeleteHousing(session, character);
             session.Delete(character);
             session.SaveChanges();
             s_documentIdByCharId.TryRemove(id, out _);
@@ -285,6 +287,35 @@ public static class WizardCollection {
             existingCharacter.Zone = zoneName;
             existingCharacter.ZoneDisplayName = zoneDisplayName;
         });
+    }
+
+    /// <summary>
+    /// Records the lot of a house the character was issued, unless the character already has a lot for the template.
+    /// </summary>
+    /// <param name="character">The character to update; its in-memory lots follow the stored ones.</param>
+    /// <param name="templateId">The template of the deed or structure item.</param>
+    /// <param name="lotGid">The lot of the issued item.</param>
+    /// <returns><c>true</c> when the character's lot for the template is <paramref name="lotGid"/> now.</returns>
+    public static bool TryAddHouseLot(Wizard character, uint templateId, ulong lotGid) {
+        var matches = false;
+        UpdateCharacterWithSession(character.CharId, (_, existingCharacter) => {
+            existingCharacter.HouseLots ??= [];
+            if (existingCharacter.HouseLots.TryGetValue(templateId, out var storedLot)) {
+                matches = storedLot == lotGid;
+
+                return false;
+            }
+
+            existingCharacter.HouseLots[templateId] = lotGid;
+            matches = true;
+
+            return true;
+        });
+        if (matches) {
+            character.HouseLots[templateId] = lotGid;
+        }
+
+        return matches;
     }
 
     /// <summary>
@@ -608,6 +639,18 @@ public static class WizardCollection {
                 .Where(x => x.AccountId == accountId)
                 .ToList();
         }
+    }
+
+    private static void DeleteHousing(IDocumentSession session, Wizard character) {
+        var houseIds = (character.HouseLots ?? []).Values.Distinct().Select(House.GetDocumentId).ToList();
+        if (houseIds.Count > 0) {
+            // A lot is only the character's when its house says so.
+            foreach (var house in session.Load<House>(houseIds).Values.Where(house => house is not null && house.OwnerCharId == character.CharId)) {
+                session.Delete(house);
+            }
+        }
+
+        session.Delete(Attic.GetDocumentId(character.CharId));
     }
 
     private static void LoadEquippedItems(IDocumentSession session, Wizard wizard) {

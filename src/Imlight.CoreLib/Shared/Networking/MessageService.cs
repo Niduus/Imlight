@@ -38,7 +38,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/09/2026
+ * Last Updated: 10/15/2026
  */
 
 using System;
@@ -48,6 +48,7 @@ using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
@@ -288,14 +289,20 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
     /// <param name="makePrivate">Specifies whether the zone should be private or not. Default is false.</param>
     /// <param name="ownerCharId">The character ID of the owner. Default is self.</param>
     /// <param name="destinationLocation">The location to transfer to. Default is "Start".</param>
+    /// <param name="houseEntry">
+    /// How to ask the client to load the zone when the destination is a house. The transfer is then private to the
+    /// house's owner. A house destination without an entry is refused.
+    /// </param>
     protected void Teleport(string destinationZone,
                             bool doTeleportEffects = true,
                             bool makePrivate = false,
                             ulong ownerCharId = 0,
-                            string destinationLocation = "") {
+                            string destinationLocation = "",
+                            HouseEntry houseEntry = null) {
         // If the destination location is nothing, default it to "Start."
         var location = destinationLocation == "" ? "Start" : destinationLocation;
-        var ownerId = ownerCharId == 0 ? GetActiveWizard().CharId : ownerCharId;
+        var ownerId = houseEntry?.OwnerCharId ?? (ownerCharId == 0 ? GetActiveWizard().CharId : ownerCharId);
+        var isPrivate = makePrivate || houseEntry is not null;
 
         if (doTeleportEffects) {
             var teleportEffectsMsg = new CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS();
@@ -307,8 +314,9 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
             var delayMsg = new SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY {
                 DestinationZone = destinationZone,
                 DestinationLocation = location,
-                MakePrivate = makePrivate,
-                OwnerCharId = ownerId
+                MakePrivate = isPrivate,
+                OwnerCharId = ownerId,
+                HouseEntry = houseEntry
             };
             Timers.StartSingleTimer("teleport-delay", delayMsg, TimeSpan.FromSeconds(2));
 
@@ -316,22 +324,23 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
         }
 
         // No effects — transfer immediately.
-        DoTeleport(destinationZone, location, makePrivate, ownerId);
+        DoTeleport(destinationZone, location, isPrivate, ownerId, houseEntry);
     }
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY))]
     protected void OnTeleportDelay(SERVICE_101_PROTOCOL.MSG_TELEPORT_DELAY msg) {
-        DoTeleport(msg.DestinationZone, msg.DestinationLocation, msg.MakePrivate, msg.OwnerCharId);
+        DoTeleport(msg.DestinationZone, msg.DestinationLocation, msg.MakePrivate, msg.OwnerCharId, msg.HouseEntry);
     }
 
     private void DoTeleport(string destinationZone, string destinationLocation,
-                            bool makePrivate, ulong ownerCharId) {
+                            bool makePrivate, ulong ownerCharId, HouseEntry houseEntry) {
         var zoneTransfer = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationLocation = destinationLocation,
             DestinationZone = destinationZone,
             SendToClient = true,
             IsPrivate = makePrivate,
-            OwnerCharId = ownerCharId
+            OwnerCharId = ownerCharId,
+            HouseEntry = houseEntry
         };
         TellOtherServices(zoneTransfer);
     }
