@@ -301,6 +301,18 @@ public class Wizard {
         WizardCollection.UpdateCharacterTimeWentHome(this, time);
     }
 
+    /// <summary>
+    /// Unlocks every teleport effect (each bit of the three purchased masks is one effect).
+    /// </summary>
+    public void UnlockAllTeleportEffects() {
+        GameStats.m_purchasedCustomTeleportEffects1 = uint.MaxValue;
+        GameStats.m_purchasedCustomTeleportEffects2 = uint.MaxValue;
+        GameStats.m_purchasedCustomTeleportEffects3 = uint.MaxValue;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void SetMaxGold(int maxGold) {
         GameStats.m_baseGoldPouch = maxGold;
 

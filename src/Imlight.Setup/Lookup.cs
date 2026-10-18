@@ -98,6 +98,7 @@ internal sealed class Lookup {
         Command("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
         Command("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
         Command("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
+        Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
 
         // Battles.
         Command("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),

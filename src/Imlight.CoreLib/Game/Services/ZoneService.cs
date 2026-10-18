@@ -352,17 +352,20 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     // This button and the GotoDorm button are locked client-side until level 2.
     // jooty, again? cmon man
+    internal const string COMMONS_ZONE = "WizardCity/WC_Hub";
+
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_GOHOME))]
     private void ReceiveGoHome(WIZARD_12_PROTOCOL.MSG_GOHOME message) {
         // this teleports the wizard to the world hub, NOT their home/dorm. for that you want MSG_GOTODORM. goofy ahh naming scheme
+        // Justin's server: this button always goes to the Commons, from any world.
         var wizard = GetActiveWizard();
+        Logger.Information("{0} pressed the Commons button in {1}.", Logger.Args(wizard.CharId, wizard.Zone));
         SendTeleportEffects();
 
-        var currentZone = wizard.Zone;
-        var zoneMap = WorldHubZones.GetHubForZone(currentZone);
+        var zoneMap = WorldHubZones.GetHubForZone("WizardCity");
         var tpmsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-            DestinationZone = zoneMap.m_hubZone,
-            DestinationLocation = zoneMap.m_location,
+            DestinationZone = COMMONS_ZONE,
+            DestinationLocation = zoneMap is not null && (string) zoneMap.m_hubZone == COMMONS_ZONE ? (string) zoneMap.m_location : "Start",
             SendToClient = true,
             OwnerCharId = wizard.CharId,
         };

@@ -69,9 +69,46 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         // Attach if the template is an NPC and has a spell inventory in Dragon database.
         => template is GameObjectTemplate goTemplate 
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
-        && NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _);
+        && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
+            || InteractTreasureVendorComponent.IsAbner(goTemplate));
+
+    /// <summary>
+    /// The test trainer (Abner K. Doodle) teaches every enchantment spell for free, at any level.
+    /// </summary>
+    public bool IsTestTrainer { get; private set; }
+
+    private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells = new(BuildEnchantmentSpells);
+
+    private static List<NPCSpellEntry> BuildEnchantmentSpells() {
+        var entries = new List<NPCSpellEntry>();
+        var seen = new HashSet<string>();
+        foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
+            string name = spell.m_name;
+            if (string.IsNullOrEmpty(name) || spell.m_Treasure || name.EndsWith(" TC")
+                || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
+                || !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell)
+                || !seen.Add(name)
+                || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } learnable) {
+                continue;
+            }
+
+            entries.Add(new NPCSpellEntry { TemplateID = learnable.m_templateID, RequiredSpellID = 0, Level = 1 });
+        }
+
+        Logger.Information("Test trainer teaches {0} enchantment spells.", Logger.Args(entries.Count));
+
+        return entries;
+    }
 
     public override void OnStart() {
+        if (Entity.Template is GameObjectTemplate abner && InteractTreasureVendorComponent.IsAbner(abner)) {
+            IsTestTrainer = true;
+            SpellInventory = s_allEnchantmentSpells.Value;
+            InitializeServiceBases();
+
+            return;
+        }
+
         // Search Dragon database for our spell inventory.
         if (    Entity.Template is not GameObjectTemplate goTemplate
             || !NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out var spellInventory)) {
@@ -98,7 +135,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         for (int i = 0; i < _serviceOptionBases.Count; i++) {
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
             var trainerSpellId = (uint) SpellInventory[i].TemplateID;
-            var spellId = Randomizer.MapSpell(wizard, trainerSpellId);
+            var spellId = IsTestTrainer ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
             var spellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(spellId);
 
             var hasSpell = wizard.SpellbookBehavior.HasSpell(spellId);
@@ -114,7 +151,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             }
 
             // Training costs nothing for the wizard's own school (or for everyone with FreeTraining), else one point.
-            newBase.m_trainingCost = TrainingCost(wizard, spellTemplate);
+            newBase.m_trainingCost = CostFor(wizard, spellTemplate);
 
             // NoLevelRequirements lets any level train any spell.
             var requiredLevel = Randomizer.NoLevelRequirements ? 1 : SpellInventory[i].Level;
@@ -173,6 +210,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// <summary>
     /// How many training points a spell costs this wizard: none for their own school or with FreeTraining, else one.
     /// </summary>
+    internal int CostFor(Wizard wizard, SpellTemplate spellTemplate)
+        => IsTestTrainer ? 0 : TrainingCost(wizard, spellTemplate);
+
     internal static int TrainingCost(Wizard wizard, SpellTemplate spellTemplate) {
         if (Randomizer.FreeTraining) {
             return 0;
