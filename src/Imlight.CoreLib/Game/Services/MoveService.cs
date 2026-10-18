@@ -122,6 +122,10 @@ internal class MoveService : MessageService {
 
         // Broadcast the move to all other players in the zone.
         BroadcastClientMove(message);
+
+        // The trainer hall door sends a wizard on when they walk up to it. Locations arrive divided by 4.
+        TrainerHallDoor.OnMove(SessionActor.ActorRef, _wizard, unchecked((short) message.LocationX * 4),
+            unchecked((short) message.LocationY * 4), unchecked((short) message.LocationZ * 4));
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PLAYERMOVEINTERVAL))]
