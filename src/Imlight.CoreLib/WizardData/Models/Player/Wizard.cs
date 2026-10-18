@@ -71,7 +71,7 @@ public class Wizard {
     public bool StartingCrownsGiven { get; set; }
     // .overdose: every battle starts with Quickening already cast on this wizard.
     public bool Overdose { get; set; }
-    // Badges earned, by badge ID (the hash of the badge's name).
+    // Badges earned by older fork builds. BadgeService moves them into BadgeBehavior at login.
     public List<uint> Badges { get; set; } = [];
     public string MarkedZone { get; set; }
     public string MarkedZoneDisplayName { get; set; }
@@ -777,30 +777,6 @@ public class Wizard {
 
         // Persistent save.
         WizardCollection.UpdateCharacterNameOverride(this);
-    }
-
-    public bool HasBadge(string badgeName)
-        => Badges is { Count: > 0 } && Badges.Contains(Imcodec.Cryptography.StringHash.Compute(badgeName));
-
-    /// <summary>
-    /// Gives the wizard these badges and saves them. Returns how many were new.
-    /// </summary>
-    public int AddBadges(IEnumerable<uint> badgeIds) {
-        Badges ??= [];
-        var owned = new HashSet<uint>(Badges);
-        var added = 0;
-        foreach (var id in badgeIds) {
-            if (id != 0 && owned.Add(id)) {
-                Badges.Add(id);
-                added++;
-            }
-        }
-
-        if (added > 0) {
-            WizardCollection.UpdateCharacterBadges(this);
-        }
-
-        return added;
     }
 
     public void SetBadgeOverride(string newBadge) {

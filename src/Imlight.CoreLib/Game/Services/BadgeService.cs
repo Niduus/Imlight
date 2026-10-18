@@ -81,6 +81,7 @@ internal class BadgeService(SessionActor sessionActor) : MessageService(sessionA
 
         // An award that is due at login is already in the full list, so the changes are not sent on their own.
         var wizard = GetActiveWizard();
+        MoveOldBadges(wizard, catalog);
         var changes = Recheck(wizard, catalog);
         FinishChanges(wizard, changes, sendBatches: false);
 
@@ -222,6 +223,9 @@ internal class BadgeService(SessionActor sessionActor) : MessageService(sessionA
             case "grant":
                 CommandGrant(wizard, catalog, argument);
                 break;
+            case "grantall":
+                CommandGrantAll(wizard, catalog);
+                break;
             case "progress":
                 CommandProgress(wizard, catalog, argument, message.Amount);
                 break;
@@ -318,6 +322,41 @@ internal class BadgeService(SessionActor sessionActor) : MessageService(sessionA
         CommandReply(granted
             ? $"Granted {DescribeBadge(definition)}."
             : $"{DescribeBadge(definition)} was not granted: it is already earned or retired.");
+    }
+
+    private void CommandGrantAll(Wizard wizard, BadgeCatalog catalog) {
+        // Completion rewards are skipped: thousands of them at once would flood the backpack.
+        var changes = new BadgeEngine(wizard, catalog).Execute(engine => {
+            foreach (var definition in catalog.Records) {
+                engine.Award(definition.Id);
+            }
+        });
+        if (changes.StateChanged) {
+            Persist(wizard);
+        }
+
+        SendFullList(wizard, catalog);
+        CommandReply($"Gave you {changes.Completed.Count} new badges. Quests and doors that need a badge now count them.");
+    }
+
+    private static void MoveOldBadges(Wizard wizard, BadgeCatalog catalog) {
+        // Older fork builds kept earned badges in Wizard.Badges; they now live in the badge behavior.
+        if (wizard.Badges is not { Count: > 0 }) {
+            return;
+        }
+
+        var changes = new BadgeEngine(wizard, catalog).Execute(engine => {
+            foreach (var id in wizard.Badges) {
+                engine.Award(id);
+            }
+        });
+        if (changes.StateChanged) {
+            Persist(wizard);
+        }
+
+        Logger.Information("Moved {0} old badges of {1} into the badge list.", Logger.Args(changes.Completed.Count, wizard.CharId));
+        wizard.Badges.Clear();
+        WizardCollection.UpdateCharacterBadges(wizard);
     }
 
     private void CommandProgress(Wizard wizard, BadgeCatalog catalog, string counterKey, ulong amount) {

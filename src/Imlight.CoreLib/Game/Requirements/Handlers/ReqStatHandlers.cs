@@ -62,19 +62,6 @@ internal sealed class ReqManaHandler : BaseRequirementHandler<ReqMana> {
 }
 
 /// <summary>
-/// ReqMagicLevel: the player's level against a number.
-/// </summary>
-internal sealed class ReqMagicLevelHandler : BaseRequirementHandler<ReqMagicLevel> {
-
-    public override bool Evaluate(IRequirementContext context) {
-        var school = context.GetWizard()?.MagicSchoolBehavior;
-
-        return school is not null && NumericRequirement.Compare(Requirement, school.Level);
-    }
-
-}
-
-/// <summary>
 /// ReqHasGold: the player carries at least the gold.
 /// </summary>
 internal sealed class ReqHasGoldHandler : BaseRequirementHandler<ReqHasGold> {
