@@ -1254,13 +1254,29 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spellSelection, enchantTemplate.m_name.ToString(),
                         spellTarget, rawSpellTarget, target is null ? "no such card" : target.m_templateID.ToString()));
 
-        if (target is null || !CombatEnchantments.Enchant(target, enchantment)) {
-            var targetTemplate = target is null ? null : CoreObjectFactory.GetCoreTemplate(target.m_templateID) as SpellTemplate;
-            Logger.Information("Duel {0} | Slot {1} | {2} did not enchant {3}. Enchantment effects: {4}. Card effects: {5}.",
-                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, enchantTemplate.m_name.ToString(),
-                            targetTemplate?.m_name.ToString() ?? "no card",
-                            string.Join(", ", CombatEnchantments.Leaves(enchantTemplate.m_effects).Select(e => $"{e.m_effectType} {e.m_effectParam}")),
-                            string.Join(", ", CombatEnchantments.Leaves(targetTemplate?.m_effects).Select(e => $"{e.m_effectType} {e.m_effectParam}"))));
+        bool enchanted;
+        try {
+            enchanted = target is not null && CombatEnchantments.Enchant(target, enchantment);
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Slot {1} | {2} failed while enchanting: {3}",
+                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, enchantTemplate.m_name.ToString(), ex));
+            enchanted = false;
+        }
+
+        if (!enchanted) {
+            try {
+                var targetTemplate = target is null ? null : CoreObjectFactory.GetCoreTemplate(target.m_templateID) as SpellTemplate;
+                Logger.Information("Duel {0} | Slot {1} | {2} did not enchant {3}. Enchantment effects: {4}. Card effects: {5}.",
+                    Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, enchantTemplate.m_name.ToString(),
+                                targetTemplate?.m_name.ToString() ?? "no card",
+                                CombatEnchantments.Describe(enchantTemplate.m_effects),
+                                CombatEnchantments.Describe(targetTemplate?.m_effects)));
+            }
+            catch (Exception ex) {
+                Logger.Error("Duel {0} | Slot {1} | could not describe the failed enchantment: {2}",
+                    Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, ex));
+            }
             SendCurrentCombatHand(caster);
 
             return true;

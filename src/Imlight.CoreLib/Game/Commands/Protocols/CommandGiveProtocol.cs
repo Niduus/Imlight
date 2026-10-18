@@ -90,9 +90,10 @@ internal class CommandGiveProtocol : CommandProtocol {
     [Command("intothedarkness")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void UnlockShadowMagicCommand() {
-        Context.Character.UnlockShadowMagic();
+        // Like the game: unlocking shadow magic gives one slot; .sp slots 2 gives the second.
+        Context.Character.UnlockShadowMagic(1);
 
-        InformSenderClient("You now have shadow magic: shadow pip slots, the shadow gauge and shadow pips in battle. Relog to see it.");
+        InformSenderClient("You now have shadow magic with 1 shadow pip slot (.sp slots 2 for a second). Relog to see it.");
     }
 
 }
