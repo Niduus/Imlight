@@ -133,6 +133,9 @@ public class Wizard {
     // Set when attachment replaces the offline data object; does not imply zone entry.
     [JsonIgnore] public bool HasInitializedGameObject { get; private set; }
     [JsonIgnore] public List<GameEffectBase> GameEffects = [];
+    // Stats the worn pet's talents and the socketed jewels added, so they can be taken off exactly.
+    [JsonIgnore] internal List<(string Name, WizStatisticEffect Effect)> AppliedPetEffects = [];
+    [JsonIgnore] internal List<GameEffectInfo> AppliedJewelEffects = [];
     [JsonIgnore] public string GameServerIp;
     [JsonIgnore] public ushort GameServerPort;
     [JsonIgnore] public string QueuedZoneName;
@@ -567,6 +570,7 @@ public class Wizard {
         Logger.Debug("{0} equips item {1}", Logger.Args(PlayerNameBehavior.GetWizardName(), itemId));
 
         equipEffects = CharacterEffectHelper.AddEffectsToWizard(this, template);
+        EquipmentExtras.Refresh(this);
 
         return true;
     }
@@ -613,6 +617,7 @@ public class Wizard {
             Logger.Args(PlayerNameBehavior.GetWizardName(), itemId));
 
         unequipEffects = CharacterEffectHelper.RemoveEffectsFromWizard(this, template);
+        EquipmentExtras.Refresh(this);
 
         return true;
     }

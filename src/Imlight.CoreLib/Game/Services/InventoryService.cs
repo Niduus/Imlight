@@ -37,13 +37,18 @@
  */
 
 using System;
+using System.Linq;
 using Akka.Actor;
+using Imcodec.CoreObject;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Effects;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Items;
+using Imlight.CoreLib.WizardData.Models.Player;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Utilities;
@@ -179,20 +184,150 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
     #region Jewels
 
-    // JEWELS
+    private static readonly CoreObjectSerializer s_itemSerializer = new(behaviors: SerializerFlags.None);
+
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELREQUEST))]
     private void ReceiveEquipJewelRequest(WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELREQUEST message) {
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELREQUEST() {
-            ItemGID = message.ItemGID,
-            JewelGID = message.JewelGID,
-            SocketNumber = message.SocketNumber,
+        var wizard = GetActiveWizard();
+        Logger.Information("Socket request: item {0}, jewel {1}, socket {2}.",
+            Logger.Args(message.ItemGID, message.JewelGID, message.SocketNumber));
+
+        try {
+            var item = FindOwnedItem(wizard, message.ItemGID);
+            var jewel = wizard.InventoryBehavior.GetItem(message.JewelGID);
+            if (item is null || jewel is null) {
+                InformGameClient("That item or jewel is not in your backpack.");
+
+                return;
+            }
+
+            var problem = JewelSockets.CheckSocket(wizard, item, ItemHelper.GetItemTemplate(jewel), message.SocketNumber);
+            if (problem is not null) {
+                InformGameClient(problem);
+
+                return;
+            }
+
+            JewelSockets.Socket(item, message.SocketNumber, (uint) jewel.m_templateID);
+            WizardItemCollection.SaveItemBehaviors(item);
+
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELTOITEM {
+                GlobalID = wizard.GameObjectID,
+                ItemGID = message.ItemGID,
+                SocketNumber = message.SocketNumber,
+                JewelGID = message.JewelGID,
+            });
+
+            // The jewel is part of the item now.
+            wizard.RemoveItemFromInventory(jewel.m_globalID);
+            WizardItemCollection.RemoveItem(jewel);
+            SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
+                GlobalID = wizard.GameObjectID,
+                ItemID = jewel.m_globalID,
+            });
+
+            EquipmentExtras.Refresh(wizard);
+            Logger.Information("{0} socketed jewel {1} into item {2}, socket {3}.",
+                Logger.Args(wizard.CharId, jewel.m_templateID, item.m_templateID, message.SocketNumber));
+        }
+        catch (Exception e) {
+            Logger.Error("Socketing a jewel failed: {0}", Logger.Args(e));
+            InformGameClient("Socketing that jewel ran into a problem. Please send the server log.");
+        }
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST))]
+    private void ReceiveUnsocketJewelRequest(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST message) {
+        var wizard = GetActiveWizard();
+        Logger.Information("Unsocket request: item {0}, socket {1}.", Logger.Args(message.ItemGID, message.SocketNumber));
+
+        try {
+            var item = FindOwnedItem(wizard, message.ItemGID);
+            if (item is null) {
+                InformGameClient("That item is not yours.");
+
+                return;
+            }
+
+            var jewelTemplateId = JewelSockets.Unsocket(item, message.SocketNumber);
+            if (jewelTemplateId == 0) {
+                InformGameClient("That socket is empty.");
+
+                return;
+            }
+
+            WizardItemCollection.SaveItemBehaviors(item);
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_UNEQUIPSOCKETEDJEWEL {
+                GlobalID = wizard.GameObjectID,
+                ItemGID = message.ItemGID,
+                SocketNumber = message.SocketNumber,
+                SocketDeleted = 0,
+            });
+
+            // On this server a jewel taken out goes back to the backpack instead of breaking.
+            if (wizard.AddItemToInventory(jewelTemplateId, out var jewel)) {
+                SendInventoryAdd(wizard, jewel);
+            }
+            else {
+                InformGameClient("Your backpack is full, so the jewel could not come back.");
+            }
+
+            EquipmentExtras.Refresh(wizard);
+        }
+        catch (Exception e) {
+            Logger.Error("Taking out a jewel failed: {0}", Logger.Args(e));
+            InformGameClient("Taking out that jewel ran into a problem. Please send the server log.");
+        }
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UNLOCKSOCKETS))]
+    private void ReceiveUnlockSockets(WIZARD2_53_PROTOCOL.MSG_UNLOCKSOCKETS message) {
+        var wizard = GetActiveWizard();
+        Logger.Information("Unlock sockets: item {0}, cost choice {1}.", Logger.Args(message.ItemGID, message.CostChoice));
+
+        // Sockets are free here.
+        var item = FindOwnedItem(wizard, message.ItemGID);
+        var state = item is null ? null : JewelSockets.GetState(item, create: true);
+        if (state is not null) {
+            state.m_publicJewelInfo.m_bSocketsLocked = false;
+            WizardItemCollection.SaveItemBehaviors(item);
+        }
+
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_UNLOCKSOCKETSCONFIRM {
+            Failure = (sbyte) (state is null ? 1 : 0),
+            WebFailure = 0,
+            Credits = wizard.Crowns,
         });
 
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELTOITEM() {
-            ItemGID = message.ItemGID,
-            JewelGID = message.JewelGID,
-            SocketNumber = message.SocketNumber,
-            GlobalID = RandomGen.GenerateGUID()
+        if (state is not null) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_JEWELSOCKETLOCKUPDATE {
+                GlobalID = wizard.GameObjectID,
+                ItemGID = message.ItemGID,
+                Locked = 0,
+            });
+        }
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_JEWELSOCKETUNLOCKCOST))]
+    private void ReceiveJewelSocketUnlockCost(WIZARD2_53_PROTOCOL.MSG_JEWELSOCKETUNLOCKCOST message) {
+        // Logged so the next log shows the format. Sockets are unlocked for free when asked.
+        Logger.Information("Socket unlock cost asked: {0}", Logger.Args(message.Data));
+    }
+
+    private static WizClientObjectItem FindOwnedItem(Wizard wizard, ulong globalId)
+        => wizard.InventoryBehavior.GetItem(globalId)
+            ?? wizard.EquipmentBehavior?.EquippedItems?.FirstOrDefault(i => i.m_globalID == globalId);
+
+    private void SendInventoryAdd(Wizard wizard, WizClientObjectItem item) {
+        if (!s_itemSerializer.Serialize(item, (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit), out var data)) {
+            Logger.Error("Could not serialize item {0} for the backpack.", Logger.Args(item.m_globalID));
+
+            return;
+        }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
+            GlobalID = wizard.GameObjectID,
+            SerializedItem = data,
         });
     }
 
