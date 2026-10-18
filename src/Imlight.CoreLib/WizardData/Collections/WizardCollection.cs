@@ -157,6 +157,7 @@ public static class WizardCollection {
             // Delete related items/dynamods/quests data/etc.
             WizardItemCollection.DeleteInventory(id);
             WizardPetSnackCollection.DeleteSnackBag(id);
+            WizardPetCollection.DeleteAll(id);
             DynamodCollection.DeleteAllDynamodSets(id);
             WizardReagentCollection.DeleteReagentBag(id);
 
@@ -667,6 +668,16 @@ public static class WizardCollection {
             .Where(r => wizard.AlchemyBehavior.ReagentItemIds
             .Contains(r.m_globalID))
         ];
+
+        // The snack bag stacks are stored in the `WizardPetSnacks` collection, keyed by the character.
+        var snacks = session.Query<ClientPetSnackItem>(collectionName: WizardPetSnackCollection.CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .Where(x => x.m_characterId == wizard.CharId)
+            .ToList();
+
+        wizard.PetSnackBehavior ??= new();
+        wizard.PetSnackBehavior.Snacks = snacks;
+        wizard.PetSnackBehavior.SnackItemIds = [.. snacks.Select(snack => snack.m_globalID.Full)];
 
         // The friends list is expanded to include a 'relationship' model
         // which helps keep track of the relationship between two players for moderation purposes.

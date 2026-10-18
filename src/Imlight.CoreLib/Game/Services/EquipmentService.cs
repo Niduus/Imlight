@@ -295,6 +295,12 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        // The client reads the pet's level, XP and talents from this behavior, so every summon sends it.
+        GetActiveWizard().InitializePet(petItem);
+        if (PetBehaviorUpdate.TryCreate(petItem, out var behaviorUpdate)) {
+            SendToSocket(behaviorUpdate);
+        }
+
         // The generic "PetObject" template (ID 2) is used for all pet zone entities.
         // The specific breed appearance comes from behaviors on the template.
         var coreObj = PetFactory.CreatePetGameObject(petItem, playerObj.m_globalID);

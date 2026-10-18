@@ -286,6 +286,76 @@ public static class WizardItemCollection {
     }
 
     /// <summary>
+    /// Saves the pet item behavior of a pet onto its stored item: level, XP, happiness, stats, genes,
+    /// expressed talents and ratings.
+    /// </summary>
+    /// <param name="pet">The pet item, carrying the behavior to store.</param>
+    /// <returns>True if the pet was found and saved, false otherwise.</returns>
+    public static bool SavePetBehavior(WizClientObjectItem pet) {
+        if (!CoreObjectFactory.FindBehaviorInstance<ClientPetItemBehavior>(pet, out var behavior)) {
+            return false;
+        }
+
+        using var session = s_store.OpenSession();
+
+        // Waits for the index so a pet stored a moment ago is found too.
+        var associatedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .FirstOrDefault(x => x.m_globalID == pet.m_globalID && x.m_characterId == pet.m_characterId);
+        var index = associatedItem?.m_inactiveBehaviors?.FindIndex(stored => stored is ClientPetItemBehavior) ?? -1;
+        if (index < 0) {
+            return false;
+        }
+
+        associatedItem.m_inactiveBehaviors[index] = behavior;
+        session.SaveChanges();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Saves the pet item behaviors of several pets of one character in a single session.
+    /// </summary>
+    /// <param name="charId">The owner's character id.</param>
+    /// <param name="pets">The pet items, carrying the behaviors to store.</param>
+    /// <returns>The number of pets that were found and saved.</returns>
+    public static int SavePetBehaviors(ulong charId, IReadOnlyCollection<WizClientObjectItem> pets) {
+        using var session = s_store.OpenSession();
+
+        // Waits for the index so pets stored a moment ago are found too.
+        var storedItems = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .Where(x => x.m_characterId == charId)
+            .ToList();
+        var storedByGlobalId = new Dictionary<ulong, WizClientObjectItem>();
+        foreach (var storedItem in storedItems) {
+            storedByGlobalId.TryAdd(storedItem.m_globalID.Full, storedItem);
+        }
+
+        var saved = 0;
+        foreach (var pet in pets) {
+            if (!CoreObjectFactory.FindBehaviorInstance<ClientPetItemBehavior>(pet, out var behavior)
+                || !storedByGlobalId.TryGetValue(pet.m_globalID.Full, out var associatedItem)) {
+                continue;
+            }
+
+            var index = associatedItem.m_inactiveBehaviors?.FindIndex(stored => stored is ClientPetItemBehavior) ?? -1;
+            if (index < 0) {
+                continue;
+            }
+
+            associatedItem.m_inactiveBehaviors[index] = behavior;
+            saved++;
+        }
+
+        if (saved > 0) {
+            session.SaveChanges();
+        }
+
+        return saved;
+    }
+
+    /// <summary>
     /// Saves new packed name keys onto a stored pet item.
     /// </summary>
     /// <param name="item">The pet item to rename.</param>

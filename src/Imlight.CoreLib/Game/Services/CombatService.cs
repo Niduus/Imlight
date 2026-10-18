@@ -37,7 +37,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/09/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -50,6 +50,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -167,6 +168,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             XP = xpGained,
         };
         TellOtherServices(msg);
+
+        PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
         GrantMobLoot(message.MobTemplateIds);
         TeachSpellAfterBattle();
