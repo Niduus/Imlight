@@ -52,7 +52,9 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.CrownShop;
 using Imlight.CoreLib.Game.Effects;
 using Imlight.CoreLib.Game.Packs;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Results;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -295,8 +297,39 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                         Quantity = reagentObj.m_quantity
                     });
                     return;
-                case PetSnackItemTemplate petSnackTemplate:
-                    // TODO
+                case PetSnackItemTemplate:
+                    for (uint i = 0; i < message.Count; i++) {
+                        if (!wizard.AddSnack(message.Item, out ClientPetSnackItem snackObj)) {
+                            Logger.Warning("Could not add snack to the snack bag.");
+
+                            SendToSocket(new WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_RESPONSE {
+                                Error = 1,
+                            });
+                            return;
+                        }
+
+                        if (!s_coreObjectSerializer.Serialize(snackObj, 24, out var serializedSnack)) {
+                            Logger.Warning("Failed to serialize core object.");
+                            return;
+                        }
+
+                        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD {
+                            GlobalID = wizard.GameObjectID,
+                            Data = serializedSnack
+                        });
+
+                        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+                            ItemGlobalID = snackObj.m_globalID,
+                            ItemTemplateID = (uint) snackObj.m_templateID,
+                            ItemLocation = 1
+                        });
+
+                        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
+                            GlobalID = wizard.GameObjectID,
+                            ItemID = snackObj.m_globalID,
+                            Quantity = snackObj.m_quantity
+                        });
+                    }
                     return;
                 case TourneyTokensAmountTemplate tourneyToken:
                     // TODO
@@ -330,6 +363,12 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                         else {
                             wizard.UnlockCustomEmote(customEmote.m_bitFieldNumber);
                         }
+                    }
+
+                    // Pets need a hatched pet object with talents and stats, which AddItemToInventory does not build.
+                    if (PetFactory.IsPetTemplate((uint) message.Item)) {
+                        GivePets(wizard, message);
+                        return;
                     }
 
                     // todo: serialize the item only once
@@ -411,6 +450,42 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                     Mail = mail
                 });
             }
+        }
+    }
+
+    private void GivePets(Wizard wizard, WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_REQUEST message) {
+        var templateId = (uint) message.Item;
+        for (uint i = 0; i < Math.Max(message.Count, 1u); i++) {
+            var pet = PetFactory.CreateHatchedPet(wizard.CharId, templateId);
+            if (pet is not null && message.PetName != 0 && WizardNameBank.IsValidPetName(message.PetName)) {
+                PetFactory.TrySetPetName(pet, message.PetName);
+            }
+
+            if (pet is null || !wizard.AddPetToInventory(pet)) {
+                Logger.Warning("Could not add crown shop pet {0} to the inventory of {1}.",
+                    Logger.Args(templateId, wizard.CharId));
+
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_RESPONSE {
+                    Error = 1,
+                });
+                return;
+            }
+
+            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, pet)) {
+                wizard.RemoveItemFromInventory(pet.m_globalID);
+                WizardItemCollection.RemoveItem(wizard.CharId, pet.m_globalID);
+
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_RESPONSE {
+                    Error = 1,
+                });
+                return;
+            }
+
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+                ItemGlobalID = pet.m_globalID,
+                ItemLocation = 1,
+                ItemTemplateID = templateId
+            });
         }
     }
 
