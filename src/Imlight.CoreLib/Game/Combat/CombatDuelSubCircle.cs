@@ -731,8 +731,14 @@ public class CombatDuelSubCircle {
     /// Whether the participant has the school pips a spell costs.
     /// </summary>
     internal bool HasSchoolPipsForSpell(Spell spell)
-        => SchoolPipCosts(spell.m_pipCost).All(c => c.Cost == 0 || (SchoolPips(CombatParticipant.m_pipCount, c.School) ?? 0) >= c.Cost)
+        => (s_anySchoolPips
+               ? s_pipSchools.Sum(school => SchoolPips(CombatParticipant.m_pipCount, school) ?? 0)
+                 >= SchoolPipCosts(spell.m_pipCost).Sum(c => c.Cost)
+               : SchoolPipCosts(spell.m_pipCost).All(c => c.Cost == 0 || (SchoolPips(CombatParticipant.m_pipCount, c.School) ?? 0) >= c.Cost))
            && (spell.m_pipCost is null || CombatParticipant.m_pipCount.m_shadowPips >= spell.m_pipCost.m_shadowPips);
+
+    // [Battle] AnySchoolPips: a school pip of any school pays for any school's pip cost.
+    private static readonly bool s_anySchoolPips = ConfigurationManager.GetValue("Battle.AnySchoolPips", false);
 
     /// <summary>
     /// Spends the school pips a spell costs.
@@ -743,10 +749,26 @@ public class CombatDuelSubCircle {
             pipCount.m_shadowPips = (byte) Math.Max(0, pipCount.m_shadowPips - rank.m_shadowPips);
         }
 
+        var unpaid = 0;
         foreach (var (school, cost) in SchoolPipCosts(spell.m_pipCost)) {
             if (cost > 0 && SchoolPips(pipCount, school) is { } have) {
                 SetSchoolPips(pipCount, school, (byte) Math.Max(0, have - cost));
+                unpaid += Math.Max(0, cost - have);
             }
+        }
+
+        // With AnySchoolPips, what the spell's own schools could not pay comes from the other schools, the
+        // fullest first.
+        while (s_anySchoolPips && unpaid > 0) {
+            var fullest = s_pipSchools.OrderByDescending(school => SchoolPips(pipCount, school) ?? 0).First();
+            var have = SchoolPips(pipCount, fullest) ?? 0;
+            if (have == 0) {
+                break;
+            }
+
+            var take = Math.Min(have, unpaid);
+            SetSchoolPips(pipCount, fullest, (byte) (have - take));
+            unpaid -= take;
         }
     }
 
