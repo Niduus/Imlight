@@ -72,6 +72,11 @@ public static class SpiralDB {
     private static ConcurrentDictionary<ulong, NpcTreasureCardInventory> s_treasureCardInventories = new();
     private static ConcurrentDictionary<uint, BadgeDefinition> s_badgeDefinitions = new();
 
+    /// <summary>
+    /// The folders SpiralDB's files are read from: SpiralDB's own copy, then our additions.
+    /// </summary>
+    public static IEnumerable<string> DataFolders => [Path.GetFullPath(s_localPath ?? "."), Path.GetFullPath(s_extraPath)];
+
     public static IReadOnlyDictionary<string, CreatureSpellbook> CreatureSpellbooks => s_creatureSpellbooks;
     public static IReadOnlyDictionary<string, DropTable> DropTables => s_dropTables;
     public static GlobalRegistryModel GlobalRegistry => s_globalRegistry;
