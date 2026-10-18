@@ -70,49 +70,72 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => template is GameObjectTemplate goTemplate 
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-            || IsTestTrainerNpc(goTemplate) || IsShadowTrainerNpc(goTemplate));
+            || TestTrainerKindOf(goTemplate) is not null);
 
     /// <summary>
     /// A test trainer teaches a whole kind of spell for free, at any level: Mr. Lincoln in Ravenwood every
-    /// enchantment, Penny Dreadful in the Commons every shadow spell.
+    /// enchantment, Monstrologist Burke in Ravenwood every Extract spell, Mellori in Ravenwood the Shadow spells.
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
-    /// <summary>
-    /// True for Mr. Lincoln in Ravenwood, the test trainer. (Abner in the Commons only shows one kind of
-    /// service, so he keeps the treasure card shop.)
-    /// </summary>
-    internal static bool IsTestTrainerNpc(GameObjectTemplate template) {
-        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
-
-        return names.Contains("Lincoln", System.StringComparison.OrdinalIgnoreCase);
-    }
+    internal enum TestTrainerKind { Enchantments, Extracts, Shadow }
 
     /// <summary>
-    /// True for Penny Dreadful in the Commons, who teaches every shadow spell.
+    /// Finds which test trainer an NPC is: Mr. Lincoln, Monstrologist Burke (WC-RAV-NPC13) or Mellori (WC-RAV-NPC12),
+    /// both of the last two only in Ravenwood. (Abner in the Commons only shows one kind of service, so he keeps the
+    /// treasure card shop.)
     /// </summary>
-    internal static bool IsShadowTrainerNpc(GameObjectTemplate template) {
-        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
+    /// <returns>The kind of spells the NPC teaches, or null for any other NPC.</returns>
+    internal static TestTrainerKind? TestTrainerKindOf(GameObjectTemplate template) {
+        var objectName = template.m_objectName.ToString();
+        if (objectName == "WC-RAV-NPC13") {
+            return TestTrainerKind.Extracts;
+        }
 
-        return names.Contains("Penny Dreadful", System.StringComparison.OrdinalIgnoreCase);
+        if (objectName == "WC-RAV-NPC12") {
+            return TestTrainerKind.Shadow;
+        }
+
+        var names = $"{objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
+
+        return names.Contains("Lincoln", System.StringComparison.OrdinalIgnoreCase) ? TestTrainerKind.Enchantments : null;
     }
 
-    private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells
-        = new(() => BuildTestSpells(enchantments: true));
+    // The Shadow spells players learn (template names): Shadow Shrike, Sentinel, Seraph and Trickster, the Dark Fiend,
+    // Dark Nova and Dark Shepherd creatures, and the Shadow Shield, Shadow Trap, Shadowblade and Shadowspear cards.
+    // Every other Shadow school template is a monster or boss fight spell.
+    private static readonly HashSet<string> s_vanillaShadowSpells = [
+        "Shadow Self DPS", "Shadow Self Tank", "Shadow Self Heal", "Shadow Self Crit",
+        "Shadow Creature Fiend", "Shadow Creature Big Bomb", "Shadow Creature Healer",
+        "Shadow Shield", "Shadow Trap", "Shadowblade", "Shadowspear",
+    ];
 
-    private static readonly System.Lazy<List<NPCSpellEntry>> s_allShadowSpells
-        = new(() => BuildTestSpells(enchantments: false));
+    private static readonly Dictionary<TestTrainerKind, System.Lazy<List<NPCSpellEntry>>> s_testSpells = new() {
+        [TestTrainerKind.Enchantments] = new(() => BuildTestSpells(TestTrainerKind.Enchantments)),
+        [TestTrainerKind.Extracts]     = new(() => BuildTestSpells(TestTrainerKind.Extracts)),
+        [TestTrainerKind.Shadow]       = new(() => BuildTestSpells(TestTrainerKind.Shadow)),
+    };
 
-    private static List<NPCSpellEntry> BuildTestSpells(bool enchantments) {
+    // The Extract spells (Extract Undead and the rest) are templates named CollectEssence<Creature>; the ones with a
+    // number after the name are what an enchanted card turns into.
+    private static bool IsExtractSpell(string name)
+        => name.StartsWith("CollectEssence", System.StringComparison.Ordinal) && !name.Contains(' ');
+
+    private static bool Teaches(TestTrainerKind kind, SpellTemplate spell, string name) => kind switch {
+        TestTrainerKind.Enchantments => !IsExtractSpell(name)
+            && (Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) || (string) spell.m_sTypeName == "Enchantment"),
+        TestTrainerKind.Extracts => IsExtractSpell(name),
+        _ => s_vanillaShadowSpells.Contains(name),
+    };
+
+    private static List<NPCSpellEntry> BuildTestSpells(TestTrainerKind kind) {
         var entries = new List<NPCSpellEntry>();
         var seen = new HashSet<string>();
         foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
             string name = spell.m_name;
             if (string.IsNullOrEmpty(name) || spell.m_Treasure || name.EndsWith(" TC")
                 || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
-                || (enchantments
-                    ? !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) && (string) spell.m_sTypeName != "Enchantment"
-                    : (string) spell.m_sMagicSchoolName != "Shadow" || Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell))
+                || !Teaches(kind, spell, name)
                 || !seen.Add(name)
                 || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } learnable) {
                 continue;
@@ -121,16 +144,15 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             entries.Add(new NPCSpellEntry { TemplateID = learnable.m_templateID, RequiredSpellID = 0, Level = 1 });
         }
 
-        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(entries.Count, enchantments ? "enchantment" : "shadow"));
+        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(entries.Count, kind));
 
         return entries;
     }
 
     public override void OnStart() {
-        if (Entity.Template is GameObjectTemplate testTrainer
-            && (IsTestTrainerNpc(testTrainer) || IsShadowTrainerNpc(testTrainer))) {
+        if (Entity.Template is GameObjectTemplate testTrainer && TestTrainerKindOf(testTrainer) is { } kind) {
             IsTestTrainer = true;
-            SpellInventory = IsShadowTrainerNpc(testTrainer) ? s_allShadowSpells.Value : s_allEnchantmentSpells.Value;
+            SpellInventory = s_testSpells[kind].Value;
             InitializeServiceBases();
 
             return;
