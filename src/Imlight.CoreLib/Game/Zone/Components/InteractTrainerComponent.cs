@@ -73,20 +73,23 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             || InteractTreasureVendorComponent.IsAbner(goTemplate));
 
     /// <summary>
-    /// The test trainer (Abner K. Doodle) teaches every enchantment spell for free, at any level.
+    /// The test trainer (Abner K. Doodle) teaches every enchantment spell and every shadow spell for free, at any level.
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
-    private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells = new(BuildEnchantmentSpells);
+    private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells
+        = new(() => [.. BuildTestSpells(enchantments: true), .. BuildTestSpells(enchantments: false)]);
 
-    private static List<NPCSpellEntry> BuildEnchantmentSpells() {
+    private static List<NPCSpellEntry> BuildTestSpells(bool enchantments) {
         var entries = new List<NPCSpellEntry>();
         var seen = new HashSet<string>();
         foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
             string name = spell.m_name;
             if (string.IsNullOrEmpty(name) || spell.m_Treasure || name.EndsWith(" TC")
                 || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
-                || !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell)
+                || (enchantments
+                    ? !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell)
+                    : (string) spell.m_sMagicSchoolName != "Shadow" || Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell))
                 || !seen.Add(name)
                 || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } learnable) {
                 continue;
@@ -95,7 +98,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             entries.Add(new NPCSpellEntry { TemplateID = learnable.m_templateID, RequiredSpellID = 0, Level = 1 });
         }
 
-        Logger.Information("Test trainer teaches {0} enchantment spells.", Logger.Args(entries.Count));
+        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(entries.Count, enchantments ? "enchantment" : "shadow"));
 
         return entries;
     }
@@ -136,7 +139,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
             var trainerSpellId = (uint) SpellInventory[i].TemplateID;
             var spellId = IsTestTrainer ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
-            var spellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(spellId);
+            if (CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate spellTemplate) {
+                continue;
+            }
 
             var hasSpell = wizard.SpellbookBehavior.HasSpell(spellId);
             if (hasSpell) {
@@ -178,7 +183,15 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             else {
                 // The required spell is swapped the same way, so a randomized chain still lines up.
                 var requiredSpellId = Randomizer.MapSpell(wizard, (uint) originalRequiredId);
-                var reqSpellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(requiredSpellId);
+                if (CoreObjectFactory.GetCoreTemplate(requiredSpellId) is not SpellTemplate reqSpellTemplate) {
+                    // A requirement that can't be found doesn't block training.
+                    newBase.m_bCanTrain = true;
+                    newBase.m_failedRequirement = null;
+                    newBase.m_requirements = null;
+                    newServiceOptions.Add(newBase);
+                    continue;
+                }
+
                 if (requiredSpellId != SpellInventory[i].RequiredSpellID) {
                     newBase.m_requirements = HasSpellRequirement(reqSpellTemplate);
                 }

@@ -349,9 +349,15 @@ public class CombatDuelSubCircle {
             return s_pipSchools[Random.Shared.Next(s_pipSchools.Length)];
         }
 
-        var school = (MagicSchool) ParticipantGameStats.m_schoolID;
+        // The school picked for the gauge in the deck, else the participant's own.
+        foreach (var id in new[] { ArchmasterySchool, ParticipantGameStats.m_schoolID }) {
+            var school = (MagicSchool) id;
+            if (id != 0 && SchoolPips(CombatParticipant.m_pipCount, school) is not null) {
+                return school;
+            }
+        }
 
-        return SchoolPips(CombatParticipant.m_pipCount, school) is null ? null : school;
+        return null;
     }
 
     // [Battle] ShadowPips: shadow pips, which shadow spells cost, kept in their own slots.
@@ -374,7 +380,7 @@ public class CombatDuelSubCircle {
     private void RollShadowPip() {
         var pipCount = CombatParticipant.m_pipCount;
         var max = _wizard is null ? s_creatureMaxShadowPips : s_playerMaxShadowPips;
-        if (!s_shadowPips || pipCount.m_shadowPips >= max) {
+        if (!HasShadowMagic || pipCount.m_shadowPips >= max) {
             return;
         }
 
@@ -390,7 +396,7 @@ public class CombatDuelSubCircle {
         var chance = s_shadowPipChance > 0
             ? s_shadowPipChance
             : (int) Math.Round(ParticipantGameStats.m_shadowPipRating + ParticipantGameStats.m_bonusShadowPipRating);
-        if (s_naturalShadowPips && _wizard is not null && chance <= 0) {
+        if ((s_naturalShadowPips || HasOwnShadowMagic) && _wizard is not null && chance <= 0) {
             chance = NATURAL_SHADOW_PIP_CHANCE;
         }
 
@@ -407,7 +413,24 @@ public class CombatDuelSubCircle {
     /// <summary>
     /// The school the archmastery gauge fills toward, as the client wants it (0 when none).
     /// </summary>
-    internal uint ArchmasterySchool => s_gainSchoolPips && _wizard is not null ? ParticipantGameStats.m_schoolID : 0;
+    internal uint ArchmasterySchool => !s_gainSchoolPips || _wizard is null ? 0
+        : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
+
+    // The school picked for the gauge in the equipped deck, or 0 when none was picked.
+    private uint _deckArchmasterySchool;
+
+    internal static bool SchoolGaugeOn => s_gainSchoolPips;
+
+    private uint DeckArchmasterySchool() {
+        var equipment = _wizard?.EquipmentBehavior;
+        var deckSlot = equipment?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck);
+        var deckItem = deckSlot?.ItemId is null ? null
+            : equipment.EquippedItems?.FirstOrDefault(i => i.m_globalID == deckSlot.ItemId);
+
+        return deckItem is not null && CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)
+            ? deck.m_archmasterySchool
+            : 0;
+    }
 
     internal float ArchmasteryPoints => ArchmasterySchool == 0 ? 0 : _schoolGauge;
 
@@ -416,7 +439,7 @@ public class CombatDuelSubCircle {
     /// shadow magic unlocked whenever shadow pips are on.
     /// </summary>
     internal void ApplyPipGauges(WizGameStats stats) {
-        if (stats is null || !s_shadowPips) {
+        if (stats is null || !HasShadowMagic) {
             return;
         }
 
@@ -436,6 +459,11 @@ public class CombatDuelSubCircle {
         => s_playerMaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : s_playerMaxShadowPips;
 
     internal static bool ShadowPipsOn => s_shadowPips;
+
+    // A wizard who used .intothedarkness has shadow magic of their own, whatever the toggles say.
+    private bool HasOwnShadowMagic => _wizard is not null && ParticipantGameStats?.m_shadowMagicUnlocked == true;
+
+    private bool HasShadowMagic => s_shadowPips || HasOwnShadowMagic;
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,
@@ -729,6 +757,10 @@ public class CombatDuelSubCircle {
             .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(queryCharacterMsg)
             .Result
             .Wizard;
+        _deckArchmasterySchool = DeckArchmasterySchool();
+        if (_deckArchmasterySchool != 0) {
+            Logger.Debug("Deck school pip gauge school: {0}.", Logger.Args(_deckArchmasterySchool));
+        }
 
         // Dyanmic symbols start at 9 for players.
         var dynamicSymbol = (DynamicSigilSymbol) (SlotIndex + 9);

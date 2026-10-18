@@ -198,13 +198,29 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         var playerObj = GetActiveGameObject();
 
         foreach (var templateId in defeatedMobTemplateIds) {
-            if (!NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)) {
-                continue;
+            var loot = NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
+                ? DropTableRoller.Roll(npcDropTable.DropTableNames.ToArray(), playerRef, playerObj, wizard)
+                : new Imlight.CoreLib.WizardData.Models.World.DropTableResult();
+
+            // Every defeated monster drops some gold, more for higher levels and bosses.
+            if (loot.GoldAmount <= 0) {
+                loot.GoldAmount = BattleGold(templateId);
             }
 
-            var loot = DropTableRoller.Roll(npcDropTable.DropTableNames.ToArray(), playerRef, playerObj, wizard);
-            LootGranter.GrantAndDisplay(playerRef, wizard, loot);
+            if (loot.HasRewards) {
+                LootGranter.GrantAndDisplay(playerRef, wizard, loot);
+            }
         }
+    }
+
+    private static int BattleGold(ulong mobTemplateId) {
+        var npc = System.Linq.Enumerable.FirstOrDefault(System.Linq.Enumerable.OfType<NPCBehaviorTemplate>(
+            (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(mobTemplateId) as GameObjectTemplate)?.m_behaviors
+            ?? []));
+        var level = Math.Max(1, npc?.m_nLevel ?? 1);
+        var gold = Random.Shared.Next(level * 3, level * 6 + 1) + 5;
+
+        return npc?.m_bossMob == true ? gold * 3 : gold;
     }
 
     [MessageHandler(typeof(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATDRAW))]
