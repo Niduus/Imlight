@@ -120,6 +120,8 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         // SpellTarget as the client sent it, before it was turned from a bit into an index.
         public uint RawSpellTarget;
         public int TimeLeft;
+        public int ShadowPactTarget;
+        public int SelectedTieredSpellID;
 
     }
 
