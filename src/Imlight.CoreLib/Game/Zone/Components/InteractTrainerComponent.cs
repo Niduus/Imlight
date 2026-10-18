@@ -125,9 +125,11 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         InitializeServiceBases();
     }
 
+    private const int TEST_TRAINER_MAX_OPTIONS = 30;
+
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (wizard is null) {
-            return _serviceOptionBases;
+            return IsTestTrainer ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }
 
         // We've initialized a list of service option bases in InitializeServiceBases.
@@ -136,6 +138,12 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         List<ServiceOptionBase> newServiceOptions = [];
 
         for (int i = 0; i < _serviceOptionBases.Count; i++) {
+            // The game disconnects when an NPC offers hundreds of options at once, so the test trainer offers the
+            // first few spells the wizard doesn't know yet; training one brings the next into the list.
+            if (IsTestTrainer && newServiceOptions.Count >= TEST_TRAINER_MAX_OPTIONS) {
+                break;
+            }
+
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
             var trainerSpellId = (uint) SpellInventory[i].TemplateID;
             var spellId = IsTestTrainer ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
