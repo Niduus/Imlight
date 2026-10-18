@@ -68,20 +68,23 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
         && (NpcTreasureCardInventoryCollection.TryGetInventory(goTemplate.m_templateID, out _)
             || TestShopFor(goTemplate) is not TestShop.None);
 
-    // Test shops: Elik Silverfist sells every treasure card in the game, Abner K. Doodle every enchantment.
-    private enum TestShop { None, AllTreasureCards, AllEnchantments }
+    // Test shop: Abner K. Doodle sells every enchantment treasure card. (Every other treasure card is in the
+    // Bazaar's treasure card tab, see AuctionHouseService.)
+    private enum TestShop { None, AllEnchantments }
     private const int MIN_TEST_PRICE = 1;
     private const int MAX_TEST_PRICE = 200;
-    private static readonly System.Lazy<List<TreasureCardEntry>> s_allTreasureCards = new(() => BuildTestInventory(false));
     private static readonly System.Lazy<List<TreasureCardEntry>> s_allEnchantments = new(() => BuildTestInventory(true));
 
-    private static TestShop TestShopFor(GameObjectTemplate template) {
-        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
-        if (names.Contains("Silverfist", System.StringComparison.OrdinalIgnoreCase)) {
-            return TestShop.AllTreasureCards;
-        }
+    private static TestShop TestShopFor(GameObjectTemplate template)
+        => IsAbner(template) ? TestShop.AllEnchantments : TestShop.None;
 
-        return names.Contains("Abner", System.StringComparison.OrdinalIgnoreCase) ? TestShop.AllEnchantments : TestShop.None;
+    /// <summary>
+    /// True for Abner K. Doodle in the Commons, who runs the enchantment test shop and trainer.
+    /// </summary>
+    internal static bool IsAbner(GameObjectTemplate template) {
+        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
+
+        return names.Contains("Abner", System.StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -114,8 +117,8 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     }
 
     public override void OnStart() {
-        if (Entity.Template is GameObjectTemplate template && TestShopFor(template) is var shop and not TestShop.None) {
-            _inventory = shop == TestShop.AllTreasureCards ? s_allTreasureCards.Value : s_allEnchantments.Value;
+        if (Entity.Template is GameObjectTemplate template && TestShopFor(template) is not TestShop.None) {
+            _inventory = s_allEnchantments.Value;
 
             return;
         }

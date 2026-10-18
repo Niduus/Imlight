@@ -104,4 +104,6 @@ Shadow pips, also in `[Battle]` (`NaturalShadowPips` gives wizards shadow pips w
 
 ## Enchantments and test shops
 
-Enchantment cards (Epic, Sharpen Blade, Potent Trap and the rest) can be played onto another card in your hand in battle. The enchanted card keeps the change until it is cast. For testing, Elik Silverfist in the Commons sells every treasure card in the game and Abner K. Doodle sells every enchantment, each for 1 to 200 gold, and they never run out.
+Enchantment cards (Epic, Sharpen Blade, Potent Trap and the rest) can be played onto another card in your hand in battle. The enchanted card keeps the change until it is cast. For testing, the Bazaar's treasure card tab sells every treasure card in the game, and Abner K. Doodle in the Commons sells every enchantment treasure card, each for 1 to 200 gold, and they never run out. Abner also teaches every enchantment spell for free.
+
+The Commons button by the compass always takes you to the Commons. `.givemetpstyle` unlocks every teleport effect (log out and back in to see them).

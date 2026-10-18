@@ -111,30 +111,22 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 3:
                 BuyFromAuctionHouse(message.itemTemplateID, message.texture, message.decal, message.key);
                 break;
-            case 4:
-                // ?
-                break;
-            case 5:
-                // ?
-                break;
-            case 6:
-                // ?
-                break;
-            case 9:
-                // ?
-                break;
             default:
+                Logger.Information("Bazaar: unhandled command {0} (category {1}, template {2}, item {3}).",
+                    Logger.Args(message.Command, message.category, message.itemTemplateID, message.itemGlobalID));
                 break;
         }
     }
 
     private void SendAuctionHouseContents(ulong npcId, uint category, uint key) {
-        // Retrieve all Auction House entries.
+        // Retrieve all Auction House entries. The treasure card tab gets every treasure card in the game.
+        Logger.Information("Bazaar: category {0} ({1}) requested.",
+            Logger.Args(category, CategoryName(category) ?? "unknown name"));
         var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries();
 
-        var entryList = houseEntries is null
-            ? new List<AuctionHouseEntry>()
-            : [.. houseEntries];
+        List<AuctionHouseEntry> entryList = IsTreasureCardCategory(category)
+            ? [.. s_treasureCards.Value.Values.Select(card => card.Entry)]
+            : houseEntries is null ? new List<AuctionHouseEntry>() : [.. houseEntries];
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
@@ -149,7 +141,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     private void ConfirmBuyFromAuctionHouse(ulong templateId, uint key) {
-        var entry = AuctionHouseCollection.GetAuctionHouseEntry(templateId);
+        var entry = AuctionHouseCollection.GetAuctionHouseEntry(templateId) ?? TreasureCard(templateId)?.Entry;
 
         if (entry is null) {
             // todo: figure out correct response, should inform player the transaction failed and reload content.
@@ -167,6 +159,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     private void BuyFromAuctionHouse(ulong templateId, int texture, int decal, uint key) {
         var wizard = GetActiveWizard();
+        if (TreasureCard(templateId) is { } treasureCard) {
+            BuyTreasureCard(wizard, treasureCard);
+
+            return;
+        }
         var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(templateId);
 
         var item = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(templateId);
@@ -337,6 +334,98 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Failure = 0
         };
         SendToSocket(shopSellConfirmMsg);
+    }
+
+    // Treasure cards in the bazaar: every one in the game, never sold out, priced from 1 to 200 gold.
+    private const int TREASURE_STOCK = 99;
+    private const int MIN_TREASURE_PRICE = 1;
+    private const int MAX_TREASURE_PRICE = 200;
+
+    // Names the client might give the treasure card tab. Every request's category is logged, so the real one
+    // can be added here if none of these match.
+    private static readonly string[] s_treasureCategoryNames = [
+        "TreasureCards", "TreasureCard", "Treasure Cards", "Treasure Card", "Treasure", "TC", "TCs",
+        "Spell", "Spells", "SpellCard", "SpellCards", "Card", "Cards", "CAT_TreasureCards", "Category_TreasureCards",
+    ];
+    private static readonly string[] s_otherCategoryNames = [
+        "Hat", "Hats", "Robe", "Robes", "Boots", "Shoes", "Weapon", "Weapons", "Wand", "Athame", "Athames", "Amulet",
+        "Amulets", "Ring", "Rings", "Deck", "Decks", "Pet", "Pets", "Mount", "Mounts", "Furniture", "Housing",
+        "Reagent", "Reagents", "Jewel", "Jewels", "Seed", "Seeds", "Snack", "Snacks", "Elixir", "Elixirs", "All",
+        "Everything", "Clothing", "Gear", "Equipment", "Item", "Items",
+    ];
+    private static readonly HashSet<uint> s_treasureCategories = [.. s_treasureCategoryNames.SelectMany(CategoryHashes)];
+
+    private static IEnumerable<uint> CategoryHashes(string name)
+        => [StringHash.Compute(name), StringHash.Compute(name.ToLowerInvariant())];
+
+    private static bool IsTreasureCardCategory(uint category) => s_treasureCategories.Contains(category);
+
+    private static string CategoryName(uint category)
+        => s_treasureCategoryNames.Concat(s_otherCategoryNames).FirstOrDefault(name => CategoryHashes(name).Contains(category));
+
+    private sealed record BazaarTreasureCard(AuctionHouseEntry Entry, string SpellName, uint SpellTemplateId);
+
+    private static readonly Lazy<Dictionary<ulong, BazaarTreasureCard>> s_treasureCards = new(BuildTreasureCards);
+
+    private static Dictionary<ulong, BazaarTreasureCard> BuildTreasureCards() {
+        var cards = new Dictionary<ulong, BazaarTreasureCard>();
+        var seen = new HashSet<string>();
+        foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
+            string name = spell.m_name;
+            if (string.IsNullOrEmpty(name) || !(spell.m_Treasure || name.EndsWith(" TC"))
+                || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
+                || !seen.Add(name)
+                || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } card) {
+                continue;
+            }
+
+            var templateId = (uint) card.m_templateID;
+            var price = Math.Clamp(spell.m_baseCost, MIN_TREASURE_PRICE, MAX_TREASURE_PRICE);
+            cards[templateId] = new BazaarTreasureCard(new AuctionHouseEntry {
+                m_templateID = (GID) (ulong) templateId,
+                m_numForSale = TREASURE_STOCK,
+                m_buyPrice = price,
+                m_sellPrice = Math.Max(1, price / 2),
+            }, name, templateId);
+        }
+
+        Logger.Information("Bazaar has {0} treasure cards.", Logger.Args(cards.Count));
+
+        return cards;
+    }
+
+    // The client may send the id with the GID type bits set, so only the template part is compared.
+    private static BazaarTreasureCard TreasureCard(ulong templateId)
+        => s_treasureCards.Value.TryGetValue(templateId & 0xFFFFFFFFUL, out var card) ? card : null;
+
+    private void BuyTreasureCard(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarTreasureCard card) {
+        var price = card.Entry.m_buyPrice;
+        if (wizard.GameStats.m_currentGold < price) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+
+            return;
+        }
+
+        // Same as buying from a treasure card shop: the card goes into the treasure book and is saved.
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTOBOOK {
+            SpellID = (int) StringHash.Compute(card.SpellName),
+            EnchantmentID = 0,
+        });
+        wizard.SpellbookBehavior.AddTreasureCard(card.SpellTemplateId);
+        WizardCollection.AddTreasureCard(wizard, card.SpellTemplateId);
+
+        wizard.RemoveGold(price);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+
+        // Stock never goes down.
+        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+            UpdateInfo = WriteAuctionBlob(0, [card.Entry]),
+            CharacterID = wizard.CharId
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
     }
 
 }
