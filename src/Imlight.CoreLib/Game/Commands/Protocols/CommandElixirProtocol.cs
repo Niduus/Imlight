@@ -42,21 +42,36 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// </summary>
 internal class CommandElixirProtocol : CommandProtocol {
 
-    private const byte ELIXIR_LEVEL = 50;
-    private static readonly string[] s_elixirWorlds = ["WC-", "KT-", "MB-", "MS-", "DS-"];
-    // Gear comes from the Dragonspyre quests only, so the bags don't fill with every older reward.
-    private const string GEAR_WORLD = "DS-";
-
     internal override string Group { get; set; } = "";
 
     [Command("elixir50")]
     [Alias("level50")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void Level50ElixirCommand() {
-        var wizard = Context.Character;
+    private void Level50ElixirCommand()
+        => InformSenderClient(Level50Elixir.Use(Context.SessionActor, Context.CharacterObject, Context.Character));
+
+}
+
+/// <summary>
+/// The Level 50 Elixir, used by `.elixir50` and by buying it in the crown shop.
+/// </summary>
+internal static class Level50Elixir {
+
+    internal const uint TEMPLATE_ID = 1386000;
+
+    private const byte ELIXIR_LEVEL = 50;
+    private static readonly string[] s_elixirWorlds = ["WC-", "KT-", "MB-", "MS-", "DS-"];
+    // Gear comes from the Dragonspyre quests only, so the bags don't fill with every older reward.
+    private const string GEAR_WORLD = "DS-";
+
+    /// <summary>
+    /// Uses the elixir on a wizard.
+    /// </summary>
+    /// <returns>What happened, for the chat window.</returns>
+    internal static string Use(IActorRef session, CoreObject characterObject, Wizard wizard) {
         try {
             if (wizard.MagicSchoolBehavior.Level < ELIXIR_LEVEL) {
-                Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_LEVELUP { NewLevel = ELIXIR_LEVEL }, null);
+                session.Tell(new CHARACTER_103_PROTOCOL.MSG_LEVELUP { NewLevel = ELIXIR_LEVEL }, null);
             }
 
             var quests = SpiralDB.QuestTemplates
@@ -80,8 +95,8 @@ internal class CommandElixirProtocol : CommandProtocol {
                 completed++;
                 foreach (var result in quest.m_endResults?.m_results ?? []) {
                     switch (result) {
-                        case ResLearnSpell learn when Passes(learn.m_requirements, wizard):
-                            if (SpellTeacher.TryTeach(Context.SessionActor, wizard, (uint) learn.m_templateID) == SpellTeachResult.Learned) {
+                        case ResLearnSpell learn when Passes(learn.m_requirements, session, characterObject, wizard):
+                            if (SpellTeacher.TryTeach(session, wizard, (uint) learn.m_templateID) == SpellTeachResult.Learned) {
                                 spells++;
                             }
                             break;
@@ -106,28 +121,30 @@ internal class CommandElixirProtocol : CommandProtocol {
             }
 
             foreach (var badgeId in badges.Distinct()) {
-                Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_BADGEEVENT { Kind = BadgeEventKind.Award, BadgeId = badgeId });
+                session.Tell(new CHARACTER_103_PROTOCOL.MSG_BADGEEVENT { Kind = BadgeEventKind.Award, BadgeId = badgeId });
             }
 
             // The quest reward tables pick the piece for the wizard's school. No experience: the level is set above.
             if (gearTables.Count > 0) {
-                var loot = DropTableRoller.Roll([.. gearTables], Context.SessionActor, Context.CharacterObject, wizard);
-                LootGranter.GrantAndDisplay(Context.SessionActor, wizard, loot, 0f);
+                var loot = DropTableRoller.Roll([.. gearTables], session, characterObject, wizard);
+                LootGranter.GrantAndDisplay(session, wizard, loot, 0f);
             }
 
             Logger.Information("Level 50 Elixir for {0}: {1} quests finished, {2} spells learned, {3} reward tables.",
                 Logger.Args(wizard.CharId, completed, spells, gearTables.Count));
-            InformSenderClient($"Level 50 Elixir used: level 50, {completed} main quests through Dragonspyre finished, " +
-                               $"{spells} spells learned and the Dragonspyre gear for your school added. Relog to see everything.");
+
+            return $"Level 50 Elixir used: level 50, {completed} main quests through Dragonspyre finished, " +
+                   $"{spells} spells learned and the Dragonspyre gear for your school added. Relog to see everything.";
         }
         catch (Exception e) {
             Logger.Error("Level 50 Elixir failed for {0}: {1}", Logger.Args(wizard?.CharId, e));
-            InformSenderClient("The Level 50 Elixir ran into a problem. Please send the server log.");
+
+            return "The Level 50 Elixir ran into a problem. Please send the server log.";
         }
     }
 
-    private bool Passes(RequirementList requirements, Wizard wizard)
+    private static bool Passes(RequirementList requirements, IActorRef session, CoreObject characterObject, Wizard wizard)
         => RequirementDispatcher.EvaluateRequirements(requirements,
-            new GenericRequirementContext(requirements, Context.SessionActor, Context.CharacterObject, wizard));
+            new GenericRequirementContext(requirements, session, characterObject, wizard));
 
 }
