@@ -1260,6 +1260,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return true;
         }
 
+        Logger.Information("Duel {0} | Slot {1} | Enchanted with {2}: pip cost now {3} (adjust {4}), accuracy {5}.",
+            Logger.Args(Duel.m_duelID.Full, caster.SlotIndex,
+                        string.Join(", ", (enchantTemplate.m_effects ?? []).Select(e => $"{e.m_effectType} {e.m_effectParam}")),
+                        target.m_pipCost?.m_spellRank, target.m_regularAdjust, target.m_accuracy));
+
         Imlight.CoreLib.Game.Combat.CombatResolver.UseUpCard(caster, enchantment);
         SendCurrentCombatHand(caster);
 

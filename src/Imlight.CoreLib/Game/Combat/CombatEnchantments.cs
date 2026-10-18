@@ -84,6 +84,10 @@ internal static class CombatEnchantments {
         target.m_enchantedThisCombat = true;
         target.m_enchantmentSpellIsItemCard = enchantment.m_itemCard;
         target.m_accuracy = (byte) Math.Clamp(enchanted.m_accuracy, 0, 100);
+        // The game draws a card's pip cost from its template plus m_regularAdjust, so a pip change
+        // (Elucidate and the like) goes there as well as into the cost the server charges.
+        var baseRank = target.m_pipCost?.m_spellRank ?? targetTemplate.m_spellRank?.m_spellRank ?? 0;
+        target.m_regularAdjust += (enchanted.m_spellRank?.m_spellRank ?? baseRank) - baseRank;
         target.m_pipCost = enchanted.m_spellRank;
         target.m_cloaked = enchanted.m_cloaked;
 
@@ -103,6 +107,9 @@ internal static class CombatEnchantments {
                 case kSpellEffects.kModifyCardAccuracy:
                     result = result with { m_accuracy = result.m_accuracy + amount };
                     changed = true;
+                    break;
+                // [Battle] NoPipsFromDaybreakerNightbringer: those two keep their damage but not their extra pip.
+                case kSpellEffects.kModifyCardRank when amount > 0 && s_noPipsFromDayNight && IsDaybreakerOrNightbringer(enchantment):
                     break;
                 case kSpellEffects.kModifyCardRank when result.m_spellRank is not null:
                     result = result with {
@@ -157,6 +164,16 @@ internal static class CombatEnchantments {
         }
 
         return result;
+    }
+
+    private static readonly bool s_noPipsFromDayNight
+        = Imlight.Common.ConfigurationManager.GetValue("Battle.NoPipsFromDaybreakerNightbringer", false);
+
+    private static bool IsDaybreakerOrNightbringer(SpellTemplate enchantment) {
+        var name = enchantment.m_name.ToString() ?? "";
+
+        return name.Contains("Daybreaker", StringComparison.OrdinalIgnoreCase)
+            || name.Contains("Nightbringer", StringComparison.OrdinalIgnoreCase);
     }
 
     // A buff gets bigger and a debuff gets worse: the size grows either way.

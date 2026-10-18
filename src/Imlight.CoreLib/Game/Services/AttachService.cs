@@ -249,6 +249,26 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
             Mana = _wizard.GameStats.m_currentMana,
             MaxMana = _wizard.GameStats.GetClientTypeAlternative().m_baseMana,
         });
+
+        GiveStartingPotions();
+    }
+
+    // [Character] StartingPotions: every wizard has at least this many potion bottles. New bottles come full,
+    // and potion vendors refill them.
+    private static readonly int s_startingPotions
+        = Math.Clamp(ConfigurationManager.GetValue("Character.StartingPotions", 1), 0, 20);
+
+    private void GiveStartingPotions() {
+        var stats = _wizard.GameStats;
+        if (stats.m_potionMax < s_startingPotions) {
+            var added = s_startingPotions - stats.m_potionMax;
+            _wizard.UpdatePotions(Math.Min(s_startingPotions, stats.m_potionCharge + added), s_startingPotions);
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEPOTIONS {
+            PotionMax = stats.m_potionMax,
+            PotionCharge = stats.m_potionCharge,
+        });
     }
 
     private (string ZoneName, string Location) GetReattachDestination(string zoneName, string location) {

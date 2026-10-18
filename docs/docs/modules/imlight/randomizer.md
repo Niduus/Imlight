@@ -99,13 +99,17 @@ Shadow pips, also in `[Battle]` (`NaturalShadowPips` gives wizards shadow pips w
 | ------- | ------- | ------------ |
 | `ShadowPips` | `true` | Wizards and creatures can get shadow pips, which shadow spells cost. They have their own slots, and wizards get shadow magic unlocked so the slots and shadow gauge show. |
 | `PlayerShadowPipLimit` | `0` | The most shadow pips a wizard can hold. 0 means no limit. |
+| `PlayerShadowPipMin` | `0` | The fewest shadow pips a wizard holds; they top back up to this each round. |
 | `CreatureShadowPipLimit` | `0` | The most shadow pips a creature can hold. 0 means no limit. |
+| `CreatureShadowPips` | `true` | Creatures can get shadow pips at all. |
+| `RandomCreatureShadowPips` | `false` | Each creature gets shadow magic only by chance, rolled every battle. |
+| `CreatureShadowMagicChance` | `50` | That chance, from 0 to 100. |
 | `ShadowPipChance` | `0` | How much the shadow gauge fills each round (0 to 100); a full gauge gives a shadow pip. 0 uses each one's own shadow pip rating from level and gear. |
 
 ## Enchantments and test shops
 
 Enchantment cards (Epic, Sharpen Blade, Potent Trap and the rest) can be played onto another card in your hand in battle. The enchanted card keeps the change until it is cast. For testing, the Bazaar's treasure card tab sells every treasure card in the game, and Abner K. Doodle in the Commons sells every enchantment treasure card, each for 1 to 200 gold, and they never run out. Abner also teaches every enchantment spell and every Shadow spell for free.
 
-Won battles (not fled ones) give gold from every monster and drop a health, a mana and a gold wisp where the battle was (`[Battle] BattleWisps`); wisps nobody picks up vanish after 2 minutes. `.intothedarkness` gives your character shadow magic of its own, even with `[Battle] ShadowPips` off. With `[Battle] GainSchoolPips` on, the school pip gauge fills toward the school picked in your deck, or your own school if none is picked.
+Won battles (not fled ones) give gold from every monster and drop a health, a mana and a gold wisp where the battle was (`[Battle] BattleWisps`); wisps nobody picks up vanish after 2 minutes. `.intothedarkness` gives your character shadow magic of its own, even with `[Battle] ShadowPips` off. `[Randomizer] RandomizeShadowPips` rolls each wizard's shadow pip limit (1 to 5) from the seed and gives creatures shadow magic by chance. `[Battle] NoPipsFromDaybreakerNightbringer` keeps those enchantments' damage but drops their extra pip. Every wizard has at least `[Character] StartingPotions` potion bottles (default 1), which potion vendors refill. `.givemeallbadges` gives every badge, which quests and doors that need a badge then count. With `[Battle] GainSchoolPips` on, the school pip gauge fills toward the school picked in your deck, or your own school if none is picked.
 
 The Commons button by the compass always takes you to the Commons. `.givemetpstyle` unlocks every teleport effect (log out and back in to see them).

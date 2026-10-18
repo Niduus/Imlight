@@ -66,6 +66,8 @@ public class Wizard {
     public string PreviousZone { get; set; }
 
     public ulong InteriorStowedMountId { get; set; }
+    // Badges earned, by badge ID (the hash of the badge's name).
+    public List<uint> Badges { get; set; } = [];
     public string MarkedZone { get; set; }
     public string MarkedZoneDisplayName { get; set; }
     public uint LastLoginTime { get; set; }
@@ -722,6 +724,30 @@ public class Wizard {
 
         // Persistent save.
         WizardCollection.UpdateCharacterNameOverride(this);
+    }
+
+    public bool HasBadge(string badgeName)
+        => Badges is { Count: > 0 } && Badges.Contains(Imcodec.Cryptography.StringHash.Compute(badgeName));
+
+    /// <summary>
+    /// Gives the wizard these badges and saves them. Returns how many were new.
+    /// </summary>
+    public int AddBadges(IEnumerable<uint> badgeIds) {
+        Badges ??= [];
+        var owned = new HashSet<uint>(Badges);
+        var added = 0;
+        foreach (var id in badgeIds) {
+            if (id != 0 && owned.Add(id)) {
+                Badges.Add(id);
+                added++;
+            }
+        }
+
+        if (added > 0) {
+            WizardCollection.UpdateCharacterBadges(this);
+        }
+
+        return added;
     }
 
     public void SetBadgeOverride(string newBadge) {

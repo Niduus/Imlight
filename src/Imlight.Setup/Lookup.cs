@@ -99,6 +99,7 @@ internal sealed class Lookup {
         Command("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
         Command("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
         Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
+        Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own: shadow pip slots, the shadow gauge and shadow pips in battle, even with the Shadow pips switch off. Log out and back in to see it."),
 
         // Battles.

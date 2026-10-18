@@ -369,6 +369,43 @@ public class CombatDuelSubCircle {
     private static readonly int s_creatureMaxShadowPips
         = ShadowLimit(ConfigurationManager.GetValue("Battle.CreatureShadowPipLimit", 0));
 
+    // [Battle] PlayerShadowPipMin: the fewest shadow pips a wizard holds; they top back up each round.
+    private static readonly int s_playerMinShadowPips
+        = Math.Clamp(ConfigurationManager.GetValue("Battle.PlayerShadowPipMin", 0), 0, NO_SHADOW_LIMIT);
+    // [Battle] CreatureShadowPips: creatures can get shadow pips at all.
+    private static readonly bool s_creatureShadowPips = ConfigurationManager.GetValue("Battle.CreatureShadowPips", true);
+    // [Battle] RandomCreatureShadowPips: each creature, each battle, has CreatureShadowMagicChance % to get shadow magic.
+    private static readonly bool s_randomCreatureShadowPips
+        = ConfigurationManager.GetValue("Battle.RandomCreatureShadowPips", false);
+    private static readonly int s_creatureShadowMagicChance
+        = Math.Clamp(ConfigurationManager.GetValue("Battle.CreatureShadowMagicChance", 50), 0, 100);
+    // [Randomizer] RandomizeShadowPips: each wizard's shadow pip limit is rolled (1 to 5) from the seed, and
+    // each creature gets shadow magic at random.
+    private static readonly bool s_randomizeShadowPips
+        = Randomization.Randomizer.Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeShadowPips", false);
+    private const int RANDOM_SHADOW_LIMIT_MAX = 5;
+    private bool? _creatureRolledShadowMagic;
+
+    private int MaxShadowPips => _wizard is null ? s_creatureMaxShadowPips
+        : s_randomizeShadowPips ? 1 + Randomization.Randomizer.PickIndex(_wizard, "ShadowPipLimit", 0, RANDOM_SHADOW_LIMIT_MAX)
+        : s_playerMaxShadowPips;
+
+    private bool CreatureHasShadowMagic {
+        get {
+            if (!s_creatureShadowPips && !s_randomizeShadowPips) {
+                return false;
+            }
+
+            if (!s_randomCreatureShadowPips && !s_randomizeShadowPips) {
+                return true;
+            }
+
+            _creatureRolledShadowMagic ??= Random.Shared.Next(100) < s_creatureShadowMagicChance;
+
+            return _creatureRolledShadowMagic.Value;
+        }
+    }
+
     private static int ShadowLimit(int value) => value <= 0 ? NO_SHADOW_LIMIT : Math.Min(value, NO_SHADOW_LIMIT);
     private static readonly int s_shadowPipChance
         = Math.Clamp(ConfigurationManager.GetValue("Battle.ShadowPipChance", 0), 0, 100);
@@ -379,8 +416,17 @@ public class CombatDuelSubCircle {
     /// </summary>
     private void RollShadowPip() {
         var pipCount = CombatParticipant.m_pipCount;
-        var max = _wizard is null ? s_creatureMaxShadowPips : s_playerMaxShadowPips;
-        if (!HasShadowMagic || pipCount.m_shadowPips >= max) {
+        var max = MaxShadowPips;
+        if (!HasShadowMagic) {
+            return;
+        }
+
+        // [Battle] PlayerShadowPipMin: a wizard never holds fewer shadow pips than this.
+        if (_wizard is not null && pipCount.m_shadowPips < Math.Min(s_playerMinShadowPips, max)) {
+            pipCount.m_shadowPips = (byte) Math.Min(s_playerMinShadowPips, max);
+        }
+
+        if (pipCount.m_shadowPips >= max) {
             return;
         }
 
@@ -443,7 +489,7 @@ public class CombatDuelSubCircle {
             return;
         }
 
-        var max = _wizard is null ? s_creatureMaxShadowPips : s_playerMaxShadowPips;
+        var max = MaxShadowPips;
         stats.m_shadowMagicUnlocked = true;
         stats.m_shadowPipMax = max >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : max;
         stats.m_shadowPipRating = ShadowPipChance();
@@ -463,7 +509,7 @@ public class CombatDuelSubCircle {
     // A wizard who used .intothedarkness has shadow magic of their own, whatever the toggles say.
     private bool HasOwnShadowMagic => _wizard is not null && ParticipantGameStats?.m_shadowMagicUnlocked == true;
 
-    private bool HasShadowMagic => s_shadowPips || HasOwnShadowMagic;
+    private bool HasShadowMagic => _wizard is null ? s_shadowPips && CreatureHasShadowMagic : s_shadowPips || HasOwnShadowMagic;
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,

@@ -308,7 +308,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     }
 
     private void RefreshServiceMomento(Wizard playerCharacter) {
-        _serviceComponents = [.. Entity.GetComponentsOfType<IServiceComponent>()];
+        // A trainer lists one option per spell. Its options go last so an NPC that also runs a shop (Abner) keeps
+        // the shop's option where the game shows it, instead of after hundreds of spells.
+        _serviceComponents = [.. Entity.GetComponentsOfType<IServiceComponent>().OrderBy(c => c is InteractTrainerComponent ? 1 : 0)];
         if (_serviceComponents.Count <= 0) {
             return;
         }
