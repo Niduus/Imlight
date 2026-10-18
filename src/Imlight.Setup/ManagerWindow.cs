@@ -74,6 +74,8 @@ internal sealed class ManagerWindow : Window {
     private readonly CheckBox _hideDebug = new() { Content = "Hide debug lines", IsChecked = true };
     private readonly CheckBox _hideWarnings = new() { Content = "Hide warnings" };
     private readonly CheckBox _follow = new() { Content = "Follow", IsChecked = true };
+    private readonly CheckBox _pauseLog = new() { Content = "Pause" };
+    private List<string> _shownLog = [];
     private readonly StackPanel _logLines = new();
     private readonly ScrollViewer _logScroll;
     private readonly Border _dieDeleteCard;
@@ -405,11 +407,13 @@ internal sealed class ManagerWindow : Window {
                     new DockPanel {
                         Margin = new Thickness(0, 0, 0, 8),
                         Children = {
-                            WithDock(Row(_hideDebug, _hideWarnings, _follow), Dock.Right),
+                            WithDock(Row(_hideDebug, _hideWarnings, _follow, _pauseLog), Dock.Right),
                             Heading("Log"),
                         },
                     },
                     new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _logScroll },
+                    WithMargin(Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)),
+                        new Thickness(0, 8, 0, 0)),
                     WithMargin(Sub("The same message repeated in a row shows once, with how many times it happened."), new Thickness(0, 8, 0, 0)),
                 },
             }));
@@ -529,6 +533,11 @@ internal sealed class ManagerWindow : Window {
     }
 
     private void RefreshLog() {
+        // Paused: keep what is on screen so it can be read or copied.
+        if (_pauseLog.IsChecked == true) {
+            return;
+        }
+
         List<LogLine> lines;
         try {
             lines = _manager.ReadLog();
@@ -539,6 +548,7 @@ internal sealed class ManagerWindow : Window {
 
         var atBottom = _logScroll.Offset.Y + _logScroll.Viewport.Height >= _logScroll.Extent.Height - 30;
         _logLines.Children.Clear();
+        _shownLog = [];
         if (lines.Count == 0) {
             _logLines.Children.Add(new TextBlock { Text = "No log yet. Start the server to see it here.", Foreground = MUTED });
 
@@ -550,8 +560,10 @@ internal sealed class ManagerWindow : Window {
                 continue;
             }
 
+            var shown = line.Count > 1 ? $"{line.Text}   ×{line.Count}" : line.Text;
+            _shownLog.Add(shown);
             var text = new SelectableTextBlock {
-                Text = line.Count > 1 ? $"{line.Text}   ×{line.Count}" : line.Text,
+                Text = shown,
                 FontFamily = MONO,
                 FontSize = 12.5,
                 TextWrapping = TextWrapping.Wrap,
@@ -751,6 +763,23 @@ internal sealed class ManagerWindow : Window {
             BorderThickness = new Thickness(0, 0, 0, 1),
             Child = new DockPanel { Children = { WithDock(buttons, Dock.Right), details } },
         };
+    }
+
+    private async Task CopyLogAsync() {
+        if (_shownLog.Count == 0) {
+            throw new PanelException("There is no log to copy yet.");
+        }
+
+        var clipboard = GetTopLevel(this)?.Clipboard ?? throw new PanelException("The clipboard is not available.");
+        await clipboard.SetTextAsync(string.Join(Environment.NewLine, _shownLog));
+        Say($"Copied {_shownLog.Count} log lines. Paste them with Ctrl+V.");
+    }
+
+    private Task SaveLogAsync() {
+        var path = _manager.SaveLogToDesktop();
+        Say($"Saved the whole log to your desktop as \"{Path.GetFileName(path)}\". Drag it into the chat to send it.");
+
+        return Task.CompletedTask;
     }
 
     private async Task CopyAsync(string text) {
