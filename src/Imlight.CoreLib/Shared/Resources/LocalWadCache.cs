@@ -153,7 +153,20 @@ internal static class LocalWadCache {
         };
 
         var contentStream = wad.GetData();
-        fs.Upload(def, fileName, contentStream);
+        try {
+            fs.Upload(def, fileName, contentStream);
+        }
+        catch (LiteException ex) when (ex.ErrorCode == LiteException.INDEX_DUPLICATE_KEY) {
+            // A server stopped while saving this file leaves its pieces behind without the file entry, and then
+            // saving it again fails forever (and the file is downloaded again for everything read from it).
+            // Clear the leftover pieces and save it again.
+            var removed = db.GetCollection("_chunks")
+                .DeleteMany(BsonExpression.Create("$._id.f = @0", db.Mapper.Serialize(typeof(FileDefinition), def)));
+            Logger.Warning("LocalCache removed {Count} leftover pieces of {FileName} and is saving it again.",
+                Logger.Args(removed, fileName));
+            contentStream.Seek(0, SeekOrigin.Begin);
+            fs.Upload(def, fileName, contentStream);
+        }
     }
 
     internal static void DeleteWad(string fileName) {
