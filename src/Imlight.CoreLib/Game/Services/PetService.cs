@@ -175,8 +175,10 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED))]
     private void ReceivePetGameSkipFeed(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED message) {
+        // Logged in full (as hex) so the next log shows how the game sends the chosen snack.
+        byte[] data = message.Data;
         Logger.Information("Pet game skip and feed: pet {0}, game {1}, data {2}.",
-            Logger.Args(message.GlobalID, message.Game, message.Data));
+            Logger.Args(message.GlobalID, message.Game, data is null ? "none" : System.Convert.ToHexString(data)));
     }
 
     [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]

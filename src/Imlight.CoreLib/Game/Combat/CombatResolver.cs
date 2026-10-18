@@ -289,7 +289,20 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell.",
                     Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer"));
                 caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
-                cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+
+                // The card goes out without its enchantment, or the game would play the delay a second time. Its
+                // effects keep the enchantment's changes (they come from the queued spell template).
+                var cast = new QueuedCombatAction {
+                    SpellCaster = action.SpellCaster,
+                    SelectedTarget = action.SelectedTarget,
+                    Spell = DelayedCard(action.Spell),
+                    SpellTemplate = action.SpellTemplate,
+                };
+                var before = combatActionList.m_actionList.Count;
+                cinematicTime += HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                    combatActionList.m_actionList[i].m_delayed = true;
+                }
             }
             catch (Exception e) {
                 Logger.Error("Duel {0} | Slot {1} | delayed spell failed: {2}",
@@ -352,13 +365,17 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 }
             }
             else if (IsDelayCast(action.Spell, out var atStart)) {
-                // Paid for now; it casts on the caster's next turn.
-                var paid = InitializeCombatAction(action);
-                DoSpellCastConsequences(action.SpellCaster, paid);
+                // The enchanted card is cast now, which plays the Daybreaker or Nightbringer delay; the game reads
+                // an action whose spell carries that enchantment as the delay itself. The card's own spell lands on
+                // the caster's next turn. It is paid for now.
+                var played = InitializeCombatAction(action);
+                played.m_targetSubcircleList.Add(action.SelectedTarget.SlotIndex);
+                DoSpellCastConsequences(action.SpellCaster, played);
+                combatActionList.m_actionList.Add(played);
                 _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum));
                 Logger.Information("Duel {0} | Slot {1} | {2} delays the spell to the caster's next turn.",
                     Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer"));
-                cinematicTime += HandlePassAction(action, combatActionList);
+                cinematicTime += GetActionCinematicTime(action);
             }
             else {
                 // Record when this caster's cinematic begins so a summoned minion appears with its cast.
@@ -370,17 +387,62 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         return cinematicTime;
     }
 
+    /// <summary>
+    /// True for a card enchanted with any Daybreaker or Nightbringer (every tier), and for the game's ready-made
+    /// delayed spells such as "Frost Beetle - Nightbringer" or "Imp - Daybreaker".
+    /// </summary>
     private static bool IsDelayCast(Spell spell, out bool atStart) {
         atStart = false;
-        if (spell is null || spell.m_enchantment == 0
-            || CoreObjectFactory.GetCoreTemplate(spell.m_enchantment) is not SpellTemplate enchantment
-            || !CombatEnchantments.IsDaybreakerOrNightbringer(enchantment)) {
+        if (spell is null) {
             return false;
         }
 
-        atStart = enchantment.m_name.ToString()?.Contains("Daybreaker", StringComparison.OrdinalIgnoreCase) == true;
+        if (spell.m_enchantment != 0
+            && CoreObjectFactory.GetCoreTemplate(spell.m_enchantment) is SpellTemplate enchantment
+            && CombatEnchantments.IsDaybreakerOrNightbringer(enchantment)) {
+            atStart = enchantment.m_name.ToString()?.Contains("Daybreaker", StringComparison.OrdinalIgnoreCase) == true;
 
-        return true;
+            return true;
+        }
+
+        if (DelayedBaseName(spell) is not null) {
+            atStart = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate own
+                && own.m_name.ToString()?.EndsWith("Daybreaker", StringComparison.OrdinalIgnoreCase) == true;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// For a ready-made delayed spell ("Frost Beetle - Nightbringer"), the name of the card it casts.
+    /// </summary>
+    private static string DelayedBaseName(Spell spell) {
+        if (CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate own) {
+            return null;
+        }
+
+        var name = own.m_name.ToString() ?? "";
+        foreach (var suffix in new[] { " - Nightbringer", " - Daybreaker" }) {
+            if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) {
+                return name[..^suffix.Length];
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The card as it is shown when the delayed spell lands: without the enchantment, or as its base card, so the
+    /// game does not play the delay a second time.
+    /// </summary>
+    private static Spell DelayedCard(Spell spell) {
+        if (spell.m_enchantment != 0) {
+            return spell with { m_enchantment = 0 };
+        }
+
+        return DelayedBaseName(spell) is { } baseName && SpellFactory.GetSpell(baseName) is { } baseSpell ? baseSpell : spell;
     }
 
     private float HandleFizzleAction(QueuedCombatAction action, CombatActionListObj combatActionList) {
