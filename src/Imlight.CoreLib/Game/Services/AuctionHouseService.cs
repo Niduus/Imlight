@@ -131,7 +131,19 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // The treasure card tab asks once per school (the category is the school's name hash), so a school
         // gets only its own cards.
         var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
-        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) || schoolCards.Count > 0 ? [] : houseEntries ?? [];
+        if (IsSnackCategory(category)) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
+                Contents = WriteAuctionBlob(category, [.. s_snacks.Value.Values.Select(snack => snack.Entry)]),
+                GlobalID = npcId,
+                LastSegment = 0
+            });
+
+            return;
+        }
+
+        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) || schoolCards.Count > 0
+            ? []
+            : [.. (houseEntries ?? []).Where(entry => Snack(entry.m_templateID) is null), .. s_snacks.Value.Values.Select(snack => snack.Entry)];
         var cards = schoolCards.Count > 0 ? schoolCards : s_shownTreasureCards.Value;
         var room = Math.Max(0, Math.Min(s_treasureCardLimit, MAX_ENTRIES - houseList.Count));
         List<AuctionHouseEntry> entryList = [.. houseList.Take(MAX_ENTRIES), .. cards.Take(room).Select(card => card.Entry)];
@@ -151,7 +163,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     private void ConfirmBuyFromAuctionHouse(ulong templateId, uint key) {
-        var entry = AuctionHouseCollection.GetAuctionHouseEntry(templateId) ?? TreasureCard(templateId)?.Entry;
+        var entry = Snack(templateId)?.Entry ?? AuctionHouseCollection.GetAuctionHouseEntry(templateId) ?? TreasureCard(templateId)?.Entry;
 
         if (entry is null) {
             // todo: figure out correct response, should inform player the transaction failed and reload content.
@@ -171,6 +183,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var wizard = GetActiveWizard();
         if (TreasureCard(templateId) is { } treasureCard) {
             BuyTreasureCard(wizard, treasureCard);
+
+            return;
+        }
+
+        if (Snack(templateId) is { } snack) {
+            BuySnack(wizard, snack);
 
             return;
         }
@@ -344,6 +362,90 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Failure = 0
         };
         SendToSocket(shopSellConfirmMsg);
+    }
+
+    // Pet snacks in the bazaar: every snack of rank 8 or higher, never sold out, for 1 gold each.
+    private const int SNACK_STOCK = 99;
+    private const int SNACK_PRICE = 1;
+    private const int MIN_SNACK_RANK = 8;
+    private const string SNACK_FOLDER = "ObjectData/PetSnacks/";
+
+    // Names the client might give the snack tab (the other tabs ask with an adjective, like Hat or Reagent).
+    private static readonly HashSet<uint> s_snackCategories
+        = [.. new[] { "PetSnack", "PetSnacks", "Snack", "Snacks" }.SelectMany(CategoryHashes)];
+
+    private static bool IsSnackCategory(uint category) => s_snackCategories.Contains(category);
+
+    private sealed record BazaarSnack(AuctionHouseEntry Entry, PetSnackItemTemplate Template);
+
+    private static readonly Lazy<Dictionary<ulong, BazaarSnack>> s_snacks = new(BuildSnacks);
+
+    private static Dictionary<ulong, BazaarSnack> BuildSnacks() {
+        var snacks = new Dictionary<ulong, BazaarSnack>();
+        try {
+            foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+                string file = location?.m_filename;
+                if (file is null || !file.StartsWith(SNACK_FOLDER, StringComparison.OrdinalIgnoreCase)
+                    || CoreObjectFactory.GetCoreTemplate(location.m_id) is not PetSnackItemTemplate snack
+                    || snack.m_rank < MIN_SNACK_RANK) {
+                    continue;
+                }
+
+                snacks[location.m_id] = new BazaarSnack(new AuctionHouseEntry {
+                    m_templateID = (GID) (ulong) location.m_id,
+                    m_numForSale = SNACK_STOCK,
+                    m_buyPrice = SNACK_PRICE,
+                    m_sellPrice = SNACK_PRICE,
+                }, snack);
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Could not list the bazaar snacks: {0}", Logger.Args(e));
+        }
+
+        Logger.Information("Bazaar has {0} pet snacks of rank {1} or higher.", Logger.Args(snacks.Count, MIN_SNACK_RANK));
+
+        return snacks;
+    }
+
+    private static BazaarSnack Snack(ulong templateId)
+        => s_snacks.Value.TryGetValue(templateId & 0xFFFFFFFFUL, out var snack) ? snack : null;
+
+    private void BuySnack(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarSnack bazaarSnack) {
+        var price = bazaarSnack.Entry.m_buyPrice;
+        var templateId = (ulong) bazaarSnack.Entry.m_templateID & 0xFFFFFFFFUL;
+        if (wizard.GameStats.m_currentGold < price || !wizard.AddSnack(templateId, out var snack)
+            || !_itemSerializer.Serialize(snack, 24, out var snackData)) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+
+            return;
+        }
+
+        // Same messages as .mod addsnack: the snack goes into the snack bag.
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+            ItemGlobalID = snack.m_globalID,
+            ItemTemplateID = (uint) snack.m_templateID,
+            ItemLocation = 1,
+        });
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
+            GlobalID = wizard.GameObjectID,
+            ItemID = snack.m_globalID,
+            Quantity = snack.m_quantity,
+        });
+
+        wizard.RemoveGold(price);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+
+        // Stock never goes down.
+        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+            UpdateInfo = WriteAuctionBlob(0, [bazaarSnack.Entry]),
+            CharacterID = wizard.CharId
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
     }
 
     // Treasure cards in the bazaar: every one in the game, never sold out, priced from 1 to 200 gold.
