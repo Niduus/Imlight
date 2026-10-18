@@ -64,6 +64,9 @@ internal sealed class ManagerWindow : Window {
     private readonly TextBox _newServerName = new() { Watermark = "Name (optional)", Width = 160 };
     private readonly TextBox _newServerHost = new() { Watermark = "Address, such as play.example.com", MinWidth = 260 };
     private readonly TextBox _newServerPort = new() { Watermark = "Port", Width = 90 };
+    private readonly SelectableTextBlock _friendAddress = new() { Text = "Finding your address…", FontSize = 16, FontWeight = FontWeight.SemiBold };
+    private readonly TextBlock _friendResult = new() { TextWrapping = TextWrapping.Wrap, IsVisible = false };
+    private string? _publicIp;
 
     // Server.
     private readonly Button _startButton = Primary("Start server");
@@ -318,7 +321,60 @@ internal sealed class ManagerWindow : Window {
                         },
                     },
                 },
+            }),
+            Card(new StackPanel {
+                Children = {
+                    Heading("Play with friends"),
+                    Sub("Friends on other internet connections join with this address and login port. Click \"Let friends connect\" " +
+                        "once: Windows asks to allow the change, and the app asks your router to let friends in. Leave the server running."),
+                    WithMargin(new DockPanel {
+                        Children = {
+                            WithDock(Row(Action(Primary("Let friends connect"), LetFriendsConnectAsync),
+                                Action(Plain("Copy address"), () => _publicIp is null
+                                    ? throw new PanelException("Your address is not found yet. Check your internet connection.")
+                                    : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}"))), Dock.Right),
+                            WithCenter(_friendAddress),
+                        },
+                    }, new Thickness(0, 10, 0, 6)),
+                    _friendResult,
+                },
             }));
+    }
+
+    private async Task LetFriendsConnectAsync() {
+        Say("Opening the way in for friends. Click Yes if Windows asks…");
+        var result = await FriendAccess.TurnOnAsync(_manager.InstallFolder);
+        _publicIp = result.PublicIp ?? _publicIp;
+        ShowFriendAddress();
+
+        var lines = new List<string> {
+            (result.Firewall ? "✓ " : "✗ ") + result.FirewallNote,
+            (result.Router ? "✓ " : "✗ ") + result.RouterNote,
+        };
+        if (!result.Router) {
+            lines.Add($"To open them by hand, forward TCP ports {string.Join(", ", result.Ports)} on your router to " +
+                      $"{result.HomeIp ?? "this computer"}.");
+        }
+
+        if (result.SharedAddress) {
+            lines.Add("✗ Your internet company shares one internet address between many homes, so friends cannot reach " +
+                      "this computer through the router. Use a free VPN app such as Radmin VPN instead: you and your friend " +
+                      "join the same network in it, and your friend uses your Radmin VPN address.");
+        }
+
+        _friendResult.Text = string.Join("\n", lines);
+        _friendResult.IsVisible = true;
+        Say(result.Firewall && result.Router && !result.SharedAddress
+            ? "Friends can connect now. Send them the address shown under \"Play with friends\"."
+            : "Some of it needs doing by hand. See \"Play with friends\" on the Play tab.",
+            isError: !(result.Firewall && result.Router) || result.SharedAddress);
+    }
+
+    private void ShowFriendAddress() {
+        var port = FriendAccess.Ports(_manager.InstallFolder)[0];
+        _friendAddress.Text = _publicIp is null
+            ? "Your address could not be found. Check your internet connection."
+            : $"Address: {_publicIp}    Login port: {port}";
     }
 
     private Control LookupTab() {
@@ -761,10 +817,10 @@ internal sealed class ManagerWindow : Window {
     // Play
     // ---------------------------------------------------------------------
 
-    private Task LoadPlayAsync() {
+    private async Task LoadPlayAsync() {
         RenderServers();
-
-        return Task.CompletedTask;
+        _publicIp ??= await FriendAccess.PublicIpAsync();
+        ShowFriendAddress();
     }
 
     private void RenderServers() {

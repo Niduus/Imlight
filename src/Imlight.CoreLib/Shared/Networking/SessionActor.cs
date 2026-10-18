@@ -81,6 +81,8 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
 
     public string Ip;
     public string RemoteIp;
+    /// <summary>This computer's own address on the player's connection (the address they reached us at).</summary>
+    public System.Net.IPAddress LocalIp;
 
     private readonly IActorRef _actorFactoryRef;
     private readonly Dictionary<IActorRef, MessageService> _services;
@@ -99,6 +101,9 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         this._socket = socket;
         this.Ip = socket.RemoteEndPoint.ToString();
         this.RemoteIp = socket.RemoteEndPoint.ToString().Split(':')[0];
+        this.LocalIp = (socket.LocalEndPoint as System.Net.IPEndPoint)?.Address is { } localIp
+            ? (localIp.IsIPv4MappedToIPv6 ? localIp.MapToIPv4() : localIp)
+            : null;
         this.SessionID = sessionId;
         this._services = new Dictionary<IActorRef, MessageService>();
         this.ServerRef = server;

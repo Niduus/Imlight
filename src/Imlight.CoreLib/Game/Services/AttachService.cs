@@ -472,8 +472,9 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
             Logger.Information("Session {SessionId} fallback found for {RemoteIp}, redirecting to zone {Zone}.",
                 Logger.Args(SessionActor.SessionID, SessionActor.RemoteIp, rsp.FallbackZone));
 
+            var transferIp = ClientAddress.For(SessionActor, rsp.GameServerIp);
             var serverTransfer = new GAME_5_PROTOCOL.MSG_SERVERTRANSFER {
-                IP = rsp.GameServerIp,
+                IP = transferIp,
                 TCPPort = rsp.GameServerPort,
                 UDPPort = rsp.GameServerPort,
                 UserID = rsp.UserId,
@@ -486,7 +487,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
                 SessionID = 0,
                 TargetPlayerID = rsp.CharId,
                 TransitionID = 1,
-                FallbackIP = rsp.GameServerIp,
+                FallbackIP = transferIp,
                 FallbackTCPPort = rsp.GameServerPort,
                 FallbackUDPPort = rsp.GameServerPort,
                 FallbackZone = rsp.FallbackZone,
