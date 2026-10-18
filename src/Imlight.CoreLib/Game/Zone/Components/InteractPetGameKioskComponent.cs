@@ -44,6 +44,8 @@ internal sealed class InteractPetGameKioskComponent(ZoneEntity entity) : ZoneEnt
     public string InteractWizBang => null;
     public string DisplayKey      => "GUI_Kiosk";
 
+    private const uint SKIP_WINS = 100;
+
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => GameName(template) is not null;
 
@@ -73,11 +75,26 @@ internal sealed class InteractPetGameKioskComponent(ZoneEntity entity) : ZoneEnt
             return;
         }
 
+        // Every PetGameInfo property is Save|Copy|Public and none is Transmit, so a Transmit mask wrote an empty
+        // object and the game crashed reading it.
         var serializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None);
-        if (!serializer.Serialize(game, PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit, out var gameInfo)) {
+        if (!serializer.Serialize(game, PropertyFlags.Prop_Public, out var gameInfo)) {
             Logger.Error("Could not write the pet game info of {0}.", Logger.Args(gameName));
 
             return;
+        }
+
+        // Skipping is free here: fill the energy bar so the game lets the player skip and feed right away.
+        var petOwner = playerCharacter?.PetOwnerBehavior;
+        var maxEnergy = playerCharacter?.GameStats?.m_energyMax ?? 0;
+        if (petOwner is not null && maxEnergy > 0 && petOwner.Energy < maxEnergy) {
+            playerCharacter.UpdateEnergy(maxEnergy);
+            playerActor.Tell(new PET_9_PROTOCOL.MSG_PETENERGYTICK {
+                GlobalID = playerCharacter.GameObjectID,
+                Energy = petOwner.Energy,
+                MaxEnergy = playerCharacter.GameStats.GetClientTypeAlternative().m_energyMax,
+                TickTime = (int) (System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Imlight.CoreLib.Game.Pet.AdvancedPetsConfig.EnergyTickInSeconds),
+            });
         }
 
         Logger.Information("{0} opened the pet game window for {1}.",
@@ -85,7 +102,8 @@ internal sealed class InteractPetGameKioskComponent(ZoneEntity entity) : ZoneEnt
         playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_PETGAMEKIOSK {
             GlobalID = Entity.ActiveGameObject.m_globalID,
             GameInfo = gameInfo,
-            GamesWon = 0,
+            // Enough wins that the game offers Skip without having to win first.
+            GamesWon = SKIP_WINS,
         });
     }
 

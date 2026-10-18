@@ -168,9 +168,9 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP))]
     private void ReceivePetGameSkip(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP message) {
-        // Logged so the next log shows what the game sends here; feeding works through the snack window and .pet feed.
         Logger.Information("Pet game skip: pet {0}, game {1}, bonus {2}.",
             Logger.Args(message.GlobalID, message.Game, message.Bonus));
+        SkipPetGame(message.GlobalID, message.Game.ToString(), message.Bonus, null);
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED))]
@@ -179,6 +179,67 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         byte[] data = message.Data;
         Logger.Information("Pet game skip and feed: pet {0}, game {1}, data {2}.",
             Logger.Args(message.GlobalID, message.Game, data is null ? "none" : System.Convert.ToHexString(data)));
+        SkipPetGame(message.GlobalID, message.Game.ToString(), 0, data);
+    }
+
+    /// <summary>
+    /// Counts a skipped pet game as a win: the pet gets the game's experience and the stats of a track, and eats
+    /// the snack the player picked, if the game named one. Skipping costs no energy and needs no wins here.
+    /// </summary>
+    private void SkipPetGame(ulong petId, string gameName, int track, byte[] snackData) {
+        var wizard = GetActiveWizard();
+        var pet = (petId != 0 ? PetCare.FindPet(wizard, petId) : null) ?? PetCare.GetWornPet(wizard);
+        var behavior = PetProgress.GetBehavior(pet);
+        if (behavior is null) {
+            InformGameClient("You need to wear a pet to train it.");
+
+            return;
+        }
+
+        PetProgress.EnsureInitialized(pet);
+        var growth = new PetProgress.PetGrowth();
+        var game = Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName);
+        if (game is not null) {
+            var cost = Imlight.CoreLib.Game.Pet.PetGameConfig.TryGetEnergyCost(gameName, behavior.m_level, out var energy) ? energy : 2;
+            PetProgress.AddXp(pet, (uint) Math.Max(2, cost * 2), growth);
+            var tracks = game.m_trackChoices;
+            if (tracks is { Count: > 0 }) {
+                var chosen = tracks[track >= 0 && track < tracks.Count ? track : Random.Shared.Next(tracks.Count)];
+                PetProgress.ApplyStatChanges(pet, chosen?.m_modifications, growth);
+            }
+        }
+
+        PetCare.Finish(wizard, pet, growth, SendToSocket);
+        var snack = FindSnackIn(wizard, snackData);
+        if (snack is not null && PetCare.Feed(wizard, pet, snack.m_templateID, 1, SendToSocket, out var fed) is null) {
+            growth.XpGained += fed.XpGained;
+            growth.LevelsGained += fed.LevelsGained;
+            growth.StatChanges.AddRange(fed.StatChanges);
+        }
+
+        InformGameClient(PetCare.Summary(pet, growth));
+    }
+
+    /// <summary>
+    /// Finds which of the wizard's snacks the skip-and-feed data names, by looking for a snack's template id or
+    /// item id in it. The layout of that data is not known yet.
+    /// </summary>
+    private static ClientPetSnackItem FindSnackIn(Wizard wizard, byte[] data) {
+        var snacks = wizard.PetSnackBehavior?.Snacks;
+        if (data is null || snacks is null || snacks.Count == 0) {
+            return null;
+        }
+
+        for (var i = 0; i + 4 <= data.Length; i++) {
+            var id32 = BitConverter.ToUInt32(data, i);
+            var id64 = i + 8 <= data.Length ? BitConverter.ToUInt64(data, i) : 0;
+            var snack = snacks.FirstOrDefault(s => s.m_templateID == id32 || (id64 != 0 && s.m_globalID.Full == id64));
+            if (snack is not null) {
+                return snack;
+            }
+        }
+
+        return null;
     }
 
     [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
