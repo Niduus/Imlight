@@ -131,6 +131,7 @@ internal sealed class Lookup {
         Command("Remove zone change", ".dynamod remove <tag>", QA, "Removes a zone change from your character."),
 
         // Quests.
+        Command("Go to quest", ".toquest \"quest name\"", QA, "Puts you on any quest to test it, by its name (Ghost Hunters) or code: marks the quests before it done, takes you to its first step and lists its steps. Steps that wait on a trigger are marked; skip one with .quest completegoal."),
         Command("Offer quest", ".quest offer <quest name>", QA, "Shows the quest's offer window, as if someone gave it to you. Search Quest in this tab for names."),
         Command("Give quest", ".quest grant <quest name>", QA, "Adds a quest to your quest book."),
         Command("Force give quest", ".quest forcegrant <quest name>", QA, "Adds a quest even when you could not normally get it."),
