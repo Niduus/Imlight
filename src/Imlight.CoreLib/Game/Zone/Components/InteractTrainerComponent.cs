@@ -70,12 +70,22 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => template is GameObjectTemplate goTemplate 
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-            || InteractTreasureVendorComponent.IsAbner(goTemplate));
+            || IsTestTrainerNpc(goTemplate));
 
     /// <summary>
-    /// The test trainer (Abner K. Doodle) teaches every enchantment spell and every shadow spell for free, at any level.
+    /// The test trainer (Mr. Lincoln in Ravenwood) teaches every enchantment spell and every shadow spell for free, at any level.
     /// </summary>
     public bool IsTestTrainer { get; private set; }
+
+    /// <summary>
+    /// True for Mr. Lincoln in Ravenwood, the test trainer. (Abner in the Commons only shows one kind of
+    /// service, so he keeps the treasure card shop.)
+    /// </summary>
+    internal static bool IsTestTrainerNpc(GameObjectTemplate template) {
+        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
+
+        return names.Contains("Lincoln", System.StringComparison.OrdinalIgnoreCase);
+    }
 
     private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells
         = new(() => [.. BuildTestSpells(enchantments: true), .. BuildTestSpells(enchantments: false)]);
@@ -104,7 +114,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     public override void OnStart() {
-        if (Entity.Template is GameObjectTemplate abner && InteractTreasureVendorComponent.IsAbner(abner)) {
+        if (Entity.Template is GameObjectTemplate testTrainer && IsTestTrainerNpc(testTrainer)) {
             IsTestTrainer = true;
             SpellInventory = s_allEnchantmentSpells.Value;
             InitializeServiceBases();

@@ -377,8 +377,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
     private const int MAX_ENTRIES = 1000;
+    // [Bazaar] SellTreasureCards: off by default, because the game still drops the connection when Elik lists
+    // treasure cards (even 500 of them), so the cards themselves seem to be what it can't take.
     private static readonly int s_treasureCardLimit
-        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, MAX_ENTRIES);
+        = !Imlight.Common.ConfigurationManager.GetValue("Bazaar.SellTreasureCards", false) ? 0
+        : Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, MAX_ENTRIES);
 
     // The order cards are shown in: one from each school in turn, cheapest first, so a short list still
     // has every school.
