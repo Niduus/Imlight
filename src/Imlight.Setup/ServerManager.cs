@@ -110,6 +110,11 @@ internal sealed partial class ServerManager(string installFolder) {
 
         Process.Start(startInfo)?.Dispose();
 
+        // Routers forget opened ports when they restart, so ask again each start once friends were let in.
+        if (FriendAccess.WasTurnedOn(InstallFolder)) {
+            _ = Task.Run(() => FriendAccess.RefreshRouterAsync(InstallFolder));
+        }
+
         return "The server is starting. It is ready for players when the dot turns green.";
     }
 

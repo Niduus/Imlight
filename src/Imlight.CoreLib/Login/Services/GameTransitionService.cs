@@ -108,15 +108,16 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
         var allocatedKey = CreateSessionKey(gameServer.ActorRef, account);
 
         var wizardName = character.PlayerNameBehavior.GetWizardName();
-        Logger.Information("Sending wizard {name} to game server {IP}:{Port}.",
-            Logger.Args(wizardName, gameServer.IP, gameServer.Port));
+        var gameServerIp = ClientAddress.For(SessionActor, gameServer.IP);
+        Logger.Information("Sending wizard {name} ({RemoteIp}) to game server {IP}:{Port}.",
+            Logger.Args(wizardName, SessionActor.RemoteIp, gameServerIp, gameServer.Port));
 
         var zoneName = DetermineZone(character);
         var location = DetermineLocation(character);
 
         var charSelectedMsg = new LOGIN_7_PROTOCOL.MSG_CHARACTERSELECTED() {
             // Set details about the game server.
-            IP = gameServer.IP,
+            IP = gameServerIp,
             TCPPort = gameServer.Port,
             UDPPort = gameServer.Port,
             Key = allocatedKey,                   // Login server -> game server session key.

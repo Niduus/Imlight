@@ -709,8 +709,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         // Send MSG_SERVERTRANSFER to redirect the client to the new game server.
+        var transferIp = ClientAddress.For(SessionActor, keyRsp.IP);
         var serverTransfer = new GAME_5_PROTOCOL.MSG_SERVERTRANSFER {
-            IP = keyRsp.IP,
+            IP = transferIp,
             TCPPort = keyRsp.Port,
             UDPPort = keyRsp.Port,
             Key = 0, // Session key is already stored on the target server.
@@ -724,7 +725,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             SessionID = 0,
             TargetPlayerID = wizard.CharId,
             TransitionID = 1,
-            FallbackIP = keyRsp.IP,
+            FallbackIP = transferIp,
             FallbackTCPPort = keyRsp.Port,
             FallbackUDPPort = keyRsp.Port,
             FallbackZone = wizard.Zone,
@@ -830,8 +831,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         WizardCollection.UpdateCharacterZone(character, character.Zone, character.ZoneDisplayName);
         WizardCollection.UpdateCharacterLocation(character, character.Location, character.Orientation.Z);
 
+        var transferIp = ClientAddress.For(SessionActor, character.GameServerIp);
         var serverTransfer = new GAME_5_PROTOCOL.MSG_SERVERTRANSFER() {
-            IP = character.GameServerIp,
+            IP = transferIp,
             TCPPort = character.GameServerPort,
             UDPPort = character.GameServerPort,
             UserID = account.AccountId,
@@ -843,7 +845,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             SessionID = 0,
             TargetPlayerID = character.CharId,
             TransitionID = 1,
-            FallbackIP = character.GameServerIp,
+            FallbackIP = transferIp,
             FallbackTCPPort = character.GameServerPort,
             FallbackUDPPort = character.GameServerPort,
             FallbackZone = character.Zone,
@@ -851,7 +853,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         };
         SendToSocket(serverTransfer);
         Logger.Information("Session {SessionId} SERVERTRANSFER sent -> {Zone} {Ip}:{Port}",
-            Logger.Args(SessionActor.SessionID, character.QueuedZoneName, character.GameServerIp, character.GameServerPort));
+            Logger.Args(SessionActor.SessionID, character.QueuedZoneName, transferIp, character.GameServerPort));
 
         // Register fallback data on the GameServer so the new session can
         // proactively recover if MSG_ATTACH never arrives.
