@@ -552,6 +552,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             case "remove":
                 CommandRemoveQuest(wizard, questName);
                 return;
+            case "toquest":
+                CommandToQuest(wizard, questName);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client
@@ -729,6 +732,213 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         CommandReply($"Removed quest '{registryName}' ({(wasActive ? "was active" : "was not active")}, "
             + $"{cleared} registry entries cleared). It can be offered again.");
+    }
+
+    // ---------------------------------------------------------------------
+    // .toquest: jump to a quest for testing
+    // ---------------------------------------------------------------------
+
+    private const int TOQUEST_MAX_EARLIER_QUESTS = 500;
+
+    /// <summary>
+    /// Puts the wizard on a quest from scratch: marks the quests before it done (with the progress flags
+    /// they set, so doors open), starts it, takes the wizard to its first step and says which steps
+    /// wait on a trigger, so a step the server can't fire yet can be skipped with '.quest completegoal'.
+    /// </summary>
+    private void CommandToQuest(Wizard wizard, string query) {
+        query = query?.Trim().Trim('"', '\'', '“', '”').Trim() ?? "";
+        if (query.Length == 0) {
+            CommandReply("Give a quest name, for example: .toquest \"Ghost Hunters\"");
+            return;
+        }
+
+        var template = FindQuestForCommand(query);
+        if (template is null) {
+            return;
+        }
+
+        string questName = template.m_questName;
+        var earlier = MarkEarlierQuestsDone(wizard, template);
+
+        // Start over even when the quest is active or already done.
+        var active = wizard.QuestBehavior.CurrentQuestInstances
+            .FirstOrDefault(q => q is not null && q.QuestName.Equals(questName, StringComparison.OrdinalIgnoreCase));
+        if (active is not null && wizard.RemoveQuest(active.QuestName)) {
+            SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = active.ID });
+        }
+        wizard.QuestBehavior.RemoveAllQuestRegistryEntries(questName);
+        WizardCollection.UpdateCharacterQuestBehavior(wizard);
+
+        StartQuest(template, wizard);
+
+        CommandReply($"Now on '{QuestTitleOf(template)}' ({questName}). {earlier} earlier quest(s) marked done.");
+        var step = 1;
+        foreach (var goal in template.m_goals ?? []) {
+            CommandReply($"  Step {step++}: {DescribeGoal(goal)}");
+        }
+        CommandReply("Use '.quest completegoal' to skip a step the server can't trigger yet.");
+
+        // Go to where the first step happens.
+        var firstGoal = template.m_goals?.FirstOrDefault(g => wizard.QuestBehavior.CurrentQuestInstances
+            .FirstOrDefault(q => q?.QuestName == questName)?.IsGoalActive(g.m_goalName) == true);
+        string zone = firstGoal is WaypointGoalTemplate waypoint && !string.IsNullOrEmpty(waypoint.m_zoneTag)
+            ? waypoint.m_zoneTag
+            : firstGoal?.m_destinationZone;
+        if (!string.IsNullOrEmpty(zone) && !zone.Equals(wizard.Zone ?? "", StringComparison.OrdinalIgnoreCase)) {
+            var known = Imlight.CoreLib.Game.World.AccessPassManager.GetContainedZoneName(zone);
+            if (string.IsNullOrEmpty(known)) {
+                CommandReply($"The first step is in {zone}, which this server can't teleport to.");
+                return;
+            }
+
+            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = known,
+                DestinationLocation = "Start",
+                SendToClient = true,
+                OwnerCharId = wizard.CharId
+            });
+        }
+    }
+
+    /// <summary>Finds a quest by its code (WC-UNICORN-MAIN-001) or by the name players see (Ghost Hunters).</summary>
+    private QuestTemplate FindQuestForCommand(string query) {
+        var byCode = QuestTemplateCollection.GetQuestByName(query);
+        if (byCode is not null) {
+            return byCode;
+        }
+
+        var all = QuestTemplateCollection.GetAllQuests().Where(q => q is not null).ToList();
+        var exact = all.Where(q => QuestTitleOf(q).Equals(query, StringComparison.OrdinalIgnoreCase)).ToList();
+        var matches = exact.Count > 0
+            ? exact
+            : all.Where(q => QuestTitleOf(q).Contains(query, StringComparison.OrdinalIgnoreCase)
+                          || ((string) q.m_questName ?? "").Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        if (matches.Count == 1) {
+            return matches[0];
+        }
+
+        if (matches.Count == 0) {
+            CommandReply($"No quest is called '{query}'. The full list is quests.csv in the ID lookup folder.");
+            return null;
+        }
+
+        // Several quests share a name (one per school, for example): the first, unless the name is ambiguous.
+        if (exact.Count > 0 && exact.Select(q => QuestTitleOf(q)).Distinct(StringComparer.OrdinalIgnoreCase).Count() == 1
+            && exact.Count <= 7) {
+            return exact.OrderBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase).First();
+        }
+
+        CommandReply($"{matches.Count} quests match '{query}'. Use one of these codes:");
+        foreach (var quest in matches.Take(8)) {
+            CommandReply($"  {(string) quest.m_questName}: {QuestTitleOf(quest)}");
+        }
+        return null;
+    }
+
+    private static string QuestTitleOf(QuestTemplate quest) {
+        string key = quest.m_questTitle;
+        var title = string.IsNullOrEmpty(key) ? "" : Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(key);
+        return string.IsNullOrEmpty(title) ? (string) quest.m_questName ?? "" : title;
+    }
+
+    /// <summary>
+    /// Marks every quest the given one needs done, and the quests those need, setting the flags their
+    /// rewards set. Returns how many were newly marked.
+    /// </summary>
+    private int MarkEarlierQuestsDone(Wizard wizard, QuestTemplate target) {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { target.m_questName };
+        var queue = new Queue<QuestTemplate>([target]);
+        var marked = 0;
+
+        while (queue.Count > 0 && seen.Count < TOQUEST_MAX_EARLIER_QUESTS) {
+            var quest = queue.Dequeue();
+            foreach (var needed in RequiredEntries(quest.m_requirements)) {
+                if (!needed.m_isQuestRegistry) {
+                    // A plain progress flag an earlier quest sets.
+                    if (!string.IsNullOrEmpty(needed.m_entryName)) {
+                        wizard.SetRegistryValue(needed.m_entryName, 1);
+                    }
+                    continue;
+                }
+
+                string earlierName = needed.m_questName;
+                if (string.IsNullOrEmpty(earlierName) || !seen.Add(earlierName)) {
+                    continue;
+                }
+
+                var earlier = QuestTemplateCollection.GetQuestByName(earlierName);
+                if (earlier is not null) {
+                    queue.Enqueue(earlier);
+                }
+
+                if (wizard.HasCompletedQuest(earlierName)) {
+                    continue;
+                }
+
+                var active = wizard.QuestBehavior.CurrentQuestInstances
+                    .FirstOrDefault(q => q is not null && q.QuestName.Equals(earlierName, StringComparison.OrdinalIgnoreCase));
+                if (active is not null && wizard.RemoveQuest(active.QuestName)) {
+                    SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = active.ID });
+                }
+
+                wizard.SetQuestRegistryValue(earlierName, string.IsNullOrEmpty(needed.m_entryName) ? QUEST_COMPLETED_ENTRY : needed.m_entryName, 1);
+                wizard.SetQuestRegistryValue(earlierName, QUEST_COMPLETED_ENTRY, 1);
+                marked++;
+
+                foreach (var result in earlier?.m_endResults?.m_results ?? []) {
+                    if (result is not ResModifyEntry entry || string.IsNullOrEmpty(entry.m_entryName)) {
+                        continue;
+                    }
+
+                    if (entry.m_isQuestRegistry && !string.IsNullOrEmpty(entry.m_questName)) {
+                        wizard.SetQuestRegistryValue(entry.m_questName, entry.m_entryName, (ulong) entry.m_value);
+                    }
+                    else if (!entry.m_isQuestRegistry) {
+                        wizard.SetRegistryValue(entry.m_entryName, (ulong) entry.m_value);
+                    }
+                }
+            }
+        }
+
+        WizardCollection.UpdateCharacterQuestBehavior(wizard);
+        return marked;
+    }
+
+    // The "has this entry" requirements that must be true (not the "must not have" ones), at any depth.
+    private static IEnumerable<ReqHasEntry> RequiredEntries(Requirement requirement) {
+        switch (requirement) {
+            case ReqHasEntry entry when !entry.m_applyNOT:
+                yield return entry;
+                break;
+            case RequirementList list when !list.m_applyNOT:
+                foreach (var inner in list.m_requirements ?? []) {
+                    foreach (var found in RequiredEntries(inner)) {
+                        yield return found;
+                    }
+                }
+                break;
+        }
+    }
+
+    private static string DescribeGoal(GoalTemplate goal) {
+        string where = goal.m_destinationZone;
+        var text = goal switch {
+            PersonaGoalTemplate persona => $"talk to {persona.m_personaName}",
+            BountyGoalTemplate bounty => $"defeat {bounty.m_bountyTotal} {string.Join("/", bounty.m_npcAdjectives ?? [])}",
+            ScavengeGoalTemplate scavenge => $"collect {scavenge.m_itemTotal} {string.Join("/", scavenge.m_itemAdjectives ?? [])}",
+            WaypointGoalTemplate waypoint when !string.IsNullOrEmpty(waypoint.m_proximityTag) => $"reach {waypoint.m_proximityTag}",
+            WaypointGoalTemplate waypoint => $"go to {(string) waypoint.m_zoneTag}",
+            _ => $"{goal.GetType().Name.Replace("GoalTemplate", "")} goal",
+        };
+
+        // Steps finished by an event (a trigger, an object, a cutscene) are the ones most likely to need '.quest completegoal'.
+        var events = goal.m_genericEvents?.Where(e => !string.IsNullOrEmpty(e)).ToList() ?? [];
+        if (events.Count > 0) {
+            text += $" (waits on trigger: {string.Join(", ", events)})";
+        }
+
+        return string.IsNullOrEmpty(where) ? text : $"{text} in {where}";
     }
 
     private void CommandGrantQuest(Wizard wizard, string questName, bool force) {
