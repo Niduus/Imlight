@@ -29,8 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Only the archive reader: it needs no game data to build. -->
+    <!-- The archive reader, which needs no game data to build. -->
     <ProjectReference Include="..\..\submodule\Imcodec\src\Imcodec.Wad\Imcodec.Wad.csproj" />
+    <!-- The data file decoder for the Game Files tab. It is generated from a type dump, so copy
+         submodule\Imcodec\test\CodeGen\Inputs\*.json into Imcodec.ObjectProperty\GeneratorInput first
+         (the release workflow does). -->
+    <ProjectReference Include="..\..\submodule\Imcodec\src\Imcodec.ObjectProperty\Imcodec.ObjectProperty.csproj" />
   </ItemGroup>
 
 </Project>
