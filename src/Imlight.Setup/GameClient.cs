@@ -243,10 +243,12 @@ internal static class GameClient {
     /// <summary>
     /// The end of the newest log Wizard101 wrote, so it can be read and copied outside the game.
     /// </summary>
-    internal static object ReadClientLog(string installFolder) {
+    internal sealed record ClientLog(string? File, string Text, string? Reason);
+
+    internal static ClientLog ReadClientLog(string installFolder) {
         var game = InstallInfo.Load(installFolder).GameFolder;
         if (game is null || !Directory.Exists(game)) {
-            return new { file = (string?) null, text = "", reason = "Wizard101 could not be found. Click \"Update Imlight\" on the Tools tab of the app once." };
+            return new ClientLog(null, "", "Wizard101 could not be found. Click \"Update Imlight\" on the Tools tab of the app once.");
         }
 
         var file = new[] { Path.Combine(game, "Bin", "logs"), Path.Combine(game, "Bin"), Path.Combine(game, "logs"), game }
@@ -257,7 +259,7 @@ internal static class GameClient {
             .OrderByDescending(f => f.LastWriteTimeUtc)
             .FirstOrDefault();
         if (file is null) {
-            return new { file = (string?) null, text = "", reason = "Wizard101 has not written a log yet. Play once, then look again." };
+            return new ClientLog(null, "", "Wizard101 has not written a log yet. Play once, then look again.");
         }
 
         string text;
@@ -276,7 +278,7 @@ internal static class GameClient {
             text = string.Join("\n", lines[^LOG_MAX_LINES..]);
         }
 
-        return new { file = file.FullName, text, reason = (string?) null };
+        return new ClientLog(file.FullName, text, null);
     }
 
 }
