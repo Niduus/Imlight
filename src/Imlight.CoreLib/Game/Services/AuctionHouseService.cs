@@ -111,6 +111,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 3:
                 BuyFromAuctionHouse(message.itemTemplateID, message.texture, message.decal, message.key);
                 break;
+            case 6:
+                // Sent right after a tab's list arrives. Answering with the tab's entries again as an update
+                // gives the game their stock counts.
+                SendStock(message.category);
+                break;
             default:
                 Logger.Information("Bazaar: unhandled command {0} (category {1}, template {2}, item {3}).",
                     Logger.Args(message.Command, message.category, message.itemTemplateID, message.itemGlobalID));
@@ -119,47 +124,55 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     private void SendAuctionHouseContents(ulong npcId, uint category, uint key) {
-        // Retrieve all Auction House entries. The treasure card tab gets every treasure card in the game.
         Logger.Information("Bazaar: category {0} ({1}) requested.",
             Logger.Args(category, CategoryName(category) ?? "unknown name"));
-        var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries();
-
-        // The game sorts what it gets into its own tabs, so every answer carries the treasure cards too: the
-        // treasure card tab's category name is not known, and a tab the server doesn't recognize got no cards.
-        // One answer that is too big makes the game drop the connection (all 5218 cards did), so the list is
-        // kept under MAX_ENTRIES with the treasure cards spread over every school.
-        // The treasure card tab asks once per school (the category is the school's name hash), so a school
-        // gets only its own cards.
-        var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
-        if (IsSnackCategory(category)) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-                Contents = WriteAuctionBlob(category, [.. s_snacks.Value.Values.Select(snack => snack.Entry)]),
-                GlobalID = npcId,
-                LastSegment = 0
-            });
-
-            return;
-        }
-
-        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) || schoolCards.Count > 0
-            ? []
-            : [.. (houseEntries ?? []).Where(entry => Snack(entry.m_templateID) is null), .. s_snacks.Value.Values.Select(snack => snack.Entry)];
-        var cards = schoolCards.Count > 0 ? schoolCards : s_shownTreasureCards.Value;
-        var room = Math.Max(0, Math.Min(s_treasureCardLimit, MAX_ENTRIES - houseList.Count));
-        List<AuctionHouseEntry> entryList = [.. houseList.Take(MAX_ENTRIES), .. cards.Take(room).Select(card => card.Entry)];
-
-        Logger.Debug("Bazaar: sending {0} entries ({1} for this school).", Logger.Args(entryList.Count, schoolCards.Count));
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
-        var contentsData = WriteAuctionBlob(category, entryList);
-
-        var auctionHouseContentsMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-            Contents = contentsData,
+        var entryList = EntriesFor(category);
+        Logger.Debug("Bazaar: sending {0} entries.", Logger.Args(entryList.Count));
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
+            Contents = WriteAuctionBlob(category, entryList),
             GlobalID = npcId,
             LastSegment = 0
-        };
-        SendToSocket(auctionHouseContentsMsg);
+        });
+    }
+
+    private void SendStock(uint category) {
+        var entryList = EntriesFor(category);
+        if (entryList.Count == 0) {
+            return;
+        }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+            UpdateInfo = WriteAuctionBlob(0, entryList),
+            CharacterID = GetActiveWizard().CharId
+        });
+    }
+
+    /// <summary>
+    /// What a tab shows. The treasure card tab asks once per school (the category is the school's id) and gets
+    /// that school's cards; the snack tab gets the snacks; every other tab gets the bazaar's own entries and the
+    /// snacks, which the game sorts into its tabs. One answer that is too big makes the game drop the connection,
+    /// so an answer is kept under MAX_ENTRIES.
+    /// </summary>
+    private static List<AuctionHouseEntry> EntriesFor(uint category) {
+        var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
+        if (schoolCards.Count > 0 || IsTreasureCardCategory(category)) {
+            var cards = schoolCards.Count > 0 ? schoolCards : s_shownTreasureCards.Value;
+
+            return [.. cards.Take(Math.Min(s_treasureCardLimit, MAX_ENTRIES)).Select(card => card.Entry)];
+        }
+
+        if (IsSnackCategory(category)) {
+            return [.. s_snacks.Value.Values.Select(snack => snack.Entry)];
+        }
+
+        var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
+
+        return [.. houseEntries.Where(entry => Snack(entry.m_templateID) is null)
+            .Concat(s_snacks.Value.Values.Select(snack => snack.Entry))
+            .Take(MAX_ENTRIES)];
     }
 
     private void ConfirmBuyFromAuctionHouse(ulong templateId, uint key) {
@@ -449,7 +462,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     // Treasure cards in the bazaar: every one in the game, never sold out, priced from 1 to 200 gold.
-    private const int TREASURE_STOCK = 99;
+    private const int TREASURE_STOCK = 999;
+    private const string TREASURE_CARD_FOLDER = "TreasureCards/";
     private const int MIN_TREASURE_PRICE = 1;
     private const int MAX_TREASURE_PRICE = 200;
 
@@ -510,11 +524,19 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static Dictionary<ulong, BazaarTreasureCard> BuildTreasureCards() {
         var cards = new Dictionary<ulong, BazaarTreasureCard>();
         var seen = new HashSet<string>();
-        foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
+        // The plain "<name> TC" card comes first, so it is the one kept when a card has several versions.
+        var spells = Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()
+            .OrderBy(pair => ((string) pair.Template.m_name)?.EndsWith(" TC", StringComparison.Ordinal) == true ? 0 : 1)
+            .ThenBy(pair => ((string) pair.Template.m_name)?.Length ?? int.MaxValue)
+            .ThenBy(pair => (string) pair.Template.m_name, StringComparer.Ordinal);
+        foreach (var (path, spell) in spells) {
             string name = spell.m_name;
-            if (string.IsNullOrEmpty(name) || !(spell.m_Treasure || name.EndsWith(" TC"))
+            // Only real treasure cards: the ones in the game's TreasureCards folder. Pet, monster and trained
+            // spells with the same picture (Wyldfire, for one) live elsewhere.
+            if (string.IsNullOrEmpty(name) || !spell.m_Treasure
+                || path?.Replace('\\', '/').Contains(TREASURE_CARD_FOLDER, StringComparison.OrdinalIgnoreCase) != true
                 || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
-                || !seen.Add(name)
+                || !seen.Add($"{spell.m_displayName}|{spell.m_sMagicSchoolName}")
                 || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } card) {
                 continue;
             }
