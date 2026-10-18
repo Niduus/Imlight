@@ -352,6 +352,14 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.Badges"/>, the badges the wizard has earned.
+    /// </summary>
+    public static void UpdateCharacterBadges(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.Badges = [.. wizard.Badges]);
+    }
+
+    /// <summary>
     /// Updates the character badge override for a wizard.
     /// </summary>
     /// <param name="wizard">The wizard object containing the updated character badge override.</param>

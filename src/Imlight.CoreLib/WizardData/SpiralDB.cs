@@ -65,6 +65,37 @@ public static class SpiralDB {
         = new(StringComparer.OrdinalIgnoreCase);
     private static ConcurrentDictionary<ulong, NpcTreasureCardInventory> s_treasureCardInventories = new();
 
+    /// <summary>
+    /// Every badge in the game (BadgeDefinitions), read on first use. A badge's Id is the hash of its name.
+    /// </summary>
+    public static IReadOnlyList<BadgeDefinition> Badges => s_badges.Value;
+    private static readonly Lazy<List<BadgeDefinition>> s_badges = new(LoadBadges, LazyThreadSafetyMode.ExecutionAndPublication);
+
+    private static List<BadgeDefinition> LoadBadges() {
+        var badges = new List<BadgeDefinition>();
+        var dir = Path.Combine(Path.GetFullPath(s_localPath), "BadgeDefinitions");
+        if (!Directory.Exists(dir)) {
+            Logger.Warning("SpiralDB has no BadgeDefinitions folder at {0}.", Logger.Args(dir));
+
+            return badges;
+        }
+
+        foreach (var file in Directory.EnumerateFiles(dir, "*.json")) {
+            try {
+                using var stream = File.OpenRead(file);
+                if (JsonSerializer.Deserialize<BadgeDefinition>(stream, s_jsonOptions) is { Id: not 0 } badge) {
+                    badges.Add(badge);
+                }
+            } catch (Exception e) {
+                Logger.Warning("Failed to load badge {0}: {1}", Logger.Args(Path.GetFileName(file), e.Message));
+            }
+        }
+
+        Logger.Information("Loaded {0} badges from SpiralDB.", Logger.Args(badges.Count));
+
+        return badges;
+    }
+
     public static IReadOnlyDictionary<string, CreatureSpellbook> CreatureSpellbooks => s_creatureSpellbooks;
     public static IReadOnlyDictionary<string, DropTable> DropTables => s_dropTables;
     public static GlobalRegistryModel GlobalRegistry => s_globalRegistry;

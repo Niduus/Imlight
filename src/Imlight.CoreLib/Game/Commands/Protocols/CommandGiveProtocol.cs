@@ -16,12 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// Test unlocks with no group: `.givemetpstyle` and `.intothedarkness`.
+/// Test unlocks with no group: `.givemetpstyle`, `.intothedarkness` and `.givemeallbadges`.
 /// </summary>
 internal class CommandGiveProtocol : CommandProtocol {
 
@@ -34,6 +35,22 @@ internal class CommandGiveProtocol : CommandProtocol {
         Context.Character.UnlockAllTeleportEffects();
 
         InformSenderClient("Unlocked every teleport effect. Relog to see them.");
+    }
+
+    [Command("givemeallbadges")]
+    [Alias("givemebadges")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void GiveAllBadgesCommand() {
+        var badges = WizardData.SpiralDB.Badges;
+        if (badges.Count == 0) {
+            InformSenderClient("The server has no badge list yet (SpiralDB's BadgeDefinitions folder is missing).");
+
+            return;
+        }
+
+        var added = Context.Character.AddBadges(badges.Where(b => !b.Retired).Select(b => b.Id));
+        InformSenderClient($"Gave you {added} new badges ({Context.Character.Badges.Count} of {badges.Count} in all). " +
+                           "Quests and doors that need a badge now count them.");
     }
 
     [Command("intothedarkness")]
