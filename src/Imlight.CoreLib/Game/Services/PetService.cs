@@ -211,6 +211,12 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
         PetCare.Finish(wizard, pet, growth, SendToSocket);
         var snack = FindSnackIn(wizard, snackData);
+        if (snackData is { Length: > 0 } && snack is null) {
+            // Logged so the next log shows how the game names the snack: compare these ids with the data above.
+            Logger.Warning("Pet game skip and feed: no snack of {0} matched the data. Snacks held: {1}.",
+                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), string.Join(", ",
+                    wizard.PetSnackBehavior?.Snacks?.Select(s => $"{s.m_templateID}/{s.m_globalID.Full:X}") ?? [])));
+        }
         if (snack is not null && PetCare.Feed(wizard, pet, snack.m_templateID, 1, SendToSocket, out var fed) is null) {
             growth.XpGained += fed.XpGained;
             growth.LevelsGained += fed.LevelsGained;

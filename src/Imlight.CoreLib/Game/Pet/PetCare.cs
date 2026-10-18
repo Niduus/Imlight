@@ -130,13 +130,7 @@ internal static class PetCare {
         }
 
         try {
-            if (growth.XpGained > 0) {
-                send(new WIZARD2_53_PROTOCOL.MSG_GAINPETXP {
-                    PetGID = pet.m_globalID,
-                    XP = growth.XpGained,
-                });
-            }
-
+            // Level-ups first, then the pet's new state so the pet window shows the XP and stats, then the XP popup.
             foreach (var (level, talent, derby) in growth.LevelUps) {
                 send(new PET_9_PROTOCOL.MSG_PETLEVELUP {
                     GlobalID = pet.m_globalID,
@@ -147,6 +141,17 @@ internal static class PetCare {
                     NewDerbyPower = derby is null ? 0 : PetData.TalentId(derby.m_talentName),
                     NewJewel = 0,
                     Display = 1,
+                });
+            }
+
+            if (PetBehaviorUpdate.TryCreate(pet, out var update)) {
+                send(update);
+            }
+
+            if (growth.XpGained > 0) {
+                send(new WIZARD2_53_PROTOCOL.MSG_GAINPETXP {
+                    PetGID = pet.m_globalID,
+                    XP = growth.XpGained,
                 });
             }
         }
