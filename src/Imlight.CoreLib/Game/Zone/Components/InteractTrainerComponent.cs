@@ -70,10 +70,11 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => template is GameObjectTemplate goTemplate 
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-            || IsTestTrainerNpc(goTemplate));
+            || IsTestTrainerNpc(goTemplate) || IsShadowTrainerNpc(goTemplate));
 
     /// <summary>
-    /// The test trainer (Mr. Lincoln in Ravenwood) teaches every enchantment spell and every shadow spell for free, at any level.
+    /// A test trainer teaches a whole kind of spell for free, at any level: Mr. Lincoln in Ravenwood every
+    /// enchantment, Penny Dreadful in the Commons every shadow spell.
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
@@ -87,8 +88,20 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         return names.Contains("Lincoln", System.StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// True for Penny Dreadful in the Commons, who teaches every shadow spell.
+    /// </summary>
+    internal static bool IsShadowTrainerNpc(GameObjectTemplate template) {
+        var names = $"{template.m_objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
+
+        return names.Contains("Penny Dreadful", System.StringComparison.OrdinalIgnoreCase);
+    }
+
     private static readonly System.Lazy<List<NPCSpellEntry>> s_allEnchantmentSpells
-        = new(() => [.. BuildTestSpells(enchantments: true), .. BuildTestSpells(enchantments: false)]);
+        = new(() => BuildTestSpells(enchantments: true));
+
+    private static readonly System.Lazy<List<NPCSpellEntry>> s_allShadowSpells
+        = new(() => BuildTestSpells(enchantments: false));
 
     private static List<NPCSpellEntry> BuildTestSpells(bool enchantments) {
         var entries = new List<NPCSpellEntry>();
@@ -98,7 +111,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             if (string.IsNullOrEmpty(name) || spell.m_Treasure || name.EndsWith(" TC")
                 || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
                 || (enchantments
-                    ? !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell)
+                    ? !Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) && (string) spell.m_sTypeName != "Enchantment"
                     : (string) spell.m_sMagicSchoolName != "Shadow" || Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell))
                 || !seen.Add(name)
                 || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } learnable) {
@@ -114,9 +127,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     public override void OnStart() {
-        if (Entity.Template is GameObjectTemplate testTrainer && IsTestTrainerNpc(testTrainer)) {
+        if (Entity.Template is GameObjectTemplate testTrainer
+            && (IsTestTrainerNpc(testTrainer) || IsShadowTrainerNpc(testTrainer))) {
             IsTestTrainer = true;
-            SpellInventory = s_allEnchantmentSpells.Value;
+            SpellInventory = IsShadowTrainerNpc(testTrainer) ? s_allShadowSpells.Value : s_allEnchantmentSpells.Value;
             InitializeServiceBases();
 
             return;
@@ -135,7 +149,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         InitializeServiceBases();
     }
 
-    private const int TEST_TRAINER_MAX_OPTIONS = 30;
+    // Every enchantment (about 47) fits in one list; the game disconnects when an NPC offers hundreds.
+    private const int TEST_TRAINER_MAX_OPTIONS = 50;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (wizard is null) {
