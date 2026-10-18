@@ -51,6 +51,26 @@ internal class CommandGiveProtocol : CommandProtocol {
         InformSenderClient($"Teleport effect set to {effect} (0 is the normal one). Relog, then teleport to see it.");
     }
 
+    [Command("overdose")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void OverdoseCommand(string onOrOff) {
+        var on = onOrOff?.Trim().ToLowerInvariant() switch {
+            "on" or "true" or "yes" or "1" => true,
+            "off" or "false" or "no" or "0" => (bool?) false,
+            _ => null,
+        };
+        if (on is null) {
+            InformSenderClient("Type .overdose on or .overdose off");
+
+            return;
+        }
+
+        Context.Character.SetOverdose(on.Value);
+        InformSenderClient(on.Value
+            ? "Overdose on: your battles start with Quickening already active."
+            : "Overdose off: your battles start normally.");
+    }
+
     [Command("givemeallbadges")]
     [Alias("givemebadges")]
     [AuthRequired(AuthLevel.QualityAssurance)]

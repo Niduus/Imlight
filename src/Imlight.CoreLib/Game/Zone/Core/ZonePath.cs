@@ -84,6 +84,11 @@ public sealed class ZonePath : ZoneEntity {
     private readonly Dictionary<ulong, SpawnObject> _spawnObjectInfo = [];
     private readonly Dictionary<IActorRef, (SpawnObject Spawner, GID ObjectId, string Name)> _loadingCreatures = [];
     private readonly HashSet<SpawnObject> _defeatedInInstance = new(ReferenceEqualityComparer.Instance);
+
+    // Creatures that won their battle because everyone fled. They are deleted like defeated ones, but their
+    // spawn point is not used up: it spawns again (a fresh roll with the randomizer) a few seconds later.
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> Spared = new();
+    private const int SPARED_RESPAWN_DELAY_IN_SECONDS = 10;
     // Spawners a ResSpawn switched off (m_activate false).
     private readonly HashSet<SpawnObject> _deactivated = new(ReferenceEqualityComparer.Instance);
     // Players that caused a spawn (quest or trigger result); the creature checks aggro against them once loaded.
@@ -217,7 +222,12 @@ public sealed class ZonePath : ZoneEntity {
 
             // Live does not respawn a defeated mob inside an instance: once a spawn point has lost a
             // creature here, CanSpawn refuses it for the rest of this instance's lifetime.
-            if (Zone.IsInstance) {
+            if (Spared.TryRemove(message.GameObjectID, out _)) {
+                Timers.StartSingleTimer($"Spared_{message.GameObjectID}",
+                    new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL { SpawnObject = spawnObject },
+                    TimeSpan.FromSeconds(SPARED_RESPAWN_DELAY_IN_SECONDS));
+            }
+            else if (Zone.IsInstance) {
                 _defeatedInInstance.Add(spawnObject);
             }
 

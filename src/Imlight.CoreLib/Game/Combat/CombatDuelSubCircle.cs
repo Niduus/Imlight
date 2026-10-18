@@ -258,7 +258,39 @@ public class CombatDuelSubCircle {
         return _combatDeck.LastGivenHand[index];
     }
 
+    // .overdose: the wizard's battles start with Quickening already cast on them.
+    private bool _overdoseApplied;
+    private static readonly Lazy<SpellTemplate> s_quickening = new(() => {
+        var spells = SpellFactory.AllSpellTemplates().Select(t => t.Template).Where(t => t is not null && !t.m_Treasure).ToList();
+
+        return spells.FirstOrDefault(t => string.Equals((string) t.m_name, "Quickening", StringComparison.OrdinalIgnoreCase))
+            ?? spells.FirstOrDefault(t => ((string) t.m_name ?? "").Contains("Quickening", StringComparison.OrdinalIgnoreCase));
+    });
+
+    private void ApplyOverdoseOnce() {
+        if (_overdoseApplied || _wizard?.Overdose != true) {
+            return;
+        }
+
+        _overdoseApplied = true;
+        if (s_quickening.Value is not { } quickening) {
+            Logger.Warning("Overdose: no Quickening spell was found.");
+
+            return;
+        }
+
+        var effects = quickening.m_effects ?? [];
+        Logger.Information("Overdose: {0} starts the battle with {1} ({2}).", Logger.Args(_wizard.CharId,
+            (string) quickening.m_name, string.Join(", ", effects.Select(e => $"{e.m_effectType} {e.m_effectParam}"))));
+        foreach (var effect in effects) {
+            // A copy, so nothing changes the shared spell.
+            CombatEffectApplicator.ApplyEffect(effect with { }, [], this, [this]);
+        }
+    }
+
     internal void DoPipGain() {
+        ApplyOverdoseOnce();
+
         // Shadow pips sit in their own slots, so they roll whether or not the normal slots are full.
         RollShadowPip();
 
