@@ -33,7 +33,7 @@ namespace Imlight.Setup;
 
 /// <summary>
 /// The app's window: Play (this server, other private servers), Lookup (every command and ID), Server
-/// (start, stop, randomizer, log), Settings, Accounts and Tools.
+/// (start, stop, randomizer, log), Settings, Accounts, Game Files and Tools.
 /// </summary>
 internal sealed class ManagerWindow : Window {
 
@@ -138,8 +138,17 @@ internal sealed class ManagerWindow : Window {
     private Lookup? _lookup;
     private DateTime _lookupLoadedFrom;
 
+    // Game files.
+    private readonly GameFiles _gameFiles;
+    private readonly TextBlock _gameFilesProgress = Sub("");
+    private readonly Button _copyGameFiles = Primary("Copy my game files");
+    private readonly Button _readGameFiles = Primary("Read my copy");
+    private readonly Button _cancelGameFiles = Plain("Stop");
+    private System.Threading.CancellationTokenSource? _gameFilesCancel;
+
     internal ManagerWindow(ServerManager manager) {
         _manager = manager;
+        _gameFiles = new GameFiles(manager.InstallFolder);
         Title = Edition.NAME;
         Width = 1120;
         Height = 820;
@@ -231,6 +240,7 @@ internal sealed class ManagerWindow : Window {
                 Tab("Server", ServerTab()),
                 Tab("Settings", SettingsTab()),
                 Tab("Accounts", AccountsTab()),
+                Tab("Game Files", GameFilesTab()),
                 Tab("Tools", ToolsTab()),
             },
         };
@@ -472,6 +482,118 @@ internal sealed class ManagerWindow : Window {
         box.IsCheckedChanged += (_, _) => _manager.AutoUpdate = box.IsChecked == true;
 
         return box;
+    }
+
+    private Control GameFilesTab() {
+        Action(_copyGameFiles, CopyGameFilesAsync);
+        Action(_readGameFiles, ReadGameFilesAsync);
+        _cancelGameFiles.IsEnabled = false;
+        _cancelGameFiles.Click += (_, _) => _gameFilesCancel?.Cancel();
+        _gameFilesProgress.Text = GameFilesState();
+
+        return Page(
+            Card(new StackPanel {
+                Spacing = 6,
+                Children = {
+                    Heading("Read the game's data files"),
+                    Sub("Shows how Wizard101 works from the data files installed with it: quests, badges, triggers, pets, creatures, " +
+                        "items, spells, zones and the messages the game and server send. It never changes your Wizard101 folder: " +
+                        "step 1 copies the files into Imlight's own folder, and step 2 reads only that copy."),
+                },
+            }),
+            Card(new StackPanel {
+                Spacing = 6,
+                Children = {
+                    Heading("Step 1: Copy my game files"),
+                    Sub("Copies the game's data files into a separate folder. It asks first and shows how much room it needs. " +
+                        "The next time, it only copies files the game has changed since."),
+                    WithMargin(Row(_copyGameFiles), new Thickness(0, 8, 0, 0)),
+                },
+            }),
+            Card(new StackPanel {
+                Spacing = 6,
+                Children = {
+                    Heading("Step 2: Read my copy"),
+                    Sub("Reads the copy and writes everything into readable files. The \"Key details\" folder has the tables for running " +
+                        "the game on a private server, and Overview.txt in it says what each one holds."),
+                    WithMargin(new WrapPanel {
+                        Children = {
+                            Spaced(_readGameFiles),
+                            Spaced(Action(Plain("Open key details"), OpenKeyDetailsAsync)),
+                            Spaced(Action(Plain("Open game files folder"), () => Open(Directory.CreateDirectory(_gameFiles.Folder).FullName))),
+                        },
+                    }, new Thickness(0, 8, 0, 0)),
+                },
+            }),
+            Card(new DockPanel {
+                Children = {
+                    WithDock(WithCenter(_cancelGameFiles), Dock.Right),
+                    _gameFilesProgress,
+                },
+            }));
+    }
+
+    private string GameFilesState()
+        => _gameFiles.HasReadable ? $"Last read is in {_gameFiles.ReadableFolder}."
+            : _gameFiles.HasCopy ? "Your files are copied. Click \"Read my copy\" next."
+            : "Nothing copied yet. Start with step 1.";
+
+    private async Task CopyGameFilesAsync() {
+        var (files, bytes, free) = _gameFiles.PlanCopy();
+        if (files == 0) {
+            Say("Your copy is already up to date. Click \"Read my copy\" to read it.");
+
+            return;
+        }
+
+        if (!await ConfirmAsync($"Copy {files} game files ({GameFiles.Size(bytes)}) into {_gameFiles.CopyFolder}? " +
+                $"This drive has {GameFiles.Size(free)} free. Your Wizard101 folder is only read from, never changed.")) {
+            return;
+        }
+
+        Say(await RunGameFilesAsync(_gameFiles.CopyAsync));
+    }
+
+    private async Task ReadGameFilesAsync() {
+        Say(await RunGameFilesAsync(_gameFiles.ReadAsync));
+        if (_gameFiles.HasReadable) {
+            await OpenKeyDetailsAsync();
+        }
+    }
+
+    private async Task<string> RunGameFilesAsync(Func<IProgress<string>, System.Threading.CancellationToken, Task<string>> work) {
+        _gameFilesCancel = new System.Threading.CancellationTokenSource();
+        _copyGameFiles.IsEnabled = false;
+        _readGameFiles.IsEnabled = false;
+        _cancelGameFiles.IsEnabled = true;
+        try {
+            var result = await work(new Progress<string>(text => _gameFilesProgress.Text = text), _gameFilesCancel.Token);
+            _gameFilesProgress.Text = result;
+
+            return result;
+        }
+        catch (OperationCanceledException) {
+            _gameFilesProgress.Text = "Stopped. Click the same button again to carry on.";
+
+            return "Stopped.";
+        }
+        finally {
+            _cancelGameFiles.IsEnabled = false;
+            _copyGameFiles.IsEnabled = true;
+            _readGameFiles.IsEnabled = true;
+            _gameFilesCancel.Dispose();
+            _gameFilesCancel = null;
+        }
+    }
+
+    private Task OpenKeyDetailsAsync() {
+        if (!_gameFiles.HasReadable) {
+            Say("There is nothing to open yet. Copy your game files, then click \"Read my copy\".");
+
+            return Task.CompletedTask;
+        }
+
+        return Open(_gameFiles.KeyDetailsFolder);
     }
 
     private Control ToolsTab() {

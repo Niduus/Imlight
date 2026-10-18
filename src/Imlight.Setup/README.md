@@ -29,6 +29,7 @@ Opening `Imlight.exe` (the desktop shortcut) shows the app in its own dark windo
 - **Server**: start, stop and restart the server, switch randomizer mode, Die = Delete mode, "Reduce mana even if fizzle", school pips and "Open every door" on or off (with Die = Delete on, a wizard that is still dead when its battle ends is deleted for good; fleeing and the tutorial battle don't count), change what spell trainers ask for (random or no spell requirements, no level requirements, free training, training points for every level gained and the players' `.gaintp` command), and read the log with repeated lines folded into one (`×30`) and debug lines hidden.
 - **Settings**: change any setting in `Config\Imlight.ini`, with each setting's help text.
 - **Accounts**: create accounts, change their level or password, and lock or unlock them (the server must be running).
+- **Game Files**: copies the game's data files (every `.wad` in `Data\GameData`) into `Game files\Copy of GameData` in the install folder, then reads only that copy into `Game files\Readable`: every BiND data file decoded to JSON, plain text files, the English game text and the message lists, plus a `Key details` folder of tables for quests, badges, triggers, event areas (with positions), spawns, zones, pets, pet talents, creatures, items and spells, and every network message with its fields. The Wizard101 folder is only read, and the game program is never opened.
 - **Tools**: update or uninstall Imlight, and open the log, settings and install folders. Each time the app opens it checks for a newer Imlight and updates by itself (it asks first if the server is running); a checkbox here turns that off.
 
 ## Update and uninstall
@@ -54,4 +55,4 @@ ImlightSetup --dir <folder>          Install somewhere else.
 
 ## Building it
 
-`dotnet publish src/Imlight.Setup -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true`. Add `-p:ImlightEdition=Manager` for ImlightManager.exe. It only uses Imcodec's archive reader, so it needs no game files to build. The Release workflow attaches ImlightManager.exe to every release; ImlightSetup.exe is only built by hand.
+`dotnet publish src/Imlight.Setup -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true`. Add `-p:ImlightEdition=Manager` for ImlightManager.exe. It uses Imcodec's archive reader and data file decoder; the decoder is generated from a type dump, so first copy `submodule\Imcodec\test\CodeGen\Inputs\*.json` into `submodule\Imcodec\src\Imcodec.ObjectProperty\GeneratorInput` (the Release workflow does this). No game files are needed to build. The Release workflow attaches ImlightManager.exe to every release; ImlightSetup.exe is only built by hand.

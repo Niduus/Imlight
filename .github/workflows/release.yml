@@ -62,8 +62,12 @@ jobs:
 
       - name: Build ImlightManager.exe
         # Builds this fork on the player's own PC from their own game files, so it needs no secret.
+        # The Game Files tab decodes game data with the type dump Imcodec ships for its tests.
         shell: pwsh
         run: |
+          $typeInput = "submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput"
+          New-Item -ItemType Directory -Force $typeInput | Out-Null
+          Copy-Item submodule/Imcodec/test/CodeGen/Inputs/*.json $typeInput/
           dotnet publish src/Imlight.Setup/Imlight.Setup.csproj -c Release -r win-x64 --self-contained true `
             -p:PublishSingleFile=true -p:Version=${{ steps.version.outputs.version }} -p:ImlightEdition=Manager -o out/manager
           Copy-Item out/manager/ImlightManager.exe release/
@@ -76,6 +80,8 @@ jobs:
           Expand-Archive "$env:RUNNER_TEMP/inputs.zip" "$env:RUNNER_TEMP/inputs"
           $codec = "submodule/Imcodec/src"
           New-Item -ItemType Directory -Force "$codec/Imcodec.ObjectProperty/GeneratorInput", "$codec/Imcodec.MessageLayer/GeneratorInput" | Out-Null
+          # Swap the bundled type dump the Manager was built with for this one.
+          Remove-Item "$codec/Imcodec.ObjectProperty/GeneratorInput/*.json" -ErrorAction SilentlyContinue
           Copy-Item "$env:RUNNER_TEMP/inputs/ObjectProperty/*" "$codec/Imcodec.ObjectProperty/GeneratorInput/"
           Copy-Item "$env:RUNNER_TEMP/inputs/MessageLayer/*" "$codec/Imcodec.MessageLayer/GeneratorInput/"
 
