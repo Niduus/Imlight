@@ -168,6 +168,16 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
     }
 
     /// <summary>
+    /// Takes an equipped item off the active wizard through the EquipmentService, which also removes its effects
+    /// and dismisses a summoned pet.
+    /// </summary>
+    /// <param name="itemId">The global id of the equipped item.</param>
+    /// <returns>True when the item is no longer equipped.</returns>
+    protected bool UnequipItem(ulong itemId)
+        => AskOtherService<CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEMRSP>(
+            new CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEM { ItemId = itemId }).Success;
+
+    /// <summary>
     /// Asks the server the SessionActor is connected to.
     /// </summary>
     /// <typeparam name="T"></typeparam>

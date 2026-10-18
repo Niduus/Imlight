@@ -466,4 +466,20 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Sent by a bank NPC to the BankService of the player who picked its bank option: the bank counts as open
+    /// until the window is closed, the zone changes or the session attaches again.
+    /// </summary>
+    public sealed class MSG_BEGINBANKSESSION : IServerMessage {
+
+        public byte MessageOrder { get; } = 50;
+        public byte ServiceID { get; } = 103;
+
+        /// <summary>
+        /// The global id of the bank NPC.
+        /// </summary>
+        public ulong EntityId;
+
+    }
+
 }

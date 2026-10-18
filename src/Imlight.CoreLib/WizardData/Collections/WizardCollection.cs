@@ -26,6 +26,7 @@ using Raven.Client.Exceptions;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.WizardData.Databases;
 using Imlight.CoreLib.WizardData.Models.Player;
 using Imcodec.ObjectProperty.TypeCache;
@@ -322,12 +323,28 @@ public static class WizardCollection {
     /// Updates the equipment of a character in the wizard collection.
     /// </summary>
     /// <param name="wizard">The wizard object containing the updated equipment.</param>
-    public static void UpdateCharacterItems(Wizard wizard) {
-        UpdateCharacter(wizard.CharId, existingCharacter => {
+    /// <returns>False when the character is not stored.</returns>
+    public static bool UpdateCharacterItems(Wizard wizard) => UpdateCharacterItems(wizard, []);
+
+    /// <summary>
+    /// Updates the equipment of a character and stores the documents of the items that entered it, in one
+    /// transaction, so an item is never stored without being listed or listed without being stored.
+    /// </summary>
+    /// <param name="wizard">The wizard object containing the updated equipment.</param>
+    /// <param name="addedItems">New items that are stored nowhere yet.</param>
+    /// <returns>False when the character is not stored, in which case nothing was written.</returns>
+    public static bool UpdateCharacterItems(Wizard wizard, IReadOnlyCollection<WizClientObjectItem> addedItems) {
+        return UpdateCharacterWithSession(wizard.CharId, (session, existingCharacter) => {
             existingCharacter.InventoryBehavior = wizard.InventoryBehavior;
+            existingCharacter.StorageBehavior = wizard.StorageBehavior;
             existingCharacter.EquipmentBehavior = wizard.EquipmentBehavior;
             existingCharacter.PetSnackBehavior = wizard.PetSnackBehavior;
             existingCharacter.AlchemyBehavior = wizard.AlchemyBehavior;
+            foreach (var item in addedItems) {
+                WizardItemCollection.StoreInSession(session, item);
+            }
+
+            return true;
         });
     }
 
@@ -620,6 +637,13 @@ public static class WizardCollection {
 
         wizard.InventoryBehavior.Items = [.. items
             .Where(i => wizard.InventoryBehavior.InventoryItemIds
+            .Contains(i.m_globalID))
+        ];
+
+        // The bank items are stored the same way, with their ids in the StorageBehavior.
+        wizard.StorageBehavior ??= new ServerWizStorageBehavior();
+        wizard.StorageBehavior.Items = [.. items
+            .Where(i => wizard.StorageBehavior.BankItemIds
             .Contains(i.m_globalID))
         ];
 

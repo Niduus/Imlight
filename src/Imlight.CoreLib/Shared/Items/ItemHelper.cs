@@ -51,7 +51,9 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Shared.Items;
 
 internal static class ItemHelper {
-    
+
+    private const string RentalAdjective = "Rental";
+
     /// <summary>
     /// Gets the <see cref="EquippedItemInfoList"/> for a <see cref="Wizard"/>. This is a lightweight version of the
     /// actual equipment that is used to publicly display the character's equipment.
@@ -87,6 +89,15 @@ internal static class ItemHelper {
     /// <param name="item">The item in question.</param>
     /// <returns>True when the item carries an appearance template.</returns>
     internal static bool IsStitched(WizClientObjectItem item) => (uint) item.m_displayID != 0;
+
+    /// <summary>
+    /// Whether an item template is a rental: it has the Rental adjective or a rental behavior.
+    /// </summary>
+    /// <param name="template">The item template, or null when the item has none.</param>
+    /// <returns>True for a rental.</returns>
+    internal static bool IsRental(WizItemTemplate template)
+        => template?.m_adjectiveList?.Any(adjective => string.Equals(adjective, RentalAdjective, StringComparison.OrdinalIgnoreCase)) == true
+           || template?.m_behaviors?.OfType<RentalBehaviorTemplate>().Any() == true;
 
     /// <summary>
     /// Gets the id of the template that decides how an item looks: the appearance template of a stitched
