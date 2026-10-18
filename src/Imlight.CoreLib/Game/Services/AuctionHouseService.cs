@@ -124,9 +124,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Logger.Args(category, CategoryName(category) ?? "unknown name"));
         var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries();
 
+        // The game sorts what it gets into its own tabs, so every answer carries the treasure cards too: the
+        // treasure card tab's category name is not known, and a tab the server doesn't recognize got no cards.
+        var treasureCards = s_treasureCards.Value.Values.Select(card => card.Entry);
         List<AuctionHouseEntry> entryList = IsTreasureCardCategory(category)
-            ? [.. s_treasureCards.Value.Values.Select(card => card.Entry)]
-            : houseEntries is null ? new List<AuctionHouseEntry>() : [.. houseEntries];
+            ? [.. treasureCards]
+            : [.. houseEntries ?? new List<AuctionHouseEntry>(), .. treasureCards];
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.

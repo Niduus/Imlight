@@ -352,6 +352,13 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.Overdose"/>.
+    /// </summary>
+    public static void UpdateCharacterOverdose(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.Overdose = wizard.Overdose);
+    }
+
+    /// <summary>
     /// Persists the equipped teleport effect, kept in both the game stats and the magic school behavior.
     /// </summary>
     public static void UpdateCharacterTeleportEffect(Wizard wizard) {

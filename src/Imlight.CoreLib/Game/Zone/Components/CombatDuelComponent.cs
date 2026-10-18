@@ -1532,9 +1532,17 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private void CreatureWin() {
         Logger.Debug("Duel {0} | Duel ended. Creatures win.", Logger.Args(Duel.m_duelID.Full));
 
-        // Send combat death to all creatures anyways. This will get rid of their game object.
+        // Send combat death to all creatures anyways. This will get rid of their game object. The ones still
+        // standing were not defeated, so their spawn points spawn again, even in a private instance.
         var deathMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEATH();
-        EnactActionOnSubCircles(circle => circle.ParticipantActor.Tell(deathMsg));
+        EnactActionOnSubCircles(circle => {
+            if (circle.OccupiedTeam == CombatTeam.Monster && !circle.IsSummonedMinion && circle.IsAlive
+                    && circle.ParticipantObject is { } creature) {
+                ZonePath.Spared[creature.m_globalID] = 0;
+            }
+
+            circle.ParticipantActor.Tell(deathMsg);
+        });
 
         // Inform each player that they've been defeated.
         var defeatMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT();

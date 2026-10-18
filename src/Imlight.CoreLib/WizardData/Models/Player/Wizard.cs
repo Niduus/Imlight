@@ -66,6 +66,8 @@ public class Wizard {
     public string PreviousZone { get; set; }
 
     public ulong InteriorStowedMountId { get; set; }
+    // .overdose: every battle starts with Quickening already cast on this wizard.
+    public bool Overdose { get; set; }
     // Badges earned, by badge ID (the hash of the badge's name).
     public List<uint> Badges { get; set; } = [];
     public string MarkedZone { get; set; }
@@ -313,6 +315,13 @@ public class Wizard {
 
         // Persistent save.
         WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    public void SetOverdose(bool on) {
+        Overdose = on;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterOverdose(this);
     }
 
     public void EquipTeleportEffect(uint effect) {
