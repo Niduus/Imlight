@@ -243,6 +243,7 @@ internal sealed class ManagerWindow : Window {
                 Tab("Play", PlayTab()),
                 Tab("Lookup", LookupTab()),
                 Tab("Server", ServerTab()),
+                Tab("Logs", LogsTab()),
                 Tab("Settings", SettingsTab()),
                 Tab("Accounts", AccountsTab()),
                 Tab("Game Files", GameFilesTab()),
@@ -257,13 +258,22 @@ internal sealed class ManagerWindow : Window {
                 case "Accounts": await LoadAccountsAsync(); break;
             }
 
-            // The position card only reads its file while the Tools tab is showing.
-            if ((tabs.SelectedItem as TabItem)?.Header as string == "Tools") {
+            // The position card only reads its file while the Play tab is showing, and the game log only while Logs is.
+            var shownTab = (tabs.SelectedItem as TabItem)?.Header as string;
+            if (shownTab == "Play") {
                 RefreshPosition();
                 _positionTimer.Start();
             }
             else {
                 _positionTimer.Stop();
+            }
+
+            if (shownTab == "Logs") {
+                RefreshClientLog();
+                _clientLogTimer.Start();
+            }
+            else {
+                _clientLogTimer.Stop();
             }
         };
 
@@ -304,6 +314,7 @@ internal sealed class ManagerWindow : Window {
         Closed += (_, _) => {
             _timer.Stop();
             _positionTimer.Stop();
+            _clientLogTimer.Stop();
         };
     }
 
@@ -352,7 +363,8 @@ internal sealed class ManagerWindow : Window {
                     }, new Thickness(0, 10, 0, 6)),
                     _friendResult,
                 },
-            }));
+            }),
+            PositionCard());
     }
 
     private async Task LetFriendsConnectAsync() {
@@ -483,22 +495,7 @@ internal sealed class ManagerWindow : Window {
             _randomizerCard,
             _dieDeleteCard,
             _battleCard,
-            _trainersCard,
-            Card(new StackPanel {
-                Children = {
-                    new DockPanel {
-                        Margin = new Thickness(0, 0, 0, 8),
-                        Children = {
-                            WithDock(Row(_hideDebug, _hideWarnings, _follow, _pauseLog), Dock.Right),
-                            Heading("Log"),
-                        },
-                    },
-                    new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _logScroll },
-                    WithMargin(Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)),
-                        new Thickness(0, 8, 0, 0)),
-                    WithMargin(Sub("The same message repeated in a row shows once, with how many times it happened."), new Thickness(0, 8, 0, 0)),
-                },
-            }));
+            _trainersCard);
     }
 
     private Control SettingsTab() {
@@ -673,6 +670,7 @@ internal sealed class ManagerWindow : Window {
         Text = "Walk around in the game to see your position here.",
     };
     private string _firstPositionXyz = "";
+    private string _firstPositionRaw = "";
 
     private string PositionFile => Path.Combine(_manager.LogFolder, "positions.txt");
 
@@ -692,17 +690,25 @@ internal sealed class ManagerWindow : Window {
 
         var shown = new List<string>();
         _firstPositionXyz = "";
+        _firstPositionRaw = "";
         foreach (var line in lines) {
             var parts = line.Split('\t');
             if (parts.Length < 7) {
                 continue;
             }
 
+            // The game only sends which way the wizard faces: Rotation is that in radians (as the game files store it),
+            // Angle the same in degrees. Wizards are always drawn at size 1, so Width is 1.
+            var radians = float.TryParse(parts[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var r) ? r : 0;
+            var rotation = radians.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+            var angle = (radians * 180 / MathF.PI % 360).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+            const string WIDTH = "1";
             if (_firstPositionXyz.Length == 0) {
                 _firstPositionXyz = $"{parts[2]}, {parts[3]}, {parts[4]}";
+                _firstPositionRaw = $"{rotation}, {angle}, {WIDTH}";
             }
 
-            shown.Add($"{parts[0]}  |  {parts[1]}  |  X {parts[2]}  Y {parts[3]}  Z {parts[4]}  |  Facing {parts[5]}  |  {parts[6]}");
+            shown.Add($"{parts[0]}  |  {parts[1]}  |  X {parts[2]}  Y {parts[3]}  Z {parts[4]}  |  Rotation {rotation}  Angle {angle}°  Width {WIDTH}  |  {parts[6]}");
         }
 
         var text = shown.Count > 0 ? string.Join(Environment.NewLine, shown) : "Walk around in the game to see your position here.";
@@ -720,19 +726,99 @@ internal sealed class ManagerWindow : Window {
         return CopyAsync(_firstPositionXyz);
     }
 
-    private Control ToolsTab() {
+    private Task CopyRawAsync() {
+        RefreshPosition();
+        if (_firstPositionRaw.Length == 0) {
+            throw new PanelException("There is no position yet. Walk around in the game first.");
+        }
+
+        return CopyAsync(_firstPositionRaw);
+    }
+
+    // Logs: the server's log and the newest log Wizard101 wrote.
+    private readonly DispatcherTimer _clientLogTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private readonly TextBox _clientLogBox = new() {
+        IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+        Height = 440, Text = "Play once to see the game's log here.",
+    };
+    private readonly TextBlock _clientLogFile = new() { Foreground = MUTED, TextWrapping = TextWrapping.Wrap };
+    private string? _clientLogFolder;
+
+    private void RefreshClientLog() {
+        // Leave the text alone while it is being selected, so a copy is not cut short.
+        if (_clientLogBox.IsFocused) {
+            return;
+        }
+
+        GameClient.ClientLog log;
+        try {
+            log = GameClient.ReadClientLog(_manager.InstallFolder);
+        }
+        catch (Exception) {
+            return;
+        }
+
+        _clientLogFolder = log.File is null ? null : Path.GetDirectoryName(log.File);
+        _clientLogFile.Text = log.File is null ? log.Reason ?? "" : $"From {log.File}";
+        var text = log.File is null ? "Play once to see the game's log here." : log.Text;
+        if (_clientLogBox.Text != text) {
+            _clientLogBox.Text = text;
+            _clientLogBox.CaretIndex = text.Length;
+        }
+    }
+
+    private Control LogsTab() {
+        _clientLogTimer.Tick += (_, _) => RefreshClientLog();
+
+        return Page(
+            Card(new StackPanel {
+                Children = {
+                    new DockPanel {
+                        Margin = new Thickness(0, 0, 0, 8),
+                        Children = {
+                            WithDock(Row(_hideDebug, _hideWarnings, _follow, _pauseLog), Dock.Right),
+                            Heading("Server log"),
+                        },
+                    },
+                    new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _logScroll },
+                    WithMargin(Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)),
+                        new Thickness(0, 8, 0, 0)),
+                    WithMargin(Sub("The same message repeated in a row shows once, with how many times it happened."), new Thickness(0, 8, 0, 0)),
+                },
+            }),
+            Card(new StackPanel {
+                Children = {
+                    Heading("Game log"),
+                    Sub("The newest log Wizard101 wrote, updated every 2 seconds while this tab is open. Select any part to copy it."),
+                    WithMargin(_clientLogFile, new Thickness(0, 6, 0, 8)),
+                    new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _clientLogBox },
+                    WithMargin(Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogBox.Text ?? "")),
+                        Action(Plain("Open game log folder"), () => _clientLogFolder is null
+                            ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
+                            : Open(_clientLogFolder))), new Thickness(0, 8, 0, 0)),
+                },
+            }));
+    }
+
+    private Control PositionCard() {
         _positionTimer.Tick += (_, _) => RefreshPosition();
 
-        return Page(Card(new StackPanel {
+        return Card(new StackPanel {
             Children = {
-                Heading("Position"),
+                Heading("Position (X, Y, Z and Rotation, Angle, Width)"),
                 Sub("Where each wizard on your server is standing, as X, Y and Z, updated twice a second while this tab is open. "
+                    + "Rotation is the way the wizard faces in radians, the way the game files store it, and Angle is the same in degrees. "
+                    + "Width is the wizard's size, which is always 1. "
                     + "It reads what the game already tells your server; nothing is added to the game. The newest mover is on top. "
                     + "Select any part of the text to copy it, or use the button. Positions are exact to about 4 units."),
                 WithMargin(_positionBox, new Thickness(0, 10, 0, 10)),
-                Row(Action(Primary("Copy X, Y, Z"), CopyPositionAsync), Action(Plain("Copy all"), () => CopyAsync(_positionBox.Text ?? ""))),
+                Row(Action(Primary("Copy X, Y, Z"), CopyPositionAsync), Action(Plain("Copy Rotation, Angle, Width"), CopyRawAsync), Action(Plain("Copy all"), () => CopyAsync(_positionBox.Text ?? ""))),
             },
-        }), Card(new StackPanel {
+        });
+    }
+
+    private Control ToolsTab() {
+        return Page(Card(new StackPanel {
             Children = {
                 Heading("Tools"),
                 Sub("Update or remove Imlight, or open the server's files."),
