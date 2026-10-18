@@ -30,20 +30,20 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </summary>
 internal static class CombatEnchantments {
 
-    private static readonly HashSet<kSpellEffects> s_damageEffects = [
-        kSpellEffects.kDamage, kSpellEffects.kDamageNoCrit, kSpellEffects.kStealHealth,
-        kSpellEffects.kDamageOverTime, kSpellEffects.kMaxHealthDamage,
-    ];
-    private static readonly HashSet<kSpellEffects> s_healEffects = [kSpellEffects.kHeal, kSpellEffects.kHealOverTime];
+    // These are methods, not static sets: a static field that fails to set up breaks the whole class for
+    // the rest of the run, and enchantments then fail without a word in the log.
+    private static bool IsDamage(kSpellEffects type) => type is kSpellEffects.kDamage or kSpellEffects.kDamageNoCrit
+        or kSpellEffects.kStealHealth or kSpellEffects.kDamageOverTime or kSpellEffects.kMaxHealthDamage;
+
+    private static bool IsHeal(kSpellEffects type) => type is kSpellEffects.kHeal or kSpellEffects.kHealOverTime;
+
     // Blades and other charms.
-    private static readonly HashSet<kSpellEffects> s_charmEffects = [
-        kSpellEffects.kModifyOutgoingDamage, kSpellEffects.kModifyAccuracy,
-        kSpellEffects.kModifyOutgoingHeal, kSpellEffects.kModifyOutgoingArmorPiercing,
-    ];
+    private static bool IsCharm(kSpellEffects type) => type is kSpellEffects.kModifyOutgoingDamage
+        or kSpellEffects.kModifyAccuracy or kSpellEffects.kModifyOutgoingHeal or kSpellEffects.kModifyOutgoingArmorPiercing;
+
     // Traps, shields and absorbs.
-    private static readonly HashSet<kSpellEffects> s_wardEffects = [
-        kSpellEffects.kModifyIncomingDamage, kSpellEffects.kAbsorbDamage, kSpellEffects.kModifyIncomingHeal,
-    ];
+    private static bool IsWard(kSpellEffects type) => type is kSpellEffects.kModifyIncomingDamage
+        or kSpellEffects.kAbsorbDamage or kSpellEffects.kModifyIncomingHeal;
 
     /// <summary>
     /// True when the spell is an enchantment: every effect it has changes another card.
@@ -133,7 +133,7 @@ internal static class CombatEnchantments {
                     changed = true;
                     break;
                 // [Battle] NoPipsFromDaybreakerNightbringer: those two keep their damage but not their extra pip.
-                case kSpellEffects.kModifyCardRank when amount > 0 && s_noPipsFromDayNight && IsDaybreakerOrNightbringer(enchantment):
+                case kSpellEffects.kModifyCardRank when amount > 0 && NoPipsFromDayNight && IsDaybreakerOrNightbringer(enchantment):
                     break;
                 case kSpellEffects.kModifyCardRank when result.m_spellRank is not null:
                     result = result with {
@@ -148,41 +148,41 @@ internal static class CombatEnchantments {
                     changed = true;
                     break;
                 case kSpellEffects.kModifyCardDamage:
-                    changed |= Modify(result, s_damageEffects, e => e with { m_effectParam = e.m_effectParam + amount });
+                    changed |= Modify(result, IsDamage, e => e with { m_effectParam = e.m_effectParam + amount });
                     break;
                 case kSpellEffects.kModifyCardDamagebyRank:
                     var rank = result.m_spellRank?.m_spellRank ?? 0;
-                    changed |= Modify(result, s_damageEffects, e => e with { m_effectParam = e.m_effectParam + amount * rank });
+                    changed |= Modify(result, IsDamage, e => e with { m_effectParam = e.m_effectParam + amount * rank });
                     break;
                 case kSpellEffects.kModifyCardArmorPiercing:
-                    changed |= Modify(result, s_damageEffects, e => e with { m_armorPiercingParam = e.m_armorPiercingParam + amount });
+                    changed |= Modify(result, IsDamage, e => e with { m_armorPiercingParam = e.m_armorPiercingParam + amount });
                     break;
                 case kSpellEffects.kModifyCardHeal:
-                    changed |= Modify(result, s_healEffects, e => e with { m_effectParam = e.m_effectParam + amount });
+                    changed |= Modify(result, IsHeal, e => e with { m_effectParam = e.m_effectParam + amount });
                     break;
                 case kSpellEffects.kModifyCardCharm:
-                    changed |= Modify(result, s_charmEffects, e => Grow(e, amount));
+                    changed |= Modify(result, IsCharm, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardWard:
-                    changed |= Modify(result, s_wardEffects, e => Grow(e, amount));
+                    changed |= Modify(result, IsWard, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardOutgoingDamage:
-                    changed |= Modify(result, [kSpellEffects.kModifyOutgoingDamage], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kModifyOutgoingDamage, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardOutgoingAccuracy:
-                    changed |= Modify(result, [kSpellEffects.kModifyAccuracy], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kModifyAccuracy, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardOutgoingHeal:
-                    changed |= Modify(result, [kSpellEffects.kModifyOutgoingHeal], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kModifyOutgoingHeal, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardOutgoingArmorPiercing:
-                    changed |= Modify(result, [kSpellEffects.kModifyOutgoingArmorPiercing], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kModifyOutgoingArmorPiercing, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardIncomingDamage:
-                    changed |= Modify(result, [kSpellEffects.kModifyIncomingDamage], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kModifyIncomingDamage, e => Grow(e, amount));
                     break;
                 case kSpellEffects.kModifyCardAbsorbDamage:
-                    changed |= Modify(result, [kSpellEffects.kAbsorbDamage], e => Grow(e, amount));
+                    changed |= Modify(result, t => t == kSpellEffects.kAbsorbDamage, e => Grow(e, amount));
                     break;
             }
         }
@@ -190,8 +190,8 @@ internal static class CombatEnchantments {
         return result;
     }
 
-    private static readonly bool s_noPipsFromDayNight
-        = Imlight.Common.ConfigurationManager.GetValue("Battle.NoPipsFromDaybreakerNightbringer", false);
+    private static bool NoPipsFromDayNight
+        => Imlight.Common.ConfigurationManager.GetValue("Battle.NoPipsFromDaybreakerNightbringer", false);
 
     private static bool IsDaybreakerOrNightbringer(SpellTemplate enchantment) {
         var name = enchantment.m_name.ToString() ?? "";
@@ -207,7 +207,7 @@ internal static class CombatEnchantments {
     /// <summary>
     /// Replaces each effect of the given types (also inside random and variable effects) with a changed copy.
     /// </summary>
-    private static bool Modify(SpellTemplate spell, HashSet<kSpellEffects> types, Func<SpellEffect, SpellEffect> change) {
+    private static bool Modify(SpellTemplate spell, Func<kSpellEffects, bool> types, Func<SpellEffect, SpellEffect> change) {
         var changed = false;
         for (var i = 0; i < spell.m_effects.Count; i++) {
             spell.m_effects[i] = ModifyEffect(spell.m_effects[i], types, change, ref changed);
@@ -216,14 +216,25 @@ internal static class CombatEnchantments {
         return changed;
     }
 
-    private static SpellEffect ModifyEffect(SpellEffect effect, HashSet<kSpellEffects> types,
+    private static SpellEffect ModifyEffect(SpellEffect effect, Func<kSpellEffects, bool> types,
                                             Func<SpellEffect, SpellEffect> change, ref bool changed) {
         if (effect is null) {
             return null;
         }
 
+        if (effect is ConditionalSpellEffect conditional && conditional.m_elements is { } elements) {
+            var copies = new List<ConditionalSpellElement>();
+            foreach (var element in elements) {
+                copies.Add(element?.m_pEffect is null
+                    ? element
+                    : element with { m_pEffect = ModifyEffect(element.m_pEffect, types, change, ref changed) });
+            }
+
+            return conditional with { m_elements = copies };
+        }
+
         if (Children(effect) is { } children) {
-            var copies = new List<SpellEffect>(children.Count);
+            var copies = new List<SpellEffect>();
             foreach (var child in children) {
                 copies.Add(ModifyEffect(child, types, change, ref changed));
             }
@@ -237,13 +248,32 @@ internal static class CombatEnchantments {
             };
         }
 
-        if (!types.Contains(effect.m_effectType)) {
+        if (!types(effect.m_effectType)) {
             return effect;
         }
 
         changed = true;
 
         return change(effect);
+    }
+
+    /// <summary>
+    /// The effects written out for the log, nested ones in brackets.
+    /// </summary>
+    internal static string Describe(IEnumerable<SpellEffect> effects)
+        => string.Join(", ", (effects ?? []).Select(DescribeOne));
+
+    private static string DescribeOne(SpellEffect effect) {
+        if (effect is null) {
+            return "null";
+        }
+
+        var text = $"{effect.GetType().Name} {effect.m_effectType} {effect.m_effectParam}";
+        var children = effect is ConditionalSpellEffect conditional
+            ? conditional.m_elements?.Select(e => e?.m_pEffect).ToList()
+            : Children(effect);
+
+        return children is null ? text : $"{text} [{Describe(children)}]";
     }
 
     private static List<SpellEffect> Children(SpellEffect effect) => effect switch {

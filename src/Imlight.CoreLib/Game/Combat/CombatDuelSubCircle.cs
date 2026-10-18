@@ -263,8 +263,20 @@ public class CombatDuelSubCircle {
     private static readonly Lazy<SpellTemplate> s_quickening = new(() => {
         var spells = SpellFactory.AllSpellTemplates().Select(t => t.Template).Where(t => t is not null && !t.m_Treasure).ToList();
 
-        return spells.FirstOrDefault(t => string.Equals((string) t.m_name, "Quickening", StringComparison.OrdinalIgnoreCase))
-            ?? spells.FirstOrDefault(t => ((string) t.m_name ?? "").Contains("Quickening", StringComparison.OrdinalIgnoreCase));
+        bool Named(SpellTemplate t, string word) => ((string) t.m_name ?? "").Contains(word, StringComparison.OrdinalIgnoreCase)
+            || ((string) t.m_displayName ?? "").Contains(word, StringComparison.OrdinalIgnoreCase);
+
+        // The internal name can differ from the card's name, so the ID list (which knows the card names) is asked first.
+        var fromCatalog = IdCatalog.Search(IdCatalogKind.Spell, "Quickening", 20)
+            .Select(e => CoreObjectFactory.GetCoreTemplate((uint) e.Id) as SpellTemplate)
+            .Where(t => t?.m_effects is { Count: > 0 })
+            .OrderBy(t => t.m_Treasure)
+            .FirstOrDefault();
+
+        return fromCatalog
+            ?? spells.FirstOrDefault(t => string.Equals((string) t.m_name, "Quickening", StringComparison.OrdinalIgnoreCase))
+            ?? spells.FirstOrDefault(t => Named(t, "Quickening"))
+            ?? spells.FirstOrDefault(t => Named(t, "Quicken"));
     });
 
     private void ApplyOverdoseOnce() {
@@ -429,6 +441,7 @@ public class CombatDuelSubCircle {
     private bool? _creatureRolledShadowMagic;
 
     private int MaxShadowPips => _wizard is null ? s_creatureMaxShadowPips
+        : ParticipantGameStats?.m_shadowPipSlots is int slots and > 0 ? Math.Min(slots, NO_SHADOW_LIMIT)
         : s_randomizeShadowPips ? 1 + Randomization.Randomizer.PickIndex(_wizard, "ShadowPipLimit", 0, RANDOM_SHADOW_LIMIT_MAX)
         : s_playerMaxShadowPips;
 

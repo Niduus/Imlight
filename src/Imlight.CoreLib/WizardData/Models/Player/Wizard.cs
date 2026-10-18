@@ -344,11 +344,12 @@ public class Wizard {
     }
 
     /// <summary>
-    /// Gives the wizard shadow magic of their own: shadow pip slots, the shadow gauge and shadow pips in battle,
-    /// even with [Battle] ShadowPips off.
+    /// Gives the wizard shadow magic of their own with <paramref name="slots"/> shadow pip slots, the shadow
+    /// gauge and shadow pips in battle, even with [Battle] ShadowPips off.
     /// </summary>
-    public void UnlockShadowMagic() {
+    public void UnlockShadowMagic(int slots = 1) {
         GameStats.m_shadowMagicUnlocked = true;
+        GameStats.m_shadowPipSlots = slots;
 
         // Persistent save.
         WizardCollection.UpdateCharacterGameStats(this);

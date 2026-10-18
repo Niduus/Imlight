@@ -126,10 +126,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         // The game sorts what it gets into its own tabs, so every answer carries the treasure cards too: the
         // treasure card tab's category name is not known, and a tab the server doesn't recognize got no cards.
-        var treasureCards = s_treasureCards.Value.Values.Select(card => card.Entry);
-        List<AuctionHouseEntry> entryList = IsTreasureCardCategory(category)
-            ? [.. treasureCards]
-            : [.. houseEntries ?? new List<AuctionHouseEntry>(), .. treasureCards];
+        // One answer that is too big makes the game drop the connection (all 5218 cards did), so the list is
+        // kept under MAX_ENTRIES with the treasure cards spread over every school.
+        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) ? [] : houseEntries ?? [];
+        var room = Math.Max(0, Math.Min(s_treasureCardLimit, MAX_ENTRIES - houseList.Count));
+        List<AuctionHouseEntry> entryList = [.. houseList.Take(MAX_ENTRIES), .. s_shownTreasureCards.Value.Take(room)];
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
@@ -366,7 +367,27 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static string CategoryName(uint category)
         => s_treasureCategoryNames.Concat(s_otherCategoryNames).FirstOrDefault(name => CategoryHashes(name).Contains(category));
 
-    private sealed record BazaarTreasureCard(AuctionHouseEntry Entry, string SpellName, uint SpellTemplateId);
+    // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
+    private const int MAX_ENTRIES = 1000;
+    private static readonly int s_treasureCardLimit
+        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, MAX_ENTRIES);
+
+    // The order cards are shown in: one from each school in turn, cheapest first, so a short list still
+    // has every school.
+    private static readonly Lazy<List<AuctionHouseEntry>> s_shownTreasureCards = new(() => {
+        var bySchool = s_treasureCards.Value.Values
+            .GroupBy(card => card.School)
+            .Select(group => group.OrderBy(card => card.Entry.m_buyPrice).ThenBy(card => card.SpellName).ToList())
+            .ToList();
+        var shown = new List<AuctionHouseEntry>();
+        for (var i = 0; bySchool.Any(group => i < group.Count); i++) {
+            shown.AddRange(bySchool.Where(group => i < group.Count).Select(group => group[i].Entry));
+        }
+
+        return shown;
+    });
+
+    private sealed record BazaarTreasureCard(AuctionHouseEntry Entry, string SpellName, uint SpellTemplateId, string School);
 
     private static readonly Lazy<Dictionary<ulong, BazaarTreasureCard>> s_treasureCards = new(BuildTreasureCards);
 
@@ -389,7 +410,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 m_numForSale = TREASURE_STOCK,
                 m_buyPrice = price,
                 m_sellPrice = Math.Max(1, price / 2),
-            }, name, templateId);
+            }, name, templateId, (string) spell.m_sMagicSchoolName);
         }
 
         Logger.Information("Bazaar has {0} treasure cards.", Logger.Args(cards.Count));
