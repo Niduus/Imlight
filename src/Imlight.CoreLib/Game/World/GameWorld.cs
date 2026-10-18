@@ -36,7 +36,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 09/27/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -220,6 +220,17 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         _dynamicZoneIds.Remove(dynamicId);
     }
 
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCECONTAINEREMPTY))]
+    private void ReceiveInstanceContainerEmpty(ZONE_102_PROTOCOL.MSG_INSTANCECONTAINEREMPTY message) {
+        if (!_instanceContainers.Remove(message.OwnerId, out var instanceContainer)) {
+            return;
+        }
+
+        Logger.Information("Game world removes the empty instance container of {OwnerId}.", Logger.Args(message.OwnerId));
+
+        Context.Stop(instanceContainer);
+    }
+
     private static string SanitizeZoneName(string zoneName)
         => zoneName.Replace('/', '-');
 
@@ -344,7 +355,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
     private IActorRef CreateInstanceContainer(ulong ownerId) {
         var zoneActorName = $"{nameof(InstanceContainer)}_{ownerId}"; // Append the owner ID to the zone name.
 
-        var instanceContainer = Context.ActorOf(InstanceContainer.Props(ownerId), zoneActorName);
+        var instanceContainer = Context.ActorOf(InstanceContainer.Props(ownerId, PvP.PvPRegistry.IsMatchInstanceOwner(ownerId)), zoneActorName);
         _instanceContainers.Add(ownerId, instanceContainer);
 
         // Log the new instance container creation.
