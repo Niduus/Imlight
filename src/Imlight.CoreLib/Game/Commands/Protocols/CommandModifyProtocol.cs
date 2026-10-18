@@ -60,16 +60,8 @@ internal class CommandModifyProtocol : CommandProtocol {
     [Command("level")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void SetLevelCommand(string level) {
-        // Try to parse the level.
-        if (!byte.TryParse(level, out var levelByte)) {
-            InformSenderClient("Invalid level.");
-
-            return;
-        }
-
-        // Inform the user of failure if the new level would be above the max level.
-        if (levelByte > MagicLevelsConfig.MaxLevel) {
-            InformSenderClient($"You cannot set level higher than the max level ({MagicLevelsConfig.MaxLevel}).");
+        if (!CommandLevelProtocol.TryParseLevel(level, out var levelByte, out var error)) {
+            InformSenderClient(error);
 
             return;
         }

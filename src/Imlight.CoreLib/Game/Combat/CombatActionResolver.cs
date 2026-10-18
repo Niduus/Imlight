@@ -95,6 +95,15 @@ internal static class CombatActionResolver {
         var critEligibleTargetSlots = new List<int>();
 
         foreach (var spellEffect in action.SpellTemplate.m_effects) {
+            // An effect like Blade Dance's rolls its own effect for each target, not one for all of them.
+            if (spellEffect is RandomPerTargetSpellEffect perTarget && perTarget.m_effectList is { Count: > 0 }) {
+                if (ApplyRandomPerTargetEffect(perTarget, action, ref combatAction, ref cinematicTime, allEffects)) {
+                    spellWorthCasting = true;
+                }
+
+                continue;
+            }
+
             var chosenEffect = spellEffect;
 
             // A spell effect may ask us to choose a random effect from a list of effects.
@@ -209,6 +218,37 @@ internal static class CombatActionResolver {
         CheckForPolarCombatActionTargets(ref combatAction, action.SpellTemplate);
 
         return spellWorthCasting;
+    }
+
+    /// <summary>
+    /// Applies a random-per-target effect: each target the effect reaches gets its own roll from the effect list,
+    /// and the rolls go to the client in target order so it shows the same choices.
+    /// </summary>
+    private static bool ApplyRandomPerTargetEffect(RandomPerTargetSpellEffect perTarget, QueuedCombatAction action,
+                                                   ref CombatAction combatAction, ref float cinematicTime,
+                                                   List<SpellEffect> allEffects) {
+        var targets = GetEffectTargets(perTarget, action.SpellCaster, action.SelectedTarget)
+            .Where(target => target is not null && target.IsAlive)
+            .ToArray();
+        if (targets.Length == 0) {
+            return false;
+        }
+
+        combatAction.m_randomSpellEffectPerTargetRolls ??= [];
+        UpdateCombatActionTargets(ref combatAction, targets);
+
+        foreach (var target in targets) {
+            var roll = Random.Shared.Next(0, perTarget.m_effectList.Count);
+            combatAction.m_randomSpellEffectPerTargetRolls.Add(roll);
+
+            var chosenEffect = perTarget.m_effectList[roll];
+            allEffects.Add(chosenEffect);
+
+            InformDuelParticipantsOfEffect(action.SpellCaster, [target], chosenEffect);
+            cinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], action.SpellCaster, [target], 1f);
+        }
+
+        return true;
     }
 
     private static SpellEffect ChooseRandomEffect(RandomSpellEffect randomSpellEffect, CombatEffectStack effectStack) {

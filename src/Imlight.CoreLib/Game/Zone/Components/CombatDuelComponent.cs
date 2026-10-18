@@ -495,6 +495,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         var moveType = (CombatMoveType) message.MoveType;
 
+        // A defeated wizard sits the round out; only fleeing is still theirs to choose.
+        if (!caster.IsAlive && moveType != CombatMoveType.Flee) {
+            return;
+        }
+
         switch (moveType) {
             case CombatMoveType.Discard:
                 var discardCandidate = caster.GetSpellFromLastHand(message.SpellSelection);

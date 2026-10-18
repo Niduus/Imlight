@@ -14,6 +14,7 @@ If Imlight was built in _release_ mode, any command with a developer security le
 | Command | Security | Syntax | Description |
 | ------- | -------- | ------ | ----------- |
 | teleport | Quality Assurance | `.teleport $zonename` | Teleports you to a specific zone. If a zone is not found, it will guess. |
+| level | Quality Assurance | `.level MAX` or `.level $level` | Sets your character to the max level, or to the level you type. Alias: `.lvl`. |
 
 ## Account Commands
 
@@ -60,7 +61,7 @@ Your command context will not drop. If you select a player, that player will sti
 | Command | Security | Syntax | Description |
 | ------- | -------- | ------ | ----------- |
 | levelup | Quality Assurance | `.mod levelup` | Levels up your character. |
-| level | Quality Assurance | `.mod level $level` | Levels up your character to a certain level. |
+| level | Quality Assurance | `.mod level $level` | Sets your character's level. `max` gives the max level. |
 | speed | Quality Assurance | `.mod speed $speed`| Changes your speed. The number matches the ingame, so `40` would give you mount speed. |
 | additem | Quality Assurance | `.mod additem $id` | Adds an item to your inventory by ID. When the inventory is full it goes to the bank, a jewel to the shared bank first. |
 | addsnack | Quality Assurance | `.mod addsnack $id` | Adds a snack to your pet snack bag. |

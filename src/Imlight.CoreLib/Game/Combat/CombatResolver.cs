@@ -198,9 +198,12 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// </summary>
     /// <returns>True if all participants have enqueued actions, false otherwise.</returns>
     public bool HaveAllParticipantsEnqueuedActions() {
-        var enqueuedPlayers = _subCircles.Where(circle => circle.AddedToDuel && circle.IsAlive && IsActing(circle));
-
-        return enqueuedPlayers.Count() == _queuedCombatActions.Count;
+        // Every circle that still has to move must have a move of its own. Counting is not enough: a move
+        // from a circle that is not expected (a dead player's client still passes) would stand in for
+        // someone else's and end the round early, as if they had passed too.
+        return _subCircles
+            .Where(circle => circle.AddedToDuel && circle.IsAlive && IsActing(circle))
+            .All(circle => _queuedCombatActions.Any(action => action.SpellCaster == circle));
     }
 
     /// <summary>The move a given caster has queued this round, or null if none. Used to re-broadcast a
@@ -449,6 +452,13 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         }
 
         foreach (var effect in hotEffects) {
+            // A heal over time ends with the participant: it never revives them, including after a DoT just now.
+            if (!caster.IsAlive) {
+                caster._hangingEffects.Remove(effect);
+                cinematicTime -= OVER_TIME_ACTIVATION_TIME;
+                continue;
+            }
+
             // Todo: are there wards that increase incoming healing?
             // We don't need to calculate stats from gear because the initial application already did that.
             caster.HealParticipant(effect.m_paramPerRound);
