@@ -25,7 +25,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// </summary>
 internal class CommandShadowPipProtocol : CommandProtocol {
 
-    private const int MAX_SLOTS = 50;
+    private const int MAX_SLOTS = 8;
 
     internal override string Group { get; set; } = "sp";
 

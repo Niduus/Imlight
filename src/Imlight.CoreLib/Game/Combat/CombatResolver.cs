@@ -105,6 +105,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     private CombatDuelSubCircle[] ActiveSubCircles => [.. _subCircles.Where(x => x.Occupied)];
     private List<QueuedCombatAction> _queuedCombatActions;
 
+    // Daybreaker and Nightbringer: the spell is paid for (pips, card, fizzle check) when played, then casts on
+    // the caster's next turn, at its start (Daybreaker) or its end (Nightbringer), even if they are stunned.
+    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round);
+    private readonly List<DelayedCast> _delayedCasts = [];
+
     public void Reset() =>
         _queuedCombatActions = [];
 
@@ -237,12 +242,54 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var instantCinematics = _subCircles[0]._duelActor.CheatInstantCinematics;
 
         foreach (var action in _queuedCombatActions) {
+            cinematicTime += CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime);
+            cinematicTime += ProcessQueuedAction(action, combatActionList, cinematicTime);
+            cinematicTime += CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime);
+        }
+
+        return instantCinematics ? 0 : cinematicTime;
+    }
+
+    /// <summary>
+    /// Casts the caster's Daybreaker (<paramref name="atStart"/>) or Nightbringer spells from an earlier round.
+    /// </summary>
+    private float CastDelayed(CombatDuelSubCircle caster, bool atStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var due = _delayedCasts
+            .Where(d => d.Action.SpellCaster == caster && d.AtStart == atStart && d.Round < _duel.m_roundNum)
+            .ToList();
+        var cinematicTime = 0.0f;
+        foreach (var delayed in due) {
+            _delayedCasts.Remove(delayed);
+            var action = delayed.Action;
+            if (!caster.IsAlive || action.SelectedTarget is null || !action.SelectedTarget.IsAlive
+                || !action.SelectedTarget.AddedToDuel) {
+                continue;
+            }
+
+            try {
+                Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell.",
+                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer"));
+                caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
+                cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+            }
+            catch (Exception e) {
+                Logger.Error("Duel {0} | Slot {1} | delayed spell failed: {2}",
+                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, e));
+            }
+        }
+
+        return cinematicTime;
+    }
+
+    private float ProcessQueuedAction(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        {
             // If the caster is dead, skip this action.
             if (!action.SpellCaster.IsAlive) {
                 Logger.Debug("Duel {0} | Slot {1} | Caster is dead. Skipping action.",
                     Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex));
 
-                continue;
+                return cinematicTime;
             }
 
             // We want to invoke the overtime effects after we check for death.
@@ -256,7 +303,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
                 cinematicTime += HandlePassAction(action, combatActionList);
 
-                continue;
+                return cinematicTime;
             }
 
             // If our target is gone or we're stunned, pass the turn.
@@ -270,7 +317,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 Logger.Debug("Duel {0} | Slot {1} | Spell cannot occur because target is dead or caster is stunned.",
                     Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex));
 
-                continue;
+                return cinematicTime;
             }
 
             // Determine if this spell hits or fizzles.
@@ -285,14 +332,36 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                     action.SpellCaster.DeductMana(action.Spell.m_pipCost.m_spellRank);
                 }
             }
+            else if (IsDelayCast(action.Spell, out var atStart)) {
+                // Paid for now; it casts on the caster's next turn.
+                var paid = InitializeCombatAction(action);
+                DoSpellCastConsequences(action.SpellCaster, paid);
+                _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum));
+                Logger.Information("Duel {0} | Slot {1} | {2} delays the spell to the caster's next turn.",
+                    Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer"));
+                cinematicTime += HandlePassAction(action, combatActionList);
+            }
             else {
                 // Record when this caster's cinematic begins so a summoned minion appears with its cast.
-                action.SpellCaster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTime;
+                action.SpellCaster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
                 cinematicTime += HandleSuccessfulAction(action, combatActionList);
             }
         }
 
-        return instantCinematics ? 0 : cinematicTime;
+        return cinematicTime;
+    }
+
+    private static bool IsDelayCast(Spell spell, out bool atStart) {
+        atStart = false;
+        if (spell is null || spell.m_enchantment == 0
+            || CoreObjectFactory.GetCoreTemplate(spell.m_enchantment) is not SpellTemplate enchantment
+            || !CombatEnchantments.IsDaybreakerOrNightbringer(enchantment)) {
+            return false;
+        }
+
+        atStart = enchantment.m_name.ToString()?.Contains("Daybreaker", StringComparison.OrdinalIgnoreCase) == true;
+
+        return true;
     }
 
     private float HandleFizzleAction(QueuedCombatAction action, CombatActionListObj combatActionList) {
@@ -307,7 +376,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         return SPELL_FIZZLE_TIME;
     }
 
-    private float HandleSuccessfulAction(QueuedCombatAction action, CombatActionListObj combatActionList) {
+    private float HandleSuccessfulAction(QueuedCombatAction action, CombatActionListObj combatActionList, bool alreadyPaid = false) {
         var cinematicTime = 0.0f;
         var combatAction = InitializeCombatAction(action);
         var spellWorthCasting = CombatActionResolver.ProcessedQueuedCombatAction(action, ref combatAction, ref cinematicTime);
@@ -320,7 +389,9 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             return SPELL_PASS_TIME;
         }
 
-        DoSpellCastConsequences(action.SpellCaster, combatAction);
+        if (!alreadyPaid) {
+            DoSpellCastConsequences(action.SpellCaster, combatAction);
+        }
 
         return GetActionCinematicTime(action) + cinematicTime;
     }

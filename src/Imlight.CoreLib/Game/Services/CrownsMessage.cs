@@ -48,6 +48,29 @@ internal static class CrownsMessage {
         return message;
     }
 
+    // Messages for things still being worked out (the badge window, the crown shop, the deck's Archmastery
+    // school), logged with their fields so the next step can use them.
+    private static readonly string[] s_loggedMessageWords = ["BADGE", "PCS", "CROWNSHOP", "ELIXIR", "ARCHMASTERY"];
+
+    private static void LogOtherMessages() {
+        try {
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => a.GetName().Name?.StartsWith("Imcodec", StringComparison.Ordinal) == true)
+                .SelectMany(LoadableTypes)
+                .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IMessage).IsAssignableFrom(t)
+                         && s_loggedMessageWords.Any(word => t.Name.Contains(word, StringComparison.OrdinalIgnoreCase)));
+            foreach (var type in types) {
+                Logger.Information("Message: the game has {0} ({1}).", Logger.Args(type.FullName,
+                    string.Join(", ", type.GetFields(BindingFlags.Public | BindingFlags.Instance).Select(m => $"{m.Name} {m.FieldType.Name}")
+                        .Concat(type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(m => m.CanWrite)
+                            .Select(m => $"{m.Name} {m.PropertyType.Name}")))));
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("Message list could not be logged: {0}", Logger.Args(e.Message));
+        }
+    }
+
     private static (Type, MemberInfo)? Find() {
         try {
             var types = AppDomain.CurrentDomain.GetAssemblies()
@@ -56,6 +79,8 @@ internal static class CrownsMessage {
                 .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IMessage).IsAssignableFrom(t)
                          && t.Name.Contains("CROWN", StringComparison.OrdinalIgnoreCase))
                 .ToList();
+
+            LogOtherMessages();
 
             (Type Type, MemberInfo Amount, int Score)? best = null;
             foreach (var type in types) {

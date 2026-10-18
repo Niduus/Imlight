@@ -103,7 +103,7 @@ internal sealed class Lookup {
         Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),
         Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
-        Command("Shadow pip slots", ".sp slots <number>", QA, "Sets how many shadow pip slots your character has, such as .sp slots 2 for the second slot. Log out and back in to see it."),
+        Command("Shadow pip slots", ".sp slots <number>", QA, "Sets how many shadow pip slots your character has, from 1 to 8, such as .sp slots 2 for the second slot. Log out and back in to see it."),
 
         // Battles.
         Command("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),

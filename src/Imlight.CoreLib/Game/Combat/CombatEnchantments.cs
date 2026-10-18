@@ -134,6 +134,8 @@ internal static class CombatEnchantments {
                     break;
                 // [Battle] NoPipsFromDaybreakerNightbringer: those two keep their damage but not their extra pip.
                 case kSpellEffects.kModifyCardRank when amount > 0 && NoPipsFromDayNight && IsDaybreakerOrNightbringer(enchantment):
+                    // Still an enchantment: the card's cast is delayed (see CombatResolver), just without the pips.
+                    changed = true;
                     break;
                 case kSpellEffects.kModifyCardRank when result.m_spellRank is not null:
                     result = result with {
@@ -193,7 +195,7 @@ internal static class CombatEnchantments {
     private static bool NoPipsFromDayNight
         => Imlight.Common.ConfigurationManager.GetValue("Battle.NoPipsFromDaybreakerNightbringer", false);
 
-    private static bool IsDaybreakerOrNightbringer(SpellTemplate enchantment) {
+    internal static bool IsDaybreakerOrNightbringer(SpellTemplate enchantment) {
         var name = enchantment.m_name.ToString() ?? "";
 
         return name.Contains("Daybreaker", StringComparison.OrdinalIgnoreCase)
