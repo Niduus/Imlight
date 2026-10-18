@@ -334,10 +334,8 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         }
 
         HashSet<string> activeQuests = [];
-        if (message.PlayerActor is not null) {
-            var wizardResponse = message.PlayerActor
-                .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD()).Result;
-            activeQuests = wizardResponse.Wizard.QuestBehavior.CurrentQuestInstances
+        if (ZoneTrigger.QueryWizard(message.PlayerActor) is { } wizard) {
+            activeQuests = wizard.QuestBehavior.CurrentQuestInstances
                 .Select(q => q.QuestName).ToHashSet();
         }
 
@@ -462,16 +460,13 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
             return true;
         }
 
-        var queryWizardMsg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
-        var wizardResponse = message.PlayerActor.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(queryWizardMsg).Result;
-
         return RequirementDispatcher.EvaluateRequirements(
             requirements: trigger.m_requirements,
             context: new ZoneRequirementContext(
                 trigger.m_requirements,
                 message.PlayerActor,
                 message.PlayerGameObject,
-                wizardResponse.Wizard,
+                ZoneTrigger.QueryWizard(message.PlayerActor),
                 ZoneRef,
                 trigger.m_triggerName) {
                 ScriptState = Zone.ScriptState,
