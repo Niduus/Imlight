@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-005",
+  "Description": "Celestia quest Fixing a Hole",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 245,
+  "MaxGold": 245,
+  "ExperienceAmount": 3760,
+  "TrainingPoints": 0,
+  "Items": []
+}

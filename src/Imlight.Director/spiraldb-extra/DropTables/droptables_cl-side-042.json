@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-042",
+  "Description": "Celestia quest Shaking the Web",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 650,
+  "MaxGold": 650,
+  "ExperienceAmount": 16500,
+  "TrainingPoints": 0,
+  "Items": []
+}

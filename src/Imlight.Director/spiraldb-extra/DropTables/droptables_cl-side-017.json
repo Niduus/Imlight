@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-017",
+  "Description": "Celestia quest Fishing Pieces",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 220,
+  "MaxGold": 220,
+  "ExperienceAmount": 5355,
+  "TrainingPoints": 0,
+  "Items": []
+}
