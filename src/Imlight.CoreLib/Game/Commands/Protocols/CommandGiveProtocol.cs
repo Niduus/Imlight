@@ -37,6 +37,20 @@ internal class CommandGiveProtocol : CommandProtocol {
         InformSenderClient("Unlocked every teleport effect. Relog to see them.");
     }
 
+    [Command("tpstyle")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void EquipTeleportEffectCommand(string number) {
+        if (!uint.TryParse(number, out var effect)) {
+            InformSenderClient("Type a number, such as .tpstyle 1 (0 is the normal effect).");
+
+            return;
+        }
+
+        Context.Character.EquipTeleportEffect(effect);
+
+        InformSenderClient($"Teleport effect set to {effect} (0 is the normal one). Relog, then teleport to see it.");
+    }
+
     [Command("givemeallbadges")]
     [Alias("givemebadges")]
     [AuthRequired(AuthLevel.QualityAssurance)]

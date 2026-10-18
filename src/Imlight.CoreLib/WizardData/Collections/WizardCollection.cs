@@ -352,6 +352,16 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists the equipped teleport effect, kept in both the game stats and the magic school behavior.
+    /// </summary>
+    public static void UpdateCharacterTeleportEffect(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.GameStats.m_equippedTeleportEffect = wizard.GameStats.m_equippedTeleportEffect;
+            existingCharacter.MagicSchoolBehavior.EquippedTeleportEffect = wizard.MagicSchoolBehavior.EquippedTeleportEffect;
+        });
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.Badges"/>, the badges the wizard has earned.
     /// </summary>
     public static void UpdateCharacterBadges(Wizard wizard) {
