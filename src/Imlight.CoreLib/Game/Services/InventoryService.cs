@@ -387,7 +387,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_UNLOCKSOCKETSCONFIRM {
             Failure = (sbyte) (state is null ? 1 : 0),
             WebFailure = 0,
-            Credits = wizard.Crowns,
+            Credits = wizard.Account?.Crowns ?? wizard.Crowns,
         });
 
         if (state is not null) {

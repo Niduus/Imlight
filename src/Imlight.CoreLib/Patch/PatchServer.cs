@@ -126,11 +126,18 @@ public class PatchServer : Server {
 
     [MessageHandler(typeof(PATCH_105_PROTOCOL.MSG_DOWNLOAD_WAD_REQUEST))]
     private void ReceiveDownloadRequest(PATCH_105_PROTOCOL.MSG_DOWNLOAD_WAD_REQUEST message) {
-        var rsp = new PATCH_105_PROTOCOL.MSG_DOWNLOAD_FILE_RESULT {
-            FileStream = DownloadWadStream(message.WadName).Result
-        };
+        // Always answer. A wad the game files do not have (some housing wads, for one) used to throw here,
+        // which restarted this actor without an answer: whoever asked then waited out the whole download
+        // timeout, holding up everything behind it, such as creating a character.
+        MemoryStream stream = null;
+        try {
+            stream = DownloadWadStream(message.WadName).GetAwaiter().GetResult();
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not download wad {WadName}: {Message}", Logger.Args(message.WadName, ex.Message));
+        }
 
-        Sender.Tell(rsp);
+        Sender.Tell(new PATCH_105_PROTOCOL.MSG_DOWNLOAD_FILE_RESULT { FileStream = stream });
     }
 
     [MessageHandler(typeof(PATCH_105_PROTOCOL.MSG_LATESTFILELIST))]

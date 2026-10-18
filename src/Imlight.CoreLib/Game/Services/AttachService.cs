@@ -378,11 +378,23 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     private static readonly bool s_refillCrowns = ConfigurationManager.GetValue("Character.RefillCrowns", true);
 
     private void GiveCrowns() {
-        if (!_wizard.StartingCrownsGiven || (s_refillCrowns && _wizard.Crowns < s_startingCrowns)) {
-            _wizard.SetCrowns(Math.Max(_wizard.Crowns, s_startingCrowns));
+        // The crown shop, seamstress and packs spend the account's crowns, so that is the one balance. A wizard
+        // from before kept their own; the larger of the two carries over.
+        var account = _wizard.Account;
+        var crowns = Math.Max(account?.Crowns ?? 0, _wizard.Crowns);
+        if (!_wizard.StartingCrownsGiven || (s_refillCrowns && crowns < s_startingCrowns)) {
+            crowns = Math.Max(crowns, s_startingCrowns);
         }
 
-        if (CrownsMessage.Create(_wizard.Crowns) is { } crownsMsg) {
+        if (account is not null && account.Crowns != crowns) {
+            account.SetCrowns(crowns);
+        }
+
+        if (_wizard.Crowns != crowns || !_wizard.StartingCrownsGiven) {
+            _wizard.SetCrowns(crowns);
+        }
+
+        if (CrownsMessage.Create(crowns) is { } crownsMsg) {
             SendToSocket(crownsMsg);
         }
     }
