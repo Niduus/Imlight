@@ -176,6 +176,7 @@ internal static class Program {
         }
 
         OnlinePlayerCollection.Clear();
+        TradeEscrowCollection.RecoverAll();
         LoginWarmup.Run();
 
         // The login and game servers accept no connection until everything above is done.
