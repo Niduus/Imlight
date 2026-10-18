@@ -256,6 +256,15 @@ internal sealed class ManagerWindow : Window {
                 case "Settings" when _settings.Count == 0: LoadSettings(); break;
                 case "Accounts": await LoadAccountsAsync(); break;
             }
+
+            // The position card only reads its file while the Tools tab is showing.
+            if ((tabs.SelectedItem as TabItem)?.Header as string == "Tools") {
+                RefreshPosition();
+                _positionTimer.Start();
+            }
+            else {
+                _positionTimer.Stop();
+            }
         };
 
         var header = new DockPanel {
@@ -292,7 +301,10 @@ internal sealed class ManagerWindow : Window {
             _timer.Start();
             await Guard(AutoUpdateAsync);
         };
-        Closed += (_, _) => _timer.Stop();
+        Closed += (_, _) => {
+            _timer.Stop();
+            _positionTimer.Stop();
+        };
     }
 
     // ---------------------------------------------------------------------
@@ -654,8 +666,73 @@ internal sealed class ManagerWindow : Window {
         return Open(_gameFiles.KeyDetailsFolder);
     }
 
+    // Position: where each wizard on this server stands, from the logs/positions.txt file the server writes.
+    private readonly DispatcherTimer _positionTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+    private readonly TextBox _positionBox = new() {
+        IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.NoWrap, FontFamily = MONO, MinHeight = 70,
+        Text = "Walk around in the game to see your position here.",
+    };
+    private string _firstPositionXyz = "";
+
+    private string PositionFile => Path.Combine(_manager.LogFolder, "positions.txt");
+
+    private void RefreshPosition() {
+        // Leave the text alone while it is being selected, so a copy is not cut short.
+        if (_positionBox.IsFocused) {
+            return;
+        }
+
+        string[] lines;
+        try {
+            lines = File.Exists(PositionFile) ? File.ReadAllLines(PositionFile) : [];
+        }
+        catch (IOException) {
+            return;
+        }
+
+        var shown = new List<string>();
+        _firstPositionXyz = "";
+        foreach (var line in lines) {
+            var parts = line.Split('\t');
+            if (parts.Length < 7) {
+                continue;
+            }
+
+            if (_firstPositionXyz.Length == 0) {
+                _firstPositionXyz = $"{parts[2]}, {parts[3]}, {parts[4]}";
+            }
+
+            shown.Add($"{parts[0]}  |  {parts[1]}  |  X {parts[2]}  Y {parts[3]}  Z {parts[4]}  |  Facing {parts[5]}  |  {parts[6]}");
+        }
+
+        var text = shown.Count > 0 ? string.Join(Environment.NewLine, shown) : "Walk around in the game to see your position here.";
+        if (_positionBox.Text != text) {
+            _positionBox.Text = text;
+        }
+    }
+
+    private Task CopyPositionAsync() {
+        RefreshPosition();
+        if (_firstPositionXyz.Length == 0) {
+            throw new PanelException("There is no position yet. Walk around in the game first.");
+        }
+
+        return CopyAsync(_firstPositionXyz);
+    }
+
     private Control ToolsTab() {
+        _positionTimer.Tick += (_, _) => RefreshPosition();
+
         return Page(Card(new StackPanel {
+            Children = {
+                Heading("Position"),
+                Sub("Where each wizard on your server is standing, as X, Y and Z, updated twice a second while this tab is open. "
+                    + "It reads what the game already tells your server; nothing is added to the game. The newest mover is on top. "
+                    + "Select any part of the text to copy it, or use the button. Positions are exact to about 4 units."),
+                WithMargin(_positionBox, new Thickness(0, 10, 0, 10)),
+                Row(Action(Primary("Copy X, Y, Z"), CopyPositionAsync), Action(Plain("Copy all"), () => CopyAsync(_positionBox.Text ?? ""))),
+            },
+        }), Card(new StackPanel {
             Children = {
                 Heading("Tools"),
                 Sub("Update or remove Imlight, or open the server's files."),

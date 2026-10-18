@@ -266,6 +266,10 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
         var degrees = initDir * (360f / byte.MaxValue) * ORIENTATION_TOLERANCE;
         var radians = degrees * (System.MathF.PI / 180f);
         _activeWizard.Orientation = new Vector3(0, 0, radians);
+
+        // For the Position card in ImlightManager.
+        Imlight.CoreLib.Game.Tools.PlayerPositions.Update(_activeWizard.CharId, _activeWizard.PlayerNameBehavior?.GetWizardName(),
+            _activeWizard.Zone, position.X, position.Y, position.Z, radians);
     }
 
     #endregion
