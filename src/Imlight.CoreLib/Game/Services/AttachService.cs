@@ -36,7 +36,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/10/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -51,6 +51,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -391,11 +392,13 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     }
 
     private ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP InternalZoneTransfer(string zoneName, string location) {
+        var hasAssignedOwner = ZoneInstanceOwners.TryGetOwner(_wizard.CharId, zoneName, out var assignedOwner);
         var zoneMsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = zoneName,
             DestinationLocation = location,
             SendToClient = false,
-            OwnerCharId = _wizard.CharId,
+            OwnerCharId = hasAssignedOwner ? assignedOwner : _wizard.CharId,
+            IsPrivate = hasAssignedOwner || ZoneInstanceOwners.IsAlwaysPrivate(zoneName),
         };
 
         return AskOtherService<ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP>(zoneMsg);

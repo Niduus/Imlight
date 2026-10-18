@@ -105,7 +105,9 @@ internal class CommandElixirProtocol : CommandProtocol {
                 }
             }
 
-            wizard.AddBadges(badges);
+            foreach (var badgeId in badges.Distinct()) {
+                Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_BADGEEVENT { Kind = BadgeEventKind.Award, BadgeId = badgeId });
+            }
 
             // The quest reward tables pick the piece for the wizard's school. No experience: the level is set above.
             if (gearTables.Count > 0) {

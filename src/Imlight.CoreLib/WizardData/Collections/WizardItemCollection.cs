@@ -141,8 +141,9 @@ public static class WizardItemCollection {
     public static bool RemoveItem(ulong charId, ulong itemId) {
         using var session = s_store.OpenSession();
 
-        // Get the item from the items collection.
+        // Get the item from the items collection, waiting for the index so a just-stored item is found too.
         var associatedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
             .FirstOrDefault(x => x.m_characterId == charId && x.m_globalID == itemId);
 
         // If the item was not found, return false.

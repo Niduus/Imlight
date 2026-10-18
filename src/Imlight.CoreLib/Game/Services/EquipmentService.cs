@@ -39,7 +39,7 @@
  * 
  * Created by: Joji
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -178,8 +178,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
     }
 
     private void UnEquipItem(GAME_5_PROTOCOL.MSG_EQUIPITEM message) {
-        var wizard = GetActiveWizard();
-        var wizEquipmentBehavior = wizard.EquipmentBehavior;
+        var wizEquipmentBehavior = GetActiveWizard().EquipmentBehavior;
         var account = GetActiveAccount();
         var itemId = message.ItemID;
 
@@ -195,6 +194,33 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        UnequipById(itemId, message.SlotName);
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEM))]
+    private void ReceiveUnequipItem(CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEM message) {
+        var wizEquipmentBehavior = GetActiveWizard().EquipmentBehavior;
+
+        try {
+            var slot = wizEquipmentBehavior.GetSlotOfItem(message.ItemId);
+            if (slot < wizEquipmentBehavior.SlotList.Count) {
+                UnequipById(message.ItemId, wizEquipmentBehavior.SlotList[slot].SlotType.ToString());
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Error while unequipping item {0}: {1} {2}",
+                Logger.Args(message.ItemId, ex.Message, ex.StackTrace));
+        }
+
+        Sender.Tell(new CHARACTER_103_PROTOCOL.MSG_UNEQUIPITEMRSP {
+            Success = !wizEquipmentBehavior.HasItemEquipped(message.ItemId)
+        });
+    }
+
+    private void UnequipById(ulong itemId, ByteString slotName) {
+        var wizard = GetActiveWizard();
+        var wizEquipmentBehavior = wizard.EquipmentBehavior;
+
         // This needs to be done before we unequip the item, because we need to know what slot it was in.
         var slot = wizEquipmentBehavior.GetSlotOfItem(itemId);
 
@@ -204,7 +230,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         if (!wizard.EquipmentToInventoryTransfer(itemId, out var removedEffects)) {
             // If this fails, there is perhaps desync between the server and the client.
             // Send a message to the client to assure them that the server does not have the item equipped.
-            SendUnequipItem(message.SlotName, slot, itemId);
+            SendUnequipItem(slotName, slot, itemId);
 
             Logger.Warning("Unequip failed on item {0}",
                 Logger.Args(itemId));
@@ -212,11 +238,11 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
-        SendUnequipItem(message.SlotName, slot, itemId);
+        SendUnequipItem(slotName, slot, itemId);
         SendRemoveEffects(removedEffects);
 
         // A manual unequip abandons any pending auto-remount.
-        if (Enum.TryParse<EquipmentSlotType>(message.SlotName, true, out var unequippedSlot)
+        if (Enum.TryParse<EquipmentSlotType>(slotName, true, out var unequippedSlot)
             && unequippedSlot == EquipmentSlotType.Mount
             && wizard.InteriorStowedMountId != 0) {
             wizard.InteriorStowedMountId = 0;

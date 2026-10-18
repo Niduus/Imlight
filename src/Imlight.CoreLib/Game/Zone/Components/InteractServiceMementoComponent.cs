@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/14/2026
  */
 
 using System;
@@ -333,6 +333,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             }
 
             foreach (var option in componentOptions) {
+                // The client echoes this index, so it has to be the flat index used to route it.
+                option.m_serviceIndex = (uint) allOptions.Count;
                 _optionIndexToComponent[allOptions.Count] = component;
                 allOptions.Add(option);
             }
