@@ -371,6 +371,9 @@ internal sealed partial class ServerManager(string installFolder) {
 
     internal string LogFolder => Path.Combine(ServerFolder, "logs");
 
+    // The server keeps where each wizard stands in the log folder too; it is not a log.
+    internal const string POSITIONS_FILE = "positions.txt";
+
     /// <summary>
     /// The log file the server is writing now, or null before it has written one.
     /// </summary>
@@ -378,7 +381,8 @@ internal sealed partial class ServerManager(string installFolder) {
         var logs = LogFolder;
 
         return Directory.Exists(logs)
-            ? new DirectoryInfo(logs).EnumerateFiles().Where(f => f.Extension is ".txt" or ".log")
+            ? new DirectoryInfo(logs).EnumerateFiles()
+                .Where(f => f.Extension is ".txt" or ".log" && !f.Name.Equals(POSITIONS_FILE, StringComparison.OrdinalIgnoreCase))
                 .OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
             : null;
     }

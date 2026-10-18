@@ -309,6 +309,10 @@ internal sealed class ManagerWindow : Window {
             Refresh();
             await LoadPlayAsync();
             _timer.Start();
+
+            // Play is the first tab, and choosing the tab that is already showing does not count as a change.
+            RefreshPosition();
+            _positionTimer.Start();
             await Guard(AutoUpdateAsync);
         };
         Closed += (_, _) => {
@@ -672,7 +676,7 @@ internal sealed class ManagerWindow : Window {
     private string _firstPositionXyz = "";
     private string _firstPositionRaw = "";
 
-    private string PositionFile => Path.Combine(_manager.LogFolder, "positions.txt");
+    private string PositionFile => Path.Combine(_manager.LogFolder, ServerManager.POSITIONS_FILE);
 
     private void RefreshPosition() {
         // Leave the text alone while it is being selected, so a copy is not cut short.
