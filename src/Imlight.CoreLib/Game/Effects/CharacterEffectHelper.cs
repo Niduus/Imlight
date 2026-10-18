@@ -221,8 +221,12 @@ internal static class CharacterEffectHelper {
         stats.m_powerPipBonusPercentAll += statistic.m_powerPipBonusPercent;
         stats.m_healBonusPercentAll += statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll += statistic.m_healIncBonusPercent;
+        stats.m_stunResistancePercent += statistic.m_stunResistancePercent;
 
-        if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
+        if (effectName.Contains("ArmorPiercing")) {
+            ApplyArmorPiercing(stats, effectName, statistic.m_armorPiercingBonusPercent);
+        }
+        else if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
             ApplyDamageIncrease(stats, effectName, statistic);
         }
         else if (effectName.Contains("Accuracy") && !effectName.Contains("Rating")) {
@@ -269,8 +273,12 @@ internal static class CharacterEffectHelper {
         stats.m_powerPipBonusPercentAll -= statistic.m_powerPipBonusPercent;
         stats.m_healBonusPercentAll -= statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll -= statistic.m_healIncBonusPercent;
+        stats.m_stunResistancePercent -= statistic.m_stunResistancePercent;
 
-        if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
+        if (effectName.Contains("ArmorPiercing")) {
+            ApplyArmorPiercing(stats, effectName, -statistic.m_armorPiercingBonusPercent);
+        }
+        else if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
             RemoveDamageIncrease(stats, effectName, statistic);
         }
         else if (effectName.Contains("Accuracy") && !effectName.Contains("Rating")) {
@@ -299,6 +307,16 @@ internal static class CharacterEffectHelper {
             else {
                 stats.m_blockRatingAll -= statistic.m_blockRating;
             }
+        }
+    }
+
+    private static void ApplyArmorPiercing(ServerWizGameStats stats, string effectName, float value) {
+        var school = effectName.Contains("All") ? null : ExtractSchoolName(effectName);
+        if (school is not null && MagicSchools.GetMagicSchool(school) is not null) {
+            ApplySchoolEffect(ref stats.m_apBonusPercent, school, value);
+        }
+        else {
+            stats.m_apBonusPercentAll += value;
         }
     }
 

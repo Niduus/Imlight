@@ -271,6 +271,26 @@ public static class WizardItemCollection {
     }
 
     /// <summary>
+    /// Saves an item's behaviors (pet stats and talents, jewel sockets and so on) over the stored copy.
+    /// </summary>
+    /// <param name="item">The item, as the server holds it now.</param>
+    /// <returns>True if the item was found and saved, false otherwise.</returns>
+    public static bool SaveItemBehaviors(WizClientObjectItem item) {
+        using var session = s_store.OpenSession();
+
+        var associatedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .FirstOrDefault(x => x.m_globalID == item.m_globalID && x.m_characterId == item.m_characterId);
+        if (associatedItem is null) {
+            return false;
+        }
+
+        associatedItem.m_inactiveBehaviors = item.m_inactiveBehaviors;
+        session.SaveChanges();
+
+        return true;
+    }
+
+    /// <summary>
     /// Adds an item to the deck with the specified deck ID and spell template ID.
     /// </summary>
     /// <param name="deckId">The ID of the deck.</param>

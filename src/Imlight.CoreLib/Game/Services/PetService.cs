@@ -44,6 +44,7 @@ using Imcodec.IO;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
@@ -147,6 +148,50 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         // TODO: validate gold cost against message.Gold
         // For now, just hatch immediately.
         HatchEgg(wizard, egg);
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS))]
+    private void ReceivePetFeedHappiness(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS message) {
+        var wizard = GetActiveWizard();
+        Logger.Information("Pet feeding: snack {0}, whole stack {1}, happiness {2}.",
+            Logger.Args(message.SnackTemplateID, message.FeedStack, message.Happiness));
+
+        var pet = PetCare.GetWornPet(wizard);
+        var snack = wizard.PetSnackBehavior.GetSnack(message.SnackTemplateID);
+        var count = message.FeedStack != 0 && snack is not null ? snack.m_quantity : 1;
+        var problem = PetCare.Feed(wizard, pet, message.SnackTemplateID, count, SendToSocket, out var growth);
+        if (problem is not null) {
+            InformGameClient(problem);
+
+            return;
+        }
+
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS {
+            SnackTemplateID = message.SnackTemplateID,
+            FeedStack = message.FeedStack,
+            Happiness = PetProgress.GetBehavior(pet)?.m_happiness ?? message.Happiness,
+        });
+        InformGameClient(PetCare.Summary(pet, growth));
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP))]
+    private void ReceivePetGameSkip(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP message) {
+        // Logged so the next log shows what the game sends here; feeding works through the snack window and .pet feed.
+        Logger.Information("Pet game skip: pet {0}, game {1}, bonus {2}.",
+            Logger.Args(message.GlobalID, message.Game, message.Bonus));
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED))]
+    private void ReceivePetGameSkipFeed(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED message) {
+        Logger.Information("Pet game skip and feed: pet {0}, game {1}, data {2}.",
+            Logger.Args(message.GlobalID, message.Game, message.Data));
+    }
+
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
+    private void ReceivePetGameJoin(PET_9_PROTOCOL.MSG_PETGAMEJOIN message) {
+        Logger.Information("Pet game join: game {0}, track {1}.", Logger.Args(message.Game, message.Track));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = message.Game, Success = 0 });
+        InformGameClient("Pet games are not in yet. Feed snacks from the snack window or with .pet feed to level your pet.");
     }
 
     private void InitializeEggs(Wizard wizard) {

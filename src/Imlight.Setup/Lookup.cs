@@ -105,6 +105,15 @@ internal sealed class Lookup {
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
         Command("Level 50 Elixir", ".elixir50", QA, "Like the crown shop's Level 50 Elixir, for free: sets your character to level 50 with its training points, finishes the main quests through Dragonspyre with the spells they teach, and gives the Dragonspyre quest gear for your school. Log out and back in to see everything."),
         Command("Shadow pip slots", ".sp slots <number>", QA, "Sets how many shadow pip slots your character has, from 1 to 8, such as .sp slots 2 for the second slot. Log out and back in to see it."),
+        Command("Pet info", ".pet info", QA, "Shows the level, XP, stats and talents of the pet you are wearing."),
+        Command("Feed your pet", ".pet feed <snack>", QA, "Feeds one snack from your snack bag to the pet you are wearing, by name or ID, for pet XP and stats. .pet feedall <snack> feeds the whole stack. Add snacks with .mod addsnack <id>."),
+        Command("Pet XP", ".pet xp <amount>", QA, "Gives the pet you are wearing that much pet XP. It levels up and shows new talents on the way."),
+        Command("Pet level", ".pet level <level>", QA, "Sets the pet you are wearing to a level, 1 to 7 or Baby, Teen, Adult, Ancient, Epic, Mega or Ultra, with a new talent for each level up to Mega."),
+        Command("Pet talent", ".pet talent <name>", QA, "Gives the pet you are wearing a talent, such as .pet talent Pain-Giver. .pet untalent <name> takes one off."),
+        Command("Max pet stats", ".pet maxstats", QA, "Raises every stat of the pet you are wearing to its maximum."),
+        Command("Jewels you wear", ".jewel list", QA, "Lists the sockets on the gear and pet you are wearing and what is in them."),
+        Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),
+        Command("Clear jewels", ".jewel clear", QA, "Empties every socket on the gear and pet you are wearing."),
 
         // Battles.
         Command("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),

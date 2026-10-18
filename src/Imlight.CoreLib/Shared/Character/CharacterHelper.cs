@@ -80,6 +80,10 @@ internal static class CharacterHelper {
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), activatedEffects.Count, template.m_objectName));
         }
 
+        // Pet talents and socketed jewels, on top of the gear.
+        EquipmentExtras.Forget(wizard);
+        EquipmentExtras.Refresh(wizard);
+
         // Check for level/XP mismatches, but don't modify XP on login.
         // Any mismatch will be corrected on the next XP gain.
         var xp = wizard.MagicSchoolBehavior.ExperiencePoints;
