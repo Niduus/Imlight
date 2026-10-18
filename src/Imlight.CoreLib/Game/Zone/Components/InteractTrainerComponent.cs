@@ -197,7 +197,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             }
 
             TestTrainerKind? kind = isExtractCopy ? TestTrainerKind.Extracts
-                : isEnchantment ? TestTrainerKind.Enchantments
+                // Treasure-card-only enchantments (Sniper, Tough...) come from cards, not from Mr. Lincoln.
+                : isEnchantment ? (spell.m_Treasure ? null : TestTrainerKind.Enchantments)
                 : s_vanillaShadowSpells.Contains(name) || (!isBoss && !spell.m_Treasure && IsShadowSpell(spell, name)) ? TestTrainerKind.Shadow
                 : isBoss && !spell.m_Treasure ? TestTrainerKind.Boss
                 : null;
