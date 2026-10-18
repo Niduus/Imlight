@@ -144,7 +144,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         if (IsInHorizontalRadius(playerObj, interactionRadius)
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
-            SendActorServiceOptions(playerActor);
+            SendActorServiceOptions(playerActor, nextSection: true);
         }
         else if (!IsInHorizontalRadius(playerObj, interactionRadius)
                  && _playersInInteractionRange.ContainsKey(playerId)) {
@@ -258,12 +258,19 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
-    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0) {
+    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false) {
         var queryCharacterMsg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
         var wizard = playerActor
             .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(queryCharacterMsg)
             .Result
             .Wizard;
+
+        // Each time a player walks up to a test trainer with a long list, it shows the next section of it.
+        if (nextSection) {
+            foreach (var trainer in Entity.GetComponentsOfType<InteractTrainerComponent>()) {
+                trainer.NextSection(wizard);
+            }
+        }
 
         RefreshServiceMomento(wizard);
 

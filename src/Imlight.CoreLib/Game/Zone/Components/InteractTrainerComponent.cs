@@ -73,27 +73,29 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             || TestTrainerKindOf(goTemplate) is not null);
 
     /// <summary>
-    /// A test trainer teaches a whole kind of spell for free, at any level: Mr. Lincoln in Ravenwood every
-    /// enchantment, Monstrologist Burke in Ravenwood every Extract spell, Mellori in Ravenwood the Shadow spells.
+    /// A test trainer teaches a whole kind of spell for free, at any level. In Ravenwood: Mr. Lincoln every
+    /// enchantment, Monstrologist Burke every Extract spell, Mellori the Shadow spells and Merle Ambrose the spells only
+    /// monsters and bosses cast.
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
-    internal enum TestTrainerKind { Enchantments, Extracts, Shadow }
+    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss }
 
     /// <summary>
-    /// Finds which test trainer an NPC is: Mr. Lincoln, Monstrologist Burke (WC-RAV-NPC13) or Mellori (WC-RAV-NPC12),
-    /// both of the last two only in Ravenwood. (Abner in the Commons only shows one kind of service, so he keeps the
-    /// treasure card shop.)
+    /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13), Mellori
+    /// (WC-RAV-NPC12) or Merle Ambrose (WC-RAV-NPC14). (Abner in the Commons only shows one kind of service, so he
+    /// keeps the treasure card shop.)
     /// </summary>
     /// <returns>The kind of spells the NPC teaches, or null for any other NPC.</returns>
     internal static TestTrainerKind? TestTrainerKindOf(GameObjectTemplate template) {
         var objectName = template.m_objectName.ToString();
-        if (objectName == "WC-RAV-NPC13") {
-            return TestTrainerKind.Extracts;
-        }
-
-        if (objectName == "WC-RAV-NPC12") {
-            return TestTrainerKind.Shadow;
+        switch (objectName) {
+            case "WC-RAV-NPC13":
+                return TestTrainerKind.Extracts;
+            case "WC-RAV-NPC12":
+                return TestTrainerKind.Shadow;
+            case "WC-RAV-NPC14":
+                return TestTrainerKind.Boss;
         }
 
         var names = $"{objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
@@ -102,57 +104,132 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     // The Shadow spells players learn (template names): Shadow Shrike, Sentinel, Seraph and Trickster, the Dark Fiend,
-    // Dark Nova and Dark Shepherd creatures, and the Shadow Shield, Shadow Trap, Shadowblade and Shadowspear cards.
-    // Every other Shadow school template is a monster or boss fight spell.
+    // Dark Nova and Dark Shepherd creatures, the Shadow Shield, Shadow Trap, Shadowblade and Shadowspear cards, and
+    // Justiceblade. They head Mellori's list.
     private static readonly HashSet<string> s_vanillaShadowSpells = [
         "Shadow Self DPS", "Shadow Self Tank", "Shadow Self Heal", "Shadow Self Crit",
         "Shadow Creature Fiend", "Shadow Creature Big Bomb", "Shadow Creature Healer",
-        "Shadow Shield", "Shadow Trap", "Shadowblade", "Shadowspear",
+        "Shadow Shield", "Shadow Trap", "Shadowblade", "Shadowspear", "Balanceblade Shadowblade",
     ];
 
-    private static readonly Dictionary<TestTrainerKind, System.Lazy<List<NPCSpellEntry>>> s_testSpells = new() {
-        [TestTrainerKind.Enchantments] = new(() => BuildTestSpells(TestTrainerKind.Enchantments)),
-        [TestTrainerKind.Extracts]     = new(() => BuildTestSpells(TestTrainerKind.Extracts)),
-        [TestTrainerKind.Shadow]       = new(() => BuildTestSpells(TestTrainerKind.Shadow)),
+    // Spell folders that hold monster and boss fight spells.
+    private static readonly string[] s_bossFolders = [
+        "Fight Specific/", "Mobs/", "CombatTrigger", "Gauntlet", "DisposableDungeon",
+    ];
+
+    // Folders of spells that are not for battle or that only work in one place.
+    private static readonly string[] s_skippedFolders = [
+        "Test/", "Gardening", "Fishing", "Cantrip", "Castle", "WhirlyBurly", "Battleground", "Sherlock", "Rhoshambo",
+        "Sigil", "PetPowers", "Tournament", "MonsterMagic", "Minion Specific",
+    ];
+
+    private static readonly HashSet<string> s_combatSchools = new(System.StringComparer.OrdinalIgnoreCase) {
+        "Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow",
     };
+
+    private static readonly System.Lazy<Dictionary<TestTrainerKind, List<NPCSpellEntry>>> s_testSpells
+        = new(BuildTestSpells, System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
     // The Extract spells (Extract Undead and the rest) are templates named CollectEssence<Creature>; the ones with a
     // number after the name are what an enchanted card turns into.
     private static bool IsExtractSpell(string name)
         => name.StartsWith("CollectEssence", System.StringComparison.Ordinal) && !name.Contains(' ');
 
-    private static bool Teaches(TestTrainerKind kind, SpellTemplate spell, string name) => kind switch {
-        TestTrainerKind.Enchantments => !IsExtractSpell(name)
-            && (Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) || (string) spell.m_sTypeName == "Enchantment"),
-        TestTrainerKind.Extracts => IsExtractSpell(name),
-        _ => s_vanillaShadowSpells.Contains(name),
-    };
+    private static bool IsBossSpell(string path, string name)
+        => s_bossFolders.Any(folder => path.Contains(folder, System.StringComparison.OrdinalIgnoreCase))
+            || System.Text.RegularExpressions.Regex.IsMatch(name, @"\bMOB\b|- Mob\b|\bBoss\b|RAID");
 
-    private static List<NPCSpellEntry> BuildTestSpells(TestTrainerKind kind) {
-        var entries = new List<NPCSpellEntry>();
-        var seen = new HashSet<string>();
-        foreach (var (_, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
+    private static bool IsShadowSpell(SpellTemplate spell, string name)
+        => (string) spell.m_sMagicSchoolName == "Shadow" || name.Contains("Shadow", System.StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Builds every test trainer's list at once, so a spell is taught by one trainer only and each card name shows
+    /// once (the many copies the game has of a spell share its name). Lists are sorted by name.
+    /// </summary>
+    private static Dictionary<TestTrainerKind, List<NPCSpellEntry>> BuildTestSpells() {
+        var templateIds = new Dictionary<string, uint>(System.StringComparer.OrdinalIgnoreCase);
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            templateIds.TryAdd(location.m_filename, location.m_id);
+        }
+
+        // One candidate per spell template that can be learned and cast in battle.
+        var candidates = new List<(TestTrainerKind Kind, string Shown, int Rank, uint TemplateId, string Name)>();
+        var normalNames = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+        var normalOtherSchoolNames = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+        foreach (var (path, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
             string name = spell.m_name;
-            if (string.IsNullOrEmpty(name) || spell.m_Treasure || name.EndsWith(" TC")
-                || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
-                || !Teaches(kind, spell, name)
-                || !seen.Add(name)
-                || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } learnable) {
+            string displayKey = spell.m_displayName;
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(displayKey) || name.EndsWith(" TC")
+                || !s_combatSchools.Contains((string) spell.m_sMagicSchoolName ?? "")
+                || s_skippedFolders.Any(folder => path.Contains(folder, System.StringComparison.OrdinalIgnoreCase))
+                || !templateIds.TryGetValue(path, out var templateId)) {
                 continue;
             }
 
-            entries.Add(new NPCSpellEntry { TemplateID = learnable.m_templateID, RequiredSpellID = 0, Level = 1 });
+            var shown = Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(displayKey);
+            if (string.IsNullOrWhiteSpace(shown)) {
+                shown = displayKey;
+            }
+
+            // Internal helper spells: no type, placeholder names, tests and scripted defeats.
+            string typeName = spell.m_sTypeName;
+            if (string.IsNullOrEmpty(typeName) || typeName == "None" || !shown.Any(char.IsUpper)
+                || shown.Contains("Test", System.StringComparison.OrdinalIgnoreCase) || shown.Contains("zappy")
+                || name.Contains("Defeat", System.StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            var isBoss = IsBossSpell(path, name);
+            var isEnchantment = Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) || (string) spell.m_sTypeName == "Enchantment";
+            if (!isBoss && !spell.m_Treasure && !name.Contains(" - ")) {
+                normalNames.Add(shown);
+                if (!IsShadowSpell(spell, name)) {
+                    normalOtherSchoolNames.Add(shown);
+                }
+            }
+
+            TestTrainerKind? kind = IsExtractSpell(name) ? TestTrainerKind.Extracts
+                : isEnchantment ? TestTrainerKind.Enchantments
+                : s_vanillaShadowSpells.Contains(name) || (!isBoss && !spell.m_Treasure && IsShadowSpell(spell, name)) ? TestTrainerKind.Shadow
+                : isBoss && !spell.m_Treasure ? TestTrainerKind.Boss
+                : null;
+            if (kind is null) {
+                continue;
+            }
+
+            // The plainest copy of a spell wins: a listed Shadow spell, then the one that is not a treasure card,
+            // has no " - " variant suffix and has the shortest name.
+            var rank = (s_vanillaShadowSpells.Contains(name) ? 0 : 1000) + (spell.m_Treasure ? 500 : 0)
+                + (name.Contains(" - ") ? 200 : 0) + name.Length;
+            candidates.Add((kind.Value, shown, rank, templateId, name));
         }
 
-        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(entries.Count, kind));
+        var result = new Dictionary<TestTrainerKind, List<NPCSpellEntry>>();
+        var taken = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+        foreach (var kind in new[] { TestTrainerKind.Extracts, TestTrainerKind.Enchantments, TestTrainerKind.Shadow, TestTrainerKind.Boss }) {
+            var picks = candidates
+                .Where(c => c.Kind == kind)
+                // Merle only teaches what players can't learn anywhere else.
+                .Where(c => kind != TestTrainerKind.Boss || !normalNames.Contains(c.Shown))
+                // Shadow copies of other schools' spells (a Shadow Blizzard) would look like the normal card.
+                .Where(c => kind != TestTrainerKind.Shadow || s_vanillaShadowSpells.Contains(c.Name) || !normalOtherSchoolNames.Contains(c.Shown))
+                .GroupBy(c => c.Shown, System.StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.OrderBy(c => c.Rank).First())
+                .Where(c => taken.Add(c.Shown))
+                .OrderBy(c => kind == TestTrainerKind.Shadow && s_vanillaShadowSpells.Contains(c.Name) ? 0 : 1)
+                .ThenBy(c => c.Shown, System.StringComparer.OrdinalIgnoreCase);
 
-        return entries;
+            result[kind] = [.. picks.Select(c => new NPCSpellEntry { TemplateID = c.TemplateId, RequiredSpellID = 0, Level = 1 })];
+            Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[kind].Count, kind));
+        }
+
+        return result;
     }
 
     public override void OnStart() {
         if (Entity.Template is GameObjectTemplate testTrainer && TestTrainerKindOf(testTrainer) is { } kind) {
             IsTestTrainer = true;
-            SpellInventory = s_testSpells[kind].Value;
+            SpellInventory = s_testSpells.Value[kind];
             InitializeServiceBases();
 
             return;
@@ -171,8 +248,51 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         InitializeServiceBases();
     }
 
-    // Every enchantment (about 47) fits in one list; the game disconnects when an NPC offers hundreds.
+    // About six pages of the training window; the game disconnects when an NPC offers hundreds.
     private const int TEST_TRAINER_MAX_OPTIONS = 50;
+
+    // Where each wizard's current section starts in the list of spells they don't know yet, by character id.
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, int> _sectionStart = new();
+
+    /// <summary>
+    /// The spells this trainer offers a wizard, as indexes into <see cref="SpellInventory"/>. The game disconnects
+    /// when an NPC offers hundreds of options at once, so a test trainer offers one section of up to 50 spells the
+    /// wizard doesn't know yet; walking away and back shows the next section.
+    /// </summary>
+    private IEnumerable<int> OfferedIndexes(Wizard wizard) {
+        if (!IsTestTrainer) {
+            return Enumerable.Range(0, _serviceOptionBases.Count);
+        }
+
+        var unknown = UnknownIndexes(wizard);
+        var start = _sectionStart.GetValueOrDefault(wizard.CharId);
+        if (start >= unknown.Count) {
+            start = 0;
+        }
+
+        return unknown.Skip(start).Take(TEST_TRAINER_MAX_OPTIONS);
+    }
+
+    private List<int> UnknownIndexes(Wizard wizard)
+        => [.. Enumerable.Range(0, _serviceOptionBases.Count)
+            .Where(i => !wizard.SpellbookBehavior.HasSpell((uint) SpellInventory[i].TemplateID))];
+
+    /// <summary>
+    /// Moves a wizard on to the next section of a test trainer's list, back to the first after the last. The first
+    /// visit shows the first section.
+    /// </summary>
+    internal void NextSection(Wizard wizard) {
+        if (!IsTestTrainer || wizard is null) {
+            return;
+        }
+
+        var unknownCount = UnknownIndexes(wizard).Count;
+        _sectionStart.AddOrUpdate(wizard.CharId, 0, (_, start) => {
+            var next = start + TEST_TRAINER_MAX_OPTIONS;
+
+            return next >= unknownCount ? 0 : next;
+        });
+    }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (wizard is null) {
@@ -184,13 +304,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         // We must now edit each service option to reflect the player's status.
         List<ServiceOptionBase> newServiceOptions = [];
 
-        for (int i = 0; i < _serviceOptionBases.Count; i++) {
-            // The game disconnects when an NPC offers hundreds of options at once, so the test trainer offers the
-            // first few spells the wizard doesn't know yet; training one brings the next into the list.
-            if (IsTestTrainer && newServiceOptions.Count >= TEST_TRAINER_MAX_OPTIONS) {
-                break;
-            }
-
+        foreach (var i in OfferedIndexes(wizard)) {
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
             var trainerSpellId = (uint) SpellInventory[i].TemplateID;
             var spellId = IsTestTrainer ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
