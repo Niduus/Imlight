@@ -2178,9 +2178,16 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
                     return;
                 }
 
-                var mobAdjectives = gameObjectTemplate.m_adjectiveList;
-                adjectivesOfDefeatedMobs.AddRange(mobAdjectives.Select(a => (string)a));
-                adjectivesPerDefeatedMob.Add([.. mobAdjectives]);
+                var mobAdjectives = gameObjectTemplate.m_adjectiveList.Select(a => (string) a).ToList();
+
+                // A creature the randomizer swapped in counts for quests as the creature it replaced, too.
+                if (Imlight.CoreLib.Game.Randomization.Randomizer.TryTakeReplacedCreature(circle.ParticipantObject.m_globalID, out var replacedTemplateId)
+                    && CoreObjectFactory.GetCoreTemplate(replacedTemplateId) is GameObjectTemplate replacedTemplate) {
+                    mobAdjectives = [.. mobAdjectives.Union(replacedTemplate.m_adjectiveList.Select(a => (string) a))];
+                }
+
+                adjectivesOfDefeatedMobs.AddRange(mobAdjectives);
+                adjectivesPerDefeatedMob.Add(mobAdjectives);
                 templateIdsOfDefeatedMobs.Add(gameObjectTemplate.m_templateID);
             }
         });

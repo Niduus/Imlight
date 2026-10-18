@@ -446,7 +446,7 @@ public class CombatDuelSubCircle {
     // [Randomizer] RandomizeShadowPips: each wizard's shadow pip limit is rolled (1 to 5) from the seed, and
     // each creature gets shadow magic at random.
     private static readonly bool s_randomizeShadowPips
-        = Randomization.Randomizer.Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeShadowPips", false);
+        = Randomization.Randomizer.Enabled && !Randomization.Randomizer.Tame && ConfigurationManager.GetValue("Randomizer.RandomizeShadowPips", false);
     private const int RANDOM_SHADOW_LIMIT_MAX = 5;
     private bool? _creatureRolledShadowMagic;
 
