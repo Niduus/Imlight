@@ -35,7 +35,7 @@ namespace Imlight.CoreLib.Game.World;
 internal static class TrainerHallDoor {
 
     private static readonly bool s_enabled = ConfigurationManager.GetValue("TrainerHall.Enabled", true);
-    private static readonly string s_doorZone = ConfigurationManager.GetValue("TrainerHall.DoorZone", "WizardCity/WC_Ravenwood");
+    private static readonly string s_doorZone = ConfigurationManager.GetValue("TrainerHall.DoorArea", "WizardCity/WC_Hub");
     private static readonly float s_doorX = ConfigurationManager.GetValue("TrainerHall.DoorX", 560f);
     private static readonly float s_doorY = ConfigurationManager.GetValue("TrainerHall.DoorY", 548f);
     private static readonly float s_doorZ = ConfigurationManager.GetValue("TrainerHall.DoorZ", 0f);
