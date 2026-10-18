@@ -1389,13 +1389,23 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Duel.m_flatParticipantList.Add(participant);
     });
 
-    private void DoPipGain() => EnactActionOnSubCircles(circle => {
-        if (!circle.AddedToDuel || !circle.IsAlive) {
-            return;
-        }
+    private void DoPipGain() {
+        // Archmastery fills fastest for whoever has the most of it in the battle.
+        var highestArchmastery = 0f;
+        EnactActionOnSubCircles(circle => {
+            if (circle.AddedToDuel && circle.IsAlive) {
+                highestArchmastery = Math.Max(highestArchmastery, circle.ArchmasteryRating);
+            }
+        });
 
-        circle.DoPipGain();
-    });
+        EnactActionOnSubCircles(circle => {
+            if (!circle.AddedToDuel || !circle.IsAlive) {
+                return;
+            }
+
+            circle.DoPipGain(highestArchmastery);
+        });
+    }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATINSTAWIN))]
     private void ReceiveCheatInstaWin(COMBAT_106_PROTOCOL.MSG_CHEATINSTAWIN message) {

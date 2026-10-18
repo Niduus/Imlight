@@ -128,9 +128,15 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // treasure card tab's category name is not known, and a tab the server doesn't recognize got no cards.
         // One answer that is too big makes the game drop the connection (all 5218 cards did), so the list is
         // kept under MAX_ENTRIES with the treasure cards spread over every school.
-        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) ? [] : houseEntries ?? [];
+        // The treasure card tab asks once per school (the category is the school's name hash), so a school
+        // gets only its own cards.
+        var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
+        List<AuctionHouseEntry> houseList = IsTreasureCardCategory(category) || schoolCards.Count > 0 ? [] : houseEntries ?? [];
+        var cards = schoolCards.Count > 0 ? schoolCards : s_shownTreasureCards.Value;
         var room = Math.Max(0, Math.Min(s_treasureCardLimit, MAX_ENTRIES - houseList.Count));
-        List<AuctionHouseEntry> entryList = [.. houseList.Take(MAX_ENTRIES), .. s_shownTreasureCards.Value.Take(room)];
+        List<AuctionHouseEntry> entryList = [.. houseList.Take(MAX_ENTRIES), .. cards.Take(room).Select(card => card.Entry)];
+
+        Logger.Debug("Bazaar: sending {0} entries ({1} for this school).", Logger.Args(entryList.Count, schoolCards.Count));
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
@@ -365,7 +371,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static bool IsTreasureCardCategory(uint category) => s_treasureCategories.Contains(category);
 
     private static string CategoryName(uint category)
-        => s_treasureCategoryNames.Concat(s_otherCategoryNames).FirstOrDefault(name => CategoryHashes(name).Contains(category));
+        => Enum.IsDefined(typeof(Imlight.CoreLib.Shared.Behaviors.MagicSchool), (int) category)
+            ? $"{(Imlight.CoreLib.Shared.Behaviors.MagicSchool) (int) category} treasure cards"
+            : s_treasureCategoryNames.Concat(s_otherCategoryNames).FirstOrDefault(name => CategoryHashes(name).Contains(category));
 
     // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
     private const int MAX_ENTRIES = 1000;
@@ -374,20 +382,25 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     // The order cards are shown in: one from each school in turn, cheapest first, so a short list still
     // has every school.
-    private static readonly Lazy<List<AuctionHouseEntry>> s_shownTreasureCards = new(() => {
+    private static readonly Lazy<List<BazaarTreasureCard>> s_shownTreasureCards = new(() => {
         var bySchool = s_treasureCards.Value.Values
             .GroupBy(card => card.School)
             .Select(group => group.OrderBy(card => card.Entry.m_buyPrice).ThenBy(card => card.SpellName).ToList())
             .ToList();
-        var shown = new List<AuctionHouseEntry>();
+        var shown = new List<BazaarTreasureCard>();
         for (var i = 0; bySchool.Any(group => i < group.Count); i++) {
-            shown.AddRange(bySchool.Where(group => i < group.Count).Select(group => group[i].Entry));
+            shown.AddRange(bySchool.Where(group => i < group.Count).Select(group => group[i]));
         }
 
         return shown;
     });
 
-    private sealed record BazaarTreasureCard(AuctionHouseEntry Entry, string SpellName, uint SpellTemplateId, string School);
+    private sealed record BazaarTreasureCard(AuctionHouseEntry Entry, string SpellName, uint SpellTemplateId, string School) {
+        // The id the game uses for the school (Fire is 2343174), which is what the treasure card tab asks for.
+        public uint SchoolHash { get; } = Enum.TryParse<Imlight.CoreLib.Shared.Behaviors.MagicSchool>(School, true, out var school)
+            ? (uint) school
+            : 0;
+    }
 
     private static readonly Lazy<Dictionary<ulong, BazaarTreasureCard>> s_treasureCards = new(BuildTreasureCards);
 

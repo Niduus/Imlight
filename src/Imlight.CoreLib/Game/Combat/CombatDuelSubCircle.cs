@@ -310,7 +310,18 @@ public class CombatDuelSubCircle {
         }
     }
 
-    internal void DoPipGain() {
+    /// <summary>
+    /// The round's pips, then Archmastery. <paramref name="highestArchmastery"/> is the most Archmastery anyone
+    /// in the battle has.
+    /// </summary>
+    internal void DoPipGain(float highestArchmastery) {
+        GainPips();
+        if (ArchmasteryActive) {
+            ArchmasteryRound(highestArchmastery);
+        }
+    }
+
+    private void GainPips() {
         ApplyOverdoseOnce();
 
         // Shadow pips sit in their own slots, so they roll whether or not the normal slots are full.
@@ -319,7 +330,9 @@ public class CombatDuelSubCircle {
         // If the participant has the maximum amount of pips, do not gain any more (but maybe convert one).
         var pipCount = CombatParticipant.m_pipCount;
         if (TotalPips(pipCount) >= MAX_PIP_COUNT) {
-            ConvertToSchoolPip();
+            if (!ArchmasteryActive) {
+                ConvertToSchoolPip();
+            }
 
             return;
         }
@@ -333,7 +346,8 @@ public class CombatDuelSubCircle {
         }
         // GainSchoolPips: the archmastery gauge fills by SchoolPipChance each round; once full, the next pip
         // comes as a school pip, no stats needed.
-        if (ArchmasterySchool != 0 && _schoolGauge < GAUGE_FULL) {
+        var schoolGauge = ArchmasterySchool != 0 && !ArchmasteryActive;
+        if (schoolGauge && _schoolGauge < GAUGE_FULL) {
             _schoolGauge = Math.Min(GAUGE_FULL, _schoolGauge + s_schoolPipChance);
         }
 
@@ -342,7 +356,7 @@ public class CombatDuelSubCircle {
                 return;
             }
 
-            if (ArchmasterySchool != 0 && _schoolGauge >= GAUGE_FULL && SchoolPipTarget() is { } gainSchool) {
+            if (schoolGauge && _schoolGauge >= GAUGE_FULL && SchoolPipTarget() is { } gainSchool) {
                 SetSchoolPips(pipCount, gainSchool, (byte) (SchoolPips(pipCount, gainSchool)!.Value + 1));
                 _schoolGauge = 0;
 
@@ -514,13 +528,13 @@ public class CombatDuelSubCircle {
     /// <summary>
     /// The school the archmastery gauge fills toward, as the client wants it (0 when none).
     /// </summary>
-    internal uint ArchmasterySchool => !s_gainSchoolPips || _wizard is null ? 0
+    internal uint ArchmasterySchool => !(s_gainSchoolPips || ArchmasteryActive) || _wizard is null ? 0
         : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
 
     // The school picked for the gauge in the equipped deck, or 0 when none was picked.
     private uint _deckArchmasterySchool;
 
-    internal static bool SchoolGaugeOn => s_gainSchoolPips;
+    internal static bool SchoolGaugeOn => s_gainSchoolPips || s_archmastery;
 
     private uint DeckArchmasterySchool() {
         var equipment = _wizard?.EquipmentBehavior;
@@ -533,7 +547,111 @@ public class CombatDuelSubCircle {
             : 0;
     }
 
-    internal float ArchmasteryPoints => ArchmasterySchool == 0 ? 0 : _schoolGauge;
+    internal float ArchmasteryPoints => ArchmasterySchool == 0 ? 0
+        : ArchmasteryActive ? Math.Min(_archmasteryPower, 1f) * GAUGE_FULL
+        : _schoolGauge;
+
+    // [Archmastery] Like the game: wizards gain Archmastery from level 50 (the game's level table), and their
+    // Power Orb fills each round, fastest for whoever has the most Archmastery in the battle. Each point of
+    // power turns a power pip into a school pip; with 3 points left, a white pip becomes a power pip.
+    private static readonly bool s_archmastery = ConfigurationManager.GetValue("Archmastery.Enabled", true);
+    // Gives wizards under level 50 the level 50 Archmastery, so they get school pips too.
+    private static readonly bool s_archmasteryAllLevels = ConfigurationManager.GetValue("Archmastery.AllLevels", false);
+    // Extra Archmastery for every wizard (stands in for gear and jewels).
+    private static readonly float s_archmasteryBonus
+        = Math.Max(0f, ConfigurationManager.GetValue("Archmastery.BonusRating", 0f));
+    // How much the fastest orb fills in a round (1 = a school pip every round). 0 uses the game's own number.
+    private static readonly float s_archmasteryFillOverride
+        = Math.Clamp(ConfigurationManager.GetValue("Archmastery.FillPerRound", 0f), 0f, 1f);
+    private const int ARCHMASTERY_LEVEL = 50;
+    private const float ARCHMASTERY_MAX_POWER = 7f;
+    private const float DEFAULT_ARCHMASTERY_FILL = 0.5f;
+    private const float DEFAULT_POWER_PIP_COST = 3f;
+    private float _archmasteryPower;
+    private float? _archmasteryRating;
+
+    private bool ArchmasteryActive => s_archmastery && _wizard is not null && ArchmasteryRating > 0;
+
+    /// <summary>
+    /// This wizard's Archmastery: the game's level table (0 under level 50) plus [Archmastery] BonusRating.
+    /// Creatures have none.
+    /// </summary>
+    internal float ArchmasteryRating {
+        get {
+            if (!s_archmastery || _wizard is null || ParticipantGameStats is null) {
+                return 0;
+            }
+
+            return _archmasteryRating ??= ComputeArchmasteryRating();
+        }
+    }
+
+    private float ComputeArchmasteryRating() {
+        try {
+            var school = (MagicSchool) ParticipantGameStats.m_schoolID;
+            var level = ParticipantGameStats.Level;
+            var rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, level)?.m_archmastery ?? 0f;
+            if (rating <= 0 && (level >= ARCHMASTERY_LEVEL || s_archmasteryAllLevels)) {
+                // The level table may have no number for this level; the level 50 one stands in.
+                rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, ARCHMASTERY_LEVEL)?.m_archmastery ?? 0f;
+                if (rating <= 0) {
+                    rating = 1f;
+                }
+            }
+
+            if (level < ARCHMASTERY_LEVEL && !s_archmasteryAllLevels) {
+                rating = 0;
+            }
+
+            rating += s_archmasteryBonus;
+            Logger.Debug("Archmastery for {0} (level {1}): {2}.", Logger.Args(_wizard.CharId, level, rating));
+
+            return rating;
+        }
+        catch (Exception e) {
+            Logger.Error("Archmastery could not be worked out for {0}: {1}", Logger.Args(_wizard.CharId, e.Message));
+
+            return 0;
+        }
+    }
+
+    private void ArchmasteryRound(float highest) {
+        var (fillMax, powerPipCost) = ArchmasteryNumbers();
+        var share = highest > 0 ? Math.Clamp(ArchmasteryRating / highest, 0f, 1f) : 1f;
+        _archmasteryPower = Math.Min(ARCHMASTERY_MAX_POWER, _archmasteryPower + fillMax * share);
+
+        // Power pips turn into school pips first, a point of power each.
+        var pipCount = CombatParticipant.m_pipCount;
+        while (_archmasteryPower >= 1f && pipCount.m_powerPips > 0 && SchoolPipTarget() is { } school) {
+            pipCount.m_powerPips--;
+            SetSchoolPips(pipCount, school, (byte) (SchoolPips(pipCount, school)!.Value + 1));
+            _archmasteryPower -= 1f;
+        }
+
+        // Then, with enough power left, a white pip turns into a power pip.
+        if (_archmasteryPower >= powerPipCost && pipCount.m_genericPips > 0) {
+            pipCount.m_genericPips--;
+            pipCount.m_powerPips++;
+            _archmasteryPower -= powerPipCost;
+        }
+    }
+
+    /// <summary>
+    /// The fastest fill per round and the power a white pip costs, in school pips (1 = one school pip),
+    /// from the game's WizStatisticEffectConfig when it has them.
+    /// </summary>
+    private static (float FillMax, float PowerPipCost) ArchmasteryNumbers() {
+        var config = Imlight.CoreLib.Game.Effects.WizStatisticEffectConfigLoader.Config;
+        var cost = config?.m_archmasteryConversionCost ?? 0f;
+        var fill = s_archmasteryFillOverride > 0 ? s_archmasteryFillOverride
+            : cost > 0 && config.m_archmasteryFillRateMax > 0 ? Math.Min(1f, config.m_archmasteryFillRateMax / cost)
+            : DEFAULT_ARCHMASTERY_FILL;
+        var powerPipCost = cost > 0 && config.m_archmasteryPowerPipCost > 0
+            ? config.m_archmasteryPowerPipCost / cost
+            : DEFAULT_POWER_PIP_COST;
+
+        return (fill, powerPipCost);
+    }
 
     /// <summary>
     /// Fills in what the client needs to lay out shadow pip slots and draw the shadow gauge. Wizards get

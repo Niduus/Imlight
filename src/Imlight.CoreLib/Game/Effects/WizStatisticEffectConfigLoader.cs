@@ -66,9 +66,17 @@ internal class WizStatisticEffectConfigLoader : RootSingleResourceSingleton<WizS
 
         Logger.Information("Loaded {0} crit and block level ranges",
             Logger.Args(config.m_critAndBlockLevelData?.Count ?? 0));
+        Logger.Information("Archmastery numbers: fill rate scaler {0}, fill rate max {1}, fullness min {2}, school pip cost {3}, power pip cost {4}.",
+            Logger.Args(config.m_archmasteryFillRateScaler, config.m_archmasteryFillRateMax, config.m_archmasteryFullnessMinPvE,
+                        config.m_archmasteryConversionCost, config.m_archmasteryPowerPipCost));
 
         DisposeStream();
     }
+
+    /// <summary>
+    /// The game's statistic numbers, or null when the file could not be read.
+    /// </summary>
+    internal static WizStatisticEffectConfig Config => s_config;
 
     /// <summary>
     /// The level-scaled crit divisor (m_baseCritDivisor + level * m_critScalarDivisor;
