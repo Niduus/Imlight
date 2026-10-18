@@ -518,4 +518,14 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Fired every second to tick down active elixir playtime.
+    /// </summary>
+    public sealed class MSG_DOELIXIRTICK : IServerMessage {
+
+        public byte MessageOrder { get; } = 63;
+        public byte ServiceID { get; } = 103;
+
+    }
+
 }

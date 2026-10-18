@@ -78,6 +78,7 @@ public static class SpiralDB {
     /// </summary>
     public static IEnumerable<string> DataFolders => [Path.GetFullPath(s_localPath ?? "."), Path.GetFullPath(s_extraPath)];
 
+
     public static IReadOnlyDictionary<string, CreatureSpellbook> CreatureSpellbooks => s_creatureSpellbooks;
     public static IReadOnlyDictionary<string, DropTable> DropTables => s_dropTables;
     public static GlobalRegistryModel GlobalRegistry => s_globalRegistry;
@@ -89,6 +90,7 @@ public static class SpiralDB {
     public static IReadOnlyDictionary<ulong, NpcTreasureCardInventory> TreasureCardInventories => s_treasureCardInventories;
     public static IReadOnlyDictionary<uint, BadgeDefinition> BadgeDefinitions => s_badgeDefinitions;
     public static IReadOnlyDictionary<ulong, NpcSeamstress> NpcSeamstresses => s_npcSeamstresses;
+
 
     /// <summary>
     /// Fetches the spiralDB repository (if remote is enabled) and loads all JSON
@@ -654,5 +656,4 @@ public static class SpiralDB {
 
         return count;
     }
-
 }

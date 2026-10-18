@@ -34,6 +34,9 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     private static readonly int s_maxJewelsAllowed = ConfigurationManager.Settings["Character.MaxJewelsAllowed"].AsInt();
     private static readonly int s_maxItemsAllowedFallback = 20;
 
+    private static readonly int s_numEmotesAllowed = ConfigurationManager.Settings["Character.MaxEmotesAllowed"].AsInt();
+    private static readonly int s_numTeleportsAllowed = ConfigurationManager.Settings["Character.MaxTeleportsAllowed"].AsInt();
+
     public List<ulong> InventoryItemIds { get; set; }
 
     [JsonIgnore] public List<WizClientObjectItem> Items { get; set; }
@@ -140,8 +143,9 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
         m_numItemsAllowed = s_maxItemsAllowed,
         m_numJewelsAllowed = s_maxJewelsAllowed,
         m_itemList = Items.ConvertAll(item =>
-            (item as IClientBehaviorProvider<CoreObject>)?.GetClientBehaviorInstance() ?? item)
-
+            (item as IClientBehaviorProvider<CoreObject>)?.GetClientBehaviorInstance() ?? item),
+        m_numCEEmotesAllowed = s_numEmotesAllowed,
+        m_numCETeleportsAllowed = s_numTeleportsAllowed
     };
 
 }

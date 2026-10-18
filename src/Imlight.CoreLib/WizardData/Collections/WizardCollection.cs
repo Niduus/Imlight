@@ -21,6 +21,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Imcodec.Math;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Databases;
+using Imlight.CoreLib.WizardData.Models.Player;
 using Raven.Client.Documents;
 using Raven.Client.Exceptions;
 using Raven.Client.Documents.Linq;
@@ -721,6 +727,9 @@ public static class WizardCollection {
         wizard.PetSnackBehavior ??= new();
         wizard.PetSnackBehavior.Snacks = snacks;
         wizard.PetSnackBehavior.SnackItemIds = [.. snacks.Select(snack => snack.m_globalID.Full)];
+
+        // Synchronize active elixir behaviors with their remaining playtime seconds from SlotList.
+        wizard.EquipmentBehavior.SyncActiveElixirTimes();
 
         // The friends list is expanded to include a 'relationship' model
         // which helps keep track of the relationship between two players for moderation purposes.

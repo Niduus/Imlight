@@ -253,10 +253,12 @@ public class Wizard {
         var healthDifference = newBaseStats.m_hitpoints - oldBaseStats.m_hitpoints;
         var manaDifference = newBaseStats.m_mana - oldBaseStats.m_mana;
         var powerPipDifference = newBaseStats.m_pipChance - oldBaseStats.m_pipChance;
+        var energyDifference = newBaseStats.m_petEnergy - oldBaseStats.m_petEnergy;
 
         GameStats.m_baseHitpoints += healthDifference;
         GameStats.m_baseMana += manaDifference;
         GameStats.m_powerPipBase += powerPipDifference;
+        GameStats.m_energyMax += energyDifference;
 
         // Don't reset XP - preserve overflow XP when leveling up.
         // XP is managed by AddExperiencePoints/RemoveExperiencePoints.
@@ -407,6 +409,21 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    public void AddLunari(int lunari) {
+        if (GameStats.m_currentEventCurrency1 + lunari > GameStats.m_baseEventCurrency1Pouch) {
+            GameStats.m_currentEventCurrency1 = GameStats.m_baseEventCurrency1Pouch;
+        } else {
+            GameStats.m_currentEventCurrency1 += lunari;
+        }
+
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    public void RemoveLunari(int lunari) {
+        GameStats.m_currentEventCurrency1 -= lunari;
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void UpdateHealth(int newHealth) {
         GameStats.m_currentHitpoints = newHealth;
 
@@ -519,7 +536,7 @@ public class Wizard {
         var success = InventoryBehavior.AddItem(item);
         if (!success) {
             Logger.Warning("Could not add item {0} to player {1}'s inventory.",
-                Logger.Args(item.m_globalID, PlayerNameBehavior.GetWizardName()));
+                Logger.Args(item.m_globalID.Value, PlayerNameBehavior.GetWizardName()));
 
             return false;
         }
@@ -1979,15 +1996,17 @@ public class Wizard {
     }
 
     private void AfterDatabaseLoadPetOwnerBehavior() {
-        var magicSchool = MagicSchoolBehavior.MagicSchool;
-        var level = MagicSchoolBehavior.Level;
-        var baseStats = MagicLevelsConfig.GetPlayerLevelInfo(magicSchool, level);
-        var normMaxEnergy = baseStats.m_petEnergy;
-        GameStats.m_energyMax = normMaxEnergy;
+        // The stored maximum keeps energy elixir bonuses, but never drops below what the level gives.
+        var baseStats = MagicLevelsConfig.GetPlayerLevelInfo(MagicSchoolBehavior.MagicSchool, MagicSchoolBehavior.Level);
+        if (GameStats.m_energyMax < baseStats.m_petEnergy) {
+            GameStats.m_energyMax = baseStats.m_petEnergy;
+        }
+
+        var maxEnergy = GameStats.m_energyMax;
 
         if (PetOwnerBehavior is null) {
             PetOwnerBehavior = new ServerPetOwnerBehavior();
-            PetOwnerBehavior.SetEnergy(GameStats.m_energyMax);
+            PetOwnerBehavior.SetEnergy(maxEnergy);
 
             return;
         }
@@ -2009,8 +2028,8 @@ public class Wizard {
         var energyRegained = timeDifference / energyTickIntervalInSeconds;
 
         // If the player has regained more energy than their max, set it to the max.
-        var newEnergy = PetOwnerBehavior.Energy + energyRegained > normMaxEnergy
-            ? normMaxEnergy
+        var newEnergy = PetOwnerBehavior.Energy + energyRegained > maxEnergy
+            ? maxEnergy
             : (int) (PetOwnerBehavior.Energy + energyRegained);
         if (newEnergy == PetOwnerBehavior.Energy) {
             PetOwnerBehavior.SetEnergy(newEnergy);
@@ -2029,6 +2048,8 @@ public class Wizard {
         GameStats.MagicSchool = MagicSchoolBehavior.MagicSchool;
         GameStats.m_schoolID = (uint) MagicSchoolBehavior.MagicSchool;
         GameStats.m_highestCharacterLevelOnAccount = highestLevelOnAcc;
+
+        CharacterHelper.RecalculateGameStats(this);
     }
 
     private void AfterDatabaseLoadAlchemyBehavior()
@@ -2078,6 +2099,42 @@ public class Wizard {
         }
 
         WizardCollection.UpdateCharacterQuestBehavior(this);
+    }
+
+    public void UnlockCustomEmote(int emoteBit) {
+        if (emoteBit < 0 || emoteBit >= 96) {
+            return;
+        }
+
+        if (emoteBit < 32) {
+            GameStats.m_purchasedCustomEmotes1 |= (1u << emoteBit);
+        }
+        else if (emoteBit < 64) {
+            GameStats.m_purchasedCustomEmotes2 |= (1u << (emoteBit - 32));
+        }
+        else {
+            GameStats.m_purchasedCustomEmotes3 |= (1u << (emoteBit - 64));
+        }
+
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    public void UnlockCustomTeleportEffect(int emoteBit) {
+        if (emoteBit < 0 || emoteBit >= 96) {
+            return;
+        }
+
+        if (emoteBit < 32) {
+            GameStats.m_purchasedCustomTeleportEffects1 |= (1u << emoteBit);
+        }
+        else if (emoteBit < 64) {
+            GameStats.m_purchasedCustomTeleportEffects2 |= (1u << (emoteBit - 32));
+        }
+        else {
+            GameStats.m_purchasedCustomTeleportEffects3 |= (1u << (emoteBit - 64));
+        }
+
+        WizardCollection.UpdateCharacterGameStats(this);
     }
 
 }

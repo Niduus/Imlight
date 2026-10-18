@@ -626,7 +626,8 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 ownerCharId: targetID,
                 houseEntry: houseEntry
             );
-        } else {
+        }
+        else {
             Logger.Error("Failed to query the target wizard for teleportation.");
         }
     }
@@ -698,7 +699,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         var msg = new GAME_5_PROTOCOL.MSG_IGNORELIST {
             ListOwnerGID = wizard.GameObjectID,
             ListData = listBytes,
-            Add = add ? (byte)1 : (byte)0
+            Add = add ? (byte) 1 : (byte) 0
         };
         SendToSocket(msg);
     }
