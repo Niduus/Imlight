@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-013",
+  "Description": "Celestia quest Gone Fishing",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 160,
+  "MaxGold": 160,
+  "ExperienceAmount": 2155,
+  "TrainingPoints": 0,
+  "Items": []
+}

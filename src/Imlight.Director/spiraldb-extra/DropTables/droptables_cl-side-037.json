@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-037",
+  "Description": "Celestia quest Up to Bat",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 220,
+  "MaxGold": 220,
+  "ExperienceAmount": 4750,
+  "TrainingPoints": 0,
+  "Items": []
+}

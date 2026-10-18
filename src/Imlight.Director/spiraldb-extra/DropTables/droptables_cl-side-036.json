@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-036",
+  "Description": "Celestia quest Like Dockwork",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 1200,
+  "TrainingPoints": 0,
+  "Items": []
+}

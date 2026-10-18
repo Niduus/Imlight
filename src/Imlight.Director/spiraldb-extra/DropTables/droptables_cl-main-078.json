@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-078",
+  "Description": "Celestia quest Plunkett, I Presume?",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 11900,
+  "TrainingPoints": 0,
+  "Items": []
+}

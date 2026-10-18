@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SIDE-049",
+  "Description": "Celestia quest A Cloak of Souls",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 185,
+  "MaxGold": 185,
+  "ExperienceAmount": 2225,
+  "TrainingPoints": 0,
+  "Items": []
+}

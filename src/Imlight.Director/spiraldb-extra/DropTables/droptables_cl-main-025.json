@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MAIN-025",
+  "Description": "Celestia quest Archivist, Revisited",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 35,
+  "MaxGold": 35,
+  "ExperienceAmount": 710,
+  "TrainingPoints": 0,
+  "Items": []
+}
