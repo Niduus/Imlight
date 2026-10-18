@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Imcodec.Cryptography;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.Bit;
 using Imcodec.ObjectProperty.TypeCache;
@@ -105,12 +106,69 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
             ]
         };
 
+        AlignBehaviorsToTemplate(pet);
+
         // A hatched pet starts with its stats and talent pool.
         if (preHatch) {
             PetProgress.EnsureInitialized(pet);
         }
 
         return pet;
+    }
+
+    /// <summary>
+    /// Moves a pet's behaviors to the positions its template lists them at. The game reads an item's behaviors
+    /// by position, so a pet whose template does not start with PetItemBehavior (the Pet Pavilion gummy bears,
+    /// for example) makes the game drop the connection when it reads the backpack.
+    /// </summary>
+    /// <param name="pet">The pet item.</param>
+    /// <returns>True if the behaviors moved.</returns>
+    internal static bool AlignBehaviorsToTemplate(WizClientObjectItem pet) {
+        var current = pet?.m_inactiveBehaviors;
+        var template = current is null ? null : CoreObjectFactory.GetCoreTemplate(pet.m_templateID);
+        if (template?.m_behaviors is null) {
+            return false;
+        }
+
+        var remaining = current.Where(b => b is not null).ToList();
+        var aligned = new List<BehaviorInstance>(template.m_behaviors.Count);
+        var lastFilled = -1;
+        for (var i = 0; i < template.m_behaviors.Count; i++) {
+            var behaviorTemplate = template.m_behaviors[i];
+            if (behaviorTemplate is null) {
+                aligned.Add(null);
+                continue;
+            }
+
+            var hash = StringHash.Compute(behaviorTemplate.m_behaviorName);
+            var fresh = BehaviorCache.AllocateBehavior(hash);
+            var existing = fresh is null ? null : remaining.FirstOrDefault(b => b.GetType() == fresh.GetType());
+            if (existing is not null) {
+                remaining.Remove(existing);
+                aligned.Add(existing);
+                lastFilled = i;
+                continue;
+            }
+
+            if (fresh is not null) {
+                fresh.m_behaviorTemplateNameID = hash;
+            }
+            aligned.Add(fresh);
+        }
+
+        // Behaviors the template does not list are left where they are.
+        if (remaining.Count > 0) {
+            return false;
+        }
+
+        aligned.RemoveRange(lastFilled + 1, aligned.Count - lastFilled - 1);
+        if (aligned.Count == current.Count && aligned.SequenceEqual(current)) {
+            return false;
+        }
+
+        pet.m_inactiveBehaviors = aligned;
+
+        return true;
     }
 
     /// <summary>

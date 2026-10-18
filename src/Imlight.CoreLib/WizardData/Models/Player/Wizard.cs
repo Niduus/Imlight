@@ -1973,6 +1973,12 @@ public class Wizard {
         List<WizClientObjectItem> completedPets = [];
         foreach (var pet in (InventoryBehavior?.Items ?? []).Concat(EquipmentBehavior?.EquippedItems ?? [])) {
             try {
+                // Pets made with their behaviors out of the template's order stop the game at login.
+                if (PetFactory.IsPetTemplate((uint) pet.m_templateID) && PetFactory.AlignBehaviorsToTemplate(pet)) {
+                    Logger.Information("Reordered the behaviors of pet {PetId} of {CharId}.", Logger.Args(pet.m_globalID.Full, CharId));
+                    WizardItemCollection.SaveItemBehaviors(pet);
+                }
+
                 if (PetProgression.EnsureInitialized(pet)) {
                     completedPets.Add(pet);
                 }
