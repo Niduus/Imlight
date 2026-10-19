@@ -225,6 +225,98 @@ internal sealed class GameFiles(string installFolder) {
             "Open \"Key details\" for quests, badges, triggers, pets and more.";
     }
 
+    // ---------------------------------------------------------------------
+    // Shop research (Justin, 2026-10-19): every NPC shop opens the robe shop window, so this collects the
+    // game's shop window layouts and the shop NPCs into one zip on the desktop to send.
+    // ---------------------------------------------------------------------
+
+    private const int RESEARCH_MAX_FILES = 600;
+    private const long RESEARCH_MAX_BYTES = 40L * 1024 * 1024;
+
+    internal string ResearchZip => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Imlight shop research.zip");
+
+    internal Task<string> ShopResearchAsync(IProgress<string> progress, CancellationToken cancel)
+        => Task.Run(() => ShopResearch(progress, cancel), cancel);
+
+    private static bool IsShopFile(string name) {
+        if (name.Contains("MagicMirrorShopOptions", StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        if (name.Contains("shop", StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        // Window layouts for reagents, snacks and jewels may not say "shop".
+        return name.StartsWith("GUI/", StringComparison.OrdinalIgnoreCase)
+            && (name.Contains("Reagent", StringComparison.OrdinalIgnoreCase) || name.Contains("Snack", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("Jewel", StringComparison.OrdinalIgnoreCase) || name.Contains("Vendor", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private string ShopResearch(IProgress<string> progress, CancellationToken cancel) {
+        var folder = HasCopy ? CopyFolder : RequireGameData();
+        var wads = Directory.EnumerateFiles(folder, "*.wad").OrderBy(f => f, StringComparer.OrdinalIgnoreCase).ToList();
+        var list = new StringBuilder();
+        var written = 0;
+        long bytes = 0;
+        var zipPath = ResearchZip;
+        var partial = zipPath + ".writing";
+        using (var zip = System.IO.Compression.ZipFile.Open(partial, System.IO.Compression.ZipArchiveMode.Create)) {
+            for (var i = 0; i < wads.Count; i++) {
+                cancel.ThrowIfCancellationRequested();
+                var wadName = Path.GetFileNameWithoutExtension(wads[i]);
+                progress.Report($"Looking through {i + 1} of {wads.Count}: {wadName} ({written} shop files found)…");
+                using var stream = new FileStream(wads[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1 << 16);
+                Archive? archive;
+                try {
+                    archive = ArchiveParser.Parse(stream);
+                }
+                catch (Exception) {
+                    continue;
+                }
+
+                foreach (var name in archive.Files.Keys.Where(IsShopFile).OrderBy(n => n, StringComparer.OrdinalIgnoreCase)) {
+                    list.AppendLine($"{wadName}: {name}");
+                    if (written >= RESEARCH_MAX_FILES || bytes >= RESEARCH_MAX_BYTES || s_skipped.Contains(Path.GetExtension(name))) {
+                        continue;
+                    }
+
+                    byte[]? data;
+                    try {
+                        data = archive.OpenFile(name)?.ToArray();
+                    }
+                    catch (Exception) {
+                        continue;
+                    }
+
+                    if (data is null || data.Length == 0) {
+                        continue;
+                    }
+
+                    var entry = $"files/{wadName}/{SafePath(name)}";
+                    if (GameFileJson.IsBind(data) && GameFileJson.Decode(data) is { } decoded && GameFileJson.ToJson(decoded) is { } json) {
+                        data = Encoding.UTF8.GetBytes(json.ToJsonString(s_indented));
+                        entry += ".json";
+                    }
+
+                    using (var output = zip.CreateEntry(entry).Open()) {
+                        output.Write(data);
+                    }
+
+                    written++;
+                    bytes += data.Length;
+                }
+            }
+
+            using var listOut = new StreamWriter(zip.CreateEntry("list of shop files.txt").Open(), Encoding.UTF8);
+            listOut.Write(list.ToString());
+        }
+
+        File.Move(partial, zipPath, overwrite: true);
+
+        return $"Saved {written} shop files to \"{Path.GetFileName(zipPath)}\" on your desktop. Send that file in the chat.";
+    }
+
     private static void ReadOne(Archive archive, string wadName, string name, KeyDetails report,
             string decodedFolder, string textFolder, string messagesFolder) {
         var data = archive.OpenFile(name)?.ToArray();
