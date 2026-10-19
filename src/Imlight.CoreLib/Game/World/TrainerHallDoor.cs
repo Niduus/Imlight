@@ -49,10 +49,28 @@ internal static class TrainerHallDoor {
 
     // How tall the door spot is: a wizard standing on the step above or below still counts.
     private const float HEIGHT_TOLERANCE = 120f;
-    private static readonly TimeSpan s_cooldown = TimeSpan.FromSeconds(10);
 
-    // Wizards standing on the spot. Walking onto it sends them once; they have to step off before it sends them again.
-    private static readonly ConcurrentDictionary<ulong, DateTime> s_onSpot = new();
+    // Wizards who stepped off the spot since they arrived in the door's area. Someone who arrives on the spot (the
+    // World Gate in the hall sends them there) has to step off before it sends them again.
+    private static readonly ConcurrentDictionary<ulong, bool> s_armed = new();
+
+    /// <summary>
+    /// Finds where the World Gate in the trainer hall leads: back to the door, in the door's area.
+    /// </summary>
+    /// <returns><c>false</c> when the zone is not the trainer hall.</returns>
+    internal static bool TryGetExit(string houseZone, out string zone, out string location) {
+        zone = null;
+        location = null;
+        if (!s_enabled || !HouseTemplates.TryGet(s_houseTemplateId, out var hall)
+            || !string.Equals(houseZone, hall.LotZone, StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        zone = s_doorZone;
+        location = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{s_doorX},{s_doorY},{s_doorZ},0");
+
+        return true;
+    }
 
     /// <summary>
     /// Checks a move and sends the wizard to the trainer hall when they walked onto the door spot.
@@ -63,7 +81,13 @@ internal static class TrainerHallDoor {
     /// <param name="y">The new Y.</param>
     /// <param name="z">The new Z.</param>
     internal static void OnMove(IActorRef session, Wizard wizard, float x, float y, float z) {
-        if (!s_enabled || wizard is null || !string.Equals(wizard.Zone, s_doorZone, StringComparison.OrdinalIgnoreCase)) {
+        if (!s_enabled || wizard is null) {
+            return;
+        }
+
+        if (!string.Equals(wizard.Zone, s_doorZone, StringComparison.OrdinalIgnoreCase)) {
+            s_armed.TryRemove(wizard.CharId, out _);
+
             return;
         }
 
@@ -71,21 +95,13 @@ internal static class TrainerHallDoor {
         var dy = y - s_doorY;
         var onSpot = dx * dx + dy * dy <= s_radius * s_radius && Math.Abs(z - s_doorZ) <= HEIGHT_TOLERANCE;
         if (!onSpot) {
-            s_onSpot.TryRemove(wizard.CharId, out _);
+            s_armed[wizard.CharId] = true;
 
             return;
         }
 
-        var now = DateTime.UtcNow;
-        if (s_onSpot.TryGetValue(wizard.CharId, out var since) && now - since < s_cooldown) {
-            return;
-        }
-
-        if (s_onSpot.ContainsKey(wizard.CharId)) {
-            // Still standing there after a send that did not happen; try again after the cooldown.
-            s_onSpot[wizard.CharId] = now;
-        }
-        else if (!s_onSpot.TryAdd(wizard.CharId, now)) {
+        // Walking onto the spot sends them once; they have to step off before it sends them again.
+        if (!s_armed.TryUpdate(wizard.CharId, false, true)) {
             return;
         }
 
