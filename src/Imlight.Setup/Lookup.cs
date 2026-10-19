@@ -128,7 +128,7 @@ internal sealed class Lookup {
         Command("Pet talent", ".pet talent <name>", QA, "Gives the pet you are wearing a talent, such as .pet talent Pain-Giver. .pet untalent <name> takes one off."),
         Command("Pet talent slot", ".pet talent get <slot> <name>", QA, "Puts a talent into a slot of your pet's talent list, 0 at the top of the pet window and 9 at the bottom, without claiming it. .pet talent claim <slot> shows it (5 at most) and .pet talent unclaim <slot> hides it again."),
         Command("Pet derby slot", ".pet derby get <slot> <name>", QA, "The same as .pet talent get, claim and unclaim, for the derby talents."),
-        Command("Set a pet stat", ".pet stats <stat> <amount|max>", QA, "Sets Strength, Intellect, Agility, Will, Power or Happiness of the pet you are wearing to an amount or its maximum."),
+        Command("Set a pet stat", ".pet stats <stat> <amount|max>", QA, "Sets Strength, Intellect, Agility, Will, Power or Happiness of the pet you are wearing to an amount or its maximum. An amount above the maximum raises the maximum to it, such as .pet stats strength 260."),
         Command("Max pet stats", ".pet maxstats", QA, "Raises every stat of the pet you are wearing to its maximum."),
         Command("Jewels you wear", ".jewel list", QA, "Lists the sockets on the gear and pet you are wearing and what is in them."),
         Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),

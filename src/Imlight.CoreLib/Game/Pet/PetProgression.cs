@@ -94,7 +94,7 @@ internal static class PetProgression {
 
         var changed = EnsureGenes(behavior, template);
         changed |= EnsureStats(behavior, template);
-        changed |= EnsureHappiness(behavior);
+        changed |= EnsureHappiness(behavior, PetMaxRaises.Get(pet.m_globalID.Full, "Happiness"));
         changed |= EnsureLevel(behavior, template);
         if (!Imlight.CoreLib.Game.Combat.BattleModes.HandPickedPetTalents.IsOn(pet.m_globalID.Full)) {
             changed |= EnsureExpressed(behavior);
@@ -389,8 +389,9 @@ internal static class PetProgression {
     private static PetStat CopyStat(PetStat stat, int value)
         => new() { m_name = stat.m_name, m_statID = StringHash.Compute(stat.m_name), m_value = value };
 
-    private static bool EnsureHappiness(ClientPetItemBehavior behavior) {
-        var maximum = (uint) PetRules.MaximumHappiness;
+    private static bool EnsureHappiness(ClientPetItemBehavior behavior, int raisedMaximum) {
+        // `.pet stats happiness` may have raised this pet's maximum.
+        var maximum = (uint) Math.Max(PetRules.MaximumHappiness, raisedMaximum);
         var changed = false;
         if (behavior.m_maximumHappiness == 0) {
             behavior.m_happiness = Math.Min((uint) PetRules.StartingHappiness, maximum);
