@@ -24,57 +24,63 @@ using Imlight.Common;
 namespace Imlight.CoreLib.Game.Combat;
 
 /// <summary>
-/// Harmony mode (`.harmony on`): the wizard starts every battle with all 7 pips as power pips and full shadow pips.
-/// Kept in harmony.txt next to the server, one character id per line, so it stays on after a restart.
+/// Battle modes a wizard turns on with a command. Each is kept in a file next to the server, one character id per
+/// line, so it stays on after a restart.
 /// </summary>
-internal static class HarmonyMode {
+internal sealed class BattleModes(string file) {
 
-    private const string FILE = "harmony.txt";
-    private static readonly object s_lock = new();
-    private static HashSet<ulong> s_characters;
+    /// <summary>`.harmony on`: every battle starts with all 7 pips as power pips and full shadow pips.</summary>
+    internal static readonly BattleModes Harmony = new("harmony.txt");
 
-    internal static bool IsOn(ulong characterId) {
-        lock (s_lock) {
+    /// <summary>`.lightnshadow on`: every round tops power pips, shadow pips and mana back up to full.</summary>
+    internal static readonly BattleModes LightAndShadow = new("lightnshadow.txt");
+
+    private readonly string _file = file;
+    private readonly object _lock = new();
+    private HashSet<ulong> _characters;
+
+    internal bool IsOn(ulong characterId) {
+        lock (_lock) {
             return Load().Contains(characterId);
         }
     }
 
-    internal static void Set(ulong characterId, bool on) {
-        lock (s_lock) {
+    internal void Set(ulong characterId, bool on) {
+        lock (_lock) {
             var characters = Load();
             if (on ? !characters.Add(characterId) : !characters.Remove(characterId)) {
                 return;
             }
 
             try {
-                File.WriteAllLines(FILE, characters.Select(id => id.ToString()));
+                File.WriteAllLines(_file, characters.Select(id => id.ToString()));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
-                Logger.Warning("Could not save Harmony mode: {0}", Logger.Args(ex.Message));
+                Logger.Warning("Could not save {0}: {1}", Logger.Args(_file, ex.Message));
             }
         }
     }
 
-    private static HashSet<ulong> Load() {
-        if (s_characters is not null) {
-            return s_characters;
+    private HashSet<ulong> Load() {
+        if (_characters is not null) {
+            return _characters;
         }
 
-        s_characters = [];
+        _characters = [];
         try {
-            if (File.Exists(FILE)) {
-                foreach (var line in File.ReadAllLines(FILE)) {
+            if (File.Exists(_file)) {
+                foreach (var line in File.ReadAllLines(_file)) {
                     if (ulong.TryParse(line.Trim(), out var id)) {
-                        s_characters.Add(id);
+                        _characters.Add(id);
                     }
                 }
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
-            Logger.Warning("Could not read Harmony mode: {0}", Logger.Args(ex.Message));
+            Logger.Warning("Could not read {0}: {1}", Logger.Args(_file, ex.Message));
         }
 
-        return s_characters;
+        return _characters;
     }
 
 }
