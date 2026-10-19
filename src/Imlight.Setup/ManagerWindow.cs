@@ -57,6 +57,8 @@ internal sealed class ManagerWindow : Window {
     private readonly Border _dot = new() { Width = 10, Height = 10, CornerRadius = new CornerRadius(5), Background = MUTED };
     private readonly TextBlock _statusText = new() { Text = "Checking…", Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap };
+    // Shows what a background update is doing on the button itself (downloading 40%, building...).
+    private readonly Button _updateButton = Primary("Update Imlight");
     private readonly Border _messageBar = new() { Padding = new Thickness(16, 10), IsVisible = false };
 
     // Play.
@@ -875,7 +877,7 @@ internal sealed class ManagerWindow : Window {
                 Sub("Update or remove Imlight, or open the server's files."),
                 WithMargin(new WrapPanel {
                     Children = {
-                        Spaced(Action(Primary("Update Imlight"), UpdateAsync)),
+                        Spaced(Action(_updateButton, UpdateAsync)),
                         Spaced(Danger(Action(Plain("Uninstall Imlight"), UninstallAsync))),
                         Spaced(Action(Plain("Open log folder"), () => Open(_manager.LogFolder))),
                         Spaced(Action(Plain("Open settings folder"), () => Open(_manager.ConfigFolder))),
@@ -1239,8 +1241,10 @@ internal sealed class ManagerWindow : Window {
         _preparingUpdate = true;
         try {
             Say("A new Imlight is out. It is downloading and building in the background, so keep playing. " +
-                "This can take a few minutes; the app asks to restart when it is ready.");
-            if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending")) is not { } download) {
+                "This can take a few minutes; the app asks to restart when it is ready. The Update Imlight button on the Tools tab shows how far along it is.");
+            _updateButton.Content = "Downloading...";
+            var progress = new Progress<int>(percent => _updateButton.Content = percent >= 0 ? $"Downloading {percent}%" : "Downloading...");
+            if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending"), progress) is not { } download) {
                 Say("The new Imlight could not be downloaded. Check your internet connection, then click Update Imlight on the Tools tab.", true);
 
                 return;
@@ -1259,7 +1263,19 @@ internal sealed class ManagerWindow : Window {
             start.ArgumentList.Add(_manager.InstallFolder);
             using var process = Process.Start(start)
                 ?? throw new PanelException("The update could not be started.");
-            process.OutputDataReceived += (_, _) => { };
+            _updateButton.Content = "Building...";
+            var startedAt = DateTime.Now;
+            process.OutputDataReceived += (_, e) => {
+                // The build's own progress lines, shown under the button's "Building" so it never looks stuck.
+                if (!string.IsNullOrWhiteSpace(e.Data)) {
+                    var line = e.Data.Trim();
+                    Dispatcher.UIThread.Post(() => {
+                        var minutes = (int) (DateTime.Now - startedAt).TotalMinutes;
+                        _updateButton.Content = $"Building... {minutes} min";
+                        Say($"Building Imlight {download.Version} in the background: {(line.Length > 140 ? line[..140] + "..." : line)}");
+                    });
+                }
+            };
             process.ErrorDataReceived += (_, _) => { };
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -1275,6 +1291,7 @@ internal sealed class ManagerWindow : Window {
         }
         finally {
             _preparingUpdate = false;
+            _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Imlight";
         }
     }
 

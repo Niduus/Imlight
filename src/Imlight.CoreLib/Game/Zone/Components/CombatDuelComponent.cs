@@ -2002,6 +2002,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         try {
             var result = subCircle.GivePips(message.Kind, message.Amount);
+            // The stats first: they tell the game how many shadow slots to draw.
+            SendCombatStats();
             SendCombatPips();
             message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = result });
         }
@@ -2020,10 +2022,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         foreach (var school in message.Schools ?? []) {
             subCircle.GrantMastery((MagicSchool) school);
         }
+        SendCombatStats();
 
         var names = string.Join(", ", (message.Schools ?? []).Select(school => ((MagicSchool) school).ToString()));
         message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-            Message = $"You have {names} mastery for the rest of this battle: power pips count as 2 for those spells.",
+            Message = $"You have {names} school mastery (not Archmastery) for the rest of this battle: power pips count as 2 for those spells.",
         });
     }
 

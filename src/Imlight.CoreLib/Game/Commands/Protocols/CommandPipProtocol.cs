@@ -53,8 +53,8 @@ internal class CommandPipProtocol : CommandProtocol {
         }
 
         if (!known) {
-            InformSenderClient("Use .pip give, then light, power, shadow, all or a school (fire, ice, storm, myth, life, " +
-                "death, balance), then a number or max. For example .pip give power max.");
+            InformSenderClient("Use .pip give, then light, power, shadow, all or a school for Archmastery pips (fire, ice, " +
+                "storm, myth, life, death, balance), then a number or max. For example .pip give power max.");
 
             return;
         }

@@ -37,7 +37,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Imcodec.MessageLayer;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
@@ -151,11 +153,23 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         var pet = PetCare.GetWornPet(wizard);
         var snack = wizard.PetSnackBehavior.GetSnack(message.SnackTemplateID);
         var count = message.FeedStack != 0 && snack is not null ? snack.m_quantity : 1;
-        var problem = PetCare.Feed(wizard, pet, message.SnackTemplateID, count, SendToSocket, out var growth);
+        // From the feed window after a skipped game, that window waits for MSG_PETGAMESNACKFEEDSUCCESS first.
+        var inFeedWindow = pet is not null && _skipAwaitingFeed != 0 && _skipAwaitingFeed == pet.m_globalID.Full;
+        var held = new List<IMessage>();
+        var problem = PetCare.Feed(wizard, pet, message.SnackTemplateID, count, inFeedWindow ? held.Add : SendToSocket, out var growth);
         if (problem is not null) {
+            if (inFeedWindow) {
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
+            }
             InformGameClient(problem);
 
             return;
+        }
+
+        if (inFeedWindow) {
+            SendSnackFeedResult("feed", growth.XpGained,
+                (CoreObjectFactory.GetCoreTemplate(message.SnackTemplateID) as PetSnackItemTemplate)?.m_statModifierSet);
+            held.ForEach(SendToSocket);
         }
 
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS {
@@ -219,6 +233,20 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             }
         }
 
+        // The results window first: level-up windows sent while it opens may not show.
+        if (snackData is null && game is not null && PetRules.SkipShowsFeedWindow) {
+            // MSG_PETGAMEEND alone did not open anything (0.9.61). Echo the skip back like the game's other pet
+            // requests (MSG_PETFEEDHAPPINESS is answered the same way); the game then shows its results and
+            // feed window, whose feed comes back as MSG_PETGAMESKIPFEED.
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP {
+                GlobalID = pet.m_globalID,
+                Game = gameName,
+                Bonus = (byte) Math.Clamp(track, 0, byte.MaxValue),
+            });
+            SendPetGameEnd(gameName, growth.XpGained, chosen);
+            _skipAwaitingFeed = pet.m_globalID.Full;
+        }
+
         if (!feedOnly) {
             PetCare.Finish(wizard, pet, growth, SendToSocket);
         }
@@ -230,23 +258,27 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), string.Join(", ",
                     wizard.PetSnackBehavior?.Snacks?.Select(s => $"{s.m_templateID}/{s.m_globalID.Full:X}") ?? [])));
         }
-        if (snack is not null && PetCare.Feed(wizard, pet, snack.m_templateID, 1, SendToSocket, out var fed) is null) {
-            growth.XpGained += fed.XpGained;
-            growth.LevelsGained += fed.LevelsGained;
-            growth.StatChanges.AddRange(fed.StatChanges);
-        }
 
-        if (snackData is null && game is not null && PetRules.SkipShowsFeedWindow) {
-            // MSG_PETGAMEEND alone did not open anything (0.9.61). Echo the skip back like the game's other pet
-            // requests (MSG_PETFEEDHAPPINESS is answered the same way); the game may then show its results and
-            // feed window, whose feed comes back as MSG_PETGAMESKIPFEED.
-            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP {
-                GlobalID = pet.m_globalID,
-                Game = gameName,
-                Bonus = (byte) Math.Clamp(track, 0, byte.MaxValue),
-            });
-            SendPetGameEnd(gameName, growth.XpGained, chosen);
-            _skipAwaitingFeed = pet.m_globalID.Full;
+        if (snack is not null) {
+            // The feed window waits for MSG_PETGAMESNACKFEEDSUCCESS to fill its bars, so the pet's new state and
+            // any level-up window follow it.
+            var snackTemplateId = snack.m_templateID;
+            var held = new List<IMessage>();
+            if (PetCare.Feed(wizard, pet, snackTemplateId, 1, held.Add, out var fed) is null) {
+                growth.XpGained += fed.XpGained;
+                growth.LevelsGained += fed.LevelsGained;
+                growth.StatChanges.AddRange(fed.StatChanges);
+                var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
+                SendSnackFeedResult(gameName, fed.XpGained, snackMods);
+            }
+            else if (snackData is not null) {
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
+            }
+
+            held.ForEach(SendToSocket);
+        }
+        else if (snackData is { Length: > 0 }) {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
         }
 
         InformGameClient(PetCare.Summary(pet, growth));
@@ -254,7 +286,28 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     private const uint SKIP_WINS = 100;
 
+    private void SendSnackFeedResult(string gameName, uint xpGained, PetStatModificationSet statMods) {
+        if (!TryWriteEndData(gameName, xpGained, statMods, out var data)) {
+            return;
+        }
+
+        Logger.Information("Pet game skip and feed: sent the feed result for {0}.", Logger.Args(gameName));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDSUCCESS { Data = data });
+    }
+
     private void SendPetGameEnd(string gameName, uint xpGained, PetStatModificationSet statMods) {
+        if (!TryWriteEndData(gameName, xpGained, statMods, out var data)) {
+            return;
+        }
+
+        Logger.Information("Pet game skip: sent the end of game window for {0}.", Logger.Args(gameName));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEEND {
+            Game = gameName,
+            Data = data,
+        });
+    }
+
+    private bool TryWriteEndData(string gameName, uint xpGained, PetStatModificationSet statMods, out Imcodec.IO.ByteString data) {
         var endData = new PetGameEndData {
             m_Score = 1.0f,
             m_statMods = statMods,
@@ -264,17 +317,13 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
         // PetGameEndData's properties are Save|Copy|Public, none Transmit (as with PetGameInfo at the kiosk).
         var serializer = new Imcodec.ObjectProperty.ObjectSerializer(Versionable: false, Behaviors: Imcodec.ObjectProperty.SerializerFlags.None);
-        if (!serializer.Serialize(endData, Imcodec.ObjectProperty.PropertyFlags.Prop_Public, out var data)) {
+        if (!serializer.Serialize(endData, Imcodec.ObjectProperty.PropertyFlags.Prop_Public, out data)) {
             Logger.Error("Could not write the end of pet game data for {0}.", Logger.Args(gameName));
 
-            return;
+            return false;
         }
 
-        Logger.Information("Pet game skip: sent the end of game window for {0}.", Logger.Args(gameName));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEEND {
-            Game = gameName,
-            Data = data,
-        });
+        return true;
     }
 
     /// <summary>
