@@ -58,6 +58,9 @@ internal static class HouseVendors {
     private static readonly uint s_snackVendorId = ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
+    // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
+    // shop type and title of a real shop of its kind (Justin: Hao opened as an empty robe shop).
+    private static readonly uint s_snackShopNpcId = ConfigurationManager.GetValue("HallVendors.SnackShopNpc", 227094u);
 
     private static readonly Lazy<List<uint>> s_snacks = new(() => [.. TemplatesIn<PetSnackItemTemplate>(SNACK_FOLDER)
         .Where(snack => snack.Template.m_rank >= MIN_SNACK_RANK)
@@ -139,6 +142,26 @@ internal static class HouseVendors {
         }
 
         return null;
+    }
+
+    /// <summary>The real shop whose window a seller's window copies, or null for the equipment window.</summary>
+    internal static WizShoppingBehaviorTemplate ShopLookFor(ShopWindow window) {
+        var npcId = window switch {
+            ShopWindow.Snack => s_snackShopNpcId,
+            ShopWindow.Reagent => s_reagentNpcId,
+            ShopWindow.Jewel => s_jewelNpcId,
+            _ => 0u,
+        };
+        if (npcId == 0) {
+            return null;
+        }
+
+        var shop = (CoreObjectFactory.GetCoreTemplate(npcId) as GameObjectTemplate)?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault();
+        if (shop is null) {
+            Logger.Warning("The {0} shop {1} has no shop to copy the window of.", Logger.Args(window, npcId));
+        }
+
+        return shop;
     }
 
     private static string Tag(Seller seller, uint gidId) => $"{TAG_PREFIX}{seller.Key}_{gidId}";

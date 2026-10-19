@@ -96,6 +96,13 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _inventory = [.. stock.Items.Select(id => new GID((ulong) id))];
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
+            if (HouseVendors.ShopLookFor(stock.Window) is { } look) {
+                _shopTitle = string.IsNullOrWhiteSpace(look.m_shopTitle) ? _shopTitle : look.m_shopTitle;
+                _shopType = look.m_shopType;
+                _csrTestShop = look.m_CSRTestShop;
+            }
+            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop type {4}, title {5}.",
+                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _shopType, _shopTitle));
 
             return;
         }
