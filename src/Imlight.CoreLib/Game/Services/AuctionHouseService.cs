@@ -195,6 +195,18 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             return [.. cards.Take(Math.Min(s_treasureCardLimit, MAX_ENTRIES)).Select(card => card.Entry)];
         }
 
+        if (category == MIXED_CATEGORY) {
+            // The window with the snack, reagent, jewel and pin tabs asks this first and fills every one of its tabs
+            // from the answer: only snacks were in it, and only the snack tab had anything (Justin, 2026-10-19).
+            return [.. s_snacks.Value.Values.Select(snack => snack.Entry)
+                .Concat(s_reagents.Value.ById.Values)
+                .Concat(s_jewelShapes.SelectMany(shape => s_jewels.Value.ByCategory.TryGetValue(StringHash.Compute(shape), out var list)
+                    ? list.Take(s_catalogLimit)
+                    : []))
+                .Distinct()
+                .Take(MAX_ENTRIES)];
+        }
+
         if (IsSnackCategory(category)) {
             return [.. s_snacks.Value.Values.Select(snack => snack.Entry)];
         }
@@ -803,6 +815,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         return first is null ? [] : [.. s_shownTreasureCards.Value.Where(card => card.SchoolHash == first.SchoolHash)];
     }
+
+    // What the snack, reagent, jewel and pin window asks for when it opens (its name is not known).
+    private const uint MIXED_CATEGORY = 1610882238;
 
     // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
     private const int MAX_ENTRIES = 1000;

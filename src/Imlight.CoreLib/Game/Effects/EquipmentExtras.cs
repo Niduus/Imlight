@@ -162,10 +162,12 @@ internal static class EquipmentExtras {
             wizard.AppliedJewelEffects.Add(info);
 
             // Listed as an effect of the worn item, so the deck window shows the cards with the item cards.
-            provide.m_internalID = wizard.GameEffects.Count;
+            provide.m_internalID = wizard.NextEffectId();
             wizard.GameEffects.Add(provide);
             wizard.AppliedCardEffects.Add(provide);
             wizard.AddedCardEffects.Add(provide);
+            Logger.Information("Item card effect {0} x{1} (slot {2}, id {3}) for {4}.",
+                Logger.Args(info.m_spellName, info.m_numSpells, slotHash, provide.m_internalID, wizard.CharId));
         }
     }
 
