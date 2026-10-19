@@ -219,6 +219,34 @@ public class CombatDuelSubCircle {
     }
 
     /// <summary>
+    /// Puts copies of a spell that is not in the deck into the current hand, as many as fit (.draw).
+    /// </summary>
+    /// <returns>How many cards were added.</returns>
+    internal int DrawExtraCards(uint spellTemplateId, int amount) {
+        if (_combatDeck is null) {
+            return 0;
+        }
+
+        var added = 0;
+        while (added < amount && _combatDeck.HandRoom > 0) {
+            var spell = SpellFactory.GetSpell(spellTemplateId);
+            if (spell is null) {
+                break;
+            }
+
+            _combatDeck.AddExtraCardToHand(spell);
+            added++;
+        }
+
+        return added;
+    }
+
+    /// <summary>
+    /// How many more cards fit in the current hand.
+    /// </summary>
+    internal int HandRoom => _combatDeck?.HandRoom ?? 0;
+
+    /// <summary>
     /// Empties the current hand.
     /// </summary>
     internal void ClearHand() {

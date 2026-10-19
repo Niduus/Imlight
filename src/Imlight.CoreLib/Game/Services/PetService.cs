@@ -173,6 +173,10 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         SkipPetGame(message.GlobalID, message.Game.ToString(), message.Bonus, null);
     }
 
+    // The pet whose skipped game is waiting for the feed step of the results window, so the feed does not
+    // count the game a second time.
+    private ulong _skipAwaitingFeed;
+
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED))]
     private void ReceivePetGameSkipFeed(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED message) {
         // Logged in full (as hex) so the next log shows how the game sends the chosen snack.
@@ -198,18 +202,27 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
         PetProgress.EnsureInitialized(pet);
         var growth = new PetProgress.PetGrowth();
-        var game = Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName);
+
+        // The feed step after a skip: the game was already counted, so only the snack is eaten.
+        var feedOnly = snackData is not null && _skipAwaitingFeed != 0 && _skipAwaitingFeed == pet.m_globalID.Full;
+        _skipAwaitingFeed = 0;
+
+        PetStatModificationSet chosen = null;
+        var game = feedOnly ? null : Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName);
         if (game is not null) {
             var cost = Imlight.CoreLib.Game.Pet.PetGameConfig.TryGetEnergyCost(gameName, behavior.m_level, out var energy) ? energy : 2;
             PetProgress.AddXp(pet, (uint) Math.Max(2, cost * 2), growth);
             var tracks = game.m_trackChoices;
             if (tracks is { Count: > 0 }) {
-                var chosen = tracks[track >= 0 && track < tracks.Count ? track : Random.Shared.Next(tracks.Count)];
+                chosen = tracks[track >= 0 && track < tracks.Count ? track : Random.Shared.Next(tracks.Count)];
                 PetProgress.ApplyStatChanges(pet, chosen?.m_modifications, growth);
             }
         }
 
-        PetCare.Finish(wizard, pet, growth, SendToSocket);
+        if (!feedOnly) {
+            PetCare.Finish(wizard, pet, growth, SendToSocket);
+        }
+
         var snack = FindSnackIn(wizard, snackData);
         if (snackData is { Length: > 0 } && snack is null) {
             // Logged so the next log shows how the game names the snack: compare these ids with the data above.
@@ -223,7 +236,38 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             growth.StatChanges.AddRange(fed.StatChanges);
         }
 
+        if (snackData is null && game is not null && PetRules.SkipShowsFeedWindow) {
+            // Show the end of game window, the same as after playing, so the player can pick a snack to feed.
+            SendPetGameEnd(gameName, growth.XpGained, chosen);
+            _skipAwaitingFeed = pet.m_globalID.Full;
+        }
+
         InformGameClient(PetCare.Summary(pet, growth));
+    }
+
+    private const uint SKIP_WINS = 100;
+
+    private void SendPetGameEnd(string gameName, uint xpGained, PetStatModificationSet statMods) {
+        var endData = new PetGameEndData {
+            m_Score = 1.0f,
+            m_statMods = statMods,
+            m_xpGain = xpGained,
+            m_wins = SKIP_WINS,
+        };
+
+        // PetGameEndData's properties are Save|Copy|Public, none Transmit (as with PetGameInfo at the kiosk).
+        var serializer = new Imcodec.ObjectProperty.ObjectSerializer(Versionable: false, Behaviors: Imcodec.ObjectProperty.SerializerFlags.None);
+        if (!serializer.Serialize(endData, Imcodec.ObjectProperty.PropertyFlags.Prop_Public, out var data)) {
+            Logger.Error("Could not write the end of pet game data for {0}.", Logger.Args(gameName));
+
+            return;
+        }
+
+        Logger.Information("Pet game skip: sent the end of game window for {0}.", Logger.Args(gameName));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEEND {
+            Game = gameName,
+            Data = data,
+        });
     }
 
     /// <summary>

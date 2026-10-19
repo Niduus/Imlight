@@ -167,13 +167,23 @@ internal static class PetProgress {
         behavior.m_XP += xp;
         growth.XpGained += xp;
 
+        // m_XP counts from the start of the current level, like the pet window shows it (4/125, then 0/250).
         while (behavior.m_level < MAX_LEVEL) {
             var required = RequiredXp(template, behavior.m_level);
             if (required == 0 || behavior.m_XP < required) {
                 break;
             }
 
+            behavior.m_XP -= required;
             LevelUp(behavior, template, growth);
+
+            // Like the real game: the pet starts its new level at 0 and the rest is lost.
+            if (!PetRules.XpCarriesOver) {
+                growth.XpGained -= Math.Min(growth.XpGained, behavior.m_XP);
+                behavior.m_XP = 0;
+
+                break;
+            }
         }
 
         if (behavior.m_level >= MAX_LEVEL) {
@@ -196,14 +206,14 @@ internal static class PetProgress {
 
         EnsureInitialized(pet);
         while (behavior.m_level < level && behavior.m_level < MAX_LEVEL) {
-            // Leveling this way also brings the experience up to what the level needs.
-            behavior.m_XP = Math.Max(behavior.m_XP, RequiredXp(template, behavior.m_level));
+            // Each level starts at 0 experience.
+            behavior.m_XP = 0;
             LevelUp(behavior, template, growth);
         }
 
         if (behavior.m_level > level) {
             behavior.m_level = level;
-            behavior.m_XP = level > BABY_LEVEL ? RequiredXp(template, (byte) (level - 1)) : 0;
+            behavior.m_XP = 0;
             behavior.m_requiredXP = RequiredXp(template, level);
         }
 

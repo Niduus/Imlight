@@ -159,6 +159,13 @@ internal static class PetProgression {
 
             total -= required;
             level++;
+
+            // Like the real game: the pet starts its new level at 0 and the rest is lost.
+            if (!PetRules.XpCarriesOver) {
+                total = 0;
+
+                break;
+            }
         }
 
         behavior.m_level = (byte) level;

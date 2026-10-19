@@ -117,6 +117,9 @@ internal static class PetCare {
     /// </summary>
     internal static void Finish(Wizard wizard, WizClientObjectItem pet, PetProgress.PetGrowth growth, Action<IMessage> send) {
         var behavior = PetProgress.GetBehavior(pet);
+
+        // The talent rows of the pet window read the ratings: a new talent shows its name there.
+        PetProgression.EnsureInitialized(pet);
         if (!WizardItemCollection.SaveItemBehaviors(pet)) {
             Logger.Warning("Could not save pet {0} of {1}.", Logger.Args(pet.m_globalID, wizard.CharId));
         }
