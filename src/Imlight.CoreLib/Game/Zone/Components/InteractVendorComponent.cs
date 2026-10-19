@@ -79,9 +79,18 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         => template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && (NpcInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-        || WorldVendorLocations.IsVendor(goTemplate.m_templateID));
+        || WorldVendorLocations.IsVendor(goTemplate.m_templateID)
+        || InteractTreasureVendorComponent.IsAbner(goTemplate));
 
     public override void OnStart() {
+        // Abner also sells the trainer tome, the furniture that brings a trainer into a house (HouseTrainers).
+        if (Entity.Template is GameObjectTemplate template && InteractTreasureVendorComponent.IsAbner(template)
+            && !NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out _)) {
+            _inventory = [new GID(HouseTrainers.ItemTemplateId)];
+
+            return;
+        }
+
         if (!NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out var inventory)) {
             Logger.Error("Failed to get vendor inventory for NPC {0}",
                 Logger.Args(Entity.ActiveGameObject.m_templateID));

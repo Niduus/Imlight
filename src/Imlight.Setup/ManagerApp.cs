@@ -34,10 +34,14 @@ internal sealed class ManagerApp : Application {
 
     private static ServerManager? s_manager;
 
+    /// <summary>True when the app was reopened by an update that stopped the server, so it starts it again.</summary>
+    internal static bool StartServerOnOpen { get; private set; }
+
     /// <summary>
     /// Shows the app until its window closes, then stops the server it started.
     /// </summary>
-    internal static int Run(string installFolder) {
+    internal static int Run(string installFolder, bool startServer = false) {
+        StartServerOnOpen = startServer;
         Console.Title = Edition.NAME;
         var manager = new ServerManager(installFolder);
         if (!manager.IsInstalled) {

@@ -422,6 +422,10 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         _objectSupervisor.Forward(message);
     }
 
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER))]
+    private void ReceiveSpawnHouseTrainer(SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER message)
+        => _objectSupervisor.Forward(message);
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ADDTRIGGEROBJECT))]
     private void ReceiveAddTriggerObject(ZONE_102_PROTOCOL.MSG_ADDTRIGGEROBJECT message)
         => _objectSupervisor.Forward(message);

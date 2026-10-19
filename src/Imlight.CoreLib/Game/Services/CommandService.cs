@@ -76,6 +76,27 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_MANAGERCOMMAND))]
+    private void ReceiveManagerCommand(SERVICE_101_PROTOCOL.MSG_MANAGERCOMMAND message) {
+        // Only the game on the server's own PC runs commands typed in the Imlight app.
+        if (!System.Net.IPAddress.TryParse(SessionActor.RemoteIp, out var address) || !System.Net.IPAddress.IsLoopback(address)
+            || GetActiveWizard() is null || GetActiveGameObject() is null || GetActiveAccount() is null) {
+            return;
+        }
+
+        _dispatcherRef.Tell(new SERVER_100_PROTOCOL.MSG_COMMAND() {
+            CommandText = message.Command,
+            ActorRef = SessionActor.ActorRef,
+            CoreObject = GetActiveGameObject(),
+            Wizard = GetActiveWizard(),
+            Account = GetActiveAccount(),
+            ZoneActor = SessionActor.GetZoneActor(),
+            ServerActor = SessionActor.ServerRef,
+            SelectedWizard = _selectedWizard,
+            SelectedAccount = _selectedAccount
+        });
+    }
+
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]
     private void ReceivePlayerSelect(GAME_5_PROTOCOL.MSG_BUDDYSTATS message) {
         // We only care about the ID sent here. It's the ID of the core object, but Imlight serialized

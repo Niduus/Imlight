@@ -74,6 +74,8 @@ public class GameServer : Server {
         this._playerQueue = new ListQueue<SessionActor>();
         this._sessionKeys = new Cache<ByteString, ulong>();
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
+        Tools.ManagerCommands.Start(Context.System);
+        World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.
         var gameWorldActorName = $"{Name}.{nameof(GameWorld)}";

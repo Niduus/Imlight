@@ -89,15 +89,6 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
             _placed.Add(new PlacedObject(objectInfo, template, coreObject, actor));
         }
 
-        // The trainer hall's trainers stand where they were put down, in every wizard's copy of the hall.
-        if (Imlight.CoreLib.Game.World.TrainerHallTrainers.IsHallZone(Zone.ZoneName)) {
-            foreach (var spot in Imlight.CoreLib.Game.World.TrainerHallTrainers.Load()) {
-                if (Imlight.CoreLib.Game.World.TrainerHallTrainers.TryCreate(spot, out var info, out var trainer, out var trainerTemplate)) {
-                    _placed.Add(new PlacedObject(info, trainerTemplate, trainer, CreateEntityActor(trainer, trainerTemplate, info)));
-                }
-            }
-        }
-
         ReportLoadedWhenEntitiesLoad();
     }
 
@@ -209,6 +200,18 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                     Targets = ZoneBroadcastTarget.Objects,
                 });
             }
+        }
+    }
+
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER))]
+    private void ReceiveSpawnHouseTrainer(SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER message) {
+        // Every visitor entering asks for the house's trainers; one already standing is kept.
+        if (_placed.Any(p => p.Actor is not null && IsNamed(p, message.Tag))) {
+            return;
+        }
+
+        if (Imlight.CoreLib.Game.World.HouseTrainers.TryCreate(message, out var info, out var trainer, out var template)) {
+            _placed.Add(new PlacedObject(info, template, trainer, CreateEntityActor(trainer, template, info)));
         }
     }
 

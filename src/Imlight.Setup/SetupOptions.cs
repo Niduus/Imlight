@@ -24,7 +24,7 @@ namespace Imlight.Setup;
 /// <summary>
 /// What the program was asked to do. Install also updates an existing install.
 /// </summary>
-internal enum SetupMode { Install, Start, Play, Uninstall, Panel }
+internal enum SetupMode { Install, Start, Play, Uninstall, Panel, PrepareUpdate, ApplyUpdate }
 
 /// <summary>
 /// What setup installs and where, from the command line. The defaults install original Imlight.
@@ -55,6 +55,12 @@ internal sealed class SetupOptions {
     /// <summary>If true, Start closes as soon as the server stops instead of waiting for a key.</summary>
     public bool NoWait { get; private set; }
 
+    /// <summary>The app that has to close before --apply-update replaces its files.</summary>
+    public int? WaitForProcess { get; private set; }
+
+    /// <summary>If true, the app starts the server as soon as it opens (after an update that stopped it).</summary>
+    public bool StartServer { get; private set; }
+
     /// <summary>If true, setup never stops to ask anything.</summary>
     public bool Unattended { get; private set; }
 
@@ -76,6 +82,8 @@ internal sealed class SetupOptions {
           --play                     Start Wizard101 connected to the server on this computer.
           --uninstall                Remove Imlight from this computer.
           --panel                    Open the app (the same as no option).
+          --prepare-update           Download and build the newest Imlight in the background, ready to install.
+          --apply-update             Install the update --prepare-update made, then open the app again.
         """;
 
     internal static SetupOptions Parse(string[] args) {
@@ -99,6 +107,10 @@ internal sealed class SetupOptions {
                 case "--panel": options.Mode = SetupMode.Panel; break;
                 case "--update": options.Mode = SetupMode.Install; break;
                 case "--no-wait": options.NoWait = true; break;
+                case "--prepare-update": options.Mode = SetupMode.PrepareUpdate; options.Unattended = true; break;
+                case "--apply-update": options.Mode = SetupMode.ApplyUpdate; options.Unattended = true; break;
+                case "--wait-pid": options.WaitForProcess = int.TryParse(Next(), out var pid) ? pid : null; break;
+                case "--start-server": options.StartServer = true; break;
                 default: throw new SetupException($"Unknown option {args[i]}.\n\n{USAGE}");
             }
         }
