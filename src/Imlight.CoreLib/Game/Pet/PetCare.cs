@@ -131,6 +131,11 @@ internal static class PetCare {
             EquipmentExtras.TakeCardEffectMessages(wizard).ForEach(send);
         }
 
+        // Commands like .pet stats change the pet without growth, and the pet window only shows it after this update.
+        if (growth is null && behavior is not null && PetBehaviorUpdate.TryCreate(pet, out var plainUpdate)) {
+            send(plainUpdate);
+        }
+
         if (growth is null || behavior is null) {
             return;
         }
@@ -165,27 +170,6 @@ internal static class PetCare {
             Logger.Error("Could not tell the game about pet {0}: {1}", Logger.Args(pet.m_globalID, e));
         }
     }
-
-    private static readonly Imcodec.CoreObject.CoreObjectSerializer s_itemSerializer = new(behaviors: Imcodec.ObjectProperty.SerializerFlags.None);
-
-    /// <summary>
-    /// Makes the game load the worn pet again, as it does at login. The pet window shows a talent the moment it is
-    /// revealed but kept showing one that was hidden again until a relog (Justin, 2026-10-19), so the pet is taken
-    /// off, removed, added back with its new state and put on again on the game's side. Nothing changes on the server.
-    /// </summary>
-    internal static void Reload(Wizard wizard, WizClientObjectItem pet, Action<IMessage> send) {
-        if (pet is null || !ReferenceEquals(GetWornPet(wizard), pet)
-            || !s_itemSerializer.Serialize(pet, 1, out var data)) {
-            return;
-        }
-
-        send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { ItemID = pet.m_globalID, SlotName = PET_SLOT, IsEquip = 0 });
-        send(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM { GlobalID = wizard.GameObjectID, ItemID = pet.m_globalID });
-        send(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM { GlobalID = wizard.GameObjectID, SerializedItem = data });
-        send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { ItemID = pet.m_globalID, SlotName = PET_SLOT, IsEquip = 1 });
-    }
-
-    private const string PET_SLOT = "Pet";
 
     /// <summary>
     /// One or two sentences about what happened to a pet, for the chat window.
