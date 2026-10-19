@@ -177,6 +177,17 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             Happiness = PetProgress.GetBehavior(pet)?.m_happiness ?? message.Happiness,
         });
         InformGameClient(PetCare.Summary(pet, growth));
+        ResummonAfterLevelUp(pet, growth);
+    }
+
+    /// <summary>
+    /// Summons the pet again after it reached a new age: the age and talent rating shown with the pet in the world
+    /// (Ancient 15 (51)) come from the summoned copy, which kept the old ones until the next login (Justin, 2026-10-19).
+    /// </summary>
+    private void ResummonAfterLevelUp(WizClientObjectItem pet, PetProgress.PetGrowth growth) {
+        if (pet is not null && growth is { LevelsGained: > 0 }) {
+            TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_RESUMMONPET { PetItemId = pet.m_globalID });
+        }
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP))]
@@ -284,6 +295,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
 
         InformGameClient(PetCare.Summary(pet, growth));
+        ResummonAfterLevelUp(pet, growth);
     }
 
     private const uint SKIP_WINS = 100;
