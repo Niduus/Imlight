@@ -205,7 +205,6 @@ internal class CommandPetProtocol : CommandProtocol {
         // From now on the pet's shown talents stay as picked instead of filling up with its age.
         Imlight.CoreLib.Game.Combat.BattleModes.HandPickedPetTalents.Set(pet.m_globalID.Full, true);
         PetCare.Finish(Context.Character, pet, null, Send);
-        PetCare.Reload(Context.Character, pet, Send);
         InformSenderClient(action switch {
             "get" => $"Slot {slot} now holds {PetProgress.TalentLabel(talent)}, not claimed yet. Claim it with {command} claim {slot}.",
             "claim" => $"Claimed {PetProgress.TalentLabel(talent)} in slot {slot}.",
