@@ -61,6 +61,8 @@ internal class CombatDeck {
     private readonly List<CombatDeckSpellData> _usedUpSpellData;
     private readonly List<CombatDeckSpellData> _treasureVaultUsed;
     private readonly List<Spell> _cardsDiscardedThisTurn;
+    // Cards put in the hand by .draw: they never came from the deck, so using them must not use up a deck copy.
+    private readonly HashSet<Spell> _extraCards = [];
 
     // ctor
     internal CombatDeck(List<CombatDeckSpellData> spellDatas, List<CombatDeckSpellData> treasureVault, byte handSize) {
@@ -106,6 +108,9 @@ internal class CombatDeck {
         // Discard the cards that were used up or discarded.
         foreach (var spell in _cardsDiscardedThisTurn) {
             LastGivenHand.Remove(spell);
+            if (_extraCards.Remove(spell)) {
+                continue;
+            }
 
             var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
             if (spellData == null) {
@@ -192,6 +197,7 @@ internal class CombatDeck {
     internal void ClearHand() {
         LastGivenHand.Clear();
         _cardsDiscardedThisTurn.Clear();
+        _extraCards.Clear();
         TreasureCardsInHand = 0;
     }
 
@@ -199,6 +205,19 @@ internal class CombatDeck {
     /// Adds a spell directly to the current hand without drawing from the deck.
     /// </summary>
     internal void AddCardToHand(Spell spell) {
+        LastGivenHand.Add(spell);
+    }
+
+    /// <summary>
+    /// How many more cards fit in the current hand.
+    /// </summary>
+    internal int HandRoom => Math.Max(0, _handSize - LastGivenHand.Count);
+
+    /// <summary>
+    /// Adds a card that is not part of the deck to the current hand (.draw).
+    /// </summary>
+    internal void AddExtraCardToHand(Spell spell) {
+        _extraCards.Add(spell);
         LastGivenHand.Add(spell);
     }
 

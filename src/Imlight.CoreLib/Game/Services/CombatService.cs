@@ -266,6 +266,18 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         _currentDuelActor.Tell(message);
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATDRAWCARDS))]
+    private void ReceiveCheatDrawCards(COMBAT_106_PROTOCOL.MSG_CHEATDRAWCARDS message) {
+        if (_currentDuelActor is null) {
+            InformGameClient("You are not in a battle.");
+
+            return;
+        }
+
+        message.Actor = SessionActor.ActorRef;
+        _currentDuelActor.Tell(message);
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATTOGGLECINEMATICS))]
     private void ReceiveCheatToggleCinematics(COMBAT_106_PROTOCOL.MSG_CHEATTOGGLECINEMATICS message) {
         _cheatInstantCinematics = !_cheatInstantCinematics;

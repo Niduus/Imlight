@@ -67,6 +67,17 @@ internal static class PetRules {
     internal static int MemberXpMultiplier { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MemberXpMultiplier", DefaultMemberXpMultiplier));
 
     /// <summary>
+    /// When false (the real game), experience past a new level is lost: the pet goes up one level and
+    /// starts it at 0. When true, the extra experience counts toward the next level.
+    /// </summary>
+    internal static bool XpCarriesOver { get; } = ConfigurationManager.GetValue("Pets.XpCarriesOver", false);
+
+    /// <summary>
+    /// After a pet game is skipped, show the end of game window so a snack can be fed from it.
+    /// </summary>
+    internal static bool SkipShowsFeedWindow { get; } = ConfigurationManager.GetValue("Pets.SkipShowsFeedWindow", true);
+
+    /// <summary>
     /// Gets the factor applied to XP from a source, for a wizard who counts as a member.
     /// </summary>
     /// <param name="source">Where the XP comes from.</param>

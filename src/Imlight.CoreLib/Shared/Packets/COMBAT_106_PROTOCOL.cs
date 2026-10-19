@@ -299,4 +299,19 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// .draw: puts copies of a spell into the sender's hand in the current duel, as many as fit.
+    /// </summary>
+    internal sealed class MSG_CHEATDRAWCARDS : IServerMessage {
+
+        public byte MessageOrder => 29;
+        public byte ServiceID => 106;
+
+        public uint SpellTemplateId;
+        public string SpellName;
+        public int Amount;
+        public IActorRef Actor;
+
+    }
+
 }

@@ -1958,6 +1958,41 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         EndDuel();
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATDRAWCARDS))]
+    private void ReceiveCheatDrawCards(COMBAT_106_PROTOCOL.MSG_CHEATDRAWCARDS message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null || !subCircle.IsAlive) {
+            return;
+        }
+
+        void Inform(string text) => message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text });
+
+        // Cards only go in while cards are being picked; mid-round the client would not show them right.
+        if (Duel.m_duelPhase != kDuelPhase.kPhase_Planning) {
+            Inform("Wait until it is your turn to pick a card, then try .draw again.");
+
+            return;
+        }
+
+        if (subCircle.HandRoom <= 0) {
+            Inform("Your hand is full. Discard a card first, then try .draw again.");
+
+            return;
+        }
+
+        var added = subCircle.DrawExtraCards(message.SpellTemplateId, message.Amount);
+        if (added == 0) {
+            Inform($"Could not make a {message.SpellName} card.");
+
+            return;
+        }
+
+        SendCurrentCombatHand(subCircle);
+        Inform(added < message.Amount
+            ? $"Drew {added} {message.SpellName} (your hand had room for {added})."
+            : $"Drew {added} {message.SpellName}.");
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATINSTANTCINEMATICS))]
     private void ReceiveCheatInstantCinematics(COMBAT_106_PROTOCOL.MSG_CHEATINSTANTCINEMATICS message)
         => CheatInstantCinematics = message.Enabled;
