@@ -53,8 +53,29 @@ internal static class EquipmentExtras {
     /// Forgets what was added without taking it off, for when the stats were just rebuilt from scratch.
     /// </summary>
     internal static void Forget(Wizard wizard) {
+        // Rebuilt stats do not touch the cards, so those still come off: left in, every rebuild added the pet's
+        // cards again (4 Black Mantles instead of 2).
+        foreach (var info in wizard.AppliedJewelEffects) {
+            if (info is ProvideSpellEffectInfo spell) {
+                RemoveCards(wizard, spell);
+            }
+        }
+
         wizard.AppliedPetEffects = [];
         wizard.AppliedJewelEffects = [];
+        wizard.AppliedCardEffects = [];
+    }
+
+    /// <summary>
+    /// The card effects taken off and put on by the last refreshes, for the equipment service to tell the game.
+    /// Cleared by reading them.
+    /// </summary>
+    internal static (List<GameEffectBase> Removed, List<GameEffectBase> Added) TakeCardEffectChanges(Wizard wizard) {
+        var changes = (wizard.RemovedCardEffects, wizard.AddedCardEffects);
+        wizard.RemovedCardEffects = [];
+        wizard.AddedCardEffects = [];
+
+        return changes;
     }
 
     private static void Remove(Wizard wizard) {
@@ -63,18 +84,31 @@ internal static class EquipmentExtras {
         }
 
         foreach (var info in wizard.AppliedJewelEffects) {
-            if (info is ProvideSpellEffectInfo spell) {
-                for (var i = 0; i < Math.Max(1, spell.m_numSpells); i++) {
-                    wizard.RemoveTemporarySpell(StringHash.Compute(spell.m_spellName));
-                }
-
+            // Cards come off in Forget.
+            if (info is ProvideSpellEffectInfo) {
                 continue;
             }
 
             CharacterEffectHelper.RemoveGameEffectFromStats(wizard.GameStats, info);
         }
 
+        // The cards' effects tell the game to list them with the item cards, like a wand's.
+        foreach (var effect in wizard.AppliedCardEffects) {
+            wizard.GameEffects.Remove(effect);
+            if (!wizard.AddedCardEffects.Remove(effect)) {
+                wizard.RemovedCardEffects.Add(effect);
+            }
+        }
+
         Forget(wizard);
+    }
+
+    private static void RemoveCards(Wizard wizard, ProvideSpellEffectInfo spell) {
+        // The card's id is the hash of its template's own name, which the effect may spell differently.
+        var spellId = SpellFactory.GetSpell(spell.m_spellName)?.m_spellID ?? StringHash.Compute(spell.m_spellName);
+        for (var i = 0; i < Math.Max(1, spell.m_numSpells); i++) {
+            wizard.RemoveTemporarySpell(spellId);
+        }
     }
 
     private static void Apply(Wizard wizard) {
@@ -96,7 +130,7 @@ internal static class EquipmentExtras {
 
                 // Card talents give their cards for battle; they are taken off like a jewel's cards.
                 foreach (var info in PetProgress.CardEffects(item, JewelSockets.GetPetJewelTalents(item))) {
-                    AddCards(wizard, info);
+                    AddCards(wizard, info, ItemHelper.GetItemSlotHash(template));
                 }
 
                 continue;
@@ -106,7 +140,7 @@ internal static class EquipmentExtras {
                 foreach (var info in jewel.m_equipEffects ?? []) {
                     switch (info) {
                         case ProvideSpellEffectInfo spell:
-                            AddCards(wizard, spell);
+                            AddCards(wizard, spell, ItemHelper.GetItemSlotHash(template));
                             break;
                         case StatisticEffectInfo or StartingPipEffectInfo:
                             if (CharacterEffectHelper.AddGameEffectToStats(wizard.GameStats, info) is not null) {
@@ -119,13 +153,19 @@ internal static class EquipmentExtras {
         }
     }
 
-    private static void AddCards(Wizard wizard, ProvideSpellEffectInfo info) {
-        if (GameEffectFactory.CreateEffectFromInfo(info, 0) is ProvideSpellEffect provide) {
+    private static void AddCards(Wizard wizard, ProvideSpellEffectInfo info, uint slotHash) {
+        if (GameEffectFactory.CreateEffectFromInfo(info, slotHash) is ProvideSpellEffect provide) {
             foreach (var card in SpellFactory.CreateSpellsFromEffect(provide) ?? []) {
                 wizard.AddTemporarySpell(card);
             }
 
             wizard.AppliedJewelEffects.Add(info);
+
+            // Listed as an effect of the worn item, so the deck window shows the cards with the item cards.
+            provide.m_internalID = wizard.GameEffects.Count;
+            wizard.GameEffects.Add(provide);
+            wizard.AppliedCardEffects.Add(provide);
+            wizard.AddedCardEffects.Add(provide);
         }
     }
 

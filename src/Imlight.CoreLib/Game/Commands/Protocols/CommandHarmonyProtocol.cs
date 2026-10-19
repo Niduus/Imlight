@@ -23,6 +23,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// `.harmony on` / `.harmony off`: Harmony mode, every battle starts with full power and shadow pips.
 /// `.lightnshadow on` / `.lightnshadow off`: every round refills power pips, shadow pips and mana.
+/// `.allknowing on` / `.allknowing off`: mastery of every school in every battle.
 /// </summary>
 internal class CommandHarmonyProtocol : CommandProtocol {
 
@@ -52,6 +53,19 @@ internal class CommandHarmonyProtocol : CommandProtocol {
         InformSenderClient(on
             ? "Light and Shadow is on: each round your power pips, shadow pips and mana fill back up. School pips stay as they are."
             : "Light and Shadow is off: pips and mana come back normally again.");
+    }
+
+    [Command("allknowing")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void AllKnowingCommand(string state) {
+        if (!TryReadState(state, ".allknowing", out var on)) {
+            return;
+        }
+
+        BattleModes.AllKnowing.Set(Context.Character.CharId, on);
+        InformSenderClient(on
+            ? "All-Knowing is on: in every battle you have mastery of every school, so power pips count as 2 for all your spells. It starts with your next battle."
+            : "All-Knowing is off: only the masteries you really have count again.");
     }
 
     private bool TryReadState(string state, string command, out bool on) {

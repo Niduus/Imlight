@@ -39,6 +39,17 @@ internal static class HouseTrainers {
     private static readonly uint s_itemTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerItemId", 1292128u);
     private static readonly uint s_trainerTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerTemplateId", 1452184u);
 
+    // [TrainerHall] TrainerName: the name shown over the trainer's head; empty keeps the game's own name.
+    private static readonly string s_trainerName = ConfigurationManager.GetValue("TrainerHall.TrainerName", "")?.Trim() ?? "";
+
+    /// <summary>
+    /// The overhead name for an object with this zone tag: its set trainer part ("Fire Trainer 2"), else the
+    /// TrainerName setting; null when it is not a house trainer or keeps its own.
+    /// </summary>
+    internal static string NameFor(string zoneTag)
+        => zoneTag?.StartsWith(TAG_PREFIX, System.StringComparison.Ordinal) != true ? null
+            : HouseTrainerSets.SetFor(zoneTag)?.Name ?? (s_trainerName.Length > 0 ? s_trainerName : null);
+
     /// <summary>The furniture that brings a trainer.</summary>
     internal static uint ItemTemplateId => s_itemTemplateId;
 
@@ -60,10 +71,12 @@ internal static class HouseTrainers {
     /// <summary>
     /// Puts the trainer on a placed trainer tome. A trainer already standing there is kept.
     /// </summary>
-    internal static void Spawn(IActorRef zone, uint gidId, PlacedItem item) {
+    internal static void Spawn(IActorRef zone, HouseState house, uint gidId, PlacedItem item) {
         if (zone is null || item is null || !IsTrainerItem(item.TemplateId)) {
             return;
         }
+
+        HouseTrainerSets.Assign(house, Tag);
 
         zone.Tell(new SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER {
             Tag = Tag(gidId), X = item.X, Y = item.Y, Z = item.Z, Yaw = item.Yaw,
@@ -81,9 +94,12 @@ internal static class HouseTrainers {
     /// </summary>
     internal static void SpawnAll(IActorRef zone, HouseState house) {
         var snapshot = house.Snapshot();
+        HouseTrainerSets.Assign(house, Tag);
         for (var slot = 0; slot < snapshot.Slots.Count; slot++) {
             if (snapshot.Slots[slot] is { } item && IsTrainerItem(item.TemplateId)) {
-                Spawn(zone, unchecked(snapshot.GidBase + (uint) slot), item);
+                zone?.Tell(new SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER {
+                    Tag = Tag(unchecked(snapshot.GidBase + (uint) slot)), X = item.X, Y = item.Y, Z = item.Z, Yaw = item.Yaw,
+                }, ActorRefs.NoSender);
             }
         }
     }
@@ -115,6 +131,10 @@ internal static class HouseTrainers {
         }
 
         coreObject = CoreObjectFactory.InitializeCoreObjectBehaviors(coreObject, template);
+        var name = NameFor(spawn.Tag);
+        if (coreObject is not null && name is not null && CoreObjectFactory.FindBehaviorInstance<NPCBehavior>(coreObject, out var npc)) {
+            npc.m_wsNameOverride = name;
+        }
 
         return coreObject is not null;
     }

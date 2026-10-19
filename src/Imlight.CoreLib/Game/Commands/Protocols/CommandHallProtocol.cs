@@ -22,30 +22,75 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.hall`: gives one trainer tome (the Burrower Lectern), the same furniture Abner sells. Each one placed in a
-/// house brings a spell trainer, so it marks where a tome goes.
+/// `.hall`: gives one trainer tome (the Burrower Lectern), the same furniture Abner sells; `.hall 5` gives five. Each
+/// one placed in a house brings a set trainer (see <see cref="HouseTrainerSets"/>). `.hall flip`, in the house, hands
+/// the trainer parts out along the row from the other end.
 /// </summary>
 internal class CommandHallProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
+    // The most tomes one .hall gives.
+    private const int MAX_TOMES = 100;
+
     [Command("hall")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void HallCommand() {
-        if (!Context.Character.TryCreateItem(HouseTrainers.ItemTemplateId, out var item)) {
-            InformSenderClient("Could not create the trainer tome.");
+    private void HallCommand([Remainder] string argument = "") {
+        argument = (argument ?? "").Trim();
+        if (argument.Equals("flip", System.StringComparison.OrdinalIgnoreCase)) {
+            Flip();
 
             return;
         }
 
-        var placement = ItemPlacement.Place(Context.Character, item);
-        ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
-        InformSenderClient(placement switch {
-            Placement.Backpack => "Added a trainer tome to your backpack. Place it in your house where a tome should stand; type .hall again for another.",
-            Placement.Bank => "Added a trainer tome to your bank, your backpack is full.",
-            Placement.SharedBank => "Added a trainer tome to your shared bank, your backpack is full.",
-            _ => "Could not add the trainer tome, your backpack and bank are full.",
-        });
+        var count = 1;
+        if (argument.Length > 0 && (!int.TryParse(argument, out count) || count < 1)) {
+            InformSenderClient($"Use .hall for one trainer tome, .hall and a number (up to {MAX_TOMES}) for more, or .hall flip in your house.");
+
+            return;
+        }
+
+        count = System.Math.Min(count, MAX_TOMES);
+        var given = 0;
+        var where = Placement.Backpack;
+        for (var i = 0; i < count; i++) {
+            if (!Context.Character.TryCreateItem(HouseTrainers.ItemTemplateId, out var item)) {
+                break;
+            }
+
+            var placement = ItemPlacement.Place(Context.Character, item);
+            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
+            if (placement is not (Placement.Backpack or Placement.Bank or Placement.SharedBank)) {
+                break;
+            }
+
+            given++;
+            where = placement;
+        }
+
+        if (given == 0) {
+            InformSenderClient("Could not add a trainer tome, your backpack and bank are full.");
+
+            return;
+        }
+
+        var tomes = given == 1 ? "a trainer tome" : $"{given} trainer tomes";
+        InformSenderClient(where switch {
+            Placement.Backpack => $"Added {tomes} to your backpack. Each one placed in your house brings the next set trainer.",
+            _ => $"Added {tomes}; some went to your bank because your backpack is full.",
+        } + (given < count ? $" Only {given} of {count} fit." : "") + $" All the set trainers need {HouseTrainerSets.Sets.Count} tomes.");
+    }
+
+    private void Flip() {
+        var lot = Context.Character.AttachedLotGid;
+        if (lot == 0) {
+            InformSenderClient("Go into the house with the trainer tomes first, then type .hall flip.");
+
+            return;
+        }
+
+        HouseTrainerSets.Flip(lot);
+        InformSenderClient("The trainer parts now go along the row from the other end. Leave the house and come back in to see the new names.");
     }
 
 }

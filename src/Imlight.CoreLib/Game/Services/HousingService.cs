@@ -248,7 +248,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             ColorBits = (sbyte) change.Item.Tint,
         }, isSelfless: false, ZoneBroadcastTarget.Players);
 
-        HouseTrainers.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
+        HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         DeleteStoredItem(wizard.CharId, itemId);
     }
 
@@ -309,7 +309,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         // A moved trainer tome takes its trainer along.
         if (HouseTrainers.IsTrainerItem(change.Item.TemplateId)) {
             HouseTrainers.Remove(SessionActor.GetZoneActor(), change.GidId);
-            HouseTrainers.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
+            HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         }
 
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHUPDATEHOUSINGOBJECT {

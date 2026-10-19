@@ -115,8 +115,10 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 4:
             case 5:
             case 7:
-                // Buy More and Sell More. Which command is which is not known yet, so the request is matched by what
-                // its ids name: a snack or an item the player holds is sold, a bazaar entry is bought.
+            case 8:
+                // Buy More is 7 (template only) and Sell More is 8 (with the held item's id), per Justin's log. The
+                // request is matched by what its ids name: a snack or an item the player holds is sold, a bazaar
+                // entry is bought.
                 Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}).",
                     Logger.Args(message.Command, message.itemTemplateID, message.itemGlobalID, message.quantity, message.itemType, message.category));
                 BuyOrSellMore(message);
@@ -179,12 +181,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             return [.. s_snacks.Value.Values.Select(snack => snack.Entry)];
         }
 
-        if (category == s_reagentCategory) {
-            return [.. s_reagents.Value.Values.Take(MAX_ENTRIES)];
+        if (s_reagents.Value.ByCategory.TryGetValue(category, out var reagents)) {
+            return [.. reagents.Take(s_catalogLimit)];
         }
 
-        if (s_jewels.Value.ByShape.TryGetValue(category, out var shapeJewels)) {
-            return [.. shapeJewels.Take(MAX_ENTRIES)];
+        if (s_jewels.Value.ByCategory.TryGetValue(category, out var jewels)) {
+            return [.. jewels.Take(s_catalogLimit)];
         }
 
         var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
@@ -252,7 +254,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         if (wizard.GameStats.m_currentGold < entry.m_buyPrice) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -262,7 +264,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         if (wizard.InventoryBehavior.FreeSlots < 1 || !wizard.AddItemToInventory(item)) {
             Logger.Warning("Could not add bazaar item {0} to the inventory of {1}, so the purchase is denied.",
                 Logger.Args(templateId, wizard.CharId));
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -295,12 +297,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(addItemMsg);
 
         // Alert client of new item.
-        var itemAcqMsg = new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = item.m_globalID,
-            ItemTemplateID = (uint) item.m_templateID,
-            ItemLocation = 1,
-        };
-        SendToSocket(itemAcqMsg);
+        SendItemAcquisition(item.m_globalID, item.m_templateID);
 
         // Update gold balances.
         wizard.RemoveGold(goldCost);
@@ -311,12 +308,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(goldUpdateMsg);
 
         // Confirm transaction.
-        var shopBuyConfirmMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM {
-            Failure = 0,
-            WebFailure = 0,
-            Credits = 0
-        };
-        SendToSocket(shopBuyConfirmMsg);
+        SendBuyConfirm(failed: false);
     }
 
     // The most copies one Buy More or Sell More request moves.
@@ -345,16 +337,59 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
             if (Snack(id) is not null || TreasureCard(id) is not null || Reagent(id) is not null || Jewel(id) is not null
                 || AuctionHouseCollection.GetAuctionHouseEntry(id) is not null) {
+                // Each copy is bought quietly; the game gets one confirm (one "ka-ching") for the whole lot.
                 var goldBefore = wizard.GameStats.m_currentGold;
-                for (var i = 0; i < quantity; i++) {
-                    BuyFromAuctionHouse(id, message.texture, message.decal, message.key);
+                var bought = 0;
+                _moreBought = 0;
+                _moreFailed = false;
+                try {
+                    // A copy that is skipped without a confirm still counts as a try, so this always ends.
+                    for (var i = 0; i < quantity && !_moreFailed; i++) {
+                        BuyFromAuctionHouse(id, message.texture, message.decal, message.key);
+                    }
+                }
+                finally {
+                    bought = _moreBought;
+                    _moreBought = NOT_BUYING_MORE;
+                    _moreFailed = false;
                 }
 
-                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, quantity);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (bought > 0 ? 0 : 1), WebFailure = 0, Credits = 0 });
+                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, bought);
 
                 return;
             }
         }
+    }
+
+    // While a Buy More runs, how many copies it has bought so far; NOT_BUYING_MORE otherwise.
+    private const int NOT_BUYING_MORE = -1;
+    private int _moreBought = NOT_BUYING_MORE;
+    private bool _moreFailed;
+
+    private void SendBuyConfirm(bool failed) {
+        if (_moreBought == NOT_BUYING_MORE) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (failed ? 1 : 0), WebFailure = 0, Credits = 0 });
+        }
+        else if (failed) {
+            _moreFailed = true;
+        }
+        else {
+            _moreBought++;
+        }
+    }
+
+    // A Buy More announces only its first copy.
+    private void SendItemAcquisition(GID itemId, ulong templateId) {
+        if (_moreBought > 0) {
+            return;
+        }
+
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+            ItemGlobalID = itemId,
+            ItemTemplateID = (uint) templateId,
+            ItemLocation = 1,
+        });
     }
 
     private void SendMoreAcknowledgement(ulong templateId, bool isSell, int totalPrice, int quantity)
@@ -563,49 +598,57 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private const string REAGENT_FOLDER = "ObjectData/Reagents/";
     private const string JEWEL_FOLDER = "ObjectData/Jewels/";
 
-    // The reagent tab asks with the Reagent adjective; the jewel tab asks per shape, as the adjective of the shape.
-    private static readonly uint s_reagentCategory = StringHash.Compute("Reagent");
+    // Every tab asks with an adjective: the reagent window has Reagent (all of them) and one tab per kind, the jewel
+    // window one tab per shape. Seen in Justin's log of 2026-10-19.
+    private static readonly string[] s_reagentKinds = [
+        "Reagent", "ReagentHarvest", "ReagentHarvestRare", "ReagentShop", "ReagentDrop", "ReagentEvent", "ReagentShard", "ReagentPet",
+    ];
     private static readonly string[] s_jewelShapes = [
         "CircleJewel", "SquareJewel", "TriangleJewel", "TearJewel", "PetJewel", "PinSquareSword", "PinSquareShield", "PinSquarePip",
     ];
 
-    private sealed record BazaarJewels(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByShape);
+    // [Bazaar] CatalogTab: how many reagents, jewels or pins one tab lists. Only short lists (snacks, one school's
+    // treasure cards) are known to show, so it starts low.
+    private static readonly int s_catalogLimit
+        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.CatalogTab", 120), 1, MAX_ENTRIES);
 
-    private static readonly Lazy<Dictionary<ulong, AuctionHouseEntry>> s_reagents = new(() => {
-        var reagents = new Dictionary<ulong, AuctionHouseEntry>();
-        foreach (var (id, _) in TemplatesIn<ReagentItemTemplate>(REAGENT_FOLDER)) {
-            reagents[id] = CatalogEntry(id);
-        }
+    private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory);
 
-        Logger.Information("Bazaar has {0} reagents.", Logger.Args(reagents.Count));
+    private static readonly Lazy<BazaarCatalog> s_reagents = new(() => BuildCatalog(REAGENT_FOLDER, s_reagentKinds, "reagents"));
 
-        return reagents;
-    });
+    private static readonly Lazy<BazaarCatalog> s_jewels = new(() => BuildCatalog(JEWEL_FOLDER, s_jewelShapes, "jewels and pins"));
 
-    private static readonly Lazy<BazaarJewels> s_jewels = new(() => {
+    /// <summary>
+    /// Lists every template in a folder under each of the given adjectives it has. Items the real bazaar never takes
+    /// (FLAG_NoAuction) are left out.
+    /// </summary>
+    private static BazaarCatalog BuildCatalog(string folder, string[] categories, string what) {
         var byId = new Dictionary<ulong, AuctionHouseEntry>();
-        var byShape = new Dictionary<uint, List<AuctionHouseEntry>>();
-        foreach (var (id, template) in TemplatesIn<WizItemTemplate>(JEWEL_FOLDER)) {
+        var byCategory = new Dictionary<uint, List<AuctionHouseEntry>>();
+        foreach (var (id, template) in TemplatesIn<WizItemTemplate>(folder)) {
             var adjectives = (template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList();
-            var shape = s_jewelShapes.FirstOrDefault(adjectives.Contains);
-            if (shape is null) {
+            var tabs = categories.Where(adjectives.Contains).ToList();
+            if (tabs.Count == 0 || adjectives.Contains("FLAG_NoAuction")) {
                 continue;
             }
 
             var entry = CatalogEntry(id);
             byId[id] = entry;
-            var hash = StringHash.Compute(shape);
-            if (!byShape.TryGetValue(hash, out var list)) {
-                byShape[hash] = list = [];
-            }
+            foreach (var tab in tabs) {
+                var hash = StringHash.Compute(tab);
+                if (!byCategory.TryGetValue(hash, out var list)) {
+                    byCategory[hash] = list = [];
+                }
 
-            list.Add(entry);
+                list.Add(entry);
+            }
         }
 
-        Logger.Information("Bazaar has {0} jewels and pins.", Logger.Args(byId.Count));
+        Logger.Information("Bazaar has {0} {1}: {2}.", Logger.Args(byId.Count, what,
+            string.Join(", ", categories.Select(tab => $"{tab} {(byCategory.TryGetValue(StringHash.Compute(tab), out var list) ? list.Count : 0)}"))));
 
-        return new BazaarJewels(byId, byShape);
-    });
+        return new BazaarCatalog(byId, byCategory);
+    }
 
     private static AuctionHouseEntry CatalogEntry(ulong id) => new() {
         m_templateID = (GID) id,
@@ -633,7 +676,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     private static AuctionHouseEntry Reagent(ulong templateId)
-        => s_reagents.Value.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
+        => s_reagents.Value.ById.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
 
     private static AuctionHouseEntry Jewel(ulong templateId)
         => s_jewels.Value.ById.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
@@ -642,18 +685,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var templateId = (ulong) entry.m_templateID & 0xFFFFFFFFUL;
         if (wizard.GameStats.m_currentGold < entry.m_buyPrice || !wizard.AddReagent(templateId, out var reagent)
             || !_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
 
         // Same messages as a crown shop reagent: it goes into the reagent bag.
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = reagent.m_globalID,
-            ItemTemplateID = (uint) reagent.m_templateID,
-            ItemLocation = 1,
-        });
+        SendItemAcquisition(reagent.m_globalID, reagent.m_templateID);
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE {
             GlobalID = wizard.GameObjectID,
             ItemID = reagent.m_globalID,
@@ -669,7 +708,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
     private static BazaarSnack Snack(ulong templateId)
@@ -680,18 +719,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var templateId = (ulong) bazaarSnack.Entry.m_templateID & 0xFFFFFFFFUL;
         if (wizard.GameStats.m_currentGold < price || !wizard.AddSnack(templateId, out var snack)
             || !_itemSerializer.Serialize(snack, 24, out var snackData)) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
 
         // Same messages as .mod addsnack: the snack goes into the snack bag.
         SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = snack.m_globalID,
-            ItemTemplateID = (uint) snack.m_templateID,
-            ItemLocation = 1,
-        });
+        SendItemAcquisition(snack.m_globalID, snack.m_templateID);
         SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
             GlobalID = wizard.GameObjectID,
             ItemID = snack.m_globalID,
@@ -709,7 +744,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [bazaarSnack.Entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
     // Treasure cards in the bazaar: every one in the game, never sold out, priced from 1 to 200 gold.
@@ -729,6 +764,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         "Amulets", "Ring", "Rings", "Deck", "Decks", "Pet", "Pets", "Mount", "Mounts", "Furniture", "Housing",
         "Reagent", "Reagents", "Jewel", "Jewels", "Seed", "Seeds", "Snack", "Snacks", "Elixir", "Elixirs", "All",
         "Everything", "Clothing", "Gear", "Equipment", "Item", "Items",
+        "ReagentHarvest", "ReagentHarvestRare", "ReagentShop", "ReagentDrop", "ReagentEvent", "ReagentShard", "ReagentPet",
+        "CircleJewel", "SquareJewel", "TriangleJewel", "TearJewel", "PetJewel", "PinSquareSword", "PinSquareShield",
+        "PinSquarePip", "PetSnack", "Cantrips", "CastleMagic", "Gardening", "CastleBlock", "Astral",
     ];
     private static readonly HashSet<uint> s_treasureCategories = [.. s_treasureCategoryNames.SelectMany(CategoryHashes)];
 
@@ -820,7 +858,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private void BuyTreasureCard(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarTreasureCard card) {
         var price = card.Entry.m_buyPrice;
         if (wizard.GameStats.m_currentGold < price) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -844,7 +882,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [card.Entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
 }

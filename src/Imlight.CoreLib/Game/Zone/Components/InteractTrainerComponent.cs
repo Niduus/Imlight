@@ -255,7 +255,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public override void OnStart() {
         if (Entity.Template is GameObjectTemplate testTrainer && TestTrainerKindOf(testTrainer) is { } kind) {
             IsTestTrainer = true;
-            SpellInventory = s_testSpells.Value[kind];
+            // A trainer tome holding a set trainer part teaches only that part.
+            SpellInventory = kind == TestTrainerKind.Hall && Imlight.CoreLib.Game.World.HouseTrainerSets.SetFor(Entity.Info?.m_zoneTag) is { } set
+                ? set.Spells
+                : s_testSpells.Value[kind];
             InitializeServiceBases();
 
             return;
