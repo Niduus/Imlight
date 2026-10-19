@@ -44,6 +44,7 @@ internal static class GameClient {
     private const string SERVERS_FILE = "servers.json";
     private const int LOG_TAIL_BYTES = 256 * 1024;
     private const int LOG_MAX_LINES = 1500;
+    private const int LOG_MAX_LINE_CHARS = 500;
 
     /// <summary>
     /// Domains of the live game. Connecting to any of them, or to an address they resolve to, is refused.
@@ -245,6 +246,25 @@ internal static class GameClient {
     /// </summary>
     internal sealed record ClientLog(string? File, string Text, string? Reason);
 
+    private static bool IsNotGameLog(FileInfo file) {
+        try {
+            using var reader = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete));
+            var start = new char[64];
+            var read = reader.Read(start, 0, start.Length);
+
+            var head = new string(start, 0, read);
+
+            // Also skips binary files with a log name.
+            return head.Contains('\0') || head.TrimStart('\uFEFF', ' ', '\r', '\n', '\t').StartsWith("<Capabilities", StringComparison.OrdinalIgnoreCase);
+        }
+        catch (IOException) {
+            return false;
+        }
+        catch (UnauthorizedAccessException) {
+            return true;
+        }
+    }
+
     internal static ClientLog ReadClientLog(string installFolder) {
         var game = InstallInfo.Load(installFolder).GameFolder;
         if (game is null || !Directory.Exists(game)) {
@@ -257,7 +277,8 @@ internal static class GameClient {
             .Where(f => f.Extension.Equals(".log", StringComparison.OrdinalIgnoreCase)
                 || (f.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase) && f.Name.Contains("log", StringComparison.OrdinalIgnoreCase)))
             .OrderByDescending(f => f.LastWriteTimeUtc)
-            .FirstOrDefault();
+            // Wizard101 also writes a hardware list (<Capabilities>) with a log name; that is not the game's log.
+            .FirstOrDefault(f => !IsNotGameLog(f));
         if (file is null) {
             return new ClientLog(null, "", "Wizard101 has not written a log yet. Play once, then look again.");
         }
@@ -273,7 +294,12 @@ internal static class GameClient {
             }
         }
 
-        var lines = text.ReplaceLineEndings("\n").Split('\n');
+        // A log line can be one huge blob (binary or a dump on one line), and laying that out froze the whole window.
+        var lines = text.ReplaceLineEndings("\n").Split('\n')
+            .Select(line => line.Length > LOG_MAX_LINE_CHARS ? line[..LOG_MAX_LINE_CHARS] + " ..." : line)
+            .Select(line => new string(line.Select(c => char.IsControl(c) && c != '\t' ? ' ' : c).ToArray()))
+            .ToArray();
+        text = string.Join("\n", lines);
         if (lines.Length > LOG_MAX_LINES) {
             text = string.Join("\n", lines[^LOG_MAX_LINES..]);
         }
