@@ -1342,6 +1342,14 @@ public class CombatDuelSubCircle {
         => (DynamicSigilSymbol) (SlotType == CombatSlotType.Creature ? SlotIndex + 1 : SlotIndex + 9);
 
     private PipCount DetermineStartingPips() {
+        // .harmony on: all 7 pips as power pips and full shadow pips.
+        if (_wizard is not null && HarmonyMode.IsOn(_wizard.CharId)) {
+            _cheatShadowMagic = true;
+            var shadow = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
+
+            return new PipCount { m_powerPips = MAX_PIP_COUNT, m_shadowPips = (byte) shadow };
+        }
+
         var pipCount = new PipCount() {
             m_powerPips = ParticipantGameStats.m_startingPowerPips,
             m_genericPips = ParticipantGameStats.m_startingPips
