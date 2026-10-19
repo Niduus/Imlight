@@ -1993,6 +1993,40 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             : $"Drew {added} {message.SpellName}.");
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATGIVEPIPS))]
+    private void ReceiveCheatGivePips(COMBAT_106_PROTOCOL.MSG_CHEATGIVEPIPS message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null || !subCircle.IsAlive) {
+            return;
+        }
+
+        try {
+            var result = subCircle.GivePips(message.Kind, message.Amount);
+            SendCombatPips();
+            message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = result });
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | .pip give failed: {1}", Logger.Args(SigilId, ex));
+        }
+    }
+
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY))]
+    private void ReceiveCheatMastery(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null) {
+            return;
+        }
+
+        foreach (var school in message.Schools ?? []) {
+            subCircle.GrantMastery((MagicSchool) school);
+        }
+
+        var names = string.Join(", ", (message.Schools ?? []).Select(school => ((MagicSchool) school).ToString()));
+        message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+            Message = $"You have {names} mastery for the rest of this battle: power pips count as 2 for those spells.",
+        });
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATINSTANTCINEMATICS))]
     private void ReceiveCheatInstantCinematics(COMBAT_106_PROTOCOL.MSG_CHEATINSTANTCINEMATICS message)
         => CheatInstantCinematics = message.Enabled;

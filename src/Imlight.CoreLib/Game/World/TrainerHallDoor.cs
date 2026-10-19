@@ -41,6 +41,12 @@ internal static class TrainerHallDoor {
     private static readonly float s_radius = ConfigurationManager.GetValue("TrainerHall.Radius", 60f);
     private static readonly uint s_houseTemplateId = ConfigurationManager.GetValue("TrainerHall.HallHouseId", 1520349u);
 
+    // A spot inside the hall that sends the wizard to the QA test area (GM island).
+    private static readonly string s_qaArea = ConfigurationManager.GetValue("TrainerHall.QaArea", "WizardCity/QA_SpawnRate");
+    private static readonly float s_qaX = ConfigurationManager.GetValue("TrainerHall.QaSpotX", -2808f);
+    private static readonly float s_qaY = ConfigurationManager.GetValue("TrainerHall.QaSpotY", -4244f);
+    private static readonly float s_qaZ = ConfigurationManager.GetValue("TrainerHall.QaSpotZ", 0f);
+
     /// <summary>Whether the trainer hall is turned on.</summary>
     internal static bool Enabled => s_enabled;
 
@@ -53,6 +59,7 @@ internal static class TrainerHallDoor {
     // Wizards who stepped off the spot since they arrived in the door's area. Someone who arrives on the spot (the
     // World Gate in the hall sends them there) has to step off before it sends them again.
     private static readonly ConcurrentDictionary<ulong, bool> s_armed = new();
+    private static readonly ConcurrentDictionary<ulong, bool> s_qaArmed = new();
 
     /// <summary>
     /// Finds where the World Gate in the trainer hall leads: back to the door, in the door's area.
@@ -87,6 +94,7 @@ internal static class TrainerHallDoor {
 
         if (!string.Equals(wizard.Zone, s_doorZone, StringComparison.OrdinalIgnoreCase)) {
             s_armed.TryRemove(wizard.CharId, out _);
+            OnMoveInHall(session, wizard, x, y, z);
 
             return;
         }
@@ -127,6 +135,36 @@ internal static class TrainerHallDoor {
             IsPrivate = true,
             OwnerCharId = entry.OwnerCharId,
             HouseEntry = entry,
+        });
+    }
+
+    // Inside the hall: walking onto the QA spot sends the wizard to the QA test area.
+    private static void OnMoveInHall(IActorRef session, Wizard wizard, float x, float y, float z) {
+        if (string.IsNullOrWhiteSpace(s_qaArea) || !HouseTemplates.TryGet(s_houseTemplateId, out var hall)
+            || !string.Equals(wizard.Zone, hall.LotZone, StringComparison.OrdinalIgnoreCase)) {
+            s_qaArmed.TryRemove(wizard.CharId, out _);
+
+            return;
+        }
+
+        var dx = x - s_qaX;
+        var dy = y - s_qaY;
+        if (dx * dx + dy * dy > s_radius * s_radius || Math.Abs(z - s_qaZ) > HEIGHT_TOLERANCE) {
+            s_qaArmed[wizard.CharId] = true;
+
+            return;
+        }
+
+        if (!s_qaArmed.TryUpdate(wizard.CharId, false, true)) {
+            return;
+        }
+
+        Logger.Information("{0} walked onto the trainer hall's QA spot.", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName()));
+        session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+            DestinationZone = s_qaArea,
+            DestinationLocation = "Start",
+            SendToClient = true,
+            OwnerCharId = wizard.CharId,
         });
     }
 

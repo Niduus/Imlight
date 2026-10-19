@@ -409,7 +409,32 @@ internal static class PetProgress {
         return [.. (behavior.m_expressedTalents ?? []).Select(PetData.GetTalent)
             .Concat((extraTalents ?? []).Select(PetData.GetTalent))
             .OfType<PetTalentTemplate>()
-            .SelectMany(talent => talent.m_effectList?.OfType<ProvideSpellEffectInfo>() ?? [])];
+            .SelectMany(talent => talent.m_effectList?.OfType<ProvideSpellEffectInfo>() ?? [])
+            .Concat(PowerCardEffects(pet))];
+    }
+
+    /// <summary>
+    /// The pet's own card for its level, such as the Obsidian Mimic's Black Mantle (the card the pet window shows).
+    /// The pet template lists it per level (m_Levels: m_powerCardName, 2 and 3, and m_powerCardCount).
+    /// </summary>
+    private static IEnumerable<ProvideSpellEffectInfo> PowerCardEffects(WizClientObjectItem pet) {
+        var behavior = GetBehavior(pet);
+        var level = GetTemplate(pet)?.m_Levels?.FirstOrDefault(info => info is not null && info.m_level == behavior?.m_level);
+        if (level is null || level.m_powerCardCount <= 0) {
+            yield break;
+        }
+
+        var names = new[] { (string) level.m_powerCardName, (string) level.m_powerCardName2, (string) level.m_powerCardName3 }
+            .Where(name => !string.IsNullOrWhiteSpace(name)).ToList();
+        for (var i = 0; i < names.Count; i++) {
+            // Copies beyond one per named card go to the first card.
+            var copies = i == 0 ? Math.Max(1, (int) level.m_powerCardCount - (names.Count - 1)) : 1;
+            yield return new ProvideSpellEffectInfo {
+                m_effectName = "PetPowerCard",
+                m_spellName = names[i],
+                m_numSpells = copies,
+            };
+        }
     }
 
     private static WizStatisticEffect ScaleEffect(PetBoostPlayerStatEffectTemplate t, float basis) => new() {
