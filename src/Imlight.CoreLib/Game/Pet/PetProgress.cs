@@ -92,8 +92,17 @@ internal static class PetProgress {
         return index >= BABY_LEVEL ? (byte) index : null;
     }
 
-    internal static ClientPetItemBehavior GetBehavior(WizClientObjectItem pet)
-        => pet?.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault();
+    internal static ClientPetItemBehavior GetBehavior(WizClientObjectItem pet) {
+        var behavior = pet?.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault();
+        if (behavior is not null) {
+            // Remembered so the maximum stats, worked out from the behavior alone, can find the pet's raised ones.
+            s_petIds.AddOrUpdate(behavior, pet.m_globalID.Full);
+        }
+
+        return behavior;
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ClientPetItemBehavior, object> s_petIds = new();
 
     internal static PetItemBehaviorTemplate GetTemplate(WizClientObjectItem pet)
         => pet is null ? null : PetFactory.GetPetItemBehaviorTemplate((uint) pet.m_templateID);
@@ -390,9 +399,16 @@ internal static class PetProgress {
             return "Type an amount or max, such as .pet stats strength 150 or .pet stats will max.";
         }
 
+        // An amount above the maximum raises the maximum to it (Justin, 2026-10-19: Strength 220 to 260).
+        var wanted = useMax ? 0 : Math.Max(0, int.Parse(amount));
         if (string.Equals(statName, "happiness", StringComparison.OrdinalIgnoreCase)) {
+            if (!useMax && wanted > behavior.m_maximumHappiness) {
+                PetMaxRaises.Set(pet.m_globalID.Full, "Happiness", wanted);
+                behavior.m_maximumHappiness = (uint) wanted;
+            }
+
             var most = behavior.m_maximumHappiness;
-            behavior.m_happiness = useMax ? most : (uint) Math.Clamp(int.Parse(amount), 0, (int) most);
+            behavior.m_happiness = useMax ? most : (uint) Math.Min(wanted, (int) most);
             shownAs = $"Happiness {behavior.m_happiness}/{most}";
 
             return null;
@@ -403,8 +419,13 @@ internal static class PetProgress {
             return "Pick Strength, Intellect, Agility, Will, Power or Happiness.";
         }
 
+        if (!useMax && wanted > GetStat(behavior.m_maxStats, stat.m_name)) {
+            PetMaxRaises.Set(pet.m_globalID.Full, stat.m_name, wanted);
+            RecalculateMaxStats(behavior, GetTemplate(pet));
+        }
+
         var max = GetStat(behavior.m_maxStats, stat.m_name);
-        stat.m_value = useMax ? max : Math.Clamp(int.Parse(amount), 0, max);
+        stat.m_value = useMax ? max : Math.Min(wanted, max);
         shownAs = $"{stat.m_name} {stat.m_value}/{max}";
 
         return null;
@@ -682,8 +703,10 @@ internal static class PetProgress {
             .SelectMany(t => t.m_maxStatList ?? [])
             .Where(s => s is not null)
             .ToList();
-        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name,
-            GetStat(template.m_maxStats, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value)))];
+        var petId = s_petIds.TryGetValue(behavior, out var id) ? (ulong) id : 0UL;
+        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
+            GetStat(template.m_maxStats, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
+            petId == 0 ? 0 : PetMaxRaises.Get(petId, name))))];
 
         foreach (var stat in behavior.m_currentStats ?? []) {
             stat.m_value = Math.Min(stat.m_value, GetStat(behavior.m_maxStats, stat.m_name));
