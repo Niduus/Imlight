@@ -83,6 +83,9 @@ internal class CommandMasteryProtocol : CommandProtocol {
         MagicSchool[] schools = school.ToLowerInvariant() switch {
             "all" => s_masterySchools,
             "astral" => s_astralSchools,
+            // Shadow cards (Scion of Fire and the like) belong to a school, and the game only knows mastery by those
+            // seven schools, so shadow mastery masters all of them.
+            "shadow" => [.. CommandPipProtocol.Schools, MagicSchool.Shadow],
             _ => [.. s_masterySchools.Where(s => s.ToString().Equals(school, StringComparison.OrdinalIgnoreCase))],
         };
         if (schools.Length == 0) {
