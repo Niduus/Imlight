@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+using System;
 using Akka.Actor;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -42,8 +43,18 @@ internal class CommandDelayCastProtocol : CommandProtocol {
     private void Queue(string spell, bool atStart) {
         var command = atStart ? ".daybreaker" : ".nightbringer";
         var name = (spell ?? "").Trim();
+
+        // An optional target first: p1 (you) to p4 (teammates), e1 to e4 (enemies).
+        string target = null;
+        var words = name.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 2 && words[0].Length == 2 && words[0].ToLowerInvariant() is var code
+            && code[0] is 'p' or 'e' && code[1] is >= '1' and <= '4') {
+            target = code;
+            name = words[1].Trim();
+        }
+
         if (name.Length == 0) {
-            InformSenderClient($"Use {command} and a spell's name or ID, such as {command} Fire Cat.");
+            InformSenderClient($"Use {command}, an optional target (p1 is you, p2-p4 teammates, e1-e4 enemies) and a spell's name or ID, such as {command} e2 Fire Cat.");
 
             return;
         }
@@ -58,6 +69,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
             SpellTemplateId = templateId,
             SpellName = spellName,
             AtStart = atStart,
+            Target = target,
         });
     }
 

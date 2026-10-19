@@ -353,6 +353,7 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public uint SpellTemplateId;
         public string SpellName;
         public bool AtStart;
+        public string Target;
         public IActorRef Actor;
 
     }
