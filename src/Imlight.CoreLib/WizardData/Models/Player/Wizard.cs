@@ -147,6 +147,10 @@ public class Wizard {
     // Stats the worn pet's talents and the socketed jewels added, so they can be taken off exactly.
     [JsonIgnore] internal List<(string Name, WizStatisticEffect Effect)> AppliedPetEffects = [];
     [JsonIgnore] internal List<GameEffectInfo> AppliedJewelEffects = [];
+    // Card effects of the worn pet and socketed jewels, and what changed since the game was last told.
+    [JsonIgnore] internal List<GameEffectBase> AppliedCardEffects = [];
+    [JsonIgnore] internal List<GameEffectBase> AddedCardEffects = [];
+    [JsonIgnore] internal List<GameEffectBase> RemovedCardEffects = [];
     [JsonIgnore] public string GameServerIp;
     [JsonIgnore] public ushort GameServerPort;
     [JsonIgnore] public string QueuedZoneName;
