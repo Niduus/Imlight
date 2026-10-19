@@ -161,6 +161,7 @@ internal sealed class ManagerWindow : Window {
     private readonly TextBlock _gameFilesProgress = Sub("");
     private readonly Button _copyGameFiles = Primary("Copy my game files");
     private readonly Button _readGameFiles = Primary("Read my copy");
+    private readonly Button _shopResearch = Primary("Save shop research");
     private readonly Button _cancelGameFiles = Plain("Stop");
     private System.Threading.CancellationTokenSource? _gameFilesCancel;
 
@@ -623,6 +624,7 @@ internal sealed class ManagerWindow : Window {
     private Control GameFilesTab() {
         Action(_copyGameFiles, CopyGameFilesAsync);
         Action(_readGameFiles, ReadGameFilesAsync);
+        Action(_shopResearch, async () => Say(await RunGameFilesAsync(_gameFiles.ShopResearchAsync)));
         _cancelGameFiles.IsEnabled = false;
         _cancelGameFiles.Click += (_, _) => _gameFilesCancel?.Cancel();
         _gameFilesProgress.Text = GameFilesState();
@@ -659,6 +661,15 @@ internal sealed class ManagerWindow : Window {
                             Spaced(Action(Plain("Open game files folder"), () => Open(Directory.CreateDirectory(_gameFiles.Folder).FullName))),
                         },
                     }, new Thickness(0, 8, 0, 0)),
+                },
+            }),
+            Card(new StackPanel {
+                Spacing = 6,
+                Children = {
+                    Heading("Shop research"),
+                    Sub("Saves the game's shop window files and shop keepers into one zip on your desktop, " +
+                        "for finding out why snack, reagent and jewel shops open as a robe shop."),
+                    WithMargin(Row(_shopResearch), new Thickness(0, 8, 0, 0)),
                 },
             }),
             Card(new DockPanel {
@@ -701,6 +712,7 @@ internal sealed class ManagerWindow : Window {
         _gameFilesCancel = new System.Threading.CancellationTokenSource();
         _copyGameFiles.IsEnabled = false;
         _readGameFiles.IsEnabled = false;
+        _shopResearch.IsEnabled = false;
         _cancelGameFiles.IsEnabled = true;
         try {
             var result = await work(new Progress<string>(text => _gameFilesProgress.Text = text), _gameFilesCancel.Token);
@@ -717,6 +729,7 @@ internal sealed class ManagerWindow : Window {
             _cancelGameFiles.IsEnabled = false;
             _copyGameFiles.IsEnabled = true;
             _readGameFiles.IsEnabled = true;
+            _shopResearch.IsEnabled = true;
             _gameFilesCancel.Dispose();
             _gameFilesCancel = null;
         }
