@@ -103,6 +103,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
 
         // Trainer tomes bring their trainers; a visitor entering a house already showing them adds none.
         HouseTrainers.SpawnAll(SessionActor.GetZoneActor(), house);
+        HouseVendors.SpawnAll(SessionActor.GetZoneActor(), house);
 
         // The client compares this with its cached copy and asks for the blob only when they differ.
         var snapshot = house.Snapshot();
@@ -249,6 +250,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         }, isSelfless: false, ZoneBroadcastTarget.Players);
 
         HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
+        HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         DeleteStoredItem(wizard.CharId, itemId);
     }
 
@@ -310,6 +312,11 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         if (HouseTrainers.IsTrainerItem(change.Item.TemplateId)) {
             HouseTrainers.Remove(SessionActor.GetZoneActor(), change.GidId);
             HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
+        }
+
+        if (HouseVendors.IsVendorItem(change.Item.TemplateId)) {
+            HouseVendors.Remove(SessionActor.GetZoneActor(), change.GidId, change.Item.TemplateId);
+            HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         }
 
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHUPDATEHOUSINGOBJECT {
@@ -382,6 +389,8 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             HouseTrainers.Remove(SessionActor.GetZoneActor(), change.GidId);
         }
 
+        HouseVendors.Remove(SessionActor.GetZoneActor(), change.GidId, placedItem.TemplateId);
+
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHDELETEHOUSINGOBJECT {
             SubType = ItemSubType,
             PackageNumber = 0,
@@ -437,6 +446,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
 
         foreach (var change in result.Removed) {
             HouseTrainers.Remove(SessionActor.GetZoneActor(), change.GidId);
+            HouseVendors.Remove(SessionActor.GetZoneActor(), change.GidId, change.Item?.TemplateId ?? 0);
             ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHDELETEHOUSINGOBJECT {
                 SubType = ItemSubType,
                 PackageNumber = 0,

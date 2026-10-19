@@ -106,8 +106,15 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         var playerWizard = GetActiveWizard();
-        var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(itemTemplateID);
+        var template = CoreObjectFactory.GetCoreTemplate(itemTemplateID) as WizItemTemplate;
         var isPet = PetFactory.IsPetTemplate(itemTemplateID);
+
+        // Snacks go into the snack bag and reagents into the reagent bag, not the backpack (Hao and the house sellers).
+        if (template is PetSnackItemTemplate or ReagentItemTemplate) {
+            BuyIntoBag(playerWizard, template, vendorComponent.FixedPrice ?? (int) template.m_baseCost, message.quantity);
+
+            return;
+        }
 
         if (BadgeGate.Blocks(template?.m_purchaseRequirements, itemTemplateID, SessionActor.ActorRef, GetActiveGameObject(), playerWizard, SessionActor.GetZoneActor())) {
             Logger.Warning("{0} tried to buy item {1} without the badge it requires.",
@@ -139,7 +146,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             item.m_secondaryColor = message.decal;
         }
 
-        var goldCost = PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
+        var goldCost = vendorComponent.FixedPrice ?? PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold < goldCost) {
@@ -489,6 +496,54 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
     // The most copies one Buy More request buys.
     private const uint MAX_COPIES = 99;
+
+    /// <summary>
+    /// Buys a snack into the snack bag or a reagent into the reagent bag, the same messages the bazaar sends.
+    /// </summary>
+    private void BuyIntoBag(Wizard wizard, WizItemTemplate template, int goldCost, uint quantity) {
+        var templateId = (ulong) template.m_templateID;
+        var copies = (int) Math.Clamp(quantity, 1u, MAX_COPIES);
+        var bought = 0;
+        while (bought < copies && wizard.GameStats.m_currentGold >= goldCost) {
+            if (template is PetSnackItemTemplate) {
+                if (!wizard.AddSnack(templateId, out var snack) || !s_itemSerializer.Serialize(snack, 24, out var snackData)) {
+                    break;
+                }
+
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE { GlobalID = wizard.GameObjectID, ItemID = snack.m_globalID, Quantity = snack.m_quantity });
+                if (bought == 0) {
+                    SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = snack.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
+                }
+            }
+            else {
+                if (!wizard.AddReagent(templateId, out var reagent) || !s_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
+                    break;
+                }
+
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE { GlobalID = wizard.GameObjectID, ItemID = reagent.m_globalID, Quantity = reagent.m_quantity });
+                if (bought == 0) {
+                    SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = reagent.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
+                }
+            }
+
+            wizard.RemoveGold(goldCost);
+            bought++;
+        }
+
+        if (bought == 0) {
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD { Gold = wizard.GameStats.m_currentGold, MaxGold = wizard.GameStats.m_baseGoldPouch });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+        if (bought < copies) {
+            InformGameClient($"Bought {bought} of {copies}: not enough gold or room for the rest.");
+        }
+    }
 
     private bool ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost,
                                            bool isPet, bool confirm = true) {
