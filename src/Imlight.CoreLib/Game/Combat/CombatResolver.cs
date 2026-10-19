@@ -363,7 +363,9 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 };
                 var before = combatActionList.m_actionList.Count;
                 cinematicTime += HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
-                for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                // A command's free cast had no enchanted card on the table, so the game is shown it as a normal
+                // cast; marked as delayed, the game waits for a card it never saw and shows nothing.
+                for (var i = before; !delayed.Free && i < combatActionList.m_actionList.Count; i++) {
                     combatActionList.m_actionList[i].m_delayed = true;
                 }
             }

@@ -160,7 +160,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static List<AuctionHouseEntry> EntriesFor(uint category) {
         var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
         if (schoolCards.Count > 0 || IsTreasureCardCategory(category)) {
-            var cards = schoolCards.Count > 0 ? schoolCards : s_shownTreasureCards.Value;
+            // One school at a time (Justin): the tab's general request gets the first school, not every card.
+            var cards = schoolCards.Count > 0 ? schoolCards : FirstSchoolCards();
 
             return [.. cards.Take(Math.Min(s_treasureCardLimit, MAX_ENTRIES)).Select(card => card.Entry)];
         }
@@ -497,6 +498,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         => Enum.IsDefined(typeof(Imlight.CoreLib.Shared.Behaviors.MagicSchool), (int) category)
             ? $"{(Imlight.CoreLib.Shared.Behaviors.MagicSchool) (int) category} treasure cards"
             : s_treasureCategoryNames.Concat(s_otherCategoryNames).FirstOrDefault(name => CategoryHashes(name).Contains(category));
+
+    private static List<BazaarTreasureCard> FirstSchoolCards() {
+        var first = s_shownTreasureCards.Value.FirstOrDefault(card => card.SchoolHash != 0);
+
+        return first is null ? [] : [.. s_shownTreasureCards.Value.Where(card => card.SchoolHash == first.SchoolHash)];
+    }
 
     // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
     private const int MAX_ENTRIES = 1000;
