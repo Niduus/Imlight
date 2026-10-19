@@ -159,58 +159,56 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
-        var entryList = s_sendEverything ? Everything() : EntriesFor(category);
+        var entryList = s_sendEverything ? WholeWindow(category) : EntriesFor(category);
         Logger.Debug("Bazaar: sending {0} entries, first {1}.", Logger.Args(entryList.Count,
             string.Join(", ", entryList.Take(3).Select(entry => (ulong) entry.m_templateID))));
-
-        // Long lists go in parts. LastSegment 1 means more parts follow (with 1 on a whole list no tab filled at
-        // all) and 0 marks the last one (Justin's logs, 2026-10-19).
-        var parts = entryList.Chunk(SEGMENT_ENTRIES).ToList();
-        if (parts.Count == 0) {
-            parts.Add([]);
-        }
-
-        for (var i = 0; i < parts.Count; i++) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-                Contents = WriteAuctionBlob(category, parts[i]),
-                GlobalID = npcId,
-                LastSegment = (sbyte) (i < parts.Count - 1 ? 1 : 0)
-            });
-        }
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
+            Contents = WriteAuctionBlob(category, entryList),
+            GlobalID = npcId,
+            LastSegment = 0
+        });
     }
 
     private void SendStock(uint category) {
-        var entryList = s_sendEverything ? Everything() : EntriesFor(category);
-        foreach (var part in entryList.Chunk(SEGMENT_ENTRIES)) {
-            SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
-                UpdateInfo = WriteAuctionBlob(0, part),
-                CharacterID = GetActiveWizard().CharId
-            });
+        var entryList = s_sendEverything ? WholeWindow(category) : EntriesFor(category);
+        if (entryList.Count == 0) {
+            return;
         }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+            UpdateInfo = WriteAuctionBlob(0, entryList),
+            CharacterID = GetActiveWizard().CharId
+        });
     }
 
-    // About 20 bytes an entry; one message of 1000 was fine, 5218 dropped the connection.
-    private const int SEGMENT_ENTRIES = 800;
+    // The list is a string with a 16-bit length: 8 bytes of header and 20 an entry fit 3276 entries. 5218 made the
+    // game drop the connection. Sending a long list in parts did not work: each part replaced the last, so only the
+    // last part showed (Justin, 2026-10-19).
+    private const int MAX_ONE_LIST = 3200;
 
-    // [Bazaar] SendEverything: every tab and shortcut gets the whole bazaar, because the game keeps one list for the
-    // whole window: each answer replaced the last, so only the tab that answer was for showed anything (Justin,
+    // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
+    // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Justin,
     // 2026-10-19). Off sends each tab only its own items.
     private static readonly bool s_sendEverything
         = Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
 
-    /// <summary>
-    /// Everything the bazaar sells, each item once: its own stock, snacks, reagents, jewels, pins and treasure cards.
-    /// </summary>
-    private static List<AuctionHouseEntry> Everything() {
-        var seen = new HashSet<ulong>();
-        var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
+    // Lazy: s_jewelShapes is set further down, after this field would be.
+    private static readonly Lazy<HashSet<uint>> s_jewelTabs = new(() => [.. s_jewelShapes.Select(StringHash.Compute)]);
 
-        return [.. houseEntries.Where(entry => Snack(entry.m_templateID) is null)
-            .Concat(s_snacks.Value.Values.Select(snack => snack.Entry))
-            .Concat(s_reagents.Value.ById.Values)
-            .Concat(s_jewels.Value.ById.Values)
-            .Concat(s_shownTreasureCards.Value.Take(s_treasureCardLimit).Select(card => card.Entry))
-            .Where(entry => seen.Add((ulong) entry.m_templateID & 0xFFFFFFFFUL))];
+    /// <summary>
+    /// Everything the window a tab belongs to sells: the jewel window gets every jewel and pin, the reagent and snack
+    /// window every reagent and snack. Other tabs (treasure cards by school, hats and the rest) keep their own lists.
+    /// </summary>
+    private static List<AuctionHouseEntry> WholeWindow(uint category) {
+        if (s_jewelTabs.Value.Contains(category)) {
+            return [.. s_jewels.Value.ById.Values.Take(MAX_ONE_LIST)];
+        }
+
+        if (category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)) {
+            return [.. s_snacks.Value.Values.Select(snack => snack.Entry).Concat(s_reagents.Value.ById.Values).Take(MAX_ONE_LIST)];
+        }
+
+        return EntriesFor(category);
     }
 
     /// <summary>
