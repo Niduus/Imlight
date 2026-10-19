@@ -682,13 +682,31 @@ public class CombatDuelSubCircle {
     /// shadow magic unlocked whenever shadow pips are on.
     /// </summary>
     internal void ApplyPipGauges(WizGameStats stats) {
-        if (stats is null || !HasShadowMagic) {
+        if (stats is null) {
+            return;
+        }
+
+        // .mastery: the game decides which cards a wizard can afford from these, so they are sent too.
+        foreach (var school in _cheatMasteries) {
+            switch ((MagicSchool) school) {
+                case MagicSchool.Storm: stats.m_stormMastery = Math.Max(stats.m_stormMastery, 1); break;
+                case MagicSchool.Fire: stats.m_fireMastery = Math.Max(stats.m_fireMastery, 1); break;
+                case MagicSchool.Ice: stats.m_iceMastery = Math.Max(stats.m_iceMastery, 1); break;
+                case MagicSchool.Myth: stats.m_mythMastery = Math.Max(stats.m_mythMastery, 1); break;
+                case MagicSchool.Life: stats.m_lifeMastery = Math.Max(stats.m_lifeMastery, 1); break;
+                case MagicSchool.Death: stats.m_deathMastery = Math.Max(stats.m_deathMastery, 1); break;
+                case MagicSchool.Balance: stats.m_balanceMastery = Math.Max(stats.m_balanceMastery, 1); break;
+            }
+        }
+
+        if (!HasShadowMagic) {
             return;
         }
 
         var max = MaxShadowPips;
         stats.m_shadowMagicUnlocked = true;
-        stats.m_shadowPipMax = max >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : max;
+        stats.m_shadowPipMax = Math.Max(max >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : max,
+            CombatParticipant?.m_pipCount?.m_shadowPips ?? 0);
         stats.m_shadowPipRating = ShadowPipChance();
         stats.m_shadowPipRateAccumulated = _shadowGauge;
         stats.m_shadowPipRateThreshold = GAUGE_FULL;
@@ -706,7 +724,11 @@ public class CombatDuelSubCircle {
     // A wizard who used .intothedarkness has shadow magic of their own, whatever the toggles say.
     private bool HasOwnShadowMagic => _wizard is not null && ParticipantGameStats?.m_shadowMagicUnlocked == true;
 
-    private bool HasShadowMagic => _wizard is null ? s_shadowPips && CreatureHasShadowMagic : s_shadowPips || HasOwnShadowMagic;
+    // .pip give shadow: shadow slots for the rest of this battle, so the given pips show on the circle.
+    private bool _cheatShadowMagic;
+
+    private bool HasShadowMagic => _cheatShadowMagic
+        || (_wizard is null ? s_shadowPips && CreatureHasShadowMagic : s_shadowPips || HasOwnShadowMagic);
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,
@@ -825,6 +847,7 @@ public class CombatDuelSubCircle {
         }
 
         if (kind == "shadow") {
+            _cheatShadowMagic = true;
             var max = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
             var target = amount < 0 ? max : Math.Min(max, pips.m_shadowPips + amount);
             var added = Math.Max(0, target - pips.m_shadowPips);
@@ -867,7 +890,8 @@ public class CombatDuelSubCircle {
             AddOne();
         }
 
-        var name = kind == "light" ? "normal" : kind;
+        // School pips are the Archmastery pips: they fill the school slots, not the Archmastery gauge.
+        var name = kind == "light" ? "normal" : school is { } picked ? $"{picked} Archmastery" : kind;
 
         return given == 0 ? $"No room for more {name} pips." : $"+{given} {name} pips.";
     }
