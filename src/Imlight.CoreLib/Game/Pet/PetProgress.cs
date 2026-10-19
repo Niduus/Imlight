@@ -48,13 +48,14 @@ internal static class PetProgress {
     internal const byte MEGA_LEVEL = 6;
     internal const byte MAX_LEVEL = 7;
     // [Pets] in Imlight.ini.
-    private static float? s_snackXpPerRank;
-    private static float? s_favoriteSnackBonus;
+    private static bool? s_doubleSnackXp;
+    private static float? s_likedSnackBonus;
 
-    // The snack card shows 15 XP for a rank 10 snack, so 1.5 a rank. Renamed from SnackXpPerRank (was 5) so old ini values do not stick.
-    private static float SnackXpPerRank => s_snackXpPerRank ??= Math.Max(0.1f, ReadSetting("Pets.SnackXpEachRank", 1.5f));
+    // Double XP & Rewards, which the feed window shows: snack experience counts twice.
+    private static bool DoubleSnackXp => s_doubleSnackXp ??= ReadSetting("Pets.DoubleSnackXp", true);
 
-    private static float FavoriteSnackBonus => s_favoriteSnackBonus ??= ReadSetting("Pets.FavoriteSnackBonus", 1.5f);
+    // Renamed from FavoriteSnackBonus (was 1.5) so old ini values do not stick; Justin's rule has no liked bonus.
+    private static float LikedSnackBonus => s_likedSnackBonus ??= Math.Max(0f, ReadSetting("Pets.LikedSnackBonus", 1.0f));
 
     private static T ReadSetting<T>(string key, T defaultValue) {
         try {
@@ -345,12 +346,18 @@ internal static class PetProgress {
     }
 
     /// <summary>
-    /// The experience a snack gives: by default one and a half per snack rank, as the snack card shows, half again for a snack the pet likes.
+    /// The experience a snack gives (Justin, 2026-10-19): the stat numbers on its card added up (Decaversary Cake:
+    /// +15 Agility, +15 Intellect, +25 Power = 55), twice that with Double XP, times LikedSnackBonus for a snack the
+    /// pet likes.
     /// </summary>
     internal static uint SnackXp(WizClientObjectItem pet, PetSnackItemTemplate snack) {
-        var xp = SnackXpPerRank * Math.Max(1, snack?.m_rank ?? 1);
+        float xp = (snack?.m_statModifierSet?.m_modifications ?? []).Where(change => change is not null).Sum(change => Math.Max(0, change.m_change));
+        if (DoubleSnackXp) {
+            xp *= 2;
+        }
+
         if (IsFavoriteSnack(pet, snack)) {
-            xp *= FavoriteSnackBonus;
+            xp *= LikedSnackBonus;
         }
 
         return (uint) Math.Max(1, Math.Round(xp, MidpointRounding.AwayFromZero));
