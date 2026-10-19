@@ -111,7 +111,7 @@ internal sealed class SocketSender : ReceiveActor, IDisposable {
         _isSending = true;
 
         try {
-            var data = MessageEncoder.Encode(message);
+            var data = FixLongFrameLength(MessageEncoder.Encode(message));
             var bytesSent = _socket.Send(data);
             if (bytesSent != data.Length) {
                 throw new SessionFatalException(
@@ -134,6 +134,22 @@ internal sealed class SocketSender : ReceiveActor, IDisposable {
         }
 
         LogSentPacket(message);
+    }
+
+    // [Advanced] LongFrameFix. Messages over about 30 KB use the long frame form: 0xF00D, 0x8000, then a 32-bit length.
+    // Imcodec writes only the message body there, but the short form counts every byte after the length field (flags,
+    // message header, body and the trailing null), so the game read the frame 9 bytes short and dropped the connection
+    // on any big bazaar list (Justin, 2026-10-19). This writes the long length the way the short form counts.
+    private static readonly bool s_longFrameFix = ConfigurationManager.GetValue("Advanced.LongFrameFix", true);
+    private const int LONG_FRAME_HEADER = 8;
+
+    private static byte[] FixLongFrameLength(byte[] data) {
+        if (s_longFrameFix && data.Length > LONG_FRAME_HEADER
+            && BitConverter.ToUInt16(data, 2) == 0x8000) {
+            BitConverter.TryWriteBytes(data.AsSpan(4, 4), (uint) (data.Length - LONG_FRAME_HEADER));
+        }
+
+        return data;
     }
 
     private void LogSentPacket(IMessage packet) {

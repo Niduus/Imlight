@@ -188,9 +188,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     private const int UPDATE_ENTRIES = 800;
 
-    // How many entries one list may hold. 1000 was fine, 2946 and 5218 made the game drop the connection. Sending a
-    // long list in parts did not work: each part replaced the last, so only the last part showed (Justin, 2026-10-19).
-    private const int MAX_ONE_LIST = 1200;
+    // How many entries one list may hold. 2946 used to drop the connection, but that was the long frame length bug (see
+    // SocketSender.FixLongFrameLength), not the list. The message header length is 16 bits, so a list must stay under
+    // about 3270 entries of 20 bytes; the jewel window (2946) fits in one list (Justin, 2026-10-19: updates past the
+    // first list did not add to it, so Triangle, Star and pins stayed empty).
+    private const int MAX_ONE_LIST = 3200;
 
     // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
     // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Justin,
