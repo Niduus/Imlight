@@ -94,6 +94,11 @@ internal static class EquipmentExtras {
                     wizard.AppliedPetEffects.Add((name, effect));
                 }
 
+                // Card talents give their cards for battle; they are taken off like a jewel's cards.
+                foreach (var info in PetProgress.CardEffects(item, JewelSockets.GetPetJewelTalents(item))) {
+                    AddCards(wizard, info);
+                }
+
                 continue;
             }
 
@@ -101,13 +106,7 @@ internal static class EquipmentExtras {
                 foreach (var info in jewel.m_equipEffects ?? []) {
                     switch (info) {
                         case ProvideSpellEffectInfo spell:
-                            if (GameEffectFactory.CreateEffectFromInfo(spell, 0) is ProvideSpellEffect provide) {
-                                foreach (var card in SpellFactory.CreateSpellsFromEffect(provide) ?? []) {
-                                    wizard.AddTemporarySpell(card);
-                                }
-
-                                wizard.AppliedJewelEffects.Add(info);
-                            }
+                            AddCards(wizard, spell);
                             break;
                         case StatisticEffectInfo or StartingPipEffectInfo:
                             if (CharacterEffectHelper.AddGameEffectToStats(wizard.GameStats, info) is not null) {
@@ -117,6 +116,16 @@ internal static class EquipmentExtras {
                     }
                 }
             }
+        }
+    }
+
+    private static void AddCards(Wizard wizard, ProvideSpellEffectInfo info) {
+        if (GameEffectFactory.CreateEffectFromInfo(info, 0) is ProvideSpellEffect provide) {
+            foreach (var card in SpellFactory.CreateSpellsFromEffect(provide) ?? []) {
+                wizard.AddTemporarySpell(card);
+            }
+
+            wizard.AppliedJewelEffects.Add(info);
         }
     }
 
