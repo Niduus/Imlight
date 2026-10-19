@@ -723,8 +723,8 @@ public class CombatDuelSubCircle {
             return;
         }
 
-        // .mastery: the game decides which cards a wizard can afford from these, so they are sent too.
-        foreach (var school in _cheatMasteries) {
+        // .mastery and .allknowing: the game decides which cards a wizard can afford from these, so they are sent too.
+        foreach (var school in IsAllKnowing ? _cheatMasteries.Concat(Commands.Protocols.CommandPipProtocol.Schools.Select(s => (uint) s)) : _cheatMasteries) {
             switch ((MagicSchool) school) {
                 case MagicSchool.Storm: stats.m_stormMastery = Math.Max(stats.m_stormMastery, 1); break;
                 case MagicSchool.Fire: stats.m_fireMastery = Math.Max(stats.m_fireMastery, 1); break;
@@ -863,6 +863,9 @@ public class CombatDuelSubCircle {
     /// </summary>
     internal void GrantMastery(MagicSchool school) => _cheatMasteries.Add((uint) school);
 
+    // .allknowing on: mastery of every school in every battle.
+    private bool IsAllKnowing => _wizard is not null && BattleModes.AllKnowing.IsOn(_wizard.CharId);
+
     /// <summary>
     /// .pip give: adds pips for the rest of this battle. Normal, power and school pips share the 7 slots: they
     /// fill empty slots first, then turn normal pips into the asked kind. Shadow pips go in their own slots.
@@ -934,7 +937,7 @@ public class CombatDuelSubCircle {
     }
 
     internal bool HasSchoolMastery(uint magicSchoolID) {
-        if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID)) {
+        if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID) || IsAllKnowing) {
             return true;
         }
 

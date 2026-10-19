@@ -35,6 +35,9 @@ internal sealed class BattleModes(string file) {
     /// <summary>`.lightnshadow on`: every round tops power pips, shadow pips and mana back up to full.</summary>
     internal static readonly BattleModes LightAndShadow = new("lightnshadow.txt");
 
+    /// <summary>`.allknowing on`: every battle counts as mastering every school.</summary>
+    internal static readonly BattleModes AllKnowing = new("allknowing.txt");
+
     private readonly string _file = file;
     private readonly object _lock = new();
     private HashSet<ulong> _characters;
