@@ -167,9 +167,8 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
 
         if (inFeedWindow) {
-            SendSnackFeedResult("feed", growth.XpGained, WithActualChanges(
+            SendHeldThenFeedResult(held, "feed", growth.XpGained, WithActualChanges(
                 (CoreObjectFactory.GetCoreTemplate(message.SnackTemplateID) as PetSnackItemTemplate)?.m_statModifierSet, growth));
-            held.ForEach(SendToSocket);
         }
 
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS {
@@ -201,8 +200,9 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
     }
 
     /// <summary>
-    /// Counts a skipped pet game as a win: the pet gets the game's experience and the stats of a track, and eats
-    /// the snack the player picked, if the game named one. Skipping costs no energy and needs no wins here.
+    /// Skips a pet game and feeds the snack the player picked, if the game named one. With [Pets] SkipGameRewards the
+    /// skip counts as a win (the game's experience and the stats of a track). Skipping costs no energy and needs no
+    /// wins here.
     /// </summary>
     private void SkipPetGame(ulong petId, string gameName, int track, byte[] snackData) {
         var wizard = GetActiveWizard();
@@ -223,7 +223,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
         PetStatModificationSet chosen = null;
         var game = feedOnly ? null : Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName);
-        if (game is not null) {
+        if (game is not null && PetRules.SkipGameRewards) {
             var cost = Imlight.CoreLib.Game.Pet.PetGameConfig.TryGetEnergyCost(gameName, behavior.m_level, out var energy) ? energy : 2;
             PetProgress.AddXp(pet, (uint) Math.Max(2, cost * 2), growth);
             var tracks = game.m_trackChoices;
@@ -269,13 +269,15 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 growth.LevelsGained += fed.LevelsGained;
                 growth.StatChanges.AddRange(fed.StatChanges);
                 var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
-                SendSnackFeedResult(gameName, fed.XpGained, WithActualChanges(snackMods, fed));
+                SendHeldThenFeedResult(held, gameName, fed.XpGained, WithActualChanges(snackMods, fed));
             }
-            else if (snackData is not null) {
-                SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
-            }
+            else {
+                if (snackData is not null) {
+                    SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
+                }
 
-            held.ForEach(SendToSocket);
+                held.ForEach(SendToSocket);
+            }
         }
         else if (snackData is { Length: > 0 }) {
             SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
@@ -302,6 +304,16 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                     .Sum(change => change.Change)),
             })],
         };
+    }
+
+    /// <summary>
+    /// Sends the pet's new state, then the feed result. The feed window shows the XP and stats the pet has when the
+    /// result arrives, so sending the state after it showed the numbers from before the snack (46 +15 instead of
+    /// 61 +15). The level-up window did not show when sent after it either (Justin, 2026-10-19).
+    /// </summary>
+    private void SendHeldThenFeedResult(List<IMessage> held, string gameName, uint xpGained, PetStatModificationSet statMods) {
+        held.ForEach(SendToSocket);
+        SendSnackFeedResult(gameName, xpGained, statMods);
     }
 
     private void SendSnackFeedResult(string gameName, uint xpGained, PetStatModificationSet statMods) {

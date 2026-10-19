@@ -78,6 +78,12 @@ internal static class PetRules {
     internal static bool SkipShowsFeedWindow { get; } = ConfigurationManager.GetValue("Pets.SkipShowsFeedWindow", true);
 
     /// <summary>
+    /// When true, a skipped pet game gives its XP and the stats of a track like a win. Off by default (Justin,
+    /// 2026-10-19): only the snack fed after the skip counts.
+    /// </summary>
+    internal static bool SkipGameRewards { get; } = ConfigurationManager.GetValue("Pets.SkipGameRewards", false);
+
+    /// <summary>
     /// Gets the factor applied to XP from a source, for a wizard who counts as a member.
     /// </summary>
     /// <param name="source">Where the XP comes from.</param>
