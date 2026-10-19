@@ -106,7 +106,7 @@ internal static class SelfUpdate {
     /// downloads in the folder are removed.
     /// </summary>
     /// <returns>The version and the downloaded program, or null when there is nothing newer or the download failed.</returns>
-    internal static async Task<(Version Version, string Path)?> DownloadNewerAsync(string folder) {
+    internal static async Task<(Version Version, string Path)?> DownloadNewerAsync(string folder, IProgress<int>? percent = null) {
         if (CurrentVersion == new Version(0, 0, 0) || !OperatingSystem.IsWindows()) {
             return null;
         }
@@ -125,7 +125,26 @@ internal static class SelfUpdate {
                 return null;
             }
 
-            var bytes = await http.GetByteArrayAsync(asset.GetProperty("browser_download_url").GetString());
+            // Read in pieces so the app can show how far along the download is.
+            using var response = await http.GetAsync(asset.GetProperty("browser_download_url").GetString(), HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var total = response.Content.Headers.ContentLength ?? 0;
+            using var buffer = new MemoryStream();
+            await using (var stream = await response.Content.ReadAsStreamAsync()) {
+                var chunk = new byte[81920];
+                int read;
+                var lastShown = -1;
+                while ((read = await stream.ReadAsync(chunk)) > 0) {
+                    buffer.Write(chunk, 0, read);
+                    var shown = total > 0 ? (int) (buffer.Length * 100 / total) : -1;
+                    if (shown != lastShown) {
+                        lastShown = shown;
+                        percent?.Report(shown);
+                    }
+                }
+            }
+
+            var bytes = buffer.ToArray();
             if (asset.TryGetProperty("digest", out var digest) && digest.GetString() is { } sha
                 && sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
                 && !Convert.ToHexString(SHA256.HashData(bytes)).Equals(sha["sha256:".Length..], StringComparison.OrdinalIgnoreCase)) {
