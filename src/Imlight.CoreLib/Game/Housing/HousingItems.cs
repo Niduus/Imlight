@@ -47,6 +47,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
@@ -125,9 +126,22 @@ internal static class HousingItems {
         template = item;
         var families = HousingFamilies.Of(item);
         family = families.FirstOrDefault(candidate => !candidate.Enabled) ?? families[0];
+        if (!family.Enabled && PlacesAsDecoration(families)) {
+            family = HousingFamilies.Plain;
+        }
 
         return family.Enabled ? HousingPlacement.Allowed : HousingPlacement.NotEnabled;
     }
+
+    /// <summary>
+    /// [Housing] PlaceAnyAsDecoration: an object of a family the server does not support yet is placed as plain
+    /// furniture, which shows it without its feature (a vault does not open, a teleporter does not send). Only families
+    /// whose live entries the client keeps as plain items qualify; castle blocks never do.
+    /// </summary>
+    private static bool PlacesAsDecoration(IReadOnlyList<HousingFamily> families)
+        => ConfigurationManager.GetValue("Housing.PlaceAnyAsDecoration", true)
+            && families.All(candidate => candidate.Enabled
+                || (candidate.BlobSubType is null && candidate != HousingFamilies.CastleBlock));
 
     /// <summary>
     /// Checks whether a template may not have another copy: the client's limit on how often a house may hold
