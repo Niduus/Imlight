@@ -36,6 +36,8 @@
  * Last Updated: 3/18/2025
  */
 
+using System.Linq;
+using Imlight.Common;
 using Akka.Actor;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Networking;
@@ -76,13 +78,51 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    private static bool IsThisPc(string remoteIp) {
+        // RemoteIp may carry a port or an IPv4-mapped IPv6 form.
+        var text = remoteIp ?? "";
+        if (!System.Net.IPAddress.TryParse(text, out var address)) {
+            var colon = text.LastIndexOf(':');
+            if (colon <= 0 || !System.Net.IPAddress.TryParse(text[..colon].Trim('[', ']'), out address)) {
+                return false;
+            }
+        }
+
+        if (address.IsIPv4MappedToIPv6) {
+            address = address.MapToIPv4();
+        }
+
+        if (System.Net.IPAddress.IsLoopback(address)) {
+            return true;
+        }
+
+        try {
+            return System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+                .SelectMany(nic => nic.GetIPProperties().UnicastAddresses)
+                .Any(unicast => unicast.Address.Equals(address));
+        }
+        catch (System.Net.NetworkInformation.NetworkInformationException) {
+            return false;
+        }
+    }
+
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_MANAGERCOMMAND))]
     private void ReceiveManagerCommand(SERVICE_101_PROTOCOL.MSG_MANAGERCOMMAND message) {
-        // Only the game on the server's own PC runs commands typed in the Imlight app.
-        if (!System.Net.IPAddress.TryParse(SessionActor.RemoteIp, out var address) || !System.Net.IPAddress.IsLoopback(address)
-            || GetActiveWizard() is null || GetActiveGameObject() is null || GetActiveAccount() is null) {
+        if (GetActiveWizard() is null || GetActiveGameObject() is null || GetActiveAccount() is null) {
             return;
         }
+
+        // Only the game on the server's own PC runs commands typed in the Imlight app. That game may connect
+        // through the PC's network address (the one given out for friends), not only 127.0.0.1.
+        if (!IsThisPc(SessionActor.RemoteIp)) {
+            Logger.Information("Imlight app command not run for {0}: the game at {1} is not on this PC.",
+                Logger.Args(GetActiveWizard().PlayerNameBehavior?.GetWizardName(), SessionActor.RemoteIp));
+
+            return;
+        }
+
+        Logger.Information("Running the Imlight app command \"{0}\" for {1}.",
+            Logger.Args(message.Command, GetActiveWizard().PlayerNameBehavior?.GetWizardName()));
 
         _dispatcherRef.Tell(new SERVER_100_PROTOCOL.MSG_COMMAND() {
             CommandText = message.Command,
