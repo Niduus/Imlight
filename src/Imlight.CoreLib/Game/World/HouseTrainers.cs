@@ -131,10 +131,6 @@ internal static class HouseTrainers {
         }
 
         coreObject = CoreObjectFactory.InitializeCoreObjectBehaviors(coreObject, template);
-        var name = NameFor(spawn.Tag);
-        if (coreObject is not null && name is not null && CoreObjectFactory.FindBehaviorInstance<NPCBehavior>(coreObject, out var npc)) {
-            npc.m_wsNameOverride = name;
-        }
 
         return coreObject is not null;
     }

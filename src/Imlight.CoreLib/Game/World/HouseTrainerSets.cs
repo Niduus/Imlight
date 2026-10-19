@@ -30,9 +30,9 @@ using Imlight.CoreLib.WizardData.Models.World;
 namespace Imlight.CoreLib.Game.World;
 
 /// <summary>
-/// Set trainers (Justin, 2026-10-19): every spell the game's own trainers teach, split by school into parts of at most
-/// <see cref="SpellsPerTrainer"/>, one part per trainer tome ("Fire Trainer 1", "Fire Trainer 2", ...). A part never
-/// takes spells of the next school. The tomes of a house are handed the parts in order along their row, starting at
+/// Set trainers (Justin, 2026-10-19): every spell the game's own trainers teach, plus Merle's boss spells and the dev
+/// cards, split by kind (attacks, shields, traps, mantles...) into parts of at most <see cref="SpellsPerTrainer"/>, one
+/// part per trainer tome ("Shield Trainer 1", "Shield Trainer 2", ...). A part never takes spells of the next kind. The tomes of a house are handed the parts in order along their row, starting at
 /// the end where the first tome was placed; `.hall flip` starts from the other end. Which tome holds which part is
 /// saved in hall-trainers.txt by house and tome, so it stays put. Tomes past the last part keep teaching everything.
 /// </summary>
@@ -187,36 +187,50 @@ internal static class HouseTrainerSets {
         return ordered;
     }
 
+    // The kinds of trainer, in the order they go down the row (Justin, 2026-10-19: "Trainers with Shields, Mantle,
+    // Traps and so on. Boss cards are their own along with dev cards").
+    private static readonly string[] s_kindOrder = [
+        "Attack", "All-Enemy Attack", "Heal", "Blade", "Shield", "Trap", "Mantle & Weakness", "Aura", "Global",
+        "Minion", "Polymorph", "Stun & Control", "Manipulation", "Enchantment", "Other", "Boss", "Dev",
+    ];
+
     private static List<TrainerSet> BuildSets() {
         var sets = new List<TrainerSet>();
         try {
             // Every spell some trainer in the game teaches, once, at the lowest level any trainer asks for it.
-            var spells = Imlight.CoreLib.WizardData.SpiralDB.NpcSpellInventories.Values
+            var trained = Imlight.CoreLib.WizardData.SpiralDB.NpcSpellInventories.Values
                 .Where(inventory => inventory?.Spells is not null)
                 .SelectMany(inventory => inventory.Spells)
                 .GroupBy(entry => entry.TemplateID)
                 .Select(group => (Id: group.Key, Level: group.Min(entry => entry.Level),
                     Spell: CoreObjectFactory.GetCoreTemplate(group.Key) as SpellTemplate))
                 .Where(spell => spell.Spell is not null && !spell.Spell.m_Treasure)
-                .Select(spell => (spell.Id, spell.Level, School: (string) spell.Spell.m_sMagicSchoolName ?? "Other",
+                .Select(spell => (spell.Id, spell.Level, spell.Spell, Kind: KindOf(spell.Spell)));
+
+            // Merle's boss spells, and the developers' cards, are trainers of their own.
+            var boss = Imlight.CoreLib.Game.Zone.Components.InteractTrainerComponent
+                .TestSpellsOf(Imlight.CoreLib.Game.Zone.Components.InteractTrainerComponent.TestTrainerKind.Boss)
+                .Select(entry => (Id: entry.TemplateID, Level: 0, Spell: CoreObjectFactory.GetCoreTemplate(entry.TemplateID) as SpellTemplate, Kind: "Boss"))
+                .Where(spell => spell.Spell is not null);
+
+            var spells = trained.Concat(boss).Concat(DevSpells())
+                .Select(spell => (spell.Id, spell.Level, spell.Kind, School: (string) spell.Spell.m_sMagicSchoolName ?? "",
                     Shown: ShownName(spell.Spell)))
-                // The same card taught under two templates shows once.
+                // A card shows once: the trained copy before the boss copy before the dev copy.
                 .GroupBy(spell => (spell.School, spell.Shown))
-                .Select(group => group.OrderBy(spell => spell.Level).First())
+                .Select(group => group.OrderBy(spell => KindRank(spell.Kind)).ThenBy(spell => spell.Level).First())
                 .ToList();
 
-            var schools = spells.Select(spell => spell.School).Distinct()
-                .OrderBy(school => Array.IndexOf(s_schoolOrder, school) is var index and >= 0 ? index : s_schoolOrder.Length)
-                .ThenBy(school => school, StringComparer.OrdinalIgnoreCase);
-            foreach (var school in schools) {
-                var list = spells.Where(spell => spell.School == school)
-                    .OrderBy(spell => spell.Level)
+            foreach (var kind in spells.Select(spell => spell.Kind).Distinct().OrderBy(KindRank)) {
+                // School by school (Fire first), then by level and name.
+                var list = spells.Where(spell => spell.Kind == kind)
+                    .OrderBy(spell => SchoolRank(spell.School))
+                    .ThenBy(spell => spell.Level)
                     .ThenBy(spell => spell.Shown, StringComparer.OrdinalIgnoreCase)
                     .Select(spell => new NPCSpellEntry { TemplateID = spell.Id, RequiredSpellID = 0, Level = 1 })
                     .ToList();
-                var name = string.IsNullOrWhiteSpace(school) ? "Other" : school;
                 for (int start = 0, part = 1; start < list.Count; start += SpellsPerTrainer, part++) {
-                    sets.Add(new TrainerSet($"{name} Trainer {part}", list.GetRange(start, Math.Min(SpellsPerTrainer, list.Count - start))));
+                    sets.Add(new TrainerSet($"{kind} Trainer {part}", list.GetRange(start, Math.Min(SpellsPerTrainer, list.Count - start))));
                 }
             }
         }
@@ -228,6 +242,127 @@ internal static class HouseTrainerSets {
             Logger.Args(sets.Count, string.Join(", ", sets.Select(set => $"{set.Name} {set.Spells.Count}"))));
 
         return sets;
+    }
+
+    private static int KindRank(string kind) => Array.IndexOf(s_kindOrder, kind) is var index and >= 0 ? index : s_kindOrder.Length;
+
+    private static int SchoolRank(string school) => Array.IndexOf(s_schoolOrder, school) is var index and >= 0 ? index : s_schoolOrder.Length;
+
+    private static readonly HashSet<kSpellEffects> s_damage = [
+        kSpellEffects.kDamage, kSpellEffects.kDamageNoCrit, kSpellEffects.kStealHealth, kSpellEffects.kDamageOverTime,
+        kSpellEffects.kDeferredDamage, kSpellEffects.kDamagePerTotalPipPower, kSpellEffects.kMaxHealthDamage,
+        kSpellEffects.kDetonateOverTime, kSpellEffects.kInstantKill,
+    ];
+    private static readonly HashSet<kSpellEffects> s_heal = [
+        kSpellEffects.kHeal, kSpellEffects.kHealPercent, kSpellEffects.kSetHealPercent, kSpellEffects.kHealOverTime,
+        kSpellEffects.kMaxHealthHeal, kSpellEffects.kHealByWard,
+    ];
+    private static readonly HashSet<kSpellEffects> s_ward = [
+        kSpellEffects.kModifyIncomingDamage, kSpellEffects.kModifyIncomingDamageFlat, kSpellEffects.kMaximumIncomingDamage,
+        kSpellEffects.kModifyIncomingDamageType, kSpellEffects.kAbsorbDamage, kSpellEffects.kBounceNext,
+        kSpellEffects.kBouncePrevious, kSpellEffects.kBounceBack, kSpellEffects.kBounceAll, kSpellEffects.kModifyIncomingHeal,
+        kSpellEffects.kModifyIncomingHealFlat, kSpellEffects.kModifyIncomingArmorPiercing, kSpellEffects.kCritBlock,
+        kSpellEffects.kStunResist, kSpellEffects.kCloakedWard, kSpellEffects.kIntercept,
+    ];
+    private static readonly HashSet<kSpellEffects> s_charm = [
+        kSpellEffects.kModifyOutgoingDamage, kSpellEffects.kModifyOutgoingDamageFlat, kSpellEffects.kModifyOutgoingHeal,
+        kSpellEffects.kModifyOutgoingHealFlat, kSpellEffects.kModifyOutgoingDamageType, kSpellEffects.kModifyOutgoingArmorPiercing,
+        kSpellEffects.kModifyAccuracy, kSpellEffects.kCritBoost, kSpellEffects.kCloakedCharm, kSpellEffects.kModifyPowerPipChance,
+    ];
+    private static readonly HashSet<kSpellEffects> s_control = [
+        kSpellEffects.kStun, kSpellEffects.kConfusion, kSpellEffects.kMindControl, kSpellEffects.kPacify, kSpellEffects.kTaunt,
+    ];
+    private static readonly HashSet<kEffectTarget> s_enemyTargets = [
+        kEffectTarget.kEnemySingle, kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kAtLeastOneEnemy,
+        kEffectTarget.kPreselectedEnemySingle, kEffectTarget.kMultiTargetEnemy, kEffectTarget.kEnemyMinion,
+    ];
+    private static readonly HashSet<kEffectTarget> s_allEnemies = [
+        kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kMultiTargetEnemy,
+    ];
+
+    /// <summary>What kind of trainer teaches a spell, from what the spell does (the first that fits, in this order).</summary>
+    private static string KindOf(SpellTemplate spell) {
+        string type = spell.m_sTypeName;
+        type ??= "";
+        var leaves = Imlight.CoreLib.Game.Combat.CombatEnchantments.Leaves(spell.m_effects).ToList();
+        bool Has(HashSet<kSpellEffects> kinds) => leaves.Any(effect => kinds.Contains(effect.m_effectType));
+        bool OnEnemy(HashSet<kSpellEffects> kinds) => leaves.Any(effect => kinds.Contains(effect.m_effectType) && s_enemyTargets.Contains(effect.m_effectTarget));
+
+        if (leaves.Count > 0 && Imlight.CoreLib.Game.Combat.CombatEnchantments.IsEnchantment(spell) || type == "Enchantment") {
+            return "Enchantment";
+        }
+
+        if (leaves.Any(effect => effect.m_effectType is kSpellEffects.kSummonCreature or kSpellEffects.kSpawnCreature)) {
+            return "Minion";
+        }
+
+        if (type == "Polymorph" || leaves.Any(effect => effect.m_effectType == kSpellEffects.kPolymorph)) {
+            return "Polymorph";
+        }
+
+        if (type == "Global" || leaves.Any(effect => effect.m_effectTarget == kEffectTarget.kGlobal)) {
+            return "Global";
+        }
+
+        if (type == "Aura") {
+            return "Aura";
+        }
+
+        if (Has(s_damage)) {
+            return leaves.Any(effect => s_damage.Contains(effect.m_effectType) && s_allEnemies.Contains(effect.m_effectTarget))
+                ? "All-Enemy Attack"
+                : "Attack";
+        }
+
+        if (Has(s_heal)) {
+            return "Heal";
+        }
+
+        if (Has(s_ward)) {
+            return OnEnemy(s_ward) ? "Trap" : "Shield";
+        }
+
+        if (Has(s_charm)) {
+            return OnEnemy(s_charm) ? "Mantle & Weakness" : "Blade";
+        }
+
+        if (Has(s_control)) {
+            return "Stun & Control";
+        }
+
+        return leaves.Count > 0 ? "Manipulation" : "Other";
+    }
+
+    // Cards the developers made for testing: in a Test folder, or named Dev, Debug, GM or Admin.
+    private static readonly System.Text.RegularExpressions.Regex s_devName
+        = new(@"(^|[^A-Za-z])(Dev|DEV|Debug|DEBUG|GM|Admin|ADMIN)([^a-z]|$)");
+
+    private static IEnumerable<(ulong Id, int Level, SpellTemplate Spell, string Kind)> DevSpells() {
+        var templateIds = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            templateIds.TryAdd(location.m_filename, location.m_id);
+        }
+
+        var found = new List<(ulong, int, SpellTemplate, string)>();
+        foreach (var (path, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
+            string name = spell.m_name;
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty((string) spell.m_displayName)
+                || Array.IndexOf(s_schoolOrder, (string) spell.m_sMagicSchoolName ?? "") < 0
+                || !templateIds.TryGetValue(path, out var id)) {
+                continue;
+            }
+
+            var inTestFolder = path.Replace('\\', '/').Contains("/Test/", StringComparison.OrdinalIgnoreCase)
+                || path.Replace('\\', '/').StartsWith("Test/", StringComparison.OrdinalIgnoreCase);
+            if (inTestFolder || s_devName.IsMatch(name)) {
+                found.Add((id, 0, spell, "Dev"));
+            }
+        }
+
+        Logger.Information("Set trainers: {0} dev cards ({1}).",
+            Logger.Args(found.Count, string.Join(", ", found.Take(40).Select(spell => (string) spell.Item3.m_name))));
+
+        return found;
     }
 
     private static string ShownName(SpellTemplate spell) {

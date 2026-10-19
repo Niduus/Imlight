@@ -64,6 +64,23 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         behaviors: SerializerFlags.None
     );
 
+    // Building every list takes several seconds. Done on the first request, the window gave up waiting and stayed
+    // empty (Justin's log of 2026-10-19), so the lists are built in the background as soon as a player logs in.
+    private static readonly Lazy<System.Threading.Tasks.Task> s_warmUp = new(() => System.Threading.Tasks.Task.Run(() => {
+        try {
+            _ = s_treasureCards.Value;
+            _ = s_shownTreasureCards.Value;
+            _ = s_reagents.Value;
+            _ = s_jewels.Value;
+            _ = s_snacks.Value;
+        }
+        catch (Exception e) {
+            Logger.Error("Could not build the bazaar lists: {0}", Logger.Args(e));
+        }
+    }));
+
+    private readonly System.Threading.Tasks.Task _warmUp = s_warmUp.Value;
+
     private static ByteString WriteAuctionBlob(uint categoryHash, IReadOnlyCollection<AuctionHouseEntry> entries) {
         // Writes auction house entries as binary. This is very similar to PropertyClass serialization.
         //
@@ -124,6 +141,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 BuyOrSellMore(message);
                 break;
             case 6:
+                Logger.Debug("Bazaar: stock request (category {0}).", Logger.Args(message.category));
                 // Sent right after a tab's list arrives. Answering with the tab's entries again as an update
                 // gives the game their stock counts.
                 SendStock(message.category);
