@@ -96,7 +96,10 @@ internal static class PetProgression {
         changed |= EnsureStats(behavior, template);
         changed |= EnsureHappiness(behavior);
         changed |= EnsureLevel(behavior, template);
-        changed |= EnsureExpressed(behavior);
+        if (!Imlight.CoreLib.Game.Combat.BattleModes.HandPickedPetTalents.IsOn(pet.m_globalID.Full)) {
+            changed |= EnsureExpressed(behavior);
+        }
+
         changed |= RefreshRatings(behavior);
 
         return changed;

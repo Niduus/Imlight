@@ -38,6 +38,12 @@ internal sealed class BattleModes(string file) {
     /// <summary>`.allknowing on`: every battle counts as mastering every school.</summary>
     internal static readonly BattleModes AllKnowing = new("allknowing.txt");
 
+    /// <summary>
+    /// Pets (by item id, not character) whose talents were picked with `.pet talent` or `.pet derby`: their shown
+    /// talents are left as set instead of being filled up to the pet's age.
+    /// </summary>
+    internal static readonly BattleModes HandPickedPetTalents = new("pet-talents-by-hand.txt");
+
     private readonly string _file = file;
     private readonly object _lock = new();
     private HashSet<ulong> _characters;
