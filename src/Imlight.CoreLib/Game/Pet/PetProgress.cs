@@ -169,18 +169,22 @@ internal static class PetProgress {
         behavior.m_XP += xp;
         growth.XpGained += xp;
 
-        // m_XP counts from the start of the current level, like the pet window shows it (4/125, then 0/250).
+        // m_XP counts from the start of the current level, like the pet window shows it (4/125, then 0/250), unless
+        // RunningTotalXp keeps it as a total that each level's goal is measured against.
         while (behavior.m_level < MAX_LEVEL) {
             var required = RequiredXp(template, behavior.m_level);
             if (required == 0 || behavior.m_XP < required) {
                 break;
             }
 
-            behavior.m_XP -= required;
+            if (!PetRules.RunningTotalXp) {
+                behavior.m_XP -= required;
+            }
+
             LevelUp(behavior, template, growth);
 
-            // Like the real game: the pet starts its new level at 0 and the rest is lost.
-            if (!PetRules.XpCarriesOver) {
+            // The real game keeps the extra for the next level; with KeepExtraXp off it is lost.
+            if (!PetRules.KeepExtraXp && !PetRules.RunningTotalXp) {
                 growth.XpGained -= Math.Min(growth.XpGained, behavior.m_XP);
                 behavior.m_XP = 0;
 
@@ -361,6 +365,18 @@ internal static class PetProgress {
         }
 
         return (uint) Math.Max(1, Math.Round(xp, MidpointRounding.AwayFromZero));
+    }
+
+    /// <summary>
+    /// The stat changes a snack gives: the numbers on its card, twice those with Double XP &amp; Rewards and
+    /// DoubleSnackStats (Justin, 2026-10-19).
+    /// </summary>
+    internal static IEnumerable<PetStatModification> SnackStatChanges(PetSnackItemTemplate snack) {
+        var changes = snack?.m_statModifierSet?.m_modifications ?? [];
+
+        return DoubleSnackXp && PetRules.DoubleSnackStats
+            ? changes.Select(change => change is null ? null : change with { m_change = change.m_change * 2 })
+            : changes;
     }
 
     internal static bool IsFavoriteSnack(WizClientObjectItem pet, PetSnackItemTemplate snack) {

@@ -97,7 +97,7 @@ internal static class PetCare {
                 });
 
             PetProgress.AddXp(pet, PetProgress.SnackXp(pet, snackTemplate), growth);
-            PetProgress.ApplyStatChanges(pet, snackTemplate.m_statModifierSet?.m_modifications, growth);
+            PetProgress.ApplyStatChanges(pet, PetProgress.SnackStatChanges(snackTemplate), growth);
             if (behavior.m_maximumHappiness > 0) {
                 behavior.m_happiness = Math.Min(behavior.m_maximumHappiness, behavior.m_happiness + (uint) Math.Max(1, snackTemplate.m_rank));
             }
