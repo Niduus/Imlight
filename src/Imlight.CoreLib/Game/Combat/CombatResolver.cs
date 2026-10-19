@@ -108,7 +108,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     // Daybreaker and Nightbringer: the spell is paid for (pips, card, fizzle check) when played, then casts on
     // the caster's next turn, at its start (Daybreaker) or its end (Nightbringer), even if they are stunned.
     // Free is a spell from .daybreaker or .nightbringer: no card was played, and its target is picked when it casts.
-    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false);
+    // Target is the command's p1-p4 / e1-e4, or null to pick one.
+    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -275,14 +276,14 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// caster's turn. Several can be queued to chain them.
     /// </summary>
     /// <returns>How many of these the caster has queued for this round, or 0 if the spell is unknown.</returns>
-    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart) {
+    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, string target = null) {
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
             return 0;
         }
 
         var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
-        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true));
+        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target));
 
         return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart);
     }
@@ -297,7 +298,26 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// A free delayed spell's target: for a spell aimed at enemies, the enemy the caster picked this round or else
     /// the first one standing; for anything else, the caster.
     /// </summary>
-    private CombatDuelSubCircle PickFreeTarget(CombatDuelSubCircle caster, SpellTemplate template) {
+    private CombatDuelSubCircle PickFreeTarget(CombatDuelSubCircle caster, SpellTemplate template, string code) {
+        // p1 is the caster, p2 to p4 the caster's teammates in circle order; e1 to e4 the enemy circles 1 to 4.
+        if (code is { Length: 2 } && code[1] is >= '1' and <= '4') {
+            var number = code[1] - '1';
+            var team = caster._duelActor.ActiveSubCircles;
+            if (code[0] == 'p') {
+                var allies = team.Where(c => c.OccupiedTeam == caster.OccupiedTeam && c != caster)
+                    .OrderBy(c => c.SlotIndex).Prepend(caster).ToList();
+                if (number < allies.Count) {
+                    return allies[number];
+                }
+            }
+            else if (code[0] == 'e') {
+                var enemy = team.FirstOrDefault(c => c.OccupiedTeam != caster.OccupiedTeam && c.SlotIndex % 4 == number);
+                if (enemy is not null) {
+                    return enemy;
+                }
+            }
+        }
+
         if (!(template.m_effects ?? []).Any(effect => effect is not null && s_enemyTargets.Contains(effect.m_effectTarget))) {
             return caster;
         }
@@ -322,7 +342,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         foreach (var delayed in due) {
             _delayedCasts.Remove(delayed);
             var action = delayed.Action;
-            var target = delayed.Free ? PickFreeTarget(caster, action.SpellTemplate) : action.SelectedTarget;
+            var target = delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget;
             if (!caster.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
                 continue;
             }

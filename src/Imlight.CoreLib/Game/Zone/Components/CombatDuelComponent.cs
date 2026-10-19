@@ -2010,10 +2010,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         try {
-            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart);
+            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, message.Target);
             Inform(count == 0
                 ? $"Could not cast {message.SpellName}."
-                : $"{name}: {message.SpellName} casts {(message.AtStart ? "at the start" : "at the end")} of your turn this round ({count} queued). Add more to chain them.");
+                : $"{name}: {message.SpellName}{(message.Target is null ? "" : $" on {message.Target}")} casts {(message.AtStart ? "at the start" : "at the end")} of your turn this round ({count} queued). Add more to chain them.");
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | .{1} failed: {2}", Logger.Args(SigilId, name, ex));
