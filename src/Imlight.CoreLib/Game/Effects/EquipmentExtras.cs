@@ -193,6 +193,16 @@ internal static class EquipmentExtras {
                         case StatisticEffectInfo or StartingPipEffectInfo:
                             if (CharacterEffectHelper.AddGameEffectToStats(wizard.GameStats, info) is not null) {
                                 wizard.AppliedJewelEffects.Add(info);
+
+                                // Also listed as an effect of the item's slot, like the pet's talents: the stats page
+                                // adds up those effects, so a jewel's flat resist showed only in the hover text, not
+                                // in the row under the schools (Justin, 2026-10-19).
+                                if (GameEffectFactory.CreateEffectFromInfo(info, ItemHelper.GetItemSlotHash(template)) is { } shown) {
+                                    shown.m_internalID = wizard.NextEffectId();
+                                    wizard.GameEffects.Add(shown);
+                                    wizard.AppliedCardEffects.Add(shown);
+                                    wizard.AddedCardEffects.Add(shown);
+                                }
                             }
                             break;
                     }
