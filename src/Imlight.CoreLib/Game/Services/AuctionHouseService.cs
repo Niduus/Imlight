@@ -357,12 +357,44 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 return;
             }
 
-            if (wizard.InventoryBehavior.HasItem(id)) {
-                var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
-                SellToAuctionHouse(id, message.key);
-                SendMoreAcknowledgement(templateId, isSell: true, 0, 1);
+            if (wizard.AlchemyBehavior.HasReagentID(id)) {
+                var templateId = (ulong) wizard.AlchemyBehavior.Reagents.First(r => r.m_globalID.Full == id).m_templateID;
+                var gold = SellReagent(wizard, id, quantity, out var sold);
+                SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
 
                 return;
+            }
+
+            if (wizard.InventoryBehavior.HasItem(id)) {
+                // The held item and more of the same kind, up to the number asked for; one confirm for the lot.
+                var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
+                var copies = new[] { id }.Concat((wizard.InventoryBehavior.Items ?? [])
+                        .Where(item => item is not null && (ulong) item.m_templateID == templateId && item.m_globalID.Full != id)
+                        .Select(item => item.m_globalID.Full))
+                    .Take(quantity)
+                    .ToList();
+                var goldBefore = wizard.GameStats.m_currentGold;
+                _sellingMore = true;
+                try {
+                    foreach (var copy in copies) {
+                        SellToAuctionHouse(copy, message.key);
+                    }
+                }
+                finally {
+                    _sellingMore = false;
+                }
+
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
+                SendMoreAcknowledgement(templateId, isSell: true, wizard.GameStats.m_currentGold - goldBefore, copies.Count);
+
+                return;
+            }
+
+            // Sell More (8) never buys: an id the player does not hold is not sold.
+            if (message.Command == 8) {
+                Logger.Information("Bazaar: Sell More of {0}, which the player does not hold.", Logger.Args(id));
+
+                continue;
             }
 
             if (Snack(id) is not null || TreasureCard(id) is not null || Reagent(id) is not null || Jewel(id) is not null
@@ -390,6 +422,51 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 return;
             }
         }
+    }
+
+    // While a Sell More runs, each copy is sold without its own confirm.
+    private bool _sellingMore;
+
+    private int SellReagent(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, ulong reagentId, int quantity, out int sold) {
+        sold = 0;
+        var reagent = wizard.AlchemyBehavior.Reagents?.FirstOrDefault(r => r.m_globalID.Full == reagentId);
+        if (reagent is null || CoreObjectFactory.GetCoreTemplate(reagent.m_templateID) is not WizItemTemplate template) {
+            return 0;
+        }
+
+        var templateId = reagent.m_templateID;
+        var count = Math.Min(quantity, reagent.m_quantity);
+        ClientReagentItem left = null;
+        for (var i = 0; i < count && wizard.RemoveReagent(reagentId, out left); i++) {
+            sold++;
+        }
+
+        if (sold == 0) {
+            return 0;
+        }
+
+        var gold = Math.Max(1, (int) Math.Ceiling(template.m_baseCost * 0.5f)) * sold;
+        if (left is not null && left.m_quantity > 0) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE { GlobalID = wizard.GameObjectID, ItemID = left.m_globalID, Quantity = left.m_quantity });
+        }
+        else {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTREMOVE { GlobalID = wizard.GameObjectID, ItemID = reagentId });
+        }
+
+        wizard.AddGold(gold);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
+            Command = 2,
+            ItemTemplateID = templateId,
+            Cost = gold,
+            ReturnCode = 0
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
+
+        return gold;
     }
 
     // While a Buy More runs, how many copies it has bought so far; NOT_BUYING_MORE otherwise.
@@ -476,6 +553,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // Snacks live in the snack bag, not the backpack.
         if (!wizard.InventoryBehavior.HasItem(itemGlobalId) && wizard.PetSnackBehavior.HasSnackID(itemGlobalId)) {
             SellSnack(wizard, itemGlobalId, 1, out _);
+
+            return;
+        }
+
+        // Reagents live in the reagent bag.
+        if (!wizard.InventoryBehavior.HasItem(itemGlobalId) && wizard.AlchemyBehavior.HasReagentID(itemGlobalId)) {
+            SellReagent(wizard, itemGlobalId, 1, out _);
 
             return;
         }
@@ -569,6 +653,10 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             ItemID = item.m_globalID
         };
         SendToSocket(removeItemMsg);
+
+        if (_sellingMore) {
+            return;
+        }
 
         var shopSellConfirmMsg = new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM {
             ClientRequestID = 0,
