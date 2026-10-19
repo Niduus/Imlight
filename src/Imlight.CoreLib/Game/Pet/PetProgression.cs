@@ -157,11 +157,14 @@ internal static class PetProgression {
                 break;
             }
 
-            total -= required;
+            if (!PetRules.RunningTotalXp) {
+                total -= required;
+            }
+
             level++;
 
-            // Like the real game: the pet starts its new level at 0 and the rest is lost.
-            if (!PetRules.XpCarriesOver) {
+            // The real game keeps the extra for the next level; with KeepExtraXp off it is lost.
+            if (!PetRules.KeepExtraXp && !PetRules.RunningTotalXp) {
                 total = 0;
 
                 break;

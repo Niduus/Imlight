@@ -67,10 +67,22 @@ internal static class PetRules {
     internal static int MemberXpMultiplier { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MemberXpMultiplier", DefaultMemberXpMultiplier));
 
     /// <summary>
-    /// When false (the real game), experience past a new level is lost: the pet goes up one level and
-    /// starts it at 0. When true, the extra experience counts toward the next level.
+    /// When true (the real game), experience past a new age counts toward the next age (244/250 + 110 is the new age
+    /// at 104). When false, the extra is lost and the pet starts the new age at 0. Replaces XpCarriesOver, whose old
+    /// false in Justin's ini would otherwise stick (Justin, 2026-10-19).
     /// </summary>
-    internal static bool XpCarriesOver { get; } = ConfigurationManager.GetValue("Pets.XpCarriesOver", false);
+    internal static bool KeepExtraXp { get; } = ConfigurationManager.GetValue("Pets.KeepExtraXp", true);
+
+    /// <summary>
+    /// When true, a pet's XP is a running total that is not reset at a new age, so the 125 XP that made it a Teen
+    /// counts toward the 250 for Adult. Off by default; the real game starts each age over (Justin, 2026-10-19).
+    /// </summary>
+    internal static bool RunningTotalXp { get; } = ConfigurationManager.GetValue("Pets.RunningTotalXp", false);
+
+    /// <summary>
+    /// Double XP &amp; Rewards also doubles the stats a snack gives (+15 becomes +30).
+    /// </summary>
+    internal static bool DoubleSnackStats { get; } = ConfigurationManager.GetValue("Pets.DoubleSnackStats", true);
 
     /// <summary>
     /// After a pet game is skipped, show the end of game window so a snack can be fed from it.
