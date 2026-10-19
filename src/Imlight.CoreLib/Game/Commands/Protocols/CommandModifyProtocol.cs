@@ -30,6 +30,8 @@ using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.Common;
+using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Commands.Protocols;
@@ -477,6 +479,73 @@ internal class CommandModifyProtocol : CommandProtocol {
         Context.SessionActor.Tell(BankSync.UpdateBankLimit(Context.Character), null);
 
         InformSenderClient($"Set the bank limit to {limitInt}.");
+    }
+
+    // What ".backpack max" and ".bank max" give. Very large lists can be too big for the game to receive in one message.
+    private static readonly int s_backpackCommandMax = ConfigurationManager.GetValue("Character.BackpackCommandMax", 500);
+    private static readonly int s_bankCommandMax = ConfigurationManager.GetValue("Character.BankCommandMax", 1000);
+
+    [Command("backpack")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void SetBackpackCommand(string amount) {
+        if (!TryReadSpace(amount, s_backpackCommandMax, out var limit)) {
+            InformSenderClient($"Use .backpack and a number of items (1 to {s_backpackCommandMax}), or .backpack max.");
+
+            return;
+        }
+
+        var inventory = Context.Character.InventoryBehavior;
+        if (limit < inventory.Items.Count) {
+            InformSenderClient($"Your backpack holds {inventory.Items.Count} items, so it cannot be made smaller than that.");
+
+            return;
+        }
+
+        var previous = inventory.ItemLimit;
+        inventory.ItemLimit = limit;
+        if (!WizardCollection.UpdateCharacterItems(Context.Character)) {
+            inventory.ItemLimit = previous;
+            InformSenderClient("Could not save the backpack size.");
+
+            return;
+        }
+
+        InformSenderClient($"Your backpack now holds {limit} items. Change area or log out and back in to see it in the backpack window.");
+    }
+
+    [Command("bank")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void SetBankCommand(string amount) {
+        if (!TryReadSpace(amount, s_bankCommandMax, out var limit)) {
+            InformSenderClient($"Use .bank and a number of items (1 to {s_bankCommandMax}), or .bank max.");
+
+            return;
+        }
+
+        if (limit < Context.Character.StorageBehavior.Items.Count) {
+            InformSenderClient($"Your bank holds {Context.Character.StorageBehavior.Items.Count} items, so it cannot be made smaller than that.");
+
+            return;
+        }
+
+        if (!Context.Character.SetBankLimit(limit)) {
+            InformSenderClient("Could not save the bank size.");
+
+            return;
+        }
+
+        Context.SessionActor.Tell(BankSync.UpdateBankLimit(Context.Character), null);
+        InformSenderClient($"Your bank now holds {limit} items.");
+    }
+
+    private static bool TryReadSpace(string amount, int max, out int limit) {
+        if (string.Equals(amount?.Trim(), "max", System.StringComparison.OrdinalIgnoreCase)) {
+            limit = max;
+
+            return true;
+        }
+
+        return int.TryParse(amount, NumberStyles.Integer, CultureInfo.InvariantCulture, out limit) && limit >= 1 && limit <= max;
     }
 
     [Command("expandbank")]

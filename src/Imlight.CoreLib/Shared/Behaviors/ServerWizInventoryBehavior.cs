@@ -39,6 +39,17 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
 
     public List<ulong> InventoryItemIds { get; set; }
 
+    /// <summary>
+    /// This character's own backpack size, set with the .backpack command; 0 uses [Character] MaxInventoryItems.
+    /// </summary>
+    public int ItemLimit { get; set; }
+
+    /// <summary>
+    /// How many items the backpack holds.
+    /// </summary>
+    [JsonIgnore] public int Limit
+        => ItemLimit > 0 ? ItemLimit : s_maxItemsAllowed <= 0 ? s_maxItemsAllowedFallback : s_maxItemsAllowed;
+
     [JsonIgnore] public List<WizClientObjectItem> Items { get; set; }
 
     /// <summary>
@@ -46,7 +57,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     /// <see cref="AddItem"/>.
     /// </summary>
     [JsonIgnore] public int FreeSlots
-        => Math.Max(0, (s_maxItemsAllowed <= 0 ? s_maxItemsAllowedFallback : s_maxItemsAllowed) - Items.Count);
+        => Math.Max(0, Limit - Items.Count);
 
     /// <summary>
     /// Adds an item to the player's inventory.
@@ -62,7 +73,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
             s_maxItemsAllowed = s_maxItemsAllowedFallback;
         }
 
-        if (Items.Count >= s_maxItemsAllowed) {
+        if (Items.Count >= Limit) {
             Logger.Debug("Player inventory is full. Cannot add item with global id {0}.", Logger.Args(item.m_globalID));
 
             return false;
@@ -140,7 +151,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     public WizClientObjectItem GetItem(ulong globalId) => Items.FirstOrDefault(item => item.m_globalID == globalId);
 
     public ClientWizInventoryBehavior GetClientBehaviorInstance() => new() {
-        m_numItemsAllowed = s_maxItemsAllowed,
+        m_numItemsAllowed = Limit,
         m_numJewelsAllowed = s_maxJewelsAllowed,
         m_itemList = Items.ConvertAll(item =>
             (item as IClientBehaviorProvider<CoreObject>)?.GetClientBehaviorInstance() ?? item),

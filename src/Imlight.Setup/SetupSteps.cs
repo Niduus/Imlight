@@ -55,6 +55,8 @@ internal sealed class SetupSteps : IDisposable {
     internal string SourceFolder => Path.Combine(_options.InstallFolder, "Source");
     internal string ServerFolder => Path.Combine(_options.InstallFolder, "Server");
     internal string ConfigFile => Path.Combine(ServerFolder, "Config", "Imlight.ini");
+    internal string PendingFolder => Path.Combine(_options.InstallFolder, "Pending");
+    internal string PendingServerFolder => Path.Combine(PendingFolder, "Server");
     private string ImcodecFolder => Path.Combine(SourceFolder, "submodule", "Imcodec");
 
     // ---------------------------------------------------------------------
@@ -323,7 +325,9 @@ internal sealed class SetupSteps : IDisposable {
     /// <summary>
     /// Builds the server into the server folder, keeping the configuration, logs and database already there.
     /// </summary>
-    internal async Task BuildServerAsync(string dotnet) {
+    /// <param name="dotnet">The dotnet to build with.</param>
+    /// <param name="toPending">If true, the build is kept in the Pending folder and the running server is not touched.</param>
+    internal async Task BuildServerAsync(string dotnet, bool toPending = false) {
         var project = Path.Combine(SourceFolder, "src", "Imlight.Director", "Imlight.Director.csproj");
         var staging = Path.Combine(_options.InstallFolder, "Build");
         if (Directory.Exists(staging)) {
@@ -338,11 +342,39 @@ internal sealed class SetupSteps : IDisposable {
             throw new SetupException("The server could not be built. The errors are in the setup log.");
         }
 
+        if (toPending) {
+            if (Directory.Exists(PendingServerFolder)) {
+                Directory.Delete(PendingServerFolder, recursive: true);
+            }
+
+            Directory.CreateDirectory(PendingFolder);
+            Directory.Move(staging, PendingServerFolder);
+
+            return;
+        }
+
+        InstallServer(staging);
+        Directory.Delete(staging, recursive: true);
+    }
+
+    /// <summary>
+    /// Puts the server that --prepare-update built in place. The server must not be running.
+    /// </summary>
+    internal void InstallPendingServer() {
+        if (!Directory.Exists(PendingServerFolder)) {
+            throw new SetupException("There is no prepared update to install.");
+        }
+
+        InstallServer(PendingServerFolder);
+        Directory.Delete(PendingServerFolder, recursive: true);
+    }
+
+    private void InstallServer(string build) {
         var existingConfig = File.Exists(ConfigFile);
-        CopyFolder(staging, ServerFolder, keepIfPresent: ["Config/Imlight.ini"]);
+        CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini"]);
 
         // A kept configuration gets the settings this version added, so they show up in the app.
-        var defaults = Path.Combine(staging, "Config", "Imlight.ini");
+        var defaults = Path.Combine(build, "Config", "Imlight.ini");
         if (existingConfig && File.Exists(defaults)) {
             var lines = File.ReadAllLines(ConfigFile).ToList();
             var added = IniFile.AddMissing(lines, File.ReadAllLines(defaults));
@@ -351,8 +383,6 @@ internal sealed class SetupSteps : IDisposable {
                 SetupLog.Detail($"Added {added} new settings to Config\\Imlight.ini.");
             }
         }
-
-        Directory.Delete(staging, recursive: true);
     }
 
     private static string RuntimeIdentifier() {

@@ -107,6 +107,8 @@ internal sealed class Lookup {
         Command("List my badges", ".badge list", QA, "Shows the badges your character has, with their progress."),
         Command("Reset badges", ".badge reset", QA, "Removes all of your character's badges and badge progress."),
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
+        Command("Backpack size", ".backpack 300   or   .backpack max", QA, "Sets how many items your backpack holds, up to 500 (max). Change area or log out and back in to see it in the backpack window."),
+        Command("Bank size", ".bank 500   or   .bank max", QA, "Sets how many items your bank holds, up to 1000 (max)."),
         Command("Level 50 Elixir", ".elixir50", QA, "Like the crown shop's Level 50 Elixir, for free: sets your character to level 50 with its training points, finishes the main quests through Dragonspyre with the spells they teach, and gives the Dragonspyre quest gear for your school. Log out and back in to see everything."),
         Command("Shadow pip slots", ".sp slots <number>", QA, "Sets how many shadow pip slots your character has, from 1 to 8, such as .sp slots 2 for the second slot. Log out and back in to see it."),
         Command("Pet info", ".pet info", QA, "Shows the level, XP, stats and talents of the pet you are wearing."),

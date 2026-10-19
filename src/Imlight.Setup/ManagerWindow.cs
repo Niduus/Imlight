@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -313,6 +315,14 @@ internal sealed class ManagerWindow : Window {
             // Play is the first tab, and choosing the tab that is already showing does not count as a change.
             RefreshPosition();
             _positionTimer.Start();
+            if (ManagerApp.StartServerOnOpen) {
+                await Guard(() => {
+                    Say($"Updated to Imlight {SelfUpdate.CurrentVersion}. " + _manager.StartServer());
+
+                    return Task.CompletedTask;
+                });
+            }
+
             await Guard(AutoUpdateAsync);
         };
         Closed += (_, _) => {
@@ -368,6 +378,7 @@ internal sealed class ManagerWindow : Window {
                     _friendResult,
                 },
             }),
+            CommandCard(),
             PositionCard());
     }
 
@@ -804,6 +815,40 @@ internal sealed class ManagerWindow : Window {
             }));
     }
 
+    private readonly TextBox _commandBox = new() { Watermark = "A command, such as .elixir50 or .lookup fire cat" };
+
+    private Control CommandCard() {
+        async Task SendAsync() {
+            var command = _commandBox.Text ?? "";
+            _manager.SendCommand(command);
+            _commandBox.Text = "";
+            Say($"Sent {command.Trim()} to your game. The answer shows in the game's chat.");
+            await Task.CompletedTask;
+        }
+
+        var send = Action(Primary("Run in my game"), SendAsync);
+        _commandBox.KeyDown += async (_, e) => {
+            if (e.Key == Avalonia.Input.Key.Enter) {
+                e.Handled = true;
+                await Guard(SendAsync);
+            }
+        };
+
+        return Card(new StackPanel {
+            Children = {
+                Heading("Run a command"),
+                Sub("Runs a command as the wizard playing on this PC, the same as typing it in chat. "
+                    + "Friends playing from other PCs are never affected. The Lookup tab lists every command."),
+                WithMargin(new DockPanel {
+                    Children = {
+                        WithDock(WithMargin(send, new Thickness(8, 0, 0, 0)), Dock.Right),
+                        _commandBox,
+                    },
+                }, new Thickness(0, 10, 0, 0)),
+            },
+        });
+    }
+
     private Control PositionCard() {
         _positionTimer.Tick += (_, _) => RefreshPosition();
 
@@ -1141,32 +1186,121 @@ internal sealed class ManagerWindow : Window {
     // Tools
     // ---------------------------------------------------------------------
 
+    // The update that was downloaded and built in the background and waits for a restart.
+    private (Version Version, string Path)? _readyUpdate;
+    private bool _preparingUpdate;
+
     /// <summary>
-    /// When the app opens, updates Imlight by itself if a newer release is out (unless turned off on the Tools tab).
-    /// While the server is running it asks first, so nobody playing is thrown out.
+    /// When the app opens, gets a newer Imlight ready in the background (unless turned off on the Tools tab), then
+    /// asks to restart into it. The server keeps running meanwhile.
     /// </summary>
     private async Task AutoUpdateAsync() {
-        if (!_manager.AutoUpdate || await SelfUpdate.NewerReleaseAsync() is not { } version) {
+        if (!_manager.AutoUpdate || await SelfUpdate.NewerReleaseAsync() is null) {
             return;
         }
 
-        if (_manager.Status().Running && !await ConfirmAsync($"Imlight {version} is out. Update now? The server stops and everyone playing is disconnected.")) {
-            Say($"Imlight {version} is out. Click Update Imlight on the Tools tab when you're ready.");
-
-            return;
-        }
-
-        Say($"Updating to Imlight {version}…");
-        _manager.RunInstaller("--update");
-        Close();
+        await PrepareUpdateAsync();
     }
 
     private async Task UpdateAsync() {
-        if (await ConfirmAsync("Update Imlight now? The server stops, this app closes, and the update opens in its own window. " +
-                "Your settings, accounts and characters are kept.")) {
+        if (_readyUpdate is not null) {
+            await OfferRestartAsync();
+
+            return;
+        }
+
+        if (_preparingUpdate) {
+            Say("The update is still downloading and building. The app asks to restart when it is ready.");
+
+            return;
+        }
+
+        if (await SelfUpdate.NewerReleaseAsync() is not null) {
+            await PrepareUpdateAsync();
+
+            return;
+        }
+
+        // Nothing newer: the old way rebuilds the same version, which repairs a broken install.
+        if (await ConfirmAsync($"You already have the newest Imlight ({SelfUpdate.CurrentVersion}). Rebuild it anyway? " +
+                "The server stops, this app closes, and the update opens in its own window. Your settings, accounts and characters are kept.")) {
             _manager.RunInstaller("--update");
             Close();
         }
+    }
+
+    /// <summary>
+    /// Downloads the newest release and has it build the server in the Pending folder, hidden, while everything keeps
+    /// running. Then asks to restart into it.
+    /// </summary>
+    private async Task PrepareUpdateAsync() {
+        _preparingUpdate = true;
+        try {
+            Say("A new Imlight is out. It is downloading and building in the background, so keep playing. " +
+                "This can take a few minutes; the app asks to restart when it is ready.");
+            if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending")) is not { } download) {
+                Say("The new Imlight could not be downloaded. Check your internet connection, then click Update Imlight on the Tools tab.", true);
+
+                return;
+            }
+
+            Say($"Imlight {download.Version} is downloaded and building in the background. Keep playing; the app asks to restart when it is ready.");
+            var start = new ProcessStartInfo(download.Path) {
+                WorkingDirectory = _manager.InstallFolder,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            start.ArgumentList.Add("--prepare-update");
+            start.ArgumentList.Add("--dir");
+            start.ArgumentList.Add(_manager.InstallFolder);
+            using var process = Process.Start(start)
+                ?? throw new PanelException("The update could not be started.");
+            process.OutputDataReceived += (_, _) => { };
+            process.ErrorDataReceived += (_, _) => { };
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            await process.WaitForExitAsync();
+            if (process.ExitCode != 0) {
+                Say($"Imlight {download.Version} could not be built. The reason is in setup-log.txt in the install folder (Tools tab, Open install folder).", true);
+
+                return;
+            }
+
+            _readyUpdate = download;
+            await OfferRestartAsync();
+        }
+        finally {
+            _preparingUpdate = false;
+        }
+    }
+
+    private async Task OfferRestartAsync() {
+        if (_readyUpdate is not { } update) {
+            return;
+        }
+
+        var running = _manager.Status().Running;
+        if (!await ConfirmAsync($"Imlight {update.Version} is ready. Restart Imlight now to use it?" + (running
+                ? " The server restarts with it, so anyone playing is disconnected for a moment."
+                : ""))) {
+            Say($"Imlight {update.Version} is ready. Click Update Imlight on the Tools tab when you want to restart into it.");
+
+            return;
+        }
+
+        var start = new ProcessStartInfo(update.Path) { WorkingDirectory = _manager.InstallFolder, UseShellExecute = false, CreateNoWindow = true };
+        foreach (var arg in new[] { "--apply-update", "--dir", _manager.InstallFolder, "--wait-pid", Environment.ProcessId.ToString(CultureInfo.InvariantCulture) }) {
+            start.ArgumentList.Add(arg);
+        }
+
+        if (running) {
+            start.ArgumentList.Add("--start-server");
+        }
+
+        Process.Start(start)?.Dispose();
+        Close();
     }
 
     private async Task UninstallAsync() {

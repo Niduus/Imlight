@@ -102,6 +102,59 @@ internal static class SelfUpdate {
     }
 
     /// <summary>
+    /// Downloads the newest release into a folder when it is newer than this one, checking its checksum. Older
+    /// downloads in the folder are removed.
+    /// </summary>
+    /// <returns>The version and the downloaded program, or null when there is nothing newer or the download failed.</returns>
+    internal static async Task<(Version Version, string Path)?> DownloadNewerAsync(string folder) {
+        if (CurrentVersion == new Version(0, 0, 0) || !OperatingSystem.IsWindows()) {
+            return null;
+        }
+
+        try {
+            using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
+            http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("ImlightSetup", CurrentVersion.ToString()));
+            http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+
+            using var document = JsonDocument.Parse(await http.GetStringAsync($"https://api.github.com/repos/{RELEASE_REPOSITORY}/releases/latest"));
+            var release = document.RootElement;
+            var version = ParseVersion(release.GetProperty("tag_name").GetString());
+            var asset = release.GetProperty("assets").EnumerateArray()
+                .FirstOrDefault(a => string.Equals(a.GetProperty("name").GetString(), ASSET, StringComparison.OrdinalIgnoreCase));
+            if (version is null || version <= CurrentVersion || asset.ValueKind != JsonValueKind.Object) {
+                return null;
+            }
+
+            var bytes = await http.GetByteArrayAsync(asset.GetProperty("browser_download_url").GetString());
+            if (asset.TryGetProperty("digest", out var digest) && digest.GetString() is { } sha
+                && sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
+                && !Convert.ToHexString(SHA256.HashData(bytes)).Equals(sha["sha256:".Length..], StringComparison.OrdinalIgnoreCase)) {
+                return null;
+            }
+
+            Directory.CreateDirectory(folder);
+            foreach (var old in Directory.EnumerateFiles(folder, "*.exe")) {
+                try {
+                    File.Delete(old);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                    // Still running from the last update; removed next time.
+                }
+            }
+
+            var path = Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(ASSET)}-{version}.exe");
+            await File.WriteAllBytesAsync(path, bytes);
+
+            return (version, path);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException
+                                       or KeyNotFoundException or IOException or InvalidOperationException
+                                       or UnauthorizedAccessException) {
+            return null;
+        }
+    }
+
+    /// <summary>
     /// The newest released version if it is newer than this one, else null (also when offline or on a local build).
     /// </summary>
     internal static async Task<Version?> NewerReleaseAsync() {

@@ -270,4 +270,27 @@ internal sealed class SERVICE_101_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 101;
         public Mail Mail;
     }
+
+    /// <summary>
+    /// A command typed in the Imlight app, sent to every online player's session. Only the sessions playing on the
+    /// server's own PC run it.
+    /// </summary>
+    public class MSG_MANAGERCOMMAND : IServerMessage {
+        public byte MessageOrder { get; } = 24;
+        public byte ServiceID { get; } = 101;
+        public string Command;
+    }
+
+    /// <summary>
+    /// Asks a house zone to put the trainer on a placed trainer tome (HouseTrainers).
+    /// </summary>
+    public class MSG_SPAWNHOUSETRAINER : IServerMessage {
+        public byte MessageOrder { get; } = 25;
+        public byte ServiceID { get; } = 101;
+        public string Tag;
+        public float X;
+        public float Y;
+        public float Z;
+        public float Yaw;
+    }
 }

@@ -62,7 +62,11 @@ internal static class Program {
             case SetupMode.Start:
                 return await InstalledCommands.StartAsync(options.InstallFolder, options.NoWait);
             case SetupMode.Panel:
-                return ManagerApp.Run(options.InstallFolder);
+                return ManagerApp.Run(options.InstallFolder, options.StartServer);
+            case SetupMode.PrepareUpdate:
+                return await PrepareUpdateAsync(options);
+            case SetupMode.ApplyUpdate:
+                return await ApplyUpdateAsync(options);
             case SetupMode.Play:
                 return InstalledCommands.Play(options.InstallFolder);
             case SetupMode.Uninstall:
@@ -147,6 +151,92 @@ internal static class Program {
         WaitForKey(options);
 
         return 0;
+    }
+
+    /// <summary>
+    /// Downloads and builds this version of Imlight into the Pending folder while the app and the server keep running.
+    /// The app runs this hidden, then offers to restart into the update (--apply-update).
+    /// </summary>
+    private static async Task<int> PrepareUpdateAsync(SetupOptions options) {
+        if (!SetupLog.Open(options.InstallFolder)) {
+            return 3;
+        }
+
+        SetupLog.Detail($"Preparing the update to {SelfUpdate.CurrentVersion} in the background.");
+        using var steps = new SetupSteps(options);
+        try {
+            var rootWad = steps.FindRootWad();
+            var dotnet = await steps.EnsureDotnetAsync();
+            await steps.DownloadSourceAsync();
+            steps.PrepareGeneratorInputs(rootWad);
+            await steps.BuildServerAsync(dotnet, toPending: true);
+            SetupLog.Info($"Imlight {SelfUpdate.CurrentVersion} is ready to install.");
+
+            return 0;
+        }
+        catch (Exception ex) {
+            SetupLog.Error(ex is SetupException ? ex.Message : $"The update stopped because of an unexpected problem: {ex.Message}");
+            SetupLog.Detail(ex.ToString());
+
+            return 1;
+        }
+        finally {
+            SetupLog.Close();
+        }
+    }
+
+    /// <summary>
+    /// Installs what --prepare-update built, once the app has closed (which stops the server), then opens the app again.
+    /// </summary>
+    private static async Task<int> ApplyUpdateAsync(SetupOptions options) {
+        if (options.WaitForProcess is { } pid) {
+            try {
+                using var app = Process.GetProcessById(pid);
+                await app.WaitForExitAsync(new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(1)).Token);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or OperationCanceledException) {
+                // Already closed.
+            }
+        }
+
+        if (InstalledCommands.IsServerRunning(options.InstallFolder)) {
+            new ServerManager(options.InstallFolder).StopServer();
+        }
+
+        if (!SetupLog.Open(options.InstallFolder)) {
+            return 3;
+        }
+
+        using var steps = new SetupSteps(options);
+        var exitCode = 0;
+        try {
+            steps.InstallPendingServer();
+            await steps.CreateShortcutsAsync();
+            SetupLog.Info($"Updated to Imlight {SelfUpdate.CurrentVersion}.");
+        }
+        catch (Exception ex) {
+            SetupLog.Error(ex is SetupException ? ex.Message : $"The update could not be installed: {ex.Message}");
+            SetupLog.Detail(ex.ToString());
+            exitCode = 1;
+        }
+        finally {
+            SetupLog.Close();
+        }
+
+        // The app opens again either way; a failed update leaves the old server in place.
+        try {
+            var exe = Path.Combine(options.InstallFolder, InstalledCommands.INSTALLED_EXE);
+            Process.Start(new ProcessStartInfo(exe) {
+                Arguments = options.StartServer ? "--start-server" : "",
+                WorkingDirectory = options.InstallFolder,
+                UseShellExecute = true,
+            })?.Dispose();
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or IOException) {
+            return 1;
+        }
+
+        return exitCode;
     }
 
     private static void OpenApp(string installFolder) {

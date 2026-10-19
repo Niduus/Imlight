@@ -371,6 +371,25 @@ internal sealed partial class ServerManager(string installFolder) {
 
     internal string LogFolder => Path.Combine(ServerFolder, "logs");
 
+    // The server runs each line of this file as a command of the wizard playing on this PC (ManagerCommands).
+    private const string COMMANDS_FILE = "manager-commands.txt";
+
+    /// <summary>
+    /// Runs a command in the game on this PC only, as if typed in chat. Wizards on other PCs never run it.
+    /// </summary>
+    internal void SendCommand(string command) {
+        command = command.Trim();
+        if (command.Length == 0) {
+            throw new PanelException("Type a command first, such as .elixir50.");
+        }
+
+        if (!Status().Running) {
+            throw new PanelException("Start the server and log in to Wizard101 on this PC first.");
+        }
+
+        File.AppendAllText(Path.Combine(ServerFolder, COMMANDS_FILE), command.ReplaceLineEndings(" ") + Environment.NewLine);
+    }
+
     // The server keeps where each wizard stands in the log folder too; it is not a log.
     internal const string POSITIONS_FILE = "positions.txt";
 
