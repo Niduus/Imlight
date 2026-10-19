@@ -737,28 +737,50 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static readonly Lazy<BazaarCatalog> s_jewels = new(() => BuildCatalog(JEWEL_FOLDER, s_jewelShapes, "jewels and pins"));
 
     /// <summary>
-    /// Lists every template in a folder under each of the given adjectives it has. Items the real bazaar never takes
-    /// (FLAG_NoAuction) are left out.
+    /// Lists every template in a folder under each of the given adjectives it has, lowest level first. Items the real
+    /// bazaar never takes (FLAG_NoAuction) are left out, unless a tab has nothing else.
     /// </summary>
     private static BazaarCatalog BuildCatalog(string folder, string[] categories, string what) {
         var byId = new Dictionary<ulong, AuctionHouseEntry>();
         var byCategory = new Dictionary<uint, List<AuctionHouseEntry>>();
+        var levels = new Dictionary<ulong, int>();
+        var noAuction = new Dictionary<uint, List<AuctionHouseEntry>>();
         foreach (var (id, template) in TemplatesIn<WizItemTemplate>(folder)) {
             var adjectives = (template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList();
             var tabs = categories.Where(adjectives.Contains).ToList();
-            if (tabs.Count == 0 || adjectives.Contains("FLAG_NoAuction")) {
+            if (tabs.Count == 0) {
                 continue;
             }
 
+            // Items the real bazaar never takes are kept aside, for a tab that would otherwise be empty (every pet
+            // jewel is one of them).
+            var target = adjectives.Contains("FLAG_NoAuction") ? noAuction : byCategory;
             var entry = CatalogEntry(id);
-            byId[id] = entry;
+            levels[id] = RequiredLevel(template);
             foreach (var tab in tabs) {
                 var hash = StringHash.Compute(tab);
-                if (!byCategory.TryGetValue(hash, out var list)) {
-                    byCategory[hash] = list = [];
+                if (!target.TryGetValue(hash, out var list)) {
+                    target[hash] = list = [];
                 }
 
                 list.Add(entry);
+            }
+        }
+
+        foreach (var (hash, list) in noAuction) {
+            if (!byCategory.ContainsKey(hash)) {
+                byCategory[hash] = list;
+            }
+        }
+
+        // Lowest level first: a tab lists only the first CatalogTab items, and in file order those were mostly
+        // high level jewels and pins (pins start at level 40), none of which showed (Justin, 2026-10-19).
+        foreach (var list in byCategory.Values) {
+            list.Sort((a, b) => levels[(ulong) a.m_templateID].CompareTo(levels[(ulong) b.m_templateID]) is var byLevel and not 0
+                ? byLevel
+                : ((ulong) a.m_templateID).CompareTo((ulong) b.m_templateID));
+            foreach (var entry in list) {
+                byId[(ulong) entry.m_templateID] = entry;
             }
         }
 
@@ -767,6 +789,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         return new BazaarCatalog(byId, byCategory);
     }
+
+    private static int RequiredLevel(WizItemTemplate template)
+        => (int) ((template.m_equipRequirements?.m_requirements ?? [])
+            .OfType<ReqMagicLevel>()
+            .Where(requirement => !requirement.m_applyNOT)
+            .Select(requirement => requirement.m_numericValue)
+            .DefaultIfEmpty(0)
+            .Max());
 
     private static AuctionHouseEntry CatalogEntry(ulong id) => new() {
         m_templateID = (GID) id,
