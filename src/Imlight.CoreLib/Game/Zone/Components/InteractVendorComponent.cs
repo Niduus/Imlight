@@ -74,6 +74,11 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private bool _csrTestShop = false;
     // Abner's lectern shop sells furniture, so it is offered as a housing shop (an equipment shop does not list it).
     private bool _housingShop;
+    // Hao and the house sellers (HouseVendors): their own window and one price for everything.
+    private HouseVendors.ShopWindow _window = HouseVendors.ShopWindow.Equipment;
+
+    /// <summary>The price of everything this NPC sells, or null for the items' own prices.</summary>
+    public int? FixedPrice { get; private set; }
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has an inventory in Dragon database,
@@ -82,9 +87,19 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && (NpcInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
         || WorldVendorLocations.IsVendor(goTemplate.m_templateID)
-        || InteractTreasureVendorComponent.IsAbner(goTemplate));
+        || InteractTreasureVendorComponent.IsAbner(goTemplate)
+        || HouseVendors.IsSellerNpc(goTemplate.m_templateID));
 
     public override void OnStart() {
+        // Hao sells the snacks and a house seller its kind (HouseVendors), whatever the NPC sells elsewhere.
+        if (HouseVendors.StockFor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag) is { } stock) {
+            _inventory = [.. stock.Items.Select(id => new GID((ulong) id))];
+            _window = stock.Window;
+            FixedPrice = HouseVendors.Price;
+
+            return;
+        }
+
         // Abner also sells the trainer tome, the furniture that brings a trainer into a house (HouseTrainers).
         if (Entity.Template is GameObjectTemplate template && InteractTreasureVendorComponent.IsAbner(template)
             && !NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out _)) {
@@ -118,6 +133,14 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
+        => _window switch {
+            HouseVendors.ShopWindow.Snack => [new PetSnackShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
+            HouseVendors.ShopWindow.Reagent => [new ReagentShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
+            HouseVendors.ShopWindow.Jewel => [new JewelShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
+            _ => EquipmentOrHousingOptions(),
+        };
+
+    private IEnumerable<ServiceOptionBase> EquipmentOrHousingOptions()
         => _housingShop
         ? [
             new HousingShopOption {
@@ -141,7 +164,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public bool HasItem(GID itemGID)
-        => _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId);
+        => _inventory is not null && _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId);
 
     private void SendShopOfferings(IActorRef playerActor) {
         var shopOffering = new WizShopOffering() {

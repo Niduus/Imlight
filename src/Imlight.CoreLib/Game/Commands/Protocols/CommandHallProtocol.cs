@@ -24,7 +24,9 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// `.hall`: gives one trainer tome (the Burrower Lectern), the same furniture Abner sells; `.hall 5` gives five. Each
 /// one placed in a house brings a set trainer (see <see cref="HouseTrainerSets"/>). `.hall flip`, in the house, hands
-/// the trainer parts out along the row from the other end.
+/// the trainer parts out along the row from the other end. `.hall vendors` gives one piece of seller furniture per
+/// reagent kind (spellements included) and per jewel shape and pin; each placed in a house brings its seller (see
+/// <see cref="HouseVendors"/>).
 /// </summary>
 internal class CommandHallProtocol : CommandProtocol {
 
@@ -43,9 +45,16 @@ internal class CommandHallProtocol : CommandProtocol {
             return;
         }
 
+        if (argument.Equals("vendors", System.StringComparison.OrdinalIgnoreCase)
+            || argument.Equals("sellers", System.StringComparison.OrdinalIgnoreCase)) {
+            GiveSellers();
+
+            return;
+        }
+
         var count = 1;
         if (argument.Length > 0 && (!int.TryParse(argument, out count) || count < 1)) {
-            InformSenderClient($"Use .hall for one trainer tome, .hall and a number (up to {MAX_TOMES}) for more, or .hall flip in your house.");
+            InformSenderClient($"Use .hall for one trainer tome, .hall and a number (up to {MAX_TOMES}) for more, .hall vendors for the sellers, or .hall flip in your house.");
 
             return;
         }
@@ -79,6 +88,28 @@ internal class CommandHallProtocol : CommandProtocol {
             Placement.Backpack => $"Added {tomes} to your backpack. Each one placed in your house brings the next set trainer.",
             _ => $"Added {tomes}; some went to your bank because your backpack is full.",
         } + (given < count ? $" Only {given} of {count} fit." : "") + $" All the set trainers need {HouseTrainerSets.Sets.Count} tomes.");
+    }
+
+    private void GiveSellers() {
+        var given = new System.Collections.Generic.List<string>();
+        foreach (var seller in HouseVendors.Sellers) {
+            if (!Context.Character.TryCreateItem(seller.FurnitureId, out var item)) {
+                continue;
+            }
+
+            var placement = ItemPlacement.Place(Context.Character, item);
+            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
+            if (placement is not (Placement.Backpack or Placement.Bank or Placement.SharedBank)) {
+                break;
+            }
+
+            given.Add(seller.Name);
+        }
+
+        InformSenderClient(given.Count == 0
+            ? "Could not add the seller furniture, your backpack and bank are full."
+            : $"Added {given.Count} pieces of seller furniture. Place one in your house and its seller stands on it: "
+              + string.Join(", ", given) + ".");
     }
 
     private void Flip() {
