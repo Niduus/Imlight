@@ -106,6 +106,12 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             return;
         }
 
+        // [Instance] PrivateZones: shared zones that each player gets their own copy of, like a dungeon, so they
+        // start fresh once everyone has left (Instance.ResetWhenEmpty).
+        if (!message.IsPrivate && IsPrivateZone(message.DestinationZone)) {
+            message.IsPrivate = true;
+        }
+
         var hasContainer = _instanceContainers.TryGetValue(message.OwnerCharId, out var instanceContainer);
 
         // If IsPrivate is set but no instance container exists, create one proactively.
@@ -233,6 +239,13 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
 
         Context.Stop(instanceContainer);
     }
+
+    private static readonly HashSet<string> s_privateZones = new(
+        ConfigurationManager.GetValue("Instance.PrivateZones", "WizardCity/WC_Golem_Tower")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+        StringComparer.OrdinalIgnoreCase);
+
+    private static bool IsPrivateZone(string zonePath) => zonePath is not null && s_privateZones.Contains(zonePath);
 
     private static string SanitizeZoneName(string zoneName)
         => zoneName.Replace('/', '-');

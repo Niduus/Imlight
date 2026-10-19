@@ -118,6 +118,7 @@ internal sealed class ManagerWindow : Window {
         ("Pets", "XpCarriesOver", "Pet XP carries over (off: extra XP is lost when a pet levels up, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Instance", "ResetWhenEmpty", "Dungeons start fresh once everyone has left (off: kept for 10 minutes)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeItemCards", "Randomizer: random item cards (from gear and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
