@@ -435,6 +435,9 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 // the caster's next turn. It is paid for now.
                 var played = InitializeCombatAction(action);
                 played.m_targetSubcircleList.Add(action.SelectedTarget.SlotIndex);
+                // Marks this as the delay itself. Without it the game played the card's spell now and again when the
+                // delay ran out, so Tower Shield showed as two casts.
+                played.m_delayedEnchanted = true;
                 DoSpellCastConsequences(action.SpellCaster, played);
                 combatActionList.m_actionList.Add(played);
                 _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum));

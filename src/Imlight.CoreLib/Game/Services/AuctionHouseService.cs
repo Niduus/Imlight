@@ -112,6 +112,15 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 3:
                 BuyFromAuctionHouse(message.itemTemplateID, message.texture, message.decal, message.key);
                 break;
+            case 4:
+            case 5:
+            case 7:
+                // Buy More and Sell More. Which command is which is not known yet, so the request is matched by what
+                // its ids name: a snack or an item the player holds is sold, a bazaar entry is bought.
+                Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}).",
+                    Logger.Args(message.Command, message.itemTemplateID, message.itemGlobalID, message.quantity, message.itemType, message.category));
+                BuyOrSellMore(message);
+                break;
             case 6:
                 // Sent right after a tab's list arrives. Answering with the tab's entries again as an update
                 // gives the game their stock counts.
@@ -285,8 +294,101 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(shopBuyConfirmMsg);
     }
 
+    // The most copies one Buy More or Sell More request moves.
+    private const uint MAX_MORE = 99;
+
+    private void BuyOrSellMore(WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST message) {
+        var wizard = GetActiveWizard();
+        var quantity = (int) Math.Clamp(message.quantity, 1u, MAX_MORE);
+        foreach (var id in new[] { message.itemGlobalID, message.itemTemplateID }.Where(id => id != 0)) {
+            if (wizard.PetSnackBehavior.HasSnackID(id)) {
+                var snack = wizard.PetSnackBehavior.Snacks.First(s => s.m_globalID.Full == id);
+                var templateId = (ulong) snack.m_templateID;
+                var gold = SellSnack(wizard, id, quantity, out var sold);
+                SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
+
+                return;
+            }
+
+            if (wizard.InventoryBehavior.HasItem(id)) {
+                var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
+                SellToAuctionHouse(id, message.key);
+                SendMoreAcknowledgement(templateId, isSell: true, 0, 1);
+
+                return;
+            }
+
+            if (Snack(id) is not null || TreasureCard(id) is not null || AuctionHouseCollection.GetAuctionHouseEntry(id) is not null) {
+                var goldBefore = wizard.GameStats.m_currentGold;
+                for (var i = 0; i < quantity; i++) {
+                    BuyFromAuctionHouse(id, message.texture, message.decal, message.key);
+                }
+
+                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, quantity);
+
+                return;
+            }
+        }
+    }
+
+    private void SendMoreAcknowledgement(ulong templateId, bool isSell, int totalPrice, int quantity)
+        => SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEMOREACKNOWLEDGEMENT {
+            ItemTemplateID = templateId,
+            IsSell = (sbyte) (isSell ? 1 : 0),
+            TotalPrice = totalPrice,
+            QuantityPurchased = quantity,
+        });
+
+    /// <summary>
+    /// Sells snacks from the snack bag to the bazaar at half their value (at least 1 gold each).
+    /// </summary>
+    /// <returns>The gold paid.</returns>
+    private int SellSnack(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, ulong snackId, int quantity, out int sold) {
+        sold = 0;
+        var snack = wizard.PetSnackBehavior.Snacks?.FirstOrDefault(s => s.m_globalID.Full == snackId);
+        if (snack is null || CoreObjectFactory.GetCoreTemplate(snack.m_templateID) is not WizItemTemplate template) {
+            return 0;
+        }
+
+        var count = Math.Min(quantity, snack.m_quantity);
+        if (count < 1 || !wizard.RemoveSnack(snackId, count, out var left)) {
+            return 0;
+        }
+
+        sold = count;
+        var gold = Math.Max(1, (int) Math.Ceiling(template.m_baseCost * 0.5f)) * count;
+        if (left is not null && left.m_quantity > 0) {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE { GlobalID = wizard.GameObjectID, ItemID = left.m_globalID, Quantity = left.m_quantity });
+        }
+        else {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKREMOVE { GlobalID = wizard.GameObjectID, ItemID = snackId });
+        }
+
+        wizard.AddGold(gold);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
+            Command = 2,
+            ItemTemplateID = snack.m_templateID,
+            Cost = gold,
+            ReturnCode = 0
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
+
+        return gold;
+    }
+
     private void SellToAuctionHouse(ulong itemGlobalId, uint key) {
         var wizard = GetActiveWizard();
+        // Snacks live in the snack bag, not the backpack.
+        if (!wizard.InventoryBehavior.HasItem(itemGlobalId) && wizard.PetSnackBehavior.HasSnackID(itemGlobalId)) {
+            SellSnack(wizard, itemGlobalId, 1, out _);
+
+            return;
+        }
+
         var item = wizard.InventoryBehavior.GetItem(itemGlobalId);
 
         // Check player has item.

@@ -142,13 +142,39 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         var goldCost = PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
 
         // Check if the user can afford the item.
-        if (playerWizard.GameStats.m_currentGold >= goldCost) {
-            ProcessSuccessfulPurchase(playerWizard, item, itemTemplateID, goldCost, isPet);
+        if (playerWizard.GameStats.m_currentGold < goldCost) {
+            SendShopDenyMessage();
 
             return;
         }
 
-        SendShopDenyMessage();
+        // Buy More: the quantity the player picked, as many as the gold pays for. A pet is always one.
+        var copies = isPet ? 1 : (int) Math.Clamp(message.quantity, 1u, MAX_COPIES);
+        var bought = 0;
+        while (bought < copies && playerWizard.GameStats.m_currentGold >= goldCost) {
+            if (bought > 0) {
+                item = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(itemTemplateID);
+                item.m_primaryColor = message.texture;
+                item.m_secondaryColor = message.decal;
+            }
+
+            if (!ProcessSuccessfulPurchase(playerWizard, item, itemTemplateID, goldCost, isPet, confirm: false)) {
+                break;
+            }
+
+            bought++;
+        }
+
+        if (bought == 0) {
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+        if (bought < copies) {
+            InformGameClient($"Bought {bought} of {copies}: not enough gold or room for the rest.");
+        }
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST))]
@@ -461,24 +487,31 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(shopDenyMsg);
     }
 
-    private void ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost,
-                                           bool isPet) {
+    // The most copies one Buy More request buys.
+    private const uint MAX_COPIES = 99;
+
+    private bool ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost,
+                                           bool isPet, bool confirm = true) {
         var added = isPet ? playerWizard.AddPetToInventory(item) : playerWizard.AddItemToInventory(item);
         if (!added) {
             Logger.Warning("Could not add purchased item {0} to the inventory of {1}.",
                 Logger.Args(itemTemplateID, playerWizard.CharId));
-            SendShopDenyMessage();
+            if (confirm) {
+                SendShopDenyMessage();
+            }
 
-            return;
+            return false;
         }
 
         // Inform the game client that a new item has been added to the player's inventory.
         if (!ItemSync.SendAdded(SessionActor.ActorRef, playerWizard, item)) {
             playerWizard.RemoveItemFromInventory(item.m_globalID);
             WizardItemCollection.RemoveItem(playerWizard.CharId, item.m_globalID);
-            SendShopDenyMessage();
+            if (confirm) {
+                SendShopDenyMessage();
+            }
 
-            return;
+            return false;
         }
 
         playerWizard.RemoveGold(goldCost);
@@ -499,8 +532,11 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(goldUpdateMsg);
 
         // Inform the game client that the purchase was successful.
-        var shopConfirmMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM();
-        SendToSocket(shopConfirmMsg);
+        if (confirm) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+        }
+
+        return true;
     }
 
     private void HandleIllegalPurchaseAttempt(uint itemTemplateID, ulong interactedObjectGID) {

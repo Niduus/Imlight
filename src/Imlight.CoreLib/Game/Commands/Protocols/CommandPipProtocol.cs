@@ -65,21 +65,29 @@ internal class CommandPipProtocol : CommandProtocol {
 }
 
 /// <summary>
-/// `.mastery fire` (or `.mastery all`): counts as mastering that school for the rest of the battle.
+/// `.mastery fire` (or `.mastery astral`, `.mastery shadow`, `.mastery all`): counts as mastering that school for the rest of the battle.
 /// </summary>
 internal class CommandMasteryProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
+    private static readonly MagicSchool[] s_astralSchools = [MagicSchool.Sun, MagicSchool.Moon, MagicSchool.Star];
+
+    // The Astral schools and Shadow have no mastery amulet, but power pips count as 2 for them the same way.
+    private static readonly MagicSchool[] s_masterySchools = [.. CommandPipProtocol.Schools, .. s_astralSchools, MagicSchool.Shadow];
+
     [Command("mastery")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void MasteryCommand(string school) {
         school = school.Trim();
-        MagicSchool[] schools = school.Equals("all", StringComparison.OrdinalIgnoreCase)
-            ? CommandPipProtocol.Schools
-            : [.. CommandPipProtocol.Schools.Where(s => s.ToString().Equals(school, StringComparison.OrdinalIgnoreCase))];
+        MagicSchool[] schools = school.ToLowerInvariant() switch {
+            "all" => s_masterySchools,
+            "astral" => s_astralSchools,
+            _ => [.. s_masterySchools.Where(s => s.ToString().Equals(school, StringComparison.OrdinalIgnoreCase))],
+        };
         if (schools.Length == 0) {
-            InformSenderClient("Use .mastery and a school (fire, ice, storm, myth, life, death, balance) or all.");
+            InformSenderClient("Use .mastery and a school (fire, ice, storm, myth, life, death, balance, sun, moon, star, " +
+                "shadow), astral (sun, moon and star) or all.");
 
             return;
         }
