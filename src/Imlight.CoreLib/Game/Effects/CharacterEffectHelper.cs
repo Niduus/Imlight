@@ -79,7 +79,7 @@ internal static class CharacterEffectHelper {
                 continue;
             }
 
-            gameEffect.m_internalID = wizard.GameEffects.Count;
+            gameEffect.m_internalID = wizard.NextEffectId();
             var effect = AddGameEffectToStats(wizard.GameStats, effectInfo);
 
             if (gameEffect is ProvideSpellEffect provideSpellEffect) {

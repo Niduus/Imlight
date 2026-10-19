@@ -144,6 +144,12 @@ public class Wizard {
     // Set when attachment replaces the offline data object; does not imply zone entry.
     [JsonIgnore] public bool HasInitializedGameObject { get; private set; }
     [JsonIgnore] public List<GameEffectBase> GameEffects = [];
+
+    /// <summary>
+    /// An id no current effect has. The count was used before, but once an effect came off, the next one took the id
+    /// of one still on, and the game kept only one of the two (the pet's Black Mantle never reached the deck window).
+    /// </summary>
+    internal int NextEffectId() => GameEffects.Count == 0 ? 0 : GameEffects.Max(effect => effect?.m_internalID ?? -1) + 1;
     // Stats the worn pet's talents and the socketed jewels added, so they can be taken off exactly.
     [JsonIgnore] internal List<(string Name, WizStatisticEffect Effect)> AppliedPetEffects = [];
     [JsonIgnore] internal List<GameEffectInfo> AppliedJewelEffects = [];

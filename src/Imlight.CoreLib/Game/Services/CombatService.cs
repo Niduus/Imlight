@@ -586,7 +586,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
     private void SetNoAggroGrace() {
         var wizard = GetActiveWizard();
         var charObjId = GetActiveGameObject().m_globalID;
-        var effectInternalId = wizard.GameEffects.Count + 1;
+        var effectInternalId = wizard.NextEffectId();
 
         var epoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var endTime = epoch + NO_AGGRO_EFFECT_DURATION_IN_SECONDS;
