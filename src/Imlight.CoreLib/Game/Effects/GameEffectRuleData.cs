@@ -67,11 +67,19 @@ internal class GameEffectRuleData : RootDirectoryResourceSingleton<GameEffectRul
             return null;
         }
 
-        if (!s_statTables.ContainsKey(tableName)) {
-            return null;
+        if (s_statTables.TryGetValue(tableName, out var table)) {
+            return table;
         }
 
-        return s_statTables[tableName];
+        // Some effects name their table the other way round from its file: CanonicalAllFlatReduceDamage asks for
+        // ReduceDamageFlat_AllSchools, but the file is FlatReduceDamage_AllSchools. Flat resist jewels counted 0.
+        var split = tableName?.IndexOf('_') ?? -1;
+        if (split > 4 && tableName[..split].EndsWith("Flat", StringComparison.Ordinal)
+            && s_statTables.TryGetValue("Flat" + tableName[..(split - 4)] + tableName[split..], out table)) {
+            return table;
+        }
+
+        return null;
     }
 
     private static void ProcessStatTables(Dictionary<FileEntry, Memory<byte>?> files) {
