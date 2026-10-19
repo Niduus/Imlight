@@ -165,7 +165,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
             Contents = WriteAuctionBlob(category, entryList),
             GlobalID = npcId,
-            LastSegment = 0
+            LastSegment = s_lastSegment
         });
     }
 
@@ -265,9 +265,18 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
             return;
         }
-        var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(templateId);
 
-        var item = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(templateId);
+        // The game sends the id with the bazaar's type bits on top (9 << 40); the template is the low 32 bits.
+        // Jewels failed to buy with the full id (Justin, 2026-10-19).
+        Logger.Information("Bazaar: buying {0}.", Logger.Args(templateId));
+        templateId &= 0xFFFFFFFFUL;
+        if (CoreObjectFactory.FinalizeCoreObject(templateId) is not WizClientObjectItem item) {
+            Logger.Warning("Bazaar: no item template {0} to buy.", Logger.Args(templateId));
+            SendBuyConfirm(failed: true);
+
+            return;
+        }
+
         item.m_primaryColor = texture;
         item.m_secondaryColor = decal;
 
@@ -727,12 +736,17 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         "CircleJewel", "SquareJewel", "TriangleJewel", "TearJewel", "PetJewel", "PinSquareSword", "PinSquareShield", "PinSquarePip",
     ];
 
-    // [Bazaar] CatalogTab: how many reagents, jewels or pins one tab lists. Only short lists (snacks, one school's
-    // treasure cards) are known to show, so it starts low.
     private static readonly uint s_petJewelTab = StringHash.Compute("PetJewel");
 
+    // [Bazaar] TabItems: how many reagents, jewels or pins one tab lists. Square jewels showed only the first 120
+    // (Justin, 2026-10-19), so every one is sent now.
     private static readonly int s_catalogLimit
-        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.CatalogTab", 120), 1, MAX_ENTRIES);
+        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
+
+    // [Bazaar] LastSegment: with 0 the game filled only the first tab opened at the bazaar and ignored every list
+    // after it (Justin, 2026-10-19), as if it were still waiting for the rest of the first one.
+    private static readonly sbyte s_lastSegment
+        = (sbyte) Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.LastSegment", 1), 0, 1);
 
     private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory);
 
@@ -777,7 +791,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             }
         }
 
-        // Lowest level first: a tab lists only the first CatalogTab items, and in file order those were mostly
+        // Lowest level first: a tab lists only the first TabItems items, and in file order those were mostly
         // high level jewels and pins (pins start at level 40), none of which showed (Justin, 2026-10-19).
         foreach (var list in byCategory.Values) {
             list.Sort((a, b) => levels[(ulong) a.m_templateID].CompareTo(levels[(ulong) b.m_templateID]) is var byLevel and not 0
