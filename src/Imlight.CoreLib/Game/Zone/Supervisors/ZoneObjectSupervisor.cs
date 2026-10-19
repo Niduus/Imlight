@@ -89,6 +89,15 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
             _placed.Add(new PlacedObject(objectInfo, template, coreObject, actor));
         }
 
+        // The trainer hall's trainers stand where they were put down, in every wizard's copy of the hall.
+        if (Imlight.CoreLib.Game.World.TrainerHallTrainers.IsHallZone(Zone.ZoneName)) {
+            foreach (var spot in Imlight.CoreLib.Game.World.TrainerHallTrainers.Load()) {
+                if (Imlight.CoreLib.Game.World.TrainerHallTrainers.TryCreate(spot, out var info, out var trainer, out var trainerTemplate)) {
+                    _placed.Add(new PlacedObject(info, trainerTemplate, trainer, CreateEntityActor(trainer, trainerTemplate, info)));
+                }
+            }
+        }
+
         ReportLoadedWhenEntitiesLoad();
     }
 

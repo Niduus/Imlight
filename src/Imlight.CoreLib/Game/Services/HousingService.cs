@@ -50,6 +50,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Housing.Families;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
@@ -154,6 +155,13 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_PLACEHOUSINGOBJECT))]
     private void ReceivePlaceHousingObject(WIZARDHOUSING_50_PROTOCOL.MSG_PLACEHOUSINGOBJECT message) {
         if (!TryGetHouse("place an object", out var house)) {
+            return;
+        }
+
+        // In the trainer hall an object put down becomes a trainer on that spot, and the object stays in the backpack.
+        if (TrainerHallTrainers.IsHall(house)) {
+            PlaceTrainer(house, message);
+
             return;
         }
 
@@ -381,6 +389,16 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
+        if (TrainerHallTrainers.IsHall(house)) {
+            var cleared = TrainerHallTrainers.Clear();
+            InformGameClient(cleared == 0
+                ? "There are no trainers in the trainer hall."
+                : $"Removed {cleared} trainer(s). They are gone the next time you enter the trainer hall.");
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_PICKUPALL { ItemCount = 0, ErrorCode = 0, Exceptions = string.Empty });
+
+            return;
+        }
+
         var wizard = GetActiveWizard();
         if (!HousingBlobs.TryParseItemList(message.Exceptions, out var kept)) {
             // Which objects stay is not known, so none is moved.
@@ -439,6 +457,23 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             ErrorCode = (sbyte) (result.Edit == HouseEdit.LimitReached || result.Left > 0 ? 1 : 0),
             Exceptions = string.Empty,
         });
+    }
+
+    private void PlaceTrainer(HouseState house, WIZARDHOUSING_50_PROTOCOL.MSG_PLACEHOUSINGOBJECT message) {
+        var wizard = GetActiveWizard();
+        var spot = TrainerHallTrainers.Add(message.LocX, message.LocY, message.LocZ, message.Yaw);
+        Logger.Information("{0} put a trainer in the trainer hall at {1}, {2}, {3}.",
+            Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), spot.X, spot.Y, spot.Z));
+
+        // The client already shows the object, so it gets the house again without it.
+        SendBlob(house);
+
+        var zoneActor = SessionActor.GetZoneActor();
+        if (zoneActor is not null && TrainerHallTrainers.TryCreate(spot, out _, out var trainer, out var template)) {
+            zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_SPAWNENTITY { CoreObject = trainer, Template = template }, ActorRefs.NoSender);
+        }
+
+        InformGameClient("A trainer was put here. Your item stays in your backpack.");
     }
 
     private bool TryGetHouse(string request, out HouseState house) {

@@ -79,7 +79,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
-    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss }
+    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall }
 
     /// <summary>
     /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13), Mellori
@@ -96,6 +96,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
                 return TestTrainerKind.Shadow;
             case "WC-RAV-NPC14":
                 return TestTrainerKind.Boss;
+            case "WC-HUB-NPC15_A":
+            case "WC-HUB-NPC15_B":
+                // The Deckathalon Tome, the trainer hall's trainer.
+                return TestTrainerKind.Hall;
         }
 
         var names = $"{objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
@@ -231,6 +235,19 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             result[kind] = [.. picks.Select(c => new NPCSpellEntry { TemplateID = c.TemplateId, RequiredSpellID = 0, Level = 1 })];
             Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[kind].Count, kind));
         }
+
+        // The trainer hall's book teaches every spell some trainer in the game teaches, school by school.
+        result[TestTrainerKind.Hall] = [.. Imlight.CoreLib.WizardData.SpiralDB.NpcSpellInventories.Values
+            .Where(inventory => inventory?.Spells is not null)
+            .SelectMany(inventory => inventory.Spells)
+            .Select(entry => entry.TemplateID)
+            .Distinct()
+            .Select(id => (Id: id, Spell: CoreObjectFactory.GetCoreTemplate(id) as SpellTemplate))
+            .Where(pair => pair.Spell is not null && !pair.Spell.m_Treasure)
+            .OrderBy(pair => (string) pair.Spell.m_sMagicSchoolName ?? "", System.StringComparer.OrdinalIgnoreCase)
+            .ThenBy(pair => (string) pair.Spell.m_name, System.StringComparer.OrdinalIgnoreCase)
+            .Select(pair => new NPCSpellEntry { TemplateID = pair.Id, RequiredSpellID = 0, Level = 1 })];
+        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[TestTrainerKind.Hall].Count, TestTrainerKind.Hall));
 
         return result;
     }
