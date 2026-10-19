@@ -20,6 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.Cryptography;
+using Imcodec.CoreObject;
+using Imcodec.MessageLayer;
+using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
@@ -78,6 +82,40 @@ internal static class EquipmentExtras {
         return changes;
     }
 
+    /// <summary>
+    /// The messages that tell the game which pet and jewel effects came off and went on since it was last told,
+    /// for callers outside the equipment service, such as feeding a pet. Clears the changes like
+    /// <see cref="TakeCardEffectChanges"/>.
+    /// </summary>
+    internal static List<IMessage> TakeCardEffectMessages(Wizard wizard) {
+        var (removed, added) = TakeCardEffectChanges(wizard);
+        var messages = new List<IMessage>();
+        foreach (var effect in removed) {
+            messages.Add(new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
+                GameObjectID = wizard.GameObjectID,
+                EffectNameID = effect.m_effectNameID,
+                InternalID = effect.m_internalID,
+            });
+        }
+
+        foreach (var effect in added) {
+            if (!s_effectSerializer.Serialize(effect, PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit, out var data)) {
+                Logger.Error("Failed to serialize effect {0} for {1}.", Logger.Args(effect.m_effectNameID, wizard.CharId));
+
+                continue;
+            }
+
+            messages.Add(new GAME_5_PROTOCOL.MSG_ADDEFFECT {
+                GameObjectID = wizard.GameObjectID,
+                EffectData = data,
+            });
+        }
+
+        return messages;
+    }
+
+    private static readonly CoreObjectSerializer s_effectSerializer = new(versionable: false, behaviors: SerializerFlags.None);
+
     private static void Remove(Wizard wizard) {
         foreach (var (name, effect) in wizard.AppliedPetEffects) {
             CharacterEffectHelper.RemoveStatisticEffectFromStats(wizard.GameStats, name, effect);
@@ -126,6 +164,16 @@ internal static class EquipmentExtras {
                 foreach (var (name, effect) in PetProgress.ComputeEffects(item, JewelSockets.GetPetJewelTalents(item))) {
                     CharacterEffectHelper.AddStatisticEffectToStats(wizard.GameStats, name, effect);
                     wizard.AppliedPetEffects.Add((name, effect));
+
+                    // Also listed as an effect of the pet's slot, like gear's: the stats page adds up those effects,
+                    // so without it a talent showed only in the hover text, not as a number (Justin, 2026-10-19).
+                    var shown = effect with {
+                        m_itemSlotID = ItemHelper.GetItemSlotHash(template),
+                        m_internalID = wizard.NextEffectId(),
+                    };
+                    wizard.GameEffects.Add(shown);
+                    wizard.AppliedCardEffects.Add(shown);
+                    wizard.AddedCardEffects.Add(shown);
                 }
 
                 // Card talents give their cards for battle; they are taken off like a jewel's cards.
