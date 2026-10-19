@@ -113,6 +113,8 @@ internal sealed class ManagerWindow : Window {
         ("Battle", "CreatureShadowPips", "Creatures can get shadow pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "RandomCreatureShadowPips", "Creatures get shadow magic only by chance (chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "Tame", "Randomizer: tame mode (creatures, their decks and pips stay normal so quests can be done)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Pets", "XpCarriesOver", "Pet XP carries over (off: extra XP is lost when a pet levels up, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "MemberBenefits", "Every wizard is a member with all member benefits", new() { OnContent = "On", OffContent = "Off" }),
