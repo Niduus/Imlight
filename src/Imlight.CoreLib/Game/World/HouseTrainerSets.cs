@@ -191,7 +191,7 @@ internal static class HouseTrainerSets {
     // Traps and so on. Boss cards are their own along with dev cards").
     private static readonly string[] s_kindOrder = [
         "Attack", "All-Enemy Attack", "Heal", "Blade", "Shield", "Trap", "Mantle & Weakness", "Aura", "Global",
-        "Minion", "Polymorph", "Stun & Control", "Manipulation", "Enchantment", "Other", "Boss", "Dev",
+        "Minion", "Polymorph", "Stun & Control", "Manipulation", "Enchantment", "Other", "Weaving", "Boss", "Dev",
     ];
 
     private static List<TrainerSet> BuildSets() {
@@ -213,7 +213,10 @@ internal static class HouseTrainerSets {
                 .Select(entry => (Id: entry.TemplateID, Level: 0, Spell: CoreObjectFactory.GetCoreTemplate(entry.TemplateID) as SpellTemplate, Kind: "Boss"))
                 .Where(spell => spell.Spell is not null);
 
+            // The weaving (formula) spells, trained or boss, are trainers of their own (Justin).
+            var weaving = WeavingIds();
             var spells = trained.Concat(boss).Concat(DevSpells())
+                .Select(spell => weaving.Contains((uint) spell.Id) ? spell with { Kind = "Weaving" } : spell)
                 .Select(spell => (spell.Id, spell.Level, spell.Kind, School: (string) spell.Spell.m_sMagicSchoolName ?? "",
                     Shown: ShownName(spell.Spell)))
                 // A card shows once: the trained copy before the boss copy before the dev copy.
@@ -331,6 +334,22 @@ internal static class HouseTrainerSets {
         }
 
         return leaves.Count > 0 ? "Manipulation" : "Other";
+    }
+
+    // The game keeps them in Spells/Trained Spells/Weaving Spells and Spells/Fight Specific/Weaving.
+    private static HashSet<uint> WeavingIds() {
+        var ids = new HashSet<uint>();
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            string file = location?.m_filename;
+            if (file is not null && file.Replace('\\', '/').Contains("Spells/", StringComparison.OrdinalIgnoreCase)
+                && file.Replace('\\', '/').Contains("/Weaving", StringComparison.OrdinalIgnoreCase)) {
+                ids.Add(location.m_id);
+            }
+        }
+
+        Logger.Information("Set trainers: {0} weaving spells.", Logger.Args(ids.Count));
+
+        return ids;
     }
 
     // Cards the developers made for testing: in a Test folder, or named Dev, Debug, GM or Admin.
