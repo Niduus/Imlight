@@ -24,7 +24,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 internal class CommandLookupProtocol : CommandProtocol {
 
-    private const int MAX_RESULTS = 15;
+    private const int MAX_RESULTS = 10; // More makes the window taller than the screen, hiding its OK button.
 
     internal override string Group { get; set; } = "lookup";
 
@@ -82,7 +82,7 @@ internal class CommandLookupProtocol : CommandProtocol {
         }
 
         if (matches.Count > MAX_RESULTS) {
-            message.AppendLine($"\nMore results were found. Narrow the search, or open {IdCatalog.OutputPath} on the server to browse everything.");
+            message.AppendLine("\nMore found. Add words to narrow it, or use the app's Lookup tab.");
         }
 
         InformSenderClient(message.ToString(), true);
