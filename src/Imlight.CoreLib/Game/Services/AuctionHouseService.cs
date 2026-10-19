@@ -181,10 +181,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         });
     }
 
-    // The list is a string with a 16-bit length: 8 bytes of header and 20 an entry fit 3276 entries. 5218 made the
-    // game drop the connection. Sending a long list in parts did not work: each part replaced the last, so only the
-    // last part showed (Justin, 2026-10-19).
-    private const int MAX_ONE_LIST = 3200;
+    // How many entries one list may hold. 1000 was fine, 2946 and 5218 made the game drop the connection. Sending a
+    // long list in parts did not work: each part replaced the last, so only the last part showed (Justin, 2026-10-19).
+    private const int MAX_ONE_LIST = 1200;
 
     // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
     // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Justin,
@@ -196,12 +195,15 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static readonly Lazy<HashSet<uint>> s_jewelTabs = new(() => [.. s_jewelShapes.Select(StringHash.Compute)]);
 
     /// <summary>
-    /// Everything the window a tab belongs to sells: the jewel window gets every jewel and pin, the reagent and snack
+    /// Everything the window a tab belongs to sells, as much as fits: the jewel window gets the tab's own jewels and then others, the reagent and snack
     /// window every reagent and snack. Other tabs (treasure cards by school, hats and the rest) keep their own lists.
     /// </summary>
     private static List<AuctionHouseEntry> WholeWindow(uint category) {
         if (s_jewelTabs.Value.Contains(category)) {
-            return [.. s_jewels.Value.ById.Values.Take(MAX_ONE_LIST)];
+            // Every jewel in the tab asked for comes first, so that tab is always whole; other jewels fill the rest.
+            var own = s_jewels.Value.ByCategory.TryGetValue(category, out var list) ? list : [];
+
+            return [.. own.Concat(s_jewels.Value.ById.Values).Distinct().Take(MAX_ONE_LIST)];
         }
 
         if (category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)) {
