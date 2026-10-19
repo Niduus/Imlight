@@ -72,6 +72,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private string _shopTitle = "Unknown Shop";
     private int _shopType = 0;
     private bool _csrTestShop = false;
+    // Abner's lectern shop sells furniture, so it is offered as a housing shop (an equipment shop does not list it).
+    private bool _housingShop;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has an inventory in Dragon database,
@@ -87,6 +89,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         if (Entity.Template is GameObjectTemplate template && InteractTreasureVendorComponent.IsAbner(template)
             && !NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out _)) {
             _inventory = [new GID(HouseTrainers.ItemTemplateId)];
+            _housingShop = true;
 
             return;
         }
@@ -115,7 +118,15 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => [
+        => _housingShop
+        ? [
+            new HousingShopOption {
+                m_displayKey = "GUI_HousingShop",
+                m_iconKey = NpcIcon,
+                m_serviceName = ServiceName,
+            }
+        ]
+        : [
             new EquipmentShopOption {
                 m_displayKey = DisplayKey,
                 m_iconKey = NpcIcon,
