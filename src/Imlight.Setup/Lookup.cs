@@ -33,7 +33,7 @@ namespace Imlight.Setup;
 /// <param name="Detail">A short extra line, such as a school, a level or who may use a command.</param>
 /// <param name="Typed">What to type in the game's chat to use it, when there is something to type.</param>
 /// <param name="Help">What it does, in plain words.</param>
-internal sealed record LookupEntry(string Kind, string Name, string Id, string Detail, string? Typed, string Help) {
+internal sealed record LookupEntry(string Kind, string Name, string Id, string Detail, string? Typed, string Help, bool Custom = false) {
 
     /// <summary>All of the text a search looks through, in lower case.</summary>
     internal string Haystack { get; } = $"{Kind} {Name} {Id} {Detail} {Typed} {Help}".ToLowerInvariant();
@@ -63,49 +63,49 @@ internal sealed class Lookup {
     /// </summary>
     internal static readonly LookupEntry[] COMMANDS = [
         // Your character.
-        Command("Level up", ".mod levelup", QA, "Raises your character by one level. Also .mod lvlup."),
+        Imlight("Level up", ".mod levelup", QA, "Raises your character by one level. Also .mod lvlup."),
         Command("Set level", ".level MAX or .level <level>", QA, "Sets your character to the max level, or to the level you type, such as .level 50. Also .mod level."),
-        Command("Add experience", ".mod addxp <amount>", QA, "Gives your character experience points."),
-        Command("Run speed", ".mod speed <multiplier>", QA, "Changes how fast you run, such as .mod speed 3. Use .mod speed 1 for normal."),
-        Command("Give item", ".mod additem <item ID>", QA, "Puts an item in your backpack. Find the ID by searching for the item in this tab."),
-        Command("Give pet snack", ".mod addsnack <item ID>", QA, "Puts a pet snack in your snack bag."),
-        Command("Give reagent", ".mod addreagent <item ID>", QA, "Puts a crafting reagent in your reagent bag."),
-        Command("Change name", ".mod name <new name>", QA, "Changes the name shown over your character. Log out and back in to see it."),
-        Command("Change badge", ".mod badge <badge text>", QA, "Changes the badge shown under your name. Log out and back in to see it."),
-        Command("Add gold", ".mod addgold <amount>", QA, "Gives your character gold."),
-        Command("Gold limit", ".mod maxgold <amount>", QA, "Changes the most gold your character can carry."),
-        Command("Max health", ".mod maxhealth <amount>", QA, "Sets your character's maximum health. Also .mod maxhp."),
-        Command("Max mana", ".mod maxmana <amount>", QA, "Sets your character's maximum mana."),
-        Command("Max energy", ".mod maxenergy <amount>", QA, "Sets your character's maximum energy. Also .mod maxnrg."),
-        Command("Current health", ".mod currenthealth <amount>", QA, "Sets how much health your character has right now. Also .mod currenthp."),
-        Command("Current mana", ".mod currentmana <amount>", QA, "Sets how much mana your character has right now."),
-        Command("Current energy", ".mod currentenergy <amount>", QA, "Sets how much energy your character has right now. Also .mod currentnrg."),
-        Command("Heal", ".mod heal", QA, "Fills your health. Also .mod refillhealth or .mod refillhp."),
-        Command("Refill mana", ".mod rejuv", QA, "Fills your mana. Also .mod refillmana, .mod refillmp or .mod rejuvenate."),
-        Command("Refill energy", ".mod energize", QA, "Fills your energy. Also .mod refillenergy, .mod refillnrg or .mod refillpet."),
-        Command("Potions", ".mod potionmax <amount>", QA, "Sets how many potions you can hold and fills them. Also .mod pmax."),
-        Command("Add training points", ".mod addtp <amount>", QA, "Gives your character training points. Also .mod addtrainingpoints."),
-        Command("Set training points", ".mod settp <amount>", QA, "Sets your character's training points. Also .mod settrainingpoints."),
+        Imlight("Add experience", ".mod addxp <amount>", QA, "Gives your character experience points."),
+        Imlight("Run speed", ".mod speed <multiplier>", QA, "Changes how fast you run, such as .mod speed 3. Use .mod speed 1 for normal."),
+        Imlight("Give item", ".mod additem <item ID>", QA, "Puts an item in your backpack. Find the ID by searching for the item in this tab."),
+        Imlight("Give pet snack", ".mod addsnack <item ID>", QA, "Puts a pet snack in your snack bag."),
+        Imlight("Give reagent", ".mod addreagent <item ID>", QA, "Puts a crafting reagent in your reagent bag."),
+        Imlight("Change name", ".mod name <new name>", QA, "Changes the name shown over your character. Log out and back in to see it."),
+        Imlight("Change badge", ".mod badge <badge text>", QA, "Changes the badge shown under your name. Log out and back in to see it."),
+        Imlight("Add gold", ".mod addgold <amount>", QA, "Gives your character gold."),
+        Imlight("Gold limit", ".mod maxgold <amount>", QA, "Changes the most gold your character can carry."),
+        Imlight("Max health", ".mod maxhealth <amount>", QA, "Sets your character's maximum health. Also .mod maxhp."),
+        Imlight("Max mana", ".mod maxmana <amount>", QA, "Sets your character's maximum mana."),
+        Imlight("Max energy", ".mod maxenergy <amount>", QA, "Sets your character's maximum energy. Also .mod maxnrg."),
+        Imlight("Current health", ".mod currenthealth <amount>", QA, "Sets how much health your character has right now. Also .mod currenthp."),
+        Imlight("Current mana", ".mod currentmana <amount>", QA, "Sets how much mana your character has right now."),
+        Imlight("Current energy", ".mod currentenergy <amount>", QA, "Sets how much energy your character has right now. Also .mod currentnrg."),
+        Imlight("Heal", ".mod heal", QA, "Fills your health. Also .mod refillhealth or .mod refillhp."),
+        Imlight("Refill mana", ".mod rejuv", QA, "Fills your mana. Also .mod refillmana, .mod refillmp or .mod rejuvenate."),
+        Imlight("Refill energy", ".mod energize", QA, "Fills your energy. Also .mod refillenergy, .mod refillnrg or .mod refillpet."),
+        Imlight("Potions", ".mod potionmax <amount>", QA, "Sets how many potions you can hold and fills them. Also .mod pmax."),
+        Imlight("Add training points", ".mod addtp <amount>", QA, "Gives your character training points. Also .mod addtrainingpoints."),
+        Imlight("Set training points", ".mod settp <amount>", QA, "Sets your character's training points. Also .mod settrainingpoints."),
         Command("Gain training points", ".gaintp <amount>", "Every player", "Gives your character 1 to 100 training points. Also .trainingpoints. " +
             "Works for every player unless the server turned it off (Settings, Trainers, PlayersCanGainTrainingPoints)."),
-        Command("Cantrip level up", ".mod clvlup", QA, "Raises your cantrip level by one. Also .mod cantriplevelup."),
-        Command("Set cantrip level", ".mod clvl <level>", QA, "Sets your cantrip level. Also .mod cantriplevel."),
+        Imlight("Cantrip level up", ".mod clvlup", QA, "Raises your cantrip level by one. Also .mod cantriplevelup."),
+        Imlight("Set cantrip level", ".mod clvl <level>", QA, "Sets your cantrip level. Also .mod cantriplevel."),
 
         // Spells.
-        Command("Learn spell", ".sb learn <spell ID>", QA, "Adds a spell to your spellbook for good. Find the ID by searching for the spell in this tab."),
-        Command("Unlearn spell", ".sb unlearn <spell ID>", QA, "Takes a spell out of your spellbook."),
-        Command("Unlearn all spells", ".sb unlearnall", QA, "Takes every learned spell out of your spellbook."),
-        Command("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
-        Command("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
-        Command("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
+        Imlight("Learn spell", ".sb learn <spell ID>", QA, "Adds a spell to your spellbook for good. Find the ID by searching for the spell in this tab."),
+        Imlight("Unlearn spell", ".sb unlearn <spell ID>", QA, "Takes a spell out of your spellbook."),
+        Imlight("Unlearn all spells", ".sb unlearnall", QA, "Takes every learned spell out of your spellbook."),
+        Imlight("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
+        Imlight("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
+        Imlight("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
         Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
         Command("Pick teleport effect", ".tpstyle <number>", QA, "Wears teleport effect number <number> (0 is the normal one). Try 1, 2, 3 and so on, log out and back in, then teleport to see it."),
         Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),
         Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
-        Command("Give one badge", ".badge grant <badge name or ID>", QA, "Gives your character one badge and its reward. Type the badge's name or its ID number."),
-        Command("Badge progress", ".badge progress <counter> <amount>", QA, "Adds to a badge counter, such as the number of a creature type you have defeated, and gives any badges it reaches."),
-        Command("List my badges", ".badge list", QA, "Shows the badges your character has, with their progress."),
-        Command("Reset badges", ".badge reset", QA, "Removes all of your character's badges and badge progress."),
+        Imlight("Give one badge", ".badge grant <badge name or ID>", QA, "Gives your character one badge and its reward. Type the badge's name or its ID number."),
+        Imlight("Badge progress", ".badge progress <counter> <amount>", QA, "Adds to a badge counter, such as the number of a creature type you have defeated, and gives any badges it reaches."),
+        Imlight("List my badges", ".badge list", QA, "Shows the badges your character has, with their progress."),
+        Imlight("Reset badges", ".badge reset", QA, "Removes all of your character's badges and badge progress."),
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
         Command("Backpack size", ".backpack 300   or   .backpack max", QA, "Sets how many items your backpack holds, up to 500 (max). Change area or log out and back in to see it in the backpack window."),
         Command("Bank size", ".bank 500   or   .bank max", QA, "Sets how many items your bank holds, up to 1000 (max)."),
@@ -135,38 +135,38 @@ internal sealed class Lookup {
         Command("Clear jewels", ".jewel clear", QA, "Empties every socket on the gear and pet you are wearing."),
 
         // Battles.
-        Command("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),
-        Command("Fast spell animations", ".cheat cinematic", QA, "Turns instant spell animations on or off."),
-        Command("No fizzle", ".cheat nofizzle", QA, "Turns spells that never fizzle on or off."),
+        Imlight("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),
+        Imlight("Fast spell animations", ".cheat cinematic", QA, "Turns instant spell animations on or off."),
+        Imlight("No fizzle", ".cheat nofizzle", QA, "Turns spells that never fizzle on or off."),
 
         // Moving around.
-        Command("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Search Zone in this tab for every name."),
-        Command("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
-        Command("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
-        Command("Show object", ".debug enableobj <zone tag>", QA, "Shows an object hidden with .debug disableobj."),
-        Command("List zone changes", ".dynamod list", QA, "Lists the zone changes (dynamods) saved on your character."),
-        Command("Set zone change", ".dynamod set <on or off> <tag>", QA, "Turns a zone change on or off for your character."),
-        Command("Toggle zone change", ".dynamod toggle <tag>", QA, "Flips a zone change between on and off."),
-        Command("Remove zone change", ".dynamod remove <tag>", QA, "Removes a zone change from your character."),
+        Imlight("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Search Zone in this tab for every name."),
+        Imlight("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
+        Imlight("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
+        Imlight("Show object", ".debug enableobj <zone tag>", QA, "Shows an object hidden with .debug disableobj."),
+        Imlight("List zone changes", ".dynamod list", QA, "Lists the zone changes (dynamods) saved on your character."),
+        Imlight("Set zone change", ".dynamod set <on or off> <tag>", QA, "Turns a zone change on or off for your character."),
+        Imlight("Toggle zone change", ".dynamod toggle <tag>", QA, "Flips a zone change between on and off."),
+        Imlight("Remove zone change", ".dynamod remove <tag>", QA, "Removes a zone change from your character."),
 
         // Quests.
         Command("Go to quest", ".toquest \"quest name\"", QA, "Puts you on any quest to test it, by its name (Ghost Hunters) or code: marks the quests before it done, takes you to its first step and lists its steps. Steps that wait on a trigger are marked; skip one with .quest completegoal."),
-        Command("Offer quest", ".quest offer <quest name>", QA, "Shows the quest's offer window, as if someone gave it to you. Search Quest in this tab for names."),
-        Command("Give quest", ".quest grant <quest name>", QA, "Adds a quest to your quest book."),
-        Command("Force give quest", ".quest forcegrant <quest name>", QA, "Adds a quest even when you could not normally get it."),
-        Command("Complete quest", ".quest complete <quest name>", QA, "Finishes a quest."),
-        Command("Complete current goal", ".quest completegoal", QA, "Finishes the goal you are on in your active quest."),
-        Command("Complete quest goal", ".quest completegoalfor <quest name>", QA, "Finishes the goal you are on in a chosen quest."),
-        Command("Remove quest", ".quest remove <quest name>", QA, "Takes a quest out of your quest book."),
-        Command("My quests", ".quest list", QA, "Lists your quests."),
-        Command("Active quest info", ".quest info", QA, "Shows details about your active quest."),
-        Command("Show quest", ".quest show <quest name>", QA, "Shows details about any quest."),
+        Imlight("Offer quest", ".quest offer <quest name>", QA, "Shows the quest's offer window, as if someone gave it to you. Search Quest in this tab for names."),
+        Imlight("Give quest", ".quest grant <quest name>", QA, "Adds a quest to your quest book."),
+        Imlight("Force give quest", ".quest forcegrant <quest name>", QA, "Adds a quest even when you could not normally get it."),
+        Imlight("Complete quest", ".quest complete <quest name>", QA, "Finishes a quest."),
+        Imlight("Complete current goal", ".quest completegoal", QA, "Finishes the goal you are on in your active quest."),
+        Imlight("Complete quest goal", ".quest completegoalfor <quest name>", QA, "Finishes the goal you are on in a chosen quest."),
+        Imlight("Remove quest", ".quest remove <quest name>", QA, "Takes a quest out of your quest book."),
+        Imlight("My quests", ".quest list", QA, "Lists your quests."),
+        Imlight("Active quest info", ".quest info", QA, "Shows details about your active quest."),
+        Imlight("Show quest", ".quest show <quest name>", QA, "Shows details about any quest."),
 
         // Groups.
-        Command("Group info", ".group info", QA, "Shows who is in your group."),
-        Command("Kick from group", ".group kick <name>", QA, "Removes someone from your group. Also .group remove."),
-        Command("Group leader", ".group leader <name>", QA, "Makes someone the group's leader."),
-        Command("Disband group", ".group disband", QA, "Breaks up your group."),
+        Imlight("Group info", ".group info", QA, "Shows who is in your group."),
+        Imlight("Kick from group", ".group kick <name>", QA, "Removes someone from your group. Also .group remove."),
+        Imlight("Group leader", ".group leader <name>", QA, "Makes someone the group's leader."),
+        Imlight("Disband group", ".group disband", QA, "Breaks up your group."),
 
         // Finding IDs in game.
         Command("Find item ID", ".lookup item <words>", QA, "Searches item names in game and shows their IDs."),
@@ -176,33 +176,33 @@ internal sealed class Lookup {
         Command("Find any ID", ".lookup all <words>", QA, "Searches items, spells, creatures and NPCs at once."),
 
         // Players you have selected.
-        Command("Mute player", ".mute <time> <reason>", HM, "Stops the selected player from chatting." + TIME + SELECTED),
-        Command("Unmute player", ".unmute", HM, "Lets the selected player chat again." + SELECTED),
-        Command("Kick player", ".kick <reason>", HM, "Disconnects the selected player." + SELECTED),
-        Command("Warn player", ".warn <reason>", HM, "Adds a warning to the selected player's account." + SELECTED),
-        Command("Player info", ".info", HM, "Shows the selected player's account details." + SELECTED),
+        Imlight("Mute player", ".mute <time> <reason>", HM, "Stops the selected player from chatting." + TIME + SELECTED),
+        Imlight("Unmute player", ".unmute", HM, "Lets the selected player chat again." + SELECTED),
+        Imlight("Kick player", ".kick <reason>", HM, "Disconnects the selected player." + SELECTED),
+        Imlight("Warn player", ".warn <reason>", HM, "Adds a warning to the selected player's account." + SELECTED),
+        Imlight("Player info", ".info", HM, "Shows the selected player's account details." + SELECTED),
 
         // Accounts.
-        Command("Create account", ".account create <username> <password>", HM, "Makes a new account."),
-        Command("Delete account", ".account delete <username>", ADMIN, "Deletes an account and its characters."),
-        Command("Lock account", ".account lock <username>", HM, "Stops an account from logging in."),
-        Command("Unlock account", ".account unlock <username>", HM, "Lets a locked account log in again."),
-        Command("Change password", ".account password <username> <new password> <new password again>", ADMIN, "Changes an account's password."),
-        Command("Permission level", ".account authlevel <username> <level>", ADMIN,
+        Imlight("Create account", ".account create <username> <password>", HM, "Makes a new account."),
+        Imlight("Delete account", ".account delete <username>", ADMIN, "Deletes an account and its characters."),
+        Imlight("Lock account", ".account lock <username>", HM, "Stops an account from logging in."),
+        Imlight("Unlock account", ".account unlock <username>", HM, "Lets a locked account log in again."),
+        Imlight("Change password", ".account password <username> <new password> <new password again>", ADMIN, "Changes an account's password."),
+        Imlight("Permission level", ".account authlevel <username> <level>", ADMIN,
             "Changes what an account may do. Levels: None, QualityAssurance, HallMonitor, Developer, Administrator."),
-        Command("Account info", ".account info <username>", HM, "Shows an account's details."),
-        Command("Account warnings", ".account warnings <username>", ANYONE, "Lists an account's warnings and punishments. Also .account infractions or .account warns."),
-        Command("Warn account", ".account warn <username> <reason>", HM, "Adds a warning to an account."),
-        Command("Remove warning", ".account removewarn <username> <warning number>", HM, "Removes one of an account's warnings."),
+        Imlight("Account info", ".account info <username>", HM, "Shows an account's details."),
+        Imlight("Account warnings", ".account warnings <username>", ANYONE, "Lists an account's warnings and punishments. Also .account infractions or .account warns."),
+        Imlight("Warn account", ".account warn <username> <reason>", HM, "Adds a warning to an account."),
+        Imlight("Remove warning", ".account removewarn <username> <warning number>", HM, "Removes one of an account's warnings."),
 
         // Bans.
-        Command("Ban account", ".ban account <username> <time> <reason>", HM, "Bans an account." + TIME + " Also .ban user."),
-        Command("Ban computer", ".ban machine <machine ID> <time> <reason>", HM, "Bans a computer." + TIME + " Also .ban pc."),
-        Command("Ban IP address", ".ban ip <IP address> <time> <reason>", HM, "Bans an internet address." + TIME),
-        Command("Ban info", ".ban info <username>", HM, "Shows an account's bans."),
-        Command("Unban account", ".unban account <username>", HM, "Lifts an account's ban. Also .unban user."),
-        Command("Unban computer", ".unban machine <machine ID>", HM, "Lifts a computer's ban. Also .unban pc."),
-        Command("Unban IP address", ".unban ip <IP address>", HM, "Lifts an internet address's ban."),
+        Imlight("Ban account", ".ban account <username> <time> <reason>", HM, "Bans an account." + TIME + " Also .ban user."),
+        Imlight("Ban computer", ".ban machine <machine ID> <time> <reason>", HM, "Bans a computer." + TIME + " Also .ban pc."),
+        Imlight("Ban IP address", ".ban ip <IP address> <time> <reason>", HM, "Bans an internet address." + TIME),
+        Imlight("Ban info", ".ban info <username>", HM, "Shows an account's bans."),
+        Imlight("Unban account", ".unban account <username>", HM, "Lifts an account's ban. Also .unban user."),
+        Imlight("Unban computer", ".unban machine <machine ID>", HM, "Lifts a computer's ban. Also .unban pc."),
+        Imlight("Unban IP address", ".unban ip <IP address>", HM, "Lifts an internet address's ban."),
     ];
 
     private readonly List<LookupEntry> _entries;
@@ -293,7 +293,12 @@ internal sealed class Lookup {
             .Take(max)];
     }
 
+    // Commands added for this build (Justin's), shown under Custom in the Commands tab.
     private static LookupEntry Command(string name, string typed, string who, string help)
+        => new("Command", name, "", who, typed, help, Custom: true);
+
+    // Commands that come with Imlight itself.
+    private static LookupEntry Imlight(string name, string typed, string who, string help)
         => new("Command", name, "", who, typed, help);
 
     /// <summary>

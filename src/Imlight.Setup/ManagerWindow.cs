@@ -254,6 +254,7 @@ internal sealed class ManagerWindow : Window {
             Padding = new Thickness(0),
             ItemsSource = new[] {
                 Tab("Play", PlayTab()),
+                Tab("Commands", CommandsTab()),
                 Tab("Lookup", LookupTab()),
                 Tab("Server", ServerTab()),
                 Tab("Logs", LogsTab()),
@@ -427,6 +428,48 @@ internal sealed class ManagerWindow : Window {
         _friendAddress.Text = _publicIp is null
             ? "Your address could not be found. Check your internet connection."
             : $"Address: {_publicIp}    Login port: {port}";
+    }
+
+    private readonly TextBox _commandSearch = new() { Watermark = "Search the commands" };
+    private readonly ListBox _customCommands = new() { Background = Brushes.Transparent };
+    private readonly ListBox _imlightCommands = new() { Background = Brushes.Transparent };
+
+    /// <summary>
+    /// Every in-game command, split into the ones made for this build (Custom) and the ones Imlight comes with.
+    /// </summary>
+    private Control CommandsTab() {
+        foreach (var list in new[] { _customCommands, _imlightCommands }) {
+            list.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
+        }
+
+        var custom = new TabItem { Content = _customCommands, FontSize = 15 };
+        var imlight = new TabItem { Content = _imlightCommands, FontSize = 15 };
+        void Render() {
+            var words = (_commandSearch.Text ?? "").ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var shown = Lookup.COMMANDS.Where(c => words.All(c.Haystack.Contains)).ToList();
+            _customCommands.ItemsSource = shown.Where(c => c.Custom).ToList();
+            _imlightCommands.ItemsSource = shown.Where(c => !c.Custom).ToList();
+            custom.Header = $"Custom ({shown.Count(c => c.Custom)})";
+            imlight.Header = $"Imlight ({shown.Count(c => !c.Custom)})";
+        }
+
+        _commandSearch.TextChanged += (_, _) => Render();
+        Render();
+
+        return new DockPanel {
+            Margin = new Thickness(24, 12, 24, 16),
+            Children = {
+                WithDock(Card(new StackPanel {
+                    Children = {
+                        Heading("Commands"),
+                        Sub("Custom has the commands made for your build. Imlight has the ones the server comes with. " +
+                            "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard."),
+                        WithMargin(_commandSearch, new Thickness(0, 10, 0, 0)),
+                    },
+                }), Dock.Top),
+                WithMargin(new TabControl { ItemsSource = new[] { custom, imlight } }, new Thickness(0, 10, 0, 0)),
+            },
+        };
     }
 
     private Control LookupTab() {
