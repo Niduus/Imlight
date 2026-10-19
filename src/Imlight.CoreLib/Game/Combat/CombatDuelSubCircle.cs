@@ -796,8 +796,84 @@ public class CombatDuelSubCircle {
         }
     }
 
+    // .mastery: schools this wizard counts as mastering for the rest of this battle.
+    private readonly HashSet<uint> _cheatMasteries = [];
+
+    /// <summary>
+    /// .mastery: this wizard counts as mastering the school for the rest of this battle.
+    /// </summary>
+    internal void GrantMastery(MagicSchool school) => _cheatMasteries.Add((uint) school);
+
+    /// <summary>
+    /// .pip give: adds pips for the rest of this battle. Normal, power and school pips share the 7 slots: they
+    /// fill empty slots first, then turn normal pips into the asked kind. Shadow pips go in their own slots.
+    /// </summary>
+    /// <param name="kind">"light", "power", "shadow", "all" (power and shadow) or a school name.</param>
+    /// <param name="amount">How many, or -1 for as many as fit.</param>
+    /// <returns>What changed, for the chat window.</returns>
+    internal string GivePips(string kind, int amount) {
+        var pips = CombatParticipant?.m_pipCount;
+        if (pips is null) {
+            return "Your pips could not be changed.";
+        }
+
+        if (kind == "all") {
+            var power = GivePips("power", amount);
+            var shadow = GivePips("shadow", amount);
+
+            return $"{power} {shadow}";
+        }
+
+        if (kind == "shadow") {
+            var max = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
+            var target = amount < 0 ? max : Math.Min(max, pips.m_shadowPips + amount);
+            var added = Math.Max(0, target - pips.m_shadowPips);
+            pips.m_shadowPips = (byte) Math.Max(pips.m_shadowPips, target);
+
+            return $"+{added} shadow pips ({pips.m_shadowPips} of {max}).";
+        }
+
+        MagicSchool? school = kind switch {
+            "light" or "power" => null,
+            _ => Enum.TryParse<MagicSchool>(kind, true, out var parsed) && SchoolPips(pips, parsed) is not null ? parsed : null,
+        };
+        if (kind is not ("light" or "power") && school is null) {
+            return $"\"{kind}\" is not a pip type. Use light, power, shadow, all or a school such as fire.";
+        }
+
+        var wanted = amount < 0 ? MAX_PIP_COUNT : amount;
+        var given = 0;
+        void AddOne() {
+            if (kind == "light") {
+                pips.m_genericPips++;
+            }
+            else if (kind == "power") {
+                pips.m_powerPips++;
+            }
+            else {
+                SetSchoolPips(pips, school.Value, (byte) (SchoolPips(pips, school.Value)!.Value + 1));
+            }
+
+            given++;
+        }
+
+        while (given < wanted && TotalPips(pips) < MAX_PIP_COUNT) {
+            AddOne();
+        }
+
+        // No empty slot left: normal pips turn into the asked kind.
+        while (given < wanted && kind != "light" && pips.m_genericPips > 0) {
+            pips.m_genericPips--;
+            AddOne();
+        }
+
+        var name = kind == "light" ? "normal" : kind;
+
+        return given == 0 ? $"No room for more {name} pips." : $"+{given} {name} pips.";
+    }
+
     internal bool HasSchoolMastery(uint magicSchoolID) {
-        if (ParticipantGameStats.m_schoolID == magicSchoolID) {
+        if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID)) {
             return true;
         }
 

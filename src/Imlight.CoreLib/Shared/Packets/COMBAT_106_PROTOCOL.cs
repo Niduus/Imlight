@@ -314,4 +314,31 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// .pip give: gives the sender pips in the current battle.
+    /// </summary>
+    internal sealed class MSG_CHEATGIVEPIPS : IServerMessage {
+
+        public byte MessageOrder => 30;
+        public byte ServiceID => 106;
+
+        public string Kind;
+        public int Amount;
+        public IActorRef Actor;
+
+    }
+
+    /// <summary>
+    /// .mastery: the sender counts as mastering these schools for the rest of the current battle.
+    /// </summary>
+    internal sealed class MSG_CHEATMASTERY : IServerMessage {
+
+        public byte MessageOrder => 31;
+        public byte ServiceID => 106;
+
+        public uint[] Schools;
+        public IActorRef Actor;
+
+    }
+
 }
