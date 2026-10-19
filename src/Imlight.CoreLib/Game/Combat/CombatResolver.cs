@@ -107,7 +107,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
     // Daybreaker and Nightbringer: the spell is paid for (pips, card, fizzle check) when played, then casts on
     // the caster's next turn, at its start (Daybreaker) or its end (Nightbringer), even if they are stunned.
-    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round);
+    // Free is a spell from .daybreaker or .nightbringer: no card was played, and its target is picked when it casts.
+    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -270,6 +271,47 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     }
 
     /// <summary>
+    /// .daybreaker / .nightbringer: queues a spell that casts for free this round, at the start or the end of the
+    /// caster's turn. Several can be queued to chain them.
+    /// </summary>
+    /// <returns>How many of these the caster has queued for this round, or 0 if the spell is unknown.</returns>
+    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart) {
+        var spell = SpellFactory.GetSpell(spellTemplateId);
+        if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
+            return 0;
+        }
+
+        var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
+        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true));
+
+        return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart);
+    }
+
+    private static readonly HashSet<kEffectTarget> s_enemyTargets = [
+        kEffectTarget.kEnemySingle, kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce,
+        kEffectTarget.kAtLeastOneEnemy, kEffectTarget.kPreselectedEnemySingle, kEffectTarget.kMultiTargetEnemy,
+        kEffectTarget.kEnemyMinion,
+    ];
+
+    /// <summary>
+    /// A free delayed spell's target: for a spell aimed at enemies, the enemy the caster picked this round or else
+    /// the first one standing; for anything else, the caster.
+    /// </summary>
+    private CombatDuelSubCircle PickFreeTarget(CombatDuelSubCircle caster, SpellTemplate template) {
+        if (!(template.m_effects ?? []).Any(effect => effect is not null && s_enemyTargets.Contains(effect.m_effectTarget))) {
+            return caster;
+        }
+
+        var picked = _queuedCombatActions.FirstOrDefault(a => a.SpellCaster == caster)?.SelectedTarget;
+        if (picked is not null && picked.IsAlive && picked.AddedToDuel && picked.OccupiedTeam != caster.OccupiedTeam) {
+            return picked;
+        }
+
+        return caster._duelActor.ActiveSubCircles
+            .FirstOrDefault(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam != caster.OccupiedTeam);
+    }
+
+    /// <summary>
     /// Casts the caster's Daybreaker (<paramref name="atStart"/>) or Nightbringer spells from an earlier round.
     /// </summary>
     private float CastDelayed(CombatDuelSubCircle caster, bool atStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
@@ -280,21 +322,22 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         foreach (var delayed in due) {
             _delayedCasts.Remove(delayed);
             var action = delayed.Action;
-            if (!caster.IsAlive || action.SelectedTarget is null || !action.SelectedTarget.IsAlive
-                || !action.SelectedTarget.AddedToDuel) {
+            var target = delayed.Free ? PickFreeTarget(caster, action.SpellTemplate) : action.SelectedTarget;
+            if (!caster.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
                 continue;
             }
 
             try {
-                Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell.",
-                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer"));
+                Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3}{4}.",
+                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer",
+                        action.Spell?.m_templateID, delayed.Free ? " (command)" : ""));
                 caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
 
                 // The card goes out without its enchantment, or the game would play the delay a second time. Its
                 // effects keep the enchantment's changes (they come from the queued spell template).
                 var cast = new QueuedCombatAction {
                     SpellCaster = action.SpellCaster,
-                    SelectedTarget = action.SelectedTarget,
+                    SelectedTarget = target,
                     Spell = DelayedCard(action.Spell),
                     SpellTemplate = action.SpellTemplate,
                 };

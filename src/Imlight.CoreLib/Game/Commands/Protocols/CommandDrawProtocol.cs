@@ -69,7 +69,7 @@ internal class CommandDrawProtocol : CommandProtocol {
         });
     }
 
-    private static bool TryFindSpell(string name, out uint templateId, out string spellName) {
+    internal static bool TryFindSpell(string name, out uint templateId, out string spellName) {
         templateId = 0;
         spellName = name;
 

@@ -388,6 +388,35 @@ internal sealed partial class ServerManager(string installFolder) {
         }
 
         File.AppendAllText(Path.Combine(ServerFolder, COMMANDS_FILE), command.ReplaceLineEndings(" ") + Environment.NewLine);
+        RememberCommand(command);
+    }
+
+    // The commands run from the app, newest first, for the "Previous commands" list.
+    private const string COMMAND_HISTORY_FILE = "command-history.txt";
+    private const int COMMAND_HISTORY_SIZE = 30;
+
+    internal List<string> CommandHistory() {
+        try {
+            var file = Path.Combine(InstallFolder, COMMAND_HISTORY_FILE);
+
+            return File.Exists(file) ? [.. File.ReadAllLines(file).Where(line => line.Trim().Length > 0)] : [];
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return [];
+        }
+    }
+
+    private void RememberCommand(string command) {
+        command = command.ReplaceLineEndings(" ");
+        var history = CommandHistory();
+        history.RemoveAll(line => line == command);
+        history.Insert(0, command);
+        try {
+            File.WriteAllLines(Path.Combine(InstallFolder, COMMAND_HISTORY_FILE), history.Take(COMMAND_HISTORY_SIZE));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // The list is a convenience; the command itself was sent.
+        }
     }
 
     // The server keeps where each wizard stands in the log folder too; it is not a log.

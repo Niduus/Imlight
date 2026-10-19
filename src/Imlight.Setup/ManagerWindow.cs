@@ -117,6 +117,7 @@ internal sealed class ManagerWindow : Window {
         ("Randomizer", "Tame", "Randomizer: tame mode (creatures, their decks and pips stay normal so quests can be done)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "XpCarriesOver", "Pet XP carries over (off: extra XP is lost when a pet levels up, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeItemCards", "Randomizer: random item cards (from gear and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
@@ -822,14 +823,32 @@ internal sealed class ManagerWindow : Window {
 
     private readonly TextBox _commandBox = new() { Watermark = "A command, such as .elixir50 or .lookup fire cat" };
 
+    private readonly ComboBox _commandHistory = new() { PlaceholderText = "Previous commands", Width = 220 };
+
     private Control CommandCard() {
+        void RefreshHistory() {
+            _commandHistory.SelectedIndex = -1;
+            _commandHistory.ItemsSource = _manager.CommandHistory();
+        }
+
         async Task SendAsync() {
             var command = _commandBox.Text ?? "";
             _manager.SendCommand(command);
             _commandBox.Text = "";
+            RefreshHistory();
             Say($"Sent {command.Trim()} to your game. The answer shows in the game's chat.");
             await Task.CompletedTask;
         }
+
+        // Picking a previous command puts it in the box, ready to run again or change.
+        RefreshHistory();
+        _commandHistory.SelectionChanged += (_, _) => {
+            if (_commandHistory.SelectedItem is string picked) {
+                _commandBox.Text = picked;
+                _commandBox.CaretIndex = picked.Length;
+                _commandBox.Focus();
+            }
+        };
 
         var send = Action(Primary("Run in my game"), SendAsync);
         _commandBox.KeyDown += async (_, e) => {
@@ -843,10 +862,12 @@ internal sealed class ManagerWindow : Window {
             Children = {
                 Heading("Run a command"),
                 Sub("Runs a command as the wizard playing on this PC, the same as typing it in chat. "
-                    + "Friends playing from other PCs are never affected. The Lookup tab lists every command."),
+                    + "Friends playing from other PCs are never affected. The Lookup tab lists every command. "
+                    + "Previous commands lists the last ones you ran: pick one to run it again."),
                 WithMargin(new DockPanel {
                     Children = {
                         WithDock(WithMargin(send, new Thickness(8, 0, 0, 0)), Dock.Right),
+                        WithDock(WithMargin(_commandHistory, new Thickness(8, 0, 0, 0)), Dock.Right),
                         _commandBox,
                     },
                 }, new Thickness(0, 10, 0, 0)),
