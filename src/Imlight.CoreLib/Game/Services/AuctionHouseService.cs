@@ -218,7 +218,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var house = (AuctionHouseCollection.GetAllAuctionHouseEntries() ?? []).Where(entry => Snack(entry.m_templateID) is null);
 
         var ordered = s_jewelTabs.Value.Contains(category)
-            ? (s_jewels.Value.ByCategory.TryGetValue(category, out var own) ? own : []).Concat(jewels).Concat(snacks).Concat(reagents).Concat(cards)
+            ? (s_jewels.Value.ByCategory.TryGetValue(category, out var own) ? own : [])
+                // Then what the real bazaar sells and the Star tab's pet jewels, then the rest, so what does not fit
+                // (all 4416 do not) is the extra health and card jewels of other tabs.
+                .Concat(jewels.Where(entry => !s_jewels.Value.NoAuction.Contains((ulong) entry.m_templateID)))
+                .Concat(s_jewels.Value.ByCategory.TryGetValue(s_petJewelTab, out var pets) ? pets : [])
+                .Concat(jewels).Concat(snacks).Concat(reagents).Concat(cards)
             : category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)
                 ? EntriesFor(category).Concat(snacks).Concat(reagents).Concat(cards).Concat(jewels)
                 : EntriesFor(category).Concat(cards).Concat(snacks).Concat(reagents).Concat(jewels);
@@ -789,31 +794,46 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
 
 
-    private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory);
+    private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory, HashSet<ulong> NoAuction);
 
     private static readonly Lazy<BazaarCatalog> s_reagents = new(() => BuildCatalog(REAGENT_FOLDER, s_reagentKinds, "reagents"));
 
-    private static readonly Lazy<BazaarCatalog> s_jewels = new(() => BuildCatalog(JEWEL_FOLDER, s_jewelShapes, "jewels and pins"));
+    private static readonly Lazy<BazaarCatalog> s_jewels = new(() => BuildCatalog(JEWEL_FOLDER, s_jewelShapes, "jewels and pins", keepAll: true));
 
     /// <summary>
     /// Lists every template in a folder under each of the given adjectives it has, lowest level first. Items the real
-    /// bazaar never takes (FLAG_NoAuction) are left out, unless a tab has nothing else.
+    /// bazaar never takes (FLAG_NoAuction) are left out, unless a tab has nothing else. With keepAll they are kept
+    /// too (test items are still left out).
     /// </summary>
-    private static BazaarCatalog BuildCatalog(string folder, string[] categories, string what) {
+    private static BazaarCatalog BuildCatalog(string folder, string[] categories, string what, bool keepAll = false) {
         var byId = new Dictionary<ulong, AuctionHouseEntry>();
         var byCategory = new Dictionary<uint, List<AuctionHouseEntry>>();
         var levels = new Dictionary<ulong, int>();
         var noAuction = new Dictionary<uint, List<AuctionHouseEntry>>();
-        foreach (var (id, template) in TemplatesIn<WizItemTemplate>(folder)) {
-            var adjectives = (template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList();
+        var noAuctionIds = new HashSet<ulong>();
+        var templates = TemplatesIn<WizItemTemplate>(folder)
+            .Select(pair => (pair.Id, pair.Template, Adjectives: (pair.Template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList()))
+            .OrderBy(item => item.Adjectives.Contains("FLAG_NoAuction"))
+            .ThenBy(item => item.Id);
+        foreach (var (id, template, adjectives) in templates) {
             var tabs = categories.Where(adjectives.Contains).ToList();
             if (tabs.Count == 0) {
                 continue;
             }
 
+            // Every jewel and pin (Justin, 2026-10-19: Tear had only the mana ones; the health and card ones are all
+            // FLAG_NoAuction).
+            if (keepAll && ((string) template.m_objectName ?? "").Contains("TEST")) {
+                continue;
+            }
+
+            if (adjectives.Contains("FLAG_NoAuction")) {
+                noAuctionIds.Add(id);
+            }
+
             // Items the real bazaar never takes are kept aside, for a tab that would otherwise be empty (every pet
             // jewel is one of them).
-            var target = adjectives.Contains("FLAG_NoAuction") ? noAuction : byCategory;
+            var target = adjectives.Contains("FLAG_NoAuction") && !keepAll ? noAuction : byCategory;
             var entry = CatalogEntry(id);
             levels[id] = RequiredLevel(template);
             foreach (var tab in tabs) {
@@ -846,7 +866,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         Logger.Information("Bazaar has {0} {1}: {2}.", Logger.Args(byId.Count, what,
             string.Join(", ", categories.Select(tab => $"{tab} {(byCategory.TryGetValue(StringHash.Compute(tab), out var list) ? list.Count : 0)}"))));
 
-        return new BazaarCatalog(byId, byCategory);
+        return new BazaarCatalog(byId, byCategory, noAuctionIds);
     }
 
     private static int RequiredLevel(WizItemTemplate template)
