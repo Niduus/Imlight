@@ -1764,9 +1764,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return false;
         }
 
-        // A value that is not a single bit can only be a plain index.
+        // The target card comes as a plain index: reading it as a bit first (0.9.24 to 0.9.71) put Justin's
+        // Daybreaker for Tower Shield (raw 2) on Sun Serpent (index 1). The bit reading is only a fallback.
         var isBit = rawSpellTarget != 0 && (rawSpellTarget & (rawSpellTarget - 1)) == 0;
-        var candidates = isBit ? new[] { spellTarget, rawSpellTarget } : new[] { rawSpellTarget };
+        var candidates = isBit ? new[] { rawSpellTarget, spellTarget } : new[] { rawSpellTarget };
 
         Spell target = null;
         foreach (var index in candidates) {

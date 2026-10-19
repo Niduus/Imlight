@@ -125,6 +125,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     private readonly HashSet<IActorRef> _players = [];
     private const string IDLE_EXPIRE_TIMER = "instance-idle-expire";
     private const int DEFAULT_INSTANCE_IDLE_MINUTES = 10;
+    private const int RESET_WHEN_EMPTY_SECONDS = 5;
     private readonly List<ZONE_102_PROTOCOL.MSG_PLAYERMOVE> _pendingPlayerMoves = [];
     private readonly List<ZONE_102_PROTOCOL.MSG_CREATUREMOVE> _pendingCreatureMoves = [];
 
@@ -608,6 +609,15 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     private void ScheduleIdleExpiryIfEmpty() {
         // Instance.IdleMinutes of 0 or less disables the expiry; a join cancels the timer.
         if (!IsInstance || _players.Count > 0 || _isLoading) {
+            return;
+        }
+
+        // [Instance] ResetWhenEmpty: a dungeon starts fresh once everyone has left, after a few seconds so a
+        // player still loading back in is not caught by it.
+        if (ConfigurationManager.GetValue("Instance.ResetWhenEmpty", true)) {
+            Timers.StartSingleTimer(IDLE_EXPIRE_TIMER, new ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE(),
+                TimeSpan.FromSeconds(RESET_WHEN_EMPTY_SECONDS));
+
             return;
         }
 
