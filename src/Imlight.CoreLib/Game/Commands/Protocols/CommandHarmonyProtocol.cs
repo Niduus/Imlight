@@ -22,6 +22,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
 /// `.harmony on` / `.harmony off`: Harmony mode, every battle starts with full power and shadow pips.
+/// `.lightnshadow on` / `.lightnshadow off`: every round refills power pips, shadow pips and mana.
 /// </summary>
 internal class CommandHarmonyProtocol : CommandProtocol {
 
@@ -30,24 +31,38 @@ internal class CommandHarmonyProtocol : CommandProtocol {
     [Command("harmony")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void HarmonyCommand(string state) {
-        bool on;
-        switch (state.Trim().ToLowerInvariant()) {
-            case "on":
-                on = true;
-                break;
-            case "off":
-                on = false;
-                break;
-            default:
-                InformSenderClient("Use .harmony on or .harmony off.");
-
-                return;
+        if (!TryReadState(state, ".harmony", out var on)) {
+            return;
         }
 
-        HarmonyMode.Set(Context.Character.CharId, on);
+        BattleModes.Harmony.Set(Context.Character.CharId, on);
         InformSenderClient(on
             ? "Harmony mode is on: your battles start with 7 power pips and full shadow pips. It starts with your next battle."
             : "Harmony mode is off: your battles start with normal pips again.");
+    }
+
+    [Command("lightnshadow")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void LightAndShadowCommand(string state) {
+        if (!TryReadState(state, ".lightnshadow", out var on)) {
+            return;
+        }
+
+        BattleModes.LightAndShadow.Set(Context.Character.CharId, on);
+        InformSenderClient(on
+            ? "Light and Shadow is on: each round your power pips, shadow pips and mana fill back up. School pips stay as they are."
+            : "Light and Shadow is off: pips and mana come back normally again.");
+    }
+
+    private bool TryReadState(string state, string command, out bool on) {
+        on = state.Trim().ToLowerInvariant() == "on";
+        if (on || state.Trim().ToLowerInvariant() == "off") {
+            return true;
+        }
+
+        InformSenderClient($"Use {command} on or {command} off.");
+
+        return false;
     }
 
 }

@@ -340,8 +340,45 @@ public class CombatDuelSubCircle {
     /// </summary>
     internal void DoPipGain(float highestArchmastery) {
         GainPips();
+        RefillLightAndShadow();
         if (ArchmasteryActive) {
             ArchmasteryRound(highestArchmastery);
+        }
+    }
+
+    /// <summary>
+    /// .lightnshadow on: every free or normal pip slot becomes a power pip, shadow pips fill up and mana is full.
+    /// School pips are kept.
+    /// </summary>
+    private void RefillLightAndShadow() {
+        if (_wizard is null || !BattleModes.LightAndShadow.IsOn(_wizard.CharId)) {
+            return;
+        }
+
+        var pips = CombatParticipant.m_pipCount;
+        pips.m_powerPips += pips.m_genericPips;
+        pips.m_genericPips = 0;
+        if (TotalPips(pips) < MAX_PIP_COUNT) {
+            pips.m_powerPips += (byte) (MAX_PIP_COUNT - TotalPips(pips));
+        }
+
+        _cheatShadowMagic = true;
+        var shadow = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
+        pips.m_shadowPips = (byte) Math.Max(pips.m_shadowPips, shadow);
+
+        var fullMana = ParticipantGameStats.m_baseMana;
+        if (fullMana > 0 && ParticipantGameStats.m_currentMana < fullMana) {
+            if (IsSandboxed) {
+                ParticipantGameStats.m_currentMana = fullMana;
+            }
+            else {
+                _wizard.UpdateMana(fullMana);
+            }
+            ParticipantActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEMANA {
+                Mana = fullMana,
+                MaxMana = ParticipantGameStats.GetClientTypeAlternative().m_baseMana,
+                DisplayDiff = 1,
+            });
         }
     }
 
@@ -1343,7 +1380,7 @@ public class CombatDuelSubCircle {
 
     private PipCount DetermineStartingPips() {
         // .harmony on: all 7 pips as power pips and full shadow pips.
-        if (_wizard is not null && HarmonyMode.IsOn(_wizard.CharId)) {
+        if (_wizard is not null && BattleModes.Harmony.IsOn(_wizard.CharId)) {
             _cheatShadowMagic = true;
             var shadow = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
 
