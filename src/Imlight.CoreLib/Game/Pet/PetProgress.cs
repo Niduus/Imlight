@@ -253,6 +253,11 @@ internal static class PetProgress {
     /// Picks a talent from the pool that the pet does not show yet. Higher ranked talents are rarer.
     /// </summary>
     private static PetTalentBaseTemplate Manifest(List<uint> pool, List<uint> expressed) {
+        // A pet shows at most five of each kind, which talents claimed by hand may already fill.
+        if (expressed.Count >= MAX_SHOWN_TALENTS) {
+            return null;
+        }
+
         var candidates = (pool ?? [])
             .Where(id => !expressed.Contains(id))
             .Select(PetData.GetTalent)
@@ -274,6 +279,135 @@ internal static class PetProgress {
         expressed.Add(PetData.TalentId(picked.m_talentName));
 
         return picked;
+    }
+
+    /// <summary>
+    /// The most talents of one kind (combat or derby) a pet shows.
+    /// </summary>
+    internal const int MAX_SHOWN_TALENTS = 5;
+
+    /// <summary>
+    /// The talent pool of one kind, in the order the pet window lists it (slot 0 at the top).
+    /// </summary>
+    internal static List<uint> Pool(ClientPetItemBehavior behavior, bool derby)
+        => derby ? behavior.m_allDerbyTalents ??= [] : behavior.m_allTalents ??= [];
+
+    private static List<uint> Shown(ClientPetItemBehavior behavior, bool derby)
+        => derby ? behavior.m_expressedDerbyTalents ??= [] : behavior.m_expressedTalents ??= [];
+
+    /// <summary>
+    /// Puts a talent into a slot of the pet's pool without showing it (`.pet talent get`). The talent that was in the
+    /// slot leaves the pool and stops showing.
+    /// </summary>
+    /// <returns>Null when it worked, otherwise the reason in plain words.</returns>
+    internal static string PutInPool(WizClientObjectItem pet, bool derby, int slot, PetTalentBaseTemplate talent) {
+        var behavior = GetBehavior(pet);
+        if (behavior is null || talent is null) {
+            return "Wear a pet first.";
+        }
+
+        if ((talent is PetDerbyTalentTemplate) != derby) {
+            return derby ? "That is not a derby talent. Use .pet talent for it." : "That is a derby talent. Use .pet derby for it.";
+        }
+
+        EnsureInitialized(pet);
+        var pool = Pool(behavior, derby);
+        var id = PetData.TalentId(talent.m_talentName);
+        var at = pool.IndexOf(id);
+        if (at >= 0 && at != slot) {
+            return $"Your pet already has that talent in slot {at}.";
+        }
+
+        while (pool.Count <= slot) {
+            pool.Add(0);
+        }
+
+        if (pool[slot] != id) {
+            Shown(behavior, derby).Remove(pool[slot]);
+            pool[slot] = id;
+        }
+
+        RecalculateMaxStats(behavior, GetTemplate(pet));
+
+        return null;
+    }
+
+    /// <summary>
+    /// Shows or hides the talent in a slot of the pet's pool (`.pet talent claim` and `unclaim`).
+    /// </summary>
+    /// <returns>Null when it worked, otherwise the reason in plain words.</returns>
+    internal static string Claim(WizClientObjectItem pet, bool derby, int slot, bool claim, out PetTalentBaseTemplate talent) {
+        talent = null;
+        var behavior = GetBehavior(pet);
+        if (behavior is null) {
+            return "Wear a pet first.";
+        }
+
+        EnsureInitialized(pet);
+        var pool = Pool(behavior, derby);
+        if (slot >= pool.Count || pool[slot] == 0 || PetData.GetTalent(pool[slot]) is not { } found) {
+            return $"Slot {slot} has no talent. Put one there with .pet {(derby ? "derby" : "talent")} get {slot} <name>.";
+        }
+
+        talent = found;
+        var shown = Shown(behavior, derby);
+        if (claim == shown.Contains(pool[slot])) {
+            return claim ? "That talent is already claimed." : "That talent is not claimed.";
+        }
+
+        if (claim && shown.Count >= MAX_SHOWN_TALENTS) {
+            return $"Your pet already shows {MAX_SHOWN_TALENTS} {(derby ? "derby talents" : "talents")}. Unclaim one first with .pet {(derby ? "derby" : "talent")} unclaim <slot>.";
+        }
+
+        if (claim) {
+            // Kept in pool order, like the window lists them.
+            shown.Add(pool[slot]);
+            shown.Sort((a, b) => pool.IndexOf(a).CompareTo(pool.IndexOf(b)));
+        }
+        else {
+            shown.Remove(pool[slot]);
+        }
+
+        RecalculateMaxStats(behavior, GetTemplate(pet));
+
+        return null;
+    }
+
+    /// <summary>
+    /// Sets one stat (Strength, Intellect, Agility, Will, Power) or Happiness to an amount or its maximum (`.pet stats`).
+    /// </summary>
+    /// <returns>Null when it worked, otherwise the reason in plain words.</returns>
+    internal static string SetStat(WizClientObjectItem pet, string statName, string amount, out string shownAs) {
+        shownAs = null;
+        var behavior = GetBehavior(pet);
+        if (behavior is null) {
+            return "Wear a pet first.";
+        }
+
+        EnsureInitialized(pet);
+        var useMax = string.Equals(amount, "max", StringComparison.OrdinalIgnoreCase);
+        if (!useMax && !int.TryParse(amount, out _)) {
+            return "Type an amount or max, such as .pet stats strength 150 or .pet stats will max.";
+        }
+
+        if (string.Equals(statName, "happiness", StringComparison.OrdinalIgnoreCase)) {
+            var most = behavior.m_maximumHappiness;
+            behavior.m_happiness = useMax ? most : (uint) Math.Clamp(int.Parse(amount), 0, (int) most);
+            shownAs = $"Happiness {behavior.m_happiness}/{most}";
+
+            return null;
+        }
+
+        var stat = behavior.m_currentStats?.FirstOrDefault(s => SameStat(s.m_name, statName));
+        if (stat is null) {
+            return "Pick Strength, Intellect, Agility, Will, Power or Happiness.";
+        }
+
+        var max = GetStat(behavior.m_maxStats, stat.m_name);
+        stat.m_value = useMax ? max : Math.Clamp(int.Parse(amount), 0, max);
+        shownAs = $"{stat.m_name} {stat.m_value}/{max}";
+
+        return null;
     }
 
     /// <summary>
