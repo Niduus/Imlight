@@ -39,6 +39,13 @@ internal static class HouseTrainers {
     private static readonly uint s_itemTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerItemId", 1292128u);
     private static readonly uint s_trainerTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerTemplateId", 1452184u);
 
+    // [TrainerHall] TrainerName: the name shown over the trainer's head; empty keeps the game's own name.
+    private static readonly string s_trainerName = ConfigurationManager.GetValue("TrainerHall.TrainerName", "")?.Trim() ?? "";
+
+    /// <summary>The overhead name for an object with this zone tag, or null when it is not a house trainer or keeps its own.</summary>
+    internal static string NameFor(string zoneTag)
+        => s_trainerName.Length > 0 && zoneTag?.StartsWith(TAG_PREFIX, System.StringComparison.Ordinal) == true ? s_trainerName : null;
+
     /// <summary>The furniture that brings a trainer.</summary>
     internal static uint ItemTemplateId => s_itemTemplateId;
 
@@ -115,6 +122,10 @@ internal static class HouseTrainers {
         }
 
         coreObject = CoreObjectFactory.InitializeCoreObjectBehaviors(coreObject, template);
+        var name = NameFor(spawn.Tag);
+        if (coreObject is not null && name is not null && CoreObjectFactory.FindBehaviorInstance<NPCBehavior>(coreObject, out var npc)) {
+            npc.m_wsNameOverride = name;
+        }
 
         return coreObject is not null;
     }
