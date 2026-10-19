@@ -252,7 +252,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         if (wizard.GameStats.m_currentGold < entry.m_buyPrice) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -262,7 +262,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         if (wizard.InventoryBehavior.FreeSlots < 1 || !wizard.AddItemToInventory(item)) {
             Logger.Warning("Could not add bazaar item {0} to the inventory of {1}, so the purchase is denied.",
                 Logger.Args(templateId, wizard.CharId));
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -295,12 +295,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(addItemMsg);
 
         // Alert client of new item.
-        var itemAcqMsg = new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = item.m_globalID,
-            ItemTemplateID = (uint) item.m_templateID,
-            ItemLocation = 1,
-        };
-        SendToSocket(itemAcqMsg);
+        SendItemAcquisition(item.m_globalID, item.m_templateID);
 
         // Update gold balances.
         wizard.RemoveGold(goldCost);
@@ -311,12 +306,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(goldUpdateMsg);
 
         // Confirm transaction.
-        var shopBuyConfirmMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM {
-            Failure = 0,
-            WebFailure = 0,
-            Credits = 0
-        };
-        SendToSocket(shopBuyConfirmMsg);
+        SendBuyConfirm(failed: false);
     }
 
     // The most copies one Buy More or Sell More request moves.
@@ -345,16 +335,59 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
             if (Snack(id) is not null || TreasureCard(id) is not null || Reagent(id) is not null || Jewel(id) is not null
                 || AuctionHouseCollection.GetAuctionHouseEntry(id) is not null) {
+                // Each copy is bought quietly; the game gets one confirm (one "ka-ching") for the whole lot.
                 var goldBefore = wizard.GameStats.m_currentGold;
-                for (var i = 0; i < quantity; i++) {
-                    BuyFromAuctionHouse(id, message.texture, message.decal, message.key);
+                var bought = 0;
+                _moreBought = 0;
+                _moreFailed = false;
+                try {
+                    // A copy that is skipped without a confirm still counts as a try, so this always ends.
+                    for (var i = 0; i < quantity && !_moreFailed; i++) {
+                        BuyFromAuctionHouse(id, message.texture, message.decal, message.key);
+                    }
+                }
+                finally {
+                    bought = _moreBought;
+                    _moreBought = NOT_BUYING_MORE;
+                    _moreFailed = false;
                 }
 
-                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, quantity);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (bought > 0 ? 0 : 1), WebFailure = 0, Credits = 0 });
+                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, bought);
 
                 return;
             }
         }
+    }
+
+    // While a Buy More runs, how many copies it has bought so far; NOT_BUYING_MORE otherwise.
+    private const int NOT_BUYING_MORE = -1;
+    private int _moreBought = NOT_BUYING_MORE;
+    private bool _moreFailed;
+
+    private void SendBuyConfirm(bool failed) {
+        if (_moreBought == NOT_BUYING_MORE) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (failed ? 1 : 0), WebFailure = 0, Credits = 0 });
+        }
+        else if (failed) {
+            _moreFailed = true;
+        }
+        else {
+            _moreBought++;
+        }
+    }
+
+    // A Buy More announces only its first copy.
+    private void SendItemAcquisition(GID itemId, ulong templateId) {
+        if (_moreBought > 0) {
+            return;
+        }
+
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+            ItemGlobalID = itemId,
+            ItemTemplateID = (uint) templateId,
+            ItemLocation = 1,
+        });
     }
 
     private void SendMoreAcknowledgement(ulong templateId, bool isSell, int totalPrice, int quantity)
@@ -642,18 +675,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var templateId = (ulong) entry.m_templateID & 0xFFFFFFFFUL;
         if (wizard.GameStats.m_currentGold < entry.m_buyPrice || !wizard.AddReagent(templateId, out var reagent)
             || !_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
 
         // Same messages as a crown shop reagent: it goes into the reagent bag.
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = reagent.m_globalID,
-            ItemTemplateID = (uint) reagent.m_templateID,
-            ItemLocation = 1,
-        });
+        SendItemAcquisition(reagent.m_globalID, reagent.m_templateID);
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE {
             GlobalID = wizard.GameObjectID,
             ItemID = reagent.m_globalID,
@@ -669,7 +698,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
     private static BazaarSnack Snack(ulong templateId)
@@ -680,18 +709,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var templateId = (ulong) bazaarSnack.Entry.m_templateID & 0xFFFFFFFFUL;
         if (wizard.GameStats.m_currentGold < price || !wizard.AddSnack(templateId, out var snack)
             || !_itemSerializer.Serialize(snack, 24, out var snackData)) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
 
         // Same messages as .mod addsnack: the snack goes into the snack bag.
         SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = snack.m_globalID,
-            ItemTemplateID = (uint) snack.m_templateID,
-            ItemLocation = 1,
-        });
+        SendItemAcquisition(snack.m_globalID, snack.m_templateID);
         SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
             GlobalID = wizard.GameObjectID,
             ItemID = snack.m_globalID,
@@ -709,7 +734,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [bazaarSnack.Entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
     // Treasure cards in the bazaar: every one in the game, never sold out, priced from 1 to 200 gold.
@@ -820,7 +845,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private void BuyTreasureCard(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarTreasureCard card) {
         var price = card.Entry.m_buyPrice;
         if (wizard.GameStats.m_currentGold < price) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 1, WebFailure = 0, Credits = 0 });
+            SendBuyConfirm(failed: true);
 
             return;
         }
@@ -844,7 +869,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             UpdateInfo = WriteAuctionBlob(0, [card.Entry]),
             CharacterID = wizard.CharId
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = 0, WebFailure = 0, Credits = 0 });
+        SendBuyConfirm(failed: false);
     }
 
 }
