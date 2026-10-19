@@ -85,13 +85,18 @@ internal class CommandDrawProtocol : CommandProtocol {
             return false;
         }
 
-        // Exact names first, and the normal card before a treasure card of the same name.
+        // Exact names first, and the normal card before a treasure card of the same name. Dozens of boss, mob and
+        // gauntlet spells share a card's shown name ("Tower Shield"), so the card whose own name is the typed name,
+        // in the main Spells folder, comes first.
         var candidates = SpellFactory.AllSpellTemplates()
             .Where(t => t.Template is not null)
             .Select(t => (t.Path, t.Template, Name: EnglishName(t.Template)))
             .Where(t => t.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
             .OrderBy(t => !t.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            .ThenBy(t => !string.Equals((string) t.Template.m_name, name, StringComparison.OrdinalIgnoreCase))
             .ThenBy(t => t.Template.m_Treasure)
+            .ThenBy(t => (t.Path ?? "").Replace('\\', '/').Count(c => c == '/'))
+            .ThenBy(t => ((string) t.Template.m_name)?.Length ?? int.MaxValue)
             .ThenBy(t => t.Name.Length)
             .Take(SEARCH_LIMIT);
 
