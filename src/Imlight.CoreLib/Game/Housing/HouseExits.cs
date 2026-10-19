@@ -66,6 +66,11 @@ internal static class HouseExits {
             return false;
         }
 
+        // The trainer hall's World Gate leads back to the hall's door.
+        if (Imlight.CoreLib.Game.World.TrainerHallDoor.TryGetExit(houseZone, out zone, out location)) {
+            return true;
+        }
+
         _ = WorldHubZones.Instance;
         var hub = WorldHubZones.GetHubForZone(houseZone);
         if (hub is not null && !string.IsNullOrEmpty(hub.m_hubZone.ToString())) {
