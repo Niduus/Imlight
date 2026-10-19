@@ -252,6 +252,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         return result;
     }
 
+    /// <summary>What one of the test trainers teaches (Merle's boss spells, for the set trainers).</summary>
+    internal static IReadOnlyList<NPCSpellEntry> TestSpellsOf(TestTrainerKind kind)
+        => s_testSpells.Value.TryGetValue(kind, out var spells) ? spells : [];
+
     public override void OnStart() {
         if (Entity.Template is GameObjectTemplate testTrainer && TestTrainerKindOf(testTrainer) is { } kind) {
             IsTestTrainer = true;
