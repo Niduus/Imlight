@@ -813,23 +813,36 @@ internal sealed class ManagerWindow : Window {
     private readonly TextBlock _clientLogFile = new() { Foreground = MUTED, TextWrapping = TextWrapping.Wrap };
     private string? _clientLogFolder;
 
-    private void RefreshClientLog() {
+    // The box shows only the newest lines; laying out the whole log every 2 seconds froze the window.
+    private const int CLIENT_LOG_SHOWN_LINES = 200;
+    private string _clientLogText = "";
+    private bool _clientLogReading;
+
+    private async void RefreshClientLog() {
         // Leave the text alone while it is being selected, so a copy is not cut short.
-        if (_clientLogBox.IsFocused) {
+        if (_clientLogBox.IsFocused || _clientLogReading) {
             return;
         }
 
         GameClient.ClientLog log;
+        _clientLogReading = true;
         try {
-            log = GameClient.ReadClientLog(_manager.InstallFolder);
+            var folder = _manager.InstallFolder;
+            log = await Task.Run(() => GameClient.ReadClientLog(folder));
         }
         catch (Exception) {
             return;
         }
+        finally {
+            _clientLogReading = false;
+        }
 
         _clientLogFolder = log.File is null ? null : Path.GetDirectoryName(log.File);
-        _clientLogFile.Text = log.File is null ? log.Reason ?? "" : $"From {log.File}";
-        var text = log.File is null ? "Play once to see the game's log here." : log.Text;
+        _clientLogFile.Text = log.File is null ? log.Reason ?? "" : $"From {log.File} (newest {CLIENT_LOG_SHOWN_LINES} lines; Copy all copies more)";
+        _clientLogText = log.File is null ? "" : log.Text;
+        var lines = _clientLogText.Split('\n');
+        var text = log.File is null ? "Play once to see the game's log here."
+            : string.Join("\n", lines.Length > CLIENT_LOG_SHOWN_LINES ? lines[^CLIENT_LOG_SHOWN_LINES..] : lines);
         if (_clientLogBox.Text != text) {
             _clientLogBox.Text = text;
             _clientLogBox.CaretIndex = text.Length;
@@ -861,7 +874,7 @@ internal sealed class ManagerWindow : Window {
                     Sub("The newest log Wizard101 wrote, updated every 2 seconds while this tab is open. Select any part to copy it."),
                     WithMargin(_clientLogFile, new Thickness(0, 6, 0, 8)),
                     new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _clientLogBox },
-                    WithMargin(Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogBox.Text ?? "")),
+                    WithMargin(Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
                         Action(Plain("Open game log folder"), () => _clientLogFolder is null
                             ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
                             : Open(_clientLogFolder))), new Thickness(0, 8, 0, 0)),
