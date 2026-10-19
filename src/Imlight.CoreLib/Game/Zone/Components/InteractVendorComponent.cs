@@ -139,13 +139,37 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
     }
 
+    // `.shoptest` (Justin, 2026-10-19): every shop opens with this shop type and menu option, to find what makes the
+    // game open its reagent, snack and jewel windows instead of the robe shop window.
+    internal static int? TestShopType;
+    internal static string TestOption;
+
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => _window switch {
+        => TestOption is { } test ? [TestOptionFor(test)] : _window switch {
             HouseVendors.ShopWindow.Snack => [new PetSnackShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             HouseVendors.ShopWindow.Reagent => [new ReagentShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             HouseVendors.ShopWindow.Jewel => [new JewelShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             _ => EquipmentOrHousingOptions(),
         };
+
+    internal static readonly string[] TestOptions = ["equipment", "reagent", "snack", "jewel", "housing", "recipe", "mount"];
+
+    private ServiceOptionBase TestOptionFor(string option) {
+        ServiceOptionBase result = option switch {
+            "reagent" => new ReagentShopOption(),
+            "snack" => new PetSnackShopOption(),
+            "jewel" => new JewelShopOption(),
+            "housing" => new HousingShopOption(),
+            "recipe" => new RecipeShopOption(),
+            "mount" => new MountShopOption(),
+            _ => new EquipmentShopOption(),
+        };
+        result.m_displayKey = option == "housing" ? "GUI_HousingShop" : DisplayKey;
+        result.m_iconKey = NpcIcon;
+        result.m_serviceName = ServiceName;
+
+        return result;
+    }
 
     private IEnumerable<ServiceOptionBase> EquipmentOrHousingOptions()
         => _housingShop
@@ -181,7 +205,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             // Changes the type of currency that is used
             // 0 - Gold
             // 1 - PvP tickets
-            m_shopType = _shopType,
+            m_shopType = TestShopType ?? _shopType,
             // todo: figure this out for QA
             m_CSRTestShop = _csrTestShop,
         };
