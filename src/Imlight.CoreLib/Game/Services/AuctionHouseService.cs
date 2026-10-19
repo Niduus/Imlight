@@ -160,26 +160,33 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
         var entryList = s_sendEverything ? WholeWindow(category) : EntriesFor(category);
-        Logger.Debug("Bazaar: sending {0} entries, first {1}.", Logger.Args(entryList.Count,
-            string.Join(", ", entryList.Take(3).Select(entry => (ulong) entry.m_templateID))));
+        var first = entryList.Take(MAX_ONE_LIST).ToList();
+        Logger.Debug("Bazaar: sending {0} entries ({1} in the list), first {2}.", Logger.Args(entryList.Count, first.Count,
+            string.Join(", ", first.Take(3).Select(entry => (ulong) entry.m_templateID))));
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-            Contents = WriteAuctionBlob(category, entryList),
+            Contents = WriteAuctionBlob(category, first),
             GlobalID = npcId,
             LastSegment = 0
         });
+
+        // The game shows only the first list of a visit (Justin, 2026-10-19), and one list cannot hold everything, so
+        // the rest goes as stock updates, which add to the list the game already has.
+        SendUpdates(entryList.Skip(MAX_ONE_LIST));
     }
 
-    private void SendStock(uint category) {
-        var entryList = s_sendEverything ? WholeWindow(category) : EntriesFor(category);
-        if (entryList.Count == 0) {
-            return;
+    private void SendStock(uint category)
+        => SendUpdates(s_sendEverything ? WholeWindow(category) : EntriesFor(category));
+
+    private void SendUpdates(IEnumerable<AuctionHouseEntry> entries) {
+        foreach (var part in entries.Chunk(UPDATE_ENTRIES)) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+                UpdateInfo = WriteAuctionBlob(0, part),
+                CharacterID = GetActiveWizard().CharId
+            });
         }
-
-        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
-            UpdateInfo = WriteAuctionBlob(0, entryList),
-            CharacterID = GetActiveWizard().CharId
-        });
     }
+
+    private const int UPDATE_ENTRIES = 800;
 
     // How many entries one list may hold. 1000 was fine, 2946 and 5218 made the game drop the connection. Sending a
     // long list in parts did not work: each part replaced the last, so only the last part showed (Justin, 2026-10-19).
@@ -203,11 +210,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             // Every jewel in the tab asked for comes first, so that tab is always whole; other jewels fill the rest.
             var own = s_jewels.Value.ByCategory.TryGetValue(category, out var list) ? list : [];
 
-            return [.. own.Concat(s_jewels.Value.ById.Values).Distinct().Take(MAX_ONE_LIST)];
+            return [.. own.Concat(s_jewels.Value.ById.Values).Distinct()];
         }
 
         if (category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)) {
-            return [.. s_snacks.Value.Values.Select(snack => snack.Entry).Concat(s_reagents.Value.ById.Values).Take(MAX_ONE_LIST)];
+            return [.. s_snacks.Value.Values.Select(snack => snack.Entry).Concat(s_reagents.Value.ById.Values)];
         }
 
         return EntriesFor(category);
