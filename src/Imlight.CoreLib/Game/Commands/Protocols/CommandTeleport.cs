@@ -62,6 +62,16 @@ internal class CommandTeleport : CommandProtocol {
             actualZoneName = s_gmIslandZoneName;
         }
 
+        SendTo(actualZoneName);
+    }
+
+    private const string BAZAAR_ZONE = "WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse";
+
+    [Command("bazaar")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void BazaarCommand() => SendTo(BAZAAR_ZONE);
+
+    private void SendTo(string actualZoneName) {
         var teleportEffectsMsg = new CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS();
         Context.SessionActor.Tell(teleportEffectsMsg);
 

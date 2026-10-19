@@ -167,8 +167,8 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
 
         if (inFeedWindow) {
-            SendSnackFeedResult("feed", growth.XpGained,
-                (CoreObjectFactory.GetCoreTemplate(message.SnackTemplateID) as PetSnackItemTemplate)?.m_statModifierSet);
+            SendSnackFeedResult("feed", growth.XpGained, WithActualChanges(
+                (CoreObjectFactory.GetCoreTemplate(message.SnackTemplateID) as PetSnackItemTemplate)?.m_statModifierSet, growth));
             held.ForEach(SendToSocket);
         }
 
@@ -243,7 +243,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 Game = gameName,
                 Bonus = (byte) Math.Clamp(track, 0, byte.MaxValue),
             });
-            SendPetGameEnd(gameName, growth.XpGained, chosen);
+            SendPetGameEnd(gameName, growth.XpGained, WithActualChanges(chosen, growth));
             _skipAwaitingFeed = pet.m_globalID.Full;
         }
 
@@ -269,7 +269,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 growth.LevelsGained += fed.LevelsGained;
                 growth.StatChanges.AddRange(fed.StatChanges);
                 var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
-                SendSnackFeedResult(gameName, fed.XpGained, snackMods);
+                SendSnackFeedResult(gameName, fed.XpGained, WithActualChanges(snackMods, fed));
             }
             else if (snackData is not null) {
                 SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
@@ -285,6 +285,24 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
     }
 
     private const uint SKIP_WINS = 100;
+
+    /// <summary>
+    /// A copy of a snack's or game track's stat changes with m_actualChange set to what the pet really gained, so
+    /// the results window shows the real numbers (a stat at its maximum gains less, or nothing).
+    /// </summary>
+    private static PetStatModificationSet WithActualChanges(PetStatModificationSet set, PetProgress.PetGrowth growth) {
+        if (set?.m_modifications is null) {
+            return set;
+        }
+
+        return set with {
+            m_modifications = [.. set.m_modifications.Select(mod => mod is null ? null : mod with {
+                m_actualChange = (uint) Math.Max(0, growth.StatChanges
+                    .Where(change => string.Equals(change.Stat, mod.m_name, StringComparison.OrdinalIgnoreCase))
+                    .Sum(change => change.Change)),
+            })],
+        };
+    }
 
     private void SendSnackFeedResult(string gameName, uint xpGained, PetStatModificationSet statMods) {
         if (!TryWriteEndData(gameName, xpGained, statMods, out var data)) {
