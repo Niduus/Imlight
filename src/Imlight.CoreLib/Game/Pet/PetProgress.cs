@@ -387,6 +387,21 @@ internal static class PetProgress {
         return result;
     }
 
+    /// <summary>
+    /// The cards a pet's talents give its owner in battle, such as Hexster's Hex.
+    /// </summary>
+    internal static List<ProvideSpellEffectInfo> CardEffects(WizClientObjectItem pet, IEnumerable<string> extraTalents = null) {
+        var behavior = GetBehavior(pet);
+        if (behavior is null) {
+            return [];
+        }
+
+        return [.. (behavior.m_expressedTalents ?? []).Select(PetData.GetTalent)
+            .Concat((extraTalents ?? []).Select(PetData.GetTalent))
+            .OfType<PetTalentTemplate>()
+            .SelectMany(talent => talent.m_effectList?.OfType<ProvideSpellEffectInfo>() ?? [])];
+    }
+
     private static WizStatisticEffect ScaleEffect(PetBoostPlayerStatEffectTemplate t, float basis) => new() {
         m_effectNameID = Imcodec.Cryptography.StringHash.Compute(t.m_effectName),
         m_damageBonusPercent = t.m_damageBonusPercent * basis,
