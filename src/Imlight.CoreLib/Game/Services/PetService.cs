@@ -237,7 +237,14 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
 
         if (snackData is null && game is not null && PetRules.SkipShowsFeedWindow) {
-            // Show the end of game window, the same as after playing, so the player can pick a snack to feed.
+            // MSG_PETGAMEEND alone did not open anything (0.9.61). Echo the skip back like the game's other pet
+            // requests (MSG_PETFEEDHAPPINESS is answered the same way); the game may then show its results and
+            // feed window, whose feed comes back as MSG_PETGAMESKIPFEED.
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETGAMESKIP {
+                GlobalID = pet.m_globalID,
+                Game = gameName,
+                Bonus = (byte) Math.Clamp(track, 0, byte.MaxValue),
+            });
             SendPetGameEnd(gameName, growth.XpGained, chosen);
             _skipAwaitingFeed = pet.m_globalID.Full;
         }
