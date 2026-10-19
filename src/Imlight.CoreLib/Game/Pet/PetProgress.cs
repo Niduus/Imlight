@@ -48,10 +48,11 @@ internal static class PetProgress {
     internal const byte MEGA_LEVEL = 6;
     internal const byte MAX_LEVEL = 7;
     // [Pets] in Imlight.ini.
-    private static int? s_snackXpPerRank;
+    private static float? s_snackXpPerRank;
     private static float? s_favoriteSnackBonus;
 
-    private static int SnackXpPerRank => s_snackXpPerRank ??= Math.Max(1, ReadSetting("Pets.SnackXpPerRank", 5));
+    // The snack card shows 15 XP for a rank 10 snack, so 1.5 a rank. Renamed from SnackXpPerRank (was 5) so old ini values do not stick.
+    private static float SnackXpPerRank => s_snackXpPerRank ??= Math.Max(0.1f, ReadSetting("Pets.SnackXpEachRank", 1.5f));
 
     private static float FavoriteSnackBonus => s_favoriteSnackBonus ??= ReadSetting("Pets.FavoriteSnackBonus", 1.5f);
 
@@ -344,15 +345,15 @@ internal static class PetProgress {
     }
 
     /// <summary>
-    /// The experience a snack gives: by default five per snack rank, half again for a snack the pet likes.
+    /// The experience a snack gives: by default one and a half per snack rank, as the snack card shows, half again for a snack the pet likes.
     /// </summary>
     internal static uint SnackXp(WizClientObjectItem pet, PetSnackItemTemplate snack) {
         var xp = SnackXpPerRank * Math.Max(1, snack?.m_rank ?? 1);
         if (IsFavoriteSnack(pet, snack)) {
-            xp = (int) (xp * FavoriteSnackBonus);
+            xp *= FavoriteSnackBonus;
         }
 
-        return (uint) xp;
+        return (uint) Math.Max(1, Math.Round(xp, MidpointRounding.AwayFromZero));
     }
 
     internal static bool IsFavoriteSnack(WizClientObjectItem pet, PetSnackItemTemplate snack) {
