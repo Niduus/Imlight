@@ -438,7 +438,10 @@ internal static class PetProgress {
             // Copies beyond one per named card go to the first card.
             var copies = i == 0 ? Math.Max(1, (int) level.m_powerCardCount - (names.Count - 1)) : 1;
             yield return new ProvideSpellEffectInfo {
-                m_effectName = "PetPowerCard",
+                // The game looks the effect up by this name in its own list (WizardEffects.xml): "ProvideSpell" is the
+                // plain card-giving effect. A made-up name such as "PetPowerCard" matched nothing there, so the deck
+                // window never listed the card with the item cards (Justin, 2026-10-19).
+                m_effectName = "ProvideSpell",
                 m_spellName = names[i],
                 m_numSpells = copies,
             };
