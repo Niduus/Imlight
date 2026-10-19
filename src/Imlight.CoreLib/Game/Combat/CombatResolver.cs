@@ -363,10 +363,10 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 };
                 var before = combatActionList.m_actionList.Count;
                 cinematicTime += HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
-                // A command's free cast had no enchanted card on the table, so the game is shown it as a normal
-                // cast; marked as delayed, the game waits for a card it never saw and shows nothing.
+                // The spell going off when the delay runs out. A command's free cast had no enchanted card on the
+                // table, so the game is shown it as a normal cast; flagged, it waits for a card it never saw.
                 for (var i = before; !delayed.Free && i < combatActionList.m_actionList.Count; i++) {
-                    combatActionList.m_actionList[i].m_delayed = true;
+                    combatActionList.m_actionList[i].m_delayedEnchanted = true;
                 }
             }
             catch (Exception e) {
@@ -435,9 +435,9 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 // the caster's next turn. It is paid for now.
                 var played = InitializeCombatAction(action);
                 played.m_targetSubcircleList.Add(action.SelectedTarget.SlotIndex);
-                // Marks this as the delay itself. Without it the game played the card's spell now and again when the
-                // delay ran out, so Tower Shield showed as two casts.
-                played.m_delayedEnchanted = true;
+                // Marks this as the delay itself. With no flag the game cast the card's spell now and again when the
+                // delay ran out (two Tower Shields); with m_delayedEnchanted it cast it now. (Justin, 2026-10-19)
+                played.m_delayed = true;
                 DoSpellCastConsequences(action.SpellCaster, played);
                 combatActionList.m_actionList.Add(played);
                 _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum));
