@@ -80,6 +80,12 @@ internal abstract class CommandProtocol {
         if (expectedParameterCount > 0) {
             // If we expected parameters, but none were provided, return.
             if (parameters.Length == 0) {
+                // A command whose parameters all have defaults (`.hall` or `.hall 5`) runs with them.
+                if (methodParameters.All(parameter => parameter.HasDefaultValue)) {
+                    method.Invoke(this, [.. methodParameters.Select(parameter => parameter.DefaultValue)]);
+                    return true;
+                }
+
                 InformClientOfProperParameterCount(commandName, methodParameters);
                 return true;
             }
