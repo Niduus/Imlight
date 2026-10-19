@@ -132,7 +132,7 @@ internal static class CombatEnchantments {
                     result = result with { m_accuracy = result.m_accuracy + amount };
                     changed = true;
                     break;
-                // [Battle] NoPipsFromDaybreakerNightbringer: those two keep their damage but not their extra pip.
+                // [Battle] DaybreakerNightbringerAddPips off: those two keep their damage but not their extra pip.
                 case kSpellEffects.kModifyCardRank when amount > 0 && NoPipsFromDayNight && IsDaybreakerOrNightbringer(enchantment):
                     // Still an enchantment: the card's cast is delayed (see CombatResolver), just without the pips.
                     changed = true;
@@ -192,8 +192,9 @@ internal static class CombatEnchantments {
         return result;
     }
 
+    // Renamed from NoPipsFromDaybreakerNightbringer (default off) so the new default, no extra pip, reaches kept ini files.
     private static bool NoPipsFromDayNight
-        => Imlight.Common.ConfigurationManager.GetValue("Battle.NoPipsFromDaybreakerNightbringer", false);
+        => !Imlight.Common.ConfigurationManager.GetValue("Battle.DaybreakerNightbringerAddPips", false);
 
     internal static bool IsDaybreakerOrNightbringer(SpellTemplate enchantment) {
         var name = enchantment.m_name.ToString() ?? "";

@@ -341,4 +341,20 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// .daybreaker and .nightbringer: the sender casts a spell for free this round, at the start or the end of
+    /// their turn.
+    /// </summary>
+    internal sealed class MSG_CHEATDELAYCAST : IServerMessage {
+
+        public byte MessageOrder => 32;
+        public byte ServiceID => 106;
+
+        public uint SpellTemplateId;
+        public string SpellName;
+        public bool AtStart;
+        public IActorRef Actor;
+
+    }
+
 }

@@ -1993,6 +1993,32 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             : $"Drew {added} {message.SpellName}.");
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATDELAYCAST))]
+    private void ReceiveCheatDelayCast(COMBAT_106_PROTOCOL.MSG_CHEATDELAYCAST message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null || !subCircle.IsAlive) {
+            return;
+        }
+
+        void Inform(string text) => message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text });
+        var name = message.AtStart ? "Daybreaker" : "Nightbringer";
+        if (Duel.m_duelPhase != kDuelPhase.kPhase_Planning) {
+            Inform($"Wait until it is your turn to pick a card, then try .{name.ToLowerInvariant()} again.");
+
+            return;
+        }
+
+        try {
+            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart);
+            Inform(count == 0
+                ? $"Could not cast {message.SpellName}."
+                : $"{name}: {message.SpellName} casts {(message.AtStart ? "at the start" : "at the end")} of your turn this round ({count} queued). Add more to chain them.");
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | .{1} failed: {2}", Logger.Args(SigilId, name, ex));
+        }
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATGIVEPIPS))]
     private void ReceiveCheatGivePips(COMBAT_106_PROTOCOL.MSG_CHEATGIVEPIPS message) {
         var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
