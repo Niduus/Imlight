@@ -115,8 +115,10 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 4:
             case 5:
             case 7:
-                // Buy More and Sell More. Which command is which is not known yet, so the request is matched by what
-                // its ids name: a snack or an item the player holds is sold, a bazaar entry is bought.
+            case 8:
+                // Buy More is 7 (template only) and Sell More is 8 (with the held item's id), per Justin's log. The
+                // request is matched by what its ids name: a snack or an item the player holds is sold, a bazaar
+                // entry is bought.
                 Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}).",
                     Logger.Args(message.Command, message.itemTemplateID, message.itemGlobalID, message.quantity, message.itemType, message.category));
                 BuyOrSellMore(message);
@@ -179,12 +181,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             return [.. s_snacks.Value.Values.Select(snack => snack.Entry)];
         }
 
-        if (category == s_reagentCategory) {
-            return [.. s_reagents.Value.Values.Take(MAX_ENTRIES)];
+        if (s_reagents.Value.ByCategory.TryGetValue(category, out var reagents)) {
+            return [.. reagents.Take(s_catalogLimit)];
         }
 
-        if (s_jewels.Value.ByShape.TryGetValue(category, out var shapeJewels)) {
-            return [.. shapeJewels.Take(MAX_ENTRIES)];
+        if (s_jewels.Value.ByCategory.TryGetValue(category, out var jewels)) {
+            return [.. jewels.Take(s_catalogLimit)];
         }
 
         var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
@@ -596,49 +598,57 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private const string REAGENT_FOLDER = "ObjectData/Reagents/";
     private const string JEWEL_FOLDER = "ObjectData/Jewels/";
 
-    // The reagent tab asks with the Reagent adjective; the jewel tab asks per shape, as the adjective of the shape.
-    private static readonly uint s_reagentCategory = StringHash.Compute("Reagent");
+    // Every tab asks with an adjective: the reagent window has Reagent (all of them) and one tab per kind, the jewel
+    // window one tab per shape. Seen in Justin's log of 2026-10-19.
+    private static readonly string[] s_reagentKinds = [
+        "Reagent", "ReagentHarvest", "ReagentHarvestRare", "ReagentShop", "ReagentDrop", "ReagentEvent", "ReagentShard", "ReagentPet",
+    ];
     private static readonly string[] s_jewelShapes = [
         "CircleJewel", "SquareJewel", "TriangleJewel", "TearJewel", "PetJewel", "PinSquareSword", "PinSquareShield", "PinSquarePip",
     ];
 
-    private sealed record BazaarJewels(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByShape);
+    // [Bazaar] CatalogTab: how many reagents, jewels or pins one tab lists. Only short lists (snacks, one school's
+    // treasure cards) are known to show, so it starts low.
+    private static readonly int s_catalogLimit
+        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.CatalogTab", 120), 1, MAX_ENTRIES);
 
-    private static readonly Lazy<Dictionary<ulong, AuctionHouseEntry>> s_reagents = new(() => {
-        var reagents = new Dictionary<ulong, AuctionHouseEntry>();
-        foreach (var (id, _) in TemplatesIn<ReagentItemTemplate>(REAGENT_FOLDER)) {
-            reagents[id] = CatalogEntry(id);
-        }
+    private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory);
 
-        Logger.Information("Bazaar has {0} reagents.", Logger.Args(reagents.Count));
+    private static readonly Lazy<BazaarCatalog> s_reagents = new(() => BuildCatalog(REAGENT_FOLDER, s_reagentKinds, "reagents"));
 
-        return reagents;
-    });
+    private static readonly Lazy<BazaarCatalog> s_jewels = new(() => BuildCatalog(JEWEL_FOLDER, s_jewelShapes, "jewels and pins"));
 
-    private static readonly Lazy<BazaarJewels> s_jewels = new(() => {
+    /// <summary>
+    /// Lists every template in a folder under each of the given adjectives it has. Items the real bazaar never takes
+    /// (FLAG_NoAuction) are left out.
+    /// </summary>
+    private static BazaarCatalog BuildCatalog(string folder, string[] categories, string what) {
         var byId = new Dictionary<ulong, AuctionHouseEntry>();
-        var byShape = new Dictionary<uint, List<AuctionHouseEntry>>();
-        foreach (var (id, template) in TemplatesIn<WizItemTemplate>(JEWEL_FOLDER)) {
+        var byCategory = new Dictionary<uint, List<AuctionHouseEntry>>();
+        foreach (var (id, template) in TemplatesIn<WizItemTemplate>(folder)) {
             var adjectives = (template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList();
-            var shape = s_jewelShapes.FirstOrDefault(adjectives.Contains);
-            if (shape is null) {
+            var tabs = categories.Where(adjectives.Contains).ToList();
+            if (tabs.Count == 0 || adjectives.Contains("FLAG_NoAuction")) {
                 continue;
             }
 
             var entry = CatalogEntry(id);
             byId[id] = entry;
-            var hash = StringHash.Compute(shape);
-            if (!byShape.TryGetValue(hash, out var list)) {
-                byShape[hash] = list = [];
-            }
+            foreach (var tab in tabs) {
+                var hash = StringHash.Compute(tab);
+                if (!byCategory.TryGetValue(hash, out var list)) {
+                    byCategory[hash] = list = [];
+                }
 
-            list.Add(entry);
+                list.Add(entry);
+            }
         }
 
-        Logger.Information("Bazaar has {0} jewels and pins.", Logger.Args(byId.Count));
+        Logger.Information("Bazaar has {0} {1}: {2}.", Logger.Args(byId.Count, what,
+            string.Join(", ", categories.Select(tab => $"{tab} {(byCategory.TryGetValue(StringHash.Compute(tab), out var list) ? list.Count : 0)}"))));
 
-        return new BazaarJewels(byId, byShape);
-    });
+        return new BazaarCatalog(byId, byCategory);
+    }
 
     private static AuctionHouseEntry CatalogEntry(ulong id) => new() {
         m_templateID = (GID) id,
@@ -666,7 +676,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
     private static AuctionHouseEntry Reagent(ulong templateId)
-        => s_reagents.Value.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
+        => s_reagents.Value.ById.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
 
     private static AuctionHouseEntry Jewel(ulong templateId)
         => s_jewels.Value.ById.TryGetValue(templateId & 0xFFFFFFFFUL, out var entry) ? entry : null;
@@ -754,6 +764,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         "Amulets", "Ring", "Rings", "Deck", "Decks", "Pet", "Pets", "Mount", "Mounts", "Furniture", "Housing",
         "Reagent", "Reagents", "Jewel", "Jewels", "Seed", "Seeds", "Snack", "Snacks", "Elixir", "Elixirs", "All",
         "Everything", "Clothing", "Gear", "Equipment", "Item", "Items",
+        "ReagentHarvest", "ReagentHarvestRare", "ReagentShop", "ReagentDrop", "ReagentEvent", "ReagentShard", "ReagentPet",
+        "CircleJewel", "SquareJewel", "TriangleJewel", "TearJewel", "PetJewel", "PinSquareSword", "PinSquareShield",
+        "PinSquarePip", "PetSnack", "Cantrips", "CastleMagic", "Gardening", "CastleBlock", "Astral",
     ];
     private static readonly HashSet<uint> s_treasureCategories = [.. s_treasureCategoryNames.SelectMany(CategoryHashes)];
 
