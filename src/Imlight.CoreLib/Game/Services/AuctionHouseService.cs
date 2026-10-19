@@ -159,8 +159,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
-        var entryList = s_sendEverything ? WholeWindow(category) : EntriesFor(category);
-        var first = entryList.Take(MAX_ONE_LIST).ToList();
+        var entryList = s_sendEverything ? WholeBazaar(category) : EntriesFor(category);
+        var first = entryList.Take(s_oneList).ToList();
         Logger.Debug("Bazaar: sending {0} entries ({1} in the list), first {2}.", Logger.Args(entryList.Count, first.Count,
             string.Join(", ", first.Take(3).Select(entry => (ulong) entry.m_templateID))));
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
@@ -169,13 +169,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             LastSegment = 0
         });
 
-        // The game shows only the first list of a visit (Justin, 2026-10-19), and one list cannot hold everything, so
-        // the rest goes as stock updates, which add to the list the game already has.
-        SendUpdates(entryList.Skip(MAX_ONE_LIST));
+        // The game shows only the first list of a visit (Justin, 2026-10-19). Anything past [Bazaar] OneList goes as
+        // stock updates, which did not add to the list when tried, so OneList should hold everything.
+        SendUpdates(entryList.Skip(s_oneList));
     }
 
     private void SendStock(uint category)
-        => SendUpdates(s_sendEverything ? WholeWindow(category) : EntriesFor(category));
+        => SendUpdates(s_sendEverything ? WholeBazaar(category) : EntriesFor(category));
 
     private void SendUpdates(IEnumerable<AuctionHouseEntry> entries) {
         foreach (var part in entries.Chunk(UPDATE_ENTRIES)) {
@@ -188,11 +188,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     private const int UPDATE_ENTRIES = 800;
 
-    // How many entries one list may hold. 2946 used to drop the connection, but that was the long frame length bug (see
-    // SocketSender.FixLongFrameLength), not the list. The message header length is 16 bits, so a list must stay under
-    // about 3270 entries of 20 bytes; the jewel window (2946) fits in one list (Justin, 2026-10-19: updates past the
-    // first list did not add to it, so Triangle, Star and pins stayed empty).
-    private const int MAX_ONE_LIST = 3200;
+    // [Bazaar] OneList: how many entries the first list may hold. Big lists used to drop the connection, but that was
+    // the long frame length bug (see SocketSender.FixLongFrameLength); 2946 in one list worked after the fix (Justin,
+    // 2026-10-19). The list is written with a 16-bit byte length, so 20-byte entries top out at MAX_ONE_LIST. Whatever
+    // does not fit goes as stock updates, which the game did not add to the list.
+    private const int MAX_ONE_LIST = (ushort.MaxValue - 8) / 20;
+    private static readonly int s_oneList
+        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
 
     // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
     // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Justin,
@@ -204,22 +206,24 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static readonly Lazy<HashSet<uint>> s_jewelTabs = new(() => [.. s_jewelShapes.Select(StringHash.Compute)]);
 
     /// <summary>
-    /// Everything the window a tab belongs to sells, as much as fits: the jewel window gets the tab's own jewels and then others, the reagent and snack
-    /// window every reagent and snack. Other tabs (treasure cards by school, hats and the rest) keep their own lists.
+    /// Everything the bazaar sells, with the tab asked for first and then the rest of its window. The game shows only
+    /// the first list of a visit, so every shortcut has to bring every tab's items, or the tabs of the other shortcuts
+    /// stay empty (Justin, 2026-10-19). One list holds at most MAX_ONE_LIST, so what comes last can be cut.
     /// </summary>
-    private static List<AuctionHouseEntry> WholeWindow(uint category) {
-        if (s_jewelTabs.Value.Contains(category)) {
-            // Every jewel in the tab asked for comes first, so that tab is always whole; other jewels fill the rest.
-            var own = s_jewels.Value.ByCategory.TryGetValue(category, out var list) ? list : [];
+    private static List<AuctionHouseEntry> WholeBazaar(uint category) {
+        IEnumerable<AuctionHouseEntry> snacks = s_snacks.Value.Values.Select(snack => snack.Entry);
+        IEnumerable<AuctionHouseEntry> reagents = s_reagents.Value.ById.Values;
+        IEnumerable<AuctionHouseEntry> jewels = s_jewels.Value.ById.Values;
+        var cards = s_shownTreasureCards.Value.Select(card => card.Entry);
+        var house = (AuctionHouseCollection.GetAllAuctionHouseEntries() ?? []).Where(entry => Snack(entry.m_templateID) is null);
 
-            return [.. own.Concat(s_jewels.Value.ById.Values).Distinct()];
-        }
+        var ordered = s_jewelTabs.Value.Contains(category)
+            ? (s_jewels.Value.ByCategory.TryGetValue(category, out var own) ? own : []).Concat(jewels).Concat(snacks).Concat(reagents).Concat(cards)
+            : category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)
+                ? EntriesFor(category).Concat(snacks).Concat(reagents).Concat(cards).Concat(jewels)
+                : EntriesFor(category).Concat(cards).Concat(snacks).Concat(reagents).Concat(jewels);
 
-        if (category == MIXED_CATEGORY || IsSnackCategory(category) || s_reagents.Value.ByCategory.ContainsKey(category)) {
-            return [.. s_snacks.Value.Values.Select(snack => snack.Entry).Concat(s_reagents.Value.ById.Values)];
-        }
-
-        return EntriesFor(category);
+        return [.. ordered.Concat(house).DistinctBy(entry => (ulong) entry.m_templateID)];
     }
 
     /// <summary>
