@@ -28,7 +28,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.World;
 
 /// <summary>
-/// The trainer hall door: walking up to one spot sends the wizard to their own copy of the Avalon Castle Plot, the test
+/// The trainer hall door: walking up to one spot sends the wizard to their own copy of the Open Space house, the test
 /// area for spell trainers. The house zone can only be loaded as a house, so the wizard is given that house first.
 /// </summary>
 internal static class TrainerHallDoor {
@@ -39,7 +39,13 @@ internal static class TrainerHallDoor {
     private static readonly float s_doorY = ConfigurationManager.GetValue("TrainerHall.DoorY", 548f);
     private static readonly float s_doorZ = ConfigurationManager.GetValue("TrainerHall.DoorZ", 0f);
     private static readonly float s_radius = ConfigurationManager.GetValue("TrainerHall.Radius", 60f);
-    private static readonly uint s_houseTemplateId = ConfigurationManager.GetValue("TrainerHall.HouseTemplateId", 1217734u);
+    private static readonly uint s_houseTemplateId = ConfigurationManager.GetValue("TrainerHall.HallHouseId", 1520349u);
+
+    /// <summary>Whether the trainer hall is turned on.</summary>
+    internal static bool Enabled => s_enabled;
+
+    /// <summary>The house the trainer hall is a copy of.</summary>
+    internal static uint HouseTemplateId => s_houseTemplateId;
 
     // How tall the door spot is: a wizard standing on the step above or below still counts.
     private const float HEIGHT_TOLERANCE = 120f;
