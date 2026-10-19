@@ -159,26 +159,58 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
-        var entryList = EntriesFor(category);
+        var entryList = s_sendEverything ? Everything() : EntriesFor(category);
         Logger.Debug("Bazaar: sending {0} entries, first {1}.", Logger.Args(entryList.Count,
             string.Join(", ", entryList.Take(3).Select(entry => (ulong) entry.m_templateID))));
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-            Contents = WriteAuctionBlob(category, entryList),
-            GlobalID = npcId,
-            LastSegment = s_lastSegment
-        });
+
+        // Long lists go in parts. LastSegment 1 means more parts follow (with 1 on a whole list no tab filled at
+        // all) and 0 marks the last one (Justin's logs, 2026-10-19).
+        var parts = entryList.Chunk(SEGMENT_ENTRIES).ToList();
+        if (parts.Count == 0) {
+            parts.Add([]);
+        }
+
+        for (var i = 0; i < parts.Count; i++) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
+                Contents = WriteAuctionBlob(category, parts[i]),
+                GlobalID = npcId,
+                LastSegment = (sbyte) (i < parts.Count - 1 ? 1 : 0)
+            });
+        }
     }
 
     private void SendStock(uint category) {
-        var entryList = EntriesFor(category);
-        if (entryList.Count == 0) {
-            return;
+        var entryList = s_sendEverything ? Everything() : EntriesFor(category);
+        foreach (var part in entryList.Chunk(SEGMENT_ENTRIES)) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
+                UpdateInfo = WriteAuctionBlob(0, part),
+                CharacterID = GetActiveWizard().CharId
+            });
         }
+    }
 
-        SendToSocket(new GAME_5_PROTOCOL.MSG_AUCTIONHOUSEUPDATE {
-            UpdateInfo = WriteAuctionBlob(0, entryList),
-            CharacterID = GetActiveWizard().CharId
-        });
+    // About 20 bytes an entry; one message of 1000 was fine, 5218 dropped the connection.
+    private const int SEGMENT_ENTRIES = 800;
+
+    // [Bazaar] SendEverything: every tab and shortcut gets the whole bazaar, because the game keeps one list for the
+    // whole window: each answer replaced the last, so only the tab that answer was for showed anything (Justin,
+    // 2026-10-19). Off sends each tab only its own items.
+    private static readonly bool s_sendEverything
+        = Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
+
+    /// <summary>
+    /// Everything the bazaar sells, each item once: its own stock, snacks, reagents, jewels, pins and treasure cards.
+    /// </summary>
+    private static List<AuctionHouseEntry> Everything() {
+        var seen = new HashSet<ulong>();
+        var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
+
+        return [.. houseEntries.Where(entry => Snack(entry.m_templateID) is null)
+            .Concat(s_snacks.Value.Values.Select(snack => snack.Entry))
+            .Concat(s_reagents.Value.ById.Values)
+            .Concat(s_jewels.Value.ById.Values)
+            .Concat(s_shownTreasureCards.Value.Take(s_treasureCardLimit).Select(card => card.Entry))
+            .Where(entry => seen.Add((ulong) entry.m_templateID & 0xFFFFFFFFUL))];
     }
 
     /// <summary>
@@ -743,10 +775,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static readonly int s_catalogLimit
         = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
 
-    // [Bazaar] LastSegment: with 0 the game filled only the first tab opened at the bazaar and ignored every list
-    // after it (Justin, 2026-10-19), as if it were still waiting for the rest of the first one.
-    private static readonly sbyte s_lastSegment
-        = (sbyte) Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.LastSegment", 1), 0, 1);
 
     private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory);
 
