@@ -160,7 +160,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // Serialize in the compact binary format the client expects.
         // category=0 is reserved for empty/update signals per the live capture.
         var entryList = EntriesFor(category);
-        Logger.Debug("Bazaar: sending {0} entries.", Logger.Args(entryList.Count));
+        Logger.Debug("Bazaar: sending {0} entries, first {1}.", Logger.Args(entryList.Count,
+            string.Join(", ", entryList.Take(3).Select(entry => (ulong) entry.m_templateID))));
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
             Contents = WriteAuctionBlob(category, entryList),
             GlobalID = npcId,
@@ -216,7 +217,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         if (s_jewels.Value.ByCategory.TryGetValue(category, out var jewels)) {
-            return [.. jewels.Take(s_catalogLimit)];
+            // The Star tab (pet jewels) lists every one of them (Justin, 2026-10-19); the other tabs stay short.
+            return [.. jewels.Take(category == s_petJewelTab ? MAX_ENTRIES : s_catalogLimit)];
         }
 
         var houseEntries = AuctionHouseCollection.GetAllAuctionHouseEntries() ?? [];
@@ -727,6 +729,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     // [Bazaar] CatalogTab: how many reagents, jewels or pins one tab lists. Only short lists (snacks, one school's
     // treasure cards) are known to show, so it starts low.
+    private static readonly uint s_petJewelTab = StringHash.Compute("PetJewel");
+
     private static readonly int s_catalogLimit
         = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.CatalogTab", 120), 1, MAX_ENTRIES);
 
