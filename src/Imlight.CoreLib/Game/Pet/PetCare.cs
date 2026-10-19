@@ -126,6 +126,9 @@ internal static class PetCare {
 
         if (ReferenceEquals(GetWornPet(wizard), pet)) {
             EquipmentExtras.Refresh(wizard);
+
+            // The talents' effects changed with the pet's stats, so the stats page gets the new numbers.
+            EquipmentExtras.TakeCardEffectMessages(wizard).ForEach(send);
         }
 
         if (growth is null || behavior is null) {
