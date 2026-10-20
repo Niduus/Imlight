@@ -96,7 +96,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     public override void OnStart() {
         // Hao sells the snacks and a house seller its kind (HouseVendors), whatever the NPC sells elsewhere.
         if (HouseVendors.StockFor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag) is { } stock) {
-            _inventory = [.. stock.Items.Select(id => new GID((ulong) id))];
+            _inventory = ShopOrder.Alphabetical(stock.Items.Select(id => new GID((ulong) id)));
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
             _furnitureShop = stock.Window switch {
@@ -134,7 +134,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             return;
         }
 
-        _inventory = inventory.Inventory;
+        _inventory = ShopOrder.Alphabetical(inventory.Inventory);
 
         var shoppingBehavior = Entity.Template?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault();
         if (shoppingBehavior != null) {
