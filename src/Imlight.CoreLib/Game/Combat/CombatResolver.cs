@@ -397,8 +397,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
     private float CastPetSpell(CombatDuelSubCircle owner, PetMayCasts.MayCast mayCast, string reason,
                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        // Sent as the pet's item card (Justin, 2026-10-20: it should look like casting the pet's card).
-        var spell = SpellFactory.GetSpell(mayCast.SpellTemplateId) is { } card ? card with { m_itemCard = true } : null;
+        // As the pet's item card only with [PetCasting] AsItemCard (Justin, 2026-10-20, wanted that look): flagged so,
+        // the game still skipped the cast ("does not spell in hand").
+        var spell = SpellFactory.GetSpell(mayCast.SpellTemplateId) is { } card
+            ? (PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card)
+            : null;
         if (spell is null || CoreObjectFactory.GetCoreTemplate(mayCast.SpellTemplateId) is not SpellTemplate template) {
             return 0;
         }
@@ -421,6 +424,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             combatActionList.m_actionList[i].m_forceSpell = true;
             if (PetMayCasts.ShowAsPetCast) {
                 combatActionList.m_actionList[i].m_petCast = true;
+                combatActionList.m_actionList[i].m_petCasted = true;
                 combatActionList.m_actionList[i].m_petCastTarget = target.SlotIndex;
             }
         }
