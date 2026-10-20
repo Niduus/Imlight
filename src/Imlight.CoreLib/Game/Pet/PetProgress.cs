@@ -38,6 +38,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.IO;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Pet;
@@ -96,13 +97,13 @@ internal static class PetProgress {
         var behavior = pet?.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault();
         if (behavior is not null) {
             // Remembered so the maximum stats, worked out from the behavior alone, can find the pet's raised ones.
-            s_petIds.AddOrUpdate(behavior, pet.m_globalID.Full);
+            s_pets.AddOrUpdate(behavior, pet);
         }
 
         return behavior;
     }
 
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ClientPetItemBehavior, object> s_petIds = new();
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ClientPetItemBehavior, WizClientObjectItem> s_pets = new();
 
     internal static PetItemBehaviorTemplate GetTemplate(WizClientObjectItem pet)
         => pet is null ? null : PetFactory.GetPetItemBehaviorTemplate((uint) pet.m_templateID);
@@ -697,20 +698,31 @@ internal static class PetProgress {
             return;
         }
 
+        // Stat talents raise the maximum: the pet's own and the one of a jewel in its socket (Mighty is +65
+        // Strength). Taking the jewel out puts the maximum back (Justin, 2026-10-20).
+        var pet = s_pets.TryGetValue(behavior, out var found) ? found : null;
         var bonus = (behavior.m_expressedTalents ?? [])
             .Select(PetData.GetTalent)
+            .Concat(pet is null ? [] : JewelSockets.GetPetJewelTalents(pet).Select(PetData.GetTalent))
             .OfType<PetTalentTemplate>()
             .SelectMany(t => t.m_maxStatList ?? [])
             .Where(s => s is not null)
             .ToList();
-        var petId = s_petIds.TryGetValue(behavior, out var id) ? (ulong) id : 0UL;
+        var petId = pet?.m_globalID.Full ?? 0UL;
         behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
-            GetStat(template.m_maxStats, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
+            BaseMaxStat(template, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
             petId == 0 ? 0 : PetMaxRaises.Get(petId, name))))];
 
         foreach (var stat in behavior.m_currentStats ?? []) {
             stat.m_value = Math.Min(stat.m_value, GetStat(behavior.m_maxStats, stat.m_name));
         }
+    }
+
+    // [Pets] MaxStrength and the others (260 by default); 0 uses the pet's own maximum from the game files.
+    private static int BaseMaxStat(PetItemBehaviorTemplate template, string name) {
+        var configured = PetRules.MaxStat(name);
+
+        return configured > 0 ? configured : GetStat(template.m_maxStats, name);
     }
 
     private static List<uint> TalentPool(List<ByteString> guaranteed, List<ByteString> talents)

@@ -48,7 +48,7 @@ namespace Imlight.CoreLib.Game.Pet;
 internal static class PetRules {
 
     private const int DefaultStartingHappiness = 50;
-    private const int DefaultMaximumHappiness = 100;
+    private const int DefaultMaximumHappiness = 1000;
     private const int DefaultMemberXpMultiplier = 2;
 
     /// <summary>
@@ -59,7 +59,16 @@ internal static class PetRules {
     /// <summary>
     /// The most happiness a pet can have.
     /// </summary>
-    internal static int MaximumHappiness { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MaximumHappiness", DefaultMaximumHappiness));
+    internal static int MaximumHappiness { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MaxHappiness", DefaultMaximumHappiness));
+
+    private const int DefaultMaxStat = 260;
+
+    /// <summary>
+    /// A pet stat's maximum before talents and jewels: [Pets] MaxStrength, MaxIntellect, MaxAgility, MaxWill and
+    /// MaxPower (260 by default, Justin 2026-10-20). 0 means the pet's own maximum from the game files.
+    /// </summary>
+    internal static int MaxStat(string stat)
+        => string.IsNullOrEmpty(stat) ? 0 : Math.Max(0, ConfigurationManager.GetValue($"Pets.Max{stat}", DefaultMaxStat));
 
     /// <summary>
     /// The factor members get on the XP their pets earn.
