@@ -114,7 +114,8 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
             return Deny($"stitch of items {displayItemId} and {statsItemId}", "the result could not be built");
         }
 
-        ReportJewelSockets(displayItem, statsItem);
+        StitchedItemFactory.CopySockets(statsItem, stitchedItem);
+        ReportJewelSockets(displayItem);
         if (!TryApply([displayItem, statsItem], [stitchedItem], stitchCrowns, out var failure)) {
             return Deny($"stitch of items {displayItemId} and {statsItemId}", failure);
         }
@@ -144,7 +145,7 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
             return Deny($"unstitch of item {itemId}", "the results could not be built");
         }
 
-        ReportJewelSockets(stitchedItem);
+        StitchedItemFactory.CopySockets(stitchedItem, statsItem);
         if (!TryApply([stitchedItem], [statsItem, appearanceItem], unstitchCrowns, out var failure)) {
             return Deny($"unstitch of item {itemId}", failure);
         }

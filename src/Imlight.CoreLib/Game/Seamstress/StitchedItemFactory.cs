@@ -80,6 +80,33 @@ internal static class StitchedItemFactory {
     internal static bool HasJewelSockets(WizClientObjectItem item)
         => item.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().Any() == true;
 
+    /// <summary>
+    /// Gives an item the jewel sockets of another: unlocked sockets stay unlocked and socketed jewels stay
+    /// (Justin, 2026-10-20: stitched wands came back with their sockets locked again).
+    /// </summary>
+    /// <param name="from">The item whose sockets are kept.</param>
+    /// <param name="to">The new item.</param>
+    internal static void CopySockets(WizClientObjectItem from, WizClientObjectItem to) {
+        var sockets = from?.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().FirstOrDefault();
+        if (sockets is not null) {
+            SetSockets(to, sockets);
+        }
+    }
+
+    /// <summary>
+    /// Puts a socket behavior in the item's own socket slot. False if the item has none.
+    /// </summary>
+    internal static bool SetSockets(WizClientObjectItem item, ClientJewelSocketBehavior sockets) {
+        var index = item.m_inactiveBehaviors?.FindIndex(behavior => behavior is ClientJewelSocketBehavior) ?? -1;
+        if (index < 0) {
+            return false;
+        }
+
+        item.m_inactiveBehaviors[index] = sockets;
+
+        return true;
+    }
+
     private static bool TryCreate(Wizard wizard, uint templateId, int primaryColor, int secondaryColor, int pattern,
                                   out WizClientObjectItem item) {
         item = CoreObjectFactory.FinalizeCoreObject(templateId) as WizClientObjectItem;

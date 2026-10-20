@@ -470,7 +470,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         owner._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar;
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
-        var cinematicTime = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+        var cinematicTime = Math.Min(HandleSuccessfulAction(action, combatActionList, alreadyPaid: true), PetMayCasts.CastSeconds);
         if (!PetCastCards.TryGetValue(owner, out var cards)) {
             PetCastCards[owner] = cards = [];
         }
