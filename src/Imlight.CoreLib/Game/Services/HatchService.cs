@@ -602,8 +602,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                         + "to hatch with and accept the hatch request.");
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Alone:
-                    InformGameClient("This sigil is for two players: each stands on one of its circles, then one presses X. "
-                        + "To hatch two of your own pets, use one of the small sigils in the middle of the room.");
+                    // With nobody else on it, the duo sigil hatches two of the player's own pets, as live does (Justin, 2026-10-20).
+                    StartSolo(message.SigilGID);
                     break;
             }
         }
