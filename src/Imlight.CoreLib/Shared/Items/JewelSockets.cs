@@ -64,6 +64,15 @@ internal static class JewelSockets {
 
     internal static bool IsJewel(WizItemTemplate template) => GetShape(template) is not null;
 
+    /// <summary>
+    /// Whether a jewel is No Shatter, so taking it out returns it instead of destroying it. The game marks these
+    /// (Stuff of Legends Peridot and the other Blackhawk and AM pet jewels) with an extra behavior named
+    /// DeletedBehavior, which the client shows as the No Shatter icon (Justin's screenshot, 2026-10-20).
+    /// </summary>
+    internal static bool IsNoShatter(WizItemTemplate template)
+        => template?.m_behaviors?.Any(b => (string) b?.m_behaviorName == "DeletedBehavior") == true
+            || (template?.m_adjectiveList ?? []).Any(a => ((string) a ?? "").Contains("Shatter", StringComparison.OrdinalIgnoreCase));
+
     internal static JewelSocketType? GetShape(WizItemTemplate template) {
         foreach (var adjective in template?.m_adjectiveList ?? []) {
             var name = (string) adjective;
