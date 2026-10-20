@@ -22,7 +22,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.cast sun`, `.cast none`, `.cast reset` (Justin, 2026-10-20): see <see cref="CastLook"/>.
+/// `.cast none`, `.cast reset` (Justin, 2026-10-20): see <see cref="CastLook"/>.
 /// </summary>
 internal class CommandCastLookProtocol : CommandProtocol {
 
@@ -40,16 +40,15 @@ internal class CommandCastLookProtocol : CommandProtocol {
             return;
         }
 
-        if (!CastLook.TryParse(name, out var look)) {
-            InformSenderClient("Use .cast and a school (fire, ice, storm, myth, life, death, balance, sun, moon, star, shadow), none for no casting animation, or reset.");
+        // Another school's animation can't be shown: the game takes the casting sign from its own copy of the spell.
+        if (name != "none") {
+            InformSenderClient("Use .cast none to skip your casting animation, or .cast reset to undo. (The game always plays the spell's own school's animation, so other schools can't be picked.)");
 
             return;
         }
 
-        CastLook.Set(id, look);
-        InformSenderClient(look == MagicSchool.None
-            ? "Your spells skip their casting animation. Use .cast reset to undo."
-            : $"Your spells play the {look} casting animation. Use .cast reset to undo.");
+        CastLook.Set(id, MagicSchool.None);
+        InformSenderClient("Your spells skip their casting animation. Use .cast reset to undo.");
     }
 
 }
