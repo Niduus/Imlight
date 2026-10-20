@@ -344,6 +344,9 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
         Imlight.CoreLib.Game.Pet.PetCare.Finish(wizard, item, null, SendToSocket);
     }
 
+    // [Jewels] KeepShatteredJewels: a jewel taken out goes back to the backpack instead of shattering.
+    private static readonly bool KeepShatteredJewels = ConfigurationManager.GetValue("Jewels.KeepShatteredJewels", false);
+
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST))]
     private void ReceiveUnsocketJewelRequest(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST message) {
         var wizard = GetActiveWizard();
@@ -357,6 +360,10 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
                 return;
             }
 
+            // A socket marked lockable keeps its jewel safe ("No Shatter"); any other jewel shatters on the way out
+            // unless [Jewels] KeepShatteredJewels is on (Justin, 2026-10-20).
+            var sockets = JewelSockets.GetSockets(ItemHelper.GetItemTemplate(item));
+            var noShatter = message.SocketNumber < sockets.Count && sockets[message.SocketNumber]?.m_bLockable == true;
             var jewelTemplateId = JewelSockets.Unsocket(item, message.SocketNumber);
             if (jewelTemplateId == 0) {
                 InformGameClient("That socket is empty.");
@@ -372,12 +379,15 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
                 SocketDeleted = 0,
             });
 
-            // On this server a jewel taken out goes back to the backpack instead of breaking.
-            if (wizard.AddItemToInventory(jewelTemplateId, out var jewel)) {
-                SendInventoryAdd(wizard, jewel);
-            }
-            else {
-                InformGameClient("Your backpack is full, so the jewel could not come back.");
+            Logger.Information("Jewel {0} taken out of item {1}, socket {2}: {3}.", Logger.Args(jewelTemplateId, item.m_templateID,
+                message.SocketNumber, noShatter ? "No Shatter, back to the backpack" : KeepShatteredJewels ? "kept (KeepShatteredJewels)" : "shattered"));
+            if (noShatter || KeepShatteredJewels) {
+                if (wizard.AddItemToInventory(jewelTemplateId, out var jewel)) {
+                    SendInventoryAdd(wizard, jewel);
+                }
+                else {
+                    InformGameClient("Your backpack is full, so the jewel could not come back.");
+                }
             }
 
             EquipmentExtras.Refresh(wizard);
