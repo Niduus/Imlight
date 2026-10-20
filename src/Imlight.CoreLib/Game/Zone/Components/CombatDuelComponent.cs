@@ -2100,7 +2100,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         CombatResolver.AddAnnouncement(message.Text);
         message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-            Message = $".ca: \"{message.Text}\" shows when the next round's spells play.",
+            Message = $".ca: \"{message.Shown ?? message.Text}\" shows before the next round's first spell.",
         });
     }
 
