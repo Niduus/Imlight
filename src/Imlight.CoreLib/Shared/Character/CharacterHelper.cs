@@ -66,6 +66,9 @@ internal static class CharacterHelper {
         // Reset the base stats to the default values.
         wizard.GameStats.SetBaseStats();
         wizard.GameEffects = [];
+        // The gear's cards are added again below, so drop the old ones first. Without this every zone change added
+        // another copy of each wand card, and the copies past those crossed out in the deck showed up in battle.
+        wizard.SpellbookBehavior.TemporarySpells?.RemoveAll(spell => spell.m_itemCard);
 
         // Iterate through the equipped items and apply their effects.
         foreach (var item in wizard.EquipmentBehavior.EquippedItems) {
