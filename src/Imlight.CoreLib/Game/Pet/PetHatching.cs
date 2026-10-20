@@ -59,6 +59,8 @@ internal enum HatchSource : byte {
     Command,
     Kiosk,
     InPerson,
+    // The hatch window in the pet morph zone, reached from a hatchery sigil.
+    Sigil,
 }
 
 /// <summary>
@@ -137,8 +139,9 @@ internal static class PetHatching {
     internal static bool Enabled => ConfigurationManager.GetValue("Hatching.Enabled", true);
 
     /// <summary>
-    /// [Hatching] SigilWindow: false stops the solo hatching sigils from trying to open the game's pet morphing
-    /// window (a guess, see HatchService), leaving the chat list and `.hatch`.
+    /// [Hatching] SigilWindow: false stops the hatchery sigils from sending players to the pet morph zone
+    /// (ThePhantomZoneWorld/PetGameMorph) and its hatch window, leaving the chat list and `.hatch` (and, on a duo
+    /// sigil with two players, the in-person hatch request).
     /// </summary>
     internal static bool SigilWindow => ConfigurationManager.GetValue("Hatching.SigilWindow", true);
 
