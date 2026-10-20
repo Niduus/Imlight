@@ -1166,6 +1166,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool NoSnap;
 
         /// <summary>
+        /// With NoSnap: put the player in the middle of the pad (keeping their facing) instead of on a sigil circle, so a
+        /// small hatchery pad holds them like the duo pad does (Justin, 2026-10-20: "It doesn't put me on it").
+        /// </summary>
+        public bool SnapToCentre;
+
+        /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.
         /// </summary>

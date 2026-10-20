@@ -298,7 +298,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         _activeSigilEntry = message;
 
-        if (!message.NoSnap) {
+        if (!message.NoSnap || message.SnapToCentre) {
             SnapPlayerToSigilFace(message);
         }
 
@@ -1310,7 +1310,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         var pad = Util.GetVectorFromCompactString(entry.SigilLoc);
         float faceX, faceY, faceZ = pad.Z, faceYaw;
-        if (TryGetSigilFaceSlot(entry, out var slotPos, out var slotYaw)) {
+        if (entry.SnapToCentre) {
+            faceX = pad.X;
+            faceY = pad.Y;
+            faceYaw = gameObj.m_orientation.Z;
+        }
+        else if (TryGetSigilFaceSlot(entry, out var slotPos, out var slotYaw)) {
             faceX = slotPos.X;
             faceY = slotPos.Y;
             faceZ = slotPos.Z;

@@ -126,6 +126,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
     private PetMorphVisit _pendingTrip;
+    private DateTime _pendingTripStarted;
+    // Longer than the countdown and the zone load; a trip older than this is not still under way.
+    private static readonly TimeSpan PENDING_TRIP_MAX = TimeSpan.FromSeconds(30);
     private PetMorphVisit _morph;
     private bool _morphClientReady;
     private int _morphInitTries;
@@ -682,6 +685,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return true;
         }
 
+        // A second X press during the countdown must not replace the trip under way: its "busy" failure used to end
+        // that trip, so the player arrived with no hatch to do and was sent straight back (Justin, 2026-10-20).
+        if (_morph is not null || _pendingTrip is not null && DateTime.UtcNow - _pendingTripStarted < PENDING_TRIP_MAX) {
+            Logger.Information("Hatching sigil: {0} is already on the way to (or in) the hatching room; ignored.", Logger.Args(wizard.CharId));
+
+            return true;
+        }
+
         if (!PetHatching.SigilWindow) {
             Logger.Information("Hatching sigil: the morph zone is turned off ([Hatching] SigilWindow); no teleport.");
 
@@ -742,6 +753,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             pair ? message.PartnerName : null);
         PetMorphZone.Begin(visit);
         _pendingTrip = visit;
+        _pendingTripStarted = DateTime.UtcNow;
 
         // The chat list goes first, so `.hatch` is there whatever the window does.
         if (pair) {
@@ -768,6 +780,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             FaceSlot = isPartner ? 1 : 0,
             // Sliding onto the circle took players off the small solo pads (Justin, 2026-10-20: "drags you").
             NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
+            SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });
@@ -777,6 +790,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED))]
     private void ReceiveHatchTripFailed(CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED message) {
+        // Busy: another countdown or transfer is running, which is the trip that is still under way.
+        if (message.Failure == CHARACTER_103_PROTOCOL.HatchTripFailure.Busy) {
+            Logger.Information("Hatching sigil: a second trip was refused while one is running ({0}); the first goes on.", Logger.Args(message.Detail));
+
+            return;
+        }
+
         var trip = _pendingTrip;
         _pendingTrip = null;
         var wizard = GetActiveWizard();
