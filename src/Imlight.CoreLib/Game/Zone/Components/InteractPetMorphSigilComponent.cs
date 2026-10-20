@@ -88,6 +88,9 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     // The players standing on the pad, by character id.
     private readonly Dictionary<ulong, Occupant> _occupants = [];
+    // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
+    // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
+    private readonly HashSet<IActorRef> _litFor = [];
     private bool _logged;
 
     private MinigameSigilInfo SigilInfo
@@ -139,12 +142,22 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         LogPadOnce();
-        if (!IsSolo && PetHatching.Enabled) {
+        _litFor.Remove(playerActor);
+        if (PetHatching.Enabled) {
+            Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
+        }
+    }
+
+    // Sent at join and again on the player's first move: a state sent while the game is still loading the zone can be
+    // lost, which left the duo pads dark (Justin, 2026-10-20).
+    private void Light(IActorRef playerActor) {
+        if (PetHatching.Enabled && playerActor is not null && _litFor.Add(playerActor)) {
             Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
         }
     }
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _litFor.Remove(playerActor);
         foreach (var charId in _occupants.Where(x => x.Value.Actor.Equals(playerActor)).Select(x => x.Key).ToList()) {
             _occupants.Remove(charId);
             Logger.Information("Hatching sigil: {0} left the zone, so is off {1}.", Logger.Args(charId, PadName));
@@ -155,6 +168,9 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         if (playerWizard is null) {
             return;
         }
+
+        // The join-time state may have been sent before the game had the pad; it goes once more on the first move.
+        Light(playerActor);
 
         var charId = playerWizard.CharId;
         var onPad = IsInHorizontalRadius(playerObj, Radius);
