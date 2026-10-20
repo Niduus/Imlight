@@ -323,6 +323,8 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             foreach (var effectMessage in EquipmentExtras.TakeCardEffectMessages(wizard)) {
                 SendToSocket(effectMessage);
             }
+
+            RefreshPetMaxStats(wizard, item);
             Logger.Information("{0} socketed jewel {1} into item {2}, socket {3}.",
                 Logger.Args(wizard.CharId, jewel.m_templateID, item.m_templateID, message.SocketNumber));
         }
@@ -330,6 +332,16 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             Logger.Error("Socketing a jewel failed: {0}", Logger.Args(e));
             InformGameClient("Socketing that jewel ran into a problem. Please send the server log.");
         }
+    }
+
+    // A pet jewel's stat talent raises the pet's maximum stats while it is in; the pet window gets the new numbers.
+    private void RefreshPetMaxStats(Wizard wizard, WizClientObjectItem item) {
+        if (Imlight.CoreLib.Game.Pet.PetProgress.GetBehavior(item) is null) {
+            return;
+        }
+
+        Imlight.CoreLib.Game.Pet.PetProgress.EnsureInitialized(item);
+        Imlight.CoreLib.Game.Pet.PetCare.Finish(wizard, item, null, SendToSocket);
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST))]
@@ -374,6 +386,8 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             foreach (var effectMessage in EquipmentExtras.TakeCardEffectMessages(wizard)) {
                 SendToSocket(effectMessage);
             }
+
+            RefreshPetMaxStats(wizard, item);
         }
         catch (Exception e) {
             Logger.Error("Taking out a jewel failed: {0}", Logger.Args(e));
