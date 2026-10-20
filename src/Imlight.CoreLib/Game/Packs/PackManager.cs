@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.CoreObject;
 using Imcodec.Cryptography;
@@ -62,12 +63,16 @@ public static class PackManager {
             return;
         }
 
+        Logger.Information("Opening booster pack {0} ({1}), slots: {2}.", Logger.Args(packTemplateId,
+            (string) boosterTemplate.m_displayName, string.Join(", ", lootTables.Select(t => (string) t))));
+
         var lootItems = new List<LootInfo>(lootTables.Count);
         var lootRarities = new List<LootRarity>(lootTables.Count);
 
         foreach (var tableName in lootTables) {
             var rollResult = DropTableRoller.Roll([tableName], sessionActorRef, wizard.GameObject, wizard);
             if (rollResult.Items.Count == 0) {
+                Logger.Warning("Booster pack {0}: slot {1} gave nothing.", Logger.Args(packTemplateId, tableName));
                 continue;
             }
 
@@ -78,12 +83,11 @@ public static class PackManager {
 
                 var itemTemplate = CoreObjectFactory.GetCoreTemplate(itemTemplateId);
                 var rarity = ResolveRarity(itemTemplate, tableName);
+                var count = Math.Max(1, droppedItem.Quantity);
 
-                lootItems.Add(new TreasureCardLootInfo {
-                    m_lootType = LOOT_TYPE.LOOT_TYPE_TREASURE_CARD,
-                    m_spellID = itemTemplateId,
-                    m_numItems = 1
-                });
+                // The pack window looks a card up by its loot type: a house item sent as a treasure card showed a
+                // question mark (Justin's Friendship Pack, 2026-10-20).
+                lootItems.Add(LootFor(itemTemplate, itemTemplateId, count));
 
                 lootRarities.Add(new LootRarity {
                     m_rarity = rarity,
@@ -91,12 +95,17 @@ public static class PackManager {
                     m_odds = 0
                 });
 
-                GrantDroppedItem(sessionActorRef, wizard, itemTemplateId, itemTemplate);
+                for (var i = 0; i < count; i++) {
+                    GrantDroppedItem(sessionActorRef, wizard, itemTemplateId, itemTemplate);
+                }
 
-                Logger.Information("Granted {0} ({1}) from slot {2}",
-                    Logger.Args(droppedItem.ItemName, droppedItem.ItemId, tableName));
+                Logger.Information("Granted {0} ({1}) x{2} from slot {3}",
+                    Logger.Args(droppedItem.ItemName, droppedItem.ItemId, count, tableName));
             }
         }
+
+        Logger.Information("Booster pack {0} shows {1} cards for {2} slots.",
+            Logger.Args(packTemplateId, lootItems.Count, lootTables.Count));
 
         var lootInfoList = new LootInfoList {
             m_loot = lootItems,
@@ -119,6 +128,29 @@ public static class PackManager {
             TemplateID = packTemplateId
         });
     }
+
+    private static LootInfo LootFor(CoreTemplate template, uint templateId, int count) => template switch {
+        SpellTemplate => new TreasureCardLootInfo {
+            m_lootType = LOOT_TYPE.LOOT_TYPE_TREASURE_CARD,
+            m_spellID = templateId,
+            m_numItems = count
+        },
+        ReagentItemTemplate => new ReagentLootInfo {
+            m_lootType = LOOT_TYPE.LOOT_TYPE_REAGENT,
+            m_itemID = templateId,
+            m_numItems = count
+        },
+        PetSnackItemTemplate => new PetSnackLootInfo {
+            m_lootType = LOOT_TYPE.LOOT_TYPE_PETSNACK,
+            m_itemID = templateId,
+            m_numItems = count
+        },
+        _ => new ItemLootInfo {
+            m_lootType = LOOT_TYPE.LOOT_TYPE_ITEM,
+            m_itemID = templateId,
+            m_numItems = count
+        },
+    };
 
     private static void GrantDroppedItem(
         IActorRef sessionActorRef,
