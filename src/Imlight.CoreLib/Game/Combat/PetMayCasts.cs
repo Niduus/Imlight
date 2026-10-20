@@ -1,8 +1,8 @@
 /*
  * Pet May Cast talents (Justin, 2026-10-20), set in [PetCasting] of Imlight.ini.
  *
- * A talent such as Guardian Wall ("Maycast [Tower Shield]") casts the normal card named in its description, not the
- * game's pet copy of it ("Pet - Tower Shield"), for free and on the pet's owner. Each May Cast can go off when the
+ * A talent such as Guardian Wall ("Maycast [Tower Shield]") casts the game's pet copy of its card ("Pet - Tower
+ * Shield"), for free and on the pet's owner. Each May Cast can go off when the
  * owner or a teammate casts a spell, takes damage, or is healed, each with its own chance: the key named after the
  * card ("TowerShield = 10/25/5"), else OnCast, OnDamage and OnHeal.
  */
@@ -111,19 +111,24 @@ internal static class PetMayCasts {
     }
 
     /// <summary>
-    /// The normal card for a May Cast: the card named in the talent's description, else the game's pet spell without
-    /// its "Pet - " name, else a card shown with that name, else the pet spell itself.
+    /// The card for a May Cast: the game's pet copy of it ("Pet - Tower Shield", from PetTalentsTriggeredSpells.xml;
+    /// Justin, 2026-10-20), else the card named in the talent's description, else that pet spell without its
+    /// "Pet - " name, else a card shown with the description's name.
     /// </summary>
     private static string FindCard(string cardName, PetTalentTemplate talent) {
-        if (SpellFactory.Exists(cardName)) {
-            return cardName;
-        }
-
         var triggers = talent.m_effectList.OfType<ProvideCombatTriggerInfo>()
             .Select(info => (string) info.m_triggerName)
             .Append((string) talent.m_talentName)
             .SelectMany(Imlight.CoreLib.Game.Pet.PetTalentsTriggeredSpells.GetSpellNames)
             .ToList();
+        if (triggers.FirstOrDefault(SpellFactory.Exists) is { } petCopy) {
+            return petCopy;
+        }
+
+        if (SpellFactory.Exists(cardName)) {
+            return cardName;
+        }
+
         foreach (var petSpell in triggers) {
             var plain = Unpet(petSpell);
             if (plain != petSpell && !Unusual(plain) && SpellFactory.Exists(plain)) {

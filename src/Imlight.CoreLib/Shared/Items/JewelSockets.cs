@@ -159,11 +159,28 @@ internal static class JewelSockets {
     /// The pet talents of the jewel in a pet's socket.
     /// </summary>
     internal static IEnumerable<string> GetPetJewelTalents(WizClientObjectItem pet)
-        => GetSocketedJewels(pet)
-            .SelectMany(t => t.m_behaviors?.OfType<PetJewelBehaviorTemplate>() ?? [])
+        => GetSocketedJewels(pet).SelectMany(JewelTalents);
+
+    // Some talent jewels, such as Guardian Wall Sapphire (Jewel-ST-Talent-Combat-TowerShield), have no
+    // PetJewelBehavior; their talent is the end of the jewel's name.
+    private static IEnumerable<string> JewelTalents(WizItemTemplate jewel) {
+        var named = (jewel.m_behaviors?.OfType<PetJewelBehaviorTemplate>() ?? [])
             .SelectMany(b => b.m_petTalentName ?? [])
             .Select(n => (string) n)
-            .Where(n => !string.IsNullOrEmpty(n));
+            .Where(n => !string.IsNullOrEmpty(n))
+            .ToList();
+        if (named.Count > 0) {
+            return named;
+        }
+
+        string objectName = jewel.m_objectName;
+        var start = objectName?.IndexOf("Talent-", StringComparison.OrdinalIgnoreCase) ?? -1;
+        if (start < 0 || Imlight.CoreLib.Game.Pet.PetData.GetTalent(objectName[start..]) is null) {
+            return [];
+        }
+
+        return [objectName[start..]];
+    }
 
     /// <summary>
     /// Checks whether a jewel can go in a socket.
