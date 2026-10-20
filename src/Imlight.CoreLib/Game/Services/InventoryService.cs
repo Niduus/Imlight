@@ -360,11 +360,10 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
                 return;
             }
 
-            // A socket marked lockable keeps its jewel safe ("No Shatter"); any other jewel shatters on the way out
-            // unless [Jewels] KeepShatteredJewels is on (Justin, 2026-10-20).
-            var sockets = JewelSockets.GetSockets(ItemHelper.GetItemTemplate(item));
-            var noShatter = message.SocketNumber < sockets.Count && sockets[message.SocketNumber]?.m_bLockable == true;
+            // A No Shatter jewel goes back to the backpack; any other jewel shatters on the way out unless
+            // [Jewels] KeepShatteredJewels is on (Justin, 2026-10-20).
             var jewelTemplateId = JewelSockets.Unsocket(item, message.SocketNumber);
+            var noShatter = JewelSockets.IsNoShatter(CoreObjectFactory.GetCoreTemplate(jewelTemplateId) as WizItemTemplate);
             if (jewelTemplateId == 0) {
                 InformGameClient("That socket is empty.");
 
