@@ -475,6 +475,20 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             PetCastCards[owner] = cards = [];
         }
 
+        // Free on screen too: the copy the game plays has its rank taken off. Done after resolving, because the server
+        // also reads m_regularAdjust as a damage/heal bonus.
+        var rank = template.m_spellRank?.m_spellRank ?? 0;
+        if (PetMayCasts.ZeroCost && rank > 0) {
+            var free = spell with { m_regularAdjust = spell.m_regularAdjust - rank };
+            for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                if (ReferenceEquals(combatActionList.m_actionList[i].m_spell, spell)) {
+                    combatActionList.m_actionList[i].m_spell = free;
+                }
+            }
+
+            spell = free;
+        }
+
         cards.Add(spell);
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
         // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.

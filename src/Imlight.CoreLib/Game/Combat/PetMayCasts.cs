@@ -36,6 +36,9 @@ internal static class PetMayCasts {
     internal static readonly bool Chain = ConfigurationManager.GetValue("PetCasting.Chain", true);
     internal static readonly int MaxChain = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
+    // The game takes a card's pips from its template rank plus m_regularAdjust (m_pipCost is never sent), so the pet's
+    // copy goes out with the rank taken off (Justin, 2026-10-20: pets drained his pips and kept casting at 0).
+    internal static readonly bool ZeroCost = ConfigurationManager.GetValue("PetCasting.ZeroCost", true);
     /// <summary>
     /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
     /// pet-flagged casts of the pet copy: "does not spell in hand"). Null uses the [PetCasting] switches.
