@@ -2062,8 +2062,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         try {
-            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, message.Target, message.SkipCast,
-                                                          message.When);
+            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, out var enchantment,
+                                                          message.Target, message.SkipCast, message.When, message.Enchant);
             var when = message.When switch {
                 'f' => "before anyone's turn",
                 'l' => "after everyone's turn",
@@ -2076,7 +2076,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             };
             Inform(count == 0
                 ? $"Could not cast {message.SpellName}."
-                : $".{name}: {message.SpellName}{on} casts {when} this round{(message.SkipCast ? ", without the casting animation" : "")} ({count} queued).");
+                : $".{name}: {message.SpellName}{(enchantment is null ? message.Enchant ? " (no enchantment fits it)" : "" : $" with {enchantment}")}{on} casts {when} this round{(message.SkipCast ? ", without the casting animation" : "")} ({count} queued).");
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | .{1} failed: {2}", Logger.Args(SigilId, name, ex));

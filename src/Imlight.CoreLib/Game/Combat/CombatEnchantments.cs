@@ -81,7 +81,8 @@ internal static class CombatEnchantments {
         or kSpellEffects.kModifyCardCharm or kSpellEffects.kModifyCardWard or kSpellEffects.kModifyCardOutgoingDamage
         or kSpellEffects.kModifyCardOutgoingAccuracy or kSpellEffects.kModifyCardOutgoingHeal
         or kSpellEffects.kModifyCardOutgoingArmorPiercing or kSpellEffects.kModifyCardIncomingDamage
-        or kSpellEffects.kModifyCardAbsorbDamage or kSpellEffects.kModifyCardDamagebyRank;
+        or kSpellEffects.kModifyCardAbsorbDamage or kSpellEffects.kModifyCardDamagebyRank
+        or kSpellEffects.kProtectCardBeneficial or kSpellEffects.kProtectCardHarmful;
 
     /// <summary>
     /// Plays <paramref name="enchantment"/> onto <paramref name="target"/>, a card in the hand. Returns false
@@ -186,6 +187,14 @@ internal static class CombatEnchantments {
                 case kSpellEffects.kModifyCardAbsorbDamage:
                     changed |= Modify(result, t => t == kSpellEffects.kAbsorbDamage, e => Grow(e, amount));
                     break;
+                // Aegis (a buff) and Indemnity (a debuff): the charm or ward survives one removal.
+                case kSpellEffects.kProtectCardBeneficial:
+                case kSpellEffects.kProtectCardHarmful:
+                    var harmful = modifier.m_effectType == kSpellEffects.kProtectCardHarmful;
+                    changed |= ModifyWhere(result, t => IsCharm(t) || IsWard(t),
+                        e => (e.m_disposition == kHangingDisposition.kHarmful) == harmful,
+                        e => e with { m_protected = true });
+                    break;
             }
         }
 
@@ -217,6 +226,23 @@ internal static class CombatEnchantments {
         }
 
         return changed;
+    }
+
+    // Like Modify, for only the effects <paramref name="which"/> picks.
+    private static bool ModifyWhere(SpellTemplate spell, Func<kSpellEffects, bool> types, Func<SpellEffect, bool> which,
+                                    Func<SpellEffect, SpellEffect> change) {
+        var any = false;
+        Modify(spell, types, e => {
+            if (!which(e)) {
+                return e;
+            }
+
+            any = true;
+
+            return change(e);
+        });
+
+        return any;
     }
 
     private static SpellEffect ModifyEffect(SpellEffect effect, Func<kSpellEffects, bool> types,

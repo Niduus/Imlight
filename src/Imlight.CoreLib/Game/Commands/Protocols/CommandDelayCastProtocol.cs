@@ -65,17 +65,21 @@ internal class CommandDelayCastProtocol : CommandProtocol {
     }
 
     /// <summary>
-    /// `.cX [s/f/l] [target] spell` (Justin, 2026-10-20): s skips the casting animation, f casts before anyone's
-    /// turn this round, l after everyone's; they mix, like sf. The target is p1-p4, e1-e4 or all (a single-target
-    /// spell then casts once on each enemy, or each teammate).
+    /// `.cX [s/f/l/e] [target] spell` (Justin, 2026-10-20): s skips the casting animation, f casts before anyone's
+    /// turn this round, l after everyone's, e adds the best enchantment that fits (Epic, Sharpened Blade...); they
+    /// mix, like sfe. The target is p1-p4, e1-e4 or all (a single-target
+    /// spell then casts once on each enemy, or each teammate). A number after the spell repeats it.
     /// </summary>
     private void Queue(string spell, bool atStart, bool skip) {
         var words = (spell ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
         var when = 'n';
+        var enchant = false;
 
-        if (words.Count > 1 && words[0].ToLowerInvariant() is var options && options.Length <= 3
-            && options.All(c => c is 's' or 'f' or 'l') && !(options.Contains('f') && options.Contains('l'))) {
+        if (words.Count > 1 && words[0].ToLowerInvariant() is var options && options.Length <= 4
+            && options.Distinct().Count() == options.Length
+            && options.All(c => c is 's' or 'f' or 'l' or 'e') && !(options.Contains('f') && options.Contains('l'))) {
             skip |= options.Contains('s');
+            enchant = options.Contains('e');
             when = options.Contains('f') ? 'f' : options.Contains('l') ? 'l' : 'n';
             words.RemoveAt(0);
         }
@@ -90,25 +94,40 @@ internal class CommandDelayCastProtocol : CommandProtocol {
         var command = (atStart ? ".c1" : ".c2");
         var name = string.Join(' ', words);
         if (name.Length == 0) {
-            InformSenderClient($"Use {command}, optional s (no casting animation), f (first, before anyone) or l (last, after everyone), an optional target (p1 is you, p2-p4 teammates, e1-e4 enemies, all for everyone) and a spell's name or ID, such as {command} sf all Fire Cat.");
+            InformSenderClient($"Use {command}, optional s (no casting animation), e (best enchantment), f (first, before anyone) or l (last, after everyone), an optional target (p1 is you, p2-p4 teammates, e1-e4 enemies, all for everyone) a spell's name or ID and an optional number of times, such as {command} sf all Fire Cat 3.");
 
             return;
         }
 
+        // A number at the end repeats the spell (Justin, 2026-10-20: `.c1 Fire Cat 3`), unless it is part of the
+        // spell's name ("Detonate All 200").
+        var repeat = 1;
         if (!CommandDrawProtocol.TryFindSpell(name, out var templateId, out var spellName)) {
-            InformSenderClient($"No spell called \"{name}\" was found. Try .lookup spell {name} to see the names.");
+            if (words.Count > 1 && int.TryParse(words[^1], out var times) && times > 0
+                && CommandDrawProtocol.TryFindSpell(string.Join(' ', words[..^1]), out templateId, out spellName)) {
+                repeat = Math.Min(times, MaxRepeat);
+            }
+            else {
+                InformSenderClient($"No spell called \"{name}\" was found. Try .lookup spell {name} to see the names.");
 
-            return;
+                return;
+            }
         }
 
-        Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATDELAYCAST {
-            SpellTemplateId = templateId,
-            SpellName = spellName,
-            AtStart = atStart,
-            Target = target,
-            SkipCast = skip,
-            When = when,
-        });
+        for (var i = 0; i < repeat; i++) {
+            Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATDELAYCAST {
+                SpellTemplateId = templateId,
+                SpellName = spellName,
+                AtStart = atStart,
+                Target = target,
+                SkipCast = skip,
+                When = when,
+                Enchant = enchant,
+            });
+        }
     }
+
+    // The most times one spell repeats.
+    private const int MaxRepeat = 20;
 
 }
