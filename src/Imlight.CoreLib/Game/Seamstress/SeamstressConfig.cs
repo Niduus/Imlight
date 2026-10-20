@@ -34,6 +34,9 @@
  * Last Updated: 10/15/2026
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Imlight.Common;
 
@@ -47,6 +50,7 @@ internal static class SeamstressConfig {
     private const string StitchCrownsKey = "Seamstress.StitchCrowns";
     private const string UnstitchCrownsKey = "Seamstress.UnstitchCrowns";
     private const string ShopTitleKeyKey = "Seamstress.ShopTitleKey";
+    private const string ObjectNamesKey = "Seamstress.ObjectNames";
 
     private static int s_warnedUnsetPrices;
 
@@ -54,6 +58,19 @@ internal static class SeamstressConfig {
     /// The locale key shown as the title of the stitch and unstitch windows.
     /// </summary>
     internal static string ShopTitleKey => ConfigurationManager.GetValue(ShopTitleKeyKey, string.Empty);
+
+    /// <summary>
+    /// The object names of the NPCs that stitch, besides the ones SpiralDB marks (SpiralDB has none; Justin,
+    /// 2026-10-20: every Eloise Merryweather stitches).
+    /// </summary>
+    internal static IReadOnlySet<string> ObjectNames {
+        get {
+            var configured = ConfigurationManager.GetValue(ObjectNamesKey, string.Empty);
+
+            return configured.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+    }
 
     /// <summary>
     /// Reads the Crowns prices of one stitch and one unstitch.

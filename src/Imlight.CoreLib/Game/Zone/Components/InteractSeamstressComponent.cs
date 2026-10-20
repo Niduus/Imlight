@@ -69,7 +69,8 @@ internal sealed class InteractSeamstressComponent(ZoneEntity entity) : ZoneEntit
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
-        && NpcSeamstressCollection.TryGetSeamstress(goTemplate.m_templateID, out _)
+        && (NpcSeamstressCollection.TryGetSeamstress(goTemplate.m_templateID, out _)
+            || SeamstressConfig.ObjectNames.Contains(goTemplate.m_objectName.ToString()))
         && SeamstressConfig.TryGetPrices(out _, out _);
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
