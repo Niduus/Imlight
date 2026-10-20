@@ -298,7 +298,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         _activeSigilEntry = message;
 
-        SnapPlayerToSigilFace(message);
+        if (!message.NoSnap) {
+            SnapPlayerToSigilFace(message);
+        }
 
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
             Time = SIGIL_COUNTDOWN_SECONDS,
