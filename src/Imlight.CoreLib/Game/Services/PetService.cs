@@ -513,7 +513,24 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 PetHatching.Talents(behavior?.m_allTalents), PetHatching.Talents(behavior?.m_allDerbyTalents),
                 string.Join("/", (behavior?.m_maxStats ?? []).Select(s => $"{s.m_name} {s.m_value}"))));
 
-        SendEggCreatedMessages(slot);
+        if (message.Source != HatchSource.Sigil) {
+            SendEggCreatedMessages(slot);
+        }
+        else {
+            // The morph window's egg picture: a guess that it wants the pet's template, as the field's name says.
+            var name = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(egg, out var petName) ? petName.m_nameKeys : 0;
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
+                PetTemplateGID = egg.m_templateID,
+                PetName = name,
+                HatchTime = (uint) slot.m_timeFinished
+            });
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHINGSLOT {
+                GlobalID = slot.m_globalID,
+                Removed = 0,
+                ExpireTimeCount = (uint) slot.m_timeFinished
+            });
+        }
+
         StartEggTimer(slot);
 
         return null;
