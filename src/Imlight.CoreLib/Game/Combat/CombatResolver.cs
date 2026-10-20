@@ -384,9 +384,14 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
         var cinematicTime = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
-        for (var i = before; PetMayCasts.ShowAsPetCast && i < combatActionList.m_actionList.Count; i++) {
-            combatActionList.m_actionList[i].m_petCast = true;
-            combatActionList.m_actionList[i].m_petCastTarget = target.SlotIndex;
+        // The card is not in the owner's hand; the game skipped it ("does not spell in hand") while the round still
+        // waited for its cinematic. Forced, it is cast without looking in the hand.
+        for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+            combatActionList.m_actionList[i].m_forceSpell = true;
+            if (PetMayCasts.ShowAsPetCast) {
+                combatActionList.m_actionList[i].m_petCast = true;
+                combatActionList.m_actionList[i].m_petCastTarget = target.SlotIndex;
+            }
         }
 
         return cinematicTime;

@@ -29,7 +29,9 @@ internal static class PetMayCasts {
 
     internal static readonly bool Enabled = ConfigurationManager.GetValue("PetCasting.Enabled", true);
     internal static readonly int MaxPerRound = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxPerRound", 1));
-    internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCast", true);
+    // Flagged as the pet's, the game looked for the card in the owner's hand and skipped it ("does not spell in
+    // hand"; Justin's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
+    internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
     private static readonly int s_onCast = ConfigurationManager.GetValue("PetCasting.OnCast", 10);
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
     private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
