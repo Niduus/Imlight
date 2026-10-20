@@ -48,6 +48,7 @@ using Imlight.CoreLib.Game.Seamstress;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -71,8 +72,11 @@ internal sealed class InteractSeamstressComponent(ZoneEntity entity) : ZoneEntit
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && (NpcSeamstressCollection.TryGetSeamstress(goTemplate.m_templateID, out _)
             || SeamstressConfig.ObjectNames.Contains(goTemplate.m_objectName.ToString())
-            || SeamstressConfig.PetObjectNames.Contains(goTemplate.m_objectName.ToString()))
+            || IsPetStitcher(goTemplate))
         && SeamstressConfig.TryGetPrices(out _, out _);
+
+    private static bool IsPetStitcher(CoreTemplate template)
+        => template is GameObjectTemplate goTemplate && SeamstressConfig.PetObjectNames.Contains(goTemplate.m_objectName.ToString());
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
         => [
@@ -91,6 +95,13 @@ internal sealed class InteractSeamstressComponent(ZoneEntity entity) : ZoneEntit
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         if (!SeamstressConfig.TryGetPrices(out var stitchCrowns, out var unstitchCrowns)) {
             return;
+        }
+
+        // Zeke: the window lists the pets as stand-in wands; anyone else takes the stand-ins away again.
+        if (IsPetStitcher(CoreObjectFactory.GetCoreTemplate(Entity.ActiveGameObject.m_templateID))) {
+            PetStitchProxies.Show(playerActor, playerCharacter, stitchedOnly: serviceOptionIndex != StitchOptionIndex);
+        } else {
+            PetStitchProxies.Clear(playerActor, playerCharacter);
         }
 
         if (serviceOptionIndex == StitchOptionIndex) {
