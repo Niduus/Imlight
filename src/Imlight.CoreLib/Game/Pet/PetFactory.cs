@@ -269,23 +269,33 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
     private static ClientPetNameBehavior CreatePetNameBehavior(WizClientObjectItem pet, ClientPetNameBehavior itemName) {
         CoreObjectFactory.FindBehaviorInstance<ClientPetItemBehavior>(pet, out var petItemBehavior);
+        // A pet stitched at Zeke shows the race (model) of the pet whose look it took.
+        var look = LookTemplateId(pet);
+        var lookTemplate = look == (uint) pet.m_templateID ? null : GetPetItemBehaviorTemplate(look);
 
         return new ClientPetNameBehavior {
             m_nameKeys = itemName.m_nameKeys,
             // A name given with .name pet.
             m_wsNameOverride = itemName.m_wsNameOverride,
             m_useRank = true,
-            m_eGender = itemName.m_eGender,
-            m_eRace = itemName.m_eRace,
+            m_eGender = lookTemplate?.m_eGender ?? itemName.m_eGender,
+            m_eRace = lookTemplate?.m_eRace ?? itemName.m_eRace,
             m_overallRating = petItemBehavior?.m_overallRating ?? 0,
             m_activeRating = petItemBehavior?.m_activeRating ?? 0,
             m_petLevel = petItemBehavior?.m_level ?? 0,
-            m_templateID = (uint) pet.m_templateID,
+            m_templateID = look,
         };
     }
 
+    /// <summary>
+    /// The template a pet looks like: the one it was stitched to, else its own.
+    /// </summary>
+    internal static uint LookTemplateId(WizClientObjectItem pet)
+        => (uint) pet.m_displayID != 0 && IsPetTemplate((uint) pet.m_displayID) ? (uint) pet.m_displayID : (uint) pet.m_templateID;
+
     private static WizardCharacterBehavior CreatePetAppearance(WizClientObjectItem pet, ClientPetNameBehavior itemName) {
-        var petItemTemplate = GetPetItemBehaviorTemplate((uint) pet.m_templateID);
+        var look = LookTemplateId(pet);
+        var petItemTemplate = GetPetItemBehaviorTemplate(look);
         if (petItemTemplate is null) {
             Logger.Warning("Pet {0} has no pet item behavior on template {1}; it will show its race's default look.",
                 Logger.Args(pet.m_globalID.Full, pet.m_templateID.Full));
@@ -297,9 +307,10 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
         // Live writes the primary texture into every color slot and the secondary into every decal
         // slot; the 4-bit skin color saturates, the skin decal keeps its high bits in the extended field.
+        var stitched = look != (uint) pet.m_templateID && petItemTemplate is not null;
         return new WizardCharacterBehavior {
-            m_eRace = itemName.m_eRace,
-            m_eGender = itemName.m_eGender,
+            m_eRace = stitched ? petItemTemplate.m_eRace : itemName.m_eRace,
+            m_eGender = stitched ? petItemTemplate.m_eGender : itemName.m_eGender,
             m_nSkinColor = (Bui4) Math.Min(primary, MaxSkinColor),
             m_nHairColor = (Bui7) primary,
             m_nHatColor = (Bui5) primary,

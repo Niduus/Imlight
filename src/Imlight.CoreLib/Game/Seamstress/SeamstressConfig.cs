@@ -51,6 +51,7 @@ internal static class SeamstressConfig {
     private const string UnstitchCrownsKey = "Seamstress.UnstitchCrowns";
     private const string ShopTitleKeyKey = "Seamstress.ShopTitleKey";
     private const string ObjectNamesKey = "Seamstress.ObjectNames";
+    private const string PetObjectNamesKey = "Seamstress.PetObjectNames";
 
     private static int s_warnedUnsetPrices;
 
@@ -63,14 +64,17 @@ internal static class SeamstressConfig {
     /// The object names of the NPCs that stitch, besides the ones SpiralDB marks (SpiralDB has none; Justin,
     /// 2026-10-20: every Eloise Merryweather stitches).
     /// </summary>
-    internal static IReadOnlySet<string> ObjectNames {
-        get {
-            var configured = ConfigurationManager.GetValue(ObjectNamesKey, string.Empty);
+    internal static IReadOnlySet<string> ObjectNames => Names(ObjectNamesKey);
 
-            return configured.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        }
-    }
+    /// <summary>
+    /// The object names of the NPCs that stitch pets (Justin, 2026-10-20: every Prospector Zeke).
+    /// </summary>
+    internal static IReadOnlySet<string> PetObjectNames => Names(PetObjectNamesKey);
+
+    private static HashSet<string> Names(string key)
+        => ConfigurationManager.GetValue(key, string.Empty)
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Reads the Crowns prices of one stitch and one unstitch.
