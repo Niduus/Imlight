@@ -32,11 +32,28 @@ internal class CommandDelayCastProtocol : CommandProtocol {
 
     [Command("c1")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void DaybreakerCommand([Remainder] string spell) => Queue(spell, atStart: true);
+    private void DaybreakerCommand([Remainder] string spell) => QueueAll(spell, atStart: true);
 
     [Command("c2")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void NightbringerCommand([Remainder] string spell) => Queue(spell, atStart: false);
+    private void NightbringerCommand([Remainder] string spell) => QueueAll(spell, atStart: false);
+
+    /// <summary>
+    /// Several spells in one line, split by commas; each part can start with c1 or c2 to pick its queue, else it
+    /// goes in the typed command's queue (Justin, 2026-10-20: `.c1 Tower Shields, c2 Pyrodynamics`).
+    /// </summary>
+    private void QueueAll(string spells, bool atStart) {
+        foreach (var part in (spells ?? "").Split(',', StringSplitOptions.TrimEntries)) {
+            var words = part.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+            var first = words.Length > 0 ? words[0].TrimStart('.').ToLowerInvariant() : "";
+            if (first is "c1" or "c2") {
+                atStart = first == "c1";
+                Queue(words.Length > 1 ? words[1] : "", atStart);
+            } else {
+                Queue(part, atStart);
+            }
+        }
+    }
 
     private void Queue(string spell, bool atStart) {
         var command = atStart ? ".c1" : ".c2";
