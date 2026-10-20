@@ -38,8 +38,9 @@
  * duo pads the dynamod state "On", which is sent here to each joining player as well. Every step is
  * logged starting "Hatching sigil".
  *
- * The game shows no prompt on the solo pads (they have no model of their own, unlike the duo pads), so
- * standing on a solo pad for [Hatching] SoloPadSeconds starts the solo hatch as if X was pressed.
+ * The solo pads have no model of their own, so the game was never sent them and showed no prompt; RenderComponent
+ * now sends them. Standing on a solo pad for [Hatching] SoloPadSeconds (0 = off) still starts the solo hatch as
+ * if X was pressed.
  *
  * TODO:
  * - Whether live offered a MinigameSigilOption (m_successZone ThePhantomZoneWorld/PetGameMorph) instead
