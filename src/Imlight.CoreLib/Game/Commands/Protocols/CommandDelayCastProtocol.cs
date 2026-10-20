@@ -32,31 +32,40 @@ internal class CommandDelayCastProtocol : CommandProtocol {
 
     [Command("c1")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void DaybreakerCommand([Remainder] string spell) => QueueAll(spell, atStart: true);
+    private void DaybreakerCommand([Remainder] string spell) => QueueAll(spell, atStart: true, skip: false);
+
+    [Command("c1s")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void FirstSkipCommand([Remainder] string spell) => QueueAll(spell, atStart: true, skip: true);
+
+    [Command("c2s")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void AfterSkipCommand([Remainder] string spell) => QueueAll(spell, atStart: false, skip: true);
 
     [Command("c2")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void NightbringerCommand([Remainder] string spell) => QueueAll(spell, atStart: false);
+    private void NightbringerCommand([Remainder] string spell) => QueueAll(spell, atStart: false, skip: false);
 
     /// <summary>
     /// Several spells in one line, split by commas; each part can start with c1 or c2 to pick its queue, else it
     /// goes in the typed command's queue (Justin, 2026-10-20: `.c1 Tower Shields, c2 Pyrodynamics`).
     /// </summary>
-    private void QueueAll(string spells, bool atStart) {
+    private void QueueAll(string spells, bool atStart, bool skip) {
         foreach (var part in (spells ?? "").Split(',', StringSplitOptions.TrimEntries)) {
             var words = part.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
             var first = words.Length > 0 ? words[0].TrimStart('.').ToLowerInvariant() : "";
-            if (first is "c1" or "c2") {
-                atStart = first == "c1";
-                Queue(words.Length > 1 ? words[1] : "", atStart);
+            if (first is "c1" or "c2" or "c1s" or "c2s") {
+                atStart = first.StartsWith("c1");
+                skip = first.EndsWith('s');
+                Queue(words.Length > 1 ? words[1] : "", atStart, skip);
             } else {
-                Queue(part, atStart);
+                Queue(part, atStart, skip);
             }
         }
     }
 
-    private void Queue(string spell, bool atStart) {
-        var command = atStart ? ".c1" : ".c2";
+    private void Queue(string spell, bool atStart, bool skip) {
+        var command = (atStart ? ".c1" : ".c2") + (skip ? "s" : "");
         var name = (spell ?? "").Trim();
 
         // An optional target first: p1 (you) to p4 (teammates), e1 to e4 (enemies).
@@ -85,6 +94,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
             SpellName = spellName,
             AtStart = atStart,
             Target = target,
+            SkipCast = skip,
         });
     }
 

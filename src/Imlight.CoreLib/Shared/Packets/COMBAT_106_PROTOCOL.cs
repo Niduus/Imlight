@@ -354,6 +354,8 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public string SpellName;
         public bool AtStart;
         public string Target;
+        // .c1s/.c2s: the game skips the casting animation (CombatAction.m_showCast off).
+        public bool SkipCast;
         public IActorRef Actor;
 
     }
