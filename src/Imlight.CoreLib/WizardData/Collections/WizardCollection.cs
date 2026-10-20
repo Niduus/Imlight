@@ -483,6 +483,20 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Updates the PvP ratings of a wizard.
+    /// </summary>
+    /// <param name="wizard">The wizard whose PvP rating records should be persisted.</param>
+    /// <returns>True if the update was successful; otherwise, false.</returns>
+    public static bool UpdateCharacterPvPEloBehavior(Wizard wizard) {
+        if (wizard is null || wizard.PvPEloBehavior is null) {
+            return false;
+        }
+
+        return UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.PvPEloBehavior = wizard.PvPEloBehavior);
+    }
+
+    /// <summary>
     /// Updates the character spellbook behavior for a wizard; persists the
     /// excluded item spell list and other spellbook state to the database.
     /// </summary>
@@ -534,6 +548,23 @@ public static class WizardCollection {
     public static void UpdateCharacterLastLoginTime(Wizard wizard) {
         UpdateCharacter(wizard.CharId, existingCharacter =>
             existingCharacter.LastLoginTime = wizard.LastLoginTime);
+    }
+
+    /// <summary>
+    /// Updates the character radial menu data for a wizard.
+    /// </summary>
+    public static void UpdateCharacterRadialMenuData(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.RadialMenuData = wizard.RadialMenuData;
+            existingCharacter.RadialMenu2Data = wizard.RadialMenu2Data;
+            existingCharacter.RadialMenu3Data = wizard.RadialMenu3Data;
+        });
+    }
+
+    public static void UpdateCharacterCSWishlist(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, character =>
+            character.CrownShopWishlist = wizard.CrownShopWishlist
+        );
     }
 
     /// <summary>

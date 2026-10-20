@@ -528,4 +528,18 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Synchronizes an updated Crown Shop wishlist to an online character's session.
+    /// </summary>
+    public sealed class MSG_UPDATE_WISHLIST : IServerMessage {
+
+        public byte MessageOrder { get; } = 33;
+        public byte ServiceID { get; } = 103;
+
+        public ulong CharId;
+        public ByteString WishlistData;
+        public uint RemovedTemplateId;
+
+    }
+
 }

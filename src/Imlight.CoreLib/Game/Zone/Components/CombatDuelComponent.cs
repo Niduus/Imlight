@@ -58,6 +58,8 @@ using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.PvP;
+using Imlight.CoreLib.Game.PvP.Arena;
+using Imlight.CoreLib.Game.PvP.Data;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -95,8 +97,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private const string PREPLANNING_TIME_KEY = "PrePlanningPhase";
     private const string RESOUTION_TIME_KEY = "ResolutionPhase";
     private const double MINION_SUMMON_ANIMATION_DELAY = 5.5;
-    private const string GroupJoinPromptKey = "GUI_GotoFriendQuestion";
+    private const string GROUP_JOIN_PROMPT_KEY = "GUI_GotoFriendQuestion";
     private const string PVP_RETURN_GRACE_KEY = "PvPReturnGrace";
+    private const double PVP_RETURN_GRACE_SECONDS = 0; // todo: measure in game
 
     public bool NoTransfer { get; set; } = false;
     public ITimerScheduler Timers { get; set; }
@@ -125,6 +128,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         => (byte) SubCircles.Count(x => x.Occupied && x.OccupiedTeam == CombatTeam.Monster && x.IsAlive && x.AddedToDuel);
     public ulong SigilId => Entity.ActiveGameObject.m_globalID;
     internal bool IsPvPDuel => _pvp is not null;
+    internal uint PvPLeagueId => _pvp?.LeagueId ?? 0;
     private byte PlanningSeconds => IsPvPDuel ? PvPSettings.PracticePlanningSeconds : PLANNING_TIME;
 
     /// <summary>
@@ -342,6 +346,20 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         ActivateSigil();
     }
 
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_FORFEITPVPPARTICIPANT))]
+    private void ReceiveForfeitPvPParticipant(ZONE_102_PROTOCOL.MSG_FORFEITPVPPARTICIPANT message) {
+        if (!IsPvPDuel || !_isActive || _pvp.MatchId != message.MatchId) {
+            return;
+        }
+
+        var subCircle = SubCircles.FirstOrDefault(circle => circle.Occupied && circle._wizard?.CharId == message.CharId);
+        if (subCircle is null) {
+            return;
+        }
+
+        ForfeitPvPDuel(subCircle);
+    }
+
     private void ActivateSigil() {
         _renderComponent.Enable();
 
@@ -378,8 +396,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         CombatResolver.Reset();
         _awaitingCombatMoves = true;
 
-        // Determine the power pip gain for each participant.
-        DoPipGain();
+        // Determine the power pip gain. Alternating turns gain in the opponent's phase: the non-starter now.
+        DoPipGain(IsAlternatingPvP ? PvPDuelState.Opposite(_pvp.RoundStarter) : null);
 
         if (IsPvPDuel) {
             BeginPvPHalfTurn();
@@ -638,7 +656,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         if (_pvp.TryBeginSecondHalfTurn()) {
-            // The other team acts next in the same round: no new round, no new pips.
+            // The other team acts next in the same round. The starter team gains its pips as phase two begins.
+            DoPipGain(_pvp.RoundStarter);
             BeginPvPHalfTurn();
             SendUpFirst(Duel.m_roundNum);
 
@@ -825,7 +844,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
     };
 
-    private Duel CreateDuelWithPvPDefaults(PvPDuelRules rules) => new() {
+    private Duel CreateDuelWithPvPDefaults(PvPDuelRules rules, uint leagueId) => new() {
         m_duelID = SigilId,
         m_bPVP = true,
         m_planningTimer = PvPSettings.PracticePlanningSeconds,
@@ -847,20 +866,19 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         m_duelModifier = new DuelModifier() {
             m_battlefieldEffects = [],
             m_combatTriggers = [],
-            m_gameEffects = [],
+            m_gameEffects = PvPLeagueScaling.CreateClientEffects(leagueId),
         }
     };
 
     private void InitializePvPDuel(ZONE_102_PROTOCOL.MSG_STARTPVPMATCH message, PvPDuelRules rules) {
-        Duel = CreateDuelWithPvPDefaults(rules);
+        Duel = CreateDuelWithPvPDefaults(rules, message.LeagueId);
         SubCircles = CreateDuelActorSubCircles(_sigilTemplate);
         CombatResolver = new Combat.CombatResolver(Duel, SubCircles);
 
         var firstTeam = DetermineFirstTeam();
         Duel.m_firstTeamToAct = (int) firstTeam;
         Duel.m_originalFirstTeamToAct = (int) firstTeam;
-        _pvp = new PvPDuelState(message.MatchId, message.TournamentNameId, message.Roster, rules, firstTeam,
-            PvPSettings.SwapFirstTeamEachRound);
+        _pvp = new PvPDuelState(message.MatchId, message.TournamentNameId, message.LeagueId, message.Roster, rules, firstTeam);
 
         // The roster is fixed: each player sits on a circle of their side and is moved onto it first, because
         // they stand wherever they arrived in the zone.
@@ -1145,7 +1163,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
             // Accepting sends MSG_GotoPlayerConfirm back, which GroupService turns into MSG_JOINRESERVEDDUEL.
             groupMate.Session?.Tell(new WIZARD2_53_PROTOCOL.MSG_GotoPlayerConfirm {
-                PromptKey = GroupJoinPromptKey,
+                PromptKey = GROUP_JOIN_PROMPT_KEY,
                 TargetCharacterID = charId,
                 DisableCrossPlay = 0,
                 ClientPlatform = 0
@@ -1247,8 +1265,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
     private void SendCombatStats() => EnactActionOnSubCircles(circle => {
         // Serialize participant stats and send them to the participant, locally.
-        var participantStats = circle.ParticipantGameStats;
-        var participantCombatsStats = participantStats?.GetCombatGameStats();
+        var participantCombatsStats = circle.ClientGameStats;
         if (participantCombatsStats is null) {
             Logger.Error("Failed to get combat stats for duel {0}",
                 Logger.Args(SigilId));
@@ -1950,7 +1967,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Duel.m_flatParticipantList.Add(participant);
     });
 
-    private void DoPipGain() {
+    private bool IsAlternatingPvP => IsPvPDuel && _pvp.Rules.AlternateTurns;
+
+    private void DoPipGain(CombatTeam? onlyTeam = null) {
         // Archmastery fills fastest for whoever has the most of it in the battle.
         var highestArchmastery = 0f;
         EnactActionOnSubCircles(circle => {
@@ -1961,6 +1980,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         EnactActionOnSubCircles(circle => {
             if (!circle.AddedToDuel || !circle.IsAlive) {
+                return;
+            }
+
+            if (onlyTeam is { } team && circle.OccupiedTeam != team) {
                 return;
             }
 
@@ -2222,7 +2245,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Each client reports when its victory scene is over; a draw plays none and reports nothing, so the wait is
         // bounded by the grace period either way.
-        var grace = PvPSettings.ReturnGrace;
+        var grace = TimeSpan.FromSeconds(PVP_RETURN_GRACE_SECONDS);
         if (grace > TimeSpan.Zero && _pvp.HasSessionsToWaitFor) {
             Timers.StartSingleTimer(PVP_RETURN_GRACE_KEY, new COMBAT_106_PROTOCOL.MSG_PVPENDGRACEOVER(), grace);
 
@@ -2456,6 +2479,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             var action = CombatResolver.GetQueuedAction(circle);
             if (action is null || action.Spell is null || action.SelectedTarget is null) {
                 SendCombatMoveSelection(circle.OccupiedTeam, circle.ParticipantObject.m_globalID, (byte) CombatMoveType.Pass, null, 0);
+
                 return;
             }
 

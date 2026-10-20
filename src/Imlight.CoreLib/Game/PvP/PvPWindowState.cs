@@ -35,7 +35,7 @@
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/14/2026
+ * Last Updated: 10/18/2026
  */
 
 using System;
@@ -49,6 +49,10 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.PvP.Arena;
+using Imlight.CoreLib.Game.PvP.Data;
+using Imlight.CoreLib.Game.PvP.Matchmaking;
+using Imlight.CoreLib.Game.PvP.Ranking;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -57,17 +61,21 @@ namespace Imlight.CoreLib.Game.PvP;
 
 internal sealed class PvPWindowState {
 
-    private const byte RankedMatchType = 1;
-    private const byte PracticeMatchType = 2;
-    private const sbyte JoinCommand = 3;
-    private const sbyte LeaveCommand = 4;
-    private const string PracticeTournament = "PvPPractice";
+    private const byte RANKED_MATCH_TYPE = 1;
+    private const byte PRACTICE_MATCH_TYPE = 2;
+    private const sbyte CREATE_COMMAND = 1;
+    private const sbyte JOIN_COMMAND = 3;
+    private const sbyte LEAVE_COMMAND = 4;
+
+    // todo: guess; the client reads 0 as success and anything else as a failure.
+    private const byte HOST_FAILURE = 1;
 
     private uint _kioskLeagueId;
 
     public uint TournamentNameId { get; private set; }
     public uint LeagueId { get; private set; }
     public uint SeasonId { get; private set; }
+    public bool IsRanked { get; private set; }
 
     public bool HasWindow => TournamentNameId != 0;
 
@@ -76,6 +84,7 @@ internal sealed class PvPWindowState {
         TournamentNameId = 0;
         LeagueId = 0;
         SeasonId = 0;
+        IsRanked = false;
     }
 
     public IReadOnlyList<IMessage> OpenWindow(WIZARD3_56_PROTOCOL.MSG_PVP5THAGEOPENPVPWINDOW message, IActorRef playerActor,
@@ -84,8 +93,9 @@ internal sealed class PvPWindowState {
             return [new WIZARD3_56_PROTOCOL.MSG_PVPDISABLED()];
         }
 
-        if (message.MatchType != PracticeMatchType) {
-            if (message.MatchType != RankedMatchType) {
+        var ranked = message.MatchType == RANKED_MATCH_TYPE && PvPSettings.RankedEnabled;
+        if (message.MatchType != PRACTICE_MATCH_TYPE && !ranked) {
+            if (message.MatchType != RANKED_MATCH_TYPE) {
                 Logger.Warning("{CharId} opened a PvP window of unknown match type {MatchType}.",
                     Logger.Args(wizard.CharId, message.MatchType));
             }
@@ -98,15 +108,18 @@ internal sealed class PvPWindowState {
             return [PvPArenaErrors.Message(refusal)];
         }
 
-        if (!PvPTournamentFactory.TryGetTournament(PracticeTournament, out var tournament)) {
-            Logger.Error("The tournament {Tournament} is missing from the Root.wad.", Logger.Args(PracticeTournament));
+        if (ranked && !IsRatedLeague(message.LeagueID)) {
+            return [PvPArenaErrors.Message(PvPArenaErrors.PLAYER_INELIGIBLE)];
+        }
 
+        if (!TryGetOpenTournament(ranked, out var tournament)) {
             return [PvPArenaErrors.Message(PvPArenaErrors.INVALID_TOURNAMENT_TYPE)];
         }
 
         TournamentNameId = StringHash.Compute(tournament.m_tournamentName);
         LeagueId = message.LeagueID;
         SeasonId = message.SeasonID;
+        IsRanked = ranked;
 
         return [new WIZARD_12_PROTOCOL.MSG_PREPVPKIOSK {
             TournamentNameID = TournamentNameId,
@@ -114,6 +127,31 @@ internal sealed class PvPWindowState {
             SeasonID = SeasonId,
             Patching = 0
         }];
+    }
+
+    private static bool IsRatedLeague(uint leagueId)
+        => PvPLeagueFactory.TryGetLeague(leagueId, out var league)
+           && PvPLeagueFactory.TryGetRankTable(league.m_leagueType, out var table)
+           && table.IsRated;
+
+    private static bool TryGetOpenTournament(bool ranked, out TournamentTemplate tournament) {
+        if (ranked) {
+            if (PvPTournamentFactory.TryGetRankedTournament(out tournament)) {
+                return true;
+            }
+
+            Logger.Error("No tournament of the data can be used for ranked play.");
+
+            return false;
+        }
+
+        if (PvPTournamentFactory.TryGetPracticeTournament(out tournament)) {
+            return true;
+        }
+
+        Logger.Error("No tournament of the data can be used for practice play.");
+
+        return false;
     }
 
     public IReadOnlyList<IMessage> CanJoin(WIZARD3_56_PROTOCOL.MSG_PVP5THAGECANJOINMATCH message, IActorRef playerActor,
@@ -141,7 +179,7 @@ internal sealed class PvPWindowState {
             return [];
         }
 
-        return [GetUpdateInfo(wizard)];
+        return [GetUpdateInfo(wizard, "kiosk echo", message.LeagueID, message.SeasonID)];
     }
 
     public IReadOnlyList<IMessage> UpdateRequest(WIZARD_12_PROTOCOL.MSG_PVPUPDATEREQUEST message, Wizard wizard) {
@@ -158,30 +196,35 @@ internal sealed class PvPWindowState {
             return [];
         }
 
-        return [GetUpdateInfo(wizard)];
+        return [GetUpdateInfo(wizard, "update request", request.m_leagueID, request.m_seasonID)];
     }
 
-    private static bool TryReadRequest(ByteString data, out TournamentInfoRequest request) {
-        request = null;
+    private static bool TryReadRequest(ByteString data, out TournamentInfoRequest request)
+        => TryRead(data, out request);
+
+    private static bool TryRead<T>(ByteString data, out T value) where T : PropertyClass {
+        value = null;
         try {
             var serializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None);
 
-            return serializer.Deserialize(data, 4, out request) && request is not null;
+            return serializer.Deserialize(data, 4, out value) && value is not null;
         } catch (Exception) {
             return false;
         }
     }
 
     /// <summary>
-    /// Answers the join and leave commands of the PvP window: the wire messages to send back and the message
+    /// Answers the create, join and leave commands of the PvP window: the wire messages to send back and the message
     /// for the PvPDirector, if the command is in order.
     /// </summary>
     public (IReadOnlyList<IMessage> Replies, IServerMessage ToDirector) Intent(WIZARD_12_PROTOCOL.MSG_PVPINTENT message, IActorRef playerActor,
                                                                               CoreObject playerObject, Wizard wizard, DateTime utcNow) {
         switch (message.Command) {
-            case JoinCommand:
+            case CREATE_COMMAND:
+                return Host(message, playerActor, playerObject, wizard, utcNow);
+            case JOIN_COMMAND:
                 return Join(message, playerActor, playerObject, wizard, utcNow);
-            case LeaveCommand:
+            case LEAVE_COMMAND:
                 return ([], new PVP_111_PROTOCOL.MSG_LEAVEQUEUE { CharId = wizard.CharId });
             default:
                 Logger.Warning("{CharId} sent PvP intent command {Command}, which practice does not offer.",
@@ -209,7 +252,7 @@ internal sealed class PvPWindowState {
             return ([new WIZARD3_56_PROTOCOL.MSG_PVPDISABLED()], null);
         }
 
-        if (!HasWindow || message.TournamentNameID != TournamentNameId || message.MatchID != 0
+        if (!HasWindow || message.TournamentNameID != TournamentNameId
             || !PvPTournamentFactory.TryGetTournament(TournamentNameId, out var tournament)) {
             Logger.Warning("{CharId} tried to join tournament {TournamentId} match {MatchId} without that window.",
                 Logger.Args(wizard.CharId, message.TournamentNameID, message.MatchID));
@@ -217,23 +260,25 @@ internal sealed class PvPWindowState {
             return ([], null);
         }
 
-        if (!PvPMatchFactory.TryGetMatch(message.MatchNameID, out var match)) {
-            return ([PvPArenaErrors.Message(PvPArenaErrors.INVALID_MATCH_NAME_ID)], null);
+        if (message.MatchID != 0) {
+            return JoinHosted(message, playerActor, playerObject, wizard, utcNow);
         }
 
-        string matchName = match.m_matchName;
-        if (!tournament.m_allowedMatches.Any(name => (string) name == matchName)) {
-            return ([PvPArenaErrors.Message(PvPArenaErrors.MATCH_NOT_ALLOWED)], null);
-        }
+        Logger.Debug("{CharId} queue join from the tab of match id {MatchNameId}.", Logger.Args(wizard.CharId, message.MatchNameID));
 
-        // Teams of more than one player come with the later phases.
-        if (match.m_teamSize != 1 || match.m_teamCount != 2) {
-            return ([PvPArenaErrors.Message(PvPArenaErrors.INVALID_MATCH_NAME_ID)], null);
+        var matchRefusal = GetMatchRefusal(tournament, message.MatchNameID);
+        if (matchRefusal is not null) {
+            return ([PvPArenaErrors.Message(matchRefusal)], null);
         }
 
         var refusal = GetOpenRefusal(LeagueId, SeasonId, playerActor, playerObject, wizard, utcNow, requireKiosk: false);
         if (refusal is not null) {
             return ([PvPArenaErrors.Message(refusal)], null);
+        }
+
+        PvPRatingSnapshot snapshot = null;
+        if (IsRanked && !PvPRatingSnapshot.TryCreate(wizard, LeagueId, SeasonId, utcNow, out snapshot)) {
+            return ([PvPArenaErrors.Message(PvPArenaErrors.INVALID_TOURNAMENT_TYPE)], null);
         }
 
         return ([], new PVP_111_PROTOCOL.MSG_JOINQUEUE {
@@ -242,21 +287,105 @@ internal sealed class PvPWindowState {
             MatchNameId = message.MatchNameID,
             LeagueId = LeagueId,
             SeasonId = SeasonId,
-            ExpandSearch = message.AllowExtMatchSearch != 0
+            ExpandSearch = message.AllowExtMatchSearch != 0,
+            Ranked = snapshot
         });
     }
 
-    private GAME_5_PROTOCOL.MSG_PVPUPDATEINFO GetUpdateInfo(Wizard wizard) {
+    private (IReadOnlyList<IMessage> Replies, IServerMessage ToDirector) JoinHosted(WIZARD_12_PROTOCOL.MSG_PVPINTENT message, IActorRef playerActor,
+                                                                                    CoreObject playerObject, Wizard wizard, DateTime utcNow) {
+        if (IsRanked) {
+            return ([PvPArenaErrors.Message(PvPArenaErrors.INVALID_TOURNAMENT_TYPE)], null);
+        }
+
+        // todo: guess; a hosted join is command 3 with the MatchID of the row.
+        var refusal = GetOpenRefusal(LeagueId, SeasonId, playerActor, playerObject, wizard, utcNow, requireKiosk: false);
+        if (refusal is not null) {
+            return ([PvPArenaErrors.Message(refusal)], null);
+        }
+
+        return ([], new PVP_111_PROTOCOL.MSG_JOINHOSTED {
+            CharId = wizard.CharId,
+            MatchId = message.MatchID,
+            TournamentNameId = TournamentNameId,
+            LeagueId = LeagueId,
+            SeasonId = SeasonId,
+            TeamId = message.TargetObject
+        });
+    }
+
+    private (IReadOnlyList<IMessage> Replies, IServerMessage ToDirector) Host(WIZARD_12_PROTOCOL.MSG_PVPINTENT message, IActorRef playerActor,
+                                                                             CoreObject playerObject, Wizard wizard, DateTime utcNow) {
+        if (!PvPSettings.IsEnabled) {
+            return ([new WIZARD3_56_PROTOCOL.MSG_PVPDISABLED()], null);
+        }
+
+        if (!HasWindow || message.TournamentNameID != TournamentNameId
+            || !PvPTournamentFactory.TryGetTournament(TournamentNameId, out var tournament)) {
+            Logger.Warning("{CharId} tried to host in tournament {TournamentId} without that window.",
+                Logger.Args(wizard.CharId, message.TournamentNameID));
+
+            return ([], null);
+        }
+
+        if (IsRanked) {
+            return ([HostReply(wizard, HOST_FAILURE), PvPArenaErrors.Message(PvPArenaErrors.INVALID_TOURNAMENT_TYPE)], null);
+        }
+
+        if (!TryRead<PvPMatchRequest>(message.TargetData, out var request) || !IsHostTeam(request, wizard.CharId)) {
+            Logger.Warning("{CharId} sent a PvP match request that does not deserialize or has no host team.", Logger.Args(wizard.CharId));
+
+            return ([HostReply(wizard, HOST_FAILURE)], null);
+        }
+
+        // The league and season of the window are trusted over the ones inside the request.
+        var refusal = GetMatchRefusal(tournament, request.m_matchNameID)
+                      ?? GetOpenRefusal(LeagueId, SeasonId, playerActor, playerObject, wizard, utcNow, requireKiosk: false);
+        if (refusal is not null) {
+            return ([HostReply(wizard, HOST_FAILURE), PvPArenaErrors.Message(refusal)], null);
+        }
+
+        // The director replies with the success.
+        return ([], new PVP_111_PROTOCOL.MSG_HOSTMATCH {
+            CharId = wizard.CharId,
+            TournamentNameId = TournamentNameId,
+            MatchNameId = request.m_matchNameID,
+            LeagueId = LeagueId,
+            SeasonId = SeasonId,
+            Request = request
+        });
+    }
+
+    private static bool IsHostTeam(PvPMatchRequest request, ulong charId)
+        => request.m_teams is { Count: > 0 }
+           && (request.m_teams[0].m_actors ?? []).All(actor => (ulong) actor.m_nActorID == charId);
+
+    private WIZARD_12_PROTOCOL.MSG_PVPMATCHREQUEST HostReply(Wizard wizard, byte failure)
+        => new() { TournamentNameID = TournamentNameId, MobileID = wizard.CharId, Failure = failure };
+
+    private static string GetMatchRefusal(TournamentTemplate tournament, uint matchNameId) {
+        if (!PvPMatchFactory.TryGetMatch(matchNameId, out var match)) {
+            return PvPArenaErrors.INVALID_MATCH_NAME_ID;
+        }
+
+        string matchName = match.m_matchName;
+        if (!tournament.m_allowedMatches.Any(name => (string) name == matchName)) {
+            return PvPArenaErrors.MATCH_NOT_ALLOWED;
+        }
+
+        return PvPMatchFactory.IsSupportedLayout(match) ? null : PvPArenaErrors.INVALID_MATCH_NAME_ID;
+    }
+
+    private GAME_5_PROTOCOL.MSG_PVPUPDATEINFO GetUpdateInfo(Wizard wizard, string source, uint askedLeagueId, uint askedSeasonId) {
         PvPTournamentFactory.TryGetTournament(TournamentNameId, out var tournament);
 
-        return new GAME_5_PROTOCOL.MSG_PVPUPDATEINFO {
-            TournamentInfo = PvPBlobs.TournamentList(tournament?.m_tournamentName ?? string.Empty, TournamentNameId),
-            CharacterID = wizard.CharId,
-            PromptMsg = 0,
-            DiffType = 0,
-            IsPvPQueue = 0,
-            IsPlayerAccountAlreadyHosting = 0
-        };
+        var update = PvPBlobs.UpdateInfo(wizard.CharId, PvPBlobs.TournamentList(tournament?.m_tournamentName ?? string.Empty, TournamentNameId));
+        Logger.Debug("PvP list for {CharId} ({Source}): tournament {TournamentId}, asked league {AskedLeague} season {AskedSeason}, window league {League} season {Season}, "
+                     + "IsPvPQueue {IsPvPQueue}, DiffType {DiffType}, {MatchCount} hosted match(es), {TeamCount} top-level team(s).",
+            Logger.Args(wizard.CharId, source, TournamentNameId, askedLeagueId, askedSeasonId, LeagueId, SeasonId,
+                update.IsPvPQueue, update.DiffType, PvPRegistry.GetHostedMatches(TournamentNameId).Count, PvPRegistry.GetHostedMatches(TournamentNameId).Sum(info => info.m_teams.Count)));
+
+        return update;
     }
 
     private string GetOpenRefusal(uint leagueId, uint seasonId, IActorRef playerActor, CoreObject playerObject, Wizard wizard,
@@ -267,7 +396,7 @@ internal sealed class PvPWindowState {
             return PvPArenaErrors.PLAYER_INELIGIBLE;
         }
 
-        if (!PvPLeagueFactory.TryGetLeague(leagueId, out var league) || !PvPSeasonClock.IsOpen(league, seasonId, utcNow)) {
+        if (!PvPLeagueFactory.TryGetLeague(leagueId, out var league) || !PvPSeasonClock.IsLeagueOpen(league) || !PvPSeasonClock.IsOpen(league, seasonId, utcNow)) {
             return PvPArenaErrors.PLAYER_INELIGIBLE;
         }
 

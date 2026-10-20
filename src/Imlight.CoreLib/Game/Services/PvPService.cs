@@ -45,9 +45,12 @@ using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.PvP;
+using Imlight.CoreLib.Game.PvP.Arena;
+using Imlight.CoreLib.Game.PvP.Matchmaking;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -92,24 +95,59 @@ internal class PvPService(SessionActor sessionActor) : MessageService(sessionAct
         => _window.KioskUsed(message.LeagueId);
 
     [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_PVP5THAGEOPENPVPWINDOW))]
-    private void ReceiveOpenPvPWindow(WIZARD3_56_PROTOCOL.MSG_PVP5THAGEOPENPVPWINDOW message)
-        => SendAll(_window.OpenWindow(message, SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard(), DateTime.UtcNow));
+    private void ReceiveOpenPvPWindow(WIZARD3_56_PROTOCOL.MSG_PVP5THAGEOPENPVPWINDOW message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        SendAll(_window.OpenWindow(message, SessionActor.ActorRef, GetActiveGameObject(), wizard, DateTime.UtcNow));
+    }
 
     [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_PVP5THAGECANJOINMATCH))]
-    private void ReceiveCanJoinMatch(WIZARD3_56_PROTOCOL.MSG_PVP5THAGECANJOINMATCH message)
-        => SendAll(_window.CanJoin(message, SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard(), DateTime.UtcNow));
+    private void ReceiveCanJoinMatch(WIZARD3_56_PROTOCOL.MSG_PVP5THAGECANJOINMATCH message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        SendAll(_window.CanJoin(message, SessionActor.ActorRef, GetActiveGameObject(), wizard, DateTime.UtcNow));
+    }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PREPVPKIOSK))]
-    private void ReceivePrePvPKiosk(WIZARD_12_PROTOCOL.MSG_PREPVPKIOSK message)
-        => SendAll(_window.PrePvPKioskEcho(message, GetActiveWizard()));
+    private void ReceivePrePvPKiosk(WIZARD_12_PROTOCOL.MSG_PREPVPKIOSK message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var replies = _window.PrePvPKioskEcho(message, wizard);
+
+        SendAll(replies);
+        AnnounceWindow(replies.Count, wizard);
+    }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PVPUPDATEREQUEST))]
-    private void ReceivePvPUpdateRequest(WIZARD_12_PROTOCOL.MSG_PVPUPDATEREQUEST message)
-        => SendAll(_window.UpdateRequest(message, GetActiveWizard()));
+    private void ReceivePvPUpdateRequest(WIZARD_12_PROTOCOL.MSG_PVPUPDATEREQUEST message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var replies = _window.UpdateRequest(message, wizard);
+
+        SendAll(replies);
+        AnnounceWindow(replies.Count, wizard);
+    }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PVPINTENT))]
     private void ReceivePvPIntent(WIZARD_12_PROTOCOL.MSG_PVPINTENT message) {
-        var (replies, toDirector) = _window.Intent(message, SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard(), DateTime.UtcNow);
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var (replies, toDirector) = _window.Intent(message, SessionActor.ActorRef, GetActiveGameObject(), wizard, DateTime.UtcNow);
 
         SendAll(replies);
         if (toDirector is not null) {
@@ -119,7 +157,12 @@ internal class PvPService(SessionActor sessionActor) : MessageService(sessionAct
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_EXPANDPVPSEARCH))]
     private void ReceiveExpandPvPSearch(WIZARD_12_PROTOCOL.MSG_EXPANDPVPSEARCH message) {
-        var expand = _window.ExpandSearch(message, GetActiveWizard());
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var expand = _window.ExpandSearch(message, wizard);
         if (expand is not null) {
             TellDirector(expand);
         }
@@ -128,6 +171,9 @@ internal class PvPService(SessionActor sessionActor) : MessageService(sessionAct
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PVPCONFIRM))]
     private void ReceivePvPConfirm(WIZARD_12_PROTOCOL.MSG_PVPCONFIRM message) {
         var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
 
         // A player in a PvE duel can answer once the duel is over; the match waits for them.
         if (message.Confirm != 0 && (wizard.IsInDuel || wizard.IsInCombatGrace)) {
@@ -142,15 +188,6 @@ internal class PvPService(SessionActor sessionActor) : MessageService(sessionAct
             Accept = message.Confirm != 0
         });
     }
-
-    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_AdvPvPEloData))]
-    private void ReceiveAdvPvPEloData(WIZARD3_56_PROTOCOL.MSG_AdvPvPEloData message)
-        => SendToSocket(new WIZARD3_56_PROTOCOL.MSG_AdvPvPEloData {
-            GlobalID = message.GlobalID,
-            EntryList = PvPBlobs.EmptyEloEntryList(),
-            CheckCompletion = 0,
-            RecordCacheID = 0
-        });
 
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_ENTERMATCH))]
     private void ReceiveEnterMatch(PVP_111_PROTOCOL.MSG_ENTERMATCH message)
@@ -217,6 +254,12 @@ internal class PvPService(SessionActor sessionActor) : MessageService(sessionAct
         }
 
         _arenaReturn = null;
+    }
+
+    private void AnnounceWindow(int replyCount, Wizard wizard) {
+        if (replyCount > 0) {
+            TellDirector(new PVP_111_PROTOCOL.MSG_WINDOWOPENED { CharId = wizard.CharId, TournamentNameId = _window.TournamentNameId });
+        }
     }
 
     private void SendAll(IReadOnlyList<IMessage> messages) {

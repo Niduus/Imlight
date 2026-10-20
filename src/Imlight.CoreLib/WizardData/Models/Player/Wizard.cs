@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Imcodec.Cryptography;
+using Imcodec.IO;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
@@ -32,6 +32,7 @@ using Imlight.CoreLib.WizardData.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text.Json.Serialization;
 using Imlight.CoreLib.Game.Rentals;
 using Raven.Client.Exceptions;
@@ -87,14 +88,14 @@ public class Wizard {
 
     public byte World { get; set; }
     public PrivacyOptions PrivacyOptions { get; set; } = new();
-    public Vector3 Location {
+    public Imcodec.Math.Vector3 Location {
         get => GameObject.m_location;
         set {
             GameObject.m_location = value;
             _hasLocation = true;
         }
     }
-    public Vector3 Orientation {
+    public Imcodec.Math.Vector3 Orientation {
         get => GameObject.m_orientation;
         set {
             GameObject.m_orientation = value;
@@ -102,8 +103,8 @@ public class Wizard {
         }
     }
 
-    public Vector3 MarkedLocation { get; set; }
-    public Vector3 MarkedOrientation { get; set; }
+    public Imcodec.Math.Vector3 MarkedLocation { get; set; }
+    public Imcodec.Math.Vector3 MarkedOrientation { get; set; }
 
     public WizardCharacterBehavior WizardAvatar { get; set; }
     public ServerWizPlayerNameBehavior PlayerNameBehavior { get; set; }
@@ -121,6 +122,7 @@ public class Wizard {
     public ServerPetOwnerBehavior PetOwnerBehavior { get; set; }
     public ServerQuestBehavior QuestBehavior { get; set; }
     public ServerBadgeBehavior BadgeBehavior { get; set; } = new();
+    public ServerPvPEloBehavior PvPEloBehavior { get; set; } = new();
 
     [JsonIgnore] public Account Account;
     // Holds character data before attachment and is replaced by the initialized player object.
@@ -175,6 +177,19 @@ public class Wizard {
     /// </summary>
     [JsonIgnore]
     public uint CurrentAnimationState { get; set; } = 0;
+    /**
+     * Each RadialMenuData blob contains a header followed by a list of 18-byte slot records:
+     * 00..03 uint32 Class Type Hash of the radial page container
+     * 04..07 uint32 Serialization Property Mask (Prop_Transmit | Prop_AuthorityTransmit)
+     * 08..11 uint32 Container Object / GID header
+     * 12..13 uint16 List count
+     * Serialized RadialMenuSlotInfo. Each slot entry in the list has 4 fields
+     */
+    public ByteString RadialMenuData { get; set; }
+    public ByteString RadialMenu2Data { get; set; }
+    public ByteString RadialMenu3Data { get; set; }
+
+    public ByteString CrownShopWishlist { get; set; }
 
     /// <summary>
     /// Tracks hatched pets for MSG_PETTOMEPETADDED. Key: pet global ID, Value: pet template ID.
@@ -227,7 +242,7 @@ public class Wizard {
     public void SaveLocation()
         => WizardCollection.UpdateCharacterLocation(this, Location, Orientation.Z);
 
-    public void SetPersistentLocation(Vector3 loc) {
+    public void SetPersistentLocation(Imcodec.Math.Vector3 loc) {
         Location = loc;
 
         // Persistent save.
@@ -235,7 +250,7 @@ public class Wizard {
     }
 
     public void SetPersistentOrientation(float orientation) {
-        Orientation = new Vector3(0, 0, orientation);
+        Orientation = new Imcodec.Math.Vector3(0, 0, orientation);
 
         // Persistent save.
         WizardCollection.UpdateCharacterLocation(this, Location, Orientation.Z);
@@ -323,7 +338,7 @@ public class Wizard {
         WizardCollection.UpdateCharacterLevel(this);
     }
 
-    public void SetMarkedLocation(Vector3 loc, Vector3 orientation, string zone, string zoneDisplayName) {
+    public void SetMarkedLocation(Imcodec.Math.Vector3 loc, Imcodec.Math.Vector3 orientation, string zone, string zoneDisplayName) {
         MarkedLocation = loc;
         MarkedOrientation = orientation;
         MarkedZone = zone;
@@ -520,6 +535,18 @@ public class Wizard {
 
         return true;
     }
+
+    public bool AddItemToInventory(ulong itemId, int primaryColor, int secondaryColor, out WizClientObjectItem item) {
+        if (!TryCreateItem(itemId, out item)) {
+            return false;
+        }
+
+        item.m_primaryColor = primaryColor;
+        item.m_secondaryColor = secondaryColor;
+
+        return AddItemToInventory(item);
+    }
+
 
     public bool AddItemToInventory(WizClientObjectItem item) {
         if (item is null) {
@@ -2135,6 +2162,12 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    public int CountEmotesUnlocked() {
+        return BitOperations.PopCount(GameStats.m_purchasedCustomEmotes1)
+         + BitOperations.PopCount(GameStats.m_purchasedCustomEmotes2)
+         + BitOperations.PopCount(GameStats.m_purchasedCustomEmotes3);
+    }
+
     public void UnlockCustomTeleportEffect(int emoteBit) {
         if (emoteBit < 0 || emoteBit >= 96) {
             return;
@@ -2153,4 +2186,9 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    public int CountTeleportEffectsUnlocked() {
+        return BitOperations.PopCount(GameStats.m_purchasedCustomTeleportEffects1)
+             + BitOperations.PopCount(GameStats.m_purchasedCustomTeleportEffects2)
+             + BitOperations.PopCount(GameStats.m_purchasedCustomTeleportEffects3);
+    }
 }

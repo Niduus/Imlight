@@ -896,7 +896,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         }
 
         var spellAccuracy = (int) spell.m_accuracy;
-        var stats = caster.CombatParticipant.m_pGameStats;
+        var stats = caster.ResolverGameStats;
         var school = MagicSchools.GetMagicSchool(spell.m_magicSchoolID);
         var schoolName = school.m_schoolName;
 

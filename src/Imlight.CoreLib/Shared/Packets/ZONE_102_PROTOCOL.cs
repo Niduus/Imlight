@@ -25,6 +25,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.PvP;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.PvP.Arena;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -531,7 +532,22 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public ulong MatchId;
         public uint TournamentNameId;
+        public uint LeagueId;
         internal IReadOnlyList<PvPRosterEntry> Roster;
+
+    }
+
+    /// <summary>
+    /// Sent by the <see cref="PvPDirector"/> to an arena zone when a player leaves a PvP match that is in progress:
+    /// the duel of the match forfeits that player only.
+    /// </summary>
+    public sealed class MSG_FORFEITPVPPARTICIPANT : IServerMessage {
+
+        public byte MessageOrder { get; } = 85;
+        public byte ServiceID { get; } = 102;
+
+        public ulong MatchId;
+        public ulong CharId;
 
     }
 
