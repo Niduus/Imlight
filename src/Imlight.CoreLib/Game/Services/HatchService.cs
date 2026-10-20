@@ -43,10 +43,12 @@
  *
  * TODO:
  * - The status values (join -1/0/1, ready 0/1/2, result codes) are copied from trading; unverified.
- * - The morph window's messages are guesses: MSG_PETGAMEINIT with the player's PetGameMorphPartner
- *   2 s after arriving, MSG_PETGAMESTART (the partner's data in a pair) on MSG_PETGAMEREADY, and
- *   MSG_PETGAMEENDING before going back. Sent in the hatchery itself, the game did not answer
- *   (v0.10.61). [Hatching] SigilWindow false keeps players in the hatchery with the chat list.
+ * - The morph window (read from the game's code, untested in game): the game handles the pet game
+ *   messages only once it has the zone's PetGameMorph object (sent by RenderComponent). MSG_PETGAMEINIT
+ *   opens the window and the game answers MSG_PETGAMEREADY; MSG_PETGAMESTART then carries the partner's
+ *   PetGameMorphPartner (character id 0 alone: both sides pick from the player's own pets, 2 needed).
+ *   INIT is sent again every 3 s until READY comes. [Hatching] SigilWindow false keeps players in the
+ *   hatchery with the chat list.
  * - The kiosk's PetData blobs are guesses: HatchmakingPetsList, HatchmakingPetTypesList and
  *   HatchmakingPetGIDList written like the pet game data, and the pet item for PETDATA.
  *
@@ -113,11 +115,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private const string MORPH_TIMEOUT_TIMER = "hatchZoneTimeout";
     private const string MORPH_RETURN_TIMER = "hatchZoneReturn";
     private static readonly TimeSpan MORPH_INIT_DELAY = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan MORPH_INIT_RETRY = TimeSpan.FromSeconds(3);
+    private const int MORPH_INIT_TRIES = 4;
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(6);
     private PetMorphVisit _pendingTrip;
     private PetMorphVisit _morph;
     private bool _morphClientReady;
+    private int _morphInitTries;
     private bool _morphPeerSeen;
     private bool _morphLeaving;
     private ByteString _morphOwnData;
@@ -1012,6 +1017,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         _morphClientReady = true;
+        Timers.Cancel(MORPH_INIT_TIMER);
         SendMorphStart();
     }
 
@@ -1062,6 +1068,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         _pendingTrip = null;
         _morph = visit;
         _morphClientReady = false;
+        _morphInitTries = 0;
         _morphPeerSeen = false;
         _morphLeaving = false;
         _morphOwnData = default;
@@ -1180,8 +1187,16 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     // A guess: the game's pet game start, its data the player's own PetGameMorphPartner.
     private void SendMorphInit() {
         var wizard = GetActiveWizard();
-        if (_morph is null || wizard is null) {
+        if (_morph is null || wizard is null || _morphClientReady) {
             return;
+        }
+
+        // The game answers with MSG_PETGAMEREADY once it has the zone's PetGameMorph object; until then the message
+        // is dropped, so it goes again a few times.
+        if (++_morphInitTries < MORPH_INIT_TRIES) {
+            Timers.StartSingleTimer(MORPH_INIT_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+                Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Init
+            }, MORPH_INIT_RETRY);
         }
 
         if (_morphOwnData.Length == 0) {
@@ -1189,8 +1204,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         var canAfford = (sbyte) (wizard.GameStats.m_currentGold >= PetHatching.GoldCost ? 1 : 0);
-        Logger.Information("Hatching zone: sending {0} MSG_PETGAMEINIT Game={1} ({2} bytes) MinLevel=0 Track=0, then MSG_PETMORPHCANAFFORD CanAfford={3}.",
-            Logger.Args(wizard.CharId, PetMorphZone.GAME, _morphOwnData.Length, canAfford));
+        Logger.Information("Hatching zone: sending {0} MSG_PETGAMEINIT Game={1} ({2} bytes) MinLevel=0 Track=0, then MSG_PETMORPHCANAFFORD CanAfford={3} (try {4}).",
+            Logger.Args(wizard.CharId, PetMorphZone.GAME, _morphOwnData.Length, canAfford, _morphInitTries));
         SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = PetMorphZone.GAME, Data = _morphOwnData, MinLevel = 0, Track = 0 });
         SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHCANAFFORD { CanAfford = canAfford });
         if (_morph.IsPair && _peerPet is not null) {
@@ -1205,11 +1220,19 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // The window takes the player's own pets from the player; the start names the partner and the partner's pets.
+        // Alone, the partner is empty (character id 0), and both sides pick from the player's own pets.
         var partnerData = _morph.IsPair && _morphPeerData.Length > 0;
-        var data = partnerData ? _morphPeerData : _morphOwnData;
+        var data = partnerData ? _morphPeerData : NoPartnerData();
         Logger.Information("Hatching zone: sending {0} MSG_PETGAMESTART Game={1} with {2} ({3} bytes).",
-            Logger.Args(_morph.CharId, PetMorphZone.GAME, partnerData ? "the partner's data" : "the player's own data", data.Length));
+            Logger.Args(_morph.CharId, PetMorphZone.GAME, partnerData ? "the partner's data" : "no partner (alone)", data.Length));
         SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESTART { Game = PetMorphZone.GAME, Data = data });
+    }
+
+    private static ByteString NoPartnerData() {
+        var partner = new PetGameMorphPartner { m_characterId = 0, m_pets = [] };
+
+        return s_morphSerializer.Serialize(partner, MORPH_FLAGS, out var data) ? data : default;
     }
 
     private void ScheduleMorphReturn(string reason, TimeSpan delay) {

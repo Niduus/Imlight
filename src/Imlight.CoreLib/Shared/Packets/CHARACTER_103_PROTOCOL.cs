@@ -714,4 +714,17 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Timer-fired on a solo hatchery pad: the player has stood on it long enough to start a solo hatch without
+    /// pressing X (the game shows no prompt on the solo pads).
+    /// </summary>
+    internal sealed class MSG_HATCHPADSTOOD : IServerMessage {
+
+        public byte MessageOrder { get; } = 78;
+        public byte ServiceID { get; } = 103;
+
+        public ulong CharId;
+
+    }
+
 }
