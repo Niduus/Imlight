@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/14/2026
+ * Last Updated: 10/20/2026
  */
 
 using System;
@@ -434,6 +434,10 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 break;
             case HatchSource.Kiosk:
                 SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = problem is null ? 0u : 1u });
+                break;
+            case HatchSource.Sigil:
+                // The HatchService sends the player back from the pet morph zone once the egg is made.
+                TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_HATCHBRED { Success = problem is null });
                 break;
         }
 

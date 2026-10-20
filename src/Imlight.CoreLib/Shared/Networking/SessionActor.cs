@@ -37,7 +37,7 @@
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 10/10/2026
+ * Last Updated: 10/20/2026
  */
 
 using System;
@@ -78,6 +78,13 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     public ushort QueuePosition                              { get; private set; }
     public IMessage CachedDequeueMessage                     { get; set; }
     public long Ping                                         { get; private set; }
+
+    /// <summary>
+    /// When set, every message the game sends this session is logged with all its fields, each line starting with
+    /// this text. The HatchService sets it while the player is in the pet morph zone, where what the game sends is
+    /// not known yet.
+    /// </summary>
+    public volatile string ClientMessageLogPrefix;
 
     public string Ip;
     public string RemoteIp;
@@ -502,6 +509,11 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
             return;
         }
 
+        var logPrefix = ClientMessageLogPrefix;
+        if (logPrefix is not null) {
+            LogClientMessage(logPrefix, packet);
+        }
+
         if (_dispatchTable.TryGetValue(packet.GetType(), out var handlers)) {
             foreach (var handler in handlers) {
                 handler.Forward(packet);
@@ -519,6 +531,42 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     }
 
     private readonly HashSet<Type> _unhandledClientMessages = [];
+
+    private void LogClientMessage(string prefix, IMessage packet) {
+        try {
+            var fields = packet.GetType()
+                .GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0)
+                .Select(p => $"{p.Name}={DescribeField(p.GetValue(packet))}");
+            Logger.Information("{0}: the game sent {1} (service {2}, order {3}) {4}.",
+                Logger.Args(prefix, packet.GetType().Name, packet.ServiceId, packet.MessageOrder, string.Join(" ", fields)));
+        }
+        catch (Exception ex) {
+            Logger.Information("{0}: the game sent {1}; its fields could not be read ({2}).",
+                Logger.Args(prefix, packet.GetType().Name, ex.Message));
+        }
+    }
+
+    // Text as text, anything else (a serialized object) as hex, so the log shows the bytes.
+    private static string DescribeField(object value) {
+        if (value is Imcodec.IO.ByteString text) {
+            byte[] bytes = text;
+            if (bytes is null || bytes.Length == 0) {
+                return "\"\"";
+            }
+
+            if (bytes.All(b => b >= 0x20 && b < 0x7F)) {
+                return $"\"{System.Text.Encoding.ASCII.GetString(bytes)}\"";
+            }
+
+            const int MAX_BYTES = 1024;
+            var hex = Convert.ToHexString(bytes, 0, Math.Min(bytes.Length, MAX_BYTES));
+
+            return bytes.Length > MAX_BYTES ? $"{hex}...({bytes.Length} bytes)" : $"{hex} ({bytes.Length} bytes)";
+        }
+
+        return value?.ToString() ?? "null";
+    }
 
     private void SendPreDisposeToServices() {
         // Iterate through each service and send them a pre-dispose message. This lets a service gracefully handle

@@ -28,7 +28,8 @@
  *
  * USAGE EXAMPLE:
  * Attaches automatically to the two sigil templates (ShouldAttachToEntity). Pressing X tells the
- * player's session a MSG_HATCHSIGIL; HatchService does the rest.
+ * player's session a MSG_HATCHSIGIL (with the pad's position, sigil type and radius for the sigil
+ * countdown); HatchService sends the player, or both players of a duo pad, to the pet morph zone.
  *
  * NOTE:
  * Both templates are MinigameSigilInfo pads (DynamicTriggerTemplate with BasicNPCServiceBehavior and
@@ -38,7 +39,8 @@
  * logged starting "Hatching sigil".
  *
  * TODO:
- * - How the live server started the morph (countdown, then which window) is not known; see HatchService.
+ * - Whether live offered a MinigameSigilOption (m_successZone ThePhantomZoneWorld/PetGameMorph) instead
+ *   of a plain Interact option is not known; Interact is what the game showed a prompt for.
  *
  * Created by: Claude
  * Version: KALI 1.0
@@ -48,12 +50,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
@@ -186,7 +190,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        var sigilGid = Entity.ActiveGameObject.m_globalID.Full;
         Logger.Information("Hatching sigil: {0} ({1}) pressed {2} ({3}).",
             Logger.Args(Name(playerCharacter), playerCharacter?.CharId, PadName, IsSolo ? "solo" : "duo"));
 
@@ -197,11 +200,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
 
         if (IsSolo) {
-            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
-                Role = CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
-                SigilGID = sigilGid,
-                SigilName = PadName,
-            });
+            playerActor.Tell(HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Solo));
 
             return;
         }
@@ -213,11 +212,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             .FirstOrDefault();
         if (partner.Occupant is null) {
             Logger.Information("Hatching sigil: nobody else is on {0}.", Logger.Args(PadName));
-            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
-                Role = CHARACTER_103_PROTOCOL.HatchSigilRole.Alone,
-                SigilGID = sigilGid,
-                SigilName = PadName,
-            });
+            playerActor.Tell(HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Alone));
 
             return;
         }
@@ -226,22 +221,33 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             Logger.Args(Name(playerCharacter), playerCharacter.CharId, partner.Occupant.Name, partner.CharId, PadName));
 
         // The partner hears first, so their note comes before the hatch request it explains.
-        partner.Occupant.Actor.Tell(new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
-            Role = CHARACTER_103_PROTOCOL.HatchSigilRole.Partner,
-            SigilGID = sigilGid,
+        var toPartner = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Partner);
+        toPartner.PartnerCharId = playerCharacter.CharId;
+        toPartner.PartnerGameObjectId = playerObject.m_globalID.Full;
+        toPartner.PartnerName = Name(playerCharacter);
+        partner.Occupant.Actor.Tell(toPartner);
+
+        var toRequester = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Requester);
+        toRequester.PartnerCharId = partner.CharId;
+        toRequester.PartnerGameObjectId = partner.Occupant.GameObjectId;
+        toRequester.PartnerName = partner.Occupant.Name;
+        playerActor.Tell(toRequester);
+    }
+
+    // What the session needs for the sigil countdown (as the dungeon sigils send it) and the way back.
+    private CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole role) {
+        var obj = Entity.ActiveGameObject;
+        var pad = obj.m_location;
+
+        return new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
+            Role = role,
+            SigilGID = obj.m_globalID.Full,
             SigilName = PadName,
-            PartnerCharId = playerCharacter.CharId,
-            PartnerGameObjectId = playerObject.m_globalID.Full,
-            PartnerName = Name(playerCharacter),
-        });
-        playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
-            Role = CHARACTER_103_PROTOCOL.HatchSigilRole.Requester,
-            SigilGID = sigilGid,
-            SigilName = PadName,
-            PartnerCharId = partner.CharId,
-            PartnerGameObjectId = partner.Occupant.GameObjectId,
-            PartnerName = partner.Occupant.Name,
-        });
+            SigilLoc = Util.GetCompactStringFromVector(new Vector4(pad.X, pad.Y, pad.Z, obj.m_orientation.Z)),
+            SigilType = SigilInfo?.m_sigilType.ToString() ?? "",
+            Radius = SigilInfo is not null && SigilInfo.m_radius > 0 ? SigilInfo.m_radius : Radius,
+            ZoneName = Entity.Zone?.ZonePath,
+        };
     }
 
     private void LogPadOnce() {

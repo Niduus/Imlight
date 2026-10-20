@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty, Jeff
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/20/2026
  */
 
 using System;
@@ -199,15 +199,22 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONETRANSFER))]
-    private void ReceiveZoneTransferRequest(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
+    private void ReceiveZoneTransferRequest(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message)
+        => RequestZoneTransfer(message);
+
+    /// <summary>
+    /// Starts a transfer. Returns the game world's answer, or null when the transfer was not asked for (a transfer
+    /// already queued, or a house that cannot be entered).
+    /// </summary>
+    private ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP RequestZoneTransfer(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
         if (_transferGate.IsQueued) {
-            return;
+            return null;
         }
 
         // A trigger or a script that teleports into a house zone names no lot, so the player's own house in that zone is used.
         if (message.SendToClient && message.HouseEntry is null && HouseZoneIndex.IsHouseZone(message.DestinationZone)
             && !TryUseOwnHouse(message)) {
-            return;
+            return null;
         }
 
         // The client loads a house zone from the entry, so every way into a house has to bring one for that zone.
@@ -216,7 +223,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
                 Logger.Args(SessionActor.SessionID, message.DestinationZone, message.HouseEntry?.Zone));
             InformGameClient("You cannot travel to that house.", true);
 
-            return;
+            return null;
         }
 
         // Sending the server transfer request to the server will allocate and load the zone.
@@ -227,7 +234,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             if (message.DestinationZone == wizard.Zone && message.HouseLotGid == wizard.AttachedLotGid) {
                 DoTeleport(message.DestinationLocation);
 
-                return;
+                return zoneDetails;
             }
 
             ReadyClientForZoneTransfer(message);
@@ -244,6 +251,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         Sender.Tell(zoneDetails);
+
+        return zoneDetails;
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_ZONETRANSFERACK))]
@@ -269,10 +278,16 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY))]
     private void ReceiveStartSigilEntry(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY message) {
         if (_transferGate.IsQueued || _activeSigilEntry is not null) {
+            Logger.Information("{0}: a countdown or transfer is already running; '{1}' ignored.",
+                Logger.Args(SigilLogName(message), message.DestinationZone));
+            TellSigilFailed(message, CHARACTER_103_PROTOCOL.HatchTripFailure.Busy, "a countdown or transfer is already running");
+
             return;
         }
 
         if (string.IsNullOrEmpty(message.DestinationZone)) {
+            TellSigilFailed(message, CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed, "no destination");
+
             return;
         }
 
@@ -296,8 +311,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             new ZONE_102_PROTOCOL.MSG_SIGILENTER(),
             TimeSpan.FromSeconds(SIGIL_COUNTDOWN_SECONDS));
 
-        Logger.Information("Dungeon sigil countdown started -> '{0}'",
-            Logger.Args(message.DestinationZone));
+        Logger.Information("{0} countdown started -> '{1}' (instance owner {2}, face {3})",
+            Logger.Args(SigilLogName(message), message.DestinationZone, message.InstanceOwnerCharId, message.FaceSlot));
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SIGILENTER))]
@@ -328,20 +343,50 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         var entry = _activeSigilEntry;
         _activeSigilEntry = null;
 
-        Logger.Information("Entering dungeon instance '{0}' (owner {1})",
-            Logger.Args(entry.DestinationZone, wizard.CharId));
+        // A pair shares the instance of the first player (InstanceOwnerCharId); only that player rebuilds it.
+        var owner = entry.InstanceOwnerCharId != 0 ? entry.InstanceOwnerCharId : wizard.CharId;
+        Logger.Information("{0}: entering instance '{1}' (player {2}, owner {3}, fresh {4})",
+            Logger.Args(SigilLogName(entry), entry.DestinationZone, wizard.CharId, owner, !entry.KeepInstance));
 
         var tpMsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = entry.DestinationZone,
             DestinationLocation = entry.DestinationLoc,
             SendToClient = true,
             IsPrivate = true,
-            OwnerCharId = wizard.CharId,
-            ResetInstance = true,
+            OwnerCharId = owner,
+            ResetInstance = !entry.KeepInstance,
         };
 
         SendTeleportEffects();
-        ReceiveZoneTransferRequest(tpMsg);
+        ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP answer;
+        try {
+            answer = RequestZoneTransfer(tpMsg);
+        }
+        catch (Exception ex) {
+            Logger.Error("{0}: asking for '{1}' failed. {2}", Logger.Args(SigilLogName(entry), entry.DestinationZone, ex));
+            answer = null;
+        }
+
+        if (answer is null || answer.ErrorCode != 0) {
+            Logger.Warning("{0}: the transfer to '{1}' did not go through ({2}).",
+                Logger.Args(SigilLogName(entry), entry.DestinationZone, answer is null ? "not started" : answer.ErrorMessage ?? answer.ErrorCode.ToString()));
+            TellSigilFailed(entry, CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed,
+                answer is null ? "the transfer was not started" : $"error {answer.ErrorCode} {answer.ErrorMessage}");
+        }
+    }
+
+    private static string SigilLogName(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry)
+        => string.IsNullOrEmpty(entry?.LogName) ? "Dungeon sigil" : entry.LogName;
+
+    private void TellSigilFailed(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry, CHARACTER_103_PROTOCOL.HatchTripFailure failure, string detail) {
+        if (entry?.OnFailed is CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED hatch) {
+            hatch.Failure = failure;
+            hatch.Detail = detail;
+        }
+
+        if (entry?.OnFailed is not null) {
+            TellOtherServices(entry.OnFailed);
+        }
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_LEAVESIGILTIMERWAITING))]
@@ -1242,7 +1287,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         // Give the player their mount back.
         SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
 
-        Logger.Information("Dungeon sigil countdown cancelled (stepped off pad)");
+        Logger.Information("{0} countdown cancelled (stepped off pad)", Logger.Args(SigilLogName(entry)));
+        TellSigilFailed(entry, CHARACTER_103_PROTOCOL.HatchTripFailure.Cancelled, "stepped off the pad");
     }
 
     private void SnapPlayerToSigilFace(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry) {
@@ -1329,7 +1375,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return false;
         }
 
-        var slot = playerSlots[0];
+        var slot = playerSlots[Math.Clamp(entry.FaceSlot, 0, playerSlots.Count - 1)];
         var pad = Util.GetVectorFromCompactString(entry.SigilLoc);
 
         double sigilRotation = pad.W;

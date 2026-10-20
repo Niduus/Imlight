@@ -29,8 +29,13 @@
  *
  * NOTE:
  * The hatchery's pet morphing sigils come here too (MSG_HATCHSIGIL from InteractPetMorphSigilComponent):
- * a solo sigil tries the game's pet morphing window and lists the player's pets for `.hatch`; a duo
- * sigil starts the in-person hatch with the other player on it. Those steps log "Hatching sigil".
+ * pressing X on a solo sigil, or on a duo sigil alone, starts the sigil countdown (ZoneService,
+ * MSG_STARTSIGILENTRY) to a new private instance of the pet morph zone ThePhantomZoneWorld/PetGameMorph;
+ * a duo sigil with two players sends both to one shared instance. There the game is sent the morph
+ * window (MSG_PETGAMEINIT "PetGameMorph"), picks arrive as MSG_PETMORPHSET and the hatch as
+ * MSG_PETMORPHREADY; after the egg (or a cancel, or [Hatching] MorphZoneMinutes) the player goes back
+ * to the pad. The player arrives in a new session, so PetMorphZone keeps the trip. The hatchery steps
+ * log "Hatching sigil", the zone's "Hatching zone" (with every message the game sends there).
  * In person, each side's session keeps its own state and tells the other's session what its player
  * did (MSG_HATCHPEER), as TradeService does through its directory. When both are ready, each session
  * breeds its own egg: its player's pet with the partner's. Every message the game sends here is
@@ -38,9 +43,10 @@
  *
  * TODO:
  * - The status values (join -1/0/1, ready 0/1/2, result codes) are copied from trading; unverified.
- * - The solo sigil's window is a guess: the game's pet game "PetGameMorph" (PetGames.xml) opened with
- *   MSG_PETGAMEINIT, its data a PetGameMorphPartner (character id and pets); picks arrive as
- *   MSG_PETMORPHSET and the hatch as MSG_PETMORPHREADY. [Hatching] SigilWindow false turns it off.
+ * - The morph window's messages are guesses: MSG_PETGAMEINIT with the player's PetGameMorphPartner
+ *   2 s after arriving, MSG_PETGAMESTART (the partner's data in a pair) on MSG_PETGAMEREADY, and
+ *   MSG_PETGAMEENDING before going back. Sent in the hatchery itself, the game did not answer
+ *   (v0.10.61). [Hatching] SigilWindow false keeps players in the hatchery with the chat list.
  * - The kiosk's PetData blobs are guesses: HatchmakingPetsList, HatchmakingPetTypesList and
  *   HatchmakingPetGIDList written like the pet game data, and the pet item for PETDATA.
  *
@@ -93,13 +99,29 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private PetParent _peerPet;
     private bool _bred;
 
-    // The solo hatching sigil this session's player is using; _soloSigilGid is 0 when there is none.
-    private const string MORPH_GAME = "PetGameMorph";
+    // The hatching sigil this session's player hatches two of their own pets from; _soloSigilGid is 0 when there is none.
     private const uint MORPH_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
     private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.None);
     private ulong _soloSigilGid;
     private readonly List<ulong> _soloPicks = [];
-    private ByteString _soloMorphData;
+
+    // The pet morph zone (see PetMorphZone). _pendingTrip is the trip counting down in the hatchery; _morph is the
+    // visit this session's player is on in the zone, null anywhere else.
+    private const float MORPH_TRIP_MIN_RADIUS = 400.0f;
+    private const string MORPH_INIT_TIMER = "hatchZoneInit";
+    private const string MORPH_PARTNER_TIMER = "hatchZonePartner";
+    private const string MORPH_TIMEOUT_TIMER = "hatchZoneTimeout";
+    private const string MORPH_RETURN_TIMER = "hatchZoneReturn";
+    private static readonly TimeSpan MORPH_INIT_DELAY = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(6);
+    private PetMorphVisit _pendingTrip;
+    private PetMorphVisit _morph;
+    private bool _morphClientReady;
+    private bool _morphPeerSeen;
+    private bool _morphLeaving;
+    private ByteString _morphOwnData;
+    private ByteString _morphPeerData;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new HatchService(parentActor));
@@ -433,6 +455,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                 Timers.Cancel(INVITE_TIMER);
                 SendJoinStatus();
+                if (_morph is not null) {
+                    OnMorphPeerJoin(message);
+                }
+
                 if (_myJoin == JOIN_JOINED) {
                     ShowPartnerPet();
                 }
@@ -455,17 +481,24 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             case CHARACTER_103_PROTOCOL.HatchPeerKind.Left:
                 Timers.Cancel(INVITE_TIMER);
                 _peerJoin = JOIN_LEFT;
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHJOINSTATUS {
-                    TargetGID = peerGid,
-                    TargetStatus = JOIN_LEFT,
-                    // The asked player's request tip is dismissed with -1, as for trades.
-                    PlayerStatus = _isRequester || _myJoin == JOIN_JOINED ? _myJoin : JOIN_PENDING,
-                });
+                if (_morph is null) {
+                    SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHJOINSTATUS {
+                        TargetGID = peerGid,
+                        TargetStatus = JOIN_LEFT,
+                        // The asked player's request tip is dismissed with -1, as for trades.
+                        PlayerStatus = _isRequester || _myJoin == JOIN_JOINED ? _myJoin : JOIN_PENDING,
+                    });
+                }
+
                 if (!_bred) {
                     InformGameClient("The hatch was cancelled.");
                 }
 
                 Reset();
+                if (_morph is not null && !_bred) {
+                    ScheduleMorphReturn("the partner left", MORPH_RETURN_DELAY);
+                }
+
                 break;
         }
     }
@@ -529,7 +562,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS {
             ParentA = pet,
             ParentB = _peerPet,
-            Source = HatchSource.InPerson,
+            Source = _morph is not null ? HatchSource.Sigil : HatchSource.InPerson,
             PartnerGameObjectId = Wizard.GetGameObjectId(_peerCharId),
         });
 
@@ -583,27 +616,42 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL))]
     private void ReceiveHatchSigil(CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL message) {
-        Logger.Information("Hatching sigil: {0} on {1} ({2}), partner {3} ({4}).",
-            Logger.Args(message.Role, message.SigilName, message.SigilGID, message.PartnerName, message.PartnerCharId));
+        Logger.Information("Hatching sigil: {0} on {1} ({2}) in {3} at {4} (sigil type \"{5}\", radius {6}), partner {7} ({8}).",
+            Logger.Args(message.Role, message.SigilName, message.SigilGID, message.ZoneName, message.SigilLoc, message.SigilType,
+                message.Radius, message.PartnerName, message.PartnerCharId));
         try {
             switch (message.Role) {
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Solo:
-                    StartSolo(message.SigilGID);
+                    if (!TryStartTrip(message, pair: false)) {
+                        StartSolo(message.SigilGID);
+                    }
+
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Requester:
                     EndSolo();
+                    if (TryStartTrip(message, pair: true)) {
+                        break;
+                    }
+
                     InformGameClient($"Asking {message.PartnerName} to hatch with you. Wear the pet you want to hatch with; "
                         + $"if no hatch window opens, use the solo sigils or .hatch with two of your own pets.");
                     StartInPerson(Wizard.GetGameObjectId(message.PartnerCharId));
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Partner:
                     EndSolo();
+                    if (TryStartTrip(message, pair: true)) {
+                        break;
+                    }
+
                     InformGameClient($"{message.PartnerName} wants to hatch pets with you on the sigil. Wear the pet you want "
                         + "to hatch with and accept the hatch request.");
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Alone:
                     // With nobody else on it, the duo sigil hatches two of the player's own pets, as live does (Justin, 2026-10-20).
-                    StartSolo(message.SigilGID);
+                    if (!TryStartTrip(message, pair: false)) {
+                        StartSolo(message.SigilGID);
+                    }
+
                     break;
             }
         }
@@ -613,30 +661,146 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     /// <summary>
-    /// The morph window's pet game, if it is one, may join and say it is ready like the other pet games.
+    /// Sends the player through the sigil countdown to the pet morph zone. Returns false when the zone is not to be
+    /// used (turned off, or it cannot be loaded), so the caller falls back to the chat list or the in-person hatch;
+    /// true when the trip started or the player was told why not.
     /// </summary>
-    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
-    private void ReceivePetGameJoin(PET_9_PROTOCOL.MSG_PETGAMEJOIN message) {
-        if (!IsMorphGame(message.Game)) {
+    private bool TryStartTrip(CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL message, bool pair) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return true;
+        }
+
+        if (!PetHatching.SigilWindow) {
+            Logger.Information("Hatching sigil: the morph zone is turned off ([Hatching] SigilWindow); no teleport.");
+
+            return false;
+        }
+
+        if (!PetHatching.Enabled) {
+            InformGameClient("Hatching is turned off on this server.");
+
+            return true;
+        }
+
+        if (_peerCharId != 0) {
+            Logger.Information("Hatching sigil: {0} is already hatching with {1}.", Logger.Args(wizard.CharId, _peerCharId));
+            InformGameClient("You are already hatching with someone.");
+
+            return true;
+        }
+
+        if (wizard.IsInDuel) {
+            InformGameClient("You cannot hatch during a battle.");
+
+            return true;
+        }
+
+        var pets = PetHatching.OwnPets(wizard);
+        Logger.Information("Hatching sigil: {0} has {1} hatched pets: {2}.",
+            Logger.Args(wizard.CharId, pets.Count, string.Join(", ", pets.Select(p => $"{PetHatching.Label(p)} ({p.m_globalID.Full})"))));
+        if (!pair && pets.Count < 2) {
+            InformGameClient("You need two hatched pets to hatch on your own. Hatch an egg or get another pet, then come back.");
+
+            return true;
+        }
+
+        if (pair && pets.Count < 1) {
+            InformGameClient($"You need a hatched pet to hatch with {message.PartnerName}.");
+
+            return true;
+        }
+
+        if (!PetMorphZone.IsAvailable(out var why)) {
+            Logger.Warning("Hatching sigil: cannot send {0} to the morph zone: {1}. Using the chat list instead.", Logger.Args(wizard.CharId, why));
+
+            return false;
+        }
+
+        // A pair shares the instance of the player who pressed the sigil, who is the partner's partner.
+        var isPartner = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Partner;
+        var owner = isPartner ? message.PartnerCharId : wizard.CharId;
+        var visit = new PetMorphVisit(
+            wizard.CharId,
+            message.SigilGID,
+            message.SigilName,
+            string.IsNullOrEmpty(message.ZoneName) ? PetMorphZone.HATCHERY_ZONE : message.ZoneName,
+            string.IsNullOrEmpty(message.SigilLoc) ? PetMorphZone.LOCATION : message.SigilLoc,
+            owner,
+            pair ? message.PartnerCharId : 0,
+            pair ? message.PartnerName : null);
+        PetMorphZone.Begin(visit);
+        _pendingTrip = visit;
+
+        // The chat list goes first, so `.hatch` is there whatever the window does.
+        if (pair) {
+            InformGameClient($"Stay on the sigil to go to the hatching room with {message.PartnerName}.");
+        }
+        else {
+            InformGameClient("Stay on the sigil to go to the hatching room. If no hatch window opens there, type .hatch <pet 1> <pet 2> "
+                + "with numbers from this list: " + string.Join("; ", pets.Select((p, i) => $"{i + 1}) {PetHatching.Label(p)}")));
+        }
+
+        Logger.Information("Hatching sigil: {0} counts down on {1} to {2} (instance owner {3}, {4}, face {5}).",
+            Logger.Args(wizard.CharId, message.SigilName, PetMorphZone.ZONE, owner,
+                pair ? $"with {message.PartnerName} ({message.PartnerCharId})" : "alone", isPartner ? 1 : 0));
+        TellOtherServices(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
+            SigilLoc = message.SigilLoc,
+            SigilGID = message.SigilGID,
+            SigilType = message.SigilType ?? "",
+            // The solo pads are small (100); the player is snapped onto the sigil's circle, which may lie outside that.
+            Radius = Math.Max(message.Radius, MORPH_TRIP_MIN_RADIUS),
+            DestinationZone = PetMorphZone.ZONE,
+            DestinationLoc = PetMorphZone.LOCATION,
+            InstanceOwnerCharId = owner,
+            KeepInstance = isPartner,
+            FaceSlot = isPartner ? 1 : 0,
+            OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
+            LogName = "Hatching sigil",
+        });
+
+        return true;
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED))]
+    private void ReceiveHatchTripFailed(CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED message) {
+        var trip = _pendingTrip;
+        _pendingTrip = null;
+        var wizard = GetActiveWizard();
+        Logger.Information("Hatching sigil: the trip of {0} to the morph zone did not happen: {1} ({2}).",
+            Logger.Args(wizard?.CharId, message.Failure, message.Detail));
+        if (wizard is null) {
             return;
         }
 
-        Logger.Information("Hatching sigil: game sent MSG_PETGAMEJOIN Game={0} Track={1} (solo sigil {2}).",
-            Logger.Args(message.Game, message.Track, _soloSigilGid));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = MORPH_GAME, Success = (byte) (_soloSigilGid != 0 ? 1 : 0) });
-    }
-
-    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEREADY))]
-    private void ReceivePetGameReady(PET_9_PROTOCOL.MSG_PETGAMEREADY message) {
-        Logger.Information("Hatching sigil: game sent MSG_PETGAMEREADY (solo sigil {0}).", Logger.Args(_soloSigilGid));
-        if (_soloSigilGid == 0 || _soloMorphData.Length == 0) {
-            return;
+        PetMorphZone.End(wizard.CharId);
+        try {
+            switch (message.Failure) {
+                case CHARACTER_103_PROTOCOL.HatchTripFailure.Cancelled:
+                    InformGameClient("You stepped off the sigil.");
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed when trip is { IsPair: false }:
+                    InformGameClient("The hatching room could not be opened.");
+                    StartSolo(trip.SigilGid);
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed when trip is not null && trip.InstanceOwnerCharId == wizard.CharId:
+                    InformGameClient($"The hatching room could not be opened; asking {trip.PartnerName} to hatch in person instead.");
+                    StartInPerson(Wizard.GetGameObjectId(trip.PartnerCharId));
+                    break;
+                default:
+                    InformGameClient("The hatching room could not be opened. Try again in a moment.");
+                    break;
+            }
         }
-
-        Logger.Information("Hatching sigil: sending MSG_PETGAMESTART for {0}.", Logger.Args(MORPH_GAME));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESTART { Game = MORPH_GAME, Data = _soloMorphData });
+        catch (Exception ex) {
+            Logger.Error("Hatching sigil: the fallback after the failed trip failed. {0}", Logger.Args(ex));
+        }
     }
 
+    /// <summary>
+    /// Lists the player's pets in chat for `.hatch`: the way that is known to work, kept for when the morph zone is
+    /// turned off or cannot be loaded.
+    /// </summary>
     private void StartSolo(ulong sigilGid) {
         var wizard = GetActiveWizard();
         if (wizard is null) {
@@ -663,7 +827,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         var pets = PetHatching.OwnPets(wizard);
-        Logger.Information("Hatching sigil: {0} has {1} hatched pets: {2}.",
+        Logger.Information("Hatching sigil: chat list for {0}, who has {1} hatched pets: {2}.",
             Logger.Args(wizard.CharId, pets.Count, string.Join(", ", pets.Select(p => $"{PetHatching.Label(p)} ({p.m_globalID.Full})"))));
         if (pets.Count < 2) {
             InformGameClient("You need two hatched pets to hatch on your own. Hatch an egg or get another pet, then come back.");
@@ -673,35 +837,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         _soloSigilGid = sigilGid;
         _soloPicks.Clear();
-        _soloMorphData = default;
 
-        // The way that is known to work goes first, so it is there even if the window does not open.
-        InformGameClient("Pick two of your pets to hatch. If no hatch window opens, type .hatch <pet 1> <pet 2> with numbers from "
+        InformGameClient("Pick two of your pets to hatch: type .hatch <pet 1> <pet 2> with numbers from "
             + "this list: " + string.Join("; ", pets.Select((p, i) => $"{i + 1}) {PetHatching.Label(p)}")));
-
-        if (!PetHatching.SigilWindow) {
-            Logger.Information("Hatching sigil: the morph window is turned off ([Hatching] SigilWindow); chat list only.");
-
-            return;
-        }
-
-        var partner = new PetGameMorphPartner {
-            m_characterId = wizard.CharId,
-            m_pets = [.. pets.Cast<CoreObject>()],
-        };
-        if (!s_morphSerializer.Serialize(partner, MORPH_FLAGS, out var data)) {
-            Logger.Error("Hatching sigil: could not write the PetGameMorphPartner; the morph window was not tried.");
-
-            return;
-        }
-
-        _soloMorphData = data;
-        Logger.Information("Hatching sigil: sending MSG_PETGAMEINIT Game={0} with {1} pets ({2} bytes) to open the morph window.",
-            Logger.Args(MORPH_GAME, pets.Count, data.Length));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = MORPH_GAME, Data = data, MinLevel = 0, Track = 0 });
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHCANAFFORD {
-            CanAfford = (sbyte) (wizard.GameStats.m_currentGold >= PetHatching.GoldCost ? 1 : 0)
-        });
     }
 
     private void PickSoloPet(ulong petId) {
@@ -747,18 +885,409 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         Logger.Information("Hatching sigil: {0} hatches {1} with {2}.",
             Logger.Args(wizard.CharId, PetHatching.Describe(parentA), PetHatching.Describe(parentB)));
-        TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS { ParentA = parentA, ParentB = parentB, Source = HatchSource.Command });
+        TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS {
+            ParentA = parentA,
+            ParentB = parentB,
+            Source = _morph is not null ? HatchSource.Sigil : HatchSource.Command,
+        });
         EndSolo();
     }
 
     private void EndSolo() {
         _soloSigilGid = 0;
         _soloPicks.Clear();
-        _soloMorphData = default;
     }
 
     private static bool IsMorphGame(ByteString game)
-        => string.Equals(game.ToString(), MORPH_GAME, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(game.ToString(), PetMorphZone.GAME, StringComparison.OrdinalIgnoreCase);
+
+    #endregion
+
+    #region Hatching zone
+
+    // Before the game is told it is in the zone, so the log has every message it sends while loading the zone too.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PRELOGIN))]
+    private void ReceivePreLogin(ZONE_102_PROTOCOL.MSG_PRELOGIN message) {
+        try {
+            var wizard = GetActiveWizard();
+            if (wizard is not null && PetMorphZone.IsMorphZone(wizard.Zone)) {
+                SessionActor.ClientMessageLogPrefix = "Hatching zone";
+                Logger.Information("Hatching zone: {0} is attaching to {1}; logging every message the game sends.",
+                    Logger.Args(wizard.CharId, wizard.Zone));
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching zone: reading the zone at login failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    // Every arrival in a zone: in the pet morph zone the hatch window is started; anywhere else a trip is over.
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
+    private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
+        try {
+            var wizard = GetActiveWizard();
+            if (wizard is null) {
+                return;
+            }
+
+            var hasVisit = PetMorphZone.TryGet(wizard.CharId, out var visit);
+            if (!PetMorphZone.IsMorphZone(wizard.Zone)) {
+                if (hasVisit) {
+                    Logger.Information("Hatching zone: {0} arrived in {1}, not the morph zone; the trip from {2} is over.",
+                        Logger.Args(wizard.CharId, wizard.Zone, visit.PadName));
+                    PetMorphZone.End(wizard.CharId);
+                }
+
+                return;
+            }
+
+            SessionActor.ClientMessageLogPrefix = "Hatching zone";
+            if (!hasVisit) {
+                // A reattach, or a teleport here by hand: nothing to hatch, so back to the hatchery.
+                Logger.Information("Hatching zone: {0} ({1}) arrived in {2} with no hatch to do; sending them to the hatchery.",
+                    Logger.Args(Name(wizard), wizard.CharId, wizard.Zone));
+                _morph = new PetMorphVisit(wizard.CharId, 0, "none", PetMorphZone.HATCHERY_ZONE, PetMorphZone.LOCATION, wizard.CharId, 0, null);
+                ScheduleMorphReturn("no hatch to do", MORPH_RETURN_DELAY);
+
+                return;
+            }
+
+            ArriveInMorphZone(wizard, visit);
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching zone: handling the arrival failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER))]
+    private void ReceiveHatchZoneTimer(CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER message) {
+        if (_morph is null) {
+            return;
+        }
+
+        try {
+            switch (message.Kind) {
+                case CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Init:
+                    SendMorphInit();
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchZoneTimerKind.PartnerWait:
+                    HatchAloneWithoutPartner();
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Timeout:
+                    Logger.Information("Hatching zone: {0} has been in the morph zone for {1}; time is up.",
+                        Logger.Args(_morph.CharId, PetMorphZone.Timeout));
+                    InformGameClient("Time is up in the hatching room.");
+                    ReturnFromMorphZone("time is up");
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Return:
+                    ReturnFromMorphZone(message.Reason);
+                    break;
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching zone: timer {0} failed. {1}", Logger.Args(message.Kind, ex));
+        }
+    }
+
+    /// <summary>
+    /// The morph window, if it is a pet game like the others, may join and say it is ready.
+    /// </summary>
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
+    private void ReceivePetGameJoin(PET_9_PROTOCOL.MSG_PETGAMEJOIN message) {
+        if (!IsMorphGame(message.Game)) {
+            return;
+        }
+
+        var success = _morph is not null || _soloSigilGid != 0;
+        Logger.Information("Hatching zone: the game sent MSG_PETGAMEJOIN Game={0} Track={1} (in the morph zone {2}); "
+            + "answering MSG_PETGAMEJOINRSP Success={3}.", Logger.Args(message.Game, message.Track, _morph is not null, success ? 1 : 0));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = PetMorphZone.GAME, Success = (byte) (success ? 1 : 0) });
+    }
+
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEREADY))]
+    private void ReceivePetGameReady(PET_9_PROTOCOL.MSG_PETGAMEREADY message) {
+        Logger.Information("Hatching zone: the game sent MSG_PETGAMEREADY (in the morph zone {0}).", Logger.Args(_morph is not null));
+        if (_morph is null) {
+            return;
+        }
+
+        _morphClientReady = true;
+        SendMorphStart();
+    }
+
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEEND))]
+    private void ReceivePetGameEnd(PET_9_PROTOCOL.MSG_PETGAMEEND message) {
+        Logger.Information("Hatching zone: the game sent MSG_PETGAMEEND Game={0} Data={1} (in the morph zone {2}).",
+            Logger.Args(message.Game, Hex(message.Data), _morph is not null));
+        if (_morph is not null && IsMorphGame(message.Game)) {
+            ReturnFromMorphZone("the game ended the hatch window");
+        }
+    }
+
+    // Listed as sent by the server; handled in case the game sends it when the window is closed.
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEENDING))]
+    private void ReceivePetGameEnding(PET_9_PROTOCOL.MSG_PETGAMEENDING message) {
+        Logger.Information("Hatching zone: the game sent MSG_PETGAMEENDING Game={0} GlobalID={1} (in the morph zone {2}).",
+            Logger.Args(message.Game, message.GlobalID, _morph is not null));
+        if (_morph is not null && IsMorphGame(message.Game)) {
+            ReturnFromMorphZone("the game is ending the hatch window");
+        }
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHBRED))]
+    private void ReceiveHatchBred(CHARACTER_103_PROTOCOL.MSG_HATCHBRED message) {
+        if (_morph is null) {
+            return;
+        }
+
+        Logger.Information("Hatching zone: the egg of {0} was {1}.", Logger.Args(_morph.CharId, message.Success ? "made" : "not made"));
+        if (message.Success) {
+            InformGameClient("Your egg is in your backpack. Back to the hatchery in a moment.");
+            ScheduleMorphReturn("the egg is made", MORPH_RETURN_DELAY);
+
+            return;
+        }
+
+        // Alone, the player may pick again; a pair's hatch is over on this side.
+        if (_morph.IsPair) {
+            ScheduleMorphReturn("the hatch failed", MORPH_RETURN_DELAY);
+
+            return;
+        }
+
+        _soloSigilGid = _morph.SigilGid;
+    }
+
+    private void ArriveInMorphZone(Wizard wizard, PetMorphVisit visit) {
+        _pendingTrip = null;
+        _morph = visit;
+        _morphClientReady = false;
+        _morphPeerSeen = false;
+        _morphLeaving = false;
+        _morphOwnData = default;
+        _morphPeerData = default;
+        Logger.Information("Hatching zone: {0} ({1}) arrived from {2} ({3}), {4}, instance owner {5}, {6:0.0} s after pressing X.",
+            Logger.Args(Name(wizard), wizard.CharId, visit.PadName, visit.SigilGid,
+                visit.IsPair ? $"hatching with {visit.PartnerName} ({visit.PartnerCharId})" : "hatching alone",
+                visit.InstanceOwnerCharId, (DateTimeOffset.UtcNow - visit.Started).TotalSeconds));
+
+        Timers.StartSingleTimer(MORPH_TIMEOUT_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+            Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Timeout
+        }, PetMorphZone.Timeout);
+        // The game is still loading the zone when it attaches; a message sent now may be lost.
+        Timers.StartSingleTimer(MORPH_INIT_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+            Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Init
+        }, MORPH_INIT_DELAY);
+
+        WriteOwnMorphData(wizard);
+        if (!visit.IsPair) {
+            _soloSigilGid = visit.SigilGid;
+            _soloPicks.Clear();
+
+            return;
+        }
+
+        // A pair hatches like in person (each side breeds its own egg), with the morph window's messages.
+        var pet = PetHatching.Snapshot(PetCare.GetWornPet(wizard), wizard.CharId);
+        if (PetHatching.ParentProblem(pet) is not null) {
+            pet = PetHatching.OwnPets(wizard).Select(p => PetHatching.Snapshot(p, wizard.CharId)).FirstOrDefault(p => PetHatching.ParentProblem(p) is null);
+        }
+
+        _peerCharId = visit.PartnerCharId;
+        _peerSession = null;
+        _peerPath = TryGetOnlinePlayer(visit.PartnerCharId, out var partner) ? partner.ActorPath : null;
+        _isRequester = visit.InstanceOwnerCharId == wizard.CharId;
+        _myJoin = JOIN_JOINED;
+        _peerJoin = JOIN_JOINED;
+        _myReady = 0;
+        _peerReady = 0;
+        _myPetId = pet?.ItemId ?? 0;
+        _peerPet = null;
+        _bred = false;
+
+        Logger.Information("Hatching zone: {0} starts with {1}; telling {2} (session {3}).",
+            Logger.Args(wizard.CharId, PetHatching.Describe(pet), visit.PartnerCharId, _peerPath ?? "not here yet"));
+        TellPeer(MorphJoin(pet));
+        Timers.StartSingleTimer(MORPH_PARTNER_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+            Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.PartnerWait
+        }, MORPH_PARTNER_WAIT);
+    }
+
+    // The partner's Join in the morph zone, answered once so whoever arrives first still learns the other's pets.
+    private void OnMorphPeerJoin(CHARACTER_103_PROTOCOL.MSG_HATCHPEER message) {
+        _morphPeerData = message.MorphData;
+        if (_morphPeerSeen) {
+            return;
+        }
+
+        _morphPeerSeen = true;
+        Timers.Cancel(MORPH_PARTNER_TIMER);
+        Logger.Information("Hatching zone: {0} sees partner {1} in the morph zone ({2} bytes of partner data).",
+            Logger.Args(_morph?.CharId, message.FromCharId, ((byte[]) message.MorphData)?.Length ?? 0));
+        TellPeer(MorphJoin(MyPet(GetActiveWizard())));
+        if (_morphClientReady) {
+            SendMorphStart();
+        }
+    }
+
+    private CHARACTER_103_PROTOCOL.MSG_HATCHPEER MorphJoin(PetParent pet) {
+        var join = HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.Join, JOIN_JOINED, pet);
+        join.MorphData = _morphOwnData;
+
+        return join;
+    }
+
+    private void HatchAloneWithoutPartner() {
+        if (_morphPeerSeen || _morph is null) {
+            return;
+        }
+
+        Logger.Information("Hatching zone: {0} did not arrive within {1} s; {2} hatches alone.",
+            Logger.Args(_morph.PartnerCharId, MORPH_PARTNER_WAIT.TotalSeconds, _morph.CharId));
+        Reset();
+        _morph = _morph with { PartnerCharId = 0, PartnerName = null };
+        var wizard = GetActiveWizard();
+        if (PetHatching.OwnPets(wizard).Count < 2) {
+            InformGameClient("Your partner did not come, and you need two hatched pets to hatch on your own.");
+            ScheduleMorphReturn("partner did not come", MORPH_RETURN_DELAY);
+
+            return;
+        }
+
+        InformGameClient("Your partner did not come; pick two of your own pets to hatch.");
+        _soloSigilGid = _morph.SigilGid;
+        _soloPicks.Clear();
+    }
+
+    private void WriteOwnMorphData(Wizard wizard) {
+        var pets = PetHatching.OwnPets(wizard);
+        var partner = new PetGameMorphPartner {
+            m_characterId = wizard.CharId,
+            m_pets = [.. pets.Cast<CoreObject>()],
+        };
+        if (!s_morphSerializer.Serialize(partner, MORPH_FLAGS, out var data)) {
+            Logger.Error("Hatching zone: could not write the PetGameMorphPartner of {0}.", Logger.Args(wizard.CharId));
+            _morphOwnData = default;
+
+            return;
+        }
+
+        _morphOwnData = data;
+        Logger.Information("Hatching zone: PetGameMorphPartner of {0}: {1} pets ({2}), {3} bytes.",
+            Logger.Args(wizard.CharId, pets.Count, string.Join(", ", pets.Select(p => $"{PetHatching.Label(p)} {p.m_globalID.Full}")), data.Length));
+    }
+
+    // A guess: the game's pet game start, its data the player's own PetGameMorphPartner.
+    private void SendMorphInit() {
+        var wizard = GetActiveWizard();
+        if (_morph is null || wizard is null) {
+            return;
+        }
+
+        if (_morphOwnData.Length == 0) {
+            WriteOwnMorphData(wizard);
+        }
+
+        var canAfford = (sbyte) (wizard.GameStats.m_currentGold >= PetHatching.GoldCost ? 1 : 0);
+        Logger.Information("Hatching zone: sending {0} MSG_PETGAMEINIT Game={1} ({2} bytes) MinLevel=0 Track=0, then MSG_PETMORPHCANAFFORD CanAfford={3}.",
+            Logger.Args(wizard.CharId, PetMorphZone.GAME, _morphOwnData.Length, canAfford));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = PetMorphZone.GAME, Data = _morphOwnData, MinLevel = 0, Track = 0 });
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHCANAFFORD { CanAfford = canAfford });
+        if (_morph.IsPair && _peerPet is not null) {
+            Logger.Information("Hatching zone: telling {0} the partner's pick {1}.", Logger.Args(wizard.CharId, PetHatching.Describe(_peerPet)));
+            ShowPartnerPet();
+        }
+    }
+
+    // A guess: the start carries the partner's PetGameMorphPartner in a pair, the player's own alone.
+    private void SendMorphStart() {
+        if (_morph is null) {
+            return;
+        }
+
+        var partnerData = _morph.IsPair && _morphPeerData.Length > 0;
+        var data = partnerData ? _morphPeerData : _morphOwnData;
+        Logger.Information("Hatching zone: sending {0} MSG_PETGAMESTART Game={1} with {2} ({3} bytes).",
+            Logger.Args(_morph.CharId, PetMorphZone.GAME, partnerData ? "the partner's data" : "the player's own data", data.Length));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESTART { Game = PetMorphZone.GAME, Data = data });
+    }
+
+    private void ScheduleMorphReturn(string reason, TimeSpan delay) {
+        if (_morph is null || _morphLeaving) {
+            return;
+        }
+
+        _morphLeaving = true;
+        Logger.Information("Hatching zone: {0} goes back to {1} in {2} s ({3}).",
+            Logger.Args(_morph.CharId, _morph.ReturnZone, delay.TotalSeconds, reason));
+        Timers.StartSingleTimer(MORPH_RETURN_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+            Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Return,
+            Reason = reason,
+        }, delay);
+    }
+
+    /// <summary>
+    /// Sends the player back to the pad they came from (the zone's HomeToFallback adjective suggests the game expects
+    /// to go back where it came from).
+    /// </summary>
+    private void ReturnFromMorphZone(string reason) {
+        var visit = _morph;
+        if (visit is null) {
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        Logger.Information("Hatching zone: sending {0} back to {1} at {2} ({3}).", Logger.Args(visit.CharId, visit.ReturnZone, visit.ReturnLocation, reason));
+        if (_peerCharId != 0) {
+            End(tellPeer: true, peerJoinShown: null);
+        }
+
+        EndSolo();
+        ForgetMorph(visit);
+
+        // A guess: the server's end of a pet game, so the window closes before the zone changes.
+        if (wizard is not null) {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEENDING { Game = PetMorphZone.GAME, GlobalID = wizard.GameObjectID });
+        }
+
+        Teleport(visit.ReturnZone, doTeleportEffects: true, destinationLocation: visit.ReturnLocation);
+    }
+
+    private void ForgetMorph(PetMorphVisit visit) {
+        Timers.Cancel(MORPH_INIT_TIMER);
+        Timers.Cancel(MORPH_PARTNER_TIMER);
+        Timers.Cancel(MORPH_TIMEOUT_TIMER);
+        Timers.Cancel(MORPH_RETURN_TIMER);
+        PetMorphZone.End(visit.CharId);
+        SessionActor.ClientMessageLogPrefix = null;
+        _morph = null;
+        _morphClientReady = false;
+        _morphPeerSeen = false;
+        _morphLeaving = false;
+        _morphOwnData = default;
+        _morphPeerData = default;
+    }
+
+    // Logging out (or losing the connection) in the morph zone: the next login starts at the pad. The login already
+    // skips minigame zones for the previous zone, which is the hatchery.
+    private void LeaveMorphZoneOnDeparture() {
+        var visit = _morph;
+        if (visit is null) {
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        Logger.Information("Hatching zone: {0} left the game in the morph zone; the next login starts at {1}.",
+            Logger.Args(visit.CharId, visit.ReturnZone));
+        if (wizard is not null && string.Equals(wizard.PreviousZone, visit.ReturnZone, StringComparison.OrdinalIgnoreCase)
+            && visit.ReturnLocation.Contains(',')) {
+            var pad = Util.GetVectorFromCompactString(visit.ReturnLocation);
+            wizard.SetPersistentLocation(new Imcodec.Math.Vector3(pad.X, pad.Y, pad.Z));
+            wizard.SetPersistentOrientation(pad.W);
+        }
+
+        ForgetMorph(visit);
+    }
 
     #endregion
 
@@ -1059,14 +1588,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     #region Lifecycle
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT))]
-    private void ReceiveQueryLogout(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT message) => LeaveOnDeparture();
+    private void ReceiveQueryLogout(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT message) => LeaveOnDeparture(isLogout: true);
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT))]
-    private void ReceiveClientDisconnect(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT message) => LeaveOnDeparture();
+    private void ReceiveClientDisconnect(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT message) => LeaveOnDeparture(isLogout: true);
 
     protected override void OnPreDispose() {
         try {
-            LeaveOnDeparture();
+            LeaveOnDeparture(isLogout: false);
         }
         catch (Exception ex) {
             Logger.Error("Hatching: leaving the hatch while the session ended failed. {0}", Logger.Args(ex));
@@ -1076,10 +1605,19 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
     }
 
-    private void LeaveOnDeparture() {
+    // The session also ends after every zone transfer, so only a logout moves the saved position back to the pad.
+    private void LeaveOnDeparture(bool isLogout) {
         EndSolo();
         if (_peerCharId != 0) {
             End(tellPeer: true, peerJoinShown: null);
+        }
+
+        if (isLogout) {
+            LeaveMorphZoneOnDeparture();
+        }
+        else if (_morph is not null) {
+            Logger.Information("Hatching zone: the session of {0} ended in the morph zone.", Logger.Args(_morph.CharId));
+            ForgetMorph(_morph);
         }
     }
 
@@ -1121,8 +1659,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
     }
 
+    // In the morph zone the in-person window's messages are not sent: its own window is up.
     private void SendJoinStatus() {
-        if (_peerCharId == 0) {
+        if (_peerCharId == 0 || _morph is not null) {
             return;
         }
 
@@ -1134,7 +1673,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private void SendReadyStatus() {
-        if (_peerCharId == 0) {
+        if (_peerCharId == 0 || _morph is not null) {
             return;
         }
 
@@ -1146,7 +1685,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private void SendResult(HatchStatus status) {
-        if (_peerCharId != 0) {
+        if (_peerCharId != 0 && _morph is null) {
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHRESULT { TargetGID = Wizard.GetGameObjectId(_peerCharId), Status = (uint) status });
         }
     }
@@ -1156,6 +1695,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHRESULT { TargetGID = targetGid, Status = (uint) status });
         InformGameClient(reason);
     }
+
+    private static string Name(Wizard wizard)
+        => wizard?.PlayerNameBehavior?.GetWizardName() ?? wizard?.CharId.ToString() ?? "?";
 
     private static string Hex(ByteString data) {
         byte[] bytes = data;

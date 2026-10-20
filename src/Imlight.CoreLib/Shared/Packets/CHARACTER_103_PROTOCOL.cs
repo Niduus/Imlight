@@ -586,6 +586,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public IActorRef FromZone;
         public int Value;
         public PetParent Pet;
+        // In the pet morph zone: the sender's PetGameMorphPartner (character id and pets), written for the game.
+        public ByteString MorphData;
 
     }
 
@@ -641,6 +643,74 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public ulong PartnerCharId;
         public ulong PartnerGameObjectId;
         public string PartnerName;
+        // The pad, for the sigil countdown and the way back: "X,Y,Z,heading", its sigil type and radius.
+        public string SigilLoc;
+        public string SigilType;
+        public float Radius;
+        // The zone the pad is in.
+        public string ZoneName;
+
+    }
+
+    /// <summary>
+    /// Why the trip to the pet morph zone did not happen (see <see cref="MSG_HATCHTRIPFAILED"/>).
+    /// </summary>
+    internal enum HatchTripFailure : byte {
+        // The player stepped off the pad during the countdown.
+        Cancelled,
+        // The session was already counting down or travelling.
+        Busy,
+        // The zone could not be entered (not loaded, refused).
+        TransferFailed,
+    }
+
+    /// <summary>
+    /// Told by the ZoneService to the HatchService when a hatching sigil's countdown or transfer to the pet morph zone
+    /// does not go through.
+    /// </summary>
+    internal sealed class MSG_HATCHTRIPFAILED : IServerMessage {
+
+        public byte MessageOrder { get; } = 75;
+        public byte ServiceID { get; } = 103;
+
+        public HatchTripFailure Failure;
+        public string Detail;
+
+    }
+
+    /// <summary>
+    /// Told by the PetService to the HatchService after a hatch from the pet morph zone: whether the egg was made.
+    /// </summary>
+    internal sealed class MSG_HATCHBRED : IServerMessage {
+
+        public byte MessageOrder { get; } = 76;
+        public byte ServiceID { get; } = 103;
+
+        public bool Success;
+
+    }
+
+    /// <summary>
+    /// The HatchService's timers in the pet morph zone (see HatchService).
+    /// </summary>
+    internal enum HatchZoneTimerKind : byte {
+        // Send the game the morph window's data, once it has had a moment to load the zone.
+        Init,
+        // The partner has not arrived; hatch alone.
+        PartnerWait,
+        // Too long in the zone; back to the hatchery.
+        Timeout,
+        // The egg is made (or the hatch is over); back to the hatchery.
+        Return,
+    }
+
+    internal sealed class MSG_HATCHZONETIMER : IServerMessage {
+
+        public byte MessageOrder { get; } = 77;
+        public byte ServiceID { get; } = 103;
+
+        public HatchZoneTimerKind Kind;
+        public string Reason;
 
     }
 

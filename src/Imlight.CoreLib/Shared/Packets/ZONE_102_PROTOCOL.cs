@@ -1147,6 +1147,27 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// <summary>The arrival position inside the instance, "X,Y,Z,heading".</summary>
         public string DestinationLoc;
 
+        /// <summary>
+        /// The owner of the instance to enter; 0 is the player's own. Two players who name the same owner share one
+        /// instance (the hatching sigils' pair).
+        /// </summary>
+        public ulong InstanceOwnerCharId;
+
+        /// <summary>True when the instance must not be rebuilt for this entry (the second player of a pair).</summary>
+        public bool KeepInstance;
+
+        /// <summary>Which of the sigil's player circles the player is put on, from 0.</summary>
+        public int FaceSlot;
+
+        /// <summary>
+        /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
+        /// for none.
+        /// </summary>
+        public IServerMessage OnFailed;
+
+        /// <summary>A name for the log, "Dungeon sigil" when empty.</summary>
+        public string LogName;
+
     }
 
     /// <summary>
