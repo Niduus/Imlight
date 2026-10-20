@@ -290,6 +290,55 @@ public static class SpiralDB {
             "Fetching SpiralDB updates from {0} (branch {1})...",
             Logger.Args(s_remoteUrl, s_branch));
 
+        try {
+            UpdateRepository(basePath);
+        }
+        catch (Exception ex) when (ex is not TimeoutException) {
+            // A shallow copy can break so that every fetch fails with "object not found", which kept the server on
+            // old data (no crown shop packs). A fresh copy fixes that; the old one comes back if the copy fails.
+            Logger.Warning("SpiralDB update failed ({0}), so it is downloaded again.", Logger.Args(ex.Message));
+            RecloneRepository(basePath);
+        }
+    }
+
+    private static void RecloneRepository(string basePath) {
+        var oldPath = basePath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "-old";
+        if (Directory.Exists(oldPath)) {
+            DeleteFolder(oldPath);
+        }
+
+        Directory.Move(basePath, oldPath);
+        try {
+            SyncRepository(basePath);
+        }
+        catch {
+            if (Directory.Exists(basePath)) {
+                DeleteFolder(basePath);
+            }
+
+            Directory.Move(oldPath, basePath);
+            throw;
+        }
+
+        DeleteFolder(oldPath);
+        Logger.Information("SpiralDB downloaded again.");
+    }
+
+    // Git marks its object files read-only, which Directory.Delete refuses on Windows.
+    private static void DeleteFolder(string path) {
+        try {
+            foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
+                File.SetAttributes(file, FileAttributes.Normal);
+            }
+
+            Directory.Delete(path, true);
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not delete {0}: {1}", Logger.Args(path, ex.Message));
+        }
+    }
+
+    private static void UpdateRepository(string basePath) {
         using var repository = new Repository(basePath);
         var remote = repository.Network.Remotes["origin"]
             ?? throw new InvalidOperationException(
