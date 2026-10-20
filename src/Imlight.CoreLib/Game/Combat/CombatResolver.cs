@@ -142,8 +142,32 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         SortQueuedActions();
 
         var cinematicTime = ProcessQueuedActions(combatActionListObj);
+        ShowAnnouncements(combatActionListObj);
 
         return cinematicTime;
+    }
+
+    // .ca (Justin, 2026-10-20): lines shown like a boss's cheat, in the "Gained Power Pip" spot, as the round plays.
+    private readonly List<string> _announcements = [];
+
+    internal void AddAnnouncement(string text) => _announcements.Add(text);
+
+    /// <summary>
+    /// Puts each waiting .ca line on one of the round's spell actions, in order (CombatAction.m_stringKeyMessage, the
+    /// text boss cheats show). Lines with no spell action left wait for the next round.
+    /// </summary>
+    private void ShowAnnouncements(CombatActionListObj combatActionList) {
+        var free = combatActionList.m_actionList
+            .Where(a => a.m_spell is not null && string.IsNullOrEmpty((string) a.m_stringKeyMessage))
+            .ToList();
+        var shown = 0;
+        for (; shown < _announcements.Count && shown < free.Count; shown++) {
+            free[shown].m_stringKeyMessage = _announcements[shown];
+            Logger.Information("Duel {0} | Round {1} | .ca shows \"{2}\" on slot {3}'s action.",
+                Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, _announcements[shown], free[shown].m_spellCaster));
+        }
+
+        _announcements.RemoveRange(0, shown);
     }
 
     /// <summary>

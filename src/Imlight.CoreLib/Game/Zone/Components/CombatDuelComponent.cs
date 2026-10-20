@@ -2092,6 +2092,18 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE))]
+    private void ReceiveCheatAnnounce(COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE message) {
+        if (!_isActive || !SubCircles.Any(x => x is not null && x.ParticipantActor == message.Actor)) {
+            return;
+        }
+
+        CombatResolver.AddAnnouncement(message.Text);
+        message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+            Message = $".ca: \"{message.Text}\" shows when the next round's spells play.",
+        });
+    }
+
     // .joinme (Justin, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]
     private void ReceiveCheatJoinMe(COMBAT_106_PROTOCOL.MSG_CHEATJOINME message) {
