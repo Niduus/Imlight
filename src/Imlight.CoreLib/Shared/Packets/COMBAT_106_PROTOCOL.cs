@@ -356,6 +356,8 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public string Target;
         // .c1s/.c2s: the game skips the casting animation (CombatAction.m_showCast off).
         public bool SkipCast;
+        // .c1 f / .c1 l: 'f' casts before anyone's turn this round, 'l' after everyone's; 'n' around the sender's card.
+        public char When = 'n';
         public IActorRef Actor;
 
     }

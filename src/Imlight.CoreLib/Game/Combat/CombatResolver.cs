@@ -110,9 +110,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     // Daybreaker and Nightbringer: the spell is paid for (pips, card, fizzle check) when played, then casts on
     // the caster's next turn, at its start (Daybreaker) or its end (Nightbringer), even if they are stunned.
     // Free is a spell from .daybreaker or .nightbringer: no card was played, and its target is picked when it casts.
-    // Target is the command's p1-p4 / e1-e4, or null to pick one.
+    // Target is the command's p1-p4 / e1-e4 / all, or null to pick one.
+    // When is the command's f (first in the round, before anyone acts) or l (last, after everyone), else 'n':
+    // around the caster's own card.
     private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null,
-                                      bool SkipCast = false);
+                                      bool SkipCast = false, char When = 'n');
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -267,6 +269,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
         _petCastsThisRound.Clear();
         PetCastCards.Clear();
+        // .c1 f / .c2 f (Justin, 2026-10-20): the queue casts before anyone's turn, then the round goes on.
+        cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
         foreach (var action in _queuedCombatActions) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
@@ -275,8 +279,26 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
         }
+        // .c1 l / .c2 l: the queue casts after everyone's turn, then the round ends.
+        cinematicTime += CastEveryonesDelayed('l', combatActionList, cinematicTime);
 
         return instantCinematics ? 0 : cinematicTime;
+    }
+
+    // Casts every caster's f (first) or l (last) queue, c1 before c2 for each caster.
+    private float CastEveryonesDelayed(char when, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        var casters = _delayedCasts.Where(d => d.When == when && d.Round < _duel.m_roundNum)
+            .Select(d => d.Action.SpellCaster).Distinct().ToList();
+        foreach (var caster in casters) {
+            foreach (var atStart in new[] { true, false }) {
+                cinematicTime += WithPetMayCasts(
+                    () => CastDelayed(caster, atStart, combatActionList, cinematicTimeSoFar + cinematicTime, when),
+                    combatActionList, cinematicTimeSoFar + cinematicTime);
+            }
+        }
+
+        return cinematicTime;
     }
 
     // How many May Casts each owner's pet has done this round ([PetCasting] MaxPerRound).
@@ -524,16 +546,17 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// </summary>
     /// <returns>How many of these the caster has queued for this round, or 0 if the spell is unknown.</returns>
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, string target = null,
-                                    bool skipCast = false) {
+                                    bool skipCast = false, char when = 'n') {
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
             return 0;
         }
 
         var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
-        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast));
+        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast,
+                                       When: when));
 
-        return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart);
+        return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when);
     }
 
     private static readonly HashSet<kEffectTarget> s_enemyTargets = [
@@ -582,63 +605,97 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// <summary>
     /// Casts the caster's Daybreaker (<paramref name="atStart"/>) or Nightbringer spells from an earlier round.
     /// </summary>
-    private float CastDelayed(CombatDuelSubCircle caster, bool atStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+    private float CastDelayed(CombatDuelSubCircle caster, bool atStart, CombatActionListObj combatActionList, float cinematicTimeSoFar,
+                              char when = 'n') {
         var due = _delayedCasts
-            .Where(d => d.Action.SpellCaster == caster && d.AtStart == atStart && d.Round < _duel.m_roundNum)
+            .Where(d => d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when && d.Round < _duel.m_roundNum)
             .ToList();
         var cinematicTime = 0.0f;
         foreach (var delayed in due) {
             _delayedCasts.Remove(delayed);
             var action = delayed.Action;
-            var target = delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget;
-            if (!caster.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
-                continue;
-            }
+            // "all" (Justin, 2026-10-20): a single-target spell casts once on each enemy (or each teammate).
+            var targets = delayed.Free && delayed.Target == "all"
+                ? AllFreeTargets(caster, action.SpellTemplate)
+                : [delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget];
+            foreach (var target in targets) {
+                if (!caster.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
+                    continue;
+                }
 
-            try {
-                Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3}{4}.",
-                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer",
-                        action.Spell?.m_templateID, delayed.Free ? " (command)" : ""));
-                caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
+                try {
+                    Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3}{4}.",
+                        Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer",
+                            action.Spell?.m_templateID, delayed.Free ? " (command)" : ""));
+                    caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
 
-                // The card goes out without its enchantment, or the game would play the delay a second time. Its
-                // effects keep the enchantment's changes (they come from the queued spell template).
-                var cast = new QueuedCombatAction {
-                    SpellCaster = action.SpellCaster,
-                    SelectedTarget = target,
-                    Spell = DelayedCard(action.Spell),
-                    SpellTemplate = action.SpellTemplate,
-                };
-                var before = combatActionList.m_actionList.Count;
-                var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
-                // .c1s/.c2s (Justin, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
-                if (delayed.SkipCast) {
-                    for (var i = before; i < combatActionList.m_actionList.Count; i++) {
-                        combatActionList.m_actionList[i].m_showCast = false;
+                    // The card goes out without its enchantment, or the game would play the delay a second time. Its
+                    // effects keep the enchantment's changes (they come from the queued spell template).
+                    var cast = new QueuedCombatAction {
+                        SpellCaster = action.SpellCaster,
+                        SelectedTarget = target,
+                        Spell = DelayedCard(action.Spell),
+                        SpellTemplate = action.SpellTemplate,
+                    };
+                    var before = combatActionList.m_actionList.Count;
+                    var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                    // .c1s/.c2s (Justin, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
+                    if (delayed.SkipCast) {
+                        for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                            combatActionList.m_actionList[i].m_showCast = false;
+                        }
+
+                        time = Math.Min(time, SkipCastSeconds);
                     }
 
-                    time = Math.Min(time, SkipCastSeconds);
+                    cinematicTime += time;
+                    // A command's free cast is in no hand, so the game skipped it when a card had been played (Justin's
+                    // log, 2026-10-20) while the next round still waited for it.
+                    if (delayed.Free) {
+                        ShowInHand(caster, cast.Spell, action.SpellTemplate, combatActionList, before);
+                    }
+                    // The spell going off when the delay runs out. A command's free cast had no enchanted card on the
+                    // table, so the game is shown it as a normal cast; flagged, it waits for a card it never saw.
+                    for (var i = before; !delayed.Free && i < combatActionList.m_actionList.Count; i++) {
+                        combatActionList.m_actionList[i].m_delayedEnchanted = true;
+                    }
                 }
-
-                cinematicTime += time;
-                // A command's free cast is in no hand, so the game skipped it when a card had been played (Justin's
-                // log, 2026-10-20) while the next round still waited for it.
-                if (delayed.Free) {
-                    ShowInHand(caster, cast.Spell, action.SpellTemplate, combatActionList, before);
+                catch (Exception e) {
+                    Logger.Error("Duel {0} | Slot {1} | delayed spell failed: {2}",
+                        Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, e));
                 }
-                // The spell going off when the delay runs out. A command's free cast had no enchanted card on the
-                // table, so the game is shown it as a normal cast; flagged, it waits for a card it never saw.
-                for (var i = before; !delayed.Free && i < combatActionList.m_actionList.Count; i++) {
-                    combatActionList.m_actionList[i].m_delayedEnchanted = true;
-                }
-            }
-            catch (Exception e) {
-                Logger.Error("Duel {0} | Slot {1} | delayed spell failed: {2}",
-                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, e));
             }
         }
 
         return cinematicTime;
+    }
+
+    private static readonly HashSet<kEffectTarget> s_singleEnemy = [
+        kEffectTarget.kEnemySingle, kEffectTarget.kPreselectedEnemySingle, kEffectTarget.kAtLeastOneEnemy,
+        kEffectTarget.kMultiTargetEnemy, kEffectTarget.kEnemyMinion,
+    ];
+
+    private static readonly HashSet<kEffectTarget> s_singleFriend = [
+        kEffectTarget.kFriendlySingle, kEffectTarget.kFriendlySingleNotMe, kEffectTarget.kSelf,
+        kEffectTarget.kMultiTargetFriendly, kEffectTarget.kFriendlyMinion,
+    ];
+
+    /// <summary>
+    /// The targets of an "all" free cast: every enemy standing for a single-enemy spell, every teammate standing for
+    /// a single-friend spell, else one cast as usual (the spell already hits everyone it can).
+    /// </summary>
+    private List<CombatDuelSubCircle> AllFreeTargets(CombatDuelSubCircle caster, SpellTemplate template) {
+        var effects = (template.m_effects ?? []).Where(effect => effect is not null).ToList();
+        var standing = caster._duelActor.ActiveSubCircles.Where(c => c.IsAlive && c.AddedToDuel).OrderBy(c => c.SlotIndex);
+        if (effects.Any(effect => s_singleEnemy.Contains(effect.m_effectTarget))) {
+            return [.. standing.Where(c => c.OccupiedTeam != caster.OccupiedTeam)];
+        }
+
+        if (effects.Any(effect => s_singleFriend.Contains(effect.m_effectTarget))) {
+            return [.. standing.Where(c => c.OccupiedTeam == caster.OccupiedTeam)];
+        }
+
+        return [PickFreeTarget(caster, template, null)];
     }
 
     private float ProcessQueuedAction(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
