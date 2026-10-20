@@ -84,10 +84,17 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
     private bool TryStitch(ulong displayItemId, ulong statsItemId, int stitchCrowns) {
         var displayItem = FindItem(displayItemId);
         var statsItem = FindItem(statsItemId);
+        Logger.Information("[Seamstress] {0} asks to stitch the look of {1} onto {2}.",
+            Logger.Args(wizard.CharId, displayItemId, statsItemId));
         if (displayItemId == statsItemId || displayItem is null || statsItem is null) {
             ReportTampering($"Player tried to stitch items {displayItemId} and {statsItemId}, which are not two items they own!");
 
             return false;
+        }
+
+        if (PetStitch.IsPet(displayItem) || PetStitch.IsPet(statsItem)) {
+            return new PetStitch(wizard, session, unequip).TryStitch(displayItem, statsItem, stitchCrowns, out var petFailure)
+                || Deny($"pet stitch of {displayItemId} and {statsItemId}", petFailure);
         }
 
         if (!StitchRules.TryPlanStitch(displayItem, statsItem, out var plan, out var reason)) {
@@ -112,6 +119,11 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
             ReportTampering($"Player tried to unstitch item {itemId}, which they do not own!");
 
             return false;
+        }
+
+        if (PetStitch.IsPet(stitchedItem)) {
+            return new PetStitch(wizard, session, unequip).TryUnstitch(stitchedItem, statItemColor1, statItemColor2, unstitchCrowns, out var petFailure)
+                || Deny($"pet unstitch of {itemId}", petFailure);
         }
 
         if (!StitchRules.TryPlanUnstitch(stitchedItem, statItemColor1, statItemColor2, out var plan, out var reason)) {
