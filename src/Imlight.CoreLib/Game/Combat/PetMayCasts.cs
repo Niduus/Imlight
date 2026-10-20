@@ -34,6 +34,9 @@ internal static class PetMayCasts {
     internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
     internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
     internal static readonly bool Chain = ConfigurationManager.GetValue("PetCasting.Chain", true);
+    // The most seconds the next round waits for each May Cast's animation. The cinematic timings ran ~1 s long per
+    // pet cast (Justin's log, 2026-10-20: 16 casts, the round started 15 s after he saw them end).
+    internal static readonly float CastSeconds = Math.Max(1f, ConfigurationManager.GetValue("PetCasting.CastSeconds", 4f));
     internal static readonly int MaxChain = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
     // The game takes a card's pips from its template rank plus m_regularAdjust (m_pipCost is never sent), so the pet's

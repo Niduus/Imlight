@@ -89,7 +89,12 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
 
         // The client is told about the results only after the commit, so a result it could not be told about stops here.
         foreach (var result in results) {
+            // Sockets copied from the item that gave the stats survive the reset to the template's behaviors.
+            var sockets = result.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().FirstOrDefault();
             CoreObjectFactory.InitializeCoreObjectBehaviors(result, result.m_templateID);
+            if (sockets is not null) {
+                StitchedItemFactory.SetSockets(result, sockets);
+            }
             result.m_characterId = wizard.CharId;
             if (!ItemSync.TrySerialize(result, out _)) {
                 failure = $"item {result.m_globalID.Full} could not be serialized for the client";

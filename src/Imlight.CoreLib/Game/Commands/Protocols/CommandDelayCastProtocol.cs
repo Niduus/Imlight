@@ -23,25 +23,23 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.daybreaker Fire Cat` (`.db`) and `.nightbringer Fire Cat` (`.nb`): in battle, casts a spell for free this round,
-/// at the start or the end of your turn, as well as your card. Type it several times to chain spells.
+/// `.c1 Fire Cat` and `.c2 Fire Cat` (were .daybreaker/.db and .nightbringer/.nb; Justin renamed them 2026-10-20): in
+/// battle, casts a spell for free this round, before (c1) or after (c2) your own card. Type it several times to chain spells.
 /// </summary>
 internal class CommandDelayCastProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    [Command("daybreaker")]
-    [Alias("db")]
+    [Command("c1")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void DaybreakerCommand([Remainder] string spell) => Queue(spell, atStart: true);
 
-    [Command("nightbringer")]
-    [Alias("nb")]
+    [Command("c2")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void NightbringerCommand([Remainder] string spell) => Queue(spell, atStart: false);
 
     private void Queue(string spell, bool atStart) {
-        var command = atStart ? ".daybreaker" : ".nightbringer";
+        var command = atStart ? ".c1" : ".c2";
         var name = (spell ?? "").Trim();
 
         // An optional target first: p1 (you) to p4 (teammates), e1 to e4 (enemies).
