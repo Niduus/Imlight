@@ -146,12 +146,6 @@ internal static class PetHatching {
     internal static bool SigilWindow => ConfigurationManager.GetValue("Hatching.SigilWindow", true);
 
     /// <summary>
-    /// [Hatching] SoloPadSeconds: seconds standing on a solo hatchery sigil before the solo hatch starts by itself
-    /// as if X was pressed. 0 (the default) turns this off: the game now shows the press-X prompt there.
-    /// </summary>
-    internal static int SoloPadSeconds => ConfigurationManager.GetValue("Hatching.SoloPadSeconds", 0);
-
-    /// <summary>
     /// The wizard's hatched pets: the one worn first, then the backpack's.
     /// </summary>
     internal static List<WizClientObjectItem> OwnPets(Wizard wizard) {

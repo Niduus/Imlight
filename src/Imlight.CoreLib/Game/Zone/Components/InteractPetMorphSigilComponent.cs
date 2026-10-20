@@ -39,8 +39,7 @@
  * logged starting "Hatching sigil".
  *
  * The solo pads have no model of their own, so the game was never sent them and showed no prompt; RenderComponent
- * now sends them. Standing on a solo pad for [Hatching] SoloPadSeconds (0 = off) still starts the solo hatch as
- * if X was pressed.
+ * now sends them. Pressing X there starts the same trip as the duo pad used alone.
  *
  * TODO:
  * - Whether live offered a MinigameSigilOption (m_successZone ThePhantomZoneWorld/PetGameMorph) instead
@@ -69,7 +68,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
-    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory, IWithTimers {
+    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
 
     private const uint SOLO_TEMPLATE_ID = 266075;
     private const uint DUO_TEMPLATE_ID = 112077;
@@ -81,7 +80,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     // The duo pad is two circles side by side; this reaches both.
     private const float DUO_RADIUS = 200.0f;
     private const float INTERACTION_TOLERANCE = 2.0f;
-    private const string STAND_TIMER_PREFIX = "HatchPadStand-";
 
     // The state ActivateHatchingSigilsTrigger gives the duo pads (ResAddDynaMod dynaModState=On).
     private const string LIT_STATE = "On";
@@ -97,16 +95,11 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     public float DEFAULT_INTERACTION_RADIUS => Radius;
 
-    public ITimerScheduler Timers { get; set; }
-
     // The players standing on the pad, by character id.
     private readonly Dictionary<ulong, Occupant> _occupants = [];
     // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
     // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
     private readonly HashSet<IActorRef> _litFor = [];
-    // The players whose position this pad has seen since they joined. One who arrives already on the pad (sent back
-    // here from the morph zone) must step off and on again before standing starts a hatch.
-    private readonly HashSet<ulong> _seen = [];
     private bool _logged;
 
     private MinigameSigilInfo SigilInfo
@@ -158,9 +151,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         LogPadOnce();
-        if (playerWizard is not null) {
-            _seen.Remove(playerWizard.CharId);
-        }
         _litFor.Remove(playerActor);
         if (PetHatching.Enabled) {
             Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
@@ -179,8 +169,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         _litFor.Remove(playerActor);
         foreach (var charId in _occupants.Where(x => x.Value.Actor.Equals(playerActor)).Select(x => x.Key).ToList()) {
             _occupants.Remove(charId);
-            _seen.Remove(charId);
-            Timers?.Cancel(STAND_TIMER_PREFIX + charId);
             Logger.Information("Hatching sigil: {0} left the zone, so is off {1}.", Logger.Args(charId, PadName));
         }
     }
@@ -195,17 +183,12 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
         var charId = playerWizard.CharId;
         var onPad = IsInHorizontalRadius(playerObj, Radius);
-        var arrivedOnPad = _seen.Add(charId) && onPad;
         if (onPad && !_occupants.ContainsKey(charId)) {
             _occupants[charId] = new Occupant(playerActor, playerObj.m_globalID.Full, Name(playerWizard));
             Logger.Information("Hatching sigil: {0} ({1}) stepped on {2} ({3}, {4} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, IsSolo ? "solo" : "duo", _occupants.Count));
-            if (!arrivedOnPad) {
-                StartStandTimer(charId);
-            }
         }
         else if (!onPad && _occupants.Remove(charId)) {
-            Timers?.Cancel(STAND_TIMER_PREFIX + charId);
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }
@@ -222,7 +205,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
 
         if (IsSolo) {
-            Timers?.Cancel(STAND_TIMER_PREFIX + playerCharacter.CharId);
             playerActor.Tell(HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Solo));
 
             return;
@@ -255,28 +237,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         toRequester.PartnerGameObjectId = partner.Occupant.GameObjectId;
         toRequester.PartnerName = partner.Occupant.Name;
         playerActor.Tell(toRequester);
-    }
-
-    private void StartStandTimer(ulong charId) {
-        var seconds = PetHatching.SoloPadSeconds;
-        if (!IsSolo || seconds <= 0 || Timers is null || !PetHatching.Enabled) {
-            return;
-        }
-
-        Timers.StartSingleTimer(STAND_TIMER_PREFIX + charId,
-            new CHARACTER_103_PROTOCOL.MSG_HATCHPADSTOOD { CharId = charId }, TimeSpan.FromSeconds(seconds));
-    }
-
-    // The player stood on the solo pad long enough: the same as pressing X there.
-    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHPADSTOOD))]
-    private void ReceivePadStood(CHARACTER_103_PROTOCOL.MSG_HATCHPADSTOOD message) {
-        if (!_occupants.TryGetValue(message.CharId, out var occupant)) {
-            return;
-        }
-
-        Logger.Information("Hatching sigil: {0} ({1}) stood on {2} for {3} s; starting the solo hatch.",
-            Logger.Args(occupant.Name, message.CharId, PadName, PetHatching.SoloPadSeconds));
-        occupant.Actor.Tell(HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Solo));
     }
 
     // What the session needs for the sigil countdown (as the dungeon sigils send it) and the way back.
