@@ -71,6 +71,9 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private List<GID> _inventory;
     private string _shopTitle = "Unknown Shop";
     private int _shopType = 0;
+    // The shop's kind, which picks the game's shop window (from the game's shop keepers: 0 equipment, 1 furniture,
+    // 2 reagents, 3 recipes, 5 pet snacks). The robe shop window opened for every shop while this was left at 0.
+    private int _furnitureShop = 0;
     private bool _csrTestShop = false;
     // Abner's lectern shop sells furniture, so it is offered as a housing shop (an equipment shop does not list it).
     private bool _housingShop;
@@ -96,13 +99,20 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _inventory = [.. stock.Items.Select(id => new GID((ulong) id))];
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
+            _furnitureShop = stock.Window switch {
+                HouseVendors.ShopWindow.Reagent => 2,
+                HouseVendors.ShopWindow.Jewel => 4,
+                HouseVendors.ShopWindow.Snack => 5,
+                _ => 0,
+            };
             if (HouseVendors.ShopLookFor(stock.Window) is { } look) {
                 _shopTitle = string.IsNullOrWhiteSpace(look.m_shopTitle) ? _shopTitle : look.m_shopTitle;
                 _shopType = look.m_shopType;
+                _furnitureShop = look.m_furnitureShop != 0 ? look.m_furnitureShop : _furnitureShop;
                 _csrTestShop = look.m_CSRTestShop;
             }
-            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop type {4}, title {5}.",
-                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _shopType, _shopTitle));
+            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop kind {4}, title {5}.",
+                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _furnitureShop, _shopTitle));
 
             return;
         }
@@ -112,6 +122,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             && !NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out _)) {
             _inventory = [new GID(HouseTrainers.ItemTemplateId)];
             _housingShop = true;
+            _furnitureShop = 1;
 
             return;
         }
@@ -131,6 +142,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 _shopTitle = shoppingBehavior.m_shopTitle;
             }
             _shopType = shoppingBehavior.m_shopType;
+            _furnitureShop = shoppingBehavior.m_furnitureShop;
             _csrTestShop = shoppingBehavior.m_CSRTestShop;
         }
 
@@ -205,7 +217,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             // Changes the type of currency that is used
             // 0 - Gold
             // 1 - PvP tickets
-            m_shopType = TestShopType ?? _shopType,
+            m_shopType = _shopType,
+            m_furnitureShop = TestShopType ?? _furnitureShop,
             // todo: figure this out for QA
             m_CSRTestShop = _csrTestShop,
         };
