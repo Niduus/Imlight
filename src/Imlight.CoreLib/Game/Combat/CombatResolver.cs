@@ -327,6 +327,12 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         return cinematicTime;
     }
 
+    private bool BattleDecided() {
+        var standing = _subCircles.Where(c => c.Occupied && c.AddedToDuel && c.IsAlive).Select(c => c.OccupiedTeam).Distinct();
+
+        return standing.Count() < 2;
+    }
+
     private Dictionary<CombatDuelSubCircle, int> HealthNow()
         => _subCircles.Where(c => c.Occupied && c.AddedToDuel && c.ParticipantGameStats is not null)
             .ToDictionary(c => c, c => c.ParticipantGameStats.m_currentHitpoints);
@@ -381,6 +387,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         }
 
         if (cast.Count + damaged.Count + healed.Count + passed.Count == 0) {
+            return 0;
+        }
+
+        // A won or lost battle ends without more May Casts, which only made its end wait (Justin, 2026-10-20).
+        if (BattleDecided()) {
             return 0;
         }
 
@@ -439,7 +450,10 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var test = PetMayCasts.TestMode is not null;
         var normal = test && PetMayCasts.TestNormalCard ? PetMayCasts.NormalCard(mayCast) : null;
         var card = normal is not null ? SpellFactory.GetSpell(normal) : SpellFactory.GetSpell(mayCast.SpellTemplateId);
-        var spell = card is null ? null : !test && PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card;
+        // Free: the game takes a card's pips off the caster when it plays it, so the pet's copy costs none (Justin's
+        // pips went down for every May Cast, 2026-10-20).
+        var spell = card is null ? null : (!test && PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card)
+            with { m_pipCost = new SpellRank() };
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template) {
             return 0;
         }
