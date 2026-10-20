@@ -103,7 +103,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     // The hatching sigil this session's player hatches two of their own pets from; _soloSigilGid is 0 when there is none.
     private const uint MORPH_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
-    private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.None);
+    // The game reads a u32 of serializer flags first (SerializerCoreObjects), so they are written (Justin, 2026-10-20:
+    // "Failed to load pet morph partner data" without them).
+    private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.SerializeFlags);
     private ulong _soloSigilGid;
     private readonly List<ulong> _soloPicks = [];
 
@@ -760,6 +762,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             InstanceOwnerCharId = owner,
             KeepInstance = isPartner,
             FaceSlot = isPartner ? 1 : 0,
+            // Sliding onto the circle took players off the small solo pads (Justin, 2026-10-20: "drags you").
+            NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });

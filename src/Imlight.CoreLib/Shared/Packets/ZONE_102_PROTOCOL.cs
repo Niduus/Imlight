@@ -1160,6 +1160,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public int FaceSlot;
 
         /// <summary>
+        /// True to leave the player where they stand instead of sliding them onto the sigil's circle. The small hatchery
+        /// pads are only 100 across, so the slide took players off them and the game cancelled the countdown.
+        /// </summary>
+        public bool NoSnap;
+
+        /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.
         /// </summary>
