@@ -99,6 +99,7 @@ internal sealed class Lookup {
         Imlight("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
         Imlight("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
         Command("Rename", ".name self <name> or .name pet <name>", QA, "Changes your wizard's name (relog to see it) or the name of the pet you are wearing. Use reset as the name to go back to the old one."),
+        Command("Pet cast test", ".petcasttest <0-6> or .petcasttest off", QA, "Changes how a pet's May Cast is sent to the game, to find the way it plays. 0 = plain pet copy, 1 = plain normal card, 2 = pet flags with pet copy, 3 = pet flags with normal card, 4 = pet flags and forced with pet copy, 5 = pet flags and forced with normal card, 6 = forced normal card. Start a new battle after changing it."),
         Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
         Command("Pick teleport effect", ".tpstyle <number>", QA, "Wears teleport effect number <number> (0 is the normal one). Try 1, 2, 3 and so on, log out and back in, then teleport to see it."),
         Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),

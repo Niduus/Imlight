@@ -34,6 +34,33 @@ internal static class PetMayCasts {
     internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
     internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
+    /// <summary>
+    /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
+    /// pet-flagged casts of the pet copy: "does not spell in hand"). Null uses the [PetCasting] switches.
+    /// </summary>
+    internal static readonly string[] TestModes = [
+        "plain pet copy (Pet - Tower Shield)",
+        "plain normal card (Tower Shield)",
+        "pet flags, pet copy",
+        "pet flags, normal card",
+        "pet flags and forced, pet copy",
+        "pet flags and forced, normal card",
+        "forced, normal card",
+    ];
+
+    internal static int? TestMode;
+
+    internal static bool TestNormalCard => TestMode is 1 or 3 or 5 or 6;
+    internal static bool TestPetFlags => TestMode is 2 or 3 or 4 or 5;
+    internal static bool TestForced => TestMode is 4 or 5 or 6;
+
+    /// <summary>The normal card a pet copy is made from ("Pet - Tower Shield" is Tower Shield), or null.</summary>
+    internal static string NormalCard(MayCast mayCast) {
+        var plain = Unpet(mayCast.SpellName);
+
+        return plain != mayCast.SpellName && SpellFactory.Exists(plain) ? plain : null;
+    }
+
     private static readonly int s_onCast = ConfigurationManager.GetValue("PetCasting.OnCast", 10);
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
     private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);

@@ -399,10 +399,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         // As the pet's item card only with [PetCasting] AsItemCard (Justin, 2026-10-20, wanted that look): flagged so,
         // the game still skipped the cast ("does not spell in hand").
-        var spell = SpellFactory.GetSpell(mayCast.SpellTemplateId) is { } card
-            ? (PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card)
-            : null;
-        if (spell is null || CoreObjectFactory.GetCoreTemplate(mayCast.SpellTemplateId) is not SpellTemplate template) {
+        var test = PetMayCasts.TestMode is not null;
+        var normal = test && PetMayCasts.TestNormalCard ? PetMayCasts.NormalCard(mayCast) : null;
+        var card = normal is not null ? SpellFactory.GetSpell(normal) : SpellFactory.GetSpell(mayCast.SpellTemplateId);
+        var spell = card is null ? null : !test && PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card;
+        if (spell is null || CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template) {
             return 0;
         }
 
@@ -412,8 +413,9 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             return 0;
         }
 
-        Logger.Information("Duel {0} | Slot {1} | Pet May Cast {2} casts {3} on slot {4} after {5}.",
-            Logger.Args(_duel.m_duelID.Full, owner.SlotIndex, mayCast.Talent, mayCast.SpellName, target.SlotIndex, reason));
+        Logger.Information("Duel {0} | Slot {1} | Pet May Cast {2} casts {3} on slot {4} after {5}{6}.",
+            Logger.Args(_duel.m_duelID.Full, owner.SlotIndex, mayCast.Talent, normal ?? mayCast.SpellName, target.SlotIndex,
+                reason, test ? $" (test {PetMayCasts.TestMode}: {PetMayCasts.TestModes[PetMayCasts.TestMode.Value]})" : ""));
         owner._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar;
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
@@ -421,8 +423,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
         // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
-            combatActionList.m_actionList[i].m_forceSpell = PetMayCasts.ForceSpell;
-            if (PetMayCasts.ShowAsPetCast) {
+            combatActionList.m_actionList[i].m_forceSpell = test ? PetMayCasts.TestForced : PetMayCasts.ForceSpell;
+            if (test ? PetMayCasts.TestPetFlags : PetMayCasts.ShowAsPetCast) {
                 combatActionList.m_actionList[i].m_petCast = true;
                 combatActionList.m_actionList[i].m_petCasted = true;
                 combatActionList.m_actionList[i].m_petCastTarget = target.SlotIndex;
