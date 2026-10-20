@@ -47,6 +47,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -395,6 +396,120 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         Logger.Information("Pet game join: game {0}, track {1}.", Logger.Args(message.Game, message.Track));
         SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = message.Game, Success = 0 });
         InformGameClient("Pet games are not in yet. Feed snacks from the snack window or with .pet feed to level your pet.");
+    }
+
+    /// <summary>
+    /// Breeds two pets into an egg for this wizard: `.hatch`, the hatchmaking kiosk and hatching in person all
+    /// come here, because the egg's timer lives in this service (Justin, 2026-10-20).
+    /// </summary>
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_BREEDPETS))]
+    private void ReceiveBreedPets(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message) {
+        string problem;
+        WizClientObjectItem egg = null;
+        try {
+            problem = Breed(message, out egg);
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: breeding {0} with {1} failed. {2}",
+                Logger.Args(message.ParentA?.ItemId, message.ParentB?.ItemId, ex));
+            problem = "Something went wrong while hatching; nothing was made. The server log has the details.";
+        }
+
+        if (problem is not null) {
+            Logger.Information("Hatching ({0}) refused: {1}", Logger.Args(message.Source, problem));
+        }
+
+        // What each window waits for. Both status codes are guesses (0 = it worked, as with trades).
+        switch (message.Source) {
+            case HatchSource.InPerson:
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHRESULT {
+                    TargetGID = message.PartnerGameObjectId,
+                    Status = (uint) (problem is null ? HatchStatus.Success : HatchStatus.Failed),
+                });
+                break;
+            case HatchSource.Kiosk:
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = problem is null ? 0u : 1u });
+                break;
+        }
+
+        if (problem is not null) {
+            InformGameClient(problem);
+
+            return;
+        }
+
+        var kind = PetHatching.KindName((uint) egg.m_templateID) ?? egg.m_templateID.ToString();
+        var left = Math.Max(0, (long) (PetProgress.GetBehavior(egg)?.m_hatchedTimeSecs ?? 0) - DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+        InformGameClient($"{message.ParentA.Label} and {message.ParentB.Label} made a {kind} egg! It hatches in "
+            + (left >= 3600 ? $"{left / 3600} h {left % 3600 / 60} min." : left >= 60 ? $"{left / 60} min." : $"{left} s."));
+    }
+
+    private string Breed(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message, out WizClientObjectItem egg) {
+        egg = null;
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return "No wizard is logged in.";
+        }
+
+        Logger.Information("Hatching ({0}) for {1}: parent A {2}; parent B {3}.",
+            Logger.Args(message.Source, wizard.CharId, PetHatching.Describe(message.ParentA), PetHatching.Describe(message.ParentB)));
+
+        // The wizard's own parent has to still be there.
+        if (message.ParentA is null || PetCare.FindPet(wizard, message.ParentA.ItemId) is null) {
+            return "Your pet for the hatch is no longer in your backpack.";
+        }
+
+        var cost = PetHatching.GoldCost;
+        if (cost > 0 && wizard.GameStats.m_currentGold < cost) {
+            return $"Hatching costs {cost} gold.";
+        }
+
+        egg = PetHatching.MakeEgg(wizard.CharId, message.ParentA, message.ParentB, Random.Shared, out var hatchSeconds, out var problem);
+        if (egg is null) {
+            return problem;
+        }
+
+        if (!wizard.AddPetToInventory(egg)) {
+            egg = null;
+
+            return "Your backpack has no room for the egg.";
+        }
+
+        if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, egg)) {
+            Logger.Error("Hatching: egg {0} is in the backpack of {1}, but the game could not be told. It shows after a relog.",
+                Logger.Args(egg.m_globalID.Full, wizard.CharId));
+        }
+
+        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+            ItemGlobalID = egg.m_globalID,
+            ItemLocation = 1,
+            ItemTemplateID = (uint) egg.m_templateID
+        });
+
+        PetHatching.KeepInheritedMaxStats(egg);
+
+        // The egg slot shares the item's global id, so MSG_HATCHEGGNOW and hatching find the item.
+        var slot = wizard.PetOwnerBehavior.CreatePetEgg(egg.m_templateID, hatchSeconds, egg.m_globalID);
+        WizardCollection.UpdateCharacterPetOwnerBehavior(wizard);
+
+        if (cost > 0) {
+            wizard.RemoveGold(cost);
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+                Gold = wizard.GameStats.m_currentGold,
+                MaxGold = wizard.GameStats.m_baseGoldPouch
+            });
+        }
+
+        var behavior = PetProgress.GetBehavior(egg);
+        Logger.Information("Hatching: {0} got egg {1} ({2}, template {3}), hatches in {4} s. Talents {5}; derby {6}; max stats {7}.",
+            Logger.Args(wizard.CharId, egg.m_globalID.Full, PetHatching.KindName((uint) egg.m_templateID), egg.m_templateID.Full, hatchSeconds,
+                PetHatching.Talents(behavior?.m_allTalents), PetHatching.Talents(behavior?.m_allDerbyTalents),
+                string.Join("/", (behavior?.m_maxStats ?? []).Select(s => $"{s.m_name} {s.m_value}"))));
+
+        SendEggCreatedMessages(slot);
+        StartEggTimer(slot);
+
+        return null;
     }
 
     private void InitializeEggs(Wizard wizard) {

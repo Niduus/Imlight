@@ -78,6 +78,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(CrownShopService),
         typeof(PrivacyOptionsService),
         typeof(TradeService),
+        typeof(HatchService),
         typeof(SeamstressService),
         typeof(BankService),
         typeof(PvPService),
