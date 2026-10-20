@@ -38,6 +38,7 @@
  */
 
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using System;
 using System.Linq;
 
@@ -146,6 +147,9 @@ internal static class CombatEffectApplicator {
                 break;
             case kSpellEffects.kStealWard:
                 cinematicTime += ApplyStealWardEffect(effect, caster, targets);
+                break;
+            case kSpellEffects.kDetonateOverTime:
+                cinematicTime += ApplyDetonateEffect(effect, targets);
                 break;
             default:
                 break;
@@ -468,6 +472,46 @@ internal static class CombatEffectApplicator {
                 pipCount.m_genericPips = (byte) Math.Max(genericPips + effect.m_effectParam, 0);
             }
         }
+    }
+
+    // Sets off the targets' damage (or heal) over time effects at once: each deals what it has left, times
+    // m_healModifier (2 for "Detonate 200"). m_effectParam is how many to set off, below 0 for all of them.
+    private static float ApplyDetonateEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {
+        var cinematicTime = 0.0f;
+        var heals = effect.m_disposition == kHangingDisposition.kBeneficial;
+        var kind = heals ? kSpellEffects.kHealOverTime : kSpellEffects.kDamageOverTime;
+        var multiplier = effect.m_healModifier > 0 ? effect.m_healModifier : 1f;
+
+        foreach (var target in targets) {
+            if (target is null || target.ParticipantObject is null || !target.IsAlive) {
+                continue;
+            }
+
+            var overTime = target._hangingEffects.Where(x => x.m_effectType == kind && x.m_numRounds > 0).ToList();
+            if (effect.m_effectParam >= 0) {
+                overTime = [.. overTime.Take(effect.m_effectParam)];
+            }
+
+            if (overTime.Count == 0) {
+                continue;
+            }
+
+            var total = (int) Math.Floor(overTime.Sum(x => (long) x.m_paramPerRound * x.m_numRounds) * multiplier);
+            target._hangingEffects.RemoveAll(x => overTime.Contains(x));
+            cinematicTime += overTime.Count * HANGING_EFFECT_CONSUME_TIME;
+
+            if (heals) {
+                target.HealParticipant(total);
+            }
+            else {
+                target.DamageParticipant(total);
+            }
+
+            Logger.Information("Detonate on slot {0}: {1} over time effects, {2} {3}.",
+                               Logger.Args(target.SlotIndex, overTime.Count, total, heals ? "healing" : "damage"));
+        }
+
+        return cinematicTime;
     }
 
     // Kills the effect's targets outright; the round cleanup sends MSG_COMBATDEATH for the corpse.
