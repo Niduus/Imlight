@@ -49,7 +49,7 @@ internal sealed class Lookup {
     internal const string EVERYTHING = "Everything";
 
     /// <summary>The filters the tab offers, in order.</summary>
-    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Item", "Spell", "Creature", "NPC", "Zone", "Quest"];
+    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Item", "Spell", "Creature", "NPC", "Zone", "Quest", "Phrase"];
 
     private const string QA = "Quality assurance or higher";
     private const string HM = "Hall monitor or higher";
@@ -126,7 +126,7 @@ internal sealed class Lookup {
         Command("Cast first, no animation (c1s)", ".c1s e2 Fire Cat", QA, "Like .c1, but the game skips the spell's casting animation, so the round goes faster. Mix them in one line: .c1s Tower Shields, c2 Pyrodynamics."),
         Command("Cast after, no animation (c2s)", ".c2s e1 Fire Cat", QA, "Like .c2, but the game skips the spell's casting animation."),
         Command("Skip your casting animation (cast)", ".cast none", QA, "Your spells skip their casting animation until .cast reset or the server restarts. (Picking another school's animation isn't possible: the game always plays the spell's own.)"),
-        Command("Boss-style message (ca)", ".ca Prepare yourself!", QA, "In battle, shows your words like a boss's cheat line, where \"Gained Power Pip\" appears, before the next round's first spell."),
+        Command("Boss-style message (ca)", ".ca 1   or   .ca gained power pip", QA, "In battle, shows one of the game's own lines like a boss's cheat line, before the next round's first spell. Use the phrase's number from the Phrase list here, or words from the line (.ca find <words> lists matches with their numbers). Typed text of your own can't be shown."),
         Command("Add an enemy to your battle (joinme)", ".joinme Gobbler", QA, "In a battle against creatures, the creature joins on the enemy side and fights from the next round. Use its name or ID (.lookup mob finds them). A number at the end adds that many while there is room: .joinme Gobbler 2."),
         Command("Cast first or last in the round (c1 f / c1 l)", ".c2 sf all Fire Cat", QA, "Options after .c1 or .c2: s skips the casting animation, e adds the best enchantment that fits (Epic on attacks, Primordial on heals, Sharpened Blade on blades, Potent Trap on traps, Aegis or Indemnity), f casts before anyone's turn, l casts after everyone's turn; mix them like sfe. A number after the spell's name repeats it, up to 20 times: .c1 e Fire Cat 3. Target all casts a single-target spell once on every enemy (or every teammate for a heal or blade)."),
         Command("Mastery in battle", ".mastery fire   or   .mastery astral   or   .mastery all", QA, "In battle, you count as having that school's mastery until the battle ends, so power pips count as 2 for its spells. Schools: fire, ice, storm, myth, life, death, balance, sun, moon, star and shadow; astral means sun, moon and star; shadow also masters the seven schools, because shadow cards belong to one of them; all means every one. This is school mastery (the amulet kind), not Archmastery."),
@@ -276,6 +276,19 @@ internal sealed class Lookup {
                 var (name, title) = (fields[0], fields[1]);
                 entries.Add(new LookupEntry("Quest", title.Length > 0 ? title : name, "", title.Length > 0 ? name : "",
                     $".quest grant {name}", "Adds the quest to your quest book. .quest complete with the same name finishes it."));
+            }
+        }
+
+        // The game's own lines for .ca, by number.
+        var phrases = Path.Combine(folder, "phrases.csv");
+        if (File.Exists(phrases)) {
+            foreach (var fields in ReadCsv(phrases)) {
+                if (fields.Count < 3 || !int.TryParse(fields[0], out _)) {
+                    continue;
+                }
+
+                entries.Add(new LookupEntry("Phrase", fields[1], fields[0], "", $".ca {fields[0]}",
+                    "In battle, shows this line like a boss's cheat line before the next round's first spell."));
             }
         }
 

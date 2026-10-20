@@ -47,6 +47,7 @@ using Imlight.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Imlight.CoreLib.Shared.Resources;
@@ -116,6 +117,76 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         }
 
         return value;
+    }
+
+    private static List<(string Key, string Text)> s_phrases;
+
+    /// <summary>
+    /// The game's short lines (100 letters or fewer, each text once), in key order, so their numbers stay the same
+    /// from boot to boot. `.ca 1` shows the first; the app's Lookup tab lists them with their numbers (phrases.csv).
+    /// </summary>
+    public static List<(string Key, string Text)> Phrases {
+        get {
+            if (s_phrases is not null) {
+                return s_phrases;
+            }
+
+            if (s_data.Count == 0) {
+                _ = Instance;
+            }
+
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            var phrases = new List<(string Key, string Text)>();
+            foreach (var (table, lines) in s_data) {
+                foreach (var (id, text) in lines) {
+                    var line = text?.Trim() ?? "";
+                    if (line.Length > 0 && line.Length <= 100) {
+                        phrases.Add(($"{table}_{id}", line));
+                    }
+                }
+            }
+
+            phrases.Sort((a, b) => string.CompareOrdinal(a.Key, b.Key));
+            s_phrases = [.. phrases.Where(p => seen.Add(p.Text))];
+
+            return s_phrases;
+        }
+    }
+
+    /// <summary>
+    /// The game's own lines that hold every word of <paramref name="query"/>: a line equal to it first, then the
+    /// shortest. Each comes with its key (Table_Id), which is what the game shows a line by. Used by .ca.
+    /// </summary>
+    public static List<(string Key, string Text)> Search(string query, int maxResults) {
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        static string Plain(string text) => text.Trim().TrimEnd('!', '.', '?').Trim();
+        var plainQuery = Plain(query ?? "");
+        var words = plainQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 0) {
+            return [];
+        }
+
+        var found = new List<(string Key, string Text)>();
+        foreach (var (table, lines) in s_data) {
+            foreach (var (id, text) in lines) {
+                if (!string.IsNullOrEmpty(text) && text.Length <= 200
+                    && Array.TrueForAll(words, w => text.Contains(w, StringComparison.OrdinalIgnoreCase))) {
+                    found.Add(($"{table}_{id}", text));
+                }
+            }
+        }
+
+        found.Sort((a, b) => {
+            var exactA = Plain(a.Text).Equals(plainQuery, StringComparison.OrdinalIgnoreCase);
+            var exactB = Plain(b.Text).Equals(plainQuery, StringComparison.OrdinalIgnoreCase);
+
+            return exactA != exactB ? (exactA ? -1 : 1) : a.Text.Length.CompareTo(b.Text.Length);
+        });
+
+        return found.Count > maxResults ? found.GetRange(0, maxResults) : found;
     }
 
     /// <summary>

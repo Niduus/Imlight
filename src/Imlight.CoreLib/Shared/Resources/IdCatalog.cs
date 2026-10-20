@@ -79,6 +79,7 @@ public static class IdCatalog {
     private const string REVISION_NAME = "revision.txt";
     private const string ZONES_NAME = "zones.txt";
     private const string QUESTS_NAME = "quests.csv";
+    private const string PHRASES_NAME = "phrases.csv";
     private const string CSV_HEADER = "Id,Kind,Name,School,Level,Path";
     private const int INFORM_ALIVE_INTERVAL = 10000;
 
@@ -318,6 +319,14 @@ public static class IdCatalog {
                 quests.Append(CsvField(name)).Append(',').AppendLine(CsvField(NameOf(titleKey, "")));
             }
             File.WriteAllText(Path.Combine(OutputPath, QUESTS_NAME), quests.ToString());
+
+            // The game's own lines for .ca, numbered (Justin, 2026-10-20: `.ca 1` plays the first phrase).
+            var phrases = new StringBuilder().AppendLine("Number,Text,Key");
+            var number = 0;
+            foreach (var (key, text) in Locale.Phrases) {
+                phrases.Append(++number).Append(',').Append(CsvField(text)).Append(',').AppendLine(CsvField(key));
+            }
+            File.WriteAllText(Path.Combine(OutputPath, PHRASES_NAME), phrases.ToString());
         }
         catch (Exception ex) {
             Logger.Warning("Could not write the zone and quest lists for the app. {Exception}", Logger.Args(ex));

@@ -386,7 +386,9 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public byte MessageOrder => 34;
         public byte ServiceID => 106;
 
+        // The line's key (Table_Id), which the game shows the line by, and its English text.
         public string Text;
+        public string Shown;
         public IActorRef Actor;
 
     }
