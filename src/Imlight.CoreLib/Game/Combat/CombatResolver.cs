@@ -263,6 +263,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var instantCinematics = _subCircles[0]._duelActor.CheatInstantCinematics;
 
         _petCastsThisRound.Clear();
+        PetCastCards.Clear();
         foreach (var action in _queuedCombatActions) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
@@ -277,6 +278,13 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
     // How many May Casts each owner's pet has done this round ([PetCasting] MaxPerRound).
     private readonly Dictionary<CombatDuelSubCircle, int> _petCastsThisRound = [];
+
+    /// <summary>
+    /// This round's pet May Cast cards per owner. The game casts only cards it finds in the caster's hand (it skipped
+    /// every other way: "does not spell in hand"; a pet item card in hand played with the pet's animation, Justin's
+    /// log 2026-10-20), so the duel sends the owner a hand holding them before the round's actions.
+    /// </summary>
+    internal readonly Dictionary<CombatDuelSubCircle, List<Spell>> PetCastCards = [];
 
     /// <summary>
     /// Runs one step of the round, then lets pets May Cast for what happened in it: a spell cast by a teammate (or
@@ -420,6 +428,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
         var cinematicTime = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+        if (!PetCastCards.TryGetValue(owner, out var cards)) {
+            PetCastCards[owner] = cards = [];
+        }
+
+        cards.Add(spell);
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
         // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
