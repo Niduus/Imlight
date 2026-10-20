@@ -4,7 +4,8 @@
  * Kinds: hat, robe, boot, wand, athame, amulet, ring, pet, gear (any item), deck, potion.
  * Form: .<kind> [amount] [level] <name or ID>. The amount is optional (1 when left out). With a name, the best match
  * of that kind is given: an exact name first, then the shortest name holding every word. Gear that comes in several
- * levels under one name gives the version for that level, or the highest level when no level is typed.
+ * levels under one name gives the version for that level, or the highest level when no level is typed; every
+ * version with that name and level (such as one per socket shape) is given.
  */
 
 using System;
@@ -96,13 +97,21 @@ internal class CommandGearProtocol : CommandProtocol {
         }
 
         copies = Math.Min(copies, MAX_COPIES);
-        var template = Find(query, kinds, level, out var problem);
-        if (template is null) {
+        var templates = Find(query, kinds, level, out var problem);
+        if (templates.Count == 0) {
             InformSenderClient(problem);
 
             return;
         }
 
+        // Several versions with one name and level (such as Bound Spirit's Cards with a triangle, square or tear
+        // socket) are all given, to pick from (Justin, 2026-10-20).
+        foreach (var template in templates) {
+            GiveCopies(template, copies);
+        }
+    }
+
+    private void GiveCopies(WizItemTemplate template, int copies) {
         var templateId = (ulong) template.m_templateID;
         var name = ShownName(template);
         var required = RequiredLevel(template);
@@ -141,24 +150,24 @@ internal class CommandGearProtocol : CommandProtocol {
         InformSenderClient($"Gave {given} x {name} ({templateId}).{where}");
     }
 
-    private static WizItemTemplate Find(string query, string[] kinds, int? level, out string problem) {
+    private static List<WizItemTemplate> Find(string query, string[] kinds, int? level, out string problem) {
         problem = null;
 
         // An ID is used as it is, whatever kind it is.
         if (ulong.TryParse(query, out var id)) {
             if (CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate byId && Usable(byId, id)) {
-                return byId;
+                return [byId];
             }
 
             problem = $"{id} is not an item that can be given.";
 
-            return null;
+            return [];
         }
 
         if (!IdCatalog.IsReady) {
             problem = "The ID lookup is still being built, so names do not work yet. Use the ID, or try again shortly.";
 
-            return null;
+            return [];
         }
 
         var matches = IdCatalog.Search(IdCatalogKind.Item, query, MAX_CANDIDATES)
@@ -172,17 +181,16 @@ internal class CommandGearProtocol : CommandProtocol {
             var shown = ShownName(matches[0]);
             var versions = matches.Where(t => ShownName(t).Equals(shown, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(RequiredLevel).ToList();
-            if (level is null) {
-                return versions[^1];
-            }
+            var chosen = level is null ? versions[^1]
+                : versions.LastOrDefault(t => RequiredLevel(t) <= level) ?? versions[0];
 
-            return versions.LastOrDefault(t => RequiredLevel(t) <= level) ?? versions[0];
+            return [.. versions.Where(t => RequiredLevel(t) == RequiredLevel(chosen))];
         }
 
         problem = $"No {(kinds.Length == 0 ? "item" : kinds[0].ToLowerInvariant())} named \"{query}\" was found. "
             + "Try fewer words, or .lookup item " + query;
 
-        return null;
+        return [];
     }
 
     private static int RequiredLevel(WizItemTemplate template)
