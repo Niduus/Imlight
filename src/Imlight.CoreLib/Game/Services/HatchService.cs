@@ -121,10 +121,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_INIT_DELAY = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan MORPH_INIT_RETRY = TimeSpan.FromSeconds(3);
     private const int MORPH_INIT_TRIES = 4;
-    private static readonly TimeSpan MORPH_CLOSE_DELAY = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan MORPH_CLOSE_DELAY = TimeSpan.FromSeconds(0.3);
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
-    // Long enough to see the egg in the hatch window.
-    private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(20);
+    // Long enough to see the egg in the hatch window; closing the window leaves sooner.
+    private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
     private PetMorphVisit _pendingTrip;
     private PetMorphVisit _morph;
     private bool _morphClientReady;
@@ -736,7 +736,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             message.SigilGID,
             message.SigilName,
             string.IsNullOrEmpty(message.ZoneName) ? PetMorphZone.HATCHERY_ZONE : message.ZoneName,
-            string.IsNullOrEmpty(message.SigilLoc) ? PetMorphZone.LOCATION : message.SigilLoc,
+            TripReturnLocation(wizard, message.SigilLoc),
             owner,
             pair ? message.PartnerCharId : 0,
             pair ? message.PartnerName : null);
@@ -1356,6 +1356,17 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         // player could not move after coming back (Justin, 2026-10-20). The zone change closes the window.
 
         Teleport(visit.ReturnZone, doTeleportEffects: true, destinationLocation: visit.ReturnLocation);
+    }
+
+    // Where the player stood, facing the same way, when the trip started (before the sigil snaps them), so they come
+    // back there and not at the pad's centre (Justin, 2026-10-20).
+    private static string TripReturnLocation(Wizard wizard, string sigilLoc) {
+        var at = wizard.Location;
+        if (at.X != 0 || at.Y != 0 || at.Z != 0) {
+            return Util.GetCompactStringFromVector(at, wizard.Orientation);
+        }
+
+        return string.IsNullOrEmpty(sigilLoc) ? PetMorphZone.LOCATION : sigilLoc;
     }
 
     private void ForgetMorph(PetMorphVisit visit) {
