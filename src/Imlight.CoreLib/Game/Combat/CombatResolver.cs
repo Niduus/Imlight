@@ -309,9 +309,28 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var healed = new HashSet<CombatTeam>();
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
             var done = combatActionList.m_actionList[i];
-            if (done.m_spell is not null && done.m_spellHits == (char) 1 && !done.m_petCast
+            if (done.m_spell is not null && done.m_spellHits == (char) 1 && !done.m_petCast && !done.m_forceSpell
                     && _subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == done.m_spellCaster) is { } caster) {
                 cast.Add(caster.OccupiedTeam);
+
+                // A damage or heal spell landing on a teammate counts even when the server's health did not move:
+                // gear can take all of a hit's damage here while the game still shows it (Justin's log, 2026-10-20).
+                var effects = (CoreObjectFactory.GetCoreTemplate(done.m_spell.m_templateID) as SpellTemplate)?.m_effects ?? [];
+                var damages = effects.Any(e => e is not null && s_damageEffects.Contains(e.m_effectType));
+                var heals = effects.Any(e => e is not null && s_healEffects.Contains(e.m_effectType));
+                foreach (var slot in done.m_targetSubcircleList ?? []) {
+                    if (_subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == slot) is not { } hit) {
+                        continue;
+                    }
+
+                    if (damages) {
+                        damaged.Add(hit.OccupiedTeam);
+                    }
+
+                    if (heals) {
+                        healed.Add(hit.OccupiedTeam);
+                    }
+                }
             }
         }
 
@@ -364,6 +383,17 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
         return cinematicTime;
     }
+
+    private static readonly HashSet<kSpellEffects> s_damageEffects = [
+        kSpellEffects.kDamage, kSpellEffects.kDamageNoCrit, kSpellEffects.kDamageOverTime, kSpellEffects.kMaxHealthDamage,
+        kSpellEffects.kStealHealth, kSpellEffects.kDamagePerTotalPipPower, kSpellEffects.kMinionRankDamage,
+        kSpellEffects.kDeferredDamage, kSpellEffects.kDivideDamage,
+    ];
+
+    private static readonly HashSet<kSpellEffects> s_healEffects = [
+        kSpellEffects.kHeal, kSpellEffects.kHealOverTime, kSpellEffects.kHealPercent, kSpellEffects.kMaxHealthHeal,
+        kSpellEffects.kSetHealPercent,
+    ];
 
     private float CastPetSpell(CombatDuelSubCircle owner, PetMayCasts.MayCast mayCast, string reason,
                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
