@@ -21,6 +21,7 @@ using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -539,6 +540,76 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public ulong CharId;
         public ByteString WishlistData;
         public uint RemovedTemplateId;
+
+    }
+
+    /// <summary>
+    /// Asks PetService to breed two pets into an egg for this session's wizard (Justin, 2026-10-20). ParentA is
+    /// the wizard's own pet; ParentB may be another player's.
+    /// </summary>
+    internal sealed class MSG_BREEDPETS : IServerMessage {
+
+        public byte MessageOrder { get; } = 70;
+        public byte ServiceID { get; } = 103;
+
+        public PetParent ParentA;
+        public PetParent ParentB;
+        public HatchSource Source;
+        // In person: the partner's game object id, for MSG_PETHATCHRESULT.
+        public ulong PartnerGameObjectId;
+
+    }
+
+    /// <summary>
+    /// What one hatching partner's session tells the other's (see HatchService).
+    /// </summary>
+    internal enum HatchPeerKind : byte {
+        Invite,
+        Refused,
+        Join,
+        Ready,
+        PetChosen,
+        Left,
+    }
+
+    /// <summary>
+    /// Sent between the sessions of two players hatching in person.
+    /// </summary>
+    internal sealed class MSG_HATCHPEER : IServerMessage {
+
+        public byte MessageOrder { get; } = 71;
+        public byte ServiceID { get; } = 103;
+
+        public HatchPeerKind Kind;
+        public ulong FromCharId;
+        public IActorRef FromSession;
+        public IActorRef FromZone;
+        public int Value;
+        public PetParent Pet;
+
+    }
+
+    /// <summary>
+    /// The hatchmaking kiosk was used: opens the kiosk window for this session.
+    /// </summary>
+    internal sealed class MSG_OPENHATCHKIOSK : IServerMessage {
+
+        public byte MessageOrder { get; } = 72;
+        public byte ServiceID { get; } = 103;
+
+        public ulong KioskGID;
+
+    }
+
+    /// <summary>
+    /// The in-person hatch invite went unanswered for too long.
+    /// </summary>
+    internal sealed class MSG_HATCHINVITETIMEOUT : IServerMessage {
+
+        public byte MessageOrder { get; } = 73;
+        public byte ServiceID { get; } = 103;
+
+        public ulong PeerCharId;
 
     }
 
