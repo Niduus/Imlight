@@ -171,9 +171,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     }
 
     // .ca (Justin, 2026-10-20): lines shown like a boss's cheat, in the "Gained Power Pip" spot, as the round plays.
-    private readonly List<string> _announcements = [];
+    private readonly List<(string Text, int Slot)> _announcements = [];
 
-    internal void AddAnnouncement(string text) => _announcements.Add(text);
+    /// <param name="text">The locale key to show.</param>
+    /// <param name="slot">The circle of the player who typed it; the text shows over them.</param>
+    internal void AddAnnouncement(string text, int slot) => _announcements.Add((text, slot));
 
     /// <summary>
     /// Shows the waiting .ca lines before the round's first spell. The game plays an action carrying a message
@@ -187,14 +189,18 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             return 0;
         }
 
+        // The text shows over the action's caster, so each copy is cast by whoever typed .ca; it showed over the
+        // enemy whose spell came first (Justin, 2026-10-20). Their own spell is the copy when they have one.
         var spellAction = combatActionList.m_actionList[index];
-        var lines = _announcements.Select(text => spellAction with {
-            m_stringKeyMessage = text,
+        var lines = _announcements.Select(a => (combatActionList.m_actionList
+                .FirstOrDefault(x => x.m_spell is not null && x.m_spellCaster == a.Slot) ?? spellAction) with {
+            m_spellCaster = a.Slot,
+            m_stringKeyMessage = a.Text,
             m_showCast = false,
         }).ToList();
         combatActionList.m_actionList.InsertRange(index, lines);
         Logger.Information("Duel {0} | Round {1} | .ca shows {2} before slot {3}'s spell.",
-            Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, string.Join(", ", _announcements.Select(t => $"\"{t}\"")),
+            Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, string.Join(", ", _announcements.Select(a => $"\"{a.Text}\" over slot {a.Slot}")),
                 spellAction.m_spellCaster));
         var seconds = lines.Count * ANNOUNCEMENT_SECONDS;
         _announcements.Clear();

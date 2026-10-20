@@ -486,8 +486,6 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             ItemTemplateID = (uint) egg.m_templateID
         });
 
-        PetHatching.KeepInheritedMaxStats(egg);
-
         // The egg slot shares the item's global id, so MSG_HATCHEGGNOW and hatching find the item.
         var slot = wizard.PetOwnerBehavior.CreatePetEgg(egg.m_templateID, hatchSeconds, egg.m_globalID);
         WizardCollection.UpdateCharacterPetOwnerBehavior(wizard);

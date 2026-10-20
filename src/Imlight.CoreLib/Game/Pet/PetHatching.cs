@@ -272,6 +272,9 @@ internal static class PetHatching {
         behavior.m_expressedDerbyTalents = [];
         behavior.m_maxStats = AverageStats(template, a, b, random);
 
+        // A new pet gets a name of its own; with none, every pet showed the first name in the tables (Justin, 2026-10-20).
+        PetFactory.TrySetPetName(egg, WizardNameBank.RandomPetName(random));
+
         // The species parent's colors are colors that kind can have.
         egg.m_primaryColor = species.PrimaryColor;
         egg.m_secondaryColor = species.SecondaryColor;
@@ -285,25 +288,6 @@ internal static class PetHatching {
         behavior.m_hatchedTimeSecs = (uint) (now + hatchSeconds);
 
         return egg;
-    }
-
-    /// <summary>
-    /// Keeps the egg's inherited maximum stats when it hatches: hatching works the maximums out again from the
-    /// pet's kind, and a raised maximum (as `.pet stats` leaves) is a floor for that.
-    /// </summary>
-    internal static void KeepInheritedMaxStats(WizClientObjectItem egg) {
-        var behavior = PetProgress.GetBehavior(egg);
-        var template = PetProgress.GetTemplate(egg);
-        if (behavior?.m_maxStats is null || template is null) {
-            return;
-        }
-
-        foreach (var stat in behavior.m_maxStats) {
-            var name = stat.m_name.ToString();
-            if (stat.m_value > BaseMaxStat(template, name)) {
-                PetMaxRaises.Set(egg.m_globalID.Full, name, stat.m_value);
-            }
-        }
     }
 
     /// <summary>
@@ -368,8 +352,8 @@ internal static class PetHatching {
     }
 
     /// <summary>
-    /// The maximum of each stat of the new pet's kind: the parents' average give or take a few points. A stat
-    /// only one parent has counts that parent's; one neither has keeps the kind's own.
+    /// The maximum of each stat of the new pet's kind: the parents' average give or take a few points, but no more
+    /// than the server's maximum. A stat only one parent has counts that parent's; one neither has keeps the kind's own.
     /// </summary>
     private static List<PetStat> AverageStats(PetItemBehaviorTemplate template, PetParent a, PetParent b, Random random) {
         var names = (template.m_maxStats ?? []).Where(s => s is not null).Select(s => s.m_name.ToString())
@@ -384,10 +368,13 @@ internal static class PetHatching {
                 .Where(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase))
                 .Select(s => s.Value)
                 .ToList();
+            var most = BaseMaxStat(template, name);
             var value = values.Count > 0
                 ? (int) Math.Round(values.Average()) + random.Next(-STAT_SPREAD, STAT_SPREAD + 1)
-                : BaseMaxStat(template, name);
-            stats.Add(new PetStat { m_name = name, m_statID = StringHash.Compute(name), m_value = Math.Max(1, value) });
+                : most;
+
+            // Never above the server's maximum: only selfish talents raise that (Justin, 2026-10-20).
+            stats.Add(new PetStat { m_name = name, m_statID = StringHash.Compute(name), m_value = Math.Clamp(value, 1, Math.Max(1, most)) });
         }
 
         return stats;

@@ -2094,11 +2094,12 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE))]
     private void ReceiveCheatAnnounce(COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE message) {
-        if (!_isActive || !SubCircles.Any(x => x is not null && x.ParticipantActor == message.Actor)) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null) {
             return;
         }
 
-        CombatResolver.AddAnnouncement(message.Text);
+        CombatResolver.AddAnnouncement(message.Text, subCircle.SlotIndex);
         message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
             Message = $".ca: \"{message.Shown ?? message.Text}\" shows before the next round's first spell.",
         });
