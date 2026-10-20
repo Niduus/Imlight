@@ -378,4 +378,17 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// .ca: a line shown like a boss's cheat when the round's animations play.
+    /// </summary>
+    internal sealed class MSG_CHEATANNOUNCE : IServerMessage {
+
+        public byte MessageOrder => 34;
+        public byte ServiceID => 106;
+
+        public string Text;
+        public IActorRef Actor;
+
+    }
+
 }
