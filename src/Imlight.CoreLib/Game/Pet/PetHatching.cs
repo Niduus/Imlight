@@ -48,6 +48,7 @@ using Imcodec.IO;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Pet;
 
@@ -134,6 +135,27 @@ internal static class PetHatching {
     /// [Hatching] Enabled: false turns off every way to hatch.
     /// </summary>
     internal static bool Enabled => ConfigurationManager.GetValue("Hatching.Enabled", true);
+
+    /// <summary>
+    /// [Hatching] SigilWindow: false stops the solo hatching sigils from trying to open the game's pet morphing
+    /// window (a guess, see HatchService), leaving the chat list and `.hatch`.
+    /// </summary>
+    internal static bool SigilWindow => ConfigurationManager.GetValue("Hatching.SigilWindow", true);
+
+    /// <summary>
+    /// The wizard's hatched pets: the one worn first, then the backpack's.
+    /// </summary>
+    internal static List<WizClientObjectItem> OwnPets(Wizard wizard) {
+        if (wizard is null) {
+            return [];
+        }
+
+        var worn = PetCare.GetWornPet(wizard);
+        var items = (worn is null ? [] : new List<WizClientObjectItem> { worn })
+            .Concat(wizard.InventoryBehavior?.Items ?? []);
+
+        return [.. items.Where(i => PetProgress.GetBehavior(i) is { m_level: > 0 }).Distinct()];
+    }
 
     /// <summary>
     /// Copies what breeding needs from a pet item.

@@ -28,6 +28,9 @@
  * Attached to every game session by GameServiceFactory.
  *
  * NOTE:
+ * The hatchery's pet morphing sigils come here too (MSG_HATCHSIGIL from InteractPetMorphSigilComponent):
+ * a solo sigil tries the game's pet morphing window and lists the player's pets for `.hatch`; a duo
+ * sigil starts the in-person hatch with the other player on it. Those steps log "Hatching sigil".
  * In person, each side's session keeps its own state and tells the other's session what its player
  * did (MSG_HATCHPEER), as TradeService does through its directory. When both are ready, each session
  * breeds its own egg: its player's pet with the partner's. Every message the game sends here is
@@ -35,6 +38,9 @@
  *
  * TODO:
  * - The status values (join -1/0/1, ready 0/1/2, result codes) are copied from trading; unverified.
+ * - The solo sigil's window is a guess: the game's pet game "PetGameMorph" (PetGames.xml) opened with
+ *   MSG_PETGAMEINIT, its data a PetGameMorphPartner (character id and pets); picks arrive as
+ *   MSG_PETMORPHSET and the hatch as MSG_PETMORPHREADY. [Hatching] SigilWindow false turns it off.
  * - The kiosk's PetData blobs are guesses: HatchmakingPetsList, HatchmakingPetTypesList and
  *   HatchmakingPetGIDList written like the pet game data, and the pet item for PETDATA.
  *
@@ -44,8 +50,10 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.CoreObject;
 using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
@@ -84,6 +92,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private ulong _myPetId;
     private PetParent _peerPet;
     private bool _bred;
+
+    // The solo hatching sigil this session's player is using; _soloSigilGid is 0 when there is none.
+    private const string MORPH_GAME = "PetGameMorph";
+    private const uint MORPH_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
+    private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.None);
+    private ulong _soloSigilGid;
+    private readonly List<ulong> _soloPicks = [];
+    private ByteString _soloMorphData;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new HatchService(parentActor));
@@ -142,6 +158,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceivePetMorphSet(PET_9_PROTOCOL.MSG_PETMORPHSET message) {
         Logger.Information("Hatching: game sent MSG_PETMORPHSET PetID={0}.", Logger.Args(message.PetID));
         try {
+            if (_soloSigilGid != 0 && _peerCharId == 0) {
+                PickSoloPet(message.PetID);
+
+                return;
+            }
+
             ChoosePet(message.PetID);
         }
         catch (Exception ex) {
@@ -153,6 +175,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceivePetMorphReady(PET_9_PROTOCOL.MSG_PETMORPHREADY message) {
         Logger.Information("Hatching: game sent MSG_PETMORPHREADY Confirmed={0}.", Logger.Args(message.Confirmed));
         try {
+            if (_soloSigilGid != 0 && _peerCharId == 0) {
+                if (message.Confirmed > 0) {
+                    SoloHatch();
+                }
+
+                return;
+            }
+
             if (_peerCharId != 0) {
                 ChangeReady(Wizard.GetGameObjectId(_peerCharId), message.Confirmed);
             }
@@ -549,6 +579,189 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     #endregion
 
+    #region Hatching sigils
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL))]
+    private void ReceiveHatchSigil(CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL message) {
+        Logger.Information("Hatching sigil: {0} on {1} ({2}), partner {3} ({4}).",
+            Logger.Args(message.Role, message.SigilName, message.SigilGID, message.PartnerName, message.PartnerCharId));
+        try {
+            switch (message.Role) {
+                case CHARACTER_103_PROTOCOL.HatchSigilRole.Solo:
+                    StartSolo(message.SigilGID);
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchSigilRole.Requester:
+                    EndSolo();
+                    InformGameClient($"Asking {message.PartnerName} to hatch with you. Wear the pet you want to hatch with; "
+                        + $"if no hatch window opens, use the solo sigils or .hatch with two of your own pets.");
+                    StartInPerson(Wizard.GetGameObjectId(message.PartnerCharId));
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchSigilRole.Partner:
+                    EndSolo();
+                    InformGameClient($"{message.PartnerName} wants to hatch pets with you on the sigil. Wear the pet you want "
+                        + "to hatch with and accept the hatch request.");
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchSigilRole.Alone:
+                    InformGameClient("This sigil is for two players: each stands on one of its circles, then one presses X. "
+                        + "To hatch two of your own pets, use one of the small sigils in the middle of the room.");
+                    break;
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching sigil: {0} failed. {1}", Logger.Args(message.Role, ex));
+        }
+    }
+
+    /// <summary>
+    /// The morph window's pet game, if it is one, may join and say it is ready like the other pet games.
+    /// </summary>
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
+    private void ReceivePetGameJoin(PET_9_PROTOCOL.MSG_PETGAMEJOIN message) {
+        if (!IsMorphGame(message.Game)) {
+            return;
+        }
+
+        Logger.Information("Hatching sigil: game sent MSG_PETGAMEJOIN Game={0} Track={1} (solo sigil {2}).",
+            Logger.Args(message.Game, message.Track, _soloSigilGid));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = MORPH_GAME, Success = (byte) (_soloSigilGid != 0 ? 1 : 0) });
+    }
+
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEREADY))]
+    private void ReceivePetGameReady(PET_9_PROTOCOL.MSG_PETGAMEREADY message) {
+        Logger.Information("Hatching sigil: game sent MSG_PETGAMEREADY (solo sigil {0}).", Logger.Args(_soloSigilGid));
+        if (_soloSigilGid == 0 || _soloMorphData.Length == 0) {
+            return;
+        }
+
+        Logger.Information("Hatching sigil: sending MSG_PETGAMESTART for {0}.", Logger.Args(MORPH_GAME));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESTART { Game = MORPH_GAME, Data = _soloMorphData });
+    }
+
+    private void StartSolo(ulong sigilGid) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        if (!PetHatching.Enabled) {
+            InformGameClient("Hatching is turned off on this server.");
+
+            return;
+        }
+
+        if (_peerCharId != 0) {
+            Logger.Information("Hatching sigil: {0} is already hatching with {1}.", Logger.Args(wizard.CharId, _peerCharId));
+            InformGameClient("You are already hatching with someone.");
+
+            return;
+        }
+
+        if (wizard.IsInDuel) {
+            InformGameClient("You cannot hatch during a battle.");
+
+            return;
+        }
+
+        var pets = PetHatching.OwnPets(wizard);
+        Logger.Information("Hatching sigil: {0} has {1} hatched pets: {2}.",
+            Logger.Args(wizard.CharId, pets.Count, string.Join(", ", pets.Select(p => $"{PetHatching.Label(p)} ({p.m_globalID.Full})"))));
+        if (pets.Count < 2) {
+            InformGameClient("You need two hatched pets to hatch on your own. Hatch an egg or get another pet, then come back.");
+
+            return;
+        }
+
+        _soloSigilGid = sigilGid;
+        _soloPicks.Clear();
+        _soloMorphData = default;
+
+        // The way that is known to work goes first, so it is there even if the window does not open.
+        InformGameClient("Pick two of your pets to hatch. If no hatch window opens, type .hatch <pet 1> <pet 2> with numbers from "
+            + "this list: " + string.Join("; ", pets.Select((p, i) => $"{i + 1}) {PetHatching.Label(p)}")));
+
+        if (!PetHatching.SigilWindow) {
+            Logger.Information("Hatching sigil: the morph window is turned off ([Hatching] SigilWindow); chat list only.");
+
+            return;
+        }
+
+        var partner = new PetGameMorphPartner {
+            m_characterId = wizard.CharId,
+            m_pets = [.. pets.Cast<CoreObject>()],
+        };
+        if (!s_morphSerializer.Serialize(partner, MORPH_FLAGS, out var data)) {
+            Logger.Error("Hatching sigil: could not write the PetGameMorphPartner; the morph window was not tried.");
+
+            return;
+        }
+
+        _soloMorphData = data;
+        Logger.Information("Hatching sigil: sending MSG_PETGAMEINIT Game={0} with {1} pets ({2} bytes) to open the morph window.",
+            Logger.Args(MORPH_GAME, pets.Count, data.Length));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = MORPH_GAME, Data = data, MinLevel = 0, Track = 0 });
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHCANAFFORD {
+            CanAfford = (sbyte) (wizard.GameStats.m_currentGold >= PetHatching.GoldCost ? 1 : 0)
+        });
+    }
+
+    private void PickSoloPet(ulong petId) {
+        var wizard = GetActiveWizard();
+        var pet = PetHatching.Snapshot(PetCare.FindPet(wizard, petId), wizard.CharId);
+        var problem = PetHatching.ParentProblem(pet);
+        if (problem is not null) {
+            Logger.Information("Hatching sigil: {0} picked {1}, which cannot hatch: {2}", Logger.Args(wizard.CharId, petId, problem));
+            InformGameClient(problem);
+
+            return;
+        }
+
+        if (!_soloPicks.Contains(pet.ItemId)) {
+            _soloPicks.Add(pet.ItemId);
+            if (_soloPicks.Count > 2) {
+                _soloPicks.RemoveAt(0);
+            }
+        }
+
+        Logger.Information("Hatching sigil: {0} picked {1}; picks now {2}.",
+            Logger.Args(wizard.CharId, PetHatching.Describe(pet), string.Join(", ", _soloPicks)));
+    }
+
+    private void SoloHatch() {
+        var wizard = GetActiveWizard();
+        if (_soloPicks.Count < 2) {
+            Logger.Information("Hatching sigil: {0} is ready with {1} pets picked; two are needed.", Logger.Args(wizard?.CharId, _soloPicks.Count));
+            InformGameClient("Pick two different pets first.");
+
+            return;
+        }
+
+        var parentA = PetHatching.Snapshot(PetCare.FindPet(wizard, _soloPicks[0]), wizard.CharId);
+        var parentB = PetHatching.Snapshot(PetCare.FindPet(wizard, _soloPicks[1]), wizard.CharId);
+        var problem = parentA is null || parentB is null ? "One of the picked pets is no longer in your backpack." : PetHatching.PairProblem(parentA, parentB);
+        if (problem is not null) {
+            Logger.Information("Hatching sigil: solo hatch of {0} refused: {1}", Logger.Args(string.Join(", ", _soloPicks), problem));
+            InformGameClient(problem);
+
+            return;
+        }
+
+        Logger.Information("Hatching sigil: {0} hatches {1} with {2}.",
+            Logger.Args(wizard.CharId, PetHatching.Describe(parentA), PetHatching.Describe(parentB)));
+        TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS { ParentA = parentA, ParentB = parentB, Source = HatchSource.Command });
+        EndSolo();
+    }
+
+    private void EndSolo() {
+        _soloSigilGid = 0;
+        _soloPicks.Clear();
+        _soloMorphData = default;
+    }
+
+    private static bool IsMorphGame(ByteString game)
+        => string.Equals(game.ToString(), MORPH_GAME, StringComparison.OrdinalIgnoreCase);
+
+    #endregion
+
     #region Hatchmaking kiosk
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_OPENHATCHKIOSK))]
@@ -864,6 +1077,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private void LeaveOnDeparture() {
+        EndSolo();
         if (_peerCharId != 0) {
             End(tellPeer: true, peerJoinShown: null);
         }

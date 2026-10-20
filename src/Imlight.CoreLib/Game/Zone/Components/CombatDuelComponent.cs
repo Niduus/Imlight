@@ -2070,6 +2070,13 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        if (message.Announcement is not null) {
+            CombatResolver.AddDelayedAnnouncement(subCircle, message.Announcement, message.AtStart, message.When);
+            Inform($".{name} ca: \"{message.AnnouncementShown ?? message.Announcement}\" shows before the next spell in that queue.");
+
+            return;
+        }
+
         try {
             var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, out var enchantment,
                                                           message.Target, message.SkipCast, message.When, message.Enchant);

@@ -53,15 +53,38 @@ internal class CommandDelayCastProtocol : CommandProtocol {
     /// goes in the typed command's queue (Justin, 2026-10-20: `.c1 Tower Shields, c2 Pyrodynamics`).
     /// </summary>
     private void QueueAll(string spells, bool atStart, bool skip) {
+        // A ca part (Justin, 2026-10-20: `.c1 Fire Cat, ca 1, Fire Cat`) goes in the queue of the part before it,
+        // and shows just before the spell after it.
+        var lastAtStart = atStart;
+        var lastWhen = 'n';
         foreach (var part in (spells ?? "").Split(',', StringSplitOptions.TrimEntries)) {
             var words = part.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
             var first = words.Length > 0 ? words[0].TrimStart('.').ToLowerInvariant() : "";
             if (first is "c1" or "c2" or "c1s" or "c2s") {
-                Queue(words.Length > 1 ? words[1] : "", first.StartsWith("c1"), first.EndsWith('s'));
+                lastAtStart = first.StartsWith("c1");
+                lastWhen = Queue(words.Length > 1 ? words[1] : "", lastAtStart, first.EndsWith('s'));
+            } else if (first == "ca") {
+                QueueAnnouncement(words.Length > 1 ? words[1] : "", lastAtStart, lastWhen);
             } else {
-                Queue(part, atStart, skip);
+                lastAtStart = atStart;
+                lastWhen = Queue(part, atStart, skip);
             }
         }
+    }
+
+    private void QueueAnnouncement(string phrase, bool atStart, char when) {
+        if (!CommandAnnounceProtocol.TryResolve(phrase, out var key, out var shown, out var problem)) {
+            InformSenderClient(phrase.Trim().Length == 0 ? "Put a phrase number or words after ca, such as .c1 Fire Cat, ca 1." : problem);
+
+            return;
+        }
+
+        Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATDELAYCAST {
+            AtStart = atStart,
+            When = when,
+            Announcement = key,
+            AnnouncementShown = shown,
+        });
     }
 
     /// <summary>
@@ -70,7 +93,8 @@ internal class CommandDelayCastProtocol : CommandProtocol {
     /// mix, like sfe. The target is p1-p4, e1-e4 or all (a single-target
     /// spell then casts once on each enemy, or each teammate). A number after the spell repeats it.
     /// </summary>
-    private void Queue(string spell, bool atStart, bool skip) {
+    /// <returns>The queue's f, l or n, for a ca part after it.</returns>
+    private char Queue(string spell, bool atStart, bool skip) {
         var words = (spell ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
         var when = 'n';
         var enchant = false;
@@ -96,7 +120,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
         if (name.Length == 0) {
             InformSenderClient($"Use {command}, optional s (no casting animation), e (best enchantment), f (first, before anyone) or l (last, after everyone), an optional target (p1 is you, p2-p4 teammates, e1-e4 enemies, all for everyone) a spell's name or ID and an optional number of times, such as {command} sf all Fire Cat 3.");
 
-            return;
+            return when;
         }
 
         // A number at the end repeats the spell (Justin, 2026-10-20: `.c1 Fire Cat 3`), unless it is part of the
@@ -110,7 +134,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
             else {
                 InformSenderClient($"No spell called \"{name}\" was found. Try .lookup spell {name} to see the names.");
 
-                return;
+                return when;
             }
         }
 
@@ -125,6 +149,8 @@ internal class CommandDelayCastProtocol : CommandProtocol {
                 Enchant = enchant,
             });
         }
+
+        return when;
     }
 
     // The most times one spell repeats.

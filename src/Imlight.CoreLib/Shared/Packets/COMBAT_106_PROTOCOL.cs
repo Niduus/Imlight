@@ -360,6 +360,9 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public char When = 'n';
         // .c1 e: the spell gets the best enchantment that fits it ([Battle] AutoEnchants).
         public bool Enchant;
+        // .c1 Fire Cat, ca 1: a .ca line (locale key) queued in its place instead of a spell; Shown is its English text.
+        public string Announcement;
+        public string AnnouncementShown;
         public IActorRef Actor;
 
     }
