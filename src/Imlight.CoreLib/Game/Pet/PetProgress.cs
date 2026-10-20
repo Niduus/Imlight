@@ -711,7 +711,7 @@ internal static class PetProgress {
         var petId = pet?.m_globalID.Full ?? 0UL;
         behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
             BaseMaxStat(template, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
-            petId == 0 ? 0 : PetMaxRaises.Get(petId, name))))];
+            petId == 0 ? 0 : CappedRaise(petId, name))))];
 
         // Selfish talents raise only the maximum; the stat itself still has to be trained up (Justin, 2026-10-20).
         // 0.10.17 added their points to the stat too, so those points are taken back once.
@@ -723,6 +723,15 @@ internal static class PetProgress {
 
             stat.m_value = Math.Min(stat.m_value, GetStat(behavior.m_maxStats, stat.m_name));
         }
+    }
+
+    // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
+    // do (Justin, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
+    private static int CappedRaise(ulong petId, string name) {
+        var raise = PetMaxRaises.Get(petId, name);
+        var most = PetRules.MaxStat(name);
+
+        return most > 0 ? Math.Min(raise, most) : raise;
     }
 
     // [Pets] MaxStrength and the others (260 by default); 0 uses the pet's own maximum from the game files.

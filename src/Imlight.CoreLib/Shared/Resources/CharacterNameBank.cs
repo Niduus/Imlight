@@ -40,6 +40,7 @@
  * Last Updated: 09/26/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -119,6 +120,21 @@ public class WizardNameBank : RootSingleResourceSingleton<WizardNameBank>, IMemo
         return middle == 0
             && first < GetTableSize(PetFirstNameTableName)
             && last < GetTableSize(PetLastNameTableName);
+    }
+
+    /// <summary>
+    /// Picks a random pet name, as packed name keys: a first and a last name from the pet name tables.
+    /// </summary>
+    /// <param name="random">The random source.</param>
+    /// <returns>The packed name keys, or 0 if the tables are not loaded.</returns>
+    public static uint RandomPetName(Random random) {
+        var firsts = Math.Min(GetTableSize(PetFirstNameTableName), 256);
+        var lasts = Math.Min(GetTableSize(PetLastNameTableName), 256);
+        if (firsts == 0 || lasts == 0) {
+            return 0;
+        }
+
+        return (uint) (random.Next(firsts) << 16 | random.Next(lasts));
     }
 
     /// <summary>
