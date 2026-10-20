@@ -159,6 +159,14 @@ internal static class CombatActionResolver {
                 }
             }
 
+            // A detonate's strength is in its name ("Detonate All 200" deals 200%), unless the effect carries it.
+            if (chosenEffect.m_effectType == kSpellEffects.kDetonateOverTime && chosenEffect.m_healModifier <= 0) {
+                var percent = System.Text.RegularExpressions.Regex.Match((string) action.SpellTemplate.m_name ?? "", @"\d+");
+                chosenEffect = chosenEffect with {
+                    m_healModifier = percent.Success && int.TryParse(percent.Value, out var p) && p > 0 ? p / 100f : 1f
+                };
+            }
+
             allEffects.Add(chosenEffect);
 
             charmsAffectingThisSpell = CombatCharms.FindAppliedCharms(action.SpellCaster, [.. allEffects]);
