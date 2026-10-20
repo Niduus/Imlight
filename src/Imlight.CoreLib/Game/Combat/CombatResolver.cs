@@ -143,8 +143,34 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
         var cinematicTime = ProcessQueuedActions(combatActionListObj);
         ShowAnnouncements(combatActionListObj);
+        ApplyCastLooks(combatActionListObj);
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// .cast: a wizard's spell actions (not their pet's) show another school, or skip the casting animation. Done
+    /// once the round is worked out, so the spell's real school still decided pips and bonuses.
+    /// </summary>
+    private void ApplyCastLooks(CombatActionListObj combatActionList) {
+        foreach (var action in combatActionList.m_actionList) {
+            if (action.m_spell is null || action.m_petCast || action.m_petCasted) {
+                continue;
+            }
+
+            var caster = _subCircles.FirstOrDefault(c => c is not null && c.SlotIndex == action.m_spellCaster);
+            if (caster is null || !caster.IsHumanPlayer || caster.ParticipantObject is null
+                || !CastLook.TryGet(caster.ParticipantObject.m_globalID.Full, out var school)) {
+                continue;
+            }
+
+            if (school == 0) {
+                action.m_showCast = false;
+            }
+            else {
+                action.m_spell = action.m_spell with { m_magicSchoolID = school };
+            }
+        }
     }
 
     // .ca (Justin, 2026-10-20): lines shown like a boss's cheat, in the "Gained Power Pip" spot, as the round plays.
