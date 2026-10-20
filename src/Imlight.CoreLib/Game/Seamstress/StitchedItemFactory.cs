@@ -38,6 +38,7 @@
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -88,8 +89,10 @@ internal static class StitchedItemFactory {
     /// <param name="to">The new item.</param>
     internal static void CopySockets(WizClientObjectItem from, WizClientObjectItem to) {
         var sockets = from?.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().FirstOrDefault();
-        if (sockets is not null) {
-            SetSockets(to, sockets);
+        if (sockets is not null && SetSockets(to, sockets)) {
+            Logger.Information("[Seamstress] Item {0} keeps the sockets of item {1} ({2} jewels).",
+                Logger.Args(to.m_globalID.Full, from.m_globalID.Full,
+                    sockets.m_publicJewelInfo?.m_infoPairs?.Count(p => p is not null && p.m_jewelTemplateID != 0) ?? 0));
         }
     }
 
@@ -97,8 +100,13 @@ internal static class StitchedItemFactory {
     /// Puts a socket behavior in the item's own socket slot. False if the item has none.
     /// </summary>
     internal static bool SetSockets(WizClientObjectItem item, ClientJewelSocketBehavior sockets) {
-        var index = item.m_inactiveBehaviors?.FindIndex(behavior => behavior is ClientJewelSocketBehavior) ?? -1;
+        // A new item has no socket state yet (its template slot is empty); GetState makes one in the right slot.
+        var slot = JewelSockets.GetState(item, create: true);
+        var index = slot is null ? -1 : item.m_inactiveBehaviors.IndexOf(slot);
         if (index < 0) {
+            Logger.Warning("[Seamstress] Item {0} (template {1}) has no jewel socket to keep.",
+                Logger.Args(item.m_globalID.Full, item.m_templateID.Full));
+
             return false;
         }
 

@@ -471,25 +471,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
         var cinematicTime = Math.Min(HandleSuccessfulAction(action, combatActionList, alreadyPaid: true), PetMayCasts.CastSeconds);
-        if (!PetCastCards.TryGetValue(owner, out var cards)) {
-            PetCastCards[owner] = cards = [];
-        }
-
-        // Free on screen too: the copy the game plays has its rank taken off. Done after resolving, because the server
-        // also reads m_regularAdjust as a damage/heal bonus.
-        var rank = template.m_spellRank?.m_spellRank ?? 0;
-        if (PetMayCasts.ZeroCost && rank > 0) {
-            var free = spell with { m_regularAdjust = spell.m_regularAdjust - rank };
-            for (var i = before; i < combatActionList.m_actionList.Count; i++) {
-                if (ReferenceEquals(combatActionList.m_actionList[i].m_spell, spell)) {
-                    combatActionList.m_actionList[i].m_spell = free;
-                }
-            }
-
-            spell = free;
-        }
-
-        cards.Add(spell);
+        ShowInHand(owner, spell, template, combatActionList, before);
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
         // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
@@ -502,6 +484,35 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         }
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// Puts a free cast (pet May Cast, .c1/.c2) into its caster's hand for the game, which skips spells it can't find
+    /// there ("does not spell in hand"), and takes its pip cost off the copy the game plays. The rank comes off after
+    /// resolving, because the server also reads m_regularAdjust as a damage/heal bonus.
+    /// </summary>
+    private void ShowInHand(CombatDuelSubCircle owner, Spell spell, SpellTemplate template, CombatActionListObj combatActionList, int before) {
+        if (spell is null) {
+            return;
+        }
+
+        if (!PetCastCards.TryGetValue(owner, out var cards)) {
+            PetCastCards[owner] = cards = [];
+        }
+
+        var rank = template?.m_spellRank?.m_spellRank ?? 0;
+        if (PetMayCasts.ZeroCost && rank > 0) {
+            var free = spell with { m_regularAdjust = spell.m_regularAdjust - rank };
+            for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                if (ReferenceEquals(combatActionList.m_actionList[i].m_spell, spell)) {
+                    combatActionList.m_actionList[i].m_spell = free;
+                }
+            }
+
+            spell = free;
+        }
+
+        cards.Add(spell);
     }
 
     /// <summary>
@@ -596,6 +607,11 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 };
                 var before = combatActionList.m_actionList.Count;
                 cinematicTime += HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                // A command's free cast is in no hand, so the game skipped it when a card had been played (Justin's
+                // log, 2026-10-20) while the next round still waited for it.
+                if (delayed.Free) {
+                    ShowInHand(caster, cast.Spell, action.SpellTemplate, combatActionList, before);
+                }
                 // The spell going off when the delay runs out. A command's free cast had no enchanted card on the
                 // table, so the game is shown it as a normal cast; flagged, it waits for a card it never saw.
                 for (var i = before; !delayed.Free && i < combatActionList.m_actionList.Count; i++) {

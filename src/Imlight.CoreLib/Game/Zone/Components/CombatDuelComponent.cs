@@ -585,6 +585,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Determine how long the cinematics will take.
         var cinematicTimeInSeconds = CombatResolver.ApplyQueuedCombatActions(out var actions);
+        Logger.Information("Duel {0} | Round {1} | Waiting {2:0.0} s for {3} actions to play.",
+            Logger.Args(SigilId, Duel.m_roundNum, cinematicTimeInSeconds, actions?.m_actionList?.Count ?? 0));
         var actionExecutionTime = TimeSpan.FromSeconds(cinematicTimeInSeconds);
         Duel.m_executionPhaseTimer = (float) actionExecutionTime.TotalSeconds;
 
