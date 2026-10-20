@@ -56,7 +56,8 @@ internal sealed class ManagerWindow : Window {
     // Header and message bar.
     private readonly Border _dot = new() { Width = 10, Height = 10, CornerRadius = new CornerRadius(5), Background = MUTED };
     private readonly TextBlock _statusText = new() { Text = "Checking…", Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center };
-    private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap };
+    // At most a few lines: a copied log shown here in full once covered the whole window (Justin, 2026-10-20).
+    private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap, MaxLines = 4, TextTrimming = TextTrimming.CharacterEllipsis };
     // Shows what a background update is doing on the button itself (downloading 40%, building...).
     private readonly Button _updateButton = Primary("Update Imlight");
     private readonly Border _messageBar = new() { Padding = new Thickness(16, 10), IsVisible = false };
@@ -305,6 +306,7 @@ internal sealed class ManagerWindow : Window {
         };
 
         _messageBar.Child = _message;
+        _messageBar.PointerPressed += (_, _) => _messageBar.IsVisible = false;
         _saveBar.Child = new StackPanel {
             Orientation = Orientation.Horizontal, Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center,
             Children = { _saveCount, Action(Plain("Discard"), DiscardSettings), Action(Primary("Save changes"), SaveSettingsAsync) },
@@ -889,6 +891,7 @@ internal sealed class ManagerWindow : Window {
                     WithMargin(_clientLogFile, new Thickness(0, 6, 0, 8)),
                     new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _clientLogBox },
                     WithMargin(Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
+                        Action(Plain("Save game log to desktop"), SaveClientLogAsync),
                         Action(Plain("Open game log folder"), () => _clientLogFolder is null
                             ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
                             : Open(_clientLogFolder))), new Thickness(0, 8, 0, 0)),
@@ -1277,10 +1280,32 @@ internal sealed class ManagerWindow : Window {
         return Task.CompletedTask;
     }
 
+    private async Task SaveClientLogAsync() {
+        var folder = _manager.InstallFolder;
+        var log = await Task.Run(() => GameClient.ReadClientLog(folder));
+        if (log.File is null) {
+            throw new PanelException(log.Reason ?? "Wizard101 has not written a log yet. Play once, then look again.");
+        }
+
+        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        if (string.IsNullOrEmpty(desktop) || !Directory.Exists(desktop)) {
+            desktop = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+
+        var target = Path.Combine(desktop, $"Wizard101 game log {DateTime.Now:yyyy-MM-dd HH-mm-ss}.txt");
+        await Task.Run(() => {
+            using var source = new FileStream(log.File, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var copy = File.Create(target);
+            source.CopyTo(copy);
+        });
+        Say($"Saved the game log to your desktop as \"{Path.GetFileName(target)}\". Drag it into the chat to send it.");
+    }
+
     private async Task CopyAsync(string text) {
         var clipboard = GetTopLevel(this)?.Clipboard ?? throw new PanelException("The clipboard is not available.");
         await clipboard.SetTextAsync(text);
-        Say($"Copied {text}");
+        var lines = text.Split('\n').Length;
+        Say(lines > 1 || text.Length > 80 ? $"Copied {lines} lines. Paste them with Ctrl+V." : $"Copied {text}");
     }
 
     // ---------------------------------------------------------------------
