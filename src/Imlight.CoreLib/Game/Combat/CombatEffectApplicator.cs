@@ -574,9 +574,18 @@ internal static class CombatEffectApplicator {
         return damageFlatIncrease + caster.ParticipantGameStats.m_dmgBonusFlatAll;
     }
 
+    /// <summary>
+    /// Gear and jewel stats are stored in percent (15 for 15%, CanonicalStatEffects multiplies them by 100 for the
+    /// game), pet talents and creatures as a fraction (0.15). A total above 1.5 can only come from percent, since no
+    /// fraction source gives that much, so it is turned back into a fraction. Before this a player with 15% resist
+    /// took no damage at all, 1 - 15 being below zero (Justin: "it said I had immunity", 2026-10-20).
+    /// </summary>
+    internal static float AsFraction(float value)
+        => Math.Abs(value) > 1.5f ? value / 100f : value;
+
     private static float GetPercentDamageIncrease(CombatDuelSubCircle caster, string damageType) {
         var damagePercentIncrease = caster.GetStatBySchool(caster.ParticipantGameStats.m_dmgBonusPercent, damageType);
-        damagePercentIncrease += caster.ParticipantGameStats.m_dmgBonusPercentAll;
+        damagePercentIncrease = AsFraction(damagePercentIncrease + caster.ParticipantGameStats.m_dmgBonusPercentAll);
         damagePercentIncrease = Math.Min(damagePercentIncrease, DAMAGE_PERCENT_MAX);
 
         return damagePercentIncrease;;
@@ -591,7 +600,7 @@ internal static class CombatEffectApplicator {
     private static float GetPercentDamageReduction(CombatDuelSubCircle target, string damageType) {
         var damageReductionPercent = target.GetStatBySchool(target.ParticipantGameStats.m_dmgReducePercent, damageType);
 
-        return damageReductionPercent + target.ParticipantGameStats.m_dmgReducePercentAll;
+        return AsFraction(damageReductionPercent + target.ParticipantGameStats.m_dmgReducePercentAll);
     }
 
     private static float GetPercentOutgoingHealIncrease(CombatDuelSubCircle caster) {
