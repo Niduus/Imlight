@@ -97,11 +97,17 @@ internal static class HouseVendors {
         var items = new Lazy<List<uint>>(() => [.. TemplatesIn<T>(folder)
             .Where(item => (item.Template.m_adjectiveList ?? []).Any(name => (string) name == adjective)
                 && !((string) item.Template.m_objectName ?? "").Contains("TEST"))
+            // The same item can have spare copies with no picture (Petrified Wood): keep the ones that have one.
+            .GroupBy(item => (string) item.Template.m_displayName ?? item.Id.ToString())
+            .SelectMany(same => same.Any(item => HasPicture(item.Template)) ? same.Where(item => HasPicture(item.Template)) : same)
             .Select(item => item.Id)
             .OrderBy(id => id)]);
 
         return () => items.Value;
     }
+
+    private static bool HasPicture(WizItemTemplate template)
+        => !string.IsNullOrWhiteSpace(template is ReagentItemTemplate reagent ? (string) reagent.m_imageName : (string) template.m_sIcon);
 
     internal static IReadOnlyList<Seller> Sellers => s_sellers;
 

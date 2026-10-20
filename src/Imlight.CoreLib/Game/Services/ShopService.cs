@@ -37,6 +37,7 @@
  */
 
 using System;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
@@ -187,7 +188,44 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST))]
     private void ReceiveShopSellRequest(WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST message) {
         var wizard = GetActiveWizard();
+        var quantity = (int) Math.Clamp(message.quantity, 1u, MAX_COPIES);
+        Logger.Information("Shop sell: item {0}, quantity {1}, quick sell {2}.", Logger.Args(message.GlobalID, message.quantity, message.IsQuickSell));
+
+        // Sell More in the reagent and snack shops sells from the reagent bag or the snack bag.
+        if (wizard.AlchemyBehavior.Reagents?.FirstOrDefault(r => r.m_globalID.Full == message.GlobalID) is { } reagent) {
+            SellReagent(wizard, reagent, quantity);
+
+            return;
+        }
+
+        if (wizard.PetSnackBehavior.Snacks?.FirstOrDefault(s => s.m_globalID.Full == message.GlobalID) is { } snack) {
+            SellSnack(wizard, snack, quantity);
+
+            return;
+        }
+
         var item = wizard.InventoryBehavior.GetItem(message.GlobalID);
+        if (item is null) {
+            Logger.Warning("Failed to find item {0} in inventory for shop sell", Logger.Args(message.GlobalID));
+            ProcessFailedSale();
+
+            return;
+        }
+
+        // Sell More on a backpack item sells that many copies of it.
+        if (quantity > 1) {
+            var copies = (wizard.InventoryBehavior.Items ?? [])
+                .Where(other => other.m_templateID == item.m_templateID && other.m_globalID.Full != message.GlobalID
+                    && !(wizard.EquipmentBehavior.EquippedItemIds?.Contains(other.m_globalID.Full) ?? false))
+                .Take(quantity - 1)
+                .Select(other => other.m_globalID.Full)
+                .ToList();
+            foreach (var copy in copies) {
+                if (wizard.RemoveItemFromInventory(copy)) {
+                    ProcessSuccessfulSale(wizard, copy, CalculateItemSellValue((WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID)));
+                }
+            }
+        }
 
         var removedItemSuccess = wizard.RemoveItemFromInventory(message.GlobalID);
         if (!removedItemSuccess) {
@@ -375,6 +413,65 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             ItemID = itemID
         };
         SendToSocket(removeItemMsg);
+    }
+
+    private void SellReagent(Wizard wizard, ClientReagentItem reagent, int quantity) {
+        var reagentId = reagent.m_globalID.Full;
+        var template = CoreObjectFactory.GetCoreTemplate(reagent.m_templateID) as WizItemTemplate;
+        var count = Math.Min(quantity, reagent.m_quantity);
+        var sold = 0;
+        ClientReagentItem left = null;
+        for (var i = 0; i < count && wizard.RemoveReagent(reagentId, out left); i++) {
+            sold++;
+        }
+
+        if (sold == 0) {
+            ProcessFailedSale();
+
+            return;
+        }
+
+        if (left is not null && left.m_quantity > 0) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE { GlobalID = wizard.GameObjectID, ItemID = left.m_globalID, Quantity = left.m_quantity });
+        }
+        else {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTREMOVE { GlobalID = wizard.GameObjectID, ItemID = reagentId });
+        }
+
+        FinishStackSale(wizard, reagentId, BagSellValue(template) * sold);
+    }
+
+    private void SellSnack(Wizard wizard, ClientPetSnackItem snack, int quantity) {
+        var snackId = snack.m_globalID.Full;
+        var template = CoreObjectFactory.GetCoreTemplate(snack.m_templateID) as WizItemTemplate;
+        var count = Math.Min(quantity, snack.m_quantity);
+        if (count < 1 || !wizard.RemoveSnack(snackId, count, out var left)) {
+            ProcessFailedSale();
+
+            return;
+        }
+
+        if (left is not null && left.m_quantity > 0) {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE { GlobalID = wizard.GameObjectID, ItemID = left.m_globalID, Quantity = left.m_quantity });
+        }
+        else {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKREMOVE { GlobalID = wizard.GameObjectID, ItemID = snackId });
+        }
+
+        FinishStackSale(wizard, snackId, BagSellValue(template) * count);
+    }
+
+    // Reagents and snacks sell for at least 1 gold each.
+    private static int BagSellValue(WizItemTemplate template)
+        => template is null ? 1 : Math.Max(1, CalculateItemSellValue(template));
+
+    private void FinishStackSale(Wizard wizard, ulong stackId, int gold) {
+        wizard.AddGold(gold);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { GlobalID = stackId, Failure = 0 });
     }
 
     private void ProcessFailedSale() {
