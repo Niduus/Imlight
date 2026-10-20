@@ -120,6 +120,7 @@ internal sealed class ManagerWindow : Window {
         ("Pets", "DoubleSnackStats", "Double XP & Rewards also doubles snack stats (+15 becomes +30)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipGameRewards", "Skipping a pet game gives its XP and stats (off: only the snack counts)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Jewels", "KeepShatteredJewels", "Jewels taken out of a socket go back to your backpack (off: they shatter unless the socket is No Shatter)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
         ("Housing", "PlaceAnyAsDecoration", "Houses: place any furniture as decoration (vaults, signs, music players show but do not work yet)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "ResetWhenEmpty", "Dungeons start fresh once everyone has left (off: kept for 10 minutes)", new() { OnContent = "On", OffContent = "Off" }),
