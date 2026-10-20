@@ -522,7 +522,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             SendToSocket(new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
                 PetTemplateGID = egg.m_templateID,
                 PetName = name,
-                HatchTime = (uint) slot.m_timeFinished
+                HatchTime = SecondsLeft(slot.m_timeFinished)
             });
             SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHINGSLOT {
                 GlobalID = slot.m_globalID,
@@ -560,11 +560,15 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
     }
 
+    // The game counts the egg window's timer down from this, one a second: seconds left, not a time of day.
+    private static uint SecondsLeft(long finished)
+        => (uint) Math.Max(0, finished - DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+
     private void SendEggCreatedMessages(CraftingSlot egg) {
         SendToSocket(new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
             PetTemplateGID = egg.m_globalID,
             PetName = 0,
-            HatchTime = (uint) egg.m_timeFinished
+            HatchTime = SecondsLeft(egg.m_timeFinished)
         });
 
         SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHINGSLOT {

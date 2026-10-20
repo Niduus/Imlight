@@ -121,6 +121,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_INIT_DELAY = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan MORPH_INIT_RETRY = TimeSpan.FromSeconds(3);
     private const int MORPH_INIT_TRIES = 4;
+    private static readonly TimeSpan MORPH_CLOSE_DELAY = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
     // Long enough to see the egg in the hatch window.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(20);
@@ -1112,8 +1113,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceivePetGameEnding(PET_9_PROTOCOL.MSG_PETGAMEENDING message) {
         Logger.Information("Hatching zone: the game sent MSG_PETGAMEENDING Game={0} GlobalID={1} (in the morph zone {2}).",
             Logger.Args(message.Game, message.GlobalID, _morph is not null));
-        if (_morph is not null && IsMorphGame(message.Game)) {
-            ReturnFromMorphZone("the game is ending the hatch window");
+        // The game sends it with no fields when the player closes the hatch window (its exit buttons).
+        if (_morph is not null) {
+            // Sooner than the wait after the egg, which may already be running.
+            Timers.Cancel(MORPH_RETURN_TIMER);
+            _morphLeaving = false;
+            ScheduleMorphReturn("the player closed the hatch window", MORPH_CLOSE_DELAY);
         }
     }
 
@@ -1347,10 +1352,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         EndSolo();
         ForgetMorph(visit);
 
-        // A guess: the server's end of a pet game, so the window closes before the zone changes.
-        if (wizard is not null) {
-            SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEENDING { Game = PetMorphZone.GAME, GlobalID = wizard.GameObjectID });
-        }
+        // No MSG_PETGAMEENDING to the game: it takes that message's GlobalID as the player's own object id, and the
+        // player could not move after coming back (Justin, 2026-10-20). The zone change closes the window.
 
         Teleport(visit.ReturnZone, doTeleportEffects: true, destinationLocation: visit.ReturnLocation);
     }
