@@ -570,6 +570,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var actionExecutionTime = TimeSpan.FromSeconds(cinematicTimeInSeconds);
         Duel.m_executionPhaseTimer = (float) actionExecutionTime.TotalSeconds;
 
+        // Pet May Cast cards go into their owner's hand first, or the game skips them.
+        foreach (var (owner, cards) in CombatResolver.PetCastCards) {
+            SendHandWith(owner, cards);
+        }
+
         // Serialize the combat actions and send them to the clients.
         if (!_serializer.Serialize(actions, _combatParticipantHandFlags, out var buffer)) {
             Logger.Error("Failed to serialize combat actions for duel {0}",
@@ -1295,6 +1300,28 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             };
 
             participantActor.Tell(msg);
+        });
+    }
+
+    // The current hand plus extra cards, sent to the game only; the server's hand stays as it is.
+    private void SendHandWith(CombatDuelSubCircle circle, List<Spell> extra) {
+        if (circle is null || circle.IsAiCreature || circle.ParticipantActor is null) {
+            return;
+        }
+
+        var hand = new Hand { m_spellList = [.. circle.GetCurrentHand().m_spellList, .. extra] };
+        if (!_serializer.Serialize(hand, _combatParticipantHandFlags, out var buffer)) {
+            Logger.Error("Failed to serialize pet cast hand for duel {0}", Logger.Args(SigilId));
+
+            return;
+        }
+
+        circle.ParticipantActor.Tell(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATHAND {
+            DeckCount = (byte) circle.AvailableSpells,
+            TotalDeckCount = (ushort) circle.TotalSpells,
+            TreasureCardCount = (ushort) circle.VaultRemainingCount,
+            ParticipantID = circle.ParticipantObject.m_globalID,
+            HandData = buffer,
         });
     }
 
