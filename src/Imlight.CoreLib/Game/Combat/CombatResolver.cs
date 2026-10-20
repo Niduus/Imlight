@@ -95,6 +95,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     private static readonly bool s_manaOnFizzle = ConfigurationManager.GetValue("Battle.ManaOnFizzle", false);
     private const int SPELL_PASS_TIME = 1;
     private const float SPELL_CAST_TIME = 5.0f;
+    // The most the round waits for a .c1s/.c2s spell, whose casting animation the game skips.
+    private static readonly float SkipCastSeconds = Math.Max(0.5f, Imlight.Common.ConfigurationManager.GetValue("Battle.SkipCastSeconds", 2f));
     private const float HANGING_EFFECT_CONSUME_TIME = 1.0f;
     private const float OVER_TIME_ACTIVATION_TIME = 2.0f;
     private const float DEATH_ANIMATION_TIME = 2.0f;
@@ -109,7 +111,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     // the caster's next turn, at its start (Daybreaker) or its end (Nightbringer), even if they are stunned.
     // Free is a spell from .daybreaker or .nightbringer: no card was played, and its target is picked when it casts.
     // Target is the command's p1-p4 / e1-e4, or null to pick one.
-    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null);
+    private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null,
+                                      bool SkipCast = false);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -520,14 +523,15 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// caster's turn. Several can be queued to chain them.
     /// </summary>
     /// <returns>How many of these the caster has queued for this round, or 0 if the spell is unknown.</returns>
-    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, string target = null) {
+    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, string target = null,
+                                    bool skipCast = false) {
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
             return 0;
         }
 
         var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
-        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target));
+        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast));
 
         return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart);
     }
@@ -606,7 +610,17 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                     SpellTemplate = action.SpellTemplate,
                 };
                 var before = combatActionList.m_actionList.Count;
-                cinematicTime += HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                // .c1s/.c2s (Justin, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
+                if (delayed.SkipCast) {
+                    for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                        combatActionList.m_actionList[i].m_showCast = false;
+                    }
+
+                    time = Math.Min(time, SkipCastSeconds);
+                }
+
+                cinematicTime += time;
                 // A command's free cast is in no hand, so the game skipped it when a card had been played (Justin's
                 // log, 2026-10-20) while the next round still waited for it.
                 if (delayed.Free) {

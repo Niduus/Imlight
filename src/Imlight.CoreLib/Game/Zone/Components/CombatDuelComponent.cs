@@ -2054,18 +2054,18 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         void Inform(string text) => message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text });
-        var name = message.AtStart ? "Daybreaker" : "Nightbringer";
+        var name = (message.AtStart ? "c1" : "c2") + (message.SkipCast ? "s" : "");
         if (Duel.m_duelPhase != kDuelPhase.kPhase_Planning) {
-            Inform($"Wait until it is your turn to pick a card, then try .{name.ToLowerInvariant()} again.");
+            Inform($"Wait until it is your turn to pick a card, then try .{name} again.");
 
             return;
         }
 
         try {
-            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, message.Target);
+            var count = CombatResolver.AddFreeDelayedCast(subCircle, message.SpellTemplateId, message.AtStart, message.Target, message.SkipCast);
             Inform(count == 0
                 ? $"Could not cast {message.SpellName}."
-                : $"{name}: {message.SpellName}{(message.Target is null ? "" : $" on {message.Target}")} casts {(message.AtStart ? "at the start" : "at the end")} of your turn this round ({count} queued). Add more to chain them.");
+                : $".{name}: {message.SpellName}{(message.Target is null ? "" : $" on {message.Target}")} casts {(message.AtStart ? "before" : "after")} your card this round{(message.SkipCast ? ", without the casting animation" : "")} ({count} queued).");
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | .{1} failed: {2}", Logger.Args(SigilId, name, ex));
