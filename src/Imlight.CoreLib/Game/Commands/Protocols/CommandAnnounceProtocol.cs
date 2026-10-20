@@ -43,32 +43,16 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             return;
         }
 
-        // The game shows only its own lines, by key (Justin, 2026-10-20: typed text showed nothing). A number is the
-        // phrase's number in the app's Lookup tab.
-        if (int.TryParse(text, out var number)) {
-            var phrases = Locale.Phrases;
-            if (number < 1 || number > phrases.Count) {
-                InformSenderClient($"There are {phrases.Count} phrases. Find their numbers in the app's Lookup tab under Phrase.");
+        var find = text.StartsWith("find ", StringComparison.OrdinalIgnoreCase);
+        if (find) {
+            var query = text[5..].Trim();
+            var matches = Locale.Search(query, MAX_LISTED);
+            if (matches.Count == 0) {
+                InformSenderClient($"The game has no line with \"{query}\". Try fewer words.");
 
                 return;
             }
 
-            var (phraseKey, phrase) = phrases[number - 1];
-            Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE { Text = phraseKey, Shown = phrase });
-
-            return;
-        }
-
-        var find = text.StartsWith("find ", StringComparison.OrdinalIgnoreCase);
-        var query = find ? text[5..].Trim() : text;
-        var matches = Locale.Search(query, find ? MAX_LISTED : 1);
-        if (matches.Count == 0) {
-            InformSenderClient($"The game has no line with \"{query}\". Try fewer words.");
-
-            return;
-        }
-
-        if (find) {
             var list = new StringBuilder().AppendLine($"<center>Lines with \"{query}\":</center>\n");
             var numbers = Locale.Phrases.Select((p, i) => (p.Key, Number: i + 1)).ToDictionary(p => p.Key, p => p.Number);
             foreach (var (lineKey, line) in matches) {
@@ -80,8 +64,53 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             return;
         }
 
-        var (key, shown) = matches[0];
-        Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE { Text = key, Shown = shown });
+        // Several lines split by commas show one after another (Justin, 2026-10-20: `.ca 1, 5`).
+        foreach (var part in text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)) {
+            if (!TryResolve(part, out var key, out var shown, out var problem)) {
+                InformSenderClient(problem);
+
+                continue;
+            }
+
+            Context.SessionActor.Tell(new COMBAT_106_PROTOCOL.MSG_CHEATANNOUNCE { Text = key, Shown = shown });
+        }
+    }
+
+    /// <summary>
+    /// The game line a .ca phrase means: a number is the phrase's number in the app's Lookup tab, words are the
+    /// line that matches them best. The game shows only its own lines, by key (Justin, 2026-10-20: typed text
+    /// showed nothing).
+    /// </summary>
+    /// <param name="text">The number or words.</param>
+    /// <param name="key">The line's locale key, which the game shows.</param>
+    /// <param name="shown">The line's English text.</param>
+    /// <param name="problem">Why nothing was found, in plain words.</param>
+    internal static bool TryResolve(string text, out string key, out string shown, out string problem) {
+        key = shown = problem = null;
+        text = (text ?? "").Trim();
+        if (int.TryParse(text, out var number)) {
+            var phrases = Locale.Phrases;
+            if (number < 1 || number > phrases.Count) {
+                problem = $"There are {phrases.Count} phrases. Find their numbers in the app's Lookup tab under Phrase.";
+
+                return false;
+            }
+
+            (key, shown) = phrases[number - 1];
+
+            return true;
+        }
+
+        var matches = Locale.Search(text, 1);
+        if (matches.Count == 0) {
+            problem = $"The game has no line with \"{text}\". Try fewer words.";
+
+            return false;
+        }
+
+        (key, shown) = matches[0];
+
+        return true;
     }
 
     private const int MAX_LISTED = 10;

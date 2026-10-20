@@ -82,17 +82,8 @@ internal class CommandHatchProtocol : CommandProtocol {
         InformSenderClient("Could not find two different pets in \"" + text + "\". Type .hatch to list your pets.");
     }
 
-    /// <summary>
-    /// The wizard's hatched pets: the one worn first, then the backpack's.
-    /// </summary>
-    private List<WizClientObjectItem> OwnPets() {
-        var wizard = Context.Character;
-        var worn = PetCare.GetWornPet(wizard);
-        var items = (worn is null ? [] : new List<WizClientObjectItem> { worn })
-            .Concat(wizard.InventoryBehavior?.Items ?? []);
-
-        return [.. items.Where(i => PetProgress.GetBehavior(i) is { m_level: > 0 }).Distinct()];
-    }
+    private List<WizClientObjectItem> OwnPets()
+        => PetHatching.OwnPets(Context.Character);
 
     private static List<WizClientObjectItem> Find(List<WizClientObjectItem> pets, string text) {
         text = text.Trim();

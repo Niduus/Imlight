@@ -393,6 +393,11 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEJOIN))]
     private void ReceivePetGameJoin(PET_9_PROTOCOL.MSG_PETGAMEJOIN message) {
+        // The pet morphing (hatching) window is HatchService's.
+        if (string.Equals(message.Game.ToString(), "PetGameMorph", StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
+
         Logger.Information("Pet game join: game {0}, track {1}.", Logger.Args(message.Game, message.Track));
         SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = message.Game, Success = 0 });
         InformGameClient("Pet games are not in yet. Feed snacks from the snack window or with .pet feed to level your pet.");

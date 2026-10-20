@@ -613,4 +613,35 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// What a pet morphing sigil in the Pet Pavilion hatchery asks of a session (see InteractPetMorphSigilComponent).
+    /// </summary>
+    internal enum HatchSigilRole : byte {
+        // The player pressed a solo (1P) sigil: hatch two of their own pets.
+        Solo,
+        // The player pressed a duo sigil with another player on it: ask that player to hatch in person.
+        Requester,
+        // Another player pressed the duo sigil this player stands on, naming this player.
+        Partner,
+        // The player pressed a duo sigil nobody else stands on.
+        Alone,
+    }
+
+    /// <summary>
+    /// Sent by a pet morphing sigil (zone actor) to the session of a player on it.
+    /// </summary>
+    internal sealed class MSG_HATCHSIGIL : IServerMessage {
+
+        public byte MessageOrder { get; } = 74;
+        public byte ServiceID { get; } = 103;
+
+        public HatchSigilRole Role;
+        public ulong SigilGID;
+        public string SigilName;
+        public ulong PartnerCharId;
+        public ulong PartnerGameObjectId;
+        public string PartnerName;
+
+    }
+
 }

@@ -113,8 +113,10 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     // Target is the command's p1-p4 / e1-e4 / all, or null to pick one.
     // When is the command's f (first in the round, before anyone acts) or l (last, after everyone), else 'n':
     // around the caster's own card.
+    // Announcement is a .ca line chained into the queue (`.c1 Fire Cat, ca 1`): it casts nothing and shows before the
+    // queue's next spell.
     private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null,
-                                      bool SkipCast = false, char When = 'n');
+                                      bool SkipCast = false, char When = 'n', string Announcement = null);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -206,6 +208,23 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         _announcements.Clear();
 
         return seconds;
+    }
+
+    /// <summary>
+    /// Puts .ca lines at <paramref name="index"/>, each on its own copy of a spell action, cast by the player who
+    /// typed them so the text shows over them.
+    /// </summary>
+    /// <returns>The seconds the lines add to the round.</returns>
+    private float InsertAnnouncements(CombatActionListObj combatActionList, int index, CombatAction source, List<string> texts, int slot) {
+        combatActionList.m_actionList.InsertRange(index, texts.Select(text => source with {
+            m_spellCaster = slot,
+            m_stringKeyMessage = text,
+            m_showCast = false,
+        }));
+        Logger.Information("Duel {0} | Round {1} | queued .ca shows {2} over slot {3}.",
+            Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, string.Join(", ", texts.Select(t => $"\"{t}\"")), slot));
+
+        return texts.Count * ANNOUNCEMENT_SECONDS;
     }
 
     // About how long the game shows one announcement.
@@ -647,7 +666,15 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast,
                                        When: when));
 
-        return _delayedCasts.Count(d => d.Free && d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when);
+        return _delayedCasts.Count(d => d.Free && d.Announcement is null && d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when);
+    }
+
+    /// <summary>
+    /// Queues a .ca line in the caster's c1 or c2 queue, in its place among the queued spells.
+    /// </summary>
+    internal void AddDelayedAnnouncement(CombatDuelSubCircle caster, string text, bool atStart, char when) {
+        var action = new QueuedCombatAction { SpellCaster = caster };
+        _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, When: when, Announcement: text));
     }
 
     private static readonly HashSet<kEffectTarget> s_enemyTargets = [
@@ -702,8 +729,14 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             .Where(d => d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when && d.Round < _duel.m_roundNum)
             .ToList();
         var cinematicTime = 0.0f;
+        var lines = new List<string>();
         foreach (var delayed in due) {
             _delayedCasts.Remove(delayed);
+            if (delayed.Announcement is not null) {
+                lines.Add(delayed.Announcement);
+                continue;
+            }
+
             var action = delayed.Action;
             // "all" (Justin, 2026-10-20): a single-target spell casts once on each enemy (or each teammate).
             var targets = delayed.Free && delayed.Target == "all"
@@ -731,6 +764,12 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                     };
                     var before = combatActionList.m_actionList.Count;
                     var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                    // Chained .ca lines show just before this spell.
+                    if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
+                        cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], lines, caster.SlotIndex);
+                        before += lines.Count;
+                        lines.Clear();
+                    }
                     // .c1s/.c2s (Justin, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
                     if (delayed.SkipCast) {
                         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
@@ -756,6 +795,17 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                     Logger.Error("Duel {0} | Slot {1} | delayed spell failed: {2}",
                         Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, e));
                 }
+            }
+        }
+
+        // Lines with no spell after them show after the spell before them, or else before the round's first spell.
+        if (lines.Count > 0) {
+            var last = combatActionList.m_actionList.FindLastIndex(a => a.m_spell is not null);
+            if (last >= 0) {
+                cinematicTime += InsertAnnouncements(combatActionList, last + 1, combatActionList.m_actionList[last], lines, caster.SlotIndex);
+            }
+            else {
+                lines.ForEach(line => AddAnnouncement(line, caster.SlotIndex));
             }
         }
 
