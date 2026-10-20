@@ -713,16 +713,12 @@ internal static class PetProgress {
             BaseMaxStat(template, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
             petId == 0 ? 0 : PetMaxRaises.Get(petId, name))))];
 
-        // Selfish talents also add to the stat itself: what they add now replaces what they added before, so a
-        // talent or jewel that goes away takes its points with it.
+        // Selfish talents raise only the maximum; the stat itself still has to be trained up (Justin, 2026-10-20).
+        // 0.10.17 added their points to the stat too, so those points are taken back once.
         foreach (var stat in behavior.m_currentStats ?? []) {
-            if (petId != 0) {
-                var added = bonus.Where(b => SameStat(b.m_name, stat.m_name)).Sum(b => b.m_value);
-                var before = PetSelfishStats.Get(petId, stat.m_name);
-                if (added != before) {
-                    stat.m_value = Math.Max(0, stat.m_value + added - before);
-                    PetSelfishStats.Set(petId, stat.m_name, added);
-                }
+            if (petId != 0 && PetSelfishStats.Get(petId, stat.m_name) is var added and not 0) {
+                stat.m_value = Math.Max(0, stat.m_value - added);
+                PetSelfishStats.Set(petId, stat.m_name, 0);
             }
 
             stat.m_value = Math.Min(stat.m_value, GetStat(behavior.m_maxStats, stat.m_name));

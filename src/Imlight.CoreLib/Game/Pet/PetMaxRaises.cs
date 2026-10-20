@@ -43,9 +43,8 @@ internal static class PetMaxRaises {
 }
 
 /// <summary>
-/// How much the selfish talents (the pet's own and its jewel's, like Mighty +65 Strength) have added to each of a
-/// pet's stats, so the stat goes back down by the same amount when a talent goes away (Justin, 2026-10-20). Kept in
-/// pet-selfish-stats.txt next to the server.
+/// How much 0.10.17 added to each of a pet's stats for its selfish talents, so it can be taken back: selfish talents
+/// raise only the maximum (Justin, 2026-10-20). Kept in pet-selfish-stats.txt next to the server.
 /// </summary>
 internal static class PetSelfishStats {
 
