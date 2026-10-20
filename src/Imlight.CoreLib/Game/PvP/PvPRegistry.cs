@@ -39,6 +39,9 @@
  */
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using Imcodec.ObjectProperty.TypeCache;
 
 namespace Imlight.CoreLib.Game.PvP;
 
@@ -47,12 +50,20 @@ internal static class PvPRegistry {
     private static readonly ConcurrentDictionary<ulong, byte> s_queued = new();
     private static readonly ConcurrentDictionary<ulong, byte> s_inMatch = new();
     private static readonly ConcurrentDictionary<ulong, byte> s_matchInstanceOwners = new();
+    private static readonly ConcurrentDictionary<ulong, byte> s_hosting = new();
+    private static readonly ConcurrentDictionary<ulong, PvPMatchInfo> s_hostedMatches = new();
 
     public static bool IsQueued(ulong charId)
         => s_queued.ContainsKey(charId);
 
+    public static bool IsHosting(ulong charId)
+        => s_hosting.ContainsKey(charId);
+
     public static bool IsInMatch(ulong charId)
         => s_inMatch.ContainsKey(charId);
+
+    public static IReadOnlyList<PvPMatchInfo> GetHostedMatches(uint tournamentNameId)
+        => [.. s_hostedMatches.Values.Where(info => info.m_tournamentNameID == tournamentNameId).OrderBy(info => (ulong) info.m_matchID)];
 
     public static bool IsMatchInstanceOwner(ulong ownerId)
         => s_matchInstanceOwners.ContainsKey(ownerId);
@@ -62,6 +73,22 @@ internal static class PvPRegistry {
             s_queued[charId] = 0;
         } else {
             s_queued.TryRemove(charId, out _);
+        }
+    }
+
+    internal static void SetHosting(ulong charId, bool isHosting) {
+        if (isHosting) {
+            s_hosting[charId] = 0;
+        } else {
+            s_hosting.TryRemove(charId, out _);
+        }
+    }
+
+    internal static void SetHostedMatch(ulong matchId, PvPMatchInfo info) {
+        if (info is not null) {
+            s_hostedMatches[matchId] = info;
+        } else {
+            s_hostedMatches.TryRemove(matchId, out _);
         }
     }
 

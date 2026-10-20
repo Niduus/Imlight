@@ -47,6 +47,7 @@ using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.PvP.Data;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -92,6 +93,9 @@ public class CombatDuelSubCircle {
     internal IActorRef ParticipantActor { get; private set; }
     internal CoreObject ParticipantObject { get; private set; }
     internal ServerWizGameStats ParticipantGameStats { get; private set; }
+    // The stats the client gets. A duel that scales stats sends them unscaled and lets the client scale them itself.
+    internal WizGameStats ClientGameStats => _clientGameStats ?? ParticipantGameStats?.GetCombatGameStats();
+    internal WizGameStats ResolverGameStats => _resolverGameStats ?? CombatParticipant?.m_pGameStats;
     internal CombatParticipant CombatParticipant { get; private set; }
     internal bool AddedToDuel { get; set;}
     internal bool IsSummonedMinion { get; private set; }
@@ -134,6 +138,8 @@ public class CombatDuelSubCircle {
     internal bool IsAlive => ParticipantGameStats?.m_currentHitpoints > 0;
     internal bool CheatNoFizzle;
     internal CombatDeck _combatDeck;
+    private WizGameStats _clientGameStats;
+    private WizGameStats _resolverGameStats;
     internal readonly CombatDuelComponent _duelActor;
     internal Wizard _wizard;
     internal int _usedPipsForExperienceGain = 0;
@@ -424,7 +430,7 @@ public class CombatDuelSubCircle {
                 continue;
             }
 
-            var gainedPowerPip = DeterminePowerPipGain(CombatParticipant);
+            var gainedPowerPip = DeterminePowerPipGain();
             if (gainedPowerPip) {
                 pipCount.m_powerPips++;
             }
@@ -1180,6 +1186,10 @@ public class CombatDuelSubCircle {
         IsSandboxed = _duelActor.Duel.m_bPVP;
         ParticipantGameStats = IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
         var combatStats = ParticipantGameStats.GetCombatGameStats();
+        if (IsSandboxed && PvPLeagueScaling.TryScaleDuelStats(_duelActor.PvPLeagueId, ParticipantGameStats)) {
+            _clientGameStats = combatStats;
+            _resolverGameStats = ParticipantGameStats.GetCombatGameStats();
+        }
 
         // Collage spells the player has learned and temporary spells (perhaps from equipment)
         // into one list to create the combat hand. Treasure cards go into a separate vault.
@@ -1424,8 +1434,8 @@ public class CombatDuelSubCircle {
         return pipCount;
     }
 
-    private bool DeterminePowerPipGain(CombatParticipant participant) {
-        var stats = participant.m_pGameStats;
+    private bool DeterminePowerPipGain() {
+        var stats = ResolverGameStats;
         var powerPipChance = 100 * (stats.m_powerPipBase + stats.m_powerPipBonusPercentAll);
 
         var powerPipRoll = Random.Shared.Next(0, 100);

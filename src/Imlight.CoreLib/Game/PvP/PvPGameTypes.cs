@@ -26,8 +26,8 @@
  * if (PvPGameTypes.TryResolve(tournament.m_pvpDuelModifiers, out var rules)) { }
  * 
  * NOTE:
- * The practice tournament lists AlternatingTurns_PipsAtOnce, a game type that has no file in the game data: the
- * client treats it as the alternate turns rule with pips for both teams. Any other name is not supported yet.
+ * The practice tournament lists one game type that has no file in the game data: the client treats it as the
+ * alternate turns rule with pips for both teams. Any other name is not supported yet.
  * 
  * TODO:
  * 
@@ -74,7 +74,8 @@ internal static class PvPGameTypes {
     public static AlternateTurnsCombatRule ToCombatRule(PvPDuelRules rules)
         => new() {
             m_alternateTurns = rules.AlternateTurns,
-            m_pipsForBothTeamsAtOnce = rules.PipsForBothTeamsAtOnce
+            // Alternating turns gain pips per phase, so the client must not show them arriving together.
+            m_pipsForBothTeamsAtOnce = rules.PipsForBothTeamsAtOnce && !rules.AlternateTurns
         };
 
 }

@@ -23,6 +23,7 @@ using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.PvP;
+using Imlight.CoreLib.Game.PvP.Arena;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -154,6 +155,13 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
 
         // Several sigils: the lowest object id hosts the match.
         _pvpSigilObjectIds.OrderBy(x => x.Value).First().Key.Forward(message);
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_FORFEITPVPPARTICIPANT))]
+    private void ReceiveForfeitPvPParticipant(ZONE_102_PROTOCOL.MSG_FORFEITPVPPARTICIPANT message) {
+        foreach (var sigil in _pvpSigilObjectIds.Keys) {
+            sigil.Forward(message);
+        }
     }
 
     private static bool IsObjectEligibleForSpawn(CoreObjectInfo objectInfo) 

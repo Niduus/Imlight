@@ -47,6 +47,9 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.PvP;
+using Imlight.CoreLib.Game.PvP.Arena;
+using Imlight.CoreLib.Game.PvP.Data;
+using Imlight.CoreLib.Game.PvP.Matchmaking;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
@@ -56,7 +59,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class PvPKioskComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
 
-    private const float InteractionTolerance = 2.0f;
+    private const float INTERACTION_TOLERANCE = 2.0f;
 
     public string ServiceName     => "PvPKioskService";
     public string NpcIcon         => null;
@@ -87,7 +90,7 @@ internal sealed class PvPKioskComponent(ZoneEntity entity) : ZoneEntityComponent
             return;
         }
 
-        if (!IsInHorizontalRadius(playerObject, ((IServiceComponent) this).DEFAULT_INTERACTION_RADIUS * InteractionTolerance)) {
+        if (!IsInHorizontalRadius(playerObject, ((IServiceComponent) this).DEFAULT_INTERACTION_RADIUS * INTERACTION_TOLERANCE)) {
             Logger.Warning("{CharId} used the PvP kiosk {Kiosk} from too far away.",
                 Logger.Args(playerCharacter.CharId, Entity.ActiveGameObject.m_debugName));
 
@@ -99,6 +102,12 @@ internal sealed class PvPKioskComponent(ZoneEntity entity) : ZoneEntityComponent
             .FirstOrDefault();
         if (behavior is null || !PvPLeagueFactory.TryGetLeague(behavior.m_leagueType.ToString(), out var league)) {
             Logger.Error("The PvP kiosk {Kiosk} names a league that does not exist.", Logger.Args(Entity.ActiveGameObject.m_debugName));
+
+            return;
+        }
+
+        if (!PvPSeasonClock.IsLeagueOpen(league)) {
+            playerActor.Tell(PvPArenaErrors.Message(PvPArenaErrors.PLAYER_INELIGIBLE));
 
             return;
         }
