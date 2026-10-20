@@ -418,10 +418,10 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
         var cinematicTime = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
-        // The card is not in the owner's hand; the game skipped it ("does not spell in hand") while the round still
-        // waited for its cinematic. Forced, it is cast without looking in the hand.
+        // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
+        // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
-            combatActionList.m_actionList[i].m_forceSpell = true;
+            combatActionList.m_actionList[i].m_forceSpell = PetMayCasts.ForceSpell;
             if (PetMayCasts.ShowAsPetCast) {
                 combatActionList.m_actionList[i].m_petCast = true;
                 combatActionList.m_actionList[i].m_petCasted = true;
