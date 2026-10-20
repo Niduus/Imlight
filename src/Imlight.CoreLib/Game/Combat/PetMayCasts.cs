@@ -33,6 +33,8 @@ internal static class PetMayCasts {
     // hand"; Justin's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
     internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
     internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
+    internal static readonly bool Chain = ConfigurationManager.GetValue("PetCasting.Chain", true);
+    internal static readonly int MaxChain = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
     /// <summary>
     /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
