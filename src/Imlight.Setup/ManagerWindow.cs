@@ -141,6 +141,9 @@ internal sealed class ManagerWindow : Window {
     private readonly Border _saveBar = new() { IsVisible = false, Padding = new Thickness(16, 10) };
     private readonly TextBlock _saveCount = new() { VerticalAlignment = VerticalAlignment.Center };
     private List<(string Section, List<Setting> Settings)> _settings = [];
+    private const string PET_CASTING = "PetCasting";
+    private readonly TextBox _petCastSearch = new() { Watermark = "Search May Cast cards, such as Aura, Ward, trap, Fire or Tower Shield" };
+    private readonly StackPanel _petCastRows = new();
 
     // Accounts.
     private readonly TextBox _newUsername = new() { Watermark = "Username", Width = 180 };
@@ -573,6 +576,12 @@ internal sealed class ManagerWindow : Window {
 
     private Control SettingsTab() {
         _settingSearch.TextChanged += (_, _) => RenderSettings();
+        _petCastSearch.TextChanged += (_, _) => {
+            var query = _settingSearch.Text?.Trim() ?? "";
+            var settings = _settings.FirstOrDefault(g => g.Section == PET_CASTING).Settings ?? [];
+            RenderPetCastRows(settings.Where(s => query.Length == 0
+                || $"{PET_CASTING} {s.Key} {s.Help}".Contains(query, StringComparison.OrdinalIgnoreCase)).ToList());
+        };
 
         return Page(
             Card(new StackPanel {
@@ -1457,7 +1466,14 @@ internal sealed class ManagerWindow : Window {
     // ---------------------------------------------------------------------
 
     private void LoadSettings() {
-        _settings = _manager.ReadSettings();
+        // Each May Cast card's key gets what the card does, so it can be searched by kind (Justin: typing Aura shows every aura).
+        _settings = _manager.ReadSettings()
+            .Select(group => (group.Section, group.Section != PET_CASTING ? group.Settings : group.Settings
+                .Select(s => PetCastCards.Details.TryGetValue(s.Key, out var card)
+                    ? s with { Help = s.Help.Length > 0 ? $"{card}\n{s.Help}" : card }
+                    : s)
+                .ToList()))
+            .ToList();
         _pending.Clear();
         UpdateSaveBar();
         RenderSettings();
@@ -1474,16 +1490,40 @@ internal sealed class ManagerWindow : Window {
             }
 
             var rows = new StackPanel();
-            foreach (var setting in matches) {
-                rows.Children.Add(SettingRow(setting));
+            if (section == PET_CASTING) {
+                // The box and its rows are kept between redraws, so they leave the old list first.
+                (_petCastSearch.Parent as Panel)?.Children.Remove(_petCastSearch);
+                (_petCastRows.Parent as Panel)?.Children.Remove(_petCastRows);
+                rows.Children.Add(WithMargin(_petCastSearch, new Thickness(0, 4, 0, 4)));
+                rows.Children.Add(_petCastRows);
+                RenderPetCastRows(matches);
+            }
+            else {
+                foreach (var setting in matches) {
+                    rows.Children.Add(SettingRow(setting));
+                }
             }
 
             _settingsList.Children.Add(new Expander {
                 Header = section,
-                IsExpanded = query.Length > 0 || section == "Randomizer",
+                IsExpanded = query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Content = rows,
             });
+        }
+    }
+
+    // The [PetCasting] section's own search: only its rows are redrawn, so the search box keeps its focus.
+    private void RenderPetCastRows(List<Setting> settings) {
+        var query = _petCastSearch.Text?.Trim() ?? "";
+        _petCastRows.Children.Clear();
+        foreach (var setting in settings.Where(s => query.Length == 0
+                || $"{s.Key} {s.Help}".Contains(query, StringComparison.OrdinalIgnoreCase))) {
+            _petCastRows.Children.Add(SettingRow(setting));
+        }
+
+        if (_petCastRows.Children.Count == 0) {
+            _petCastRows.Children.Add(Sub($"No May Cast setting matches \"{query}\"."));
         }
     }
 

@@ -37,8 +37,10 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.WizardData.Models.World;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Packs;
@@ -70,7 +72,20 @@ public static class PackManager {
         var lootRarities = new List<LootRarity>(lootTables.Count);
 
         foreach (var tableName in lootTables) {
-            var rollResult = DropTableRoller.Roll([tableName], sessionActorRef, wizard.GameObject, wizard);
+            var rollTable = (string) tableName;
+            if (DropTableCollection.GetDropTable(rollTable) is null) {
+                rollTable = StandInTable(boosterTemplate, rollTable);
+            }
+
+            var rollResult = rollTable is null ? new DropTableResult { Items = [] }
+                : DropTableRoller.Roll([rollTable], sessionActorRef, wizard.GameObject, wizard);
+            if (rollResult.Items.Count == 0 && rollTable is null && IsSpellementSlot(tableName)
+                    && RandomSpellement() is { } spellement) {
+                rollResult.Items.Add(new DropItemResult { ItemId = spellement.ToString(), ItemName = "Spellement", Quantity = 1 });
+                Logger.Information("Booster pack {0}: slot {1} has no list in SpiralDB, so it gives a random spellement.",
+                    Logger.Args(packTemplateId, tableName));
+            }
+
             if (rollResult.Items.Count == 0) {
                 Logger.Warning("Booster pack {0}: slot {1} gave nothing.", Logger.Args(packTemplateId, tableName));
                 continue;
@@ -127,6 +142,31 @@ public static class PackManager {
             Data = serializedLoot,
             TemplateID = packTemplateId
         });
+    }
+
+    /// <summary>
+    /// A slot whose list SpiralDB does not have (TreasureTower03-Heal, Spellements_P_Lore_HH_01) would leave the pack a
+    /// card short, so it rolls another of the pack's lists that shares its name up to the last dash, or null.
+    /// </summary>
+    private static string StandInTable(BoosterPackTemplate pack, string tableName) {
+        var cut = tableName.LastIndexOf('-');
+        var prefix = cut > 0 ? tableName[..cut] : null;
+        var standIn = prefix is null ? null : pack.m_lootTables
+            .Select(t => (string) t)
+            .FirstOrDefault(t => t != tableName && t.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                && DropTableCollection.GetDropTable(t) is not null);
+        Logger.Warning("Booster pack {0}: slot {1} has no list in SpiralDB{2}.", Logger.Args(pack.m_templateID, tableName,
+            standIn is null ? "" : $", so it rolls {standIn} instead"));
+
+        return standIn;
+    }
+
+    private static bool IsSpellementSlot(string tableName) => tableName.StartsWith("Spellements", StringComparison.OrdinalIgnoreCase);
+
+    private static uint? RandomSpellement() {
+        var spellements = HouseVendors.Sellers.FirstOrDefault(seller => seller.Key == "ReagentShard")?.Items() ?? [];
+
+        return spellements.Count == 0 ? null : spellements[Random.Shared.Next(spellements.Count)];
     }
 
     private static LootInfo LootFor(CoreTemplate template, uint templateId, int count) => template switch {

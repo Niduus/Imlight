@@ -1,0 +1,19 @@
+{
+  "Name": "Spellements_P_Lore_HH_01",
+  "Description": "Gloomthorn Nightmare Pack (2017) spellement slot, missing from SpiralDB: the Headless Horseman spellement.",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1557317",
+      "ItemName": "Headless Horseman",
+      "Notes": ""
+    }
+  ]
+}
