@@ -288,20 +288,37 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
     /// <summary>
     /// Runs one step of the round, then lets pets May Cast for what happened in it: a spell cast by a teammate (or
-    /// the owner), a teammate taking damage, or a teammate being healed. A pet's own casts set off nothing.
+    /// the owner), a teammate taking damage, or a teammate being healed, pet casts included ([PetCasting] Chain).
     /// </summary>
     private float WithPetMayCasts(Func<float> step, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         if (!PetMayCasts.Enabled || PetMayCasts.MaxPerRound == 0) {
             return step();
         }
 
-        var health = _subCircles.Where(c => c.Occupied && c.AddedToDuel && c.ParticipantGameStats is not null)
-            .ToDictionary(c => c, c => c.ParticipantGameStats.m_currentHitpoints);
+        var health = HealthNow();
         var before = combatActionList.m_actionList.Count;
         var cinematicTime = step();
 
         try {
-            cinematicTime += PetMayCast(health, before, combatActionList, cinematicTimeSoFar + cinematicTime);
+            // A May Cast can set off more May Casts, the pet's own or another pet's (Justin, 2026-10-20), up to
+            // [PetCasting] MaxChain links; MaxPerRound still caps each pet.
+            for (var link = 0; link <= PetMayCasts.MaxChain; link++) {
+                // The pet casts about to be added are the next link's step.
+                var nextHealth = HealthNow();
+                var nextBefore = combatActionList.m_actionList.Count;
+                var time = PetMayCast(health, before, combatActionList, cinematicTimeSoFar + cinematicTime);
+                if (time <= 0) {
+                    break;
+                }
+
+                cinematicTime += time;
+                if (!PetMayCasts.Chain) {
+                    break;
+                }
+
+                health = nextHealth;
+                before = nextBefore;
+            }
         }
         catch (Exception e) {
             Logger.Error("Duel {0} | Pet May Cast failed: {1}", Logger.Args(_duel.m_duelID.Full, e));
@@ -310,6 +327,10 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         return cinematicTime;
     }
 
+    private Dictionary<CombatDuelSubCircle, int> HealthNow()
+        => _subCircles.Where(c => c.Occupied && c.AddedToDuel && c.ParticipantGameStats is not null)
+            .ToDictionary(c => c, c => c.ParticipantGameStats.m_currentHitpoints);
+
     private float PetMayCast(Dictionary<CombatDuelSubCircle, int> health, int before, CombatActionListObj combatActionList,
                              float cinematicTimeSoFar) {
         var cast = new HashSet<CombatTeam>();
@@ -317,7 +338,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var healed = new HashSet<CombatTeam>();
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
             var done = combatActionList.m_actionList[i];
-            if (done.m_spell is not null && done.m_spellHits == (char) 1 && !done.m_petCast && !done.m_forceSpell
+            if (done.m_spell is not null && done.m_spellHits == (char) 1 && (PetMayCasts.Chain || !done.m_petCast)
                     && _subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == done.m_spellCaster) is { } caster) {
                 cast.Add(caster.OccupiedTeam);
 
