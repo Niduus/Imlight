@@ -272,6 +272,8 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
         return new ClientPetNameBehavior {
             m_nameKeys = itemName.m_nameKeys,
+            // A name given with .name pet.
+            m_wsNameOverride = itemName.m_wsNameOverride,
             m_useRank = true,
             m_eGender = itemName.m_eGender,
             m_eRace = itemName.m_eRace,

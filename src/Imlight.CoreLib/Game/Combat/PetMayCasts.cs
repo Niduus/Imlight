@@ -32,6 +32,7 @@ internal static class PetMayCasts {
     // Flagged as the pet's, the game looked for the card in the owner's hand and skipped it ("does not spell in
     // hand"; Justin's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
     internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
+    internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
     private static readonly int s_onCast = ConfigurationManager.GetValue("PetCasting.OnCast", 10);
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);

@@ -98,6 +98,7 @@ internal sealed class Lookup {
         Imlight("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
         Imlight("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
         Imlight("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
+        Command("Rename", ".name self <name> or .name pet <name>", QA, "Changes your wizard's name (relog to see it) or the name of the pet you are wearing. Use reset as the name to go back to the old one."),
         Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
         Command("Pick teleport effect", ".tpstyle <number>", QA, "Wears teleport effect number <number> (0 is the normal one). Try 1, 2, 3 and so on, log out and back in, then teleport to see it."),
         Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),
