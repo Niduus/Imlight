@@ -364,4 +364,18 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// .joinme: a creature joins the sender's battle on the enemy side.
+    /// </summary>
+    internal sealed class MSG_CHEATJOINME : IServerMessage {
+
+        public byte MessageOrder => 33;
+        public byte ServiceID => 106;
+
+        public uint CreatureTemplateId;
+        public string CreatureName;
+        public IActorRef Actor;
+
+    }
+
 }

@@ -1036,14 +1036,17 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     internal static void OnMinionRemoved(CombatDuelSubCircle circle)
         => circle.RemoveParticipant();
 
-    private void SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster) {
+    // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
+    // Returns the circle it took, or null.
+    private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false) {
         // A PvE minion fights for the wizards whoever summoned it; in PvP it fights for its summoner.
-        var slot = Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer();
+        var slot = forEnemies ? GetAvailableSubCircleTeamCreature()
+            : Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer();
         if (slot is null) {
             Logger.Information("Duel {0} | minion summon (tid {1}) skipped, no free slot on the side of the caster.",
                 Logger.Args(Duel.m_duelID.Full, creatureTid));
 
-            return;
+            return null;
         }
 
         var template = CoreObjectFactory.GetCoreTemplate(creatureTid);
@@ -1051,7 +1054,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Warning("Duel {0} | minion summon: no template for creature tid {1}.",
                 Logger.Args(Duel.m_duelID.Full, creatureTid));
 
-            return;
+            return null;
         }
 
         var centre = Entity.ActiveGameObject?.m_location ?? (caster?.ParticipantObject?.m_location ?? default);
@@ -1065,12 +1068,16 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         var minionActor = Entity.SpawnCombatMinionActor(minionObj, template);
         if (minionActor is null) {
-            return;
+            return null;
         }
 
+        // An enemy minion belongs to the first enemy in the fight.
+        var owner = forEnemies
+            ? SubCircles.FirstOrDefault(c => c.Occupied && c.OccupiedTeam == CombatTeam.Monster && c != slot)?.SlotIndex ?? slot.SlotIndex
+            : caster.SlotIndex;
         try {
             AssignParticipantToSubCircle(slot, minionActor, minionObj, isSummonedMinion: true,
-                                         minionOwnerSubCircle: caster.SlotIndex);
+                                         minionOwnerSubCircle: owner);
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | minion summon: failed to assign tid {1} to slot {2}: {3}",
@@ -1078,11 +1085,13 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             slot.RemoveParticipant();
             minionActor.Tell(PoisonPill.Instance);
 
-            return;
+            return null;
         }
 
-        Logger.Information("Duel {0} | summoned minion tid {1} into player-team slot {2} (caught up next round).",
-            Logger.Args(Duel.m_duelID.Full, creatureTid, slot.SlotIndex));
+        Logger.Information("Duel {0} | summoned minion tid {1} into {2}-team slot {3} (caught up next round).",
+            Logger.Args(Duel.m_duelID.Full, creatureTid, forEnemies ? "enemy" : "player", slot.SlotIndex));
+
+        return slot;
     }
 
     private void AddParticipant(CoreObject participantObject, IActorRef participantActor) {
@@ -2080,6 +2089,34 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | .{1} failed: {2}", Logger.Args(SigilId, name, ex));
+        }
+    }
+
+    // .joinme (Justin, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]
+    private void ReceiveCheatJoinMe(COMBAT_106_PROTOCOL.MSG_CHEATJOINME message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        void Inform(string text) => message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text });
+        if (!_isActive || subCircle is null || IsPvPDuel) {
+            Inform("Use .joinme in a battle against creatures.");
+
+            return;
+        }
+
+        if (GetAvailableSubCircleTeamCreature() is null) {
+            Inform("The enemy side is full (4 enemies).");
+
+            return;
+        }
+
+        try {
+            var slot = SpawnAndAssignMinion(message.CreatureTemplateId, subCircle, forEnemies: true);
+            Inform(slot is null
+                ? $"{message.CreatureName} could not join the battle."
+                : $"{message.CreatureName} joins the battle and fights from the next round.");
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | .joinme failed: {1}", Logger.Args(SigilId, ex));
         }
     }
 
