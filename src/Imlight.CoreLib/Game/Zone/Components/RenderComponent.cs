@@ -79,7 +79,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
         && gameObjectTemplate.m_behaviors.Any(x => x is RenderBehaviorTemplate)
-        || template is CombatSigilTemplate; // bug fix: combat sigil templtaes don't have any behaviors
+        || template is CombatSigilTemplate // bug fix: combat sigil templtaes don't have any behaviors
+        // A pet game's object (PetGameMorph in the pet morph zone) has no model, but the game runs the pet game's
+        // messages through its ClientPetGameBehavior, so the client must be sent it (Justin, 2026-10-20: no hatch window).
+        || template is GameObjectTemplate { m_behaviors: var behaviors } && behaviors.Any(x => x is PetGameBehaviorTemplate);
 
     public override void OnStart() {
         // A combat minion never distance-culls; it lives only for the duel. A summoned pet
