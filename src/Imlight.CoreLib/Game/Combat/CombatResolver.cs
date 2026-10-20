@@ -367,7 +367,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
 
     private float CastPetSpell(CombatDuelSubCircle owner, PetMayCasts.MayCast mayCast, string reason,
                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        var spell = SpellFactory.GetSpell(mayCast.SpellTemplateId);
+        // Sent as the pet's item card (Justin, 2026-10-20: it should look like casting the pet's card).
+        var spell = SpellFactory.GetSpell(mayCast.SpellTemplateId) is { } card ? card with { m_itemCard = true } : null;
         if (spell is null || CoreObjectFactory.GetCoreTemplate(mayCast.SpellTemplateId) is not SpellTemplate template) {
             return 0;
         }
