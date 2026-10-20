@@ -142,15 +142,15 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         SortQueuedActions();
 
         var cinematicTime = ProcessQueuedActions(combatActionListObj);
-        ShowAnnouncements(combatActionListObj);
+        cinematicTime += ShowAnnouncements(combatActionListObj);
         ApplyCastLooks(combatActionListObj);
 
         return cinematicTime;
     }
 
     /// <summary>
-    /// .cast: a wizard's spell actions (not their pet's) show another school, or skip the casting animation. Done
-    /// once the round is worked out, so the spell's real school still decided pips and bonuses.
+    /// .cast none: a wizard's spell actions (not their pet's) skip the casting animation. (A school's animation can't
+    /// be shown: the game draws the casting sign from its own copy of the spell, Justin's log 2026-10-20.)
     /// </summary>
     private void ApplyCastLooks(CombatActionListObj combatActionList) {
         foreach (var action in combatActionList.m_actionList) {
@@ -167,9 +167,6 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             if (school == 0) {
                 action.m_showCast = false;
             }
-            else {
-                action.m_spell = action.m_spell with { m_magicSchoolID = school };
-            }
         }
     }
 
@@ -179,22 +176,34 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     internal void AddAnnouncement(string text) => _announcements.Add(text);
 
     /// <summary>
-    /// Puts each waiting .ca line on one of the round's spell actions, in order (CombatAction.m_stringKeyMessage, the
-    /// text boss cheats show). Lines with no spell action left wait for the next round.
+    /// Shows the waiting .ca lines before the round's first spell. The game plays an action carrying a message
+    /// (CombatAction.m_stringKeyMessage, the text boss cheats show) as an announcement and does not cast its spell
+    /// (Justin's log, 2026-10-20: his Minor Blessing never cast), so each line goes on its own copy of that action.
     /// </summary>
-    private void ShowAnnouncements(CombatActionListObj combatActionList) {
-        var free = combatActionList.m_actionList
-            .Where(a => a.m_spell is not null && string.IsNullOrEmpty((string) a.m_stringKeyMessage))
-            .ToList();
-        var shown = 0;
-        for (; shown < _announcements.Count && shown < free.Count; shown++) {
-            free[shown].m_stringKeyMessage = _announcements[shown];
-            Logger.Information("Duel {0} | Round {1} | .ca shows \"{2}\" on slot {3}'s action.",
-                Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, _announcements[shown], free[shown].m_spellCaster));
+    /// <returns>The seconds the lines add to the round.</returns>
+    private float ShowAnnouncements(CombatActionListObj combatActionList) {
+        var index = combatActionList.m_actionList.FindIndex(a => a.m_spell is not null);
+        if (index < 0 || _announcements.Count == 0) {
+            return 0;
         }
 
-        _announcements.RemoveRange(0, shown);
+        var spellAction = combatActionList.m_actionList[index];
+        var lines = _announcements.Select(text => spellAction with {
+            m_stringKeyMessage = text,
+            m_showCast = false,
+        }).ToList();
+        combatActionList.m_actionList.InsertRange(index, lines);
+        Logger.Information("Duel {0} | Round {1} | .ca shows {2} before slot {3}'s spell.",
+            Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum, string.Join(", ", _announcements.Select(t => $"\"{t}\"")),
+                spellAction.m_spellCaster));
+        var seconds = lines.Count * ANNOUNCEMENT_SECONDS;
+        _announcements.Clear();
+
+        return seconds;
     }
+
+    // About how long the game shows one announcement.
+    private const float ANNOUNCEMENT_SECONDS = 2.0f;
 
     /// <summary>
     /// Adds a combat move to the queue for processing.
