@@ -60,7 +60,7 @@ namespace Imlight.CoreLib.Game.Pet;
 /// <param name="SigilGid">The sigil pad's global id.</param>
 /// <param name="PadName">The pad's name, for the log.</param>
 /// <param name="ReturnZone">The zone of the pad, where the player goes back to.</param>
-/// <param name="ReturnLocation">The pad's position, "X,Y,Z,heading".</param>
+/// <param name="ReturnLocation">Where the player stood when the trip started (else the pad), "X,Y,Z,heading".</param>
 /// <param name="InstanceOwnerCharId">The owner of the shared instance: the player who pressed the sigil.</param>
 /// <param name="PartnerCharId">The other player of a duo sigil, or 0 when hatching alone.</param>
 /// <param name="PartnerName">The other player's name.</param>
