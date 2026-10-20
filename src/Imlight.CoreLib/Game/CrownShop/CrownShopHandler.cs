@@ -129,8 +129,8 @@ public static class CrownShopHandler {
                 }
             }
 
-            s_crownShopTabs = loadedTabs;
-            s_crownShopCategories = loadedCategories;
+            s_crownShopTabs = loadedTabs.OrderBy(t => t.TabId).ToList();
+            s_crownShopCategories = s_crownShopTabs.SelectMany(t => t.Categories).ToList();
 
             var layoutTabs = new List<CrownShopCategoryMenu>();
             var layoutCategories = new List<CrownShopCategory>();

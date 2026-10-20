@@ -71,7 +71,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
         var slot = wizard.EquipmentBehavior.SlotList?.FirstOrDefault(s => s.ItemId.Value == message.GlobalID);
         if (slot is not null || wizard.EquipmentBehavior.HasItemEquipped(message.GlobalID)) {
             var item = wizard.EquipmentBehavior.GetItem(message.GlobalID);
-            var template = item is not null ? ItemHelper.GetItemTemplate(item) : null;
+            var template = ItemHelper.GetItemTemplate(item);
 
             if (template is null) {
                 var dbItem = WizardItemCollection.GetItem(wizard.CharId, message.GlobalID);
