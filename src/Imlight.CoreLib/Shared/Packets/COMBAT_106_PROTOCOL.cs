@@ -358,6 +358,8 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public bool SkipCast;
         // .c1 f / .c1 l: 'f' casts before anyone's turn this round, 'l' after everyone's; 'n' around the sender's card.
         public char When = 'n';
+        // .c1 e: the spell gets the best enchantment that fits it ([Battle] AutoEnchants).
+        public bool Enchant;
         public IActorRef Actor;
 
     }

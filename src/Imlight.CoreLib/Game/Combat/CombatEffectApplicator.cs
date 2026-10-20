@@ -40,6 +40,7 @@
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -345,6 +346,25 @@ internal static class CombatEffectApplicator {
     private static void ApplyReshuffleEffect(CombatDuelSubCircle caster) 
         => caster.Reshuffle();
 
+    /// <summary>
+    /// Aegis and Indemnity: a protected charm or ward survives one removal or steal and loses its protection.
+    /// Returns the chosen effects that really go.
+    /// </summary>
+    private static List<SpellEffect> Unprotected(CombatDuelSubCircle target, SpellEffect remover, IEnumerable<SpellEffect> chosen) {
+        var going = new List<SpellEffect>();
+        foreach (var hanging in chosen.ToList()) {
+            var index = target._hangingEffects.IndexOf(hanging);
+            if (hanging.m_protected && !remover.m_bypassProtection && index >= 0) {
+                target._hangingEffects[index] = hanging with { m_protected = false };
+            }
+            else {
+                going.Add(hanging);
+            }
+        }
+
+        return going;
+    }
+
     private static float ApplyRemoveCharmEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {
         var cinematicTime = 0.0f;
 
@@ -353,8 +373,8 @@ internal static class CombatEffectApplicator {
 
         foreach (var target in targets) {
             var hangingEffects = target._hangingEffects.ToArray();
-            var charmsInQuesiton = CombatCharms.FindAppliedCharms(target, hangingEffects, effect.m_disposition)
-                                               .Take(charmRemoveCount);
+            var charmsInQuesiton = Unprotected(target, effect, CombatCharms.FindAppliedCharms(target, hangingEffects, effect.m_disposition)
+                                               .Take(charmRemoveCount));
 
             cinematicTime += charmsInQuesiton.Count() * HANGING_EFFECT_CONSUME_TIME;
 
@@ -372,9 +392,9 @@ internal static class CombatEffectApplicator {
 
         foreach (var target in targets) {
             // Remove all wards except for stun blocks.
-            var wards = CombatWards.FindAppliedWards(target, effect)
+            var wards = Unprotected(target, effect, CombatWards.FindAppliedWards(target, effect)
                                    .Where(x => x.m_effectType != kSpellEffects.kStunBlock)
-                                   .Take(wardRemoveCount);
+                                   .Take(wardRemoveCount));
 
             cinematicTime += wards.Count() * HANGING_EFFECT_CONSUME_TIME;
 
@@ -394,8 +414,8 @@ internal static class CombatEffectApplicator {
 
         foreach (var target in targets) {
             var hangingEffects = target._hangingEffects.ToArray();
-            var charmsInQuesiton = CombatCharms.FindAppliedCharms(target, hangingEffects, effect.m_disposition)
-                                               .Take(charmRemoveCount);
+            var charmsInQuesiton = Unprotected(target, effect, CombatCharms.FindAppliedCharms(target, hangingEffects, effect.m_disposition)
+                                               .Take(charmRemoveCount));
 
             cinematicTime += charmsInQuesiton.Count() * HANGING_EFFECT_CONSUME_TIME;
 
@@ -415,8 +435,8 @@ internal static class CombatEffectApplicator {
         // This is the same as the remove ward function, but we're moving the wards from the target to the caster.
 
         foreach (var target in targets) {
-            var wards = CombatWards.FindAppliedWards(target, effect)
-                                   .Take(wardRemoveCount);
+            var wards = Unprotected(target, effect, CombatWards.FindAppliedWards(target, effect)
+                                   .Take(wardRemoveCount));
 
             cinematicTime += wards.Count() * HANGING_EFFECT_CONSUME_TIME;
 

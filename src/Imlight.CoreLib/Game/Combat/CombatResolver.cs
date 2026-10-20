@@ -546,10 +546,36 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
     /// </summary>
     /// <returns>How many of these the caster has queued for this round, or 0 if the spell is unknown.</returns>
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, string target = null,
-                                    bool skipCast = false, char when = 'n') {
+                                    bool skipCast = false, char when = 'n', bool enchant = false) {
+        return AddFreeDelayedCast(caster, spellTemplateId, atStart, out _, target, skipCast, when, enchant);
+    }
+
+    // .c1 e (Justin, 2026-10-20): the first of these enchantments that changes the spell goes on it.
+    private static readonly string[] s_autoEnchants = Imlight.Common.ConfigurationManager
+        .GetValue("Battle.AutoEnchants", "Epic; Primordial; Sharpened Blade; Potent Trap; Potent Ward - Amulet; Aegis; Indemnity")
+        .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    /// <param name="enchantment">The enchantment the e option put on the spell, or null.</param>
+    internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, out string enchantment,
+                                    string target = null, bool skipCast = false, char when = 'n', bool enchant = false) {
+        enchantment = null;
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
             return 0;
+        }
+
+        if (enchant) {
+            foreach (var name in s_autoEnchants) {
+                var enchantSpell = SpellFactory.Exists(name) ? SpellFactory.GetSpell(name) : null;
+                var enchanted = spell with { };
+                if (enchantSpell is not null && CombatEnchantments.Enchant(enchanted, enchantSpell)
+                    && CoreObjectFactory.GetCoreTemplate(enchantSpell.m_templateID) is SpellTemplate enchantTemplate) {
+                    spell = enchanted;
+                    template = CombatEnchantments.Apply(template, enchantTemplate, out _);
+                    enchantment = name;
+                    break;
+                }
+            }
         }
 
         var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
@@ -634,7 +660,8 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                     var cast = new QueuedCombatAction {
                         SpellCaster = action.SpellCaster,
                         SelectedTarget = target,
-                        Spell = DelayedCard(action.Spell),
+                        // A command's free cast keeps the e option's enchantment: it never carries a delay.
+                    Spell = delayed.Free ? action.Spell : DelayedCard(action.Spell),
                         SpellTemplate = action.SpellTemplate,
                     };
                     var before = combatActionList.m_actionList.Count;
