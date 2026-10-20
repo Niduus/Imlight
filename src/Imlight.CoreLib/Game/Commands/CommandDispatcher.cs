@@ -123,6 +123,14 @@ internal class CommandDispatcher : ReceiveProtocolDispatcher {
             // Create new parameters with the first two words removed.
             var parameters = split.Skip(2).ToArray();
             var executed = protocol.Execute(command, context, parameters);
+
+            // A group name can also be a command with no group, like `.pet 1 Chromatic Pet` beside `.pet stats`.
+            if (!executed) {
+                executed = s_protocols.Values
+                    .Where(x => x is not null && string.IsNullOrEmpty(x.Group))
+                    .Any(p => p.Execute(protocolName, context, split.Skip(1).ToArray()));
+            }
+
             if (!executed) {
                 InformSenderClient(context, "Command not found.");
             }
