@@ -110,6 +110,17 @@ internal class SpellFactory : RootDirectoryResourceSingleton<SpellFactory>, IMem
     }
 
     /// <summary>
+    /// Whether a spell template has this name. Unlike <see cref="GetSpell(string)"/>, a missing name is not logged.
+    /// </summary>
+    internal static bool Exists(string spellName) {
+        if (s_spellTemplates.Count == 0) {
+            _ = Instance;
+        }
+
+        return !string.IsNullOrEmpty(spellName) && s_spellTemplates.ContainsKey(StringHash.Compute(spellName));
+    }
+
+    /// <summary>
     /// Retrieves a spell by its name.
     /// </summary>
     /// <param name="spellName">The name of the spell.</param>
