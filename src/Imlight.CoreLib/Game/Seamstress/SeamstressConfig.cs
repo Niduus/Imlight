@@ -51,7 +51,7 @@ internal static class SeamstressConfig {
     private const string UnstitchCrownsKey = "Seamstress.UnstitchCrowns";
     private const string ShopTitleKeyKey = "Seamstress.ShopTitleKey";
     private const string ObjectNamesKey = "Seamstress.ObjectNames";
-    private const string PetObjectNamesKey = "Seamstress.PetStitchTestNames";
+    private const string PetObjectNamesKey = "Seamstress.PetStitchNames";
 
     private static int s_warnedUnsetPrices;
 
@@ -67,8 +67,8 @@ internal static class SeamstressConfig {
     internal static IReadOnlySet<string> ObjectNames => Names(ObjectNamesKey);
 
     /// <summary>
-    /// Extra stitch NPCs for a pet stitching test, empty by default. Justin tried Zeke (2026-10-20): the game's stitch
-    /// window only has hat, robe, boots and wand tabs, so he chose normal stitching only.
+    /// The object names of the NPCs that stitch pets (Justin, 2026-10-20: every Prospector Zeke). Their stitch window
+    /// lists the pets as stand-in wands (PetStitchProxies), since it has only hat, robe, boots and wand tabs.
     /// </summary>
     internal static IReadOnlySet<string> PetObjectNames => Names(PetObjectNamesKey);
 

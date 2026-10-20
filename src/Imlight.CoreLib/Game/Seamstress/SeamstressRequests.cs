@@ -66,20 +66,29 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
     /// </summary>
     /// <param name="message">The client's request. GlobalID names the seamstress NPC.</param>
     /// <returns>True when the wizard paid and holds the stitched item. False when nothing changed.</returns>
-    internal bool Stitch(WIZARD_12_PROTOCOL.MSG_STITCHITEMS message)
-        => SeamstressConfig.TryGetPrices(out var stitchCrowns, out _)
-        && IsAtSeamstress(message.GlobalID)
-        && TryStitch(message.DisplayID, message.StatsID, stitchCrowns);
+    internal bool Stitch(WIZARD_12_PROTOCOL.MSG_STITCHITEMS message) {
+        var displayId = PetStitchProxies.Resolve(wizard, message.DisplayID);
+        var statsId = PetStitchProxies.Resolve(wizard, message.StatsID);
+        PetStitchProxies.Clear(session, wizard);
+
+        return SeamstressConfig.TryGetPrices(out var stitchCrowns, out _)
+            && IsAtSeamstress(message.GlobalID)
+            && TryStitch(displayId, statsId, stitchCrowns);
+    }
 
     /// <summary>
     /// Splits a stitched item into the item with its stats and the item with its look.
     /// </summary>
     /// <param name="message">The client's request. GlobalID names the seamstress NPC.</param>
     /// <returns>True when the wizard paid and holds both items. False when nothing changed.</returns>
-    internal bool Unstitch(WIZARD_12_PROTOCOL.MSG_UNSTITCHITEMS message)
-        => SeamstressConfig.TryGetPrices(out _, out var unstitchCrowns)
-        && IsAtSeamstress(message.GlobalID)
-        && TryUnstitch(message.ItemID, ClampToInt(message.StatItemColor1), ClampToInt(message.StatItemColor2), unstitchCrowns);
+    internal bool Unstitch(WIZARD_12_PROTOCOL.MSG_UNSTITCHITEMS message) {
+        var itemId = PetStitchProxies.Resolve(wizard, message.ItemID);
+        PetStitchProxies.Clear(session, wizard);
+
+        return SeamstressConfig.TryGetPrices(out _, out var unstitchCrowns)
+            && IsAtSeamstress(message.GlobalID)
+            && TryUnstitch(itemId, ClampToInt(message.StatItemColor1), ClampToInt(message.StatItemColor2), unstitchCrowns);
+    }
 
     private bool TryStitch(ulong displayItemId, ulong statsItemId, int stitchCrowns) {
         var displayItem = FindItem(displayItemId);
