@@ -397,6 +397,14 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // The small hatchery pads are not sigils the game counts the player as standing on, so it sends this the
+        // moment the countdown starts (Justin, 2026-10-20); the distance check at the end of the countdown stands in.
+        if (_activeSigilEntry.NoSnap) {
+            Logger.Information("{0}: the game says the player left the pad; ignored for this pad.", Logger.Args(SigilLogName(_activeSigilEntry)));
+
+            return;
+        }
+
         Logger.Information("Client left the dungeon sigil pad — cancelling countdown.");
         CancelSigilCountdown();
     }

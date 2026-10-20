@@ -108,6 +108,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.SerializeFlags);
     private ulong _soloSigilGid;
     private readonly List<ulong> _soloPicks = [];
+    // The pets on the hatch window's two sides (side 0 and 1), alone in the morph zone.
+    private readonly ulong[] _windowSides = new ulong[2];
 
     // The pet morph zone (see PetMorphZone). _pendingTrip is the trip counting down in the hatchery; _morph is the
     // visit this session's player is on in the zone, null anywhere else.
@@ -120,7 +122,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_INIT_RETRY = TimeSpan.FromSeconds(3);
     private const int MORPH_INIT_TRIES = 4;
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
-    private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(6);
+    // Long enough to see the egg in the hatch window.
+    private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(20);
     private PetMorphVisit _pendingTrip;
     private PetMorphVisit _morph;
     private bool _morphClientReady;
@@ -1025,6 +1028,76 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         SendMorphStart();
     }
 
+    // The hatch window's picks and its Hatch button, as text (Justin's log, 2026-10-20):
+    // "set:side=0;id=<pet item id>" when a side's pet changes, "ready:confirmed=1" on Hatch.
+    [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEDATA))]
+    private void ReceivePetGameData(PET_9_PROTOCOL.MSG_PETGAMEDATA message) {
+        if (_morph is null || !IsMorphGame(message.Game)) {
+            return;
+        }
+
+        try {
+            var text = message.Data.ToString() ?? "";
+            var colon = text.IndexOf(':');
+            var verb = colon < 0 ? text : text[..colon];
+            var fields = (colon < 0 ? "" : text[(colon + 1)..])
+                .Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Select(f => f.Split('=', 2))
+                .Where(f => f.Length == 2)
+                .ToDictionary(f => f[0].Trim(), f => f[1].Trim(), StringComparer.OrdinalIgnoreCase);
+
+            switch (verb.Trim().ToLowerInvariant()) {
+                case "set" when fields.TryGetValue("id", out var idText) && ulong.TryParse(idText, out var petId):
+                    var side = fields.TryGetValue("side", out var sideText) && int.TryParse(sideText, out var n) ? n : 0;
+                    if (_morph.IsPair) {
+                        ChoosePet(petId);
+                    }
+                    else if (side is 0 or 1) {
+                        _windowSides[side] = petId;
+                    }
+
+                    break;
+                case "ready":
+                    var confirmed = fields.TryGetValue("confirmed", out var c) && int.TryParse(c, out var v) ? v : 1;
+                    if (_morph.IsPair) {
+                        if (_peerCharId != 0) {
+                            ChangeReady(Wizard.GetGameObjectId(_peerCharId), confirmed);
+                        }
+
+                        break;
+                    }
+
+                    if (confirmed > 0) {
+                        HatchWindowSides();
+                    }
+
+                    break;
+                default:
+                    Logger.Information("Hatching zone: hatch window data \"{0}\" is not used.", Logger.Args(text));
+                    break;
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching zone: MSG_PETGAMEDATA failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    // Alone, the window's two sides are both the player's own pets.
+    private void HatchWindowSides() {
+        if (_windowSides[0] == 0 || _windowSides[1] == 0 || _windowSides[0] == _windowSides[1]) {
+            Logger.Information("Hatching zone: Hatch pressed with sides {0} and {1}.", Logger.Args(_windowSides[0], _windowSides[1]));
+            InformGameClient("Pick two different pets first.");
+
+            return;
+        }
+
+        _soloSigilGid = _morph.SigilGid;
+        _soloPicks.Clear();
+        _soloPicks.Add(_windowSides[0]);
+        _soloPicks.Add(_windowSides[1]);
+        SoloHatch();
+    }
+
     [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEEND))]
     private void ReceivePetGameEnd(PET_9_PROTOCOL.MSG_PETGAMEEND message) {
         Logger.Information("Hatching zone: the game sent MSG_PETGAMEEND Game={0} Data={1} (in the morph zone {2}).",
@@ -1072,6 +1145,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         _pendingTrip = null;
         _morph = visit;
         _morphClientReady = false;
+        _windowSides[0] = 0;
+        _windowSides[1] = 0;
         _morphInitTries = 0;
         _morphPeerSeen = false;
         _morphLeaving = false;
