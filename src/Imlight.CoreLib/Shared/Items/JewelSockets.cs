@@ -65,13 +65,23 @@ internal static class JewelSockets {
     internal static bool IsJewel(WizItemTemplate template) => GetShape(template) is not null;
 
     /// <summary>
-    /// Whether a jewel is No Shatter, so taking it out returns it instead of destroying it. The game marks these
-    /// (Stuff of Legends Peridot and the other Blackhawk and AM pet jewels) with an extra behavior named
-    /// DeletedBehavior, which the client shows as the No Shatter icon (Justin's screenshot, 2026-10-20).
+    /// Whether a jewel is No Shatter, so taking it out returns it instead of destroying it. The No Shatter jewels
+    /// (the Blackhawk and AM pet jewels: Stuff of Legends Peridot, Lifesaver Jade...) are the jewels marked No Sell,
+    /// and carry an extra behavior (DeletedBehavior, or a second PetJewelBehavior on Lifesaver Jade) (Justin, 2026-10-20).
     /// </summary>
-    internal static bool IsNoShatter(WizItemTemplate template)
-        => template?.m_behaviors?.Any(b => (string) b?.m_behaviorName == "DeletedBehavior") == true
-            || (template?.m_adjectiveList ?? []).Any(a => ((string) a ?? "").Contains("Shatter", StringComparison.OrdinalIgnoreCase));
+    internal static bool IsNoShatter(WizItemTemplate template) {
+        if (template is null) {
+            return false;
+        }
+
+        var adjectives = (template.m_adjectiveList ?? []).Select(a => (string) a ?? "").ToList();
+        var behaviors = (template.m_behaviors ?? []).Select(b => (string) b?.m_behaviorName ?? "").ToList();
+
+        return adjectives.Any(a => a.Equals("FLAG_NoSell", StringComparison.OrdinalIgnoreCase)
+                || a.Contains("Shatter", StringComparison.OrdinalIgnoreCase))
+            || behaviors.Contains("DeletedBehavior")
+            || behaviors.Count(b => b == "PetJewelBehavior") > 1;
+    }
 
     internal static JewelSocketType? GetShape(WizItemTemplate template) {
         foreach (var adjective in template?.m_adjectiveList ?? []) {
