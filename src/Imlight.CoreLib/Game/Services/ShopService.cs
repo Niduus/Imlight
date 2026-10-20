@@ -188,7 +188,8 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST))]
     private void ReceiveShopSellRequest(WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST message) {
         var wizard = GetActiveWizard();
-        var quantity = (int) Math.Clamp(message.quantity, 1u, MAX_COPIES);
+        // Sell More can sell a whole stack, so only the stack size limits it (Buy More stops at MAX_COPIES).
+        var quantity = (int) Math.Clamp(message.quantity, 1u, int.MaxValue);
         Logger.Information("Shop sell: item {0}, quantity {1}, quick sell {2}.", Logger.Args(message.GlobalID, message.quantity, message.IsQuickSell));
 
         // Sell More in the reagent and snack shops sells from the reagent bag or the snack bag.
@@ -419,13 +420,16 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         var reagentId = reagent.m_globalID.Full;
         var template = CoreObjectFactory.GetCoreTemplate(reagent.m_templateID) as WizItemTemplate;
         var count = Math.Min(quantity, reagent.m_quantity);
-        var sold = 0;
-        ClientReagentItem left = null;
-        for (var i = 0; i < count && wizard.RemoveReagent(reagentId, out left); i++) {
-            sold++;
+        // Take all but one straight off the stack, then the last through the bag so it saves once.
+        if (count < 1) {
+            ProcessFailedSale();
+
+            return;
         }
 
-        if (sold == 0) {
+        reagent.m_quantity -= count - 1;
+        if (!wizard.RemoveReagent(reagentId, out var left)) {
+            reagent.m_quantity += count - 1;
             ProcessFailedSale();
 
             return;
@@ -438,7 +442,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTREMOVE { GlobalID = wizard.GameObjectID, ItemID = reagentId });
         }
 
-        FinishStackSale(wizard, reagentId, BagSellValue(template) * sold);
+        FinishStackSale(wizard, reagentId, BagSellValue(template) * count);
     }
 
     private void SellSnack(Wizard wizard, ClientPetSnackItem snack, int quantity) {
