@@ -336,8 +336,15 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var cast = new HashSet<CombatTeam>();
         var damaged = new HashSet<CombatTeam>();
         var healed = new HashSet<CombatTeam>();
+        var passed = new HashSet<CombatTeam>();
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
             var done = combatActionList.m_actionList[i];
+            // Passing counts too (Justin, 2026-10-20).
+            if (done.m_spell is null
+                    && _subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == done.m_spellCaster) is { } passer) {
+                passed.Add(passer.OccupiedTeam);
+            }
+
             if (done.m_spell is not null && done.m_spellHits == (char) 1 && (PetMayCasts.Chain || !done.m_petCast)
                     && _subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == done.m_spellCaster) is { } caster) {
                 cast.Add(caster.OccupiedTeam);
@@ -373,7 +380,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
             }
         }
 
-        if (cast.Count + damaged.Count + healed.Count == 0) {
+        if (cast.Count + damaged.Count + healed.Count + passed.Count == 0) {
             return 0;
         }
 
@@ -381,7 +388,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
         var owners = _subCircles.Where(c => c.Occupied && c.AddedToDuel && c.IsAlive && c._wizard is not null).ToList();
         foreach (var owner in owners) {
             var team = owner.OccupiedTeam;
-            if (!cast.Contains(team) && !damaged.Contains(team) && !healed.Contains(team)) {
+            if (!cast.Contains(team) && !damaged.Contains(team) && !healed.Contains(team) && !passed.Contains(team)) {
                 continue;
             }
 
@@ -395,6 +402,7 @@ public class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCircles) {
                 var reason = cast.Contains(team) && PetMayCasts.Roll(chances.Cast) ? "a cast"
                     : damaged.Contains(team) && PetMayCasts.Roll(chances.Damage) ? "damage"
                     : healed.Contains(team) && PetMayCasts.Roll(chances.Heal) ? "a heal"
+                    : passed.Contains(team) && PetMayCasts.Roll(chances.Pass) ? "a pass"
                     : null;
                 if (reason is null) {
                     continue;

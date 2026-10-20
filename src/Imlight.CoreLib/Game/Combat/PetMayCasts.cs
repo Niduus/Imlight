@@ -3,8 +3,8 @@
  *
  * A talent such as Guardian Wall ("Maycast [Tower Shield]") casts the game's pet copy of its card ("Pet - Tower
  * Shield"), for free and on the pet's owner. Each May Cast can go off when the
- * owner or a teammate casts a spell, takes damage, or is healed, each with its own chance: the key named after the
- * card ("TowerShield = 10/25/5"), else OnCast, OnDamage and OnHeal.
+ * owner or a teammate casts a spell, takes damage, is healed or passes, each with its own chance: the key named after
+ * the card ("TowerShield = 10/25/5/10"), else OnCast, OnDamage, OnHeal and OnPass.
  */
 
 using System;
@@ -66,6 +66,7 @@ internal static class PetMayCasts {
     private static readonly int s_onCast = ConfigurationManager.GetValue("PetCasting.OnCast", 10);
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
     private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
+    private static readonly int s_onPass = ConfigurationManager.GetValue("PetCasting.OnPass", 10);
 
     // Talent name to its May Cast; null for a talent that is not one or whose card was not found.
     private static readonly ConcurrentDictionary<string, MayCast> s_byTalent = new(StringComparer.OrdinalIgnoreCase);
@@ -92,18 +93,18 @@ internal static class PetMayCasts {
             .Where(mayCast => mayCast is not null)];
     }
 
-    /// <summary>The chances in percent for a May Cast: when a spell is cast, damage is taken, and healing is had.</summary>
-    internal static (int Cast, int Damage, int Heal) Chances(MayCast mayCast) {
+    /// <summary>The chances in percent for a May Cast: when a spell is cast, damage is taken, healing is had, and a turn is passed.</summary>
+    internal static (int Cast, int Damage, int Heal, int Pass) Chances(MayCast mayCast) {
         var text = ConfigurationManager.GetSetting($"PetCasting.{mayCast.Key}")?.Trim();
         if (string.IsNullOrEmpty(text)) {
-            return (s_onCast, s_onDamage, s_onHeal);
+            return (s_onCast, s_onDamage, s_onHeal, s_onPass);
         }
 
         var parts = text.Split('/', StringSplitOptions.TrimEntries);
         int Part(int index, int fallback)
             => int.TryParse(parts[Math.Min(index, parts.Length - 1)].TrimEnd('%'), out var value) ? value : fallback;
 
-        return (Part(0, s_onCast), Part(1, s_onDamage), Part(2, s_onHeal));
+        return (Part(0, s_onCast), Part(1, s_onDamage), Part(2, s_onHeal), Part(3, s_onPass));
     }
 
     internal static bool Roll(int percent)
