@@ -201,8 +201,6 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
     // The pet whose skipped game is waiting for the feed step of the results window, so the feed does not
     // count the game a second time.
     private ulong _skipAwaitingFeed;
-    // The egg screen of the last hatch from the pet morph zone, passed on to a partner who lent their pet.
-    private PET_9_PROTOCOL.MSG_PETEGGMORPHED _lastEggMorphed;
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED))]
     private void ReceivePetGameSkipFeed(WIZARD2_53_PROTOCOL.MSG_PETGAMESKIPFEED message) {
@@ -439,10 +437,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
                 break;
             case HatchSource.Sigil:
                 // The HatchService sends the player back from the pet morph zone once the egg is made.
-                TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_HATCHBRED {
-                    Success = problem is null,
-                    Egg = problem is null ? _lastEggMorphed : null,
-                });
+                TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_HATCHBRED { Success = problem is null });
                 break;
         }
 
@@ -524,12 +519,11 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         else {
             // The morph window's egg picture: a guess that it wants the pet's template, as the field's name says.
             var name = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(egg, out var petName) ? petName.m_nameKeys : 0;
-            _lastEggMorphed = new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
                 PetTemplateGID = egg.m_templateID,
                 PetName = name,
                 HatchTime = SecondsLeft(slot.m_timeFinished)
-            };
-            SendToSocket(_lastEggMorphed);
+            });
             SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHINGSLOT {
                 GlobalID = slot.m_globalID,
                 Removed = 0,

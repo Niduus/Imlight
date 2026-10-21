@@ -110,6 +110,10 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
     // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
     private readonly HashSet<IActorRef> _litFor = [];
+    // The players who stepped off the pad, and when to light it for them again: a stopped countdown leaves the pad
+    // dark for that player (Justin, 2026-10-21: the sigil went missing after stepping off).
+    private readonly Dictionary<IActorRef, DateTime> _relightAt = [];
+    private static readonly TimeSpan RELIGHT_AFTER = TimeSpan.FromSeconds(2);
     private bool _logged;
 
     private MinigameSigilInfo SigilInfo
@@ -185,6 +189,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
         _litFor.Remove(playerActor);
+        _relightAt.Remove(playerActor);
         foreach (var charId in _occupants.Where(x => x.Value.Actor.Equals(playerActor)).Select(x => x.Key).ToList()) {
             _occupants.Remove(charId);
             _pairedUntil.Remove(charId);
@@ -200,6 +205,12 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
         // The join-time state may have been sent before the game had the pad; it goes once more on the first move.
         Light(playerActor);
+        if (_relightAt.TryGetValue(playerActor, out var relightAt) && DateTime.UtcNow >= relightAt) {
+            _relightAt.Remove(playerActor);
+            if (PetHatching.Enabled) {
+                Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
+            }
+        }
 
         var charId = playerWizard.CharId;
         var onPad = IsInHorizontalRadius(playerObj, Radius);
@@ -218,6 +229,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             _pressedAt.Remove(charId);
             // Stepping off stops the countdown, so pressing again when back on must start a new one.
             _pairedUntil.Remove(charId);
+            _relightAt[playerActor] = DateTime.UtcNow + RELIGHT_AFTER;
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }
@@ -270,6 +282,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             var wait = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.WaitingForPartner);
             wait.PartnerCharId = partner.CharId;
             wait.PartnerName = partner.Occupant.Name;
+            wait.FaceSlot = FaceSlot(playerCharacter.CharId);
             playerActor.Tell(wait);
 
             return;

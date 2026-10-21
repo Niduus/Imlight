@@ -572,7 +572,7 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         Left,
         // In the pet morph zone: Hatch (1) or Lend (2) on the "Hatch or Lend Pet" screen.
         Choice,
-        // In the pet morph zone: the hatcher's egg is made; the lender is shown it too (Egg), so their window ends.
+        // In the pet morph zone: the hatcher's egg is made, so the lender goes back too (they get no egg).
         EggMade,
         // On the sigil: the sender stepped off during the pair's countdown, so the partner's countdown stops too.
         TripCancelled,
@@ -594,8 +594,6 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public PetParent Pet;
         // In the pet morph zone: the sender's PetGameMorphPartner (character id and pets), written for the game.
         public ByteString MorphData;
-        // EggMade: the egg screen the hatcher was sent.
-        public PET_9_PROTOCOL.MSG_PETEGGMORPHED Egg;
 
     }
 
@@ -701,8 +699,6 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 103;
 
         public bool Success;
-        // The egg screen sent to the player, passed on to a partner who lent their pet.
-        public PET_9_PROTOCOL.MSG_PETEGGMORPHED Egg;
 
     }
 
