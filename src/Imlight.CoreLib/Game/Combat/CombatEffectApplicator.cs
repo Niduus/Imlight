@@ -39,6 +39,7 @@
 
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -190,13 +191,14 @@ internal static class CombatEffectApplicator {
         var duel = caster._duelActor.Duel;
         var bubbleDamageIncrease = GetGlobalEffectDamageModifier(duel, effect.m_sDamageType);
         damageFromCaster = (int) Math.Floor(damageFromCaster * (1 + bubbleDamageIncrease));
+        var pierce = GetPierce(caster, effect.m_sDamageType);
 
         foreach (var target in targets) {
             var targetSpecificDamage = damageFromCaster;
 
-            // Calculate damage reduction from target stats
+            // Calculate damage reduction from target stats, less the caster's pierce.
             var damageReductionFlat = GetFlatDamageReduction(target, effect.m_sDamageType);
-            var damageReductionPercent = GetPercentDamageReduction(target, effect.m_sDamageType);
+            var damageReductionPercent = Pierced(GetPercentDamageReduction(target, effect.m_sDamageType), pierce);
             var reducedDamage = (int) Math.Floor(targetSpecificDamage * (1 - damageReductionPercent) - damageReductionFlat);
 
             // Ensure that damage isn't negative.
@@ -291,18 +293,22 @@ internal static class CombatEffectApplicator {
         // wards and resist still reduce it.
         damageFromCaster = (int) Math.Floor(damageFromCaster * critMultiplier);
 
+        // Pierce (armor piercing) goes through the target's shields first, then what is left through its resist.
+        var pierce = GetPierce(caster, effect.m_sDamageType);
+
         // Apply damage to each target
         var damageDealt = 0;
         foreach (var target in targets) {
             var damage = damageFromCaster;
+            var pierceLeft = pierce;
 
             // Calculate damage changes from target hanging effects.
             var wards = CombatWards.FindAppliedWards(target, effect);
             wards = CombatWards.GetWardsBySchool([.. wards], effect.m_sDamageType, out var finalSchool);
             cinematicTime += wards.Count * HANGING_EFFECT_CONSUME_TIME;
-            damage = CombatWards.GetIncomingDamageFromWards(wards, damage);
+            damage = CombatWards.GetIncomingDamageFromWards(wards, damage, ref pierceLeft);
 
-            damageDealt += DoDamageToTarget(target, damage, finalSchool);
+            damageDealt += DoDamageToTarget(target, damage, finalSchool, pierceLeft);
 
             // Remove the wards that were applied to this spell from the target's hanging effects.
             target._hangingEffects.RemoveAll(x => wards.Contains(x) && x.m_paramPerRound <= 0);
@@ -610,10 +616,10 @@ internal static class CombatEffectApplicator {
         return heal;
     }
 
-    private static int DoDamageToTarget(CombatDuelSubCircle target, int damage, string damageType) {
-        // Calculate damage reduction from target stats
+    private static int DoDamageToTarget(CombatDuelSubCircle target, int damage, string damageType, float pierce = 0) {
+        // Calculate damage reduction from target stats, less the pierce the shields left.
         var damageReductionFlat = GetFlatDamageReduction(target, damageType);
-        var damageReductionPercent = GetPercentDamageReduction(target, damageType);
+        var damageReductionPercent = Pierced(GetPercentDamageReduction(target, damageType), pierce);
         var reducedDamage = (int) Math.Floor(damage * (1 - damageReductionPercent) - damageReductionFlat);
 
         // Ensure that damage isn't negative.
@@ -654,6 +660,23 @@ internal static class CombatEffectApplicator {
 
         return damagePercentIncrease;;
     }
+
+    /// <summary>
+    /// The caster's pierce (armor piercing) for a school as a fraction, 0 to 1. Gear, jewels and the Bosses tab give it
+    /// (m_apBonusPercent); before this nothing in battle read it (Justin, 2026-10-21: "I want specifics covered").
+    /// </summary>
+    internal static float GetPierce(CombatDuelSubCircle caster, string damageType) {
+        var stats = caster.ParticipantGameStats;
+        if (stats is null || MagicSchools.GetMagicSchool(damageType) is null) {
+            return 0f;
+        }
+
+        return Math.Clamp(AsFraction(caster.GetStatBySchool(stats.m_apBonusPercent, damageType) + stats.m_apBonusPercentAll), 0f, 1f);
+    }
+
+    // Pierce lowers resist down to zero, never below: a weakness (resist under zero) stays as it is.
+    private static float Pierced(float resist, float pierce)
+        => resist > 0 ? Math.Max(0f, resist - pierce) : resist;
 
     private static float GetFlatDamageReduction(CombatDuelSubCircle target, string damageType) {
         var damageReductionFlat = target.GetStatBySchool(target.ParticipantGameStats.m_dmgReduceFlat, damageType);

@@ -194,6 +194,7 @@ public class CombatDuelSubCircle {
         ParticipantObject = null;
         CombatParticipant = null;
         AddedToDuel = false;
+        _bossOverride = null;
     }
 
     internal Hand DrawHand() {
@@ -522,8 +523,32 @@ public class CombatDuelSubCircle {
     private bool? _creatureRolledShadowMagic;
 
     // A boss whose cheat file sets ShadowPips (BossCheats.cs) holds that many, whatever the creature settings say.
-    private (int Most, int Chance) BossShadowPips
-        => _wizard is null && ParticipantObject is not null ? BossCheats.ShadowPipsOf(ParticipantObject.m_templateID) : (0, 0);
+    // ShadowPips from the app's Bosses tab (BossOverrides.cs) wins over the cheat file; 0 there means none.
+    private (int Most, int Chance) BossShadowPips {
+        get {
+            if (_wizard is not null || ParticipantObject is null) {
+                return (0, 0);
+            }
+
+            var cheat = BossCheats.ShadowPipsOf(ParticipantObject.m_templateID);
+            if (_bossOverride?.ShadowPips is { } most) {
+                var chance = _bossOverride.ShadowPipChance ?? (cheat.Most > 0 ? cheat.Chance : 25);
+
+                return most > 0 ? (Math.Min(most, NO_SHADOW_LIMIT), Math.Clamp(chance, 0, 100)) : (0, 0);
+            }
+
+            return cheat;
+        }
+    }
+
+    // The app's Bosses tab set ShadowPips to 0: this boss never gets shadow pips.
+    private bool BossHasNoShadowPips => _wizard is null && _bossOverride?.ShadowPips is <= 0;
+
+    /// <summary>
+    /// Whether a beguile (mind control) may take this participant over. The server has no beguile effect yet
+    /// (kMindControl is not handled); this is for when it does: a boss set to Beguilable: No in the Bosses tab says no.
+    /// </summary>
+    internal bool CanBeBeguiled => _wizard is not null || _bossOverride?.Beguilable != false;
 
     private int MaxShadowPips => _wizard is null ? BossShadowPips.Most > 0 ? BossShadowPips.Most : s_creatureMaxShadowPips
         : ParticipantGameStats?.m_shadowPipSlots is int slots and > 0 ? Math.Min(slots, NO_SHADOW_LIMIT)
@@ -598,6 +623,9 @@ public class CombatDuelSubCircle {
     private const int SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT = 5;
     private float _shadowGauge;
     private float _schoolGauge;
+
+    // The changes from the app's Bosses tab for the creature in this circle (BossOverrides.cs), or null.
+    private BossOverrides.BossOverride _bossOverride;
 
     /// <summary>
     /// The school the archmastery gauge fills toward, as the client wants it (0 when none).
@@ -778,7 +806,8 @@ public class CombatDuelSubCircle {
     private bool _cheatShadowMagic;
 
     private bool HasShadowMagic => _cheatShadowMagic
-        || (_wizard is null ? s_shadowPips && (CreatureHasShadowMagic || BossShadowPips.Most > 0) : s_shadowPips || HasOwnShadowMagic);
+        || (_wizard is null ? s_shadowPips && !BossHasNoShadowPips && (CreatureHasShadowMagic || BossShadowPips.Most > 0)
+                            : s_shadowPips || HasOwnShadowMagic);
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,
@@ -1015,7 +1044,11 @@ public class CombatDuelSubCircle {
     }
 
     internal bool TryStun() {
-        // todo: check if this creature can be stunned.
+        // A boss set to Stunable: No in the app's Bosses tab shrugs stuns off (no stun, no stun block).
+        if (_wizard is null && _bossOverride?.Stunable == false) {
+            return false;
+        }
+
         CombatParticipant.m_stunned = 1;
 
         return true;
@@ -1335,7 +1368,8 @@ public class CombatDuelSubCircle {
         var gameStats = creatureStats.GameStats;
         var school = creatureStats.MagicSchool;
         var level = creatureStats.CombatLevel;
-        if (BossOverrides.For(ParticipantObject.m_templateID) is { } boss) {
+        _bossOverride = BossOverrides.For(ParticipantObject.m_templateID);
+        if (_bossOverride is { } boss) {
             gameStats = BossOverrides.Apply(boss, gameStats, ref school, ref level);
             spellData = BossOverrides.DeckOf(boss) ?? spellData;
         }

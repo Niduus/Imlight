@@ -128,6 +128,9 @@ internal class MagicSchools : RootDirectoryResourceSingleton<SpellFactory>, IMem
         return null;
     }
 
+    /// <summary>Every magic school the game defines.</summary>
+    internal static IEnumerable<MagicSchoolTemplate> All => s_magicSchools.Values;
+
     /// <summary>
     /// Gets the index of the highest magic school defined.
     /// </summary>
