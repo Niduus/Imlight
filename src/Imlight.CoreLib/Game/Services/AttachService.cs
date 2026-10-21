@@ -297,7 +297,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
             // Misc
             ShowSubscriberIcon = 0,
-            TestServer = 1,
+            // 1 made the game block the gift button ("This is not accessible on the Test Realm", Justin 2026-10-21).
+            TestServer = 0,
 
             // Every captured login sends 1, in every zone; the client hides its Pick Up All button while it is 0.
             PickUpAllEnabled = 1

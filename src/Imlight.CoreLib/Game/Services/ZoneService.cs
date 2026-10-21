@@ -315,7 +315,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         if (!message.NoSigil) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
+            SendSigilTimer(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
                 Time = countdown,
                 SigilGID = message.SigilGID,
                 Teleport = 0,
@@ -384,6 +384,24 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             TellSigilFailed(entry, CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed,
                 answer is null ? "the transfer was not started" : $"error {answer.ErrorCode} {answer.ErrorMessage}");
         }
+    }
+
+    /// <summary>
+    /// The countdown is drawn by the pad itself and counts down in each game on its own, so everyone in the zone is
+    /// told, not only the player on it (Justin, 2026-10-21: the timer should show whenever a player is on the sigil).
+    /// </summary>
+    private void SendSigilTimer(Imcodec.MessageLayer.IMessage timerMessage) {
+        if (ZoneActor is null) {
+            SendToSocket(timerMessage);
+
+            return;
+        }
+
+        ZoneActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = timerMessage,
+            Selfless = false,
+            Targets = ZoneBroadcastTarget.Players,
+        });
     }
 
     private static string SigilLogName(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry)
@@ -1325,7 +1343,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         if (!entry.NoSigil) {
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = entry.SigilGID });
+            SendSigilTimer(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = entry.SigilGID });
         }
 
         // Give the player their mount back.
