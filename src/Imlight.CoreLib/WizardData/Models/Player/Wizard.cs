@@ -146,6 +146,8 @@ public class Wizard {
     // Set when attachment replaces the offline data object; does not imply zone entry.
     [JsonIgnore] public bool HasInitializedGameObject { get; private set; }
     [JsonIgnore] public List<GameEffectBase> GameEffects = [];
+    // QA .mod speed is restored as a session effect whenever a new zone session attaches.
+    public int? ModSpeedBonus { get; set; }
 
     /// <summary>
     /// An id no current effect has. The count was used before, but once an effect came off, the next one took the id

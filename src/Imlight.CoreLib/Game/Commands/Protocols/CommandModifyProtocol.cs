@@ -82,11 +82,29 @@ internal class CommandModifyProtocol : CommandProtocol {
             return;
         }
 
-        // Create the speed effect.
+        // Keep one command-controlled speed effect in the wizard state. Zone attaches replay
+        // GameEffects to the client, so sending this only as a packet loses it on transfer.
+        var wizard = Context.Character;
+        var previousSpeedEffects = wizard.GameEffects
+            .Where(existing => existing is SpeedEffect
+                && existing.m_effectNameID == SPEED_EFFECT_NAME
+                && existing.m_itemSlotID == 0)
+            .ToList();
+        foreach (var previous in previousSpeedEffects) {
+            wizard.GameEffects.Remove(previous);
+            Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
+                GameObjectID = wizard.GameObjectID,
+                EffectNameID = previous.m_effectNameID,
+                InternalID = previous.m_internalID,
+            }, null);
+        }
+
+        // Create and retain the speed effect for subsequent zone and realm attaches.
         var effect = new SpeedEffect() {
             m_speedMultiplier = speedBonusInt, // Speed is not a multiplier, but a percentage bonus! (+50%, etc.)
             m_effectNameID = SPEED_EFFECT_NAME,
-            m_itemSlotID = 0 //  Should be 0 when effects are not bound to an equipped gear slot!
+            m_itemSlotID = 0, // Should be 0 when effects are not bound to an equipped gear slot!
+            m_internalID = wizard.NextEffectId(),
         };
 
         var coreObjectSerializer = new CoreObjectSerializer(
@@ -98,6 +116,9 @@ internal class CommandModifyProtocol : CommandProtocol {
             InformSenderClient("Failed to serialize speed effect.");
             return;
         }
+
+        wizard.GameEffects.Add(effect);
+        WizardCollection.UpdateCharacterModSpeed(wizard, speedBonusInt);
 
         // Create the network message and send it.
         var networkMessage = new GAME_5_PROTOCOL.MSG_ADDEFFECT() {

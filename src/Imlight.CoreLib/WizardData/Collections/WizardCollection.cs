@@ -295,6 +295,12 @@ public static class WizardCollection {
         });
     }
 
+    /// <summary>Persists the QA movement speed modifier across server transfers.</summary>
+    public static void UpdateCharacterModSpeed(Wizard character, int? speedBonus) {
+        UpdateCharacter(character.CharId, existingCharacter => existingCharacter.ModSpeedBonus = speedBonus);
+        character.ModSpeedBonus = speedBonus;
+    }
+
     /// <summary>
     /// Records the lot of a house the character was issued, unless the character already has a lot for the template.
     /// </summary>

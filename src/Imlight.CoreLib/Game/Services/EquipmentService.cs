@@ -48,6 +48,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.CoreObject;
+using Imcodec.Cryptography;
 using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
@@ -115,6 +116,20 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         try {
             var playerCharacter = GetActiveWizard();
+            // Zone and realm transfers create a fresh wizard from the character document.
+            // GameEffects is intentionally transient, so rebuild the command modifier here.
+            if (playerCharacter.ModSpeedBonus is { } speedBonus
+                && !playerCharacter.GameEffects.Any(effect => effect is SpeedEffect
+                    && effect.m_effectNameID == StringHash.Compute("SpeedBuff")
+                    && effect.m_itemSlotID == 0)) {
+                playerCharacter.GameEffects.Add(new SpeedEffect {
+                    m_speedMultiplier = speedBonus,
+                    m_effectNameID = StringHash.Compute("SpeedBuff"),
+                    m_itemSlotID = 0,
+                    m_internalID = playerCharacter.NextEffectId(),
+                });
+            }
+
             var effects = playerCharacter.GameEffects;
 
             // Every effect goes out now, the pet's and jewels' cards included.
