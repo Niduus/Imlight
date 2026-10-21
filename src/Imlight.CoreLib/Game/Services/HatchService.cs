@@ -128,13 +128,17 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     // A lender goes back once shown the partner's egg; this is how long that may take before they go back anyway.
     private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
     // Long enough to read the lender's pop-up; closing the hatch window leaves sooner.
-    private static readonly TimeSpan LEND_POPUP_RETURN_DELAY = TimeSpan.FromSeconds(10);
+    // The game does not tell the server when OK is clicked on the pop-up, so the lender leaves soon after it shows.
+    private static readonly TimeSpan LEND_POPUP_RETURN_DELAY = TimeSpan.FromSeconds(4);
     private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
     // From the in-person hatch window: the window shows "get ready to port" over a dark screen, then the trip.
     private const float HATCH_WINDOW_DELAY = 1.0f;
     // A trip without a sigil is never cancelled for walking off: the player is where they stood.
     private const float NO_SIGIL_RADIUS = 1_000_000.0f;
     private PetMorphVisit _pendingTrip;
+
+    // A lone countdown was replaced by the pair's; the next trip restarts it instead of starting a second one.
+    private bool _restartCountdown;
     private DateTime _pendingTripStarted;
     // Longer than the countdown and the zone load; a trip older than this is not still under way.
     private static readonly TimeSpan PENDING_TRIP_MAX = TimeSpan.FromSeconds(30);
@@ -771,6 +775,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         catch (Exception ex) {
             Logger.Error("Hatching sigil: {0} failed. {1}", Logger.Args(message.Role, ex));
         }
+        finally {
+            CancelUnusedRestart();
+        }
     }
 
     /// <summary>
@@ -784,10 +791,21 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        Logger.Information("Hatching sigil: {0} was counting down alone on {1}; stopping that to hatch as a pair.",
+        Logger.Information("Hatching sigil: {0} was counting down alone on {1}; restarting it to hatch as a pair.",
             Logger.Args(trip.CharId, trip.PadName));
         _pendingTrip = null;
         PetMorphZone.End(trip.CharId);
+        // The pair's countdown replaces this one on screen (no end then start, which could leave no countdown
+        // showing); CancelUnusedRestart stops it if the pair's trip does not start.
+        _restartCountdown = true;
+    }
+
+    private void CancelUnusedRestart() {
+        if (!_restartCountdown) {
+            return;
+        }
+
+        _restartCountdown = false;
         TellOtherServices(new ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY());
     }
 
@@ -905,9 +923,11 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             CountdownSeconds = message.FromHatchWindow ? HATCH_WINDOW_DELAY
                 : message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN : 0,
             NoSigil = message.FromHatchWindow,
+            Restart = _restartCountdown,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });
+        _restartCountdown = false;
 
         return true;
     }

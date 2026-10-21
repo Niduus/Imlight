@@ -144,7 +144,7 @@ internal sealed class Lookup {
         Command("Max pet stats", ".pet maxstats", QA, "Raises every stat of the pet you are wearing to its maximum."),
         Command("Hatch two pets", ".hatch <pet 1> <pet 2>", QA, "Hatches two of your own pets (worn or in your backpack) into an egg in your backpack. Type .hatch alone to list your pets with numbers, then use the numbers, such as .hatch 1 2, or names, such as .hatch Fire Cat Storm Dragon. The egg is one of the two kinds and gets talents from both parents. How long it takes and the gold it costs are under Settings, Hatching."),
         Command("Bundle list", ".bundle list [words]", QA, "Lists the game's bundles (gear sets with all their tiers and wands, and the crown shop bundles) as chat messages. Add words to show only names that have them, such as .bundle list stinger."),
-        Command("Bundle to gift box", ".bundle <name>", QA, "Puts every tier of that bundle in your gift box, one gift each (lowest tier first), so you claim the tier you want. Use a name from .bundle list, such as .bundle Stinger Attire."),
+        Command("Bundle to gift box", ".bundle <name>", QA, "Puts that bundle in your gifts (the gift button). Claim it there and pick the tier you want. Use a name from .bundle list, such as .bundle Stinger Attire."),
         Command("Jewels you wear", ".jewel list", QA, "Lists the sockets on the gear and pet you are wearing and what is in them."),
         Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),
         Command("Clear jewels", ".jewel clear", QA, "Empties every socket on the gear and pet you are wearing."),

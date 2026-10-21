@@ -1178,6 +1178,13 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool NoSigil;
 
         /// <summary>
+        /// Replaces a countdown already running for this player without ending it on screen; the new one starts now.
+        /// Used once, when a second player joins a duo sigil (Justin, 2026-10-21: the countdown should always show and
+        /// only reset when the other player joins).
+        /// </summary>
+        public bool Restart;
+
+        /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.
         /// </summary>

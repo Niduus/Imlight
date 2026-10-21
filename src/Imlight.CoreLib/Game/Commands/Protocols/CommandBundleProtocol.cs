@@ -22,11 +22,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.Types;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -43,9 +45,7 @@ internal class CommandBundleProtocol : CommandProtocol {
 
     private const int NAMES_PER_MESSAGE = 40;
 
-    private const uint GIFT_PROPERTY_FLAGS = 31;
-
-    private static readonly ObjectSerializer s_giftSerializer = new(Versionable: true, Behaviors: SerializerFlags.None);
+    private const string CHAT_NAME = "Bundle List";
 
     [Command("bundle")]
     [Alias("bundles")]
@@ -91,64 +91,51 @@ internal class CommandBundleProtocol : CommandProtocol {
             return;
         }
 
-        InformSenderClient($"{families.Count} bundles. Type .bundle <name> to get one in your gift box:");
+        // The names go to chat only; one notice says so (Justin, 2026-10-21: the list filled the notice column).
+        SendChat($"{families.Count} bundles. Type .bundle <name> to get one in your gift box:");
         for (var start = 0; start < families.Count; start += NAMES_PER_MESSAGE) {
-            InformSenderClient(string.Join("; ", families.Skip(start).Take(NAMES_PER_MESSAGE)
+            SendChat(string.Join("; ", families.Skip(start).Take(NAMES_PER_MESSAGE)
                 .Select(f => $"{f.Name} ({f.Gifts.Count})")));
         }
+
+        InformSenderClient("List Sent to Game Chat");
+    }
+
+    /// <summary>
+    /// A chat line to the player alone, shown as a whisper from "Bundle List".
+    /// </summary>
+    private void SendChat(string text) {
+        var name = Encoding.ASCII.GetBytes(CHAT_NAME);
+        var packed = new byte[name.Length + 1];
+        // Packed override name: 0x81 | 8-bit text | byte length << 2 (as ServerWizPlayerNameBehavior does).
+        packed[0] = (byte) (0x81 | 0x02 | (name.Length << 2));
+        name.CopyTo(packed, 1);
+
+        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_DIRECTEDCHAT {
+            SourceName = packed,
+            SourceID = Context.Character.CharId,
+            Message = text,
+            Filter = 0,
+        }, ActorRefs.NoSender);
     }
 
     private void Send(BundleFamily family) {
-        var wizard = Context.Character;
-        var accountId = wizard.AccountId;
-        var now = (ulong) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var sent = 0;
+        var account = Context.Character.Account;
+        if (account is null) {
+            InformSenderClient($"Could not send {family.Name}.");
 
-        foreach (var templateId in family.Gifts) {
-            var redemption = new CrownShopGiftRedemption {
-                m_giverAccountID = accountId,
-                m_itemCount = 1,
-                m_itemId = templateId,
-                m_itemTransactionId = Guid.NewGuid().ToString("N"),
-            };
-
-            if (!s_giftSerializer.Serialize(redemption, GIFT_PROPERTY_FLAGS, out var serialized)) {
-                Logger.Error("Bundle: could not serialize the gift for template {0}.", Logger.Args(templateId));
-                continue;
-            }
-
-            var mail = new Mail {
-                m_recipientId = accountId,
-                m_senderId = (GID) wizard.CharId,
-                m_messageData = Encoding.Latin1.GetString((byte[]) serialized),
-                m_expireDuration = 0,
-                m_messageType = 2,
-                // One second apart, so the gift box keeps them in tier order.
-                m_timeStamp = now + (ulong) sent,
-                m_mailId = RandomMailId(),
-            };
-
-            // Saved here; the session adds it to the open account and tells the client.
-            if (!AccountCollection.AddGiftMail(accountId, mail)) {
-                Logger.Error("Bundle: could not save the gift for template {0}.", Logger.Args(templateId));
-                continue;
-            }
-
-            Context.SessionActor.Tell(new SERVICE_101_PROTOCOL.MSG_DELIVER_GIFT { Mail = mail }, ActorRefs.NoSender);
-            sent++;
+            return;
         }
 
-        Logger.Information("Bundle: \"{0}\" sent {1} gifts to account {2}.", Logger.Args(family.Name, sent, accountId));
-        InformSenderClient(sent == 0
-            ? $"Could not send {family.Name}."
-            : $"Sent {family.Name} to your gift box: {sent} gifts, lowest tier first. Open the gift box and claim the tier you want.");
-    }
+        // The game's gift button list: a set's master bundle opens a picker there, so the player claims the tier
+        // they want (Justin, 2026-10-21: the friend gift box was the wrong one and claiming crashed the game).
+        foreach (var templateId in family.Gifts) {
+            GiftingService.AddClaimGift(account, templateId);
+        }
 
-    private static ulong RandomMailId() {
-        Span<byte> bytes = stackalloc byte[sizeof(ulong)];
-        Random.Shared.NextBytes(bytes);
-
-        return BitConverter.ToUInt64(bytes);
+        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = account.ClaimGifts.Count }, ActorRefs.NoSender);
+        Logger.Information("Bundle: \"{0}\" sent {1} gifts to account {2}.", Logger.Args(family.Name, family.Gifts.Count, account.AccountId));
+        InformSenderClient($"Sent {family.Name} to your gifts: click the gift button, claim it and pick the tier you want.");
     }
 
 }
@@ -286,19 +273,10 @@ internal static class BundleCatalog {
     }
 
     /// <summary>
-    /// A choose-one bundle (a set's master) becomes one gift per choice; any other bundle is one gift.
+    /// Each bundle is one gift; the game lets the player pick inside a choose-one bundle (a set's master).
     /// </summary>
-    private static void AddGifts(ulong id, Dictionary<ulong, Entry> bundles, List<ulong> gifts, int depth) {
-        if (bundles.TryGetValue(id, out var entry) && depth < 4 && (int) entry.Template.m_acquireCondition == 1) {
-            foreach (var inner in Contents(entry.Template)) {
-                AddGifts(inner, bundles, gifts, depth + 1);
-            }
-
-            return;
-        }
-
-        gifts.Add(id);
-    }
+    private static void AddGifts(ulong id, Dictionary<ulong, Entry> bundles, List<ulong> gifts, int depth)
+        => gifts.Add(id);
 
     private static IEnumerable<ulong> Contents(ItemBundleTemplate bundle)
         => (bundle.m_bundleItems ?? []).Concat(bundle.m_bundleFreeItems ?? []).Select(g => (ulong) g);
