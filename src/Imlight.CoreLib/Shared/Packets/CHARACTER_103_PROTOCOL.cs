@@ -570,6 +570,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         Ready,
         PetChosen,
         Left,
+        // In the pet morph zone: Hatch (1) or Lend (2) on the "Hatch or Lend Pet" screen.
+        Choice,
     }
 
     /// <summary>
