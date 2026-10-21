@@ -104,7 +104,8 @@ internal sealed partial class ManagerWindow {
     private readonly TextBox _cheatSpellSearch = new() { Watermark = "Search a spell to add, such as Steal Charm or Meteor" };
     private readonly StackPanel _cheatSpellResults = new() { Spacing = 2 };
     private readonly StackPanel _cheatSpellRows = new() { Spacing = 2 };
-    private readonly TextBlock _cheatSpellsChanged = new() { Foreground = WARN };
+    // Made again for each open editor: it sits in the editor's own header, which a closed editor still holds.
+    private TextBlock _cheatSpellsChanged = new();
     private readonly DispatcherTimer _cheatSpellDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
 
     private BossCheatList? _cheats;
@@ -392,6 +393,7 @@ internal sealed partial class ManagerWindow {
         _cheatReaders.Clear();
         _cheatEditor.Children.Clear();
         _cheatDraftSpells = [.. cheat.CurrentSpells];
+        _cheatSpellsChanged = new TextBlock { Foreground = WARN };
 
         var number = (_cheats?.Cheats.IndexOf(cheat) ?? 0) + 1;
         _cheatEditor.Children.Add(Heading($"Cheat {number}"));
