@@ -292,9 +292,6 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         _pressedAt.Remove(partner.CharId);
         _pairedUntil[playerCharacter.CharId] = now + PAIRED_FOR;
         _pairedUntil[partner.CharId] = now + PAIRED_FOR;
-        // One circle each: whoever stepped on first keeps the first circle (both were put on the same one).
-        var requesterFirst = !_occupants.TryGetValue(playerCharacter.CharId, out var me) || me.Order < partner.Occupant.Order;
-
         Logger.Information("Hatching sigil: pairing {0} ({1}) with {2} ({3}) on {4}.",
             Logger.Args(Name(playerCharacter), playerCharacter.CharId, partner.Occupant.Name, partner.CharId, PadName));
 
@@ -303,14 +300,16 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         toPartner.PartnerCharId = playerCharacter.CharId;
         toPartner.PartnerGameObjectId = playerObject.m_globalID.Full;
         toPartner.PartnerName = Name(playerCharacter);
-        toPartner.FaceSlot = requesterFirst ? 1 : 0;
+        // Circles go by who pressed X first: the partner pressed before this player (Justin, 2026-10-21: the first
+        // player takes the first circle, the second player the next).
+        toPartner.FaceSlot = 0;
         partner.Occupant.Actor.Tell(toPartner);
 
         var toRequester = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Requester);
         toRequester.PartnerCharId = partner.CharId;
         toRequester.PartnerGameObjectId = partner.Occupant.GameObjectId;
         toRequester.PartnerName = partner.Occupant.Name;
-        toRequester.FaceSlot = requesterFirst ? 0 : 1;
+        toRequester.FaceSlot = 1;
         playerActor.Tell(toRequester);
     }
 
@@ -344,13 +343,11 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     private static string Name(Wizard wizard)
         => wizard?.PlayerNameBehavior?.GetWizardName() ?? wizard?.CharId.ToString() ?? "?";
 
-    // 0 for the first player on the pad, 1 for anyone after.
+    // 0 for the first player to press X, 1 when another player on the pad pressed before them.
     private int FaceSlot(ulong charId) {
-        if (!_occupants.TryGetValue(charId, out var occupant)) {
-            return 0;
-        }
+        var now = DateTime.UtcNow;
 
-        return _occupants.Values.Any(x => x.Order < occupant.Order) ? 1 : 0;
+        return _pressedAt.Any(x => x.Key != charId && _occupants.ContainsKey(x.Key) && now - x.Value <= PRESS_KEPT_FOR) ? 1 : 0;
     }
 
     private sealed record Occupant(IActorRef Actor, ulong GameObjectId, string Name, long Order);

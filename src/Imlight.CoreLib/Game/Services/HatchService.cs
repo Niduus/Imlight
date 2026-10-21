@@ -127,6 +127,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
     // A lender goes back once shown the partner's egg; this is how long that may take before they go back anyway.
     private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
+    // Long enough to read the lender's pop-up; closing the hatch window leaves sooner.
+    private static readonly TimeSpan LEND_POPUP_RETURN_DELAY = TimeSpan.FromSeconds(10);
     private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
     // From the in-person hatch window: the window shows "get ready to port" over a dark screen, then the trip.
     private const float HATCH_WINDOW_DELAY = 1.0f;
@@ -1091,9 +1093,6 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
             var hasVisit = PetMorphZone.TryGet(wizard.CharId, out var visit);
             if (!PetMorphZone.IsMorphZone(wizard.Zone)) {
-                if (PetMorphZone.TakeReturnNotice(wizard.CharId, out var notice)) {
-                    InformGameClient(notice, isImportant: true);
-                }
 
                 if (hasVisit) {
                     Logger.Information("Hatching zone: {0} arrived in {1}, not the morph zone; the trip from {2} is over.",
@@ -1375,13 +1374,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         // No egg screen: it read as the lender getting an egg (Justin, 2026-10-21: lending should not give an egg).
         Logger.Information("Hatching zone: {0} lent their pet and {1}'s egg is made.", Logger.Args(_morph.CharId, message.FromCharId));
         var partnerName = _morph.PartnerName ?? "Your partner";
-        InformGameClient($"{partnerName} got an egg with your pet. Back to the hatchery in a moment.");
-        // A pop-up back in the hatchery (Justin, 2026-10-21: the lender should get a "congratulations" notice).
-        PetMorphZone.SetReturnNotice(_morph.CharId,
-            $"Congratulations on lending your pet! {partnerName} got an egg thanks to you.");
+        // A pop-up as soon as the hatch is over (Justin, 2026-10-21: the lender should get a "congratulations" notice
+        // right away, not only back in the hatchery).
+        InformGameClient($"Congratulations on lending your pet! {partnerName} got an egg thanks to you.", isImportant: true);
         Timers.Cancel(MORPH_RETURN_TIMER);
         _morphLeaving = false;
-        ScheduleMorphReturn("the partner's egg is made", MORPH_RETURN_DELAY);
+        ScheduleMorphReturn("the partner's egg is made", LEND_POPUP_RETURN_DELAY);
     }
 
     private void ArriveInMorphZone(Wizard wizard, PetMorphVisit visit) {
