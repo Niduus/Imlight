@@ -116,6 +116,17 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     // When each player on the pad pressed X: a pair goes only once both have, so pressing never pulls in a player who
     // is only standing there (Justin, 2026-10-21: player 1 pressed and dragged player 2 in).
     private readonly Dictionary<ulong, DateTime> _pressedAt = [];
+
+    // The circle each player on the pad stands on. A new player takes the lowest free one and nobody else is moved
+    // (Justin, 2026-10-21: "If 1 is empty, they go to that").
+    private readonly Dictionary<ulong, int> _slots = [];
+
+    // The pad's one countdown: when it ends, and whether a second player joining has already restarted it once.
+    // Hopping off and back on joins it instead of starting it over (Justin, 2026-10-21).
+    private const float COUNTDOWN_SECONDS = 10.0f;
+    private const float MIN_COUNTDOWN_SECONDS = 1.0f;
+    private DateTime? _countdownEnds;
+    private bool _countdownRestarted;
     private static readonly TimeSpan PRESS_KEPT_FOR = TimeSpan.FromSeconds(30);
     // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
     // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
@@ -180,6 +191,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         // one (Justin, 2026-10-21: one player went in alone and the other's presses were ignored).
         if (playerWizard is not null && _occupants.Remove(playerWizard.CharId)) {
             _pressedAt.Remove(playerWizard.CharId);
+            _slots.Remove(playerWizard.CharId);
+            ClearCountdownIfEmpty();
             Logger.Information("Hatching sigil: {0} came back into the zone; their old place on {1} is cleared.",
                 Logger.Args(playerWizard.CharId, PadName));
         }
@@ -204,6 +217,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             _occupants.Remove(charId);
             _pairedUntil.Remove(charId);
             _pressedAt.Remove(charId);
+            _slots.Remove(charId);
+            ClearCountdownIfEmpty();
             Logger.Information("Hatching sigil: {0} left the zone, so is off {1}.", Logger.Args(charId, PadName));
             RelightSoon();
         }
@@ -241,6 +256,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
         else if (!onPad && _occupants.Remove(charId)) {
             _pressedAt.Remove(charId);
+            _slots.Remove(charId);
+            ClearCountdownIfEmpty();
             // Stepping off stops the countdown, so pressing again when back on must start a new one.
             _pairedUntil.Remove(charId);
             _relightAt[playerActor] = DateTime.UtcNow + RELIGHT_AFTER;
@@ -290,7 +307,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         if (partner.Occupant is null) {
             Logger.Information("Hatching sigil: nobody else is on {0}.", Logger.Args(PadName));
             var alone = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Alone);
-            alone.FaceSlot = FaceSlot(playerCharacter.CharId);
+            alone.FaceSlot = SlotOf(playerCharacter.CharId);
+            alone.CountdownSeconds = CountdownForNewTrip(now);
             playerActor.Tell(alone);
 
             return;
@@ -303,7 +321,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             var wait = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.WaitingForPartner);
             wait.PartnerCharId = partner.CharId;
             wait.PartnerName = partner.Occupant.Name;
-            wait.FaceSlot = FaceSlot(playerCharacter.CharId);
+            wait.FaceSlot = SlotOf(playerCharacter.CharId);
+            wait.CountdownSeconds = CountdownForNewTrip(now);
             playerActor.Tell(wait);
 
             return;
@@ -324,14 +343,19 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         toPartner.PartnerName = Name(playerCharacter);
         // Circles go by who pressed X first: the partner pressed before this player (Justin, 2026-10-21: the first
         // player takes the first circle, the second player the next).
-        toPartner.FaceSlot = 0;
+        var (seconds, keep) = CountdownForPair(now);
+        toPartner.FaceSlot = SlotOf(partner.CharId);
+        toPartner.CountdownSeconds = seconds;
+        toPartner.KeepCountdown = keep;
         partner.Occupant.Actor.Tell(toPartner);
 
         var toRequester = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Requester);
         toRequester.PartnerCharId = partner.CharId;
         toRequester.PartnerGameObjectId = partner.Occupant.GameObjectId;
         toRequester.PartnerName = partner.Occupant.Name;
-        toRequester.FaceSlot = 1;
+        toRequester.FaceSlot = SlotOf(playerCharacter.CharId);
+        toRequester.CountdownSeconds = seconds;
+        toRequester.KeepCountdown = keep;
         playerActor.Tell(toRequester);
     }
 
@@ -380,10 +404,57 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         => wizard?.PlayerNameBehavior?.GetWizardName() ?? wizard?.CharId.ToString() ?? "?";
 
     // 0 for the first player to press X, 1 when another player on the pad pressed before them.
-    private int FaceSlot(ulong charId) {
-        var now = DateTime.UtcNow;
+    private int SlotOf(ulong charId) {
+        if (_slots.TryGetValue(charId, out var slot)) {
+            return slot;
+        }
 
-        return _pressedAt.Any(x => x.Key != charId && _occupants.ContainsKey(x.Key) && now - x.Value <= PRESS_KEPT_FOR) ? 1 : 0;
+        var taken = _slots.Where(x => x.Key != charId && _occupants.ContainsKey(x.Key)).Select(x => x.Value).ToHashSet();
+        slot = 0;
+        while (taken.Contains(slot)) {
+            slot++;
+        }
+
+        _slots[charId] = slot;
+
+        return slot;
+    }
+
+    private bool CountdownRunning(DateTime now, out float secondsLeft) {
+        secondsLeft = _countdownEnds is { } ends ? (float) (ends - now).TotalSeconds : 0;
+
+        return secondsLeft > 0;
+    }
+
+    // A player starting on their own: the pad's countdown if one is running, else a new one.
+    private float CountdownForNewTrip(DateTime now) {
+        if (CountdownRunning(now, out var left)) {
+            return Math.Max(left, MIN_COUNTDOWN_SECONDS);
+        }
+
+        _countdownEnds = now.AddSeconds(COUNTDOWN_SECONDS);
+        _countdownRestarted = false;
+
+        return COUNTDOWN_SECONDS;
+    }
+
+    // A pair forming: the first time a second player joins, the countdown starts over for both; after that it goes on.
+    private (float Seconds, bool Keep) CountdownForPair(DateTime now) {
+        if (CountdownRunning(now, out var left) && _countdownRestarted) {
+            return (Math.Max(left, MIN_COUNTDOWN_SECONDS), true);
+        }
+
+        _countdownEnds = now.AddSeconds(COUNTDOWN_SECONDS);
+        _countdownRestarted = true;
+
+        return (COUNTDOWN_SECONDS, false);
+    }
+
+    private void ClearCountdownIfEmpty() {
+        if (_occupants.Count == 0) {
+            _countdownEnds = null;
+            _countdownRestarted = false;
+        }
     }
 
     private sealed record Occupant(IActorRef Actor, ulong GameObjectId, string Name, long Order);

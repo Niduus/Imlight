@@ -89,7 +89,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY _activeSigilEntry;
     private DateTime _sigilEntryStarted;
     // After the countdown starts the player is moved onto the pad; their position may lag behind for a moment.
-    private static readonly TimeSpan SIGIL_OFF_PAD_GRACE = TimeSpan.FromSeconds(1);
+    // Moves while the player is being put on their circle are not theirs; after that any move stops the countdown
+    // (Justin, 2026-10-21: "Sigil cancellation should be from any movement").
+    private static readonly TimeSpan SIGIL_SETTLE_TIME = TimeSpan.FromSeconds(2.5);
+    private const float SIGIL_MOVE_TOLERANCE = 10.0f;
+    private DateTime _sigilSettleUntil;
+    private Imcodec.Math.Vector3 _sigilAnchor;
 
     private readonly CoreObjectSerializer _effectSerializer = new(
         behaviors: SerializerFlags.None
@@ -291,11 +296,15 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // A player already counting down stays where they stand when the countdown restarts (Justin, 2026-10-21: the
+        // players moved when a new one came on).
+        var restarted = false;
         if (message.Restart && _activeSigilEntry is not null && !_transferGate.IsQueued) {
             // No timer end on screen: the new start below restarts the countdown the player already sees.
             Logger.Information("{0}: countdown restarted for the pair.", Logger.Args(SigilLogName(message)));
             Timers.Cancel(SIGIL_ENTER_TIMER_KEY);
             _activeSigilEntry = null;
+            restarted = true;
         }
 
         if (_transferGate.IsQueued || _activeSigilEntry is not null) {
@@ -321,8 +330,13 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         _sigilEntryStarted = DateTime.UtcNow;
         var countdown = message.CountdownSeconds > 0 ? message.CountdownSeconds : SIGIL_COUNTDOWN_SECONDS;
 
-        if (!message.NoSigil && (!message.NoSnap || message.SnapToCentre)) {
+        if (!message.NoSigil && !restarted && (!message.NoSnap || message.SnapToCentre)) {
             SnapPlayerToSigilFace(message);
+        }
+
+        if (!restarted) {
+            _sigilSettleUntil = DateTime.UtcNow + SIGIL_SETTLE_TIME;
+            _sigilAnchor = GetActiveGameObject()?.m_location ?? default;
         }
 
         if (!message.NoSigil) {
@@ -730,9 +744,14 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Stepping off the pad stops the countdown right away, not only when it runs out (Justin, 2026-10-21: the
         // countdown went on after stepping off). The game's own walk-off message is not sent for every pad.
-        if (_activeSigilEntry is { NoSigil: false } entry && DateTime.UtcNow - _sigilEntryStarted > SIGIL_OFF_PAD_GRACE
-            && GetActiveWizard() is { } wizard && IsOffSigilPad(wizard, entry)) {
-            CancelSigilCountdown();
+        if (_activeSigilEntry is { NoSigil: false } entry && GetActiveWizard() is { } wizard) {
+            var here = wizard.Location;
+            if (DateTime.UtcNow < _sigilSettleUntil) {
+                _sigilAnchor = here;
+            }
+            else if (IsOffSigilPad(wizard, entry) || SigilPadCheck.IsOff(here.X - _sigilAnchor.X, here.Y - _sigilAnchor.Y, SIGIL_MOVE_TOLERANCE / 1.25f)) {
+                CancelSigilCountdown();
+            }
         }
 
         ZoneActor.Forward(message);
