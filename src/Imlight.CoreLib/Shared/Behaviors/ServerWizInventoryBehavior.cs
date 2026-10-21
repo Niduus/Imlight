@@ -145,7 +145,11 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     /// </summary>
     private static bool CanSendToGame(WizClientObjectItem item) {
         var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID);
-        if (template is WizItemTemplate and not ItemBundleTemplate) {
+        // Bundles, booster packs and currency amounts are not backpack objects to the game: one in the list stops the
+        // whole backpack from loading ("Unable to instantiate object of type: 107"), so the character never loads in
+        // (Walter Blanco, 2026-10-21: the Witch Hut bundle's Mega-Snack Pack).
+        if (template is WizItemTemplate and not (ItemBundleTemplate or BoosterPackTemplate or GoldAmountTemplate
+            or LunariAmountTemplate or CurrencyTemplate or TourneyTokensAmountTemplate)) {
             return true;
         }
 
