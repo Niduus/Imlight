@@ -88,14 +88,6 @@ internal static class PetMorphZone {
     internal const string GAME = "PetGameMorph";
 
     private static readonly ConcurrentDictionary<ulong, PetMorphVisit> s_visits = new();
-    // A pop-up shown once the player is back from the morph zone (the session is a new one after the zone change).
-    private static readonly ConcurrentDictionary<ulong, string> s_returnNotices = new();
-
-    internal static void SetReturnNotice(ulong charId, string text)
-        => s_returnNotices[charId] = text;
-
-    internal static bool TakeReturnNotice(ulong charId, out string text)
-        => s_returnNotices.TryRemove(charId, out text);
 
     /// <summary>
     /// [Hatching] MorphZoneMinutes: how long a player may stay in the pet morph zone before being sent back.
