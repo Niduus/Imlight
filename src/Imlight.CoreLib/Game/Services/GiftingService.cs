@@ -374,6 +374,37 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
+        switch (CoreObjectFactory.GetCoreTemplate(templateId)) {
+            // A booster pack in the backpack stopped the character from loading; open it like the crown shop does.
+            case BoosterPackTemplate:
+                PackManager.OpenPack(SessionActor.ActorRef, wizard, templateId);
+                count++;
+
+                return;
+            case GoldAmountTemplate goldItem:
+                wizard.AddGold(goldItem.m_goldAmount);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+                    Gold = wizard.GameStats.m_currentGold,
+                    MaxGold = wizard.GameStats.m_baseGoldPouch
+                });
+                count++;
+
+                return;
+            case LunariAmountTemplate lunariTemplate:
+                wizard.AddLunari(lunariTemplate.m_lunariAmount);
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_UPDATEEVENTCURRENCY1 {
+                    EventCurrency1 = wizard.GameStats.m_currentEventCurrency1,
+                    MaxEventCurrency1 = wizard.GameStats.m_baseEventCurrency1Pouch
+                });
+                count++;
+
+                return;
+            case CurrencyTemplate or TourneyTokensAmountTemplate:
+                Logger.Warning("Claim gifts: {0} is a currency the server cannot give; skipped.", Logger.Args(templateId));
+
+                return;
+        }
+
         if (!wizard.AddItemToInventory(templateId, out WizClientObjectItem item)) {
             Logger.Warning("Claim gifts: could not add {0} to the inventory of {1}.", Logger.Args(templateId, wizard.CharId));
 

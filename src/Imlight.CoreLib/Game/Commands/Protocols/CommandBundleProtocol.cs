@@ -43,7 +43,7 @@ internal class CommandBundleProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    private const int NAMES_PER_MESSAGE = 60;
+    private const int NAMES_PER_MESSAGE = 10;
 
     private const string CHAT_NAME = "Bundle List";
 
@@ -125,7 +125,8 @@ internal class CommandBundleProtocol : CommandProtocol {
             SourceName = packed,
             SourceID = 0,
             Message = text,
-            Filter = 0,
+            // 2 is what player chat uses; 0 ran the text through the game's chat filter, which showed "..." (Justin, 2026-10-21).
+            Filter = 2,
         }, ActorRefs.NoSender);
     }
 
@@ -189,6 +190,13 @@ internal static class BundleCatalog {
     private const int CHOOSE_ONE = 1;
 
     private static List<BundleFamily> s_families;
+
+    // Things the game sold with a set that its bundle files do not list (the game data does not link houses, mounts
+    // and pets to sets). Keyed by the set's object name prefix; each is one more gift.
+    private static readonly Dictionary<string, ulong[]> s_extras = new(StringComparer.OrdinalIgnoreCase) {
+        // Spooky Carnival (Justin, 2026-10-21): Scarousel, 4-Passenger Creepy Clown Car (PERM), Booloon.
+        ["DM2"] = [1421671, 1254268, 1254264],
+    };
 
     public static List<BundleFamily> Families {
         get {
@@ -292,6 +300,10 @@ internal static class BundleCatalog {
             // Gear before wands, then lowest level first.
             foreach (var entry in members.OrderBy(m => m.ObjectName.Contains("-Wand-", StringComparison.OrdinalIgnoreCase))) {
                 AddGifts(entry.Id, bundles, gifts, 0);
+            }
+
+            if (group.Prefix is not null && s_extras.TryGetValue(group.Prefix, out var extras)) {
+                gifts.AddRange(extras);
             }
 
             if (gifts.Count == 0) {

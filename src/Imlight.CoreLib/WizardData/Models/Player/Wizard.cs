@@ -673,15 +673,33 @@ public class Wizard {
         equipEffects = null;
         unequipEffects = null;
 
+        // Get the template for this item. Using this template we can get the slot this object should be on.
+        // Checked before the item leaves the backpack: an item with no slot used to throw here and vanish.
+        var heldItem = InventoryBehavior.GetItem(itemId);
+        if (heldItem is null) {
+            Logger.Warning("Tried to equip item with global id {0} that does not exist in player inventory.", Logger.Args(itemId));
+            return false;
+        }
+
+        var template = ItemHelper.GetItemTemplate(heldItem);
+        EquipmentSlot slot = null;
+        try {
+            slot = template is null ? null : ItemHelper.GetItemSlot(template);
+        }
+        catch (InvalidOperationException) {
+        }
+
+        if (slot is null) {
+            Logger.Warning("Item {0} (template {1}) has no equipment slot, so it stays in the backpack.",
+                Logger.Args(itemId, heldItem.m_templateID));
+            return false;
+        }
+
         // Remove the item from the inventory.
         if (!InventoryBehavior.RemoveItem(itemId, out var inventoryItem)) {
             Logger.Warning("Tried to equip item with global id {0} that does not exist in player inventory.", Logger.Args(itemId));
             return false;
         }
-
-        // Get the template for this item. Using this template we can get the slot this object should be on.
-        var template = ItemHelper.GetItemTemplate(inventoryItem);
-        var slot = ItemHelper.GetItemSlot(template);
 
         // Get the item that is currently in the slot, if there is one. We want to remove its effects.
         var replacedItem = EquipmentBehavior.GetItemInSlot(slot.SlotType);
