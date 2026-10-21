@@ -530,10 +530,17 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
     }
 
     private void BroadcastEquipItem(WizClientObjectItem item) {
-        // Serialize item and broadcast equip action to other players.
+        // Confirm the server-side equip to this player so its local equipment state is restored too.
+        SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM() {
+            ItemID = item.m_globalID,
+            SlotName = "Mount",
+            IsEquip = 1
+        });
+
+        // Serialize item and broadcast equip action using the same mask as normal equipment changes.
         var pubItem = ItemHelper.GetPublicItem(item);
 
-        if (_itemSerializer.Serialize(pubItem, PropertyFlags.Prop_Transmit, out var data)) {
+        if (!_itemSerializer.Serialize(pubItem, 1, out var data)) {
             Logger.Error("Failed to serialize item {0}", Logger.Args(item.m_globalID));
 
             return;
