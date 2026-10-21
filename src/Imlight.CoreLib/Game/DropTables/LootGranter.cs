@@ -240,8 +240,13 @@ public static class LootGranter {
         results.Items = grantedItems;
 
         foreach (var item in rolledItems) {
+            // A drop table can name a treasure card by its spell name ("Banshee TC") instead of its number.
             if (!ulong.TryParse(item.ItemId, out var itemGuid)) {
-                continue;
+                if (!SpellFactory.Exists(item.ItemId) || SpellFactory.GetSpell(item.ItemId) is not { } card) {
+                    continue;
+                }
+
+                itemGuid = card.m_templateID;
             }
 
             // Randomizer mode may swap the drop; the loot popup then lists what was really granted.

@@ -1,0 +1,70 @@
+{
+  "Name": "Malistaire-Azteca-Jewels",
+  "Description": "Malistaire the Undying (Azteca): Jewels (from Wizard101 Central's drop list)",
+  "RollChance": 0.3,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1360723",
+      "ItemName": "Blade of Fire Ruby"
+    },
+    {
+      "ItemId": "1360766",
+      "ItemName": "Blizzard Lizard Sapphire"
+    },
+    {
+      "ItemId": "1360737",
+      "ItemName": "Button Tom Peridot"
+    },
+    {
+      "ItemId": "1357591",
+      "ItemName": "Clear Defense Hematite +40"
+    },
+    {
+      "ItemId": "1358641",
+      "ItemName": "Draw Health Sapphire"
+    },
+    {
+      "ItemId": "1358662",
+      "ItemName": "Golem Minion Peridot"
+    },
+    {
+      "ItemId": "1357063",
+      "ItemName": "Polished Accurate Ruby +10%"
+    },
+    {
+      "ItemId": "1352871",
+      "ItemName": "Polished Critical Peridot +11"
+    },
+    {
+      "ItemId": "1352741",
+      "ItemName": "Polished Damage Citrine +21"
+    },
+    {
+      "ItemId": "1352597",
+      "ItemName": "Polished Damage Ruby +21"
+    },
+    {
+      "ItemId": "1352415",
+      "ItemName": "Polished Health Opal +89"
+    },
+    {
+      "ItemId": "1360735",
+      "ItemName": "Time Skip Sapphire"
+    },
+    {
+      "ItemId": "1360755",
+      "ItemName": "Vengeance Talent Opal"
+    },
+    {
+      "ItemId": "1360825",
+      "ItemName": "Wisp Bonus Opal"
+    }
+  ]
+}

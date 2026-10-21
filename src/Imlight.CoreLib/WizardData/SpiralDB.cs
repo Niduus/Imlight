@@ -54,6 +54,9 @@ public static class SpiralDB {
     private static readonly string s_extraPath
         = ConfigurationManager.GetValue("Database.SpiralDBExtraPath", "./spiraldb-extra");
 
+    /// <summary>The full path of our own additions folder (spiraldb-extra).</summary>
+    internal static string ExtraPath => Path.GetFullPath(s_extraPath);
+
     private static readonly JsonSerializerOptions s_jsonOptions = SpiralJsonOptions.Options;
 
     private static ConcurrentDictionary<string, CreatureSpellbook> s_creatureSpellbooks

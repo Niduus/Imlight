@@ -1,0 +1,282 @@
+{
+  "Name": "Malistaire-Azteca-Gear-1",
+  "Description": "Malistaire the Undying (Azteca): Gear (from Wizard101 Central's drop list)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 279,
+  "MaxGold": 320,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730267",
+      "ItemName": "Coatl Lord's Hat"
+    },
+    {
+      "ItemId": "730275",
+      "ItemName": "Dawn Hour Mantle"
+    },
+    {
+      "ItemId": "730269",
+      "ItemName": "Elite Jura Guard Helm"
+    },
+    {
+      "ItemId": "730273",
+      "ItemName": "Five Fangs of Fury Headdress"
+    },
+    {
+      "ItemId": "730271",
+      "ItemName": "Indigo Wing Crown"
+    },
+    {
+      "ItemId": "730284",
+      "ItemName": "Mantle of the Last Codex"
+    },
+    {
+      "ItemId": "730268",
+      "ItemName": "Sweet Kiss of Death Mask"
+    },
+    {
+      "ItemId": "730274",
+      "ItemName": "Thirteen Death Mask"
+    },
+    {
+      "ItemId": "730272",
+      "ItemName": "Tree of Secrets Chac Mask"
+    },
+    {
+      "ItemId": "730270",
+      "ItemName": "Twisted Fang Mask"
+    },
+    {
+      "ItemId": "730347",
+      "ItemName": "Black Sun Chac's Armor"
+    },
+    {
+      "ItemId": "730349",
+      "ItemName": "Grinning Death Xicolli Vest"
+    },
+    {
+      "ItemId": "730346",
+      "ItemName": "Keeper of the Codex Vest"
+    },
+    {
+      "ItemId": "730350",
+      "ItemName": "Lord of Night Robes"
+    },
+    {
+      "ItemId": "730364",
+      "ItemName": "Night Caiman's Gaunt Robes"
+    },
+    {
+      "ItemId": "730345",
+      "ItemName": "Philososaur's Robes"
+    },
+    {
+      "ItemId": "730333",
+      "ItemName": "Vestment of the Calavera"
+    },
+    {
+      "ItemId": "730348",
+      "ItemName": "Vestment of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730344",
+      "ItemName": "White Fire Chac's Armor"
+    },
+    {
+      "ItemId": "730388",
+      "ItemName": "Black Tears of Night Wraps"
+    },
+    {
+      "ItemId": "730383",
+      "ItemName": "Elite Jura Guard Stalkers"
+    },
+    {
+      "ItemId": "730387",
+      "ItemName": "Five Fangs of Fury Boots"
+    },
+    {
+      "ItemId": "730389",
+      "ItemName": "Heart of Sky Boots"
+    },
+    {
+      "ItemId": "730402",
+      "ItemName": "Night Caiman's Tomb Wraps"
+    },
+    {
+      "ItemId": "730386",
+      "ItemName": "Tree of Secrets Chac Runners"
+    },
+    {
+      "ItemId": "730384",
+      "ItemName": "Twisted Fang Boots"
+    },
+    {
+      "ItemId": "730230",
+      "ItemName": "Bleeding Sun Dagger"
+    },
+    {
+      "ItemId": "730232",
+      "ItemName": "Moon Skull's Blessed Edge"
+    },
+    {
+      "ItemId": "730251",
+      "ItemName": "Mother's New Moon Athame"
+    },
+    {
+      "ItemId": "730250",
+      "ItemName": "Seven Stabs of the Sky Athame"
+    },
+    {
+      "ItemId": "730227",
+      "ItemName": "Tears of Mother Moon Blade"
+    },
+    {
+      "ItemId": "730233",
+      "ItemName": "Thunder Horn's Rough Cutter"
+    },
+    {
+      "ItemId": "730234",
+      "ItemName": "Wild Wing's Glorious Razor"
+    },
+    {
+      "ItemId": "730231",
+      "ItemName": "Winged Tooth Knight's Hook"
+    },
+    {
+      "ItemId": "730202",
+      "ItemName": "Charm of the Gold Aztecosaur"
+    },
+    {
+      "ItemId": "730190",
+      "ItemName": "Golden Head of the Cold House"
+    },
+    {
+      "ItemId": "730194",
+      "ItemName": "Home Hearth Relic"
+    },
+    {
+      "ItemId": "730189",
+      "ItemName": "Horizon of Underworld Charm"
+    },
+    {
+      "ItemId": "730203",
+      "ItemName": "House of Plague Greenstone"
+    },
+    {
+      "ItemId": "730212",
+      "ItemName": "Judgement of Pitch Black Lake"
+    },
+    {
+      "ItemId": "730191",
+      "ItemName": "Pendant of the Wild Wings"
+    },
+    {
+      "ItemId": "730196",
+      "ItemName": "Speaking Water Ornament"
+    },
+    {
+      "ItemId": "730199",
+      "ItemName": "Stone of the Green Skycarrier"
+    },
+    {
+      "ItemId": "730192",
+      "ItemName": "Thunder Horn's Coral Charm"
+    },
+    {
+      "ItemId": "730311",
+      "ItemName": "Acampi Reedfist's Lost Seal"
+    },
+    {
+      "ItemId": "730308",
+      "ItemName": "Bleeding Sun Warrior's Loop"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730320",
+      "ItemName": "Lords of Night Challenge Ring"
+    },
+    {
+      "ItemId": "730309",
+      "ItemName": "Mother Moon's Count Ring"
+    },
+    {
+      "ItemId": "730456",
+      "ItemName": "Arrow of the Hungry Dead"
+    },
+    {
+      "ItemId": "730440",
+      "ItemName": "Eclipse Spear of Azteca"
+    },
+    {
+      "ItemId": "730437",
+      "ItemName": "Lance of Night Fire"
+    },
+    {
+      "ItemId": "730441",
+      "ItemName": "New Moon Lance"
+    },
+    {
+      "ItemId": "730443",
+      "ItemName": "Spear of Breaking Dawn"
+    },
+    {
+      "ItemId": "1248119",
+      "ItemName": "Spring Fledgling Baton"
+    },
+    {
+      "ItemId": "730439",
+      "ItemName": "Talon of the Storm Owl"
+    },
+    {
+      "ItemId": "730442",
+      "ItemName": "Tears of Night Lance"
+    },
+    {
+      "ItemId": "730438",
+      "ItemName": "Winter Lord's Obsidian Shard"
+    },
+    {
+      "ItemId": "730422",
+      "ItemName": "Calendar of the Spiral King"
+    },
+    {
+      "ItemId": "730428",
+      "ItemName": "Cipactli's Lost Cards"
+    },
+    {
+      "ItemId": "730416",
+      "ItemName": "Codex of the Lost Fire"
+    },
+    {
+      "ItemId": "730424",
+      "ItemName": "Cold Codex"
+    },
+    {
+      "ItemId": "730419",
+      "ItemName": "Deck of the Jaguar Spirit"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730421",
+      "ItemName": "Lords of Night Pyramid Deck"
+    },
+    {
+      "ItemId": "730418",
+      "ItemName": "Storm Sun Gallery"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    }
+  ]
+}

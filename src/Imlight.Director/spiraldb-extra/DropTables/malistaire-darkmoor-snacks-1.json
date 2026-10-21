@@ -1,0 +1,70 @@
+{
+  "Name": "Malistaire-Darkmoor-Snacks-1",
+  "Description": "Malistaire the Undying (Castle Darkmoor): Snacks (from Wizard101 Central's drop list)",
+  "RollChance": 0.7,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257604",
+      "ItemName": "Alligator Pear"
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak"
+    },
+    {
+      "ItemId": "1257603",
+      "ItemName": "Berry Poundcake"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "1257591",
+      "ItemName": "Desparagus Quiche"
+    },
+    {
+      "ItemId": "1257600",
+      "ItemName": "Desparagus Salad"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1257584",
+      "ItemName": "Evil Magma Soup"
+    },
+    {
+      "ItemId": "1257602",
+      "ItemName": "Huckleberry Muffin"
+    },
+    {
+      "ItemId": "1257601",
+      "ItemName": "Huckleberry Pie"
+    },
+    {
+      "ItemId": "1257586",
+      "ItemName": "King Parsley Soup"
+    },
+    {
+      "ItemId": "1257589",
+      "ItemName": "Ninja Fig Bars"
+    },
+    {
+      "ItemId": "1257607",
+      "ItemName": "Snow Apple Pie"
+    },
+    {
+      "ItemId": "1257585",
+      "ItemName": "Stuffed Bell Pepper"
+    }
+  ]
+}

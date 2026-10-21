@@ -1,0 +1,82 @@
+{
+  "Name": "Malistaire-Azteca-Snacks-1",
+  "Description": "Malistaire the Undying (Azteca): Snacks (from Wizard101 Central's drop list)",
+  "RollChance": 0.7,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "733126",
+      "ItemName": "Allocados"
+    },
+    {
+      "ItemId": "733131",
+      "ItemName": "Bedrock Bonbons"
+    },
+    {
+      "ItemId": "733116",
+      "ItemName": "Cacao Beans"
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit"
+    },
+    {
+      "ItemId": "473221",
+      "ItemName": "Flapjacks"
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "733123",
+      "ItemName": "Guava"
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms"
+    },
+    {
+      "ItemId": "473583",
+      "ItemName": "Jelly Baby"
+    },
+    {
+      "ItemId": "733124",
+      "ItemName": "Papaya"
+    },
+    {
+      "ItemId": "733137",
+      "ItemName": "Quetzal Pretzel"
+    },
+    {
+      "ItemId": "733132",
+      "ItemName": "Saber-Tooth Cider"
+    },
+    {
+      "ItemId": "733135",
+      "ItemName": "Saursa"
+    },
+    {
+      "ItemId": "733117",
+      "ItemName": "Tenochti-Flan"
+    },
+    {
+      "ItemId": "733136",
+      "ItemName": "Tortilla Chips"
+    },
+    {
+      "ItemId": "733139",
+      "ItemName": "Zocalo Wings"
+    }
+  ]
+}

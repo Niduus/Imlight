@@ -1,0 +1,134 @@
+{
+  "Name": "Malistaire-Darkmoor-Reagents-3",
+  "Description": "Malistaire the Undying (Castle Darkmoor): Reagents (from Wizard101 Central's drop list)",
+  "RollChance": 0.4,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus"
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl"
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss"
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom"
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom"
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil"
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl"
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood"
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril"
+    },
+    {
+      "ItemId": "1340033",
+      "ItemName": "Mote of Eternity"
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade"
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block"
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine"
+    }
+  ]
+}
