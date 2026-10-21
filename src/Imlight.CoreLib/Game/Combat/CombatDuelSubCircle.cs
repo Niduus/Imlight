@@ -521,7 +521,11 @@ public class CombatDuelSubCircle {
     private const int RANDOM_SHADOW_LIMIT_MAX = 5;
     private bool? _creatureRolledShadowMagic;
 
-    private int MaxShadowPips => _wizard is null ? s_creatureMaxShadowPips
+    // A boss whose cheat file sets ShadowPips (BossCheats.cs) holds that many, whatever the creature settings say.
+    private (int Most, int Chance) BossShadowPips
+        => _wizard is null && ParticipantObject is not null ? BossCheats.ShadowPipsOf(ParticipantObject.m_templateID) : (0, 0);
+
+    private int MaxShadowPips => _wizard is null ? BossShadowPips.Most > 0 ? BossShadowPips.Most : s_creatureMaxShadowPips
         : ParticipantGameStats?.m_shadowPipSlots is int slots and > 0 ? Math.Min(slots, NO_SHADOW_LIMIT)
         : s_randomizeShadowPips ? 1 + Randomization.Randomizer.PickIndex(_wizard, "ShadowPipLimit", 0, RANDOM_SHADOW_LIMIT_MAX)
         : s_playerMaxShadowPips;
@@ -580,6 +584,9 @@ public class CombatDuelSubCircle {
             : (int) Math.Round(ParticipantGameStats.m_shadowPipRating + ParticipantGameStats.m_bonusShadowPipRating);
         if ((s_naturalShadowPips || HasOwnShadowMagic) && _wizard is not null && chance <= 0) {
             chance = NATURAL_SHADOW_PIP_CHANCE;
+        }
+        if (_wizard is null && chance <= 0 && BossShadowPips.Most > 0) {
+            chance = BossShadowPips.Chance;
         }
 
         return Math.Clamp(chance, 0, (int) GAUGE_FULL);
@@ -771,7 +778,7 @@ public class CombatDuelSubCircle {
     private bool _cheatShadowMagic;
 
     private bool HasShadowMagic => _cheatShadowMagic
-        || (_wizard is null ? s_shadowPips && CreatureHasShadowMagic : s_shadowPips || HasOwnShadowMagic);
+        || (_wizard is null ? s_shadowPips && (CreatureHasShadowMagic || BossShadowPips.Most > 0) : s_shadowPips || HasOwnShadowMagic);
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,

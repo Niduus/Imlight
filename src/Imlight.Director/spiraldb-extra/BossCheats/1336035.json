@@ -1,10 +1,14 @@
 {
   // Malistaire the Undying, Castle Darkmoor (G14-DM-Malistaire_Boss). The .joinme default.
   // From Wizard101 Central's pages for "Malistaire the Undying (Shadow)" and "Haunted Malistaire" (Justin saved them, 2026-10-21).
-  // Phase 1 is Malistaire; under 1,000 health (or defeated) he comes back as Haunted Malistaire, phase 2, with 48,000 health.
+  // Under 1,000 health (or defeated) he comes back as Haunted Malistaire (G14-DM-Malistaire_Shadow, 1336037.json), a
+  // creature of its own with its own model and 48,000 health. With no enemy circle free he comes back in his own circle
+  // instead (48,000 health, phase 2 below). His drops stay on this template, and come when the last form is defeated.
   // Which game spell does each move is a guess from the names in Spells/G14-CombatTrigger-Spells; check a test log.
   "TemplateID": 1336035,
   "Name": "Malistaire the Undying",
+  // Central: "Shadow Pips 4 max", in both forms.
+  "ShadowPips": 4,
   "Cheats": [
     { "When": "BattleStart", "Cast": "Mega Taunt - Shadow", "Target": "FirstEnemy", "Line": "I cannot be stopped", "Once": true,
       "Notes": "First round: Shadow Mega Taunt on the first wizard." },
@@ -32,8 +36,9 @@
       "Cast": "Black Mantle", "Target": "Caster", "Line": "Can you face my stare",
       "Notes": "A single-target hit on him: Black Mantle on the attacker." },
 
-    { "When": "RoundEnd", "Phase": 1, "Round": 3, "Every": 5, "Cast": "Polymorph - Dragon Trigger", "Target": "Enemy",
-      "Line": "Fear the power of Dragonspyre", "Notes": "Black Dragon: 535 Moon damage and destroys the aura." },
+    { "When": "RoundEnd", "Phase": 1, "Round": 3, "Every": 5, "Cast": "Supernova Sun", "Target": "Enemy",
+      "Line": "Fear the power of Dragonspyre",
+      "Notes": "Black Dragon: 535 damage and destroys the aura. The game's Polymorph - Dragon Trigger turns him into the dragon, which the server cannot do (the dragon stayed on the field), so Supernova Sun does the same hit: 535 Balance damage and removes the aura." },
     { "When": "RoundEnd", "Phase": 1, "Round": 4, "Every": 5, "Cast": "Minotaur Death Sun", "Target": "Enemy",
       "Line": "A gift from Tartarus", "Notes": "Sun Deadly Minotaur on a random wizard." },
     { "When": "RoundEnd", "Phase": 1, "Round": 5, "Every": 5, "Cast": "Virulence - Malistaire", "Target": "Self",
@@ -41,9 +46,11 @@
     { "When": "RoundStart", "Phase": 1, "Round": 5, "Every": 4, "Cast": "Malistaire Dragon - Roar",
       "Line": "Its power shakes your spells apart", "Notes": "Skeletal Dragon removes every wizard's charms and wards (guess: the Roar spell)." },
 
-    { "When": "HealthBelow", "Phase": 1, "Health": 1000, "SetHealth": 48000, "SetPhase": 2,
-      "Cast": "Afterlife - Malistaire 02", "Target": "Self", "Line": "I touch Shadow",
-      "Notes": "Haunted Malistaire: back at 48,000 health. The model stays the same (the server has no polymorph yet)." },
+    { "When": "HealthBelow", "Phase": 1, "Health": 1000, "Defeat": true, "Spawn": 1336037, "SetHealth": 48000, "SetPhase": 2,
+      "Line": "I touch Shadow",
+      "Notes": "Haunted Malistaire (1336037) takes over. Only with no enemy circle free: he comes back in his own circle at 48,000 health, phase 2." },
+
+    // Phase 2 is only for when Haunted Malistaire found no circle; his own cheats are in 1336037.json.
 
     { "When": "RoundEnd", "Phase": 2, "Round": 1, "Every": 4, "Cast": "Shadowblade Self Mob", "Target": "Self", "Line": "I call upon Shadow" },
     { "When": "RoundEnd", "Phase": 2, "Round": 2, "Every": 4, "Cast": "Shadowspear", "Target": "Self", "Line": "I call upon Shadow" },
@@ -53,7 +60,7 @@
       "Line": "I will show you the Shadow", "Notes": "Shadow Steal." },
     { "When": "RoundStart", "Phase": 2, "Round": 4, "Every": 4, "Cast": "Malistaire Dragon - Roar",
       "Line": "Its power shakes your spells apart" },
-    { "When": "RoundStart", "Phase": 2, "Chance": 20, "Cast": "Malistaire Dragon - Attack", "Target": "Self",
-      "Line": "Curse you beast", "Notes": "Skeletal Dragon now and then puts a +100% trap on his side (guess: the Attack spell)." }
+    { "When": "RoundStart", "Phase": 2, "Chance": 20, "Cast": "Malistaire Dragon - Attack", "Target": "Self", "Silent": true,
+      "Line": "Curse you beast", "Notes": "Skeletal Dragon now and then puts a +100% trap on his side (guess: the Attack spell). Silent: the spell is a Balance card and its cast should not show." }
   ]
 }

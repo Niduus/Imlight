@@ -157,6 +157,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private PvPDuelState _pvp;
     private bool _isActive;
     private bool _awaitingCombatMoves;
+    // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
+    // die, so the win would not see them; their drops come from this list.
+    private readonly List<(ulong TemplateId, ulong GlobalId)> _defeatedEnemyMinions = [];
     private TutorialDuelDirector _tutorialDirector;
     // Seconds of cinematics before a caster's cast; SummonMinion adds the animation delay to it.
     internal float CurrentActionCinematicOffsetSeconds;
@@ -623,6 +626,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         EnactActionOnSubCircles(circle => {
             // A dead minion can't be revived; remove it like an enemy.
             if (!circle.IsHumanPlayer && !circle.IsAlive) {
+                NoteDefeatedEnemyMinion(circle);
                 var removeMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEATH();
                 circle.ParticipantActor.Tell(removeMsg);
             }
@@ -787,6 +791,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Duel = CreateDuelWithDefaults();
         SubCircles = CreateDuelActorSubCircles(_sigilTemplate);
         CombatResolver = new Combat.CombatResolver(Duel, SubCircles);
+        _defeatedEnemyMinions.Clear();
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();
@@ -1035,6 +1040,20 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
     internal static void OnMinionRemoved(CombatDuelSubCircle circle)
         => circle.RemoveParticipant();
+
+    private void NoteDefeatedEnemyMinion(CombatDuelSubCircle circle) {
+        if (circle.IsSummonedMinion && circle.OccupiedTeam == CombatTeam.Monster && circle.ParticipantObject is { } minion
+            && _defeatedEnemyMinions.All(m => m.GlobalId != minion.m_globalID)) {
+            _defeatedEnemyMinions.Add((minion.m_templateID, minion.m_globalID));
+        }
+    }
+
+    /// <summary>
+    /// A boss's second form (boss cheat Spawn): the creature joins on the boss's side and fights from the next round.
+    /// </summary>
+    /// <returns>The circle it took, or null when none was free.</returns>
+    internal CombatDuelSubCircle SpawnBossForm(uint creatureTid, CombatDuelSubCircle boss)
+        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true);
 
     // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
     // Returns the circle it took, or null.
@@ -2388,31 +2407,44 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var adjectivesOfDefeatedMobs = new List<string>();
         var adjectivesPerDefeatedMob = new List<List<string>>();
         var templateIdsOfDefeatedMobs = new List<ulong>();
+        // A defeated minion on the enemy side (a .joinme boss, a boss's second form) may have left its circle already.
+        var defeatedMobs = new List<(ulong TemplateId, ulong GlobalId)>();
         EnactActionOnSubCircles(circle => {
-            if (circle.OccupiedTeam == CombatTeam.Monster) {
-                var mobTemplateId = circle.ParticipantObject.m_templateID;
-                var mobTemplate = CoreObjectFactory.GetCoreTemplate(mobTemplateId);
-                if (mobTemplate is null) {
-                    return;
-                }
+            if (circle.OccupiedTeam != CombatTeam.Monster) {
+                return;
+            }
 
-                if (mobTemplate is not GameObjectTemplate gameObjectTemplate) {
-                    return;
-                }
-
-                var mobAdjectives = gameObjectTemplate.m_adjectiveList.Select(a => (string) a).ToList();
-
-                // A creature the randomizer swapped in counts for quests as the creature it replaced, too.
-                if (Imlight.CoreLib.Game.Randomization.Randomizer.TryTakeReplacedCreature(circle.ParticipantObject.m_globalID, out var replacedTemplateId)
-                    && CoreObjectFactory.GetCoreTemplate(replacedTemplateId) is GameObjectTemplate replacedTemplate) {
-                    mobAdjectives = [.. mobAdjectives.Union(replacedTemplate.m_adjectiveList.Select(a => (string) a))];
-                }
-
-                adjectivesOfDefeatedMobs.AddRange(mobAdjectives);
-                adjectivesPerDefeatedMob.Add(mobAdjectives);
-                templateIdsOfDefeatedMobs.Add(gameObjectTemplate.m_templateID);
+            if (circle.IsSummonedMinion) {
+                NoteDefeatedEnemyMinion(circle);
+            }
+            else {
+                defeatedMobs.Add((circle.ParticipantObject.m_templateID, circle.ParticipantObject.m_globalID));
             }
         });
+        defeatedMobs.AddRange(_defeatedEnemyMinions);
+        _defeatedEnemyMinions.Clear();
+        foreach (var (mobTemplateId, mobGlobalId) in defeatedMobs) {
+            var mobTemplate = CoreObjectFactory.GetCoreTemplate(mobTemplateId);
+            if (mobTemplate is null) {
+                continue;
+            }
+
+            if (mobTemplate is not GameObjectTemplate gameObjectTemplate) {
+                continue;
+            }
+
+            var mobAdjectives = gameObjectTemplate.m_adjectiveList.Select(a => (string) a).ToList();
+
+            // A creature the randomizer swapped in counts for quests as the creature it replaced, too.
+            if (Imlight.CoreLib.Game.Randomization.Randomizer.TryTakeReplacedCreature(mobGlobalId, out var replacedTemplateId)
+                && CoreObjectFactory.GetCoreTemplate(replacedTemplateId) is GameObjectTemplate replacedTemplate) {
+                mobAdjectives = [.. mobAdjectives.Union(replacedTemplate.m_adjectiveList.Select(a => (string) a))];
+            }
+
+            adjectivesOfDefeatedMobs.AddRange(mobAdjectives);
+            adjectivesPerDefeatedMob.Add(mobAdjectives);
+            templateIdsOfDefeatedMobs.Add(gameObjectTemplate.m_templateID);
+        }
 
         var allyCharIds = new List<ulong>();
         EnactActionOnSubCircles(circle => {
