@@ -51,6 +51,7 @@ using Imcodec.IO;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Utilities;
 
 namespace Imlight.CoreLib.Shared.Resources;
@@ -311,7 +312,8 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
         obj.m_location = objInfo.m_location;
         obj.m_orientation = objInfo.m_orientation;
         obj.m_fScale = objInfo.m_fScale;
-        obj.m_globalID = RandomGen.GenerateGUID();
+        // An object added from spiraldb-extra/ZoneObjects keeps the same global id on every load.
+        obj.m_globalID = ZoneObjects.GlobalIdOf(objInfo) ?? RandomGen.GenerateGUID();
         obj.m_zoneTagID = StringHash.Compute(objInfo.m_zoneTag);
         obj.m_permID = RandomGen.GenerateHash(string.Create(CultureInfo.InvariantCulture,
             $"{obj.m_zoneTagID}{obj.m_templateID}{obj.m_location.X}"));

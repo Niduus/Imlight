@@ -178,6 +178,14 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             return false;
         }
 
+        // A pad added from spiraldb-extra/ZoneObjects names its own destination (ZoneObjects.cs).
+        if (ZoneObjects.TryGetDestination(SigilInfo, out var addedZone, out var addedLoc)) {
+            _resolved = new ResolvedSigil(addedZone, addedLoc);
+            sigil = _resolved;
+
+            return true;
+        }
+
         var tag = SigilInfo.m_zoneTag2.ToString() ?? "";
         var zoneData = ZoneDataCollection.GetZoneData(zonePath);
 
