@@ -30,6 +30,7 @@
  * Attaches automatically to the two sigil templates (ShouldAttachToEntity). Pressing X tells the
  * player's session a MSG_HATCHSIGIL (with the pad's position, sigil type and radius for the sigil
  * countdown); HatchService sends the player, or both players of a duo pad, to the pet morph zone.
+ * Two players on a duo pad go together only once both have pressed X; the first is told to wait for the other.
  *
  * NOTE:
  * Both templates are MinigameSigilInfo pads (DynamicTriggerTemplate with BasicNPCServiceBehavior and
@@ -47,7 +48,7 @@
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/20/2026
+ * Last Updated: 10/21/2026
  */
 
 using System;
@@ -102,6 +103,10 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     // (Justin, 2026-10-20: both pressed and the trips crossed).
     private readonly Dictionary<ulong, DateTime> _pairedUntil = [];
     private static readonly TimeSpan PAIRED_FOR = TimeSpan.FromSeconds(15);
+    // When each player on the pad pressed X: a pair goes only once both have, so pressing never pulls in a player who
+    // is only standing there (Justin, 2026-10-21: player 1 pressed and dragged player 2 in).
+    private readonly Dictionary<ulong, DateTime> _pressedAt = [];
+    private static readonly TimeSpan PRESS_KEPT_FOR = TimeSpan.FromSeconds(30);
     // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
     // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
     private readonly HashSet<IActorRef> _litFor = [];
@@ -157,6 +162,14 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         LogPadOnce();
         _litFor.Remove(playerActor);
+        // A player coming back into the zone has a new session; an old entry would send the pair's note to the old
+        // one (Justin, 2026-10-21: one player went in alone and the other's presses were ignored).
+        if (playerWizard is not null && _occupants.Remove(playerWizard.CharId)) {
+            _pressedAt.Remove(playerWizard.CharId);
+            Logger.Information("Hatching sigil: {0} came back into the zone; their old place on {1} is cleared.",
+                Logger.Args(playerWizard.CharId, PadName));
+        }
+
         if (PetHatching.Enabled) {
             Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
         }
@@ -175,6 +188,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         foreach (var charId in _occupants.Where(x => x.Value.Actor.Equals(playerActor)).Select(x => x.Key).ToList()) {
             _occupants.Remove(charId);
             _pairedUntil.Remove(charId);
+            _pressedAt.Remove(charId);
             Logger.Information("Hatching sigil: {0} left the zone, so is off {1}.", Logger.Args(charId, PadName));
         }
     }
@@ -189,12 +203,19 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
         var charId = playerWizard.CharId;
         var onPad = IsInHorizontalRadius(playerObj, Radius);
-        if (onPad && !_occupants.ContainsKey(charId)) {
+        if (onPad && _occupants.TryGetValue(charId, out var known)) {
+            // Keep the session and object current: both change when the player changes zones.
+            if (!known.Actor.Equals(playerActor) || known.GameObjectId != playerObj.m_globalID.Full) {
+                _occupants[charId] = known with { Actor = playerActor, GameObjectId = playerObj.m_globalID.Full };
+            }
+        }
+        else if (onPad) {
             _occupants[charId] = new Occupant(playerActor, playerObj.m_globalID.Full, Name(playerWizard), _nextOrder++);
             Logger.Information("Hatching sigil: {0} ({1}) stepped on {2} ({3}, {4} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, IsSolo ? "solo" : "duo", _occupants.Count));
         }
         else if (!onPad && _occupants.Remove(charId)) {
+            _pressedAt.Remove(charId);
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }
@@ -230,6 +251,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             .OrderBy(x => x.Value.Order)
             .Select(x => (CharId: x.Key, Occupant: x.Value))
             .FirstOrDefault();
+        _pressedAt[playerCharacter.CharId] = now;
         if (partner.Occupant is null) {
             Logger.Information("Hatching sigil: nobody else is on {0}.", Logger.Args(PadName));
             var alone = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.Alone);
@@ -239,6 +261,20 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             return;
         }
 
+        // The other player is only standing there: they are not taken along until they press X too.
+        if (!_pressedAt.TryGetValue(partner.CharId, out var pressed) || now - pressed > PRESS_KEPT_FOR) {
+            Logger.Information("Hatching sigil: {0} pressed with {1} on {2}, who has not pressed; waiting for them.",
+                Logger.Args(playerCharacter.CharId, partner.CharId, PadName));
+            var wait = HatchSigil(CHARACTER_103_PROTOCOL.HatchSigilRole.WaitingForPartner);
+            wait.PartnerCharId = partner.CharId;
+            wait.PartnerName = partner.Occupant.Name;
+            playerActor.Tell(wait);
+
+            return;
+        }
+
+        _pressedAt.Remove(playerCharacter.CharId);
+        _pressedAt.Remove(partner.CharId);
         _pairedUntil[playerCharacter.CharId] = now + PAIRED_FOR;
         _pairedUntil[partner.CharId] = now + PAIRED_FOR;
         // One circle each: whoever stepped on first keeps the first circle (both were put on the same one).

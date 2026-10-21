@@ -125,6 +125,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
+    // A lender goes back once shown the partner's egg; this is how long that may take before they go back anyway.
+    private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
     private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
     // From the in-person hatch window: the window shows "get ready to port" over a dark screen, then the trip.
     private const float HATCH_WINDOW_DELAY = 1.0f;
@@ -452,6 +454,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // The pairing is let go once the egg is made, so this is checked against the hatching room's partner.
+        if (message.Kind == CHARACTER_103_PROTOCOL.HatchPeerKind.EggMade) {
+            OnPartnerEggMade(message);
+
+            return;
+        }
+
         if (message.FromCharId != _peerCharId || _peerCharId == 0) {
             return;
         }
@@ -587,9 +596,11 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         if (_morph is not null && _myChoice == CHOICE_LEND) {
             _bred = true;
             Logger.Information("Hatching zone: {0} lent their pet to {1}; no egg on this side.", Logger.Args(wizard?.CharId, _peerCharId));
-            InformGameClient("You lent your pet. Back to the hatchery in a moment.");
+            InformGameClient("You lent your pet. Your partner's egg is being made.");
             Reset();
-            ScheduleMorphReturn("the pet was lent", MORPH_RETURN_DELAY);
+            // The lender's window waits for an egg too: it is shown the partner's (EggMade) and goes back then
+            // (Justin, 2026-10-21: the lender had no way out). This is in case that never comes.
+            ScheduleMorphReturn("the pet was lent and the partner's egg did not come", LEND_RETURN_WAIT);
 
             return;
         }
@@ -726,6 +737,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                     InformGameClient($"{message.PartnerName} wants to hatch pets with you on the sigil. Wear the pet you want "
                         + "to hatch with and accept the hatch request.");
+                    break;
+                case CHARACTER_103_PROTOCOL.HatchSigilRole.WaitingForPartner:
+                    InformGameClient($"Waiting for {message.PartnerName} to press X on the sigil too.");
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Alone:
                     // With nobody else on it, the duo sigil hatches two of the player's own pets, as live does (Justin, 2026-10-20).
@@ -1291,6 +1305,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         if (message.Success) {
             InformGameClient("Your egg is in your backpack. Back to the hatchery in a moment.");
             ScheduleMorphReturn("the egg is made", MORPH_RETURN_DELAY);
+            TellMorphPartnerEggMade(message.Egg);
 
             return;
         }
@@ -1303,6 +1318,37 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         _soloSigilGid = _morph.SigilGid;
+    }
+
+    // A partner who lent their pet sees this egg too, so their window ends as well.
+    private void TellMorphPartnerEggMade(PET_9_PROTOCOL.MSG_PETEGGMORPHED egg) {
+        if (_morph is not { IsPair: true } || !TryGetOnlinePlayer(_morph.PartnerCharId, out var partner)) {
+            return;
+        }
+
+        var made = HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.EggMade);
+        made.Egg = egg;
+        Context.ActorSelection(partner.ActorPath).Tell(made);
+    }
+
+    private void OnPartnerEggMade(CHARACTER_103_PROTOCOL.MSG_HATCHPEER message) {
+        if (_morph is null || message.FromCharId != _morph.PartnerCharId || _myChoice != CHOICE_LEND) {
+            return;
+        }
+
+        Logger.Information("Hatching zone: {0} lent their pet; showing them {1}'s egg.", Logger.Args(_morph.CharId, message.FromCharId));
+        if (message.Egg is not null) {
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETEGGMORPHED {
+                PetTemplateGID = message.Egg.PetTemplateGID,
+                PetName = message.Egg.PetName,
+                HatchTime = message.Egg.HatchTime,
+            });
+        }
+
+        InformGameClient($"{_morph.PartnerName ?? "Your partner"} got an egg with your pet. Back to the hatchery in a moment.");
+        Timers.Cancel(MORPH_RETURN_TIMER);
+        _morphLeaving = false;
+        ScheduleMorphReturn("the partner's egg is made", MORPH_RETURN_DELAY);
     }
 
     private void ArriveInMorphZone(Wizard wizard, PetMorphVisit visit) {
