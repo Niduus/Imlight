@@ -216,6 +216,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
         else if (!onPad && _occupants.Remove(charId)) {
             _pressedAt.Remove(charId);
+            // Stepping off stops the countdown, so pressing again when back on must start a new one.
+            _pairedUntil.Remove(charId);
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }
