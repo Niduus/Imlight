@@ -7,13 +7,20 @@
  * counts from the next battle, without a restart. A field left out (null) keeps what the game gives.
  *
  *   Health, Level, School    its most health, its level (crits and the level shown) and its school.
- *   Damage, Resist           percent for every school (20 = 20%). Replaces the game's value for every school.
+ *   DamageBySchool, ResistBySchool, IncomingBoostBySchool, PierceBySchool (percent, 20 = 20%) and CriticalBySchool,
+ *   BlockBySchool (rating): by school name, with "All" for the schools not named; a school with neither keeps the game's
+ *   value. Incoming boost is a weakness: the game keeps it as resist below zero, so the boss's resist to a school is
+ *   its Resist minus its IncomingBoost. Pierce takes that much off the target's shields, then off its resist (above zero).
+ *   Damage, Resist, Critical, Block   one number, as the files of v0.10.96 saved them: read as "All" of the row above.
  *   FlatDamage, FlatResist   hit points added to each hit it makes, or taken off each hit it takes, every school.
  *   Accuracy                 percent added to its spells' accuracy, every school.
- *   Critical, Block          critical and block rating, every school.
  *   OutgoingHealing, IncomingHealing   percent more healing it gives and gets.
  *   PowerPipChance           percent chance a new pip is a power pip.
  *   StartingPips, StartingPowerPips    the pips it starts the battle with.
+ *   ShadowPips, ShadowPipChance        the most shadow pips it holds (0 = none) and its percent a round to gain one.
+ *                            They win over a BossCheats file's ShadowPips and the [Battle] creature settings.
+ *   Stunable, Beguilable     false: stun spells do nothing to it, or it cannot be beguiled. The server has no
+ *                            beguile (mind control) effect yet, so Beguilable is kept for when it does (CanBeBeguiled).
  *   Deck                     the spells it casts, replacing its game deck when there is at least one. Copies: how many
  *                            times it can use the spell in one battle; 0 = it never runs out (as the game's creatures).
  */
@@ -45,6 +52,12 @@ internal static class BossOverrides {
         public string School { get; set; }
         public float? Damage { get; set; }
         public float? Resist { get; set; }
+        public Dictionary<string, float> DamageBySchool { get; set; }
+        public Dictionary<string, float> ResistBySchool { get; set; }
+        public Dictionary<string, float> IncomingBoostBySchool { get; set; }
+        public Dictionary<string, float> PierceBySchool { get; set; }
+        public Dictionary<string, float> CriticalBySchool { get; set; }
+        public Dictionary<string, float> BlockBySchool { get; set; }
         public float? FlatDamage { get; set; }
         public float? FlatResist { get; set; }
         public float? Accuracy { get; set; }
@@ -55,6 +68,10 @@ internal static class BossOverrides {
         public float? PowerPipChance { get; set; }
         public int? StartingPips { get; set; }
         public int? StartingPowerPips { get; set; }
+        public int? ShadowPips { get; set; }
+        public int? ShadowPipChance { get; set; }
+        public bool? Stunable { get; set; }
+        public bool? Beguilable { get; set; }
         public List<BossCard> Deck { get; set; }
     }
 
@@ -98,6 +115,12 @@ internal static class BossOverrides {
             if (boss is not null) {
                 boss.TemplateID = templateId;
                 boss.Deck = boss.Deck?.Where(c => c is not null && c.SpellID != 0).ToList();
+                boss.DamageBySchool = Row(boss.DamageBySchool, boss.Damage);
+                boss.ResistBySchool = Row(boss.ResistBySchool, boss.Resist);
+                boss.IncomingBoostBySchool = Row(boss.IncomingBoostBySchool, null);
+                boss.PierceBySchool = Row(boss.PierceBySchool, null);
+                boss.CriticalBySchool = Row(boss.CriticalBySchool, boss.Critical);
+                boss.BlockBySchool = Row(boss.BlockBySchool, boss.Block);
                 Logger.Information("Boss changes for {0} ({1}) read.", Logger.Args(boss.Name, templateId));
             }
         }
@@ -130,16 +153,33 @@ internal static class BossOverrides {
             copy.m_currentHitpoints = health;
         }
 
-        // A school list set to null leaves only the every-school value. The damage and resist totals pass through
-        // CombatEffectApplicator.AsFraction, which reads anything above 1.5 as percent.
-        if (boss.Damage is { } damage) {
-            copy.m_dmgBonusPercent = null;
-            copy.m_dmgBonusPercentAll = ForAsFraction(damage);
+        // Each row is laid out school by school, the every-school value set to 0. The damage, resist and pierce totals
+        // pass through CombatEffectApplicator.AsFraction, which reads anything above 1.5 as percent.
+        if (boss.DamageBySchool is not null) {
+            copy.m_dmgBonusPercent = BySchoolList(s => ForAsFraction(Pick(boss.DamageBySchool, s) ?? GameValue(stats, "Damage", s)));
+            copy.m_dmgBonusPercentAll = 0;
         }
 
-        if (boss.Resist is { } resist) {
-            copy.m_dmgReducePercent = null;
-            copy.m_dmgReducePercentAll = ForAsFraction(resist);
+        if (boss.ResistBySchool is not null || boss.IncomingBoostBySchool is not null) {
+            copy.m_dmgReducePercent = BySchoolList(s => ForAsFraction(
+                (Pick(boss.ResistBySchool, s) ?? GameValue(stats, "Resist", s))
+                - (Pick(boss.IncomingBoostBySchool, s) ?? GameValue(stats, "IncomingBoost", s))));
+            copy.m_dmgReducePercentAll = 0;
+        }
+
+        if (boss.PierceBySchool is not null) {
+            copy.m_apBonusPercent = BySchoolList(s => ForAsFraction(Pick(boss.PierceBySchool, s) ?? GameValue(stats, "Pierce", s)));
+            copy.m_apBonusPercentAll = 0;
+        }
+
+        if (boss.CriticalBySchool is not null) {
+            copy.m_criticalHitRatingBySchool = BySchoolList(s => Pick(boss.CriticalBySchool, s) ?? GameValue(stats, "Critical", s));
+            copy.m_criticalHitRatingAll = 0;
+        }
+
+        if (boss.BlockBySchool is not null) {
+            copy.m_blockRatingBySchool = BySchoolList(s => Pick(boss.BlockBySchool, s) ?? GameValue(stats, "Block", s));
+            copy.m_blockRatingAll = 0;
         }
 
         if (boss.FlatDamage is { } flatDamage) {
@@ -155,16 +195,6 @@ internal static class BossOverrides {
         if (boss.Accuracy is { } accuracy) {
             copy.m_accBonusPercent = null;
             copy.m_accBonusPercentAll = accuracy / 100f;
-        }
-
-        if (boss.Critical is { } critical) {
-            copy.m_criticalHitRatingBySchool = null;
-            copy.m_criticalHitRatingAll = critical;
-        }
-
-        if (boss.Block is { } block) {
-            copy.m_blockRatingBySchool = null;
-            copy.m_blockRatingAll = block;
         }
 
         if (boss.OutgoingHealing is { } outgoing) {
@@ -225,6 +255,62 @@ internal static class BossOverrides {
     private static float ForAsFraction(float percent)
         => Math.Abs(percent) > 150f ? percent : percent / 100f;
 
+    /// <summary>The rows of the Bosses tab's school grid, in order, as creatures.csv and the boss files name them.</summary>
+    internal static readonly string[] ROWS = ["Damage", "Resist", "IncomingBoost", "Pierce", "Critical", "Block"];
+
+    /// <summary>The school columns of the Bosses tab, in order.</summary>
+    internal static readonly string[] SCHOOLS = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow"];
+
+    private const string ALL = "All";
+
+    // A row read case-blind, with a v0.10.96 single value as its "All"; null when the row changes nothing.
+    private static Dictionary<string, float> Row(Dictionary<string, float> bySchool, float? all) {
+        var row = new Dictionary<string, float>(bySchool ?? [], StringComparer.OrdinalIgnoreCase);
+        if (all is { } value && !row.ContainsKey(ALL)) {
+            row[ALL] = value;
+        }
+
+        return row.Count > 0 ? row : null;
+    }
+
+    private static float? Pick(Dictionary<string, float> row, string school)
+        => row is null ? null : row.TryGetValue(school, out var value) ? value : row.TryGetValue(ALL, out var all) ? all : null;
+
+    // A list with a value for every school the game defines (one longer than the highest index, as GetStatBySchool reads).
+    private static List<float> BySchoolList(Func<string, float> value) {
+        var list = Enumerable.Repeat(0f, (int) MagicSchools.GetMaxMagicSchoolIndex() + 1).ToList();
+        foreach (var school in MagicSchools.All) {
+            list[school.m_schoolIndex] = value(school.m_schoolName);
+        }
+
+        return list;
+    }
+
+    /// <summary>
+    /// What the game gives a creature in a row of the school grid, in the tab's units: percent for damage, resist,
+    /// incoming boost and pierce, rating for critical and block. Resist below zero shows as incoming boost.
+    /// </summary>
+    internal static float GameValue(ServerWizGameStats stats, string row, string school) {
+        float Fraction(List<float> list, float all) => CombatEffectApplicator.AsFraction(BySchool(list, school) + all) * 100f;
+
+        return row switch {
+            "Damage" => Fraction(stats.m_dmgBonusPercent, stats.m_dmgBonusPercentAll),
+            "Resist" => Math.Max(0f, Fraction(stats.m_dmgReducePercent, stats.m_dmgReducePercentAll)),
+            "IncomingBoost" => Math.Max(0f, -Fraction(stats.m_dmgReducePercent, stats.m_dmgReducePercentAll)),
+            "Pierce" => Fraction(stats.m_apBonusPercent, stats.m_apBonusPercentAll),
+            "Critical" => BySchool(stats.m_criticalHitRatingBySchool, school) + stats.m_criticalHitRatingAll,
+            "Block" => BySchool(stats.m_blockRatingBySchool, school) + stats.m_blockRatingAll,
+            _ => 0f,
+        };
+    }
+
+    /// <summary>
+    /// The school grid in one creatures.csv field: "Damage=0 0 25 ...;Resist=..." with a number per school of SCHOOLS.
+    /// </summary>
+    internal static string GameGrid(ServerWizGameStats stats)
+        => string.Join(';', ROWS.Select(row => row + "=" + string.Join(' ', SCHOOLS.Select(school
+            => MathF.Round(GameValue(stats, row, school), 1).ToString(System.Globalization.CultureInfo.InvariantCulture)))));
+
     // ---------------------------------------------------------------------
     // The game's own values, for the app (IdCatalog writes them to creatures.csv)
     // ---------------------------------------------------------------------
@@ -274,6 +360,7 @@ internal static class BossOverrides {
 
         Add("Damage", s => CombatEffectApplicator.AsFraction(BySchool(stats.m_dmgBonusPercent, s) + stats.m_dmgBonusPercentAll), Percent);
         Add("Resist", s => CombatEffectApplicator.AsFraction(BySchool(stats.m_dmgReducePercent, s) + stats.m_dmgReducePercentAll), Percent);
+        Add("Pierce", s => CombatEffectApplicator.AsFraction(BySchool(stats.m_apBonusPercent, s) + stats.m_apBonusPercentAll), Percent);
         Add("Flat damage", s => BySchool(stats.m_dmgBonusFlat, s) + stats.m_dmgBonusFlatAll, Number);
         Add("Flat resist", s => BySchool(stats.m_dmgReduceFlat, s) + stats.m_dmgReduceFlatAll, Number);
         Add("Accuracy", s => BySchool(stats.m_accBonusPercent, s) + stats.m_accBonusPercentAll, Percent);

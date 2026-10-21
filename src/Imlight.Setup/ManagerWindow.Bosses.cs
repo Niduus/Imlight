@@ -38,6 +38,8 @@ namespace Imlight.Setup;
 internal sealed partial class ManagerWindow {
 
     private const string GAME_SCHOOL = "The game's school";
+    private const string GAME_VALUE = "The game's value";
+    private static readonly string[] TRI_STATE = [GAME_VALUE, "Yes", "No"];
 
     private readonly TextBox _bossSearch = new() { Watermark = "Search a boss by name or ID, such as Malistaire or Rattlebones" };
     private readonly CheckBox _bossesOnly = new() { Content = "Bosses only", IsChecked = true, Margin = new Thickness(10, 0, 0, 0) };
@@ -53,6 +55,9 @@ internal sealed partial class ManagerWindow {
     private readonly TextBox _bossLevel = new() { Width = 140 };
     private readonly ComboBox _bossSchool = new() { Width = 180 };
     private readonly Dictionary<string, TextBox> _bossStatBoxes = [];
+    private readonly Dictionary<(string Row, string School), TextBox> _bossGridBoxes = [];
+    private readonly ComboBox _bossStunable = new() { Width = 180, ItemsSource = TRI_STATE };
+    private readonly ComboBox _bossBeguilable = new() { Width = 180, ItemsSource = TRI_STATE };
     private readonly StackPanel _bossDeckRows = new() { Spacing = 2 };
     private readonly TextBlock _bossDeckNote = Sub("");
     private readonly TextBox _bossSpellSearch = new() { Watermark = "Search a spell to add, such as Fire Cat, Meteor or 2062265892" };
@@ -105,6 +110,10 @@ internal sealed partial class ManagerWindow {
             stats.Children.Add(StatRow(label, box, help));
         }
 
+        stats.Children.Add(StatRow("Can be stunned", _bossStunable, "No: stun spells do nothing to it."));
+        stats.Children.Add(StatRow("Can be beguiled", _bossBeguilable,
+            "No: a beguile spell cannot take it over. The server has no beguile spells yet, so this counts once it does."));
+
         _bossEditor.Children.Add(Card(new StackPanel {
             Spacing = 4,
             Children = {
@@ -116,9 +125,16 @@ internal sealed partial class ManagerWindow {
         }));
         _bossEditor.Children.Add(Card(new StackPanel {
             Children = {
-                Heading("Stats"),
-                Sub("Leave a box empty to keep what the game gives. A number in a percent or rating box replaces the " +
-                    "game's value for every school, so a boss that resists only Fire resists every school the same."),
+                Heading("Stats by school"),
+                Sub("Leave a box empty to keep what the game gives; the grey number in it is what the boss fights with then. " +
+                    "A number under All counts for every school you leave empty in that row."),
+                WithMargin(SchoolGrid(), new Thickness(0, 10, 0, 0)),
+            },
+        }));
+        _bossEditor.Children.Add(Card(new StackPanel {
+            Children = {
+                Heading("Other stats"),
+                Sub("Leave a box empty to keep what the game gives."),
                 WithMargin(stats, new Thickness(0, 10, 0, 0)),
             },
         }));
@@ -171,6 +187,63 @@ internal sealed partial class ManagerWindow {
                 },
             }),
             _bossEditor);
+    }
+
+    /// <summary>
+    /// The school grid: a row per stat (BossChanges.GRID_ROWS), a column for All and each school, and the help of each
+    /// row under it.
+    /// </summary>
+    private Control SchoolGrid() {
+        var columns = new[] { BossChanges.ALL }.Concat(BossChanges.SCHOOLS).ToList();
+        var grid = new Grid {
+            ColumnDefinitions = new ColumnDefinitions("150," + string.Join(',', columns.Select(_ => "*"))),
+            RowDefinitions = new RowDefinitions(string.Join(',', Enumerable.Repeat("Auto", BossChanges.GRID_ROWS.Length + 1))),
+        };
+        void Put(Control control, int row, int column) {
+            Grid.SetRow(control, row);
+            Grid.SetColumn(control, column);
+            grid.Children.Add(control);
+        }
+
+        for (var c = 0; c < columns.Count; c++) {
+            var header = new TextBlock {
+                Text = columns[c], FontWeight = FontWeight.Medium, HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 4),
+            };
+            if (c > 0) {
+                header.Foreground = MUTED;
+            }
+
+            Put(header, 0, c + 1);
+        }
+
+        var help = new StackPanel { Spacing = 2, Margin = new Thickness(0, 10, 0, 0) };
+        for (var r = 0; r < BossChanges.GRID_ROWS.Length; r++) {
+            var (key, label, text) = BossChanges.GRID_ROWS[r];
+            Put(new TextBlock { Text = label, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center }, r + 1, 0);
+            for (var c = 0; c < columns.Count; c++) {
+                var box = new TextBox {
+                    MinWidth = 0, Margin = new Thickness(2), Padding = new Thickness(4, 4), HorizontalContentAlignment = HorizontalAlignment.Center,
+                };
+                ToolTip.SetTip(box, $"{label}, {(c == 0 ? "every school left empty" : columns[c])}");
+
+                // The game's value (the grey number) shows dimmer than a number typed in.
+                foreach (var state in new[] { "", "PointerOver", "Focused" }) {
+                    box.Resources[$"TextControlPlaceholderForeground{state}"] = MUTED;
+                }
+
+                _bossGridBoxes[(key, columns[c])] = box;
+                Put(box, r + 1, c + 1);
+            }
+
+            // A number under All is what the empty boxes of the row get, so they show it instead of the game's value.
+            var rowKey = key;
+            _bossGridBoxes[(key, BossChanges.ALL)].TextChanged += (_, _) => ShowGridRowValues(rowKey);
+
+            help.Children.Add(Sub($"{label}: {text}"));
+        }
+
+        return new StackPanel { Children = { grid, help } };
     }
 
     private static Control StatRow(string label, Control box, string help) => new DockPanel {
@@ -290,6 +363,20 @@ internal sealed partial class ManagerWindow {
             box.Text = changes is not null && changes.Stats.TryGetValue(key, out var value) ? value.ToString(CultureInfo.InvariantCulture) : "";
         }
 
+        var cheatShadowPips = CheatShadowPips(boss.Id);
+        _bossStatBoxes["ShadowPips"].Watermark = cheatShadowPips is { } most ? $"Game: {most}" : "Game's value";
+        foreach (var ((row, column), box) in _bossGridBoxes) {
+            box.Text = changes?.Grid.GetValueOrDefault(row)?.TryGetValue(column, out var value) == true
+                ? value.ToString(CultureInfo.InvariantCulture) : "";
+        }
+
+        foreach (var (row, _, _) in BossChanges.GRID_ROWS) {
+            ShowGridRowValues(row);
+        }
+
+        _bossStunable.SelectedItem = Tri(changes?.Stunable);
+        _bossBeguilable.SelectedItem = Tri(changes?.Beguilable);
+
         _bossDeck = changes?.Deck ?? _bossCatalog.GameDeck(boss);
         _bossDeckChanged = changes?.Deck is not null;
         _bossSpellSearch.Text = "";
@@ -389,11 +476,26 @@ internal sealed partial class ManagerWindow {
         };
         foreach (var (key, label, _) in BossChanges.STATS) {
             var box = _bossStatBoxes[key];
-            float? value = key.StartsWith("Starting") ? WholeNumber(box, label, 0, 7) : Number(box, label);
+            float? value = key switch {
+                "StartingPips" or "StartingPowerPips" => WholeNumber(box, label, 0, 7),
+                "ShadowPips" => WholeNumber(box, label, 0, 50),
+                "ShadowPipChance" => WholeNumber(box, label, 0, 100),
+                _ => Number(box, label),
+            };
             if (value is { } v) {
                 changes.Stats[key] = v;
             }
         }
+
+        foreach (var ((row, column), box) in _bossGridBoxes) {
+            var label = BossChanges.GRID_ROWS.First(r => r.Key == row).Label;
+            if (Number(box, $"{label} for {column}") is { } value) {
+                (changes.Grid.TryGetValue(row, out var values) ? values : changes.Grid[row] = [])[column] = value;
+            }
+        }
+
+        changes.Stunable = FromTri(_bossStunable);
+        changes.Beguilable = FromTri(_bossBeguilable);
 
         // The game's deck as it is needs no file, and keeps randomizer mode's spell swaps.
         var gameDeck = _bossCatalog.GameDeck(boss);
@@ -435,6 +537,57 @@ internal sealed partial class ManagerWindow {
         RenderBossResults();
         Say($"{boss.Name} fights as in the game again from its next battle.");
     }
+
+    // The grey numbers of a grid row: the row's All when one is typed, else the game's value of each school.
+    private void ShowGridRowValues(string row) {
+        var all = (_bossGridBoxes[(row, BossChanges.ALL)].Text ?? "").Trim().TrimEnd('%');
+        var hasAll = float.TryParse(all.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out _);
+        foreach (var column in new[] { BossChanges.ALL }.Concat(BossChanges.SCHOOLS)) {
+            _bossGridBoxes[(row, column)].Watermark = _boss is null ? ""
+                : hasAll && column != BossChanges.ALL ? all : GameGridValue(_boss, row, column);
+        }
+    }
+
+    // The game's value of a grid cell, shown grey in the empty box: the school's number, or under All the number every
+    // school shares (empty when they differ).
+    private static string GameGridValue(BossInfo boss, string row, string school) {
+        if (!boss.Grid.TryGetValue(row, out var values) || values.Length < BossChanges.SCHOOLS.Length) {
+            return "";
+        }
+
+        if (school == BossChanges.ALL) {
+            return values.Distinct().Count() == 1 ? Shown(values[0]) : "";
+        }
+
+        return Shown(values[Array.IndexOf(BossChanges.SCHOOLS, school)]);
+    }
+
+    private static string Shown(float value) => MathF.Round(value, 1).ToString(CultureInfo.InvariantCulture);
+
+    // The ShadowPips of the boss's cheat file (spiraldb-extra/BossCheats), which the Bosses tab's value wins over.
+    private int? CheatShadowPips(string id) {
+        try {
+            var file = Path.Combine(Path.GetDirectoryName(_manager.BossChangesFolder) ?? "", "BossCheats", $"{id}.json");
+            if (File.Exists(file) && System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(file),
+                    documentOptions: new System.Text.Json.JsonDocumentOptions {
+                        AllowTrailingCommas = true, CommentHandling = System.Text.Json.JsonCommentHandling.Skip,
+                    }) is System.Text.Json.Nodes.JsonObject json) {
+                var node = json.FirstOrDefault(p => p.Key.Equals("ShadowPips", StringComparison.OrdinalIgnoreCase)).Value;
+                if (node is System.Text.Json.Nodes.JsonValue value && value.TryGetValue<int>(out var most) && most > 0) {
+                    return most;
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+            // A cheat file that cannot be read shows no game value.
+        }
+
+        return null;
+    }
+
+    private static string Tri(bool? value) => value switch { true => "Yes", false => "No", null => GAME_VALUE };
+
+    private static bool? FromTri(ComboBox box) => (box.SelectedItem as string) switch { "Yes" => true, "No" => false, _ => null };
 
     private static int? WholeNumber(TextBox box, string label, int min, int max) {
         var text = (box.Text ?? "").Trim().Replace(",", "");

@@ -30,7 +30,10 @@ namespace Imlight.Setup;
 /// A creature as the game makes it, from the server's creatures.csv.
 /// </summary>
 /// <param name="Stats">Its other battle stats in words, from its gear and the game, or empty.</param>
-internal sealed record BossInfo(string Id, string Name, string School, int Level, int Health, bool IsBoss, List<uint> Spells, string Stats) {
+/// <param name="Grid">The game's value of each school grid row (BossChanges.GRID_ROWS), one per school of
+/// BossChanges.SCHOOLS; empty when the server's list is from before the grid.</param>
+internal sealed record BossInfo(string Id, string Name, string School, int Level, int Health, bool IsBoss, List<uint> Spells, string Stats,
+                                Dictionary<string, float[]> Grid) {
 
     internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
 
@@ -59,19 +62,44 @@ internal sealed class BossChanges {
 
     /// <summary>The boxes of the Bosses tab, in order: the file's key, the label and what it means.</summary>
     internal static readonly (string Key, string Label, string Help)[] STATS = [
-        ("Damage", "Damage %", "Extra damage for every school. 20 means 20% more."),
-        ("Resist", "Resist %", "Less damage taken from every school. 30 means 30% less."),
         ("FlatDamage", "Flat damage", "Added to every hit it makes."),
         ("FlatResist", "Flat resist", "Taken off every hit it takes."),
         ("Accuracy", "Accuracy %", "Added to its spells' chance to work."),
-        ("Critical", "Critical rating", "Higher means more critical hits."),
-        ("Block", "Block rating", "Higher means it blocks more critical hits."),
         ("OutgoingHealing", "Outgoing healing %", "More healing from its heal spells."),
         ("IncomingHealing", "Incoming healing %", "More healing when it is healed."),
         ("PowerPipChance", "Power pip chance %", "Chance a new pip is a power pip."),
         ("StartingPips", "Starting pips", "Pips it has when the battle starts (0 to 7)."),
-        ("StartingPowerPips", "Starting power pips", "Power pips it has when the battle starts."),
+        ("StartingPowerPips", "Starting power pips", "Power pips it has when the battle starts (0 to 7)."),
+        ("ShadowPips", "Most shadow pips", "Shadow pips it can hold. 0 means none. Wins over its boss cheat file."),
+        ("ShadowPipChance", "Shadow pip chance %", "Chance each round to gain a shadow pip, until it holds the most."),
     ];
+
+    /// <summary>The boxes that take whole numbers only.</summary>
+    internal static bool IsWhole(string key) => key is "StartingPips" or "StartingPowerPips" or "ShadowPips" or "ShadowPipChance";
+
+    /// <summary>
+    /// The rows of the school grid, in order: the file's key (saved as &lt;Key&gt;BySchool), the label and what it means.
+    /// </summary>
+    internal static readonly (string Key, string Label, string Help)[] GRID_ROWS = [
+        ("Damage", "Damage %", "Extra damage it does with spells of that school. 25 means 25% more."),
+        ("Resist", "Resist %", "Less damage it takes from that school. 60 means 60% less."),
+        ("IncomingBoost", "Incoming boost %", "A weakness: more damage it takes from that school. 40 means 40% more."),
+        ("Pierce", "Pierce %", "Goes through its target's shields, then its resist, by up to this much."),
+        ("Critical", "Critical rating", "Higher means more critical hits with that school."),
+        ("Block", "Block rating", "Higher means it blocks more critical hits from that school."),
+    ];
+
+    internal const string ALL = "All";
+
+    /// <summary>The school columns of the grid, after All, as the server names them.</summary>
+    internal static readonly string[] SCHOOLS = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow"];
+
+    /// <summary>Each grid row's numbers: by school name, or All for the schools left empty.</summary>
+    internal Dictionary<string, Dictionary<string, float>> Grid { get; } = [];
+
+    /// <summary>Null keeps the game's value.</summary>
+    internal bool? Stunable { get; set; }
+    internal bool? Beguilable { get; set; }
 
     internal string Name { get; set; } = "";
     internal int? Health { get; set; }
@@ -105,6 +133,29 @@ internal sealed class BossChanges {
                 changes.Stats[key] = (float) value;
             }
         }
+
+        foreach (var (key, _, _) in GRID_ROWS) {
+            var row = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+            if (Find(json, key + "BySchool") is JsonObject bySchool) {
+                foreach (var (column, node) in bySchool) {
+                    if (node is JsonValue value && value.TryGetValue<double>(out var number)) {
+                        row[column] = (float) number;
+                    }
+                }
+            }
+
+            // A v0.10.96 file kept one number for Damage, Resist, Critical and Block: it counts for every school.
+            if (!row.ContainsKey(ALL) && Number(json, key) is { } single) {
+                row[ALL] = (float) single;
+            }
+
+            if (row.Count > 0) {
+                changes.Grid[key] = row;
+            }
+        }
+
+        changes.Stunable = Flag(json, "Stunable");
+        changes.Beguilable = Flag(json, "Beguilable");
 
         if (Find(json, "Deck") is JsonArray deck) {
             changes.Deck = [];
@@ -150,8 +201,25 @@ internal sealed class BossChanges {
 
         foreach (var (key, _, _) in STATS) {
             if (Stats.TryGetValue(key, out var value)) {
-                json[key] = value;
+                json[key] = IsWhole(key) ? (int) value : value;
             }
+        }
+
+        foreach (var (key, row) in Grid.Where(g => g.Value.Count > 0)) {
+            var bySchool = new JsonObject();
+            foreach (var column in new[] { ALL }.Concat(SCHOOLS).Where(row.ContainsKey)) {
+                bySchool[column] = row[column];
+            }
+
+            json[key + "BySchool"] = bySchool;
+        }
+
+        if (Stunable is { } stunable) {
+            json["Stunable"] = stunable;
+        }
+
+        if (Beguilable is { } beguilable) {
+            json["Beguilable"] = beguilable;
         }
 
         if (Deck is not null) {
@@ -168,10 +236,14 @@ internal sealed class BossChanges {
     }
 
     /// <summary>True when nothing is changed, so there is no need for a file.</summary>
-    internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null;
+    internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null
+                             && Grid.Values.All(r => r.Count == 0) && Stunable is null && Beguilable is null;
 
     private static JsonNode? Find(JsonObject json, string key)
         => json.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
+
+    private static bool? Flag(JsonObject json, string key)
+        => Find(json, key) is JsonValue value && value.TryGetValue<bool>(out var flag) ? flag : null;
 
     private static string? Text(JsonObject json, string key)
         => Find(json, key) is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
@@ -230,7 +302,7 @@ internal sealed class BossCatalog {
 
             creatures.Add(new BossInfo(f[0], f[1], f[2], Int(f[3]), Int(f[4]), f[5] == "1",
                 [.. f[6].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => uint.TryParse(s, out var id) ? id : 0).Where(id => id != 0)],
-                f[7]));
+                f[7], f.Count > 8 ? ParseGrid(f[8]) : []));
         }
 
         return new BossCatalog(creatures, spells, null);
@@ -277,6 +349,18 @@ internal sealed class BossCatalog {
         => [.. boss.Spells.Select(id => Spells.GetValueOrDefault(id) is { } s
             ? new BossCard { SpellId = id, Name = s.Name, School = s.School }
             : new BossCard { SpellId = id, Name = $"Spell {id}" })];
+
+    // "Damage=0 0 25 ...;Resist=..." as the server's BossOverrides.GameGrid writes it.
+    private static Dictionary<string, float[]> ParseGrid(string text) {
+        var grid = new Dictionary<string, float[]>();
+        foreach (var part in text.Split(';', StringSplitOptions.RemoveEmptyEntries)) {
+            var (key, values) = (part.Split('=')[0], part.Contains('=') ? part[(part.IndexOf('=') + 1)..] : "");
+            grid[key] = [.. values.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => float.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out var n) ? n : 0f)];
+        }
+
+        return grid;
+    }
 
     private static int Int(string text) => int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : 0;
 

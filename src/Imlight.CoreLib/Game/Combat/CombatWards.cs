@@ -85,6 +85,16 @@ internal static class CombatWards {
     /// <param name="initialDamage">The initial damage amount.</param>
     /// <returns>The modified incoming damage.</returns>
     internal static int GetIncomingDamageFromWards(List<SpellEffect> wards, int initialDamage = 0) {
+        var noPierce = 0f;
+
+        return GetIncomingDamageFromWards(wards, initialDamage, ref noPierce);
+    }
+
+    /// <summary>
+    /// Calculates the incoming damage from the given wards, with the caster's pierce (a fraction) taken off each shield
+    /// in turn. What a shield does not use goes on to the next, and what is left (in pierce) to the target's resist.
+    /// </summary>
+    internal static int GetIncomingDamageFromWards(List<SpellEffect> wards, int initialDamage, ref float pierce) {
         foreach (var ward in wards) {
             if (ward.m_effectType == kSpellEffects.kAbsorbDamage) {
                 // Absorbs will absorb the flat damage, up to the effect param.
@@ -103,6 +113,12 @@ internal static class CombatWards {
             }
 
             var damageChange = ward.m_effectParam / 100.0f;
+            if (damageChange < 0 && pierce > 0) {
+                var pierced = Math.Min(pierce, -damageChange);
+                damageChange += pierced;
+                pierce -= pierced;
+            }
+
             initialDamage = (int) Math.Floor(initialDamage * (1 + damageChange));
         }
 
