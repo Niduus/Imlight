@@ -1197,6 +1197,17 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Stops the session's sigil countdown without telling anyone it failed: a player counting down alone on a duo
+    /// hatchery pad is being paired with the player who just joined them.
+    /// </summary>
+    public sealed class MSG_CANCELSIGILENTRY : IServerMessage {
+
+        public byte MessageOrder { get; } = 91;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
     /// Sent by <see cref="World.GameWorld"/> to an <see cref="World.InstanceContainer"/>: drop the loaded
     /// copy of <see cref="ZoneName"/> (stop the zone actor) so the next transfer builds a fresh instance.
     /// </summary>

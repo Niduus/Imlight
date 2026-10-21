@@ -400,7 +400,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         // The small hatchery pads are not sigils the game counts the player as standing on, so it sends this the
         // moment the countdown starts (Justin, 2026-10-20); the distance check at the end of the countdown stands in.
-        if (_activeSigilEntry.NoSnap) {
+        // The hatchery pads too: with two players on a duo pad the game sent this a few seconds into the countdown
+        // although both stood still (Justin, 2026-10-20). The distance check at the end of the countdown stands in.
+        if (_activeSigilEntry.NoSnap || _activeSigilEntry.OnFailed is CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED) {
             Logger.Information("{0}: the game says the player left the pad; ignored for this pad.", Logger.Args(SigilLogName(_activeSigilEntry)));
 
             return;
@@ -1284,7 +1286,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         ReceiveZoneBroadcast(broadcastWrapper);
     }
 
-    private void CancelSigilCountdown() {
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY))]
+    private void ReceiveCancelSigilEntry(ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY message)
+        => CancelSigilCountdown(silent: true);
+
+    private void CancelSigilCountdown(bool silent = false) {
         var entry = _activeSigilEntry;
         _activeSigilEntry = null;
         Timers.Cancel(SIGIL_ENTER_TIMER_KEY);
@@ -1297,6 +1303,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Give the player their mount back.
         SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
+
+        if (silent) {
+            Logger.Information("{0} countdown cancelled to start another.", Logger.Args(SigilLogName(entry)));
+
+            return;
+        }
 
         Logger.Information("{0} countdown cancelled (stepped off pad)", Logger.Args(SigilLogName(entry)));
         TellSigilFailed(entry, CHARACTER_103_PROTOCOL.HatchTripFailure.Cancelled, "stepped off the pad");

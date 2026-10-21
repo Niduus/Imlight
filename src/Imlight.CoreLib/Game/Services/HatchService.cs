@@ -643,6 +643,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Requester:
+                    DropAloneTrip();
                     EndSolo();
                     if (TryStartTrip(message, pair: true)) {
                         break;
@@ -653,6 +654,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                     StartInPerson(Wizard.GetGameObjectId(message.PartnerCharId));
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Partner:
+                    DropAloneTrip();
                     EndSolo();
                     if (TryStartTrip(message, pair: true)) {
                         break;
@@ -673,6 +675,24 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         catch (Exception ex) {
             Logger.Error("Hatching sigil: {0} failed. {1}", Logger.Args(message.Role, ex));
         }
+    }
+
+    /// <summary>
+    /// A player counting down alone on a duo pad is paired when someone joins them: the lone countdown stops (without
+    /// a failure, which would end the pair's trip) so the pair's starts (Justin, 2026-10-20: one went alone, the other
+    /// stayed behind).
+    /// </summary>
+    private void DropAloneTrip() {
+        var trip = _pendingTrip;
+        if (trip is null || trip.IsPair || _morph is not null) {
+            return;
+        }
+
+        Logger.Information("Hatching sigil: {0} was counting down alone on {1}; stopping that to hatch as a pair.",
+            Logger.Args(trip.CharId, trip.PadName));
+        _pendingTrip = null;
+        PetMorphZone.End(trip.CharId);
+        TellOtherServices(new ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY());
     }
 
     /// <summary>
@@ -767,7 +787,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         Logger.Information("Hatching sigil: {0} counts down on {1} to {2} (instance owner {3}, {4}, face {5}).",
             Logger.Args(wizard.CharId, message.SigilName, PetMorphZone.ZONE, owner,
-                pair ? $"with {message.PartnerName} ({message.PartnerCharId})" : "alone", isPartner ? 1 : 0));
+                pair ? $"with {message.PartnerName} ({message.PartnerCharId})" : "alone", message.FaceSlot));
         TellOtherServices(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
             SigilLoc = message.SigilLoc,
             SigilGID = message.SigilGID,
@@ -778,7 +798,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             DestinationLoc = PetMorphZone.LOCATION,
             InstanceOwnerCharId = owner,
             KeepInstance = isPartner,
-            FaceSlot = isPartner ? 1 : 0,
+            FaceSlot = message.FaceSlot,
             // Sliding onto the circle took players off the small solo pads (Justin, 2026-10-20: "drags you").
             NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,

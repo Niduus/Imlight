@@ -101,6 +101,29 @@ internal static class PetMorphZone {
     /// </summary>
     /// <param name="why">Why not, when this returns <c>false</c>.</param>
     internal static bool IsAvailable(out string why) {
+        // Once found, the zone stays there. Two players pressing a duo pad together checked the archive at the same
+        // moment and one check failed (Justin, 2026-10-20), so it is checked one at a time and only until it works.
+        if (s_available) {
+            why = null;
+
+            return true;
+        }
+
+        lock (s_availableLock) {
+            return CheckAvailable(out why);
+        }
+    }
+
+    private static readonly object s_availableLock = new();
+    private static volatile bool s_available;
+
+    private static bool CheckAvailable(out string why) {
+        if (s_available) {
+            why = null;
+
+            return true;
+        }
+
         try {
             if (!AccessPassManager.Zones.Any(zone => string.Equals(zone, ZONE, StringComparison.OrdinalIgnoreCase))) {
                 why = $"{ZONE} is not in the game's zone list (AccessPass.xml)";
@@ -120,6 +143,7 @@ internal static class PetMorphZone {
             return false;
         }
 
+        s_available = true;
         why = null;
 
         return true;
