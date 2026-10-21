@@ -213,8 +213,21 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
+        var wizard = message.PlayerActor
+            .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD())
+            .Result
+            .Wizard;
+        foreach (var trainer in Entity.GetComponentsOfType<InteractTrainerComponent>()) {
+            trainer.ResetSpellOptions(wizard);
+        }
+
         SendLeaveServiceRange(message.PlayerActor);
         SendActorServiceOptions(message.PlayerActor);
+    }
+
+    internal void ShowServiceOptions(IActorRef playerActor, int reinteract = 0) {
+        SendLeaveServiceRange(playerActor);
+        SendActorServiceOptions(playerActor, reinteract);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL))]

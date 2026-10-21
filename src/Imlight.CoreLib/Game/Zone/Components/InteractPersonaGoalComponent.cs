@@ -45,6 +45,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
@@ -101,13 +102,25 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         }
 
         var npcName = goTemplate.m_objectName;
-
-        // Check if this NPC is referenced as a persona goal target in any quest.
-        return QuestTemplateCollection
+        var questTemplates = QuestTemplateCollection
             .GetAllQuests()
             .Where(x => x is not null)
-            .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
-            .Any(goal => goal.m_personaName == npcName);
+            .ToArray();
+
+        // Check if this NPC is referenced as a persona goal target in any quest.
+        if (questTemplates.SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
+                .Any(goal => PersonaNamesMayMatch(goal.m_personaName, npcName))) {
+            return true;
+        }
+
+        // Some Ravenwood zone copies use a localized NPC template name rather than the quest's
+        // suffixed object name. Attach the service to Lincoln copies so OnStart can resolve the
+        // alias with the actual zone context.
+        var englishName = Locale.GetEnglishName(goTemplate.m_displayName.ToString());
+        return englishName.Contains("Lincoln", StringComparison.OrdinalIgnoreCase)
+            && questTemplates.SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
+                .Any(goal => IsRegistrarTemplate(goal.m_personaName)
+                    && goal.m_destinationZone.ToString().Contains("Ravenwood", StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
@@ -125,6 +138,12 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             yield break;
         }
 
+        // While the player is in the trainer's spell picker, do not keep the quest choice mixed into
+        // the spell list. The goal is offered again when the NPC menu is closed.
+        if (InteractTrainerComponent.IsShowingSpellOptions(Entity, wizard)) {
+            yield break;
+        }
+
         var state = GetOrUpdatePlayerState(wizard);
 
         // The memento wizbang tick reads this property; refresh it from live state.
@@ -138,24 +157,22 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             .FirstOrDefault(q => q.ID == state.ActiveQuestId)?.QuestName;
         var qTemplate = questName is null ? null : QuestTemplateCollection.GetQuestByName(questName);
 
-        if (qTemplate == null) {
-            yield break;
-        }
-
         yield return new GoalEntry {
             m_questID = state.ActiveQuestId,
             m_goalID = state.ActiveGoalId,
             m_goalTitle = state.ActiveGoal.m_goalTitle,
-            m_questTitle = qTemplate.m_questTitle,
-            m_displayKey = qTemplate.m_questTitle,
+            m_questTitle = qTemplate?.m_questTitle ?? questName,
+            m_displayKey = qTemplate?.m_questTitle ?? state.ActiveGoal.m_goalTitle,
             m_iconKey = COMPLETE_NPC_ICON,
             m_serviceName = ServiceName,
         };
     }
 
     public override void OnStart() {
+        var npcDisplayName = string.Empty;
         if (Entity.Template is GameObjectTemplate goTemplate) {
             _npcName = goTemplate.m_objectName;
+            npcDisplayName = Locale.GetEnglishName(goTemplate.m_displayName.ToString());
         }
 
         // Cache all persona goals that reference this NPC.
@@ -166,7 +183,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
 
         foreach (var questTemplate in questTemplates) {
             foreach (var goal in questTemplate.m_goals.OfType<PersonaGoalTemplate>()) {
-                if (goal.m_personaName != _npcName) {
+                if (!PersonaNamesMatch(goal.m_personaName, _npcName, npcDisplayName, Entity.Zone?.ZoneData?.m_zoneName)) {
                     continue;
                 }
 
@@ -179,6 +196,24 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             }
         }
     }
+
+    private static bool PersonaNamesMayMatch(string personaName, string npcName)
+        => string.Equals(personaName, npcName, StringComparison.Ordinal)
+            || IsRegistrarTemplate(personaName) && IsRegistrarTemplate(npcName);
+
+    /// <summary>
+    /// The Commons and Ravenwood registrars have separate templates. The Ravenwood quest targets its
+    /// suffixed template, but some Ravenwood zone data uses the shared template name for the spawned copy.
+    /// Restrict that alias to Ravenwood so the Commons registrar cannot complete the Ravenwood goal.
+    /// </summary>
+    private static bool PersonaNamesMatch(string personaName, string npcName, string npcDisplayName, string zoneName)
+        => string.Equals(personaName, npcName, StringComparison.Ordinal)
+            || IsRegistrarTemplate(personaName)
+                && (IsRegistrarTemplate(npcName) || npcDisplayName.Contains("Lincoln", StringComparison.OrdinalIgnoreCase))
+                && zoneName?.Contains("Ravenwood", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool IsRegistrarTemplate(string name)
+        => name is "WC-HUB-NPC08" or "WC-HUB-NPC08-B" or "WC-HUB-NPC08-B_Persona";
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (_personaGoalsByQuest.Count <= 0) {

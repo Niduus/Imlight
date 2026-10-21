@@ -60,10 +60,11 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public WizBangs WizBang       => WizBangs.Training;
     public string StateName       => "Shop";
     public string InteractWizBang => "Registrar";
-    public string DisplayKey      => "GUI_ShopOptionEquipment";
+    public string DisplayKey      => "GUI_00000979"; // Spell List
 
     public List<NPCSpellEntry> SpellInventory { get; private set; } = [];
     private List<ServiceOptionBase> _serviceOptionBases = [];
+    private readonly HashSet<ulong> _showingSpellOptions = [];
 
     public static bool ShouldAttachToEntity(CoreTemplate template) 
         // Attach if the template is an NPC and has a spell inventory in Dragon database.
@@ -315,7 +316,13 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// visit shows the first section.
     /// </summary>
     internal void NextSection(Wizard wizard) {
-        if (!IsTestTrainer || wizard is null) {
+        if (wizard is null) {
+            return;
+        }
+
+        // Closing the NPC dialog and walking back up should return to the shared service menu.
+        _showingSpellOptions.Remove(wizard.CharId);
+        if (!IsTestTrainer) {
             return;
         }
 
@@ -330,6 +337,18 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (wizard is null) {
             return IsTestTrainer ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
+        }
+
+        // If this trainer also completes an active quest, first offer one trainer choice. The client
+        // interprets individual WizTrainingOption entries as the spell picker, so putting them beside
+        // GoalEntry skips the shared "What can I do for you?" choice entirely.
+        if (InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
+                && !_showingSpellOptions.Contains(wizard.CharId)) {
+            return [new WizTrainingInteraction {
+                m_iconKey = WizBang.ToString(),
+                m_serviceName = ServiceName,
+                m_displayKey = DisplayKey,
+            }];
         }
 
         // We've initialized a list of service option bases in InitializeServiceBases.
@@ -420,7 +439,24 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         return newServiceOptions;
     }
 
-    public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) { }
+    public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        if (playerCharacter is null || !InteractPersonaGoalComponent.HasPendingGoalFor(Entity, playerCharacter)) {
+            return;
+        }
+
+        _showingSpellOptions.Add(playerCharacter.CharId);
+        Entity.GetComponentOfType<InteractServiceMementoComponent>()?.ShowServiceOptions(playerActor, reinteract: 2);
+    }
+
+    internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
+        => wizard is not null
+            && entity.GetComponentOfType<InteractTrainerComponent>()?._showingSpellOptions.Contains(wizard.CharId) == true;
+
+    internal void ResetSpellOptions(Wizard wizard) {
+        if (wizard is not null) {
+            _showingSpellOptions.Remove(wizard.CharId);
+        }
+    }
 
     /// <summary>
     /// How many training points a spell costs this wizard: none for their own school or with FreeTraining, else one.
