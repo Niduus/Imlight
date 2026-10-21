@@ -299,15 +299,17 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         _activeSigilEntry = message;
         var countdown = message.CountdownSeconds > 0 ? message.CountdownSeconds : SIGIL_COUNTDOWN_SECONDS;
 
-        if (!message.NoSnap || message.SnapToCentre) {
+        if (!message.NoSigil && (!message.NoSnap || message.SnapToCentre)) {
             SnapPlayerToSigilFace(message);
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
-            Time = countdown,
-            SigilGID = message.SigilGID,
-            Teleport = 0,
-        });
+        if (!message.NoSigil) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
+                Time = countdown,
+                SigilGID = message.SigilGID,
+                Teleport = 0,
+            });
+        }
 
         Timers.StartSingleTimer(
             SIGIL_ENTER_TIMER_KEY,
@@ -1299,7 +1301,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = entry.SigilGID });
+        if (!entry.NoSigil) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = entry.SigilGID });
+        }
 
         // Give the player their mount back.
         SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
