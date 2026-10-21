@@ -74,7 +74,7 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         }
 
         if (wizard.Account?.ClaimGifts is { Count: > 0 } claimGifts) {
-            SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = claimGifts.Count });
+            SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = 1 });
         }
     }
 
@@ -177,7 +177,7 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                     MailId = message.MailId,
                 });
                 SendMailList(wizard.Account);
-                SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = wizard.Account.ClaimGifts.Count });
+                SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = 1 });
                 InformGameClient("That bundle was moved to your gift list (the gift button), where you can pick the tier.");
                 return;
             default:

@@ -1042,6 +1042,17 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message that puts a hatchery sigil back to its lit look after a countdown, which the game leaves
+    /// blank when its count runs out.
+    /// </summary>
+    public sealed class MSG_SIGILRELIGHT : IServerMessage {
+
+        public byte MessageOrder { get; } = 92;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
     /// Timer-fired message that releases a mobile ID back to the pool after a cooldown,
     /// preventing races between MSG_REMOVEOBJECT delivery and mobile ID reuse.
     /// </summary>
