@@ -1,0 +1,23 @@
+{
+  "Zone": "WizardCity/WC_Ravenwood",
+  "Notes": "Extra objects for Ravenwood (ZoneObjects.cs explains the fields).",
+  "Objects": [
+    {
+      "Name": "Imlight Ravenwood Cyclops Lane Tower Sigil",
+      "Notes": "Justin, 2026-10-21: a 4 player sigil at X -2340 Y 4812 Z -28, Rotation 3.851 (220.6 degrees), Width 1. A copy of Cyclops Lane's Street 3 Tower 1 Instance Sigil (template 107081, Teleport Semi Circle 4 Player Generic); it goes to the same tower, WC_Cyclops_T1 (Eyus Maximus), at the spot Cyclops Lane's Tele Trigger to Tower 1 sends players to.",
+      "TemplateID": 107081,
+      "X": -2340,
+      "Y": 4812,
+      "Z": -28,
+      "Yaw": 3.851,
+      "Scale": 1,
+      "Sigil": {
+        "SigilType": "MinigameSemiCircleSigil4Actor",
+        "Tag": "Street 3 Tower 1 Instance Sigil",
+        "Radius": 0,
+        "DestinationZone": "WizardCity/WC_Streets/Interiors/WC_Cyclops_T1",
+        "DestinationLoc": "33.10013,-996.145,0.006915471,-3.129041"
+      }
+    }
+  ]
+}

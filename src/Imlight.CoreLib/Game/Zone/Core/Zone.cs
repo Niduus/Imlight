@@ -327,6 +327,9 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         _zoneLoadTimer.Restart();
+
+        // Objects added from spiraldb-extra/ZoneObjects join the zone's own before the supervisors make them.
+        ZoneObjects.AddTo(ZonePath, message.ZoneData);
         ZoneData = message.ZoneData;
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply
