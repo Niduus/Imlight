@@ -363,6 +363,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             var before = combatActionList.m_actionList.Count;
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            // A participant defeated by that move comes back if an afterlife waits on them (CombatResolver.Afterlife.cs).
+            ProcessAfterlives();
             // A boss answers the move that was just made (a player's cast or pass, or its health falling).
             cinematicTime += BossCheatsAfter(action.SpellCaster, before, combatActionList, cinematicTime);
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime),

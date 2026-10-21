@@ -15,8 +15,11 @@ namespace Imlight.CoreLib.Game.Combat;
 
 public partial class CombatResolver {
 
-    // Once cheats that went off, by boss and the cheat's place in its file.
-    private readonly HashSet<(CombatDuelSubCircle Boss, int Cheat)> _bossCheatsUsed = [];
+    // Once cheats that went off, by boss, the cheat file's template and the cheat's place in that file.
+    private readonly HashSet<(CombatDuelSubCircle Boss, ulong Template, int Cheat)> _bossCheatsUsed = [];
+
+    // The template whose cheats each boss uses now (CheatTemplate).
+    private readonly Dictionary<CombatDuelSubCircle, ulong> _bossCheatTemplates = [];
 
     // Each boss's phase and the round it began in (a boss starts in phase 1 in its first round, so a boss added with
     // .joinme counts its own rounds).
@@ -26,8 +29,30 @@ public partial class CombatResolver {
         // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Justin's log, 2026-10-21).
         => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && (defeatedToo || c.IsAlive)
                                   && c.ParticipantObject is not null)
-            .Select(c => (c, BossCheats.For(c.ParticipantObject.m_templateID)))
+            .Select(c => (c, BossCheats.For(CheatTemplate(c))))
             .Where(b => b.Item2.Count > 0);
+
+    // The template whose cheat file a boss uses: the creature it was polymorphed into (Haunted Malistaire, 1336037)
+    // when that has a file, else its own. A new form starts in phase 1 from the next round, counting its own rounds.
+    private ulong CheatTemplate(CombatDuelSubCircle boss) {
+        var form = CombatPolymorph.FormOf(boss);
+        var template = form != 0 && BossCheats.For(form).Count > 0 ? form : (ulong) boss.ParticipantObject.m_templateID;
+        if (_bossCheatTemplates.TryGetValue(boss, out var before) && before != template) {
+            _bossPhases[boss] = (1, (int) _duel.m_roundNum + 1);
+            Logger.Information("Duel {0} | Slot {1} | Boss now cheats as {2}.",
+                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, BossCheats.NameOf(template)));
+        }
+
+        _bossCheatTemplates[boss] = template;
+
+        return template;
+    }
+
+    private bool CheatUsed(CombatDuelSubCircle boss, int index)
+        => _bossCheatsUsed.Contains((boss, _bossCheatTemplates.GetValueOrDefault(boss), index));
+
+    private void UseCheat(CombatDuelSubCircle boss, int index)
+        => _bossCheatsUsed.Add((boss, _bossCheatTemplates.GetValueOrDefault(boss), index));
 
     private (int Phase, int FirstRound) PhaseOf(CombatDuelSubCircle boss) {
         if (!_bossPhases.TryGetValue(boss, out var phase)) {
@@ -142,6 +167,8 @@ public partial class CombatResolver {
             .FirstOrDefault(c => c is not null);
 
     private float BossHealthCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        // A boss defeated by a cheat's spell comes back first if an afterlife waits on it.
+        ProcessAfterlives();
         var cinematicTime = 0.0f;
         // A defeated boss can still have a second form to come back as (SetHealth).
         foreach (var (boss, cheats) in BossesWithCheats(defeatedToo: true).ToList()) {
@@ -155,14 +182,14 @@ public partial class CombatResolver {
                 var cheat = cheats[i];
                 var under = cheat.Health > 0 ? health < cheat.Health : health * 100.0 / most < cheat.Percent;
                 // Health cheats go off once each, as the boss's health first falls under the mark.
-                if (!cheat.Is("HealthBelow") || !under || !InPhase(boss, cheat) || _bossCheatsUsed.Contains((boss, i))
+                if (!cheat.Is("HealthBelow") || !under || !InPhase(boss, cheat) || CheatUsed(boss, i)
                     || (!boss.IsAlive && cheat.SetHealth <= 0 && cheat.Spawn == 0)) {
                     continue;
                 }
 
                 cinematicTime += TryBossCheat(boss, i, cheat, null, null, $"health {health}",
                     combatActionList, cinematicTimeSoFar + cinematicTime);
-                _bossCheatsUsed.Add((boss, i));
+                UseCheat(boss, i);
             }
         }
 
@@ -235,7 +262,7 @@ public partial class CombatResolver {
     private float TryBossCheat(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger,
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
-        if (cheat.Once && _bossCheatsUsed.Contains((boss, index))) {
+        if (cheat.Once && CheatUsed(boss, index)) {
             return 0;
         }
 
@@ -260,7 +287,7 @@ public partial class CombatResolver {
         }
 
         if (cheat.Once) {
-            _bossCheatsUsed.Add((boss, index));
+            UseCheat(boss, index);
         }
 
         if (cheat.SetPhase > 0) {
@@ -275,7 +302,7 @@ public partial class CombatResolver {
             Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, cheat.Line, problem));
         }
 
-        var bossName = BossCheats.NameOf(boss.ParticipantObject.m_templateID);
+        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, boss.ParticipantObject.m_templateID));
         var spell = cheat.Cast.Length > 0 && SpellFactory.Exists(cheat.Cast) ? SpellFactory.GetSpell(cheat.Cast) : null;
         var template = spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate;
         if (cheat.Cast.Length > 0 && template is null) {
@@ -347,10 +374,10 @@ public partial class CombatResolver {
     private float BossFormArrives(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle form,
                                   CombatActionListObj combatActionList) {
         if (cheat.Once) {
-            _bossCheatsUsed.Add((boss, index));
+            UseCheat(boss, index);
         }
 
-        var bossName = BossCheats.NameOf(boss.ParticipantObject.m_templateID);
+        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, boss.ParticipantObject.m_templateID));
         if (cheat.Defeat && boss.IsAlive) {
             boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
         }
