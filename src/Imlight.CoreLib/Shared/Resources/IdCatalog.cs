@@ -80,6 +80,7 @@ public static class IdCatalog {
     private const string ZONES_NAME = "zones.txt";
     private const string QUESTS_NAME = "quests.csv";
     private const string PHRASES_NAME = "phrases.csv";
+    private const string BUNDLES_NAME = "bundles.csv";
     private const string CSV_HEADER = "Id,Kind,Name,School,Level,Path";
     private const int INFORM_ALIVE_INTERVAL = 10000;
 
@@ -330,6 +331,18 @@ public static class IdCatalog {
         }
         catch (Exception ex) {
             Logger.Warning("Could not write the zone and quest lists for the app. {Exception}", Logger.Args(ex));
+        }
+
+        // The bundle list for the app's Lookup tab (Justin, 2026-10-21: the list moved out of the game's chat).
+        try {
+            var bundles = new StringBuilder().AppendLine("Name,Gifts");
+            foreach (var family in Imlight.CoreLib.Game.Commands.Protocols.BundleCatalog.Families) {
+                bundles.Append(CsvField(family.Name)).Append(',').Append(family.Gifts.Count).AppendLine();
+            }
+            File.WriteAllText(Path.Combine(OutputPath, BUNDLES_NAME), bundles.ToString());
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not write the bundle list for the app. {Exception}", Logger.Args(ex));
         }
     }
 

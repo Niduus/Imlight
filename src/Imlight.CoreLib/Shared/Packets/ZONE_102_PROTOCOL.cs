@@ -1187,6 +1187,8 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         /// <summary>No sigil: no countdown on screen and no snap, the trip starts after CountdownSeconds.</summary>
         public bool NoSigil;
+        // The zone already shows this pad's countdown (another player started it); sending it again restarts its numbers.
+        public bool NoTimerBroadcast;
 
         /// <summary>
         /// Replaces a countdown already running for this player without ending it on screen; the new one starts now.

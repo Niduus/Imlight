@@ -497,7 +497,7 @@ internal sealed class ManagerWindow : Window {
                 WithDock(Card(new StackPanel {
                     Children = {
                         Heading("Commands and IDs"),
-                        Sub("Every in-game command, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
+                        Sub("Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
                             "starting with the dot. Copy puts the text on your clipboard."),
                         new DockPanel {
                             Margin = new Thickness(0, 10, 0, 6),
@@ -1196,7 +1196,7 @@ internal sealed class ManagerWindow : Window {
 
     private async Task LoadLookupAsync() {
         var folder = _manager.IdLookupFolder;
-        var changed = new[] { "ids.csv", "zones.txt", "quests.csv" }
+        var changed = new[] { "ids.csv", "zones.txt", "quests.csv", "bundles.csv" }
             .Select(name => Path.Combine(folder, name))
             .Where(File.Exists)
             .Select(File.GetLastWriteTimeUtc)
@@ -1237,6 +1237,16 @@ internal sealed class ManagerWindow : Window {
 
     private Control LookupRow(LookupEntry entry) {
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, VerticalAlignment = VerticalAlignment.Center };
+        if (entry.Kind == "Bundle" && entry.Typed is not null) {
+            // Runs .bundle for the wizard playing on this PC (Justin, 2026-10-21: bundles picked in the app).
+            buttons.Children.Add(Action(Plain("Send to my gifts"), () => {
+                _manager.SendCommand(entry.Typed);
+                Say($"Sent {entry.Name} to your gifts. Click the gift button in the game to claim it.");
+
+                return Task.CompletedTask;
+            }));
+        }
+
         if (entry.Typed is not null) {
             buttons.Children.Add(Action(Plain("Copy command"), () => CopyAsync(entry.Typed)));
         }
