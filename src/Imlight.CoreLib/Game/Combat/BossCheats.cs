@@ -23,12 +23,15 @@
  * Rounds count from the start of the phase. SetPhase moves the boss on to that phase from the next round.
  * SetHealth: the boss's most and current health become this, even after it was defeated (a second form).
  * Defeat: the boss is defeated after the cheat, if its spell did not do it.
- * Spawn: a creature template that comes into the battle on the boss's side (a second form with its own model, such as
- * Haunted Malistaire). It takes a free enemy circle and fights from the next round with its own cheat file, counting its
+ * Spawn: a creature template that comes into the battle on the boss's side (a second creature with its own model, such
+ * as a minion). It takes a free enemy circle and fights from the next round with its own cheat file, counting its
  * rounds from its first round; the boss is defeated (with Defeat) and the line shows over it, and Cast and SetPhase are
  * not used. With no circle free, SetHealth (if set) brings the boss back in its own circle instead, as if there were
  * no Spawn and no Defeat. Drops stay with the boss's own template (NpcDropTable).
  * Silent: the cheat's spell goes off without the casting animation (its line still shows).
+ * A boss polymorphed into another creature for the rest of the battle (a second form in its own circle, such as Haunted
+ * Malistaire through "Afterlife - Malistaire 02") uses that creature's cheat file from then on, if it has one, starting
+ * again at phase 1 from the next round (CombatPolymorph.cs).
  *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).

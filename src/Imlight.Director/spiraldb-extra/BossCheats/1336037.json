@@ -1,9 +1,9 @@
 {
-  // Haunted Malistaire, Castle Darkmoor (G14-DM-Malistaire_Shadow): Malistaire the Undying's second form, brought in by
-  // the "I touch Shadow" cheat of 1336035.json and 1418093.json. 48,000 health and the Shadow Malistaire model come from
-  // its own template. From Wizard101 Central's pages (Justin saved them, 2026-10-21): it keeps his cheats except the
-  // Primary Interrupt Cycle, which becomes a Shadow cycle every 4 rounds, and the Skeletal Dragon now and then traps.
-  // Its rounds count from its first round in the battle. No drops here: they stay on 1336035 / 1418093.
+  // Haunted Malistaire, Castle Darkmoor (G14-DM-Malistaire_Shadow): Malistaire the Undying's second form. His "I touch
+  // Shadow" cheat (1336035.json, 1418093.json) polymorphs him into it, and these cheats are his from then on. 48,000
+  // health, the Shadow Malistaire model and the deck come from its own template. From Wizard101 Central's pages (Justin
+  // saved them, 2026-10-21): it keeps his cheats except the Primary Interrupt Cycle, which becomes a Shadow cycle every 4 rounds, and the Skeletal Dragon now and then traps.
+  // Its rounds count from the round after the polymorph. No drops here: they stay on 1336035 / 1418093.
   "TemplateID": 1336037,
   "Name": "Haunted Malistaire",
   // Central: "Shadow Pips 4 max".

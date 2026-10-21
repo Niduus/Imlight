@@ -1,9 +1,10 @@
 {
   // Monstrology copy of Malistaire the Undying, Castle Darkmoor (G14_DM_Malistaire_Boss_MM); same as 1336035.json.
   // From Wizard101 Central's pages for "Malistaire the Undying (Shadow)" and "Haunted Malistaire" (Justin saved them, 2026-10-21).
-  // Under 1,000 health (or defeated) he comes back as Haunted Malistaire (G14-DM-Malistaire_Shadow, 1336037.json), a
-  // creature of its own with its own model and 48,000 health. With no enemy circle free he comes back in his own circle
-  // instead (48,000 health, phase 2 below). His drops stay on this template, and come when the last form is defeated.
+  // Mega Taunt - Shadow gives him an afterlife: when defeated he comes back with 100 health. Under 1,000 health he casts
+  // Afterlife - Malistaire 02, which polymorphs him in his own circle into Haunted Malistaire (G14-DM-Malistaire_Shadow,
+  // model and 48,000 health) until the battle ends; from then on his cheats come from 1336037.json and he draws its deck.
+  // His drops stay on this template, and come when Haunted Malistaire is defeated.
   // Which game spell does each move is a guess from the names in Spells/G14-CombatTrigger-Spells; check a test log.
   "TemplateID": 1418093,
   "Name": "Malistaire the Undying",
@@ -46,21 +47,8 @@
     { "When": "RoundStart", "Phase": 1, "Round": 5, "Every": 4, "Cast": "Malistaire Dragon - Roar",
       "Line": "Its power shakes your spells apart", "Notes": "Skeletal Dragon removes every wizard's charms and wards (guess: the Roar spell)." },
 
-    { "When": "HealthBelow", "Phase": 1, "Health": 1000, "Defeat": true, "Spawn": 1336037, "SetHealth": 48000, "SetPhase": 2,
+    { "When": "HealthBelow", "Phase": 1, "Health": 1000, "Cast": "Afterlife - Malistaire 02", "Target": "Self",
       "Line": "I touch Shadow",
-      "Notes": "Haunted Malistaire (1336037) takes over. Only with no enemy circle free: he comes back in his own circle at 48,000 health, phase 2." },
-
-    // Phase 2 is only for when Haunted Malistaire found no circle; his own cheats are in 1336037.json.
-
-    { "When": "RoundEnd", "Phase": 2, "Round": 1, "Every": 4, "Cast": "Shadowblade Self Mob", "Target": "Self", "Line": "I call upon Shadow" },
-    { "When": "RoundEnd", "Phase": 2, "Round": 2, "Every": 4, "Cast": "Shadowspear", "Target": "Self", "Line": "I call upon Shadow" },
-    { "When": "RoundEnd", "Phase": 2, "Round": 3, "Every": 4, "Cast": "Mass Shadow Trap", "Line": "I call upon Shadow",
-      "Notes": "Shadow Trap on all wizards." },
-    { "When": "RoundEnd", "Phase": 2, "Round": 4, "Every": 4, "Cast": "NA G14-DM-ShadowMalistaire", "Target": "Enemy",
-      "Line": "I will show you the Shadow", "Notes": "Shadow Steal." },
-    { "When": "RoundStart", "Phase": 2, "Round": 4, "Every": 4, "Cast": "Malistaire Dragon - Roar",
-      "Line": "Its power shakes your spells apart" },
-    { "When": "RoundStart", "Phase": 2, "Chance": 20, "Cast": "Malistaire Dragon - Attack", "Target": "Self", "Silent": true,
-      "Line": "Curse you beast", "Notes": "Skeletal Dragon now and then puts a +100% trap on his side (guess: the Attack spell). Silent: the spell is a Balance card and its cast should not show." }
+      "Notes": "Haunted Malistaire: the game's polymorph (1336084) swaps his model in place and heals him to 48,000. Lasts the battle; from then on 1336037.json cheats." }
   ]
 }

@@ -104,6 +104,17 @@ internal static class CombatActionResolver {
                 continue;
             }
 
+            // An afterlife waits on its target until they are defeated (CombatResolver.Afterlife.cs); its own effects
+            // do not go off now.
+            if (spellEffect.m_effectType == kSpellEffects.kAfterlife) {
+                var waitingOn = GetEffectTargets(spellEffect, action.SpellCaster, action.SelectedTarget);
+                action.SpellCaster._duelActor.CombatResolver.AddAfterlife(waitingOn, spellEffect);
+                UpdateCombatActionTargets(ref combatAction, waitingOn);
+                spellWorthCasting |= waitingOn.Length > 0;
+
+                continue;
+            }
+
             var chosenEffect = spellEffect;
 
             // A spell effect may ask us to choose a random effect from a list of effects.
@@ -187,6 +198,13 @@ internal static class CombatActionResolver {
             // Inform each of the targets of this spell that they've been targeted by this effect.
             UpdateCombatActionTargets(ref combatAction, targets);
             InformDuelParticipantsOfEffect(action.SpellCaster, targets, chosenEffect);
+
+            // A lasting polymorph on a creature (CombatPolymorph.cs): the game swaps the model from the cast itself.
+            if (chosenEffect.m_effectType == kSpellEffects.kPolymorph) {
+                foreach (var target in targets) {
+                    CombatPolymorph.Apply(target, chosenEffect, action.Spell.m_templateID);
+                }
+            }
 
             // The effect types CombatEffectApplicator applies critMultiplier to.
             if (chosenEffect.m_effectType is kSpellEffects.kDamage
