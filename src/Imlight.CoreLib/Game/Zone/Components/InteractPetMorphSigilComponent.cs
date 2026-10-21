@@ -72,7 +72,14 @@ using Imlight.CoreLib.Game.Sigils;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
-    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
+    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory, IWithTimers {
+
+    public ITimerScheduler Timers { get; set; }
+
+    private const string RELIGHT_TIMER_KEY = "SigilRelight";
+    // The game sets the pad to a blank look when its countdown runs out (ClientCountdownBehavior), a moment after the
+    // players have gone, so the lit look is sent again once that has happened (Justin, 2026-10-21: sigil missing on both).
+    private static readonly TimeSpan s_relightDelay = TimeSpan.FromSeconds(2.5);
 
     private const uint SOLO_TEMPLATE_ID = 266075;
     private const uint DUO_TEMPLATE_ID = 112077;
@@ -198,6 +205,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             _pairedUntil.Remove(charId);
             _pressedAt.Remove(charId);
             Logger.Information("Hatching sigil: {0} left the zone, so is off {1}.", Logger.Args(charId, PadName));
+            RelightSoon();
         }
     }
 
@@ -241,6 +249,8 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             if (_occupants.Count == 0) {
                 PlayerBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = Entity.ActiveGameObject.m_globalID });
             }
+
+            RelightSoon();
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }
@@ -299,8 +309,9 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             return;
         }
 
-        _pressedAt.Remove(playerCharacter.CharId);
-        _pressedAt.Remove(partner.CharId);
+        // Both stay marked as pressed while on the pad: if one steps off and back on, pressing X again joins the
+        // countdown the other is still on instead of starting a second trip (Justin, 2026-10-21).
+        _pressedAt[partner.CharId] = now;
         _pairedUntil[playerCharacter.CharId] = now + PAIRED_FOR;
         _pairedUntil[partner.CharId] = now + PAIRED_FOR;
         Logger.Information("Hatching sigil: pairing {0} ({1}) with {2} ({3}) on {4}.",
@@ -322,6 +333,20 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         toRequester.PartnerName = partner.Occupant.Name;
         toRequester.FaceSlot = 1;
         playerActor.Tell(toRequester);
+    }
+
+    private void RelightSoon() {
+        if (!PetHatching.Enabled) {
+            return;
+        }
+
+        Timers.StartSingleTimer(RELIGHT_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_SIGILRELIGHT(), s_relightDelay);
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT))]
+    private void ReceiveRelight(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT message) {
+        // A countdown still running for someone on the pad redraws its number on its next second.
+        Entity.ChangeState(LIT_STATE);
     }
 
     // What the session needs for the sigil countdown (as the dungeon sigils send it) and the way back.

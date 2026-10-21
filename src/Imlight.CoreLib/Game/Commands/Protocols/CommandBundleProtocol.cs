@@ -137,7 +137,8 @@ internal class CommandBundleProtocol : CommandProtocol {
             GiftingService.AddClaimGift(account, templateId);
         }
 
-        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = account.ClaimGifts.Count }, ActorRefs.NoSender);
+        // The game shows the gift button only when Gift is exactly 1 (GameClient::MSG_NotifyGift); it is a flag, not a count.
+        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = 1 }, ActorRefs.NoSender);
         Logger.Information("Bundle: \"{0}\" sent {1} gifts to account {2}.", Logger.Args(family.Name, family.Gifts.Count, account.AccountId));
         InformSenderClient($"Sent {family.Name} to your gifts: click the gift button, claim it and pick the tier you want.");
     }
