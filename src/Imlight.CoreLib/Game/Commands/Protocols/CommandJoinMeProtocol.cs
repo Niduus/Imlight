@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imlight.CoreLib.Shared.Packets;
@@ -27,10 +28,20 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// `.joinme Gobbler` (Justin, 2026-10-20): in battle, a creature joins on the enemy side. A number at the end adds
 /// that many, while the enemy side has room.
+/// Some bosses share one name across worlds; <see cref="s_versions"/> picks the one Justin means (2026-10-21:
+/// `.joinme Malistaire the Undying` is the Castle Darkmoor boss, `.joinme Malistaire the Undying Azteca` the Azteca one).
 /// </summary>
 internal class CommandJoinMeProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
+
+    // Name (with an optional world word) to the template ID of that version.
+    private static readonly Dictionary<string, ulong> s_versions = new(StringComparer.OrdinalIgnoreCase) {
+        ["Malistaire the Undying"] = 1336035,                 // G14-DM-Malistaire_Boss, Castle Darkmoor
+        ["Malistaire the Undying Darkmoor"] = 1336035,
+        ["Malistaire the Undying Castle Darkmoor"] = 1336035,
+        ["Malistaire the Undying Azteca"] = 684531,           // AZ-Human-LichMalistaire-A
+    };
 
     [Command("joinme")]
     [AuthRequired(AuthLevel.QualityAssurance)]
@@ -66,7 +77,17 @@ internal class CommandJoinMeProtocol : CommandProtocol {
         }
     }
 
-    private static IdCatalogEntry Find(string name)
-        => name.Length == 0 ? null : IdCatalog.Search(IdCatalogKind.Creature, name, 1).FirstOrDefault();
+    private static IdCatalogEntry Find(string name) {
+        if (name.Length == 0) {
+            return null;
+        }
+
+        var query = string.Join(' ', name.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        if (s_versions.TryGetValue(query, out var id)) {
+            query = id.ToString();
+        }
+
+        return IdCatalog.Search(IdCatalogKind.Creature, query, 1).FirstOrDefault();
+    }
 
 }
