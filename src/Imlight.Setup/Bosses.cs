@@ -1,0 +1,283 @@
+/*
+ * Imlight
+ * Copyright (C) 2025 Revive101
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+namespace Imlight.Setup;
+
+/// <summary>
+/// A creature as the game makes it, from the server's creatures.csv.
+/// </summary>
+/// <param name="Stats">Its other battle stats in words, from its gear and the game, or empty.</param>
+internal sealed record BossInfo(string Id, string Name, string School, int Level, int Health, bool IsBoss, List<uint> Spells, string Stats) {
+
+    internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
+
+}
+
+/// <summary>A spell the Bosses tab can put in a deck, from the server's ids.csv.</summary>
+internal sealed record BossSpell(uint Id, string Name, string School) {
+
+    internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
+
+}
+
+/// <summary>A spell in a boss's deck. Copies 0: it never runs out.</summary>
+internal sealed class BossCard {
+    internal uint SpellId { get; init; }
+    internal string Name { get; init; } = "";
+    internal string School { get; init; } = "";
+    internal int Copies { get; set; }
+}
+
+/// <summary>
+/// What the Bosses tab changes for one creature, saved as spiraldb-extra/BossOverrides/&lt;ID&gt;.json in the server
+/// folder (the server's BossOverrides.cs reads it). Null keeps the game's value.
+/// </summary>
+internal sealed class BossChanges {
+
+    /// <summary>The boxes of the Bosses tab, in order: the file's key, the label and what it means.</summary>
+    internal static readonly (string Key, string Label, string Help)[] STATS = [
+        ("Damage", "Damage %", "Extra damage for every school. 20 means 20% more."),
+        ("Resist", "Resist %", "Less damage taken from every school. 30 means 30% less."),
+        ("FlatDamage", "Flat damage", "Added to every hit it makes."),
+        ("FlatResist", "Flat resist", "Taken off every hit it takes."),
+        ("Accuracy", "Accuracy %", "Added to its spells' chance to work."),
+        ("Critical", "Critical rating", "Higher means more critical hits."),
+        ("Block", "Block rating", "Higher means it blocks more critical hits."),
+        ("OutgoingHealing", "Outgoing healing %", "More healing from its heal spells."),
+        ("IncomingHealing", "Incoming healing %", "More healing when it is healed."),
+        ("PowerPipChance", "Power pip chance %", "Chance a new pip is a power pip."),
+        ("StartingPips", "Starting pips", "Pips it has when the battle starts (0 to 7)."),
+        ("StartingPowerPips", "Starting power pips", "Power pips it has when the battle starts."),
+    ];
+
+    internal string Name { get; set; } = "";
+    internal int? Health { get; set; }
+    internal int? Level { get; set; }
+    internal string? School { get; set; }
+    internal Dictionary<string, float> Stats { get; } = [];
+    internal List<BossCard>? Deck { get; set; }
+
+    private static readonly JsonSerializerOptions s_write = new() { WriteIndented = true };
+
+    internal static string FileOf(string folder, string id) => Path.Combine(folder, $"{id}.json");
+
+    /// <summary>The changes saved for a creature, or null when it has none.</summary>
+    internal static BossChanges? Load(string folder, string id, IReadOnlyDictionary<uint, BossSpell> spells) {
+        var file = FileOf(folder, id);
+        if (!File.Exists(file)) {
+            return null;
+        }
+
+        var json = JsonNode.Parse(File.ReadAllText(file), documentOptions: new JsonDocumentOptions {
+            AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip,
+        }) as JsonObject ?? throw new PanelException($"{file} is not a boss file.");
+        var changes = new BossChanges {
+            Name = Text(json, "Name") ?? "",
+            Health = (int?) Number(json, "Health"),
+            Level = (int?) Number(json, "Level"),
+            School = Text(json, "School") is { Length: > 0 } school ? school : null,
+        };
+        foreach (var (key, _, _) in STATS) {
+            if (Number(json, key) is { } value) {
+                changes.Stats[key] = (float) value;
+            }
+        }
+
+        if (Find(json, "Deck") is JsonArray deck) {
+            changes.Deck = [];
+            foreach (var card in deck.OfType<JsonObject>()) {
+                if (Number(card, "SpellID") is not { } spellId || spellId <= 0) {
+                    continue;
+                }
+
+                var known = spells.GetValueOrDefault((uint) spellId);
+                changes.Deck.Add(new BossCard {
+                    SpellId = (uint) spellId,
+                    Name = known?.Name ?? Text(card, "Name") ?? $"Spell {spellId}",
+                    School = known?.School ?? "",
+                    Copies = (int) (Number(card, "Copies") ?? 0),
+                });
+            }
+        }
+
+        return changes;
+    }
+
+    /// <summary>
+    /// Writes the file the server reads. It is written beside the old one and then moved over it, so a battle that
+    /// starts at that moment never reads half a file.
+    /// </summary>
+    internal void Save(string folder, string id) {
+        var json = new JsonObject {
+            ["TemplateID"] = ulong.Parse(id, CultureInfo.InvariantCulture),
+            ["Name"] = Name,
+            ["Notes"] = "Made in the app's Bosses tab. Left out = the game's own value.",
+        };
+        if (Health is { } health) {
+            json["Health"] = health;
+        }
+
+        if (Level is { } level) {
+            json["Level"] = level;
+        }
+
+        if (School is { } school) {
+            json["School"] = school;
+        }
+
+        foreach (var (key, _, _) in STATS) {
+            if (Stats.TryGetValue(key, out var value)) {
+                json[key] = value;
+            }
+        }
+
+        if (Deck is not null) {
+            json["Deck"] = new JsonArray([.. Deck.Select(c => (JsonNode) new JsonObject {
+                ["SpellID"] = c.SpellId, ["Name"] = c.Name, ["Copies"] = c.Copies,
+            })]);
+        }
+
+        Directory.CreateDirectory(folder);
+        var file = FileOf(folder, id);
+        var temp = file + ".saving";
+        File.WriteAllText(temp, json.ToJsonString(s_write));
+        File.Move(temp, file, overwrite: true);
+    }
+
+    /// <summary>True when nothing is changed, so there is no need for a file.</summary>
+    internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null;
+
+    private static JsonNode? Find(JsonObject json, string key)
+        => json.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
+
+    private static string? Text(JsonObject json, string key)
+        => Find(json, key) is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
+
+    // A double, so a spell ID (up to 4,294,967,295) keeps every digit.
+    private static double? Number(JsonObject json, string key)
+        => Find(json, key) is JsonValue value && value.TryGetValue<double>(out var number) ? number : null;
+
+}
+
+/// <summary>
+/// Every creature and spell the server listed for the Bosses tab.
+/// </summary>
+internal sealed class BossCatalog {
+
+    internal const string CREATURES_FILE = "creatures.csv";
+
+    /// <summary>The schools a boss can have, as the server names them.</summary>
+    internal static readonly string[] SCHOOLS = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Shadow"];
+
+    internal List<BossInfo> Creatures { get; }
+    internal Dictionary<uint, BossSpell> Spells { get; }
+
+    /// <summary>Why the creature list is not here yet, or null when it is.</summary>
+    internal string? Missing { get; }
+
+    private BossCatalog(List<BossInfo> creatures, Dictionary<uint, BossSpell> spells, string? missing) {
+        Creatures = creatures;
+        Spells = spells;
+        Missing = missing;
+    }
+
+    /// <summary>Reads creatures.csv and the spells of ids.csv from the server's ID lookup folder.</summary>
+    internal static BossCatalog Load(string folder) {
+        var spells = new Dictionary<uint, BossSpell>();
+        var ids = Path.Combine(folder, "ids.csv");
+        if (File.Exists(ids)) {
+            foreach (var fields in Lookup.ReadCsv(ids)) {
+                if (fields.Count >= 4 && fields[1] == "Spell" && uint.TryParse(fields[0], out var id)) {
+                    spells[id] = new BossSpell(id, fields[2], fields[3]);
+                }
+            }
+        }
+
+        var creatures = new List<BossInfo>();
+        var file = Path.Combine(folder, CREATURES_FILE);
+        if (!File.Exists(file)) {
+            return new BossCatalog(creatures, spells, "The boss list shows up here once the server has made it. "
+                + "Start the server and give it a few minutes (the first start after an update takes longest).");
+        }
+
+        foreach (var f in Lookup.ReadCsv(file)) {
+            if (f.Count < 8 || f[0].Length == 0) {
+                continue;
+            }
+
+            creatures.Add(new BossInfo(f[0], f[1], f[2], Int(f[3]), Int(f[4]), f[5] == "1",
+                [.. f[6].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => uint.TryParse(s, out var id) ? id : 0).Where(id => id != 0)],
+                f[7]));
+        }
+
+        return new BossCatalog(creatures, spells, null);
+    }
+
+    /// <summary>Creatures that hold every word of the query, bosses and exact names first.</summary>
+    internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total) {
+        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var pool = words.Length == 0
+            ? Creatures.Where(c => changed.Contains(c.Id))
+            : Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && words.All(c.Haystack.Contains));
+        var matches = pool.ToList();
+        total = matches.Count;
+        var exact = query.Trim();
+
+        return [.. matches
+            .OrderBy(c => !(c.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || c.Id == exact))
+            .ThenBy(c => !c.IsBoss)
+            .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(c => c.Level)
+            .Take(max)];
+    }
+
+    /// <summary>Spells that hold every word of the query, exact and shorter names first.</summary>
+    internal List<BossSpell> SearchSpells(string query, int max) {
+        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 0) {
+            return [];
+        }
+
+        var exact = query.Trim();
+
+        return [.. Spells.Values
+            .Where(s => words.All(s.Haystack.Contains))
+            .OrderBy(s => !(s.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || s.Id.ToString() == exact))
+            .ThenBy(s => !words.All(s.Name.ToLowerInvariant().Contains))
+            .ThenBy(s => s.Name.Length)
+            .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
+            .Take(max)];
+    }
+
+    /// <summary>The game's own deck of a creature, each spell never running out.</summary>
+    internal List<BossCard> GameDeck(BossInfo boss)
+        => [.. boss.Spells.Select(id => Spells.GetValueOrDefault(id) is { } s
+            ? new BossCard { SpellId = id, Name = s.Name, School = s.School }
+            : new BossCard { SpellId = id, Name = $"Spell {id}" })];
+
+    private static int Int(string text) => int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : 0;
+
+}

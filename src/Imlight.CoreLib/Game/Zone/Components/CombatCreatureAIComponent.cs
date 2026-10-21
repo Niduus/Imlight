@@ -440,7 +440,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(selectedSpell);
 
         // If we're below the healing threshold, and selfish enough, heal ourselves.
-        var selfThresholdMatched = _stats.Stats.m_currentHitpoints / _stats.Stats.m_baseHitpoints < _healingThreshold;
+        // The battle's stats: a boss changed in the app's Bosses tab fights with a copy of the creature's own.
+        var self = _currentSubCircle.ParticipantGameStats ?? _stats.Stats;
+        var selfThresholdMatched = self.m_currentHitpoints / self.m_baseHitpoints < _healingThreshold;
         if (selfThresholdMatched && _determinedSelfishThisTurn) {
             msg.SpellTarget = (uint) _currentSubCircle.SlotIndex;
         }

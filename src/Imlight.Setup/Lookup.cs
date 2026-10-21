@@ -345,7 +345,7 @@ internal sealed class Lookup {
     /// <summary>
     /// The rows of a CSV file after its header line, allowing quoted fields.
     /// </summary>
-    private static IEnumerable<List<string>> ReadCsv(string path) {
+    internal static IEnumerable<List<string>> ReadCsv(string path) {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         using var reader = new StreamReader(stream, Encoding.UTF8);
         reader.ReadLine();
