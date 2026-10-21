@@ -126,6 +126,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
     private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
+    // From the in-person hatch window: the window shows "get ready to port" over a dark screen, then the trip.
+    private const float HATCH_WINDOW_DELAY = 1.0f;
+    // A trip without a sigil is never cancelled for walking off: the player is where they stood.
+    private const float NO_SIGIL_RADIUS = 1_000_000.0f;
     private PetMorphVisit _pendingTrip;
     private DateTime _pendingTripStarted;
     // Longer than the countdown and the zone load; a trip older than this is not still under way.
@@ -563,6 +567,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         var wizard = GetActiveWizard();
+
+        // The in-person window does not make the egg: once both are ready the game waits to be sent to the hatching
+        // room ("get ready to port") and the egg is made there, in the hatch window (Justin, 2026-10-21: both
+        // accepted and were stuck). Each side sends itself; the requester's instance is the shared one.
+        if (_morph is null && TryHatchWindowTrip(wizard)) {
+            return;
+        }
+
         var pet = PetHatching.Snapshot(PetCare.FindPet(wizard, _myPetId), wizard.CharId);
         if (pet is null || _peerPet is null) {
             Logger.Warning("Hatching: both ready, but a pet is missing (mine {0}, partner's {1}).",
@@ -583,6 +595,39 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         // The window closes with the result; both sides end on their own.
         Reset();
+    }
+
+    private bool TryHatchWindowTrip(Wizard wizard) {
+        if (wizard is null || !PetHatching.SigilWindow || !PetMorphZone.IsAvailable(out _)) {
+            return false;
+        }
+
+        var peer = _peerCharId;
+        var role = _isRequester ? CHARACTER_103_PROTOCOL.HatchSigilRole.Requester : CHARACTER_103_PROTOCOL.HatchSigilRole.Partner;
+        var peerName = WizardCollection.GetCharacterUnloaded(peer)?.PlayerNameBehavior?.GetWizardName() ?? "your partner";
+        var here = Util.GetCompactStringFromVector(wizard.Location, wizard.Orientation);
+        Logger.Information("Hatching: {0} and {1} are both ready in the hatch window; going to the hatching room as {2}.",
+            Logger.Args(wizard.CharId, peer, role));
+
+        // The trip starts a fresh pair in the hatching room, so the window's pairing is let go first.
+        _bred = true;
+        Reset();
+        _bred = false;
+        var started = TryStartTrip(new CHARACTER_103_PROTOCOL.MSG_HATCHSIGIL {
+            Role = role,
+            SigilGID = 0,
+            SigilName = "hatch window",
+            PartnerCharId = peer,
+            PartnerGameObjectId = Wizard.GetGameObjectId(peer),
+            PartnerName = peerName,
+            SigilLoc = here,
+            SigilType = "",
+            Radius = NO_SIGIL_RADIUS,
+            ZoneName = wizard.Zone,
+            FaceSlot = 0,
+            FromHatchWindow = true,
+        }, pair: true);
+        return started;
     }
 
     private void ShowPartnerPet() {
@@ -777,7 +822,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         _pendingTripStarted = DateTime.UtcNow;
 
         // The chat list goes first, so `.hatch` is there whatever the window does.
-        if (pair) {
+        if (message.FromHatchWindow) {
+            InformGameClient($"Going to the hatching room with {message.PartnerName}.");
+        }
+        else if (pair) {
             InformGameClient($"Stay on the sigil to go to the hatching room with {message.PartnerName}.");
         }
         else {
@@ -803,7 +851,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             // The one-player sigil goes after 1 s (Justin, 2026-10-21).
-            CountdownSeconds = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN : 0,
+            CountdownSeconds = message.FromHatchWindow ? HATCH_WINDOW_DELAY
+                : message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN : 0,
+            NoSigil = message.FromHatchWindow,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });

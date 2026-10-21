@@ -651,6 +651,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public string ZoneName;
         // Which of the pad's circles this player is put on: 0 for the first player on the pad, 1 for the second.
         public int FaceSlot;
+        // From the in-person hatch window (no sigil): straight to the hatching room, with no countdown.
+        public bool FromHatchWindow;
 
     }
 

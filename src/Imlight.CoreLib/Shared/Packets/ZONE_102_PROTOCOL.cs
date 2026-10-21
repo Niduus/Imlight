@@ -1174,6 +1174,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// <summary>Seconds of countdown before the trip; 0 for the usual sigil countdown.</summary>
         public float CountdownSeconds;
 
+        /// <summary>No sigil: no countdown on screen and no snap, the trip starts after CountdownSeconds.</summary>
+        public bool NoSigil;
+
         /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.
