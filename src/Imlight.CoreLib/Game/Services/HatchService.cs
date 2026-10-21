@@ -125,6 +125,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan PARTNER_LEFT_RETURN_DELAY = TimeSpan.FromSeconds(3);
     // A lender goes back once shown the partner's egg; this is how long that may take before they go back anyway.
     private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
     // Long enough to read the lender's pop-up; closing the hatch window leaves sooner.
@@ -539,13 +540,18 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                     });
                 }
 
-                if (!_bred) {
+                if (_morph is not null) {
+                    // In the hatching room the other player is gone (left or lost connection), so this one is sent
+                    // back shortly (Justin, 2026-10-21).
+                    InformGameClient($"{_morph.PartnerName ?? "Your partner"} has left.");
+                }
+                else if (!_bred) {
                     InformGameClient("The hatch was cancelled.");
                 }
 
                 Reset();
                 if (_morph is not null && !_bred) {
-                    ScheduleMorphReturn("the partner left", MORPH_RETURN_DELAY);
+                    ScheduleMorphReturn("the partner left", PARTNER_LEFT_RETURN_DELAY);
                 }
 
                 break;
@@ -921,9 +927,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             // The one-player sigil goes after 1 s (Justin, 2026-10-21).
             CountdownSeconds = message.FromHatchWindow ? HATCH_WINDOW_DELAY
-                : message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN : 0,
+                : message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN
+                : message.CountdownSeconds,
             NoSigil = message.FromHatchWindow,
-            Restart = _restartCountdown,
+            // The pad's countdown is reset only once, when the second player first joins; after that a pair forming
+            // again keeps the countdown already running (Justin, 2026-10-21).
+            Restart = _restartCountdown && !message.KeepCountdown,
+            ContinueCountdown = _restartCountdown && message.KeepCountdown,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });
@@ -954,7 +964,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         try {
             switch (message.Failure) {
                 case CHARACTER_103_PROTOCOL.HatchTripFailure.Cancelled:
-                    InformGameClient("You stepped off the sigil.");
+                    InformGameClient("You moved, so your sigil countdown stopped. Press X on the sigil to hop back on.");
                     if (trip is { IsPair: true } && TryGetOnlinePlayer(trip.PartnerCharId, out var partner)) {
                         Context.ActorSelection(partner.ActorPath).Tell(HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.TripCancelled));
                     }
