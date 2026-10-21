@@ -280,6 +280,13 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY))]
     private void ReceiveStartSigilEntry(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY message) {
+        if (message.Restart && _activeSigilEntry is not null && !_transferGate.IsQueued) {
+            // No timer end on screen: the new start below restarts the countdown the player already sees.
+            Logger.Information("{0}: countdown restarted for the pair.", Logger.Args(SigilLogName(message)));
+            Timers.Cancel(SIGIL_ENTER_TIMER_KEY);
+            _activeSigilEntry = null;
+        }
+
         if (_transferGate.IsQueued || _activeSigilEntry is not null) {
             Logger.Information("{0}: a countdown or transfer is already running; '{1}' ignored.",
                 Logger.Args(SigilLogName(message), message.DestinationZone));

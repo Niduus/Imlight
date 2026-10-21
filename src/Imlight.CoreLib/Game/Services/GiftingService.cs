@@ -47,7 +47,9 @@ using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imcodec.Types;
 using System;
 using System.Linq;
 using System.Text;
@@ -69,6 +71,10 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                 CharacterID = wizard.CharId,
                 MailType = 1
             });
+        }
+
+        if (wizard.Account?.ClaimGifts is { Count: > 0 } claimGifts) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = claimGifts.Count });
         }
     }
 
@@ -162,12 +168,18 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                     MaxEventCurrency1 = wizard.GameStats.m_baseEventCurrency1Pouch
                 });
                 break;
-            case ItemBundleTemplate bundle:
-                // A bundle from `.bundle` (or the crown shop): everything in it, nested bundles too.
-                for (uint i = 0; i < Math.Max(giftRedemption.m_itemCount, 1u); i++) {
-                    GrantBundle(wizard, bundle, 0);
-                }
-                break;
+            case ItemBundleTemplate:
+                // Bundles belong in the Claim Gift list, where the game lets the player pick a tier; claiming one from
+                // the friend gift box crashed the game (Justin, 2026-10-21). Move it there.
+                AddClaimGift(wizard.Account, giftRedemption.m_itemId);
+                SendToSocket(new GAME_5_PROTOCOL.MSG_REDEEM_MAIL_GIFT_RESPONSE {
+                    ErrorCode = 1,
+                    MailId = message.MailId,
+                });
+                SendMailList(wizard.Account);
+                SendToSocket(new GAME_5_PROTOCOL.MSG_NOTIFY_GIFT { Gift = wizard.Account.ClaimGifts.Count });
+                InformGameClient("That bundle was moved to your gift list (the gift button), where you can pick the tier.");
+                return;
             default:
                 // Check if the item is emote or teleport effect
                 var customEmote = itemTemplate?.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>().FirstOrDefault();
@@ -226,26 +238,154 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
-    private void GrantBundle(Wizard wizard, ItemBundleTemplate bundle, int depth) {
+    private void SendMailList(Account account) {
+        var mailData = new MailList { m_messages = account.GiftMailbox };
+        var mailSerializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.Compress);
+        if (mailSerializer.Serialize(mailData, 5, out var serializedData)) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_MAIL_DATA { Data = serializedData });
+        }
+    }
+
+    internal static ClaimGift AddClaimGift(Account account, ulong templateId) {
+        var gift = new ClaimGift { GiftId = Guid.NewGuid().ToString("N"), TemplateId = templateId, Modifier = 1 };
+        account.ClaimGifts ??= new();
+        account.ClaimGifts.Add(gift);
+        AccountCollection.AddClaimGifts(account.AccountId, [gift]);
+
+        return gift;
+    }
+
+    #region Claim Gift list
+
+    // The game's gift button list (promo gifts). Data is a PromoGiftList, non-versionable, uncompressed, property mask
+    // 0x18; read from the game client (2026-10-21). A choose-one bundle opens a picker and the pick comes back as
+    // BundleChoiceID (a template id).
+    private const uint CLAIM_GIFT_FLAGS = 0x18;
+
+    private static readonly ObjectSerializer s_claimGiftSerializer = new(Versionable: false, Behaviors: SerializerFlags.None);
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUEST_GIFTS))]
+    private void ReceiveRequestGifts(GAME_5_PROTOCOL.MSG_REQUEST_GIFTS message) {
+        var account = GetActiveAccount();
+        string giftType = message.GiftType;
+        var gifts = account?.ClaimGifts;
+        Logger.Information("Claim gifts: the game asked for \"{0}\"; {1} waiting.", Logger.Args(giftType, gifts?.Count ?? 0));
+
+        // Crowns rewards and periodic items are not kept here; AutoRedeem=1 makes the game show nothing.
+        if (!string.IsNullOrEmpty(giftType) || gifts is null || gifts.Count == 0) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_RECEIVE_GIFTS { Success = 1, Data = Array.Empty<byte>(), AutoRedeem = 1 });
+
+            return;
+        }
+
+        var list = new PromoGiftList {
+            m_promoGifts = gifts.Select(g => new PromoGift {
+                m_rewardID = (GID) g.TemplateId,
+                m_rewardModifier = (GID) Math.Max(g.Modifier, 1),
+                m_giftID = g.GiftId,
+                m_autoRedeem = false,
+            }).ToList(),
+        };
+
+        if (!s_claimGiftSerializer.Serialize(list, CLAIM_GIFT_FLAGS, out var data)) {
+            Logger.Error("Claim gifts: could not serialize the gift list.");
+            SendToSocket(new GAME_5_PROTOCOL.MSG_RECEIVE_GIFTS { Success = 0, Data = Array.Empty<byte>() });
+
+            return;
+        }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_RECEIVE_GIFTS { Success = 1, Data = data });
+    }
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REDEEM_GIFT))]
+    private void ReceiveRedeemClaimGift(GAME_5_PROTOCOL.MSG_REDEEM_GIFT message) {
+        var wizard = GetActiveWizard();
+        var account = wizard?.Account;
+        string giftId = message.GiftID;
+        ulong choice = message.BundleChoiceID;
+        var gift = account?.ClaimGifts?.FirstOrDefault(g => g.GiftId == giftId);
+        Logger.Information("Claim gifts: {0} claims {1} (template {2}, choice {3}).",
+            Logger.Args(wizard?.CharId, giftId, gift?.TemplateId, choice));
+        if (gift is null) {
+            SendGiftRedeemed(giftId, false, 0, 0, account);
+
+            return;
+        }
+
+        var template = CoreObjectFactory.GetCoreTemplate(gift.TemplateId);
+        var granted = gift.TemplateId;
+        if (template is ItemBundleTemplate bundle && (int) bundle.m_acquireCondition == 1 && choice != 0
+            && bundle.m_bundleItems.Any(id => (ulong) id == choice)) {
+            granted = choice;
+        }
+
+        ulong lastItem = 0;
+        var count = 0;
+        GrantTemplate(wizard, granted, 0, ref lastItem, ref count);
+        if (count == 0) {
+            SendGiftRedeemed(giftId, false, 0, 0, account);
+
+            return;
+        }
+
+        account.ClaimGifts.Remove(gift);
+        AccountCollection.RemoveClaimGift(account.AccountId, giftId);
+        SendGiftRedeemed(giftId, true, lastItem, granted, account);
+    }
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_DELETE_GIFT))]
+    private void ReceiveDeleteClaimGift(GAME_5_PROTOCOL.MSG_DELETE_GIFT message) {
+        var account = GetActiveAccount();
+        string giftId = message.GiftID;
+        account?.ClaimGifts?.RemoveAll(g => g.GiftId == giftId);
+        if (account is not null) {
+            AccountCollection.RemoveClaimGift(account.AccountId, giftId);
+        }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_DELETE_GIFT { GiftID = giftId, Success = 1, IsPeriodicItem = message.IsPeriodicItem });
+    }
+
+    private void SendGiftRedeemed(string giftId, bool success, ulong itemGid, ulong templateId, Account account)
+        => SendToSocket(new GAME_5_PROTOCOL.MSG_GIFT_REDEEMED {
+            Success = success ? 1 : 0,
+            GiftID = giftId ?? "",
+            GID = itemGid,
+            Data = Array.Empty<byte>(),
+            TemplateID = templateId,
+            // 5 is "inventory full" to the game.
+            ErrorCode = success ? 0 : 5,
+            Quantity = 1,
+            HasMorePromoGifts = (sbyte) (account?.ClaimGifts?.Count > 0 ? 1 : 0),
+        });
+
+    /// <summary>
+    /// Gives a template: a bundle gives everything in it (a choose-one bundle given whole gives all its choices).
+    /// </summary>
+    private void GrantTemplate(Wizard wizard, ulong templateId, int depth, ref ulong lastItem, ref int count) {
         if (depth > 4) {
             return;
         }
 
-        foreach (ulong templateId in bundle.m_bundleItems.Concat(bundle.m_bundleFreeItems ?? [])) {
-            if (CoreObjectFactory.GetCoreTemplate(templateId) is ItemBundleTemplate inner) {
-                GrantBundle(wizard, inner, depth + 1);
-                continue;
+        if (CoreObjectFactory.GetCoreTemplate(templateId) is ItemBundleTemplate bundle) {
+            foreach (ulong inner in bundle.m_bundleItems.Concat(bundle.m_bundleFreeItems ?? [])) {
+                GrantTemplate(wizard, inner, depth + 1, ref lastItem, ref count);
             }
 
-            if (!wizard.AddItemToInventory(templateId, out WizClientObjectItem item)) {
-                Logger.Warning("Bundle {0}: could not add item {1} to the inventory of {2}.",
-                    Logger.Args(bundle.m_templateID, templateId, wizard.CharId));
-                continue;
-            }
-
-            ItemSync.SendAdded(SessionActor.ActorRef, wizard, item);
+            return;
         }
+
+        if (!wizard.AddItemToInventory(templateId, out WizClientObjectItem item)) {
+            Logger.Warning("Claim gifts: could not add {0} to the inventory of {1}.", Logger.Args(templateId, wizard.CharId));
+
+            return;
+        }
+
+        ItemSync.SendAdded(SessionActor.ActorRef, wizard, item);
+        lastItem = item.m_globalID.Full;
+        count++;
     }
+
+    #endregion
 
     public static bool TryGetGiftRedemption(Mail mail, out CrownShopGiftRedemption? giftRedemption) {
         giftRedemption = null;

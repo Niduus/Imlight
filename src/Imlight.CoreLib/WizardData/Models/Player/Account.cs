@@ -101,6 +101,9 @@ public class Account {
 
     public List<Mail> GiftMailbox { get; set; } = new();
 
+    /// <summary>Gifts for the game's Claim Gift list (`.bundle`), where a choose-one bundle lets the player pick.</summary>
+    public List<ClaimGift> ClaimGifts { get; set; } = new();
+
     [JsonIgnore] public List<Wizard> Characters = new();
     [JsonIgnore] public InfractionHistory InfractionHistory { get; set; }
     [JsonIgnore] public SessionActor SessionActor { get; set; }
@@ -357,4 +360,11 @@ public class Account {
 
         return AccountCollection.RemoveGiftMail(this.AccountId, mailId);
     }
+}
+
+/// <summary>One gift in the Claim Gift list: an item, bundle or pet template, waiting to be claimed.</summary>
+public class ClaimGift {
+    public string GiftId { get; set; }
+    public ulong TemplateId { get; set; }
+    public ulong Modifier { get; set; }
 }

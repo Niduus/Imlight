@@ -544,4 +544,19 @@ public static class AccountCollection {
             }
         });
     }
+
+    public static bool AddClaimGifts(ulong accountId, IEnumerable<ClaimGift> gifts) {
+        var list = gifts.ToList();
+        return UpdateAccount(accountId, acc => {
+            acc.ClaimGifts ??= new();
+            acc.ClaimGifts.AddRange(list);
+        });
+    }
+
+    public static bool RemoveClaimGift(ulong accountId, string giftId) {
+        return UpdateAccount(accountId, acc => {
+            acc.ClaimGifts ??= new();
+            acc.ClaimGifts.RemoveAll(g => g.GiftId == giftId);
+        });
+    }
 }
