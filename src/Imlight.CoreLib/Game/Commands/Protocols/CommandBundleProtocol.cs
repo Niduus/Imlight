@@ -111,8 +111,8 @@ internal class CommandBundleProtocol : CommandProtocol {
     }
 
     /// <summary>
-    /// A chat line to this player alone, said by "Bundle List". Radial chat from nobody in the zone, so there is no
-    /// speech bubble and no whisper.
+    /// A chat line to this player alone, said by "Bundle List" as a whisper: the game shows whisper text as written.
+    /// Radial chat with filter 0 showed "..." and with filter 2 froze the game (Justin, 2026-10-21).
     /// </summary>
     private void SendChat(string text) {
         var name = Encoding.ASCII.GetBytes(CHAT_NAME);
@@ -121,12 +121,12 @@ internal class CommandBundleProtocol : CommandProtocol {
         packed[0] = (byte) (0x81 | 0x02 | (name.Length << 2));
         name.CopyTo(packed, 1);
 
-        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_RADIALCHAT {
+        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_DIRECTEDCHAT {
             SourceName = packed,
-            SourceID = 0,
+            SourceID = Context.Character.CharId,
             Message = text,
-            // 2 is what player chat uses; 0 ran the text through the game's chat filter, which showed "..." (Justin, 2026-10-21).
-            Filter = 2,
+            TargetID = Context.Character.CharId,
+            Filter = 0,
         }, ActorRefs.NoSender);
     }
 

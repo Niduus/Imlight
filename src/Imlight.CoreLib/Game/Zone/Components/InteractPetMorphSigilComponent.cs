@@ -231,7 +231,9 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
         // The join-time state may have been sent before the game had the pad; it goes once more on the first move.
         Light(playerActor);
-        if (_relightAt.TryGetValue(playerActor, out var relightAt) && DateTime.UtcNow >= relightAt) {
+        // Not while the countdown draws its numbers on the pad.
+        if (_relightAt.TryGetValue(playerActor, out var relightAt) && DateTime.UtcNow >= relightAt
+            && !(_countdownEnds is { } running && running > DateTime.UtcNow)) {
             _relightAt.Remove(playerActor);
             if (PetHatching.Enabled) {
                 Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
@@ -369,7 +371,15 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT))]
     private void ReceiveRelight(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT message) {
-        // A countdown still running for someone on the pad redraws its number on its next second.
+        // Lighting the pad while its countdown runs fights the countdown's numbers, which looked like a distorted
+        // fade when one player stepped off (Justin, 2026-10-21); wait until the countdown is over.
+        if (_countdownEnds is { } ends && ends > DateTime.UtcNow) {
+            Timers.StartSingleTimer(RELIGHT_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_SIGILRELIGHT(),
+                ends - DateTime.UtcNow + s_relightDelay);
+
+            return;
+        }
+
         Entity.ChangeState(LIT_STATE);
     }
 
