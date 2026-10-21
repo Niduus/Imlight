@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using Imlight.Common;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Shared.Behaviors;
 
@@ -138,6 +139,23 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     }
 
     /// <summary>
+    /// An item the game cannot make (no such template, or a bundle, which is only ever claimed, never held) makes it
+    /// drop the whole backpack and the connection at login (Justin, 2026-10-21: "can't load my character"). Such items
+    /// are left out of what the game is sent.
+    /// </summary>
+    private static bool CanSendToGame(WizClientObjectItem item) {
+        var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID);
+        if (template is WizItemTemplate and not ItemBundleTemplate) {
+            return true;
+        }
+
+        Logger.Warning("Inventory: item {0} (template {1}, {2}) is not sent to the game; it cannot show it.",
+            Logger.Args(item.m_globalID.Full, item.m_templateID, template?.GetType().Name ?? "no template"));
+
+        return false;
+    }
+
+    /// <summary>
     /// Checks if the inventory contains an item with the specified global ID.
     /// </summary>
     /// <param name="globalId">The global ID of the item to check.</param>
@@ -153,8 +171,8 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     public ClientWizInventoryBehavior GetClientBehaviorInstance() => new() {
         m_numItemsAllowed = Limit,
         m_numJewelsAllowed = s_maxJewelsAllowed,
-        m_itemList = Items.ConvertAll(item =>
-            (item as IClientBehaviorProvider<CoreObject>)?.GetClientBehaviorInstance() ?? item),
+        m_itemList = Items.Where(CanSendToGame).Select(item =>
+            (item as IClientBehaviorProvider<CoreObject>)?.GetClientBehaviorInstance() ?? item).ToList(),
         m_numCEEmotesAllowed = s_numEmotesAllowed,
         m_numCETeleportsAllowed = s_numTeleportsAllowed
     };
