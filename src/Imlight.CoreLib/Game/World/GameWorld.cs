@@ -288,7 +288,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             // GameWorld actor thread, so even though the Asks ran concurrently, this guard still prevents a
             // duplicate loader or a duplicate owner registration.
             if (!_zoneLoaderActors.ContainsKey(message.DestinationZone)) {
-                CreateZoneLoader(message.DestinationZone);
+                CreateZoneLoader(message.DestinationZone, message.Variant);
                 _instanceCreationCalledByMap.Add(message.DestinationZone, (message.OwnerCharId, message.IsPrivate));
             }
             _awaitingTransfers.Add(message, result.OriginalSender);
@@ -305,7 +305,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         if (!_publicZones.TryGetValue(message.DestinationZone, out var zone)) {
             // A second player entering while the zone still loads waits for the same load.
             if (!_zoneLoaderActors.ContainsKey(message.DestinationZone)) {
-                CreateZoneLoader(message.DestinationZone);
+                CreateZoneLoader(message.DestinationZone, message.Variant);
                 _instanceCreationCalledByMap.AddOrSet(message.DestinationZone, (message.OwnerCharId, message.IsPrivate));
             }
 
@@ -318,7 +318,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         }
     }
 
-    private IActorRef CreateZoneLoader(string zonePath) {
+    private IActorRef CreateZoneLoader(string zonePath, string variant) {
         // Run the loader on the dedicated zone-loading dispatcher (see akka.conf). Its work, a synchronous WAD
         // open plus six deserializes, would otherwise run on the default dispatcher, where a burst of
         // concurrent loads can starve session and handshake processing and drop entering players. Fail-safe:
@@ -337,7 +337,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         Logger.Information("Game world starting zone load: {ZoneName}", Logger.Args(zonePath));
 
         // Tell the loader to begin loading the zone and await the response.
-        var msg = new ZONE_102_PROTOCOL.MSG_ZONELOADBEGIN { ZonePath = zonePath };
+        var msg = new ZONE_102_PROTOCOL.MSG_ZONELOADBEGIN { ZonePath = zonePath, Variant = variant };
         loaderRef.Tell(msg);
 
         _zoneLoaderActors.Add(zonePath, loaderRef);

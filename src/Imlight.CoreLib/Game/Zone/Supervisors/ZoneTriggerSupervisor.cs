@@ -539,9 +539,38 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
                 };
                 trigger.m_results = resultList;
             }
+
+            UseZoneObjectsExit(trigger);
         }
 
         return triggers;
+    }
+
+    // A copy of the zone whose spiraldb-extra/ZoneObjects file gives it an exit (an added sigil's instance) sends its
+    // teleports out there. The teleports are copied, so the stored ones and the zone's other copies are untouched.
+    private void UseZoneObjectsExit(Trigger trigger) {
+        var results = trigger.m_results?.m_results;
+        if (results is null || !results.Any(r => r is ResTeleport)) {
+            return;
+        }
+
+        var changed = false;
+        var exits = results.Select(r => {
+            if (r is not ResTeleport teleport
+                || !Zone.Extras.TryGetExit(trigger.m_triggerName, teleport.m_destinationZone, out var zone, out var loc)) {
+                return r;
+            }
+
+            changed = true;
+
+            return teleport with { m_destinationZone = zone, m_destinationLoc = loc };
+        }).ToList();
+
+        if (changed) {
+            trigger.m_results = new ResultList { m_results = exits };
+            Logger.Information("Zone {0}: trigger {1} now leads to the ZoneObjects exit.",
+                Logger.Args(Zone.ZonePath, trigger.m_triggerName));
+        }
     }
 
 }

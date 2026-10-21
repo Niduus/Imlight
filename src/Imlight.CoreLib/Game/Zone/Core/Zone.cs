@@ -72,6 +72,12 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     public WizZoneData ZoneData { get; private set; }
 
     /// <summary>
+    /// What spiraldb-extra/ZoneObjects gave this copy of the zone (its encounters and exit); set before the
+    /// supervisors load.
+    /// </summary>
+    internal ZoneObjects.Applied Extras { get; private set; } = ZoneObjects.Applied.None;
+
+    /// <summary>
     /// Whether this zone is a private, per-owner instance (a dungeon/raid loaded under an
     /// <see cref="World.InstanceContainer"/>) rather than a shared public zone.
     /// </summary>
@@ -328,8 +334,9 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
         _zoneLoadTimer.Restart();
 
-        // Objects added from spiraldb-extra/ZoneObjects join the zone's own before the supervisors make them.
-        ZoneObjects.AddTo(ZonePath, message.ZoneData);
+        // Objects and creatures added from spiraldb-extra/ZoneObjects join the zone's own before the supervisors make
+        // them; a copy loaded for a variant (an added sigil's instance) takes that variant's file too.
+        Extras = ZoneObjects.AddTo(ZonePath, message.Variant, message);
         ZoneData = message.ZoneData;
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply

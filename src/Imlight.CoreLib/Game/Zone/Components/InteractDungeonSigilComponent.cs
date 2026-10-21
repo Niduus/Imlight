@@ -79,7 +79,12 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public float DEFAULT_INTERACTION_RADIUS
         => SigilInfo is not null && SigilInfo.m_radius > 0 ? SigilInfo.m_radius : DEFAULT_PAD_RADIUS;
 
+    // The pad's lit state in MinigameSigilStatesNew; its animation is the pad's "On".
+    private const string LIT_STATE = ZoneObjects.SIGIL_LIT_STATE;
+
     private ResolvedSigil _resolved;
+    // Players the pad has been lit for since they joined (once more on their first move).
+    private readonly HashSet<IActorRef> _litFor = [];
     private MinigameSigilInfo SigilInfo 
         => Entity.Info as MinigameSigilInfo;
     private bool IsAvailable
@@ -123,8 +128,24 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (IsAvailable) {
-            Entity.ChangeStateExclusiveSender("Glowy", playerActor);
+        _litFor.Remove(playerActor);
+        Light(playerActor);
+    }
+
+    // The join-time state may be sent before the game has the pad, which leaves it Off, so it goes once more on the
+    // player's first move, as the hatching pads do (Justin, 2026-10-21: the Ravenwood sigil showed Off).
+    public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (playerWizard is not null && _litFor.Add(playerActor)) {
+            Light(playerActor);
+        }
+    }
+
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id)
+        => _litFor.Remove(playerActor);
+
+    private void Light(IActorRef playerActor) {
+        if (playerActor is not null && IsAvailable) {
+            Entity.ChangeStateExclusiveSender(ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE, playerActor);
         }
     }
 
@@ -147,10 +168,11 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             Radius = DEFAULT_INTERACTION_RADIUS,
             DestinationZone = sigil.DestinationZone,
             DestinationLoc = sigil.DestinationLoc,
+            Variant = sigil.Variant,
         });
     }
 
-    private sealed record ResolvedSigil(string DestinationZone, string DestinationLoc);
+    private sealed record ResolvedSigil(string DestinationZone, string DestinationLoc, string Variant = "");
 
     private static readonly Regex s_streetTowerRx
         = StreetTowerRegex();
@@ -179,8 +201,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         }
 
         // A pad added from spiraldb-extra/ZoneObjects names its own destination (ZoneObjects.cs).
-        if (ZoneObjects.TryGetDestination(SigilInfo, out var addedZone, out var addedLoc)) {
-            _resolved = new ResolvedSigil(addedZone, addedLoc);
+        if (ZoneObjects.TryGetDestination(SigilInfo, out var addedZone, out var addedLoc, out var addedVariant)) {
+            _resolved = new ResolvedSigil(addedZone, addedLoc, addedVariant);
             sigil = _resolved;
 
             return true;

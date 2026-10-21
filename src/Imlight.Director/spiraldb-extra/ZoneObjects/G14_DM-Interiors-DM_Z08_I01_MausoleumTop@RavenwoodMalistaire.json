@@ -1,0 +1,45 @@
+{
+  "Zone": "G14_DM/Interiors/DM_Z08_I01_MausoleumTop",
+  "Variant": "RavenwoodMalistaire",
+  "Notes": "Justin, 2026-10-21: the private copy of the top of the Darkmoor Mausoleum that the Ravenwood sigil sends players to (ZoneObjects.cs explains the fields). Malistaire the Undying (G14-DM-Malistaire_Boss, the Castle Darkmoor one, with his BossCheats and drops) stands on his own battle circle, and 3 different Draconians, picked at random from his 8, join when the battle starts. The zone's own Malistaire and Draconians are left out so there are not two. Leaving through the exit goes back to the Ravenwood sigil. The room's layout is not in the files here: the circle and Malistaire stand straight ahead of where players arrive (-20.8, -3024, facing +Y); move them with in-game coordinates if they are in a wall or off the floor.",
+  "Remove": [1336035, 1336034, 1336048, 1336049, 1336050, 1336051, 1336052, 1336053, 1336054],
+  "Objects": [
+    {
+      "Name": "Imlight Malistaire Battle Circle",
+      "Notes": "Duel Circle (template 560) with Malistaire's own sigil (Root.wad Sigils/CombatSigilDarkmoorMalistaireBoss: 4 enemy and 4 player circles, 600 out). At yaw 0 the player circles face the way players come in (-Y) and the enemy circles are beyond.",
+      "TemplateID": 560,
+      "X": -20,
+      "Y": -1300,
+      "Z": 0,
+      "Yaw": 0,
+      "CombatSigil": {
+        "SigilType": "CombatSigilDarkmoorMalistaireBoss",
+        "Radius": 600
+      }
+    }
+  ],
+  "Creatures": [
+    {
+      "Name": "Imlight Malistaire the Undying",
+      "Notes": "On the enemy side of the circle, facing the players coming in. Walking near him starts the battle.",
+      "TemplateID": 1336035,
+      "X": -20,
+      "Y": -900,
+      "Z": 0,
+      "Yaw": 0
+    }
+  ],
+  "Encounters": [
+    {
+      "Boss": 1336035,
+      "Notes": "Draconian Pyromancer 1336034, Draconian Pyro 1336048, Draconian Thaumaturge 1336049, Draconian Diviner 1336050, Draconian Conjurer 1336051, Draconian Theurgist 1336052, Draconian Necromancer 1336053, Draconian Sorcerer 1336054 (all G14-DM-Draconian_Malistaire*).",
+      "Minions": [1336051, 1336050, 1336053, 1336048, 1336034, 1336054, 1336049, 1336052],
+      "MinionCount": 3
+    }
+  ],
+  "Exit": {
+    "Zone": "WizardCity/WC_Ravenwood",
+    "Loc": "-2340,4812,-28,-0.861",
+    "Triggers": []
+  }
+}

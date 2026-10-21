@@ -114,6 +114,12 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
         teleport = ZoneDataCollection.GetZoneData(zonePath)?.Teleports?
             .FirstOrDefault(t => t.TriggerName == name)?.Teleport;
 
+        // A copy of the zone with a spiraldb-extra/ZoneObjects exit (an added sigil's instance) leaves there instead.
+        if (teleport is not null
+            && Entity.Zone.Extras.TryGetExit(name, teleport.m_destinationZone, out var exitZone, out var exitLoc)) {
+            teleport = teleport with { m_destinationZone = exitZone, m_destinationLoc = exitLoc };
+        }
+
         return !string.IsNullOrEmpty(teleport?.m_destinationZone);
     }
 
