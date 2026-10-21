@@ -156,7 +156,7 @@ public partial class CombatResolver {
                 var under = cheat.Health > 0 ? health < cheat.Health : health * 100.0 / most < cheat.Percent;
                 // Health cheats go off once each, as the boss's health first falls under the mark.
                 if (!cheat.Is("HealthBelow") || !under || !InPhase(boss, cheat) || _bossCheatsUsed.Contains((boss, i))
-                    || (!boss.IsAlive && cheat.SetHealth <= 0)) {
+                    || (!boss.IsAlive && cheat.SetHealth <= 0 && cheat.Spawn == 0)) {
                     continue;
                 }
 
@@ -235,13 +235,27 @@ public partial class CombatResolver {
     private float TryBossCheat(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger,
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
-        // A second form comes back before anything else is checked: the boss is up again, so the battle goes on.
-        if (cheat.SetHealth > 0 && !(cheat.Once && _bossCheatsUsed.Contains((boss, index)))) {
+        if (cheat.Once && _bossCheatsUsed.Contains((boss, index))) {
+            return 0;
+        }
+
+        // A second form comes before anything else is checked, so the battle goes on: a new creature (Spawn) when a
+        // circle is free, else the boss back up in its own circle (SetHealth).
+        var form = cheat.Spawn > 0 ? boss._duelActor.SpawnBossForm(cheat.Spawn, boss) : null;
+        if (form is not null) {
+            return BossFormArrives(boss, index, cheat, form, combatActionList);
+        }
+
+        if (cheat.Spawn > 0) {
+            Logger.Warning("Duel {0} | Slot {1} | Boss form {2} found no free circle{3}.", Logger.Args(_duel.m_duelID.Full,
+                boss.SlotIndex, cheat.Spawn, cheat.SetHealth > 0 ? "; the boss comes back in its own circle" : ""));
+        }
+
+        if (cheat.SetHealth > 0) {
             SetBossHealth(boss, cheat.SetHealth);
         }
 
-        if (!boss.IsAlive || BattleDecided() || (cheat.Once && _bossCheatsUsed.Contains((boss, index)))
-            || !PetMayCasts.Roll(cheat.Chance)) {
+        if (!boss.IsAlive || BattleDecided() || !PetMayCasts.Roll(cheat.Chance)) {
             return 0;
         }
 
@@ -285,7 +299,17 @@ public partial class CombatResolver {
                 boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
                 var before = combatActionList.m_actionList.Count;
                 var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
-                cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+                var time = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+                // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
+                if (cheat.Silent) {
+                    for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                        combatActionList.m_actionList[i].m_showCast = false;
+                    }
+
+                    time = Math.Min(time, SkipCastSeconds);
+                }
+
+                cinematicTime += time;
                 if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
                     cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], lines, boss.SlotIndex);
                     lines.Clear();
@@ -293,23 +317,58 @@ public partial class CombatResolver {
             }
         }
 
-        if (cheat.Defeat && boss.IsAlive) {
+        // With Spawn, Defeat is for the boss the new form replaces; one brought back in its own circle stays up.
+        if (cheat.Defeat && cheat.Spawn == 0 && boss.IsAlive) {
             boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
             Logger.Information("Duel {0} | Slot {1} | {2} defeats itself.", Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
         }
 
-        // A line with no spell shows after the round's last spell so far, or before the round's first spell.
         if (lines.Count > 0) {
-            var last = combatActionList.m_actionList.FindLastIndex(a => a.m_spell is not null);
-            if (last >= 0) {
-                cinematicTime += InsertAnnouncements(combatActionList, last + 1, combatActionList.m_actionList[last], lines, boss.SlotIndex);
-            }
-            else {
-                AddAnnouncement(line, boss.SlotIndex);
-            }
+            cinematicTime += ShowBossLine(line, boss, combatActionList);
         }
 
         return cinematicTime;
+    }
+
+    // A line with no spell shows after the round's last spell so far, or before the round's first spell.
+    private float ShowBossLine(string line, CombatDuelSubCircle boss, CombatActionListObj combatActionList) {
+        var last = combatActionList.m_actionList.FindLastIndex(a => a.m_spell is not null);
+        if (last >= 0) {
+            return InsertAnnouncements(combatActionList, last + 1, combatActionList.m_actionList[last], [line], boss.SlotIndex);
+        }
+
+        AddAnnouncement(line, boss.SlotIndex);
+
+        return 0;
+    }
+
+    // A second form (Spawn) took a circle: the boss is defeated (Defeat) and its line shows over it. The new creature
+    // fights from the next round with its own cheats.
+    private float BossFormArrives(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle form,
+                                  CombatActionListObj combatActionList) {
+        if (cheat.Once) {
+            _bossCheatsUsed.Add((boss, index));
+        }
+
+        var bossName = BossCheats.NameOf(boss.ParticipantObject.m_templateID);
+        if (cheat.Defeat && boss.IsAlive) {
+            boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | {2} comes back as {3} in slot {4}.",
+            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, BossCheats.NameOf(cheat.Spawn), form.SlotIndex));
+
+        if (cheat.Line.Length == 0) {
+            return 0;
+        }
+
+        if (!CommandAnnounceProtocol.TryResolve(cheat.Line, out var line, out _, out var problem)) {
+            Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, cheat.Line, problem));
+
+            return 0;
+        }
+
+        return ShowBossLine(line, boss, combatActionList);
     }
 
     private List<CombatDuelSubCircle> BossCheatTargets(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, SpellTemplate template,
