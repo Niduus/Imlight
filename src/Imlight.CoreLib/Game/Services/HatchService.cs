@@ -138,6 +138,11 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private bool _morphClientReady;
     private int _morphInitTries;
     private bool _morphPeerSeen;
+    // The "Hatch or Lend Pet" screen of a pair: 0 not chosen yet, 1 Hatch, 2 Lend (this player's and the partner's).
+    private const int CHOICE_HATCH = 1;
+    private const int CHOICE_LEND = 2;
+    private int _myChoice;
+    private int _peerChoice;
     private bool _morphLeaving;
     private ByteString _morphOwnData;
     private ByteString _morphPeerData;
@@ -497,6 +502,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                 SendReadyStatus();
                 ShowPartnerPet();
                 break;
+            case CHARACTER_103_PROTOCOL.HatchPeerKind.Choice:
+                OnPeerChoice(message.Value);
+                break;
             case CHARACTER_103_PROTOCOL.HatchPeerKind.Left:
                 Timers.Cancel(INVITE_TIMER);
                 _peerJoin = JOIN_LEFT;
@@ -572,6 +580,17 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         // room ("get ready to port") and the egg is made there, in the hatch window (Justin, 2026-10-21: both
         // accepted and were stuck). Each side sends itself; the requester's instance is the shared one.
         if (_morph is null && TryHatchWindowTrip(wizard)) {
+            return;
+        }
+
+        // A lender gets no egg; the partner hatches with the lent pet (Justin, 2026-10-21).
+        if (_morph is not null && _myChoice == CHOICE_LEND) {
+            _bred = true;
+            Logger.Information("Hatching zone: {0} lent their pet to {1}; no egg on this side.", Logger.Args(wizard?.CharId, _peerCharId));
+            InformGameClient("You lent your pet. Back to the hatchery in a moment.");
+            Reset();
+            ScheduleMorphReturn("the pet was lent", MORPH_RETURN_DELAY);
+
             return;
         }
 
@@ -1151,6 +1170,11 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                     }
 
                     break;
+                // "Hatch or Lend Pet": the game only asks; the screen moves on when the server answers both choices.
+                case "hatch" when _morph.IsPair:
+                case "lend" when _morph.IsPair:
+                    ChooseHatchOrLend(verb.Trim().Equals("lend", StringComparison.OrdinalIgnoreCase) ? CHOICE_LEND : CHOICE_HATCH);
+                    break;
                 case "ready":
                     var confirmed = fields.TryGetValue("confirmed", out var c) && int.TryParse(c, out var v) ? v : 1;
                     if (_morph.IsPair) {
@@ -1175,6 +1199,48 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             Logger.Error("Hatching zone: MSG_PETGAMEDATA failed. {0}", Logger.Args(ex));
         }
     }
+
+    private void ChooseHatchOrLend(int choice) {
+        _myChoice = choice;
+        Logger.Information("Hatching zone: {0} chose {1} (partner {2}).",
+            Logger.Args(_morph?.CharId, ChoiceName(choice), ChoiceName(_peerChoice)));
+        TellPeer(HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.Choice, choice));
+        SendChoices();
+    }
+
+    private void OnPeerChoice(int choice) {
+        _peerChoice = choice;
+        if (_myChoice != 0) {
+            SendChoices();
+        }
+    }
+
+    // What the window understands: "Hatch:Wait" while the partner has not chosen, then this player's choice and the
+    // partner's: "Hatch:Hatch", "Hatch:Lend", "Lend:Hatch" or "Lend:DoubleLend" (read from the game, 2026-10-21).
+    private void SendChoices() {
+        string data;
+        if (_peerChoice == 0) {
+            data = "Hatch:Wait";
+        }
+        else if (_myChoice == CHOICE_LEND && _peerChoice == CHOICE_LEND) {
+            data = "Lend:DoubleLend";
+        }
+        else {
+            data = $"{ChoiceName(_myChoice)}:{ChoiceName(_peerChoice)}";
+        }
+
+        Logger.Information("Hatching zone: telling {0} \"{1}\".", Logger.Args(_morph?.CharId, data));
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEDATA { Game = PetMorphZone.GAME, Data = data });
+
+        // Two lenders: the window shows a note and goes back to the choice, so both choose again.
+        if (data == "Lend:DoubleLend") {
+            _myChoice = 0;
+            _peerChoice = 0;
+        }
+    }
+
+    private static string ChoiceName(int choice)
+        => choice == CHOICE_LEND ? "Lend" : choice == CHOICE_HATCH ? "Hatch" : "none";
 
     // Alone, the window's two sides are both the player's own pets.
     private void HatchWindowSides() {
@@ -1250,6 +1316,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         _morphLeaving = false;
         _morphOwnData = default;
         _morphPeerData = default;
+        _myChoice = 0;
+        _peerChoice = 0;
         Logger.Information("Hatching zone: {0} ({1}) arrived from {2} ({3}), {4}, instance owner {5}, {6:0.0} s after pressing X.",
             Logger.Args(Name(wizard), wizard.CharId, visit.PadName, visit.SigilGid,
                 visit.IsPair ? $"hatching with {visit.PartnerName} ({visit.PartnerCharId})" : "hatching alone",
@@ -1383,7 +1451,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         var canAfford = (sbyte) (wizard.GameStats.m_currentGold >= PetHatching.GoldCost ? 1 : 0);
         Logger.Information("Hatching zone: sending {0} MSG_PETGAMEINIT Game={1} ({2} bytes) MinLevel=0 Track=0, then MSG_PETMORPHCANAFFORD CanAfford={3} (try {4}).",
             Logger.Args(wizard.CharId, PetMorphZone.GAME, _morphOwnData.Length, canAfford, _morphInitTries));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = PetMorphZone.GAME, Data = _morphOwnData, MinLevel = 0, Track = 0 });
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT { Game = PetMorphZone.GAME, Data = _morphOwnData, MinLevel = 0,
+            // "Lends Available Today" (a byte, so 255 at most); 0 greys out Lend Pet.
+            Track = (byte) Math.Clamp(PetHatching.LendsPerDay, 0, 255) });
         SendToSocket(new PET_9_PROTOCOL.MSG_PETMORPHCANAFFORD { CanAfford = canAfford });
         if (_morph.IsPair && _peerPet is not null) {
             Logger.Information("Hatching zone: telling {0} the partner's pick {1}.", Logger.Args(wizard.CharId, PetHatching.Describe(_peerPet)));

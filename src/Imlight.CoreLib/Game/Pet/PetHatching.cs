@@ -146,6 +146,12 @@ internal static class PetHatching {
     internal static bool SigilWindow => ConfigurationManager.GetValue("Hatching.SigilWindow", true);
 
     /// <summary>
+    /// [Hatching] LendsPerDay: "Lends Available Today" on the hatch window's Hatch or Lend screen. The game holds it in
+    /// one byte, so it shows 255 at most; 0 turns Lend Pet off. Lends are not counted down.
+    /// </summary>
+    internal static int LendsPerDay => ConfigurationManager.GetValue("Hatching.LendsPerDay", 999);
+
+    /// <summary>
     /// The wizard's hatched pets: the one worn first, then the backpack's.
     /// </summary>
     internal static List<WizClientObjectItem> OwnPets(Wizard wizard) {
