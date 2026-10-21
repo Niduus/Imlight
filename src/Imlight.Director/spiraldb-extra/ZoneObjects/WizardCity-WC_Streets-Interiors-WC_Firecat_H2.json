@@ -1,0 +1,5 @@
+{
+  "Zone": "WizardCity/WC_Streets/Interiors/WC_Firecat_H2",
+  "Notes": "Keep the mainline Gretta and remove the separate side-quest copy inside Gretta's house. InteractQuestOfferComponent serves both quest templates through the remaining NPC.",
+  "Remove": [38098]
+}

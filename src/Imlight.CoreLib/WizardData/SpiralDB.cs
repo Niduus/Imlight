@@ -52,7 +52,9 @@ public static class SpiralDB {
     // Our own additions (Celestia's quests, for example), laid over SpiralDB's data. A file here replaces
     // SpiralDB's file of the same name, and SpiralDB's updates never touch this folder.
     private static readonly string s_extraPath
-        = ConfigurationManager.GetValue("Database.SpiralDBExtraPath", "./spiraldb-extra");
+        = ConfigurationManager.GetValue(
+            "Database.SpiralDBExtraPath",
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "spiraldb-extra"));
 
     /// <summary>The full path of our own additions folder (spiraldb-extra).</summary>
     internal static string ExtraPath => Path.GetFullPath(s_extraPath);

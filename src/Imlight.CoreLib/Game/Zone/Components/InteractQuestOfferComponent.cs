@@ -59,13 +59,17 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal class PlayerQuestOfferState {
-    public bool HasAvailableQuest { get; set; }
-    public QuestTemplate AvailableQuest { get; set; }
+    public List<QuestTemplate> AvailableQuests { get; set; } = [];
     public DateTime LastUpdated { get; set; }
 }
 
 internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
+
+    // Firecat Alley has a second Gretta object used by side quests. The zone extra removes that
+    // copy and routes its offers through the mainline Gretta instead.
+    private const ulong FIRECAT_GRETTA_MAINLINE_TEMPLATE_ID = 1521048;
+    private const ulong FIRECAT_GRETTA_SIDE_QUEST_TEMPLATE_ID = 38098;
 
     private const string PREP_NPC_ICON = "Prep";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
@@ -123,17 +127,19 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         var state = GetOrUpdatePlayerState(wizard);
 
         // The memento wizbang tick reads this property; refresh it from live state.
-        WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
+        WizBang = state.AvailableQuests.Count > 0 ? WizBangs.StartQuest : WizBangs.None;
 
-        if (!state.HasAvailableQuest || state.AvailableQuest == null) {
+        if (state.AvailableQuests.Count == 0) {
             yield break;
         }
 
-        yield return new PrepEntry {
-            m_displayKey = state.AvailableQuest.m_questTitle,
-            m_iconKey = PREP_NPC_ICON,
-            m_serviceName = ServiceName,
-        };
+        foreach (var quest in state.AvailableQuests) {
+            yield return new PrepEntry {
+                m_displayKey = quest.m_questTitle,
+                m_iconKey = PREP_NPC_ICON,
+                m_serviceName = ServiceName,
+            };
+        }
     }
 
     public override void OnStart() {
@@ -151,7 +157,9 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
             var prepDialogEntry = dialogList.m_dialogs.FirstOrDefault(de => de.m_dialogTag == "Prep");
             var templateId = prepDialogEntry?.m_dialogEntries?.FirstOrDefault()?.m_actorTemplateID;
 
-            if (templateId == entity.ActiveGameObject.m_templateID) {
+            if (templateId == entity.ActiveGameObject.m_templateID
+                || (entity.ActiveGameObject.m_templateID == FIRECAT_GRETTA_MAINLINE_TEMPLATE_ID
+                    && templateId == FIRECAT_GRETTA_SIDE_QUEST_TEMPLATE_ID)) {
                 _givesQuests.Add(questTemplate);
             }
         }
@@ -167,7 +175,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         }
 
         var state = GetOrUpdatePlayerState(playerWizard, forceUpdate: true);
-        WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
+        WizBang = state.AvailableQuests.Count > 0 ? WizBangs.StartQuest : WizBangs.None;
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
@@ -186,13 +194,13 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
 
         _lastWizBangUpdate[playerId] = now;
         var state = GetOrUpdatePlayerState(playerWizard, forceUpdate: true);
-        WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
+        WizBang = state.AvailableQuests.Count > 0 ? WizBangs.StartQuest : WizBangs.None;
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        var state = GetOrUpdatePlayerState(playerCharacter);
-        if (state.HasAvailableQuest && state.AvailableQuest != null) {
-            HandleQuestOffer(playerActor, state.AvailableQuest, playerCharacter);
+        var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
+        if (serviceOptionIndex < state.AvailableQuests.Count) {
+            HandleQuestOffer(playerActor, state.AvailableQuests[(int) serviceOptionIndex], playerCharacter);
         }
     }
 
@@ -228,10 +236,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
                 context: new QuestRequirementContext(quest.m_requirements, null, null, wizard, quest.m_questName));
 
             if (requirementsMet) {
-                state.HasAvailableQuest = true;
-                state.AvailableQuest = quest;
-
-                break; // Take the first available quest.
+                state.AvailableQuests.Add(quest);
             }
         }
 
