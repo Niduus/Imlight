@@ -49,7 +49,7 @@ internal sealed class Lookup {
     internal const string EVERYTHING = "Everything";
 
     /// <summary>The filters the tab offers, in order.</summary>
-    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Item", "Spell", "Creature", "NPC", "Zone", "Quest", "Phrase"];
+    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Bundle", "Item", "Spell", "Creature", "NPC", "Zone", "Quest", "Phrase"];
 
     private const string QA = "Quality assurance or higher";
     private const string HM = "Hall monitor or higher";
@@ -143,8 +143,7 @@ internal sealed class Lookup {
         Command("Set a pet stat", ".pet stats <stat> <amount|max>", QA, "Sets Strength, Intellect, Agility, Will, Power or Happiness of the pet you are wearing to an amount or its maximum. An amount above the maximum raises the maximum to it, such as .pet stats strength 260."),
         Command("Max pet stats", ".pet maxstats", QA, "Raises every stat of the pet you are wearing to its maximum."),
         Command("Hatch two pets", ".hatch <pet 1> <pet 2>", QA, "Hatches two of your own pets (worn or in your backpack) into an egg in your backpack. Type .hatch alone to list your pets with numbers, then use the numbers, such as .hatch 1 2, or names, such as .hatch Fire Cat Storm Dragon. The egg is one of the two kinds and gets talents from both parents. How long it takes and the gold it costs are under Settings, Hatching."),
-        Command("Bundle list", ".bundle list [words]", QA, "Lists the game's bundles (gear sets with all their tiers and wands, and the crown shop bundles) as chat messages. Add words to show only names that have them, such as .bundle list stinger."),
-        Command("Bundle to gift box", ".bundle <name>", QA, "Puts that bundle in your gifts (the gift button). Claim it there and pick the tier you want. Use a name from .bundle list, such as .bundle Stinger Attire."),
+        Command("Bundle to gift box", ".bundle <name>", QA, "Puts that bundle in your gifts (the gift button). Claim it there and pick the tier you want. Find the names here: pick Bundle in the list on the right, search, and click Send to my gifts."),
         Command("Clear gift box", ".bundle clear", QA, "Removes every unclaimed gift from your gift button list."),
         Command("Jewels you wear", ".jewel list", QA, "Lists the sockets on the gear and pet you are wearing and what is in them."),
         Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),
@@ -281,6 +280,19 @@ internal sealed class Lookup {
                 var (name, title) = (fields[0], fields[1]);
                 entries.Add(new LookupEntry("Quest", title.Length > 0 ? title : name, "", title.Length > 0 ? name : "",
                     $".quest grant {name}", "Adds the quest to your quest book. .quest complete with the same name finishes it."));
+            }
+        }
+
+        // The game's bundles, written by the server (the list moved out of the game's chat, Justin 2026-10-21).
+        var bundles = Path.Combine(folder, "bundles.csv");
+        if (File.Exists(bundles)) {
+            foreach (var fields in ReadCsv(bundles)) {
+                if (fields.Count < 2 || fields[0].Length == 0) {
+                    continue;
+                }
+
+                entries.Add(new LookupEntry("Bundle", fields[0], "", fields[1] == "1" ? "1 gift" : $"{fields[1]} gifts",
+                    $".bundle {fields[0]}", "Puts this bundle in your gifts (the gift button). Claim it there and pick the tier you want."));
             }
         }
 

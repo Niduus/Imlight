@@ -43,9 +43,8 @@ internal class CommandBundleProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    private const int NAMES_PER_MESSAGE = 10;
-
-    private const string CHAT_NAME = "Bundle List";
+    // Names in the notice when several bundles match.
+    private const int MAX_NAMES_SHOWN = 5;
 
 
     [Command("bundle")]
@@ -62,8 +61,8 @@ internal class CommandBundleProtocol : CommandProtocol {
 
         if (text.Length == 0 || text.Equals("list", StringComparison.OrdinalIgnoreCase)
             || text.StartsWith("list ", StringComparison.OrdinalIgnoreCase)) {
-            var filter = text.Length > 4 ? text[5..].Trim() : "";
-            SendList(families.Where(f => filter.Length == 0 || f.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList(), filter);
+            // The list lives in the Imlight app now (Justin, 2026-10-21: scrap the chat list, search in the app).
+            InformSenderClient("The bundle list is in the Imlight app: Lookup tab, pick Bundle, and search.");
 
             return;
         }
@@ -82,52 +81,14 @@ internal class CommandBundleProtocol : CommandProtocol {
         }
 
         if (matches.Count > 1) {
-            InformSenderClient($"More than one bundle matches \"{text}\". Type the full name of one of these:");
-            SendList(matches, text);
+            var names = string.Join(", ", matches.Take(MAX_NAMES_SHOWN).Select(f => f.Name));
+            var more = matches.Count > MAX_NAMES_SHOWN ? $" and {matches.Count - MAX_NAMES_SHOWN} more" : "";
+            InformSenderClient($"More than one bundle matches \"{text}\": {names}{more}. Type the full name, or search in the Imlight app's Lookup tab.");
 
             return;
         }
 
         Send(matches[0]);
-    }
-
-    private void SendList(List<BundleFamily> families, string filter) {
-        if (families.Count == 0) {
-            InformSenderClient($"No bundle name has \"{filter}\" in it.");
-
-            return;
-        }
-
-        // The names go to chat as lines from "Bundle List" with no notice each; one notice says where they went
-        // (Justin, 2026-10-21: only the "List Sent" pop-up, bundles separated by //). Server messages always add a
-        // notice, so they are not used for the names.
-        SendChat($"{families.Count} bundles. Type .bundle <name> to get one in your gifts:");
-        for (var start = 0; start < families.Count; start += NAMES_PER_MESSAGE) {
-            SendChat(string.Join(" // ", families.Skip(start).Take(NAMES_PER_MESSAGE)
-                .Select(f => $"{f.Name} ({f.Gifts.Count})")));
-        }
-
-        InformSenderClient("List Sent to Game Chat");
-    }
-
-    /// <summary>
-    /// A chat line to this player alone, said by "Bundle List" as a whisper: the game shows whisper text as written.
-    /// Radial chat with filter 0 showed "..." and with filter 2 froze the game (Justin, 2026-10-21).
-    /// </summary>
-    private void SendChat(string text) {
-        var name = Encoding.ASCII.GetBytes(CHAT_NAME);
-        var packed = new byte[name.Length + 1];
-        // Packed override name: 0x81 | 8-bit text | byte length << 2 (as ServerWizPlayerNameBehavior does).
-        packed[0] = (byte) (0x81 | 0x02 | (name.Length << 2));
-        name.CopyTo(packed, 1);
-
-        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_DIRECTEDCHAT {
-            SourceName = packed,
-            SourceID = Context.Character.CharId,
-            Message = text,
-            TargetID = Context.Character.CharId,
-            Filter = 0,
-        }, ActorRefs.NoSender);
     }
 
     // Empties the gift button list (Justin, 2026-10-21: older .bundle gifts put every tier there one by one).

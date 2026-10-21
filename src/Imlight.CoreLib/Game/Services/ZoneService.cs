@@ -339,7 +339,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             _sigilAnchor = GetActiveGameObject()?.m_location ?? default;
         }
 
-        if (!message.NoSigil) {
+        if (!message.NoSigil && !message.NoTimerBroadcast) {
             SendSigilTimer(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
                 Time = countdown,
                 SigilGID = message.SigilGID,
