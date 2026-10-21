@@ -280,6 +280,17 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY))]
     private void ReceiveStartSigilEntry(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY message) {
+        if (message.ContinueCountdown && _activeSigilEntry is not null && !_transferGate.IsQueued) {
+            // Same countdown, new destination (the partner stepped off, so this player goes alone when it ends).
+            Logger.Information("{0}: the countdown goes on with a new destination (instance owner {1}).",
+                Logger.Args(SigilLogName(message), message.InstanceOwnerCharId));
+            _activeSigilEntry.InstanceOwnerCharId = message.InstanceOwnerCharId;
+            _activeSigilEntry.KeepInstance = message.KeepInstance;
+            _activeSigilEntry.OnFailed = message.OnFailed ?? _activeSigilEntry.OnFailed;
+
+            return;
+        }
+
         if (message.Restart && _activeSigilEntry is not null && !_transferGate.IsQueued) {
             // No timer end on screen: the new start below restarts the countdown the player already sees.
             Logger.Information("{0}: countdown restarted for the pair.", Logger.Args(SigilLogName(message)));
@@ -730,11 +741,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private static bool IsOffSigilPad(Wizard wizard, ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry) {
         var pad = Util.GetVectorFromCompactString(entry.SigilLoc);
         var pos = wizard.Location;
-        var dx = pad.X - pos.X;
-        var dy = pad.Y - pos.Y;
-        var dz = pad.Z - pos.Z;
 
-        return (dx * dx) + (dy * dy) + (dz * dz) > (entry.Radius * entry.Radius);
+        return SigilPadCheck.IsOff(pad.X - pos.X, pad.Y - pos.Y, entry.Radius);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY))]
@@ -1342,7 +1350,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (!entry.NoSigil) {
+        // A hatchery pad keeps counting down while anyone is on it; the pad ends it when the last player leaves.
+        if (!entry.NoSigil && entry.OnFailed is not CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED) {
             SendSigilTimer(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = entry.SigilGID });
         }
 

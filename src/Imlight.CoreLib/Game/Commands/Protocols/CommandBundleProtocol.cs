@@ -43,7 +43,9 @@ internal class CommandBundleProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    private const int NAMES_PER_MESSAGE = 100;
+    private const int NAMES_PER_MESSAGE = 60;
+
+    private const string CHAT_NAME = "Bundle List";
 
 
     [Command("bundle")]
@@ -90,15 +92,35 @@ internal class CommandBundleProtocol : CommandProtocol {
             return;
         }
 
-        // Server messages, as Justin wants (2026-10-21), then one "List Sent to Game Chat" notice. The game shows every
-        // server message both in chat and as a notice, so the names go in few, long messages.
-        InformSenderClient($"{families.Count} bundles. Type .bundle <name> to get one in your gifts:");
+        // The names go to chat as lines from "Bundle List" with no notice each; one notice says where they went
+        // (Justin, 2026-10-21: only the "List Sent" pop-up, bundles separated by //). Server messages always add a
+        // notice, so they are not used for the names.
+        SendChat($"{families.Count} bundles. Type .bundle <name> to get one in your gifts:");
         for (var start = 0; start < families.Count; start += NAMES_PER_MESSAGE) {
-            InformSenderClient(string.Join("; ", families.Skip(start).Take(NAMES_PER_MESSAGE)
+            SendChat(string.Join(" // ", families.Skip(start).Take(NAMES_PER_MESSAGE)
                 .Select(f => $"{f.Name} ({f.Gifts.Count})")));
         }
 
         InformSenderClient("List Sent to Game Chat");
+    }
+
+    /// <summary>
+    /// A chat line to this player alone, said by "Bundle List". Radial chat from nobody in the zone, so there is no
+    /// speech bubble and no whisper.
+    /// </summary>
+    private void SendChat(string text) {
+        var name = Encoding.ASCII.GetBytes(CHAT_NAME);
+        var packed = new byte[name.Length + 1];
+        // Packed override name: 0x81 | 8-bit text | byte length << 2 (as ServerWizPlayerNameBehavior does).
+        packed[0] = (byte) (0x81 | 0x02 | (name.Length << 2));
+        name.CopyTo(packed, 1);
+
+        Context.SessionActor.Tell(new GAME_5_PROTOCOL.MSG_RADIALCHAT {
+            SourceName = packed,
+            SourceID = 0,
+            Message = text,
+            Filter = 0,
+        }, ActorRefs.NoSender);
     }
 
     private void Send(BundleFamily family) {

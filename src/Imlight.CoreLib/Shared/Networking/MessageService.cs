@@ -190,7 +190,7 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
     /// <param name="message"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    protected T AskOtherService<T>(IServerMessage message)
+    protected T AskOtherService<T>(IServerMessage message, TimeSpan? timeout = null)
         where T : IServerMessage {
         if (SessionActor is null) {
             throw new ActorKilledException($"{this.GetType()} attempted to send message to undefined SessionActor.");
@@ -201,7 +201,7 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
                                 $"Do not do this. Use {nameof(SendToSocket)} instead.");
         }
 
-        var task = SessionActor.HandleInternalAsk<T>(message);
+        var task = SessionActor.HandleInternalAsk<T>(message, timeout);
 
         return task;
     }
@@ -314,11 +314,15 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
     /// </summary>
     /// <param name="globalId">The global ID of the WizardZoneObject.</param>
     /// <returns>The WizardZoneObject associated with the specified global ID. Null, if none was found.</returns>
+    private static readonly TimeSpan ZONE_OBJECT_QUERY_TIMEOUT = TimeSpan.FromSeconds(3);
+
     protected ZoneEntity GetZoneObject(ulong globalId) {
         var msg = new ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY {
             GlobalID = globalId
         };
-        var response = AskOtherService<ZONE_102_PROTOCOL.MSG_QUERYZONEENTITYRSP>(msg);
+        // Only the matching object answers, so an unknown id waits for the whole timeout. The session handles nothing
+        // else meanwhile: 20 s of ignored X presses on the hatchery sigils (Justin, 2026-10-21).
+        var response = AskOtherService<ZONE_102_PROTOCOL.MSG_QUERYZONEENTITYRSP>(msg, ZONE_OBJECT_QUERY_TIMEOUT);
         if (response is null) {
             return null;
         }

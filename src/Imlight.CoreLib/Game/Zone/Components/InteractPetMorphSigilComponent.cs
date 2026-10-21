@@ -66,6 +66,9 @@ using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
+using Imcodec.MessageLayer.Generated;
+using Imlight.CoreLib.Game.Sigils;
+
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
@@ -213,7 +216,10 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
 
         var charId = playerWizard.CharId;
-        var onPad = IsInHorizontalRadius(playerObj, Radius);
+        var delta = playerObj.m_location - Entity.ActiveGameObject.m_location;
+        var onPad = _occupants.ContainsKey(playerWizard.CharId)
+            ? !SigilPadCheck.IsOff(delta.X, delta.Y, Radius)
+            : SigilPadCheck.IsOn(delta.X, delta.Y, Radius);
         if (onPad && _occupants.TryGetValue(charId, out var known)) {
             // Keep the session and object current: both change when the player changes zones.
             if (!known.Actor.Equals(playerActor) || known.GameObjectId != playerObj.m_globalID.Full) {
@@ -230,6 +236,11 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             // Stepping off stops the countdown, so pressing again when back on must start a new one.
             _pairedUntil.Remove(charId);
             _relightAt[playerActor] = DateTime.UtcNow + RELIGHT_AFTER;
+            // The countdown runs while anyone is on the pad; it goes off the pad for everyone once the last one leaves
+            // (Justin, 2026-10-21).
+            if (_occupants.Count == 0) {
+                PlayerBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = Entity.ActiveGameObject.m_globalID });
+            }
             Logger.Information("Hatching sigil: {0} ({1}) stepped off {2} ({3} on it now).",
                 Logger.Args(Name(playerWizard), charId, PadName, _occupants.Count));
         }

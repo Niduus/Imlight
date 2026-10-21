@@ -1185,6 +1185,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool Restart;
 
         /// <summary>
+        /// Replaces the destination of a countdown already running and leaves the countdown itself alone (Justin,
+        /// 2026-10-21: the countdown goes on until every player has left the sigil).
+        /// </summary>
+        public bool ContinueCountdown;
+
+        /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.
         /// </summary>
