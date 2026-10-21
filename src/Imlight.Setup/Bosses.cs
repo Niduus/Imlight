@@ -108,6 +108,9 @@ internal sealed class BossChanges {
     internal Dictionary<string, float> Stats { get; } = [];
     internal List<BossCard>? Deck { get; set; }
 
+    /// <summary>Changes to its cheats (BossCheatList.ToJson), or null to keep its cheat file as it is.</summary>
+    internal JsonObject? Cheats { get; set; }
+
     private static readonly JsonSerializerOptions s_write = new() { WriteIndented = true };
 
     internal static string FileOf(string folder, string id) => Path.Combine(folder, $"{id}.json");
@@ -174,6 +177,8 @@ internal sealed class BossChanges {
             }
         }
 
+        changes.Cheats = Find(json, "Cheats") is JsonObject cheats ? (JsonObject) cheats.DeepClone() : null;
+
         return changes;
     }
 
@@ -228,6 +233,10 @@ internal sealed class BossChanges {
             })]);
         }
 
+        if (Cheats is not null) {
+            json["Cheats"] = Cheats.DeepClone();
+        }
+
         Directory.CreateDirectory(folder);
         var file = FileOf(folder, id);
         var temp = file + ".saving";
@@ -237,7 +246,11 @@ internal sealed class BossChanges {
 
     /// <summary>True when nothing is changed, so there is no need for a file.</summary>
     internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null
-                             && Grid.Values.All(r => r.Count == 0) && Stunable is null && Beguilable is null;
+                             && Grid.Values.All(r => r.Count == 0) && Stunable is null && Beguilable is null
+                             && Cheats is null;
+
+    /// <summary>A field of a JSON object, its name in any case.</summary>
+    internal static JsonNode? FindIn(JsonObject json, string key) => Find(json, key);
 
     private static JsonNode? Find(JsonObject json, string key)
         => json.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;

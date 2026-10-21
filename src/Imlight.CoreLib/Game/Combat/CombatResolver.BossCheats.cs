@@ -303,19 +303,24 @@ public partial class CombatResolver {
         }
 
         var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, boss.ParticipantObject.m_templateID));
-        var spell = cheat.Cast.Length > 0 && SpellFactory.Exists(cheat.Cast) ? SpellFactory.GetSpell(cheat.Cast) : null;
-        var template = spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate;
-        if (cheat.Cast.Length > 0 && template is null) {
-            Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, cheat.Cast, bossName));
-        }
-
+        var casts = cheat.CastList();
         Logger.Information("Duel {0} | Slot {1} | {2} cheats after {3}: {4}{5}.",
             Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, reason,
-                template is null ? "no spell" : cheat.Cast, line is null ? "" : $", line {line}"));
+                casts.Count == 0 ? "no spell" : string.Join(", ", casts.Select(c => c.Spell)), line is null ? "" : $", line {line}"));
 
         var cinematicTime = 0.0f;
         var lines = line is null ? new List<string>() : [line];
-        if (template is not null) {
+        // Each spell in turn (or one picked at random with Random); a file's single Cast is a list of one.
+        foreach (var cast in casts) {
+            var spell = cast.SpellID != 0 ? SpellFactory.GetSpell(cast.SpellID)
+                : SpellFactory.Exists(cast.Spell) ? SpellFactory.GetSpell(cast.Spell) : null;
+            var template = spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate;
+            if (template is null) {
+                Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, cast.Spell, bossName));
+
+                continue;
+            }
+
             // Free: no pips are taken for it.
             spell = spell with { m_pipCost = new SpellRank() };
             foreach (var target in BossCheatTargets(boss, cheat, template, trigger, receiver)) {
@@ -326,9 +331,13 @@ public partial class CombatResolver {
                 boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
                 var before = combatActionList.m_actionList.Count;
                 var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
-                var time = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+                // A cheat spell never fizzles and works through stun. A Dispel on the boss stops it only when it is
+                // not DispelImmune, as it stops a player's spell of that school.
+                var time = !cast.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
+                    ? HandleFizzleAction(action, combatActionList)
+                    : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
                 // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
-                if (cheat.Silent) {
+                if (cast.Silent) {
                     for (var i = before; i < combatActionList.m_actionList.Count; i++) {
                         combatActionList.m_actionList[i].m_showCast = false;
                     }

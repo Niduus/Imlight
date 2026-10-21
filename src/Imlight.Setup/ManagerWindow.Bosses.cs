@@ -163,6 +163,7 @@ internal sealed partial class ManagerWindow {
                 WithMargin(_bossSpellResults, new Thickness(0, 6, 0, 0)),
             },
         }));
+        _bossEditor.Children.Add(CheatsCard());
         _bossEditor.Children.Add(Card(new StackPanel {
             Children = {
                 Row(Action(Primary("Save changes"), SaveBossAsync),
@@ -176,7 +177,7 @@ internal sealed partial class ManagerWindow {
             Card(new StackPanel {
                 Children = {
                     Heading("Bosses"),
-                    Sub("Change a boss's health, stats and spells. Search for it, click it, change what you want and press Save changes. " +
+                    Sub("Change a boss's health, stats, spells and cheats. Search for it, click it, change what you want and press Save changes. " +
                         "Turn off Bosses only to find any creature that fights."),
                     new DockPanel {
                         Margin = new Thickness(0, 10, 0, 6),
@@ -382,6 +383,7 @@ internal sealed partial class ManagerWindow {
         _bossSpellSearch.Text = "";
         _bossSpellResults.Children.Clear();
         RenderBossDeck();
+        LoadBossCheats(boss, changes);
         _bossEditor.IsVisible = true;
     }
 
@@ -507,6 +509,9 @@ internal sealed partial class ManagerWindow {
 
         changes.Deck = _bossDeckChanged && !sameAsGame ? [.. _bossDeck] : null;
 
+        ApplyOpenCheat();
+        changes.Cheats = _cheats?.ToJson();
+
         var folder = _manager.BossChangesFolder;
         if (changes.IsEmpty) {
             File.Delete(BossChanges.FileOf(folder, boss.Id));
@@ -528,7 +533,7 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("Pick a boss first.");
         }
 
-        if (!await ConfirmAsync($"Put back the game's health, stats and deck for {boss.Name}? Your changes for it are deleted.")) {
+        if (!await ConfirmAsync($"Put back the game's health, stats, deck and cheats for {boss.Name}? Your changes for it are deleted.")) {
             return;
         }
 
