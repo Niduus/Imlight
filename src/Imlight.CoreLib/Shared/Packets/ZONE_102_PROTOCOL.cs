@@ -1171,6 +1171,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// </summary>
         public bool SnapToCentre;
 
+        /// <summary>Seconds of countdown before the trip; 0 for the usual sigil countdown.</summary>
+        public float CountdownSeconds;
+
         /// <summary>
         /// Told to the session's services when the countdown is cancelled or the transfer does not go through; null
         /// for none.

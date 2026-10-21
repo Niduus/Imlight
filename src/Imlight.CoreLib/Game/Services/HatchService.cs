@@ -125,6 +125,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan MORPH_PARTNER_WAIT = TimeSpan.FromSeconds(60);
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
+    private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
     private PetMorphVisit _pendingTrip;
     private DateTime _pendingTripStarted;
     // Longer than the countdown and the zone load; a trip older than this is not still under way.
@@ -781,6 +782,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             // Sliding onto the circle took players off the small solo pads (Justin, 2026-10-20: "drags you").
             NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
+            // The one-player sigil goes after 1 s (Justin, 2026-10-21).
+            CountdownSeconds = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN : 0,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
             LogName = "Hatching sigil",
         });
