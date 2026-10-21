@@ -129,7 +129,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
     // Long enough to read the lender's pop-up; closing the hatch window leaves sooner.
     // The game does not tell the server when OK is clicked on the pop-up, so the lender leaves soon after it shows.
-    private static readonly TimeSpan LEND_POPUP_RETURN_DELAY = TimeSpan.FromSeconds(4);
+    private static readonly TimeSpan LEND_POPUP_RETURN_DELAY = TimeSpan.FromSeconds(1);
     private const float SOLO_SIGIL_COUNTDOWN = 1.0f;
     // From the in-person hatch window: the window shows "get ready to port" over a dark screen, then the trip.
     private const float HATCH_WINDOW_DELAY = 1.0f;
@@ -1399,6 +1399,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         InformGameClient($"Congratulations on lending your pet! {partnerName} got an egg thanks to you.", isImportant: true);
         Timers.Cancel(MORPH_RETURN_TIMER);
         _morphLeaving = false;
+        _returnQuietly = true;
         ScheduleMorphReturn("the partner's egg is made", LEND_POPUP_RETURN_DELAY);
     }
 
@@ -1615,8 +1616,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         // No MSG_PETGAMEENDING to the game: it takes that message's GlobalID as the player's own object id, and the
         // player could not move after coming back (Justin, 2026-10-20). The zone change closes the window.
 
-        Teleport(visit.ReturnZone, doTeleportEffects: true, destinationLocation: visit.ReturnLocation);
+        // The lender just moves back, without the teleport effect (Justin, 2026-10-21: "Not TP out, but move them out").
+        var effects = !_returnQuietly;
+        _returnQuietly = false;
+        Teleport(visit.ReturnZone, doTeleportEffects: effects, destinationLocation: visit.ReturnLocation);
     }
+
+    private bool _returnQuietly;
 
     // Where the player stood, facing the same way, when the trip started (before the sigil snaps them), so they come
     // back there and not at the pad's centre (Justin, 2026-10-20).
