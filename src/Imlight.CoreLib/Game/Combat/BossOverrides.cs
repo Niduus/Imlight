@@ -23,6 +23,14 @@
  *                            beguile (mind control) effect yet, so Beguilable is kept for when it does (CanBeBeguiled).
  *   Deck                     the spells it casts, replacing its game deck when there is at least one. Copies: how many
  *                            times it can use the spell in one battle; 0 = it never runs out (as the game's creatures).
+ *   Cheats                   changes to its BossCheats file (CheatsOf), laid over it each time the cheats are read:
+ *     Changed  by the cheat's place in that file ("0" is the first): the fields that differ, as the file names them
+ *              (Casts, Chance, Line...), "Off": true to turn the cheat off, and "Match": its When|Cast|Line as it was,
+ *              so the change still finds its cheat when the file gains or loses cheats before it (a change whose cheat
+ *              is gone is left out).
+ *     Added    whole new cheats, after the file's own, as a BossCheats file writes them. A creature with no cheat file
+ *              can have them too.
+ *   A form a boss is polymorphed into uses its own template's file (Haunted Malistaire: 1336037.json).
  */
 
 using System;
@@ -31,6 +39,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Effects;
@@ -73,6 +82,12 @@ internal static class BossOverrides {
         public bool? Stunable { get; set; }
         public bool? Beguilable { get; set; }
         public List<BossCard> Deck { get; set; }
+        public CheatChanges Cheats { get; set; }
+    }
+
+    internal sealed class CheatChanges {
+        public Dictionary<string, JsonObject> Changed { get; set; } = [];
+        public List<BossCheats.BossCheat> Added { get; set; } = [];
     }
 
     internal sealed class BossCard {
@@ -250,6 +265,79 @@ internal static class BossOverrides {
 
         return deck.Count > 0 ? deck : null;
     }
+
+    // The cheats as last laid out, kept while neither the file nor the changes are read again.
+    private static readonly ConcurrentDictionary<ulong, (BossOverride Boss, List<BossCheats.BossCheat> Shipped,
+        List<BossCheats.BossCheat> Cheats)> s_cheats = new();
+
+    /// <summary>
+    /// A boss's cheats with the Bosses tab's changes laid over its BossCheats file. A cheat turned off keeps its place
+    /// (When "Off" never comes), so the cheats after it keep theirs and once-only cheats stay counted.
+    /// </summary>
+    internal static List<BossCheats.BossCheat> CheatsOf(ulong templateId, List<BossCheats.BossCheat> shipped) {
+        if (For(templateId) is not { Cheats: { } changes } boss) {
+            return shipped;
+        }
+
+        if (s_cheats.TryGetValue(templateId, out var kept) && kept.Boss == boss && kept.Shipped == shipped) {
+            return kept.Cheats;
+        }
+
+        var cheats = new List<BossCheats.BossCheat>(shipped);
+        var taken = new HashSet<int>();
+        foreach (var (key, change) in (changes.Changed ?? []).OrderBy(c => int.TryParse(c.Key, out var n) ? n : int.MaxValue)) {
+            var match = change?.FirstOrDefault(p => p.Key.Equals("Match", StringComparison.OrdinalIgnoreCase)).Value?.ToString();
+            var index = int.TryParse(key, out var n) ? n : -1;
+            if (match is { Length: > 0 } && !(index >= 0 && index < shipped.Count && Fingerprint(shipped[index]) == match.ToLowerInvariant())) {
+                index = shipped.FindIndex(c => !taken.Contains(shipped.IndexOf(c)) && Fingerprint(c) == match.ToLowerInvariant());
+            }
+
+            if (change is null || index < 0 || index >= shipped.Count || !taken.Add(index)) {
+                Logger.Warning("Boss changes for {0}: cheat {1} ({2}) is no longer in its cheat file, so its change is left out.",
+                    Logger.Args(boss.Name, key, match));
+
+                continue;
+            }
+
+            try {
+                var json = JsonSerializer.SerializeToNode(shipped[index], s_options)!.AsObject();
+                var off = false;
+                foreach (var (field, value) in change) {
+                    if (field.Equals("Match", StringComparison.OrdinalIgnoreCase)) {
+                        continue;
+                    }
+
+                    if (field.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
+                        off = value is JsonValue v && v.TryGetValue<bool>(out var flag) && flag;
+
+                        continue;
+                    }
+
+                    json.Remove(json.FirstOrDefault(p => p.Key.Equals(field, StringComparison.OrdinalIgnoreCase)).Key ?? field);
+                    json[field] = value?.DeepClone();
+                }
+
+                var cheat = json.Deserialize<BossCheats.BossCheat>(s_options);
+                if (off) {
+                    cheat.When = "Off";
+                }
+
+                cheats[index] = cheat;
+            }
+            catch (Exception e) {
+                Logger.Warning("Boss changes for {0}: cheat {1} could not be read: {2}", Logger.Args(boss.Name, key, e.Message));
+            }
+        }
+
+        cheats.AddRange((changes.Added ?? []).Where(c => c is not null));
+        s_cheats[templateId] = (boss, shipped, cheats);
+
+        return cheats;
+    }
+
+    /// <summary>A cheat as Changed's Match names it: When|Cast|Line, lower case.</summary>
+    internal static string Fingerprint(BossCheats.BossCheat cheat)
+        => $"{cheat.When}|{cheat.Cast}|{cheat.Line}".ToLowerInvariant();
 
     // 20% is sent as 0.2, and more than 150% as the percent itself, so AsFraction turns both into the same fraction.
     private static float ForAsFraction(float percent)

@@ -32,6 +32,12 @@
  * A boss polymorphed into another creature for the rest of the battle (a second form in its own circle, such as Haunted
  * Malistaire through "Afterlife - Malistaire 02") uses that creature's cheat file from then on, if it has one, starting
  * again at phase 1 from the next round (CombatPolymorph.cs).
+ * Casts: several spells instead of Cast, each { "Spell": name, "SpellID": id (wins over the name), "Silent": true,
+ *   "DispelImmune": false }, cast in order, or one of them at random with Random: true. A cheat's spell never fizzles
+ *   and works through stun; DispelImmune (true if left out, and always for Cast) keeps a Dispel on the boss from
+ *   stopping it, false lets a Dispel of the spell's school stop it as it stops a player's spell.
+ * The app's Bosses tab changes, turns off and adds cheats in BossOverrides/<template id>.json, laid over this file
+ * (BossOverrides.CheatsOf); this file itself is never changed by it.
  *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
@@ -82,8 +88,29 @@ internal static class BossCheats {
         public bool Defeat { get; set; }
         public uint Spawn { get; set; }
         public bool Silent { get; set; }
+        public List<CheatCast> Casts { get; set; } = [];
+        public bool Random { get; set; }
 
         internal bool Is(string when) => When.Equals(when, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>The spells to cast this time: Casts, or Cast as a list of one; the cheat's Silent counts for each.</summary>
+        internal List<CheatCast> CastList() {
+            List<CheatCast> casts = [.. (Casts ?? []).Where(c => c is not null && (c.SpellID != 0 || !string.IsNullOrWhiteSpace(c.Spell)))
+                .Select(c => Silent ? c with { Silent = true } : c)];
+            if (casts.Count == 0 && !string.IsNullOrWhiteSpace(Cast)) {
+                casts.Add(new CheatCast { Spell = Cast, Silent = Silent });
+            }
+
+            return Random && casts.Count > 1 ? [casts[System.Random.Shared.Next(casts.Count)]] : casts;
+        }
+    }
+
+    /// <summary>One spell of a cheat's Casts.</summary>
+    internal sealed record CheatCast {
+        public string Spell { get; set; } = "";
+        public uint SpellID { get; set; }
+        public bool Silent { get; set; }
+        public bool DispelImmune { get; set; } = true;
     }
 
     internal static readonly bool Enabled = ConfigurationManager.GetValue("BossCheats.Enabled", true);
@@ -98,7 +125,10 @@ internal static class BossCheats {
 
     /// <summary>The cheats of a boss template, or none.</summary>
     internal static List<BossCheat> For(ulong templateId)
-        => Enabled && s_bosses.Value.TryGetValue(templateId, out var boss) ? boss.Cheats : [];
+        => Enabled ? BossOverrides.CheatsOf(templateId, s_bosses.Value.TryGetValue(templateId, out var boss) ? boss.Cheats : s_none) : [];
+
+    // The cheats of a boss with no file, the same list each time so BossOverrides.CheatsOf keeps its own laid over it.
+    private static readonly List<BossCheat> s_none = [];
 
     /// <summary>How many shadow pips a boss template can hold and its chance a round to gain one, or (0, 0).</summary>
     internal static (int Most, int Chance) ShadowPipsOf(ulong templateId)
