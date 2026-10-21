@@ -68,6 +68,12 @@ internal class CommandBundleProtocol : CommandProtocol {
             return;
         }
 
+        if (text.Equals("clear", StringComparison.OrdinalIgnoreCase)) {
+            Clear();
+
+            return;
+        }
+
         var matches = BundleCatalog.Find(text);
         if (matches.Count == 0) {
             InformSenderClient($"No bundle is called \"{text}\". Type .bundle list to see them all.");
@@ -123,6 +129,23 @@ internal class CommandBundleProtocol : CommandProtocol {
         }, ActorRefs.NoSender);
     }
 
+    // Empties the gift button list (Justin, 2026-10-21: older .bundle gifts put every tier there one by one).
+    private void Clear() {
+        var account = Context.Character.Account;
+        if (account is null) {
+            return;
+        }
+
+        var gifts = account.ClaimGifts.ToList();
+        foreach (var gift in gifts) {
+            AccountCollection.RemoveClaimGift(account.AccountId, gift.GiftId);
+        }
+
+        account.ClaimGifts.Clear();
+        Logger.Information("Bundle: cleared {0} gifts of account {1}.", Logger.Args(gifts.Count, account.AccountId));
+        InformSenderClient($"Removed {gifts.Count} gifts from your gift button.");
+    }
+
     private void Send(BundleFamily family) {
         var account = Context.Character.Account;
         if (account is null) {
@@ -161,6 +184,9 @@ internal static class BundleCatalog {
     private static readonly Regex s_levelSuffix = new(@"\s+\d+\+$", RegexOptions.Compiled);
 
     private static readonly object s_lock = new();
+
+    // AcquireConditionType.kChooseOne: the game shows its "choose one" window when the gift is claimed.
+    private const int CHOOSE_ONE = 1;
 
     private static List<BundleFamily> s_families;
 
@@ -256,8 +282,15 @@ internal static class BundleCatalog {
         var families = new List<BundleFamily>();
         foreach (var (name, group) in groups) {
             var gifts = new List<ulong>();
+            // A set's pick-one bundles (gear and wand) open the game's tier picker, so they are the only gifts; the
+            // set's loose tier bundles would each be another entry in the gift list (Justin, 2026-10-21).
+            var members = group.Members.Where(m => (int) m.Template.m_acquireCondition == CHOOSE_ONE).ToList();
+            if (members.Count == 0) {
+                members = group.Members;
+            }
+
             // Gear before wands, then lowest level first.
-            foreach (var entry in group.Members.OrderBy(m => m.ObjectName.Contains("-Wand-", StringComparison.OrdinalIgnoreCase))) {
+            foreach (var entry in members.OrderBy(m => m.ObjectName.Contains("-Wand-", StringComparison.OrdinalIgnoreCase))) {
                 AddGifts(entry.Id, bundles, gifts, 0);
             }
 
