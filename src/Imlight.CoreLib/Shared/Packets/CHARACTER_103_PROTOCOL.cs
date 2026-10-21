@@ -719,6 +719,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         Timeout,
         // The egg is made (or the hatch is over); back to the hatchery.
         Return,
+        // Back from the hatching room: show the notice kept for this player (Reason holds the text).
+        Notice,
     }
 
     internal sealed class MSG_HATCHZONETIMER : IServerMessage {

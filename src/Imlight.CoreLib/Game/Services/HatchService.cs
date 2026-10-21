@@ -126,6 +126,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     // Long enough to see the egg in the hatch window; closing the window leaves sooner.
     private static readonly TimeSpan MORPH_RETURN_DELAY = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan PARTNER_LEFT_RETURN_DELAY = TimeSpan.FromSeconds(3);
+    // Notices for players sent back from the hatching room, shown once they arrive (the room shows none).
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, string> s_noticeOnReturn = new();
+    private const string RETURN_NOTICE_TIMER = "hatch-return-notice";
+    private static readonly TimeSpan RETURN_NOTICE_DELAY = TimeSpan.FromSeconds(2);
     // A lender goes back once shown the partner's egg; this is how long that may take before they go back anyway.
     private static readonly TimeSpan LEND_RETURN_WAIT = TimeSpan.FromSeconds(20);
     // Long enough to read the lender's pop-up; closing the hatch window leaves sooner.
@@ -542,8 +546,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                 if (_morph is not null) {
                     // In the hatching room the other player is gone (left or lost connection), so this one is sent
-                    // back shortly (Justin, 2026-10-21).
-                    InformGameClient($"{_morph.PartnerName ?? "Your partner"} has left.");
+                    // back shortly (Justin, 2026-10-21). The room hides notices, so it is shown again once back.
+                    var leftText = $"{_morph.PartnerName ?? "Your partner"} has left.";
+                    InformGameClient(leftText);
+                    s_noticeOnReturn[_morph.CharId] = leftText;
                 }
                 else if (!_bred) {
                     InformGameClient("The hatch was cancelled.");
@@ -1123,6 +1129,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
             var hasVisit = PetMorphZone.TryGet(wizard.CharId, out var visit);
             if (!PetMorphZone.IsMorphZone(wizard.Zone)) {
+                if (s_noticeOnReturn.TryRemove(wizard.CharId, out var notice)) {
+                    // A moment after arriving, so the game's HUD is up to show it.
+                    Timers.StartSingleTimer(RETURN_NOTICE_TIMER, new CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER {
+                        Kind = CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Notice,
+                        Reason = notice,
+                    }, RETURN_NOTICE_DELAY);
+                }
 
                 if (hasVisit) {
                     Logger.Information("Hatching zone: {0} arrived in {1}, not the morph zone; the trip from {2} is over.",
@@ -1153,6 +1166,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER))]
     private void ReceiveHatchZoneTimer(CHARACTER_103_PROTOCOL.MSG_HATCHZONETIMER message) {
+        if (message.Kind == CHARACTER_103_PROTOCOL.HatchZoneTimerKind.Notice) {
+            InformGameClient(message.Reason);
+
+            return;
+        }
+
         if (_morph is null) {
             return;
         }
