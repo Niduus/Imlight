@@ -141,7 +141,7 @@ internal class CanonicalStatEffects : RootSingleResourceSingleton<CanonicalStatE
     /// <param name="effectName"></param>
     /// <returns></returns>
     internal static GameEffectTemplate GetEffectTemplate(string effectName)
-        => s_effectTable.m_effectTemplates.FirstOrDefault(x => x.m_effectName == effectName);
+        => s_effectTable?.m_effectTemplates?.FirstOrDefault(x => x.m_effectName == effectName);
 
     private static float GetStatValue(WizardStatTable statTable, int lookupIndex) {
         if (lookupIndex >= statTable.m_statVector.Count) {

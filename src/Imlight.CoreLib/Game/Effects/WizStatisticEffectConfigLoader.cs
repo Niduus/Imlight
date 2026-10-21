@@ -40,6 +40,7 @@
  * Last Updated: 08/14/2026
  */
 
+using System;
 using System.Linq;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -91,6 +92,31 @@ internal class WizStatisticEffectConfigLoader : RootSingleResourceSingleton<WizS
     /// </summary>
     internal static int GetCriticalHitLevelThreshold() 
         => s_config?.m_criticalHitLevelThreshold ?? 0;
+
+    /// <summary>
+    /// Calculates the chance to retain the unused half of a mastered-school power pip,
+    /// using the level and spell-rank values shipped in WizStatisticEffectConfig.
+    /// </summary>
+    internal static float GetPipConversionChance(int level, int spellRank, float rating) {
+        var config = s_config;
+        if (config is null || level < config.m_pipConversionLevelThreshold || spellRank is < 1 or > 7 || rating <= 0) {
+            return 0f;
+        }
+
+        var levelData = config.m_pipConversionLevelData?
+            .Where(data => data.m_minLevel <= level)
+            .OrderByDescending(data => data.m_minLevel)
+            .FirstOrDefault();
+        var rankData = levelData?.m_levelValues?.ElementAtOrDefault(spellRank - 1);
+        if (rankData is null) {
+            return 0f;
+        }
+
+        return CalculatePipConversionChance(rating, rankData.m_capValue, rankData.m_scalarBase, rankData.m_scalingFactor);
+    }
+
+    internal static float CalculatePipConversionChance(float rating, float cap, float scalarBase, float scalingFactor)
+        => Math.Clamp(Math.Min(cap, scalarBase + rating * scalingFactor), 0f, 1f);
 
     public void DisposeStream()
         => base.Stream.Dispose();

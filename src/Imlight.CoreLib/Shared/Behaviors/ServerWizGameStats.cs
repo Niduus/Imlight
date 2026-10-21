@@ -22,6 +22,7 @@ using System.Text.Json.Serialization;
 using Imlight.CoreLib.WizardData.Implementations;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Game.Combat;
+using Imlight.CoreLib.Game.Spells;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.IO;
 using Imlight.Common;
@@ -200,6 +201,9 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         m_apBonusPercent = null;
         m_dmgReducePercent = null;
         m_dmgReduceFlat = null;
+        m_fishingLuckBonusPercent = null;
+        m_pipConversionRatingPerSchool = null;
+        m_pipConversionPercentPerSchool = null;
         m_criticalHitRatingBySchool = null;
         m_blockRatingBySchool = null;
         m_dmgBonusPercentAll = 0;
@@ -208,10 +212,15 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         m_apBonusPercentAll = 0;
         m_dmgReducePercentAll = 0;
         m_dmgReduceFlatAll = 0;
+        m_fishingLuckBonusPercentAll = 0;
+        m_pipConversionRatingAll = 0;
+        m_pipConversionPercentAll = 0;
         m_healBonusPercentAll = 0;
         m_healIncBonusPercentAll = 0;
         m_powerPipBonusPercentAll = 0;
         m_stunResistancePercent = 0;
+        m_bonusShadowPipRating = 0;
+        m_archmasteryBonus = 0;
         m_criticalHitRatingAll = 0;
         m_blockRatingAll = 0;
         m_startingPips = 0;
@@ -227,6 +236,38 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         this.m_baseMana = baseStats.m_mana;
         this.m_powerPipBase = baseStats.m_pipChance;
         this.m_energyMax = baseStats.m_petEnergy;
+        this.m_shadowPipRating = baseStats.m_shadowPipRating;
+        this.m_pipConversionBaseAllSchools = baseStats.m_pipConversionRatingAllSchools;
+        this.m_pipConversionBasePerSchool = GetPipConversionBaseBySchool();
+        this.m_archmasteryBase = baseStats.m_archmastery;
+    }
+
+    private List<int> GetPipConversionBaseBySchool() {
+        var ratings = new List<int>((int) MagicSchools.GetMaxMagicSchoolIndex() + 1);
+        for (var i = 0; i <= MagicSchools.GetMaxMagicSchoolIndex(); i++) {
+            ratings.Add(0);
+        }
+
+        foreach (var school in MagicSchools.All) {
+            if (school.m_schoolIndex < 0 || school.m_schoolIndex >= ratings.Count) {
+                continue;
+            }
+
+            var schoolName = school.m_schoolName.ToString();
+            var levelInfo = MagicLevelsConfig.GetPlayerLevelInfo(schoolName, Level);
+            ratings[school.m_schoolIndex] = schoolName switch {
+                "Balance" => levelInfo?.m_pipConversionRatingBalance ?? 0,
+                "Death" => levelInfo?.m_pipConversionRatingDeath ?? 0,
+                "Fire" => levelInfo?.m_pipConversionRatingFire ?? 0,
+                "Ice" => levelInfo?.m_pipConversionRatingIce ?? 0,
+                "Life" => levelInfo?.m_pipConversionRatingLife ?? 0,
+                "Myth" => levelInfo?.m_pipConversionRatingMyth ?? 0,
+                "Storm" => levelInfo?.m_pipConversionRatingStorm ?? 0,
+                _ => 0,
+            };
+        }
+
+        return ratings;
     }
 
     /// <summary>
@@ -248,6 +289,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_accReducePercent = m_accReducePercent,
             m_healBonusPercent = m_healBonusPercent,
             m_healIncBonusPercent = m_healIncBonusPercent,
+            m_fishingLuckBonusPercent = m_fishingLuckBonusPercent,
+            m_fishingLuckBonusPercentAll = m_fishingLuckBonusPercentAll,
             m_spellChargeBonus = m_spellChargeBonus,
             m_dmgBonusPercentAll = m_dmgBonusPercentAll,
             m_dmgBonusFlatAll = m_dmgBonusFlatAll,
@@ -261,6 +304,16 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_spellChargeBonusAll = m_spellChargeBonusAll,
             m_powerPipBase = m_powerPipBase,
             m_powerPipBonusPercentAll = m_powerPipBonusPercentAll,
+            m_pipConversionRatingAll = m_pipConversionRatingAll,
+            m_pipConversionRatingPerSchool = m_pipConversionRatingPerSchool,
+            m_pipConversionPercentAll = m_pipConversionPercentAll,
+            m_pipConversionPercentPerSchool = m_pipConversionPercentPerSchool,
+            m_pipConversionBaseAllSchools = m_pipConversionBaseAllSchools,
+            m_pipConversionBasePerSchool = m_pipConversionBasePerSchool,
+            m_shadowPipRating = m_shadowPipRating,
+            m_bonusShadowPipRating = m_bonusShadowPipRating,
+            m_archmasteryBase = m_archmasteryBase,
+            m_archmasteryBonusFlat = m_archmasteryBonus,
             m_xpPercentIncrease = m_xpPercentIncrease,
             // The client's cinematic re-simulates the crit from the rating and percent we send here.
             m_criticalHitPercentBySchool = ToChanceList(m_criticalHitRatingBySchool, Level),

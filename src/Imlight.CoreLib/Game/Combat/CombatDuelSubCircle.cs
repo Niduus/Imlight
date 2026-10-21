@@ -690,11 +690,11 @@ public class CombatDuelSubCircle {
 
     private float ComputeArchmasteryRating() {
         try {
-            var school = (MagicSchool) ParticipantGameStats.m_schoolID;
             var level = ParticipantGameStats.Level;
-            var rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, level)?.m_archmastery ?? 0f;
+            var rating = ParticipantGameStats.m_archmasteryBase;
             if (rating <= 0 && (level >= ARCHMASTERY_LEVEL || s_archmasteryAllLevels)) {
                 // The level table may have no number for this level; the level 50 one stands in.
+                var school = (MagicSchool) ParticipantGameStats.m_schoolID;
                 rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, ARCHMASTERY_LEVEL)?.m_archmastery ?? 0f;
                 if (rating <= 0) {
                     rating = 1f;
@@ -705,7 +705,7 @@ public class CombatDuelSubCircle {
                 rating = 0;
             }
 
-            rating += s_archmasteryBonus;
+            rating += ParticipantGameStats.m_archmasteryBonus + s_archmasteryBonus;
             Logger.Debug("Archmastery for {0} (level {1}): {2}.", Logger.Args(_wizard.CharId, level, rating));
 
             return rating;
@@ -1145,6 +1145,7 @@ public class CombatDuelSubCircle {
     internal void DeductPips(MagicSchool school, byte spellRank, bool fullPipConserve = false) {
         var isMastered = HasSchoolMastery((uint) school);
         var pipCount = CombatParticipant.m_pipCount;
+        var originalSpellRank = spellRank;
 
         // Deduct pips based on the spell rank.
         // We have a second conditional here incase of byte overflow.
@@ -1155,7 +1156,7 @@ public class CombatDuelSubCircle {
                 // A power pip is worth 2 here; paying the last 1 with it wastes half. Pip conserve
                 // (100% with FullPipConserve) hands that half back as a normal pip.
                 if (spellRank == 1) {
-                    if (fullPipConserve) {
+                    if (fullPipConserve || RollPipConversion(school, originalSpellRank)) {
                         pipCount.m_genericPips++;
                     }
 
@@ -1176,6 +1177,24 @@ public class CombatDuelSubCircle {
                 break;
             }
         }
+    }
+
+    private bool RollPipConversion(MagicSchool school, byte spellRank) {
+        var rating = ParticipantGameStats.m_pipConversionRatingAll
+            + ParticipantGameStats.m_pipConversionBaseAllSchools;
+        var schoolIndex = MagicSchools.GetMagicSchool((uint) school)?.m_schoolIndex ?? -1;
+        if (schoolIndex >= 0 && ParticipantGameStats.m_pipConversionRatingPerSchool is { } schoolRatings
+            && schoolIndex < schoolRatings.Count) {
+            rating += schoolRatings[schoolIndex];
+        }
+        if (schoolIndex >= 0 && ParticipantGameStats.m_pipConversionBasePerSchool is { } baseRatings
+            && schoolIndex < baseRatings.Count) {
+            rating += baseRatings[schoolIndex];
+        }
+
+        var chance = Imlight.CoreLib.Game.Effects.WizStatisticEffectConfigLoader.GetPipConversionChance(
+            ParticipantGameStats.Level, spellRank, rating);
+        return chance >= 1f || (chance > 0f && Random.Shared.NextSingle() < chance);
     }
 
     internal void DeductAllPips() {

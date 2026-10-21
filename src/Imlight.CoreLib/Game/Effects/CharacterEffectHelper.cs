@@ -38,6 +38,7 @@
  * Last Updated: 08/14/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -172,8 +173,13 @@ internal static class CharacterEffectHelper {
         }
 
         if (gameEffect is WizStatisticEffect canonicalEffect) {
-            var canonicalEffectName = CanonicalStatEffects.GetEffectTemplate(effectInfo.m_effectName).m_effectName;
-            AddStatisticEffectToStats(stats, canonicalEffectName, canonicalEffect);
+            if (CanonicalStatEffects.GetEffectTemplate(effectInfo.m_effectName) is { } effectTemplate) {
+                AddStatisticEffectToStats(stats, effectTemplate.m_effectName, canonicalEffect);
+            }
+            else {
+                Logger.Warning("Could not apply statistic effect {0}: its canonical template is missing.",
+                    Logger.Args(effectInfo.m_effectName));
+            }
         }
         else if (gameEffect is StartingPipEffect pipEffect) {
             stats.m_startingPips += (byte) pipEffect.m_pipsGiven;
@@ -197,8 +203,13 @@ internal static class CharacterEffectHelper {
         }
 
         if (gameEffect is WizStatisticEffect canonicalEffect) {
-            var canonicalEffectName = CanonicalStatEffects.GetEffectTemplate(effectInfo.m_effectName).m_effectName;
-            RemoveStatisticEffectFromStats(stats, canonicalEffectName, canonicalEffect);
+            if (CanonicalStatEffects.GetEffectTemplate(effectInfo.m_effectName) is { } effectTemplate) {
+                RemoveStatisticEffectFromStats(stats, effectTemplate.m_effectName, canonicalEffect);
+            }
+            else {
+                Logger.Warning("Could not remove statistic effect {0}: its canonical template is missing.",
+                    Logger.Args(effectInfo.m_effectName));
+            }
         }
         else if (gameEffect is StartingPipEffect pipEffect) {
             stats.m_startingPips -= (byte) pipEffect.m_pipsGiven;
@@ -223,8 +234,18 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll += statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll += statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent += statistic.m_stunResistancePercent;
+        stats.m_bonusShadowPipRating += statistic.m_shadowPipRating;
+        stats.m_archmasteryBonus += statistic.m_archmastery;
 
-        if (effectName.Contains("ArmorPiercing")) {
+        if (effectName.Contains("FishingLuck")) {
+            ApplyRatingEffect(ref stats.m_fishingLuckBonusPercent, ref stats.m_fishingLuckBonusPercentAll,
+                effectName, statistic.m_fishingLuckBonusPercent);
+        }
+        else if (effectName.Contains("PipConversion")) {
+            ApplyRatingEffect(ref stats.m_pipConversionRatingPerSchool, ref stats.m_pipConversionRatingAll,
+                effectName, statistic.m_pipConversionRating);
+        }
+        else if (effectName.Contains("ArmorPiercing")) {
             ApplyArmorPiercing(stats, effectName, statistic.m_armorPiercingBonusPercent);
         }
         else if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
@@ -236,8 +257,8 @@ internal static class CharacterEffectHelper {
         else if (effectName.Contains("ReduceDamage")) {
             ApplyReduceDamageIncrease(stats, effectName, statistic);
         }
-        else if (effectName.Contains("Mastery")) {
-            ApplySchoolMastery(stats, effectName);
+        else if (effectName.Contains("Mastery") && !effectName.Contains("Archmastery")) {
+            ApplySchoolMastery(stats, effectName, 1);
         }
         else if (effectName.Contains("CriticalHit")) {
             // Crit gear is school-based; route like damage, only falling back to the
@@ -276,8 +297,18 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll -= statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll -= statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent -= statistic.m_stunResistancePercent;
+        stats.m_bonusShadowPipRating -= statistic.m_shadowPipRating;
+        stats.m_archmasteryBonus -= statistic.m_archmastery;
 
-        if (effectName.Contains("ArmorPiercing")) {
+        if (effectName.Contains("FishingLuck")) {
+            ApplyRatingEffect(ref stats.m_fishingLuckBonusPercent, ref stats.m_fishingLuckBonusPercentAll,
+                effectName, -statistic.m_fishingLuckBonusPercent);
+        }
+        else if (effectName.Contains("PipConversion")) {
+            ApplyRatingEffect(ref stats.m_pipConversionRatingPerSchool, ref stats.m_pipConversionRatingAll,
+                effectName, -statistic.m_pipConversionRating);
+        }
+        else if (effectName.Contains("ArmorPiercing")) {
             ApplyArmorPiercing(stats, effectName, -statistic.m_armorPiercingBonusPercent);
         }
         else if (effectName.Contains("Damage") && !effectName.Contains("Reduce")) {
@@ -289,8 +320,8 @@ internal static class CharacterEffectHelper {
         else if (effectName.Contains("ReduceDamage")) {
             RemoveReduceDamageIncrease(stats, effectName, statistic);
         }
-        else if (effectName.Contains("Mastery")) {
-            RemoveSchoolMastery(stats, effectName);
+        else if (effectName.Contains("Mastery") && !effectName.Contains("Archmastery")) {
+            ApplySchoolMastery(stats, effectName, -1);
         }
         else if (effectName.Contains("CriticalHit")) {
             var school = effectName.Contains("All") ? null : ExtractSchoolName(effectName);
@@ -322,18 +353,23 @@ internal static class CharacterEffectHelper {
         }
     }
 
-    private static void ApplySchoolEffect(ref List<float> effectList, string schoolName, float value) {
-        var maxIndex = MagicSchools.GetMaxMagicSchoolIndex();
-
-        // Set the list if it doesn't exist. Give it a count equal to how many schools there are.
-        effectList ??= [.. Enumerable.Repeat(0f, (int) maxIndex)];
-
-        // Ensure that the effect list is the same length as the number of schools.
-        if (effectList.Count != maxIndex) {
-            var compensationRequired = maxIndex - effectList.Count;
-            effectList.AddRange(Enumerable.Repeat(0f, (int) compensationRequired));
+    private static void ApplyRatingEffect(ref List<float> schoolRatings, ref float allSchoolsRating,
+                                          string effectName, float value) {
+        if (effectName.Contains("All")) {
+            allSchoolsRating += value;
+            return;
         }
 
+        var school = ExtractSchoolName(effectName);
+        if (school is not null && MagicSchools.GetMagicSchool(school) is not null) {
+            ApplySchoolEffect(ref schoolRatings, school, value);
+        }
+        else {
+            Logger.Warning("Could not determine the school for statistic effect {0}.", Logger.Args(effectName));
+        }
+    }
+
+    private static void ApplySchoolEffect(ref List<float> effectList, string schoolName, float value) {
         var schoolTemplate = MagicSchools.GetMagicSchool(schoolName);
         if (schoolTemplate is null) {
             Logger.Warning("Could not find magic school {0}.", Logger.Args(schoolName));
@@ -341,31 +377,32 @@ internal static class CharacterEffectHelper {
         }
 
         var schoolIndex = schoolTemplate.m_schoolIndex;
+        EnsureSchoolEffectList(ref effectList, schoolIndex);
         effectList[schoolIndex] += value;
     }
 
-    private static void ApplySchoolMastery(ServerWizGameStats stats, string effectCategory) {
+    private static void ApplySchoolMastery(ServerWizGameStats stats, string effectCategory, int delta) {
         switch (effectCategory) {
             case var category when category.Contains("Ice"):
-                stats.m_iceMastery = 1;
+                stats.m_iceMastery = Math.Max(0, stats.m_iceMastery + delta);
                 break;
             case var category when category.Contains("Life"):
-                stats.m_lifeMastery = 1;
+                stats.m_lifeMastery = Math.Max(0, stats.m_lifeMastery + delta);
                 break;
             case var category when category.Contains("Fire"):
-                stats.m_fireMastery = 1;
+                stats.m_fireMastery = Math.Max(0, stats.m_fireMastery + delta);
                 break;
             case var category when category.Contains("Myth"):
-                stats.m_mythMastery = 1;
+                stats.m_mythMastery = Math.Max(0, stats.m_mythMastery + delta);
                 break;
             case var category when category.Contains("Death"):
-                stats.m_deathMastery = 1;
+                stats.m_deathMastery = Math.Max(0, stats.m_deathMastery + delta);
                 break;
             case var category when category.Contains("Storm"):
-                stats.m_stormMastery = 1;
+                stats.m_stormMastery = Math.Max(0, stats.m_stormMastery + delta);
                 break;
             case var category when category.Contains("Balance"):
-                stats.m_balanceMastery = 1;
+                stats.m_balanceMastery = Math.Max(0, stats.m_balanceMastery + delta);
                 break;
         }
     }
@@ -433,50 +470,24 @@ internal static class CharacterEffectHelper {
     }
 
     private static void RemoveSchoolEffect(ref List<float> effectList, string schoolName, float value) {
-        var maxIndex = MagicSchools.GetMaxMagicSchoolIndex();
-
-        // Ensure that the effect list is the same length as the number of schools.
-        effectList ??= [.. new float[maxIndex]];
-
-        if (effectList.Count != maxIndex) {
-            effectList = [.. new float[maxIndex]];
-        }
-
-        var index = MagicSchools.GetMagicSchool(schoolName)?.m_schoolIndex ?? -1;
-
-        if (index == -1) {
+        var schoolTemplate = MagicSchools.GetMagicSchool(schoolName);
+        if (schoolTemplate is null) {
             Logger.Warning("Could not find magic school {0}.", 
                 Logger.Args(schoolName));
 
             return;
         }
 
-        effectList[index] -= value;
+        var schoolIndex = schoolTemplate.m_schoolIndex;
+        EnsureSchoolEffectList(ref effectList, schoolIndex);
+        effectList[schoolIndex] -= value;
     }
 
-    private static void RemoveSchoolMastery(ServerWizGameStats stats, string effectCategory) {
-        switch (effectCategory) {
-            case var category when category.Contains("Ice"):
-                stats.m_iceMastery = 0;
-                break;
-            case var category when category.Contains("Life"):
-                stats.m_lifeMastery = 0;
-                break;
-            case var category when category.Contains("Fire"):
-                stats.m_fireMastery = 0;
-                break;
-            case var category when category.Contains("Myth"):
-                stats.m_mythMastery = 0;
-                break;
-            case var category when category.Contains("Death"):
-                stats.m_deathMastery = 0;
-                break;
-            case var category when category.Contains("Storm"):
-                stats.m_stormMastery = 0;
-                break;
-            case var category when category.Contains("Balance"):
-                stats.m_balanceMastery = 0;
-                break;
+    private static void EnsureSchoolEffectList(ref List<float> effectList, int schoolIndex) {
+        var requiredCount = Math.Max((int) MagicSchools.GetMaxMagicSchoolIndex() + 1, schoolIndex + 1);
+        effectList ??= new List<float>(requiredCount);
+        if (effectList.Count < requiredCount) {
+            effectList.AddRange(Enumerable.Repeat(0f, requiredCount - effectList.Count));
         }
     }
 

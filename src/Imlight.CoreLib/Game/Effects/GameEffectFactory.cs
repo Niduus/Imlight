@@ -117,29 +117,39 @@ internal static class GameEffectFactory {
         };
         var val = CanonicalStatEffects.GetCanonicalStatValue(info);
 
-        // Broad category effects are property specific.
         var effectName = info.m_effectName.ToString();
+        MapStatisticValue(effect, effectName, val);
+
+        return effect;
+    }
+
+    internal static void MapStatisticValue(WizStatisticEffect effect, string effectName, float value) {
+        // Specific ratings must be mapped before their broader names, such as Accuracy and Damage.
         switch (effectName) {
-            case var _ when effectName.Contains("MaxMana"): effect.m_manaBonus = val; break;
-            case var _ when effectName.Contains("MaxHealth"): effect.m_hitPointBonus = val; break;
-            case var _ when effectName.Contains("MaxEnergy"): effect.m_energyBonus = val; break;
-            case var _ when effectName.Contains("FlatReduceDamage"): effect.m_damageReduceFlat = val; break;
-            case var _ when effectName.Contains("FlatDamage"): effect.m_damageBonusFlat = val; break;
-            case var _ when effectName.Contains("CriticalHit"): effect.m_criticalHitRating = val; break;
-            case var _ when effectName.Contains("Block"): effect.m_blockRating = val; break;
-            case var _ when effectName.Contains("PipConversion"): effect.m_pipConversionRating = val; break;
-            case var _ when effectName.Contains("ShadowPipRating"): effect.m_shadowPipRating = val; break;
-            case var _ when effectName.Contains("PowerPip"): effect.m_powerPipBonusPercent = val; break;
-            case var _ when effectName.Contains("ReduceDamage"): effect.m_damageReducePercent = val; break;
-            case var _ when effectName.Contains("Damage"): effect.m_damageBonusPercent = val; break;
-            case var _ when effectName.Contains("Accuracy"): effect.m_accuracyBonusPercent = val; break;
-            case var _ when effectName.Contains("ArmorPiercing"): effect.m_armorPiercingBonusPercent = val; break;
-            case var _ when effectName.Contains("FishingLuck"): effect.m_fishingLuckBonusPercent = val; break;
-            case var _ when effectName.Contains("IncHealing"): effect.m_healIncBonusPercent = val; break;
-            case var _ when effectName.Contains("LifeHealing"): effect.m_healBonusPercent = val; break;
-            case var _ when effectName.Contains("StunResistance"): effect.m_stunResistancePercent = val; break;
-            case var _ when effectName.Contains("XPPercent"): effect.m_expPercent = val; break;
-            case var _ when effectName.Contains("GoldPercent"): effect.m_goldPercent = val; break;
+            case var _ when effectName.Contains("AccuracyRating"): effect.m_accuracyRating = value; break;
+            case var _ when effectName.Contains("PowerPipRating"): effect.m_powerPipRating = value; break;
+            case var _ when effectName.Contains("DamageResistanceRating"): effect.m_damageResistanceRating = value; break;
+            case var _ when effectName.Contains("Archmastery"): effect.m_archmastery = value; break;
+            case var _ when effectName.Contains("MaxMana"): effect.m_manaBonus = value; break;
+            case var _ when effectName.Contains("MaxHealth"): effect.m_hitPointBonus = value; break;
+            case var _ when effectName.Contains("MaxEnergy"): effect.m_energyBonus = value; break;
+            case var _ when effectName.Contains("FlatReduceDamage"): effect.m_damageReduceFlat = value; break;
+            case var _ when effectName.Contains("FlatDamage"): effect.m_damageBonusFlat = value; break;
+            case var _ when effectName.Contains("CriticalHit"): effect.m_criticalHitRating = value; break;
+            case var _ when effectName.Contains("Block"): effect.m_blockRating = value; break;
+            case var _ when effectName.Contains("PipConversion"): effect.m_pipConversionRating = value; break;
+            case var _ when effectName.Contains("ShadowPipRating"): effect.m_shadowPipRating = value; break;
+            case var _ when effectName.Contains("PowerPip"): effect.m_powerPipBonusPercent = value; break;
+            case var _ when effectName.Contains("ReduceDamage"): effect.m_damageReducePercent = value; break;
+            case var _ when effectName.Contains("Damage"): effect.m_damageBonusPercent = value; break;
+            case var _ when effectName.Contains("Accuracy"): effect.m_accuracyBonusPercent = value; break;
+            case var _ when effectName.Contains("ArmorPiercing"): effect.m_armorPiercingBonusPercent = value; break;
+            case var _ when effectName.Contains("FishingLuck"): effect.m_fishingLuckBonusPercent = value; break;
+            case var _ when effectName.Contains("IncHealing"): effect.m_healIncBonusPercent = value; break;
+            case var _ when effectName.Contains("LifeHealing"): effect.m_healBonusPercent = value; break;
+            case var _ when effectName.Contains("StunResistance"): effect.m_stunResistancePercent = value; break;
+            case var _ when effectName.Contains("XPPercent"): effect.m_expPercent = value; break;
+            case var _ when effectName.Contains("GoldPercent"): effect.m_goldPercent = value; break;
             case "CanonicalStormMastery": effect.m_stormMastery = 1; break;
             case "CanonicalFireMastery": effect.m_fireMastery = 1; break;
             case "CanonicalIceMastery": effect.m_iceMastery = 1; break;
@@ -149,8 +159,6 @@ internal static class GameEffectFactory {
             case "CanonicalBalanceMastery": effect.m_balanceMastery = 1; break;
             default: break;
         }
-
-        return effect;
     }
 
     private static TransformationEffect CreateTransformationEffect(TransformationEffectInfo info, uint itemSlotId) {
