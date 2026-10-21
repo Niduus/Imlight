@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Text;
 using Imcodec.IO;
 using Imcodec.ObjectProperty.TypeCache;
@@ -57,6 +58,12 @@ public class ServerWizPlayerNameBehavior : IClientBehaviorProvider<ClientWizPlay
     }
 
     public string GetWizardNameAsByteHexString() {
+        // A custom name is sent as itself, so chat, friends and groups show it rather than the name the keys make
+        // (Justin, 2026-10-21: chat said "Mycin LotusKey" for Walter Blanco).
+        if (TryGetOverrideNameBytes(out var overrideBytes)) {
+            return string.Join(" ", overrideBytes.Select(x => x.ToString("X2")));
+        }
+
         // Drop the MSB from input, then convert it to a hex string.
         var raw = (NameIndices & 0x7FFFFFFF).ToString("X8");
         var sb = new StringBuilder(raw);
@@ -71,6 +78,32 @@ public class ServerWizPlayerNameBehavior : IClientBehaviorProvider<ClientWizPlay
         tail = newMsb + tail[2..];
 
         return tail;
+    }
+
+    /// <summary>
+    /// The game's packed-name form of NameOverride (read from the client's name codec, WizardNameCodec::UnpackName):
+    /// the first byte's bits, lowest first, are 1 (an override, not name keys), 1 for 8-bit characters or 0 for
+    /// UTF-16, the byte length (5 bits) and a closing 1; the name's bytes follow. 8-bit takes up to 31 characters,
+    /// UTF-16 up to 15; a longer name falls back to the name keys.
+    /// </summary>
+    private bool TryGetOverrideNameBytes(out byte[] bytes) {
+        bytes = null;
+        var name = NameOverride.Length > 0 ? NameOverride.ToString() : null;
+        if (string.IsNullOrEmpty(name)) {
+            return false;
+        }
+
+        var ascii = name.All(c => c >= 0x20 && c < 0x7F);
+        var body = ascii ? Encoding.ASCII.GetBytes(name) : Encoding.Unicode.GetBytes(name);
+        if (body.Length > 31) {
+            return false;
+        }
+
+        bytes = new byte[body.Length + 1];
+        bytes[0] = (byte) (0x81 | (ascii ? 0x02 : 0) | (body.Length << 2));
+        body.CopyTo(bytes, 1);
+
+        return true;
     }
 
     public ClientWizPlayerNameBehavior GetClientBehaviorInstance() {
