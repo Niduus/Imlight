@@ -909,8 +909,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             SigilLoc = message.SigilLoc,
             SigilGID = message.SigilGID,
             SigilType = message.SigilType ?? "",
-            // The solo pads are small (100); the player is snapped onto the sigil's circle, which may lie outside that.
-            Radius = Math.Max(message.Radius, MORPH_TRIP_MIN_RADIUS),
+            // The pad's own radius, so the countdown and the pad agree on who is on it (Justin, 2026-10-21).
+            Radius = message.Radius > 0 ? message.Radius : MORPH_TRIP_MIN_RADIUS,
             DestinationZone = PetMorphZone.ZONE,
             DestinationLoc = PetMorphZone.LOCATION,
             InstanceOwnerCharId = owner,
@@ -1378,12 +1378,38 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        Logger.Information("Hatching sigil: {0} stepped off {1}; stopping the countdown of {2} too.",
-            Logger.Args(message.FromCharId, trip.PadName, trip.CharId));
-        _pendingTrip = null;
+        var partnerName = trip.PartnerName ?? "Your partner";
+        var wizard = GetActiveWizard();
+        var pets = wizard is null ? [] : PetHatching.OwnPets(wizard);
         PetMorphZone.End(trip.CharId);
-        TellOtherServices(new ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY());
-        InformGameClient($"{trip.PartnerName ?? "Your partner"} stepped off the sigil.");
+        if (wizard is null || pets.Count < 2) {
+            Logger.Information("Hatching sigil: {0} stepped off {1}; {2} cannot hatch alone, so their countdown stops.",
+                Logger.Args(message.FromCharId, trip.PadName, trip.CharId));
+            _pendingTrip = null;
+            TellOtherServices(new ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY());
+            InformGameClient($"{partnerName} stepped off the sigil. You need two hatched pets to hatch on your own.");
+
+            return;
+        }
+
+        // The countdown goes on until everyone has left the pad (Justin, 2026-10-21); this player now goes alone.
+        Logger.Information("Hatching sigil: {0} stepped off {1}; {2} keeps counting down and goes alone.",
+            Logger.Args(message.FromCharId, trip.PadName, trip.CharId));
+        var alone = new PetMorphVisit(trip.CharId, trip.SigilGid, trip.PadName, trip.ReturnZone, trip.ReturnLocation,
+            trip.CharId, 0, null);
+        PetMorphZone.Begin(alone);
+        _pendingTrip = alone;
+        TellOtherServices(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
+            SigilGID = trip.SigilGid,
+            DestinationZone = PetMorphZone.ZONE,
+            DestinationLoc = PetMorphZone.LOCATION,
+            InstanceOwnerCharId = trip.CharId,
+            KeepInstance = false,
+            ContinueCountdown = true,
+            OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
+            LogName = "Hatching sigil",
+        });
+        InformGameClient($"{partnerName} stepped off the sigil. Stay on it to hatch on your own.");
     }
 
     private void OnPartnerEggMade(CHARACTER_103_PROTOCOL.MSG_HATCHPEER message) {

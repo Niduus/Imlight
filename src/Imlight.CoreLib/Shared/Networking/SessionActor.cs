@@ -215,7 +215,7 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     /// <param name="msg"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T HandleInternalAsk<T>(IServerMessage msg)
+    public T HandleInternalAsk<T>(IServerMessage msg, TimeSpan? timeout = null)
         where T : IServerMessage {
         if (_dispatchTable.TryGetValue(msg.GetType(), out var handlers)) {
             foreach (var handler in handlers) {
@@ -224,7 +224,7 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
                 }
 
                 try {
-                    return handler.Ask<T>(msg, timeout: s_askTimeout).Result;
+                    return handler.Ask<T>(msg, timeout: timeout ?? s_askTimeout).Result;
                 }
                 catch (Exception ex) {
                     Logger.Error("SessionActor service attempted to ask another service with {0}, but the timeout " +
