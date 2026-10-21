@@ -61,34 +61,8 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
 
     // ctor
     public CombatCreatureDeckComponent(ZoneEntity entity) : base(entity) { 
-        // Collect every behavior from the creature's equipment items.
-        var equipmentItemBehaviors = entity.Template.m_behaviors
-            .OfType<EquipmentBehaviorTemplate>()
-            .SelectMany(x => x.m_itemList)
-            .Select(x => CoreObjectFactory.GetCoreTemplate(x))
-            .Where(x => x != null)
-            .SelectMany(x => x.m_behaviors ?? []);
-
-        // Combine equipment item behaviors with the entity's own behaviors.
-        // MobDeckBehaviorTemplate can appear in either location.
-        var allBehaviors = entity.Template.m_behaviors
-            .Concat(equipmentItemBehaviors);
-
-        // MobDeckBehaviorTemplate stores spell names directly, if it exists.
-        var mobDeck = allBehaviors.OfType<MobDeckBehaviorTemplate>().FirstOrDefault();
-        if (mobDeck != null) {
-            AddSpellsFromNames(mobDeck.m_spellList);
-        }
-
-        // DeckBehaviorTemplate stores a deck name that maps to a SpiralDB spellbook.
-        // The deck is the union of both sources: the client's own spell names and the
-        // SpiralDB spellbook named by the deck behavior. Either source may be missing.
-        var deckBehavior = allBehaviors.OfType<DeckBehaviorTemplate>().FirstOrDefault();
-        if (deckBehavior is not null && !string.IsNullOrEmpty(deckBehavior.m_defaultDeck)) {
-            var spellbook = CreatureSpellbookCollection.GetCreatureSpellbook(deckBehavior.m_defaultDeck);
-            if (spellbook is not null) {
-                AddSpellbookSpells(spellbook);
-            }
+        foreach (var spellId in GameSpellIds(entity.Template)) {
+            AddSpell(spellId);
         }
 
         // A creature with an empty deck (no usable client names and no SpiralDB deck) falls
@@ -98,28 +72,72 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
                 "{0} {1} has no usable spells from its client deck or SpiralDB deck, falling back to the default spellbook.",
                 Logger.Args(nameof(ZoneEntity), entity.ActiveGameObject.m_debugName)
             );
-            AddSpellbookSpells(CreatureSpellbookCollection.GetDefaultCreatureSpellbook());
+            foreach (var spellId in CreatureSpellbookCollection.GetDefaultCreatureSpellbook().SpellTemplateIds) {
+                AddSpell(spellId);
+            }
         }
     }
 
-    private void AddSpellbookSpells(CreatureSpellbook spellbook) {
-        foreach (var spellId in spellbook.SpellTemplateIds) {
-            AddSpell(spellId);
+    /// <summary>
+    /// The spells of a creature's game deck, once each, before randomizer mode. The app's Bosses tab shows these
+    /// (IdCatalog writes them to creatures.csv).
+    /// </summary>
+    internal static List<uint> GameSpellIds(CoreTemplate template) {
+        var spellIds = new List<uint>();
+        if (template?.m_behaviors is null) {
+            return spellIds;
         }
-    }
 
-    private void AddSpellsFromNames(List<ByteString> spellNames) {
-        foreach (var spellName in spellNames) {
-            if (spellName.ToString().Length == 0) {
-                continue;
-            }
+        // Collect every behavior from the creature's equipment items.
+        var equipmentItemBehaviors = template.m_behaviors
+            .OfType<EquipmentBehaviorTemplate>()
+            .SelectMany(x => x.m_itemList)
+            .Select(x => CoreObjectFactory.GetCoreTemplate(x))
+            .Where(x => x != null)
+            .SelectMany(x => x.m_behaviors ?? []);
 
-            // Unknown names are skipped; SpellFactory logs the miss.
-            var spell = SpellFactory.GetSpell(spellName.ToString());
-            if (spell is not null) {
-                AddSpell(spell.m_templateID);
+        // Combine equipment item behaviors with the entity's own behaviors.
+        // MobDeckBehaviorTemplate can appear in either location.
+        var allBehaviors = template.m_behaviors
+            .Concat(equipmentItemBehaviors)
+            .ToList();
+
+        void Add(uint spellId) {
+            // Both sources may list the same spell; creatures carry one entry per spell.
+            // Unknown spell ids are skipped; SpellFactory logs the miss.
+            if (!spellIds.Contains(spellId) && SpellFactory.GetSpell(spellId) is not null) {
+                spellIds.Add(spellId);
             }
         }
+
+        // MobDeckBehaviorTemplate stores spell names directly, if it exists.
+        var mobDeck = allBehaviors.OfType<MobDeckBehaviorTemplate>().FirstOrDefault();
+        if (mobDeck != null) {
+            foreach (var spellName in mobDeck.m_spellList) {
+                if (spellName.ToString().Length == 0) {
+                    continue;
+                }
+
+                // Unknown names are skipped; SpellFactory logs the miss.
+                var spell = SpellFactory.GetSpell(spellName.ToString());
+                if (spell is not null) {
+                    Add(spell.m_templateID);
+                }
+            }
+        }
+
+        // DeckBehaviorTemplate stores a deck name that maps to a SpiralDB spellbook.
+        // The deck is the union of both sources: the client's own spell names and the
+        // SpiralDB spellbook named by the deck behavior. Either source may be missing.
+        var deckBehavior = allBehaviors.OfType<DeckBehaviorTemplate>().FirstOrDefault();
+        if (deckBehavior is not null && !string.IsNullOrEmpty(deckBehavior.m_defaultDeck)) {
+            var spellbook = CreatureSpellbookCollection.GetCreatureSpellbook(deckBehavior.m_defaultDeck);
+            foreach (var spellId in spellbook?.SpellTemplateIds ?? []) {
+                Add(spellId);
+            }
+        }
+
+        return spellIds;
     }
 
     private void AddSpell(uint spellId) {

@@ -34,10 +34,10 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The app's window: Play (this server, other private servers), Lookup (every command and ID), Server
-/// (start, stop, randomizer, log), Settings, Accounts, Game Files and Tools.
+/// The app's window: Play (this server, other private servers), Lookup (every command and ID), Bosses (a boss's
+/// stats and deck, ManagerWindow.Bosses.cs), Server (start, stop, randomizer, log), Settings, Accounts, Game Files and Tools.
 /// </summary>
-internal sealed class ManagerWindow : Window {
+internal sealed partial class ManagerWindow : Window {
 
     private static readonly IBrush BACKGROUND = new SolidColorBrush(Color.FromRgb(24, 27, 33));
     private static readonly IBrush CARD = new SolidColorBrush(Color.FromArgb(20, 128, 128, 128));
@@ -262,6 +262,7 @@ internal sealed class ManagerWindow : Window {
                 Tab("Play", PlayTab()),
                 Tab("Commands", CommandsTab()),
                 Tab("Lookup", LookupTab()),
+                Tab("Bosses", BossesTab()),
                 Tab("Server", ServerTab()),
                 Tab("Logs", LogsTab()),
                 Tab("Settings", SettingsTab()),
@@ -270,10 +271,16 @@ internal sealed class ManagerWindow : Window {
                 Tab("Tools", ToolsTab()),
             },
         };
-        tabs.SelectionChanged += async (_, _) => {
+        tabs.SelectionChanged += async (_, e) => {
+            // A list or drop-down inside a tab sends its own SelectionChanged up here; only a new tab counts.
+            if (e.Source != tabs) {
+                return;
+            }
+
             switch ((tabs.SelectedItem as TabItem)?.Header as string) {
                 case "Play": await LoadPlayAsync(); break;
                 case "Lookup": await LoadLookupAsync(); break;
+                case "Bosses": await LoadBossesAsync(); break;
                 case "Settings" when _settings.Count == 0: LoadSettings(); break;
                 case "Accounts": await LoadAccountsAsync(); break;
             }

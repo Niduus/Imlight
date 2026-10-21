@@ -1330,9 +1330,19 @@ public class CombatDuelSubCircle {
             });
         }
 
+        // Changes saved in the app's Bosses tab (BossOverrides): the creature fights with a copy of its stats, so it
+        // keeps the game's own, and a changed file counts from the next battle.
+        var gameStats = creatureStats.GameStats;
+        var school = creatureStats.MagicSchool;
+        var level = creatureStats.CombatLevel;
+        if (BossOverrides.For(ParticipantObject.m_templateID) is { } boss) {
+            gameStats = BossOverrides.Apply(boss, gameStats, ref school, ref level);
+            spellData = BossOverrides.DeckOf(boss) ?? spellData;
+        }
+
         _combatDeck = new CombatDeck(spellData, [], PLAYER_HAND_SIZE);
 
-        ParticipantGameStats = creatureStats.GameStats;
+        ParticipantGameStats = gameStats;
         CombatParticipant = new CombatParticipant {
             m_ownerID = ParticipantObject.m_globalID,
             m_templateID = 2199023290637, // Captured 2199023290637 from live
@@ -1344,18 +1354,18 @@ public class CombatDuelSubCircle {
             m_originalTeam = asMinion ? (int) OccupiedTeam : 0,
             m_isMinion = asMinion,
             m_maxHandSize = PLAYER_HAND_SIZE,
-            m_primaryMagicSchoolID = (int) creatureStats.MagicSchool,
+            m_primaryMagicSchoolID = (int) school,
             m_pipCount = DetermineStartingPips(),
             m_pipRoundRates = new(),
-            m_playerHealth = creatureStats.GameStats.m_currentHitpoints,
-            m_maxPlayerHealth = creatureStats.GameStats.m_baseHitpoints,
+            m_playerHealth = gameStats.m_currentHitpoints,
+            m_maxPlayerHealth = gameStats.m_baseHitpoints,
             // todo: a PvE minion has always been told it acts with the creatures, is that right?
             m_myTeamTurn = _duelActor.Duel.m_firstTeamToAct == (int) (_duelActor.Duel.m_bPVP ? OccupiedTeam : CombatTeam.Monster),
-            m_pGameStats = creatureStats.GameStats.GetCombatGameStats(),
-            m_mobLevel = creatureStats.CombatLevel,
+            m_pGameStats = gameStats.GetCombatGameStats(),
+            m_mobLevel = level,
 
-            m_minionStartingHealth = asMinion ? creatureStats.GameStats.m_currentHitpoints : 0,
-            m_curMaxHP = asMinion ? creatureStats.GameStats.m_baseHitpoints : 0,
+            m_minionStartingHealth = asMinion ? gameStats.m_currentHitpoints : 0,
+            m_curMaxHP = asMinion ? gameStats.m_baseHitpoints : 0,
             // The client links a minion to its owner through this sub-circle.
             m_minionSubCircle = asMinion ? minionOwnerSubCircle : 0,
 

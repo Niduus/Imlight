@@ -334,6 +334,14 @@ internal sealed partial class ServerManager(string installFolder) {
         => Path.GetFullPath(Path.Combine(ServerFolder, IniFile.Get(ConfigFile, "ID Lookup", "OutputPath") ?? "./id-lookup"));
 
     /// <summary>
+    /// Where the Bosses tab saves its changes, one file per creature: the server's own additions folder
+    /// (spiraldb-extra), which updates leave alone. The server reads a file again when it changes.
+    /// </summary>
+    internal string BossChangesFolder
+        => Path.GetFullPath(Path.Combine(ServerFolder,
+            IniFile.Get(ConfigFile, "Database", "SpiralDBExtraPath") ?? "./spiraldb-extra", "BossOverrides"));
+
+    /// <summary>
     /// Stops the server and opens Imlight.exe in its own window to update (--update) or uninstall (--uninstall).
     /// The app closes afterwards, so the files it uses can be replaced or removed.
     /// </summary>

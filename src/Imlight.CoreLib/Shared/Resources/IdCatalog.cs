@@ -33,7 +33,8 @@
  *   in the background and is cached on disk per game revision.
  * - The output folder holds ids.csv (opens in a spreadsheet) and index.html
  *   (opens in a browser with a search box), plus zones.txt and quests.csv,
- *   which the app's Lookup tab reads alongside ids.csv.
+ *   which the app's Lookup tab reads alongside ids.csv, and creatures.csv
+ *   (each creature's health, stats and deck), which the app's Bosses tab reads.
  *
  * TODO:
  *
@@ -81,6 +82,8 @@ public static class IdCatalog {
     private const string QUESTS_NAME = "quests.csv";
     private const string PHRASES_NAME = "phrases.csv";
     private const string BUNDLES_NAME = "bundles.csv";
+    private const string CREATURES_NAME = "creatures.csv";
+    private const string CREATURES_HEADER = "Id,Name,School,Level,Health,Boss,Spells,Stats";
     private const string CSV_HEADER = "Id,Kind,Name,School,Level,Path";
     private const int INFORM_ALIVE_INTERVAL = 10000;
 
@@ -125,8 +128,8 @@ public static class IdCatalog {
                 }
 
                 Logger.Information("Building the ID lookup. This happens once per game revision and may take a few minutes.");
-                var entries = Build();
-                WriteToDisk(entries);
+                var entries = Build(out var creatures);
+                WriteToDisk(entries, creatures);
                 s_entries = entries;
 
                 Logger.Information("ID lookup is ready with {Count} IDs. Open {Path} to browse them.",
@@ -169,8 +172,9 @@ public static class IdCatalog {
             .Take(maxResults)];
     }
 
-    private static List<IdCatalogEntry> Build() {
+    private static List<IdCatalogEntry> Build(out List<string> creatures) {
         var entries = new List<IdCatalogEntry>();
+        creatures = [];
         var counter = 0;
 
         foreach (var location in CoreObjectFactory.TemplateManifest.m_serializedTemplates) {
@@ -189,6 +193,9 @@ public static class IdCatalog {
                 var entry = CreateEntry(location.m_id, path, template);
                 if (entry is not null) {
                     entries.Add(entry);
+                    if (entry.Kind == IdCatalogKind.Creature && CreatureRow(entry, template) is { } row) {
+                        creatures.Add(row);
+                    }
                 }
             }
             catch (Exception ex) {
@@ -240,6 +247,36 @@ public static class IdCatalog {
         }
     }
 
+    /// <summary>
+    /// A creature's line in creatures.csv: what it fights with before any change from the app's Bosses tab.
+    /// </summary>
+    private static string CreatureRow(IdCatalogEntry entry, CoreTemplate template) {
+        if (template is not GameObjectTemplate gameObject
+            || gameObject.m_behaviors.OfType<NPCBehaviorTemplate>().FirstOrDefault() is not { } npc) {
+            return null;
+        }
+
+        try {
+            var spells = Imlight.CoreLib.Game.Zone.Components.CombatCreatureDeckComponent.GameSpellIds(gameObject);
+            var stats = Imlight.CoreLib.Game.Combat.BossOverrides.GameStatsOf(gameObject, npc);
+
+            return string.Join(',',
+                entry.Id.ToString(CultureInfo.InvariantCulture),
+                CsvField(entry.Name),
+                CsvField(entry.School),
+                entry.Level.ToString(CultureInfo.InvariantCulture),
+                npc.m_nStartingHealth.ToString(CultureInfo.InvariantCulture),
+                npc.m_bossMob ? "1" : "0",
+                string.Join(' ', spells.Select(id => id.ToString(CultureInfo.InvariantCulture))),
+                CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.Describe(stats)));
+        }
+        catch (Exception ex) {
+            Logger.Debug("ID lookup left creature {Id} out of the creature list. {Message}", Logger.Args(entry.Id, ex.Message));
+
+            return null;
+        }
+    }
+
     private static string NameOf(string displayKey, string fallback) {
         var englishName = string.IsNullOrEmpty(displayKey) ? "" : Locale.GetEnglishName(displayKey);
 
@@ -253,7 +290,8 @@ public static class IdCatalog {
     private static bool TryLoadFromDisk() {
         var revisionFile = Path.Combine(OutputPath, REVISION_NAME);
         var csvFile = Path.Combine(OutputPath, CSV_NAME);
-        if (!File.Exists(revisionFile) || !File.Exists(csvFile)) {
+        // A list from before the Bosses tab has no creatures.csv, so it is built again once.
+        if (!File.Exists(revisionFile) || !File.Exists(csvFile) || !File.Exists(Path.Combine(OutputPath, CREATURES_NAME))) {
             return false;
         }
 
@@ -280,7 +318,7 @@ public static class IdCatalog {
         return true;
     }
 
-    private static void WriteToDisk(List<IdCatalogEntry> entries) {
+    private static void WriteToDisk(List<IdCatalogEntry> entries, List<string> creatures) {
         Directory.CreateDirectory(OutputPath);
 
         var csv = new StringBuilder().AppendLine(CSV_HEADER);
@@ -294,6 +332,7 @@ public static class IdCatalog {
         }
         File.WriteAllText(Path.Combine(OutputPath, CSV_NAME), csv.ToString());
         File.WriteAllText(Path.Combine(OutputPath, HTML_NAME), BuildHtml(entries));
+        File.WriteAllLines(Path.Combine(OutputPath, CREATURES_NAME), [CREATURES_HEADER, .. creatures]);
 
         // Written last so an interrupted build is redone on the next boot.
         File.WriteAllText(Path.Combine(OutputPath, REVISION_NAME), s_gameRevision);
