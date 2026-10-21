@@ -23,7 +23,8 @@ public partial class CombatResolver {
     private readonly Dictionary<CombatDuelSubCircle, (int Phase, int FirstRound)> _bossPhases = [];
 
     private IEnumerable<(CombatDuelSubCircle Boss, List<BossCheats.BossCheat> Cheats)> BossesWithCheats(bool defeatedToo = false)
-        => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAiCreature && (defeatedToo || c.IsAlive)
+        // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Justin's log, 2026-10-21).
+        => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && (defeatedToo || c.IsAlive)
                                   && c.ParticipantObject is not null)
             .Select(c => (c, BossCheats.For(c.ParticipantObject.m_templateID)))
             .Where(b => b.Item2.Count > 0);
