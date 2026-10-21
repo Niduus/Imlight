@@ -1091,6 +1091,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
             var hasVisit = PetMorphZone.TryGet(wizard.CharId, out var visit);
             if (!PetMorphZone.IsMorphZone(wizard.Zone)) {
+                if (PetMorphZone.TakeReturnNotice(wizard.CharId, out var notice)) {
+                    InformGameClient(notice, isImportant: true);
+                }
+
                 if (hasVisit) {
                     Logger.Information("Hatching zone: {0} arrived in {1}, not the morph zone; the trip from {2} is over.",
                         Logger.Args(wizard.CharId, wizard.Zone, visit.PadName));
@@ -1370,7 +1374,11 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         // No egg screen: it read as the lender getting an egg (Justin, 2026-10-21: lending should not give an egg).
         Logger.Information("Hatching zone: {0} lent their pet and {1}'s egg is made.", Logger.Args(_morph.CharId, message.FromCharId));
-        InformGameClient($"{_morph.PartnerName ?? "Your partner"} got an egg with your pet. Back to the hatchery in a moment.");
+        var partnerName = _morph.PartnerName ?? "Your partner";
+        InformGameClient($"{partnerName} got an egg with your pet. Back to the hatchery in a moment.");
+        // A pop-up back in the hatchery (Justin, 2026-10-21: the lender should get a "congratulations" notice).
+        PetMorphZone.SetReturnNotice(_morph.CharId,
+            $"Congratulations on lending your pet! {partnerName} got an egg thanks to you.");
         Timers.Cancel(MORPH_RETURN_TIMER);
         _morphLeaving = false;
         ScheduleMorphReturn("the partner's egg is made", MORPH_RETURN_DELAY);
