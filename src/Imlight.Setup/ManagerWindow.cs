@@ -34,7 +34,8 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The app's window: Play (this server, other private servers), Lookup (every command and ID), Bosses (a boss's
+/// The app's window: Play (this server, other private servers), Lookup (every command and ID, and each spell's card in
+/// ManagerWindow.Spells.cs), Bosses (a boss's
 /// stats and deck, ManagerWindow.Bosses.cs), Server (start, stop, randomizer, log), Settings, Accounts, Game Files and Tools.
 /// </summary>
 internal sealed partial class ManagerWindow : Window {
@@ -495,7 +496,10 @@ internal sealed partial class ManagerWindow : Window {
             _lookupDelay.Stop();
             _lookupDelay.Start();
         };
-        _lookupKind.SelectionChanged += (_, _) => RenderLookup();
+        _lookupKind.SelectionChanged += (_, _) => {
+            ShowSpellMode();
+            RenderLookup();
+        };
         _lookupResults.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
 
         return new DockPanel {
@@ -505,7 +509,7 @@ internal sealed partial class ManagerWindow : Window {
                     Children = {
                         Heading("Commands and IDs"),
                         Sub("Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
-                            "starting with the dot. Copy puts the text on your clipboard."),
+                            "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card."),
                         new DockPanel {
                             Margin = new Thickness(0, 10, 0, 6),
                             Children = { WithDock(WithMargin(_lookupKind, new Thickness(8, 0, 0, 0)), Dock.Right), _lookupSearch },
@@ -513,7 +517,7 @@ internal sealed partial class ManagerWindow : Window {
                         _lookupCount,
                     },
                 }), Dock.Top),
-                WithMargin(_lookupResults, new Thickness(0, 10, 0, 0)),
+                WithMargin(new Panel { Children = { _lookupResults, SpellView() } }, new Thickness(0, 10, 0, 0)),
             },
         };
     }
@@ -1226,6 +1230,12 @@ internal sealed partial class ManagerWindow : Window {
     }
 
     private void RenderLookup() {
+        if (SpellMode) {
+            RenderSpells();
+
+            return;
+        }
+
         if (_lookup is null) {
             return;
         }
