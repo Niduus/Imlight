@@ -7,14 +7,22 @@
  *
  * When:
  *   BattleStart   the boss's first round (a boss added with .joinme starts its own count).
- *   RoundStart    the start of a round: Round = the boss's Nth round, Every = every Nth round, neither = each round.
- *   HealthBelow   the boss's health falls under Percent of its most.
+ *   RoundStart    the start of a round: Round = the boss's Nth round, Every = every Nth round, neither = each round,
+ *                 both = round Round, then every Every rounds after it (Round 3, Every 5: rounds 3, 8, 13...).
+ *                 NoAllies: only when no creature is left standing on the boss's side.
+ *   RoundEnd      the end of a round, after everyone's move, counted the same way.
+ *   HealthBelow   the boss's health falls under Percent of its most, or under Health (hit points) when that is set.
  *   PlayerCasts   a player's spell lands. School, Kind (the card's type: Damage, Heal, Ward, Charm, Aura, Global,
- *                 Steal, Manipulation, Shadow...) and Spells (card names) narrow it.
+ *                 Steal, Manipulation, Shadow...) and Spells (card names) narrow it. OnBoss: only a spell aimed at
+ *                 the boss. SingleTarget: only a spell that hits one target.
  *   PlayerPasses  a player passes.
- * Target: Self, Caster (the player who set it off), Enemy (a random player), AllEnemies, or empty to pick as the
- * spell aims. Line: words from the game's own line (as .ca finds it) or its locale key. Once: only the first time.
- * Chance: percent, 100 if left out.
+ * Target: Self, Caster (the player who set it off), Receiver (whoever that player's spell was aimed at), Enemy (a random
+ * player), FirstEnemy, AllEnemies, or empty to pick as the spell aims. Line: words from the game's own line (as .ca
+ * finds it) or its locale key. Once: only the first time. Chance: percent, 100 if left out.
+ * Phase: the cheat works only in that phase of the fight (0 or left out = every phase; a boss starts in phase 1).
+ * Rounds count from the start of the phase. SetPhase moves the boss on to that phase from the next round.
+ * SetHealth: the boss's most and current health become this, even after it was defeated (a second form).
+ * Defeat: the boss is defeated after the cheat, if its spell did not do it.
  */
 
 using System;
@@ -50,6 +58,14 @@ internal static class BossCheats {
         public bool Once { get; set; }
         public int Chance { get; set; } = 100;
         public string Notes { get; set; } = "";
+        public int Health { get; set; }
+        public bool NoAllies { get; set; }
+        public bool OnBoss { get; set; }
+        public bool SingleTarget { get; set; }
+        public int Phase { get; set; }
+        public int SetPhase { get; set; }
+        public int SetHealth { get; set; }
+        public bool Defeat { get; set; }
 
         internal bool Is(string when) => When.Equals(when, StringComparison.OrdinalIgnoreCase);
     }

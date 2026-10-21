@@ -1,0 +1,42 @@
+{
+  "Name": "Malistaire-Azteca-Seeds",
+  "Description": "Malistaire the Undying (Azteca): Seeds (from Wizard101 Central's drop list)",
+  "RollChance": 0.15,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree"
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-O-Dil"
+    }
+  ]
+}

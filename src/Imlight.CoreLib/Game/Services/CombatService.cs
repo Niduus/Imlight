@@ -216,7 +216,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
         // TODO: real mob drops. Every mob drops only gold today: the client names each mob's loot tables
         // (WizGameObjectTemplate.m_lootTable, about 2,225 names such as MS-Level-40-42) but not what is in them, and
-        // SpiralDB has no NpcDropTable data. Justin does not want them taken from Wizard101 Central (2026-10-18).
+        // SpiralDB has no NpcDropTable data. Justin allows Wizard101 Central only boss by boss (2026-10-21: Malistaire the
+        // Undying, spiraldb-extra/NpcDropTable).
         foreach (var templateId in defeatedMobTemplateIds) {
             var loot = NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
                 ? DropTableRoller.Roll(npcDropTable.DropTableNames.ToArray(), playerRef, playerObj, wizard)

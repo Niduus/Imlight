@@ -1,0 +1,17 @@
+{
+  "TemplateID": 1336035,
+  "DropTableNames": [
+    "Malistaire-Darkmoor-Gear-1",
+    "Malistaire-Darkmoor-Gear-2",
+    "Malistaire-Darkmoor-TreasureCards-1",
+    "Malistaire-Darkmoor-TreasureCards-2",
+    "Malistaire-Darkmoor-Reagents-1",
+    "Malistaire-Darkmoor-Reagents-2",
+    "Malistaire-Darkmoor-Reagents-3",
+    "Malistaire-Darkmoor-Snacks-1",
+    "Malistaire-Darkmoor-Snacks-2",
+    "Malistaire-Darkmoor-Jewels",
+    "Malistaire-Darkmoor-Seeds",
+    "Malistaire-Darkmoor-HousingItems"
+  ]
+}

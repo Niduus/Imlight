@@ -368,6 +368,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
         }
+        // Boss cheats for the end of the round, after everyone's move.
+        cinematicTime += BossCheatsAtRoundEnd(combatActionList, cinematicTime);
         // .c1 l / .c2 l: the queue casts after everyone's turn, then the round ends.
         cinematicTime += CastEveryonesDelayed('l', combatActionList, cinematicTime);
 

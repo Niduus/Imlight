@@ -1,0 +1,66 @@
+{
+  "Name": "Malistaire-Azteca-HousingItems",
+  "Description": "Malistaire the Undying (Azteca): HousingItems (from Wizard101 Central's drop list)",
+  "RollChance": 0.2,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "512207",
+      "ItemName": "Azteca Apocalypse Theme"
+    },
+    {
+      "ItemId": "512209",
+      "ItemName": "Azteca Dungeon Theme"
+    },
+    {
+      "ItemId": "512210",
+      "ItemName": "Azteca Mountain Theme"
+    },
+    {
+      "ItemId": "512222",
+      "ItemName": "Azteca Post Apocalypse Theme"
+    },
+    {
+      "ItemId": "739112",
+      "ItemName": "Bird Head Mount"
+    },
+    {
+      "ItemId": "739124",
+      "ItemName": "Earth Codex"
+    },
+    {
+      "ItemId": "739167",
+      "ItemName": "Magic Orb"
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench"
+    },
+    {
+      "ItemId": "1346131",
+      "ItemName": "Meowiarty Archmage Duel"
+    },
+    {
+      "ItemId": "1346132",
+      "ItemName": "Meowiarty Exalted Duel"
+    },
+    {
+      "ItemId": "1346123",
+      "ItemName": "Rattlebones Exalted Duel"
+    },
+    {
+      "ItemId": "739122",
+      "ItemName": "Star Clothesline"
+    },
+    {
+      "ItemId": "739183",
+      "ItemName": "Starburst Frond"
+    }
+  ]
+}
