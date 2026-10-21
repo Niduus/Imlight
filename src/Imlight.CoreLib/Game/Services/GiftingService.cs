@@ -43,9 +43,11 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Packs;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Models.Player;
 using System;
 using System.Linq;
 using System.Text;
@@ -160,6 +162,12 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                     MaxEventCurrency1 = wizard.GameStats.m_baseEventCurrency1Pouch
                 });
                 break;
+            case ItemBundleTemplate bundle:
+                // A bundle from `.bundle` (or the crown shop): everything in it, nested bundles too.
+                for (uint i = 0; i < Math.Max(giftRedemption.m_itemCount, 1u); i++) {
+                    GrantBundle(wizard, bundle, 0);
+                }
+                break;
             default:
                 // Check if the item is emote or teleport effect
                 var customEmote = itemTemplate?.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>().FirstOrDefault();
@@ -216,6 +224,27 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         SendToSocket(new GAME_5_PROTOCOL.MSG_MAIL_DATA {
             Data = serializedData
         });
+    }
+
+    private void GrantBundle(Wizard wizard, ItemBundleTemplate bundle, int depth) {
+        if (depth > 4) {
+            return;
+        }
+
+        foreach (ulong templateId in bundle.m_bundleItems.Concat(bundle.m_bundleFreeItems ?? [])) {
+            if (CoreObjectFactory.GetCoreTemplate(templateId) is ItemBundleTemplate inner) {
+                GrantBundle(wizard, inner, depth + 1);
+                continue;
+            }
+
+            if (!wizard.AddItemToInventory(templateId, out WizClientObjectItem item)) {
+                Logger.Warning("Bundle {0}: could not add item {1} to the inventory of {2}.",
+                    Logger.Args(bundle.m_templateID, templateId, wizard.CharId));
+                continue;
+            }
+
+            ItemSync.SendAdded(SessionActor.ActorRef, wizard, item);
+        }
     }
 
     public static bool TryGetGiftRedemption(Mail mail, out CrownShopGiftRedemption? giftRedemption) {
