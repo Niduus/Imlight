@@ -130,6 +130,7 @@ internal sealed class ZoneLoader : ReceiveProtocolDispatcher {
                 TriggerData = triggerData,
                 VolumeData = volumeData,
                 ZonePath = message.ZonePath,
+                Variant = message.Variant,
                 Error = error,
                 ErrorMessage = error ? errorMessage : string.Empty
             };

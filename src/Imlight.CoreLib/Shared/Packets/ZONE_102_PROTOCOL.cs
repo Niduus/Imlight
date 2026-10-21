@@ -82,6 +82,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// </summary>
         public string ZonePath;
 
+        /// <summary>The ZoneObjects variant the zone loads with (spiraldb-extra/ZoneObjects), or empty.</summary>
+        public string Variant;
+
     }
 
     /// <summary>
@@ -133,6 +136,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// The error message, if an error occured during loading.
         /// </summary>
         public string ErrorMessage;
+
+        /// <summary>The ZoneObjects variant the zone was loaded for (spiraldb-extra/ZoneObjects), or empty.</summary>
+        public string Variant;
 
     }
 
@@ -740,6 +746,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool ResetInstance;
 
         /// <summary>
+        /// The ZoneObjects variant a new copy of the zone loads with (spiraldb-extra/ZoneObjects): its extra objects,
+        /// encounters and exit. Empty for the zone as it is. Only a zone this transfer loads takes it.
+        /// </summary>
+        public string Variant;
+
+        /// <summary>
         /// How the client is asked to load the house zone the player is entering. Null for every ordinary zone.
         /// </summary>
         public HouseEntry HouseEntry;
@@ -1211,6 +1223,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         /// <summary>A name for the log, "Dungeon sigil" when empty.</summary>
         public string LogName;
+
+        /// <summary>The ZoneObjects variant the instance loads with (an added sigil's Variant), or empty.</summary>
+        public string Variant;
 
     }
 

@@ -4,7 +4,7 @@
   "Objects": [
     {
       "Name": "Imlight Ravenwood Cyclops Lane Tower Sigil",
-      "Notes": "Justin, 2026-10-21: a 4 player sigil at X -2340 Y 4812 Z -28, Rotation 3.851 (220.6 degrees), Width 1. A copy of Cyclops Lane's Street 3 Tower 1 Instance Sigil (template 107081, Teleport Semi Circle 4 Player Generic); it goes to the same tower, WC_Cyclops_T1 (Eyus Maximus), at the spot Cyclops Lane's Tele Trigger to Tower 1 sends players to.",
+      "Notes": "Justin, 2026-10-21: a 4 player sigil at X -2340 Y 4812 Z -28, Rotation 3.851 (220.6 degrees), Width 1; then turned a quarter turn left. A copy of Cyclops Lane's Street 3 Tower 1 Instance Sigil (template 107081, Teleport Semi Circle 4 Player Generic), lit (Glowy, the pad's On). Justin, 2026-10-21: it now sends the player into a private copy of the top of the Darkmoor Mausoleum, where Malistaire the Undying is fought, loaded with the RavenwoodMalistaire variant (G14_DM-Interiors-DM_Z08_I01_MausoleumTop@RavenwoodMalistaire.json). The spot is the zone's own Start (where the Mausoleum's lower floor sends players up). The name is kept so the sigil keeps its global id.",
       "TemplateID": 107081,
       "X": -2340,
       "Y": 4812,
@@ -15,8 +15,10 @@
         "SigilType": "MinigameSemiCircleSigil4Actor",
         "Tag": "Street 3 Tower 1 Instance Sigil",
         "Radius": 0,
-        "DestinationZone": "WizardCity/WC_Streets/Interiors/WC_Cyclops_T1",
-        "DestinationLoc": "33.10013,-996.145,0.006915471,-3.129041"
+        "LitState": "Glowy",
+        "DestinationZone": "G14_DM/Interiors/DM_Z08_I01_MausoleumTop",
+        "DestinationLoc": "-20.77749,-3024.013,3.814697E-06,-3.098318",
+        "Variant": "RavenwoodMalistaire"
       }
     }
   ]

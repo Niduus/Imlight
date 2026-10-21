@@ -819,9 +819,31 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         _isActive = true;
         ReserveCirclesForGroupOf(startingPlayerObject);
+        AddEncounterMinions(availableCreatureSubCircle, startingCreatureObject);
 
         Logger.Debug("Duel {0} | Created. Grace period over in {1}",
             Logger.Args(Duel.m_duelID.Full, DUEL_GRACE_PERIOD_IN_SECONDS));
+    }
+
+    // A spiraldb-extra/ZoneObjects encounter (Justin, 2026-10-21: Malistaire the Undying with 3 random Draconians):
+    // a battle started against its boss gets MinionCount different minions, picked at random, on the boss's side.
+    // They take the free enemy circles before the first round, so they fight from it.
+    private void AddEncounterMinions(CombatDuelSubCircle bossCircle, CoreObject boss) {
+        var encounter = Entity.Zone?.Extras.EncounterFor(boss.m_templateID);
+        if (encounter is null || encounter.MinionCount <= 0 || encounter.Minions.Count == 0) {
+            return;
+        }
+
+        var picked = encounter.Minions.OrderBy(_ => Random.Shared.Next()).Take(encounter.MinionCount).ToList();
+        var joined = 0;
+        foreach (var minion in picked) {
+            if (SpawnAndAssignMinion((uint) minion, bossCircle, forEnemies: true) is not null) {
+                joined++;
+            }
+        }
+
+        Logger.Information("Duel {0} | encounter for {1}: {2} of {3} minions joined ({4}).",
+            Logger.Args(Duel.m_duelID.Full, boss.m_templateID.Full, joined, picked.Count, string.Join(", ", picked)));
     }
 
     private Duel CreateDuelWithDefaults() => new() {

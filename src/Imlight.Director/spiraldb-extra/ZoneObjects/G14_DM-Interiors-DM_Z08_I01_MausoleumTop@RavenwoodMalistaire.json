@@ -1,0 +1,19 @@
+{
+  "Zone": "G14_DM/Interiors/DM_Z08_I01_MausoleumTop",
+  "Variant": "RavenwoodMalistaire",
+  "Notes": "Justin, 2026-10-21: the private copy of the top of the Darkmoor Mausoleum that the Ravenwood sigil sends players to (ZoneObjects.cs explains the fields). From the zone's own files (G14_DM-Interiors-DM_Z08_I01_MausoleumTop.wad): this is where Malistaire the Undying is fought. His spawner 'Malistaire' (7283780, template 1336035) puts him on path 'Path' at (7.74, -512.62, 0), by the room's battle circle 'Combat for 4 Enemy Slots sigil' (Duel Circle 560, CombatSigil_4EnemySlots, radius 700) at (0, 0, 0); players arrive at the zone's Start (-20.78, -3024.01, 0). This copy keeps all of that. Only the zone's 'MalMinions' spawner (7283839: 3 Draconians, picked by chance with repeats, walking 'PathMinions') is left out: instead 3 different Draconians, picked at random from the same 8, join when the battle against Malistaire starts. The zone's exits (the BacktoLower volume at the entrance, and the warp portal to the Graveyard that appears once he is defeated) go back to the Ravenwood sigil.",
+  "Remove": [1336034, 1336048, 1336049, 1336050, 1336051, 1336052, 1336053, 1336054],
+  "Encounters": [
+    {
+      "Boss": 1336035,
+      "Notes": "The 8 of the zone's MalMinions spawner: Draconian Pyromancer 1336034, Draconian Pyro 1336048, Draconian Thaumaturge 1336049, Draconian Diviner 1336050, Draconian Conjurer 1336051, Draconian Theurgist 1336052, Draconian Necromancer 1336053, Draconian Sorcerer 1336054 (all G14-DM-Draconian_Malistaire*).",
+      "Minions": [1336051, 1336050, 1336053, 1336048, 1336034, 1336054, 1336049, 1336052],
+      "MinionCount": 3
+    }
+  ],
+  "Exit": {
+    "Zone": "WizardCity/WC_Ravenwood",
+    "Loc": "-2340,4812,-28,-0.861",
+    "Triggers": []
+  }
+}

@@ -391,6 +391,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             IsPrivate = true,
             OwnerCharId = owner,
             ResetInstance = !entry.KeepInstance,
+            Variant = entry.Variant,
         };
 
         SendTeleportEffects();
