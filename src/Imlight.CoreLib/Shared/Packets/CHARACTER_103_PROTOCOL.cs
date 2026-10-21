@@ -574,6 +574,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         Choice,
         // In the pet morph zone: the hatcher's egg is made; the lender is shown it too (Egg), so their window ends.
         EggMade,
+        // On the sigil: the sender stepped off during the pair's countdown, so the partner's countdown stops too.
+        TripCancelled,
     }
 
     /// <summary>

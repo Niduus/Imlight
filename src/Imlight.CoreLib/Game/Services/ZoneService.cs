@@ -87,6 +87,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private const float SIGIL_COUNTDOWN_SECONDS = 10.0f;
     private const float SIGIL_YAW_ERROR_COMPENSATION = 1.58f; // Gamebryo yaw compensation
     private ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY _activeSigilEntry;
+    private DateTime _sigilEntryStarted;
+    // After the countdown starts the player is moved onto the pad; their position may lag behind for a moment.
+    private static readonly TimeSpan SIGIL_OFF_PAD_GRACE = TimeSpan.FromSeconds(1);
 
     private readonly CoreObjectSerializer _effectSerializer = new(
         behaviors: SerializerFlags.None
@@ -297,6 +300,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         );
 
         _activeSigilEntry = message;
+        _sigilEntryStarted = DateTime.UtcNow;
         var countdown = message.CountdownSeconds > 0 ? message.CountdownSeconds : SIGIL_COUNTDOWN_SECONDS;
 
         if (!message.NoSigil && (!message.NoSnap || message.SnapToCentre)) {
@@ -334,12 +338,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         // If the player walked off the pad during the countdown and the client's walk-off cancel never
         // arrived, drop the transfer instead of yanking them from across the street.
-        var pad = Util.GetVectorFromCompactString(_activeSigilEntry.SigilLoc);
-        var pos = wizard.Location;
-        var dx = pad.X - pos.X;
-        var dy = pad.Y - pos.Y;
-        var dz = pad.Z - pos.Z;
-        if ((dx * dx) + (dy * dy) + (dz * dz) > (_activeSigilEntry.Radius * _activeSigilEntry.Radius)) {
+        if (IsOffSigilPad(wizard, _activeSigilEntry)) {
             CancelSigilCountdown();
 
             return;
@@ -693,7 +692,24 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // Stepping off the pad stops the countdown right away, not only when it runs out (Justin, 2026-10-21: the
+        // countdown went on after stepping off). The game's own walk-off message is not sent for every pad.
+        if (_activeSigilEntry is { NoSigil: false } entry && DateTime.UtcNow - _sigilEntryStarted > SIGIL_OFF_PAD_GRACE
+            && GetActiveWizard() is { } wizard && IsOffSigilPad(wizard, entry)) {
+            CancelSigilCountdown();
+        }
+
         ZoneActor.Forward(message);
+    }
+
+    private static bool IsOffSigilPad(Wizard wizard, ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry) {
+        var pad = Util.GetVectorFromCompactString(entry.SigilLoc);
+        var pos = wizard.Location;
+        var dx = pad.X - pos.X;
+        var dy = pad.Y - pos.Y;
+        var dz = pad.Z - pos.Z;
+
+        return (dx * dx) + (dy * dy) + (dz * dz) > (entry.Radius * entry.Radius);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY))]

@@ -461,6 +461,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // The pair's countdown runs before the pairing is set up, so this is checked against the trip's partner.
+        if (message.Kind == CHARACTER_103_PROTOCOL.HatchPeerKind.TripCancelled) {
+            OnPartnerTripCancelled(message);
+
+            return;
+        }
+
         if (message.FromCharId != _peerCharId || _peerCharId == 0) {
             return;
         }
@@ -917,6 +924,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             switch (message.Failure) {
                 case CHARACTER_103_PROTOCOL.HatchTripFailure.Cancelled:
                     InformGameClient("You stepped off the sigil.");
+                    if (trip is { IsPair: true } && TryGetOnlinePlayer(trip.PartnerCharId, out var partner)) {
+                        Context.ActorSelection(partner.ActorPath).Tell(HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.TripCancelled));
+                    }
+
                     break;
                 case CHARACTER_103_PROTOCOL.HatchTripFailure.TransferFailed when trip is { IsPair: false }:
                     InformGameClient("The hatching room could not be opened.");
@@ -1329,6 +1340,20 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         var made = HatchPeer(CHARACTER_103_PROTOCOL.HatchPeerKind.EggMade);
         made.Egg = egg;
         Context.ActorSelection(partner.ActorPath).Tell(made);
+    }
+
+    private void OnPartnerTripCancelled(CHARACTER_103_PROTOCOL.MSG_HATCHPEER message) {
+        var trip = _pendingTrip;
+        if (trip is null || _morph is not null || trip.PartnerCharId != message.FromCharId) {
+            return;
+        }
+
+        Logger.Information("Hatching sigil: {0} stepped off {1}; stopping the countdown of {2} too.",
+            Logger.Args(message.FromCharId, trip.PadName, trip.CharId));
+        _pendingTrip = null;
+        PetMorphZone.End(trip.CharId);
+        TellOtherServices(new ZONE_102_PROTOCOL.MSG_CANCELSIGILENTRY());
+        InformGameClient($"{trip.PartnerName ?? "Your partner"} stepped off the sigil.");
     }
 
     private void OnPartnerEggMade(CHARACTER_103_PROTOCOL.MSG_HATCHPEER message) {
