@@ -174,7 +174,26 @@ internal sealed class AreaCatalog {
         "CombatSigilDarkmoorMalistaireBoss",
     ];
 
-    internal static readonly string[] LIT_STATES = ["Glowy", "Off", "On"];
+    /// <summary>
+    /// A sigil pad's looks, in plain words, with the state the server sends for each (MinigameSigilStatesNew in
+    /// Root.wad). Red is the Advanced Mode look: the pad's On_Red animation, a red glow.
+    /// </summary>
+    internal static readonly (string Label, string State)[] SIGIL_LOOKS = [
+        ("Lit: the usual blue glow", "Glowy"),
+        ("Advanced Mode: a red glow", "Red"),
+        ("Off: no glow", "Off"),
+    ];
+
+    /// <summary>The sigil templates whose animations have the red Advanced Mode glow (FX_BattleCircle_4X_New.xml).</summary>
+    internal static readonly ulong[] ADVANCED_LOOK_TEMPLATES = [107081, 1313007, 1313009];
+
+    // Friendly names for the sigil pads in the template picker (the game gives most of them none).
+    private static readonly Dictionary<ulong, string> s_sigilNames = new() {
+        [107081] = "Sigil pad, 4 players (blue, or red for Advanced Mode)",
+        [1634569] = "Sigil pad, 2 players (blue only)",
+        [1313007] = "Skeleton Key sigil, for looks (blue, or red for Advanced Mode)",
+        [1313009] = "Skeleton Key sigil, invisible pad (no model)",
+    };
 
     internal static AreaCatalog Load(string idLookupFolder, string keyDetailsFolder) {
         var catalog = new AreaCatalog();
@@ -294,6 +313,12 @@ internal sealed class AreaCatalog {
                 }
             }
         });
+
+        foreach (var (id, shown) in s_sigilNames) {
+            if (catalog.Templates.TryGetValue(id, out var sigil)) {
+                catalog.Templates[id] = new Template(id, sigil.Name, shown, sigil.Kind, sigil.School);
+            }
+        }
 
         catalog.Zones.AddRange(zones.OrderBy(z => z, StringComparer.OrdinalIgnoreCase));
         foreach (var list in catalog.Spawners.Values) {

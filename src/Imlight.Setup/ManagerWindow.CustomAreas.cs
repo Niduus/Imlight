@@ -448,13 +448,13 @@ internal sealed partial class ManagerWindow {
                 Field("Where", "Where it stands (X, Y, Z), which way it faces (Rotation in degrees, or Yaw in radians) and its size " +
                                "(1 is its own size). Use my position fills these with where your wizard stands and faces.",
                     PlaceEditor(edit, obj, () => edit.Zone, withScale: true)),
-                Field("Start state", "The state it starts in, such as Glowy or Off. Empty: the template's own (a sigil pad: its lit state).",
+                Field("Start state", "The state it starts in, such as Glowy, Off or Red (a sigil's red Advanced Mode glow). Empty: the template's own (a sigil pad: its Look below).",
                     Text(edit, obj, "StartState", "Empty for its own", 200)),
                 Field("Notes", "Your own notes.", Text(edit, obj, "Notes", "", 560, multiline: true)),
             },
         };
         if (sigil is not null) {
-            body.Children.Add(SubPart(SigilTile(SIGIL, AreaIcon.Sigil, 24), "Sigil pad", Timing.Live, SigilFields(edit, sigil), SIGIL));
+            body.Children.Add(SubPart(SigilTile(SIGIL, AreaIcon.Sigil, 24), "Sigil pad", Timing.Live, SigilFields(edit, obj, sigil), SIGIL));
         }
 
         if (circle is not null) {
@@ -501,7 +501,7 @@ internal sealed partial class ManagerWindow {
             edit.Area.File + "/objects/" + name);
     }
 
-    private Control SigilFields(AreaEdit edit, JsonObject sigil) => new StackPanel {
+    private Control SigilFields(AreaEdit edit, JsonObject obj, JsonObject sigil) => new StackPanel {
         Spacing = FIELD_SPACING,
         Children = {
             Sub("A pad a team stands on to be sent somewhere together, like a dungeon's sigil."),
@@ -515,9 +515,51 @@ internal sealed partial class ManagerWindow {
                 LocEditor(edit, sigil, "DestinationLoc", () => CustomArea.Text(sigil, "DestinationZone"))),
             Field("Into variant", "Empty: the zone itself. A name: a fresh private copy loaded with that variant's area.",
                 VariantBox(edit, sigil)),
-            Field("Lit state", "How the pad looks. Glowy is its On glow (the usual).", Suggest(edit, sigil, "LitState", AreaCatalog.LIT_STATES, "Glowy", 200)),
+            Field("Look", "How the pad glows. Advanced Mode is the red glow the game shows for a dungeon's harder Advanced Mode. " +
+                          "Only the 4 player pad (107081) and the Skeleton Key sigil (1313007) have it; other pads stay as they are.",
+                LookBox(edit, obj, sigil)),
         },
     };
+
+    // The pad's look in plain words; the file keeps the state the server sends (LitState: Glowy, Red or Off).
+    private Control LookBox(AreaEdit edit, JsonObject obj, JsonObject sigil) {
+        var looks = AreaCatalog.SIGIL_LOOKS.ToList();
+        var now = CustomArea.Text(sigil, "LitState").Trim();
+        if (now.Replace(" ", "").ToLowerInvariant() is "advanced" or "advancedmode" or "advance" or "advancemode") {
+            now = "Red";
+        }
+
+        var index = now.Length == 0 ? 0 : looks.FindIndex(l => l.State.Equals(now, StringComparison.OrdinalIgnoreCase));
+        if (index < 0) {
+            looks.Add(($"Its own state: {now}", now));
+            index = looks.Count - 1;
+        }
+
+        var box = new ComboBox { Width = 300, ItemsSource = looks.Select(l => l.Label).ToList(), SelectedIndex = index };
+        var warning = new TextBlock { Foreground = MUTED, FontSize = 12, TextWrapping = TextWrapping.Wrap, MaxWidth = 640 };
+
+        void Warn() {
+            var template = (ulong) CustomArea.Number(obj, "TemplateID");
+            var red = box.SelectedIndex >= 0 && looks[box.SelectedIndex].State == "Red";
+            warning.Text = red && !AreaCatalog.ADVANCED_LOOK_TEMPLATES.Contains(template)
+                ? "This pad's template has no red glow, so the game keeps it as it is. Use template 107081 (the 4 player pad) for Advanced Mode."
+                : "";
+            warning.IsVisible = warning.Text.Length > 0;
+        }
+
+        box.SelectionChanged += (_, _) => {
+            if (box.SelectedIndex < 0) {
+                return;
+            }
+
+            Set(sigil, "LitState", looks[box.SelectedIndex].State);
+            Warn();
+            edit.Changed();
+        };
+        Warn();
+
+        return new StackPanel { Spacing = 2, Children = { box, warning } };
+    }
 
     private Control VariantBox(AreaEdit edit, JsonObject sigil) {
         var known = CustomArea.All(AreaFolder).Where(a => a.Variant.Length > 0).Select(a => a.Variant).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
