@@ -63,6 +63,11 @@ internal static class ItemPlacement {
     /// <param name="item">The new item, with its behaviors initialized. It is stored nowhere yet.</param>
     /// <returns>Where the item is now. Lost means it was stored nowhere.</returns>
     internal static Placement Place(Wizard wizard, WizClientObjectItem item) {
+        // A pet snack or reagent is a stack of its bag, never an item of the backpack's list.
+        if (Wizard.IsBagStack(item)) {
+            return wizard.AddToBag(item.m_templateID, out _) ? Placement.Backpack : Placement.Lost;
+        }
+
         var isJewel = BankRules.IsJewel(item);
         if (!(isJewel && IsJewelPouchFull(wizard)) && wizard.InventoryBehavior.FreeSlots >= 1 && wizard.AddInitializedItemToInventory(item)) {
             return Placement.Backpack;
@@ -95,6 +100,14 @@ internal static class ItemPlacement {
     /// <param name="placement">What Place returned for it.</param>
     internal static void Announce(IActorRef session, Wizard wizard, WizClientObjectItem item, Placement placement) {
         switch (placement) {
+            case Placement.Backpack when Wizard.IsBagStack(item):
+                var stack = (WizClientObjectItem) wizard.PetSnackBehavior?.GetSnack(item.m_templateID)
+                    ?? wizard.AlchemyBehavior?.GetReagent(item.m_templateID);
+                if (stack is not null) {
+                    BankSync.SendBackpackStackAdded(session, wizard, stack);
+                }
+
+                break;
             case Placement.Backpack:
                 ItemSync.SendAdded(session, wizard, item);
 

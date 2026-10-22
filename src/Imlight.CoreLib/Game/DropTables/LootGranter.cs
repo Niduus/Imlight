@@ -267,6 +267,15 @@ public static class LootGranter {
                     }
 
                     break;
+                case PetSnackItemTemplate:
+                    // Snacks go to the snack bag as a stack; as an item of the backpack the client showed them with 0.
+                    var grantedSnacks = GrantSnack(playerActor, wizard, itemGuid, item.Quantity);
+                    if (grantedSnacks > 0) {
+                        item.Quantity = grantedSnacks;
+                        grantedItems.Add(item);
+                    }
+
+                    break;
                 case ItemTemplate:
                     if (GrantItem(playerActor, wizard, item, itemGuid)) {
                         grantedItems.Add(item);
@@ -294,6 +303,24 @@ public static class LootGranter {
         unit.m_quantity = 1;
 
         return unit;
+    }
+
+    /// <summary>
+    /// Puts pet snacks into the snack bag and tells the client the stack once.
+    /// </summary>
+    /// <returns>How many snacks went into the bag.</returns>
+    internal static int GrantSnack(IActorRef playerActor, Wizard wizard, ulong templateId, int quantity) {
+        var granted = 0;
+        WizClientObjectItem stack = null;
+        while (granted < Math.Max(1, quantity) && wizard.AddToBag(templateId, out stack)) {
+            granted++;
+        }
+
+        if (granted > 0 && stack is not null) {
+            BankSync.SendBackpackStackAdded(playerActor, wizard, stack);
+        }
+
+        return granted;
     }
 
     internal static bool GrantItem(IActorRef playerActor, Wizard wizard, DropItemResult item, ulong templateId) {
