@@ -76,8 +76,12 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
     /// <summary>
     /// Opens the bank window: reads the shared bank again, streams the bank and the shared bank, then opens the
     /// window. The window fills its lists from what the client holds when it opens, so the stream goes first.
+    /// MSG_OPENBANK names the bank object, not the player: the client's InteractionManager looks the GlobalID up
+    /// among the objects the player is interacting with (0x14172ef50, the same check as MSG_SHOPLIST and
+    /// MSG_DYESHOPOPEN) and, when it is not one of them, sends MSG_DONESHOPPING at once and no window opens.
     /// </summary>
-    internal void Open() {
+    /// <param name="bankObjectId">The global id of the bank object the player used.</param>
+    internal void Open(ulong bankObjectId) {
         if (!AccountCollection.ReloadSharedBank(wizard.Account)) {
             Logger.Error("The shared bank of account {AccountId} could not be read again, the window opens with what the session holds.",
                 Logger.Args(wizard.Account.AccountId));
@@ -89,7 +93,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
             Logger.Args(wizard.CharId, wizard.StorageBehavior.Items.Count, wizard.StorageBehavior.Limit,
                 shared?.Items.Count ?? 0, shared?.Reagents.Count ?? 0, shared?.Snacks.Count ?? 0,
                 complete ? string.Empty : " (some items could not be sent, see the errors above)"));
-        session.Tell(new WIZARD_12_PROTOCOL.MSG_OPENBANK { GlobalID = wizard.GameObjectID });
+        session.Tell(new WIZARD_12_PROTOCOL.MSG_OPENBANK { GlobalID = bankObjectId });
     }
 
     /// <summary>

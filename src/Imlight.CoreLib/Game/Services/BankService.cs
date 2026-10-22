@@ -61,7 +61,7 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
         _openBankEntityId = message.EntityId;
         Logger.Information("Bank: session begins for {CharId} at bank object {ObjectId}.",
             Logger.Args(GetActiveWizard()?.CharId, message.EntityId));
-        CreateRequests().Open();
+        CreateRequests().Open(message.EntityId);
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM))]
