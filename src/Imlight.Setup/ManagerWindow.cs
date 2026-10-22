@@ -513,7 +513,7 @@ internal sealed partial class ManagerWindow : Window {
                     "Type them in the game's chat, starting with the dot.",
                     WithHint(_commandSearch, "Custom has the commands made for your build. Imlight has the ones the server comes with. " +
                         "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard.")), Dock.Top),
-                WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight } }), new Thickness(0, 14, 0, 0)),
+                WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight, PlayerCheatsTab() } }), new Thickness(0, 14, 0, 0)),
             },
         };
     }

@@ -69,7 +69,41 @@
  *     { "Do": "Pips", "Amount" (below 0 takes), "Kind": "Normal"/"Power"/"Shadow", "Target" (Self if left out) }
  *   An action with "Off": true is skipped. Target also takes Attacker (as Caster), WeakestEnemy, Ally (a random one
  *   on the boss's side) and AllAllies.
+ *
+ * More (Niduus, 2026-10-22: "Get more expansive with cheats"; CombatResolver.CheatSteps.cs). Old files read as before:
+ *   Spells + AnyVersion   a plain name is every version of that spell ("Scald" is also "Scald (Treasure Card)",
+ *                "Scald - Item Card", "Scald - Mob"...; SpellNameFamily.cs). Without AnyVersion, exact names as before.
+ *                Cast, Polymorph and AddEffects take a plain name too: a Spell that is no spell's own name casts the
+ *                plainest spell of that family. RemoveCharms / RemoveWards take a Spell: only those from that spell.
+ *   Category     may hold several kinds with commas ("Charm, Ward"); also Charm (any blade, weakness or other charm),
+ *                Ward (any shield, trap or absorb), Shadow, Enchantment and Treasure.
+ *   CostMin, CostMax   the pip cost of the spell (CostMax 0 = no top; an X spell costs 0).
+ *   When         also PlayerHeals, PlayerCharms, PlayerWards, PlayerAuras, PlayerGlobals, PlayerMinions, PlayerShadows,
+ *                PlayerDamages (PlayerCasts for that kind of card), PlayerCrits (a player's spell was a critical hit),
+ *                PlayerDefeated (a player falls; Receiver is that player), PlayerHealthBelow (a player's health first
+ *                drops under Percent, or Health; once each player; Caster is that player), PlayerFlees (a player ran;
+ *                answered at the start of the next round) and FromRound (every round, or every Every rounds, from
+ *                round Round on: an enrage).
+ *   PlayersMin, PlayersMax   only while this many players stand. FromRound, ToRound: only in these battle rounds.
+ *   HasAllies    only while someone else on its side stands.
+ *   Actions also:
+ *     { "Do": "Reflect" }                   the player's spell fizzles and the boss casts it back (as Interrupt, before).
+ *     { "Do": "StealPips", "Amount", "Kind", "Target" (Caster if left out) }   taken from them, given to the boss.
+ *     { "Do": "RemoveAuras", "Target" (AllEnemies) }
+ *     { "Do": "AddCharm", "Kind": Blade/Weakness/Shield/Trap/Absorb, "Amount" (percent; hit points for Absorb),
+ *       "School" ("" = all), "Target" (Self, or Caster for a weakness or trap) }   used up as a real one.
+ *     { "Do": "Boost", "Kind": Damage/Resist/Heal/Accuracy, "Amount" (percent, below 0 lowers), "School", "Rounds"
+ *       (0 = the rest of the battle), "Target" (Self) }   an aura-like effect that is never used up (enrage: Boost
+ *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do.
+ *     { "Do": "Immune", "School" ("" = all), "Rounds", "Target" (Self) }   a -100% ward of that school that is never
+ *       used up (pierce still gets through, as against any shield).
+ *     { "Do": "Stun", "Rounds" (1), "Target" (Caster) }   as a stun spell does, with no animation.
+ *     { "Do": "HealthTo", "Amount" (percent of the most health), "Target" (Self) }   never below 1.
+ *     { "Do": "SwapHealth", "Target" (Caster) }   the boss and the target swap their share of health.
+ *     { "Do": "PickOne", "Count" (0 = all the rest), "Weights": "2, 1, 1" }   of the next Count actions only one goes
+ *       off, picked at random by Weights (1 each if left out).
  * Each cheat made or changed in the app (and each cheat of a custom) writes "Custom cheat | ..." to the log as it goes off.
+ * Player cheats (PlayerCheats.cs) use these same cheats for the wizard played on the server's own PC.
  *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
@@ -131,6 +165,19 @@ internal static class BossCheats {
         public int MaxTimes { get; set; }
         public int Cooldown { get; set; }
         public List<CheatAction> Actions { get; set; } = [];
+        // Spells is a list of plain names, each standing for every version of that spell (SpellNameFamily).
+        public bool AnyVersion { get; set; }
+        // The pip cost of the spell that sets it off: at least CostMin, at most CostMax (0 = no top).
+        public int CostMin { get; set; }
+        public int CostMax { get; set; }
+        // Only while this many players are standing (0 = no limit).
+        public int PlayersMin { get; set; }
+        public int PlayersMax { get; set; }
+        // Only from / up to this round of the battle (0 = no limit).
+        public int FromRound { get; set; }
+        public int ToRound { get; set; }
+        // Only while someone else on its side is still standing (the other way round from NoAllies).
+        public bool HasAllies { get; set; }
         // An added cheat turned off in the app (BossOverrides.CheatsOf).
         public bool Off { get; set; }
 
@@ -139,7 +186,7 @@ internal static class BossCheats {
         internal bool Custom { get; set; }
 
         /// <summary>Whether it stops the player's spell, so it goes off before that spell.</summary>
-        internal bool Interrupts => (Actions ?? []).Any(a => a is not null && !a.Off && a.Is("Interrupt"));
+        internal bool Interrupts => (Actions ?? []).Any(a => a is not null && !a.Off && (a.Is("Interrupt") || a.Is("Reflect")));
 
         /// <summary>
         /// Everything it does, in order: the old fields as actions (a second form, health, phase, line, spells, defeat),
@@ -222,6 +269,16 @@ internal static class BossCheats {
         public string Line { get; set; } = "";
         public string Text { get; set; } = "";
         public bool Off { get; set; }
+        // For Boost, Immune and Stun: how many rounds (0 = the rest of the battle, or 1 for Stun).
+        public int Rounds { get; set; }
+        // For Boost, Immune and AddCharm: the school ("" or All = every school).
+        public string School { get; set; } = "";
+        // For PickOne: the chance of each of the next actions, such as "2, 1, 1" (1 each if left out).
+        public string Weights { get; set; } = "";
+        // Player cheats' FreeCast: how many times, when (First, Last, Before, After, Now), and with an enchantment.
+        public int Times { get; set; }
+        public string Timing { get; set; } = "";
+        public bool Enchant { get; set; }
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

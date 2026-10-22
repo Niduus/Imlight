@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- What a spell name covers in a cheat ("Scald" is every Scald), the same file the server uses. -->
+    <Compile Include="..\Imlight.CoreLib\Game\Combat\SpellNameFamily.cs" Link="Shared\SpellNameFamily.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- The archive reader, which needs no game data to build. -->
     <ProjectReference Include="..\..\submodule\Imcodec\src\Imcodec.Wad\Imcodec.Wad.csproj" />
     <!-- The data file decoder for the Game Files tab. It is generated from a type dump, so copy

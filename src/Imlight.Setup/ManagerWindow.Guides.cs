@@ -166,6 +166,20 @@ internal sealed partial class ManagerWindow {
                     "D|Heal itself by 5,000 hit points"),
                 new GuideTip("[its health drops] goes off once (once in each phase), so it does not need [only the first time]. A boss " +
                              "starts in phase 1; a [next phase] block moves it on, and [in phase] blocks give each phase its own cheats."),
+                new GuideTerms("Naming spells",
+                    ("I|these spells", "Type plain names with commas between, such as `Scald, Tower Shield`. With [any version of] picked, " +
+                                       "Scald means every Scald: its treasure card, item card, a monster's copy and the rest. [exactly] " +
+                                       "means only that very name. The grey [matches 4 spells] shows how many it covers; point at it to " +
+                                       "see them."),
+                    ("W|kind and school", "Instead of names, pick what kind of card (damage, heal, charm, ward, aura, global, " +
+                                          "minion, shadow...) and its school, or add a [pip cost] block, such as every spell of 7 pips or more.")),
+                new GuideExample("Example: an enrage from round 10",
+                    "W|At the start of every round from round 10 on",
+                    "D|Change the damage of itself by 15 for every school spells for 0 rounds"),
+                new GuideTip("More blocks to try: [a player heals], [a player crits], [a player falls], [a player flees], " +
+                             "[reflect the spell], [steal pips], [become immune], [stun], [swap health], [boost or enrage] and " +
+                             "[pick one at random] (only one of the blocks under it goes off). The player cheats on the [Commands] tab " +
+                             "use the same blocks for you."),
                 new GuideSteps("Change or turn off a cheat from the game",
                     "Press [Edit blocks] on the cheat to open it, then change any box. It is marked \"Changed from the game's\".",
                     "Press the eye button on a cheat to turn it off without deleting it. Press it again to turn it back on.",

@@ -33,6 +33,15 @@ public partial class CombatResolver {
     // Set by an Interrupt step while a cheat runs.
     private bool _interruptNow;
 
+    // The player's spell that set the running cheat off (for Reflect), or 0.
+    private uint _cheatSpellId;
+
+    // Players who fled since the last round started (PlayerFlees), with the team they were on.
+    private readonly List<(int Slot, CombatTeam Team)> _fledPlayers = [];
+
+    // Players whose health a PlayerHealthBelow cheat already answered, by boss, template, cheat and player.
+    private readonly HashSet<(CombatDuelSubCircle Boss, ulong Template, int Cheat, ulong Player)> _playerHealthSeen = [];
+
     // The template whose cheats each boss uses now (CheatTemplate).
     private readonly Dictionary<CombatDuelSubCircle, ulong> _bossCheatTemplates = [];
 
@@ -113,11 +122,18 @@ public partial class CombatResolver {
             : Count(boss) >= cheat.Pips;
     }
 
-    private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar)
-        => BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
+    // Boss cheats, then the local player's cheats (CombatResolver.PlayerCheats.cs).
+    private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var time = BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
 
-    private float BossCheatsAtRoundEnd(CombatActionListObj combatActionList, float cinematicTimeSoFar)
-        => BossRoundCheats(atEnd: true, combatActionList, cinematicTimeSoFar);
+        return time + PlayerCheatsAtRound(atEnd: false, combatActionList, cinematicTimeSoFar + time);
+    }
+
+    private float BossCheatsAtRoundEnd(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var time = BossRoundCheats(atEnd: true, combatActionList, cinematicTimeSoFar);
+
+        return time + PlayerCheatsAtRound(atEnd: true, combatActionList, cinematicTimeSoFar + time);
+    }
 
     private float BossRoundCheats(bool atEnd, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         if (!BossCheats.Enabled) {
@@ -137,6 +153,9 @@ public partial class CombatResolver {
                     var due = atEnd ? cheat.Is("RoundEnd") && DueIn(cheat, round)
                         : cheat.Is("BattleStart") ? round == 1 && PhaseOf(boss).Phase == 1
                         : cheat.Is("Pips") ? PipsReached(boss, cheat)
+                        // "FromRound": every round (or every Every rounds) from round Round of its phase on: an enrage.
+                        : cheat.Is("FromRound") ? round >= Math.Max(1, cheat.Round)
+                                                  && (cheat.Every <= 1 || (round - Math.Max(1, cheat.Round)) % cheat.Every == 0)
                         : cheat.Is("RoundStart") && DueIn(cheat, round);
                     if (due) {
                         cinematicTime += TryBossCheat(boss, i, cheat, null, null, $"{(atEnd ? "end of " : "")}round {round}",
@@ -145,7 +164,12 @@ public partial class CombatResolver {
                 }
             }
 
+            if (!atEnd) {
+                cinematicTime += FleeCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            }
+
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -161,6 +185,12 @@ public partial class CombatResolver {
     /// (QueuedCombatAction.Interrupted).
     /// </summary>
     private float BossCheatsBefore(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var time = PlayerCheatsBefore(action, combatActionList, cinematicTimeSoFar);
+
+        return time + BossCheatsBeforeMove(action, combatActionList, cinematicTimeSoFar + time);
+    }
+
+    private float BossCheatsBeforeMove(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         if (!BossCheats.Enabled || action?.SpellCaster is not { } mover || action.Spell is null || action.SelectedTarget is null
             || !mover.IsAlive || mover.CombatParticipant is null || mover.CombatParticipant.m_stunned > 0
             || !action.SelectedTarget.IsAlive || !action.SelectedTarget.AddedToDuel) {
@@ -178,13 +208,15 @@ public partial class CombatResolver {
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
-                    if (!cheat.Interrupts || !InPhase(boss, cheat) || !SetOffBy(cheat, boss, mover, spell, aimed)) {
+                    if (!cheat.Interrupts || !InPhase(boss, cheat) || !SetOffBy(cheat, boss, mover, spell, aimed, crit: null)) {
                         continue;
                     }
 
                     _interruptNow = false;
+                    _cheatSpellId = action.Spell.m_templateID;
                     cinematicTime += TryBossCheat(boss, i, cheat, mover, action.SelectedTarget, $"{(string) spell.m_name} (before it lands)",
                         combatActionList, cinematicTimeSoFar + cinematicTime);
+                    _cheatSpellId = 0;
                     if (_interruptNow) {
                         action.Interrupted = true;
                         _interruptNow = false;
@@ -211,11 +243,27 @@ public partial class CombatResolver {
             : [target.SlotIndex];
     }
 
-    // Whether a player's (or for BossHit, an enemy's) spell aimed at those slots sets the cheat off.
+    // When "PlayerHeals", "PlayerCharms"...: When "PlayerCasts" for one kind of card (its Category on top of the cheat's).
+    private static readonly Dictionary<string, string> s_castWhens = new(StringComparer.OrdinalIgnoreCase) {
+        ["PlayerHeals"] = "Heal", ["PlayerCharms"] = "Charm", ["PlayerWards"] = "Ward", ["PlayerAuras"] = "Aura",
+        ["PlayerGlobals"] = "Global", ["PlayerMinions"] = "Minion", ["PlayerShadows"] = "Shadow", ["PlayerDamages"] = "Damage",
+    };
+
+    // A cheat set off by a player's spell: PlayerCasts, the kinds above and PlayerCrits.
+    private static bool IsCastWhen(BossCheats.BossCheat cheat)
+        => cheat.Is("PlayerCasts") || cheat.Is("PlayerCrits") || s_castWhens.ContainsKey(cheat.When ?? "");
+
+    // Whether a player's (or for BossHit, an enemy's) spell aimed at those slots sets the cheat off. Crit: whether that
+    // spell was a critical hit, or null before it is cast (a PlayerCrits cheat is never set off then).
     private static bool SetOffBy(BossCheats.BossCheat cheat, CombatDuelSubCircle boss, CombatDuelSubCircle mover, SpellTemplate spell,
-                                 ICollection<int> aimed) {
-        if (cheat.Is("PlayerCasts")) {
-            return mover.IsHumanPlayer && Matches(cheat, spell, aimed, boss, mover);
+                                 ICollection<int> aimed, bool? crit) {
+        if (IsCastWhen(cheat)) {
+            if (cheat.Is("PlayerCrits") && crit != true) {
+                return false;
+            }
+
+            return mover.IsHumanPlayer && Matches(cheat, spell, aimed, boss, mover)
+                   && (!s_castWhens.TryGetValue(cheat.When, out var kind) || CategoriesOf(spell).Contains(kind));
         }
 
         return cheat.Is("BossHit") && mover.OccupiedTeam != boss.OccupiedTeam && aimed.Contains(boss.SlotIndex)
@@ -223,6 +271,12 @@ public partial class CombatResolver {
     }
 
     private float BossCheatsAfter(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var time = BossCheatsAfterMove(mover, before, combatActionList, cinematicTimeSoFar);
+
+        return time + PlayerCheatsAfter(mover, before, combatActionList, cinematicTimeSoFar + time);
+    }
+
+    private float BossCheatsAfterMove(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         if (!BossCheats.Enabled || mover is null) {
             return 0;
         }
@@ -231,7 +285,8 @@ public partial class CombatResolver {
         try {
             var moves = combatActionList.m_actionList.Skip(before).Where(a => a.m_spellCaster == mover.SlotIndex).ToList();
             var passed = moves.Count > 0 && moves.All(a => a.m_spell is null);
-            var landed = moves.Where(a => a.m_spell is not null && a.m_spellHits == (char) 1)
+            // A critical hit is m_spellHits 2 (CombatActionResolver): it landed too.
+            var landed = moves.Where(a => a.m_spell is not null && a.m_spellHits is (char) 1 or (char) 2)
                 .Select(a => (Action: a, Spell: CoreObjectFactory.GetCoreTemplate(a.m_spell.m_templateID) as SpellTemplate))
                 .Where(m => m.Spell is not null)
                 .ToList();
@@ -247,16 +302,21 @@ public partial class CombatResolver {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, null, "a pass", combatActionList,
                             cinematicTimeSoFar + cinematicTime);
                     }
-                    else if ((cheat.Is("PlayerCasts") || cheat.Is("BossHit"))
-                             && landed.FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? []))
+                    else if ((IsCastWhen(cheat) || cheat.Is("BossHit"))
+                             && landed.FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
+                                     crit: m.Action.m_spellHits == (char) 2))
                                  is { Spell: not null } move) {
-                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action), $"{(string) move.Spell.m_name}",
+                        _cheatSpellId = move.Action.m_spell.m_templateID;
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action),
+                            $"{(string) move.Spell.m_name}{(move.Action.m_spellHits == (char) 2 ? " (a critical hit)" : "")}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
+                        _cheatSpellId = 0;
                     }
                 }
             }
 
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -399,7 +459,7 @@ public partial class CombatResolver {
         var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         string type = spell.m_sTypeName;
         type ??= "";
-        foreach (var name in new[] { "Aura", "Global", "Polymorph", "Steal", "Shadow", "Enchantment", "Manipulation" }) {
+        foreach (var name in new[] { "Aura", "Global", "Polymorph", "Steal", "Shadow", "Enchantment", "Manipulation", "Charm", "Ward" }) {
             if (type.Contains(name, StringComparison.OrdinalIgnoreCase)) {
                 found.Add(name);
             }
@@ -452,6 +512,21 @@ public partial class CombatResolver {
             found.Remove("Blade");
         }
 
+        // Charm: any blade, weakness or other charm (accuracy, critical...); Ward: any shield, trap or absorb.
+        if (!found.Contains("Aura") && (found.Contains("Blade") || found.Contains("Weakness")
+                                        || Flatten(spell).Any(e => e.m_effectType is kSpellEffects.kModifyAccuracy or kSpellEffects.kCritBoost
+                                            or kSpellEffects.kModifyOutgoingHeal or kSpellEffects.kModifyOutgoingArmorPiercing))) {
+            found.Add("Charm");
+        }
+
+        if (found.Contains("Shield") || found.Contains("Trap") || Flatten(spell).Any(e => e.m_effectType == kSpellEffects.kAbsorbDamage)) {
+            found.Add("Ward");
+        }
+
+        if (spell.m_Treasure) {
+            found.Add("Treasure");
+        }
+
         return found;
     }
 
@@ -473,7 +548,12 @@ public partial class CombatResolver {
             return false;
         }
 
-        if (cheat.Category is { Length: > 0 } category && !CategoriesOf(spell).Contains(category)) {
+        // Several kinds may be asked for, with commas between ("Charm, Ward").
+        if (cheat.Category is { Length: > 0 } category && !SpellNameFamily.CategoryMatches(category, CategoriesOf(spell))) {
+            return false;
+        }
+
+        if ((cheat.CostMin > 0 || cheat.CostMax > 0) && !SpellNameFamily.CostMatches(CostOf(spell), cheat.CostMin, cheat.CostMax)) {
             return false;
         }
 
@@ -487,8 +567,10 @@ public partial class CombatResolver {
             string displayKey = spell.m_displayName;
             var shown = string.IsNullOrEmpty(displayKey) ? "" : Locale.GetEnglishName(displayKey);
 
-            return cheat.Spells.Any(s => s.Equals(name, StringComparison.OrdinalIgnoreCase)
-                                         || s.Equals(shown, StringComparison.OrdinalIgnoreCase));
+            string spellBase = spell.m_spellBase;
+
+            // AnyVersion: "Scald" is every Scald (its treasure card, item card, a mob's copy...).
+            return SpellNameFamily.IsOneOf(cheat.Spells, cheat.AnyVersion, name, shown, cheat.AnyVersion ? spellBase : null);
         }
 
         return true;
@@ -502,6 +584,23 @@ public partial class CombatResolver {
         }
 
         if (cheat.Cooldown > 0 && times > 0 && (int) _duel.m_roundNum - last <= cheat.Cooldown) {
+            return false;
+        }
+
+        // FromRound / ToRound count the battle's rounds; PlayersMin / PlayersMax the players standing.
+        var battleRound = (int) _duel.m_roundNum;
+        if ((cheat.FromRound > 0 && battleRound < cheat.FromRound) || (cheat.ToRound > 0 && battleRound > cheat.ToRound)) {
+            return false;
+        }
+
+        if (cheat.PlayersMin > 0 || cheat.PlayersMax > 0) {
+            var players = _subCircles.Count(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam != boss.OccupiedTeam);
+            if (players < cheat.PlayersMin || (cheat.PlayersMax > 0 && players > cheat.PlayersMax)) {
+                return false;
+            }
+        }
+
+        if (cheat.HasAllies && !HasAllies(boss)) {
             return false;
         }
 
@@ -525,7 +624,7 @@ public partial class CombatResolver {
             return 0;
         }
 
-        var steps = cheat.Steps();
+        var steps = PickSteps(cheat.Steps());
         var template = _bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject));
         var bossName = BossCheats.NameOf(template);
         var custom = cheat.Custom || Customs.IsCustom(template);
@@ -605,7 +704,7 @@ public partial class CombatResolver {
                     break;
                 case "removecharms" or "removewards":
                     foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
-                        RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count);
+                        RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count, step.Spell);
                     }
 
                     break;
@@ -634,7 +733,18 @@ public partial class CombatResolver {
                 case "defeat":
                     defeat = true;
                     break;
+                case "pickone":
+                    // Handled by PickSteps before the steps run.
+                    break;
                 default:
+                    if (TryMoreCheatSteps(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList,
+                            cinematicTimeSoFar + cinematicTime, custom, out var more)) {
+                        cinematicTime += more;
+
+                        break;
+                    }
+
+
                     Logger.Warning("Duel {0} | Boss cheat of {1}: \"{2}\" is not something a cheat can do.",
                         Logger.Args(_duel.m_duelID.Full, bossName, step.Do));
                     break;
@@ -681,6 +791,17 @@ public partial class CombatResolver {
             "addeffects" => $"add the effects of {spell}{on}",
             "setphase" => $"phase {step.Phase}",
             "sethealth" => $"health {step.Amount}",
+            "reflect" => "reflect the spell",
+            "stealpips" => $"steal {step.Amount} {step.Kind} pips{on}",
+            "removeauras" => $"remove auras{on}",
+            "addcharm" => $"add a {step.Amount}% {SchoolText(step.School)}{step.Kind}{on}",
+            "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
+            "immune" => $"immune to {SchoolText(step.School)}damage for {RoundsText(step.Rounds)}{on}",
+            "stun" => $"stun for {Math.Max(1, step.Rounds)} rounds{on}",
+            "healthto" => $"health to {step.Amount}%{on}",
+            "swaphealth" => $"swap health{on}",
+            "freecast" => $"free cast {spell}{on} x{Math.Max(1, step.Times)} ({(step.Timing.Length > 0 ? step.Timing : "Now")}"
+                          + $"{(step.Silent ? ", silent" : "")}{(step.Enchant ? ", enchanted" : "")})",
             _ => step.Do.ToLowerInvariant(),
         };
     }
@@ -761,10 +882,56 @@ public partial class CombatResolver {
 
     private static (Spell Spell, SpellTemplate Template) FindSpell(string name, uint id) {
         var spell = id != 0 ? SpellFactory.GetSpell(id)
-            : !string.IsNullOrWhiteSpace(name) && SpellFactory.Exists(name) ? SpellFactory.GetSpell(name) : null;
+            : !string.IsNullOrWhiteSpace(name) && SpellFactory.Exists(name) ? SpellFactory.GetSpell(name)
+            // A plain name ("Scald") that is no spell's own name: the plainest spell of that family.
+            : !string.IsNullOrWhiteSpace(name) && FamilySpellName(name) is { } plain ? SpellFactory.GetSpell(plain) : null;
 
         return (spell, spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate);
     }
+
+    private static readonly Lazy<List<(string Name, string Shown, bool Treasure)>> s_spellNames = new(() => {
+        try {
+            return [.. SpellFactory.AllSpellTemplates().Select(t => {
+                string name = t.Template.m_name;
+                string key = t.Template.m_displayName;
+
+                return (name ?? "", string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key) ?? "", t.Template.m_Treasure);
+            })];
+        }
+        catch (Exception e) {
+            Logger.Error("Boss cheats | The spell names could not be listed: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    // The game name of the spell a family name stands for: not a treasure card, whose card shows that very name if
+    // one does, else the shortest name.
+    private static string FamilySpellName(string family) => s_spellNames.Value
+        .Where(s => SpellNameFamily.AnyInFamily(family, s.Name, s.Shown))
+        .OrderBy(s => s.Treasure)
+        .ThenBy(s => !s.Shown.Equals(family.Trim(), StringComparison.OrdinalIgnoreCase))
+        .ThenBy(s => s.Name.Length)
+        .Select(s => s.Name)
+        .FirstOrDefault();
+
+    // The spell a hanging effect came from is in a cheat's Spell family (or is it, by name).
+    private static bool FromSpell(SpellEffect effect, string family) {
+        if (string.IsNullOrWhiteSpace(family)) {
+            return true;
+        }
+
+        if (CoreObjectFactory.GetCoreTemplate(effect.m_spellTemplateID) is not SpellTemplate template) {
+            return false;
+        }
+
+        string name = template.m_name;
+        string key = template.m_displayName;
+
+        return SpellNameFamily.AnyInFamily(family, name, string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key));
+    }
+
+    private static int CostOf(SpellTemplate spell) => spell.m_spellRank is { m_xPipSpell: false } rank ? rank.m_spellRank : 0;
 
     // AddEffects: a spell's charms and wards go on its targets with no casting, as if it had been cast.
     private void AddHanging(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver,
@@ -789,8 +956,9 @@ public partial class CombatResolver {
         }
     }
 
-    // RemoveCharms / RemoveWards: Kind Good, Bad or All (empty), newest first, Count of them (0 = all).
-    private void RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count) {
+    // RemoveCharms / RemoveWards: Kind Good, Bad or All (empty), newest first, Count of them (0 = all); with a Spell, only
+    // those that came from a spell of that name (any version).
+    private void RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count, string fromSpell = "") {
         if (target?._hangingEffects is not { } hanging) {
             return;
         }
@@ -798,7 +966,7 @@ public partial class CombatResolver {
         var good = kind.Equals("Good", StringComparison.OrdinalIgnoreCase);
         var bad = kind.Equals("Bad", StringComparison.OrdinalIgnoreCase);
         var gone = hanging.Where(e => kinds.Contains(e.m_effectType) && e.m_numRounds <= 0 && !e.m_protected
-                                      && (!good || IsGood(e)) && (!bad || !IsGood(e)))
+                                      && (!good || IsGood(e)) && (!bad || !IsGood(e)) && FromSpell(e, fromSpell))
             .Reverse()
             .Take(count > 0 ? count : int.MaxValue)
             .ToList();
@@ -822,16 +990,17 @@ public partial class CombatResolver {
     }
 
     // Pips: Amount above 0 gives (as .pip give), below 0 takes. Kind Normal (empty), Power or Shadow.
-    private void ChangePips(CombatDuelSubCircle target, string kind, int amount) {
+    // Returns how many it gave (or, for a take, took).
+    private int ChangePips(CombatDuelSubCircle target, string kind, int amount) {
         if (target?.CombatParticipant?.m_pipCount is not { } pips || amount == 0) {
-            return;
+            return 0;
         }
 
-        var name = kind.ToLowerInvariant() switch { "power" => "power", "shadow" => "shadow", _ => "light" };
+        var name = (kind ?? "").ToLowerInvariant() switch { "power" => "power", "shadow" => "shadow", _ => "light" };
         if (amount > 0) {
             Logger.Information("Duel {0} | Slot {1} | Cheat pips: {2}", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, target.GivePips(name, amount)));
 
-            return;
+            return amount;
         }
 
         var take = -amount;
@@ -854,6 +1023,8 @@ public partial class CombatResolver {
         }
 
         Logger.Information("Duel {0} | Slot {1} | Cheat takes {2} {3} pips.", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, -amount - take, name));
+
+        return -amount - take;
     }
 
     // Say's Text: the words go to every player's chat.

@@ -2296,6 +2296,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             });
         }
 
+        // A boss's PlayerFlees cheat answers it at the start of the next round.
+        if (drainMana) {
+            CombatResolver?.NotePlayerFled(caster);
+        }
+
         // Inform the client that they've been removed from this duel.
         var defeatMsg = NewDefeat(diedInDuel: false);
         actor.Tell(defeatMsg);

@@ -94,6 +94,8 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
     private void ReceiveSetActiveWizard(CHARACTER_103_PROTOCOL.MSG_SETACTIVEWIZARD message) {
         _activeWizard = message.Wizard;
         _activeWizard.UpdateLastLoginTime((uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+        // Player cheats (PlayerCheats.cs) are only for the wizard played on the server's own PC.
+        Imlight.CoreLib.Game.Combat.PlayerCheats.NoteWizard(_activeWizard.CharId, CommandService.IsThisPcCached(SessionActor.RemoteIp));
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD))]
