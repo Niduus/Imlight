@@ -119,6 +119,47 @@ internal static class IniFile {
         return null;
     }
 
+    /// <summary>
+    /// Every value in an ini file by section and key, read in one go; each holds what <see cref="Get"/> would return
+    /// for it. Empty when the file is missing.
+    /// </summary>
+    internal static Dictionary<(string Section, string Key), string> ReadAll(string path) {
+        var values = new Dictionary<(string Section, string Key), string>(SectionKeyComparer.INSTANCE);
+        if (!System.IO.File.Exists(path)) {
+            return values;
+        }
+
+        string? section = null;
+        foreach (var line in System.IO.File.ReadLines(path)) {
+            var trimmed = line.Trim();
+            if (trimmed.StartsWith('[') && trimmed.EndsWith(']')) {
+                section = trimmed[1..^1].Trim();
+
+                continue;
+            }
+
+            var equals = trimmed.IndexOf('=');
+            if (section is not null && !trimmed.StartsWith(';') && equals > 0) {
+                // The first one wins, as Get finds it.
+                values.TryAdd((section, trimmed[..equals].Trim()), trimmed[(equals + 1)..].Trim());
+            }
+        }
+
+        return values;
+    }
+
+    private sealed class SectionKeyComparer : IEqualityComparer<(string Section, string Key)> {
+
+        internal static readonly SectionKeyComparer INSTANCE = new();
+
+        public bool Equals((string Section, string Key) x, (string Section, string Key) y)
+            => StringComparer.OrdinalIgnoreCase.Equals(x.Section, y.Section) && StringComparer.OrdinalIgnoreCase.Equals(x.Key, y.Key);
+
+        public int GetHashCode((string Section, string Key) obj)
+            => HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Section), StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key));
+
+    }
+
     internal static void Set(List<string> lines, string section, string key, string value) {
         var inSection = false;
         var sectionEnd = -1;

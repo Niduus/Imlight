@@ -88,7 +88,24 @@ internal sealed partial class ManagerWindow : Window {
     private readonly CheckBox _follow = new() { Content = "Follow", IsChecked = true };
     private readonly CheckBox _pauseLog = new() { Content = "Pause" };
     private List<string> _shownLog = [];
-    private readonly StackPanel _logLines = new();
+    // Only the lines in view are drawn (a recycling, virtualizing list), so a long log scrolls and grows smoothly.
+    private System.Collections.ObjectModel.ObservableCollection<LogRow> _logRows = [];
+    private readonly ItemsControl _logLines = new() {
+        ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel()),
+        ItemTemplate = new FuncDataTemplate<LogRow>((row, _) => {
+            var text = new SelectableTextBlock { FontFamily = MONO, FontSize = 12.5, TextWrapping = TextWrapping.Wrap };
+            void Show(LogRow? shown) {
+                text.Text = shown?.Text;
+                text.Foreground = shown?.Brush;
+            }
+
+            Show(row);
+            text.DataContextChanged += (_, _) => Show(text.DataContext as LogRow);
+
+            return text;
+        }, supportsRecycling: true),
+    };
+    private readonly TextBlock _logEmpty = new() { Text = "No log yet. Start the server to see it here.", Foreground = MUTED, IsVisible = false };
     private readonly ScrollViewer _logScroll;
     private readonly Border _dieDeleteCard;
     private readonly ToggleSwitch _dieDelete = new() { OnContent = "On", OffContent = "Off" };
@@ -228,26 +245,26 @@ internal sealed partial class ManagerWindow : Window {
         _logScroll = new ScrollViewer {
             Height = 440,
             Background = LOG_BACK,
-            Content = new Border { Padding = new Thickness(12), Child = _logLines },
+            Content = new Border { Padding = new Thickness(12), Child = new StackPanel { Children = { _logEmpty, _logLines } } },
         };
 
         var tabs = new TabControl {
             Padding = new Thickness(0),
             TabStripPlacement = Dock.Left,
             ItemsSource = new[] {
-                Tab("Play", PlayTab()),
-                Tab("Commands", CommandsTab()),
-                Tab("Lookup", LookupTab()),
-                Tab("Spells", SpellsTab()),
-                Tab("Bosses", BossesTab()),
-                Tab("Customs", CustomsTab()),
-                Tab("Guides", GuidesTab()),
-                Tab("Server", ServerTab()),
-                Tab("Logs", LogsTab()),
-                Tab("Settings", SettingsTab()),
-                Tab("Accounts", AccountsTab()),
-                Tab("Game Files", GameFilesTab()),
-                Tab("Tools", ToolsTab()),
+                Tab("Play", PlayTab),
+                Tab("Commands", CommandsTab),
+                Tab("Lookup", LookupTab),
+                Tab("Spells", SpellsTab),
+                Tab("Bosses", BossesTab),
+                Tab("Customs", CustomsTab),
+                Tab("Guides", GuidesTab),
+                Tab("Server", ServerTab),
+                Tab("Logs", LogsTab),
+                Tab("Settings", SettingsTab),
+                Tab("Accounts", AccountsTab),
+                Tab("Game Files", GameFilesTab),
+                Tab("Tools", ToolsTab),
             },
         };
         tabs.SelectionChanged += async (_, e) => {
@@ -275,7 +292,9 @@ internal sealed partial class ManagerWindow : Window {
                 _positionTimer.Stop();
             }
 
+            _logTabShown = shownTab == "Logs";
             if (shownTab == "Logs") {
+                RefreshLog();
                 RefreshClientLog();
                 _clientLogTimer.Start();
             }
@@ -570,7 +589,15 @@ internal sealed partial class ManagerWindow : Window {
     }
 
     private Control SettingsTab() {
-        _settingSearch.TextChanged += (_, _) => RenderSettings();
+        // A short wait after the last key, as the Lookup search does, so typing a word shows its matches once.
+        _settingDelay.Tick += (_, _) => {
+            _settingDelay.Stop();
+            UiTiming.Measure("search settings", RenderSettings);
+        };
+        _settingSearch.TextChanged += (_, _) => {
+            _settingDelay.Stop();
+            _settingDelay.Start();
+        };
         _petCastSearch.TextChanged += (_, _) => {
             var query = _settingSearch.Text?.Trim() ?? "";
             var settings = _settings.FirstOrDefault(g => g.Section == PET_CASTING).Settings ?? [];
@@ -745,17 +772,31 @@ internal sealed partial class ManagerWindow : Window {
 
     private string PositionFile => Path.Combine(_manager.LogFolder, ServerManager.POSITIONS_FILE);
 
-    private void RefreshPosition() {
+    // Read twice a second away from the window, so a slow disk never makes it skip.
+    private bool _positionReading;
+
+    private void RefreshPosition() => _ = RefreshPositionAsync();
+
+    private async Task RefreshPositionAsync() {
         // Leave the text alone while it is being selected, so a copy is not cut short.
-        if (_positionBox.IsFocused) {
+        if (_positionBox.IsFocused || _positionReading) {
             return;
         }
 
         string[] lines;
+        _positionReading = true;
         try {
-            lines = File.Exists(PositionFile) ? File.ReadAllLines(PositionFile) : [];
+            var file = PositionFile;
+            lines = await Task.Run(() => File.Exists(file) ? File.ReadAllLines(file) : []);
         }
-        catch (IOException) {
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return;
+        }
+        finally {
+            _positionReading = false;
+        }
+
+        if (_positionBox.IsFocused) {
             return;
         }
 
@@ -790,22 +831,22 @@ internal sealed partial class ManagerWindow : Window {
         }
     }
 
-    private Task CopyPositionAsync() {
-        RefreshPosition();
+    private async Task CopyPositionAsync() {
+        await RefreshPositionAsync();
         if (_firstPositionXyz.Length == 0) {
             throw new PanelException("There is no position yet. Walk around in the game first.");
         }
 
-        return CopyAsync(_firstPositionXyz);
+        await CopyAsync(_firstPositionXyz);
     }
 
-    private Task CopyRawAsync() {
-        RefreshPosition();
+    private async Task CopyRawAsync() {
+        await RefreshPositionAsync();
         if (_firstPositionRaw.Length == 0) {
             throw new PanelException("There is no position yet. Walk around in the game first.");
         }
 
-        return CopyAsync(_firstPositionRaw);
+        await CopyAsync(_firstPositionRaw);
     }
 
     // Logs: the server's log and the newest log Wizard101 wrote.
@@ -829,10 +870,17 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         GameClient.ClientLog log;
+        string text;
         _clientLogReading = true;
         try {
             var folder = _manager.InstallFolder;
-            log = await Task.Run(() => GameClient.ReadClientLog(folder));
+            (log, text) = await Task.Run(() => {
+                var read = GameClient.ReadClientLog(folder);
+                var lines = read.File is null ? Array.Empty<string>() : read.Text.Split('\n');
+
+                return (read, read.File is null ? "Play once to see the game's log here."
+                    : string.Join("\n", lines.Length > CLIENT_LOG_SHOWN_LINES ? lines[^CLIENT_LOG_SHOWN_LINES..] : lines));
+            });
         }
         catch (Exception) {
             return;
@@ -844,9 +892,10 @@ internal sealed partial class ManagerWindow : Window {
         _clientLogFolder = log.File is null ? null : Path.GetDirectoryName(log.File);
         _clientLogFile.Text = log.File is null ? log.Reason ?? "" : $"From {log.File} (newest {CLIENT_LOG_SHOWN_LINES} lines; Copy all copies more)";
         _clientLogText = log.File is null ? "" : log.Text;
-        var lines = _clientLogText.Split('\n');
-        var text = log.File is null ? "Play once to see the game's log here."
-            : string.Join("\n", lines.Length > CLIENT_LOG_SHOWN_LINES ? lines[^CLIENT_LOG_SHOWN_LINES..] : lines);
+        if (_clientLogBox.IsFocused) {
+            return;
+        }
+
         if (_clientLogBox.Text != text) {
             _clientLogBox.Text = text;
             _clientLogBox.CaretIndex = text.Length;
@@ -958,8 +1007,53 @@ internal sealed partial class ManagerWindow : Window {
     // Status and log
     // ---------------------------------------------------------------------
 
-    private void Refresh() {
-        var status = _manager.Status();
+    // The 2-second check runs away from the window: finding the server's process, trying its login port (up to half a
+    // second) and reading Imlight.ini once for every switch made the whole window skip each time it ran.
+    private bool _refreshing;
+    private bool _refreshAgain;
+
+    private async void Refresh() {
+        if (_refreshing) {
+            _refreshAgain = true;
+
+            return;
+        }
+
+        _refreshing = true;
+        try {
+            var manager = _manager;
+            var config = manager.ConfigFile;
+            var (status, ini, stamp) = await Task.Run(() => {
+                var written = File.Exists(config) ? File.GetLastWriteTimeUtc(config) : DateTime.MinValue;
+
+                return (manager.Status(), IniFile.ReadAll(config), written);
+            });
+
+            // A switch saved while it was reading: what it read is old, so read again.
+            if ((File.Exists(config) ? File.GetLastWriteTimeUtc(config) : DateTime.MinValue) != stamp) {
+                _refreshAgain = true;
+            }
+            else {
+                ShowStatus(status, ini);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Imlight.ini is being written; the next check reads it.
+        }
+        finally {
+            _refreshing = false;
+        }
+
+        RefreshLog();
+        if (_refreshAgain) {
+            _refreshAgain = false;
+            Dispatcher.UIThread.Post(Refresh, DispatcherPriority.Background);
+        }
+    }
+
+    private void ShowStatus(ServerStatus status, Dictionary<(string Section, string Key), string> ini) {
+        bool Has(string section, string key) => ini.ContainsKey((section, key));
+        bool Switch(string section, string key) => ini.TryGetValue((section, key), out var value) && value.Equals("true", StringComparison.OrdinalIgnoreCase);
         _dot.Background = status.Ready ? GOOD : status.Running ? WARN : MUTED;
         _statusText.Text = status.Ready ? "Running, ready for players" : status.Running ? "Starting…" : "Stopped";
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
@@ -976,68 +1070,141 @@ internal sealed partial class ManagerWindow : Window {
         _randomizer.IsChecked = status.Randomizer == true;
         _dieDeleteCard.IsVisible = status.DieDelete is not null;
         _dieDelete.IsChecked = status.DieDelete == true;
-        _trainersCard.IsVisible = _manager.IsInstalled && _manager.HasSetting("Trainers", "FreeTraining");
+        _trainersCard.IsVisible = Has("Trainers", "FreeTraining");
         foreach (var (key, _, toggle) in _trainerSwitches) {
-            toggle.IsChecked = _manager.GetSwitch("Trainers", key);
+            toggle.IsChecked = Switch("Trainers", key);
         }
 
-        _battleCard.IsVisible = _manager.IsInstalled && _manager.HasSetting("Battle", "ManaOnFizzle");
+        _battleCard.IsVisible = Has("Battle", "ManaOnFizzle");
         foreach (var (section, key, _, toggle) in _battleSwitches) {
-            toggle.IsChecked = _manager.GetSwitch(section, key);
-            toggle.IsEnabled = _manager.HasSetting(section, key);
+            toggle.IsChecked = Switch(section, key);
+            toggle.IsEnabled = Has(section, key);
         }
 
         if (!_pointsPerLevel.IsFocused) {
-            _pointsPerLevel.Value = int.TryParse(_manager.GetSetting("Trainers", "TrainingPointsPerLevel"), out var points) ? points : 1;
+            _pointsPerLevel.Value = int.TryParse(ini.GetValueOrDefault(("Trainers", "TrainingPointsPerLevel")), out var points) ? points : 1;
         }
 
         _updatingRandomizer = false;
-        RefreshLog();
     }
 
-    private void RefreshLog() {
+    // One shown line of the server log.
+    private sealed record LogRow(string Text, IBrush Brush);
+
+    // The log is read away from the window, only while the Logs tab shows, and only when the file has changed; the
+    // lines already on screen are kept and only new ones are added (redrawing all 400 every 2 seconds made it skip).
+    private (string? File, long Length, DateTime Written, bool HideDebug, bool HideWarnings) _logReadFrom;
+    private bool _logTabShown;
+    private bool _logReading;
+    private bool _logAgain;
+
+    private async void RefreshLog() {
         // Paused: keep what is on screen so it can be read or copied.
-        if (_pauseLog.IsChecked == true) {
+        if (_pauseLog.IsChecked == true || !_logTabShown) {
             return;
         }
 
-        List<LogLine> lines;
+        if (_logReading) {
+            _logAgain = true;
+
+            return;
+        }
+
+        var manager = _manager;
+        var hideDebug = _hideDebug.IsChecked == true;
+        var hideWarnings = _hideWarnings.IsChecked == true;
+        var last = _logReadFrom;
+        _logReading = true;
         try {
-            lines = _manager.ReadLog();
+            var (from, raw, rows) = await Task.Run(() => {
+                var file = manager.NewestLogFile();
+                var stamp = (file?.FullName, file?.Length ?? 0, file?.LastWriteTimeUtc ?? DateTime.MinValue, hideDebug, hideWarnings);
+                if (stamp == last) {
+                    return (stamp, -1, (List<LogRow>?) null);
+                }
+
+                var lines = manager.ReadLog();
+                var shown = lines
+                    .Where(line => !((hideDebug && line.Level is "DBG" or "VRB") || (hideWarnings && line.Level == "WRN")))
+                    .Select(line => new LogRow(line.Count > 1 ? $"{line.Text}   ×{line.Count}" : line.Text, line.Level switch {
+                        "WRN" => WARN,
+                        "ERR" or "FTL" => BAD,
+                        "DBG" or "VRB" => MUTED,
+                        _ => LOG_TEXT,
+                    }))
+                    .ToList();
+
+                return (stamp, lines.Count, shown);
+            });
+            if (rows is not null && _pauseLog.IsChecked != true) {
+                _logReadFrom = from;
+                UiTiming.Measure("show server log", () => ShowLog(raw, rows));
+            }
         }
         catch (Exception) {
-            return;
+            // Being rotated or written; the next check reads it.
+        }
+        finally {
+            _logReading = false;
         }
 
+        if (_logAgain) {
+            _logAgain = false;
+            RefreshLog();
+        }
+    }
+
+    private void ShowLog(int raw, List<LogRow> rows) {
         var atBottom = _logScroll.Offset.Y + _logScroll.Viewport.Height >= _logScroll.Extent.Height - 30;
-        _logLines.Children.Clear();
-        _shownLog = [];
-        if (lines.Count == 0) {
-            _logLines.Children.Add(new TextBlock { Text = "No log yet. Start the server to see it here.", Foreground = MUTED });
+        _shownLog = rows.Select(row => row.Text).ToList();
+        _logEmpty.IsVisible = raw == 0;
+        if (raw == 0) {
+            _logRows.Clear();
 
             return;
         }
 
-        foreach (var line in lines) {
-            if ((_hideDebug.IsChecked == true && line.Level is "DBG" or "VRB") || (_hideWarnings.IsChecked == true && line.Level == "WRN")) {
+        // The lines on screen that are still in the log's end: drop the oldest ones above them, update the last one
+        // (its ×count can grow) and add the new ones under it.
+        var start = 0;
+        for (; start < _logRows.Count - 1; start++) {
+            var kept = _logRows.Count - 1 - start;
+            if (kept > rows.Count) {
                 continue;
             }
 
-            var shown = line.Count > 1 ? $"{line.Text}   ×{line.Count}" : line.Text;
-            _shownLog.Add(shown);
-            var text = new SelectableTextBlock {
-                Text = shown,
-                FontFamily = MONO,
-                FontSize = 12.5,
-                TextWrapping = TextWrapping.Wrap,
-                Foreground = line.Level switch {
-                    "WRN" => WARN,
-                    "ERR" or "FTL" => BAD,
-                    "DBG" or "VRB" => MUTED,
-                    _ => LOG_TEXT,
-                },
-            };
-            _logLines.Children.Add(text);
+            var same = true;
+            for (var i = 0; i < kept && same; i++) {
+                same = _logRows[start + i] == rows[i];
+            }
+
+            if (same) {
+                break;
+            }
+        }
+
+        if (_logRows.Count == 0 || start > 50) {
+            // Mostly new (the first read, a filter changed): one new list instead of hundreds of changes.
+            _logRows = new System.Collections.ObjectModel.ObservableCollection<LogRow>(rows);
+            _logLines.ItemsSource = _logRows;
+        }
+        else {
+            for (var i = 0; i < start; i++) {
+                _logRows.RemoveAt(0);
+            }
+
+            for (var i = 0; i < rows.Count; i++) {
+                if (i >= _logRows.Count) {
+                    _logRows.Add(rows[i]);
+                }
+                else if (_logRows[i] != rows[i]) {
+                    _logRows[i] = rows[i];
+                }
+            }
+
+            while (_logRows.Count > rows.Count) {
+                _logRows.RemoveAt(_logRows.Count - 1);
+            }
         }
 
         if (_follow.IsChecked == true && atBottom) {
@@ -1408,7 +1575,8 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
-        var running = _manager.Status().Running;
+        var installFolder = _manager.InstallFolder;
+        var running = await Task.Run(() => InstalledCommands.IsServerRunning(installFolder));
         if (withoutAsking) {
             Say($"Imlight {update.Version} is ready and installs by itself now" + (running ? "; the server restarts with it." : "."));
         }
@@ -1456,54 +1624,95 @@ internal sealed partial class ManagerWindow : Window {
             .ToList();
         _pending.Clear();
         UpdateSaveBar();
+        UiTiming.Measure("build settings", BuildSettings);
         RenderSettings();
     }
 
-    private void RenderSettings() {
-        var query = _settingSearch.Text?.Trim() ?? "";
-        _settingsList.Children.Clear();
-        foreach (var (section, settings) in _settings) {
-            var matches = settings.Where(s => query.Length == 0
-                || $"{section} {s.Key} {s.Help}".Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
-            if (matches.Count == 0) {
-                continue;
-            }
+    // Every section and row of the Settings tab is built once (when Imlight.ini is read) and searching only shows or
+    // hides them: building hundreds of rows again on every key typed froze the window for most of a second.
+    private readonly List<(string Section, Section Fold, List<(Setting Setting, Control Row)> Rows)> _settingFolds = [];
+    private readonly List<(Setting Setting, Control Row)> _petCastRowList = [];
+    private readonly TextBlock _petCastNone = Sub("");
+    private readonly DispatcherTimer _settingDelay = new() { Interval = TimeSpan.FromMilliseconds(200) };
 
+    private void BuildSettings() {
+        _settingsList.Children.Clear();
+        _settingFolds.Clear();
+        _petCastRowList.Clear();
+        _petCastRows.Children.Clear();
+        (_petCastSearch.Parent as Panel)?.Children.Remove(_petCastSearch);
+        (_petCastRows.Parent as Panel)?.Children.Remove(_petCastRows);
+        foreach (var (section, settings) in _settings) {
             var rows = new StackPanel();
+            var list = new List<(Setting Setting, Control Row)>();
             if (section == PET_CASTING) {
-                // The box and its rows are kept between redraws, so they leave the old list first.
-                (_petCastSearch.Parent as Panel)?.Children.Remove(_petCastSearch);
-                (_petCastRows.Parent as Panel)?.Children.Remove(_petCastRows);
                 rows.Children.Add(WithMargin(_petCastSearch, new Thickness(0, 4, 0, 4)));
                 rows.Children.Add(_petCastRows);
-                RenderPetCastRows(matches);
             }
-            else {
-                foreach (var setting in matches) {
-                    rows.Children.Add(SettingRow(setting));
-                }
+
+            foreach (var setting in settings) {
+                var row = SettingRow(setting);
+                list.Add((setting, row));
+                (section == PET_CASTING ? _petCastRows : rows).Children.Add(row);
+            }
+
+            if (section == PET_CASTING) {
+                _petCastRowList.AddRange(list);
+                _petCastRows.Children.Add(_petCastNone);
             }
 
             var (icon, accent) = SettingLook(section);
             var fold = Fold(icon, accent, section, "", rows);
-            fold.SetBadge(matches.Count == 1 ? "1 setting" : $"{matches.Count} settings");
-            fold.SetOpen(query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0));
+            _settingFolds.Add((section, fold, list));
             _settingsList.Children.Add(fold);
         }
     }
 
-    // The [PetCasting] section's own search: only its rows are redrawn, so the search box keeps its focus.
+    private void RenderSettings() {
+        var query = _settingSearch.Text?.Trim() ?? "";
+        foreach (var (section, fold, rows) in _settingFolds) {
+            var matches = 0;
+            var petMatches = new List<Setting>();
+            foreach (var (setting, row) in rows) {
+                var match = query.Length == 0 || $"{section} {setting.Key} {setting.Help}".Contains(query, StringComparison.OrdinalIgnoreCase);
+                matches += match ? 1 : 0;
+                if (section == PET_CASTING) {
+                    if (match) {
+                        petMatches.Add(setting);
+                    }
+                }
+                else {
+                    row.IsVisible = match;
+                }
+            }
+
+            fold.IsVisible = matches > 0;
+            if (matches == 0) {
+                continue;
+            }
+
+            if (section == PET_CASTING) {
+                RenderPetCastRows(petMatches);
+            }
+
+            fold.SetBadge(matches == 1 ? "1 setting" : $"{matches} settings");
+            fold.SetOpen(query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0));
+        }
+    }
+
+    // The [PetCasting] section's own search: only its rows change, so the search box keeps its focus.
     private void RenderPetCastRows(List<Setting> settings) {
         var query = _petCastSearch.Text?.Trim() ?? "";
-        _petCastRows.Children.Clear();
-        foreach (var setting in settings.Where(s => query.Length == 0
-                || $"{s.Key} {s.Help}".Contains(query, StringComparison.OrdinalIgnoreCase))) {
-            _petCastRows.Children.Add(SettingRow(setting));
+        var allowed = settings.ToHashSet();
+        var shown = 0;
+        foreach (var (setting, row) in _petCastRowList) {
+            row.IsVisible = allowed.Contains(setting)
+                && (query.Length == 0 || $"{setting.Key} {setting.Help}".Contains(query, StringComparison.OrdinalIgnoreCase));
+            shown += row.IsVisible ? 1 : 0;
         }
 
-        if (_petCastRows.Children.Count == 0) {
-            _petCastRows.Children.Add(Sub($"No May Cast setting matches \"{query}\"."));
-        }
+        _petCastNone.Text = $"No May Cast setting matches \"{query}\".";
+        _petCastNone.IsVisible = shown == 0;
     }
 
     private Control SettingRow(Setting setting) {
@@ -1556,6 +1765,7 @@ internal sealed partial class ManagerWindow : Window {
     private Task DiscardSettings() {
         _pending.Clear();
         UpdateSaveBar();
+        BuildSettings();
         RenderSettings();
 
         return Task.CompletedTask;
@@ -1782,7 +1992,8 @@ internal sealed partial class ManagerWindow : Window {
     };
 
     /// <summary>A tab of the side bar: its icon and name there, and a header with its one line above its page.</summary>
-    private static TabItem Tab(string header, Control content) {
+    private static TabItem Tab(string header, Func<Control> build) {
+        var content = UiTiming.Measure($"build {header} tab", build);
         var (icon, line) = s_tabs[header];
         var accent = ManagerTheme.Accent(header);
 

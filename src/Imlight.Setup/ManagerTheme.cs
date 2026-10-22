@@ -301,9 +301,21 @@ internal static class ManagerTheme {
         return Boxed(path, size);
     }
 
+    // Each icon's shape is parsed once and shared: every button, tile and section header draws one.
+    private static readonly Dictionary<string, Geometry> s_iconGeometry = [];
+
     private static Path IconPath(string name) {
-        var (data, filled) = s_icons.TryGetValue(name, out var icon) ? icon : s_icons["puzzle"];
-        var path = new Path { Data = StreamGeometry.Parse(data) };
+        if (!s_icons.ContainsKey(name)) {
+            name = "puzzle";
+        }
+
+        var (data, filled) = s_icons[name];
+        if (!s_iconGeometry.TryGetValue(name, out var geometry)) {
+            geometry = StreamGeometry.Parse(data);
+            s_iconGeometry[name] = geometry;
+        }
+
+        var path = new Path { Data = geometry };
         if (!filled) {
             path.StrokeThickness = 2;
             path.StrokeLineCap = PenLineCap.Round;

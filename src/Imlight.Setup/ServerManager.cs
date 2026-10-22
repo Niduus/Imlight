@@ -171,7 +171,8 @@ internal sealed partial class ServerManager(string installFolder) {
             throw new PanelException("Wizard101 could not be found. Click \"Update Imlight\" on the Tools tab of the app once, then try again.");
         }
 
-        if (IsListening(LoginPort)) {
+        // Away from the window: trying a port nothing listens on waits up to half a second.
+        if (await Task.Run(() => IsListening(LoginPort))) {
             await GameClient.LaunchAsync(InstallFolder, "127.0.0.1", LoginPort);
 
             return "Starting Wizard101. Log in with your account on this server.";
@@ -415,7 +416,8 @@ internal sealed partial class ServerManager(string installFolder) {
             throw new PanelException("Type a command first, such as .elixir50.");
         }
 
-        if (!Status().Running) {
+        // Only whether it runs: the full status also tries the login port, which can keep the window waiting.
+        if (!InstalledCommands.IsServerRunning(InstallFolder)) {
             throw new PanelException("Start the server and log in to Wizard101 on this PC first.");
         }
 
