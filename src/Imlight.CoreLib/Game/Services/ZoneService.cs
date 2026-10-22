@@ -794,6 +794,20 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         var wizard = GetActiveWizard();
         var zoneName = wizard.Zone;
 
+        // A private room's exit (the duel component found it in the zone's copy) beats the world's hub.
+        if (!string.IsNullOrEmpty(message.DestinationZone)) {
+            Logger.Information("Leaving {0} by its exit after a battle: {1} {2}",
+                Logger.Args(zoneName, message.DestinationZone, message.DestinationLocation));
+            ReceiveZoneTransferRequest(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = message.DestinationZone,
+                DestinationLocation = message.DestinationLocation ?? "",
+                SendToClient = true,
+                OwnerCharId = wizard.CharId // as the room's exit doors send it
+            });
+
+            return;
+        }
+
         var worldHubMap = WorldHubZones.GetHubForZone(zoneName);
         if (worldHubMap is null) {
             Logger.Error("Could not find world hub mapping for zone {0}",

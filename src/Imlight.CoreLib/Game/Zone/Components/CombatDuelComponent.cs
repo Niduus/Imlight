@@ -2010,7 +2010,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         // Inform the client that they've been removed from this duel.
-        var defeatMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT();
+        var defeatMsg = NewDefeat(diedInDuel: false);
         actor.Tell(defeatMsg);
 
         caster.RemoveParticipant();
@@ -2027,6 +2027,28 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         if (AliveAndInDuelPlayerCount <= 0) {
             EndDuel();
         }
+    }
+
+    /// <summary>
+    /// The defeat for a player leaving this duel by fleeing or losing. A copy of the zone with a spiraldb-extra/ZoneObjects
+    /// exit (an added sigil's private room, such as Malistaire's from the Ravenwood sigil) sends them to that exit, the
+    /// same place its doors go, not to the world's hub (which for G14_DM is Castle Darkmoor).
+    /// </summary>
+    private COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT NewDefeat(bool diedInDuel) {
+        var defeat = new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT { DiedInDuel = diedInDuel };
+        var zone = Entity.Zone;
+        if (string.IsNullOrEmpty(zone?.ZonePath)
+            || Imlight.CoreLib.Game.World.WorldHubZones.GetHubForZone(zone.ZonePath) is not { } hub) {
+            return defeat;
+        }
+
+        // Going to the hub is a teleport out of the zone like any other, so the exit takes it when it takes those.
+        if (zone.Extras.TryGetExit(null, hub.m_hubZone, out var exitZone, out var exitLoc)) {
+            defeat.ExitZone = exitZone;
+            defeat.ExitLocation = exitLoc;
+        }
+
+        return defeat;
     }
 
     private static CombatTeam DetermineFirstTeam()
@@ -2605,7 +2627,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         });
 
         // Inform each player that they've been defeated.
-        var defeatMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT();
+        var defeatMsg = NewDefeat(diedInDuel: false);
         EnactActionOnSubCircles(circle => {
             if (!circle.AddedToDuel) {
                 return;
@@ -2623,7 +2645,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Send any dead players back to the hub. Scripted tutorial duels never count as a death.
         if (!circle.IsAlive) {
-            var defeatMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT { DiedInDuel = !_tutorialDirector.IsActive && !Duel.m_bPVP };
+            var defeatMsg = NewDefeat(diedInDuel: !_tutorialDirector.IsActive && !Duel.m_bPVP);
             circle.ParticipantActor.Tell(defeatMsg);
 
             return;

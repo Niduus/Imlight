@@ -87,7 +87,8 @@ internal static class BuddyStatsCrc {
         return publicItems is null || publicItems.Count == 0;
     }
 
+    // A wizard with no wishlist has a ByteString with no bytes behind it (null): checksum it as empty data.
     internal static uint ForWishlist(ByteString wishlistData)
-        => Compute(wishlistData);
+        => Compute(wishlistData.IsEmpty ? [] : (byte[]) wishlistData);
 
 }

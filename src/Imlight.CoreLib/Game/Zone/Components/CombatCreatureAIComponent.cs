@@ -206,7 +206,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATEFFECT))]
     private void ReceiveCombatEffect(COMBAT_106_PROTOCOL.MSG_COMBATEFFECT message) {
-        if (_sentFinalKill) {
+        if (_sentFinalKill || _currentSubCircle is null || message.Caster is null || message.Targets is null) {
             return;
         }
 
@@ -248,6 +248,17 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     private void ReceiveCombatDeath(COMBAT_106_PROTOCOL.MSG_COMBATDEATH message) {
         if (_sentFinalKill || !_isInDuel) {
             Entity.DeleteObject();
+
+            return;
+        }
+
+        // An encounter minion can die before its duel slot is fully set up: nothing to remove from, just go.
+        if (_currentDuelComponent is null || _currentSubCircle?.ParticipantObject is null) {
+            _sentFinalKill = true;
+            Entity.DeleteObject();
+            if (_currentSubCircle?.IsSummonedMinion == true) {
+                CombatDuelComponent.OnMinionRemoved(_currentSubCircle);
+            }
 
             return;
         }
@@ -519,12 +530,17 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     }
 
     private void InitiatizeHateTable() {
-        // Create the hate table.
-        int start = (_currentSubCircle.SlotIndex < 3) ? 4 : 0;
-        int end = (_currentSubCircle.SlotIndex < 3) ? _currentDuelComponent.SubCircles.Length : _currentDuelComponent.SubCircles.Length / 2;
+        // Create the hate table from the other side's slots. Monster slots are 0-3, so slot 3 (where an
+        // encounter minion often joins) belongs to the monster side too.
+        var half = _currentDuelComponent.SubCircles.Length / 2;
+        var onMonsterSide = _currentSubCircle.SlotIndex < half;
+        int start = onMonsterSide ? half : 0;
+        int end = onMonsterSide ? _currentDuelComponent.SubCircles.Length : half;
 
+        // Joining a second time (or a late re-add) must not throw on keys already there.
+        _hateTable.Clear();
         for (int i = start; i < end; i++) {
-            _hateTable.Add(i, 0);
+            _hateTable[i] = 0;
         }
 
         // Our initial target will be whomever is across from us. The wrap matters for a summoned
@@ -553,12 +569,13 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
     private void UpdateHateTable(int targetIdx, int hateValue) {
         // Make sure we aren't targeting ourselves.
-        if (targetIdx == _currentSubCircle.SlotIndex) {
+        if (_currentSubCircle is null || targetIdx == _currentSubCircle.SlotIndex) {
             Logger.Error("Creature tried to target itself.");
             return;
         }
 
-        _hateTable[targetIdx] += hateValue;
+        // A caster who joined after the table was built (or a slot we never listed) gets an entry now.
+        _hateTable[targetIdx] = (_hateTable.TryGetValue(targetIdx, out var current) ? current : 0) + hateValue;
     }
 
 }

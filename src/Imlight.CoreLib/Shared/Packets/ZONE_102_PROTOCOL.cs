@@ -829,6 +829,10 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 35;
         public byte ServiceID { get; } = 102;
 
+        /// <summary>Where to go instead of the world's hub (a private room's exit), or null for the hub.</summary>
+        public string DestinationZone;
+        public string DestinationLocation;
+
     }
 
     /// <summary>
