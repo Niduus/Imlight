@@ -148,6 +148,12 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
             }
 
             if (!EvaluateRequirements(trigger, message)) {
+                // A door that stays shut is otherwise silent ("friend can not enter Hedge Maze", 2026-10-22).
+                if (HasTeleportResult(trigger)) {
+                    Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met.",
+                        Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name));
+                }
+
                 continue;
             }
 

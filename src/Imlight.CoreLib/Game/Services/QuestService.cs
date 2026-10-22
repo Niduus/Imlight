@@ -97,7 +97,13 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     /// the NPC replays it.
     /// </summary>
     private sealed record PendingGoalCompletion(ulong QuestId, ulong GoalId,
-        IActorRef TransitionTarget, IServerMessage TransitionMessage);
+        IActorRef TransitionTarget, IServerMessage TransitionMessage, DateTime ShownAt);
+
+    /// <summary>
+    /// The NPC cannot be clicked while its dialog is up, so the same goal asked for again after this long
+    /// means the dialog was closed without the client saying so: the goal completes then.
+    /// </summary>
+    private static readonly TimeSpan PENDING_GOAL_REASK_GRACE = TimeSpan.FromSeconds(2);
 
     private readonly List<PendingGoalCompletion> _pendingGoalCompletions = [];
     private bool _clientReportsPersonaCompletion;
@@ -116,13 +122,23 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances) {
             var qTemplate = QuestTemplateCollection.GetQuestByName(qInstance.QuestName);
+            if (qTemplate is null) {
+                Logger.Warning("Quest '{0}' of {1} has no template; it is not sent to the quest book.",
+                    Logger.Args(qInstance.QuestName, wizard.CharId));
 
-            SendQuestResumeMessage(qTemplate, qInstance);
+                continue;
+            }
 
             // Cache the quest template so we can reference it later if needed.
             if (!_cachedQuestTemplates.Contains(qTemplate)) {
                 _cachedQuestTemplates.Add(qTemplate);
             }
+
+            if (!IsShownInQuestBook(qTemplate, wizard)) {
+                continue;
+            }
+
+            SendQuestResumeMessage(qTemplate, qInstance);
         }
     }
 
@@ -214,9 +230,18 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         // Live sends a persona goal's completion dialog first and completes the goal only when the client
         // reports the dialog closed (MSG_COMPLETEDIALOG). Show it now and finish the goal from there.
         if (FindDialogue(gTemplate.m_dialogList, GOAL_COMPLETION_DIALOG_TAG) is not null) {
-            if (_pendingGoalCompletions.Any(p => p.QuestId == questId && p.GoalId == goalId)) {
-                Logger.Debug("Player '{0}' asked again to complete goal ID '{1}' for quest ID '{2}' while its completion dialog is open; ignoring.",
+            var pending = _pendingGoalCompletions.FirstOrDefault(p => p.QuestId == questId && p.GoalId == goalId);
+            if (pending is not null) {
+                if (DateTime.UtcNow - pending.ShownAt < PENDING_GOAL_REASK_GRACE) {
+                    Logger.Debug("Player '{0}' asked again to complete goal ID '{1}' for quest ID '{2}' while its completion dialog is open; ignoring.",
+                        Logger.Args(wizard.CharId, goalId, questId));
+
+                    return;
+                }
+
+                Logger.Information("Player '{0}' talked again for goal ID '{1}' of quest ID '{2}' with no dialog close reported; completing the goal.",
                     Logger.Args(wizard.CharId, goalId, questId));
+                FinishPendingGoalCompletion(pending);
 
                 return;
             }
@@ -224,7 +249,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             ShowGoalCompletionDialogue(gTemplate, questId, goalId);
 
             _pendingGoalCompletions.Add(new PendingGoalCompletion(questId, goalId,
-                message.TransitionTarget, message.TransitionMessage));
+                message.TransitionTarget, message.TransitionMessage, DateTime.UtcNow));
             Timers.StartSingleTimer(
                 PendingGoalTimerKey(questId, goalId),
                 new CHARACTER_103_PROTOCOL.MSG_GOALDIALOGTIMEOUT { QuestID = questId, GoalID = goalId },
@@ -393,7 +418,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         wizard.IncrementQuestGoal(qInstance.QuestName, gTemplate.m_goalName);
 
-        var goalMax = gTemplate.m_tallyCounter?.m_count ?? 1;
+        var goalMax = QuestMadlibs.GetGoalTotal(gTemplate);
         Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a use.",
             Logger.Args(wizard.CharId, qInstance.QuestName, gTemplate.m_goalName, gInstance.CurrentProgress, goalMax));
         if (gInstance.CurrentProgress >= goalMax) {
@@ -655,8 +680,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 state = "done";
             }
             else {
-                var total = gTemplate.m_tallyCounter?.m_count ?? 0;
-                state = total > 0 ? $"active {gInstance.CurrentProgress}/{total}" : "active";
+                state = IsTalliedGoal(gTemplate)
+                    ? $"active {gInstance.CurrentProgress}/{QuestMadlibs.GetGoalTotal(gTemplate)}"
+                    : "active";
             }
 
             CommandReply($"  {gTemplate.m_goalName} [{gTemplate.m_goalType}]: {state}");
@@ -1457,6 +1483,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private void SendGoalMessage(GoalTemplate gTemplate, QuestInstance qInstance, byte sendType = 0, bool forceSendDestZone = true) {
+        // A goal of a quest the book does not show would only add an empty entry.
+        if (QuestTemplateCollection.GetQuestByName(qInstance.QuestName) is { } owningQuest
+            && !IsShownInQuestBook(owningQuest, GetActiveWizard())) {
+            return;
+        }
+
         var gInstance = qInstance.GoalProgress
             .FirstOrDefault(g => g.GoalName == gTemplate.m_goalName);
         if (gInstance == null) {
@@ -1502,6 +1534,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             destZone = "";
         }
 
+        // A defeat, collect or use goal shows "count/total"; a defeat goal's total is its bounty total.
+        var tallied = IsTalliedGoal(gTemplate);
+        var goalTotal = tallied ? QuestMadlibs.GetGoalTotal(gTemplate) : gTemplate.m_tallyCounter?.m_count ?? 0;
+
         var packet = new QUEST_MESSAGES_52_PROTOCOL.MSG_SENDGOAL {
             QuestID = qInstance.ID,
             GoalID = gInstance.ID,
@@ -1516,10 +1552,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             GoalType = (byte) gTemplate.m_goalType,
             GoalStatus = 0,                      // *** ACTIVE on retail captures ***
             GoalCount = gInstance.CurrentProgress,
-            UseTally = (byte) (gTemplate.m_tallyCounter is not null ? 1 : 0),
-            GoalTotal = gTemplate.m_tallyCounter?.m_count ?? 0,
+            UseTally = (byte) (tallied || gTemplate.m_tallyCounter is not null ? 1 : 0),
+            GoalTotal = goalTotal,
             TallyText = gTemplate.m_tallyCounter?.m_descriptor ?? "",
-            SubscriberGoalTotal = gTemplate.m_tallyCounter?.m_count ?? 0,
+            SubscriberGoalTotal = goalTotal,
             SendType = sendType,                 // 0=resume/start-of-zone, 1=start, 2=progress
             GoalMadlibs = madLibData,
             ClientTags = clientTagData,
@@ -1528,6 +1564,18 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         SendToSocket(packet);
     }
+
+    /// <summary>
+    /// Hidden quests (the tutorial's control quests and Tutorial_Intro) have no title and no goal text; sent to
+    /// the client they show as a blank card in the quest book. The tutorial keeps them; nowhere else shows them.
+    /// </summary>
+    private static bool IsShownInQuestBook(QuestTemplate qTemplate, Wizard wizard)
+        => !qTemplate.m_isHidden || TutorialService.IsTutorialZone(wizard.Zone ?? "");
+
+    private static bool IsTalliedGoal(GoalTemplate gTemplate)
+        => gTemplate.m_goalType is GOAL_TYPE.GOAL_TYPE_BOUNTY
+            or GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT
+            or GOAL_TYPE.GOAL_TYPE_USAGE;
 
     private void SendCompleteGoal(ulong questId, ulong goalId) {
         var gCompleteMsg = new QUEST_MESSAGES_52_PROTOCOL.MSG_COMPLETEGOAL {
@@ -1569,6 +1617,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         if (goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT) {
             var chance = goalTemplate.m_tallyCounter?.m_percentChance ?? DEFAULT_KILL_COLLECT_CHANCE;
+            // Most quests give the chance in percent (90, 100), a few as a fraction (1.0).
+            if (chance > 1f) {
+                chance /= 100f;
+            }
             shouldIncrement = new Random().NextDouble() <= chance;
 
             // todo: live's bonus size is unknown; a group win gets one more roll at the same chance.
@@ -1583,7 +1635,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 wizard.IncrementQuestGoal(qInstance.QuestName, goalTemplate.m_goalName);
             }
 
-            var goalMax = goalTemplate.m_tallyCounter?.m_count ?? 0;
+            var goalMax = QuestMadlibs.GetGoalTotal(goalTemplate);
             var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goalTemplate.m_goalName);
             Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a won battle.",
                 Logger.Args(wizard.CharId, qInstance.QuestName, goalTemplate.m_goalName, gInstance?.CurrentProgress, goalMax));
@@ -1860,9 +1912,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
     }
 
+    // A tag with no entries (e.g. the "Completion" of WC-ST01-C02-001's last goal) is no dialog: the client
+    // shows nothing and never reports it closed.
     private static ActorDialog FindDialogue(ActorDialogListBase dialogListBase, string dialogTag)
         => dialogListBase is ActorDialogList dialogList
-            ? dialogList.m_dialogs?.FirstOrDefault(de => de.m_dialogTag == dialogTag)
+            ? dialogList.m_dialogs?.FirstOrDefault(de => de.m_dialogTag == dialogTag
+                && de.m_dialogEntries is { Count: > 0 })
             : null;
 
     private void SendActorDialog(ActorDialog dialogEntry, string completionType, ulong questId = 0, ulong goalId = 0) {

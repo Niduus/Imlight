@@ -172,8 +172,10 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var serviceIndex = message.ServiceIndex;
         var reinteract = message.Reinteract;
 
-        Logger.Debug("Player {0} interacted with NPC {1} using service {2} at index {3} (Reinteract: {4})",
-            Logger.Args(playerActor.Path.Name, Entity.ActiveGameObject.m_globalID.Full, serviceName, serviceIndex, reinteract));
+        Logger.Debug("Player {0} interacted with NPC {1} ({5}, template {6}) using service {2} at index {3} (Reinteract: {4})",
+            Logger.Args(playerActor.Path.Name, Entity.ActiveGameObject.m_globalID.Full, serviceName, serviceIndex, reinteract,
+                Entity.Info?.m_zoneTag is { Length: > 0 } tag ? tag : Entity.ActiveGameObject.m_debugName.ToString(),
+                Entity.ActiveGameObject.m_templateID));
 
         if (_serviceComponents.Count <= 0) {
             Logger.Warning("No service components found for NPC {0}",
