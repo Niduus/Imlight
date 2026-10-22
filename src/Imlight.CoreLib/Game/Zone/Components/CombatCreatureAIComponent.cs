@@ -96,6 +96,8 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         => _friendlySubcircles.Any(x => x.ParticipantGameStats.m_currentHitpoints / x.ParticipantGameStats.m_baseHitpoints < _healingThreshold);
     private bool _sentFinalKill;
     private bool _isInDuel;
+    // Read by a sigil's battle (another actor) to see whether this monster may still join one late.
+    internal bool IsInDuel => _isInDuel || _sentFinalKill;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate

@@ -84,6 +84,12 @@ public class ZoneEntity(
     public IActorRef SupervisorRef { get; protected set; } = Context.Parent;
 
     public virtual bool IsCombatOnlyMinion => false;
+
+    // Set by the battle a wandering monster joins late ([Battle] MobsJoinLate), so a second battle next to it that saw
+    // the same step does not take it too. The battles are other actors, hence the interlocked flag.
+    private int _lateDuelClaim;
+    internal bool TryClaimLateDuelJoin() => System.Threading.Interlocked.CompareExchange(ref _lateDuelClaim, 1, 0) == 0;
+    internal void ReleaseLateDuelJoin() => System.Threading.Volatile.Write(ref _lateDuelClaim, 0);
     public IActorRef ZoneRef { get; protected set; } = zoneRef;
     public bool NoTransfer { get; set; } = false;
     public ushort MobileID { 

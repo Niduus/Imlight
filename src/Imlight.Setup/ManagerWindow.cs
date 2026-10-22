@@ -108,6 +108,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "LateJoinersJoinImmediately", "A wizard who joins a battle late plays the current round (off: waits for the next one)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "MobsJoinLate", "Monsters can join a battle late", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FullPipConserve", "100% pip conserve (a half-used power pip always comes back)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "NoPipsFromDaybreakerNightbringer", "Daybreaker and Nightbringer do not add pips to card", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "Enabled", "Archmastery (Power Orb turns power pips into school pips from level 50)", new() { OnContent = "On", OffContent = "Off" }),
@@ -209,7 +210,13 @@ internal sealed partial class ManagerWindow : Window {
         _trainersCard.IsVisible = false;
         var battleRows = new StackPanel { Spacing = 6 };
         foreach (var (_, key, name, toggle) in _battleSwitches) {
-            battleRows.Children.Add(SwitchRow(name, toggle));
+            var row = SwitchRow(name, toggle);
+            if (key == "MobsJoinLate") {
+                ToolTip.SetTip(row, "A monster that walks into a battle with a free enemy circle joins it and fights from the next round, " +
+                    "like the real game. Off: monsters walk past battles.");
+            }
+
+            battleRows.Children.Add(row);
         }
 
         _battleCard = Fold("sword", "Bosses", "Battle and world",
