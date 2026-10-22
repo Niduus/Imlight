@@ -39,8 +39,9 @@ public static class SpellLookalikes {
     private static readonly string[] s_copyWords = ["Fight Specific", "MOB", "Rematch"];
     private static readonly string[] s_notPlayerWords = ["Fight Specific", "Battleground", "ForTesting", "MOB", "Rematch", "Boss", "NPC", "Test", "Rasputin", "Wand"];
 
-    // Wand hits, monster attacks ("NA ...") and empty animations are not what a player would expect to see instead.
-    private static readonly string[] s_notTwinStarts = ["Wand-", "NA "];
+    // Wand hits, monster attacks ("NA ..."), pet May Casts (their animation needs a pet: Emulate Life showed nothing as
+    // "Pet - CircleOfThorns", Niduus 2026-10-22) and empty animations are not what a player would expect to see instead.
+    private static readonly string[] s_notTwinStarts = ["Wand-", "NA ", "Pet - ", "Pet-"];
     private static readonly string[] s_notTwinBases = ["Blank", "RavenwoodCam"];
 
     /// <summary>
@@ -53,8 +54,12 @@ public static class SpellLookalikes {
         var players = new Dictionary<string, (string Path, SpellTemplate Spell, uint Id)>();
         var copies = new List<(string Path, SpellTemplate Spell, uint Id)>();
         var playerBases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var all = spells.ToList();
+        // Animations pets also use rank after the wizard-only ones (Emulate Life showed nothing as the pet's Circle of Thorns).
+        s_petBases = all.Where(e => e.Spell is not null && e.Spell.m_spellSourceType == kSpellSourceType.kPet && !IsEmpty(e.Spell.m_spellBase))
+            .Select(e => (string) e.Spell.m_spellBase).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var entry in spells) {
+        foreach (var entry in all) {
             var spell = entry.Spell;
             if (spell?.m_effects is null || spell.m_effects.Count == 0 || IsEmpty(spell.m_spellBase) || IsEmpty(spell.m_sTypeName)) {
                 continue;
@@ -70,7 +75,7 @@ public static class SpellLookalikes {
                 continue;
             }
 
-            if (!IsPlayerSpell(entry.Path, name, spell) || (hasAnimation is not null && !hasAnimation(spell.m_spellBase))) {
+            if (!IsPlayerSpell(entry.Path, name, spell) || spell.m_spellSourceType == kSpellSourceType.kPet || (hasAnimation is not null && !hasAnimation(spell.m_spellBase))) {
                 continue;
             }
 
@@ -90,8 +95,15 @@ public static class SpellLookalikes {
 
             // A global's animation does not show its numbers, so a stronger or weaker copy of a player global
             // (the bosses' "Emulate" globals) still gets that global's animation.
-            if (!players.TryGetValue(Signature(copy.Spell), out var twin)
-                && !(IsGlobal(copy.Spell) && players.TryGetValue(Signature(copy.Spell, numbers: false), out twin))) {
+            var found = players.TryGetValue(Signature(copy.Spell), out var twin);
+            if (IsGlobal(copy.Spell) && players.TryGetValue(Signature(copy.Spell, numbers: false), out var loose)
+                && (!found || Rank(loose).Item1 < Rank(twin).Item1)) {
+                // An exact twin whose animation pets share loses to a looser one only wizards use.
+                twin = loose;
+                found = true;
+            }
+
+            if (!found) {
                 continue;
             }
 
@@ -125,12 +137,15 @@ public static class SpellLookalikes {
            && !s_notTwinStarts.Any(start => name?.StartsWith(start, StringComparison.OrdinalIgnoreCase) == true)
            && !s_notTwinBases.Any(word => string.Equals(spell.m_spellBase, word, StringComparison.OrdinalIgnoreCase));
 
-    // Lower is better: trained spells first, then treasure cards, then anything else.
-    private static (int, int, uint) Rank((string Path, SpellTemplate Spell, uint Id) entry) {
+    private static HashSet<string> s_petBases = [];
+
+    // Lower is better: an animation only wizards use, then trained spells, treasure cards, anything else.
+    private static (int, int, int, uint) Rank((string Path, SpellTemplate Spell, uint Id) entry) {
+        var pet = s_petBases.Contains(entry.Spell.m_spellBase) ? 1 : 0;
         var where = Contains(entry.Path, "Trained Spells") ? 0 : Contains(entry.Path, "TreasureCards") ? 1 : 2;
         string name = entry.Spell.m_name;
 
-        return (where, name?.Length ?? 0, entry.Id);
+        return (pet, where, name?.Length ?? 0, entry.Id);
     }
 
     /// <summary>

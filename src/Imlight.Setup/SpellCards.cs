@@ -134,10 +134,11 @@ internal sealed class SpellCard {
     internal string Does => Shown;
 
     /// <summary>
-    /// What the code does, in Imlight's words written from the spell's effects, shown in braces after the game's text on
-    /// every card (Niduus, 2026-10-22: "ALL cards ... should have their written text and {code text}"), or "".
+    /// What the code does, in Imlight's words written from the spell's effects, shown in braces after the game's text only
+    /// when that text is blank or wrong, such as Abominable Weaver's "1000% Shield" for -75% (Niduus, 2026-10-22: "I only
+    /// want the {code} context if the face description is inaccurate"), or "".
     /// </summary>
-    internal string Corrected => Explained;
+    internal string Corrected { get; set; } = "";
 
     /// <summary>
     /// The game's text with what the code does after it in braces, such as "710 Death Damage and ... {Deals 710 Death
@@ -326,6 +327,7 @@ internal sealed partial class SpellBook {
         try {
             card.Support = SpellSupport.Classify(spell, card.Code, file);
             card.Explained = SpellSupport.Describe(spell, card.School);
+            card.Corrected = card.Blank || Inaccurate(card.Short, card.Explained) ? card.Explained : "";
         }
         catch (Exception) {
             // A spell the reader can't make sense of keeps "works" and its own text.
@@ -357,6 +359,39 @@ internal sealed partial class SpellBook {
 
     /// <summary>Whether words give a spell's numbers: a percent, damage or health.</summary>
     internal static bool HasAmounts(string text) => AmountWords().IsMatch(text);
+
+    [GeneratedRegex(@"(\d+)(?:-(\d+))?%(?! of it)|(\d+)(?:-(\d+))? (?:\w+ )?(?:damage|health)(?![-\w])")]
+    private static partial Regex AmountNumbers();
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex AnyNumber();
+
+    /// <summary>
+    /// Whether the card's own text misses an amount the code uses: a damage, health or percent number in Imlight's words
+    /// that is not on the card, nor a total the card gives (880 for "2 x 440"). Only the first "with 1 enemy standing"
+    /// part counts, as the card shows that one; 0 never counts.
+    /// </summary>
+    internal static bool Inaccurate(string card, string code) {
+        if (code.Length == 0) {
+            return false;
+        }
+
+        var shown = AnyNumber().Matches(card).Select(m => long.TryParse(m.Value, out var n) ? n : -1).Where(n => n >= 0).ToHashSet();
+        var first = code.Split("; with ", 2)[0];
+        foreach (Match match in AmountNumbers().Matches(first)) {
+            foreach (System.Text.RegularExpressions.Group group in match.Groups.Values.Skip(1)) {
+                if (!group.Success || !long.TryParse(group.Value, out var amount) || amount == 0) {
+                    continue;
+                }
+
+                if (!shown.Contains(amount) && !shown.Any(times => times is > 1 and <= 10 && shown.Contains(amount * times))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>The card's text is blank, only a placeholder, or a text key the game files had no words for.</summary>
     private static bool IsBlank(string text) => string.IsNullOrWhiteSpace(text) || PlaceholderText().IsMatch(text.Trim());

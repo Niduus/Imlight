@@ -71,7 +71,8 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _gearCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _gearList = new() { Background = Brushes.Transparent };
     private readonly Border _gearTooltipHost = new() { HorizontalAlignment = HorizontalAlignment.Center };
-    private readonly WrapPanel _gearCards = new() { HorizontalAlignment = HorizontalAlignment.Center };
+    // Bundle contents and spell cards, each row centered under the tooltip (Niduus, 2026-10-22: "always have spells centered").
+    private readonly StackPanel _gearCards = new() { HorizontalAlignment = HorizontalAlignment.Center };
     private readonly StackPanel _gearDetails = new() { Spacing = 4 };
     private readonly DispatcherTimer _gearDelay = new() { Interval = TimeSpan.FromMilliseconds(220) };
 
@@ -350,9 +351,7 @@ internal sealed partial class ManagerWindow {
         // The item's cards, painted big below the tooltip as the game shows them beside it.
         var cards = item.Spells.Select(s => s.Code).Concat(item.Pet?.Spells ?? []).Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(gear.Spell).OfType<SpellCard>().ToList();
-        foreach (var card in cards) {
-            _gearCards.Children.Add(WithMargin(SpellThumb(card.Id, card.School, 118), new Thickness(4)));
-        }
+        _gearCards.Children.Add(CardRow(cards, 118));
 
         var id = item.Id.ToString(CultureInfo.InvariantCulture);
         _gearDetails.Children.Add(new DockPanel {
@@ -406,6 +405,16 @@ internal sealed partial class ManagerWindow {
         Fact("File", item.File);
     }
 
+    // A row of spell cards, centered, wrapping when they don't fit.
+    private Control CardRow(IReadOnlyList<SpellCard> cards, double width) {
+        var row = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Center };
+        foreach (var card in cards) {
+            row.Children.Add(WithMargin(SpellThumb(card.Id, card.School, width), new Thickness(4)));
+        }
+
+        return row;
+    }
+
     /// <summary>
     /// A bundle's items under its own tooltip, each as the game's tooltip with its cards, as the game's bundle pictures
     /// show them side by side. A bundle inside a bundle (a set's tiers) shows its items too.
@@ -425,7 +434,9 @@ internal sealed partial class ManagerWindow {
                 }
 
                 if (inside.BundleItems.Count > 0 && depth < 3) {
-                    _gearCards.Children.Add(WithMargin(GearText(inside.Name, TIP_CYAN, 18), new Thickness(0, 6, 0, 0)));
+                    var heading = WithMargin(GearText(inside.Name, TIP_CYAN, 18), new Thickness(0, 6, 0, 0));
+                    heading.HorizontalAlignment = HorizontalAlignment.Center;
+                    _gearCards.Children.Add(heading);
                     Walk(inside, depth + 1);
                     continue;
                 }
@@ -435,11 +446,10 @@ internal sealed partial class ManagerWindow {
                 tooltip.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
                 ToolTip.SetTip(tooltip, $"{inside.Slot}  ·  ID {inside.Id}. Click to see it on its own.");
                 tooltip.PointerPressed += (_, _) => ShowGear(inside);
+                tooltip.HorizontalAlignment = HorizontalAlignment.Center;
                 _gearCards.Children.Add(tooltip);
-                foreach (var card in inside.Spells.Select(sp => sp.Code).Concat(inside.Pet?.Spells ?? []).Distinct(StringComparer.OrdinalIgnoreCase)
-                             .Select(gear.Spell).OfType<SpellCard>()) {
-                    _gearCards.Children.Add(WithMargin(SpellThumb(card.Id, card.School, 96), new Thickness(4)));
-                }
+                _gearCards.Children.Add(CardRow(inside.Spells.Select(sp => sp.Code).Concat(inside.Pet?.Spells ?? []).Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Select(gear.Spell).OfType<SpellCard>().ToList(), 96));
             }
         }
 

@@ -120,6 +120,7 @@ internal sealed partial class ManagerWindow {
         _spellsGrid.ItemTemplate = new FuncDataTemplate<SpellCard[]>((row, _) => row is null ? new Panel() : SpellsRow(row));
         _spellsScroll.Content = _spellsGrid;
         _spellsScroll.SizeChanged += (_, _) => {
+            CenterSpells();
             if (SpellsColumns() != _spellsColumns) {
                 LayOutSpells();
             }
@@ -320,10 +321,20 @@ internal sealed partial class ManagerWindow {
         }
 
         _spellsGrid.ItemsSource = rows;
+        CenterSpells();
+    }
+
+    /// <summary>Splits the room left over after the last whole card evenly on both sides of the grid.</summary>
+    private void CenterSpells() {
+        var width = _spellsScroll.Bounds.Width > 0 ? _spellsScroll.Bounds.Width - 24 : 700;
+        var used = _spellsColumns * SPELL_TILE_OUTER_WIDTH + (_spellsColumns - 1) * SPELL_TILE_GAP;
+        _spellsGrid.Margin = new Thickness(Math.Max(0, Math.Floor((width - used) / 2)), 0, 0, 0);
     }
 
     private Control SpellsRow(SpellCard[] row) {
-        var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = SPELL_TILE_GAP, Margin = new Thickness(0, 0, 0, SPELL_TILE_GAP) };
+        var panel = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = SPELL_TILE_GAP, Margin = new Thickness(0, 0, 0, SPELL_TILE_GAP),
+        };
         foreach (var card in row) {
             panel.Children.Add(SpellTile(card));
         }
@@ -353,18 +364,29 @@ internal sealed partial class ManagerWindow {
                 },
             },
         };
-        // The BROKEN or PARTLY mark sits on the line under the card, next to its ID, so it covers none of the card.
-        var caption = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, HorizontalAlignment = HorizontalAlignment.Center };
-        caption.Children.Add(new TextBlock {
-            Text = card.Hidden ? $"ID {card.Id}  ·  hidden" : $"ID {card.Id}", FontSize = 11, Foreground = MUTED,
-            VerticalAlignment = VerticalAlignment.Center,
-        });
+        // The ID sits under the card and the BROKEN, PARTLY or hidden mark on a line of its own under that, so every
+        // tile is the same size and the cards stay evenly spaced (Niduus, 2026-10-22: "I'm big on spacing").
+        var marks = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 6, Height = 18, HorizontalAlignment = HorizontalAlignment.Center,
+        };
         if (SpellStatusBadge(card, 10) is { } badge) {
-            caption.Children.Add(badge);
+            marks.Children.Add(badge);
         }
 
+        if (card.Hidden) {
+            marks.Children.Add(new TextBlock { Text = "hidden", FontSize = 11, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center });
+        }
+
+        var caption = new StackPanel {
+            Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center,
+            Children = {
+                new TextBlock { Text = $"ID {card.Id}", FontSize = 11, Foreground = MUTED, HorizontalAlignment = HorizontalAlignment.Center },
+                marks,
+            },
+        };
+
         var tile = new Border {
-            Padding = new Thickness(3), CornerRadius = new CornerRadius(8), BorderThickness = new Thickness(2),
+            Width = SPELL_TILE_OUTER_WIDTH, Padding = new Thickness(3), CornerRadius = new CornerRadius(8), BorderThickness = new Thickness(2),
             BorderBrush = card == _spellsPicked ? SPELL_PICKED : Brushes.Transparent,
             Background = Brushes.Transparent, Cursor = new Cursor(StandardCursorType.Hand),
             Child = new StackPanel {
