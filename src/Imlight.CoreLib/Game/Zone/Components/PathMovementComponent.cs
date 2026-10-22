@@ -91,6 +91,12 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
             return;
         }
 
+        // A wisp dropped after a battle (BattleDrops) has no spawner, so no ZonePath ever sends it path details: it
+        // stays where it fell instead of waiting for them and being deleted.
+        if (Entity.ActiveGameObject?.m_zoneTagID == Imlight.CoreLib.Game.Combat.BattleDrops.DropTagId) {
+            return;
+        }
+
         var pathBehavior = Entity.Template.m_behaviors.OfType<PathBehaviorTemplate>().First();
         var pathMovementBehavior = Entity.Template.m_behaviors.OfType<PathMovementBehaviorTemplate>().First();
 

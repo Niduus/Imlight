@@ -171,6 +171,12 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         /// </summary>
         public bool DiedInDuel;
 
+        /// <summary>
+        /// Where the player goes instead of the world's hub, when the zone is a copy with an exit of its own; else null.
+        /// </summary>
+        public string ExitZone;
+        public string ExitLocation;
+
     }
 
     public sealed class MSG_COMBATWIN : IServerMessage {

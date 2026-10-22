@@ -142,7 +142,10 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         EquipMountSubtle();
 
         // We've fled or have been defeated in this duel. Send us back to the world hub.
-        var hubMsg = new ZONE_102_PROTOCOL.MSG_SENDTOHUB();
+        var hubMsg = new ZONE_102_PROTOCOL.MSG_SENDTOHUB {
+            DestinationZone = message.ExitZone,
+            DestinationLocation = message.ExitLocation
+        };
         TellOtherServices(hubMsg);
     }
 
