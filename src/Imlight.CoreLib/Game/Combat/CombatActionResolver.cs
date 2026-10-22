@@ -69,6 +69,8 @@ internal static class CombatActionResolver {
         // The charms this cast used, taken off the caster at the end (auras stay).
         internal readonly List<SpellEffect> UsedCharms = [];
         internal bool Worth;
+        // A global (bubble) effect went on the battlefield.
+        internal bool Global;
         internal uint TemplateId;
         internal int DamageEffectCount;
         // Why parts of the spell did nothing, for the log.
@@ -147,6 +149,15 @@ internal static class CombatActionResolver {
         combatAction.m_handledRandomSpellPerTarget = true;
 
         CheckForPolarCombatActionTargets(ref combatAction, action.SpellTemplate);
+
+        // A global still needs a target in the action: with none the game cast it and then dropped it ("Could not find a
+        // valid target for Paradox Life Global - Rematch", Niduus's log 2026-10-22; the server said "hits targets []"),
+        // so the bubble never showed and the game's battlefield had no global. It goes on the caster, as a self spell.
+        if (cast.Global && combatAction.m_targetSubcircleList is { Count: 0 } && action.SpellCaster is not null) {
+            combatAction.m_targetSubcircleList.Add(action.SpellCaster.SlotIndex);
+            Logger.Debug("Spell {0} ({1}) is a global: the action targets the caster's slot {2}.",
+                Logger.Args(cast.TemplateId, (string) action.SpellTemplate.m_name, action.SpellCaster.SlotIndex));
+        }
 
         notes = string.Join("; ", cast.Notes.Distinct());
 
@@ -342,6 +353,7 @@ internal static class CombatActionResolver {
         // below, so the card was thrown away as "not worth casting" (Paul's Death Rampage, Niduus, 2026-10-22).
         if (chosenEffect.m_effectTarget == kEffectTarget.kGlobal) {
             cast.Worth = true;
+            cast.Global = true;
             cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], caster, [], cast.CritMultiplier, cast.TemplateId);
 
             return;

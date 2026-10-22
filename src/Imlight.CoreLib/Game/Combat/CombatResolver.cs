@@ -298,8 +298,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         return texts.Count * ANNOUNCEMENT_SECONDS;
     }
 
-    // About how long the game shows one announcement.
-    private const float ANNOUNCEMENT_SECONDS = 2.0f;
+    // How much an announcement adds to the round. The game shows it over the boss while the spell next to it plays:
+    // in Niduus's log of 2026-10-22 the spell after one started straight away (Mega Taunt and its line were over in
+    // 2.0 s, which waited 4 s; Minotaur Death Sun and Polymorph - Dragon NA started 0.1 s after the turn before them).
+    // [Battle] FastAnimationTiming off keeps the old 2 s.
+    private static readonly float ANNOUNCEMENT_SECONDS = FastAnimationTiming ? 0.5f : 2.0f;
 
     /// <summary>
     /// Adds a combat move to the queue for processing.
@@ -675,7 +678,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         owner._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar;
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
-        var cinematicTime = Math.Min(HandleSuccessfulAction(action, combatActionList, alreadyPaid: true), PetMayCasts.CastSeconds);
+        // The pet's card plays as the owner's own cast, with the whole casting animation: Pet - Sleet Storm - Trigger took
+        // 7.3 to 8.0 s every time in Niduus's log of 2026-10-22 (6 rounds), while the round waited [PetCasting]
+        // CastSeconds (4 s), so the turns after it started early. With [Battle] FastAnimationTiming the measured
+        // animation (8.0 s for Sleet Storm) is waited; CastSeconds caps the old, longer estimates only.
+        var full = HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+        var cinematicTime = FastAnimationTiming ? full : Math.Min(full, PetMayCasts.CastSeconds);
         ShowInHand(owner, spell, template, combatActionList, before);
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
         // pet's, the game skipped it ("does not spell in hand"; Niduus's logs, 2026-10-20). The flags stay as tests.
@@ -1133,11 +1141,23 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             return SPELL_PASS_TIME;
         }
 
+        // Not worth casting: the action goes out as a pass (m_spell is null), so the game plays a pass, not the spell.
+        // The round used to wait the whole spell anyway (Niduus's log 2026-10-22: 67.7 s for 24.4 s of animations, and
+        // 52.6 s for 38.4 s, each with one "not worth casting").
+        if (!spellWorthCasting) {
+            return SPELL_PASS_TIME;
+        }
+
         if (!alreadyPaid) {
             DoSpellCastConsequences(action.SpellCaster, combatAction);
         }
 
-        return GetActionCinematicTime(action) + cinematicTime;
+        var animation = GetActionCinematicTime(action);
+        Logger.Debug("Duel {0} | Slot {1} | Spell {2} ({3}) waits {4:0.0} s: animation {5:0.0} s + effects {6:0.0} s.",
+            Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, action.Spell.m_templateID,
+                (string) action.SpellTemplate?.m_name ?? "?", animation + cinematicTime, animation, cinematicTime));
+
+        return animation + cinematicTime;
     }
 
     private float HandlePassAction(QueuedCombatAction action, CombatActionListObj combatActionList) {

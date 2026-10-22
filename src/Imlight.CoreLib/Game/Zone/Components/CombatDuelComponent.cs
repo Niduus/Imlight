@@ -659,6 +659,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Duel.m_duelPhase = kDuelPhase.kPhase_Execution;
         SendCombatPhase((byte) Duel.m_duelPhase);
 
+        // The hands the game holds now, before the round uses up its cards (see SendHandWith).
+        var handsBeforeRound = SnapshotHands();
+
         // Determine how long the cinematics will take.
         var cinematicTimeInSeconds = CombatResolver.ApplyQueuedCombatActions(out var actions);
         // [Battle] AnimationExtraSeconds: more time on top of the estimate, for a slow PC (none with instant cinematics).
@@ -671,7 +674,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Pet May Cast cards go into their owner's hand first, or the game skips them.
         foreach (var (owner, cards) in CombatResolver.PetCastCards) {
-            SendHandWith(owner, cards);
+            SendHandWith(owner, cards, handsBeforeRound.GetValueOrDefault(owner));
         }
 
         // Serialize the combat actions and send them to the clients.
@@ -1653,13 +1656,51 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
-    // The current hand plus extra cards, sent to the game only; the server's hand stays as it is.
-    private void SendHandWith(CombatDuelSubCircle circle, List<Spell> extra) {
+    // Each player's hand as the game has it, taken before the round's actions are worked out.
+    private Dictionary<CombatDuelSubCircle, List<Spell>> SnapshotHands() {
+        var hands = new Dictionary<CombatDuelSubCircle, List<Spell>>();
+        try {
+            foreach (var circle in SubCircles) {
+                if (circle is null || circle.IsAiCreature || circle.ParticipantActor is null) {
+                    continue;
+                }
+
+                hands[circle] = [.. circle.GetCurrentHand().m_spellList ?? []];
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Could not note the hands before the round: {1}", Logger.Args(SigilId, ex));
+        }
+
+        return hands;
+    }
+
+    /// <summary>
+    /// The hand the game held this round plus extra cards (pet May Casts, Daybreaker/.c1/.c2 free casts), sent to the
+    /// game only; the server's hand stays as it is. It goes out before the round's actions, and the game casts only
+    /// cards it finds in the caster's hand, so it must still hold the cards played this round: the server has already
+    /// discarded them by now. Sending the hand after the round (the cards gone) made the game skip the player's own
+    /// card whenever a pet or a free cast went off in the same round ("Participant (sc 4) does not spell in hand",
+    /// Niduus's log 2026-10-22: Aberrant - Shadow Global and Meteor Strike with Pet - Sleet Storm, Headless Horseman,
+    /// Tower Shield with a Daybreaker). Cards the round added to the hand are kept too.
+    /// </summary>
+    private void SendHandWith(CombatDuelSubCircle circle, List<Spell> extra, List<Spell> handBeforeRound = null) {
         if (circle is null || circle.IsAiCreature || circle.ParticipantActor is null) {
             return;
         }
 
-        var hand = new Hand { m_spellList = [.. circle.GetCurrentHand().m_spellList, .. extra] };
+        var current = circle.GetCurrentHand().m_spellList ?? [];
+        List<Spell> cards = [.. handBeforeRound ?? current];
+        if (handBeforeRound is not null) {
+            cards.AddRange(current.Where(c => !handBeforeRound.Any(b => ReferenceEquals(b, c))));
+            Logger.Debug("Duel {0} | Slot {1} | Hand for the round's free casts: {2} cards as at the start of the round "
+                         + "({3} played this round kept), {4} added by the round, {5} free cast cards.",
+                Logger.Args(SigilId, circle.SlotIndex, handBeforeRound.Count,
+                    handBeforeRound.Count(b => !current.Any(c => ReferenceEquals(b, c))),
+                    cards.Count - handBeforeRound.Count, extra.Count));
+        }
+
+        var hand = new Hand { m_spellList = [.. cards, .. extra] };
         if (!_serializer.Serialize(hand, _combatParticipantHandFlags, out var buffer)) {
             Logger.Error("Failed to serialize pet cast hand for duel {0}", Logger.Args(SigilId));
 

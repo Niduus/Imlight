@@ -201,6 +201,15 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
     // which kept the first round of his battle waiting about 16 s after everything had played.
     private static readonly HashSet<string> s_castOnly = ["Malistaire Taunt"];
 
+    // Cinematics whose stages do not say how long the game plays them, with the time measured in Niduus's game log
+    // (2026-10-22) plus a little. Shadow Self Tank (Ahk'To - Shadow Self Tank) played in 7.3 s, while the casting
+    // animation the estimate adds (it has no Casting stage) and its Act came to 11.9 s. Meteor Strike played in 10.9 to
+    // 11.9 s (5 rounds), longer than its stages (10.7 s), so the turn after it could start early.
+    private static readonly Dictionary<string, float> s_measuredSeconds = new() {
+        ["Shadow Self Tank"] = 8.0f,
+        ["Meteor Strike"] = 12.0f,
+    };
+
     /// <summary>
     /// How long a spell's animation plays: the casting animation, the summon, and the act (both acts of a two-act
     /// cinematic such as Minotaur or Empower, which the game plays one after the other and the old estimate cut short;
@@ -212,6 +221,10 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
         var template = string.IsNullOrEmpty(name) ? null : GetCinematicTemplate(name);
         if (template?.m_stages is not { Count: > 0 } stages || s_castOnly.Contains(name)) {
             return castSeconds;
+        }
+
+        if (s_measuredSeconds.TryGetValue(name, out var measured)) {
+            return measured;
         }
 
         // The stage GetSpellSummonTime reads.
