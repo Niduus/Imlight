@@ -42,7 +42,7 @@
  * Custom cheats (Niduus, 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be modified and
  * created"), made as When -> If -> Do blocks in the app, add to the fields above:
  *   When         also BossHit (a spell from the other side lands on the boss and hurts it: School, Kind, Category and
- *                Spells narrow it), MinionDefeated (a creature on the boss's side is defeated) and Pips (at the start
+ *                Spells narrow it), MinionDefeated (a creature on the boss's side is defeated), BossDefeated (the boss itself is defeated; spell Ifs look at the spell that did it) and Pips (at the start
  *                of a round, the boss, or with PipsOf "Enemy" any player, has at least Pips pips; a power pip is one).
  *   Category     for PlayerCasts and BossHit: what the card does, worked out from its effects: Damage, Heal, Shield,
  *                Trap, Blade, Weakness, Aura, Global, Minion, Stun, Steal, Dispel, Polymorph.

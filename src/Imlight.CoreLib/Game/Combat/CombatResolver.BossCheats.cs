@@ -190,6 +190,7 @@ public partial class CombatResolver {
 
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += BossDefeatCheats(null, [], combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -345,6 +346,7 @@ public partial class CombatResolver {
 
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += BossDefeatCheats(mover, landed, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -375,6 +377,58 @@ public partial class CombatResolver {
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
                 }
+            }
+        }
+
+        return cinematicTime;
+    }
+
+    // Bosses already seen defeated (BossDefeated); one that is brought back can set it off again.
+    private readonly HashSet<CombatDuelSubCircle> _bossesSeenDefeated = [];
+
+    // When "BossDefeated" (Niduus, 2026-10-22: "If the boss dies due to Incindiate, revive the boss"): a boss that was
+    // standing is now defeated. After a player's move, the If blocks on spells (these spells, school, card type...) look
+    // at that player's spells that landed; defeated any other way (an over time tick, a cheat), only a cheat with no
+    // such blocks goes off. A Set health block first brings the boss back, as for its health dropping.
+    private float BossDefeatCheats(CombatDuelSubCircle mover, List<(CombatAction Action, SpellTemplate Spell)> landed,
+                                   CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        foreach (var (boss, cheats) in BossesWithCheats(defeatedToo: true).ToList()) {
+            if (boss.IsAlive) {
+                _bossesSeenDefeated.Remove(boss);
+                continue;
+            }
+
+            if (!_bossesSeenDefeated.Add(boss)) {
+                continue;
+            }
+
+            for (var i = 0; i < cheats.Count; i++) {
+                var cheat = cheats[i];
+                if (!cheat.Is("BossDefeated") || !InPhase(boss, cheat)) {
+                    continue;
+                }
+
+                var spellBlocks = cheat.Spells is { Count: > 0 } || cheat.School.Length > 0 || cheat.Kind.Length > 0
+                                  || cheat.Category is { Length: > 0 } || cheat.CostMin > 0 || cheat.CostMax > 0 || cheat.SingleTarget || cheat.OnBoss;
+                var by = mover is null ? default
+                    : landed.FirstOrDefault(m => Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover));
+                if (spellBlocks && by.Spell is null) {
+                    continue;
+                }
+
+                if (by.Spell is not null) {
+                    _cheatSpellId = by.Action.m_spell.m_templateID;
+                }
+
+                cinematicTime += TryBossCheat(boss, i, cheat, mover, mover,
+                    by.Spell is null ? "its defeat" : $"its defeat by {(string) by.Spell.m_name}",
+                    combatActionList, cinematicTimeSoFar + cinematicTime);
+                _cheatSpellId = 0;
+            }
+
+            if (boss.IsAlive) {
+                _bossesSeenDefeated.Remove(boss);
             }
         }
 
@@ -874,6 +928,10 @@ public partial class CombatResolver {
             }
 
             cinematicTime += time;
+            if (lasting is not null && before < combatActionList.m_actionList.Count) {
+                NotePolymorphReplay(target, spell, template);
+            }
+
             if (step.Is("Polymorph") || lasting is not null) {
                 LogPolymorph(custom, boss, bossName, template, lasting, target, before < combatActionList.m_actionList.Count);
             }

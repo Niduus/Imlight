@@ -35,6 +35,45 @@ public partial class CombatResolver {
         }
     }
 
+    // Who an afterlife brought back this round. The game brings them back itself only once the round's effects are done,
+    // so a lasting polymorph cast on them in the same round (Malistaire's "I touch Shadow", Afterlife - Malistaire 02)
+    // finds them still defeated there and the look does not change (Niduus, 2026-10-22). The server keeps the new form at
+    // once (waiting a round let a last hit end the battle at 100 health, 0.10.150), and the cast plays again first thing
+    // next round, when the game has them standing and swaps the model.
+    private readonly HashSet<CombatDuelSubCircle> _cameBackThisRound = [];
+    private readonly Dictionary<CombatDuelSubCircle, (Spell Spell, SpellTemplate Template)> _polymorphReplays = [];
+
+    private void NotePolymorphReplay(CombatDuelSubCircle target, Spell spell, SpellTemplate template) {
+        if (_cameBackThisRound.Contains(target)) {
+            _polymorphReplays[target] = (spell, template);
+        }
+    }
+
+    // At the start of a round: the polymorphs the game could not show last round, cast again on the same participant.
+    private float ReplayPolymorphs(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        _cameBackThisRound.Clear();
+        var cinematicTime = 0.0f;
+        foreach (var (target, (spell, template)) in _polymorphReplays.ToList()) {
+            _polymorphReplays.Remove(target);
+            if (!target.Occupied || !target.IsAlive || !target.AddedToDuel || CombatPolymorph.FormOf(target) == 0) {
+                continue;
+            }
+
+            try {
+                target._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
+                var action = new QueuedCombatAction { SpellCaster = target, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+                cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+                Logger.Information("Duel {0} | Slot {1} | {2} played again so the game shows the new form.",
+                    Logger.Args(_duel.m_duelID.Full, target.SlotIndex, (string) template.m_name));
+            }
+            catch (Exception e) {
+                Logger.Error("Duel {0} | Slot {1} | Polymorph replay failed: {2}", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, e));
+            }
+        }
+
+        return cinematicTime;
+    }
+
     // Brings back each defeated participant that has an afterlife waiting; each afterlife works once.
     private void ProcessAfterlives() {
         foreach (var (circle, waiting) in _afterlives.ToList()) {
@@ -57,6 +96,7 @@ public partial class CombatResolver {
             }
 
             circle.SetHealthTo(most > 0 ? Math.Min(heal, most) : heal);
+            _cameBackThisRound.Add(circle);
 
             Logger.Information("Duel {0} | Slot {1} | Afterlife: back with {2} health.",
                 Logger.Args(_duel.m_duelID.Full, circle.SlotIndex, stats.m_currentHitpoints));

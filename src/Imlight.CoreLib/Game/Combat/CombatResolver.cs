@@ -427,6 +427,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         _petCastsThisRound.Clear();
         PetCastCards.Clear();
+        // A form taken last round right after an afterlife, shown now (CombatResolver.Afterlife.cs).
+        cinematicTime += ReplayPolymorphs(combatActionList, cinematicTime);
         // .cf (Niduus, 2026-10-22; was .c1 f / .c2 f): the queue casts before anyone's turn, then the round goes on.
         cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
         NoteHealthBeat(cinematicTime);
