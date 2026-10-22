@@ -122,7 +122,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             SendAddEffects([.. effects]);
 
             // Spawn the equipped pet as a zone entity if one is equipped.
-            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0) {
+            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0 && !ReWearIfNamed(null)) {
                 SpawnPetEntity();
             }
 
@@ -480,19 +480,6 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         // Only one pet follows its owner: a swap or a repeated attach replaces the previous summon.
         DismissPetEntity();
 
-        // A pet named with .name pet glided (no walk or idle) and wisps stopped being picked up after logging in or
-        // renaming, until it was taken off and put on again, which keeps the name (Niduus, 2026-10-22). Sending
-        // MSG_EQUIPITEM again before the summon didn't help and made the pet show far too big, so a named pet now gets
-        // the other half of putting it on: the worn-pet notice everyone in the zone gets, the owner included.
-        if (CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(petItem, out var petName)
-            && petName.m_wsNameOverride.ToString() is { Length: > 0 }
-            && _itemSerializer.Serialize(ItemHelper.GetPublicItem(petItem), 1, out var publicPet)) {
-            ZoneBroadcast(new GAME_5_PROTOCOL.MSG_EQUIPMENTBEHAVIOR_PUBLICEQUIPITEM {
-                GlobalID = playerObj.m_globalID,
-                SerializedInfo = publicPet
-            }, false);
-        }
-
         var spawnMsg = new ZONE_102_PROTOCOL.MSG_SPAWNENTITY {
             CoreObject = coreObj,
             Template = CoreObjectFactory.GetCoreTemplate(PetFactory.GENERIC_PET_TEMPLATE_ID),
@@ -515,7 +502,56 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
-        SpawnPetEntity(equipment.GetItem(message.PetItemId));
+        var pet = equipment.GetItem(message.PetItemId);
+        if (!ReWearIfNamed(pet)) {
+            SpawnPetEntity(pet);
+        }
+    }
+
+    /// <summary>Asks this service to take a named pet off and put it back on, as <see cref="ReWearIfNamed"/> says.</summary>
+    internal sealed record ReWearNamedPet(ulong PetItemId);
+
+    private static readonly TimeSpan ReWearDelay = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// A pet named with .name pet glided (no walk or idle), showed far too big and wisps weren't picked up after logging
+    /// in or renaming, until it was taken off and put back on, which keeps its name (Niduus, 2026-10-22). Sending only
+    /// MSG_EQUIPITEM, or only the public equip notice, before the summon didn't help, so the server now does the whole
+    /// take-off and put-on itself a moment later, when the game has loaded the wizard. False when the pet has no name.
+    /// </summary>
+    private bool ReWearIfNamed(WizClientObjectItem pet) {
+        var equipment = GetActiveWizard()?.EquipmentBehavior;
+        pet ??= equipment?.GetEquippedPetId() is { } id and not 0 ? equipment.GetItem(id) : null;
+        if (pet is null || !CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(pet, out var petName)
+                        || petName.m_wsNameOverride.ToString() is not { Length: > 0 }) {
+            return false;
+        }
+
+        DismissPetEntity();
+        Context.System.Scheduler.ScheduleTellOnce(ReWearDelay, Self, new ReWearNamedPet(pet.m_globalID), Self);
+
+        return true;
+    }
+
+    [InternalMessageHandler(typeof(ReWearNamedPet))]
+    private void ReceiveReWearNamedPet(ReWearNamedPet message) {
+        try {
+            var equipment = GetActiveWizard()?.EquipmentBehavior;
+            if (equipment is null || equipment.GetEquippedPetId() != message.PetItemId || GetActiveGameObject() is null) {
+                return;
+            }
+
+            var pet = equipment.GetItem(message.PetItemId);
+            var slot = equipment.GetSlotOfItem(message.PetItemId);
+            SendUnequipItem("Pet", slot, message.PetItemId);
+            DismissPetEntity();
+            SendEquipItem(pet, "Pet");
+            SpawnPetEntity(pet);
+            Logger.Information("Took named pet {0} off and put it back on so the game animates it.", Logger.Args(message.PetItemId));
+        }
+        catch (Exception ex) {
+            Logger.Error("Error while putting the named pet back on: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
+        }
     }
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SYNC_PET_FOR_MOUNT))]
