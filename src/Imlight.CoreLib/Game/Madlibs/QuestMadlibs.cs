@@ -60,6 +60,19 @@ internal static class QuestMadlibs {
             m_blockToken = "QUEST"
         };
 
+    /// <summary>
+    /// How many kills, items or uses a tallied goal needs. A defeat goal keeps its count in m_bountyTotal:
+    /// its tally counter's m_count is 0 in most quests ("Pesky Pirates" needs 3 Skeletal Pirates, not 0).
+    /// A goal that names no count needs one.
+    /// </summary>
+    internal static int GetGoalTotal(GoalTemplate gTemplate) {
+        var total = gTemplate is BountyGoalTemplate { m_bountyTotal: > 0 } bounty
+            ? bounty.m_bountyTotal
+            : gTemplate.m_tallyCounter?.m_count ?? 0;
+
+        return Math.Max(total, 1);
+    }
+
     internal static MadlibBlock GetAppropriateMadlibBlockForGoal(GoalTemplate gTemplate, GoalInstance gInstance)
         => gTemplate.m_goalType switch {
             GOAL_TYPE.GOAL_TYPE_WAYPOINT => GetMadlibBlockForWaypointGoal(gTemplate),
@@ -219,11 +232,11 @@ internal static class QuestMadlibs {
                 },
                 new MadlibArgT_int {
                     m_madlibToken = "TOTAL",
-                    m_madlibArgument = gTemplate.m_tallyCounter?.m_count ?? 0
+                    m_madlibArgument = GetGoalTotal(gTemplate)
                 },
                 new MadlibArgT_int {
                     m_madlibToken = "SUBSCRIBER_TOTAL",
-                    m_madlibArgument = gTemplate.m_tallyCounter?.m_count ?? 0
+                    m_madlibArgument = GetGoalTotal(gTemplate)
                 }
             ],
             m_blockToken = "GOAL"
