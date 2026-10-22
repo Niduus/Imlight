@@ -161,6 +161,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private PvPDuelState _pvp;
     private bool _isActive;
     private bool _awaitingCombatMoves;
+    // When this round's planning began, so a wizard who joins during it can be given the time left.
+    private DateTime _planningStartedAt;
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
     // die, so the win would not see them; their drops come from this list.
     private readonly List<(ulong TemplateId, ulong GlobalId)> _defeatedEnemyMinions = [];
@@ -168,6 +170,13 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private ZoneObjects.ZoneEncounter _encounter;
     private CombatDuelSubCircle _encounterBossCircle;
     private readonly HashSet<ulong> _encounterJoined = [];
+    // Global ids of the room's own creatures that joined this battle's encounter (alive or defeated since), so a lost
+    // or fled battle puts them back in the room for the next try (ZonePath, MSG_ENCOUNTERRESET).
+    private readonly HashSet<ulong> _encounterZoneMinions = [];
+    // Whether this battle counts in its zone's EncounterBattles (a distinct spawner waits while it runs).
+    private bool _encounterBattleCounted;
+    // The room's minions a lost encounter battle gives back, sent to the zone when the duel is torn down.
+    private HashSet<ulong> _encounterResetIds = [];
     private int _battle;
     private TutorialDuelDirector _tutorialDirector;
     // Seconds of cinematics before a caster's cast; SummonMinion adds the animation delay to it.
@@ -441,6 +450,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         SendCombatPips();
         SendCombatHealth();
         SendCombatUI(PlanningSeconds);
+        LogRoundPipsAndHealth();
+        _planningStartedAt = DateTime.UtcNow;
 
         // Re-telegraph minion AI moves now that the planning HUD exists.
         ResendMinionMoveSelections();
@@ -745,6 +756,24 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Entity.DespawnObject();
         _entitiesInRange.Clear();
         _groupReservations.Clear();
+        EndEncounterBattle();
+    }
+
+    // The zone's distinct spawners wait while an encounter battle runs; this lets them go and, after a lost battle,
+    // gives the room back the minions that fought.
+    private void EndEncounterBattle() {
+        if (!_encounterBattleCounted) {
+            return;
+        }
+
+        _encounterBattleCounted = false;
+        if (Entity.Zone is { } zone) {
+            System.Threading.Interlocked.Decrement(ref zone.EncounterBattles);
+        }
+
+        Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED { ResetIds = _encounterResetIds });
+        _encounterResetIds = [];
+        _encounterZoneMinions.Clear();
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT))]
@@ -843,12 +872,17 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         _battle++;
         _encounter = null;
         _encounterJoined.Clear();
+        _encounterZoneMinions.Clear();
         var encounter = Entity.Zone?.Extras.EncounterFor(boss.m_templateID);
         if (encounter is null || encounter.MinionCount <= 0 || encounter.Minions.Count == 0) {
             return;
         }
 
         _encounter = encounter;
+        if (!_encounterBattleCounted && Entity.Zone is { } zone) {
+            System.Threading.Interlocked.Increment(ref zone.EncounterBattles);
+            _encounterBattleCounted = true;
+        }
         _encounterBossCircle = bossCircle;
         Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS {
             TemplateIds = [.. encounter.Minions],
@@ -865,13 +899,17 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         if (!_isActive || _encounter is null || creature is null || message.CreatureActor is null
             || _encounterJoined.Count >= _encounter.MinionCount || _encounterJoined.Contains(creature.m_templateID.Full)
             || SubCircles.Any(x => x?.ParticipantObject?.m_globalID == creature.m_globalID)
-            || !IsSlotAvailable(CombatTeam.Monster)) {
+            // The encounter says how many minions fight (MinionCount), so the usual cap of 2 creatures plus one per
+            // wizard does not apply: with one wizard in, only 1 of the room's Draconians joined and the other 2 stayed
+            // walking the room while 2 more were spawned into the circle (Justin, 2026-10-22). A free circle is enough.
+            || GetAvailableSubCircleTeamCreature() is null) {
             return;
         }
 
         AddParticipant(creature, message.CreatureActor);
         if (SubCircles.Any(x => x?.ParticipantObject?.m_globalID == creature.m_globalID)) {
             _encounterJoined.Add(creature.m_templateID.Full);
+            _encounterZoneMinions.Add(creature.m_globalID.Full);
             _entitiesInRange.Add(message.CreatureActor);
         }
     }
@@ -1227,6 +1265,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         if (isPlayer) {
             ReserveCirclesForGroupOf(participantObject);
+            JoinLateWizardNow(subCircle);
         }
     }
 
@@ -1312,6 +1351,12 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         => unchecked((ushort) (short) MathF.Round(coordinate / 4));
 
     private void SendCombatPhase(byte phase) {
+        if (NewCombatPhase(phase) is { } msg) {
+            DuelBroadcast(msg);
+        }
+    }
+
+    private DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATPHASE NewCombatPhase(byte phase) {
         // Determine which sigil slot the client should point its turn indicator at.
         var upFirstSigilSlot = GetUpFirstSigilSlot();
 
@@ -1331,17 +1376,15 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Error("Failed to serialize up first data for duel {0}",
                 Logger.Args(SigilId));
 
-            return;
+            return null;
         }
 
-        var msg = new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATPHASE() {
+        return new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATPHASE() {
             DuelID = SigilId,
             NewPhase = phase,
             PlayerID = 0, // Always recorded as 0
             Data = phase == 1 ? upFirstData : "",
         };
-
-        DuelBroadcast(msg);
     }
 
     private void SendUpFirst(int roundNum) {
@@ -1404,10 +1447,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         DuelBroadcast(msg);
     });
 
-    private void SendCombatHand() {
-        // Serialize the combat hand and send it to the participant, locally.
-        // We're skipping creatures for now.
-        EnactActionOnSubCircles(circle => {
+    private void SendCombatHand() => EnactActionOnSubCircles(SendHandTo);
+
+    // Draws the circle's hand for the round and sends it to that participant. Creatures are skipped.
+    private void SendHandTo(CombatDuelSubCircle circle) {
+        {
             if (circle.IsAiCreature) {
                 return;
             }
@@ -1431,7 +1475,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             };
 
             participantActor.Tell(msg);
-        });
+        }
     }
 
     // The current hand plus extra cards, sent to the game only; the server's hand stays as it is.
@@ -1493,7 +1537,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
             var current = circle.CombatParticipant.m_pipCount;
             var participantPipData = new ParticipantPipData {
-                m_acq = 1,
+                // PipAquiredByEnum: 2 for a power pip this round, else 1 (a pip, or none with every slot full).
+                m_acq = circle.PipAcquired == 2 ? 2u : 1u,
                 m_partID = (GID) circle.ParticipantObject.m_globalID,
                 m_arch = circle.ArchmasterySchool,
                 m_archPoints = circle.ArchmasteryPoints,
@@ -1533,14 +1578,16 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             m_duelID = SigilId
         };
 
-        // Iterate through each sub circle and add the participant's health to the list.
+        // Iterate through each sub circle and add the participant's health to the list. A defeated one is sent too
+        // (0), so no game keeps showing the health it had before it fell.
         EnactActionOnSubCircles(circle => {
-            if (!circle.AddedToDuel || !circle.IsAlive) {
+            if (!circle.AddedToDuel || circle.ParticipantGameStats is null || circle.ParticipantObject is null) {
                 return;
             }
 
+            circle.SyncParticipantHealth();
             var participantHealth = new ParticipantParameter {
-                m_data = (uint) circle.ParticipantGameStats.m_currentHitpoints,
+                m_data = (uint) Math.Max(0, circle.ParticipantGameStats.m_currentHitpoints),
                 m_partID = (GID) circle.ParticipantObject.m_globalID,
             };
             healthList.m_healthList.Add(participantHealth);
@@ -1559,6 +1606,24 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             HealthData = healthBuffer,
         };
         ZoneBroadcast(msg);
+    }
+
+    // One line a round with every slot's pips and the server's health, to compare with what the game shows.
+    private void LogRoundPipsAndHealth() {
+        var slots = new List<string>();
+        EnactActionOnSubCircles(circle => {
+            if (circle.CombatParticipant?.m_pipCount is not { } pips || circle.ParticipantGameStats is not { } stats) {
+                return;
+            }
+
+            var school = CombatDuelSubCircle.TotalPips(pips) - pips.m_genericPips - pips.m_powerPips;
+            slots.Add(string.Create(System.Globalization.CultureInfo.InvariantCulture,
+                $"{circle.SlotIndex} {circle.ParticipantObject?.m_debugName}: pips {pips.m_genericPips}+{pips.m_powerPips}P"
+                + $"+{school}S+{pips.m_shadowPips}Sh (acq {circle.PipAcquired}), health {stats.m_currentHitpoints}/"
+                + $"{circle.CombatParticipant.m_maxPlayerHealth}{(circle.AddedToDuel ? "" : " (not in yet)")}"));
+        });
+
+        Logger.Debug("Duel {0} | Round {1} | {2}", Logger.Args(Duel.m_duelID.Full, Duel.m_roundNum, string.Join("; ", slots)));
     }
 
     private void SendCombatMoveSelection(CombatTeam team, ulong participantId, byte moveType, Spell spell, byte targetIndex) {
@@ -2076,12 +2141,15 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         return (byte) upFirst.SlotIndex;
     }
 
-    private void AddWaitingCombatParticipants() => EnactActionOnSubCircles(circle => {
+    private void AddWaitingCombatParticipants() => EnactActionOnSubCircles(AddCombatParticipant);
+
+    private void AddCombatParticipant(CombatDuelSubCircle circle) {
         if (circle.AddedToDuel || !circle.Occupied) {
             return;
         }
 
         // Serialize the combat participant and send it to every client in the zone.
+        circle.SyncParticipantHealth();
         var participant = circle.CombatParticipant;
         if (!_serializer.Serialize(participant, _combatParticipantFlags, out var buffer)) {
             Logger.Error("Failed to serialize combat participant for duel {0}",
@@ -2101,7 +2169,69 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         circle.AddedToDuel = true;
         Duel.m_flatParticipantList.Add(participant);
-    });
+    }
+
+    // [Battle] LateJoinersJoinImmediately (Justin, 2026-10-22: "joining late should immediately put that wizard in"):
+    // a wizard who steps in after the round began plays this round, not the next one.
+    private static readonly bool s_lateJoinersJoinImmediately
+        = ConfigurationManager.GetValue("Battle.LateJoinersJoinImmediately", true);
+    // The least planning time a wizard who joins mid-planning gets; the countdown is made longer for everyone if less is left.
+    private const double LATE_JOIN_MIN_PLANNING_SECONDS = 15;
+
+    private void JoinLateWizardNow(CombatDuelSubCircle circle) {
+        if (!s_lateJoinersJoinImmediately || !_isActive || IsPvPDuel || _tutorialDirector.IsActive || circle is null
+            || circle.AddedToDuel || !circle.IsHumanPlayer || Duel.m_roundNum == 0) {
+            return;
+        }
+
+        // Before planning (the round's opening): planning, which starts in a moment, deals the wizard in with everyone.
+        if (Duel.m_duelPhase == kDuelPhase.kPhase_PrePlanning) {
+            AddCombatParticipant(circle);
+            Logger.Debug("Duel {0} | Slot {1} | Late joiner is in for this round.", Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
+
+            return;
+        }
+
+        // Mid-execution the spells are already playing: the wizard comes in with the next round, as before.
+        if (Duel.m_duelPhase != kDuelPhase.kPhase_Planning) {
+            return;
+        }
+
+        AddCombatParticipant(circle);
+
+        // The planning phase as everyone else got it, for this wizard only.
+        var actor = circle.ParticipantActor;
+        var phase = NewCombatPhase((byte) kDuelPhase.kPhase_Planning);
+        if (phase is not null) {
+            actor.Tell(phase);
+        }
+
+        SendCombatStats();
+        SendHandTo(circle);
+        SendCombatPips();
+        SendCombatHealth();
+
+        // The time left, or more when little is left (then for everyone).
+        var left = PlanningSeconds - (DateTime.UtcNow - _planningStartedAt).TotalSeconds;
+        if (left < LATE_JOIN_MIN_PLANNING_SECONDS) {
+            left = LATE_JOIN_MIN_PLANNING_SECONDS;
+            _planningStartedAt = DateTime.UtcNow - TimeSpan.FromSeconds(PlanningSeconds - left);
+            HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SETPLANNINGPHASETIMER {
+                DuelID = SigilId,
+                Time = (byte) Math.Ceiling(left),
+            });
+        }
+
+        actor.Tell(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SHOWCOMBATUI { DuelID = SigilId, AltTurn = 0, AltTurnTeam = 0 });
+        actor.Tell(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SETPLANNINGPHASETIMER { DuelID = SigilId, Time = (byte) Math.Ceiling(left) });
+
+        // The new wizard has not moved yet, so the round waits for them (a 1 s end timer for the others is replaced).
+        _awaitingCombatMoves = true;
+        Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(left));
+
+        Logger.Debug("Duel {0} | Slot {1} | Late joiner plays this round ({2:0} s of planning left).",
+            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, left));
+    }
 
     private bool IsAlternatingPvP => IsPvPDuel && _pvp.Rules.AlternateTurns;
 
@@ -2330,7 +2460,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         // A queued tutorial card grant must not leak into the next duel on this sigil.
         _tutorialDirector.OnDuelEnded();
 
-        RemovePlayersFromDuel();
+        RemovePlayersFromDuel(playersWin);
 
         if (playersWin) {
             PlayerWin();
@@ -2630,6 +2760,15 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             circle.ParticipantActor.Tell(deathMsg);
         });
 
+        // The room's minions that joined an encounter and were defeated in it come back too, so a new try after a flee
+        // finds them walking the room again rather than spawned twice (ZonePath, MSG_ENCOUNTERBATTLEENDED).
+        if (Entity.Zone?.IsInstance == true) {
+            foreach (var id in _encounterZoneMinions) {
+                ZonePath.Spared[id] = 0;
+            }
+        }
+        _encounterResetIds = [.. _encounterZoneMinions];
+
         // Inform each player that they've been defeated.
         var defeatMsg = NewDefeat(diedInDuel: false);
         EnactActionOnSubCircles(circle => {
@@ -2641,9 +2780,18 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         });
     }
 
-    private void RemovePlayersFromDuel() => EnactActionOnSubCircles(circle => {
+    private void RemovePlayersFromDuel(bool playersWin) => EnactActionOnSubCircles(circle => {
         // Minions have no hub to return to; DespawnDuel tears them down.
         if (!circle.IsHumanPlayer) {
+            return;
+        }
+
+        // A wizard defeated in a battle their team won stays where they are and gets up with a little health, as on
+        // live (Justin, 2026-10-22: his friend was sent out of the Malistaire room after they won). Only a lost battle
+        // or a flee sends a wizard to the hub or the room's exit. Die = Delete keeps its rule: still dead at the end.
+        if (!circle.IsAlive && playersWin && !Duel.m_bPVP && !s_dieDelete) {
+            ReviveAfterWin(circle);
+
             return;
         }
 
@@ -2662,6 +2810,30 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         };
         circle.ParticipantActor.Tell(stateMsg);
     });
+
+    private static readonly bool s_dieDelete = ConfigurationManager.GetValue("Die Delete.Enabled", false);
+    // The health a wizard defeated in a won battle gets up with.
+    private const int REVIVE_AFTER_WIN_HEALTH = 1;
+
+    private void ReviveAfterWin(CombatDuelSubCircle circle) {
+        circle.SetHealthTo(REVIVE_AFTER_WIN_HEALTH);
+        if (circle._wizard is { } wizard) {
+            circle.ParticipantActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEHEALTH {
+                CharacterID = wizard.GameObjectID,
+                NewHealth = REVIVE_AFTER_WIN_HEALTH,
+                NewHealthMax = wizard.GameStats.GetClientTypeAlternative().m_baseHitpoints,
+                DisplayDiff = 1,
+            });
+        }
+
+        circle.ParticipantActor.Tell(new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+            GameObjectID = circle.ParticipantObject.m_globalID,
+            State = (uint) NPCStates.Idle
+        });
+
+        Logger.Debug("Duel {0} | Slot {1} | Defeated in a won battle: stays, back with {2} health.",
+            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, REVIVE_AFTER_WIN_HEALTH));
+    }
 
     private bool IsSlotAvailable(CombatTeam team) {
         var IsNewbieZone = _combatSigilObjectInfo is { m_unknown_uint_4: not 0 };

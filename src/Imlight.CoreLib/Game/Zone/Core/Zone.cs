@@ -84,6 +84,12 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     public bool IsInstance { get; }
 
     /// <summary>
+    /// How many battles against a ZoneObjects encounter's boss run in this zone now. A distinct spawner (the boss's
+    /// minions) does not spawn while one runs, so the room's helpers are not doubled by spawned ones.
+    /// </summary>
+    internal int EncounterBattles;
+
+    /// <summary>
     /// The zone path, formatted as it would be in the access pass.
     /// </summary>
     public string ZonePath { get; init; }
@@ -523,6 +529,10 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS))]
     private void ReceiveQueryEncounterMinions(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS message)
+        => _supervisors.ForEach(supervisor => supervisor.Forward(message));
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED))]
+    private void ReceiveEncounterBattleEnded(ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED message)
         => _supervisors.ForEach(supervisor => supervisor.Forward(message));
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEBROADCAST))]

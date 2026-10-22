@@ -1525,4 +1525,19 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Sent by a duel to its <see cref="Zone"/> when a battle against a ZoneObjects encounter's boss ends. A battle the
+    /// creatures won (everyone fled or was defeated) puts the room's minions that fought in it back: ResetIds are their
+    /// global ids, and their spawn points spawn them again. A ZoneObjects distinct spawner that waited during the battle
+    /// fills up again.
+    /// </summary>
+    public sealed class MSG_ENCOUNTERBATTLEENDED : IServerMessage {
+
+        public byte MessageOrder { get; } = 98;
+        public byte ServiceID { get; } = 102;
+
+        public HashSet<ulong> ResetIds = [];
+
+    }
+
 }

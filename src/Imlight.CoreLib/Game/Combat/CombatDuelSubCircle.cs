@@ -389,7 +389,14 @@ public class CombatDuelSubCircle {
         }
     }
 
+    /// <summary>
+    /// How this round's pip came, as the game's CombatParticipant::PipAquiredByEnum (MSG_COMBATPIPS m_acq): 0 none
+    /// (every slot full), 1 a pip, 2 a power pip.
+    /// </summary>
+    internal uint PipAcquired { get; private set; }
+
     private void GainPips() {
+        PipAcquired = 0;
         ApplyOverdoseOnce();
 
         // Shadow pips sit in their own slots, so they roll whether or not the normal slots are full.
@@ -434,9 +441,11 @@ public class CombatDuelSubCircle {
             var gainedPowerPip = DeterminePowerPipGain();
             if (gainedPowerPip) {
                 pipCount.m_powerPips++;
+                PipAcquired = 2;
             }
             else {
                 pipCount.m_genericPips++;
+                PipAcquired = Math.Max(PipAcquired, 1u);
             }
         }
     }
@@ -1076,6 +1085,44 @@ public class CombatDuelSubCircle {
             else {
                 ParticipantGameStats.m_currentHitpoints -= damage;
             }
+        }
+    }
+
+    /// <summary>
+    /// Sets the health outright, even from 0 (an afterlife, or a wizard getting up after a won battle), and keeps the
+    /// participant's own health in step.
+    /// </summary>
+    internal void SetHealthTo(int health) {
+        if (ParticipantGameStats is null) {
+            return;
+        }
+
+        health = Math.Max(0, health);
+        if (_wizard is not null && !IsSandboxed) {
+            _wizard.UpdateHealth(health);
+        }
+        else {
+            ParticipantGameStats.m_currentHitpoints = health;
+        }
+
+        SyncParticipantHealth();
+    }
+
+    /// <summary>
+    /// Puts the server's health into the participant (m_playerHealth, m_maxPlayerHealth and its game stats), which the
+    /// game reads for the health ring on the duel circle. They were only set when the participant joined, so a later
+    /// re-send (a late joiner's MSG_COMBATADD, the participant list) carried the health from the start of the battle.
+    /// </summary>
+    internal void SyncParticipantHealth() {
+        if (CombatParticipant is not { } participant || ParticipantGameStats is not { } stats) {
+            return;
+        }
+
+        var most = participant.m_maxPlayerHealth > 0 ? participant.m_maxPlayerHealth : stats.m_baseHitpoints;
+        participant.m_maxPlayerHealth = Math.Max(most, stats.m_currentHitpoints);
+        participant.m_playerHealth = Math.Max(0, stats.m_currentHitpoints);
+        if (participant.m_pGameStats is { } combatStats) {
+            combatStats.m_currentHitpoints = participant.m_playerHealth;
         }
     }
 
