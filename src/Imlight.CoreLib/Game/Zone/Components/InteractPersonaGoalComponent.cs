@@ -197,8 +197,19 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         }
     }
 
+    private const string PERSONA_SUFFIX = "_Persona";
+
+    /// <summary>
+    /// A persona goal names the NPC by its object name (WC-ST01-NPC04) or, in most quests, by the persona
+    /// the NPC's template registers, which is the object name plus "_Persona" (WC-ST01-NPC03_Persona).
+    /// </summary>
+    private static bool IsPersonaOf(string personaName, string npcName)
+        => !string.IsNullOrEmpty(npcName)
+            && (string.Equals(personaName, npcName, StringComparison.Ordinal)
+                || string.Equals(personaName, npcName + PERSONA_SUFFIX, StringComparison.Ordinal));
+
     private static bool PersonaNamesMayMatch(string personaName, string npcName)
-        => string.Equals(personaName, npcName, StringComparison.Ordinal)
+        => IsPersonaOf(personaName, npcName)
             || IsRegistrarTemplate(personaName) && IsRegistrarTemplate(npcName);
 
     /// <summary>
@@ -207,7 +218,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
     /// Restrict that alias to Ravenwood so the Commons registrar cannot complete the Ravenwood goal.
     /// </summary>
     private static bool PersonaNamesMatch(string personaName, string npcName, string npcDisplayName, string zoneName)
-        => string.Equals(personaName, npcName, StringComparison.Ordinal)
+        => IsPersonaOf(personaName, npcName)
             || IsRegistrarTemplate(personaName)
                 && (IsRegistrarTemplate(npcName) || npcDisplayName.Contains("Lincoln", StringComparison.OrdinalIgnoreCase))
                 && zoneName?.Contains("Ravenwood", StringComparison.OrdinalIgnoreCase) == true;
