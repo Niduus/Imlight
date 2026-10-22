@@ -30,6 +30,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Imlight.Setup.Blocks;
 
 namespace Imlight.Setup;
 
@@ -40,23 +41,25 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow : Window {
 
-    private static readonly IBrush BACKGROUND = new SolidColorBrush(Color.FromRgb(24, 27, 33));
-    private static readonly IBrush CARD = new SolidColorBrush(Color.FromArgb(20, 128, 128, 128));
-    private static readonly IBrush LINE = new SolidColorBrush(Color.FromArgb(50, 128, 128, 128));
-    private static readonly IBrush GOOD = new SolidColorBrush(Color.FromRgb(46, 160, 92));
-    private static readonly IBrush WARN = new SolidColorBrush(Color.FromRgb(214, 150, 40));
-    private static readonly IBrush BAD = new SolidColorBrush(Color.FromRgb(220, 70, 60));
-    private static readonly IBrush MUTED = new SolidColorBrush(Color.FromArgb(170, 128, 128, 128));
-    private static readonly IBrush LOG_BACK = new SolidColorBrush(Color.FromRgb(17, 21, 28));
-    private static readonly IBrush LOG_TEXT = new SolidColorBrush(Color.FromRgb(216, 222, 233));
-    private static readonly FontFamily MONO = new("Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace");
+    // The colours are the Manager's theme (ManagerTheme.cs), shared with the block editor and the Customs tab's areas.
+    private static readonly IBrush BACKGROUND = ManagerTheme.BACKGROUND_BRUSH;
+    private static readonly IBrush CARD = ManagerTheme.SURFACE_HIGH_BRUSH;
+    private static readonly IBrush LINE = ManagerTheme.LINE_BRUSH;
+    private static readonly IBrush GOOD = ManagerTheme.Brush(ManagerTheme.GOOD);
+    private static readonly IBrush WARN = ManagerTheme.Brush(ManagerTheme.WARN);
+    private static readonly IBrush BAD = ManagerTheme.Brush(ManagerTheme.BAD);
+    private static readonly IBrush MUTED = ManagerTheme.MUTED_BRUSH;
+    private static readonly IBrush LOG_BACK = ManagerTheme.Brush(ManagerTheme.LOG_BACK);
+    private static readonly IBrush LOG_TEXT = ManagerTheme.Brush(ManagerTheme.LOG_TEXT);
+    private static readonly FontFamily MONO = ManagerTheme.MONO;
 
     private readonly ServerManager _manager;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(2) };
 
     // Header and message bar.
-    private readonly Border _dot = new() { Width = 10, Height = 10, CornerRadius = new CornerRadius(5), Background = MUTED };
-    private readonly TextBlock _statusText = new() { Text = "Checking…", Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center };
+    private readonly Border _dot = new() { Width = 9, Height = 9, CornerRadius = new CornerRadius(5), Background = MUTED, VerticalAlignment = VerticalAlignment.Center };
+    private readonly TextBlock _statusText = new() { Text = "Checking…", Foreground = MUTED, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center };
+    private readonly Border _statusBadge;
     // At most a few lines: a copied log shown here in full once covered the whole window (Justin, 2026-10-20).
     private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap, MaxLines = 4, TextTrimming = TextTrimming.CharacterEllipsis };
     // Shows what a background update is doing on the button itself (downloading 40%, building...).
@@ -176,81 +179,42 @@ internal sealed partial class ManagerWindow : Window {
         _manager = manager;
         _gameFiles = new GameFiles(manager.InstallFolder);
         Title = Edition.NAME;
-        Width = 1120;
-        Height = 820;
-        Background = BACKGROUND;
-        MinWidth = 640;
+        Width = 1240;
+        Height = 840;
+        ManagerTheme.Apply(this);
+        MinWidth = 760;
         MinHeight = 480;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-        _randomizerCard = Card(new DockPanel {
-            Children = {
-                WithDock(_randomizer, Dock.Right),
-                new StackPanel {
-                    Children = {
-                        Heading("Randomizer mode"),
-                        Sub("Shuffles schools, spells, drops and more for every character, kept balanced. Fine-tune it under Settings, Randomizer."),
-                    },
-                },
-            },
-        });
+        _randomizerCard = Fold("dice", "Customs", "Randomizer mode",
+            "Shuffles schools, spells, drops and more for every character, kept balanced. Fine-tune it under Settings, Randomizer.",
+            SwitchRow("Randomizer mode", _randomizer));
         _randomizerCard.IsVisible = false;
-        _dieDeleteCard = Card(new DockPanel {
-            Children = {
-                WithDock(_dieDelete, Dock.Right),
-                new StackPanel {
-                    Children = {
-                        Heading("Die = Delete mode"),
-                        Sub("If a wizard dies in battle and is still dead when the battle ends, that wizard is deleted for good. " +
-                            "Fleeing doesn't count, and neither does the tutorial battle."),
-                    },
-                },
-            },
-        });
+        _dieDeleteCard = Fold("skull", "bad", "Die = Delete mode",
+            "If a wizard dies in battle and is still dead when the battle ends, that wizard is deleted for good. " +
+            "Fleeing doesn't count, and neither does the tutorial battle.",
+            SwitchRow("Die = Delete mode", _dieDelete));
         _dieDeleteCard.IsVisible = false;
-        var trainerRows = new StackPanel {
-            Spacing = 6,
-            Children = {
-                Heading("Spell trainers"),
-                Sub("Change what trainers ask for before they teach a spell. These work with or without randomizer mode. " +
-                    "Random spell requirements makes each spell that needs another spell first need a different one from the same trainer instead."),
-            },
-        };
+        var trainerRows = new StackPanel { Spacing = 6 };
         foreach (var (key, name, toggle) in _trainerSwitches) {
-            trainerRows.Children.Add(new DockPanel {
-                Children = {
-                    WithDock(toggle, Dock.Right),
-                    new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center },
-                },
-            });
+            trainerRows.Children.Add(SwitchRow(name, toggle));
         }
 
-        trainerRows.Children.Add(new DockPanel {
-            Children = {
-                WithDock(_pointsPerLevel, Dock.Right),
-                new TextBlock { Text = "Training points per level", VerticalAlignment = VerticalAlignment.Center },
-            },
-        });
-        _trainersCard = Card(trainerRows);
+        trainerRows.Children.Add(SwitchRow("Training points per level", _pointsPerLevel));
+        _trainersCard = Fold("school", "Lookup", "Spell trainers",
+            "Change what trainers ask for before they teach a spell. These work with or without randomizer mode. " +
+            "Random spell requirements makes each spell that needs another spell first need a different one from the same trainer instead.",
+            trainerRows);
         _trainersCard.IsVisible = false;
-        var battleRows = new StackPanel {
-            Spacing = 6,
-            Children = {
-                Heading("Battle and world"),
-                Sub("School pips: once every pip slot is full, each round turns a power pip into a school pip of your own school, " +
-                    "for spells that cost school pips."),
-            },
-        };
+        var battleRows = new StackPanel { Spacing = 6 };
         foreach (var (_, key, name, toggle) in _battleSwitches) {
-            battleRows.Children.Add(new DockPanel {
-                Children = {
-                    WithDock(toggle, Dock.Right),
-                    new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center },
-                },
-            });
+            battleRows.Children.Add(SwitchRow(name, toggle));
         }
 
-        _battleCard = Card(battleRows);
+        _battleCard = Fold("sword", "Bosses", "Battle and world",
+            "School pips: once every pip slot is full, each round turns a power pip into a school pip of your own school, " +
+            "for spells that cost school pips.",
+            battleRows);
         _battleCard.IsVisible = false;
         _logScroll = new ScrollViewer {
             Height = 440,
@@ -260,6 +224,7 @@ internal sealed partial class ManagerWindow : Window {
 
         var tabs = new TabControl {
             Padding = new Thickness(0),
+            TabStripPlacement = Dock.Left,
             ItemsSource = new[] {
                 Tab("Play", PlayTab()),
                 Tab("Commands", CommandsTab()),
@@ -280,7 +245,7 @@ internal sealed partial class ManagerWindow : Window {
                 return;
             }
 
-            switch ((tabs.SelectedItem as TabItem)?.Header as string) {
+            switch ((tabs.SelectedItem as TabItem)?.Tag as string) {
                 case "Play": await LoadPlayAsync(); break;
                 case "Lookup": await LoadLookupAsync(); break;
                 case "Bosses": await LoadBossesAsync(); break;
@@ -290,7 +255,7 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             // The position card only reads its file while the Play tab is showing, and the game log only while Logs is.
-            var shownTab = (tabs.SelectedItem as TabItem)?.Header as string;
+            var shownTab = (tabs.SelectedItem as TabItem)?.Tag as string;
             if (shownTab == "Play") {
                 RefreshPosition();
                 _positionTimer.Start();
@@ -308,31 +273,56 @@ internal sealed partial class ManagerWindow : Window {
             }
         };
 
-        var header = new DockPanel {
-            Margin = new Thickness(24, 14, 24, 4),
-            Children = {
-                new TextBlock { Text = Edition.NAME, FontSize = 20, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center },
-                new StackPanel {
-                    Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(18, 0, 0, 0),
-                    Children = { WithCenter(_dot), _statusText },
+        // The header: the app's name on the left, the server's state as a badge on the right.
+        _statusBadge = ManagerTheme.Badge(_dot, _statusText);
+        ToolTip.SetTip(_statusBadge, "The server on this computer. Start and stop it on the Server tab.");
+        ManagerTheme.PaintBadge(_statusBadge, _statusText, MUTED);
+        var header = new Border {
+            Background = ManagerTheme.SIDEBAR_BRUSH, BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(18, 12, 24, 12),
+            Child = new DockPanel {
+                Children = {
+                    WithDock(_statusBadge, Dock.Right),
+                    WithDock(new Border { Margin = new Thickness(0, 0, 12, 0), Child = ManagerTheme.Tile("sparkle", ManagerTheme.Accent("accent"), 34) }, Dock.Left),
+                    new StackPanel {
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Children = {
+                            new TextBlock { Text = Edition.NAME, FontSize = ManagerTheme.FONT_APP, FontWeight = FontWeight.Bold },
+                            new TextBlock { Text = "Your Wizard101 server", FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED },
+                        },
+                    },
                 },
             },
         };
 
         _messageBar.Child = _message;
+        _messageBar.BorderBrush = LINE;
+        _messageBar.BorderThickness = new Thickness(0, 1, 0, 0);
         _messageBar.PointerPressed += (_, _) => _messageBar.IsVisible = false;
         _saveBar.Child = new StackPanel {
             Orientation = Orientation.Horizontal, Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center,
             Children = { _saveCount, Action(Plain("Discard"), DiscardSettings), Action(Primary("Save changes"), SaveSettingsAsync) },
         };
         _saveBar.Background = CARD;
+        _saveBar.BorderBrush = LINE;
+        _saveBar.BorderThickness = new Thickness(0, 1, 0, 0);
+
+        // The tabs run down a side bar of their own colour.
+        var body = new Panel {
+            Children = {
+                new Border {
+                    Width = ManagerTheme.SIDEBAR_WIDTH, HorizontalAlignment = HorizontalAlignment.Left, Background = ManagerTheme.SIDEBAR_BRUSH,
+                    BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 1, 0),
+                },
+                WithMargin(tabs, new Thickness(0, 10, 0, 0)),
+            },
+        };
 
         Content = new DockPanel {
             Children = {
                 WithDock(header, Dock.Top),
                 WithDock(_messageBar, Dock.Bottom),
                 WithDock(_saveBar, Dock.Bottom),
-                tabs,
+                body,
             },
         };
 
@@ -372,42 +362,35 @@ internal sealed partial class ManagerWindow : Window {
         _playButton.Padding = new Thickness(22, 12);
 
         return Page(
-            Card(new DockPanel {
-                Children = {
-                    WithDock(WithCenter(_playButton), Dock.Right),
-                    new StackPanel { Margin = new Thickness(0, 0, 16, 0), Children = { Heading("Play on my server"), _playHelp } },
-                },
-            }),
-            Card(new StackPanel {
-                Children = {
-                    Heading("Other servers"),
-                    Sub("Play on someone else's private server with your Wizard101. The live game is blocked, so these only work for private servers."),
-                    WithMargin(_serverRows, new Thickness(0, 10, 0, 10)),
-                    new WrapPanel {
-                        Children = {
-                            Spaced(_newServerName), Spaced(_newServerHost), Spaced(_newServerPort),
-                            Spaced(Action(Plain("Save server"), SaveServerAsync)),
-                        },
+            Fold("play", "Play", "Play on my server", "Wizard101 on this computer, on your own server.",
+                new DockPanel {
+                    Children = {
+                        WithDock(WithCenter(_playButton), Dock.Right),
+                        WithCenter(WithMargin(_playHelp, new Thickness(0, 0, 16, 0))),
+                    },
+                }),
+            Fold("globe", "Lookup", "Other servers",
+                "Play on someone else's private server with your Wizard101. The live game is blocked, so these only work for private servers.",
+                WithMargin(_serverRows, new Thickness(0, 0, 0, 4)),
+                new WrapPanel {
+                    Children = {
+                        Spaced(_newServerName), Spaced(_newServerHost), Spaced(_newServerPort),
+                        Spaced(Action(Plain("Save server"), SaveServerAsync)),
+                    },
+                }),
+            Fold("users", "Accounts", "Play with friends",
+                "Friends on other internet connections join with this address and login port. Click \"Let friends connect\" " +
+                "once: Windows asks to allow the change, and the app asks your router to let friends in. Leave the server running.",
+                new DockPanel {
+                    Children = {
+                        WithDock(Row(Action(Primary("Let friends connect"), LetFriendsConnectAsync),
+                            Action(Plain("Copy address"), () => _publicIp is null
+                                ? throw new PanelException("Your address is not found yet. Check your internet connection.")
+                                : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}"))), Dock.Right),
+                        WithCenter(_friendAddress),
                     },
                 },
-            }),
-            Card(new StackPanel {
-                Children = {
-                    Heading("Play with friends"),
-                    Sub("Friends on other internet connections join with this address and login port. Click \"Let friends connect\" " +
-                        "once: Windows asks to allow the change, and the app asks your router to let friends in. Leave the server running."),
-                    WithMargin(new DockPanel {
-                        Children = {
-                            WithDock(Row(Action(Primary("Let friends connect"), LetFriendsConnectAsync),
-                                Action(Plain("Copy address"), () => _publicIp is null
-                                    ? throw new PanelException("Your address is not found yet. Check your internet connection.")
-                                    : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}"))), Dock.Right),
-                            WithCenter(_friendAddress),
-                        },
-                    }, new Thickness(0, 10, 0, 6)),
-                    _friendResult,
-                },
-            }),
+                _friendResult),
             CommandCard(),
             PositionCard());
     }
@@ -475,17 +458,13 @@ internal sealed partial class ManagerWindow : Window {
         Render();
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
             Children = {
-                WithDock(Card(new StackPanel {
-                    Children = {
-                        Heading("Commands"),
-                        Sub("Custom has the commands made for your build. Imlight has the ones the server comes with. " +
-                            "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard."),
-                        WithMargin(_commandSearch, new Thickness(0, 10, 0, 0)),
-                    },
-                }), Dock.Top),
-                WithMargin(new TabControl { ItemsSource = new[] { custom, imlight } }, new Thickness(0, 10, 0, 0)),
+                WithDock(Fold("search", "Commands", "Find a command",
+                    "Custom has the commands made for your build. Imlight has the ones the server comes with. " +
+                    "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard.",
+                    _commandSearch), Dock.Top),
+                WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight } }), new Thickness(0, 14, 0, 0)),
             },
         };
     }
@@ -506,21 +485,16 @@ internal sealed partial class ManagerWindow : Window {
         _lookupResults.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
             Children = {
-                WithDock(Card(new StackPanel {
-                    Children = {
-                        Heading("Commands and IDs"),
-                        Sub("Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
-                            "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card."),
-                        new DockPanel {
-                            Margin = new Thickness(0, 10, 0, 6),
-                            Children = { WithDock(WithMargin(_lookupKind, new Thickness(8, 0, 0, 0)), Dock.Right), _lookupSearch },
-                        },
-                        _lookupCount,
+                WithDock(Fold("search", "Lookup", "Commands and IDs",
+                    "Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
+                    "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card.",
+                    new DockPanel {
+                        Children = { WithDock(WithMargin(_lookupKind, new Thickness(8, 0, 0, 0)), Dock.Right), _lookupSearch },
                     },
-                }), Dock.Top),
-                WithMargin(new Panel { Children = { _lookupResults, SpellView() } }, new Thickness(0, 10, 0, 0)),
+                    _lookupCount), Dock.Top),
+                WithMargin(Card(new Panel { Children = { _lookupResults, SpellView() } }), new Thickness(0, 14, 0, 0)),
             },
         };
     }
@@ -537,7 +511,7 @@ internal sealed partial class ManagerWindow : Window {
                 Say(_manager.StopServer());
             }
         });
-        _stopButton.Foreground = BAD;
+        Danger(_stopButton);
         _randomizer.IsCheckedChanged += async (_, _) => {
             if (!_updatingRandomizer) {
                 await Guard(() => SetRandomizerAsync(_randomizer.IsChecked == true));
@@ -575,13 +549,9 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    Heading("Server"),
-                    Sub("Start the server here. It gets the game files from your Wizard101 folder by itself. Closing this window stops it."),
-                    WithMargin(Row(_startButton, _restartButton, _stopButton), new Thickness(0, 10, 0, 0)),
-                },
-            }),
+            Fold("power", "Server", "Start and stop",
+                "Start the server here. It gets the game files from your Wizard101 folder by itself. Closing this window stops it.",
+                Row(_startButton, _restartButton, _stopButton)),
             _randomizerCard,
             _dieDeleteCard,
             _battleCard,
@@ -598,13 +568,9 @@ internal sealed partial class ManagerWindow : Window {
         };
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    Heading("Settings"),
-                    Sub("Every setting in the server's Imlight.ini. Changes apply the next time the server starts."),
-                    WithMargin(_settingSearch, new Thickness(0, 10, 0, 0)),
-                },
-            }),
+            Fold("search", "Settings", "Find a setting",
+                "Every setting in the server's Imlight.ini. Changes apply the next time the server starts.",
+                _settingSearch),
             _settingsList);
     }
 
@@ -613,27 +579,18 @@ internal sealed partial class ManagerWindow : Window {
         _newLevel.SelectedIndex = 0;
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    Heading("New account"),
-                    Sub("Accounts can only be changed while the server is running."),
-                    WithMargin(new WrapPanel {
-                        Children = {
-                            Spaced(_newUsername), Spaced(_newPassword), Spaced(_newLevel),
-                            Spaced(Action(Primary("Create account"), CreateAccountAsync)),
-                        },
-                    }, new Thickness(0, 10, 0, 0)),
-                },
-            }),
-            Card(new StackPanel {
-                Children = {
-                    new DockPanel {
-                        Children = { WithDock(Action(Plain("Refresh"), LoadAccountsAsync), Dock.Right), Heading("Accounts") },
+            Fold("plus", "Accounts", "New account", "Accounts can only be changed while the server is running.",
+                new WrapPanel {
+                    Children = {
+                        Spaced(_newUsername), Spaced(_newPassword), Spaced(_newLevel),
+                        Spaced(Action(Primary("Create account"), CreateAccountAsync)),
                     },
-                    WithMargin(_accountsNote, new Thickness(0, 6, 0, 10)),
-                    _accountRows,
+                }),
+            Fold("users", "Accounts", "Accounts", "Everyone who can log in to your server, and what they are allowed to do.",
+                new DockPanel {
+                    Children = { WithDock(Action(Plain("Refresh"), LoadAccountsAsync), Dock.Right), WithCenter(_accountsNote) },
                 },
-            }));
+                _accountRows));
     }
 
     private CheckBox AutoUpdateBox() {
@@ -656,15 +613,9 @@ internal sealed partial class ManagerWindow : Window {
                 : "The app asks before it restarts into a new version again.");
         };
 
-        return new StackPanel {
-            Margin = new Thickness(0, 0, 0, 8),
-            Children = {
-                new TextBlock { Text = "Install updates automatically", FontWeight = FontWeight.Medium },
-                toggle,
-                Sub("When a new version has downloaded and built, the app restarts into it without asking \"Yes\" first. " +
-                    "If the server is running it restarts too, so anyone playing is disconnected for a moment."),
-            },
-        };
+        return SwitchRow("Install updates automatically", toggle,
+            "When a new version has downloaded and built, the app restarts into it without asking \"Yes\" first. " +
+            "If the server is running it restarts too, so anyone playing is disconnected for a moment.");
     }
 
     private Control GameFilesTab() {
@@ -676,52 +627,33 @@ internal sealed partial class ManagerWindow : Window {
         _gameFilesProgress.Text = GameFilesState();
 
         return Page(
-            Card(new StackPanel {
-                Spacing = 6,
-                Children = {
-                    Heading("Read the game's data files"),
-                    Sub("Shows how Wizard101 works from the data files installed with it: quests, badges, triggers, pets, creatures, " +
-                        "items, spells, zones and the messages the game and server send. It never changes your Wizard101 folder: " +
-                        "step 1 copies the files into Imlight's own folder, and step 2 reads only that copy."),
-                },
-            }),
-            Card(new StackPanel {
-                Spacing = 6,
-                Children = {
-                    Heading("Step 1: Copy my game files"),
-                    Sub("Copies the game's data files into a separate folder. It asks first and shows how much room it needs. " +
-                        "The next time, it only copies files the game has changed since."),
-                    WithMargin(Row(_copyGameFiles), new Thickness(0, 8, 0, 0)),
-                },
-            }),
-            Card(new StackPanel {
-                Spacing = 6,
-                Children = {
-                    Heading("Step 2: Read my copy"),
-                    Sub("Reads the copy and writes everything into readable files. The \"Key details\" folder has the tables for running " +
-                        "the game on a private server, and Overview.txt in it says what each one holds."),
-                    WithMargin(new WrapPanel {
-                        Children = {
-                            Spaced(_readGameFiles),
-                            Spaced(Action(Plain("Open key details"), OpenKeyDetailsAsync)),
-                            Spaced(Action(Plain("Open game files folder"), () => Open(Directory.CreateDirectory(_gameFiles.Folder).FullName))),
-                        },
-                    }, new Thickness(0, 8, 0, 0)),
-                },
-            }),
-            Card(new StackPanel {
-                Spacing = 6,
-                Children = {
-                    Heading("Shop research"),
-                    Sub("Saves the game's shop window files and shop keepers into one zip on your desktop, " +
-                        "for finding out why snack, reagent and jewel shops open as a robe shop."),
-                    WithMargin(Row(_shopResearch), new Thickness(0, 8, 0, 0)),
-                },
-            }),
+            Fold("info", "Game Files", "Read the game's data files",
+                "Shows how Wizard101 works from the data files installed with it: quests, badges, triggers, pets, creatures, " +
+                "items, spells, zones and the messages the game and server send. It never changes your Wizard101 folder: " +
+                "step 1 copies the files into Imlight's own folder, and step 2 reads only that copy."),
+            Fold("download", "Game Files", "Step 1: Copy my game files",
+                "Copies the game's data files into a separate folder. It asks first and shows how much room it needs. " +
+                "The next time, it only copies files the game has changed since.",
+                Row(_copyGameFiles)),
+            Fold("file", "Game Files", "Step 2: Read my copy",
+                "Reads the copy and writes everything into readable files. The \"Key details\" folder has the tables for running " +
+                "the game on a private server, and Overview.txt in it says what each one holds.",
+                new WrapPanel {
+                    Children = {
+                        Spaced(_readGameFiles),
+                        Spaced(Action(Plain("Open key details"), OpenKeyDetailsAsync)),
+                        Spaced(Action(Plain("Open game files folder"), () => Open(Directory.CreateDirectory(_gameFiles.Folder).FullName))),
+                    },
+                }),
+            Fold("bag", "Game Files", "Shop research",
+                "Saves the game's shop window files and shop keepers into one zip on your desktop, " +
+                "for finding out why snack, reagent and jewel shops open as a robe shop.",
+                Row(_shopResearch)),
             Card(new DockPanel {
                 Children = {
                     WithDock(WithCenter(_cancelGameFiles), Dock.Right),
-                    _gameFilesProgress,
+                    WithDock(WithMargin(WithCenter(ManagerTheme.Icon("hourglass", 18, MUTED)), new Thickness(0, 0, 10, 0)), Dock.Left),
+                    WithCenter(_gameFilesProgress),
                 },
             }));
     }
@@ -912,34 +844,20 @@ internal sealed partial class ManagerWindow : Window {
         _clientLogTimer.Tick += (_, _) => RefreshClientLog();
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    new DockPanel {
-                        Margin = new Thickness(0, 0, 0, 8),
-                        Children = {
-                            WithDock(Row(_hideDebug, _hideWarnings, _follow, _pauseLog), Dock.Right),
-                            Heading("Server log"),
-                        },
-                    },
-                    new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _logScroll },
-                    WithMargin(Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)),
-                        new Thickness(0, 8, 0, 0)),
-                    WithMargin(Sub("The same message repeated in a row shows once, with how many times it happened."), new Thickness(0, 8, 0, 0)),
-                },
-            }),
-            Card(new StackPanel {
-                Children = {
-                    Heading("Game log"),
-                    Sub("The newest log Wizard101 wrote, updated every 2 seconds while this tab is open. Select any part to copy it."),
-                    WithMargin(_clientLogFile, new Thickness(0, 6, 0, 8)),
-                    new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = _clientLogBox },
-                    WithMargin(Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
-                        Action(Plain("Save game log to desktop"), SaveClientLogAsync),
-                        Action(Plain("Open game log folder"), () => _clientLogFolder is null
-                            ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
-                            : Open(_clientLogFolder))), new Thickness(0, 8, 0, 0)),
-                },
-            }));
+            Fold("server", "Server", "Server log",
+                "What the server on this computer is doing. The same message repeated in a row shows once, with how many times it happened.",
+                Row(_hideDebug, _hideWarnings, _follow, _pauseLog),
+                LogWell(_logScroll),
+                Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync))),
+            Fold("log", "Logs", "Game log",
+                "The newest log Wizard101 wrote, updated every 2 seconds while this tab is open. Select any part to copy it.",
+                _clientLogFile,
+                LogWell(_clientLogBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
+                    Action(Plain("Save game log to desktop"), SaveClientLogAsync),
+                    Action(Plain("Open game log folder"), () => _clientLogFolder is null
+                        ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
+                        : Open(_clientLogFolder)))));
     }
 
     private readonly TextBox _commandBox = new() { Watermark = "A command, such as .elixir50 or .lookup fire cat" };
@@ -979,59 +897,48 @@ internal sealed partial class ManagerWindow : Window {
             }
         };
 
-        return Card(new StackPanel {
-            Children = {
-                Heading("Run a command"),
-                Sub("Runs a command as the wizard playing on this PC, the same as typing it in chat. "
-                    + "Friends playing from other PCs are never affected. The Lookup tab lists every command. "
-                    + "Previous commands lists the last ones you ran: pick one to run it again."),
-                WithMargin(new DockPanel {
-                    Children = {
-                        WithDock(WithMargin(send, new Thickness(8, 0, 0, 0)), Dock.Right),
-                        WithDock(WithMargin(_commandHistory, new Thickness(8, 0, 0, 0)), Dock.Right),
-                        _commandBox,
-                    },
-                }, new Thickness(0, 10, 0, 0)),
-            },
-        });
+        return Fold("terminal", "Commands", "Run a command",
+            "Runs a command as the wizard playing on this PC, the same as typing it in chat. "
+            + "Friends playing from other PCs are never affected. The Lookup tab lists every command. "
+            + "Previous commands lists the last ones you ran: pick one to run it again.",
+            new DockPanel {
+                Children = {
+                    WithDock(WithMargin(send, new Thickness(8, 0, 0, 0)), Dock.Right),
+                    WithDock(WithMargin(_commandHistory, new Thickness(8, 0, 0, 0)), Dock.Right),
+                    _commandBox,
+                },
+            });
     }
 
     private Control PositionCard() {
         _positionTimer.Tick += (_, _) => RefreshPosition();
 
-        return Card(new StackPanel {
-            Children = {
-                Heading("Position (X, Y, Z and Rotation, Angle, Width)"),
-                Sub("Where each wizard on your server is standing, as X, Y and Z, updated twice a second while this tab is open. "
-                    + "Rotation is the way the wizard faces in radians, the way the game files store it, and Angle is the same in degrees. "
-                    + "Width is the wizard's size, which is always 1. "
-                    + "It reads what the game already tells your server; nothing is added to the game. The newest mover is on top. "
-                    + "Select any part of the text to copy it, or use the button. Positions are exact to about 4 units."),
-                WithMargin(_positionBox, new Thickness(0, 10, 0, 10)),
-                Row(Action(Primary("Copy X, Y, Z"), CopyPositionAsync), Action(Plain("Copy Rotation, Angle, Width"), CopyRawAsync), Action(Plain("Copy all"), () => CopyAsync(_positionBox.Text ?? ""))),
-            },
-        });
+        return Fold("crosshair", "zone", "Position (X, Y, Z and Rotation, Angle, Width)",
+            "Where each wizard on your server is standing, as X, Y and Z, updated twice a second while this tab is open. "
+            + "Rotation is the way the wizard faces in radians, the way the game files store it, and Angle is the same in degrees. "
+            + "Width is the wizard's size, which is always 1. "
+            + "It reads what the game already tells your server; nothing is added to the game. The newest mover is on top. "
+            + "Select any part of the text to copy it, or use the button. Positions are exact to about 4 units.",
+            _positionBox,
+            Row(Action(Primary("Copy X, Y, Z"), CopyPositionAsync), Action(Plain("Copy Rotation, Angle, Width"), CopyRawAsync), Action(Plain("Copy all"), () => CopyAsync(_positionBox.Text ?? ""))));
     }
 
     private Control ToolsTab() {
-        return Page(Card(new StackPanel {
-            Children = {
-                Heading("Tools"),
-                Sub("Update or remove Imlight, or open the server's files."),
-                WithMargin(new WrapPanel {
+        return Page(
+            Fold("download", "Settings", "Updates",
+                $"{Edition.NAME} {SelfUpdate.CurrentVersion}, installed in {_manager.InstallFolder}.",
+                Row(Action(_updateButton, UpdateAsync)),
+                AutoUpdateBox(),
+                AutoInstallSwitch()),
+            Fold("folder", "Tools", "Files and folders", "Open the server's files, or remove Imlight from this computer.",
+                new WrapPanel {
                     Children = {
-                        Spaced(Action(_updateButton, UpdateAsync)),
-                        Spaced(Danger(Action(Plain("Uninstall Imlight"), UninstallAsync))),
                         Spaced(Action(Plain("Open log folder"), () => Open(_manager.LogFolder))),
                         Spaced(Action(Plain("Open settings folder"), () => Open(_manager.ConfigFolder))),
                         Spaced(Action(Plain("Open install folder"), () => Open(_manager.InstallFolder))),
+                        Spaced(Danger(Action(Plain("Uninstall Imlight"), UninstallAsync))),
                     },
-                }, new Thickness(0, 10, 0, 10)),
-                AutoUpdateBox(),
-                AutoInstallSwitch(),
-                Sub($"{Edition.NAME} {SelfUpdate.CurrentVersion}, installed in {_manager.InstallFolder}."),
-            },
-        }));
+                }));
     }
 
     // ---------------------------------------------------------------------
@@ -1042,6 +949,7 @@ internal sealed partial class ManagerWindow : Window {
         var status = _manager.Status();
         _dot.Background = status.Ready ? GOOD : status.Running ? WARN : MUTED;
         _statusText.Text = status.Ready ? "Running, ready for players" : status.Running ? "Starting…" : "Stopped";
+        ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
         _startButton.IsEnabled = !status.Running;
         _stopButton.IsEnabled = status.Running;
         _restartButton.IsEnabled = status.Running;
@@ -1563,12 +1471,11 @@ internal sealed partial class ManagerWindow : Window {
                 }
             }
 
-            _settingsList.Children.Add(new Expander {
-                Header = section,
-                IsExpanded = query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Content = rows,
-            });
+            var (icon, accent) = SettingLook(section);
+            var fold = Fold(icon, accent, section, "", rows);
+            fold.SetBadge(matches.Count == 1 ? "1 setting" : $"{matches.Count} settings");
+            fold.SetOpen(query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0));
+            _settingsList.Children.Add(fold);
         }
     }
 
@@ -1719,18 +1626,16 @@ internal sealed partial class ManagerWindow : Window {
             Foreground = account.IsLocked ? BAD : MUTED,
         };
 
-        return new Border {
-            BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(0, 6),
-            Child = new DockPanel {
-                Children = {
-                    WithDock(Row(level, password, lockButton), Dock.Right),
-                    new StackPanel {
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Children = { new TextBlock { Text = account.Username, FontWeight = FontWeight.SemiBold }, details },
-                    },
+        return ManagerTheme.Item(new DockPanel {
+            Children = {
+                WithDock(Row(level, password, lockButton), Dock.Right),
+                WithDock(WithMargin(WithCenter(ManagerTheme.Tile("user", account.IsLocked ? BAD : ManagerTheme.Accent("Accounts"), 30)), new Thickness(0, 0, 12, 0)), Dock.Left),
+                new StackPanel {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Children = { new TextBlock { Text = account.Username, FontWeight = FontWeight.SemiBold }, details },
                 },
             },
-        };
+        });
     }
 
     private async Task CreateAccountAsync() {
@@ -1802,11 +1707,22 @@ internal sealed partial class ManagerWindow : Window {
             Title = Edition.NAME, Width = 420, SizeToContent = SizeToContent.Height, CanResize = false, Background = BACKGROUND,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
         };
+        ManagerTheme.Apply(dialog);
         ok = Primary("OK");
         ok.Click += (_, _) => dialog.Close(true);
         var cancel = Plain("Cancel");
         cancel.Click += (_, _) => dialog.Close(false);
-        var body = new StackPanel { Margin = new Thickness(20), Spacing = 14, Children = { new TextBlock { Text = question, TextWrapping = TextWrapping.Wrap } } };
+        var body = new StackPanel {
+            Margin = new Thickness(22), Spacing = 16,
+            Children = {
+                new DockPanel {
+                    Children = {
+                        WithDock(WithMargin(new Border { VerticalAlignment = VerticalAlignment.Top, Child = ManagerTheme.Tile("info", ManagerTheme.Accent("accent"), 32) }, new Thickness(0, 0, 14, 0)), Dock.Left),
+                        WithCenter(new TextBlock { Text = question, TextWrapping = TextWrapping.Wrap, FontSize = ManagerTheme.FONT_HEADING }),
+                    },
+                },
+            },
+        };
         if (input is not null) {
             body.Children.Add(input);
         }
@@ -1835,29 +1751,116 @@ internal sealed partial class ManagerWindow : Window {
         return button;
     }
 
-    private static TabItem Tab(string header, Control content) => new() { Header = header, Content = content, FontSize = 17, Padding = new Thickness(14, 4) };
+    // Each tab's icon and the one line its header says it is for.
+    private static readonly Dictionary<string, (string Icon, string Line)> s_tabs = new() {
+        ["Play"] = ("play", "Play Wizard101 on your server, on a friend's, or with friends."),
+        ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
+        ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
+        ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
+        ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
+        ["Server"] = ("server", "Start and stop the server, and switch its game modes on or off."),
+        ["Logs"] = ("log", "What the server and the game are writing down, as it happens."),
+        ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
+        ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
+        ["Game Files"] = ("folder", "Read the game's data files, without ever changing them."),
+        ["Tools"] = ("wrench", "Update Imlight, open its folders, or remove it."),
+    };
+
+    /// <summary>A tab of the side bar: its icon and name there, and a header with its one line above its page.</summary>
+    private static TabItem Tab(string header, Control content) {
+        var (icon, line) = s_tabs[header];
+        var accent = ManagerTheme.Accent(header);
+
+        return new TabItem {
+            Tag = header,
+            Classes = { "nav" },
+            Header = ManagerTheme.TabHeader(icon, accent, header),
+            Content = new DockPanel { Children = { WithDock(ManagerTheme.PageHeader(icon, accent, header, line), Dock.Top), content } },
+        };
+    }
 
     private static Control Page(params Control[] cards) {
-        var stack = new StackPanel { Margin = new Thickness(24, 12, 24, 40), Spacing = 14, MaxWidth = 1060 };
+        var stack = new StackPanel { Margin = new Thickness(24, 12, 24, 40), Spacing = ManagerTheme.GAP, MaxWidth = ManagerTheme.PAGE_MAX_WIDTH };
         stack.Children.AddRange(cards);
 
         return new ScrollViewer { Content = stack };
     }
 
     private static Border Card(Control content) => new() {
-        Background = CARD, CornerRadius = new CornerRadius(12), Padding = new Thickness(18), Child = content,
+        Background = ManagerTheme.SURFACE_BRUSH, BorderBrush = LINE, BorderThickness = new Thickness(1),
+        CornerRadius = new CornerRadius(ManagerTheme.RADIUS), Padding = new Thickness(ManagerTheme.PAD), Child = content,
     };
 
-    private static TextBlock Heading(string text) => new() { Text = text, FontSize = 16, FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 0, 0, 4) };
+    /// <summary>
+    /// A section of a tab, as the block editor's are: a card with an icon tile in the tab's colour (or another named
+    /// colour), a title and what it is for, that folds shut when its header is clicked.
+    /// </summary>
+    private static Section Fold(string icon, string accent, string title, string help, params Control[] body) {
+        var stack = new StackPanel { Spacing = 10 };
+        stack.Children.AddRange(body);
+        return new Section(icon, ManagerTheme.Accent(accent), title, help, stack);
+    }
+
+    /// <summary>A switch (or a number box) on a row of its own, with what it does on the left.</summary>
+    private static Control SwitchRow(string name, Control input, string? help = null) {
+        var text = new StackPanel {
+            VerticalAlignment = VerticalAlignment.Center, Spacing = 2,
+            Children = { new TextBlock { Text = name, TextWrapping = TextWrapping.Wrap } },
+        };
+        if (help is not null) {
+            text.Children.Add(Sub(help));
+        }
+
+        input.VerticalAlignment = VerticalAlignment.Center;
+        if (input is ToggleSwitch toggle) {
+            toggle.MinWidth = 0;
+        }
+
+        return new Border {
+            Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 6, 10, 6),
+            Child = new DockPanel { Children = { WithDock(WithMargin(input, new Thickness(16, 0, 0, 0)), Dock.Right), text } },
+        };
+    }
+
+    /// <summary>A log's dark, rounded well.</summary>
+    private static Control LogWell(Control log) => new Border {
+        CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), ClipToBounds = true, BorderBrush = LINE, BorderThickness = new Thickness(1), Child = log,
+    };
+
+    /// <summary>The icon of a section of Imlight.ini on the Settings tab, and the colour of its tile.</summary>
+    private static (string Icon, string Accent) SettingLook(string section) => section switch {
+        "Global Settings" => ("gear", "Settings"),
+        "Logging" => ("log", "Logs"),
+        "Locale" or "World" => ("globe", "Lookup"),
+        "Combat" or "Battle" or "Archmastery" => ("sword", "Bosses"),
+        "PvP" => ("swords", "Bosses"),
+        "Die Delete" => ("skull", "bad"),
+        "Character" => ("user", "Accounts"),
+        "Pets" or "Hatching" or PET_CASTING => ("paw", "Play"),
+        "Jewels" or "April Fools" => ("sparkle", "Customs"),
+        "Minigames" => ("dice", "Commands"),
+        "Randomizer" => ("dice", "Customs"),
+        "Seamstress" or "CrownShop" or "Bazaar" or "HallVendors" or "Bank" => ("bag", "Game Files"),
+        "Trainers" or "TrainerHall" => ("school", "Lookup"),
+        "Housing" => ("home", "Play"),
+        "Instance" => ("layers", "Customs"),
+        "ID Lookup" => ("search", "Lookup"),
+        "Database" => ("server", "Server"),
+        _ when section.Contains("Server", StringComparison.OrdinalIgnoreCase) => ("server", "Server"),
+        _ => ("sliders", "Tools"),
+    };
+
+    private static TextBlock Heading(string text) => new() { Text = text, FontSize = ManagerTheme.FONT_HEADING + 1, FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 0, 0, 4) };
 
     private static TextBlock Sub(string text) => new() { Text = text, Foreground = MUTED, TextWrapping = TextWrapping.Wrap };
 
-    private static Button Primary(string text) => new() { Content = text, Classes = { "accent" } };
+    // Buttons come in three kinds, the same on every tab: primary (the accent colour), plain and danger (red).
+    private static Button Primary(string text) => ManagerTheme.MakeButton(text, primary: true);
 
-    private static Button Plain(string text) => new() { Content = text };
+    private static Button Plain(string text) => ManagerTheme.MakeButton(text, primary: false);
 
     private static Button Danger(Button button) {
-        button.Foreground = BAD;
+        button.Classes.Add("danger");
 
         return button;
     }

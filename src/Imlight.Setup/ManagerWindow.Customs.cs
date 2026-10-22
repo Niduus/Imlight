@@ -41,7 +41,7 @@ namespace Imlight.Setup;
 internal sealed partial class ManagerWindow {
 
     private readonly Border _customsEditorHost = new();
-    private readonly StackPanel _customRows = new() { Spacing = 2 };
+    private readonly StackPanel _customRows = new() { Spacing = 6 };
     private readonly TextBlock _customCount = Sub("");
     private readonly TextBox _customBaseSearch = new() { Watermark = "Search the creature it is based on, such as Malistaire or 1336035" };
     private readonly StackPanel _customBaseResults = new() { Spacing = 2 };
@@ -79,23 +79,13 @@ internal sealed partial class ManagerWindow {
         // The custom's own fields now sit in the editor's Identity, Drops and Forms sections (ManagerWindow.CustomBosses.cs).
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    Heading("Custom mobs"),
-                    Sub("A custom is its own creature, made from a game creature: it has a number, a name, and stats, a deck, " +
-                        "cheats and drops of its own. Changing it never changes the game's creature or the Bosses tab. " +
-                        "Bring it into a battle with .joinme, the creature and its number, such as .joinme 1336035 1."),
-                    WithMargin(_customCount, new Thickness(0, 8, 0, 0)),
-                    WithMargin(_customRows, new Thickness(0, 6, 0, 0)),
-                    WithMargin(Heading("New custom"), new Thickness(0, 16, 0, 0)),
-                    Sub("1. Search the creature it is based on and press Use.  2. Give it a name.  3. Press Make the custom."),
-                    WithMargin(_customBaseSearch, new Thickness(0, 6, 0, 0)),
-                    WithMargin(_customBaseResults, new Thickness(0, 4, 0, 0)),
-                    WithMargin(StatRow("Based on", _customNewBaseText, ""), new Thickness(0, 8, 0, 0)),
-                    WithMargin(StatRow("Name", _customNewName, ""), new Thickness(0, 6, 0, 0)),
-                    WithMargin(Row(Action(Primary("Make the custom"), MakeCustomAsync)), new Thickness(0, 8, 0, 0)),
-                },
-            }),
+            Fold("paw", "Customs", "Custom mobs",
+                "A custom is its own creature, made from a game creature: it has a number, a name, and stats, a deck, " +
+                "cheats and drops of its own. Changing it never changes the game's creature or the Bosses tab. " +
+                "Bring it into a battle with .joinme, the creature and its number, such as .joinme 1336035 1.",
+                _customCount,
+                _customRows),
+            NewCustomWizard(),
             CustomAreasCard(),
             _customHeaderCard,
             _customsEditorHost);
@@ -111,6 +101,7 @@ internal sealed partial class ManagerWindow {
 
     private void RenderCustoms() {
         _customRows.Children.Clear();
+        UpdateCustomWizard();
         var customs = CustomMob.All(_manager.CustomsFolder);
         var rooms = SafeRooms();
         _customCount.Text = customs.Count == 0 ? "No customs yet. Make one below." : customs.Count == 1 ? "1 custom." : $"{customs.Count} customs.";
@@ -122,12 +113,7 @@ internal sealed partial class ManagerWindow {
                 usedIn.Count > 0 ? "boss of " + string.Join(", ", usedIn.Select(RoomName)) : "",
             }.Where(t => t.Length > 0);
             var editing = _editCustom?.Id == custom.Id && _bossEditor.Parent == _customsEditorHost;
-            _customRows.Children.Add(new Border {
-                Padding = new Thickness(4, 6),
-                BorderBrush = LINE,
-                BorderThickness = new Thickness(0, 0, 0, 1),
-                Background = editing ? LINE : null,
-                Child = new DockPanel {
+            _customRows.Children.Add(ManagerTheme.Item(highlighted: editing, content: new DockPanel {
                     Children = {
                         WithDock(Row(
                             Action(Primary("Edit"), () => {
@@ -144,6 +130,7 @@ internal sealed partial class ManagerWindow {
                                 return Task.CompletedTask;
                             }),
                             Danger(Action(Plain("Delete"), () => DeleteCustomAsync(custom)))), Dock.Right),
+                        WithDock(WithMargin(WithCenter(ManagerTheme.Tile("paw", ManagerTheme.Accent("Customs"), 32)), new Thickness(0, 0, 12, 0)), Dock.Left),
                         new StackPanel {
                             Spacing = 2, VerticalAlignment = VerticalAlignment.Center,
                             Children = {
@@ -152,8 +139,126 @@ internal sealed partial class ManagerWindow {
                             },
                         },
                     },
+                }));
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // New custom: a guided wizard (Justin, 2026-10-22: "make making a custom mob/boss easier to understand")
+    // ---------------------------------------------------------------------
+
+    private readonly Border[] _customStepMarks = new Border[4];
+    private readonly Border _customPickedPortrait = new() { VerticalAlignment = VerticalAlignment.Center };
+    private readonly TextBlock _customNumberText = new() { FontSize = ManagerTheme.FONT_HEADING, FontWeight = FontWeight.SemiBold };
+    private readonly SelectableTextBlock _customJoinPreview = new() { FontFamily = MONO, FontSize = ManagerTheme.FONT_HEADING, Foreground = GOOD };
+
+    private Control NewCustomWizard() {
+        _customNewName.TextChanged += (_, _) => UpdateCustomWizard();
+        _customNewName.HorizontalAlignment = HorizontalAlignment.Left;
+        _customNewBaseText.TextWrapping = TextWrapping.Wrap;
+        var picked = ManagerTheme.Item(new DockPanel {
+            Children = {
+                WithDock(WithMargin(_customPickedPortrait, new Thickness(0, 0, 12, 0)), Dock.Left),
+                WithCenter(_customNewBaseText),
+            },
+        });
+        var number = new StackPanel {
+            Spacing = 4,
+            Children = {
+                _customNumberText,
+                new DockPanel {
+                    Children = {
+                        WithDock(WithCenter(new TextBlock { Text = "Bring it into a battle with  ", Foreground = MUTED }), Dock.Left),
+                        WithCenter(_customJoinPreview),
+                    },
                 },
-            });
+            },
+        };
+        var steps = new StackPanel {
+            Spacing = 0,
+            Children = {
+                WizardStep(0, "Pick the creature it starts from",
+                    "Search a game creature by name or ID and press Use. Your custom starts as a copy of it: same look, stats and spells.",
+                    _customBaseSearch, _customBaseResults, picked),
+                WizardStep(1, "Give it a name",
+                    "The name players see in battle. Keep the creature's own name or type a new one, such as Malistaire the Unbroken.",
+                    _customNewName),
+                WizardStep(2, "It gets a number of its own",
+                    "Each custom has a number, so several customs can come from the same creature. Imlight picks the next free one.",
+                    number),
+                WizardStep(3, "Make it, then change what you like",
+                    "Its editor opens below: stats, deck, cheat blocks, drops and forms. Press Save changes there when you are done.",
+                    Row(Action(Primary("Make the custom"), MakeCustomAsync))),
+            },
+        };
+        UpdateCustomWizard();
+
+        return Fold("plus", "Customs", "Make a custom, step by step",
+            "A custom is your own copy of a game creature, with its own name, stats, deck, cheats and drops. The game's creature never changes.",
+            steps);
+    }
+
+    /// <summary>One step of the wizard: a numbered circle (a tick once it is done), what to do, and its boxes.</summary>
+    private Control WizardStep(int index, string title, string help, params Control[] body) {
+        var mark = new Border {
+            Width = 30, Height = 30, CornerRadius = new CornerRadius(15), BorderThickness = new Thickness(2), VerticalAlignment = VerticalAlignment.Top,
+        };
+        _customStepMarks[index] = mark;
+        var content = new StackPanel {
+            Spacing = 8,
+            Children = {
+                new TextBlock { Text = $"Step {index + 1}.  {title}", FontSize = ManagerTheme.FONT_HEADING + 1, FontWeight = FontWeight.SemiBold },
+                Sub(help),
+            },
+        };
+        content.Children.AddRange(body);
+
+        // A line runs down from each circle to the next, as in a list of steps.
+        var rail = new DockPanel {
+            Children = {
+                WithDock(mark, Dock.Top),
+                new Border { Width = 2, Background = index < 3 ? LINE : Brushes.Transparent, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 4, 0, 4) },
+            },
+        };
+
+        return new DockPanel {
+            Margin = new Thickness(0, 0, 0, index < 3 ? 6 : 0),
+            Children = { WithDock(rail, Dock.Left), WithMargin(content, new Thickness(14, 4, 0, index < 3 ? 14 : 0)) },
+        };
+    }
+
+    /// <summary>Ticks the steps that are done and shows the number and .joinme line the new custom will have.</summary>
+    private void UpdateCustomWizard() {
+        var next = 1;
+        try {
+            next = CustomMob.NextId(_manager.CustomsFolder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // The folder cannot be read; 1 is shown.
+        }
+
+        var picked = _customNewBase;
+        _customNumberText.Text = $"It will be custom {next}.";
+        _customJoinPreview.Text = picked is null ? $".joinme <creature ID> {next}" : $".joinme {picked.Id} {next}";
+        _customPickedPortrait.Child = picked is null
+            ? ManagerTheme.Tile("paw", ManagerTheme.Brush(ManagerTheme.MUTED, 90), 40)
+            : MobPortrait(picked.Name, picked.School, 44);
+        var done = new[] { picked is not null, picked is not null && (_customNewName.Text ?? "").Trim().Length > 0, picked is not null, false };
+        var current = Array.IndexOf(done, false);
+        for (var i = 0; i < _customStepMarks.Length; i++) {
+            if (_customStepMarks[i] is not { } mark) {
+                continue;
+            }
+
+            var color = done[i] ? ManagerTheme.GOOD : i == current ? ManagerTheme.AccentColor("Customs") : ManagerTheme.LINE_STRONG;
+            mark.BorderBrush = ManagerTheme.Brush(color);
+            mark.Background = done[i] || i == current ? ManagerTheme.Brush(color, (byte) (done[i] ? 255 : 60)) : null;
+            mark.Child = done[i]
+                ? new Border { Padding = new Thickness(5), Child = ManagerTheme.Icon("check", 16, Brushes.White) }
+                : new TextBlock {
+                    Text = (i + 1).ToString(CultureInfo.InvariantCulture), FontWeight = FontWeight.Bold,
+                    Foreground = i == current ? Brushes.White : MUTED, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+                };
         }
     }
 
@@ -176,9 +281,9 @@ internal sealed partial class ManagerWindow {
         }
 
         foreach (var creature in found) {
-            _customBaseResults.Children.Add(new DockPanel {
+            _customBaseResults.Children.Add(ManagerTheme.Item(highlighted: _customNewBase?.Id == creature.Id, content: new DockPanel {
                 Children = {
-                    WithDock(Action(Plain("Use"), () => {
+                    WithDock(WithCenter(Action(Plain("Use"), () => {
                         _customNewBase = creature;
                         _customNewBaseText.Text = $"{creature.Name} (ID {creature.Id}, level {creature.Level}, {creature.Health:N0} health)";
                         _customNewBaseText.ClearValue(TextBlock.ForegroundProperty);
@@ -186,16 +291,26 @@ internal sealed partial class ManagerWindow {
                             _customNewName.Text = creature.Name;
                         }
 
+                        UpdateCustomWizard();
+                        RenderCustomBaseResults();
+
                         return Task.CompletedTask;
-                    }), Dock.Right),
-                    WithCenter(new TextBlock {
-                        Text = string.Join("  ·  ", new[] {
-                            creature.Name, $"ID {creature.Id}", creature.Level > 0 ? $"level {creature.Level}" : "",
-                            $"{creature.Health:N0} health", creature.IsBoss ? "boss" : "",
-                        }.Where(t => t.Length > 0)),
+                    })), Dock.Right),
+                    WithDock(WithMargin(MobPortrait(creature.Name, creature.School, 36), new Thickness(0, 0, 12, 0)), Dock.Left),
+                    WithCenter(new StackPanel {
+                        Children = {
+                            new TextBlock { Text = creature.Name, FontWeight = FontWeight.SemiBold },
+                            new TextBlock {
+                                Foreground = MUTED,
+                                Text = string.Join("  ·  ", new[] {
+                                    $"ID {creature.Id}", creature.Level > 0 ? $"level {creature.Level}" : "", creature.School,
+                                    $"{creature.Health:N0} health", creature.IsBoss ? "boss" : "",
+                                }.Where(t => t.Length > 0)),
+                            },
+                        },
                     }),
                 },
-            });
+            }));
         }
 
         if (total > found.Count) {
@@ -217,6 +332,8 @@ internal sealed partial class ManagerWindow {
         _customBaseSearch.Text = "";
         _customBaseResults.Children.Clear();
         OpenCustom(custom);
+        UpdateCustomWizard();
+        Dispatcher.UIThread.Post(() => _customsEditorHost.BringIntoView(), DispatcherPriority.Background);
         Say($"Made custom {custom.Id}. It fights as the game's {creature.Name} until you change it below. Bring it in with {custom.JoinMe}.");
 
         return Task.CompletedTask;

@@ -31,12 +31,13 @@ internal static class BlockColors {
 
     private static SolidColorBrush Brush(uint argb) => new(Color.FromUInt32(argb));
 
-    internal static readonly IBrush WHEN = Brush(0xFFE0A323);
-    internal static readonly IBrush WHEN_EDGE = Brush(0xFFB37F12);
-    internal static readonly IBrush IF = Brush(0xFF3A8FD9);
-    internal static readonly IBrush IF_EDGE = Brush(0xFF2468A6);
-    internal static readonly IBrush DO = Brush(0xFF8B5CD6);
-    internal static readonly IBrush DO_EDGE = Brush(0xFF6538A8);
+    // The colours themselves are the Manager's theme (ManagerTheme.cs), so the blocks and the rest of the app match.
+    internal static readonly IBrush WHEN = ManagerTheme.Brush(ManagerTheme.BLOCK_WHEN);
+    internal static readonly IBrush WHEN_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_WHEN_EDGE);
+    internal static readonly IBrush IF = ManagerTheme.Brush(ManagerTheme.BLOCK_IF);
+    internal static readonly IBrush IF_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_IF_EDGE);
+    internal static readonly IBrush DO = ManagerTheme.Brush(ManagerTheme.BLOCK_DO);
+    internal static readonly IBrush DO_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_DO_EDGE);
 
     /// <summary>Text on a block.</summary>
     internal static readonly IBrush TEXT = Brushes.White;
@@ -58,15 +59,7 @@ internal static class BlockColors {
     /// <summary>The word a kind is shown with in a palette.</summary>
     internal static string Word(BlockKind kind) => kind switch { BlockKind.When => "When…", BlockKind.If => "If…", _ => "Do…" };
 
-    /// <summary>The section colours of an editor page (its icon tiles), by name.</summary>
-    internal static IBrush Accent(string name) => name switch {
-        "identity" => Brush(0xFF3FA7A0),
-        "stats" => Brush(0xFFD9653B),
-        "deck" => Brush(0xFF3A8FD9),
-        "drops" => Brush(0xFFC9A227),
-        "forms" => Brush(0xFF9A5CC9),
-        "cheats" => Brush(0xFFE0A323),
-        _ => Brush(0xFF6C7A8C),
-    };
+    /// <summary>The section colours of an editor page (its icon tiles), by name, from the theme.</summary>
+    internal static IBrush Accent(string name) => ManagerTheme.Accent(name);
 
 }

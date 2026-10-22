@@ -124,19 +124,14 @@ internal sealed partial class ManagerWindow {
         BuildBossSections(stats);
 
         return Page(
-            Card(new StackPanel {
-                Children = {
-                    Heading("Bosses"),
-                    Sub("Change a boss's health, stats, spells and cheats. Search for it, click it, change what you want and press Save changes. " +
-                        "Turn off Bosses only to find any creature that fights."),
-                    new DockPanel {
-                        Margin = new Thickness(0, 10, 0, 6),
-                        Children = { WithDock(WithCenter(_bossesOnly), Dock.Right), _bossSearch },
-                    },
-                    _bossCount,
-                    WithMargin(_bossResults, new Thickness(0, 6, 0, 0)),
+            Fold("search", "Bosses", "Find a boss",
+                "Search for it, click it, change what you want and press Save changes. " +
+                "Turn off Bosses only to find any creature that fights.",
+                new DockPanel {
+                    Children = { WithDock(WithCenter(_bossesOnly), Dock.Right), _bossSearch },
                 },
-            }),
+                _bossCount,
+                _bossResults),
             _bossesEditorHost);
     }
 

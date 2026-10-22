@@ -113,20 +113,15 @@ internal sealed partial class ManagerWindow {
             },
         };
 
-        return Card(new StackPanel {
-            Spacing = 4,
-            Children = {
-                SectionHeader(Tile(Glyph(AreaIcon.Zone, ZONE), ZONE), "Custom areas", null, null),
-                Sub("Places the server changes or adds to the game, one file each (spiraldb-extra/ZoneObjects): objects and " +
-                    "sigils, creatures, battles with helpers, who the boss of a room is, where leaving goes, and more. Open an " +
-                    "area, then open any of its sections; every box says what it does. Press Save area when you are done. " +
-                    "Nothing in the game files is ever changed, and updates keep the areas you saved here."),
-                WithMargin(Sub("Each section says when its changes count (point at the tag for more):"), new Thickness(0, 6, 0, 2)),
-                legend,
-                WithMargin(NewAreaPanel(), new Thickness(0, 10, 0, 0)),
-                WithMargin(_areaRows, new Thickness(0, 12, 0, 0)),
-            },
-        });
+        return Fold("pin", "zone", "Custom areas",
+            "Places the server changes or adds to the game, one file each (spiraldb-extra/ZoneObjects): objects and " +
+            "sigils, creatures, battles with helpers, who the boss of a room is, where leaving goes, and more. Open an " +
+            "area, then open any of its sections; every box says what it does. Press Save area when you are done. " +
+            "Nothing in the game files is ever changed, and updates keep the areas you saved here.",
+            Sub("Each section says when its changes count (point at the tag for more):"),
+            legend,
+            NewAreaPanel(),
+            _areaRows);
     }
 
     private Control NewAreaPanel() {

@@ -42,14 +42,17 @@ internal sealed class Section : Border {
         Title = title;
         Icon = icon;
         Accent = accent;
-        Background = new SolidColorBrush(Color.FromArgb(20, 128, 128, 128));
-        BorderBrush = new SolidColorBrush(Color.FromArgb(40, 128, 128, 128));
+        // The look is the Manager's theme (ManagerTheme.cs): every tab's sections are cards like this one.
+        Background = ManagerTheme.SURFACE_BRUSH;
+        BorderBrush = ManagerTheme.LINE_BRUSH;
         BorderThickness = new Thickness(1);
-        CornerRadius = new CornerRadius(12);
+        CornerRadius = new CornerRadius(ManagerTheme.RADIUS);
+        ClipToBounds = true;
         Padding = new Thickness(0);
-        _body.Padding = new Thickness(18, 4, 18, 18);
+        // A section with nothing under its header (just a title and its line) needs no room below.
+        _body.Padding = content is Panel { Children.Count: 0 } ? new Thickness(0, 0, 0, 2) : new Thickness(18, 4, 18, 18);
         _body.Child = content;
-        _chevron = BlockIcons.Icon("down", 16, new SolidColorBrush(Color.FromArgb(170, 200, 200, 200)));
+        _chevron = BlockIcons.Icon("down", 16, ManagerTheme.MUTED_BRUSH);
         var header = new Border {
             Background = Brushes.Transparent, Padding = new Thickness(14, 12), Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand),
             Child = new DockPanel {
@@ -59,8 +62,8 @@ internal sealed class Section : Border {
                     new StackPanel {
                         VerticalAlignment = VerticalAlignment.Center, Spacing = 2,
                         Children = {
-                            new TextBlock { Text = title, FontSize = 17, FontWeight = FontWeight.SemiBold },
-                            new TextBlock { Text = help, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.FromArgb(170, 160, 160, 160)) },
+                            new TextBlock { Text = title, FontSize = ManagerTheme.FONT_SECTION, FontWeight = FontWeight.SemiBold },
+                            new TextBlock { Text = help, TextWrapping = TextWrapping.Wrap, Foreground = ManagerTheme.MUTED_BRUSH, IsVisible = help.Length > 0 },
                         },
                     },
                 },
@@ -68,7 +71,7 @@ internal sealed class Section : Border {
         };
         ToolTip.SetTip(header, "Click to fold this section shut or open it");
         header.PointerReleased += (_, _) => SetOpen(!_body.IsVisible);
-        var stripe = new Border { Height = 3, CornerRadius = new CornerRadius(12, 12, 0, 0), Background = accent, Opacity = 0.85 };
+        var stripe = new Border { Height = 3, Background = accent, Opacity = 0.9 };
         Child = new StackPanel { Children = { stripe, header, _body } };
     }
 
@@ -86,7 +89,7 @@ internal sealed class Section : Border {
     /// <summary>A short note in the header, such as "Changed" or "3 cheats".</summary>
     internal void SetBadge(string text, IBrush? brush = null) {
         _badge.Text = text;
-        _badge.Foreground = brush ?? new SolidColorBrush(Color.FromArgb(170, 160, 160, 160));
+        _badge.Foreground = brush ?? ManagerTheme.MUTED_BRUSH;
     }
 
     /// <summary>A row of chips, one for each section, that open it and scroll to it.</summary>
