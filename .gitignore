@@ -364,3 +364,6 @@ spiraldb-cache/
 
 # Cache file created by Imlight
 cache
+
+# Local MCP client settings (may hold the agent bridge token)
+.mcp.json

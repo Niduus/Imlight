@@ -47,8 +47,14 @@ function readIni() {
 
 function bridgeConfig() {
   const ini = readIni()["Agent Bridge"] || {};
+  const url = process.env.IMLIGHT_BRIDGE_URL || `http://127.0.0.1:${ini.Port || 12400}`;
+  // The token goes over plain HTTP, so only this PC may be the bridge.
+  const host = new URL(url).hostname;
+  if (!["127.0.0.1", "localhost", "[::1]", "::1"].includes(host)) {
+    throw new Error(`IMLIGHT_BRIDGE_URL must point at this PC (127.0.0.1 or localhost), not ${host}.`);
+  }
   return {
-    url: process.env.IMLIGHT_BRIDGE_URL || `http://127.0.0.1:${ini.Port || 12400}`,
+    url,
     token: process.env.IMLIGHT_BRIDGE_TOKEN || ini.Token || "",
   };
 }

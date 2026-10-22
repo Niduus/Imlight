@@ -116,7 +116,10 @@ public static class AgentBridge {
             return;
         }
 
-        s_token = ConfigurationManager.GetValue("Agent Bridge.Token", "");
+        // The IMLIGHT_BRIDGE_TOKEN environment variable wins, so the token never has to sit in a file that may be shared.
+        s_token = Environment.GetEnvironmentVariable("IMLIGHT_BRIDGE_TOKEN") is { Length: > 0 } fromEnvironment
+            ? fromEnvironment
+            : ConfigurationManager.GetValue("Agent Bridge.Token", "");
         if (string.IsNullOrWhiteSpace(s_token)) {
             Logger.Warning("The agent bridge is enabled but has no Token, so it stays off.");
 
@@ -225,6 +228,11 @@ public static class AgentBridge {
                 _ = Task.Run(async () => {
                     await Task.Delay(500);
                     Logger.Information("The agent bridge was asked to shut the server down.");
+                    // Let the actors stop (and save) first, but never wait on them for more than 10 seconds.
+                    if (Actors is { } actors) {
+                        await Task.WhenAny(actors.Terminate(), Task.Delay(10000));
+                    }
+
                     Environment.Exit(0);
                 });
 
