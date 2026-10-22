@@ -115,6 +115,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _spellsHidden.IsCheckedChanged += (_, _) => RenderSpellsTab();
+        var hideBroken = HideBrokenBox(RenderSpellsTab);
         _spellsGrid.ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel());
         _spellsGrid.ItemTemplate = new FuncDataTemplate<SpellCard[]>((row, _) => row is null ? new Panel() : SpellsRow(row));
         _spellsScroll.Content = _spellsGrid;
@@ -138,6 +139,7 @@ internal sealed partial class ManagerWindow {
                 Labelled("Cards", _spellsKind),
                 Labelled("Sort by", _spellsSort),
                 WithMargin(_spellsHidden, new Thickness(4, 18, 0, 6)),
+                WithMargin(hideBroken, new Thickness(14, 18, 0, 6)),
             },
         };
         var details = new ScrollViewer {
@@ -157,7 +159,8 @@ internal sealed partial class ManagerWindow {
                 WithDock(Fold("cards", "Spells", "Find a card",
                     "Search or filter, then click a card to see its stats and ID.",
                     WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
-                        "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies."),
+                        "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies. " +
+                        "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which)."),
                     filters, _spellsCount), Dock.Top),
                 WithMargin(new DockPanel {
                     Children = { WithDock(details, Dock.Right), _spellsScroll },
@@ -245,7 +248,7 @@ internal sealed partial class ManagerWindow {
         var hidden = _spellsHidden.IsChecked == true;
         var id = uint.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var number) ? number : (uint?) null;
 
-        var found = book.Spells.Where(s =>
+        var matched = book.Spells.Where(s =>
             (id is not null ? s.Id == id || words.All(s.Haystack.Contains) : words.All(s.Haystack.Contains))
             // A spell asked for by its ID shows even when it is hidden.
             && (hidden || !s.Hidden || s.Id == id)
@@ -258,7 +261,15 @@ internal sealed partial class ManagerWindow {
                 3 => s.Item,
                 4 => s.Source == "Pet",
                 _ => true,
-            });
+            }).ToList();
+
+        // Broken cards are left out unless asked for by their ID; how many is said in the count.
+        var brokenHidden = 0;
+        IEnumerable<SpellCard> found = matched;
+        if (HideBroken) {
+            brokenHidden = matched.Count(s => s.Broken && s.Id != id);
+            found = matched.Where(s => !s.Broken || s.Id == id);
+        }
 
         IOrderedEnumerable<SpellCard> sorted = _spellsSort.SelectedIndex switch {
             1 => found.OrderBy(s => s.PipSort),
@@ -278,9 +289,11 @@ internal sealed partial class ManagerWindow {
             .ThenBy(s => s.PipSort).ThenBy(s => s.Id)];
 
         var total = book.Spells.Count;
-        _spellsCount.Text = _spellsShown.Count == 0
-            ? "No spell card matches. Clear the search or pick \"All\" in the filters."
-            : $"{_spellsShown.Count:N0} of {total:N0} spell cards. Click one to see it on the right.";
+        _spellsCount.Text = (_spellsShown.Count == 0
+            ? brokenHidden > 0
+                ? "No working spell card matches. Clear \"Hide broken cards\" to see the broken ones."
+                : "No spell card matches. Clear the search or pick \"All\" in the filters."
+            : $"{_spellsShown.Count:N0} of {total:N0} spell cards. Click one to see it on the right.") + BrokenHiddenNote(brokenHidden);
         LayOutSpells();
         _spellsScroll.Offset = new Vector(0, 0);
         if (_spellsPicked is null && _spellsShown.Count > 0 && query.Length > 0) {
@@ -337,6 +350,16 @@ internal sealed partial class ManagerWindow {
                 },
             },
         };
+        // The BROKEN or PARTLY mark sits on the line under the card, next to its ID, so it covers none of the card.
+        var caption = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, HorizontalAlignment = HorizontalAlignment.Center };
+        caption.Children.Add(new TextBlock {
+            Text = card.Hidden ? $"ID {card.Id}  ·  hidden" : $"ID {card.Id}", FontSize = 11, Foreground = MUTED,
+            VerticalAlignment = VerticalAlignment.Center,
+        });
+        if (SpellStatusBadge(card, 10) is { } badge) {
+            caption.Children.Add(badge);
+        }
+
         var tile = new Border {
             Padding = new Thickness(3), CornerRadius = new CornerRadius(8), BorderThickness = new Thickness(2),
             BorderBrush = card == _spellsPicked ? SPELL_PICKED : Brushes.Transparent,
@@ -345,14 +368,13 @@ internal sealed partial class ManagerWindow {
                 Spacing = 2,
                 Children = {
                     picture,
-                    new TextBlock {
-                        Text = card.Hidden ? $"ID {card.Id}  ·  hidden" : $"ID {card.Id}", FontSize = 11, Foreground = MUTED,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                    },
+                    caption,
                 },
             },
         };
-        ToolTip.SetTip(tile, $"{card.Name}  ·  {card.School}  ·  {card.Cost}  ·  {card.Accuracy}%\n{card.Short}");
+        var does = card.Blank && card.Explained.Length > 0 ? $"{card.Explained} {DESCRIBED_BY_IMLIGHT}" : card.Short;
+        var status = card.Support.Status == SpellStatus.Works ? "" : $"\n{(card.Broken ? "BROKEN" : "PARTLY")}: {card.Support.Summary}";
+        ToolTip.SetTip(tile, $"{card.Name}  ·  {card.School}  ·  {card.Cost}  ·  {card.Accuracy}%\n{does}{status}");
         if (card == _spellsPicked) {
             _spellsPickedTile = tile;
         }
@@ -402,6 +424,10 @@ internal sealed partial class ManagerWindow {
 
         var id = card.Id.ToString(CultureInfo.InvariantCulture);
         _spellsDetails.Children.Add(new SelectableTextBlock { Text = card.Name, FontSize = 17, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap });
+        if (SpellStatusLine(card) is { } statusLine) {
+            _spellsDetails.Children.Add(statusLine);
+        }
+
         _spellsDetails.Children.Add(new DockPanel {
             Children = {
                 WithDock(WithCenter(Action(Plain("Copy"), () => CopyAsync(id))), Dock.Right),
@@ -432,8 +458,17 @@ internal sealed partial class ManagerWindow {
             }
         }
 
+        void FactWith(string label, Control? value) {
+            if (value is not null) {
+                _spellsDetails.Children.Add(new DockPanel {
+                    Children = { WithDock(new TextBlock { Text = label, Width = 104, Foreground = MUTED }, Dock.Left), value },
+                });
+            }
+        }
+
         string YesNo(bool value) => value ? "Yes" : "No";
-        Fact("Does", card.Short);
+        FactWith("Does", card.Does.Length > 0 ? SpellDoesText(card) : null);
+        FactWith("In numbers", SpellNumbersText(card));
         Fact("School", card.School);
         Fact("Pip cost", card.Cost);
         Fact("Accuracy", $"{card.Accuracy}%");

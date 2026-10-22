@@ -117,6 +117,26 @@ internal sealed class SpellCard {
 
     internal string Haystack { get; set; } = "";
 
+    /// <summary>Whether Imlight's server does the spell (<see cref="SpellSupport"/>).</summary>
+    internal SpellSupportResult Support { get; set; } = SpellSupportResult.Unknown;
+
+    internal bool Broken => Support.Status == SpellStatus.Broken;
+
+    internal bool Partly => Support.Status == SpellStatus.Partly;
+
+    /// <summary>What the spell does, written by Imlight from its effects (<see cref="SpellSupport.Describe"/>).</summary>
+    internal string Explained { get; set; } = "";
+
+    /// <summary>The game's card text is blank, or only a placeholder or an unread text key.</summary>
+    internal bool Blank { get; set; }
+
+    /// <summary>What the card does: the game's own words, or Imlight's when the game's are blank.</summary>
+    internal string Does => Blank && Explained.Length > 0 ? Explained : Short;
+
+    /// <summary>Imlight's words shown under a short game text that gives no numbers, or "".</summary>
+    internal string Numbers => !Blank && Explained.Length > 0 && !Short.Any(char.IsDigit) && SpellBook.HasAmounts(Explained)
+        ? Explained : "";
+
     internal string Command => $".sb learn {Id}";
 
     /// <summary>What it costs, such as "3 pips", "X pips" or "4 pips + 2 shadow".</summary>
@@ -294,8 +314,18 @@ internal sealed partial class SpellBook {
         };
         card.Hidden = IsHidden(card, Text(displayName).Length > 0);
         card.Short = Plain(card);
-        card.Haystack = $"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Short} {(card.Treasure ? "treasure tc" : "")}"
-            .ToLowerInvariant();
+        card.Blank = IsBlank(card.Short);
+        try {
+            card.Support = SpellSupport.Classify(spell, card.Code, file);
+            card.Explained = SpellSupport.Describe(spell, card.School);
+        }
+        catch (Exception) {
+            // A spell the reader can't make sense of keeps "works" and its own text.
+        }
+
+        var status = card.Broken ? "broken" : card.Partly ? "partly" : "";
+        card.Haystack = ($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Short} {(card.Blank ? card.Explained : "")} " +
+                         $"{(card.Treasure ? "treasure tc" : "")} {status}").ToLowerInvariant();
 
         return card;
     }
@@ -310,6 +340,18 @@ internal sealed partial class SpellBook {
     private static bool IsHidden(SpellCard card, bool named)
         => !named || card.Description.Length == 0 || HiddenWords().IsMatch(card.Code) || HiddenWords().IsMatch(card.File)
            || card.School.Length == 0;
+
+    [GeneratedRegex(@"(?i)^(\?+|-+|\.+|x+|tbd|todo|none|n/?a|placeholder|description|desc|\w+_\d+)$")]
+    private static partial Regex PlaceholderText();
+
+    [GeneratedRegex(@"\d+(-\d+)?%|\d+(-\d+)? (\w+ )?(damage|health)(?![-\w])")]
+    private static partial Regex AmountWords();
+
+    /// <summary>Whether words give a spell's numbers: a percent, damage or health.</summary>
+    internal static bool HasAmounts(string text) => AmountWords().IsMatch(text);
+
+    /// <summary>The card's text is blank, only a placeholder, or a text key the game files had no words for.</summary>
+    private static bool IsBlank(string text) => string.IsNullOrWhiteSpace(text) || PlaceholderText().IsMatch(text.Trim());
 
     private static bool Summons(IEnumerable<SpellEffect>? effects) {
         bool Any(SpellEffect? effect, int depth) {
@@ -384,10 +426,23 @@ internal sealed partial class SpellBook {
     /// <summary>
     /// Spells holding every word of the query, best matches first: the exact name, then names that start with it.
     /// </summary>
-    internal List<SpellCard> Search(string query, int max, out int total) {
+    internal List<SpellCard> Search(string query, int max, out int total) => Search(query, max, hideBroken: false, out total, out _);
+
+    /// <summary>
+    /// As <see cref="Search(string, int, out int)"/>; with <paramref name="hideBroken"/>, cards the server can't do are
+    /// left out (and counted in <paramref name="brokenHidden"/>) unless asked for by their ID.
+    /// </summary>
+    internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden) {
         var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var exact = query.Trim();
         var matches = Spells.Where(s => words.All(s.Haystack.Contains)).ToList();
+        brokenHidden = 0;
+        if (hideBroken) {
+            var before = matches.Count;
+            matches = [.. matches.Where(s => !s.Broken || s.Id.ToString(CultureInfo.InvariantCulture) == exact)];
+            brokenHidden = before - matches.Count;
+        }
+
         total = matches.Count;
 
         return [.. matches

@@ -770,12 +770,19 @@ internal static class CardPainter {
 
         // Small pictures in the description are this much of a line's height.
         private const float ICON = 0.86f;
+        private const int GENERATED_ON_CARD = 120;
+        private const uint GENERATED_COLOR = 0xFF6E5A40;
 
         private sealed record Piece(string Text, uint Color, GameImage? Icon, bool Space, bool Break, float Aspect);
 
         private void Description(GlyphFont font) {
             var pieces = new List<Piece>();
-            foreach (var part in book.Describe(card)) {
+            // A card with no game text shows Imlight's own words (when short enough to read on the card), in a faded
+            // brown so they don't pass for the game's.
+            var parts = card.Blank && card.Explained.Length is > 0 and <= GENERATED_ON_CARD
+                ? [new DescriptionPart(card.Explained.TrimEnd('.'), GENERATED_COLOR)]
+                : book.Describe(card);
+            foreach (var part in parts) {
                 var color = part.Color == 0xFF000000 ? DESCRIPTION_COLOR : part.Color;
                 if (part.Break) {
                     pieces.Add(new Piece("", 0, null, false, true, 1));

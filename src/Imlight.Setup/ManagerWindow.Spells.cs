@@ -77,7 +77,12 @@ internal sealed partial class ManagerWindow {
             ColumnDefinitions = new ColumnDefinitions("*,Auto"),
             IsVisible = false,
             Children = {
-                _spellResults,
+                new DockPanel {
+                    Children = {
+                        WithDock(WithMargin(HideBrokenBox(RenderSpells), new Thickness(4, 0, 0, 6)), Dock.Top),
+                        _spellResults,
+                    },
+                },
                 WithColumn(new ScrollViewer {
                     Margin = new Thickness(16, 0, 0, 0),
                     Width = _spellImage.Width + 36,
@@ -158,7 +163,7 @@ internal sealed partial class ManagerWindow {
         }
 
         var query = _lookupSearch.Text ?? "";
-        var results = _spellBook.Search(query, SPELL_MAX, out var total);
+        var results = _spellBook.Search(query, SPELL_MAX, HideBroken, out var total, out var brokenHidden);
         var selected = _spellResults.SelectedItem as SpellCard;
         _spellResults.ItemsSource = results;
         if (selected is not null && results.Contains(selected)) {
@@ -168,7 +173,7 @@ internal sealed partial class ManagerWindow {
         _lookupCount.Text = (total == 0 ? "Nothing matches." : total > SPELL_MAX
                 ? $"{total:N0} spells match. Showing the best {SPELL_MAX}; add words to narrow it down."
                 : total == 1 ? "1 spell matches." : $"{total:N0} spells match.")
-            + " Point at a spell to see its card; click one to keep it showing.";
+            + " Point at a spell to see its card; click one to keep it showing." + BrokenHiddenNote(brokenHidden);
         ShowSpell(_spellResults.SelectedItem as SpellCard);
     }
 
@@ -181,6 +186,23 @@ internal sealed partial class ManagerWindow {
         if (spell.Treasure) {
             facts.Add("Treasure card");
         }
+
+        var title = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 10,
+            Children = { new TextBlock { Text = spell.Name, FontWeight = FontWeight.SemiBold, FontSize = 15 } },
+        };
+        if (SpellStatusBadge(spell) is { } badge) {
+            title.Children.Add(badge);
+        }
+
+        title.Children.Add(WithCenter(new TextBlock { Text = string.Join("  ·  ", facts), Foreground = MUTED }));
+        var generated = spell.Blank && spell.Explained.Length > 0;
+        var does = spell.Does.Length > 0
+            ? new TextBlock {
+                Text = generated ? $"{spell.Explained} {DESCRIBED_BY_IMLIGHT}" : spell.Short, TextWrapping = TextWrapping.Wrap, MaxLines = 2,
+                TextTrimming = TextTrimming.CharacterEllipsis, FontStyle = generated ? FontStyle.Italic : FontStyle.Normal,
+            }
+            : new TextBlock { Text = "No card text in the game files.", Foreground = MUTED };
 
         var row = new Border {
             Padding = new Thickness(4, 6),
@@ -196,16 +218,8 @@ internal sealed partial class ManagerWindow {
                     new StackPanel {
                         Spacing = 2,
                         Children = {
-                            new StackPanel {
-                                Orientation = Orientation.Horizontal, Spacing = 10,
-                                Children = {
-                                    new TextBlock { Text = spell.Name, FontWeight = FontWeight.SemiBold, FontSize = 15 },
-                                    WithCenter(new TextBlock { Text = string.Join("  ·  ", facts), Foreground = MUTED }),
-                                },
-                            },
-                            spell.Short.Length > 0
-                                ? new TextBlock { Text = spell.Short, TextWrapping = TextWrapping.Wrap, MaxLines = 2, TextTrimming = TextTrimming.CharacterEllipsis }
-                                : new TextBlock { Text = "No card text in the game files.", Foreground = MUTED },
+                            title,
+                            does,
                             new TextBlock { Text = $"ID {spell.Id}  ·  {spell.Code}", Foreground = MUTED, FontSize = 12 },
                         },
                     },
@@ -299,6 +313,10 @@ internal sealed partial class ManagerWindow {
         }
 
         _spellDetails.Children.Add(new SelectableTextBlock { Text = spell.Name, FontSize = 17, FontWeight = FontWeight.SemiBold });
+        if (SpellStatusLine(spell) is { } statusLine) {
+            _spellDetails.Children.Add(statusLine);
+        }
+
         void Fact(string label, string value) {
             if (value.Length > 0) {
                 _spellDetails.Children.Add(new DockPanel {
@@ -332,7 +350,16 @@ internal sealed partial class ManagerWindow {
         Fact("Accuracy", $"{spell.Accuracy}%");
         Fact("Type", spell.Type.Replace('_', ' '));
         Fact("Kind", spell.Treasure ? "Treasure card" : "Normal spell");
-        Fact("Does", spell.Short);
+        void FactWith(string label, Control? value) {
+            if (value is not null) {
+                _spellDetails.Children.Add(new DockPanel {
+                    Children = { WithDock(new TextBlock { Text = label, Width = 110, Foreground = MUTED }, Dock.Left), value },
+                });
+            }
+        }
+
+        FactWith("Does", spell.Does.Length > 0 ? SpellDoesText(spell) : null);
+        FactWith("In numbers", SpellNumbersText(spell));
         Fact("Level", spell.Level > 0 ? $"{spell.Level} or higher" : "");
         Fact("Game's name", spell.Code);
     }

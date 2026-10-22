@@ -384,6 +384,31 @@ internal sealed partial class ServerManager(string installFolder) {
     private const string AUTO_UPDATE_OFF_FILE = "auto-update-off.txt";
 
     /// <summary>
+    /// Whether the Spells and Lookup tabs leave out the cards the server can't do ("Hide broken cards"). On unless the
+    /// marker file says off.
+    /// </summary>
+    internal bool HideBrokenSpells {
+        get => !File.Exists(Path.Combine(InstallFolder, SHOW_BROKEN_SPELLS_FILE));
+        set {
+            var path = Path.Combine(InstallFolder, SHOW_BROKEN_SPELLS_FILE);
+            try {
+                if (value) {
+                    File.Delete(path);
+                }
+                else {
+                    File.WriteAllText(path, "The app's spell lists show cards the server can't do while this file exists. " +
+                        "The \"Hide broken cards\" box on the Spells tab changes it.");
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // Only remembered for next time; the box still works for now.
+            }
+        }
+    }
+
+    private const string SHOW_BROKEN_SPELLS_FILE = "show-broken-spells.txt";
+
+    /// <summary>
     /// Whether a downloaded and built update installs straight away, without asking to restart first. Off unless the
     /// marker file says on.
     /// </summary>
