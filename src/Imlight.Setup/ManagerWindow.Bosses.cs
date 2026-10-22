@@ -121,64 +121,7 @@ internal sealed partial class ManagerWindow {
         stats.Children.Add(StatRow("Can be beguiled", _bossBeguilable,
             "No: a beguile spell cannot take it over. The server has no beguile spells yet, so this counts once it does."));
 
-        _bossEditor.Children.Add(Card(new StackPanel {
-            Spacing = 4,
-            Children = {
-                _bossTitle,
-                _bossGame,
-                _bossGameStats,
-                _bossChangedNote,
-            },
-        }));
-        _bossEditor.Children.Add(Card(new StackPanel {
-            Children = {
-                Heading("Stats by school"),
-                Sub("Leave a box empty to keep what the game gives; the grey number in it is what the boss fights with then. " +
-                    "A number under All counts for every school you leave empty in that row."),
-                WithMargin(SchoolGrid(), new Thickness(0, 10, 0, 0)),
-            },
-        }));
-        _bossEditor.Children.Add(Card(new StackPanel {
-            Children = {
-                Heading("Other stats"),
-                Sub("Leave a box empty to keep what the game gives."),
-                WithMargin(stats, new Thickness(0, 10, 0, 0)),
-            },
-        }));
-        _bossEditor.Children.Add(Card(new StackPanel {
-            Children = {
-                new DockPanel {
-                    Children = {
-                        WithDock(Action(Plain("Put back the game's deck"), () => {
-                            if (_boss is not null && _bossCatalog is not null) {
-                                _bossDeck = _bossCatalog.GameDeck(_boss);
-                                _bossDeckChanged = true;
-                                RenderBossDeck();
-                            }
-
-                            return Task.CompletedTask;
-                        }), Dock.Right),
-                        Heading("Deck"),
-                    },
-                },
-                Sub("The spells it can cast. Copies is how many times it can use a spell in one battle; " +
-                    "0 means it never runs out, like the game's own creatures."),
-                WithMargin(_bossDeckNote, new Thickness(0, 6, 0, 0)),
-                WithMargin(_bossDeckRows, new Thickness(0, 8, 0, 0)),
-                WithMargin(Heading("Add a spell"), new Thickness(0, 14, 0, 0)),
-                _bossSpellSearch,
-                WithMargin(_bossSpellResults, new Thickness(0, 6, 0, 0)),
-            },
-        }));
-        _bossEditor.Children.Add(CheatsCard());
-        _bossEditor.Children.Add(Card(new StackPanel {
-            Children = {
-                Row(Action(Primary("Save changes"), SaveBossAsync),
-                    Danger(Action(Plain("Put back the game's values"), ResetBossAsync))),
-                WithMargin(Sub("Saved changes count from the boss's next battle. There is no need to restart the server; " +
-                    "a battle that is already going keeps the old values. The game files are never changed."), new Thickness(0, 8, 0, 0)),
-            },
-        }));
+        BuildBossSections(stats);
 
         return Page(
             Card(new StackPanel {
@@ -414,6 +357,7 @@ internal sealed partial class ManagerWindow {
         _bossSpellResults.Children.Clear();
         RenderBossDeck();
         LoadBossCheats(boss, changes);
+        UpdateBossSections();
         _bossEditor.IsVisible = true;
     }
 
@@ -449,8 +393,9 @@ internal sealed partial class ManagerWindow {
                         new StackPanel {
                             Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center,
                             Children = {
-                                new TextBlock { Text = card.Name, FontWeight = FontWeight.SemiBold },
-                                new TextBlock { Text = string.Join("  ·  ", new[] { card.School, $"ID {card.SpellId}" }.Where(t => t.Length > 0)), Foreground = MUTED },
+                                SpellThumb(card.SpellId, card.School, 30),
+                                WithCenter(new TextBlock { Text = card.Name, FontWeight = FontWeight.SemiBold }),
+                                WithCenter(new TextBlock { Text = string.Join("  ·  ", new[] { card.School, $"ID {card.SpellId}" }.Where(t => t.Length > 0)), Foreground = MUTED }),
                             },
                         },
                     },

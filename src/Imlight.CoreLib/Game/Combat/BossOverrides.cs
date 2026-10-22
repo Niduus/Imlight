@@ -336,6 +336,8 @@ internal static class BossOverrides {
                     cheat.When = "Off";
                 }
 
+                cheat.Custom = true;
+
                 cheats[index] = cheat;
             }
             catch (Exception e) {
@@ -343,7 +345,16 @@ internal static class BossOverrides {
             }
         }
 
-        cheats.AddRange((changes.Added ?? []).Where(c => c is not null));
+        foreach (var added in (changes.Added ?? []).Where(c => c is not null)) {
+            added.Custom = true;
+            if (added.Off) {
+                added.When = "Off";
+            }
+
+            added.Actions = [.. (added.Actions ?? []).Where(a => a is not null)];
+            cheats.Add(added);
+        }
+
         s_cheats[templateId] = (boss, shipped, cheats);
 
         return cheats;

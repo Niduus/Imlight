@@ -23,129 +23,340 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Imlight.Setup.Blocks;
 
 namespace Imlight.Setup;
 
-/// <summary>One spell a cheat casts. SpellId 0: known by Name only, as a cheat file names it.</summary>
-internal sealed record CheatSpell(uint SpellId, string Name, bool Silent, bool DispelImmune = true) {
+/// <summary>The kinds of box a cheat block's sentence can hold (CheatSpecs).</summary>
+internal enum CheatFieldType {
+    Number, Percent, Words, Choice, Toggle, Spell, Creature, Line, Cards, Rounds, Health, School, Category, Target, HealAmount, Sign,
+}
 
-    internal JsonObject ToJson() {
-        var json = new JsonObject { ["Spell"] = Name };
-        if (SpellId != 0) {
-            json["SpellID"] = SpellId;
+/// <summary>A box of a cheat block: the cheat file's name for it, its type, its first value and, for a Choice, its choices.</summary>
+internal sealed record CheatField(string Key, CheatFieldType Type, JsonNode? Default = null, (string Value, string Label)[]? Options = null,
+                                  string Label = "", int Max = 100_000_000);
+
+/// <summary>
+/// A kind of cheat block: a When (what sets the cheat off), an If (only when) or a Do (what it does), with the words of
+/// its sentence ("Cast {Spell} on {Target}": each {Key} is one of its Fields) and what it does in plain words.
+/// </summary>
+internal sealed record CheatSpec(string Id, BlockKind Kind, string Icon, string Palette, string Help, string Sentence, CheatField[] Fields,
+                                 Func<CheatBlock, string> Summary);
+
+/// <summary>One block of a cheat: its kind (a CheatSpec) and its values, by the cheat file's names.</summary>
+internal sealed class CheatBlock {
+
+    internal required string Spec { get; init; }
+    internal JsonObject Values { get; init; } = [];
+    internal bool On { get; set; } = true;
+
+    internal CheatSpec Kind => CheatSpecs.Get(Spec);
+
+    internal CheatBlock Copy() => new() { Spec = Spec, Values = (JsonObject) Values.DeepClone(), On = On };
+
+    internal string Text(string key) => BossChanges.FindIn(Values, key) is JsonValue v && v.TryGetValue<string>(out var s) ? s : "";
+
+    internal int Number(string key)
+        => BossChanges.FindIn(Values, key) is JsonValue v && double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n)
+            ? (int) Math.Clamp(n, int.MinValue, int.MaxValue) : 0;
+
+    internal uint Id(string key)
+        => BossChanges.FindIn(Values, key) is JsonValue v && double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n)
+            ? (uint) Math.Clamp(n, 0, uint.MaxValue) : 0;
+
+    internal bool Flag(string key) => BossChanges.FindIn(Values, key) is JsonValue v && v.TryGetValue<bool>(out var b) && b;
+
+    internal List<string> List(string key) => BossChanges.FindIn(Values, key) is JsonArray a
+        ? [.. a.OfType<JsonValue>().Select(v => v.TryGetValue<string>(out var s) ? s : "").Where(s => s.Length > 0)] : [];
+
+    internal void Set(string key, JsonNode? value) {
+        var existing = Values.Select(p => p.Key).FirstOrDefault(k => k.Equals(key, StringComparison.OrdinalIgnoreCase));
+        if (existing is not null) {
+            Values.Remove(existing);
         }
 
-        if (Silent) {
-            json["Silent"] = true;
-        }
-
-        if (!DispelImmune) {
-            json["DispelImmune"] = false;
-        }
-
-        return json;
+        Values[key] = value;
     }
+
+    /// <summary>A new block of a kind, with its boxes at their first values.</summary>
+    internal static CheatBlock New(CheatSpec spec, JsonObject? values = null) {
+        var block = new CheatBlock { Spec = spec.Id };
+        foreach (var field in spec.Fields) {
+            foreach (var (key, value) in Defaults(field)) {
+                block.Set(key, value?.DeepClone());
+            }
+        }
+
+        foreach (var (key, value) in values ?? []) {
+            block.Set(key, value?.DeepClone());
+        }
+
+        return block;
+    }
+
+    private static IEnumerable<(string, JsonNode?)> Defaults(CheatField field) => field.Type switch {
+        CheatFieldType.Rounds => [("Round", 0), ("Every", 0)],
+        CheatFieldType.Health => [("Percent", 50), ("Health", 0)],
+        CheatFieldType.HealAmount => [("Amount", 500), ("Percent", false)],
+        CheatFieldType.Spell => [("Spell", ""), ("SpellID", 0)],
+        CheatFieldType.Creature => [("Creature", 0), ("Custom", 0)],
+        CheatFieldType.Cards => [(field.Key, new JsonArray())],
+        _ => [(field.Key, field.Default?.DeepClone() ?? field.Type switch {
+            CheatFieldType.Number or CheatFieldType.Percent or CheatFieldType.Sign => JsonValue.Create(0),
+            CheatFieldType.Toggle => JsonValue.Create(false),
+            _ => JsonValue.Create(""),
+        })],
+    };
 
 }
 
 /// <summary>
-/// A cheat of the Bosses tab: one of the boss's cheat file (Index), or one added in the tab (Index -1). Changes holds
-/// the fields set in the tab, by the cheat file's names; Spells is null while the file's spells are kept.
+/// One cheat as the app shows it: a When block, its If blocks and its Do blocks (Justin, 2026-10-22: Scratch-like
+/// blocks). Index is its place in the boss's cheat file, -1 for one added in the app; Game is that file's cheat.
 /// </summary>
-internal sealed class CheatEdit {
+internal sealed class CheatRule {
 
     internal int Index { get; init; } = -1;
     internal JsonObject Game { get; init; } = [];
-    internal Dictionary<string, JsonNode?> Changes { get; } = new(StringComparer.OrdinalIgnoreCase);
-    internal List<CheatSpell>? Spells { get; set; }
+    internal required CheatBlock When { get; set; }
+    internal List<CheatBlock> Ifs { get; } = [];
+    internal List<CheatBlock> Dos { get; } = [];
     internal bool Off { get; set; }
+    internal string Notes { get; set; } = "";
+
+    // The cheat file's cheat as a full cheat, to see whether this one still is the same.
+    internal string GameCanonical { get; init; } = "";
 
     internal bool Added => Index < 0;
 
-    internal bool IsChanged => Added || Off || Changes.Count > 0 || Spells is not null;
+    internal bool IsChanged => Added || Off || Canonical().ToJsonString() != GameCanonical;
 
-    /// <summary>A field as the cheat now has it: the tab's change, else the file's value, else null.</summary>
-    internal JsonNode? Get(string key) => Changes.TryGetValue(key, out var changed) ? changed : GameValue(key);
+    internal CheatRule Copy() {
+        var copy = new CheatRule { When = When.Copy(), Notes = Notes, Off = Off };
+        copy.Ifs.AddRange(Ifs.Select(b => b.Copy()));
+        copy.Dos.AddRange(Dos.Select(b => b.Copy()));
 
-    /// <summary>A field as the cheat file has it, or null.</summary>
-    internal JsonNode? GameValue(string key) => BossChanges.FindIn(Game, key);
-
-    internal string Text(string key) => Get(key) is JsonValue v && v.TryGetValue<string>(out var s) ? s : "";
-
-    internal int Number(string key) => NumberOf(Get(key)) is { } n ? (int) n : key == "Chance" ? 100 : 0;
-
-    /// <summary>A number however it was made (read from a file, or set in the tab as an int or a long), or null.</summary>
-    internal static double? NumberOf(JsonNode? node)
-        => node is JsonValue v && double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n) ? n : null;
-
-    internal bool Flag(string key) => Get(key) is JsonValue v && v.TryGetValue<bool>(out var b) && b;
-
-    internal List<string> List(string key) => Get(key) is JsonArray a
-        ? [.. a.OfType<JsonValue>().Select(v => v.TryGetValue<string>(out var s) ? s : "").Where(s => s.Length > 0)] : [];
-
-    /// <summary>The spells it casts now, in order.</summary>
-    internal List<CheatSpell> CurrentSpells => Spells ?? GameSpells;
-
-    /// <summary>The spells the cheat file gives it: Casts, or Cast as one spell; the cheat's Silent counts for each.</summary>
-    internal List<CheatSpell> GameSpells {
-        get {
-            var silent = BossChanges.FindIn(Game, "Silent") is JsonValue v && v.TryGetValue<bool>(out var b) && b;
-            if (BossChanges.FindIn(Game, "Casts") is JsonArray casts && casts.Count > 0) {
-                return [.. casts.OfType<JsonObject>().Select(c => FromJson(c, silent))];
-            }
-
-            return BossChanges.FindIn(Game, "Cast") is JsonValue cast && cast.TryGetValue<string>(out var name) && name.Length > 0
-                ? [new CheatSpell(0, name, silent)] : [];
-        }
+        return copy;
     }
-
-    internal static CheatSpell FromJson(JsonObject json, bool silent = false) => new(
-        NumberOf(BossChanges.FindIn(json, "SpellID")) is { } n ? (uint) n : 0,
-        BossChanges.FindIn(json, "Spell") is JsonValue s && s.TryGetValue<string>(out var name) ? name : "",
-        silent || (BossChanges.FindIn(json, "Silent") is JsonValue v && v.TryGetValue<bool>(out var b) && b),
-        BossChanges.FindIn(json, "DispelImmune") is not JsonValue d || !d.TryGetValue<bool>(out var immune) || immune);
 
     /// <summary>As the server's BossOverrides.Fingerprint: When|Cast|Line of the cheat file's cheat, lower case.</summary>
     internal string Match => string.Join('|', new[] { "When", "Cast", "Line" }
         .Select(k => BossChanges.FindIn(Game, k) is JsonValue v && v.TryGetValue<string>(out var s) ? s : "")).ToLowerInvariant();
 
-    /// <summary>What the boss file keeps of this cheat: the changed fields, or the whole cheat when it was added.</summary>
-    internal JsonObject ToJson() {
-        var json = new JsonObject();
-        if (!Added) {
-            json["Match"] = Match;
-        }
+    /// <summary>
+    /// The whole cheat in the cheat file's format, every field written, so it can be laid over the file's cheat as it
+    /// is: the old one-spell fields are emptied and everything it does goes in Actions.
+    /// </summary>
+    internal JsonObject Canonical() {
+        var json = new JsonObject {
+            ["When"] = When.Spec == "W.Other" ? When.Text("When") : When.Spec[2..],
+            ["Round"] = 0, ["Every"] = 0, ["Health"] = 0, ["Percent"] = 0, ["School"] = "", ["Kind"] = "", ["Category"] = "",
+            ["Spells"] = new JsonArray(), ["Pips"] = 0, ["PipsOf"] = "", ["OnBoss"] = false, ["SingleTarget"] = false, ["NoAllies"] = false,
+            ["CasterSchool"] = "", ["Phase"] = 0, ["Chance"] = 100, ["Once"] = false, ["MaxTimes"] = 0, ["Cooldown"] = 0,
+            ["HealthAbove"] = 0, ["HealthUnder"] = 0, ["Random"] = false, ["Target"] = "", ["Cast"] = "", ["Casts"] = new JsonArray(),
+            ["Line"] = "", ["Silent"] = false, ["SetHealth"] = 0, ["SetPhase"] = 0, ["Defeat"] = false, ["Spawn"] = 0,
+        };
+        void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        if (Off) {
-            json["Off"] = true;
-        }
-
-        foreach (var (key, value) in Changes) {
-            json[key] = value?.DeepClone();
-        }
-
-        if (Spells is not null) {
-            json["Casts"] = new JsonArray([.. Spells.Select(s => (JsonNode) s.ToJson())]);
-            json["Cast"] = "";
-            // Each spell has its own Silent now; the file's Silent for the whole cheat would count for every one.
-            if (!Added && BossChanges.FindIn(Game, "Silent") is JsonValue v && v.TryGetValue<bool>(out var silent) && silent) {
-                json["Silent"] = false;
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf" }) {
+            if (BossChanges.FindIn(When.Values, key) is { } value) {
+                Put(key, value);
             }
         }
 
+        // A When that does not use health keeps none, so a cheat file's leftover does not show as a change.
+        if (When.Spec != "W.HealthBelow") {
+            json["Health"] = 0;
+            json["Percent"] = 0;
+        }
+
+        foreach (var block in Ifs.Where(b => b.On)) {
+            switch (block.Spec) {
+                case "I.Once": json["Once"] = true; break;
+                case "I.NoAllies": json["NoAllies"] = true; break;
+                case "I.OnBoss": json["OnBoss"] = true; break;
+                case "I.SingleTarget": json["SingleTarget"] = true; break;
+                default:
+                    foreach (var field in block.Kind.Fields) {
+                        Put(field.Key, BossChanges.FindIn(block.Values, field.Key));
+                    }
+
+                    break;
+            }
+        }
+
+        var actions = new JsonArray();
+        foreach (var block in Dos) {
+            if (block.Spec == "D.RandomOne") {
+                json["Random"] = block.On;
+
+                continue;
+            }
+
+            var action = new JsonObject { ["Do"] = CheatSpecs.DoOf(block.Spec) };
+            foreach (var (key, value) in block.Values) {
+                action[key] = value?.DeepClone();
+            }
+
+            if (!block.On) {
+                action["Off"] = true;
+            }
+
+            actions.Add(action);
+        }
+
+        json["Actions"] = actions;
+        json["Notes"] = Notes;
+
         return json;
+    }
+
+    /// <summary>A cheat of a cheat file (or a saved one), as blocks.</summary>
+    internal static CheatRule FromCheat(JsonObject cheat, int index = -1, JsonObject? game = null, string gameCanonical = "") {
+        string Text(string key) => BossChanges.FindIn(cheat, key) is JsonValue v && v.TryGetValue<string>(out var s) ? s : "";
+        int Number(string key) => BossChanges.FindIn(cheat, key) is JsonValue v
+                                  && double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n) ? (int) n : key == "Chance" ? 100 : 0;
+        bool Flag(string key) => BossChanges.FindIn(cheat, key) is JsonValue v && v.TryGetValue<bool>(out var b) && b;
+        JsonNode? Node(string key) => BossChanges.FindIn(cheat, key)?.DeepClone();
+
+        var when = Text("When");
+        var whenSpec = CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.When && s.Id[2..].Equals(when, StringComparison.OrdinalIgnoreCase));
+        var off = when.Equals("Off", StringComparison.OrdinalIgnoreCase) || Flag("Off");
+        var whenBlock = whenSpec is null
+            ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
+            : CheatBlock.New(whenSpec);
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf" }) {
+            if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
+                whenBlock.Set(key, value);
+            }
+        }
+
+        if (whenBlock.Spec == "W.HealthBelow" && Number("Health") > 0) {
+            whenBlock.Set("Percent", 0);
+        }
+
+        var rule = new CheatRule { Index = index, Game = game ?? [], GameCanonical = gameCanonical, When = whenBlock, Off = off, Notes = Text("Notes") };
+        void If(string spec, JsonObject? values = null) => rule.Ifs.Add(CheatBlock.New(CheatSpecs.Get(spec), values));
+
+        if (Number("Phase") > 0) {
+            If("I.Phase", new JsonObject { ["Phase"] = Number("Phase") });
+        }
+
+        if (Number("Chance") < 100) {
+            If("I.Chance", new JsonObject { ["Chance"] = Number("Chance") });
+        }
+
+        if (Flag("Once")) {
+            If("I.Once");
+        }
+
+        foreach (var (key, spec) in new[] { ("MaxTimes", "I.MaxTimes"), ("Cooldown", "I.Cooldown"), ("HealthAbove", "I.HealthAbove"), ("HealthUnder", "I.HealthUnder") }) {
+            if (Number(key) > 0) {
+                If(spec, new JsonObject { [key] = Number(key) });
+            }
+        }
+
+        foreach (var (key, spec) in new[] { ("NoAllies", "I.NoAllies"), ("OnBoss", "I.OnBoss"), ("SingleTarget", "I.SingleTarget") }) {
+            if (Flag(key)) {
+                If(spec);
+            }
+        }
+
+        if (Text("CasterSchool").Length > 0) {
+            If("I.CasterSchool", new JsonObject { ["CasterSchool"] = Text("CasterSchool") });
+        }
+
+        if (Text("Kind").Length > 0) {
+            If("I.CardType", new JsonObject { ["Kind"] = Text("Kind") });
+        }
+
+        if (Node("Spells") is JsonArray { Count: > 0 } spells) {
+            If("I.Cards", new JsonObject { ["Spells"] = spells });
+        }
+
+        // A file's School and Category on a When that has no box for them stay as If blocks would not: keep them on it.
+        void Do(string spec, JsonObject? values = null, bool on = true) {
+            var block = CheatBlock.New(CheatSpecs.Get(spec), values);
+            block.On = on;
+            rule.Dos.Add(block);
+        }
+
+        var target = Text("Target");
+        var silent = Flag("Silent");
+        if (Number("Spawn") > 0) {
+            Do("D.Form", new JsonObject { ["Creature"] = Number("Spawn"), ["ReplaceBoss"] = Flag("Defeat") });
+        }
+
+        if (Number("SetHealth") > 0) {
+            Do("D.SetHealth", new JsonObject { ["Amount"] = Number("SetHealth") });
+        }
+
+        if (Number("SetPhase") > 0) {
+            Do("D.SetPhase", new JsonObject { ["Phase"] = Number("SetPhase") });
+        }
+
+        if (Text("Line").Length > 0) {
+            Do("D.Say", new JsonObject { ["Line"] = Text("Line") });
+        }
+
+        var casts = (Node("Casts") as JsonArray ?? []).OfType<JsonObject>().ToList();
+        if (casts.Count == 0 && Text("Cast").Length > 0) {
+            casts.Add(new JsonObject { ["Spell"] = Text("Cast") });
+        }
+
+        foreach (var cast in casts) {
+            var values = new JsonObject {
+                ["Spell"] = BossChanges.FindIn(cast, "Spell")?.DeepClone() ?? "",
+                ["SpellID"] = BossChanges.FindIn(cast, "SpellID")?.DeepClone() ?? 0,
+                ["Target"] = BossChanges.FindIn(cast, "Target") is JsonValue t && t.ToString().Length > 0 ? t.ToString() : target,
+                ["Silent"] = silent || (BossChanges.FindIn(cast, "Silent") is JsonValue s && s.TryGetValue<bool>(out var b) && b),
+                ["DispelImmune"] = BossChanges.FindIn(cast, "DispelImmune") is not JsonValue d || !d.TryGetValue<bool>(out var immune) || immune,
+            };
+            Do("D.Cast", values);
+        }
+
+        if (Flag("Defeat") && Number("Spawn") == 0) {
+            Do("D.Defeat");
+        }
+
+        foreach (var action in (Node("Actions") as JsonArray ?? []).OfType<JsonObject>()) {
+            var what = BossChanges.FindIn(action, "Do") is JsonValue w ? w.ToString() : "";
+            var values = new JsonObject();
+            foreach (var (key, value) in action) {
+                if (!key.Equals("Do", StringComparison.OrdinalIgnoreCase) && !key.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
+                    values[key] = value?.DeepClone();
+                }
+            }
+
+            var actionOff = BossChanges.FindIn(action, "Off") is JsonValue o && o.TryGetValue<bool>(out var isOff) && isOff;
+            var spec = what.Equals("Say", StringComparison.OrdinalIgnoreCase)
+                ? (BossChanges.FindIn(action, "Line") is JsonValue l && l.ToString().Length > 0 ? "D.Say" : "D.Chat")
+                : CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.Do && CheatSpecs.DoOf(s.Id).Equals(what, StringComparison.OrdinalIgnoreCase))?.Id;
+            if (spec is null) {
+                // An action this app does not know is kept as it is, under its own name.
+                values["Do"] = what;
+                spec = "D.Other";
+            }
+
+            Do(spec, values, !actionOff);
+        }
+
+        if (Flag("Random")) {
+            Do("D.RandomOne");
+        }
+
+        return rule;
     }
 
 }
 
 /// <summary>
-/// The cheats of a boss as the Bosses tab shows them: its cheat file (spiraldb-extra/BossCheats/&lt;ID&gt;.json, never
-/// changed) with the tab's changes saved in its boss file (Cheats) laid over it, as the server's BossOverrides.CheatsOf
-/// does.
+/// The cheats of a boss as the app shows them: its cheat file (spiraldb-extra/BossCheats/&lt;ID&gt;.json, never
+/// changed) with the changes saved in its boss file (Cheats) laid over it, as the server's BossOverrides.CheatsOf does.
 /// </summary>
 internal sealed class BossCheatList {
 
-    internal List<CheatEdit> Cheats { get; } = [];
+    internal List<CheatRule> Cheats { get; } = [];
 
     /// <summary>Whether the boss has a cheat file.</summary>
     internal bool HasFile { get; private set; }
@@ -159,15 +370,19 @@ internal sealed class BossCheatList {
 
     internal static BossCheatList Load(string extraFolder, string id, JsonObject? saved) {
         var list = new BossCheatList();
+        var shipped = new List<JsonObject>();
         var file = FileOf(extraFolder, id);
         if (File.Exists(file) && JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) is JsonObject json) {
             list.HasFile = true;
-            var index = 0;
-            foreach (var cheat in (BossChanges.FindIn(json, "Cheats") as JsonArray ?? []).OfType<JsonObject>()) {
-                list.Cheats.Add(new CheatEdit { Index = index++, Game = (JsonObject) cheat.DeepClone() });
-            }
+            shipped.AddRange((BossChanges.FindIn(json, "Cheats") as JsonArray ?? []).OfType<JsonObject>());
         }
 
+        var rules = shipped.Select((cheat, i) => {
+            var canonical = CheatRule.FromCheat(cheat).Canonical().ToJsonString();
+
+            return CheatRule.FromCheat(cheat, i, (JsonObject) cheat.DeepClone(), canonical);
+        }).ToList();
+        list.Cheats.AddRange(rules);
         if (saved is null) {
             return list;
         }
@@ -182,65 +397,66 @@ internal sealed class BossCheatList {
 
             var match = (BossChanges.FindIn(change, "Match") as JsonValue)?.ToString().ToLowerInvariant();
             var index = int.TryParse(key, out var n) ? n : -1;
-            var edit = index >= 0 && index < list.Cheats.Count && (match is not { Length: > 0 } || list.Cheats[index].Match == match)
-                ? list.Cheats[index]
-                : list.Cheats.FirstOrDefault(c => !taken.Contains(c.Index) && c.Match == match);
-            if (edit is null || !taken.Add(edit.Index)) {
+            var rule = index >= 0 && index < rules.Count && (match is not { Length: > 0 } || rules[index].Match == match)
+                ? rules[index]
+                : rules.FirstOrDefault(c => !taken.Contains(c.Index) && c.Match == match);
+            if (rule is null || !taken.Add(rule.Index)) {
                 list.Lost++;
 
                 continue;
             }
 
-            Apply(edit, change);
+            // As the server does: the change's fields over the file's cheat.
+            var merged = (JsonObject) rule.Game.DeepClone();
+            foreach (var (field, value) in change) {
+                if (field.Equals("Match", StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
+                var existing = merged.Select(p => p.Key).FirstOrDefault(k => k.Equals(field, StringComparison.OrdinalIgnoreCase));
+                if (existing is not null) {
+                    merged.Remove(existing);
+                }
+
+                merged[field] = value?.DeepClone();
+            }
+
+            list.Cheats[list.Cheats.IndexOf(rule)] = CheatRule.FromCheat(merged, rule.Index, rule.Game, rule.GameCanonical);
         }
 
         foreach (var added in (BossChanges.FindIn(saved, "Added") as JsonArray ?? []).OfType<JsonObject>()) {
-            var edit = new CheatEdit();
-            Apply(edit, added);
-            list.Cheats.Add(edit);
+            list.Cheats.Add(CheatRule.FromCheat(added));
         }
 
         return list;
     }
 
-    private static void Apply(CheatEdit edit, JsonObject change) {
-        foreach (var (key, value) in change) {
-            if (key.Equals("Match", StringComparison.OrdinalIgnoreCase)) {
-                continue;
-            }
-
-            if (key.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
-                edit.Off = value is JsonValue v && v.TryGetValue<bool>(out var off) && off;
-            }
-            else if (key.Equals("Casts", StringComparison.OrdinalIgnoreCase)) {
-                edit.Spells = [.. (value as JsonArray ?? []).OfType<JsonObject>().Select(c => CheatEdit.FromJson(c))];
-            }
-            else if (key.Equals("Cast", StringComparison.OrdinalIgnoreCase) && edit.Spells is not null) {
-                // Written with Casts so the file's single spell is not cast too.
-            }
-            else if (key.Equals("Silent", StringComparison.OrdinalIgnoreCase) && change.Any(p => p.Key.Equals("Casts", StringComparison.OrdinalIgnoreCase))) {
-                // Each spell keeps its own Silent.
-            }
-            else {
-                edit.Changes[key] = value?.DeepClone();
-            }
-        }
-
-        // An added cheat that names one spell with Cast (as a cheat file does) shows it in its list.
-        if (edit.Added && edit.Spells is null && edit.Changes.Remove("Cast", out var cast)
-            && cast is JsonValue c && c.TryGetValue<string>(out var name) && name.Length > 0) {
-            edit.Spells = [new CheatSpell(0, name, edit.Changes.Remove("Silent", out var s) && s is JsonValue sv && sv.TryGetValue<bool>(out var silent) && silent)];
-        }
-    }
-
     /// <summary>The Cheats section of the boss file, or null when no cheat is changed.</summary>
     internal JsonObject? ToJson() {
         var changed = new JsonObject();
-        foreach (var edit in Cheats.Where(c => !c.Added && c.IsChanged)) {
-            changed[edit.Index.ToString(CultureInfo.InvariantCulture)] = edit.ToJson();
+        foreach (var rule in Cheats.Where(c => !c.Added && c.IsChanged)) {
+            var json = new JsonObject { ["Match"] = rule.Match };
+            if (rule.Off) {
+                json["Off"] = true;
+            }
+
+            foreach (var (key, value) in rule.Canonical()) {
+                json[key] = value?.DeepClone();
+            }
+
+            changed[rule.Index.ToString(CultureInfo.InvariantCulture)] = json;
         }
 
-        var added = new JsonArray([.. Cheats.Where(c => c.Added).Select(c => (JsonNode) c.ToJson())]);
+        var added = new JsonArray();
+        foreach (var rule in Cheats.Where(c => c.Added)) {
+            var json = rule.Canonical();
+            if (rule.Off) {
+                json["Off"] = true;
+            }
+
+            added.Add(json);
+        }
+
         if (changed.Count == 0 && added.Count == 0) {
             return null;
         }
@@ -288,6 +504,14 @@ internal sealed class CheatLines {
         return _phrases.FirstOrDefault(p => p.Key.Equals(line, StringComparison.OrdinalIgnoreCase)).Text
                ?? _phrases.FirstOrDefault(p => p.Text.Equals(line, StringComparison.OrdinalIgnoreCase)).Text
                ?? _phrases.FirstOrDefault(p => p.Text.Contains(line, StringComparison.OrdinalIgnoreCase)).Text;
+    }
+
+    /// <summary>Game lines holding all the words, for the line picker.</summary>
+    internal List<(int Number, string Text)> Search(string words, int max) {
+        var parts = words.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        return parts.Length == 0 ? []
+            : [.. _phrases.Where(p => parts.All(w => p.Text.Contains(w, StringComparison.OrdinalIgnoreCase))).Take(max).Select(p => (p.Number, p.Text))];
     }
 
 }

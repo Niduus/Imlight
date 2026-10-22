@@ -76,28 +76,7 @@ internal sealed partial class ManagerWindow {
             }
         };
         _customHeaderCard.IsVisible = false;
-        _customHeaderCard.Child = Card(new StackPanel {
-            Spacing = 8,
-            Children = {
-                _customHeaderTitle,
-                _customHeaderBase,
-                StatRow("Bring it in", Row(_customJoinMe, Action(Plain("Copy"), () => CopyAsync(_customJoinMe.Text ?? ""))),
-                    "Type this in a battle. Its stats, deck, cheats and drops count only for it."),
-                StatRow("Name", _customName, "The name it shows in battle. Empty: the creature's own name."),
-                StatRow("Drops", _customDrops, "Drop table names, with commas between. Empty: the creature's own drops."),
-                WithMargin(_customGameDrops, new Thickness(190, 0, 0, 0)),
-                WithMargin(Heading("When it changes form"), new Thickness(0, 8, 0, 0)),
-                Sub("A boss that turns into another creature (Malistaire into Haunted Malistaire, creature 1336037) is that " +
-                    "creature from then on. Name a custom of that creature here to have it fight as your custom instead."),
-                _customFormRows,
-                Row(Action(Plain("Add a form"), () => {
-                    AddCustomFormRow("", "");
-
-                    return Task.CompletedTask;
-                })),
-                Sub("Press Save changes at the bottom to keep the name, drops and forms with the rest."),
-            },
-        });
+        // The custom's own fields now sit in the editor's Identity, Drops and Forms sections (ManagerWindow.CustomBosses.cs).
 
         return Page(
             Card(new StackPanel {

@@ -1,10 +1,16 @@
 /*
  * Boss cheats in a round (Justin, 2026-10-21). The cheats themselves are in BossCheats.cs and spiraldb-extra/BossCheats.
+ *
+ * Custom cheats (2026-10-22): the app's When -> If -> Do blocks. Each cheat's old fields (Cast, Line, SetPhase...) and
+ * its Actions run as one list of steps (BossCheat.Steps). Cheats that interrupt go off before the player's spell
+ * (BossCheatsBefore), the rest after it (BossCheatsAfter).
  */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Commands.Protocols;
@@ -17,6 +23,15 @@ public partial class CombatResolver {
 
     // Once cheats that went off, by boss, the cheat file's template and the cheat's place in that file.
     private readonly HashSet<(CombatDuelSubCircle Boss, ulong Template, int Cheat)> _bossCheatsUsed = [];
+
+    // How often each cheat went off this battle and its last round (MaxTimes, Cooldown).
+    private readonly Dictionary<(CombatDuelSubCircle Boss, ulong Template, int Cheat), (int Times, int Round)> _bossCheatCounts = [];
+
+    // Creatures already seen defeated (MinionDefeated), by circle and the creature in it.
+    private readonly HashSet<(CombatDuelSubCircle Circle, ulong Creature)> _seenDefeated = [];
+
+    // Set by an Interrupt step while a cheat runs.
+    private bool _interruptNow;
 
     // The template whose cheats each boss uses now (CheatTemplate).
     private readonly Dictionary<CombatDuelSubCircle, ulong> _bossCheatTemplates = [];
@@ -49,11 +64,17 @@ public partial class CombatResolver {
         return template;
     }
 
-    private bool CheatUsed(CombatDuelSubCircle boss, int index)
-        => _bossCheatsUsed.Contains((boss, _bossCheatTemplates.GetValueOrDefault(boss), index));
+    private (CombatDuelSubCircle, ulong, int) CheatKey(CombatDuelSubCircle boss, int index)
+        => (boss, _bossCheatTemplates.GetValueOrDefault(boss), index);
 
-    private void UseCheat(CombatDuelSubCircle boss, int index)
-        => _bossCheatsUsed.Add((boss, _bossCheatTemplates.GetValueOrDefault(boss), index));
+    private bool CheatUsed(CombatDuelSubCircle boss, int index) => _bossCheatsUsed.Contains(CheatKey(boss, index));
+
+    private void UseCheat(CombatDuelSubCircle boss, int index) => _bossCheatsUsed.Add(CheatKey(boss, index));
+
+    private void CountCheat(CombatDuelSubCircle boss, int index) {
+        var key = CheatKey(boss, index);
+        _bossCheatCounts[key] = (_bossCheatCounts.GetValueOrDefault(key).Times + 1, (int) _duel.m_roundNum);
+    }
 
     private (int Phase, int FirstRound) PhaseOf(CombatDuelSubCircle boss) {
         if (!_bossPhases.TryGetValue(boss, out var phase)) {
@@ -78,6 +99,20 @@ public partial class CombatResolver {
         => _subCircles.Any(c => c is not null && c != boss && c.Occupied && c.AddedToDuel && c.IsAlive
                                 && c.OccupiedTeam == boss.OccupiedTeam);
 
+    // When "Pips": the boss (or with PipsOf Enemy, any player) has at least that many pips.
+    private bool PipsReached(CombatDuelSubCircle boss, BossCheats.BossCheat cheat) {
+        static int Count(CombatDuelSubCircle c) => c.CombatParticipant?.m_pipCount is { } pips
+            ? CombatDuelSubCircle.TotalPips(pips) + pips.m_shadowPips : 0;
+        if (cheat.Pips <= 0) {
+            return false;
+        }
+
+        return cheat.PipsOf.Equals("Enemy", StringComparison.OrdinalIgnoreCase)
+            ? _subCircles.Any(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam != boss.OccupiedTeam
+                                   && Count(c) >= cheat.Pips)
+            : Count(boss) >= cheat.Pips;
+    }
+
     private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar)
         => BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
 
@@ -101,6 +136,7 @@ public partial class CombatResolver {
 
                     var due = atEnd ? cheat.Is("RoundEnd") && DueIn(cheat, round)
                         : cheat.Is("BattleStart") ? round == 1 && PhaseOf(boss).Phase == 1
+                        : cheat.Is("Pips") ? PipsReached(boss, cheat)
                         : cheat.Is("RoundStart") && DueIn(cheat, round);
                     if (due) {
                         cinematicTime += TryBossCheat(boss, i, cheat, null, null, $"{(atEnd ? "end of " : "")}round {round}",
@@ -109,6 +145,7 @@ public partial class CombatResolver {
                 }
             }
 
+            cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -119,8 +156,74 @@ public partial class CombatResolver {
         return cinematicTime;
     }
 
+    /// <summary>
+    /// Cheats that interrupt (an Interrupt step) go off before the spell that sets them off; the spell then fizzles
+    /// (QueuedCombatAction.Interrupted).
+    /// </summary>
+    private float BossCheatsBefore(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        if (!BossCheats.Enabled || action?.SpellCaster is not { } mover || action.Spell is null || action.SelectedTarget is null
+            || !mover.IsAlive || mover.CombatParticipant is null || mover.CombatParticipant.m_stunned > 0
+            || !action.SelectedTarget.IsAlive || !action.SelectedTarget.AddedToDuel) {
+            return 0;
+        }
+
+        var cinematicTime = 0.0f;
+        try {
+            var spell = action.SpellTemplate ?? CoreObjectFactory.GetCoreTemplate(action.Spell.m_templateID) as SpellTemplate;
+            if (spell is null) {
+                return 0;
+            }
+
+            var aimed = AimedAt(mover, action.SelectedTarget, spell);
+            foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
+                for (var i = 0; i < cheats.Count; i++) {
+                    var cheat = cheats[i];
+                    if (!cheat.Interrupts || !InPhase(boss, cheat) || !SetOffBy(cheat, boss, mover, spell, aimed)) {
+                        continue;
+                    }
+
+                    _interruptNow = false;
+                    cinematicTime += TryBossCheat(boss, i, cheat, mover, action.SelectedTarget, $"{(string) spell.m_name} (before it lands)",
+                        combatActionList, cinematicTimeSoFar + cinematicTime);
+                    if (_interruptNow) {
+                        action.Interrupted = true;
+                        _interruptNow = false;
+
+                        return cinematicTime;
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Boss cheats before slot {1}'s move failed: {2}",
+                Logger.Args(_duel.m_duelID.Full, mover.SlotIndex, e));
+        }
+
+        return cinematicTime;
+    }
+
+    // The slots a queued spell is aimed at: its target, or the target's whole side for a spell that hits many.
+    private HashSet<int> AimedAt(CombatDuelSubCircle caster, CombatDuelSubCircle target, SpellTemplate spell) {
+        var many = Flatten(spell).Any(e => s_manyTargets.Contains(e.m_effectTarget) && e.m_effectTarget != kEffectTarget.kGlobal);
+
+        return many
+            ? [.. _subCircles.Where(c => c is not null && c.Occupied && c.IsAlive && c.OccupiedTeam == target.OccupiedTeam).Select(c => c.SlotIndex)]
+            : [target.SlotIndex];
+    }
+
+    // Whether a player's (or for BossHit, an enemy's) spell aimed at those slots sets the cheat off.
+    private static bool SetOffBy(BossCheats.BossCheat cheat, CombatDuelSubCircle boss, CombatDuelSubCircle mover, SpellTemplate spell,
+                                 ICollection<int> aimed) {
+        if (cheat.Is("PlayerCasts")) {
+            return mover.IsHumanPlayer && Matches(cheat, spell, aimed, boss, mover);
+        }
+
+        return cheat.Is("BossHit") && mover.OccupiedTeam != boss.OccupiedTeam && aimed.Contains(boss.SlotIndex)
+               && Flatten(spell).Any(e => s_damageEffects.Contains(e.m_effectType)) && Matches(cheat, spell, aimed, boss, mover);
+    }
+
     private float BossCheatsAfter(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        if (!BossCheats.Enabled || mover is null || !mover.IsHumanPlayer) {
+        if (!BossCheats.Enabled || mover is null) {
             return 0;
         }
 
@@ -136,22 +239,24 @@ public partial class CombatResolver {
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
-                    if (!InPhase(boss, cheat)) {
+                    if (!InPhase(boss, cheat) || cheat.Interrupts) {
                         continue;
                     }
 
-                    if (cheat.Is("PlayerPasses") && passed) {
+                    if (cheat.Is("PlayerPasses") && passed && mover.IsHumanPlayer) {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, null, "a pass", combatActionList,
                             cinematicTimeSoFar + cinematicTime);
                     }
-                    else if (cheat.Is("PlayerCasts") && landed.FirstOrDefault(m => Matches(cheat, m.Spell, m.Action, boss)) is
-                             { Spell: not null } move) {
+                    else if ((cheat.Is("PlayerCasts") || cheat.Is("BossHit"))
+                             && landed.FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? []))
+                                 is { Spell: not null } move) {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action), $"{(string) move.Spell.m_name}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
                 }
             }
 
+            cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
         catch (Exception e) {
@@ -166,6 +271,27 @@ public partial class CombatResolver {
         => (action.m_targetSubcircleList ?? []).Select(slot => _subCircles.FirstOrDefault(c => c is not null && c.Occupied
                                                                                                    && c.SlotIndex == slot))
             .FirstOrDefault(c => c is not null);
+
+    // When "MinionDefeated": a creature on a boss's side that was standing is now defeated.
+    private float MinionDefeatCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        var fallen = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && !c.IsAlive
+                                            && c.ParticipantObject is not null
+                                            && _seenDefeated.Add((c, c.ParticipantObject.m_globalID.Full)))
+            .ToList();
+        foreach (var minion in fallen) {
+            foreach (var (boss, cheats) in BossesWithCheats().Where(b => b.Boss != minion && b.Boss.OccupiedTeam == minion.OccupiedTeam).ToList()) {
+                for (var i = 0; i < cheats.Count; i++) {
+                    if (cheats[i].Is("MinionDefeated") && InPhase(boss, cheats[i])) {
+                        cinematicTime += TryBossCheat(boss, i, cheats[i], null, minion, $"the defeat of slot {minion.SlotIndex}",
+                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                    }
+                }
+            }
+        }
+
+        return cinematicTime;
+    }
 
     private float BossHealthCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         // A boss defeated by a cheat's spell comes back first if an afterlife waits on it.
@@ -184,7 +310,7 @@ public partial class CombatResolver {
                 var under = cheat.Health > 0 ? health < cheat.Health : health * 100.0 / most < cheat.Percent;
                 // Health cheats go off once each, as the boss's health first falls under the mark.
                 if (!cheat.Is("HealthBelow") || !under || !InPhase(boss, cheat) || CheatUsed(boss, i)
-                    || (!boss.IsAlive && cheat.SetHealth <= 0 && cheat.Spawn == 0)) {
+                    || (!boss.IsAlive && !cheat.Steps().Any(s => s.Is("SetHealth") || s.Is("Form")))) {
                     continue;
                 }
 
@@ -225,12 +351,117 @@ public partial class CombatResolver {
         kEffectTarget.kMultiTargetFriendly, kEffectTarget.kGlobal,
     ];
 
-    private static bool Matches(BossCheats.BossCheat cheat, SpellTemplate spell, CombatAction action, CombatDuelSubCircle boss) {
-        if (cheat.OnBoss && !(action.m_targetSubcircleList ?? []).Contains(boss.SlotIndex)) {
+    // A spell's effects, with the effects inside its effect lists and random picks.
+    private static IEnumerable<SpellEffect> Flatten(SpellTemplate spell) {
+        static IEnumerable<SpellEffect> Walk(SpellEffect effect, int depth) {
+            if (effect is null || depth > 4) {
+                yield break;
+            }
+
+            yield return effect;
+            var inner = effect switch {
+                EffectListSpellEffect list => list.m_effectList,
+                RandomSpellEffect random => random.m_effectList,
+                _ => null,
+            };
+            foreach (var child in inner ?? []) {
+                foreach (var e in Walk(child, depth + 1)) {
+                    yield return e;
+                }
+            }
+        }
+
+        return (spell.m_effects ?? []).SelectMany(e => Walk(e, 0));
+    }
+
+    private static readonly HashSet<kSpellEffects> s_charmEffects = [
+        kSpellEffects.kModifyOutgoingDamage, kSpellEffects.kModifyOutgoingDamageFlat, kSpellEffects.kModifyOutgoingHeal,
+        kSpellEffects.kModifyOutgoingHealFlat, kSpellEffects.kModifyAccuracy, kSpellEffects.kCritBoost,
+        kSpellEffects.kModifyOutgoingArmorPiercing, kSpellEffects.kDispel,
+    ];
+
+    private static readonly HashSet<kSpellEffects> s_wardEffects = [
+        kSpellEffects.kModifyIncomingDamage, kSpellEffects.kModifyIncomingDamageFlat, kSpellEffects.kAbsorbDamage,
+        kSpellEffects.kModifyIncomingHeal, kSpellEffects.kModifyIncomingHealFlat, kSpellEffects.kModifyIncomingDamageType,
+        kSpellEffects.kCritBlock, kSpellEffects.kModifyIncomingArmorPiercing,
+    ];
+
+    // A charm or ward that helps whoever has it: by its disposition, else by its sign (less damage in is good).
+    private static bool IsGood(SpellEffect effect) => effect.m_disposition switch {
+        kHangingDisposition.kBeneficial => true,
+        kHangingDisposition.kHarmful => false,
+        _ => effect.m_effectType is kSpellEffects.kModifyIncomingDamage or kSpellEffects.kModifyIncomingDamageFlat
+            ? effect.m_effectParam < 0 : effect.m_effectParam > 0,
+    };
+
+    /// <summary>What a card does, from its type and effects (a cheat's Category): Damage, Heal, Shield, Trap...</summary>
+    internal static HashSet<string> CategoriesOf(SpellTemplate spell) {
+        var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        string type = spell.m_sTypeName;
+        type ??= "";
+        foreach (var name in new[] { "Aura", "Global", "Polymorph", "Steal", "Shadow", "Enchantment", "Manipulation" }) {
+            if (type.Contains(name, StringComparison.OrdinalIgnoreCase)) {
+                found.Add(name);
+            }
+        }
+
+        foreach (var e in Flatten(spell)) {
+            if (e.m_effectTarget == kEffectTarget.kGlobal) {
+                found.Add("Global");
+            }
+
+            if (s_damageEffects.Contains(e.m_effectType)) {
+                found.Add("Damage");
+            }
+
+            if (s_healEffects.Contains(e.m_effectType)) {
+                found.Add("Heal");
+            }
+
+            if (e.m_effectType is kSpellEffects.kSummonCreature or kSpellEffects.kSpawnCreature) {
+                found.Add("Minion");
+            }
+
+            if (e.m_effectType is kSpellEffects.kStun) {
+                found.Add("Stun");
+            }
+
+            if (e.m_effectType is kSpellEffects.kDispel) {
+                found.Add("Dispel");
+            }
+
+            if (e.m_effectType is kSpellEffects.kPolymorph) {
+                found.Add("Polymorph");
+            }
+
+            if (e.m_effectType is kSpellEffects.kStealCharm or kSpellEffects.kStealWard or kSpellEffects.kStealHealth) {
+                found.Add("Steal");
+            }
+
+            if (e.m_effectType is kSpellEffects.kModifyIncomingDamage or kSpellEffects.kAbsorbDamage or kSpellEffects.kModifyIncomingDamageFlat) {
+                found.Add(IsGood(e) ? "Shield" : "Trap");
+            }
+
+            if (e.m_effectType is kSpellEffects.kModifyOutgoingDamage or kSpellEffects.kModifyOutgoingDamageFlat) {
+                found.Add(IsGood(e) ? "Blade" : "Weakness");
+            }
+        }
+
+        // An aura is a long-lasting charm on oneself: not a blade too.
+        if (found.Contains("Aura")) {
+            found.Remove("Blade");
+        }
+
+        return found;
+    }
+
+    private static bool Matches(BossCheats.BossCheat cheat, SpellTemplate spell, ICollection<int> aimed, CombatDuelSubCircle boss,
+                                CombatDuelSubCircle mover) {
+        if (cheat.OnBoss && !aimed.Contains(boss.SlotIndex)) {
             return false;
         }
 
-        if (cheat.SingleTarget && (spell.m_effects ?? []).Any(e => e is not null && s_manyTargets.Contains(e.m_effectTarget))) {
+        if (cheat.SingleTarget && Flatten(spell).Any(e => s_manyTargets.Contains(e.m_effectTarget))) {
             return false;
         }
 
@@ -239,6 +470,15 @@ public partial class CombatResolver {
         }
 
         if (cheat.Kind.Length > 0 && !cheat.Kind.Equals((string) spell.m_sTypeName, StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        if (cheat.Category is { Length: > 0 } category && !CategoriesOf(spell).Contains(category)) {
+            return false;
+        }
+
+        if (cheat.CasterSchool is { Length: > 0 } casterSchool
+            && !casterSchool.Equals(mover?.ParticipantGameStats?.MagicSchool.ToString(), StringComparison.OrdinalIgnoreCase)) {
             return false;
         }
 
@@ -254,33 +494,59 @@ public partial class CombatResolver {
         return true;
     }
 
+    // Whether the cheat's own limits let it go now: MaxTimes, Cooldown and the boss's health window.
+    private bool LimitsAllow(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat) {
+        var (times, last) = _bossCheatCounts.GetValueOrDefault(CheatKey(boss, index));
+        if (cheat.MaxTimes > 0 && times >= cheat.MaxTimes) {
+            return false;
+        }
+
+        if (cheat.Cooldown > 0 && times > 0 && (int) _duel.m_roundNum - last <= cheat.Cooldown) {
+            return false;
+        }
+
+        var most = MostHealth(boss);
+        var percent = most > 0 ? boss.ParticipantGameStats.m_currentHitpoints * 100.0 / most : 0;
+
+        return (cheat.HealthAbove <= 0 || percent > cheat.HealthAbove) && (cheat.HealthUnder <= 0 || percent < cheat.HealthUnder);
+    }
+
     /// <summary>
-    /// Makes the boss use one cheat: its line shows over the boss, then its spell casts for free.
+    /// Makes the boss use one cheat: its steps in order (a line shows over the boss with its first spell, spells cast
+    /// for free, and the rest).
     /// </summary>
     /// <param name="trigger">The player who set it off, or null.</param>
+    /// <param name="receiver">Whoever that player's spell was aimed at (or the defeated minion), or null.</param>
     /// <returns>The seconds it adds to the round.</returns>
-    /// <param name="receiver">Whoever that player's spell was aimed at, or null.</param>
     private float TryBossCheat(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger,
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
-        if (cheat.Once && CheatUsed(boss, index)) {
+        if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat)) {
             return 0;
         }
 
-        // A second form comes before anything else is checked, so the battle goes on: a new creature (Spawn) when a
+        var steps = cheat.Steps();
+        var template = _bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject));
+        var bossName = BossCheats.NameOf(template);
+        var custom = cheat.Custom || Customs.IsCustom(template);
+
+        // A second form comes before anything else is checked, so the battle goes on: a new creature (Form) when a
         // circle is free, else the boss back up in its own circle (SetHealth).
-        var form = cheat.Spawn > 0 ? boss._duelActor.SpawnBossForm(cheat.Spawn, boss) : null;
-        if (form is not null) {
-            return BossFormArrives(boss, index, cheat, form, combatActionList);
-        }
+        var formStep = steps.FirstOrDefault(s => s.Is("Form") && (s.Creature > 0 || s.Custom > 0));
+        if (formStep is not null) {
+            var form = SpawnCheatCreature(boss, formStep, asForm: true);
+            if (form is not null) {
+                LogCustomCheat(custom, boss, bossName, index, reason, steps);
 
-        if (cheat.Spawn > 0) {
+                return BossFormArrives(boss, index, cheat, formStep, form, bossName, steps, combatActionList);
+            }
+
             Logger.Warning("Duel {0} | Slot {1} | Boss form {2} found no free circle{3}.", Logger.Args(_duel.m_duelID.Full,
-                boss.SlotIndex, cheat.Spawn, cheat.SetHealth > 0 ? "; the boss comes back in its own circle" : ""));
+                boss.SlotIndex, formStep.Creature, steps.Any(s => s.Is("SetHealth")) ? "; the boss comes back in its own circle" : ""));
         }
 
-        if (cheat.SetHealth > 0) {
-            SetBossHealth(boss, cheat.SetHealth);
+        foreach (var health in steps.Where(s => s.Is("SetHealth") && s.Amount > 0)) {
+            SetBossHealth(boss, health.Amount);
         }
 
         if (!boss.IsAlive || BattleDecided() || !PetMayCasts.Roll(cheat.Chance)) {
@@ -291,80 +557,299 @@ public partial class CombatResolver {
             UseCheat(boss, index);
         }
 
-        if (cheat.SetPhase > 0) {
-            // The new phase counts its rounds from the next round.
-            _bossPhases[boss] = (cheat.SetPhase, (int) _duel.m_roundNum + 1);
-            Logger.Information("Duel {0} | Slot {1} | Boss moves on to phase {2}.",
-                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, cheat.SetPhase));
-        }
-
-        string line = null;
-        if (cheat.Line.Length > 0 && !CommandAnnounceProtocol.TryResolve(cheat.Line, out line, out _, out var problem)) {
-            Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, cheat.Line, problem));
-        }
-
-        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject)));
-        var casts = cheat.CastList();
-        Logger.Information("Duel {0} | Slot {1} | {2} cheats after {3}: {4}{5}.",
+        CountCheat(boss, index);
+        var casts = steps.Where(s => s.IsCast).ToList();
+        Logger.Information("Duel {0} | Slot {1} | {2} cheats after {3}: {4}.",
             Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, reason,
-                casts.Count == 0 ? "no spell" : string.Join(", ", casts.Select(c => c.Spell)), line is null ? "" : $", line {line}"));
+                casts.Count == 0 ? "no spell" : string.Join(", ", casts.Select(c => c.Spell.Length > 0 ? c.Spell : c.SpellID.ToString()))));
+        LogCustomCheat(custom, boss, bossName, index, reason, steps);
 
         var cinematicTime = 0.0f;
-        var lines = line is null ? new List<string>() : [line];
-        // Each spell in turn (or one picked at random with Random); a file's single Cast is a list of one.
-        foreach (var cast in casts) {
-            var spell = cast.SpellID != 0 ? SpellFactory.GetSpell(cast.SpellID)
-                : SpellFactory.Exists(cast.Spell) ? SpellFactory.GetSpell(cast.Spell) : null;
-            var template = spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate;
-            if (template is null) {
-                Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, cast.Spell, bossName));
-
-                continue;
+        var lines = new List<string>();
+        var defeat = false;
+        foreach (var step in steps) {
+            if (!boss.IsAlive && !step.Is("Say")) {
+                break;
             }
 
-            // Free: no pips are taken for it.
-            spell = spell with { m_pipCost = new SpellRank() };
-            foreach (var target in BossCheatTargets(boss, cheat, template, trigger, receiver)) {
-                if (!boss.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
-                    continue;
-                }
-
-                boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
-                var before = combatActionList.m_actionList.Count;
-                var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
-                // A cheat spell never fizzles and works through stun. A Dispel on the boss stops it only when it is
-                // not DispelImmune, as it stops a player's spell of that school.
-                var time = !cast.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
-                    ? HandleFizzleAction(action, combatActionList)
-                    : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
-                // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
-                if (cast.Silent) {
-                    for (var i = before; i < combatActionList.m_actionList.Count; i++) {
-                        combatActionList.m_actionList[i].m_showCast = false;
+            switch (step.Do.ToLowerInvariant()) {
+                case "form" or "sethealth":
+                    break;
+                case "setphase" when step.Phase > 0:
+                    // The new phase counts its rounds from the next round.
+                    _bossPhases[boss] = (step.Phase, (int) _duel.m_roundNum + 1);
+                    Logger.Information("Duel {0} | Slot {1} | Boss moves on to phase {2}.",
+                        Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, step.Phase));
+                    break;
+                case "say":
+                    if (step.Line.Length > 0) {
+                        if (CommandAnnounceProtocol.TryResolve(step.Line, out var line, out _, out var problem)) {
+                            lines.Add(line);
+                        }
+                        else {
+                            Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, step.Line, problem));
+                        }
                     }
 
-                    time = Math.Min(time, SkipCastSeconds);
-                }
+                    if (step.Text.Length > 0) {
+                        TellPlayers($"{bossName}: {step.Text}");
+                    }
 
-                cinematicTime += time;
-                if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
-                    cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], lines, boss.SlotIndex);
-                    lines.Clear();
-                }
+                    break;
+                case "cast" or "polymorph":
+                    cinematicTime += CheatCast(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList,
+                        cinematicTimeSoFar + cinematicTime);
+                    break;
+                case "interrupt":
+                    _interruptNow = true;
+                    break;
+                case "removecharms" or "removewards":
+                    foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
+                        RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count);
+                    }
+
+                    break;
+                case "addeffects":
+                    AddHanging(boss, step, trigger, receiver, bossName);
+                    break;
+                case "heal":
+                    foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
+                        HealFromCheat(target, step.Percent ? MostHealth(target) * step.Amount / 100 : step.Amount);
+                    }
+
+                    break;
+                case "minion":
+                    if (SpawnCheatCreature(boss, step, asForm: false) is null) {
+                        Logger.Warning("Duel {0} | Slot {1} | Cheat minion {2} found no free circle.",
+                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, step.Custom > 0 ? $"custom {step.Custom}" : step.Creature));
+                    }
+
+                    break;
+                case "pips":
+                    foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
+                        ChangePips(target, step.Kind, step.Amount);
+                    }
+
+                    break;
+                case "defeat":
+                    defeat = true;
+                    break;
+                default:
+                    Logger.Warning("Duel {0} | Boss cheat of {1}: \"{2}\" is not something a cheat can do.",
+                        Logger.Args(_duel.m_duelID.Full, bossName, step.Do));
+                    break;
             }
         }
 
-        // With Spawn, Defeat is for the boss the new form replaces; one brought back in its own circle stays up.
-        if (cheat.Defeat && cheat.Spawn == 0 && boss.IsAlive) {
+        // A form brought back in its own circle stays up; Defeat counts for the boss the form would have replaced.
+        if (defeat && boss.IsAlive) {
             boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
             Logger.Information("Duel {0} | Slot {1} | {2} defeats itself.", Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
         }
 
-        if (lines.Count > 0) {
+        foreach (var line in lines) {
             cinematicTime += ShowBossLine(line, boss, combatActionList);
         }
 
         return cinematicTime;
+    }
+
+    // "Custom cheat | ...": one line in the log each time a cheat of the app's (or a custom's) goes off.
+    private void LogCustomCheat(bool custom, CombatDuelSubCircle boss, string bossName, int index, string reason,
+                                List<BossCheats.CheatAction> steps) {
+        if (!custom) {
+            return;
+        }
+
+        Logger.Information("Custom cheat | Duel {0} | {1} (slot {2}) cheat {3} after {4}: {5}.",
+            Logger.Args(_duel.m_duelID.Full, bossName, boss.SlotIndex, index + 1, reason,
+                steps.Count == 0 ? "does nothing" : string.Join(", ", steps.Select(StepText))));
+    }
+
+    private static string StepText(BossCheats.CheatAction step) {
+        var on = step.Target.Length > 0 ? $" on {step.Target}" : "";
+        var spell = step.Spell.Length > 0 ? step.Spell : step.SpellID.ToString();
+
+        return step.Do.ToLowerInvariant() switch {
+            "cast" => $"cast {spell}{on}{(step.Silent ? " (silent)" : "")}",
+            "polymorph" => $"polymorph with {spell}{on}",
+            "say" => step.Line.Length > 0 ? $"say \"{step.Line}\"" : $"chat \"{step.Text}\"",
+            "heal" => $"heal {step.Amount}{(step.Percent ? "%" : "")}{on}",
+            "pips" => $"{(step.Amount < 0 ? "take" : "give")} {Math.Abs(step.Amount)} {step.Kind} pips{on}",
+            "minion" or "form" => $"{step.Do.ToLowerInvariant()} {(step.Custom > 0 ? $"custom {step.Custom}" : step.Creature)}",
+            "removecharms" or "removewards" => $"{step.Do} {step.Kind} x{(step.Count > 0 ? step.Count : "all")}{on}",
+            "addeffects" => $"add the effects of {spell}{on}",
+            "setphase" => $"phase {step.Phase}",
+            "sethealth" => $"health {step.Amount}",
+            _ => step.Do.ToLowerInvariant(),
+        };
+    }
+
+    // A cheat's spell: free, never fizzles, works through stun. A Dispel on the boss stops it only when it is not
+    // DispelImmune, as it stops a player's spell of that school.
+    private float CheatCast(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
+                            CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
+                            float cinematicTimeSoFar) {
+        var (spell, template) = FindSpell(step.Spell, step.SpellID);
+        if (template is null) {
+            Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, step.Spell, bossName));
+
+            return 0;
+        }
+
+        // Free: no pips are taken for it.
+        spell = spell with { m_pipCost = new SpellRank() };
+        var aim = step.Target.Length > 0 ? step.Target : step.Is("Polymorph") && cheat.Target.Length == 0 ? "Self" : cheat.Target;
+        var cinematicTime = 0.0f;
+        foreach (var target in StepTargets(boss, aim, template, trigger, receiver)) {
+            if (!boss.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
+                continue;
+            }
+
+            boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
+            var before = combatActionList.m_actionList.Count;
+            var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+            var time = !step.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
+                ? HandleFizzleAction(action, combatActionList)
+                : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+            // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
+            if (step.Silent) {
+                for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+                    combatActionList.m_actionList[i].m_showCast = false;
+                }
+
+                time = Math.Min(time, SkipCastSeconds);
+            }
+
+            cinematicTime += time;
+            if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
+                cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], [.. lines], boss.SlotIndex);
+                lines.Clear();
+            }
+        }
+
+        return cinematicTime;
+    }
+
+    private static (Spell Spell, SpellTemplate Template) FindSpell(string name, uint id) {
+        var spell = id != 0 ? SpellFactory.GetSpell(id)
+            : !string.IsNullOrWhiteSpace(name) && SpellFactory.Exists(name) ? SpellFactory.GetSpell(name) : null;
+
+        return (spell, spell is null ? null : CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate);
+    }
+
+    // AddEffects: a spell's charms and wards go on its targets with no casting, as if it had been cast.
+    private void AddHanging(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver,
+                            string bossName) {
+        var (spell, template) = FindSpell(step.Spell, step.SpellID);
+        if (template is null) {
+            Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, step.Spell, bossName));
+
+            return;
+        }
+
+        var effects = Flatten(template).Where(e => s_charmEffects.Contains(e.m_effectType) || s_wardEffects.Contains(e.m_effectType)).ToList();
+        foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", template, trigger, receiver)) {
+            foreach (var effect in effects) {
+                var copy = effect with { m_spellTemplateID = spell.m_templateID };
+                if (copy.m_effectType == kSpellEffects.kAbsorbDamage) {
+                    copy = copy with { m_paramPerRound = copy.m_effectParam };
+                }
+
+                target._hangingEffects?.Add(copy);
+            }
+        }
+    }
+
+    // RemoveCharms / RemoveWards: Kind Good, Bad or All (empty), newest first, Count of them (0 = all).
+    private void RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count) {
+        if (target?._hangingEffects is not { } hanging) {
+            return;
+        }
+
+        var good = kind.Equals("Good", StringComparison.OrdinalIgnoreCase);
+        var bad = kind.Equals("Bad", StringComparison.OrdinalIgnoreCase);
+        var gone = hanging.Where(e => kinds.Contains(e.m_effectType) && e.m_numRounds <= 0 && !e.m_protected
+                                      && (!good || IsGood(e)) && (!bad || !IsGood(e)))
+            .Reverse()
+            .Take(count > 0 ? count : int.MaxValue)
+            .ToList();
+        hanging.RemoveAll(gone.Contains);
+        Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} of its charms or wards.",
+            Logger.Args(_duel.m_duelID.Full, target.SlotIndex, gone.Count));
+    }
+
+    private void HealFromCheat(CombatDuelSubCircle target, int amount) {
+        if (target is null || !target.IsAlive || amount <= 0) {
+            return;
+        }
+
+        target.HealParticipant(amount);
+        if (target._wizard is null && target.CombatParticipant is not null) {
+            target.CombatParticipant.m_playerHealth = target.ParticipantGameStats.m_currentHitpoints;
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | Cheat heals {2}, now {3}.",
+            Logger.Args(_duel.m_duelID.Full, target.SlotIndex, amount, target.ParticipantGameStats.m_currentHitpoints));
+    }
+
+    // Pips: Amount above 0 gives (as .pip give), below 0 takes. Kind Normal (empty), Power or Shadow.
+    private void ChangePips(CombatDuelSubCircle target, string kind, int amount) {
+        if (target?.CombatParticipant?.m_pipCount is not { } pips || amount == 0) {
+            return;
+        }
+
+        var name = kind.ToLowerInvariant() switch { "power" => "power", "shadow" => "shadow", _ => "light" };
+        if (amount > 0) {
+            Logger.Information("Duel {0} | Slot {1} | Cheat pips: {2}", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, target.GivePips(name, amount)));
+
+            return;
+        }
+
+        var take = -amount;
+        for (; take > 0; take--) {
+            if (name == "shadow" && pips.m_shadowPips > 0) {
+                pips.m_shadowPips--;
+            }
+            else if (name == "power" && pips.m_powerPips > 0) {
+                pips.m_powerPips--;
+            }
+            else if (name == "light" && pips.m_genericPips > 0) {
+                pips.m_genericPips--;
+            }
+            else if (name == "light" && pips.m_powerPips > 0) {
+                pips.m_powerPips--;
+            }
+            else {
+                break;
+            }
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | Cheat takes {2} {3} pips.", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, -amount - take, name));
+    }
+
+    // Say's Text: the words go to every player's chat.
+    private void TellPlayers(string text) {
+        foreach (var player in _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null)) {
+            player.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
+        }
+    }
+
+    // Minion or Form: a creature, or a custom of the Customs tab, joins on the boss's side. A Form with no custom is the
+    // custom the boss's Forms name for that creature, if any.
+    private CombatDuelSubCircle SpawnCheatCreature(CombatDuelSubCircle boss, BossCheats.CheatAction step, bool asForm) {
+        var creature = step.Creature;
+        if (step.Custom > 0 && Customs.Get(step.Custom) is { } custom) {
+            creature = (uint) custom.BaseTemplateID;
+        }
+
+        if (creature == 0) {
+            return null;
+        }
+
+        return step.Custom > 0 ? boss._duelActor.SpawnBossMinion(creature, boss, step.Custom)
+            : asForm ? boss._duelActor.SpawnBossForm(creature, boss)
+            : boss._duelActor.SpawnBossMinion(creature, boss, 0);
     }
 
     // A line with no spell shows after the round's last spell so far, or before the round's first spell.
@@ -379,52 +864,70 @@ public partial class CombatResolver {
         return 0;
     }
 
-    // A second form (Spawn) took a circle: the boss is defeated (Defeat) and its line shows over it. The new creature
+    // A second form took a circle: the boss is defeated (ReplaceBoss) and its lines show over it. The new creature
     // fights from the next round with its own cheats.
-    private float BossFormArrives(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle form,
+    private float BossFormArrives(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, BossCheats.CheatAction formStep,
+                                  CombatDuelSubCircle form, string bossName, List<BossCheats.CheatAction> steps,
                                   CombatActionListObj combatActionList) {
         if (cheat.Once) {
             UseCheat(boss, index);
         }
 
-        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject)));
-        if (cheat.Defeat && boss.IsAlive) {
+        CountCheat(boss, index);
+        if (formStep.ReplaceBoss && boss.IsAlive) {
             boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
         }
 
         Logger.Information("Duel {0} | Slot {1} | {2} comes back as {3} in slot {4}.",
-            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, BossCheats.NameOf(cheat.Spawn), form.SlotIndex));
+            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName,
+                BossCheats.NameOf(formStep.Custom > 0 ? Customs.Key(formStep.Custom) : formStep.Creature), form.SlotIndex));
 
-        if (cheat.Line.Length == 0) {
-            return 0;
+        var cinematicTime = 0.0f;
+        foreach (var say in steps.Where(s => s.Is("Say"))) {
+            if (say.Text.Length > 0) {
+                TellPlayers($"{bossName}: {say.Text}");
+            }
+
+            if (say.Line.Length == 0) {
+                continue;
+            }
+
+            if (!CommandAnnounceProtocol.TryResolve(say.Line, out var line, out _, out var problem)) {
+                Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, say.Line, problem));
+
+                continue;
+            }
+
+            cinematicTime += ShowBossLine(line, boss, combatActionList);
         }
 
-        if (!CommandAnnounceProtocol.TryResolve(cheat.Line, out var line, out _, out var problem)) {
-            Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, cheat.Line, problem));
-
-            return 0;
-        }
-
-        return ShowBossLine(line, boss, combatActionList);
+        return cinematicTime;
     }
 
-    private List<CombatDuelSubCircle> BossCheatTargets(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, SpellTemplate template,
-                                                       CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+    // Who a step works on. Empty: as the spell aims (or the player who set it off, for a spell on enemies).
+    private List<CombatDuelSubCircle> StepTargets(CombatDuelSubCircle boss, string aim, SpellTemplate template,
+                                                  CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
         var enemies = boss._duelActor.ActiveSubCircles
             .Where(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam != boss.OccupiedTeam).ToList();
-        var target = cheat.Target.ToLowerInvariant();
+        var allies = boss._duelActor.ActiveSubCircles
+            .Where(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam == boss.OccupiedTeam).ToList();
+        var others = allies.Where(c => c != boss).ToList();
 
-        return target switch {
+        return (aim ?? "").ToLowerInvariant() switch {
             "self" => [boss],
-            "caster" when trigger is not null => [trigger],
+            "caster" or "attacker" when trigger is not null => [trigger],
             // A spell on a teammate is taken from that teammate; one on many (or on an enemy) from the caster.
             "receiver" when receiver is not null && receiver.OccupiedTeam != boss.OccupiedTeam => [receiver],
             "receiver" when trigger is not null => [trigger],
             "firstenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.SlotIndex).First()],
-            "enemy" when enemies.Count > 0 => [enemies[Random.Shared.Next(enemies.Count)]],
+            "weakestenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.ParticipantGameStats.m_currentHitpoints).First()],
+            "enemy" or "caster" or "attacker" when enemies.Count > 0 => [enemies[Random.Shared.Next(enemies.Count)]],
             "allenemies" => enemies,
+            "ally" => [others.Count > 0 ? others[Random.Shared.Next(others.Count)] : boss],
+            "allallies" => allies,
+            _ when template is null => [boss],
             _ => [trigger is not null && trigger.OccupiedTeam != boss.OccupiedTeam
-                  && (template.m_effects ?? []).Any(e => e is not null && s_enemyTargets.Contains(e.m_effectTarget))
+                  && Flatten(template).Any(e => s_enemyTargets.Contains(e.m_effectTarget))
                 ? trigger
                 : PickFreeTarget(boss, template, null)],
         };

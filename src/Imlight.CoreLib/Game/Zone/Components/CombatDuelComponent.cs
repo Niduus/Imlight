@@ -1131,6 +1131,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true,
             customId: Customs.IdOf(Customs.FormKey(boss.ParticipantObject, creatureTid)));
 
+    /// <summary>A boss cheat's minion (or a custom's form): a creature, as that custom when customId is set, on the boss's side.</summary>
+    internal CombatDuelSubCircle SpawnBossMinion(uint creatureTid, CombatDuelSubCircle boss, int customId)
+        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true, customId: customId);
+
     // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
     // customId: it comes in as that custom of the Customs tab (Customs.cs), 0 for the game's creature.
     // Returns the circle it took, or null.
