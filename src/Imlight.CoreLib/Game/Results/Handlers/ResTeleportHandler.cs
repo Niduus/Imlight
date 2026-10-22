@@ -18,6 +18,7 @@
 
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Shared.Packets;
 
@@ -40,6 +41,9 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
         if (string.IsNullOrEmpty(destinationZone)) {
             // The exits of a house zone name no destination, so the player leaves to the hub of the house's world.
             if (!HouseExits.TryResolve(context.GetZonePath(), out destinationZone, out destinationLocation)) {
+                Logger.Warning("A teleport in {0} names no destination zone; the player stays where they are.",
+                    Logger.Args(context.GetZonePath()));
+
                 return false;
             }
         }

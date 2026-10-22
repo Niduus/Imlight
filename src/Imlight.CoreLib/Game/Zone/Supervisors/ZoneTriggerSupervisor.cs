@@ -23,6 +23,7 @@ using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -54,6 +55,7 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
 
     private readonly List<(Trigger Trigger, IActorRef Actor)> _orderedTriggers = [];
     private readonly HashSet<string> _undecodableLogged = [];
+    private readonly HashSet<string> _deadTeleportsLogged = [];
     private readonly HashSet<string> _chainedEvents = [];
     private readonly HashSet<string> _cinematicEndsPosted = [];
     private readonly HashSet<string> _unenforceableTriggers = [];
@@ -161,6 +163,10 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         }
 
         var teleportWinner = PickTeleportTrigger(passing, message);
+        if (teleportWinner is not null) {
+            Logger.Debug("Zone {0}: event {1} takes the player through teleport trigger {2}.",
+                Logger.Args(Zone.ZonePath, message.EventName, teleportWinner.m_triggerName));
+        }
         foreach (var (trigger, triggerActor) in passing) {
             // Two passing events in one message cannot both take the last fire.
             if (!Zone.ScriptState.HasTriggerFiresLeft(trigger.m_triggerName, trigger.m_triggerMax)) {
@@ -332,9 +338,30 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
     private static bool HasTeleportResult(Trigger trigger)
         => trigger.m_results?.m_results?.Any(result => result is ResTeleport) == true;
 
-    private static Trigger PickTeleportTrigger(List<(Trigger Trigger, IActorRef Actor)> passing, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
+    // The teleport handler sends a player with no destination zone out of a house zone only; anywhere else it does nothing.
+    private bool LeadsSomewhere(Trigger trigger)
+        => trigger.m_results?.m_results?.Any(result => result is ResTeleport teleport
+            && (!string.IsNullOrEmpty(teleport.m_destinationZone) || HouseExits.TryResolve(Zone.ZonePath, out _, out _))) == true;
+
+    private Trigger PickTeleportTrigger(List<(Trigger Trigger, IActorRef Actor)> passing, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
         // ReqHasQuest also passes for a completed quest: prefer the trigger naming a currently active quest, else the last passing one.
         var teleports = passing.Where(x => HasTeleportResult(x.Trigger)).Select(x => x.Trigger).ToList();
+
+        // A paired trigger whose teleport names no destination (the client data leaves it blank and spiraldb has none for it)
+        // would win and take nobody anywhere, suppressing the one that does lead somewhere. Unicorn Way pairs the Hedge Maze
+        // entrance with "And After Hedgemaze Quest" this way. Those only win when no passing teleport has a destination.
+        var leading = teleports.Where(LeadsSomewhere).ToList();
+        if (leading.Count > 0 && leading.Count < teleports.Count) {
+            foreach (var dead in teleports.Except(leading)) {
+                if (_deadTeleportsLogged.Add(dead.m_triggerName)) {
+                    Logger.Information("Trigger {0} in {1} teleports with no destination; {2} takes the player instead.",
+                        Logger.Args(dead.m_triggerName, Zone.ZonePath, leading[^1].m_triggerName));
+                }
+            }
+
+            teleports = leading;
+        }
+
         if (teleports.Count <= 1) {
             return teleports.FirstOrDefault();
         }
