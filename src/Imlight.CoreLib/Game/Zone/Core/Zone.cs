@@ -234,6 +234,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         _players.Add(message.PlayerActor);
+        NoteInstancedPlayer(message.PlayerActor, message.Wizard);
         Timers.Cancel(IDLE_EXPIRE_TIMER);
         InformZoneSupervisors(message.PlayerActor, message);
         RestoreRememberedSpawns(message.Wizard);
@@ -243,6 +244,26 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
             WizardGameObject = message.PlayerObject
         };
         Sender.Tell(response);
+    }
+
+    // The characters in this zone when it is an instance, so a teleport to them is refused (InstancedPlayers).
+    private readonly Dictionary<IActorRef, ulong> _instancedCharIds = [];
+
+    private void NoteInstancedPlayer(IActorRef playerActor, Wizard wizard) {
+        if (!IsInstance || wizard is null) {
+            return;
+        }
+
+        _instancedCharIds[playerActor] = wizard.CharId;
+        World.InstancedPlayers.Enter(wizard.CharId, this);
+    }
+
+    protected override void PostStop() {
+        foreach (var charId in _instancedCharIds.Values) {
+            World.InstancedPlayers.Leave(charId, this);
+        }
+
+        base.PostStop();
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVEPLAYER))]
@@ -263,6 +284,9 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         // The leaver is counted until the supervisors are told: the Players target is gated on a non-empty set.
         InformZoneSupervisors(message.PlayerActor, message);
         _players.Remove(message.PlayerActor);
+        if (_instancedCharIds.Remove(message.PlayerActor, out var charId)) {
+            World.InstancedPlayers.Leave(charId, this);
+        }
         ReleaseObjectIdentifier(message.MobileId);
         ScheduleIdleExpiryIfEmpty();
         Sender.Tell(new ZONE_102_PROTOCOL.MSG_REMOVEPLAYERRSP());
@@ -490,6 +514,10 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
     }
 
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS))]
+    private void ReceiveQueryEncounterMinions(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS message)
+        => _supervisors.ForEach(supervisor => supervisor.Forward(message));
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEBROADCAST))]
     private void ReceiveZoneBroadcast(ZONE_102_PROTOCOL.MSG_ZONEBROADCAST message) {
         DispatchBroadcast(message);
@@ -602,6 +630,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
             }
             else if (pendingEvent is ZONE_102_PROTOCOL.MSG_ADDPLAYER addPlayer) {
                 _players.Add(playerActor);
+                NoteInstancedPlayer(playerActor, addPlayer.Wizard);
                 Timers.Cancel(IDLE_EXPIRE_TIMER);
                 InformZoneSupervisors(playerActor, addPlayer);
                 RestoreRememberedSpawns(addPlayer.Wizard);

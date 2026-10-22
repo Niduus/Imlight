@@ -1065,6 +1065,49 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by a duel to its <see cref="Zone"/> when a battle starts against the boss of a ZoneObjects encounter: the
+    /// zone's own creatures of these templates that are not fighting answer with
+    /// <see cref="MSG_QUERYENCOUNTERMINIONSRSP"/>, so the ones already walking the room join the boss.
+    /// </summary>
+    public sealed class MSG_QUERYENCOUNTERMINIONS : IServerMessage {
+
+        public byte MessageOrder { get; } = 93;
+        public byte ServiceID { get; } = 102;
+
+        public HashSet<ulong> TemplateIds;
+        public Vector3 Center;
+        /// <summary>How near the center a creature must be; 0 for anywhere in the zone.</summary>
+        public float Radius;
+
+    }
+
+    /// <summary>
+    /// Sent by a creature in response to <see cref="MSG_QUERYENCOUNTERMINIONS"/>.
+    /// </summary>
+    public sealed class MSG_QUERYENCOUNTERMINIONSRSP : IServerMessage {
+
+        public byte MessageOrder { get; } = 94;
+        public byte ServiceID { get; } = 102;
+
+        public IActorRef CreatureActor;
+        public CoreObject CreatureObject;
+
+    }
+
+    /// <summary>
+    /// Timer-fired message: the creatures of an encounter that answered have joined, so the duel spawns the rest.
+    /// </summary>
+    public sealed class MSG_ENCOUNTERMINIONSDUE : IServerMessage {
+
+        public byte MessageOrder { get; } = 95;
+        public byte ServiceID { get; } = 102;
+
+        /// <summary>Which battle of the sigil it is for, so a late timer of an ended battle does nothing.</summary>
+        public int Battle;
+
+    }
+
+    /// <summary>
     /// Timer-fired message that releases a mobile ID back to the pool after a cooldown,
     /// preventing races between MSG_REMOVEOBJECT delivery and mobile ID reuse.
     /// </summary>

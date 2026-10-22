@@ -384,6 +384,17 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         Logger.Information("{0}: entering instance '{1}' (player {2}, owner {3}, fresh {4})",
             Logger.Args(SigilLogName(entry), entry.DestinationZone, wizard.CharId, owner, !entry.KeepInstance));
 
+        // The game attaches again once it is in the zone, and the attach must land in the same copy: the owner's for a
+        // player who went with a dungeon sigil's team, their own otherwise. The hatching trips keep their own record.
+        if (entry.OnFailed is not CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED) {
+            if (owner != wizard.CharId) {
+                ZoneInstanceOwners.Assign(wizard.CharId, entry.DestinationZone, owner);
+            }
+            else {
+                ZoneInstanceOwners.Clear(wizard.CharId, entry.DestinationZone);
+            }
+        }
+
         var tpMsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = entry.DestinationZone,
             DestinationLocation = entry.DestinationLoc,

@@ -13,12 +13,18 @@
  *               still, fight like the zone's creatures and, in an instance, do not come back once defeated.
  *   Remove      template ids: the zone's own objects and spawners of these are left out (a boss the file places
  *               itself, so there are not two).
- *   Encounters  extra enemies for a battle: Boss (a template id), Minions (template ids) and MinionCount. When a
- *               battle in the zone starts against the boss, MinionCount different ones of Minions, picked at random,
- *               join it on the boss's side and fight from the first round.
+ *   DistinctSpawners  names of the zone's own spawners (SpawnData m_name) that never have two living creatures of
+ *               the same template: each spawn is picked by its chance among the templates not already out. Such a
+ *               spawner fills up to its maximum with its first spawn, a few seconds after the zone loads.
+ *   Encounters  extra enemies for a battle: Boss (a template id), Minions (template ids), MinionCount and JoinRadius.
+ *               When a battle in the zone starts against the boss, MinionCount different ones of Minions join it on
+ *               the boss's side and fight from the first round: first the zone's own creatures of those templates
+ *               that are not fighting (within JoinRadius of the battle circle; 0 for anywhere in the zone), then,
+ *               a second later, spawned ones picked at random for the rest.
  *   Exit        where the zone's teleports out of it go instead: Zone and Loc ("X,Y,Z,Yaw" or a named place there).
  *               Triggers names the teleports it changes (trigger or door names); empty for every one that leaves
- *               the zone.
+ *               the zone. Doors are object template ids that become press-X doors to the exit in this copy, for an
+ *               object the server has no teleport for (such as the warp portal a trigger puts up after a boss).
  *
  * Object and creature fields:
  *   Name        the object's zone tag. It must be unique in the file: the object's global id comes from the zone, the
@@ -65,6 +71,7 @@ internal static class ZoneObjects {
         public List<ZoneObject> Objects { get; set; } = [];
         public List<ZoneObject> Creatures { get; set; } = [];
         public List<ulong> Remove { get; set; } = [];
+        public List<string> DistinctSpawners { get; set; } = [];
         public List<ZoneEncounter> Encounters { get; set; } = [];
         public ZoneExit Exit { get; set; }
     }
@@ -103,12 +110,14 @@ internal static class ZoneObjects {
         public string Notes { get; set; } = "";
         public List<ulong> Minions { get; set; } = [];
         public int MinionCount { get; set; }
+        public float JoinRadius { get; set; }
     }
 
     internal sealed class ZoneExit {
         public string Zone { get; set; } = "";
         public string Loc { get; set; } = "";
         public List<string> Triggers { get; set; } = [];
+        public List<ulong> Doors { get; set; } = [];
     }
 
     /// <summary>What the files gave one copy of a zone: its encounters and its exit.</summary>
@@ -119,6 +128,25 @@ internal static class ZoneObjects {
         /// <summary>The encounter for a battle started against this creature template, or null.</summary>
         internal ZoneEncounter EncounterFor(ulong bossTemplateId)
             => files.SelectMany(f => f.Encounters).FirstOrDefault(e => e.Boss == bossTemplateId);
+
+        /// <summary>Where a door of one of the exit's Doors templates goes in this copy of the zone.</summary>
+        internal bool TryGetDoorExit(ulong templateId, out string zone, out string loc) {
+            zone = loc = null;
+            var exit = files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
+            if (exit?.Doors is null || !exit.Doors.Contains(templateId)) {
+                return false;
+            }
+
+            zone = exit.Zone;
+            loc = exit.Loc ?? "";
+
+            return true;
+        }
+
+        /// <summary>Whether this spawner of the zone keeps its living creatures all of different templates.</summary>
+        internal bool IsDistinctSpawner(string spawnerName)
+            => !string.IsNullOrEmpty(spawnerName)
+               && files.Any(f => f.DistinctSpawners.Contains(spawnerName, StringComparer.OrdinalIgnoreCase));
 
         /// <summary>
         /// Where a teleport of this zone goes instead, when a file gives the zone an exit: the trigger or door name
@@ -227,6 +255,10 @@ internal static class ZoneObjects {
 
         return new Applied(zonePath, files);
     }
+
+    /// <summary>Whether any file makes objects of this template a door to its exit (the door component attaches).</summary>
+    internal static bool IsExitDoor(ulong templateId)
+        => Enabled && s_zones.Value.Values.Any(f => f.Exit?.Doors?.Contains(templateId) == true);
 
     /// <summary>The global id an added object takes, or null for the zone's own objects.</summary>
     internal static GID? GlobalIdOf(CoreObjectInfo info)
@@ -400,6 +432,11 @@ internal static class ZoneObjects {
                 file.Objects = [.. (file.Objects ?? []).Where(o => IsUsable(fileName, o, names))];
                 file.Creatures = [.. (file.Creatures ?? []).Where(o => IsUsable(fileName, o, names))];
                 file.Remove ??= [];
+                file.DistinctSpawners = [.. (file.DistinctSpawners ?? []).Where(n => !string.IsNullOrWhiteSpace(n))];
+                if (file.Exit is not null) {
+                    file.Exit.Triggers ??= [];
+                    file.Exit.Doors = [.. (file.Exit.Doors ?? []).Where(d => d != 0)];
+                }
                 file.Encounters = [.. (file.Encounters ?? []).Where(e => e is not null && e.Boss != 0)];
                 foreach (var encounter in file.Encounters) {
                     encounter.Minions = [.. (encounter.Minions ?? []).Where(m => m != 0).Distinct()];

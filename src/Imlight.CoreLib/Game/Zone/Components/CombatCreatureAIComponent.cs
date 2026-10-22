@@ -162,6 +162,29 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         InitiatizeHateTable();
     }
 
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS))]
+    private void ReceiveQueryEncounterMinions(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS message) {
+        // Only a creature of the zone's own that is not fighting (or dying) answers: a battle's minion stays in it.
+        var creature = Entity.ActiveGameObject;
+        if (_isInDuel || _sentFinalKill || Entity.IsCombatOnlyMinion || creature is null
+            || message.TemplateIds is null || !message.TemplateIds.Contains(creature.m_templateID.Full)) {
+            return;
+        }
+
+        if (message.Radius > 0) {
+            var dx = creature.m_location.X - message.Center.X;
+            var dy = creature.m_location.Y - message.Center.Y;
+            if ((dx * dx) + (dy * dy) > message.Radius * message.Radius) {
+                return;
+            }
+        }
+
+        Sender.Tell(new ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONSRSP {
+            CreatureActor = Entity.SelfRef,
+            CreatureObject = creature,
+        });
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_NEWROUND))]
     private void ReceiveNewCombatRound(COMBAT_106_PROTOCOL.MSG_NEWROUND message) {
         if (_sentFinalKill) {
