@@ -394,11 +394,35 @@ internal sealed class SetupSteps : IDisposable {
         return $"{os}-{arch}";
     }
 
+    /// <summary>
+    /// A custom area file (spiraldb-extra/ZoneObjects) the Manager's Customs tab saved: it has "EditedInManager", and
+    /// an update keeps it, so the changes made in the app are not replaced by the shipped file.
+    /// </summary>
+    internal static bool IsEditedArea(string relative, string target) {
+        if (!relative.StartsWith("spiraldb-extra/ZoneObjects/", StringComparison.OrdinalIgnoreCase)
+            || !relative.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        try {
+            return File.ReadAllText(target).Contains("\"EditedInManager\"", StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return false;
+        }
+    }
+
     private static void CopyFolder(string from, string to, string[] keepIfPresent) {
         foreach (var file in Directory.EnumerateFiles(from, "*", SearchOption.AllDirectories)) {
             var relative = Path.GetRelativePath(from, file).Replace('\\', '/');
             var target = Path.Combine(to, relative);
             if (File.Exists(target) && keepIfPresent.Contains(relative, StringComparer.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            if (File.Exists(target) && IsEditedArea(relative, target)) {
+                SetupLog.Detail($"Kept {relative}: it was changed in the Customs tab.");
+
                 continue;
             }
 

@@ -8,6 +8,11 @@
  * sends its team into a fresh private copy loaded with it. A file with no Variant is used by every copy.
  *
  * File fields:
+ *   Enabled     false switches the whole file off (its objects go at once, the rest counts as below) without
+ *               deleting it; true or left out, it is used. The Manager's Customs tab has a switch for it.
+ *   EditedInManager  set by the Manager's Customs tab when it saves the file (the date). An update keeps a file
+ *               that has it instead of putting back the shipped one, so the changes made there stay. The server
+ *               does not use it.
  *   Objects     objects added to the zone's object list (ZoneData m_objectList).
  *   Creatures   creatures spawned in the zone as the zone's own spawns are (a spawner on a one-node path): they stand
  *               still, fight like the zone's creatures and, in an instance, do not come back once defeated.
@@ -85,6 +90,7 @@ internal static class ZoneObjects {
         public string Zone { get; set; } = "";
         public string Variant { get; set; } = "";
         public string Notes { get; set; } = "";
+        public bool Enabled { get; set; } = true;
         public List<ZoneObject> Objects { get; set; } = [];
         public List<ZoneObject> Creatures { get; set; } = [];
         public List<ulong> Remove { get; set; } = [];
@@ -409,6 +415,7 @@ internal static class ZoneObjects {
         }
 
         foreach (var (zone, (zonePath, variant)) in s_live) {
+            LogNextLoadChanges(zonePath, variant, before, after);
             var change = Changes(zonePath, variant, before, after);
             if (change.Moved.Count + change.Added.Count + change.Removed.Count == 0) {
                 continue;
@@ -418,6 +425,27 @@ internal static class ZoneObjects {
                 Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})", change.Moved.Count, change.Added.Count,
                     change.Removed.Count));
             zone.Tell(change);
+        }
+    }
+
+    // Creatures, left-out objects and battle circles are only read when a zone loads: a change to them is noted in
+    // the log for each copy that runs now, so it is clear why it does not show yet.
+    private static void LogNextLoadChanges(string zonePath, string variant, Dictionary<string, ZoneObjectFile> before,
+                                           Dictionary<string, ZoneObjectFile> after) {
+        static string Part(string zonePath, string variant, Dictionary<string, ZoneObjectFile> zones) {
+            var files = new[] { KeyOf(zonePath, ""), string.IsNullOrEmpty(variant) ? null : KeyOf(zonePath, variant) }
+                .Where(k => k is not null && zones.ContainsKey(k)).Select(k => zones[k]).ToList();
+
+            return JsonSerializer.Serialize(new {
+                Creatures = files.SelectMany(f => f.Creatures),
+                Remove = files.SelectMany(f => f.Remove),
+                Circles = files.SelectMany(f => f.Objects).Where(o => o.CombatSigil is not null).Select(o => o.Name),
+            });
+        }
+
+        if (Part(zonePath, variant, before) != Part(zonePath, variant, after)) {
+            Logger.Information("Zone {0}{1}: its creatures, left-out objects or battle circles changed; they count from "
+                + "the next time the zone loads.", Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})"));
         }
     }
 
@@ -623,6 +651,7 @@ internal static class ZoneObjects {
 
     private static Dictionary<string, ZoneObjectFile> Load() {
         var zones = new Dictionary<string, ZoneObjectFile>();
+        var off = new HashSet<string>();
         var dir = Path.Combine(SpiralDB.ExtraPath, FOLDER);
         if (!Directory.Exists(dir)) {
             return zones;
@@ -639,6 +668,13 @@ internal static class ZoneObjects {
                 }
 
                 file.Variant ??= "";
+                if (!file.Enabled) {
+                    off.Add(KeyOf(file.Zone, file.Variant));
+                    Logger.Information("Zone objects {0} are switched off (Enabled is false); skipped.", Logger.Args(fileName));
+
+                    continue;
+                }
+
                 var key = KeyOf(file.Zone, file.Variant);
                 if (zones.ContainsKey(key)) {
                     Logger.Warning("Zone objects {0}: another file is already for {1} {2}; skipped.",
@@ -674,7 +710,7 @@ internal static class ZoneObjects {
             }
         }
 
-        ApplyPlacements(zones);
+        ApplyPlacements(zones, off);
         Logger.Information("Zone objects loaded from {0} files ({1} objects, {2} creatures).",
             Logger.Args(zones.Count, zones.Values.Sum(z => z.Objects.Count), zones.Values.Sum(z => z.Creatures.Count)));
 
@@ -692,7 +728,8 @@ internal static class ZoneObjects {
     }
 
     // The Customs tab's placements over the files: moved, swapped, added and removed objects.
-    private static void ApplyPlacements(Dictionary<string, ZoneObjectFile> zones) {
+    // A file that is switched off takes the placements of its room with it.
+    private static void ApplyPlacements(Dictionary<string, ZoneObjectFile> zones, HashSet<string> off) {
         var path = Path.Combine(SpiralDB.ExtraPath, PLACEMENTS_FOLDER, PLACEMENTS_FILE);
         if (!File.Exists(path)) {
             return;
@@ -716,6 +753,10 @@ internal static class ZoneObjects {
             var at = room.IndexOf('@');
             var zone = at < 0 ? room : room[..at];
             var variant = at < 0 ? "" : room[(at + 1)..];
+            if (off.Contains(KeyOf(zone, variant))) {
+                continue;
+            }
+
             if (!zones.TryGetValue(KeyOf(zone, variant), out var file)) {
                 // Objects added to a zone with no file of its own.
                 file = new ZoneObjectFile { Zone = zone, Variant = variant };
