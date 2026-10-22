@@ -308,19 +308,20 @@ internal static class CheatSpecs {
             "Cast only one of these spells, picked at random", [], _ => "(only one spell, at random)"),
 
         // Do... (a player cheat's)
-        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the best enchantment that fits.",
-            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant}",
+        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked.",
+            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants}",
             [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.PlayerTarget), F("Timing", CheatFieldType.Choice, "Now", s_timings),
-             F("Times", CheatFieldType.Number, 1, max: 10), new("Silent", CheatFieldType.Toggle, false, Label: "silent"), new("Enchant", CheatFieldType.Toggle, false, Label: "enchanted")],
+             F("Times", CheatFieldType.Number, 1, max: 10), new("Silent", CheatFieldType.Toggle, false, Label: "silent"), new("Enchant", CheatFieldType.Toggle, false, Label: "enchanted"),
+             F("Enchants", CheatFieldType.Enchants)],
             b => $"cast {SpellName(b)}{(b.Text("Target").Length > 0 ? " on " + LabelOf(PLAYER_TARGETS, b.Text("Target")) : "")} {LabelOf(s_timings, b.Text("Timing"))}"
-                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? " (enchanted)" : "")}", "player"),
+                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}", "player"),
         new("D.MyPips", BlockKind.Do, "pips", "give me pips", "Gives you pips (or takes them away).",
             "{Amount} {Kind} pips for me", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds)],
             b => $"{(b.Number("Amount") < 0 ? "take" : "give me")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips", "player"),
         new("D.MyHeal", BlockKind.Do, "heal", "heal me", "Heals you by hit points, or by a share of your most health.",
             "Heal me by {Amount}", [F("Amount", CheatFieldType.HealAmount)], b => $"heal me by {(b.Flag("Percent") ? $"{b.Number("Amount")}%" : N(b.Number("Amount")))}", "player"),
         new("D.Banner", BlockKind.Do, "quote", "show a banner", "A line from the game shown over you in battle, as .ca shows it. Type a few of its words or its number.",
-            "Show {Line} over me", [F("Line", CheatFieldType.Line)], b => $"show \"{b.Text("Line")}\"", "player"),
+            "Show {Line} over me", [F("Line", CheatFieldType.Line)], b => b.Text("Line").Length == 0 ? "show (no line picked)" : $"show \"{b.Text("Line")}\"", "player"),
         new("D.MyChat", BlockKind.Do, "chat", "message to me", "Any words you like, in your own chat window.",
             "Tell me in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell me \"{b.Text("Text")}\"", "player"),
 

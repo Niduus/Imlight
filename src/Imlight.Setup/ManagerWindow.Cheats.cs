@@ -276,7 +276,7 @@ internal sealed partial class ManagerWindow {
     private Control CheatCard(CheatBoard board, CheatRule rule, int number) {
         var open = board.Expanded.Contains(rule);
         var summary = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
-        var marks = new TextBlock { Foreground = WARN, FontSize = 12 };
+        var marks = new TextBlock { Foreground = WARN, FontSize = 12, TextWrapping = TextWrapping.Wrap };
         board.Heads[rule] = (summary, marks);
         UpdateCheatHead(board, rule);
 
@@ -416,8 +416,42 @@ internal sealed partial class ManagerWindow {
             }
         }
 
-        head.Marks.Text = string.Join("  ·  ", marks);
-        head.Marks.Foreground = rule.Added || rule.IsChanged ? WARN : MUTED;
+        var missing = Unfinished(board, rule);
+        head.Marks.Text = string.Join("  ·  ", marks) + (missing.Count > 0 ? "\nNot finished, so it does nothing yet: " + string.Join(" ", missing) : "");
+        head.Marks.Foreground = missing.Count > 0 || rule.Added || rule.IsChanged ? WARN : MUTED;
+    }
+
+    /// <summary>
+    /// What a cheat's blocks still need before the server can do them, and how to fill each in (Niduus, 2026-10-22: adding
+    /// "cast for free" or "show a banner" didn't say what was wrong or how to finish it).
+    /// </summary>
+    private List<string> Unfinished(CheatBoard board, CheatRule rule) {
+        var missing = new List<string>();
+        foreach (var block in new[] { rule.When }.Concat(rule.Ifs).Concat(rule.Dos).Where(b => b.On)) {
+            var spec = CheatSpecs.Get(block.Spec);
+            var name = $"\"{spec.Palette}\"";
+            foreach (var field in spec.Fields) {
+                switch (field.Type) {
+                    case CheatFieldType.Spell when spec.Kind == BlockKind.Do && block.Text("Spell").Length == 0 && block.Id("SpellID") == 0:
+                        missing.Add($"In {name}, click \"pick a spell\" and choose the spell to cast.");
+                        break;
+                    case CheatFieldType.Line when block.Text("Line").Length == 0:
+                        missing.Add($"In {name}, type a few words of a game line (such as \"cannot be stopped\") or click \"find\" to pick one.");
+                        break;
+                    case CheatFieldType.Line when _cheatLines?.Any == true && _cheatLines.Resolve(block.Text("Line")) is null:
+                        missing.Add($"In {name}, no game line holds \"{block.Text("Line")}\": click \"find\" and pick one from the list.");
+                        break;
+                    case CheatFieldType.Creature when block.Id("Creature") == 0 && block.Number("Custom") == 0:
+                        missing.Add($"In {name}, click \"pick a creature\" and choose one.");
+                        break;
+                    case CheatFieldType.Words when field.Key == "Text" && block.Text("Text").Length == 0:
+                        missing.Add($"In {name}, type the words to show.");
+                        break;
+                }
+            }
+        }
+
+        return [.. missing.Distinct()];
     }
 
     // ---------------------------------------------------------------------
@@ -583,7 +617,14 @@ internal sealed partial class ManagerWindow {
             case CheatFieldType.Choice:
                 return BlockFields.Choice(field.Options ?? [], block.Text(field.Key), v => Set(field.Key, v));
             case CheatFieldType.Toggle:
-                return BlockFields.Toggle(field.Label, block.Flag(field.Key), on => Set(field.Key, on));
+                return BlockFields.Toggle(field.Label, block.Flag(field.Key), on => {
+                    Set(field.Key, on);
+                    if (field.Key == "Enchant" && _enchantPickers.TryGetValue(block, out var picker)) {
+                        picker.IsVisible = on;
+                    }
+                });
+            case CheatFieldType.Enchants:
+                return EnchantsField(block, changed);
             case CheatFieldType.Target:
                 return BlockFields.Choice(CheatSpecs.TARGETS, block.Text(field.Key), v => Set(field.Key, v));
             case CheatFieldType.PlayerTarget:
@@ -879,6 +920,73 @@ internal sealed partial class ManagerWindow {
             return new StackPanel { Spacing = 8, Width = 400, Children = { search, new ScrollViewer { MaxHeight = 420, Content = results } } };
         }, "Click to pick the spell");
         ShowCard();
+
+        return button;
+    }
+
+    // The enchantment picker of each FreeCast block, shown while its "enchanted" box is ticked.
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<CheatBlock, Control> _enchantPickers = [];
+
+    /// <summary>
+    /// The enchantments to put on an enchanted free cast (Niduus, 2026-10-22: "if enchant, allow select(s)"): tick one
+    /// or more; the server puts each on in the order picked, and with none picked the best one that fits.
+    /// </summary>
+    private Control EnchantsField(CheatBlock block, Action changed) {
+        Button? button = null;
+        string Shown() => block.List("Enchants") is { Count: > 0 } picked ? string.Join(" + ", picked) : "best that fits";
+
+        button = BlockFields.Picker(new TextBlock { Text = "✨", VerticalAlignment = VerticalAlignment.Center }, Shown(), flyout => {
+            var search = new TextBox { Watermark = "Search an enchantment, such as Epic or Aegis", Width = 380 };
+            var results = new StackPanel { Spacing = 2 };
+            void Render() {
+                results.Children.Clear();
+                if (_spellBook is null) {
+                    _ = Guard(LoadSpellBookAsync);
+                    results.Children.Add(Sub(_spellBookProblem ?? "Reading the enchantments from your game files. Click here again in a moment."));
+
+                    return;
+                }
+
+                var picked = block.List("Enchants");
+                var words = (search.Text ?? "").Trim().ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var names = _spellBook.Spells
+                    .Where(c => c.Type.Equals("Enchantment", StringComparison.OrdinalIgnoreCase) && (!c.Hidden || picked.Contains(c.Name)))
+                    .Select(c => c.Name).Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Where(n => words.All(n.ToLowerInvariant().Contains))
+                    .OrderBy(n => !picked.Contains(n, StringComparer.OrdinalIgnoreCase)).ThenBy(n => n, StringComparer.OrdinalIgnoreCase)
+                    .Take(60).ToList();
+                if (names.Count == 0) {
+                    results.Children.Add(Sub("No enchantment matches."));
+                }
+
+                foreach (var name in names) {
+                    var at = picked.FindIndex(p => p.Equals(name, StringComparison.OrdinalIgnoreCase));
+                    var box = new CheckBox { Content = at >= 0 ? $"{at + 1}. {name}" : name, IsChecked = at >= 0 };
+                    box.IsCheckedChanged += (_, _) => {
+                        var list = block.List("Enchants").Where(p => !p.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+                        if (box.IsChecked == true) {
+                            list.Add(name);
+                        }
+
+                        block.Set("Enchants", new JsonArray([.. list.Select(n => (JsonNode) JsonValue.Create(n)!)]));
+                        BlockFields.SetPicker(button!, new TextBlock { Text = "✨", VerticalAlignment = VerticalAlignment.Center }, Shown());
+                        changed();
+                        Render();
+                    };
+                    results.Children.Add(box);
+                }
+            }
+
+            search.TextChanged += (_, _) => Render();
+            Render();
+
+            return new StackPanel {
+                Spacing = 8, Width = 400,
+                Children = { Sub("Tick one or more. They go on in the order ticked (the numbers), so several stack."), search, new ScrollViewer { MaxHeight = 420, Content = results } },
+            };
+        }, "Click to pick the enchantments");
+        button.IsVisible = block.Flag("Enchant");
+        _enchantPickers.AddOrUpdate(block, button);
 
         return button;
     }

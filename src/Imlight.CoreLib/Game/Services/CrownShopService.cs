@@ -445,7 +445,7 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
 
                     wizard.UnlockCustomTeleportEffect(customEmote.m_bitFieldNumber);
                 }
-                else if(customEmote.m_emoteType == CustomEmoteType.CE_Emote) {
+                else if (customEmote.m_emoteType is CustomEmoteType.CE_Emote or CustomEmoteType.CE_Dance) {
                     if (wizard.CountEmotesUnlocked() >= s_maxEmotes) {
                         return s_errorMaxEmotes;
                     }

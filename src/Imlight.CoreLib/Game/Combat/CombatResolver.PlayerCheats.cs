@@ -279,7 +279,7 @@ public partial class CombatResolver {
         var target = FreeCastTarget(step.Target);
         var count = Math.Clamp(step.Times, 1, 10);
         for (var i = 0; i < count; i++) {
-            if (AddFreeDelayedCast(me, spell.m_templateID, atStart, target, step.Silent, when, step.Enchant) == 0) {
+            if (AddFreeDelayedCast(me, spell.m_templateID, atStart, out _, target, step.Silent, when, step.Enchant, step.Enchants) == 0) {
                 return 0;
             }
         }

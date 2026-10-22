@@ -175,8 +175,10 @@ internal static class ItemHelper {
         }
 
         // The client dynamically adds "PIIVictoryDance" to m_adjectiveList in CustomEmoteBehaviorTemplate::OnPostLoad
-        // when m_emoteType == CustomEmoteType.CE_Emote, so it is not present in the raw Root.wad template data.
-        if (itemTemplate.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>().Any(b => b.m_emoteType == CustomEmoteType.CE_Emote) == true) {
+        // for emotes, so it is not present in the raw Root.wad template data. Dances are Victory Dances too: in a packet
+        // capture of the real game (2026-10-22) Bee Dance (1633019, CE_Dance) was worn and played as one.
+        if (itemTemplate.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>()
+                .Any(b => b.m_emoteType is CustomEmoteType.CE_Emote or CustomEmoteType.CE_Dance) == true) {
             return new EquipmentSlot {
                 SlotType = EquipmentSlotType.PIIVictoryDance,
             };

@@ -132,7 +132,7 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     // How long after a won battle the Victory Dance starts, so it plays in the circle during the victory scene.
-    private static readonly TimeSpan VictoryDanceDelay = TimeSpan.FromSeconds(1.5);
+    private static readonly TimeSpan VictoryDanceDelay = TimeSpan.FromSeconds(Math.Clamp(ConfigurationManager.GetValue("Emotes.VictoryDanceDelay", 0.75), 0, 10));
 
     // On (the default): after a won battle the server plays the dance as a radial emote, unless the game asks for the
     // dance first (then the game plays it itself). Niduus, 2026-10-22: with this off in v0.10.145 no dance played, as

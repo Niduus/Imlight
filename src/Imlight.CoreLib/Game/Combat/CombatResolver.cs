@@ -745,14 +745,40 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     /// <param name="enchantment">The enchantment the e option put on the spell, or null.</param>
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, out string enchantment,
-                                    string target = null, bool skipCast = false, char when = 'n', bool enchant = false) {
+                                    string target = null, bool skipCast = false, char when = 'n', bool enchant = false,
+                                    IReadOnlyList<string> enchants = null) {
         enchantment = null;
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
             return 0;
         }
 
-        if (enchant) {
+        // Player cheats' picked enchantments (Niduus, 2026-10-22: "if enchant, allow select(s)"): each one that changes
+        // the spell goes on, in order, so several can stack. The card shows the first.
+        var picked = enchant ? (enchants ?? []).Where(name => !string.IsNullOrWhiteSpace(name)).ToList() : [];
+        foreach (var name in picked) {
+            var enchantSpell = SpellFactory.Exists(name) ? SpellFactory.GetSpell(name) : null;
+            if (enchantSpell is null || CoreObjectFactory.GetCoreTemplate(enchantSpell.m_templateID) is not SpellTemplate enchantTemplate
+                || !CombatEnchantments.IsEnchantment(enchantTemplate)) {
+                Logger.Warning("Free cast {0}: \"{1}\" is not an enchantment, so it was left off.", Logger.Args(spellTemplateId, name));
+                continue;
+            }
+
+            var stacked = CombatEnchantments.Apply(template, enchantTemplate, out var changed);
+            if (!changed) {
+                continue;
+            }
+
+            if (spell.m_enchantment == 0) {
+                CombatEnchantments.Enchant(spell, enchantSpell);
+            }
+
+            template = stacked;
+            spell.m_accuracy = (byte) Math.Clamp(template.m_accuracy, 0, 100);
+            enchantment = enchantment is null ? name : $"{enchantment} + {name}";
+        }
+
+        if (enchant && picked.Count == 0) {
             foreach (var name in s_autoEnchants) {
                 var enchantSpell = SpellFactory.Exists(name) ? SpellFactory.GetSpell(name) : null;
                 var enchanted = spell with { };
@@ -1282,19 +1308,66 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         m_targetSubcircleList = [],
         m_showCast = true,
         m_spellHits = (char) 1,
-        m_spell = action.Spell,
+        m_spell = ShownSpell(action),
         m_serializedBlocks = "\u0000\u0000",
         m_shadowPactTarget = -1,
         m_petCastTarget = -1,
         m_CritHitList = [],
     };
 
+    // [Battle] PlayerCastsUseNormalAnimation (Niduus, 2026-10-22, "Swap where possible"): a wizard casting a boss's or
+    // monster's copy of a spell (the Emulate globals and the like) sees the animation of the player spell that does the
+    // same thing, without the boss's own part first. Copies with no such player spell keep their animation.
+    private static readonly bool s_playerCastsUseNormalAnimation =
+        Imlight.Common.ConfigurationManager.GetValue("Battle.PlayerCastsUseNormalAnimation", true);
+
+    private static readonly Lazy<Dictionary<uint, uint>> s_lookalikes = new(BuildLookalikes);
+
+    private static Dictionary<uint, uint> BuildLookalikes() {
+        try {
+            var ids = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
+            foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+                string file = location?.m_filename;
+                if (!string.IsNullOrEmpty(file) && location.m_id <= uint.MaxValue) {
+                    ids.TryAdd(file, (uint) location.m_id);
+                }
+            }
+
+            var spells = SpellFactory.AllSpellTemplates()
+                .Where(s => ids.ContainsKey(s.Path))
+                .Select(s => (s.Path, s.Template, ids[s.Path]));
+            _ = SpellCinematics.Instance;
+            var twins = SpellLookalikes.Build(spells, name => SpellCinematics.GetCinematicTemplate(name) is not null);
+            Logger.Information("Spell animations: {0} boss and monster spells play a player spell's animation when a wizard casts them.",
+                Logger.Args(twins.Count));
+
+            return twins;
+        }
+        catch (Exception e) {
+            Logger.Error("Spell animations: could not match boss spells to player spells: {0}", Logger.Args(e));
+
+            return [];
+        }
+    }
+
+    /// <summary>The spell the game is told was cast: for a wizard casting a boss copy, its player twin (same effects).</summary>
+    private static Spell ShownSpell(QueuedCombatAction action) {
+        if (!s_playerCastsUseNormalAnimation || action.Spell is null || action.SpellCaster is not { IsHumanPlayer: true }
+            || !s_lookalikes.Value.TryGetValue(action.Spell.m_templateID, out var twin)) {
+            return action.Spell;
+        }
+
+        Logger.Debug("Spell animations: wizard cast {0}, shown with the animation of {1}.", Logger.Args(action.Spell.m_templateID, twin));
+
+        return action.Spell with { m_templateID = twin };
+    }
+
     private static float GetActionCinematicTime(QueuedCombatAction action) {
         if (action.Spell is null) {
             return SPELL_PASS_TIME;
         }
 
-        var spellName = SpellFactory.GetBaseSpellName(action.Spell.m_templateID);
+        var spellName = SpellFactory.GetBaseSpellName(ShownSpell(action).m_templateID);
         var cinematicFactory = SpellCinematics.Instance;
 
         if (FastAnimationTiming) {

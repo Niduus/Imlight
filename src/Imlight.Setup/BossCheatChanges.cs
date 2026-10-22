@@ -33,6 +33,8 @@ internal enum CheatFieldType {
     // "any version of" / "exactly" (a yes/no value); the live "matches 7 spells" count (no value of its own); the player
     // cheats' targets (me, p1-p4, e1-e4, all).
     VersionChoice, MatchCount, PlayerTarget,
+    // The enchantments picked for an enchanted free cast (a list of names), shown while its Enchant box is ticked.
+    Enchants,
 }
 
 /// <summary>A box of a cheat block: the cheat file's name for it, its type, its first value and, for a Choice, its choices.</summary>
@@ -108,7 +110,7 @@ internal sealed class CheatBlock {
         CheatFieldType.HealAmount => [("Amount", 500), ("Percent", false)],
         CheatFieldType.Spell => [("Spell", ""), ("SpellID", 0)],
         CheatFieldType.Creature => [("Creature", 0), ("Custom", 0)],
-        CheatFieldType.Cards => [(field.Key, new JsonArray())],
+        CheatFieldType.Cards or CheatFieldType.Enchants => [(field.Key, new JsonArray())],
         CheatFieldType.MatchCount => [],
         _ => [(field.Key, field.Default?.DeepClone() ?? field.Type switch {
             CheatFieldType.Number or CheatFieldType.Percent or CheatFieldType.Sign => JsonValue.Create(0),

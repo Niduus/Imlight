@@ -279,6 +279,8 @@ internal static class BossCheats {
         public int Times { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
+        // The enchantments picked for an enchanted FreeCast, put on in this order (none: the best one that fits).
+        public List<string> Enchants { get; set; } = [];
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

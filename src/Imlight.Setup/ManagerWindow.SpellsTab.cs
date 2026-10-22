@@ -159,7 +159,8 @@ internal sealed partial class ManagerWindow {
                 WithDock(Fold("cards", "Spells", "Find a card",
                     "Search or filter, then click a card to see its stats and ID.",
                     WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
-                        "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies. " +
+                        "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies: a search always " +
+                        "finds them too; the switch shows them while browsing without a search. " +
                         "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
                         "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects)."),
                     filters, _spellsCount), Dock.Top),
@@ -251,8 +252,9 @@ internal sealed partial class ManagerWindow {
 
         var matched = book.Spells.Where(s =>
             (id is not null ? s.Id == id || words.All(s.Haystack.Contains) : words.All(s.Haystack.Contains))
-            // A spell asked for by its ID shows even when it is hidden.
-            && (hidden || !s.Hidden || s.Id == id)
+            // A spell asked for by its ID or found by a search shows even when it is hidden (Niduus, 2026-10-22: searching
+            // "Emulate" found nothing, as every Emulate card is a boss copy).
+            && (hidden || !s.Hidden || s.Id == id || words.Length > 0)
             && (school == ALL_SCHOOLS || s.School.Equals(school, StringComparison.OrdinalIgnoreCase))
             && (pips == ANY || (pips == "X" ? s.XPips : !s.XPips && s.Pips.ToString(CultureInfo.InvariantCulture) == pips))
             && (type == ALL_TYPES.Replace(' ', '_') || (type == MINION ? s.Minion : s.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
