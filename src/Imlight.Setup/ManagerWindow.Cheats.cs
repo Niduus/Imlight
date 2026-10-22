@@ -26,8 +26,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.Setup.Blocks;
 
@@ -50,10 +52,18 @@ internal sealed partial class ManagerWindow {
         internal TextBlock Note { get; } = Sub("");
         internal Dictionary<CheatRule, (TextBlock Summary, TextBlock Marks)> Heads { get; } = [];
         internal Dictionary<CheatRule, List<Action>> Counters { get; } = [];
-        internal HashSet<CheatRule> Expanded { get; } = [];
         internal BossCheatList? List { get; set; }
-        internal CheatRule? Focus { get; set; }
         internal Section? Section { get; set; }
+
+        // The cheat open on the edit page (null: the list of cheats shows). The edit page puts the palette right beside
+        // the cheat's blocks, each scrolling on its own (Niduus, 2026-10-22: blocks couldn't be dragged that far down).
+        internal CheatRule? Editing { get; set; }
+        internal CheatRule? Shown { get; set; }
+        internal Control ListView { get; set; } = new Panel();
+        internal Control EditView { get; set; } = new Panel();
+        internal Grid EditGrid { get; } = new() { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
+        internal ContentControl EditHead { get; } = new();
+        internal ScrollViewer EditScroll { get; } = new() { HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
     }
 
     private readonly CheatBoard _bossBoard = new(player: false);
@@ -69,7 +79,7 @@ internal sealed partial class ManagerWindow {
     private Control CheatsCard() {
         var grid = CheatEditor(_bossBoard, [
             Danger(Action(Plain("Put back the game's cheats"), ResetCheatsAsync)),
-        ], CheatsGuide());
+        ], [], CheatsGuide());
 
         _bossBoard.Section = new Section("bolt", BlockColors.Accent("cheats"), "Cheats",
             "Moves the boss makes outside its turn. Each cheat reads as a sentence: When something happens, If it is true, Do these things. " +
@@ -101,14 +111,14 @@ internal sealed partial class ManagerWindow {
             Say(_playerCheatsOn ? "Player cheats are on." : "Player cheats are off. Your cheats stay here.");
         });
 
-        var grid = CheatEditor(_playerBoard, [
-            Action(Primary("Save player cheats"), () => {
-                SavePlayerCheats();
-                Say("Player cheats saved. They count from the next round, with no restart.");
+        Control SaveButton() => Action(Primary("Save player cheats"), () => {
+            SavePlayerCheats();
+            Say("Player cheats saved. They count from the next round, with no restart.");
 
-                return Task.CompletedTask;
-            }),
-        ], master);
+            return Task.CompletedTask;
+        });
+
+        var grid = CheatEditor(_playerBoard, [SaveButton()], [SaveButton()], master);
         EnsureGameIcons(() => RenderCheats(_playerBoard));
 
         return new ScrollViewer {
@@ -132,8 +142,7 @@ internal sealed partial class ManagerWindow {
             Say($"The player cheats could not be read: {ex.Message}");
         }
 
-        _playerBoard.Expanded.Clear();
-        _playerBoard.Focus = null;
+        _playerBoard.Editing = null;
         RenderCheats(_playerBoard);
     }
 
@@ -150,17 +159,17 @@ internal sealed partial class ManagerWindow {
         }
     }
 
-    // The palette at the side and the list of cheats with its buttons.
-    private Grid CheatEditor(CheatBoard board, Control[] extraButtons, Control top) {
+    // Two pages: the list of cheats with its buttons, and the edit page of one cheat with the palette beside its blocks.
+    private Control CheatEditor(CheatBoard board, Control[] listButtons, Control[] editButtons, Control top) {
         var palette = new BlockPalette(
             CheatSpecs.All.Where(s => s.Id is not ("W.Other" or "D.Other") && s.For(board.Player))
                 .Select(s => new PaletteEntry(s.Kind, s.Icon, s.Palette, s.Help, s)),
             entry => Guarded(() => AddFromPalette(board, (CheatSpec) entry.Payload, null, -1)),
             "Cheat blocks") {
-            Width = 236, MaxHeight = 760, VerticalAlignment = VerticalAlignment.Top,
+            Width = 236, VerticalAlignment = VerticalAlignment.Stretch,
         };
 
-        var legend = new WrapPanel {
+        Control Legends() => new WrapPanel {
             Children = {
                 Legend(BlockKind.When, "When… starts a cheat: what sets it off"),
                 Legend(BlockKind.If, "If… only when something is true"),
@@ -173,30 +182,32 @@ internal sealed partial class ManagerWindow {
                 NewCheat(board, CheatSpecs.Get(board.Player ? "W.ICast" : "W.RoundStart"));
 
                 return Task.CompletedTask;
-            }), Action(Plain("Open all"), () => {
-                foreach (var rule in board.List?.Cheats ?? []) {
-                    board.Expanded.Add(rule);
-                }
-
-                RenderCheats(board);
-
-                return Task.CompletedTask;
-            }), Action(Plain("Close all"), () => {
-                board.Expanded.Clear();
-                RenderCheats(board);
-
-                return Task.CompletedTask;
-            }), .. extraButtons,
+            }), .. listButtons,
         ]);
+        board.ListView = new StackPanel { Spacing = 8, Children = { top, Legends(), board.Note, board.Rows, buttons } };
 
-        var right = new StackPanel { Spacing = 8, Children = { top, legend, board.Note, board.Rows, buttons } };
-        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
-        grid.Children.Add(palette);
-        Grid.SetColumn(right, 1);
-        right.Margin = new Thickness(14, 0, 0, 0);
-        grid.Children.Add(right);
+        var back = Action(Plain("← Back to all cheats"), () => {
+            board.Editing = null;
+            RenderCheats(board);
 
-        return grid;
+            return Task.CompletedTask;
+        });
+        board.EditGrid.Children.Add(palette);
+        board.EditScroll.Margin = new Thickness(14, 0, 0, 0);
+        Grid.SetColumn(board.EditScroll, 1);
+        board.EditGrid.Children.Add(board.EditScroll);
+        board.EditView = new StackPanel {
+            Spacing = 10, IsVisible = false,
+            Children = {
+                Row([back, .. editButtons]),
+                board.EditHead,
+                Sub("Click a block in the palette to add it at the end, or drag it to the place you want. Drag a block's grip to move it."),
+                Legends(),
+                board.EditGrid,
+            },
+        };
+
+        return new StackPanel { Children = { board.ListView, board.EditView } };
     }
 
     private static Control Legend(BlockKind kind, string text) => new StackPanel {
@@ -228,8 +239,7 @@ internal sealed partial class ManagerWindow {
             Say($"The cheat file of {boss.Name} could not be read: {ex.Message}");
         }
 
-        _bossBoard.Expanded.Clear();
-        _bossBoard.Focus = null;
+        _bossBoard.Editing = null;
         RenderCheats(_bossBoard);
         EnsureGameIcons(() => {
             if (_bossBoard.List is not null) {
@@ -248,7 +258,7 @@ internal sealed partial class ManagerWindow {
 
         var notes = new List<string>();
         if (!board.Player && !list.HasFile) {
-            notes.Add("This boss has no cheats in the game. Make one with New cheat, or click a When block in the palette.");
+            notes.Add("This boss has no cheats in the game. Make one with New cheat.");
         }
 
         if (list.Lost > 0) {
@@ -258,6 +268,25 @@ internal sealed partial class ManagerWindow {
 
         board.Note.Text = string.Join(" ", notes);
         board.Note.IsVisible = notes.Count > 0;
+        if (board.Editing is { } editing && !list.Cheats.Contains(editing)) {
+            board.Editing = null;
+        }
+
+        var changed = list.Cheats.Count(c => c.IsChanged);
+        board.Section?.SetBadge(list.Cheats.Count == 0 ? "" : $"{list.Cheats.Count} cheats" + (changed > 0 ? $", {changed} yours" : ""),
+            changed > 0 ? WARN : null);
+        board.ListView.IsVisible = board.Editing is null;
+        board.EditView.IsVisible = board.Editing is not null;
+        var opened = board.Shown != board.Editing;
+        board.Shown = board.Editing;
+        if (board.Editing is { } rule) {
+            RenderEditPage(board, rule, opened);
+
+            return;
+        }
+
+        board.EditHead.Content = null;
+        board.EditScroll.Content = null;
         for (var i = 0; i < list.Cheats.Count; i++) {
             board.Rows.Children.Add(CheatCard(board, list.Cheats[i], i + 1));
         }
@@ -267,14 +296,26 @@ internal sealed partial class ManagerWindow {
                 : list.HasFile ? "Its cheat file has no cheats." : "No cheats yet."));
         }
 
-        var changed = list.Cheats.Count(c => c.IsChanged);
-        board.Section?.SetBadge(list.Cheats.Count == 0 ? "" : $"{list.Cheats.Count} cheats" + (changed > 0 ? $", {changed} yours" : ""),
-            changed > 0 ? WARN : null);
+        if (opened) {
+            Dispatcher.UIThread.Post(() => board.ListView.BringIntoView(), DispatcherPriority.Background);
+        }
     }
 
-    // One cheat: its number, its sentence and buttons; opened, its blocks.
-    private Control CheatCard(CheatBoard board, CheatRule rule, int number) {
-        var open = board.Expanded.Contains(rule);
+    // The edit page of one cheat: its head, and its blocks beside the palette, both as tall as the window allows.
+    private void RenderEditPage(CheatBoard board, CheatRule rule, bool opened) {
+        board.EditHead.Content = CheatCard(board, rule, board.List!.Cheats.IndexOf(rule) + 1, editing: true);
+        var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
+        notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
+        board.EditScroll.Content = new StackPanel { Spacing = 10, Margin = new Thickness(0, 0, 14, 0), Children = { CheatScript(board, rule), notes } };
+        board.EditGrid.Height = Math.Clamp(ClientSize.Height - 400, 400, 1100);
+        if (opened) {
+            board.EditScroll.Offset = default;
+            Dispatcher.UIThread.Post(() => board.EditView.BringIntoView(), DispatcherPriority.Background);
+        }
+    }
+
+    // One cheat: its number, its sentence and buttons (on the edit page, without Edit and moving).
+    private Control CheatCard(CheatBoard board, CheatRule rule, int number, bool editing = false) {
         var summary = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
         var marks = new TextBlock { Foreground = WARN, FontSize = 12, TextWrapping = TextWrapping.Wrap };
         board.Heads[rule] = (summary, marks);
@@ -291,16 +332,15 @@ internal sealed partial class ManagerWindow {
         var list = board.List!.Cheats;
         var at = list.IndexOf(rule);
         var tools = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
-        tools.Children.Add(Action(open ? Plain("Close") : Primary("Edit blocks"), () => {
-            if (!board.Expanded.Remove(rule)) {
-                board.Expanded.Add(rule);
-                board.Focus = rule;
-            }
+        if (!editing) {
+            tools.Children.Add(Action(Primary("Edit blocks"), () => {
+                board.Editing = rule;
+                RenderCheats(board);
 
-            RenderCheats(board);
+                return Task.CompletedTask;
+            }));
+        }
 
-            return Task.CompletedTask;
-        }));
         tools.Children.Add(Tool(rule.Off ? "eyeoff" : "eye", rule.Off ? "Turn this cheat back on" : "Turn this cheat off (it stays here)", () => {
             rule.Off = !rule.Off;
             RenderCheats(board);
@@ -308,21 +348,26 @@ internal sealed partial class ManagerWindow {
         tools.Children.Add(Tool("copy", "Make a copy of this cheat, as a new one of yours", () => {
             var copy = rule.Copy();
             list.Add(copy);
-            board.Expanded.Add(copy);
-            board.Focus = copy;
+            board.Editing = copy;
             RenderCheats(board);
-            Say("Copied. The copy is at the bottom of the list.");
+            Say("Copied. You are now editing the copy; it is at the bottom of the list.");
         }));
         // The game's cheats keep their places (the server finds a change by its place); yours move among yours.
         var movable = rule.Added;
-        tools.Children.Add(Tool("up", movable ? "Move up" : "The game's cheats keep their place", () => Swap(at, at - 1),
-            movable && at > 0 && list[at - 1].Added));
-        tools.Children.Add(Tool("down", movable ? "Move down" : "The game's cheats keep their place", () => Swap(at, at + 1),
-            movable && at + 1 < list.Count && list[at + 1].Added));
+        if (!editing) {
+            tools.Children.Add(Tool("up", movable ? "Move up" : "The game's cheats keep their place", () => Swap(at, at - 1),
+                movable && at > 0 && list[at - 1].Added));
+            tools.Children.Add(Tool("down", movable ? "Move down" : "The game's cheats keep their place", () => Swap(at, at + 1),
+                movable && at + 1 < list.Count && list[at + 1].Added));
+        }
+
         if (rule.Added) {
             tools.Children.Add(Tool("trash", "Delete this cheat", () => {
                 list.Remove(rule);
-                board.Expanded.Remove(rule);
+                if (board.Editing == rule) {
+                    board.Editing = null;
+                }
+
                 RenderCheats(board);
             }));
         }
@@ -330,8 +375,8 @@ internal sealed partial class ManagerWindow {
             tools.Children.Add(Tool("undo", "Put back the game's cheat", () => {
                 var fresh = CheatRule.FromCheat(rule.Game, rule.Index, rule.Game, rule.GameCanonical);
                 list[at] = fresh;
-                if (board.Expanded.Remove(rule)) {
-                    board.Expanded.Add(fresh);
+                if (board.Editing == rule) {
+                    board.Editing = fresh;
                 }
 
                 RenderCheats(board);
@@ -354,34 +399,12 @@ internal sealed partial class ManagerWindow {
                 new StackPanel { Spacing = 2, VerticalAlignment = VerticalAlignment.Center, Children = { marks, summary } },
             },
         };
-        var card = new StackPanel { Spacing = 10, Children = { head } };
-        if (open) {
-            card.Children.Add(CheatScript(board, rule));
-            var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
-            notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
-            card.Children.Add(notes);
-        }
-
-        var border = new Border {
+        return new Border {
             Padding = new Thickness(12), CornerRadius = new CornerRadius(10),
-            Background = open ? new SolidColorBrush(Color.FromArgb(30, 128, 128, 128)) : new SolidColorBrush(Color.FromArgb(14, 128, 128, 128)),
-            BorderBrush = rule == board.Focus && open ? BlockColors.WHEN : LINE, BorderThickness = new Thickness(rule == board.Focus && open ? 2 : 1),
-            Child = card,
+            Background = new SolidColorBrush(Color.FromArgb(editing ? (byte) 30 : (byte) 14, 128, 128, 128)),
+            BorderBrush = editing ? BlockColors.WHEN : LINE, BorderThickness = new Thickness(editing ? 2 : 1),
+            Child = head,
         };
-        border.PointerPressed += (_, _) => {
-            if (open && board.Focus != rule) {
-                board.Focus = rule;
-                foreach (var other in board.Rows.Children.OfType<Border>()) {
-                    other.BorderThickness = new Thickness(1);
-                    other.BorderBrush = LINE;
-                }
-
-                border.BorderBrush = BlockColors.WHEN;
-                border.BorderThickness = new Thickness(2);
-            }
-        };
-
-        return border;
     }
 
     private void UpdateCheatHead(CheatBoard board, CheatRule rule) {
@@ -483,11 +506,11 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("Pick a boss first.");
         }
 
-        var rule = into ?? (board.Focus is { } focus && board.Expanded.Contains(focus) && board.List.Cheats.Contains(focus) ? focus : null);
+        var rule = into ?? (board.Editing is { } editing && board.List.Cheats.Contains(editing) ? editing : null);
         if (rule is null) {
             if (spec.Kind != BlockKind.When) {
                 NewCheat(board, CheatSpecs.Get(board.Player ? "W.ICast" : "W.RoundStart"));
-                rule = board.Focus!;
+                rule = board.Editing!;
             }
             else {
                 NewCheat(board, spec);
@@ -517,8 +540,7 @@ internal sealed partial class ManagerWindow {
                 break;
         }
 
-        board.Expanded.Add(rule);
-        board.Focus = rule;
+        board.Editing = rule;
         RenderCheats(board);
     }
 
@@ -530,10 +552,9 @@ internal sealed partial class ManagerWindow {
         var rule = new CheatRule { When = CheatBlock.New(when) };
         rule.Dos.Add(CheatBlock.New(CheatSpecs.Get(board.Player ? "D.FreeCast" : "D.Cast")));
         board.List.Cheats.Add(rule);
-        board.Expanded.Add(rule);
-        board.Focus = rule;
+        board.Editing = rule;
         RenderCheats(board);
-        Say("A new cheat is at the bottom of the list. Pick its spell, and add blocks from the palette.");
+        Say("A new cheat is open. Pick its spell, and add blocks from the palette beside it.");
     }
 
     // A block of a cheat, its boxes wired to the block's values.
