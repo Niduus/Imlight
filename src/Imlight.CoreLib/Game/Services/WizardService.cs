@@ -252,6 +252,12 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENTMOVE))]
     private void ReceiveClientMove(GAME_5_PROTOCOL.MSG_CLIENTMOVE message) {
+        // A game coming back after a disconnect (Reattach=1) sends moves before its wizard is loaded here; those threw
+        // a NullReferenceException ("service null L:lambda_method"). The first move after the load is saved.
+        if (_activeWizard is null) {
+            return;
+        }
+
         // Save the player's location and direction on interval.
         // Restore actual location information, as it is compressed by a factor of 4 and unsigned.
         // Yaw is represented in radians in the client, but transmitted to the server as degrees.

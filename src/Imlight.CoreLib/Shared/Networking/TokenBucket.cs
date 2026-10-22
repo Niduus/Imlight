@@ -64,7 +64,17 @@ public class TokenBucket {
         }
     }
 
-    public int GetFailedAcquisitionCount() 
+    public int AvailableTokens {
+        get {
+            lock (_tokenBucketLock) {
+                RefillTokens();
+
+                return _tokens;
+            }
+        }
+    }
+
+    public int GetFailedAcquisitionCount()
         => _failedAcquisitionCount;
 
     private void RefillTokens() {

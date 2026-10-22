@@ -212,8 +212,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // Handle this as if it were the flee action.
-        HandleFleeAction(subCircle);
+        // Handle this as if it were the flee action, without its mana cost: the wizard did not flee.
+        HandleFleeAction(subCircle, drainMana: false);
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
@@ -790,8 +790,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         _pvp?.MarkDisconnected(Sender);
 
-        // Handle this as if it were the flee action.
-        HandleFleeAction(subCircle);
+        // Handle this as if it were the flee action, without its mana cost: the wizard did not flee.
+        HandleFleeAction(subCircle, drainMana: false);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT))]
@@ -808,8 +808,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         _pvp?.MarkDisconnected(Sender);
 
-        // Handle this as if it were the flee action.
-        HandleFleeAction(subCircle);
+        // Handle this as if it were the flee action, without its mana cost: the wizard did not flee.
+        HandleFleeAction(subCircle, drainMana: false);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DEFERREDMINIONSUMMON))]
@@ -1263,10 +1263,44 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Logger.Debug("Duel {0} | Slot {1} | Participant {2} joined",
             Logger.Args(Duel.m_duelID.Full, subCircle.SlotIndex, participantObject.m_debugName));
 
+        ShowCreaturesOfDuel(subCircle);
+
         if (isPlayer) {
             ReserveCirclesForGroupOf(participantObject);
             JoinLateWizardNow(subCircle);
         }
+    }
+
+    // A wizard who joins a battle that is running must see every creature in it, and a creature that joins must be seen
+    // by every wizard in it (Justin, 2026-10-22: after coming back into a battle the enemy circles were empty while the
+    // battle went on; the game had no object for the creature, so it drew nothing and its name was blank). Each creature
+    // sends its object to the wizard again; a game that has it already ignores the copy.
+    private void ShowCreaturesOfDuel(CombatDuelSubCircle joined) {
+        if (joined is null || !joined.Occupied) {
+            return;
+        }
+
+        foreach (var other in ActiveSubCircles) {
+            if (other == joined || other.ParticipantActor is null) {
+                continue;
+            }
+
+            if (joined.IsHumanPlayer && !other.IsHumanPlayer && !other.IsSummonedMinion) {
+                other.ParticipantActor.Tell(new ZONE_102_PROTOCOL.MSG_SHOWDUELPARTICIPANT { PlayerActor = joined.ParticipantActor });
+            }
+            else if (!joined.IsHumanPlayer && !joined.IsSummonedMinion && other.IsHumanPlayer) {
+                joined.ParticipantActor.Tell(new ZONE_102_PROTOCOL.MSG_SHOWDUELPARTICIPANT { PlayerActor = other.ParticipantActor });
+            }
+        }
+    }
+
+    // The duel object the game gets when it comes into the zone lists the battle's participants. One that left (fled,
+    // logged out, was disconnected) must leave that list too: a wizard who logged out and back in was still listed,
+    // so his game put him on his circle twice ("Subcircle 5 is already in use"), showed the stale copy's pips (none)
+    // and counted him twice in the battle.
+    private void ForgetParticipant(GID ownerId) {
+        var owner = ownerId.Full;
+        Duel.m_flatParticipantList?.RemoveAll(p => p is not null && p.m_ownerID.Full == owner);
     }
 
     [MessageHandler(typeof(GROUP_109_PROTOCOL.MSG_JOINRESERVEDDUEL))]
@@ -2054,7 +2088,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
-    private void HandleFleeAction(CombatDuelSubCircle caster) {
+    // drainMana: only the Flee button costs mana. Logging out, a dropped connection or leaving the zone took it all as
+    // well (Justin, 2026-10-22: after logging out of a battle and back in to rejoin it, his mana was gone).
+    private void HandleFleeAction(CombatDuelSubCircle caster, bool drainMana = true) {
         if (!_isActive) {
             return;
         }
@@ -2069,7 +2105,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var participantObjId = caster.ParticipantObject.m_globalID;
 
         // Fleeing drains the player's mana; creature participants have no wizard.
-        if (caster._wizard is not null) {
+        if (drainMana && caster._wizard is not null) {
             var clientMaxMana = caster._wizard.GameStats.GetClientTypeAlternative().m_baseMana;
             caster._wizard.UpdateMana(0);
             actor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEMANA {
@@ -2082,6 +2118,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var defeatMsg = NewDefeat(diedInDuel: false);
         actor.Tell(defeatMsg);
 
+        ForgetParticipant(participantObjId);
         caster.RemoveParticipant();
 
         Logger.Debug("Duel {0} | Slot {1} | Participant fled",
@@ -2168,6 +2205,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
 
         circle.AddedToDuel = true;
+        ForgetParticipant(participant.m_ownerID);
         Duel.m_flatParticipantList.Add(participant);
     }
 
@@ -2510,6 +2548,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         // A forfeit costs the wizard nothing outside of the duel: no mana is drained and nobody is sent to a hub.
+        ForgetParticipant(participantObjId);
         caster.RemoveParticipant();
 
         Logger.Debug("Duel {0} | Slot {1} | Participant left{2}",
