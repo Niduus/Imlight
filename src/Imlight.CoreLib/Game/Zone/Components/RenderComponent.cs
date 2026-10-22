@@ -403,7 +403,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         };
         player.Tell(newObjectMsg);
 
-        if (CreateCurrentStateMessage() is { } stateMsg) {
+        foreach (var stateMsg in CreateCurrentStateMessages()) {
             player.Tell(stateMsg);
         }
     }
@@ -422,24 +422,34 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             Data = serializedData
         });
 
-        if (CreateCurrentStateMessage() is { } stateMsg) {
+        foreach (var stateMsg in CreateCurrentStateMessages()) {
             PlayerBroadcast(stateMsg);
         }
     }
 
     // The client builds an object in its template's default state, so the state the zone holds for it
-    // (the placement's start state, or what a player or trigger changed since) is sent right after it.
-    private GAME_5_PROTOCOL.MSG_ENTERSTATE CreateCurrentStateMessage() {
-        var state = Entity.Zone.ScriptState.GetObjectState(Entity.Info?.m_zoneTag);
+    // (the placement's start state, or what a player or trigger changed since) is sent right after it. A dungeon sigil
+    // pad from spiraldb-extra/ZoneObjects is sent its file's look as it is now (the Customs tab can change it while the
+    // zone runs), through Glowy for the red Advanced Mode look: the client's new pad is Off, and Red is reached only
+    // from Glowy.
+    private List<GAME_5_PROTOCOL.MSG_ENTERSTATE> CreateCurrentStateMessages() {
+        var look = Entity.Info is MinigameSigilInfo ? Core.ZoneObjects.LitStateOf(Entity.Info) : null;
+        var state = look ?? Entity.Zone.ScriptState.GetObjectState(Entity.Info?.m_zoneTag);
         if (IsDespawnState(state)) {
-            return null;
+            return [];
         }
 
-        return new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+        string[] states = look is null ? [state] : Core.ZoneObjects.SigilStatePath(look);
+        if (look is not null) {
+            Logger.Debug("Dungeon sigil {0} (gid {1}): sent with state {2}.",
+                Logger.Args(Entity.Info.m_zoneTag, Entity.ActiveGameObject.m_globalID.Full, string.Join(" then ", states)));
+        }
+
+        return [.. states.Select(s => new GAME_5_PROTOCOL.MSG_ENTERSTATE {
             GameObjectID = Entity.ActiveGameObject.m_globalID,
-            State = StringHash.Compute(state),
+            State = StringHash.Compute(s),
             Data = new ByteString(),
-        };
+        })];
     }
 
     private void DespawnObjectForPlayer(IActorRef player) {

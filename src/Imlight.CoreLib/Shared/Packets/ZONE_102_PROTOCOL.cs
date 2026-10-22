@@ -1157,6 +1157,22 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message: a dungeon sigil pad sends its look again, to one player (Player set) or to every player in
+    /// the zone (Player null, after the Customs tab changed the pad while the zone runs). LastOnly sends only the look's
+    /// final state, a second time, for a game that was still busy with the first.
+    /// </summary>
+    public sealed class MSG_DUNGEONSIGILRELIGHT : IServerMessage {
+
+        public byte MessageOrder { get; } = 100;
+        public byte ServiceID { get; } = 102;
+
+        public IActorRef Player;
+        public bool LastOnly;
+        public string Why = "";
+
+    }
+
+    /// <summary>
     /// Timer-fired message that releases a mobile ID back to the pool after a cooldown,
     /// preventing races between MSG_REMOVEOBJECT delivery and mobile ID reuse.
     /// </summary>

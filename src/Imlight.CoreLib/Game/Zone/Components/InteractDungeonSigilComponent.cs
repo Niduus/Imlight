@@ -55,6 +55,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Akka.Actor;
+using Imcodec.Cryptography;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -71,7 +72,9 @@ using Imlight.CoreLib.WizardData.Models.World;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
-    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
+    : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory, IWithTimers {
+
+    public ITimerScheduler Timers { get; set; }
 
     private const uint SIGIL_TEMPLATE_ID = 107081;
     private const float DEFAULT_PAD_RADIUS = 370.0f;
@@ -104,6 +107,13 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     private DateTime _partyEnds;
     // Players the pad has been lit for since they joined (once more on their first move).
     private readonly HashSet<IActorRef> _litFor = [];
+    // Every player in the zone the pad knows of, so a look changed in the Customs tab reaches them all at once.
+    private readonly HashSet<IActorRef> _players = [];
+    // A changed look is sent once the pad was sent again (RenderComponent's 400 ms), and the last state of a look that
+    // goes through another (Red, through Glowy) once more a moment later.
+    private static readonly TimeSpan RELIGHT_ALL_DELAY = TimeSpan.FromMilliseconds(1000);
+    private static readonly TimeSpan CONFIRM_DELAY = TimeSpan.FromMilliseconds(1500);
+    private const string RELIGHT_ALL_TIMER = "SigilRelightAll";
     private MinigameSigilInfo SigilInfo 
         => Entity.Info as MinigameSigilInfo;
     private bool IsAvailable
@@ -147,15 +157,19 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        _players.Add(playerActor);
         _litFor.Remove(playerActor);
-        Light(playerActor);
+        Light(playerActor, "join");
     }
 
     // The join-time state may be sent before the game has the pad, which leaves it Off, so it goes once more on the
     // player's first move, as the hatching pads do (Niduus, 2026-10-21: the Ravenwood sigil showed Off).
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (playerWizard is not null && _litFor.Add(playerActor)) {
-            Light(playerActor);
+        if (playerWizard is not null) {
+            _players.Add(playerActor);
+            if (_litFor.Add(playerActor)) {
+                Light(playerActor, "first move");
+            }
         }
 
         // A player of the countdown who stepped off the pad drops out of it (ZoneService cancels their own trip).
@@ -167,29 +181,73 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _players.Remove(playerActor);
         _litFor.Remove(playerActor);
+        Timers?.Cancel(("SigilConfirm", playerActor));
         LeaveParty(playerActor);
     }
 
-    // The Customs tab moved the pad (or changed where it leads) while the zone runs. RenderComponent moves it and sends
-    // it again; it is lit again on each player's next move, and its destination is read again on the next press.
+    // The Customs tab moved the pad, changed its look or where it leads while the zone runs. RenderComponent moves it
+    // and sends it again (400 ms later); the look goes to every player in the zone a moment after that, so the change
+    // shows without moving or coming into the zone again (a look sent only on the next move was lost when the pad was
+    // sent again after it, with the state the zone loaded it in). Its destination is read again on the next press.
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
     private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
-        if (Entity.ActiveGameObject is { } obj && message.Moved.ContainsKey(obj.m_globalID.Full)) {
-            _litFor.Clear();
-            _resolved = null;
+        if (Entity.ActiveGameObject is not { } obj || !message.Moved.TryGetValue(obj.m_globalID.Full, out var moved)) {
+            return;
+        }
+
+        _resolved = null;
+        // The pad's own info takes the file's new look now (RenderComponent rebinds it too; either may run first).
+        ZoneObjects.Rebind(Entity.Info, moved);
+        if (Entity.Info is { } info && moved is not null && !string.IsNullOrEmpty(moved.m_startState)) {
+            info.m_startState = moved.m_startState;
+        }
+
+        _litFor.Clear();
+        _litFor.UnionWith(_players);
+        Timers?.StartSingleTimer(RELIGHT_ALL_TIMER,
+            new ZONE_102_PROTOCOL.MSG_DUNGEONSIGILRELIGHT { Why = "look changed in the Customs tab" }, RELIGHT_ALL_DELAY);
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DUNGEONSIGILRELIGHT))]
+    private void ReceiveRelight(ZONE_102_PROTOCOL.MSG_DUNGEONSIGILRELIGHT message) {
+        if (message.Player is not null) {
+            if (_players.Contains(message.Player)) {
+                Light(message.Player, message.Why, message.LastOnly);
+            }
+
+            return;
+        }
+
+        foreach (var player in _players.ToList()) {
+            Light(player, message.Why);
         }
     }
 
-    private void Light(IActorRef playerActor) {
-        if (playerActor is not null && IsAvailable) {
-            var state = ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE;
-            // Red (the Advanced Mode look) is only reached from Glowy in the pad's state set.
-            if (state.Equals(ZoneObjects.SIGIL_ADVANCED_STATE, StringComparison.OrdinalIgnoreCase)) {
-                Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
-            }
+    private void Light(IActorRef playerActor, string why, bool lastOnly = false) {
+        if (playerActor is null || !IsAvailable) {
+            return;
+        }
 
+        // Red (the Advanced Mode look) is only reached from Glowy in the pad's state set, so it goes through Glowy.
+        var look = ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE;
+        var path = ZoneObjects.SigilStatePath(look);
+        var states = lastOnly ? path[^1..] : path;
+        foreach (var state in states) {
             Entity.ChangeStateExclusiveSender(state, playerActor);
+        }
+
+        Logger.Debug("Dungeon sigil {0} (gid {1}): sent state {2} (hash {3}) to {4} ({5}).",
+            Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), Entity.ActiveGameObject?.m_globalID.Full ?? 0,
+                string.Join(" then ", states), string.Join(", ", states.Select(s => StringHash.Compute(s))),
+                playerActor.Path.Name, why));
+
+        // A look of two states: its last one goes once more a moment later, for a game still busy with the first.
+        if (!lastOnly && path.Length > 1) {
+            Timers?.StartSingleTimer(("SigilConfirm", playerActor),
+                new ZONE_102_PROTOCOL.MSG_DUNGEONSIGILRELIGHT { Player = playerActor, LastOnly = true, Why = why + ", again" },
+                CONFIRM_DELAY);
         }
     }
 

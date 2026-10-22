@@ -241,8 +241,17 @@ internal static class ZoneObjects {
     // The Advanced Mode look (Niduus, 2026-10-22: "Advance Mode" sigils): MinigameSigilStatesNew's Red plays the pad's
     // "On_Red" animation (AnimationData/FX_BattleCircle_4X_New.xml, animation 2), the red glow the game shows when a
     // team picks Advanced Mode at a dungeon sigil. The set only goes to Red from Glowy (Off goes to Red_02, the same
-    // red with debug on), so a pad is sent Glowy just before it.
+    // red with debug on), so a pad is sent Glowy just before it (SigilStatePath).
     internal const string SIGIL_ADVANCED_STATE = "Red";
+
+    /// <summary>
+    /// The states a sigil pad is sent, in order, to show a look: Red goes through Glowy (a pad the game just made is
+    /// Off, and the state set only reaches Red from Glowy); any other look is sent as it is.
+    /// </summary>
+    internal static string[] SigilStatePath(string state)
+        => string.Equals(state, SIGIL_ADVANCED_STATE, StringComparison.OrdinalIgnoreCase)
+            ? [SIGIL_LIT_STATE, SIGIL_ADVANCED_STATE]
+            : [state];
 
     /// <summary>A sigil pad's lit state as its file names it, with "Advanced" (or AdvancedMode) read as Red.</summary>
     internal static string SigilStateName(string state) {
