@@ -86,6 +86,11 @@ public sealed class ZonePath : ZoneEntity {
     private readonly Dictionary<ulong, ulong> _spawnedTemplate = [];
     private readonly Dictionary<IActorRef, (SpawnObject Spawner, GID ObjectId, string Name)> _loadingCreatures = [];
     private readonly HashSet<SpawnObject> _defeatedInInstance = new(ReferenceEqualityComparer.Instance);
+    // Which creature used up each spawn point in _defeatedInInstance (by global id), so a lost battle against an
+    // encounter's boss can give the spawn point back (MSG_ENCOUNTERBATTLEENDED).
+    private readonly Dictionary<ulong, SpawnObject> _defeatedIds = [];
+    // ZoneObjects distinct spawners that wanted to spawn while a battle against the zone's encounter ran.
+    private readonly HashSet<SpawnObject> _heldDistinct = new(ReferenceEqualityComparer.Instance);
 
     // Creatures that won their battle because everyone fled. They are deleted like defeated ones, but their
     // spawn point is not used up: it spawns again (a fresh roll with the randomizer) a few seconds later.
@@ -240,6 +245,7 @@ public sealed class ZonePath : ZoneEntity {
             }
             else if (Zone.IsInstance) {
                 _defeatedInInstance.Add(spawnObject);
+                _defeatedIds[message.GameObjectID] = spawnObject;
             }
 
             _spawnObjectInfo.Remove(message.GameObjectID);
@@ -249,6 +255,37 @@ public sealed class ZonePath : ZoneEntity {
                 Timers.Cancel(Sender);
             }
         }
+    }
+
+    // A battle against a ZoneObjects encounter's boss ended. When the creatures won it (everyone fled or was defeated),
+    // the room's minions that were defeated in it come back as the ones that lived do (Spared): the fight starts over,
+    // as on live. Spawners that waited during the battle fill up again; CanSpawn keeps the limits.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED))]
+    private void ReceiveEncounterBattleEnded(ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED message) {
+        foreach (var id in message.ResetIds ?? []) {
+            if (!_defeatedIds.Remove(id, out var spawnObject)) {
+                continue;
+            }
+
+            // Its delete was already counted as a defeat, so the Spared mark the duel gave it is not needed.
+            Spared.TryRemove(id, out _);
+            if (!_defeatedIds.Values.Any(s => ReferenceEquals(s, spawnObject))) {
+                _defeatedInInstance.Remove(spawnObject);
+            }
+
+            _heldDistinct.Add(spawnObject);
+        }
+
+        foreach (var spawnObject in _heldDistinct) {
+            var index = _creatures.FindIndex(x => ReferenceEquals(x, spawnObject));
+            for (var i = 0; i < Math.Max(1, (int) spawnObject.m_maxNumberOfSpawns); i++) {
+                Timers.StartSingleTimer($"EncounterRefill_{index}_{i}",
+                    new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL { SpawnObject = spawnObject },
+                    TimeSpan.FromSeconds(SPARED_RESPAWN_DELAY_IN_SECONDS));
+            }
+        }
+
+        _heldDistinct.Clear();
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL))]
@@ -290,6 +327,15 @@ public sealed class ZonePath : ZoneEntity {
     private void HandleCreatureSpawn(SpawnObject spawnObject, ZONE_102_PROTOCOL.MSG_ZONEPATHSPAWN cause) {
         // Determine if the conditions match to spawn the objects.
         if (!CanSpawn(spawnObject)) {
+            return;
+        }
+
+        // A boss's minions (a ZoneObjects distinct spawner) wait while a battle against the boss runs: the missing ones
+        // are in that battle already, spawned into its circle. They fill up again once it ends.
+        if (Zone.Extras.IsDistinctSpawner(spawnObject.m_name)
+            && System.Threading.Volatile.Read(ref Zone.EncounterBattles) > 0) {
+            _heldDistinct.Add(spawnObject);
+
             return;
         }
 

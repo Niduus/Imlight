@@ -359,6 +359,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
         // Boss cheats for the start of the round (BossCheats.cs).
         cinematicTime += BossCheatsAtRoundStart(combatActionList, cinematicTime);
+        ProcessAfterlives();
         foreach (var action in _queuedCombatActions) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
@@ -378,6 +379,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         cinematicTime += BossCheatsAtRoundEnd(combatActionList, cinematicTime);
         // .c1 l / .c2 l: the queue casts after everyone's turn, then the round ends.
         cinematicTime += CastEveryonesDelayed('l', combatActionList, cinematicTime);
+        // Malistaire went invisible (Justin, 2026-10-22): a participant defeated by a round-end cheat or a last (.c1 l)
+        // cast was never given its afterlife, so the round's end took him out of the battle (MSG_COMBATDEATH and
+        // MSG_COMBATREMOVE) while the game, which works out the afterlife itself, still had him standing there.
+        ProcessAfterlives();
 
         return instantCinematics ? 0 : cinematicTime;
     }
@@ -756,7 +761,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 ? AllFreeTargets(caster, action.SpellTemplate)
                 : [delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget];
             foreach (var target in targets) {
-                if (!caster.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
+                var revive = target is not null && !target.IsAlive && IsRevive(action.SpellTemplate)
+                             && target.OccupiedTeam == caster.OccupiedTeam;
+                if (!caster.IsAlive || target is null || (!target.IsAlive && !revive) || !target.AddedToDuel) {
                     continue;
                 }
 
@@ -841,7 +848,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// </summary>
     private List<CombatDuelSubCircle> AllFreeTargets(CombatDuelSubCircle caster, SpellTemplate template) {
         var effects = (template.m_effects ?? []).Where(effect => effect is not null).ToList();
-        var standing = caster._duelActor.ActiveSubCircles.Where(c => c.IsAlive && c.AddedToDuel).OrderBy(c => c.SlotIndex);
+        // A revive (Guardian Spirit) goes on fallen teammates too.
+        var revive = IsRevive(template);
+        var standing = caster._duelActor.ActiveSubCircles
+            .Where(c => c.AddedToDuel && (c.IsAlive || revive && c.OccupiedTeam == caster.OccupiedTeam)).OrderBy(c => c.SlotIndex);
         if (effects.Any(effect => s_singleEnemy.Contains(effect.m_effectTarget))) {
             return [.. standing.Where(c => c.OccupiedTeam != caster.OccupiedTeam)];
         }
@@ -852,6 +862,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         return [PickFreeTarget(caster, template, null)];
     }
+
+    // A spell that brings a defeated participant back: it has an afterlife (kAfterlife), at the top or in a list.
+    internal static bool IsRevive(SpellTemplate template)
+        => template?.m_effects?.Any(e => e is not null && (e.m_effectType == kSpellEffects.kAfterlife
+            || e is EffectListSpellEffect list && (list.m_effectList ?? []).Any(x => x?.m_effectType == kSpellEffects.kAfterlife))) == true;
 
     private float ProcessQueuedAction(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
@@ -878,9 +893,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 return cinematicTime;
             }
 
-            // If our target is gone or we're stunned, pass the turn.
+            // If our target is gone or we're stunned, pass the turn. A revive (an afterlife, such as Guardian Spirit) may
+            // go on a defeated teammate.
+            var revivesFallenAlly = !action.SelectedTarget.IsAlive && IsRevive(action.SpellTemplate)
+                                    && action.SelectedTarget.OccupiedTeam == action.SpellCaster.OccupiedTeam;
             if (    action.SpellCaster.CombatParticipant.m_stunned > 0 
-                || !action.SelectedTarget.IsAlive
+                || (!action.SelectedTarget.IsAlive && !revivesFallenAlly)
                 || !action.SelectedTarget.AddedToDuel) {
                 action.SpellCaster.CombatParticipant.m_stunned--;
 

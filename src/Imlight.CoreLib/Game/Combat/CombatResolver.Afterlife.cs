@@ -3,6 +3,10 @@
  * bring them back. Malistaire the Undying's "Mega Taunt - Shadow" gives him one at the start of the battle (100 health),
  * and his "I touch Shadow" cheat then turns him into Haunted Malistaire.
  *
+ * Wizards come back too (Justin, 2026-10-22: a Guardian Spirit on his friend did not work, so the server had the friend
+ * defeated while the game had him standing). A heal of a share of the most health (kHealPercent) counts as well as a
+ * flat one, and an afterlife cast on a teammate who is already defeated brings them back at once.
+ *
  * The game does the same on its own while it plays the round (CombatResolver::ProcessDeathPostAllEffects), so the server
  * only keeps its numbers in step: nothing is sent for it.
  */
@@ -21,7 +25,8 @@ public partial class CombatResolver {
     private readonly Dictionary<CombatDuelSubCircle, List<SpellEffect>> _afterlives = [];
 
     internal void AddAfterlife(IEnumerable<CombatDuelSubCircle> targets, SpellEffect effect) {
-        foreach (var target in targets.Where(t => t is not null && t.IsAlive)) {
+        // A defeated target is fine: the next ProcessAfterlives brings them back (a revive on a fallen teammate).
+        foreach (var target in targets.Where(t => t is not null && t.Occupied)) {
             if (!_afterlives.TryGetValue(target, out var waiting)) {
                 _afterlives[target] = waiting = [];
             }
@@ -33,25 +38,23 @@ public partial class CombatResolver {
     // Brings back each defeated participant that has an afterlife waiting; each afterlife works once.
     private void ProcessAfterlives() {
         foreach (var (circle, waiting) in _afterlives.ToList()) {
-            // A wizard's health is saved with the wizard; only creatures come back for now.
-            if (waiting.Count == 0 || !circle.Occupied || circle.IsHumanPlayer || circle.IsAlive
-                || circle.ParticipantGameStats is not { } stats) {
+            if (waiting.Count == 0 || !circle.Occupied || circle.IsAlive || circle.ParticipantGameStats is not { } stats) {
                 continue;
             }
 
             var afterlife = waiting[0];
             waiting.RemoveAt(0);
             var effects = afterlife is EffectListSpellEffect list ? list.m_effectList ?? [] : [];
-            var heal = effects.Where(e => e is not null && e.m_effectType == kSpellEffects.kHeal).Sum(e => e.m_effectParam);
+            // A wizard's server health already counts gear; a creature's most health is its base and bonus.
+            var most = circle.IsHumanPlayer ? stats.m_baseHitpoints : stats.m_baseHitpoints + stats.m_bonusHitpoints;
+            var heal = effects.Where(e => e is not null && e.m_effectType == kSpellEffects.kHeal).Sum(e => e.m_effectParam)
+                       + effects.Where(e => e is not null && e.m_effectType == kSpellEffects.kHealPercent)
+                           .Sum(e => (int) (most * (e.m_effectParam / 100.0)));
             if (heal <= 0) {
                 continue;
             }
 
-            var most = stats.m_baseHitpoints + stats.m_bonusHitpoints;
-            stats.m_currentHitpoints = most > 0 ? Math.Min(heal, most) : heal;
-            if (circle.CombatParticipant is { } participant) {
-                participant.m_playerHealth = stats.m_currentHitpoints;
-            }
+            circle.SetHealthTo(most > 0 ? Math.Min(heal, most) : heal);
 
             Logger.Information("Duel {0} | Slot {1} | Afterlife: back with {2} health.",
                 Logger.Args(_duel.m_duelID.Full, circle.SlotIndex, stats.m_currentHitpoints));
