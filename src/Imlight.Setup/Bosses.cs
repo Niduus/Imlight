@@ -289,7 +289,7 @@ internal sealed class BossChanges {
     /// <summary>True when nothing is changed, so there is no need for a file.</summary>
     internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null
                              && Grid.Values.All(r => r.Count == 0) && Stunable is null && Beguilable is null
-                             && Cheats is null;
+                             && Cheats is null && Extra.Count == 0;
 
     /// <summary>A field of a JSON object, its name in any case.</summary>
     internal static JsonNode? FindIn(JsonObject json, string key) => Find(json, key);

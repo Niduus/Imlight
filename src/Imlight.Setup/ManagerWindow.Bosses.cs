@@ -481,6 +481,7 @@ internal sealed partial class ManagerWindow {
 
         ApplyOpenCheat();
         changes.Cheats = _cheats?.ToJson();
+        RewardsInto(changes);
 
         var folder = _editFolder;
         if (_editCustom is { } custom) {
