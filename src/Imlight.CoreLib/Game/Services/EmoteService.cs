@@ -134,9 +134,10 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     // How long after a won battle the Victory Dance starts, so it plays in the circle during the victory scene.
     private static readonly TimeSpan VictoryDanceDelay = TimeSpan.FromSeconds(1.5);
 
-    // Off: the game plays the dance itself once it gets the server's pick (below). On: the server also plays it as a
-    // radial emote, the stand-in used before the packet capture showed how the real server does it.
-    private static readonly bool s_serverPlaysVictoryDance = ConfigurationManager.GetValue("Emotes.ServerPlaysVictoryDance", false);
+    // On (the default): after a won battle the server plays the dance as a radial emote, unless the game asks for the
+    // dance first (then the game plays it itself). Niduus, 2026-10-22: with this off in v0.10.145 no dance played, as
+    // Imlight ends the battle at once and the game never asked.
+    private static readonly bool s_serverPlaysVictoryDance = ConfigurationManager.GetValue("Emotes.ServerVictoryDance", true);
 
     /// <summary>
     /// At the end of a won battle the game asks for the dance to play (PlayerGID 0). As the real server does in a
@@ -151,6 +152,8 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
                 return;
             }
 
+            // The game plays this pick itself, so the server's own play is not needed.
+            Timers.Cancel("victory-dance");
             var worn = wizard.EquipmentBehavior?.GetVictoryDances().Count ?? 0;
             var templateId = wizard.PickVictoryDance();
             Logger.Information("Victory Dance: {0} won a battle; dance {1} picked from {2} worn.",
@@ -166,13 +169,13 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     /// <summary>
-    /// With [Emotes] ServerPlaysVictoryDance on, a won battle also plays the wizard's Victory Dance from the server: the
-    /// dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation is played like a radial menu
-    /// emote, for everyone in the zone.
+    /// With [Emotes] ServerVictoryDance on, a won battle plays one of the wizard's worn Victory Dances (picked at
+    /// random) from the server: the dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation is
+    /// played like a radial menu emote, for everyone in the zone.
     /// </summary>
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatWin(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
-        if (s_serverPlaysVictoryDance && GetActiveWizard()?.WizardAvatar?.m_afterCombatVictoryDance is > 0) {
+        if (s_serverPlaysVictoryDance && GetActiveWizard() is { } wizard && wizard.PickVictoryDance() > 0) {
             Timers.StartSingleTimer("victory-dance", new SERVICE_101_PROTOCOL.MSG_PLAYVICTORYDANCE(), VictoryDanceDelay);
         }
     }
