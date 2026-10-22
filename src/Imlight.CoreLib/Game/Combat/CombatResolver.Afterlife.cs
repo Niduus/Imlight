@@ -48,7 +48,9 @@ public partial class CombatResolver {
             // A wizard's server health already counts gear; a creature's most health is its base and bonus.
             var most = circle.IsHumanPlayer ? stats.m_baseHitpoints : stats.m_baseHitpoints + stats.m_bonusHitpoints;
             var heal = effects.Where(e => e is not null && e.m_effectType == kSpellEffects.kHeal).Sum(e => e.m_effectParam)
-                       + effects.Where(e => e is not null && e.m_effectType == kSpellEffects.kHealPercent)
+                       // Guardian Angel brings back with a share of the maximum health (kMaxHealthHeal), which was
+                       // not counted, so it brought no one back.
+                       + effects.Where(e => e is not null && e.m_effectType is kSpellEffects.kHealPercent or kSpellEffects.kMaxHealthHeal)
                            .Sum(e => (int) (most * (e.m_effectParam / 100.0)));
             if (heal <= 0) {
                 continue;
