@@ -31,7 +31,7 @@ using Imcodec.Wad;
 namespace Imlight.Setup;
 
 /// <summary>One number a spell's description can show: an effect's amount, school and rounds.</summary>
-internal sealed record SpellEffectInfo(int Amount, string School, int Rounds);
+internal sealed record SpellEffectInfo(int Amount, string School, int Rounds, string Kind = "", string Target = "");
 
 /// <summary>
 /// One spell as the game's card shows it, read from the game's own spell file.
@@ -76,6 +76,42 @@ internal sealed class SpellCard {
 
     internal required string File { get; init; }
 
+    /// <summary>Where the card comes from in the game: Caster, Pet, ShadowCreature, Weapon or Equipment (an item card).</summary>
+    internal string Source { get; init; } = "Caster";
+
+    /// <summary>A card frame the spell asks for by name, when it has one of its own.</summary>
+    internal string CardFront { get; init; } = "";
+
+    internal bool NoPvEEnchant { get; init; }
+
+    internal bool NoPvPEnchant { get; init; }
+
+    internal bool NoDiscard { get; init; }
+
+    internal bool PvP { get; init; } = true;
+
+    internal bool PvE { get; init; } = true;
+
+    internal bool Cloaked { get; init; }
+
+    internal int MaxCopies { get; init; }
+
+    internal string Category { get; init; } = "";
+
+    /// <summary>Summons a minion (a SummonCreature effect), whatever its type says.</summary>
+    internal bool Minion { get; init; }
+
+    /// <summary>
+    /// A spell players never get: a monster's or boss's own copy, a cheat, a test or a fight's special version.
+    /// </summary>
+    internal bool Hidden { get; set; }
+
+    /// <summary>An item card: one a wand, hat, robe, amulet or other piece of gear gives.</summary>
+    internal bool Item => Source is "Equipment" or "Weapon";
+
+    /// <summary>Cards that come as counted copies, which the game marks "x1" in a deck: treasure and item cards.</summary>
+    internal bool Counted => Treasure || Item;
+
     /// <summary>The description as plain words, filled in by <see cref="SpellBook"/>.</summary>
     internal string Short { get; set; } = "";
 
@@ -96,7 +132,10 @@ internal sealed class SpellCard {
         }
     }
 
-    internal string Kind => Treasure ? "Treasure card" : "Spell";
+    internal string Kind => Treasure ? "Treasure card" : Item ? "Item card" : Source == "Pet" ? "Pet card" : "Spell";
+
+    /// <summary>The pip cost as a number to sort and filter by; X spells count as 0.</summary>
+    internal int PipSort => XPips ? -1 : Pips;
 
 }
 
@@ -241,12 +280,61 @@ internal sealed partial class SpellBook {
             Effects = Flatten(spell.m_effects),
             Level = spell.m_levelRestriction,
             File = file,
+            Source = spell.m_spellSourceType.ToString() is { Length: > 1 } source && source[0] == 'k' ? source[1..] : "Caster",
+            CardFront = spell.m_cardFront.ToString() ?? "",
+            NoPvEEnchant = spell.m_noPvEEnchant,
+            NoPvPEnchant = spell.m_noPvPEnchant,
+            NoDiscard = spell.m_noDiscard,
+            PvP = spell.m_PvP,
+            PvE = spell.m_PvE,
+            Cloaked = spell.m_cloaked,
+            MaxCopies = (int) spell.m_maxCopies,
+            Category = spell.m_spellCategory.ToString() ?? "",
+            Minion = Summons(spell.m_effects),
         };
+        card.Hidden = IsHidden(card, Text(displayName).Length > 0);
         card.Short = Plain(card);
         card.Haystack = $"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Short} {(card.Treasure ? "treasure tc" : "")}"
             .ToLowerInvariant();
 
         return card;
+    }
+
+    [GeneratedRegex(@"(?i)\b(mob|mobs|boss|bosses|cheat|cheats|test|testing|fortesting|dev|npc|monster|monsters|unused|deprecated|do not use|placeholder|fight specific|raid|gauntlet|tutorial|minion only|archive)\b|mob only|_mob|-mob|\bTEMP\b")]
+    private static partial Regex HiddenWords();
+
+    /// <summary>
+    /// Whether players never get the spell: it has no name of its own in the game's text, no card text, or its file or
+    /// game name says it is a monster's, a boss's, a cheat's, a test's or a fight's special copy.
+    /// </summary>
+    private static bool IsHidden(SpellCard card, bool named)
+        => !named || card.Description.Length == 0 || HiddenWords().IsMatch(card.Code) || HiddenWords().IsMatch(card.File)
+           || card.School.Length == 0;
+
+    private static bool Summons(IEnumerable<SpellEffect>? effects) {
+        bool Any(SpellEffect? effect, int depth) {
+            if (effect is null || depth > 8) {
+                return false;
+            }
+
+            if (effect.m_effectType.ToString().Contains("Summon", StringComparison.Ordinal)) {
+                return true;
+            }
+
+            IEnumerable<SpellEffect?>? inside = effect switch {
+                RandomSpellEffect random => random.m_effectList,
+                VariableSpellEffect variable => variable.m_effectList,
+                EffectListSpellEffect list => list.m_effectList,
+                CountBasedSpellEffect count => count.m_effectList,
+                ConditionalSpellEffect conditional => conditional.m_elements?.Select(e => e?.m_pEffect),
+                TargetCountSpellEffect targets => targets.m_effectLists?.SelectMany(l => l?.m_effectList ?? []),
+                _ => null,
+            };
+
+            return inside?.Any(e => Any(e, depth + 1)) == true;
+        }
+
+        return effects?.Any(e => Any(e, 0)) == true;
     }
 
     /// <summary>
@@ -278,7 +366,8 @@ internal sealed partial class SpellBook {
                 return;
             }
 
-            flat.Add(new SpellEffectInfo(effect.m_effectParam, effect.m_sDamageType.ToString() ?? "", effect.m_numRounds));
+            flat.Add(new SpellEffectInfo(effect.m_effectParam, effect.m_sDamageType.ToString() ?? "", effect.m_numRounds,
+                Trim(effect.m_effectType.ToString()), Trim(effect.m_effectTarget.ToString())));
         }
 
         foreach (var effect in effects ?? []) {
@@ -287,6 +376,10 @@ internal sealed partial class SpellBook {
 
         return flat;
     }
+
+    /// <summary>"kDamage" as "Damage": the game's enum names without their k.</summary>
+    private static string Trim(string? name)
+        => string.IsNullOrEmpty(name) ? "" : name.Length > 1 && name[0] == 'k' && char.IsUpper(name[1]) ? name[1..] : name;
 
     /// <summary>
     /// Spells holding every word of the query, best matches first: the exact name, then names that start with it.
@@ -303,6 +396,7 @@ internal sealed partial class SpellBook {
             .ThenBy(s => words.Length == 0 ? 0 : s.Name.Length)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
             // The spell players know (its file is named like the card) before creature, pet and item copies.
+            .ThenBy(s => s.Hidden)
             .ThenBy(s => s.Code.Equals(s.Name, StringComparison.OrdinalIgnoreCase) ? 0 : s.Code.StartsWith(s.Name + " TC", StringComparison.OrdinalIgnoreCase) ? 1 : 2)
             .ThenBy(s => s.Description.Length == 0)
             .Take(max)];

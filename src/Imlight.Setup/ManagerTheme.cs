@@ -99,6 +99,7 @@ internal static class ManagerTheme {
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
         ["Lookup"] = BLOCK_IF,
+        ["Spells"] = Color.FromRgb(196, 74, 112),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
         ["Guides"] = Color.FromRgb(46, 160, 140),
