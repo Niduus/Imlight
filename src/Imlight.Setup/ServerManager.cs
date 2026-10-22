@@ -357,6 +357,9 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>Whether the server runs the commands from the app (manager-commands.txt). Another Imlight copy may not.</summary>
     internal bool HasCommandBox => ServerKnows(COMMANDS_FILE);
 
+    /// <summary>Whether the server has the .hat, .robe, .pet and other give-gear commands (CommandGearProtocol), found by its own words.</summary>
+    internal bool HasGearCommands => ServerKnows(" is not an item that can be given.");
+
     /// <summary>Whether the server reads its own additions folder (spiraldb-extra), which Bosses, Customs and cheats save to.</summary>
     internal bool HasExtraFolder => ServerKnows("Database.SpiralDBExtraPath");
 

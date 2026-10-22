@@ -330,6 +330,31 @@ internal sealed partial class ManagerWindow {
                 new GuideTip("Want a hard version and keep the normal one? Make a custom on the Customs tab and leave the real boss as it is."),
             ]),
 
+        new("gear", "shield", "Gear", "Gear", "How to look up gear and give it to your wizard",
+            "Every hat, robe, boots, wand, athame, amulet, ring, deck, mount and pet, shown as the game's item tooltip.",
+            [
+                new GuideSteps("Find an item",
+                    "Click [Gear] on the left. The first time, it reads the gear from your game files, which takes a few seconds.",
+                    "Type a name in the search box, such as `Whalebird`, or a template ID, such as `1770010`.",
+                    "Narrow the list with [Slot], [School], [Level from] and [Level to]. Tick [Crowns only] for Crown Shop items.",
+                    "Click an item. On the right is its tooltip as the game draws it: the name in blue, each stat in yellow with " +
+                    "its icon, its sockets, its item cards under [Spells], the level it needs in red, and its marks at the bottom. " +
+                    "The full cards are painted below the tooltip."),
+                new GuideTerms("Reading the tooltip",
+                    ("Point at a stat", "Says what the icon means, such as Critical Hit Rating or Outgoing Healing."),
+                    ("Point at a mark", "Says what it means: No Auction, No Sell, No Trade, Crowns Only (the green G), No Gift and the rest."),
+                    ("Mounts", "The number with the wing is how much faster you move on it. (PERM) means it is kept for good; " +
+                               "(7 Day) and the like go away after that time."),
+                    ("Pets", "Each MAX line is the most that stat can reach. \"Spells at Baby\" says when its cards come.")),
+                new GuideSteps("Give it to your wizard",
+                    "Start the server and log in to the game on this PC.",
+                    "Press [Give to my wizard]. It sends the give command for that exact item (such as `.hat 1 1553519`); " +
+                    "look in your backpack.",
+                    "[Copy command] copies the same line to type in the game's chat yourself, and [Copy] beside the template ID copies the ID."),
+                new GuideTip("Unnamed and test items are the game's own copies without a name, which players never see. Tick " +
+                             "[Unnamed and test items] to list them too."),
+            ]),
+
         new("files", "folder", "Game Files", "Files and backups", "Where your work is kept, backups and undo",
             "Everything you make is kept in the Server folder's spiraldb-extra, and updates keep it.",
             [
@@ -442,6 +467,9 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The top of the Bosses tab: a line that opens How to change a real boss, or make a custom instead.</summary>
     private Control BossesGuide() => GuideLink("real", "How does changing a boss work?");
+
+    /// <summary>The top of the Gear tab: a line that opens How to look up gear and give it to your wizard.</summary>
+    private Control GearGuide() => GuideLink("gear", "How does the Gear page work?");
 
     /// <summary>In the editor's Cheats section: a line that opens How to make a custom boss and give it cheats.</summary>
     private Control CheatsGuide() => GuideLink("boss", "How do cheats work?");

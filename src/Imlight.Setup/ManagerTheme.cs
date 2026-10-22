@@ -100,6 +100,7 @@ internal static class ManagerTheme {
         ["Commands"] = BLOCK_WHEN,
         ["Lookup"] = BLOCK_IF,
         ["Spells"] = Color.FromRgb(196, 74, 112),
+        ["Gear"] = Color.FromRgb(52, 170, 200),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
         ["Guides"] = Color.FromRgb(46, 160, 140),
@@ -272,6 +273,12 @@ internal static class ManagerTheme {
         ["code"] = ("M8 7l-5 5 5 5 M16 7l5 5-5 5 M14 4l-4 16", false),
         ["branch"] = ("M6 3v12 M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M18 9a9 9 0 0 1-9 9", false),
         ["map"] = ("M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3z M9 4v13 M15 7v13", false),
+        // The Gear tab's stand-ins for the game's stat and mark pictures.
+        ["wing"] = ("M2 19c5 0 9.5-1.6 12.5-4.6C17.4 11.5 19.5 7.6 21 3c-2.4 1.4-4.6 2.3-7 2.6.9.8 1.4 1.8 1.5 3-1.6-.4-3.1-.3-4.6.3 " +
+                    "1 .7 1.6 1.6 1.8 2.7-1.7-.2-3.3.1-4.8.9 1 .6 1.6 1.5 1.8 2.6-2.3.3-4.4 1.6-6.7 3.9z", true),
+        ["weight"] = ("M9 8.5a3 3 0 1 1 6 0h-1.7a1.3 1.3 0 1 0-2.6 0z M6 9.5h12l2.2 10.5H3.8z", true),
+        ["gavel"] = ("M12.5 3.5l6 6 M9.5 6.5l6 6 M11 5l-2.5 2.5 6 6L17 11 M11.8 10.2 4 18l2 2 7.8-7.8 M3 21h8", false),
+        ["dna"] = ("M7 3c0 6 10 6 10 12 0 2.4-1.2 4.4-3 6 M17 3c0 6-10 6-10 12 0 2.4 1.2 4.4 3 6 M8.5 7h7 M8.5 17h7 M10 12h4", false),
     };
 
     internal static bool HasIcon(string name) => s_icons.ContainsKey(name);

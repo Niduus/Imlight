@@ -763,6 +763,25 @@ internal sealed partial class SpellBook {
         return Image(icon);
     }
 
+    /// <summary>The templates in a folder of Root.wad (such as ObjectData/), from the game's own list, by ID.</summary>
+    internal List<(uint Id, string File)> TemplatesUnder(string folder) {
+        var manifest = Decode<TemplateManifest>(_root, "TemplateManifest.xml");
+
+        return [.. (manifest?.m_serializedTemplates ?? [])
+            .Where(t => t is not null && ((string) t.m_filename)?.StartsWith(folder, StringComparison.OrdinalIgnoreCase) == true)
+            .Select(t => (t.m_id, (string) t.m_filename))];
+    }
+
+    /// <summary>Every file in a folder of Root.wad, such as GameEffectRuleData/.</summary>
+    internal List<(uint Id, string File)> FilesUnder(string folder)
+        => [.. _root.Files.Keys.Where(k => k.StartsWith(folder, StringComparison.OrdinalIgnoreCase)).Select(k => (0u, k))];
+
+    /// <summary>A data file of Root.wad, decoded, or null.</summary>
+    internal PropertyClass? DecodeFile(string file) => Decode<PropertyClass>(_root, file);
+
+    /// <summary>The picture file of one of the game's small text icons (MadlibIcons.xml), such as Accuracy_image.</summary>
+    internal string? TokenIcon(string token) => _tokens.TryGetValue(token, out var known) && known.Icon.Length > 0 ? known.Icon : null;
+
     /// <summary>The picture file names that hold every one of these words (any case), shortest first.</summary>
     internal List<string> FindImages(params string[] words)
         => [.. _images.Keys.Where(k => words.All(w => k.Contains(w, StringComparison.OrdinalIgnoreCase))).OrderBy(k => k.Length)];
