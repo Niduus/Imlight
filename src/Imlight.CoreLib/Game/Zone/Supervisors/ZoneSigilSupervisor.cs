@@ -50,28 +50,7 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
                 continue;
             }
 
-            var template = CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) as GameObjectTemplate;
-            if (template is null) {
-                Logger.Warning("Dungeon sigil template {0} not found; skipping.",
-                    Logger.Args(objectInfo.m_templateID));
-
-                continue;
-            }
-
-            var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
-            if (coreObject is null) {
-                Logger.Warning("Could not finalize dungeon sigil (template {0}); skipping.",
-                    Logger.Args(objectInfo.m_templateID));
-
-                continue;
-            }
-
-            // The pad octagon sits low and clips into the terrain; lift it like the combat sigils.
-            var newLoc = coreObject.m_location;
-            newLoc.Z += 5;
-            coreObject.m_location = newLoc;
-
-            CreateEntityActor(coreObject, template, objectInfo);
+            CreatePad(objectInfo, "");
         }
 
         // Initialize any objects found within the zone data.
@@ -115,6 +94,52 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
         }
 
         ReportLoadedWhenEntitiesLoad();
+    }
+
+    private void CreatePad(CoreObjectInfo objectInfo, string nameSuffix) {
+        var template = CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) as GameObjectTemplate;
+        if (template is null) {
+            Logger.Warning("Dungeon sigil template {0} not found; skipping.",
+                Logger.Args(objectInfo.m_templateID));
+
+            return;
+        }
+
+        var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
+        if (coreObject is null) {
+            Logger.Warning("Could not finalize dungeon sigil (template {0}); skipping.",
+                Logger.Args(objectInfo.m_templateID));
+
+            return;
+        }
+
+        // The pad octagon sits low and clips into the terrain; lift it like the combat sigils.
+        var newLoc = coreObject.m_location;
+        newLoc.Z += 5;
+        coreObject.m_location = newLoc;
+
+        _pads[coreObject.m_globalID.Full] = (CreateEntityActor(coreObject, template, objectInfo, nameSuffix), coreObject);
+    }
+
+    // The dungeon sigil pads, by global id, so one a spiraldb-extra/ZoneObjects change removes can be found.
+    private readonly Dictionary<ulong, (IActorRef Actor, CoreObject Object)> _pads = [];
+    private int _addedWhileRunning;
+
+    // A dungeon sigil pad added or removed while the zone runs; moved ones move themselves (RenderComponent). A battle
+    // circle added or removed counts from the next time the zone loads.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        base.ReceiveZoneObjectsChanged(message);
+
+        foreach (var id in message.Removed) {
+            if (_pads.Remove(id, out var pad)) {
+                RemoveEntity(pad.Actor, pad.Object);
+            }
+        }
+
+        foreach (var objectInfo in message.Added.OfType<MinigameSigilInfo>()) {
+            CreatePad(objectInfo, $"_{++_addedWhileRunning}");
+        }
     }
 
     protected override void OnEntityLoadFailed(IActorRef entityActor) {
