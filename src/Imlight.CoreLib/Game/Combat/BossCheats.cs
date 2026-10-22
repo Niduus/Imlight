@@ -178,6 +178,9 @@ internal static class BossCheats {
         public int ToRound { get; set; }
         // Only while someone else on its side is still standing (the other way round from NoAllies).
         public bool HasAllies { get; set; }
+        // For a player-cast When: "" or "Landed" only a spell that lands sets it off, "Fizzled" only one that fizzles,
+        // "Any" either (Niduus, 2026-10-22).
+        public string Fizzle { get; set; } = "";
         // An added cheat turned off in the app (BossOverrides.CheatsOf).
         public bool Off { get; set; }
 

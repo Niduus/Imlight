@@ -167,7 +167,7 @@ internal sealed class CheatRule {
             ["HealthAbove"] = 0, ["HealthUnder"] = 0, ["Random"] = false, ["Target"] = "", ["Cast"] = "", ["Casts"] = new JsonArray(),
             ["Line"] = "", ["Silent"] = false, ["SetHealth"] = 0, ["SetPhase"] = 0, ["Defeat"] = false, ["Spawn"] = 0,
             ["AnyVersion"] = false, ["CostMin"] = 0, ["CostMax"] = 0, ["PlayersMin"] = 0, ["PlayersMax"] = 0, ["FromRound"] = 0,
-            ["ToRound"] = 0, ["HasAllies"] = false,
+            ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
@@ -279,6 +279,10 @@ internal sealed class CheatRule {
 
         if (Text("CasterSchool").Length > 0) {
             If("I.CasterSchool", new JsonObject { ["CasterSchool"] = Text("CasterSchool") });
+        }
+
+        if (Text("Fizzle").Length > 0) {
+            If("I.Fizzle", new JsonObject { ["Fizzle"] = Text("Fizzle") });
         }
 
         if (Text("Kind").Length > 0) {

@@ -76,6 +76,7 @@ internal static class CheatSpecs {
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
     ];
 
+    private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
     private static readonly (string, string)[] s_anySchool = [("", "every school"), .. SCHOOLS[1..]];
 
     private static CheatField F(string key, CheatFieldType type, JsonNode? first = null, (string, string)[]? options = null, int max = 100_000_000)
@@ -229,6 +230,9 @@ internal static class CheatSpecs {
             "Only if the spell hits one target", [], _ => "only single-target spells", "both"),
         new("I.CasterSchool", BlockKind.If, "school", "player's school", "Only when the player who set it off is a wizard of this school.",
             "Only if the player is a {CasterSchool} wizard", [F("CasterSchool", CheatFieldType.Choice, "Fire", SCHOOLS[1..])], b => $"only {b.Text("CasterSchool")} wizards"),
+        new("I.Fizzle", BlockKind.If, "stop", "lands or fizzles", "Whether the player's spell has to land, fizzle, or either, for a player-cast When. Without this block only a spell that lands counts.",
+            "Only if the spell {Fizzle}", [F("Fizzle", CheatFieldType.Choice, "Fizzled", s_fizzles)],
+            b => $"only if the spell {LabelOf(s_fizzles, b.Text("Fizzle"))}"),
         new("I.Spells", BlockKind.If, "cards", "these spells", "Only these spells, by name, with commas between. \"Any version of\" makes Scald mean every Scald: its treasure card, item card, a monster's copy and the rest. \"Exactly\" means only spells with that very name.",
             "Only {AnyVersion} these spells: {Spells} {Count}",
             [new("AnyVersion", CheatFieldType.VersionChoice, true), F("Spells", CheatFieldType.Cards), F("Count", CheatFieldType.MatchCount)],

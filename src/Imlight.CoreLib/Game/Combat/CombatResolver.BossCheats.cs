@@ -306,10 +306,18 @@ public partial class CombatResolver {
             var moves = combatActionList.m_actionList.Skip(before).Where(a => a.m_spellCaster == mover.SlotIndex).ToList();
             var passed = moves.Count > 0 && moves.All(a => a.m_spell is null);
             // A critical hit is m_spellHits 2 (CombatActionResolver): it landed too.
-            var landed = moves.Where(a => a.m_spell is not null && a.m_spellHits is (char) 1 or (char) 2)
+            var cast = moves.Where(a => a.m_spell is not null)
                 .Select(a => (Action: a, Spell: CoreObjectFactory.GetCoreTemplate(a.m_spell.m_templateID) as SpellTemplate))
                 .Where(m => m.Spell is not null)
                 .ToList();
+            var landed = cast.Where(m => m.Action.m_spellHits is (char) 1 or (char) 2).ToList();
+            // A spell that fizzled is m_spellHits 0; a cheat's Fizzle says which of them set it off.
+            List<(CombatAction Action, SpellTemplate Spell)> CountedFor(BossCheats.BossCheat cheat)
+                => (cheat.Fizzle ?? "").ToLowerInvariant() switch {
+                    "fizzled" => [.. cast.Where(m => m.Action.m_spellHits == (char) 0)],
+                    "any" => cast,
+                    _ => landed,
+                };
 
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
@@ -323,12 +331,12 @@ public partial class CombatResolver {
                             cinematicTimeSoFar + cinematicTime);
                     }
                     else if ((IsCastWhen(cheat) || cheat.Is("BossHit"))
-                             && landed.FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
+                             && CountedFor(cheat).FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
                                      crit: m.Action.m_spellHits == (char) 2))
                                  is { Spell: not null } move) {
                         _cheatSpellId = move.Action.m_spell.m_templateID;
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action),
-                            $"{(string) move.Spell.m_name}{(move.Action.m_spellHits == (char) 2 ? " (a critical hit)" : "")}",
+                            $"{(string) move.Spell.m_name}{(move.Action.m_spellHits == (char) 2 ? " (a critical hit)" : move.Action.m_spellHits == (char) 0 ? " (fizzled)" : "")}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                         _cheatSpellId = 0;
                     }
