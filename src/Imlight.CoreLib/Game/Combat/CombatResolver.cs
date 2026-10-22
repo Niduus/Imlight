@@ -430,7 +430,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         // .cf (Niduus, 2026-10-22; was .c1 f / .c2 f): the queue casts before anyone's turn, then the round goes on.
         cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
         NoteHealthBeat(cinematicTime);
-        // Boss cheats for the start of the round (BossCheats.cs).
+        // Boss cheats for the start of the round (BossCheats.cs), with the health cheats of anyone an afterlife brought
+        // back last round.
+        _cameBackThisRound.Clear();
         cinematicTime += BossCheatsAtRoundStart(combatActionList, cinematicTime);
         ProcessAfterlives();
         NoteHealthBeat(cinematicTime);

@@ -1103,6 +1103,18 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message: the victory scene of a won battle is over, so the duel ends for the game (phase 7, ENDDUEL).
+    /// </summary>
+    public sealed class MSG_VICTORYSCENEOVER : IServerMessage {
+
+        public byte MessageOrder { get; } = 101;
+        public byte ServiceID { get; } = 102;
+
+        /// <summary>Which battle of the sigil it is for, so a late timer of an ended battle does nothing.</summary>
+        public int Battle;
+    }
+
+    /// <summary>
     /// Timer-fired message: the creatures of an encounter that answered have joined, so the duel spawns the rest.
     /// </summary>
     public sealed class MSG_ENCOUNTERMINIONSDUE : IServerMessage {

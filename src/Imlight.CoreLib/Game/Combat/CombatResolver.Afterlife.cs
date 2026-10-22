@@ -35,6 +35,12 @@ public partial class CombatResolver {
         }
     }
 
+    // Who an afterlife brought back this round. The game brings them back itself once the round's effects are done, so
+    // until then it still has them defeated: Malistaire's "I touch Shadow" (Afterlife - Malistaire 02) cast right after
+    // his afterlife turned a defeated Malistaire into Haunted Malistaire, and the game showed no change (Niduus,
+    // 2026-10-22). Their health cheats wait for the start of the next round.
+    private readonly HashSet<CombatDuelSubCircle> _cameBackThisRound = [];
+
     // Brings back each defeated participant that has an afterlife waiting; each afterlife works once.
     private void ProcessAfterlives() {
         foreach (var (circle, waiting) in _afterlives.ToList()) {
@@ -57,6 +63,7 @@ public partial class CombatResolver {
             }
 
             circle.SetHealthTo(most > 0 ? Math.Min(heal, most) : heal);
+            _cameBackThisRound.Add(circle);
 
             Logger.Information("Duel {0} | Slot {1} | Afterlife: back with {2} health.",
                 Logger.Args(_duel.m_duelID.Full, circle.SlotIndex, stats.m_currentHitpoints));

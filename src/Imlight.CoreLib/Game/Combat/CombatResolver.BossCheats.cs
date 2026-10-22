@@ -125,6 +125,14 @@ public partial class CombatResolver {
     // Boss cheats, then the local player's cheats (CombatResolver.PlayerCheats.cs).
     private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var time = BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
+        if (BossCheats.Enabled) {
+            try {
+                time += BossHealthCheats(combatActionList, cinematicTimeSoFar + time);
+            }
+            catch (Exception e) {
+                Logger.Error("Duel {0} | Boss health cheats at the round's start failed: {1}", Logger.Args(_duel.m_duelID.Full, e));
+            }
+        }
 
         return time + PlayerCheatsAtRound(atEnd: false, combatActionList, cinematicTimeSoFar + time);
     }
@@ -361,6 +369,11 @@ public partial class CombatResolver {
         foreach (var (boss, cheats) in BossesWithCheats(defeatedToo: true).ToList()) {
             var most = MostHealth(boss);
             if (most <= 0) {
+                continue;
+            }
+
+            // Brought back by an afterlife this round: the game still has it defeated until the round is over.
+            if (_cameBackThisRound.Contains(boss)) {
                 continue;
             }
 

@@ -277,11 +277,20 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // Each refusal is logged, so a monster that walked in and did not join says why (Niduus, 2026-10-22: "Mobs
+        // join late isn't working").
+        string name = npc.NameOverride ?? creature.m_debugName;
+        void Refused(string why) => Logger.Information("Late mob join: {0} ({1}) walked into duel {2} but did not join: {3}",
+            Logger.Args(name, creature.m_templateID.Full, Duel?.m_duelID.Full ?? SigilId, why));
+
         // Battles whose enemies are set (tutorial and scripted fights, a ZoneObjects encounter that gathers its own
         // minions, a boss fight) take nobody who wanders by, and a wandering boss does not join someone else's fight.
         if (_tutorialDirector.IsActive || _encounter is not null || _encounterBattleCounted || npc.IsBossMonster
             || SubCircles.Any(c => c is { Occupied: true, OccupiedTeam: CombatTeam.Monster }
                                    && IsBossCreature(c.ParticipantObject))) {
+            Refused(_tutorialDirector.IsActive ? "tutorial battle" : npc.IsBossMonster ? "it is a boss"
+                : _encounter is not null || _encounterBattleCounted ? "the battle has its own minions" : "a boss is in the battle");
+
             return;
         }
 
@@ -289,8 +298,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // The usual cap (2 creatures plus one per wizard, at most 4): a monster that finds no room vanishes, as before.
-        if (!IsSlotAvailable(CombatTeam.Monster)) {
+        // Any free enemy circle, up to 4 enemies, even where the usual cap (one monster per wizard in starter areas
+        // such as Wizard City) would say no (Niduus, 2026-10-22: walk-ins should join in Wizard City too). A monster
+        // that finds no room vanishes, as before.
+        if (GetAvailableSubCircleTeamCreature() is null) {
+            Refused($"the enemy side is full ({CreatureCount} monsters)");
             suspect.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
 
             return;
@@ -298,6 +310,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Two battles side by side both see the same step; only one of them gets the monster.
         if (!entity.TryClaimLateDuelJoin()) {
+            Refused("another battle took it first");
+
             return;
         }
 
@@ -305,14 +319,53 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var circle = SubCircles.FirstOrDefault(x => x?.ParticipantObject?.m_globalID == creature.m_globalID);
         if (circle is null) {
             entity.ReleaseLateDuelJoin();
+            Refused("no circle could be given to it");
 
             return;
         }
 
-        // Its circle is sent to everyone with the next round (AddWaitingCombatParticipants) and it acts from then on.
-        Logger.Information("Late mob join: {0} ({1}) joined duel {2} slot {3}",
-            Logger.Args(npc.NameOverride ?? creature.m_debugName, creature.m_templateID.Full, Duel.m_duelID.Full,
-                circle.SlotIndex));
+        var now = JoinLateCreatureNow(circle);
+        Logger.Information("Late mob join: {0} ({1}) joined duel {2} slot {3}{4}",
+            Logger.Args(name, creature.m_templateID.Full, Duel.m_duelID.Full,
+                circle.SlotIndex, now ? " and plays this round" : ", from the next round"));
+    }
+
+    /// <summary>
+    /// A monster that joins a running battle (walking in, or by .joinme) plays the round it joins in, as late wizards
+    /// do (Niduus, 2026-10-22, with [Battle] MobsJoinLate on). Before or during planning its circle is sent to everyone
+    /// and its AI picks a move now; once the spells play, it comes in with the next round.
+    /// </summary>
+    /// <returns>Whether it plays this round.</returns>
+    private bool JoinLateCreatureNow(CombatDuelSubCircle circle) {
+        if (!s_mobsJoinLate || !_isActive || IsPvPDuel || _tutorialDirector.IsActive || circle is null
+            || circle.AddedToDuel || circle.IsHumanPlayer || circle.ParticipantActor is null || Duel.m_roundNum == 0
+            || Duel.m_duelPhase is not (kDuelPhase.kPhase_PrePlanning or kDuelPhase.kPhase_Planning)) {
+            return false;
+        }
+
+        try {
+            AddCombatParticipant(circle);
+            if (!circle.AddedToDuel) {
+                return false;
+            }
+
+            if (Duel.m_duelPhase == kDuelPhase.kPhase_Planning) {
+                SendCombatStats();
+                SendCombatPips();
+                SendCombatHealth();
+            }
+
+            // Its move is taken even if everyone else has moved already (the round then ends a second later).
+            _awaitingCombatMoves = true;
+            circle.ParticipantActor.Tell(new COMBAT_106_PROTOCOL.MSG_NEWROUND());
+
+            return true;
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Slot {1} | Late creature join failed: {2}", Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, ex));
+
+            return false;
+        }
     }
 
     private static bool IsBossCreature(CoreObject creature)
@@ -371,6 +424,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private void ReceiveDuelStart(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL message) {
         if (_isActive) {
             return;
+        }
+
+        // A new battle on this sigil cuts the last one's victory scene short.
+        if (_victorySceneBattle >= 0) {
+            FinishEndDuel();
         }
 
         if (_renderComponent is null) {
@@ -2660,7 +2718,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             var slot = SpawnAndAssignMinion(message.CreatureTemplateId, subCircle, forEnemies: true, customId: message.CustomId);
             Inform(slot is null
                 ? $"{message.CreatureName} could not join the battle."
-                : $"{message.CreatureName} joins the battle and fights from the next round.");
+                : JoinLateCreatureNow(slot)
+                    ? $"{message.CreatureName} joins the battle and fights this round."
+                    : $"{message.CreatureName} joins the battle and fights from the next round.");
         }
         catch (Exception ex) {
             Logger.Error("Duel {0} | .joinme failed: {1}", Logger.Args(SigilId, ex));
@@ -2749,6 +2809,80 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         };
         ZoneBroadcast(combatMatchResult);
 
+        // A won battle keeps its victory scene a moment, as the real game does: in a packet capture (Niduus,
+        // 2026-10-22) the game asks for the Victory Dance right after the victory phase and the battle ends about
+        // 0.8 s later. Ending at once (phase 7 straight after 6) meant the game never asked and put the wizard
+        // straight back on their mount.
+        _victoryWinners.Clear();
+        if (playersWin && s_victorySceneSeconds > 0) {
+            EnactActionOnSubCircles(circle => {
+                if (circle.IsHumanPlayer && circle.IsAlive && circle.ParticipantActor is not null && circle.ParticipantObject is not null) {
+                    _victoryWinners.Add((circle.ParticipantActor, circle.ParticipantObject.m_globalID));
+                }
+            });
+        }
+
+        // DespawnDuel deletes the summoned minions by their circles, which are emptied below; it gets them from here.
+        _victoryMinions.Clear();
+        EnactActionOnSubCircles(circle => {
+            if (circle.IsSummonedMinion && circle.ParticipantActor is not null) {
+                _victoryMinions.Add(circle.ParticipantActor);
+            }
+        });
+
+        _isActive = false;
+
+        // Nobody is in this duel any more; a later disconnect or logout must not find a circle.
+        EnactActionOnSubCircles(circle => circle.RemoveParticipant());
+
+        if (_victoryWinners.Count > 0) {
+            _victorySceneBattle = ++_battle;
+            Timers.StartSingleTimer(VICTORY_SCENE_KEY, new ZONE_102_PROTOCOL.MSG_VICTORYSCENEOVER { Battle = _victorySceneBattle },
+                TimeSpan.FromSeconds(s_victorySceneSeconds));
+
+            return;
+        }
+
+        FinishEndDuel();
+    }
+
+    // [Battle] VictorySceneSeconds: how long a won battle's victory scene lasts before the battle ends for the game
+    // (0: at once, as before 0.10.150).
+    private static readonly double s_victorySceneSeconds
+        = Math.Clamp(ConfigurationManager.GetValue("Battle.VictorySceneSeconds", 0.8), 0, 5);
+
+    private const string VICTORY_SCENE_KEY = "VictoryScene";
+    private const uint VICTORY_STATE = 523160964;     // the state the real server puts a winner in during the scene
+    private const uint NORMAL_STATE = 1674067506;     // StringHash("Normal"), sent just before the battle ends
+
+    private readonly List<(IActorRef Actor, ulong ObjectId)> _victoryWinners = [];
+    private readonly List<IActorRef> _victoryMinions = [];
+    private int _victorySceneBattle = -1;
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_VICTORYSCENEOVER))]
+    private void ReceiveVictorySceneOver(ZONE_102_PROTOCOL.MSG_VICTORYSCENEOVER message) {
+        if (message.Battle != _victorySceneBattle) {
+            return;
+        }
+
+        FinishEndDuel();
+    }
+
+    /// <summary>Tells the game the battle is over (phase 7, ENDDUEL) and takes the sigil down.</summary>
+    private void FinishEndDuel() {
+        _victorySceneBattle = -1;
+        Timers.Cancel(VICTORY_SCENE_KEY);
+        foreach (var (actor, objectId) in _victoryWinners) {
+            actor.Tell(new GAME_5_PROTOCOL.MSG_ENTERSTATE { GameObjectID = objectId, State = NORMAL_STATE });
+        }
+
+        _victoryWinners.Clear();
+        foreach (var minion in _victoryMinions) {
+            minion.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
+        }
+
+        _victoryMinions.Clear();
+
         // Inform the zone of the final phase, and the end of the duel.
         Duel.m_duelPhase = kDuelPhase.kPhase_Ended;
         SendCombatPhase((byte) Duel.m_duelPhase);
@@ -2758,9 +2892,6 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         DespawnDuel();
         _isActive = false;
-
-        // Nobody is in this duel any more; a later disconnect or logout must not find a circle.
-        EnactActionOnSubCircles(circle => circle.RemoveParticipant());
     }
 
     private bool IsPvPSideWiped()
@@ -3082,10 +3213,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // Get the players back into the idle state, so they can move around again.
+        // Get the players back into the idle state, so they can move around again; after a won battle with a victory
+        // scene, the state the real server uses for it (the game's own "Normal" follows when the scene ends).
         var stateMsg = new GAME_5_PROTOCOL.MSG_ENTERSTATE {
             GameObjectID = circle.ParticipantObject.m_globalID,
-            State = (uint) NPCStates.Idle
+            State = playersWin && !Duel.m_bPVP && s_victorySceneSeconds > 0 ? VICTORY_STATE : (uint) NPCStates.Idle
         };
         circle.ParticipantActor.Tell(stateMsg);
     });
