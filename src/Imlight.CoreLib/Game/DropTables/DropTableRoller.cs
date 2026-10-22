@@ -70,7 +70,7 @@ public static class DropTableRoller {
             }
 
             // Load drop table from database.
-            var dropTable = DropTableCollection.GetDropTable(tableName);
+            var dropTable = DropTableFiles.Get(tableName);
             if (dropTable == null) {
                 Logger.Warning("Roller encountered missing drop table {0} that was not present in the database.",
                     Logger.Args(tableName));
@@ -153,6 +153,10 @@ public static class DropTableRoller {
             return results;
         }
 
+        if (dropTable.EachItem) {
+            return RollEachItem(dropTable, playerRef, playerObj, wizard, random);
+        }
+
         // Create a working copy of items to roll from.
         var availableItems = dropTable.Items
             .Where(item => !string.IsNullOrEmpty(item.ItemId))
@@ -190,6 +194,32 @@ public static class DropTableRoller {
                 // Item doesn't meet requirements, remove it from the pool and try again.
                 availableItems.RemoveAt(randomIndex);
             }
+        }
+
+        return results;
+    }
+
+    /// <summary>A table made in the app: each item rolls by its own chance and count.</summary>
+    private static List<DropItemResult> RollEachItem(DropTable dropTable, IActorRef playerRef, CoreObject playerObj,
+        Wizard wizard, Random random) {
+        var results = new List<DropItemResult>();
+        foreach (var item in dropTable.Items.Where(i => !string.IsNullOrEmpty(i.ItemId))) {
+            if (!item.Guaranteed && random.NextDouble() * 100 >= Math.Clamp(item.Chance ?? 100, 0, 100)) {
+                continue;
+            }
+
+            if (item.Requirements != null && !RequirementDispatcher.EvaluateRequirements(item.Requirements,
+                    new GenericRequirementContext(requirements: item.Requirements, playerRef: playerRef, playerObj: playerObj, wizard: wizard))) {
+                continue;
+            }
+
+            var min = Math.Max(1, item.MinCount ?? 1);
+            var max = Math.Max(min, item.MaxCount ?? min);
+            results.Add(new DropItemResult {
+                ItemId = item.ItemId,
+                ItemName = item.ItemName,
+                Quantity = random.Next(min, max + 1),
+            });
         }
 
         return results;

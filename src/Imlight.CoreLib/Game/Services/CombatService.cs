@@ -188,7 +188,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
         PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
-        GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds);
+        GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds, Math.Max(1, message.AllyCharIds?.Length ?? 1));
         TeachSpellAfterBattle();
     }
 
@@ -205,7 +205,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
     }
 
-    private void GrantMobLoot(ulong[] defeatedMobTemplateIds) {
+    private void GrantMobLoot(ulong[] defeatedMobTemplateIds, int wizards) {
         // Rolls and grants drop-table loot for the defeated mobs (raw template ids). Each mob's tables
         // come from NpcDropTableCollection; a single roll across all of a mob's tables yields one combined
         // loot popup for that mob.
@@ -223,8 +223,10 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         // Undying, spiraldb-extra/NpcDropTable).
         foreach (var key in defeatedMobTemplateIds) {
             // A custom (Customs.cs) drops its own Drops when it names any, else its creature's.
+            // A boss of the Bosses tab (BossOverrides) can name its own Drops too.
             var templateId = Imlight.CoreLib.Game.Combat.Customs.BaseOf(key);
-            var customDrops = Imlight.CoreLib.Game.Combat.Customs.Get(Imlight.CoreLib.Game.Combat.Customs.IdOf(key))?.Drops;
+            var changes = Imlight.CoreLib.Game.Combat.BossOverrides.For(key);
+            var customDrops = changes?.Drops;
             var loot = customDrops is { Count: > 0 }
                 ? DropTableRoller.Roll([.. customDrops], playerRef, playerObj, wizard)
                 : NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
@@ -236,10 +238,41 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
                 loot.GoldAmount = BattleGold(templateId);
             }
 
+            CreatureRewards(key, changes, loot, wizards, wizard);
+
             if (loot.HasRewards) {
                 LootGranter.GrantAndDisplay(playerRef, wizard, loot);
             }
         }
+    }
+
+    /// <summary>
+    /// The XP and gold the app set for a creature or custom (BossOverrides XP, GoldMin, GoldMax, RewardShared): they
+    /// replace what its drop tables and the game give, each only when it is set.
+    /// </summary>
+    private static void CreatureRewards(ulong key, Imlight.CoreLib.Game.Combat.BossOverrides.BossOverride changes,
+        Imlight.CoreLib.WizardData.Models.World.DropTableResult loot, int wizards, Wizard wizard) {
+        if (changes is null || (changes.XP is null && changes.GoldMin is null && changes.GoldMax is null)) {
+            return;
+        }
+
+        var split = changes.RewardShared == true ? Math.Max(1, wizards) : 1;
+        if (changes.XP is { } xp) {
+            loot.ExperienceAmount = Math.Max(0, xp) / split;
+        }
+
+        if (changes.GoldMin is not null || changes.GoldMax is not null) {
+            var min = Math.Max(0, changes.GoldMin ?? changes.GoldMax ?? 0);
+            var max = Math.Max(min, changes.GoldMax ?? min);
+            loot.GoldAmount = Random.Shared.Next(min, max + 1) / split;
+        }
+
+        var name = Imlight.CoreLib.Game.Combat.Customs.IsCustom(key)
+            ? $"custom {Imlight.CoreLib.Game.Combat.Customs.IdOf(key)}"
+            : $"creature {key}";
+        Logger.Information("Custom reward | {0} gives {1}: {2} XP, {3} gold{4}.", Logger.Args(
+            name, wizard.PlayerNameBehavior?.GetWizardName() ?? wizard.CharId.ToString(), loot.ExperienceAmount, loot.GoldAmount,
+            split > 1 ? $" (shared by {split} wizards)" : ""));
     }
 
     private static int BattleGold(ulong mobTemplateId) {

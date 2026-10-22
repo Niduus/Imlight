@@ -2193,16 +2193,35 @@ public class Wizard {
             ReagentItemIds = []
         };
 
+    // Completed goals count most, then how far the goals under way have come.
+    private static long QuestProgressScore(QuestInstance quest) {
+        var goals = quest.GoalProgress ?? [];
+        var completed = goals.Count(g => g is not null && g.IsGoalCompleted());
+        var underway = goals.Where(g => g is not null && g.DoesPlayerHaveGoal() && !g.IsGoalCompleted())
+            .Sum(g => (long) g.CurrentProgress + 1);
+
+        return (completed * 1_000_000L) + underway;
+    }
+
     private void AfterDatabaseLoadQuestBehavior() {
         QuestBehavior ??= new ServerQuestBehavior();
 
-        // Ensure that we have no duplicate quest instances active and remove completed quests.
+        // Ensure that we have no duplicate quest instances active and remove completed quests. Of two copies of one
+        // quest, the one furthest along stays.
+        var savedIds = QuestBehavior.CurrentQuestIDs.ToHashSet();
+        var originalOrder = QuestBehavior.CurrentQuestInstances.ToList();
         var uniqueQuests = new List<QuestInstance>();
-        foreach (var quest in QuestBehavior.CurrentQuestInstances.ToList()) {
+        var ordered = QuestBehavior.CurrentQuestInstances
+            .Where(q => q is not null)
+            .OrderByDescending(QuestProgressScore)
+            .ThenByDescending(q => savedIds.Contains(q.ID))
+            .ToList();
+        foreach (var quest in ordered) {
             // Remove duplicate quests.
-            if (uniqueQuests.Any(q => q.QuestName == quest.QuestName)) {
-                Logger.Warning("Found duplicate quest instance {0} for player {1}. Removing duplicate.",
-                    Logger.Args(quest.QuestName, PlayerNameBehavior.GetWizardName()));
+            var kept = uniqueQuests.FirstOrDefault(q => string.Equals(q.QuestName, quest.QuestName, StringComparison.OrdinalIgnoreCase));
+            if (kept is not null) {
+                Logger.Warning("Found duplicate quest instance {0} ({1}) for player {2}. Keeping {3}, which is further along.",
+                    Logger.Args(quest.QuestName, quest.ID, PlayerNameBehavior.GetWizardName(), kept.ID));
 
                 QuestBehavior.CurrentQuestInstances.Remove(quest);
                 QuestInstanceCollection.RemoveQuestInstance(quest.ID);
@@ -2221,12 +2240,12 @@ public class Wizard {
             uniqueQuests.Add(quest);
         }
 
-        QuestBehavior.CurrentQuestInstances = uniqueQuests;
+        QuestBehavior.CurrentQuestInstances = [.. uniqueQuests.OrderBy(originalOrder.IndexOf)];
 
         // Prune stale quest IDs whose instance docs were removed above, and persist.
         var questIdsBefore = QuestBehavior.CurrentQuestIDs.ToList();
         QuestBehavior.CurrentQuestIDs.Clear();
-        QuestBehavior.CurrentQuestIDs.AddRange(uniqueQuests.Select(q => q.ID));
+        QuestBehavior.CurrentQuestIDs.AddRange(QuestBehavior.CurrentQuestInstances.Select(q => q.ID));
         if (questIdsBefore.SequenceEqual(QuestBehavior.CurrentQuestIDs)) {
             return;
         }

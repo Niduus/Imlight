@@ -33,6 +33,11 @@
  *   A form a boss is polymorphed into uses its own template's file (Haunted Malistaire: 1336037.json).
  * A custom creature of the Customs tab (Customs.cs) has a file of this format of its own, in spiraldb-extra/Customs,
  * with its CustomID, BaseTemplateID, Name (shown in battle), Drops and Forms; For reads it by the custom's key.
+ *   Drops                    drop table names (DropTables): what a win over it drops, instead of the creature's own
+ *                            (NpcDropTable). A boss of the Bosses tab can have them too.
+ *   XP, GoldMin, GoldMax     what a win over it gives, instead of what its drop tables and the game give. Gold is a
+ *                            random amount from GoldMin to GoldMax. RewardShared: true splits them between the wizards
+ *                            who fought; otherwise each wizard gets them all. Counted from the next win.
  */
 
 using System;
@@ -90,6 +95,12 @@ internal static class BossOverrides {
         public ulong BaseTemplateID { get; set; }
         public List<string> Drops { get; set; }
         public Dictionary<string, int> Forms { get; set; }
+        // What a win over it gives (CombatService.GrantMobLoot); left out keeps what the game gives.
+        public int? XP { get; set; }
+        public int? GoldMin { get; set; }
+        public int? GoldMax { get; set; }
+        // True: the XP and gold above are split between the wizards who fought; false or left out: each gets all.
+        public bool? RewardShared { get; set; }
     }
 
     internal sealed class CheatChanges {

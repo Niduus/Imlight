@@ -715,6 +715,27 @@ public static class WizardCollection {
         }
     }
 
+    /// <summary>
+    /// The quest instances of a character, once the index caught up. A quest taken just before a zone change
+    /// would otherwise be missing from the new session: its ID was dropped as stale and the quest could be
+    /// offered and taken again, leaving the character with two copies of it.
+    /// </summary>
+    private static List<QuestInstance> QueryQuestInstances(IDocumentSession session, ulong charId) {
+        try {
+            return session.Query<QuestInstance>(collectionName: QuestInstanceCollection.CollectionName)
+                .Customize(query => query.WaitForNonStaleResults(s_nonStaleWaitTimeout))
+                .Where(q => q.OwnerCharId == charId)
+                .ToList();
+        } catch (Exception ex) when (ex is TimeoutException or RavenTimeoutException) {
+            Logger.Warning("The quest instance index was still stale after {Seconds} s, loading the quests of character {CharId} as it is.",
+                Logger.Args(s_nonStaleWaitTimeout.TotalSeconds, charId));
+
+            return session.Query<QuestInstance>(collectionName: QuestInstanceCollection.CollectionName)
+                .Where(q => q.OwnerCharId == charId)
+                .ToList();
+        }
+    }
+
     private static void LoadEquippedItems(IDocumentSession session, Wizard wizard) {
         if (wizard.EquipmentBehavior.EquippedItemIds is not { Count: > 0 }) {
             wizard.EquipmentBehavior.EquippedItems = [];
@@ -801,13 +822,7 @@ public static class WizardCollection {
 
         // Load the actual quests the character has.
         if (wizard.QuestBehavior != null) {
-            var currentQuestIDs = wizard.QuestBehavior.CurrentQuestIDs;
-            var myQuests = session
-                .Query<QuestInstance>(collectionName: QuestInstanceCollection.CollectionName)
-                .Where(q => q.OwnerCharId == wizard.CharId)
-                .ToList();
-
-            wizard.QuestBehavior.CurrentQuestInstances = myQuests;
+            wizard.QuestBehavior.CurrentQuestInstances = QueryQuestInstances(session, wizard.CharId);
         }
 
         // The wizard may still have some initialization to do. Inform the wizard

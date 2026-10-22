@@ -305,7 +305,9 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         };
 
         // Send MSG_PRELOGIN so other services may do their work before we send the final login complete message.
-        var preLoginMsg = new ZONE_102_PROTOCOL.MSG_PRELOGIN();
+        var preLoginMsg = new ZONE_102_PROTOCOL.MSG_PRELOGIN {
+            ClientKeptState = message.Reattach == 1 || message.Retry == 1,
+        };
         TellOtherServices(preLoginMsg);
 
         // Send the same message to ourselves after a short delay to allow other services to prepare.

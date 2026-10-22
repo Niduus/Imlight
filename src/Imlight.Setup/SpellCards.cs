@@ -590,6 +590,30 @@ internal sealed partial class SpellBook {
         });
     }
 
+    /// <summary>
+    /// An item's icon by its template file (the Path column of the server's ids.csv), such as a hat's or a reagent's
+    /// picture; null when the game has none for it.
+    /// </summary>
+    internal GameImage? ItemIcon(string templateFile) {
+        if (string.IsNullOrWhiteSpace(templateFile)) {
+            return null;
+        }
+
+        string? icon;
+        try {
+            icon = Decode<PropertyClass>(_root, templateFile.Replace('\\', '/')) switch {
+                ReagentItemTemplate reagent => (string) reagent.m_imageName,
+                ItemTemplate item => (string) item.m_sIcon,
+                _ => null,
+            };
+        }
+        catch (Exception) {
+            return null;
+        }
+
+        return Image(icon);
+    }
+
     /// <summary>The picture file names that hold every one of these words (any case), shortest first.</summary>
     internal List<string> FindImages(params string[] words)
         => [.. _images.Keys.Where(k => words.All(w => k.Contains(w, StringComparison.OrdinalIgnoreCase))).OrderBy(k => k.Length)];

@@ -36,6 +36,14 @@ public class DropTable {
     public int ExperienceAmount { get; set; } = 0;
     public int TrainingPoints { get; set; } = 0;
     public bool GrantsPotionSlot { get; set; } = false;
+
+    /// <summary>
+    /// How Items roll. False (the files of SpiralDB): one item, picked at random among those the player may have.
+    /// True (tables made in the app's Drop tables editor): every item rolls on its own, by its Chance, and drops
+    /// MinCount to MaxCount of itself; a Guaranteed item always drops.
+    /// </summary>
+    public bool EachItem { get; set; } = false;
+
     public List<DropItem> Items { get; set; } = [];
 
     /// <summary>
@@ -55,6 +63,17 @@ public class DropItem {
     public string ItemName { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
     public RequirementList? Requirements { get; set; } = null;
+
+    /// <summary>With EachItem: percent chance it drops (100 when left out).</summary>
+    public double? Chance { get; set; } = null;
+
+    /// <summary>With EachItem: how many drop, from MinCount to MaxCount (1 when left out).</summary>
+    public int? MinCount { get; set; } = null;
+
+    public int? MaxCount { get; set; } = null;
+
+    /// <summary>With EachItem: it always drops, whatever its Chance.</summary>
+    public bool Guaranteed { get; set; } = false;
 
 }
 
