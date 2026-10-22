@@ -264,6 +264,7 @@ internal sealed partial class ManagerWindow : Window {
                 Tab("Commands", CommandsTab()),
                 Tab("Lookup", LookupTab()),
                 Tab("Bosses", BossesTab()),
+                Tab("Customs", CustomsTab()),
                 Tab("Server", ServerTab()),
                 Tab("Logs", LogsTab()),
                 Tab("Settings", SettingsTab()),
@@ -282,6 +283,7 @@ internal sealed partial class ManagerWindow : Window {
                 case "Play": await LoadPlayAsync(); break;
                 case "Lookup": await LoadLookupAsync(); break;
                 case "Bosses": await LoadBossesAsync(); break;
+                case "Customs": await LoadCustomsAsync(); break;
                 case "Settings" when _settings.Count == 0: LoadSettings(); break;
                 case "Accounts": await LoadAccountsAsync(); break;
             }

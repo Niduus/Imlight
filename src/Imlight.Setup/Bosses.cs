@@ -111,6 +111,30 @@ internal sealed class BossChanges {
     /// <summary>Changes to its cheats (BossCheatList.ToJson), or null to keep its cheat file as it is.</summary>
     internal JsonObject? Cheats { get; set; }
 
+    /// <summary>
+    /// The file's other fields, written back as they are: a custom's CustomID, BaseTemplateID, Drops and Forms
+    /// (the Customs tab sets them).
+    /// </summary>
+    internal JsonObject Extra { get; set; } = [];
+
+    /// <summary>A custom's file (Customs tab), which keeps its file even with nothing changed.</summary>
+    internal bool IsCustom => Find(Extra, "BaseTemplateID") is not null;
+
+    /// <summary>
+    /// The changes without a custom's own fields (to see whether anything else is changed), or with clear, a custom
+    /// file that keeps only those: its name, number, creature, drops and forms.
+    /// </summary>
+    internal BossChanges WithoutCustom(bool clear = false) {
+        if (clear) {
+            return new BossChanges { Name = Name, Extra = (JsonObject) Extra.DeepClone() };
+        }
+
+        var copy = (BossChanges) MemberwiseClone();
+        copy.Extra = [];
+
+        return copy;
+    }
+
     private static readonly JsonSerializerOptions s_write = new() { WriteIndented = true };
 
     internal static string FileOf(string folder, string id) => Path.Combine(folder, $"{id}.json");
@@ -179,6 +203,15 @@ internal sealed class BossChanges {
 
         changes.Cheats = Find(json, "Cheats") is JsonObject cheats ? (JsonObject) cheats.DeepClone() : null;
 
+        var handled = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+            "TemplateID", "Name", "Notes", "Health", "Level", "School", "Stunable", "Beguilable", "Deck", "Cheats",
+        };
+        handled.UnionWith(STATS.Select(s => s.Key));
+        handled.UnionWith(GRID_ROWS.SelectMany(r => new[] { r.Key, r.Key + "BySchool" }));
+        foreach (var (key, node) in json.Where(p => !handled.Contains(p.Key))) {
+            changes.Extra[key] = node?.DeepClone();
+        }
+
         return changes;
     }
 
@@ -187,11 +220,20 @@ internal sealed class BossChanges {
     /// starts at that moment never reads half a file.
     /// </summary>
     internal void Save(string folder, string id) {
-        var json = new JsonObject {
-            ["TemplateID"] = ulong.Parse(id, CultureInfo.InvariantCulture),
-            ["Name"] = Name,
-            ["Notes"] = "Made in the app's Bosses tab. Left out = the game's own value.",
-        };
+        var json = IsCustom
+            ? new JsonObject {
+                ["Name"] = Name,
+                ["Notes"] = "A custom made in the app's Customs tab. Left out = the game's own value.",
+            }
+            : new JsonObject {
+                ["TemplateID"] = ulong.Parse(id, CultureInfo.InvariantCulture),
+                ["Name"] = Name,
+                ["Notes"] = "Made in the app's Bosses tab. Left out = the game's own value.",
+            };
+        foreach (var (key, node) in Extra) {
+            json[key] = node?.DeepClone();
+        }
+
         if (Health is { } health) {
             json["Health"] = health;
         }

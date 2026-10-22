@@ -1127,11 +1127,15 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     /// </summary>
     /// <returns>The circle it took, or null when none was free.</returns>
     internal CombatDuelSubCircle SpawnBossForm(uint creatureTid, CombatDuelSubCircle boss)
-        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true);
+        // A custom's second form is the custom its Forms names for that creature (Customs.cs), if any.
+        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true,
+            customId: Customs.IdOf(Customs.FormKey(boss.ParticipantObject, creatureTid)));
 
     // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
+    // customId: it comes in as that custom of the Customs tab (Customs.cs), 0 for the game's creature.
     // Returns the circle it took, or null.
-    private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false) {
+    private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false,
+                                                     int customId = 0) {
         // A PvE minion fights for the wizards whoever summoned it; in PvP it fights for its summoner.
         var slot = forEnemies ? GetAvailableSubCircleTeamCreature()
             : Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer();
@@ -1158,6 +1162,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         };
         var minionObj = CoreObjectFactory.FinalizeCoreObject(info, template);
         minionObj = CoreObjectFactory.InitializeCoreObjectBehaviors(minionObj, template);
+        // Marked before its actor is made, so its name (NpcComponent) is the custom's.
+        Customs.Mark(minionObj.m_globalID.Full, customId);
 
         var minionActor = Entity.SpawnCombatMinionActor(minionObj, template);
         if (minionActor is null) {
@@ -2223,7 +2229,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         try {
-            var slot = SpawnAndAssignMinion(message.CreatureTemplateId, subCircle, forEnemies: true);
+            var slot = SpawnAndAssignMinion(message.CreatureTemplateId, subCircle, forEnemies: true, customId: message.CustomId);
             Inform(slot is null
                 ? $"{message.CreatureName} could not join the battle."
                 : $"{message.CreatureName} joins the battle and fights from the next round.");
@@ -2481,6 +2487,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         var adjectivesOfDefeatedMobs = new List<string>();
         var adjectivesPerDefeatedMob = new List<List<string>>();
         var templateIdsOfDefeatedMobs = new List<ulong>();
+        // What each one drops by: its custom's key (Customs.cs) or its template id.
+        var lootKeysOfDefeatedMobs = new List<ulong>();
         // A defeated minion on the enemy side (a .joinme boss, a boss's second form) may have left its circle already.
         var defeatedMobs = new List<(ulong TemplateId, ulong GlobalId)>();
         EnactActionOnSubCircles(circle => {
@@ -2518,6 +2526,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             adjectivesOfDefeatedMobs.AddRange(mobAdjectives);
             adjectivesPerDefeatedMob.Add(mobAdjectives);
             templateIdsOfDefeatedMobs.Add(gameObjectTemplate.m_templateID);
+            lootKeysOfDefeatedMobs.Add(Customs.Of(mobGlobalId) is var custom and > 0
+                ? Customs.Key(custom) : gameObjectTemplate.m_templateID);
+            Customs.Forget(mobGlobalId);
         }
 
         var allyCharIds = new List<ulong>();
@@ -2540,6 +2551,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
                 UsedPips = circle._usedPipsForExperienceGain,
                 MobAdjectives = [.. adjectivesOfDefeatedMobs],
                 MobTemplateIds = [.. templateIdsOfDefeatedMobs],
+                MobLootKeys = [.. lootKeysOfDefeatedMobs],
                 AllyCharIds = [.. allyCharIds],
             };
             circle.ParticipantActor.Tell(victoryMsg);

@@ -35,8 +35,9 @@ public partial class CombatResolver {
     // The template whose cheat file a boss uses: the creature it was polymorphed into (Haunted Malistaire, 1336037)
     // when that has a file, else its own. A new form starts in phase 1 from the next round, counting its own rounds.
     private ulong CheatTemplate(CombatDuelSubCircle boss) {
-        var form = CombatPolymorph.FormOf(boss);
-        var template = form != 0 && BossCheats.For(form).Count > 0 ? form : (ulong) boss.ParticipantObject.m_templateID;
+        // A custom (Customs.cs) cheats as its custom, and its form as the custom its Forms names, if any.
+        var form = Customs.FormKey(boss.ParticipantObject, CombatPolymorph.FormOf(boss));
+        var template = form != 0 && BossCheats.For(form).Count > 0 ? form : Customs.KeyOf(boss.ParticipantObject);
         if (_bossCheatTemplates.TryGetValue(boss, out var before) && before != template) {
             _bossPhases[boss] = (1, (int) _duel.m_roundNum + 1);
             Logger.Information("Duel {0} | Slot {1} | Boss now cheats as {2}.",
@@ -302,7 +303,7 @@ public partial class CombatResolver {
             Logger.Warning("Duel {0} | Boss cheat line \"{1}\" not found: {2}", Logger.Args(_duel.m_duelID.Full, cheat.Line, problem));
         }
 
-        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, boss.ParticipantObject.m_templateID));
+        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject)));
         var casts = cheat.CastList();
         Logger.Information("Duel {0} | Slot {1} | {2} cheats after {3}: {4}{5}.",
             Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, reason,
@@ -386,7 +387,7 @@ public partial class CombatResolver {
             UseCheat(boss, index);
         }
 
-        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, boss.ParticipantObject.m_templateID));
+        var bossName = BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject)));
         if (cheat.Defeat && boss.IsAlive) {
             boss.DamageParticipant(boss.ParticipantGameStats.m_currentHitpoints);
         }

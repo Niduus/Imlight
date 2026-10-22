@@ -60,8 +60,9 @@ internal static class CombatPolymorph {
         participant.m_polymorphEffect = effect;
         participant.m_nPolymorphTurnLength = effect.m_numRounds;
 
-        // A boss changed in the app's Bosses tab keeps its changes in its new form too.
-        var changes = BossOverrides.For(mobId);
+        // A boss changed in the app's Bosses tab keeps its changes in its new form too; a custom's form is the custom
+        // its Forms names (Customs.cs), if any.
+        var changes = BossOverrides.For(Customs.FormKey(target.ParticipantObject, mobId));
         var npc = mob.m_behaviors?.OfType<NPCBehaviorTemplate>().FirstOrDefault();
         var most = changes?.Health ?? npc?.m_nStartingHealth ?? 0;
         if (most > 0) {

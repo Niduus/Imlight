@@ -123,21 +123,35 @@ internal static class BossCheats {
 
     private static readonly Lazy<Dictionary<ulong, BossCheatFile>> s_bosses = new(Load);
 
-    /// <summary>The cheats of a boss template, or none.</summary>
+    /// <summary>
+    /// The cheats of a boss template, or none. For a custom's key (Customs.cs): its creature's file with the custom's
+    /// own changes laid over it.
+    /// </summary>
     internal static List<BossCheat> For(ulong templateId)
-        => Enabled ? BossOverrides.CheatsOf(templateId, s_bosses.Value.TryGetValue(templateId, out var boss) ? boss.Cheats : s_none) : [];
+        => Enabled ? BossOverrides.CheatsOf(templateId,
+            s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss) ? boss.Cheats : s_none) : [];
 
     // The cheats of a boss with no file, the same list each time so BossOverrides.CheatsOf keeps its own laid over it.
     private static readonly List<BossCheat> s_none = [];
 
     /// <summary>How many shadow pips a boss template can hold and its chance a round to gain one, or (0, 0).</summary>
     internal static (int Most, int Chance) ShadowPipsOf(ulong templateId)
-        => s_bosses.Value.TryGetValue(templateId, out var boss) && boss.ShadowPips > 0
+        => s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss) && boss.ShadowPips > 0
             ? (boss.ShadowPips, Math.Clamp(boss.ShadowPipChance, 0, 100))
             : (0, 0);
 
-    internal static string NameOf(ulong templateId)
-        => s_bosses.Value.TryGetValue(templateId, out var boss) && boss.Name.Length > 0 ? boss.Name : templateId.ToString();
+    internal static string NameOf(ulong templateId) {
+        if (Customs.IsCustom(templateId)) {
+            var custom = Customs.Get(Customs.IdOf(templateId));
+            if (custom is { Name.Length: > 0 }) {
+                return $"{custom.Name} (custom {custom.CustomID})";
+            }
+
+            templateId = custom?.BaseTemplateID ?? 0;
+        }
+
+        return s_bosses.Value.TryGetValue(templateId, out var boss) && boss.Name.Length > 0 ? boss.Name : templateId.ToString();
+    }
 
     private static Dictionary<ulong, BossCheatFile> Load() {
         var bosses = new Dictionary<ulong, BossCheatFile>();
