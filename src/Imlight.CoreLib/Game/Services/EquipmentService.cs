@@ -481,11 +481,16 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         DismissPetEntity();
 
         // A pet named with .name pet glided (no walk or idle) and wisps stopped being picked up after logging in or
-        // renaming, until it was taken off and put on again (Niduus, 2026-10-22). Putting it on is the one summon that
-        // first tells the game the pet is worn, so a named pet is told that again before each summon.
+        // renaming, until it was taken off and put on again, which keeps the name (Niduus, 2026-10-22). Sending
+        // MSG_EQUIPITEM again before the summon didn't help and made the pet show far too big, so a named pet now gets
+        // the other half of putting it on: the worn-pet notice everyone in the zone gets, the owner included.
         if (CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(petItem, out var petName)
-            && petName.m_wsNameOverride.ToString() is { Length: > 0 }) {
-            SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM { ItemID = petItem.m_globalID, SlotName = "Pet", IsEquip = 1 });
+            && petName.m_wsNameOverride.ToString() is { Length: > 0 }
+            && _itemSerializer.Serialize(ItemHelper.GetPublicItem(petItem), 1, out var publicPet)) {
+            ZoneBroadcast(new GAME_5_PROTOCOL.MSG_EQUIPMENTBEHAVIOR_PUBLICEQUIPITEM {
+                GlobalID = playerObj.m_globalID,
+                SerializedInfo = publicPet
+            }, false);
         }
 
         var spawnMsg = new ZONE_102_PROTOCOL.MSG_SPAWNENTITY {
