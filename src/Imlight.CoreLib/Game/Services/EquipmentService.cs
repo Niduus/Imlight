@@ -480,6 +480,14 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         // Only one pet follows its owner: a swap or a repeated attach replaces the previous summon.
         DismissPetEntity();
 
+        // A pet named with .name pet glided (no walk or idle) and wisps stopped being picked up after logging in or
+        // renaming, until it was taken off and put on again (Niduus, 2026-10-22). Putting it on is the one summon that
+        // first tells the game the pet is worn, so a named pet is told that again before each summon.
+        if (CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(petItem, out var petName)
+            && petName.m_wsNameOverride.ToString() is { Length: > 0 }) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM { ItemID = petItem.m_globalID, SlotName = "Pet", IsEquip = 1 });
+        }
+
         var spawnMsg = new ZONE_102_PROTOCOL.MSG_SPAWNENTITY {
             CoreObject = coreObj,
             Template = CoreObjectFactory.GetCoreTemplate(PetFactory.GENERIC_PET_TEMPLATE_ID),
