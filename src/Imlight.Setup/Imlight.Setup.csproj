@@ -29,6 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Pictures the window shows, built into the exe so they show offline (read with avares://<assembly>/Assets/...). -->
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- The archive reader, which needs no game data to build. -->
     <ProjectReference Include="..\..\submodule\Imcodec\src\Imcodec.Wad\Imcodec.Wad.csproj" />
     <!-- The data file decoder for the Game Files tab. It is generated from a type dump, so copy

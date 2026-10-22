@@ -336,7 +336,8 @@ internal sealed partial class ManagerWindow : Window {
         _saveBar.BorderBrush = LINE;
         _saveBar.BorderThickness = new Thickness(0, 1, 0, 0);
 
-        // The tabs run down a side bar of their own colour.
+        // The tabs run down a side bar of their own colour, with the credit pinned to its bottom (ManagerWindow.Credit.cs).
+        var credit = CreditFooter();
         var body = new Panel {
             Children = {
                 new Border {
@@ -344,8 +345,10 @@ internal sealed partial class ManagerWindow : Window {
                     BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 1, 0),
                 },
                 WithMargin(tabs, new Thickness(0, 10, 0, 0)),
+                credit,
             },
         };
+        FitCreditFooter(body, tabs, credit);
 
         Content = new DockPanel {
             Children = {
