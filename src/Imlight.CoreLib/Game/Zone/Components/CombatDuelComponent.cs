@@ -2709,12 +2709,14 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         CombatResolver.SetFirstSide(subCircle, message.WeFirst);
-        ShowFirstSide();
         Inform(message.WeFirst ? "Your side goes first, from this round's spells on." : "The other side goes first, from this round's spells on.");
     }
 
     /// <summary>Shows the sun on the side that now acts first.</summary>
-    internal void ShowFirstSide() => SendUpFirst(Duel.m_roundNum);
+    internal void ShowFirstSide() {
+        SendUpFirst(Duel.m_roundNum);
+        Logger.Information("Duel {0} | Up first sent again: team {1}, phase {2}.", Logger.Args(SigilId, Duel.m_firstTeamToAct, Duel.m_duelPhase));
+    }
 
     // .joinme (Niduus, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]

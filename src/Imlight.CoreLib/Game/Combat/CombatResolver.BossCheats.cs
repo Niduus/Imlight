@@ -469,6 +469,8 @@ public partial class CombatResolver {
 
         var team = weFirst ? who.OccupiedTeam : who.OccupiedTeam == CombatTeam.Player ? CombatTeam.Monster : CombatTeam.Player;
         _duel.m_firstTeamToAct = (int) team;
+        // The sun moves at once, not at the next round.
+        who._duelActor?.ShowFirstSide();
         Logger.Information("Duel {0} | Slot {1} | {2} side goes first now.",
             Logger.Args(_duel.m_duelID.Full, who.SlotIndex, team == CombatTeam.Player ? "The players'" : "The creatures'"));
     }
