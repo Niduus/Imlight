@@ -2846,10 +2846,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         FinishEndDuel();
     }
 
-    // [Battle] VictorySceneSeconds: how long a won battle's victory scene lasts before the battle ends for the game
-    // (0: at once, as before 0.10.150).
+    // [Battle] VictorySceneDelay: how long a won battle's victory scene lasts before the battle ends for the game
+    // (0: at once). Off by default: in 0.10.150 (as VictorySceneSeconds = 0.8) Niduus was stuck in place after a won
+    // battle (2026-10-22), so it is a test switch until that is understood.
     private static readonly double s_victorySceneSeconds
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.VictorySceneSeconds", 0.8), 0, 5);
+        = Math.Clamp(ConfigurationManager.GetValue("Battle.VictorySceneDelay", 0.0), 0, 5);
 
     private const string VICTORY_SCENE_KEY = "VictoryScene";
     private const uint VICTORY_STATE = 523160964;     // the state the real server puts a winner in during the scene
