@@ -43,6 +43,19 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
 
     [JsonIgnore] public List<WizClientObjectItem> EquippedItems;
 
+    /// <summary>
+    /// How many Victory Dances a wizard wears at once; the game shows five dance slots, and one of them is picked at
+    /// random for each won battle (packet capture given to Niduus, 2026-10-22).
+    /// </summary>
+    public const int MaxVictoryDances = 5;
+
+    /// <summary>The worn Victory Dances, oldest first.</summary>
+    public List<WizClientObjectItem> GetVictoryDances() => SlotList?
+        .Where(slot => slot.SlotType == EquipmentSlotType.PIIVictoryDance)
+        .Select(slot => EquippedItems?.FirstOrDefault(item => item.m_globalID == slot.ItemId))
+        .Where(item => item is not null)
+        .ToList() ?? [];
+
     public bool EquipItem(WizClientObjectItem item, EquipmentSlotType slotType) {
         var itemId = item.m_globalID;
 
@@ -51,14 +64,26 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
             return false;
         }
 
-        var existingItem = GetItemInSlot(slotType);
+        // Victory Dances share one slot name, and up to MaxVictoryDances are worn together.
+        var shared = slotType == EquipmentSlotType.PIIVictoryDance && GetVictoryDances().Count < MaxVictoryDances;
+        var existingItem = shared ? null : GetItemInSlot(slotType);
         if (existingItem is not null) {
             EquippedItemIds.Remove(existingItem.m_globalID);
             EquippedItems.Remove(existingItem);
         }
 
         // Finally, update the slot.
-        UpdateEquipmentSlot(slotType, item.m_debugName, itemId);
+        if (shared) {
+            SlotList.Add(new EquipmentSlot {
+                SlotType = slotType,
+                ItemName = item.m_debugName,
+                ItemId = (GID) itemId,
+                EquippedSince = DateTime.Now,
+            });
+        }
+        else {
+            UpdateEquipmentSlot(slotType, item.m_debugName, itemId);
+        }
         EquippedItemIds.Add(itemId);
         EquippedItems.Add(item);
         

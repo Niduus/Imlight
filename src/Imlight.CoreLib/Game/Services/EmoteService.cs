@@ -134,14 +134,45 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     // How long after a won battle the Victory Dance starts, so it plays in the circle during the victory scene.
     private static readonly TimeSpan VictoryDanceDelay = TimeSpan.FromSeconds(1.5);
 
+    // Off: the game plays the dance itself once it gets the server's pick (below). On: the server also plays it as a
+    // radial emote, the stand-in used before the packet capture showed how the real server does it.
+    private static readonly bool s_serverPlaysVictoryDance = ConfigurationManager.GetValue("Emotes.ServerPlaysVictoryDance", false);
+
     /// <summary>
-    /// A won battle plays the wizard's equipped Victory Dance (Niduus, 2026-10-22: equipping worked but nothing danced).
-    /// The dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation the server plays like a
-    /// radial menu emote, for everyone in the zone.
+    /// At the end of a won battle the game asks for the dance to play (PlayerGID 0). As the real server does in a
+    /// packet capture Niduus was given (2026-10-22), this picks one of the worn dances at random (up to five are worn)
+    /// and answers with it for everyone in the zone; the game then plays it.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UPDATEAFTERCOMBATDANCE))]
+    private void ReceiveUpdateAfterCombatDance(WIZARD2_53_PROTOCOL.MSG_UPDATEAFTERCOMBATDANCE message) {
+        try {
+            // Only the game's request; the server's own answers carry a player.
+            if (message.PlayerGID != 0 || GetActiveWizard() is not { } wizard) {
+                return;
+            }
+
+            var worn = wizard.EquipmentBehavior?.GetVictoryDances().Count ?? 0;
+            var templateId = wizard.PickVictoryDance();
+            Logger.Information("Victory Dance: {0} won a battle; dance {1} picked from {2} worn.",
+                Logger.Args(wizard.CharId, templateId, worn));
+            ZoneBroadcast(new WIZARD2_53_PROTOCOL.MSG_UPDATEAFTERCOMBATDANCE {
+                PlayerGID = wizard.GameObjectID,
+                AfterCombatDance = templateId,
+            }, false);
+        }
+        catch (Exception ex) {
+            Logger.Error("Victory Dance pick failed: {0}", Logger.Args(ex));
+        }
+    }
+
+    /// <summary>
+    /// With [Emotes] ServerPlaysVictoryDance on, a won battle also plays the wizard's Victory Dance from the server: the
+    /// dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation is played like a radial menu
+    /// emote, for everyone in the zone.
     /// </summary>
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatWin(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
-        if (GetActiveWizard()?.WizardAvatar?.m_afterCombatVictoryDance is > 0) {
+        if (s_serverPlaysVictoryDance && GetActiveWizard()?.WizardAvatar?.m_afterCombatVictoryDance is > 0) {
             Timers.StartSingleTimer("victory-dance", new SERVICE_101_PROTOCOL.MSG_PLAYVICTORYDANCE(), VictoryDanceDelay);
         }
     }

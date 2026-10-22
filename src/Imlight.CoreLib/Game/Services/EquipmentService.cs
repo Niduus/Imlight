@@ -196,7 +196,10 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
 
         // Check to see if the player already has this item equipped. If they do, broadcast the removal of it.
         // We don't have to remove it here because the InventoryToEquipmentTransfer method will do that for us.
-        if (wizard.EquipmentBehavior.SlotInUse(message.SlotName, out var index)) {
+        // A Victory Dance joins the worn ones while fewer than five are worn, so nothing comes off.
+        var danceHasRoom = string.Equals(message.SlotName, nameof(EquipmentSlotType.PIIVictoryDance), StringComparison.OrdinalIgnoreCase)
+                           && wizard.EquipmentBehavior.GetVictoryDances().Count < Imlight.CoreLib.Shared.Behaviors.ServerWizEquipmentBehavior.MaxVictoryDances;
+        if (!danceHasRoom && wizard.EquipmentBehavior.SlotInUse(message.SlotName, out var index)) {
             // Debug log.
             Logger.Debug("{0} tried to equip item {1} in slot {2} that is already in use. Unequipping from index {3}",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), itemId, message.SlotName, index));
@@ -236,7 +239,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         }
         else if (equippedSlot == EquipmentSlotType.PIIVictoryDance) {
             ZoneBroadcast(new WIZARD2_53_PROTOCOL.MSG_UPDATEAFTERCOMBATDANCE {
-                AfterCombatDance = (uint) item.m_templateID,
+                AfterCombatDance = wizard.WizardAvatar?.m_afterCombatVictoryDance ?? (uint) item.m_templateID,
                 PlayerGID = wizard.GameObjectID
             }, false);
         }
@@ -354,7 +357,8 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         var isVictoryDance = slotObj?.SlotType == EquipmentSlotType.PIIVictoryDance;
         if (isVictoryDance) {
             ZoneBroadcast(new WIZARD2_53_PROTOCOL.MSG_UPDATEAFTERCOMBATDANCE {
-                AfterCombatDance = 0,
+                // Another worn dance (picked at random) takes over, or 0 when this was the last.
+                AfterCombatDance = wizard.WizardAvatar?.m_afterCombatVictoryDance ?? 0,
                 PlayerGID = wizard.GameObjectID
             }, false);
         }

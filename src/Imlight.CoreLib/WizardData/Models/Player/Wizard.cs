@@ -713,7 +713,11 @@ public class Wizard {
         }
 
         // Get the item that is currently in the slot, if there is one. We want to remove its effects.
-        var replacedItem = EquipmentBehavior.GetItemInSlot(slot.SlotType);
+        // A new Victory Dance joins the worn ones while there is room; with all five worn it replaces the oldest.
+        var replacedItem = slot.SlotType == EquipmentSlotType.PIIVictoryDance
+                           && EquipmentBehavior.GetVictoryDances().Count < ServerWizEquipmentBehavior.MaxVictoryDances
+            ? null
+            : EquipmentBehavior.GetItemInSlot(slot.SlotType);
         if (replacedItem != null) {
             if (!EquipmentToInventoryTransfer(replacedItem.m_globalID, out unequipEffects)) {
                 Logger.Warning("Could not replace item {0} from slot {1}.",
@@ -743,7 +747,7 @@ public class Wizard {
             EquipPet(template, inventoryItem);
         }
         if (slot.SlotType == EquipmentSlotType.PIIVictoryDance) {
-            EquipVictoryDance(inventoryItem);
+            PickVictoryDance();
         }
 
         // Persistent save.
@@ -1845,7 +1849,7 @@ public class Wizard {
             UnequipPet();
         }
         if (slotType == EquipmentSlotType.PIIVictoryDance) {
-            UnequipVictoryDance();
+            PickVictoryDance();
         }
 
         var removedEffects = CharacterEffectHelper.RemoveEffectsFromWizard(this, template);
@@ -1854,8 +1858,13 @@ public class Wizard {
         return removedEffects;
     }
 
-    private void EquipVictoryDance(WizClientObjectItem item) {
-        var templateId = (uint) item.m_templateID;
+    /// <summary>
+    /// Picks one of the worn Victory Dances at random as the one the game plays after the next won battle (0 when none
+    /// is worn), saves it, and returns its template ID. The game asks for a new pick at the end of every won battle
+    /// (MSG_UPDATEAFTERCOMBATDANCE), so with two or more worn the dance changes from battle to battle.
+    /// </summary>
+    public uint PickVictoryDance() {
+        var templateId = RandomVictoryDance();
         if (WizardAvatar is not null) {
             WizardAvatar.m_afterCombatVictoryDance = templateId;
         }
@@ -1865,33 +1874,19 @@ public class Wizard {
         }
 
         WizardCollection.UpdateCharacterVictoryDance(this);
+
+        return templateId;
     }
 
-    private void UnequipVictoryDance() {
-        if (WizardAvatar is not null) {
-            WizardAvatar.m_afterCombatVictoryDance = 0;
-        }
+    private uint RandomVictoryDance() {
+        var dances = EquipmentBehavior?.GetVictoryDances() ?? [];
 
-        if (HasInitializedGameObject && CoreObjectFactory.FindBehaviorInstance<WizardCharacterBehavior>(GameObject, out var avatarBehavior)) {
-            avatarBehavior.m_afterCombatVictoryDance = 0;
-        }
-
-        WizardCollection.UpdateCharacterVictoryDance(this);
+        return dances.Count == 0 ? 0u : (uint) dances[Random.Shared.Next(dances.Count)].m_templateID;
     }
 
     private void AfterDatabaseLoadVictoryDance() {
-        var idInSlot = EquipmentBehavior?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.PIIVictoryDance)?.ItemId;
-        if (idInSlot is null) {
-            if (WizardAvatar is not null) {
-                WizardAvatar.m_afterCombatVictoryDance = 0;
-            }
-            return;
-        }
-
-        var danceItem = EquipmentBehavior.EquippedItems?.FirstOrDefault(i => i.m_globalID == idInSlot);
-        var templateId = danceItem is not null ? (uint) danceItem.m_templateID : 0u;
         if (WizardAvatar is not null) {
-            WizardAvatar.m_afterCombatVictoryDance = templateId;
+            WizardAvatar.m_afterCombatVictoryDance = RandomVictoryDance();
         }
     }
 
