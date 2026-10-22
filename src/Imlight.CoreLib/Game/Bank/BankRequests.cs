@@ -71,7 +71,7 @@ namespace Imlight.CoreLib.Game.Bank;
 /// <param name="unequip">Takes an equipped item off the wizard and returns whether it is no longer equipped.</param>
 internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> bankIsOpen, Func<ulong, bool> unequip) {
 
-    private const int LockBit = unchecked((int) 0x80000000);
+    private const int LockBit = ItemHelper.LockBit;
     private const uint HouseTransferListMask = 4;
 
     /// <summary>
@@ -365,34 +365,42 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
     /// <param name="message">The client's request. Only ItemGID is set.</param>
     internal void ToggleLock(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM message) {
         var itemId = (ulong) message.ItemGID;
-        var request = $"lock of item {itemId}";
-        var item = FindItem(BankContainer.Backpack, itemId) ?? FindItem(BankContainer.Bank, itemId) ?? FindItem(BankContainer.SharedBank, itemId);
-        if (item is null) {
-            ReportUnknown(request, itemId);
+        try {
+            var request = $"lock of item {itemId}";
+            var item = FindItem(BankContainer.Backpack, itemId) ?? FindItem(BankContainer.Bank, itemId) ?? FindItem(BankContainer.SharedBank, itemId);
+            if (item is null) {
+                ReportUnknown(request, itemId);
 
-            return;
+                return;
+            }
+
+            if (item is ClientReagentItem or ClientPetSnackItem) {
+                Deny(request, itemId, "reagent and pet snack stacks are not locked");
+
+                return;
+            }
+
+            var pattern = item.m_pattern ^ LockBit;
+            if (!WizardItemCollection.ApplyPattern(item, pattern)) {
+                Deny(request, itemId, "the item could not be saved");
+
+                return;
+            }
+
+            item.m_pattern = pattern;
+            session.Tell(new WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM {
+                ItemGID = itemId,
+                GlobalID = wizard.GameObjectID,
+                IsLocked = unchecked((uint) pattern),
+            });
+            Logger.Information("Item lock: {Item} {What} by {Wizard} ({CharId}).",
+                Logger.Args(ItemHelper.DescribeForLog(item), (pattern & LockBit) != 0 ? "locked" : "unlocked",
+                    wizard.PlayerNameBehavior?.GetWizardName(), wizard.CharId));
         }
-
-        if (item is ClientReagentItem or ClientPetSnackItem) {
-            Deny(request, itemId, "reagent and pet snack stacks are not locked");
-
-            return;
+        catch (Exception exception) {
+            Logger.Error("Item lock: the lock request for item {ItemId} of {CharId} failed: {Error}",
+                Logger.Args(itemId, wizard.CharId, exception));
         }
-
-        var pattern = item.m_pattern ^ LockBit;
-        if (!WizardItemCollection.ApplyPattern(item, pattern)) {
-            Deny(request, itemId, "the item could not be saved");
-
-            return;
-        }
-
-        item.m_pattern = pattern;
-        session.Tell(new WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM {
-            ItemGID = itemId,
-            GlobalID = wizard.GameObjectID,
-            IsLocked = unchecked((uint) pattern),
-        });
-        Done($"{((pattern & LockBit) != 0 ? "locked" : "unlocked")} item {itemId}");
     }
 
     /// <summary>

@@ -68,6 +68,15 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
     private void ReceiveTrashInventoryItem(GAME_5_PROTOCOL.MSG_TRASHINVENTORYITEM message) {
         var wizard = GetActiveWizard();
 
+        // A locked item may not be thrown away (the backpack padlock, MSG_REQUESTTOGGLELOCKITEM).
+        var lockedItem = wizard.InventoryBehavior.GetItem(message.GlobalID) ?? wizard.EquipmentBehavior.GetItem(message.GlobalID);
+        if (ItemHelper.IsLocked(lockedItem)) {
+            Logger.Warning("Item lock: refused to throw away {0} of {1}, the item is locked.",
+                Logger.Args(ItemHelper.DescribeForLog(lockedItem), wizard.CharId));
+
+            return;
+        }
+
         // Check if this is an equipped item (e.g. an active elixir).
         var slot = wizard.EquipmentBehavior.SlotList?.FirstOrDefault(s => s.ItemId.Value == message.GlobalID);
         if (slot is not null || wizard.EquipmentBehavior.HasItemEquipped(message.GlobalID)) {
@@ -169,6 +178,15 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM))]
     private void ReceiveFeedInventoryItem(GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM message) {
+        var wizard = GetActiveWizard();
+        var fedItem = wizard?.InventoryBehavior.GetItem(message.FedObjectID);
+        if (ItemHelper.IsLocked(fedItem)) {
+            Logger.Warning("Item lock: refused to feed {0} of {1} to pet {2}, the item is locked.",
+                Logger.Args(ItemHelper.DescribeForLog(fedItem), wizard.CharId, message.PetID));
+
+            return;
+        }
+
         SendToSocket(new GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM() {
             FedObjectID = message.FedObjectID,
             PetID = message.PetID,
@@ -210,6 +228,13 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
         // Remove items from inventory and equipment, tally up gold sum.
         foreach (QuickSellItem quickSellItem in quickSellItemList.m_quickSellItemList) {
             var item = wizard.InventoryBehavior.GetItem(quickSellItem.m_sellItemGID);
+            if (ItemHelper.IsLocked(item)) {
+                Logger.Warning("Item lock: refused to quick sell {0} of {1}, the item is locked.",
+                    Logger.Args(ItemHelper.DescribeForLog(item), wizard.CharId));
+
+                continue;
+            }
+
             if (item is not null) {
                 var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
 

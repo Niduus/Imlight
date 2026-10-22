@@ -430,7 +430,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 // The held item and more of the same kind, up to the number asked for; one confirm for the lot.
                 var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
                 var copies = new[] { id }.Concat((wizard.InventoryBehavior.Items ?? [])
-                        .Where(item => item is not null && (ulong) item.m_templateID == templateId && item.m_globalID.Full != id)
+                        .Where(item => item is not null && (ulong) item.m_templateID == templateId && item.m_globalID.Full != id
+                            && !ItemHelper.IsLocked(item))
                         .Select(item => item.m_globalID.Full))
                     .Take(quantity)
                     .ToList();
@@ -643,7 +644,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
 
-        var isNoAuction = template.m_adjectiveList.Any(x => x == "FLAG_NoAuction") || ItemHelper.IsStitched(item);
+        var isLocked = ItemHelper.IsLocked(item);
+        if (isLocked) {
+            Logger.Warning("Item lock: refused to sell {0} of {1} to the bazaar, the item is locked.",
+                Logger.Args(ItemHelper.DescribeForLog(item), wizard.CharId));
+        }
+
+        var isNoAuction = isLocked || template.m_adjectiveList.Any(x => x == "FLAG_NoAuction") || ItemHelper.IsStitched(item);
         if (isNoAuction) { // The item cannot be sold to the bazaar.
             // Todo: respond with error
             var auctionRspErrorMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {

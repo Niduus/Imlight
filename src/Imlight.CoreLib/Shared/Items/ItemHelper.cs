@@ -55,6 +55,41 @@ internal static class ItemHelper {
     private const string RentalAdjective = "Rental";
 
     /// <summary>
+    /// The item lock is bit 31 of m_pattern. The client sends MSG_REQUESTTOGGLELOCKITEM from the padlock of the
+    /// backpack and the bank window and sets the item's m_pattern to the IsLocked of the answer
+    /// (ClientWizStorageBehavior::MSG_RequestToggleLockItem). The pattern is saved with the item, so a lock survives a relog.
+    /// </summary>
+    internal const int LockBit = unchecked((int) 0x80000000);
+
+    /// <summary>
+    /// Whether the player locked the item. A locked item may not be sold, deleted, sold to the bazaar or stitched.
+    /// </summary>
+    /// <param name="item">The item in question, or null.</param>
+    /// <returns>True when bit 31 of the pattern is set.</returns>
+    internal static bool IsLocked(WizClientObjectItem item) => item is not null && (item.m_pattern & LockBit) != 0;
+
+    /// <summary>
+    /// A name for an item in the log: its template's object name and its id.
+    /// </summary>
+    /// <param name="item">The item in question.</param>
+    /// <returns>Such as "Hat_Fire_L10 (123456)".</returns>
+    internal static string DescribeForLog(WizClientObjectItem item) {
+        if (item is null) {
+            return "an unknown item";
+        }
+
+        string name = null;
+        try {
+            name = CoreObjectFactory.GetCoreTemplate(item.m_templateID) is WizItemTemplate template ? (string) template.m_objectName : null;
+        }
+        catch {
+            // The id is still logged.
+        }
+
+        return $"{(string.IsNullOrWhiteSpace(name) ? $"template {item.m_templateID}" : name)} ({item.m_globalID})";
+    }
+
+    /// <summary>
     /// Gets the <see cref="EquippedItemInfoList"/> for a <see cref="Wizard"/>. This is a lightweight version of the
     /// actual equipment that is used to publicly display the character's equipment.
     /// </summary>

@@ -45,6 +45,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Game.Zone.Core;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.WizardData.Models.Misc;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -101,6 +102,13 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
             return false;
         }
 
+        if (ItemHelper.IsLocked(displayItem) || ItemHelper.IsLocked(statsItem)) {
+            var locked = ItemHelper.IsLocked(displayItem) ? displayItem : statsItem;
+
+            return Deny($"stitch of items {displayItemId} and {statsItemId}",
+                $"Item lock: {ItemHelper.DescribeForLog(locked)} is locked and may not be stitched");
+        }
+
         if (PetStitch.IsPet(displayItem) || PetStitch.IsPet(statsItem)) {
             return new PetStitch(wizard, session, unequip).TryStitch(displayItem, statsItem, stitchCrowns, out var petFailure)
                 || Deny($"pet stitch of {displayItemId} and {statsItemId}", petFailure);
@@ -129,6 +137,10 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
             ReportTampering($"Player tried to unstitch item {itemId}, which they do not own!");
 
             return false;
+        }
+
+        if (ItemHelper.IsLocked(stitchedItem)) {
+            return Deny($"unstitch of item {itemId}", $"Item lock: {ItemHelper.DescribeForLog(stitchedItem)} is locked and may not be unstitched");
         }
 
         if (PetStitch.IsPet(stitchedItem)) {

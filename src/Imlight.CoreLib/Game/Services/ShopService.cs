@@ -213,11 +213,20 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        if (ItemHelper.IsLocked(item)) {
+            Logger.Warning("Item lock: refused to sell {0} of {1} to a shop, the item is locked.",
+                Logger.Args(ItemHelper.DescribeForLog(item), wizard.CharId));
+            ProcessFailedSale();
+
+            return;
+        }
+
         // Sell More on a backpack item sells that many copies of it.
         if (quantity > 1) {
             var copies = (wizard.InventoryBehavior.Items ?? [])
                 .Where(other => other.m_templateID == item.m_templateID && other.m_globalID.Full != message.GlobalID
-                    && !(wizard.EquipmentBehavior.EquippedItemIds?.Contains(other.m_globalID.Full) ?? false))
+                    && !(wizard.EquipmentBehavior.EquippedItemIds?.Contains(other.m_globalID.Full) ?? false)
+                    && !ItemHelper.IsLocked(other))
                 .Take(quantity - 1)
                 .Select(other => other.m_globalID.Full)
                 .ToList();

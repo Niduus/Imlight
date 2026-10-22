@@ -62,7 +62,6 @@ internal static class BankRules {
     private const string NoTradeAdjective = "FLAG_NoTrade";
     private const string HouseAdjective = "Islands";
     private const uint NoTradeItemFlag = 1;
-    private const int LockBit = unchecked((int) 0x80000000);
 
     /// <summary>
     /// Tells what kind of item a bank request is about.
@@ -149,7 +148,7 @@ internal static class BankRules {
     /// </summary>
     /// <param name="item">The item in question.</param>
     /// <returns>True when bit 31 of the pattern is set.</returns>
-    internal static bool IsLocked(WizClientObjectItem item) => (item.m_pattern & LockBit) != 0;
+    internal static bool IsLocked(WizClientObjectItem item) => ItemHelper.IsLocked(item);
 
     /// <summary>
     /// Whether other items are stored in the item, as in a vault, which stops it from being deleted.

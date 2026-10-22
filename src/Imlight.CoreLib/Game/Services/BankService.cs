@@ -68,6 +68,26 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
     private void ReceiveToggleLockItem(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM message)
         => CreateRequests().ToggleLock(message);
 
+    // "Client request to server to set item lock flag" (WIZARD 75). It names no item, so it sets the item lock flag of
+    // the game stats (WizGameStats.m_showItemLock), which goes to the client with the character. The padlock of an item
+    // is MSG_REQUESTTOGGLELOCKITEM above.
+    [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_ITEMLOCK))]
+    private void ReceiveItemLock(WIZARD_12_PROTOCOL.MSG_ITEMLOCK message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        try {
+            wizard.SetShowItemLock(message.ItemLock != 0);
+            Logger.Information("Item lock: the item lock flag of {Wizard} ({CharId}) is now {Flag}.",
+                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), wizard.CharId, message.ItemLock != 0 ? "on" : "off"));
+        }
+        catch (System.Exception exception) {
+            Logger.Error("Item lock: the item lock flag of {CharId} could not be set: {Error}", Logger.Args(wizard.CharId, exception));
+        }
+    }
+
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSETRANSFERLIST))]
     private void ReceiveRequestHouseTransferList(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSETRANSFERLIST message)
         => CreateRequests().SendHouseTransferList();

@@ -408,6 +408,17 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    /// <summary>
+    /// Sets the item lock flag of the game stats (WizGameStats.m_showItemLock), which the client asks for with MSG_ITEMLOCK.
+    /// </summary>
+    /// <param name="show">The flag the client asked for.</param>
+    public void SetShowItemLock(bool show) {
+        GameStats.m_showItemLock = show;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void SetMaxGold(int maxGold) {
         GameStats.m_baseGoldPouch = maxGold;
 
