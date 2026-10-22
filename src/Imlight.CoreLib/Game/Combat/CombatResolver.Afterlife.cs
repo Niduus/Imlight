@@ -37,19 +37,18 @@ public partial class CombatResolver {
 
     // Who an afterlife brought back this round. The game brings them back itself only once the round's effects are done,
     // so a lasting polymorph cast on them in the same round (Malistaire's "I touch Shadow", Afterlife - Malistaire 02)
-    // finds them still defeated there and the look does not change (Niduus, 2026-10-22). The server takes the new form at
-    // once (waiting a round let a last hit end the battle at 100 health, 0.10.150), and the game is sent the cast only
-    // first thing next round, when it has them standing and swaps the model (CheatCast).
+    // finds them still defeated there and the look does not change (Niduus, 2026-10-22). The cast is sent first thing
+    // next round instead, before anyone else's, when the game has them standing and swaps the model (CheatCast).
     private readonly HashSet<CombatDuelSubCircle> _cameBackThisRound = [];
     private readonly Dictionary<CombatDuelSubCircle, (Spell Spell, SpellTemplate Template)> _polymorphReplays = [];
 
-    // At the start of a round: the polymorphs the game could not show last round, cast again on the same participant.
+    // At the start of a round: the polymorphs held back last round, cast on the same participant.
     private float ReplayPolymorphs(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         _cameBackThisRound.Clear();
         var cinematicTime = 0.0f;
         foreach (var (target, (spell, template)) in _polymorphReplays.ToList()) {
             _polymorphReplays.Remove(target);
-            if (!target.Occupied || !target.IsAlive || !target.AddedToDuel || CombatPolymorph.FormOf(target) == 0) {
+            if (!target.Occupied || !target.IsAlive || !target.AddedToDuel) {
                 continue;
             }
 

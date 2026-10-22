@@ -971,16 +971,14 @@ public partial class CombatResolver {
             }
 
             // A lasting polymorph on a boss an afterlife brought back this round: the game still has it defeated, so the
-            // cast hid it (the spell is casterInvisible) and the model never came back (Niduus, 2026-10-22: invisible,
-            // then shown only while the cast played again). The server takes the form now and the game is sent the
-            // cast once, first thing next round, when it has the boss standing.
+            // cast hid it (the spell is casterInvisible) and the model never came back (Niduus, 2026-10-22). It is sent
+            // first thing next round instead, when the game has the boss standing. The server takes the form only then
+            // too: told the boss was already changed, the game hid him for the cast and never showed the new model
+            // (0.10.159). The cast goes before anyone else's, and its heal brings the new form to full health.
             if (lasting is not null && _cameBackThisRound.Contains(target)) {
-                if (CombatPolymorph.Apply(target, lasting, spell.m_templateID)) {
-                    _polymorphReplays[target] = (spell, template);
-                    LogPolymorph(custom, boss, bossName, template, lasting, target, false);
-                    Logger.Information("Duel {0} | Slot {1} | {2} is shown next round, after the game brings it back.",
-                        Logger.Args(_duel.m_duelID.Full, target.SlotIndex, (string) template.m_name));
-                }
+                _polymorphReplays[target] = (spell, template);
+                Logger.Information("Duel {0} | Slot {1} | {2} is sent first thing next round, after the game brings it back.",
+                    Logger.Args(_duel.m_duelID.Full, target.SlotIndex, (string) template.m_name));
 
                 continue;
             }
