@@ -82,6 +82,8 @@ public sealed class ZonePath : ZoneEntity {
     private readonly Dictionary<SpawnObject, byte> _creatureCount = new(ReferenceEqualityComparer.Instance);
     private readonly List<IActorRef> _creatureActors = [];
     private readonly Dictionary<ulong, SpawnObject> _spawnObjectInfo = [];
+    // The spawn list template each living creature was picked as, for a ZoneObjects distinct spawner.
+    private readonly Dictionary<ulong, ulong> _spawnedTemplate = [];
     private readonly Dictionary<IActorRef, (SpawnObject Spawner, GID ObjectId, string Name)> _loadingCreatures = [];
     private readonly HashSet<SpawnObject> _defeatedInInstance = new(ReferenceEqualityComparer.Instance);
 
@@ -139,6 +141,14 @@ public sealed class ZonePath : ZoneEntity {
         // point from ever refilling there (see _defeatedInInstance).
         var delay = TimeSpan.FromSeconds(INITIAL_SPAWN_DELAY_IN_SECONDS);
         Timers.StartPeriodicTimer(timerKey, msg, delay, interval);
+
+        // A ZoneObjects distinct spawner (a boss's minions) is full from the first spawn, so they are all there
+        // before anyone reaches the battle.
+        if (Zone.Extras.IsDistinctSpawner(spawnObject.m_name)) {
+            for (var i = 1; i < (int) spawnObject.m_maxNumberOfSpawns; i++) {
+                Timers.StartSingleTimer($"{timerKey}_fill_{i}", msg, delay);
+            }
+        }
     }
 
     private static string SpawnTimerKey(SpawnObject spawnObject, int index) {
@@ -210,6 +220,7 @@ public sealed class ZonePath : ZoneEntity {
         _creatureActors.Remove(message.Entity);
         _aggroOnLoad.Remove(message.Entity);
         _spawnObjectInfo.Remove(creature.ObjectId);
+        _spawnedTemplate.Remove(creature.ObjectId);
         SetCreatureCount(creature.Spawner, CreatureCount(creature.Spawner) - 1);
         Context.Stop(message.Entity);
     }
@@ -232,6 +243,7 @@ public sealed class ZonePath : ZoneEntity {
             }
 
             _spawnObjectInfo.Remove(message.GameObjectID);
+            _spawnedTemplate.Remove(message.GameObjectID);
             _creatureActors.RemoveAll(x => x == Sender);
             if (_loadingCreatures.Remove(Sender)) {
                 Timers.Cancel(Sender);
@@ -284,7 +296,12 @@ public sealed class ZonePath : ZoneEntity {
         // We meet the conditions to spawn whatever is within this spawn object.
         // The name is confusing, but a SpawnObject may contain different creatures to spawn.
         // Choose a random creature to spawn from the SpawnObject.
-        var spawnItemInfo = PickRandomSpawnObject(spawnObject.m_spawnList).m_objectInfo;
+        var spawnItem = PickSpawnItem(spawnObject);
+        if (spawnItem is null) {
+            return;
+        }
+
+        var spawnItemInfo = spawnItem.m_objectInfo;
 
         // Get the node to spawn the creature at.
         var spawnNode = GetRelevantNode(spawnItemInfo);
@@ -339,6 +356,7 @@ public sealed class ZonePath : ZoneEntity {
 
         _creatureActors.Add(creatureActor);
         _spawnObjectInfo.Add(creatureObj.m_globalID, spawnObject);
+        _spawnedTemplate[creatureObj.m_globalID] = originalTemplateId;
         if (cause?.PlayerObject is not null && cause.PlayerActor is not null) {
             _aggroOnLoad[creatureActor] = new ZONE_102_PROTOCOL.MSG_PLAYERMOVE {
                 PlayerObject = cause.PlayerObject,
@@ -388,9 +406,24 @@ public sealed class ZonePath : ZoneEntity {
         return true;
     }
 
-    private static SpawnItem PickRandomSpawnObject(List<SpawnItem> spawnItems) {
+    private SpawnItem PickSpawnItem(SpawnObject spawnObject) {
+        // A ZoneObjects distinct spawner (Justin, 2026-10-22: Malistaire's 3 Draconians are 3 different ones) picks
+        // by chance among the templates it has no living creature of; with none left it spawns nothing.
+        if (!Zone.Extras.IsDistinctSpawner(spawnObject.m_name)) {
+            return PickRandomSpawnObject(spawnObject.m_spawnList);
+        }
+
+        var living = _spawnObjectInfo.Where(x => ReferenceEquals(x.Value, spawnObject))
+            .Select(x => _spawnedTemplate.GetValueOrDefault(x.Key)).ToHashSet();
+        var left = spawnObject.m_spawnList.Where(i => i?.m_objectInfo is not null
+                                                      && !living.Contains(i.m_objectInfo.m_templateID)).ToList();
+
+        return left.Count == 0 ? null : PickRandomSpawnObject(left, Math.Max(1, left.Sum(i => i.m_percentChance)));
+    }
+
+    private static SpawnItem PickRandomSpawnObject(List<SpawnItem> spawnItems, int totalChance = 100) {
         var rng = new Random();
-        var rngNum = rng.Next(0, 100);
+        var rngNum = rng.Next(0, totalChance);
 
         var cumulativePercentage = 0;
         foreach (var t in spawnItems) {

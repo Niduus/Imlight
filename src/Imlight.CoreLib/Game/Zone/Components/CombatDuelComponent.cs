@@ -99,6 +99,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private const double MINION_SUMMON_ANIMATION_DELAY = 5.5;
     private const string GROUP_JOIN_PROMPT_KEY = "GUI_GotoFriendQuestion";
     private const string PVP_RETURN_GRACE_KEY = "PvPReturnGrace";
+    private const string ENCOUNTER_MINIONS_KEY = "EncounterMinions";
+    // How long a battle against an encounter's boss waits for the zone's own minions to answer before it spawns the
+    // missing ones; well inside the grace period, so all of them fight from the first round.
+    private const float ENCOUNTER_JOIN_WAIT_IN_SECONDS = 1.0f;
     private const double PVP_RETURN_GRACE_SECONDS = 0; // todo: measure in game
 
     public bool NoTransfer { get; set; } = false;
@@ -160,6 +164,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
     // die, so the win would not see them; their drops come from this list.
     private readonly List<(ulong TemplateId, ulong GlobalId)> _defeatedEnemyMinions = [];
+    // The ZoneObjects encounter of this battle while its minions gather, and the templates that joined from the zone.
+    private ZoneObjects.ZoneEncounter _encounter;
+    private CombatDuelSubCircle _encounterBossCircle;
+    private readonly HashSet<ulong> _encounterJoined = [];
+    private int _battle;
     private TutorialDuelDirector _tutorialDirector;
     // Seconds of cinematics before a caster's cast; SummonMinion adds the animation delay to it.
     internal float CurrentActionCinematicOffsetSeconds;
@@ -826,24 +835,67 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     }
 
     // A spiraldb-extra/ZoneObjects encounter (Justin, 2026-10-21: Malistaire the Undying with 3 random Draconians):
-    // a battle started against its boss gets MinionCount different minions, picked at random, on the boss's side.
-    // They take the free enemy circles before the first round, so they fight from it.
+    // a battle started against its boss gets MinionCount different minions on the boss's side. The zone's own
+    // creatures of the encounter's templates that are walking the room come first, as on live where the minions are
+    // there before the battle (Justin, 2026-10-22); a short wait later, the ones still missing are spawned, picked at
+    // random among the templates not already in. They take the free enemy circles before the first round.
     private void AddEncounterMinions(CombatDuelSubCircle bossCircle, CoreObject boss) {
+        _battle++;
+        _encounter = null;
+        _encounterJoined.Clear();
         var encounter = Entity.Zone?.Extras.EncounterFor(boss.m_templateID);
         if (encounter is null || encounter.MinionCount <= 0 || encounter.Minions.Count == 0) {
             return;
         }
 
-        var picked = encounter.Minions.OrderBy(_ => Random.Shared.Next()).Take(encounter.MinionCount).ToList();
-        var joined = 0;
+        _encounter = encounter;
+        _encounterBossCircle = bossCircle;
+        Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONS {
+            TemplateIds = [.. encounter.Minions],
+            Center = Entity.ActiveGameObject.m_location,
+            Radius = encounter.JoinRadius,
+        }, Self);
+        Timers.StartSingleTimer(ENCOUNTER_MINIONS_KEY, new ZONE_102_PROTOCOL.MSG_ENCOUNTERMINIONSDUE { Battle = _battle },
+            TimeSpan.FromSeconds(ENCOUNTER_JOIN_WAIT_IN_SECONDS));
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONSRSP))]
+    private void ReceiveEncounterMinion(ZONE_102_PROTOCOL.MSG_QUERYENCOUNTERMINIONSRSP message) {
+        var creature = message.CreatureObject;
+        if (!_isActive || _encounter is null || creature is null || message.CreatureActor is null
+            || _encounterJoined.Count >= _encounter.MinionCount || _encounterJoined.Contains(creature.m_templateID.Full)
+            || SubCircles.Any(x => x?.ParticipantObject?.m_globalID == creature.m_globalID)
+            || !IsSlotAvailable(CombatTeam.Monster)) {
+            return;
+        }
+
+        AddParticipant(creature, message.CreatureActor);
+        if (SubCircles.Any(x => x?.ParticipantObject?.m_globalID == creature.m_globalID)) {
+            _encounterJoined.Add(creature.m_templateID.Full);
+            _entitiesInRange.Add(message.CreatureActor);
+        }
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENCOUNTERMINIONSDUE))]
+    private void ReceiveEncounterMinionsDue(ZONE_102_PROTOCOL.MSG_ENCOUNTERMINIONSDUE message) {
+        var encounter = _encounter;
+        _encounter = null;
+        if (!_isActive || encounter is null || message.Battle != _battle) {
+            return;
+        }
+
+        var fromZone = _encounterJoined.Count;
+        var picked = encounter.Minions.Where(m => !_encounterJoined.Contains(m))
+            .OrderBy(_ => Random.Shared.Next()).Take(Math.Max(0, encounter.MinionCount - fromZone)).ToList();
+        var spawned = 0;
         foreach (var minion in picked) {
-            if (SpawnAndAssignMinion((uint) minion, bossCircle, forEnemies: true) is not null) {
-                joined++;
+            if (SpawnAndAssignMinion((uint) minion, _encounterBossCircle, forEnemies: true) is not null) {
+                spawned++;
             }
         }
 
-        Logger.Information("Duel {0} | encounter for {1}: {2} of {3} minions joined ({4}).",
-            Logger.Args(Duel.m_duelID.Full, boss.m_templateID.Full, joined, picked.Count, string.Join(", ", picked)));
+        Logger.Information("Duel {0} | encounter for {1}: {2} of the zone's minions joined, {3} of {4} spawned ({5}).",
+            Logger.Args(Duel.m_duelID.Full, encounter.Boss, fromZone, spawned, picked.Count, string.Join(", ", picked)));
     }
 
     private Duel CreateDuelWithDefaults() => new() {

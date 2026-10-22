@@ -210,6 +210,16 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // As on live, nobody teleports into a dungeon (or any other instance) to a group mate (Justin, 2026-10-22).
+        if (targetCharacter.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetCharId)) {
+            Logger.Information("Character {CharId} cannot go to group mate {TargetCharId}, who is in an instance.",
+                Logger.Args(wizard.CharId, targetCharId));
+            InformGameClient("You cannot teleport to a group mate who is in a dungeon.");
+            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+
+            return;
+        }
+
         Teleport(
             destinationZone: target.CurrentZone,
             destinationLocation: Util.GetCompactStringFromVector((Vector4) targetCharacter.Wizard.Location),

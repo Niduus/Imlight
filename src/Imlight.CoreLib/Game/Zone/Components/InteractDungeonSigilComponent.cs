@@ -25,6 +25,12 @@
  * teleport table and, when it resolves, lights its Glowy swirl for each joining player and hands the
  * pressing player's session a MSG_STARTSIGILENTRY (dismount + snap + countdown + private-instance
  * transfer, owned by ZoneService).
+ *
+ * A pad for several players (MinigameSemiCircleSigil4Actor: 4) sends the players who press it during one
+ * countdown into one fresh private copy together, as the hatching duo pad does (Justin, 2026-10-22): the
+ * first starts the countdown and owns the copy; each other one joins that countdown on a face of their own
+ * and arrives a second after the owner, in the owner's copy. A player who steps off the pad or leaves the
+ * zone drops out; when the owner does, the next player takes the copy over.
  * 
  * USAGE EXAMPLE:
  * Attaches automatically to sigil-pad templates (ShouldAttachToEntity); a pad with no resolvable
@@ -51,6 +57,8 @@ using System.Text.RegularExpressions;
 using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
@@ -82,7 +90,17 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     // The pad's lit state in MinigameSigilStatesNew; its animation is the pad's "On".
     private const string LIT_STATE = ZoneObjects.SIGIL_LIT_STATE;
 
+    // The sigil countdown (ZoneService's), and how much later than the owner the others go, so the owner's fresh copy
+    // is there first and theirs joins it.
+    private const float COUNTDOWN_SECONDS = 10.0f;
+    private const float JOINER_DELAY_SECONDS = 1.0f;
+    // With less countdown left than this, a player pressing the pad starts a trip of their own.
+    private const float PARTY_CLOSED_SECONDS = 1.5f;
+
     private ResolvedSigil _resolved;
+    // The players counting down on the pad together, the owner of the copy first.
+    private readonly List<PartyMember> _party = [];
+    private DateTime _partyEnds;
     // Players the pad has been lit for since they joined (once more on their first move).
     private readonly HashSet<IActorRef> _litFor = [];
     private MinigameSigilInfo SigilInfo 
@@ -138,10 +156,19 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         if (playerWizard is not null && _litFor.Add(playerActor)) {
             Light(playerActor);
         }
+
+        // A player of the countdown who stepped off the pad drops out of it (ZoneService cancels their own trip).
+        var pad = Entity.ActiveGameObject?.m_location;
+        if (playerObj is not null && pad is { } at && _party.Any(m => m.Actor.Equals(playerActor))
+            && SigilPadCheck.IsOff(at.X - playerObj.m_location.X, at.Y - playerObj.m_location.Y, DEFAULT_INTERACTION_RADIUS)) {
+            LeaveParty(playerActor);
+        }
     }
 
-    public override void OnPlayerLeave(IActorRef playerActor, ulong id)
-        => _litFor.Remove(playerActor);
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _litFor.Remove(playerActor);
+        LeaveParty(playerActor);
+    }
 
     private void Light(IActorRef playerActor) {
         if (playerActor is not null && IsAvailable) {
@@ -161,7 +188,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
         // Hand off to the player's session, which owns dismount + snap + countdown + transfer. The pad
         // object's gid lets the session trip the client's native on-face countdown on it.
-        playerActor.Tell(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
+        var entry = new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
             SigilLoc = sigilLoc,
             SigilGID = (ulong) obj.m_globalID,
             SigilType = SigilInfo.m_sigilType.ToString() ?? "",
@@ -169,7 +196,98 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             DestinationZone = sigil.DestinationZone,
             DestinationLoc = sigil.DestinationLoc,
             Variant = sigil.Variant,
-        });
+        };
+
+        var now = DateTime.UtcNow;
+        if (now >= _partyEnds) {
+            _party.Clear();
+        }
+
+        // Pressing again while counting down changes nothing.
+        if (_party.Any(m => m.Actor.Equals(playerActor) || m.CharId == playerCharacter.CharId)) {
+            return;
+        }
+
+        var size = PartySize();
+        var left = (float) (_partyEnds - now).TotalSeconds;
+        if (size <= 1 || _party.Count >= size) {
+            // A pad for one, or a full team: a trip and a fresh copy of their own.
+            playerActor.Tell(entry);
+
+            return;
+        }
+
+        if (_party.Count == 0 || left < PARTY_CLOSED_SECONDS) {
+            // The first player (or one too late for the countdown running) starts a countdown and owns a fresh copy.
+            _party.Clear();
+            _party.Add(new PartyMember(playerActor, playerCharacter.CharId, 0));
+            _partyEnds = now + TimeSpan.FromSeconds(COUNTDOWN_SECONDS);
+            playerActor.Tell(entry);
+
+            return;
+        }
+
+        // Another player: the countdown already running, on a face of their own, into the owner's copy.
+        var face = Enumerable.Range(0, size).First(f => _party.All(m => m.FaceSlot != f));
+        _party.Add(new PartyMember(playerActor, playerCharacter.CharId, face));
+        entry.FaceSlot = face;
+        entry.InstanceOwnerCharId = _party[0].CharId;
+        entry.KeepInstance = true;
+        entry.CountdownSeconds = left + JOINER_DELAY_SECONDS;
+        entry.NoTimerBroadcast = true;
+        playerActor.Tell(entry);
+
+        Logger.Information("Dungeon sigil {0}: {1} joins the countdown of {2} ({3} of {4}, {5:0.0} s left).",
+            Logger.Args(SigilInfo.m_zoneTag2.ToString(), playerCharacter.CharId, _party[0].CharId, _party.Count, size, left));
+    }
+
+    private sealed record PartyMember(IActorRef Actor, ulong CharId, int FaceSlot);
+
+    // How many players the pad takes at once: the N of its sigil type's "NActor", 1 for a pad that names none.
+    private int PartySize() {
+        var match = Regex.Match(SigilInfo?.m_sigilType.ToString() ?? "", @"(\d+)Actor", RegexOptions.IgnoreCase);
+
+        return match.Success && int.TryParse(match.Groups[1].Value, out var n) && n > 1 ? Math.Min(n, 4) : 1;
+    }
+
+    private void LeaveParty(IActorRef playerActor) {
+        var index = _party.FindIndex(m => m.Actor.Equals(playerActor));
+        if (index < 0) {
+            return;
+        }
+
+        _party.RemoveAt(index);
+        var left = (float) (_partyEnds - DateTime.UtcNow).TotalSeconds;
+        if (index != 0 || _party.Count == 0 || left <= 0) {
+            return;
+        }
+
+        // The owner dropped out: the next player owns a fresh copy and the others go into theirs. The countdowns are
+        // timed again (not redrawn) so the new owner still goes first.
+        var owner = _party[0];
+        foreach (var member in _party) {
+            var isOwner = member == owner;
+            member.Actor.Tell(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
+                SigilLoc = Util.GetCompactStringFromVector(new Vector4(Entity.ActiveGameObject.m_location.X,
+                    Entity.ActiveGameObject.m_location.Y, Entity.ActiveGameObject.m_location.Z,
+                    Entity.ActiveGameObject.m_orientation.Z)),
+                SigilGID = (ulong) Entity.ActiveGameObject.m_globalID,
+                SigilType = SigilInfo.m_sigilType.ToString() ?? "",
+                Radius = DEFAULT_INTERACTION_RADIUS,
+                DestinationZone = _resolved.DestinationZone,
+                DestinationLoc = _resolved.DestinationLoc,
+                Variant = _resolved.Variant,
+                FaceSlot = member.FaceSlot,
+                InstanceOwnerCharId = isOwner ? 0 : owner.CharId,
+                KeepInstance = !isOwner,
+                CountdownSeconds = isOwner ? left : left + JOINER_DELAY_SECONDS,
+                NoTimerBroadcast = true,
+                Restart = true,
+            });
+        }
+
+        Logger.Information("Dungeon sigil {0}: the owner left the countdown; {1} owns the copy now ({2} players).",
+            Logger.Args(SigilInfo.m_zoneTag2.ToString(), owner.CharId, _party.Count));
     }
 
     private sealed record ResolvedSigil(string DestinationZone, string DestinationLoc, string Variant = "");
