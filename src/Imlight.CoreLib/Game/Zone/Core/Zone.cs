@@ -259,12 +259,17 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     }
 
     protected override void PostStop() {
+        ZoneObjects.Unregister(Self);
         foreach (var charId in _instancedCharIds.Values) {
             World.InstancedPlayers.Leave(charId, this);
         }
 
         base.PostStop();
     }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message)
+        => _supervisors.ForEach(supervisor => supervisor.Forward(message));
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVEPLAYER))]
     protected virtual void ReceiveRemovePlayer(ZONE_102_PROTOCOL.MSG_REMOVEPLAYER message) {
@@ -361,6 +366,8 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         // Objects and creatures added from spiraldb-extra/ZoneObjects join the zone's own before the supervisors make
         // them; a copy loaded for a variant (an added sigil's instance) takes that variant's file too.
         Extras = ZoneObjects.AddTo(ZonePath, message.Variant, message);
+        // A change to those files (the Customs tab moving an object) reaches this copy while it runs.
+        ZoneObjects.Register(Self, ZonePath, message.Variant);
         ZoneData = message.ZoneData;
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply

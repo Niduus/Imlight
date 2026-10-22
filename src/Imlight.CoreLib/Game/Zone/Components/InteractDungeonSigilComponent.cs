@@ -61,6 +61,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
+using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
@@ -168,6 +169,16 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
         _litFor.Remove(playerActor);
         LeaveParty(playerActor);
+    }
+
+    // The Customs tab moved the pad (or changed where it leads) while the zone runs. RenderComponent moves it and sends
+    // it again; it is lit again on each player's next move, and its destination is read again on the next press.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        if (Entity.ActiveGameObject is { } obj && message.Moved.ContainsKey(obj.m_globalID.Full)) {
+            _litFor.Clear();
+            _resolved = null;
+        }
     }
 
     private void Light(IActorRef playerActor) {

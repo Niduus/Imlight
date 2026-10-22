@@ -57,7 +57,13 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
-internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory {
+internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory, IWithTimers {
+
+    public ITimerScheduler Timers { get; set; }
+
+    // How long an object that moved stays away before it is sent at its new place, so the game has let the old one go.
+    private const int SHOW_AGAIN_DELAY_IN_MS = 400;
+    private const string SHOW_AGAIN_TIMER = "ShowAgainAfterMove";
 
     private const string SPAWN_STATE_NAME = "On";
     private const string DESPAWN_STATE_NAME = "Off";
@@ -75,6 +81,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private readonly Dictionary<IActorRef, Wizard> _playerIgnoreBecauseDynamod = [];
     private float _renderDistance;
     private bool _doesDistanceCheck = false;
+    // Players this object has seen join. One that was in the zone before the object was made (added while the zone
+    // runs, or brought back by a trigger) got it from OnStart and is counted on their first move.
+    private readonly HashSet<IActorRef> _joinedPlayers = [];
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
@@ -128,6 +137,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     public override void OnPlayerJoin(CoreObject player, IActorRef suspect, Wizard wizard) {
+        _joinedPlayers.Add(suspect);
+
         // Check to see if dynamods would enable/disable this object.
         // We don't need to check for spawns, only despawns.
         var relevantDynaMods = wizard?.DynamodSet?.Dynamods?
@@ -199,6 +210,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     public override void OnPlayerLeave(IActorRef suspect, ulong id) {
+        _joinedPlayers.Remove(suspect);
         var wizard = _playersWithRequirementsMet.FirstOrDefault(x => x.Value == suspect).Key;
         if (wizard != null) {
             _playersWithRequirementsMet.Remove(wizard);
@@ -215,6 +227,11 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (playerWizard is not null && Entity.Info?.m_spawnRequirements is null && _joinedPlayers.Add(playerActor)) {
+            _playersWithRequirementsMet[playerWizard] = playerActor;
+            _playersInRange.Add(playerActor);
+        }
+
         if (!_doesDistanceCheck) {
             return;
         }
@@ -239,6 +256,43 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             _playersInRange.Remove(playerActor);
         }
     }
+
+    // An object from spiraldb-extra/ZoneObjects that the Customs tab moved, turned or resized while the zone runs: it takes
+    // its new placement, is taken away from the players and is sent again at the new place. A battle circle is left
+    // until the zone loads again (its supervisor keeps it by its old place).
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        var obj = Entity.ActiveGameObject;
+        if (obj is null || Entity.Info is CombatSigilObjectInfo
+            || !message.Moved.TryGetValue(obj.m_globalID.Full, out var moved)) {
+            return;
+        }
+
+        // A sigil pad stands a little higher than its file says, as when the zone loads (ZoneSigilSupervisor).
+        var lift = Entity.Info is MinigameSigilInfo ? 5 : 0;
+        obj.m_location = new Imcodec.Math.Vector3(moved.m_location.X, moved.m_location.Y, moved.m_location.Z + lift);
+        obj.m_orientation = moved.m_orientation;
+        obj.m_fScale = moved.m_fScale;
+        if (Entity.Info is { } info) {
+            info.m_location = moved.m_location;
+            info.m_orientation = moved.m_orientation;
+            info.m_fScale = moved.m_fScale;
+            if (info is MinigameSigilInfo pad && moved is MinigameSigilInfo movedPad) {
+                pad.m_radius = movedPad.m_radius;
+                pad.m_sigilType = movedPad.m_sigilType;
+                pad.m_zoneTag2 = movedPad.m_zoneTag2;
+            }
+
+            Core.ZoneObjects.Rebind(info, moved);
+        }
+
+        OnDisabled();
+        Timers.StartSingleTimer(SHOW_AGAIN_TIMER, new ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN(),
+            System.TimeSpan.FromMilliseconds(SHOW_AGAIN_DELAY_IN_MS));
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN))]
+    private void ReceiveShowAgain() => OnEnabled();
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENTERSTATE))]
     public void ReceiveEnterState(ZONE_102_PROTOCOL.MSG_ENTERSTATE msg) {

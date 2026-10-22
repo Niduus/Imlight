@@ -123,6 +123,10 @@ internal sealed partial class ManagerWindow {
                     Heading("Custom areas"),
                     Sub("Places the server adds to the game (its ZoneObjects files): sigils, private rooms and their bosses. " +
                         "Pick who the boss of a room is; it counts from the next time a team goes in."),
+                    Sub("Move, turn or resize an object with its boxes and Save: the running server moves it at once for " +
+                        "everyone in the zone, with no restart. Use my position fills the boxes with where your wizard " +
+                        "stands and faces (walk there in the game first). Your changes are kept apart from the files, so " +
+                        "updates keep them; Put back returns an object to the file's place."),
                     WithMargin(_areaRows, new Thickness(0, 10, 0, 0)),
                 },
             }),
@@ -388,15 +392,38 @@ internal sealed partial class ManagerWindow {
                 panel.Children.Add(Sub(area.Notes.Length > 320 ? area.Notes[..320].TrimEnd() + "…" : area.Notes));
             }
 
+            var placements = SafePlacements();
+            var fileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var obj in area.List("Objects")) {
-                panel.Children.Add(Bullet($"Object \"{CustomArea.Text(obj, "Name")}\" (template {CustomArea.Number(obj, "TemplateID")}) at {Place(obj)}."));
+                var name = CustomArea.Text(obj, "Name");
+                fileNames.Add(name);
+                var placement = CustomPlacements.Of(placements, area.Room, name);
+                var isRemoved = placement is not null && BossChanges.FindIn(placement, "Removed") is JsonValue r && r.ToJsonString() == "true";
+                panel.Children.Add(Bullet($"Object \"{name}\" (template {CustomArea.Number(Placed(obj, placement), "TemplateID")}) at " +
+                                          $"{Place(Placed(obj, placement))}{(isRemoved ? ", removed in this tab" : placement is not null ? ", moved in this tab" : "")}."));
                 if (BossChanges.FindIn(obj, "Sigil") is JsonObject sigil) {
                     var to = CustomArea.Text(sigil, "DestinationZone");
                     var variant = CustomArea.Text(sigil, "Variant");
                     panel.Children.Add(Bullet($"It is a sigil: it sends the team to {to} at {CustomArea.Text(sigil, "DestinationLoc")}" +
                                               (variant.Length > 0 ? $", into a fresh private copy ({variant})." : "."), 2));
                 }
+
+                panel.Children.Add(WithMargin(PlacementEditor(area, name, obj, placement, isRemoved, fromFile: true), new Thickness(16, 2, 0, 6)));
             }
+
+            // Objects added in this tab, which the file does not have.
+            if (BossChanges.FindIn(placements, area.Room) is JsonObject roomPlacements) {
+                foreach (var (name, node) in roomPlacements) {
+                    if (fileNames.Contains(name) || node is not JsonObject placement || CustomArea.Number(placement, "TemplateID") <= 0) {
+                        continue;
+                    }
+
+                    panel.Children.Add(Bullet($"Object \"{name}\" (template {CustomArea.Number(placement, "TemplateID")}) at {Place(placement)}, added in this tab."));
+                    panel.Children.Add(WithMargin(PlacementEditor(area, name, placement, placement, false, fromFile: false), new Thickness(16, 2, 0, 6)));
+                }
+            }
+
+            panel.Children.Add(WithMargin(AddObjectEditor(area), new Thickness(16, 4, 0, 6)));
 
             foreach (var creature in area.List("Creatures")) {
                 var id = ((ulong) CustomArea.Number(creature, "TemplateID")).ToString(CultureInfo.InvariantCulture);
@@ -465,6 +492,220 @@ internal sealed partial class ManagerWindow {
             Orientation = Orientation.Horizontal, Spacing = 10,
             Children = { WithCenter(new TextBlock { Text = "Boss of this room", FontWeight = FontWeight.Medium }), combo },
         };
+    }
+
+    // An object's place with this tab's placement over the file's.
+    private static JsonObject Placed(JsonObject obj, JsonObject? placement) {
+        var placed = new JsonObject();
+        foreach (var key in new[] { "TemplateID", "X", "Y", "Z", "Yaw", "Scale" }) {
+            var value = placement is not null && BossChanges.FindIn(placement, key) is JsonValue p ? p : BossChanges.FindIn(obj, key);
+            if (value is JsonValue v) {
+                placed[key] = JsonNode.Parse(v.ToJsonString());
+            }
+        }
+
+        return placed;
+    }
+
+    private JsonObject SafePlacements() {
+        try {
+            return CustomPlacements.Load(_manager.CustomsFolder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+            return [];
+        }
+    }
+
+    // X, Y, Z, rotation (degrees and yaw) and size boxes for one object, with Use my position, Save, Put back and Remove.
+    private Control PlacementEditor(CustomArea area, string name, JsonObject obj, JsonObject? placement, bool removed, bool fromFile) {
+        var placed = Placed(obj, placement);
+        var boxes = PlaceBoxes(placed);
+        var buttons = new List<Control> {
+            Action(Plain("Use my position"), () => {
+                FillFromMyPosition(area, boxes);
+
+                return Task.CompletedTask;
+            }),
+            Action(Primary("Save"), () => {
+                var saved = boxes.Read();
+                if (!fromFile || CustomArea.Number(obj, "TemplateID") != CustomArea.Number(placed, "TemplateID")) {
+                    saved["TemplateID"] = (ulong) CustomArea.Number(placed, "TemplateID");
+                }
+
+                CustomPlacements.Set(_manager.CustomsFolder, area.Room, name, saved);
+                RenderAreas();
+                Say($"\"{name}\" is saved at {Place(saved)}. The server moves it now for everyone in {area.Zone}.");
+
+                return Task.CompletedTask;
+            }),
+        };
+        if (fromFile && placement is not null) {
+            buttons.Add(Action(Plain(removed ? "Put back" : "Put back to the file's place"), () => {
+                CustomPlacements.Set(_manager.CustomsFolder, area.Room, name, null);
+                RenderAreas();
+                Say($"\"{name}\" is back at the file's place ({Place(obj)}). The server moves it now.");
+
+                return Task.CompletedTask;
+            }));
+        }
+
+        if (!removed) {
+            buttons.Add(Danger(Action(Plain("Remove"), async () => {
+                if (!await ConfirmAsync($"Take \"{name}\" out of {area.Zone}? " +
+                                        (fromFile ? "Put back brings it again." : "It is gone for good."))) {
+                    return;
+                }
+
+                CustomPlacements.Set(_manager.CustomsFolder, area.Room, name, fromFile ? new JsonObject { ["Removed"] = true } : null);
+                RenderAreas();
+                Say($"\"{name}\" is taken out. The server removes it now.");
+            })));
+        }
+
+        return new StackPanel { Spacing = 6, Children = { boxes.Row, Row([.. buttons]) } };
+    }
+
+    // A new object: a name, a template and a place.
+    private Control AddObjectEditor(CustomArea area) {
+        var name = new TextBox { Width = 260, Watermark = "A name of its own, such as Shadow Portal 2" };
+        var template = new TextBox { Width = 120, Watermark = "Template ID" };
+        var boxes = PlaceBoxes(new JsonObject { ["Scale"] = 1 });
+
+        return new StackPanel {
+            Spacing = 6,
+            Children = {
+                new TextBlock { Text = "Add an object here", FontWeight = FontWeight.Medium },
+                Row(name, template),
+                boxes.Row,
+                Row(
+                    Action(Plain("Use my position"), () => {
+                        FillFromMyPosition(area, boxes);
+
+                        return Task.CompletedTask;
+                    }),
+                    Action(Primary("Add"), () => {
+                        var objectName = (name.Text ?? "").Trim();
+                        if (objectName.Length == 0) {
+                            throw new PanelException("Give the object a name.");
+                        }
+
+                        if (!ulong.TryParse((template.Text ?? "").Trim(), out var templateId) || templateId == 0) {
+                            throw new PanelException("The template ID is a number, such as 1719467 (the Shadow Portal).");
+                        }
+
+                        if (area.List("Objects").Concat(area.List("Creatures")).Any(o => string.Equals(CustomArea.Text(o, "Name"), objectName, StringComparison.OrdinalIgnoreCase))
+                            || CustomPlacements.Of(SafePlacements(), area.Room, objectName) is not null) {
+                            throw new PanelException($"There is already an object called \"{objectName}\" here.");
+                        }
+
+                        var saved = boxes.Read();
+                        saved["TemplateID"] = templateId;
+                        CustomPlacements.Set(_manager.CustomsFolder, area.Room, objectName, saved);
+                        RenderAreas();
+                        Say($"\"{objectName}\" is added at {Place(saved)}. The server puts it in {area.Zone} now.");
+
+                        return Task.CompletedTask;
+                    })),
+            },
+        };
+    }
+
+    private sealed record PlaceBoxesSet(Control Row, TextBox X, TextBox Y, TextBox Z, TextBox Degrees, TextBox Yaw, TextBox Scale) {
+
+        internal JsonObject Read() {
+            static double Number(TextBox box, string what) {
+                if (!double.TryParse((box.Text ?? "").Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n)
+                    || double.IsNaN(n) || double.IsInfinity(n)) {
+                    throw new PanelException($"{what} is a number, such as -2340 or 0.5.");
+                }
+
+                return Math.Round(n, 3);
+            }
+
+            var scale = Number(Scale, "Size");
+            if (scale <= 0) {
+                throw new PanelException("Size is more than 0 (1 is the object's own size).");
+            }
+
+            return new JsonObject {
+                ["X"] = Number(X, "X"), ["Y"] = Number(Y, "Y"), ["Z"] = Number(Z, "Z"), ["Yaw"] = Number(Yaw, "Yaw"), ["Scale"] = scale,
+            };
+        }
+
+    }
+
+    private static PlaceBoxesSet PlaceBoxes(JsonObject placed) {
+        static TextBox Box(double value, double width) => new() {
+            Width = width, Text = Math.Round(value, 3).ToString(CultureInfo.InvariantCulture),
+        };
+        static Control Labelled(string label, TextBox box) => new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 4,
+            Children = { WithCenter(new TextBlock { Text = label, Foreground = MUTED }), box },
+        };
+
+        var yawValue = CustomArea.Number(placed, "Yaw");
+        var x = Box(CustomArea.Number(placed, "X"), 90);
+        var y = Box(CustomArea.Number(placed, "Y"), 90);
+        var z = Box(CustomArea.Number(placed, "Z"), 80);
+        var degrees = Box((yawValue * 180.0 / Math.PI % 360 + 360) % 360, 70);
+        var yaw = Box(yawValue, 80);
+        var scale = Box(placed.ContainsKey("Scale") ? CustomArea.Number(placed, "Scale") : 1, 60);
+
+        // Degrees and yaw are one rotation: typing in either fills the other.
+        var syncing = false;
+        degrees.TextChanged += (_, _) => {
+            if (!syncing && double.TryParse(degrees.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var d)) {
+                syncing = true;
+                yaw.Text = Math.Round(d * Math.PI / 180.0, 3).ToString(CultureInfo.InvariantCulture);
+                syncing = false;
+            }
+        };
+        yaw.TextChanged += (_, _) => {
+            if (!syncing && double.TryParse(yaw.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var r)) {
+                syncing = true;
+                degrees.Text = Math.Round((r * 180.0 / Math.PI % 360 + 360) % 360, 1).ToString(CultureInfo.InvariantCulture);
+                syncing = false;
+            }
+        };
+
+        var row = new WrapPanel {
+            Orientation = Orientation.Horizontal,
+            Children = {
+                WithMargin(Labelled("X", x), new Thickness(0, 0, 12, 4)),
+                WithMargin(Labelled("Y", y), new Thickness(0, 0, 12, 4)),
+                WithMargin(Labelled("Z", z), new Thickness(0, 0, 12, 4)),
+                WithMargin(Labelled("Rotation °", degrees), new Thickness(0, 0, 12, 4)),
+                WithMargin(Labelled("Yaw", yaw), new Thickness(0, 0, 12, 4)),
+                WithMargin(Labelled("Size", scale), new Thickness(0, 0, 12, 4)),
+            },
+        };
+
+        return new PlaceBoxesSet(row, x, y, z, degrees, yaw, scale);
+    }
+
+    // Where the wizard who moved last stands and faces, from the server's logs/positions.txt (the Play tab's Position).
+    private void FillFromMyPosition(CustomArea area, PlaceBoxesSet boxes) {
+        string[] lines;
+        try {
+            lines = File.Exists(PositionFile) ? File.ReadAllLines(PositionFile) : [];
+        }
+        catch (IOException) {
+            throw new PanelException("The position file is being written; press again.");
+        }
+
+        var parts = lines.Select(l => l.Split('\t')).FirstOrDefault(p => p.Length >= 7)
+                    ?? throw new PanelException("There is no position yet. Start the server, go into the game and walk a step.");
+        if (!string.Equals(parts[1], area.Zone, StringComparison.OrdinalIgnoreCase)) {
+            throw new PanelException($"{parts[0]} is in {parts[1]}, not {area.Zone}. Go there in the game and walk a step.");
+        }
+
+        syncFill(boxes.X, parts[2]);
+        syncFill(boxes.Y, parts[3]);
+        syncFill(boxes.Z, parts[4]);
+        syncFill(boxes.Yaw, parts[5]);
+        Say($"Filled with where {parts[0]} stands and faces (at {parts[6]}). Press Save to put the object there.");
+
+        static void syncFill(TextBox box, string value) => box.Text = value;
     }
 
     private static TextBlock Bullet(string text, int level = 1) => new() {

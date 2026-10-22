@@ -1108,6 +1108,32 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by ZoneObjects to a loaded <see cref="Zone"/> when a spiraldb-extra/ZoneObjects file or the Customs tab's
+    /// Placements.json changed: the added objects of this copy that moved or turned (by global id, with their new
+    /// placement), the ones added and the ones removed. The zone passes it to its supervisors and their entities.
+    /// </summary>
+    public sealed class MSG_ZONEOBJECTSCHANGED : IServerMessage {
+
+        public byte MessageOrder { get; } = 96;
+        public byte ServiceID { get; } = 102;
+
+        public Dictionary<ulong, CoreObjectInfo> Moved = [];
+        public List<CoreObjectInfo> Added = [];
+        public HashSet<ulong> Removed = [];
+
+    }
+
+    /// <summary>
+    /// Timer-fired message: an object that moved is sent to the players again, at its new place.
+    /// </summary>
+    public sealed class MSG_ZONEOBJECTSHOWAGAIN : IServerMessage {
+
+        public byte MessageOrder { get; } = 97;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
     /// Timer-fired message that releases a mobile ID back to the pool after a cooldown,
     /// preventing races between MSG_REMOVEOBJECT delivery and mobile ID reuse.
     /// </summary>

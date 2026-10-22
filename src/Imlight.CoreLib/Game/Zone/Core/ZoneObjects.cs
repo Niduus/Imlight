@@ -47,14 +47,28 @@
  *   CombatSigil for a battle circle (a CombatSigilObjectInfo, made by ZoneSigilSupervisor): SigilType (the Root.wad
  *               Sigils/ name, such as CombatSigilDarkmoorMalistaireBoss) and Radius (how near a player joins).
  * Leave Sigil and CombatSigil out for any other object.
+ *
+ * Placements (Justin, 2026-10-22: "if I have to turn it or move it, it works immediately and does NOT require another
+ * prompt or server reset"): the Manager's Customs tab saves where an object stands to spiraldb-extra/Customs/
+ * Placements.json, which updates never replace (they replace the files here). For a room (the zone, with @variant for a
+ * variant's file) and an object name it holds X, Y, Z, Yaw and Scale over the file's, a TemplateID to swap the object
+ * (or, with a name the file does not have, to add one), and Removed to leave the object out.
+ *
+ * Both are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
+ * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
+ * object appears and a removed one goes. Encounters, exits, distinct spawners and spawn swaps count from their next
+ * use. Creatures, Remove and battle circles (CombatSigil) count from the next time the zone loads.
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading;
+using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
@@ -124,10 +138,15 @@ internal static class ZoneObjects {
         public List<ulong> Doors { get; set; } = [];
     }
 
-    /// <summary>What the files gave one copy of a zone: its encounters and its exit.</summary>
-    internal sealed class Applied(string zonePath, string variant, IReadOnlyList<ZoneObjectFile> files) {
+    /// <summary>
+    /// What the files give one copy of a zone: its encounters and its exit. It reads the files as they are now, so a
+    /// change to them counts from its next use.
+    /// </summary>
+    internal sealed class Applied(string zonePath, string variant) {
 
-        internal static readonly Applied None = new("", "", []);
+        internal static readonly Applied None = new("", "");
+
+        private List<ZoneObjectFile> Files => zonePath.Length == 0 ? [] : FilesFor(zonePath, variant);
 
         /// <summary>
         /// The custom (Customs.cs) this copy of the zone spawns instead of a creature template, or 0: the Customs tab's
@@ -144,18 +163,18 @@ internal static class ZoneObjects {
                 return Math.Max(0, room);
             }
 
-            return files.Select(f => f.ReplaceSpawns != null && f.ReplaceSpawns.TryGetValue(templateId.ToString(), out var id) ? id : 0)
+            return Files.Select(f => f.ReplaceSpawns != null && f.ReplaceSpawns.TryGetValue(templateId.ToString(), out var id) ? id : 0)
                 .LastOrDefault(id => id > 0);
         }
 
         /// <summary>The encounter for a battle started against this creature template, or null.</summary>
         internal ZoneEncounter EncounterFor(ulong bossTemplateId)
-            => files.SelectMany(f => f.Encounters).FirstOrDefault(e => e.Boss == bossTemplateId);
+            => Files.SelectMany(f => f.Encounters).FirstOrDefault(e => e.Boss == bossTemplateId);
 
         /// <summary>Where a door of one of the exit's Doors templates goes in this copy of the zone.</summary>
         internal bool TryGetDoorExit(ulong templateId, out string zone, out string loc) {
             zone = loc = null;
-            var exit = files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
+            var exit = Files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
             if (exit?.Doors is null || !exit.Doors.Contains(templateId)) {
                 return false;
             }
@@ -169,7 +188,7 @@ internal static class ZoneObjects {
         /// <summary>Whether this spawner of the zone keeps its living creatures all of different templates.</summary>
         internal bool IsDistinctSpawner(string spawnerName)
             => !string.IsNullOrEmpty(spawnerName)
-               && files.Any(f => f.DistinctSpawners.Contains(spawnerName, StringComparer.OrdinalIgnoreCase));
+               && Files.Any(f => f.DistinctSpawners.Contains(spawnerName, StringComparer.OrdinalIgnoreCase));
 
         /// <summary>
         /// Where a teleport of this zone goes instead, when a file gives the zone an exit: the trigger or door name
@@ -177,7 +196,7 @@ internal static class ZoneObjects {
         /// </summary>
         internal bool TryGetExit(string teleportName, string destinationZone, out string zone, out string loc) {
             zone = loc = null;
-            var exit = files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
+            var exit = Files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
             if (exit is null) {
                 return false;
             }
@@ -221,7 +240,19 @@ internal static class ZoneObjects {
         ReadCommentHandling = JsonCommentHandling.Skip,
     };
 
-    private static readonly Lazy<Dictionary<string, ZoneObjectFile>> s_zones = new(Load);
+    private const string PLACEMENTS_FOLDER = "Customs";
+    internal const string PLACEMENTS_FILE = "Placements.json";
+    // How long the files must stay still before they are read again (an editor writes a file in several steps).
+    private const int RELOAD_DELAY_IN_MS = 400;
+
+    private static readonly object s_loadLock = new();
+    private static Dictionary<string, ZoneObjectFile> s_loaded;
+    private static FileSystemWatcher s_watcher;
+    private static FileSystemWatcher s_placementsWatcher;
+    private static Timer s_reloadTimer;
+
+    // The loaded copies of zones that use these files, so a change reaches them.
+    private static readonly ConcurrentDictionary<IActorRef, (string Zone, string Variant)> s_live = new();
 
     // The objects made from these files, for the global id and the sigil destination.
     private static readonly ConditionalWeakTable<CoreObjectInfo, Added> s_added = [];
@@ -235,21 +266,14 @@ internal static class ZoneObjects {
             return Applied.None;
         }
 
-        var files = new List<ZoneObjectFile>();
-        if (s_zones.Value.TryGetValue(KeyOf(zonePath, ""), out var always)) {
-            files.Add(always);
-        }
-
-        if (!string.IsNullOrEmpty(variant)) {
-            if (s_zones.Value.TryGetValue(KeyOf(zonePath, variant), out var forVariant)) {
-                files.Add(forVariant);
-            } else {
-                Logger.Warning("Zone {0}: no {1} file for variant {2}.", Logger.Args(zonePath, FOLDER, variant));
-            }
+        var files = FilesFor(zonePath, variant);
+        if (!string.IsNullOrEmpty(variant) && !Zones.ContainsKey(KeyOf(zonePath, variant))) {
+            Logger.Warning("Zone {0}: no {1} file for variant {2}.", Logger.Args(zonePath, FOLDER, variant));
         }
 
         if (files.Count == 0) {
-            return Applied.None;
+            // Kept for the zone all the same, so objects added to it later (Placements.json) reach it.
+            return new Applied(zonePath, variant ?? "");
         }
 
         var zoneData = results.ZoneData;
@@ -276,12 +300,189 @@ internal static class ZoneObjects {
         Logger.Information("Zone {0}{1}: added {2} objects and {3} creatures from {4}, left out {5} of the zone's own.",
             Logger.Args(zonePath, string.IsNullOrEmpty(variant) ? "" : $" ({variant})", objects, creatures, FOLDER, removed));
 
-        return new Applied(zonePath, variant ?? "", files);
+        return new Applied(zonePath, variant ?? "");
     }
+
+    // The files a copy of a zone uses: the one for every copy, then the variant's.
+    private static List<ZoneObjectFile> FilesFor(string zonePath, string variant) {
+        var zones = Zones;
+        var files = new List<ZoneObjectFile>();
+        if (zones.TryGetValue(KeyOf(zonePath, ""), out var always)) {
+            files.Add(always);
+        }
+
+        if (!string.IsNullOrEmpty(variant) && zones.TryGetValue(KeyOf(zonePath, variant), out var forVariant)) {
+            files.Add(forVariant);
+        }
+
+        return files;
+    }
+
+    private static Dictionary<string, ZoneObjectFile> Zones {
+        get {
+            var zones = s_loaded;
+            if (zones is not null) {
+                return zones;
+            }
+
+            lock (s_loadLock) {
+                if (s_loaded is null) {
+                    s_loaded = Load();
+                    Watch();
+                }
+
+                return s_loaded;
+            }
+        }
+    }
+
+    /// <summary>A loaded copy of a zone, which a change to the files reaches.</summary>
+    internal static void Register(IActorRef zone, string zonePath, string variant) {
+        if (Enabled && zone is not null && !string.IsNullOrEmpty(zonePath)) {
+            s_live[zone] = (zonePath, variant ?? "");
+        }
+    }
+
+    internal static void Unregister(IActorRef zone) {
+        if (zone is not null) {
+            s_live.TryRemove(zone, out _);
+        }
+    }
+
+    /// <summary>
+    /// An entity that took a moved object's new placement keeps its own info: it is given the moved one's id and file
+    /// object, so its sigil destination follows too.
+    /// </summary>
+    internal static void Rebind(CoreObjectInfo own, CoreObjectInfo moved) {
+        if (own is not null && moved is not null && !ReferenceEquals(own, moved) && s_added.TryGetValue(moved, out var added)) {
+            s_added.AddOrUpdate(own, added);
+        }
+    }
+
+    private static void Watch() {
+        try {
+            s_reloadTimer = new Timer(_ => Reload(), null, Timeout.Infinite, Timeout.Infinite);
+            var dir = Path.Combine(SpiralDB.ExtraPath, FOLDER);
+            Directory.CreateDirectory(dir);
+            s_watcher = MakeWatcher(dir, "*.json");
+            var placements = Path.Combine(SpiralDB.ExtraPath, PLACEMENTS_FOLDER);
+            Directory.CreateDirectory(placements);
+            s_placementsWatcher = MakeWatcher(placements, PLACEMENTS_FILE);
+        }
+        catch (Exception e) {
+            Logger.Warning("Zone objects: changes to the files will need a server restart ({0}).", Logger.Args(e.Message));
+        }
+    }
+
+    private static FileSystemWatcher MakeWatcher(string dir, string filter) {
+        var watcher = new FileSystemWatcher(dir, filter) {
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
+        };
+        watcher.Changed += (_, _) => ReloadSoon();
+        watcher.Created += (_, _) => ReloadSoon();
+        watcher.Deleted += (_, _) => ReloadSoon();
+        watcher.Renamed += (_, _) => ReloadSoon();
+        watcher.EnableRaisingEvents = true;
+
+        return watcher;
+    }
+
+    private static void ReloadSoon() => s_reloadTimer?.Change(RELOAD_DELAY_IN_MS, Timeout.Infinite);
+
+    // A timer thread runs it, where an exception would end the server.
+    private static void Reload() {
+        try {
+            ReloadNow();
+        }
+        catch (Exception e) {
+            Logger.Warning("Zone objects could not be read again: {0}", Logger.Args(e.Message));
+        }
+    }
+
+    // Reads the files again and tells each loaded copy of a zone what changed for it.
+    private static void ReloadNow() {
+        Dictionary<string, ZoneObjectFile> before, after;
+        lock (s_loadLock) {
+            before = s_loaded ?? [];
+            after = Load();
+            s_loaded = after;
+        }
+
+        foreach (var (zone, (zonePath, variant)) in s_live) {
+            var change = Changes(zonePath, variant, before, after);
+            if (change.Moved.Count + change.Added.Count + change.Removed.Count == 0) {
+                continue;
+            }
+
+            Logger.Information("Zone {0}{1}: {2} objects moved, {3} added and {4} removed while it runs.",
+                Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})", change.Moved.Count, change.Added.Count,
+                    change.Removed.Count));
+            zone.Tell(change);
+        }
+    }
+
+    private static ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED Changes(string zonePath, string variant,
+                                                                     Dictionary<string, ZoneObjectFile> before,
+                                                                     Dictionary<string, ZoneObjectFile> after) {
+        var old = ObjectsFor(zonePath, variant, before);
+        var now = ObjectsFor(zonePath, variant, after);
+        var change = new ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED();
+        foreach (var (id, (fileVariant, obj)) in now) {
+            if (!old.TryGetValue(id, out var was)) {
+                change.Added.Add(InfoFor(zonePath, fileVariant, obj));
+
+                continue;
+            }
+
+            // Another template, or a pad that became an object: it goes and comes back as the new one.
+            if (was.Object.TemplateID != obj.TemplateID || (was.Object.Sigil is null) != (obj.Sigil is null)
+                || (was.Object.CombatSigil is null) != (obj.CombatSigil is null)) {
+                change.Removed.Add(id);
+                change.Added.Add(InfoFor(zonePath, fileVariant, obj));
+            }
+            else if (!SamePlacement(was.Object, obj)) {
+                change.Moved[id] = InfoFor(zonePath, fileVariant, obj);
+            }
+        }
+
+        foreach (var id in old.Keys.Where(id => !now.ContainsKey(id))) {
+            change.Removed.Add(id);
+        }
+
+        return change;
+    }
+
+    private static Dictionary<ulong, (string Variant, ZoneObject Object)> ObjectsFor(string zonePath, string variant,
+                                                                                    Dictionary<string, ZoneObjectFile> zones) {
+        var objects = new Dictionary<ulong, (string, ZoneObject)>();
+        foreach (var key in new[] { KeyOf(zonePath, ""), string.IsNullOrEmpty(variant) ? null : KeyOf(zonePath, variant) }) {
+            if (key is null || !zones.TryGetValue(key, out var file)) {
+                continue;
+            }
+
+            foreach (var obj in file.Objects) {
+                objects[GlobalIdOf(zonePath, file.Variant, obj.Name)] = (file.Variant, obj);
+            }
+        }
+
+        return objects;
+    }
+
+    private static CoreObjectInfo InfoFor(string zonePath, string variant, ZoneObject obj) {
+        var info = MakeInfo(obj);
+        s_added.AddOrUpdate(info, new Added(GlobalIdOf(zonePath, variant, obj.Name), obj));
+
+        return info;
+    }
+
+    private static bool SamePlacement(ZoneObject a, ZoneObject b)
+        => a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.Yaw == b.Yaw && a.Scale == b.Scale
+           && a.StartState == b.StartState && JsonSerializer.Serialize(a.Sigil) == JsonSerializer.Serialize(b.Sigil)
+           && JsonSerializer.Serialize(a.CombatSigil) == JsonSerializer.Serialize(b.CombatSigil);
 
     /// <summary>Whether any file makes objects of this template a door to its exit (the door component attaches).</summary>
     internal static bool IsExitDoor(ulong templateId)
-        => Enabled && s_zones.Value.Values.Any(f => f.Exit?.Doors?.Contains(templateId) == true);
+        => Enabled && Zones.Values.Any(f => f.Exit?.Doors?.Contains(templateId) == true);
 
     /// <summary>The global id an added object takes, or null for the zone's own objects.</summary>
     internal static GID? GlobalIdOf(CoreObjectInfo info)
@@ -473,10 +674,85 @@ internal static class ZoneObjects {
             }
         }
 
+        ApplyPlacements(zones);
         Logger.Information("Zone objects loaded from {0} files ({1} objects, {2} creatures).",
             Logger.Args(zones.Count, zones.Values.Sum(z => z.Objects.Count), zones.Values.Sum(z => z.Creatures.Count)));
 
         return zones;
+    }
+
+    internal sealed class Placement {
+        public ulong? TemplateID { get; set; }
+        public float? X { get; set; }
+        public float? Y { get; set; }
+        public float? Z { get; set; }
+        public float? Yaw { get; set; }
+        public float? Scale { get; set; }
+        public bool Removed { get; set; }
+    }
+
+    // The Customs tab's placements over the files: moved, swapped, added and removed objects.
+    private static void ApplyPlacements(Dictionary<string, ZoneObjectFile> zones) {
+        var path = Path.Combine(SpiralDB.ExtraPath, PLACEMENTS_FOLDER, PLACEMENTS_FILE);
+        if (!File.Exists(path)) {
+            return;
+        }
+
+        Dictionary<string, Dictionary<string, Placement>> rooms;
+        try {
+            rooms = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Placement>>>(File.ReadAllText(path), s_options);
+        }
+        catch (Exception e) {
+            Logger.Warning("Zone objects: {0} could not be read: {1}", Logger.Args(PLACEMENTS_FILE, e.Message));
+
+            return;
+        }
+
+        foreach (var (room, placements) in rooms ?? []) {
+            if (string.IsNullOrWhiteSpace(room) || placements is null) {
+                continue;
+            }
+
+            var at = room.IndexOf('@');
+            var zone = at < 0 ? room : room[..at];
+            var variant = at < 0 ? "" : room[(at + 1)..];
+            if (!zones.TryGetValue(KeyOf(zone, variant), out var file)) {
+                // Objects added to a zone with no file of its own.
+                file = new ZoneObjectFile { Zone = zone, Variant = variant };
+                zones[KeyOf(zone, variant)] = file;
+            }
+
+            foreach (var (name, placement) in placements) {
+                if (string.IsNullOrWhiteSpace(name) || placement is null) {
+                    continue;
+                }
+
+                var obj = file.Objects.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.OrdinalIgnoreCase));
+                if (placement.Removed) {
+                    if (obj is not null) {
+                        file.Objects.Remove(obj);
+                    }
+
+                    continue;
+                }
+
+                if (obj is null) {
+                    if (placement.TemplateID is not > 0 || file.Creatures.Any(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase))) {
+                        continue;
+                    }
+
+                    obj = new ZoneObject { Name = name, Notes = "Added in the Customs tab." };
+                    file.Objects.Add(obj);
+                }
+
+                obj.TemplateID = placement.TemplateID is > 0 ? placement.TemplateID.Value : obj.TemplateID;
+                obj.X = placement.X ?? obj.X;
+                obj.Y = placement.Y ?? obj.Y;
+                obj.Z = placement.Z ?? obj.Z;
+                obj.Yaw = placement.Yaw ?? obj.Yaw;
+                obj.Scale = placement.Scale is > 0 ? placement.Scale.Value : obj.Scale;
+            }
+        }
     }
 
     private static bool IsUsable(string fileName, ZoneObject obj, HashSet<string> names) {

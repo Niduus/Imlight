@@ -158,6 +158,36 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         Sender.Tell(rsp);
     }
 
+    // An object a spiraldb-extra/ZoneObjects file (or the Customs tab's placements) added or removed while the zone runs.
+    private int _addedWhileRunning;
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        base.ReceiveZoneObjectsChanged(message);
+
+        foreach (var placed in _placed.Where(p => message.Removed.Contains(p.Object.m_globalID.Full)).ToList()) {
+            if (placed.Actor is not null) {
+                RemoveEntity(placed.Actor, placed.Object);
+            }
+
+            _placed.Remove(placed);
+        }
+
+        foreach (var objectInfo in message.Added) {
+            if (!IsObjectEligibleForSpawn(objectInfo)
+                || CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) is not GameObjectTemplate template
+                || CoreObjectFactory.FinalizeCoreObject(objectInfo, template) is not { } coreObject) {
+                Logger.Warning("Zone {0}: the added object {1} (template {2}) could not be made.",
+                    Logger.Args(Zone.ZoneName, objectInfo?.m_zoneTag, objectInfo?.m_templateID.Full));
+
+                continue;
+            }
+
+            var actor = CreateEntityActor(coreObject, template, objectInfo, $"_{++_addedWhileRunning}");
+            _placed.Add(new PlacedObject(objectInfo, template, coreObject, actor));
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT))]
     private void ReceiveRemoveTriggerObject(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT message) {
         foreach (var placed in _placed.Where(p => p.Actor is not null && IsNamed(p, message.ObjectName))) {

@@ -184,6 +184,55 @@ internal static class CustomRooms {
 
 }
 
+/// <summary>
+/// Where the Customs tab puts the added objects (spiraldb-extra/Customs/Placements.json, read by the server's
+/// ZoneObjects.cs, which watches it and moves the objects at once): for a room (the zone, with @variant for a variant's
+/// file) and an object name, its X, Y, Z, Yaw and Scale over the ZoneObjects file's, a TemplateID (an object of the
+/// room's own, or one the file does not have), or Removed. Updates replace the ZoneObjects files but never this one.
+/// </summary>
+internal static class CustomPlacements {
+
+    internal const string FILE = "Placements.json";
+
+    private static readonly JsonDocumentOptions s_read = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
+    private static readonly JsonSerializerOptions s_write = new() { WriteIndented = true };
+
+    internal static JsonObject Load(string folder) {
+        var file = Path.Combine(folder, FILE);
+
+        return File.Exists(file) && JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) is JsonObject json ? json : [];
+    }
+
+    /// <summary>The placement of an object in a room, or null.</summary>
+    internal static JsonObject? Of(JsonObject placements, string room, string name)
+        => BossChanges.FindIn(placements, room) is JsonObject objects ? BossChanges.FindIn(objects, name) as JsonObject : null;
+
+    /// <summary>Saves an object's placement (null removes it, so the ZoneObjects file's values count again).</summary>
+    internal static void Set(string folder, string room, string name, JsonObject? placement) {
+        var placements = Load(folder);
+        var key = placements.Select(p => p.Key).FirstOrDefault(k => string.Equals(k, room, StringComparison.OrdinalIgnoreCase)) ?? room;
+        if (placements[key] is not JsonObject objects) {
+            placements[key] = objects = [];
+        }
+
+        var nameKey = objects.Select(o => o.Key).FirstOrDefault(k => string.Equals(k, name, StringComparison.OrdinalIgnoreCase)) ?? name;
+        objects.Remove(nameKey);
+        if (placement is not null) {
+            objects[nameKey] = placement;
+        }
+
+        if (objects.Count == 0) {
+            placements.Remove(key);
+        }
+
+        Directory.CreateDirectory(folder);
+        var file = Path.Combine(folder, FILE);
+        File.WriteAllText(file + ".saving", placements.ToJsonString(s_write));
+        File.Move(file + ".saving", file, overwrite: true);
+    }
+
+}
+
 /// <summary>A spiraldb-extra/ZoneObjects file, read for the Customs tab's areas.</summary>
 internal sealed record CustomArea(string File, string Zone, string Variant, string Notes, JsonObject Json) {
 
