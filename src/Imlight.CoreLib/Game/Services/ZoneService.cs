@@ -28,12 +28,16 @@
  * and player management processes.
  * 
  * NOTE:
- * 
+ * - Home goes to the dorm, or to the equipped house when there is one; from inside any house but the dorm it goes to
+ *   the dorm (HouseDeeds.ResolveEquippedHouse).
+ * - A house teleport request the client does not answer within a few seconds is followed by a plain zone transfer
+ *   request for the same house, so a visitor is not left on the loading screen.
+ *
  * TODO:
- * 
+ *
  * Created by: Jooty, Jeff
  * Version: KALI 1.0
- * Last Updated: 10/20/2026
+ * Last Updated: 10/22/2026
  */
 
 using System;
@@ -72,6 +76,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private const int ZoneTransferDelayMs = 350;
 
     private const string DeedZoneTimeoutKey = "deedzone-timeout";
+    private const string HouseTeleportFallbackKey = "house-teleport-fallback";
+    private static readonly TimeSpan HouseTeleportFallbackTime = TimeSpan.FromSeconds(8);
     private const string BackpackFullForHouseText = "Your backpack is full. Make room for your house deed and try again.";
 
     public IActorRef ZoneActor;
@@ -270,6 +276,13 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         var accepted = _transferGate.TryAck();
         LogTransferStep("ZONETRANSFERACK received", previous, accepted);
         if (accepted) {
+            // The answer to a house teleport's fallback request: the house handshake is over.
+            if (_pendingHouseEntry is not null) {
+                Timers.Cancel(DeedZoneTimeoutKey);
+                Timers.Cancel(HouseTeleportFallbackKey);
+                _pendingHouseEntry = null;
+            }
+
             DoZoneTransfer();
         }
     }
@@ -281,6 +294,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         var previous = _transferGate.State;
         var accepted = _transferGate.TryNack();
         LogTransferStep("ZONETRANSFERNACK received", previous, accepted);
+        if (accepted && _pendingHouseEntry is not null) {
+            Timers.Cancel(DeedZoneTimeoutKey);
+            Timers.Cancel(HouseTeleportFallbackKey);
+            _pendingHouseEntry = null;
+            GetActiveWizard().QueuedLotGid = 0;
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY))]
@@ -558,17 +577,16 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        // The client has no in-house check for its Home button, and a same-zone teleport cannot name a house location.
         var wizard = GetActiveWizard();
-        var home = HouseDeeds.ResolveHome(wizard);
-        if (home.Lot != 0 && wizard.AttachedLotGid == home.Lot) {
-            return;
+        HouseEntry entry;
+        try {
+            if (!TryPrepareHomeButton(wizard, out entry)) {
+                return;
+            }
         }
-
-        if (!HouseDeeds.TryPrepareHome(wizard, out var entry, out var failure)) {
-            InformGameClient(failure == HouseGrantFailure.BackpackFull
-                ? BackpackFullForHouseText
-                : "Your house is not available right now. Please try again later.", true);
+        catch (Exception ex) {
+            Logger.Error("Home button of character {CharId} in {Zone} failed: {Error}", Logger.Args(wizard.CharId, wizard.Zone, ex));
+            InformGameClient("Your house is not available right now. Please try again later.", true);
 
             return;
         }
@@ -588,6 +606,63 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         var delay = TimeSpan.FromSeconds(TELEPORT_EFFECTS_TIME);
         Timers.StartSingleTimer("zonetransfer", tpmsg, delay);
+    }
+
+    /// <summary>
+    /// Picks the house the Home button goes to and gets it ready (Niduus, 2026-10-22): the dorm when no house is
+    /// equipped, the equipped house when one is, and the dorm from inside any house that is not the dorm.
+    /// </summary>
+    /// <param name="wizard">The character who pressed Home.</param>
+    /// <param name="entry">The house entry for the transfer when this returns <c>true</c>.</param>
+    /// <returns><c>false</c> when the player stays where they are; the player has been told why when it matters.</returns>
+    private bool TryPrepareHomeButton(Wizard wizard, out HouseEntry entry) {
+        entry = null;
+
+        // The client has no in-house check for its Home button, and a same-zone teleport cannot name a house location.
+        var dorm = HouseDeeds.ResolveHome(wizard);
+        var equipped = HouseDeeds.ResolveEquippedHouse(wizard);
+        var inHouse = wizard.AttachedLotGid != 0;
+        var inDorm = inHouse && dorm.Lot != 0 && wizard.AttachedLotGid == dorm.Lot;
+
+        // Inside any house but the dorm (an equipped castle, the trainer hall, a friend's house), Home leads to the dorm.
+        var toDorm = (inHouse && !inDorm) || equipped == 0;
+        Logger.Information("{0} pressed the Home button in {1} (lot {2}): equipped house {3}, dorm lot {4}, going to {5}.",
+            Logger.Args(wizard.CharId, wizard.Zone, wizard.AttachedLotGid, equipped, dorm.Lot,
+                toDorm ? (inDorm ? "nowhere (already in the dorm)" : "the dorm") : $"the equipped house {equipped}"));
+        if (toDorm && inDorm) {
+            return false;
+        }
+
+        HouseGrantFailure failure;
+        if (!toDorm) {
+            if (HouseDeeds.TryPrepareHouse(wizard, equipped, out entry, out failure)) {
+                return true;
+            }
+
+            Logger.Warning("The equipped house {0} of character {1} could not be prepared ({2}); Home goes to the dorm.",
+                Logger.Args(equipped, wizard.CharId, failure));
+            if (failure == HouseGrantFailure.BackpackFull) {
+                InformGameClient(BackpackFullForHouseText, true);
+
+                return false;
+            }
+
+            if (inDorm) {
+                InformGameClient("Your house is not available right now. Please try again later.", true);
+
+                return false;
+            }
+        }
+
+        if (!HouseDeeds.TryPrepareHome(wizard, out entry, out failure)) {
+            InformGameClient(failure == HouseGrantFailure.BackpackFull
+                ? BackpackFullForHouseText
+                : "Your house is not available right now. Please try again later.", true);
+
+            return false;
+        }
+
+        return true;
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_HOUSEDOOR))]
@@ -1076,9 +1151,44 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             }
         }
 
-        SendToSocket(entry.CreateRequest(location));
+        // A friend's spot arrives as coordinates, but the teleport request names a location in the house zone. Both
+        // visits that sent coordinates here hung on the loading screen (Niduus, 2026-10-22); the transfer itself still
+        // takes the player to the coordinates.
+        var requestLocation = entry.Kind == HouseEntryKind.Teleport && IsCoordinates(location) ? HouseDeeds.EntryLocation : location;
+        SendToSocket(entry.CreateRequest(requestLocation));
 
         StartDeedZoneTimeout();
+        if (entry.Kind == HouseEntryKind.Teleport) {
+            Timers.StartSingleTimer(HouseTeleportFallbackKey, new SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK(), HouseTeleportFallbackTime);
+        }
+    }
+
+    private static bool IsCoordinates(string location)
+        => !string.IsNullOrEmpty(location) && location.Split(',').Length == 4;
+
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK))]
+    private void OnHouseTeleportFallback(SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK _) {
+        if (_pendingHouseEntry is not { Kind: HouseEntryKind.Teleport } || _transferGate.State != ZoneTransferState.Requested) {
+            return;
+        }
+
+        // The client did not answer the house teleport request, which is what a visitor on the loading screen sees
+        // forever. A plain zone transfer request loads the same zone; the lot and the owner stay queued, so the attach
+        // still lands in the owner's house.
+        try {
+            var character = GetActiveWizard();
+            Logger.Information("Session {SessionId}: no answer to the house teleport request for {Zone} (lot {Lot}) after {Seconds} s; "
+                    + "sending a plain zone transfer request instead.",
+                Logger.Args(SessionActor.SessionID, character.QueuedZoneName, character.QueuedLotGid, HouseTeleportFallbackTime.TotalSeconds));
+            SendToSocket(new GAME_5_PROTOCOL.MSG_ZONETRANSFERREQUEST {
+                ZoneName = character.QueuedZoneName,
+                SendAck = 1
+            });
+        }
+        catch (Exception ex) {
+            Logger.Error("Session {SessionId} could not send the house teleport fallback: {Error}", Logger.Args(SessionActor.SessionID, ex));
+            AbortDeedZoneTransfer("house teleport fallback failed");
+        }
     }
 
     private void StartDeedZoneTimeout() {
@@ -1087,6 +1197,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     private void AbortDeedZoneTransfer(string step) {
         Timers.Cancel(DeedZoneTimeoutKey);
+        Timers.Cancel(HouseTeleportFallbackKey);
         var previous = _transferGate.State;
         var accepted = _transferGate.TryNack();
         LogTransferStep(step, previous, accepted);
@@ -1117,6 +1228,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         switch (status) {
             case HouseEchoStatus.Ready:
                 Timers.Cancel(DeedZoneTimeoutKey);
+                Timers.Cancel(HouseTeleportFallbackKey);
                 var previous = _transferGate.State;
                 var accepted = _transferGate.TryAck();
                 LogTransferStep($"{messageName} echo received", previous, accepted);

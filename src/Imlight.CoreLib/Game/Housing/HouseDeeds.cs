@@ -39,16 +39,17 @@
  * - Running an issue again changes nothing. Nothing is created when the backpack cannot hold everything that is
  *   missing, and a lot that was stored stays stored.
  * - The house document is not created by an issue. The first entry creates it from the template's layout.
- * - Home goes to the first starter template that is a house (Housing.StarterDeeds). A starter is a plain house template
+ * - The dorm is the first starter template that is a house (Housing.StarterDeeds). A starter is a plain house template
  *   like any other; no data marks it.
+ * - Home goes to the house equipped in the Islands slot, and to the dorm when none is (ResolveEquippedHouse). The game
+ *   text says the same: "To go to your new house instead of your dorm room, you can equip it in your Backpack".
+ * - An equipped castle is entered at its deed's lot, the lot zone of the deed, like the trainer hall door does.
  *
  * TODO:
- * - The equipped Islands item should decide the home. The slots exist, but which lot of an equipped castle Home goes to
- *   needs a capture.
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/22/2026
  */
 
 using System;
@@ -130,6 +131,30 @@ internal static class HouseDeeds {
         var item = FindItem(wizard, templateId);
 
         return new HomeTarget(templateId, lot, item, item is null || lot == 0);
+    }
+
+    /// <summary>
+    /// Finds the house the character has equipped in the Islands slot, which Home goes to instead of the dorm.
+    /// </summary>
+    /// <param name="wizard">The character.</param>
+    /// <returns>The template of the equipped house, or 0 when none is equipped or the equipped one is a starter.</returns>
+    internal static uint ResolveEquippedHouse(Wizard wizard) {
+        var equipment = wizard.EquipmentBehavior;
+        var item = equipment?.SlotList is null || equipment.EquippedItems is null ? null : equipment.GetItemInSlot(EquipmentSlotType.Islands);
+        if (item is null) {
+            return 0;
+        }
+
+        var templateId = TemplateIdOf(item);
+        if (!HouseTemplates.TryGet(templateId, out _)) {
+            Logger.Warning("Character {CharId} has item {ItemId} of template {TemplateId} in the Islands slot, which is not a house.",
+                Logger.Args(wizard.CharId, item.m_globalID, templateId));
+
+            return 0;
+        }
+
+        // A starter in the slot is the dorm itself, so Home has no other house to go to.
+        return HouseTemplates.Starters().Any(starter => starter.TemplateId == templateId) ? 0 : templateId;
     }
 
     /// <summary>

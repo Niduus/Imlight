@@ -293,4 +293,13 @@ internal sealed class SERVICE_101_PROTOCOL : IServerProtocol {
         public float Z;
         public float Yaw;
     }
+
+    /// <summary>
+    /// Timer signal indicating the client has not answered a house teleport request, so the plain zone transfer request
+    /// is tried for the same house.
+    /// </summary>
+    public class MSG_HOUSETELEPORT_FALLBACK : IServerMessage {
+        public byte MessageOrder { get; } = 26;
+        public byte ServiceID { get; } = 101;
+    }
 }

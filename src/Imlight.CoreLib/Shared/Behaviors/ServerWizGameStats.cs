@@ -328,6 +328,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_gardeningXP = m_gardeningXP,
             m_invisibleToFriends = m_invisibleToFriends,
             m_showItemLock = m_showItemLock,
+            // Castle space; never sent before, while equipping a castle did nothing (Niduus, 2026-10-22).
+            m_maximumNumberOfIslands = Imlight.CoreLib.Game.Housing.HousingSettings.CastleSpace,
             m_questFinderEnabled = m_questFinderEnabled,
             m_buddyListLimit = m_buddyListLimit,
             m_dontAllowFriendFinderCodes = m_dontAllowFriendFinderCodes,

@@ -160,6 +160,13 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        // Equipping a house picks where Home goes (Niduus, 2026-10-22: equipping a house did nothing), so every try is logged.
+        var isHouse = HouseTemplates.TryGet((uint) Math.Min((ulong) item.m_templateID, uint.MaxValue), out _);
+        if (isHouse) {
+            Logger.Information("{0} asks to equip house item {1} (template {2}) in slot {3}.",
+                Logger.Args(wizard.CharId, itemId, item.m_templateID, message.SlotName));
+        }
+
         // A house goes in a house slot and nothing else does.
         if (!HouseEquipment.Allows(item, message.SlotName)) {
             var infractionText = $"Player tried to equip item {itemId} in slot {message.SlotName}, which does not take it!";
@@ -204,6 +211,11 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
                 Logger.Args(itemId));
 
             return;
+        }
+
+        if (isHouse) {
+            Logger.Information("{0} equipped house item {1} (template {2}) in slot {3}; Home now goes to house template {4} (0 = the dorm).",
+                Logger.Args(wizard.CharId, itemId, item.m_templateID, message.SlotName, HouseDeeds.ResolveEquippedHouse(wizard)));
         }
 
         SendEquipItem(item, message.SlotName);
@@ -317,6 +329,11 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         SendUnequipItem(slotName, slot, itemId);
         SendRemoveEffects(removedEffects);
         SendCardEffectChanges(wizard);
+
+        if (slotObj is not null && HouseEquipment.IsHouseSlot(slotObj.SlotType)) {
+            Logger.Information("{0} unequipped house item {1} from slot {2}; Home now goes to house template {3} (0 = the dorm).",
+                Logger.Args(wizard.CharId, itemId, slotObj.SlotType, HouseDeeds.ResolveEquippedHouse(wizard)));
+        }
 
         // A manual unequip abandons any pending auto-remount.
         if (Enum.TryParse<EquipmentSlotType>(slotName, true, out var unequippedSlot)

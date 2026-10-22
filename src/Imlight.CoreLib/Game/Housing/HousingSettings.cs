@@ -29,12 +29,15 @@
  * - DeedZoneTimeoutSeconds: how long to wait for the client to confirm that a house zone archive is ready.
  * - StarterDeeds: the templates every character is given on the first Home click, as a comma-separated list.
  * - AtticLimit: how many items an attic holds.
- * 
+ * - CastleSpace: how many castles a character has space for, sent as the character's m_maximumNumberOfIslands. It was
+ *   never sent (so 0) while equipping a castle did nothing in the game (Niduus, 2026-10-22).
+ *
  * TODO:
- * 
+ * - Check with a capture whether the game reads m_maximumNumberOfIslands before it equips a castle.
+ *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/22/2026
  */
 
 using System;
@@ -54,6 +57,8 @@ internal static class HousingSettings {
     private const string AtticLimitKey = "Housing.AtticLimit";
     private const int DefaultDeedZoneTimeoutSeconds = 90;
     private const int DefaultAtticLimit = 100;
+    private const string CastleSpaceKey = "Housing.CastleSpace";
+    private const int DefaultCastleSpace = 100;
 
     /// <summary>
     /// How long to wait for the client to confirm that a house zone archive is ready:
@@ -75,6 +80,17 @@ internal static class HousingSettings {
             var configured = ConfigurationManager.Settings[AtticLimitKey].AsInt();
 
             return configured > 0 ? configured : DefaultAtticLimit;
+        }
+    }
+
+    /// <summary>
+    /// How many castles a character has space for: <c>Housing.CastleSpace</c>, or 100 when it is not a positive number.
+    /// </summary>
+    internal static int CastleSpace {
+        get {
+            var configured = ConfigurationManager.Settings[CastleSpaceKey].AsInt();
+
+            return configured > 0 ? configured : DefaultCastleSpace;
         }
     }
 

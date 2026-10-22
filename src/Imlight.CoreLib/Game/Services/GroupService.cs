@@ -205,6 +205,9 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
         if (targetCharacter.Wizard.AttachedLotGid != 0 && !HouseVisits.TryPrepare(wizard, targetCharacter.Wizard, out houseEntry, out var failure)) {
             Logger.Information("Character {CharId} cannot go to group mate {TargetCharId} in a house: {Failure}.",
                 Logger.Args(wizard.CharId, targetCharId, failure));
+            InformGameClient(failure == HouseVisitFailure.Denied
+                ? "That house is closed to visitors right now."
+                : "You cannot teleport to your group mate's house right now.");
             SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
 
             return;

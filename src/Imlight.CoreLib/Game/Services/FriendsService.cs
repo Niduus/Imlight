@@ -623,9 +623,26 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
 
             // A friend inside a house is visited through the house's lot, which only the house's owner may allow.
             HouseEntry houseEntry = null;
-            if (queryResult.Wizard.AttachedLotGid != 0 && !HouseVisits.TryPrepare(wizard, queryResult.Wizard, out houseEntry, out var failure)) {
+            var failure = HouseVisitFailure.None;
+            var canVisit = true;
+            if (queryResult.Wizard.AttachedLotGid != 0) {
+                try {
+                    canVisit = HouseVisits.TryPrepare(wizard, queryResult.Wizard, out houseEntry, out failure);
+                }
+                catch (Exception ex) {
+                    Logger.Error("Preparing the visit of {0} to character ID {1} in lot {2} failed: {3}",
+                        Logger.Args(wizard.CharId, targetID, queryResult.Wizard.AttachedLotGid, ex));
+                    canVisit = false;
+                    failure = HouseVisitFailure.Unavailable;
+                }
+            }
+
+            if (!canVisit) {
                 Logger.Information("Player {0} cannot go to character ID {1} in a house: {2}.",
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID, failure));
+                InformGameClient(failure == HouseVisitFailure.Denied
+                    ? "That house is closed to visitors right now."
+                    : "You cannot teleport to your friend's house right now.");
 
                 SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
                     TargetCharacterID = targetID,
@@ -633,6 +650,11 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 });
 
                 return;
+            }
+
+            if (houseEntry is not null) {
+                Logger.Information("Player {0} teleports to character ID {1} in house lot {2} ({3}), owner {4}: same instance as the owner.",
+                    Logger.Args(wizard.CharId, targetID, houseEntry.LotGid, houseEntry.Zone, houseEntry.OwnerCharId));
             }
 
             // As on live, nobody teleports into a dungeon (or any other instance) to a friend (Niduus, 2026-10-22).
