@@ -394,6 +394,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         wizard.IncrementQuestGoal(qInstance.QuestName, gTemplate.m_goalName);
 
         var goalMax = gTemplate.m_tallyCounter?.m_count ?? 1;
+        Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a use.",
+            Logger.Args(wizard.CharId, qInstance.QuestName, gTemplate.m_goalName, gInstance.CurrentProgress, goalMax));
         if (gInstance.CurrentProgress >= goalMax) {
             CompleteGoal(qInstance, gTemplate, showCompletionDialogue: !message.SuppressCompletionDialog);
 
@@ -1327,6 +1329,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        Logger.Information("Quest goal complete: {0} quest '{1}' goal '{2}' ({3}, {4}).",
+            Logger.Args(wizard.CharId, questInstance.QuestName, goalTemplate.m_goalName, goalTemplate.m_goalType, completion));
+
         SendCompleteGoal(questInstance.ID, gInstance.ID);
         if (completion != GoalCompletion.CatchUp) {
             if (showCompletionDialogue) {
@@ -1400,6 +1405,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 Logger.Args(questInstance.QuestName, wizard.CharId));
             return;
         }
+
+        Logger.Information("Quest complete: {0} quest '{1}'.", Logger.Args(wizard.CharId, questInstance.QuestName));
 
         // The "Complete" entry counts this player's completions of a dungeon quest.
         if (IsZoneDungeonQuest(wizard, questInstance.QuestName)) {
@@ -1578,6 +1585,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
             var goalMax = goalTemplate.m_tallyCounter?.m_count ?? 0;
             var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goalTemplate.m_goalName);
+            Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a won battle.",
+                Logger.Args(wizard.CharId, qInstance.QuestName, goalTemplate.m_goalName, gInstance?.CurrentProgress, goalMax));
 
             if (gInstance != null && gInstance.CurrentProgress >= goalMax) {
                 CompleteGoal(qInstance, goalTemplate);
