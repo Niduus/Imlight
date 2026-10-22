@@ -81,6 +81,8 @@ internal sealed partial class ManagerWindow {
 
         // The step-by-step maker lives on the Guides tab (Niduus, 2026-10-22: "move to guide"); New custom… opens it there.
         return Page(
+            MissingNote("customs need " + ServerSource.DefaultName + ", which lists the creatures and reads the customs and areas.",
+                () => !_manager.HasExtraFolder || !_manager.HasIdLookup),
             CustomsGuide(),
             Fold("paw", "Customs", "Custom mobs",
                 "Your own creatures, copied from the game's. Bring one into a battle with .joinme.",

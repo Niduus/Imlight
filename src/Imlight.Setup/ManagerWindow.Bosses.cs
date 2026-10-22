@@ -124,6 +124,8 @@ internal sealed partial class ManagerWindow {
         BuildBossSections(stats);
 
         return Page(
+            MissingNote("changing bosses needs " + ServerSource.DefaultName + ", which lists the creatures and reads the changes.",
+                () => !_manager.HasExtraFolder || !_manager.HasIdLookup),
             BossesGuide(),
             Fold("search", "Bosses", "Find a boss",
                 "Search for it, click it, change it and press Save changes.",

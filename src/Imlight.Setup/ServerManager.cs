@@ -52,7 +52,7 @@ internal sealed partial class ServerManager(string installFolder) {
 
     internal string ConfigFile => InstalledCommands.ConfigFile(InstallFolder);
 
-    private string ServerFolder => InstalledCommands.ServerFolder(InstallFolder);
+    internal string ServerFolder => InstalledCommands.ServerFolder(InstallFolder);
 
     private int LoginPort => int.TryParse(IniFile.Get(ConfigFile, "Login Server", "LoginServerPort"), out var port) ? port : 12000;
 
@@ -347,6 +347,59 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>Where the Customs tab keeps the customs, one file per custom number, and its rooms (Rooms.json).</summary>
     internal string CustomsFolder => Path.Combine(ExtraFolder, "Customs");
 
+    // ---------------------------------------------------------------------
+    // What this server copy has
+    // ---------------------------------------------------------------------
+
+    /// <summary>Where the server comes from (the Server source card on the Tools tab).</summary>
+    internal ServerSource Source => ServerSource.Load(InstallFolder);
+
+    /// <summary>Whether the server runs the commands from the app (manager-commands.txt). Another Imlight copy may not.</summary>
+    internal bool HasCommandBox => ServerKnows(COMMANDS_FILE);
+
+    /// <summary>Whether the server reads its own additions folder (spiraldb-extra), which Bosses, Customs and cheats save to.</summary>
+    internal bool HasExtraFolder => ServerKnows("Database.SpiralDBExtraPath");
+
+    /// <summary>Whether the server writes the ID lists (id-lookup) that Lookup, Bosses and Customs search.</summary>
+    internal bool HasIdLookup => ServerKnows("ID Lookup.OutputPath");
+
+    private string? _knownFile;
+    private DateTime _knownWritten;
+    private readonly Dictionary<string, bool> _known = [];
+
+    /// <summary>
+    /// Whether the server's code has a piece of text (a file name or setting it reads), looked for in Imlight.CoreLib.dll,
+    /// where .NET keeps it as UTF-16. So a feature is known from the server copy itself, not from its folders, which the
+    /// app may have made. Without the file (a single-file build), a server that has the ID Lookup settings counts as having it.
+    /// </summary>
+    private bool ServerKnows(string text) {
+        var dll = Path.Combine(ServerFolder, "Imlight.CoreLib.dll");
+        try {
+            if (!File.Exists(dll)) {
+                return !IsInstalled || HasSetting("ID Lookup", "OutputPath");
+            }
+
+            lock (_known) {
+                var written = File.GetLastWriteTimeUtc(dll);
+                if (_knownFile != dll || _knownWritten != written) {
+                    _known.Clear();
+                    (_knownFile, _knownWritten) = (dll, written);
+                }
+
+                if (!_known.TryGetValue(text, out var has)) {
+                    has = File.ReadAllBytes(dll).AsSpan().IndexOf(Encoding.Unicode.GetBytes(text)) >= 0;
+                    _known[text] = has;
+                }
+
+                return has;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Being replaced by an update: let the feature try, as before.
+            return true;
+        }
+    }
+
     /// <summary>
     /// Stops the server and opens Imlight.exe in its own window to update (--update) or uninstall (--uninstall).
     /// The app closes afterwards, so the files it uses can be replaced or removed.
@@ -439,6 +492,10 @@ internal sealed partial class ServerManager(string installFolder) {
         command = command.Trim();
         if (command.Length == 0) {
             throw new PanelException("Type a command first, such as .elixir50.");
+        }
+
+        if (!HasCommandBox) {
+            throw new PanelException("This server copy doesn't have the app's command box. Type the command in the game's chat instead.");
         }
 
         // Only whether it runs: the full status also tries the login port, which can keep the window waiting.

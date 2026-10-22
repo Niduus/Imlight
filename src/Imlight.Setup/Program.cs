@@ -79,7 +79,7 @@ internal static class Program {
         }
 
         Console.WriteLine(Edition.NAME + " Setup");
-        Console.WriteLine($"This installs an Imlight server from github.com/{options.Repository} into {options.InstallFolder}.");
+        Console.WriteLine($"This installs an Imlight server from {options.SourceName} into {options.InstallFolder}.");
         Console.WriteLine("If Imlight is already there, it is updated and your settings and characters are kept.");
         if (!options.Unattended && !Prompt.YesNo("Continue?", true)) {
             return 0;
@@ -109,15 +109,23 @@ internal static class Program {
             SetupLog.Step(2, STEPS, "Checking for the .NET SDK");
             var dotnet = await steps.EnsureDotnetAsync();
 
-            SetupLog.Step(3, STEPS, "Downloading the latest Imlight");
-            await steps.DownloadSourceAsync();
-
-            SetupLog.Step(4, STEPS, "Reading game files from your Wizard101 install");
-            steps.PrepareGeneratorInputs(rootWad);
-
-            SetupLog.Step(5, STEPS, "Building the server");
             var isNewConfig = !File.Exists(steps.ConfigFile);
-            await steps.BuildServerAsync(dotnet);
+            if (steps.RunsInPlace) {
+                // A server that is already built (the Server source card): it runs where it is, with its own settings.
+                SetupLog.Step(3, STEPS, "Using the server that is already built");
+                SetupLog.Info($"The server in {steps.ServerFolder} runs where it is, so there is nothing to download or build.");
+                isNewConfig = false;
+            }
+            else {
+                SetupLog.Step(3, STEPS, "Downloading the latest Imlight");
+                await steps.DownloadSourceAsync();
+
+                SetupLog.Step(4, STEPS, "Reading game files from your Wizard101 install");
+                steps.PrepareGeneratorInputs(rootWad);
+
+                SetupLog.Step(5, STEPS, "Building the server");
+                await steps.BuildServerAsync(dotnet);
+            }
 
             SetupLog.Step(6, STEPS, "Setting up the server");
             steps.Configure(isNewConfig);
@@ -166,6 +174,13 @@ internal static class Program {
         using var steps = new SetupSteps(options);
         try {
             var rootWad = steps.FindRootWad();
+            if (steps.RunsInPlace) {
+                // A server built elsewhere runs where it is; only the app itself updates.
+                SetupLog.Info($"The server in {steps.ServerFolder} runs where it is, so there is nothing to build.");
+
+                return 0;
+            }
+
             var dotnet = await steps.EnsureDotnetAsync();
             await steps.DownloadSourceAsync();
             steps.PrepareGeneratorInputs(rootWad);

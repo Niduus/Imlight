@@ -48,12 +48,16 @@ ImlightSetup --dir <folder>          Install somewhere else.
              --type-dump <file>      Your own wiztype type dump, if the bundled one doesn't match your client.
              --repo <owner/repo>     Build a different GitHub repository.
              --branch <name>         Build a different branch.
+             --source-folder <folder>  Build an Imlight source folder on this PC (copied, never changed),
+                                     or run a server already built there, where it is.
              --yes --admin-password <text>   Install without asking anything.
              --panel                 Open the app (the installed Imlight.exe does this with no option).
              --update                Update Imlight (what Update Imlight on the Tools tab runs).
              --start                 Run the server in a plain window, without the app.
              --uninstall             Uninstall Imlight.
 ```
+
+Without `--repo` or `--source-folder`, setup uses the Server source chosen on the app's Tools tab, kept in `server-source.txt` in the install folder (no file means the default repository).
 
 ## Building it
 

@@ -38,7 +38,25 @@ internal sealed class SetupOptions {
     public string Repository { get; private set; } = Edition.DEFAULT_REPOSITORY;
 
     /// <summary>The branch to build.</summary>
-    public string Branch { get; private set; } = "quality-assurance";
+    public string Branch { get; private set; } = ServerSource.DEFAULT_BRANCH;
+
+    /// <summary>An Imlight source folder on this PC to build instead of downloading one. It is copied, never changed.</summary>
+    public string? LocalCheckout { get; private set; }
+
+    /// <summary>A server already built on this PC, run where it is: setup has nothing to download or build.</summary>
+    public string? BuiltServer { get; private set; }
+
+    /// <summary>Where the server comes from, in a few words for the setup window.</summary>
+    public string SourceName => SourceProblem is not null ? "the folder chosen in the app, which can't be used"
+        : LocalCheckout is { } checkout ? $"your folder {checkout}"
+        : BuiltServer is { } built ? $"the server already built in {built}"
+        : $"github.com/{Repository} ({Branch})";
+
+    /// <summary>Why the saved Server source cannot be used (its folder is gone), for setup to say instead of building.</summary>
+    public string? SourceProblem { get; private set; }
+
+    /// <summary>Where the server is installed: <see cref="BuiltServer"/>, or the install's own Server folder.</summary>
+    public string ServerFolder => BuiltServer ?? Path.Combine(InstallFolder, "Server");
 
     /// <summary>Where Imlight is installed.</summary>
     public string InstallFolder { get; private set; } = DefaultInstallFolder();
@@ -72,6 +90,8 @@ internal sealed class SetupOptions {
           --type-dump <file>         A wiztype type dump to use instead of the bundled one.
           --repo <owner/repo>        Build from another GitHub repository. Default: Revive101/Imlight (Niduus/Imlight for Imlight Manager)
           --branch <name>            Build another branch. Default: quality-assurance
+          --source-folder <folder>   Build an Imlight source folder on this PC, or run a server already built there.
+                                     Without --repo or this, the app's Server source choice (Tools tab) is used.
           --admin-password <text>    The admin password, for --yes installs.
           --yes                      Do not ask anything; use the defaults.
 
@@ -88,6 +108,8 @@ internal sealed class SetupOptions {
 
     internal static SetupOptions Parse(string[] args) {
         var options = new SetupOptions();
+        var sourceGiven = false;
+        var branchGiven = false;
         for (var i = 0; i < args.Length; i++) {
             string Next() => i + 1 < args.Length
                 ? args[++i]
@@ -97,8 +119,9 @@ internal sealed class SetupOptions {
                 case "--dir": options.InstallFolder = Path.GetFullPath(Next()); break;
                 case "--game": options.GameFolder = Next(); break;
                 case "--type-dump": options.TypeDump = Path.GetFullPath(Next()); break;
-                case "--repo": options.Repository = Next(); break;
-                case "--branch": options.Branch = Next(); break;
+                case "--repo": options.Repository = Next(); sourceGiven = true; break;
+                case "--branch": options.Branch = Next(); branchGiven = true; break;
+                case "--source-folder": options.UseFolder(Path.GetFullPath(Next())); sourceGiven = true; break;
                 case "--admin-password": options.AdminPassword = Next(); break;
                 case "--yes": options.Unattended = true; break;
                 case "--start": options.Mode = SetupMode.Start; break;
@@ -115,7 +138,38 @@ internal sealed class SetupOptions {
             }
         }
 
+        // The choice saved in the app, unless the command line names another source.
+        if (!sourceGiven) {
+            var saved = ServerSource.Load(options.InstallFolder);
+            if (saved.Kind == ServerSourceKind.GitHub) {
+                options.Repository = saved.Repository;
+                options.Branch = branchGiven ? options.Branch : saved.Branch;
+            }
+            else if (saved.Kind == ServerSourceKind.Folder && saved.Folder is { } folder) {
+                // Only installing needs the folder; the app still opens when it was moved or deleted.
+                try {
+                    options.UseFolder(folder);
+                }
+                catch (SetupException ex) {
+                    options.SourceProblem = ex.Message;
+                }
+            }
+        }
+
         return options;
+    }
+
+    private void UseFolder(string folder) {
+        if (ServerSource.IsCheckout(folder)) {
+            LocalCheckout = Path.GetFullPath(folder);
+        }
+        else if (ServerSource.IsBuiltServer(folder)) {
+            BuiltServer = Path.GetFullPath(folder);
+        }
+        else {
+            throw new SetupException($"{folder} is not an Imlight folder. Pick the folder with src\\Imlight.Director in it, " +
+                "or a built server's folder (the one with Imlight.Director.exe and Config\\Imlight.ini).");
+        }
     }
 
     /// <summary>

@@ -42,7 +42,8 @@ internal static class InstalledCommands {
     private const string UNINSTALL_KEY = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\" + Edition.REGISTRY_KEY;
     private const string DEFAULT_PATCH_URL = "http://127.0.0.1:12369";
 
-    internal static string ServerFolder(string installFolder) => Path.Combine(installFolder, "Server");
+    // The install's own Server folder, or a built server elsewhere on this PC when the Server source card says so.
+    internal static string ServerFolder(string installFolder) => ServerSource.Load(installFolder).ServerFolder(installFolder);
 
     internal static string ServerExe(string installFolder) => Path.Combine(ServerFolder(installFolder),
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Imlight.Director.exe" : "Imlight.Director");

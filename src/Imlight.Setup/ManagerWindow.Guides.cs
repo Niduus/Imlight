@@ -360,6 +360,41 @@ internal sealed partial class ManagerWindow {
                     ("After you save", "[Put back the game's values] (everything), [Put back the game's cheats] (only cheats), the curved " +
                                        "arrow on one cheat, [Go back to the original] for an area, or put a backup back.")),
             ]),
+
+        // Niduus, 2026-10-22: "make the manager work with any imlight copy", so a friend with their own copy needs no patched app.
+        new("source", "server", "Server", "Another server copy", "How to run another copy of the Imlight server",
+            "This app can run " + ServerSource.DefaultName + ", someone else's copy from GitHub, or one in a folder on your PC.",
+            [
+                new GuideTerms("The three choices",
+                    (ServerSource.DefaultName, "The usual one, which this app is made for. Pick this if you are not sure."),
+                    ("Another copy on GitHub", "Someone else's Imlight on github.com, such as `Revive101/Imlight`. The app downloads it, " +
+                                               "builds it and keeps it up to date."),
+                    ("A folder on this PC", "An Imlight folder you already have. If it is Imlight's source (it has a src folder), the app " +
+                                            "builds it for you and never changes your folder. If it is a server that is already built " +
+                                            "(it has Imlight.Director.exe and a Config folder), the app runs it right where it is.")),
+                new GuideSteps("Switch to another copy",
+                    "Stop the server: [Server] tab, [Stop server].",
+                    "Click [Tools] in the list on the left side of the window.",
+                    "Open the section [Server source] by clicking its title.",
+                    "For a copy on GitHub: pick [Another copy on GitHub]. In the first box type its owner and name as they show on " +
+                    "github.com, such as `Revive101/Imlight`. In the second box type the branch, such as `quality-assurance` " +
+                    "(leave it empty for that one).",
+                    "For a folder: pick [A folder on this PC], press [Choose folder…] and pick the Imlight folder. The line under the " +
+                    "box says what the app found in it.",
+                    "Press [Use this server]. For a copy that needs building, the app asks to install it now: press Yes. A window opens " +
+                    "and builds it, which takes a few minutes, then the app opens again. A built folder is used straight away.",
+                    "Start the server again on the [Server] tab. Your accounts and characters are kept."),
+                new GuideSteps("Keep it up to date",
+                    "A copy on GitHub: [Update Imlight] on the [Tools] tab checks its branch and builds anything new in the " +
+                    "background, the same as a new version of the app.",
+                    "A folder with Imlight's source: after it changes, press [Rebuild from folder] under [Server source].",
+                    "A built folder: the app runs whatever is in it. Build it again yourself, then restart the server."),
+                new GuideSteps("Go back",
+                    $"Under [Server source], pick [{ServerSource.DefaultName} (the usual one)] and press [Use this server], then Yes."),
+                new GuideTip("Some pages, such as Bosses, Customs and the command box on the Play tab, only work with " +
+                             ServerSource.DefaultName + ". With another copy they say \"This server copy doesn't have this feature\" " +
+                             "instead of doing nothing."),
+            ]),
     ];
 
     private static Guide GuideOf(string id) => s_guides.First(g => g.Id == id);

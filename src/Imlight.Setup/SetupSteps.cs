@@ -53,7 +53,10 @@ internal sealed class SetupSteps : IDisposable {
     }
 
     internal string SourceFolder => Path.Combine(_options.InstallFolder, "Source");
-    internal string ServerFolder => Path.Combine(_options.InstallFolder, "Server");
+    internal string ServerFolder => _options.ServerFolder;
+
+    /// <summary>True when the Server source is a server already built elsewhere: there is nothing to download or build.</summary>
+    internal bool RunsInPlace => _options.BuiltServer is not null;
     internal string ConfigFile => Path.Combine(ServerFolder, "Config", "Imlight.ini");
     internal string PendingFolder => Path.Combine(_options.InstallFolder, "Pending");
     internal string PendingServerFolder => Path.Combine(PendingFolder, "Server");
@@ -189,20 +192,31 @@ internal sealed class SetupSteps : IDisposable {
     // 3. Source code
     // ---------------------------------------------------------------------
 
+    // What the server is built from (repository, branch and commit, or the folder), written next to it (ServerSource.STAMP_FILE).
+    private string? _sourceStamp;
+
     /// <summary>
-    /// Downloads the latest Imlight source and the exact Imcodec version it uses. Git is not needed.
+    /// Downloads the latest Imlight source and the exact Imcodec version it uses. Git is not needed. With a source
+    /// folder on this PC (the Server source card), that folder is copied instead and left as it is.
     /// </summary>
     internal async Task DownloadSourceAsync() {
+        if (_options.SourceProblem is { } problem) {
+            throw new SetupException(problem + " Change the Server source on the Tools tab of the app, then update again.");
+        }
+
+        if (_options.LocalCheckout is { } checkout) {
+            await CopyCheckoutAsync(checkout);
+
+            return;
+        }
+
         var repo = _options.Repository;
         var branch = _options.Branch;
 
         SetupLog.Info($"Downloading Imlight from github.com/{repo} ({branch})..");
-        var submodule = await GetJsonAsync($"https://api.github.com/repos/{repo}/contents/submodule/Imcodec?ref={Uri.EscapeDataString(branch)}");
-        var imcodecCommit = submodule.GetProperty("sha").GetString()
-            ?? throw new SetupException("Could not tell which Imcodec version Imlight uses.");
-        var imcodecRepo = RepositoryFromUrl(submodule.TryGetProperty("submodule_git_url", out var url) ? url.GetString() : null)
-            ?? "Jooty/Imcodec";
-        SetupLog.Detail($"Imcodec: {imcodecRepo} at {imcodecCommit}");
+        // Only remembered so the app can tell when the branch has something newer; the build does not need it.
+        _sourceStamp = await ServerSource.LatestCommitAsync(repo, branch) is { } commit ? ServerSource.Stamp(repo, branch, commit) : null;
+        var (imcodecRepo, imcodecCommit) = await ImcodecVersionAsync(repo, branch);
 
         if (Directory.Exists(SourceFolder)) {
             Directory.Delete(SourceFolder, recursive: true);
@@ -211,6 +225,117 @@ internal sealed class SetupSteps : IDisposable {
         await DownloadAndExtractAsync($"https://codeload.github.com/{repo}/zip/refs/heads/{branch}", SourceFolder);
         SetupLog.Info("Downloading Imcodec..");
         await DownloadAndExtractAsync($"https://codeload.github.com/{imcodecRepo}/zip/{imcodecCommit}", ImcodecFolder);
+    }
+
+    /// <summary>Which Imcodec repository and commit a branch of Imlight uses, read from GitHub.</summary>
+    private async Task<(string Repository, string Commit)> ImcodecVersionAsync(string repo, string branch) {
+        var submodule = await GetJsonAsync($"https://api.github.com/repos/{repo}/contents/submodule/Imcodec?ref={Uri.EscapeDataString(branch)}");
+        var imcodecCommit = submodule.GetProperty("sha").GetString()
+            ?? throw new SetupException("Could not tell which Imcodec version Imlight uses.");
+        var imcodecRepo = RepositoryFromUrl(submodule.TryGetProperty("submodule_git_url", out var url) ? url.GetString() : null)
+            ?? "Jooty/Imcodec";
+        SetupLog.Detail($"Imcodec: {imcodecRepo} at {imcodecCommit}");
+
+        return (imcodecRepo, imcodecCommit);
+    }
+
+    /// <summary>
+    /// Copies an Imlight source folder on this PC into the Source folder, so the build and the game files it needs never
+    /// touch the person's own folder. Its own Imcodec is used when it has one; otherwise the version it names is downloaded.
+    /// </summary>
+    private async Task CopyCheckoutAsync(string checkout) {
+        var from = Path.GetFullPath(checkout).TrimEnd(Path.DirectorySeparatorChar, '/');
+        var source = Path.GetFullPath(SourceFolder).TrimEnd(Path.DirectorySeparatorChar);
+        if (IsSameOrInside(from, source) || IsSameOrInside(source, from)) {
+            throw new SetupException($"{from} is the app's own working folder. Pick your own Imlight folder on the Tools tab of the app.");
+        }
+
+        SetupLog.Info($"Copying Imlight from {from}. Your folder is not changed..");
+        _sourceStamp = $"folder {from}";
+        if (Directory.Exists(SourceFolder)) {
+            Directory.Delete(SourceFolder, recursive: true);
+        }
+
+        CopySourceTree(from, SourceFolder);
+        if (Directory.Exists(Path.Combine(ImcodecFolder, "src"))) {
+            SetupLog.Detail("Using the Imcodec in the folder's submodule\\Imcodec.");
+
+            return;
+        }
+
+        // The submodule was never checked out: git knows the exact version, otherwise GitHub does for the folder's repository.
+        var (repo, branch) = GitRemote(from) ?? (Edition.DEFAULT_REPOSITORY, ServerSource.DEFAULT_BRANCH);
+        var commit = GitCapture(from, "rev-parse", "HEAD:submodule/Imcodec");
+        var (imcodecRepo, imcodecCommit) = commit is { Length: 40 }
+            ? (RepositoryFromUrl(GitModulesUrl(from)) ?? "Jooty/Imcodec", commit)
+            : await ImcodecVersionAsync(repo, branch);
+        SetupLog.Info("Downloading Imcodec..");
+        if (Directory.Exists(ImcodecFolder)) {
+            Directory.Delete(ImcodecFolder, recursive: true);
+        }
+
+        await DownloadAndExtractAsync($"https://codeload.github.com/{imcodecRepo}/zip/{imcodecCommit}", ImcodecFolder);
+    }
+
+    private static bool IsSameOrInside(string path, string folder)
+        => path.Equals(folder, StringComparison.OrdinalIgnoreCase)
+           || path.StartsWith(folder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+
+    // Build output, git's own data and editor folders are left behind; only the source is needed.
+    private static readonly string[] SKIPPED_FOLDERS = [".git", "bin", "obj", ".vs", ".idea"];
+
+    private static void CopySourceTree(string from, string to) {
+        Directory.CreateDirectory(to);
+        foreach (var file in Directory.EnumerateFiles(from)) {
+            // A submodule's .git is a file pointing into the parent's .git folder.
+            if (!Path.GetFileName(file).Equals(".git", StringComparison.OrdinalIgnoreCase)) {
+                File.Copy(file, Path.Combine(to, Path.GetFileName(file)), overwrite: true);
+            }
+        }
+
+        foreach (var folder in Directory.EnumerateDirectories(from)) {
+            if (!SKIPPED_FOLDERS.Contains(Path.GetFileName(folder), StringComparer.OrdinalIgnoreCase)) {
+                CopySourceTree(folder, Path.Combine(to, Path.GetFileName(folder)));
+            }
+        }
+    }
+
+    /// <summary>The GitHub repository and branch a git folder came from, or null without git or a GitHub remote.</summary>
+    private static (string Repository, string Branch)? GitRemote(string folder) {
+        var repo = RepositoryFromUrl(GitCapture(folder, "remote", "get-url", "origin"));
+        var branch = GitCapture(folder, "rev-parse", "--abbrev-ref", "HEAD");
+
+        return repo is null ? null : (repo, branch is null or "HEAD" ? ServerSource.DEFAULT_BRANCH : branch);
+    }
+
+    private static string? GitCapture(string folder, params string[] arguments) {
+        // Only the folder's own git: a folder without one would answer for whatever repository it sits inside.
+        var own = Path.Combine(folder, ".git");
+        if (!Directory.Exists(own) && !File.Exists(own)) {
+            return null;
+        }
+
+        try {
+            var output = ProcessRunner.Capture("git", ["-C", folder, .. arguments]).Trim();
+
+            return output.Length > 0 ? output : null;
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException) {
+            // Git is not installed.
+            return null;
+        }
+    }
+
+    /// <summary>The Imcodec address in a folder's .gitmodules, read without git.</summary>
+    private static string? GitModulesUrl(string folder) {
+        var file = Path.Combine(folder, ".gitmodules");
+
+        return File.Exists(file)
+            ? File.ReadLines(file).Select(line => line.Trim())
+                .Where(line => line.StartsWith("url", StringComparison.OrdinalIgnoreCase) && line.Contains('='))
+                .Select(line => line[(line.IndexOf('=') + 1)..].Trim())
+                .FirstOrDefault(url => url.Contains("Imcodec", StringComparison.OrdinalIgnoreCase))
+            : null;
     }
 
     private static string? RepositoryFromUrl(string? gitUrl) {
@@ -342,6 +467,10 @@ internal sealed class SetupSteps : IDisposable {
             throw new SetupException("The server could not be built. The errors are in the setup log.");
         }
 
+        if (_sourceStamp is not null) {
+            File.WriteAllText(Path.Combine(staging, ServerSource.STAMP_FILE), _sourceStamp);
+        }
+
         if (toPending) {
             if (Directory.Exists(PendingServerFolder)) {
                 Directory.Delete(PendingServerFolder, recursive: true);
@@ -361,6 +490,10 @@ internal sealed class SetupSteps : IDisposable {
     /// Puts the server that --prepare-update built in place. The server must not be running.
     /// </summary>
     internal void InstallPendingServer() {
+        if (RunsInPlace) {
+            return;
+        }
+
         if (!Directory.Exists(PendingServerFolder)) {
             throw new SetupException("There is no prepared update to install.");
         }
@@ -372,6 +505,10 @@ internal sealed class SetupSteps : IDisposable {
     private void InstallServer(string build) {
         var existingConfig = File.Exists(ConfigFile);
         CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini"]);
+        if (!File.Exists(Path.Combine(build, ServerSource.STAMP_FILE))) {
+            // An older build's stamp would say the server is still that version.
+            File.Delete(Path.Combine(ServerFolder, ServerSource.STAMP_FILE));
+        }
 
         // A kept configuration gets the settings this version added, so they show up in the app.
         var defaults = Path.Combine(build, "Config", "Imlight.ini");
