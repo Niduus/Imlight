@@ -1039,6 +1039,78 @@ public class Wizard {
         return true;
     }
 
+    /// <summary>
+    /// Whether an item belongs in the snack bag or the reagent bag instead of the backpack's item list.
+    /// </summary>
+    /// <param name="item">The item in question.</param>
+    /// <returns>True for a pet snack or a reagent, by its class or by its template.</returns>
+    internal static bool IsBagStack(WizClientObjectItem item)
+        => item is ClientPetSnackItem or ClientReagentItem
+            || CoreObjectFactory.GetCoreTemplate(item.m_templateID) is PetSnackItemTemplate or ReagentItemTemplate;
+
+    /// <summary>
+    /// Adds one unit of a pet snack or reagent to its bag, as a stack, the way buying one does.
+    /// </summary>
+    /// <param name="templateId">The template of the snack or reagent.</param>
+    /// <param name="stack">The stack in the bag after the add.</param>
+    /// <returns>False when the stack is full or the template is neither.</returns>
+    internal bool AddToBag(ulong templateId, out WizClientObjectItem stack) {
+        stack = null;
+        switch (CoreObjectFactory.GetCoreTemplate(templateId)) {
+            case PetSnackItemTemplate:
+                var snackAdded = AddSnack(templateId, out var snack);
+                stack = snack;
+
+                return snackAdded;
+            case ReagentItemTemplate:
+                var reagentAdded = AddReagent(templateId, out var reagent);
+                stack = reagent;
+
+                return reagentAdded;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// Moves pet snacks and reagents that were stored as single items in the backpack or the bank into their bags.
+    /// Loot used to grant a snack as an item: the client then listed it in the backpack with a quantity of 0, the
+    /// bank window computed 0 snacks to move and showed "Shared Bank Full" (BankingWindow 0x1406979a6), and the
+    /// client log said "GroupInventory : Item PetSnacks_1_AlligatorPear does not have an appropriate category".
+    /// </summary>
+    /// <returns>How many items went into a bag.</returns>
+    internal int MoveStrayStacksIntoBags() {
+        var strays = InventoryBehavior.Items.Where(IsBagStack).Select(item => (Item: item, InBank: false))
+            .Concat((StorageBehavior?.Items ?? []).Where(IsBagStack).Select(item => (Item: item, InBank: true)))
+            .ToList();
+        var moved = 0;
+        foreach (var (item, inBank) in strays) {
+            if (!AddToBag(item.m_templateID, out _)) {
+                Logger.Warning("The stray stack item {ItemId} (template {TemplateId}) of {CharId} could not go into its bag, it stays where it is.",
+                    Logger.Args(item.m_globalID.Full, item.m_templateID.Full, CharId));
+
+                continue;
+            }
+
+            if (inBank) {
+                StorageBehavior.RemoveItem(item);
+            } else {
+                InventoryBehavior.RemoveItem(item.m_globalID, out _);
+            }
+
+            WizardItemCollection.RemoveItem(CharId, item.m_globalID);
+            moved++;
+        }
+
+        if (moved > 0) {
+            WizardCollection.UpdateCharacterItems(this);
+            Logger.Information("Moved {Count} pet snacks and reagents of {CharId} that were stored as items into their bags.",
+                Logger.Args(moved, CharId));
+        }
+
+        return moved;
+    }
+
     public bool AddReagent(ulong reagentTemplateId, out ClientReagentItem reagentObj) {
         if (AlchemyBehavior.HasReageant(reagentTemplateId)) {
             reagentObj = AlchemyBehavior.GetReagent(reagentTemplateId);
