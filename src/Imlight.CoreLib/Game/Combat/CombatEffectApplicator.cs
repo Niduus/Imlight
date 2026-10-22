@@ -144,6 +144,9 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kRemoveWard:
                 cinematicTime += ApplyRemoveWardEffect(effect, targets);
                 break;
+            case kSpellEffects.kRemoveAura:
+                cinematicTime += ApplyRemoveAuraEffect(targets);
+                break;
             case kSpellEffects.kStealCharm:
                 cinematicTime += ApplyStealCharmEffect(effect, caster, targets);
                 break;
@@ -369,6 +372,32 @@ internal static class CombatEffectApplicator {
         }
 
         return going;
+    }
+
+    // What an aura puts on its caster: effects that last some rounds (an over-time hit or heal is not one).
+    private static readonly HashSet<kSpellEffects> s_auraEffects = [
+        kSpellEffects.kModifyOutgoingDamage, kSpellEffects.kModifyIncomingDamage, kSpellEffects.kModifyAccuracy,
+        kSpellEffects.kModifyOutgoingHeal, kSpellEffects.kModifyOutgoingHealFlat, kSpellEffects.kModifyIncomingHeal,
+        kSpellEffects.kModifyIncomingHealFlat, kSpellEffects.kModifyIncomingDamageType, kSpellEffects.kCritBoost,
+        kSpellEffects.kCritBlock, kSpellEffects.kModifyPowerPipChance,
+    ];
+
+    // A spell that destroys an aura (Malistaire's Black Dragon, Supernova): the game takes the target's aura away in
+    // the spell's cinematic, so the server takes it off too, else it kept working. A participant has one aura at a
+    // time, so all of its round-lasting effects go.
+    private static float ApplyRemoveAuraEffect(CombatDuelSubCircle[] targets) {
+        foreach (var target in targets) {
+            if (target?._hangingEffects is not { } hanging) {
+                continue;
+            }
+
+            var gone = hanging.RemoveAll(e => e is not null && e.m_numRounds > 0 && s_auraEffects.Contains(e.m_effectType));
+            if (gone > 0) {
+                Logger.Information("Slot {0} | Its aura is destroyed ({1} effects).", Logger.Args(target.SlotIndex, gone));
+            }
+        }
+
+        return 0;
     }
 
     private static float ApplyRemoveCharmEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {

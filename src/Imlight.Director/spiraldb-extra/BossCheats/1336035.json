@@ -37,9 +37,9 @@
       "Cast": "Black Mantle", "Target": "Caster", "Line": "Can you face my stare",
       "Notes": "A single-target hit on him: Black Mantle on the attacker." },
 
-    { "When": "RoundEnd", "Phase": 1, "Round": 3, "Every": 5, "Cast": "Supernova Sun", "Target": "Enemy",
-      "Line": "Fear the power of Dragonspyre",
-      "Notes": "Black Dragon: 535 damage and destroys the aura. The game's Polymorph - Dragon Trigger turns him into the dragon, which the server cannot do (the dragon stayed on the field), so Supernova Sun does the same hit: 535 Balance damage and removes the aura." },
+    { "When": "RoundEnd", "Phase": 1, "Round": 3, "Every": 5, "Line": "Fear the power of Dragonspyre",
+      "Actions": [ { "Do": "Polymorph", "Spell": "Polymorph - Dragon NA", "Target": "Enemy" } ],
+      "Notes": "Central: he polymorphs into a Black Dragon and attacks a random wizard, 535 Moon damage, destroying any aura. Polymorph - Dragon NA is that move: its cinematic hides him, the Black Dragon appears in his place, attacks and goes away, and he comes back in his circle. (Polymorph - Dragon Trigger has no hit of its own, so the game never played the part where the dragon leaves: it stayed on the field.)" },
     { "When": "RoundEnd", "Phase": 1, "Round": 4, "Every": 5, "Cast": "Minotaur Death Sun", "Target": "Enemy",
       "Line": "A gift from Tartarus", "Notes": "Sun Deadly Minotaur on a random wizard." },
     { "When": "RoundEnd", "Phase": 1, "Round": 5, "Every": 5, "Cast": "Virulence - Malistaire", "Target": "Self",
