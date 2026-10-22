@@ -302,4 +302,12 @@ internal sealed class SERVICE_101_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 26;
         public byte ServiceID { get; } = 101;
     }
+
+    /// <summary>
+    /// Timer signal to play the wizard's equipped Victory Dance once a won battle's victory scene has started.
+    /// </summary>
+    public class MSG_PLAYVICTORYDANCE : IServerMessage {
+        public byte MessageOrder { get; } = 27;
+        public byte ServiceID { get; } = 101;
+    }
 }

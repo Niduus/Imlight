@@ -48,6 +48,8 @@ using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using System;
+using System.Linq;
+using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -127,6 +129,47 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
 
         ZoneBroadcast(broadcastMsg);
         BroadcastEmoteAnimation(wizard.GameObjectID, message.Name, message.ExcludeOriginator == 1);
+    }
+
+    // How long after a won battle the Victory Dance starts, so it plays in the circle during the victory scene.
+    private static readonly TimeSpan VictoryDanceDelay = TimeSpan.FromSeconds(1.5);
+
+    /// <summary>
+    /// A won battle plays the wizard's equipped Victory Dance (Niduus, 2026-10-22: equipping worked but nothing danced).
+    /// The dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation the server plays like a
+    /// radial menu emote, for everyone in the zone.
+    /// </summary>
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
+    private void ReceiveCombatWin(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
+        if (GetActiveWizard()?.WizardAvatar?.m_afterCombatVictoryDance is > 0) {
+            Timers.StartSingleTimer("victory-dance", new SERVICE_101_PROTOCOL.MSG_PLAYVICTORYDANCE(), VictoryDanceDelay);
+        }
+    }
+
+    [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_PLAYVICTORYDANCE))]
+    private void ReceivePlayVictoryDance(SERVICE_101_PROTOCOL.MSG_PLAYVICTORYDANCE message) {
+        try {
+            var wizard = GetActiveWizard();
+            var templateId = wizard?.WizardAvatar?.m_afterCombatVictoryDance ?? 0;
+            var emote = templateId == 0 ? null
+                : (CoreObjectFactory.GetCoreTemplate(templateId) as WizItemTemplate)?.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>().FirstOrDefault();
+            var animation = emote is null ? "" : (string) emote.m_animation1;
+            Logger.Information("Victory Dance: {0} won a battle with dance {1}, playing animation \"{2}\".",
+                Logger.Args(wizard?.CharId, templateId, animation));
+            if (string.IsNullOrWhiteSpace(animation)) {
+                return;
+            }
+
+            ZoneBroadcast(new WIZARD3_56_PROTOCOL.MSG_PIIRADIALMENUPLAYEMOTE {
+                SourceID = wizard.GameObjectID,
+                EmoteAnimationName = animation,
+                EmoteText = string.Empty
+            });
+            BroadcastEmoteAnimation(wizard.GameObjectID, animation, false);
+        }
+        catch (Exception ex) {
+            Logger.Error("Victory Dance failed: {0}", Logger.Args(ex));
+        }
     }
 
     /// <summary>
