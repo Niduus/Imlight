@@ -43,6 +43,22 @@ internal static class PetMaxRaises {
 }
 
 /// <summary>
+/// A pet's own maximum stats, before talents, jewels and `.pet stats` raises: its kind's maximum from the game files,
+/// or for a hatched pet what it got from its parents. Kept in pet-own-max-stats.txt next to the server. A pet with no
+/// line here is from before 2026-10-22 and keeps the server maximum ([Pets] MaxStrength and the others) it had, so no
+/// pet loses stats.
+/// </summary>
+internal static class PetOwnMaxStats {
+
+    private static readonly PetStatFile s_file = new("pet-own-max-stats.txt");
+
+    internal static int Get(ulong petId, string stat) => s_file.Get(petId, stat);
+
+    internal static void SetAll(ulong petId, IEnumerable<(string Stat, int Maximum)> stats) => s_file.SetMany(petId, stats);
+
+}
+
+/// <summary>
 /// How much 0.10.17 added to each of a pet's stats for its selfish talents, so it can be taken back: selfish talents
 /// raise only the maximum (Justin, 2026-10-20). Kept in pet-selfish-stats.txt next to the server.
 /// </summary>
@@ -77,6 +93,31 @@ internal sealed class PetStatFile(string file) {
             }
 
             _values[(petId, Key(stat))] = value;
+            try {
+                File.WriteAllLines(file, _values.Select(entry => $"{entry.Key.Pet} {entry.Key.Stat} {entry.Value}"));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                Logger.Warning("Could not save {0}: {1}", Logger.Args(file, ex.Message));
+            }
+        }
+    }
+
+    internal void SetMany(ulong petId, IEnumerable<(string Stat, int Value)> values) {
+        lock (_lock) {
+            var changed = false;
+            foreach (var (stat, value) in values ?? []) {
+                if (string.IsNullOrWhiteSpace(stat) || (Load().TryGetValue((petId, Key(stat)), out var old) && old == value)) {
+                    continue;
+                }
+
+                _values[(petId, Key(stat))] = value;
+                changed = true;
+            }
+
+            if (!changed) {
+                return;
+            }
+
             try {
                 File.WriteAllLines(file, _values.Select(entry => $"{entry.Key.Pet} {entry.Key.Stat} {entry.Value}"));
             }

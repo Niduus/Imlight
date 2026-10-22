@@ -64,11 +64,20 @@ internal static class PetRules {
     private const int DefaultMaxStat = 260;
 
     /// <summary>
-    /// A pet stat's maximum before talents and jewels: [Pets] MaxStrength, MaxIntellect, MaxAgility, MaxWill and
-    /// MaxPower (260 by default, Justin 2026-10-20). 0 means the pet's own maximum from the game files.
+    /// The ceiling on a pet stat's own maximum before talents and jewels: [Pets] MaxStrength, MaxIntellect, MaxAgility,
+    /// MaxWill and MaxPower (260 by default, Justin 2026-10-20). A pet whose kind or parents give less keeps less; it
+    /// is not raised to this. 0 means no ceiling.
     /// </summary>
     internal static int MaxStat(string stat)
         => string.IsNullOrEmpty(stat) ? 0 : Math.Max(0, ConfigurationManager.GetValue($"Pets.Max{stat}", DefaultMaxStat));
+
+    /// <summary>
+    /// [Pets] StartAtMaxStats: when true, a new pet (bought, dropped, given or hatched) gets the server maximum
+    /// (MaxStrength and the others) as its maximum and starts with every stat at it. Off by default (Justin,
+    /// 2026-10-22): a new pet gets its kind's own maximum, or its parents' from hatching, and starts at its kind's
+    /// starting stats; games and snacks train the stats up from there.
+    /// </summary>
+    internal static bool StartAtMaxStats { get; } = ConfigurationManager.GetValue("Pets.StartAtMaxStats", false);
 
     /// <summary>
     /// The factor members get on the XP their pets earn.

@@ -141,9 +141,7 @@ internal static class PetProgress {
         }
 
         if (behavior.m_currentStats is null || behavior.m_currentStats.Count == 0) {
-            var start = template.m_startStats?.Count > 0 ? template.m_startStats : template.m_conversionStats;
-            behavior.m_currentStats = [.. StatNames(template).Select(name => NewStat(name,
-                start?.FirstOrDefault(s => SameStat(s?.m_name, name))?.m_value ?? DEFAULT_START_STAT))];
+            behavior.m_currentStats = StartingStats(behavior, template);
             changed = true;
         }
 
@@ -710,7 +708,7 @@ internal static class PetProgress {
             .ToList();
         var petId = pet?.m_globalID.Full ?? 0UL;
         behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
-            BaseMaxStat(template, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
+            BaseMaxStat(template, petId, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
             petId == 0 ? 0 : CappedRaise(petId, name))))];
 
         // Selfish talents raise only the maximum; the stat itself still has to be trained up (Justin, 2026-10-20).
@@ -734,11 +732,49 @@ internal static class PetProgress {
         return most > 0 ? Math.Min(raise, most) : raise;
     }
 
-    // [Pets] MaxStrength and the others (260 by default); 0 uses the pet's own maximum from the game files.
-    private static int BaseMaxStat(PetItemBehaviorTemplate template, string name) {
-        var configured = PetRules.MaxStat(name);
+    // The pet's own maximum (its kind's, or its parents' from hatching) under the server's ceiling ([Pets] MaxStrength
+    // and the others, 260 by default). Until 2026-10-22 the ceiling itself was every pet's maximum, so a new pet showed
+    // 260 everywhere (Justin, 2026-10-22). A pet from before then has no own maximum saved and keeps the ceiling it
+    // had, so no pet loses stats.
+    private static int BaseMaxStat(PetItemBehaviorTemplate template, ulong petId, string name) {
+        var ceiling = PetRules.MaxStat(name);
+        var own = petId == 0 ? 0 : PetOwnMaxStats.Get(petId, name);
+        if (own <= 0) {
+            return ceiling > 0 ? ceiling : GetStat(template.m_maxStats, name);
+        }
 
-        return configured > 0 ? configured : GetStat(template.m_maxStats, name);
+        return ceiling > 0 ? Math.Min(own, ceiling) : own;
+    }
+
+    /// <summary>
+    /// Saves a new pet's own maximum stats: its kind's from the game files, or for a hatched pet its parents'. With
+    /// [Pets] StartAtMaxStats nothing is saved, so the pet gets the server maximum as before.
+    /// </summary>
+    /// <param name="pet">The new pet item.</param>
+    /// <param name="stats">Its maximum stats.</param>
+    internal static void RememberOwnMaxStats(WizClientObjectItem pet, IEnumerable<PetStat> stats) {
+        if (pet is null || PetRules.StartAtMaxStats) {
+            return;
+        }
+
+        var own = (stats ?? []).Where(s => s is not null && !string.IsNullOrEmpty(s.m_name) && s.m_value > 0)
+            .Select(s => ((string) s.m_name, s.m_value)).ToList();
+        if (own.Count > 0) {
+            PetOwnMaxStats.SetAll(pet.m_globalID.Full, own);
+        }
+    }
+
+    /// <summary>
+    /// The stats a newly hatched pet starts with: its kind's starting stats (1 for most kinds), or every stat at its
+    /// maximum with [Pets] StartAtMaxStats. Brings the maximum stats up to date first.
+    /// </summary>
+    internal static List<PetStat> StartingStats(ClientPetItemBehavior behavior, PetItemBehaviorTemplate template) {
+        RecalculateMaxStats(behavior, template);
+        var start = template.m_startStats?.Count > 0 ? template.m_startStats : template.m_conversionStats;
+
+        return [.. StatNames(template).Select(name => NewStat(name, PetRules.StartAtMaxStats
+            ? GetStat(behavior.m_maxStats, name)
+            : start?.FirstOrDefault(s => SameStat(s?.m_name, name))?.m_value ?? DEFAULT_START_STAT))];
     }
 
     private static List<uint> TalentPool(List<ByteString> guaranteed, List<ByteString> talents)

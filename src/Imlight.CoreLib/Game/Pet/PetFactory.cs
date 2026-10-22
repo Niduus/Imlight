@@ -108,6 +108,9 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
         AlignBehaviorsToTemplate(pet);
 
+        // The pet's maximum stats are its kind's, under the server's ceiling; hatching replaces them with the parents'.
+        PetProgress.RememberOwnMaxStats(pet, petItemBehaviorTemplate.m_maxStats);
+
         // A hatched pet starts with its stats and talent pool.
         if (preHatch) {
             PetProgress.EnsureInitialized(pet);
