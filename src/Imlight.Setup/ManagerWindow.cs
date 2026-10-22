@@ -644,6 +644,26 @@ internal sealed partial class ManagerWindow : Window {
         return box;
     }
 
+    private Control AutoInstallSwitch() {
+        var toggle = new ToggleSwitch { OnContent = "On", OffContent = "Off", IsChecked = _manager.AutoInstallUpdates };
+        toggle.IsCheckedChanged += (_, _) => {
+            _manager.AutoInstallUpdates = toggle.IsChecked == true;
+            Say(toggle.IsChecked == true
+                ? "New versions now install by themselves when they are ready, without asking. If the server is running, it restarts with the update."
+                : "The app asks before it restarts into a new version again.");
+        };
+
+        return new StackPanel {
+            Margin = new Thickness(0, 0, 0, 8),
+            Children = {
+                new TextBlock { Text = "Install updates automatically", FontWeight = FontWeight.Medium },
+                toggle,
+                Sub("When a new version has downloaded and built, the app restarts into it without asking \"Yes\" first. " +
+                    "If the server is running it restarts too, so anyone playing is disconnected for a moment."),
+            },
+        };
+    }
+
     private Control GameFilesTab() {
         Action(_copyGameFiles, CopyGameFilesAsync);
         Action(_readGameFiles, ReadGameFilesAsync);
@@ -1005,6 +1025,7 @@ internal sealed partial class ManagerWindow : Window {
                     },
                 }, new Thickness(0, 10, 0, 10)),
                 AutoUpdateBox(),
+                AutoInstallSwitch(),
                 Sub($"{Edition.NAME} {SelfUpdate.CurrentVersion}, installed in {_manager.InstallFolder}."),
             },
         }));
@@ -1398,8 +1419,9 @@ internal sealed partial class ManagerWindow : Window {
     private async Task PrepareUpdateAsync() {
         _preparingUpdate = true;
         try {
+            var whenReady = _manager.AutoInstallUpdates ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
             Say("A new Imlight is out. It is downloading and building in the background, so keep playing. " +
-                "This can take a few minutes; the app asks to restart when it is ready. The Update Imlight button on the Tools tab shows how far along it is.");
+                $"This can take a few minutes; {whenReady}. The Update Imlight button on the Tools tab shows how far along it is.");
             _updateButton.Content = "Downloading...";
             var progress = new Progress<int>(percent => _updateButton.Content = percent >= 0 ? $"Downloading {percent}%" : "Downloading...");
             if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending"), progress) is not { } download) {
@@ -1408,7 +1430,7 @@ internal sealed partial class ManagerWindow : Window {
                 return;
             }
 
-            Say($"Imlight {download.Version} is downloaded and building in the background. Keep playing; the app asks to restart when it is ready.");
+            Say($"Imlight {download.Version} is downloaded and building in the background. Keep playing; {whenReady}.");
             var start = new ProcessStartInfo(download.Path) {
                 WorkingDirectory = _manager.InstallFolder,
                 UseShellExecute = false,
@@ -1445,7 +1467,7 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             _readyUpdate = download;
-            await OfferRestartAsync();
+            await OfferRestartAsync(_manager.AutoInstallUpdates);
         }
         finally {
             _preparingUpdate = false;
@@ -1453,13 +1475,20 @@ internal sealed partial class ManagerWindow : Window {
         }
     }
 
-    private async Task OfferRestartAsync() {
+    /// <summary>
+    /// Restarts into the ready update after asking, or straight away when <paramref name="withoutAsking"/> (the
+    /// Install updates automatically switch on the Tools tab). Either way the server restarts with it if it was running.
+    /// </summary>
+    private async Task OfferRestartAsync(bool withoutAsking = false) {
         if (_readyUpdate is not { } update) {
             return;
         }
 
         var running = _manager.Status().Running;
-        if (!await ConfirmAsync($"Imlight {update.Version} is ready. Restart Imlight now to use it?" + (running
+        if (withoutAsking) {
+            Say($"Imlight {update.Version} is ready and installs by itself now" + (running ? "; the server restarts with it." : "."));
+        }
+        else if (!await ConfirmAsync($"Imlight {update.Version} is ready. Restart Imlight now to use it?" + (running
                 ? " The server restarts with it, so anyone playing is disconnected for a moment."
                 : ""))) {
             Say($"Imlight {update.Version} is ready. Click Update Imlight on the Tools tab when you want to restart into it.");

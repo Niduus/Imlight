@@ -377,6 +377,25 @@ internal sealed partial class ServerManager(string installFolder) {
 
     private const string AUTO_UPDATE_OFF_FILE = "auto-update-off.txt";
 
+    /// <summary>
+    /// Whether a downloaded and built update installs straight away, without asking to restart first. Off unless the
+    /// marker file says on.
+    /// </summary>
+    internal bool AutoInstallUpdates {
+        get => File.Exists(Path.Combine(InstallFolder, AUTO_INSTALL_ON_FILE));
+        set {
+            var path = Path.Combine(InstallFolder, AUTO_INSTALL_ON_FILE);
+            if (value) {
+                File.WriteAllText(path, "Imlight installs a new version as soon as it is ready, without asking, while this file exists. The Tools tab in the app changes it.");
+            }
+            else {
+                File.Delete(path);
+            }
+        }
+    }
+
+    private const string AUTO_INSTALL_ON_FILE = "auto-install-updates-on.txt";
+
     internal string LogFolder => Path.Combine(ServerFolder, "logs");
 
     // The server runs each line of this file as a command of the wizard playing on this PC (ManagerCommands).
