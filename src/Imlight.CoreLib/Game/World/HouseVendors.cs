@@ -239,7 +239,8 @@ internal static class HouseVendors {
         return coreObject is not null;
     }
 
-    private static List<(uint Id, T Template)> TemplatesIn<T>(string folder) where T : class {
+    /// <summary>The templates of a kind whose files are in a folder of the template manifest.</summary>
+    internal static List<(uint Id, T Template)> TemplatesIn<T>(string folder) where T : class {
         var found = new List<(uint, T)>();
         try {
             foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {

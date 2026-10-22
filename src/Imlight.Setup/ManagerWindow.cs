@@ -147,6 +147,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "StartAtMaxStats", "New pets start with every stat at the server maximum (off: their own starting stats, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipGameRewards", "Skipping a pet game gives its XP and stats (off: only the snack counts)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Pets", "ItemFeedCostsEnergy", "Feeding an item to your pet costs pet energy where the game files say so (off: always free)", new() { OnContent = "On", OffContent = "Off" }),
         ("Jewels", "KeepShatteredJewels", "Jewels taken out of a socket go back to your backpack (off: they shatter unless they are No Shatter)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
         ("Housing", "PlaceAnyAsDecoration", "Houses: place any furniture as decoration (vaults, signs, music players show but do not work yet)", new() { OnContent = "On", OffContent = "Off" }),

@@ -114,6 +114,17 @@ internal static class PetRules {
     internal static bool SkipGameRewards { get; } = ConfigurationManager.GetValue("Pets.SkipGameRewards", false);
 
     /// <summary>
+    /// When true, feeding an item to a pet costs pet energy for the tiers PetFeedingRewardConfig.xml marks as costing
+    /// energy (none do in the game files today). False makes every item feed free.
+    /// </summary>
+    internal static bool ItemFeedCostsEnergy { get; } = ConfigurationManager.GetValue("Pets.ItemFeedCostsEnergy", true);
+
+    /// <summary>
+    /// The pet energy one item feed costs when it costs energy. The game files do not give a number, so 1 is a guess.
+    /// </summary>
+    internal static int ItemFeedEnergyCost { get; } = Math.Max(0, ConfigurationManager.GetValue("Pets.ItemFeedEnergyCost", 1));
+
+    /// <summary>
     /// Gets the factor applied to XP from a source, for a wizard who counts as a member.
     /// </summary>
     /// <param name="source">Where the XP comes from.</param>

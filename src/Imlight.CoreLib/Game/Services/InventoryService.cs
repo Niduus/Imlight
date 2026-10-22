@@ -33,7 +33,7 @@
  * 
  * Created by: Jooty, Joji
  * Version: KALI 1.0
- * Last Updated: 09/27/2026
+ * Last Updated: 10/22/2026
  */
 
 using System;
@@ -47,6 +47,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Effects;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -178,19 +179,24 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM))]
     private void ReceiveFeedInventoryItem(GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM message) {
+        // Backpack "Feed to pet": the pet eats the item for gold and loot (PetItemFeeding).
         var wizard = GetActiveWizard();
-        var fedItem = wizard?.InventoryBehavior.GetItem(message.FedObjectID);
-        if (ItemHelper.IsLocked(fedItem)) {
-            Logger.Warning("Item lock: refused to feed {0} of {1} to pet {2}, the item is locked.",
-                Logger.Args(ItemHelper.DescribeForLog(fedItem), wizard.CharId, message.PetID));
-
+        if (wizard is null) {
             return;
         }
 
-        SendToSocket(new GAME_5_PROTOCOL.MSG_FEEDINVENTORYITEM() {
-            FedObjectID = message.FedObjectID,
-            PetID = message.PetID,
-        });
+        try {
+            var problem = PetItemFeeding.Feed(SessionActor.ActorRef, wizard, message.PetID, message.FedObjectID, SendToSocket);
+            if (problem is not null) {
+                Logger.Information("Pet item feeding: refused {0} of {1} for pet {2}: {3}",
+                    Logger.Args(message.FedObjectID, wizard.CharId, message.PetID, problem));
+                InformGameClient(problem);
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Pet item feeding: feeding {0} of {1} to pet {2} failed: {3}",
+                Logger.Args(message.FedObjectID, wizard.CharId, message.PetID, e));
+        }
     }
 
     #endregion
