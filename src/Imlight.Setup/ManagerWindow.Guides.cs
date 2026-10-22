@@ -37,7 +37,7 @@ using Imlight.Setup.Blocks;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The "How to" guides (Justin, 2026-10-22: "Make it very clear and user friendly of how users can make custom
+/// The "How to" guides (Niduus, 2026-10-22: "Make it very clear and user friendly of how users can make custom
 /// mobs/bosses/drop tables/areas and how to edit them"): numbered, click-by-click steps that name the buttons as the app
 /// shows them, as foldable sections at the top of the Customs and Bosses tabs and all together on the Guides tab. The
 /// words are kept here as data, so a guide is changed in one place; GuidesMarkdown() writes the same words as a printable

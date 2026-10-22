@@ -22,7 +22,7 @@ using System.Collections.Concurrent;
 namespace Imlight.CoreLib.Game.Combat;
 
 /// <summary>
-/// `.cast sun` (Justin, 2026-10-20): a wizard's spells play another school's casting animation, or none with
+/// `.cast sun` (Niduus, 2026-10-20): a wizard's spells play another school's casting animation, or none with
 /// `.cast none`, until `.cast reset` or the server restarts. Only what the game is shown changes; the spell itself
 /// (pips, damage, school bonuses) stays as it is.
 /// </summary>

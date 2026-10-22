@@ -284,7 +284,7 @@ internal sealed class Lookup {
             }
         }
 
-        // The game's bundles, written by the server (the list moved out of the game's chat, Justin 2026-10-21).
+        // The game's bundles, written by the server (the list moved out of the game's chat, Niduus 2026-10-21).
         var bundles = Path.Combine(folder, "bundles.csv");
         if (File.Exists(bundles)) {
             foreach (var fields in ReadCsv(bundles)) {
@@ -335,7 +335,7 @@ internal sealed class Lookup {
             .Take(max)];
     }
 
-    // Commands added for this build (Justin's), shown under Custom in the Commands tab.
+    // Commands added for this build (Niduus's), shown under Custom in the Commands tab.
     private static LookupEntry Command(string name, string typed, string who, string help)
         => new("Command", name, "", who, typed, help, Custom: true);
 

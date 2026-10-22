@@ -635,7 +635,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 return;
             }
 
-            // As on live, nobody teleports into a dungeon (or any other instance) to a friend (Justin, 2026-10-22).
+            // As on live, nobody teleports into a dungeon (or any other instance) to a friend (Niduus, 2026-10-22).
             if (queryResult.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetID)) {
                 Logger.Information("Player {0} cannot go to character ID {1}, who is in an instance.",
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));

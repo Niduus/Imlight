@@ -1,9 +1,9 @@
 /*
- * Afterlife (Justin, 2026-10-21): a kAfterlife effect waits on its target, and when the target is defeated its effects
+ * Afterlife (Niduus, 2026-10-21): a kAfterlife effect waits on its target, and when the target is defeated its effects
  * bring them back. Malistaire the Undying's "Mega Taunt - Shadow" gives him one at the start of the battle (100 health),
  * and his "I touch Shadow" cheat then turns him into Haunted Malistaire.
  *
- * Wizards come back too (Justin, 2026-10-22: a Guardian Spirit on his friend did not work, so the server had the friend
+ * Wizards come back too (Niduus, 2026-10-22: a Guardian Spirit on his friend did not work, so the server had the friend
  * defeated while the game had him standing). A heal of a share of the most health (kHealPercent) counts as well as a
  * flat one, and an afterlife cast on a teammate who is already defeated brings them back at once.
  *

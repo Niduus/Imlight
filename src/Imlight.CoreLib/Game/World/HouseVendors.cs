@@ -32,7 +32,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.World;
 
 /// <summary>
-/// Sellers moved out of the bazaar (Justin, 2026-10-19). Hao in the Pet Pavilion sells every snack of rank 8 or
+/// Sellers moved out of the bazaar (Niduus, 2026-10-19). Hao in the Pet Pavilion sells every snack of rank 8 or
 /// higher, and `.hall vendors` gives one piece of furniture per seller: one per reagent kind (spellements included)
 /// and one per jewel shape and pin. Wherever one is placed in a house its seller stands on it, like the trainer
 /// tomes (<see cref="HouseTrainers"/>). Everything they sell costs <see cref="Price"/> gold.
@@ -59,7 +59,7 @@ internal static class HouseVendors {
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
     // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
-    // shop type and title of a real shop of its kind (Justin: Hao opened as an empty robe shop).
+    // shop type and title of a real shop of its kind (Niduus: Hao opened as an empty robe shop).
     private static readonly uint s_snackShopNpcId = ConfigurationManager.GetValue("HallVendors.SnackShopNpc", 227094u);
 
     private static readonly Lazy<List<uint>> s_snacks = new(() => [.. TemplatesIn<PetSnackItemTemplate>(SNACK_FOLDER)

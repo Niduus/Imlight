@@ -31,7 +31,7 @@ using Avalonia.Styling;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The look of the whole Manager in one place (Justin, 2026-10-22: "make the whole manager nicer to compensate for the
+/// The look of the whole Manager in one place (Niduus, 2026-10-22: "make the whole manager nicer to compensate for the
 /// new design in the 'block'-like programming"): its colours, fonts, sizes, corner radius and icons, and the styles
 /// that give every tab's buttons, boxes and switches the same look as the block editor. AreaStyle (the Customs tab's
 /// areas) and BlockColors (the block editor) read their colours from here.

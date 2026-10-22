@@ -207,7 +207,7 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
                 if (IsCriticalPacket(packet)) {
                     _tokenBucket.Spend();
                 } else if (!_tokenBucket.TryAcquire()) {
-                    // The rate limit was reached. A short burst only loses the extra messages: Justin's game was
+                    // The rate limit was reached. A short burst only loses the extra messages: Niduus's game was
                     // disconnected a second or two after most logins (9 times on 2026-10-22, once in the middle of
                     // a battle he had just come back into) because 5 messages in a row found the bucket empty.
                     // Only a flood that keeps the bucket empty for a while closes the session.

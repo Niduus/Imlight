@@ -60,7 +60,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly Border _dot = new() { Width = 9, Height = 9, CornerRadius = new CornerRadius(5), Background = MUTED, VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _statusText = new() { Text = "Checking…", Foreground = MUTED, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center };
     private readonly Border _statusBadge;
-    // At most a few lines: a copied log shown here in full once covered the whole window (Justin, 2026-10-20).
+    // At most a few lines: a copied log shown here in full once covered the whole window (Niduus, 2026-10-20).
     private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap, MaxLines = 4, TextTrimming = TextTrimming.CharacterEllipsis };
     // Shows what a background update is doing on the button itself (downloading 40%, building...).
     private readonly Button _updateButton = Primary("Update Imlight");
@@ -1192,7 +1192,7 @@ internal sealed partial class ManagerWindow : Window {
     private Control LookupRow(LookupEntry entry) {
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, VerticalAlignment = VerticalAlignment.Center };
         if (entry.Kind == "Bundle" && entry.Typed is not null) {
-            // Runs .bundle for the wizard playing on this PC (Justin, 2026-10-21: bundles picked in the app).
+            // Runs .bundle for the wizard playing on this PC (Niduus, 2026-10-21: bundles picked in the app).
             buttons.Children.Add(Action(Plain("Send to my gifts"), () => {
                 _manager.SendCommand(entry.Typed);
                 Say($"Sent {entry.Name} to your gifts. Click the gift button in the game to claim it.");
@@ -1438,7 +1438,7 @@ internal sealed partial class ManagerWindow : Window {
     // ---------------------------------------------------------------------
 
     private void LoadSettings() {
-        // Each May Cast card's key gets what the card does, so it can be searched by kind (Justin: typing Aura shows every aura).
+        // Each May Cast card's key gets what the card does, so it can be searched by kind (Niduus: typing Aura shows every aura).
         _settings = _manager.ReadSettings()
             .Select(group => (group.Section, group.Section != PET_CASTING ? group.Settings : group.Settings
                 .Select(s => PetCastCards.Details.TryGetValue(s.Key, out var card)

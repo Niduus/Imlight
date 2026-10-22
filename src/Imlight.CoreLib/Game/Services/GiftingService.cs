@@ -170,7 +170,7 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                 break;
             case ItemBundleTemplate:
                 // Bundles belong in the Claim Gift list, where the game lets the player pick a tier; claiming one from
-                // the friend gift box crashed the game (Justin, 2026-10-21). Move it there.
+                // the friend gift box crashed the game (Niduus, 2026-10-21). Move it there.
                 AddClaimGift(wizard.Account, giftRedemption.m_itemId);
                 SendToSocket(new GAME_5_PROTOCOL.MSG_REDEEM_MAIL_GIFT_RESPONSE {
                     ErrorCode = 1,

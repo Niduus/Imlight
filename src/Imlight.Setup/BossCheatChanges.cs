@@ -111,7 +111,7 @@ internal sealed class CheatBlock {
 }
 
 /// <summary>
-/// One cheat as the app shows it: a When block, its If blocks and its Do blocks (Justin, 2026-10-22: Scratch-like
+/// One cheat as the app shows it: a When block, its If blocks and its Do blocks (Niduus, 2026-10-22: Scratch-like
 /// blocks). Index is its place in the boss's cheat file, -1 for one added in the app; Game is that file's cheat.
 /// </summary>
 internal sealed class CheatRule {

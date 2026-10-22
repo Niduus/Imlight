@@ -61,13 +61,13 @@ internal static class SeamstressConfig {
     internal static string ShopTitleKey => ConfigurationManager.GetValue(ShopTitleKeyKey, string.Empty);
 
     /// <summary>
-    /// The object names of the NPCs that stitch, besides the ones SpiralDB marks (SpiralDB has none; Justin,
+    /// The object names of the NPCs that stitch, besides the ones SpiralDB marks (SpiralDB has none; Niduus,
     /// 2026-10-20: every Eloise Merryweather stitches).
     /// </summary>
     internal static IReadOnlySet<string> ObjectNames => Names(ObjectNamesKey);
 
     /// <summary>
-    /// The object names of the NPCs that stitch pets (Justin, 2026-10-20: every Prospector Zeke). Their stitch window
+    /// The object names of the NPCs that stitch pets (Niduus, 2026-10-20: every Prospector Zeke). Their stitch window
     /// lists the pets as stand-in wands (PetStitchProxies), since it has only hat, robe, boots and wand tabs.
     /// </summary>
     internal static IReadOnlySet<string> PetObjectNames => Names(PetObjectNamesKey);

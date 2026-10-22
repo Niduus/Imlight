@@ -22,7 +22,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.cast none`, `.cast reset` (Justin, 2026-10-20): see <see cref="CastLook"/>.
+/// `.cast none`, `.cast reset` (Niduus, 2026-10-20): see <see cref="CastLook"/>.
 /// </summary>
 internal class CommandCastLookProtocol : CommandProtocol {
 

@@ -116,7 +116,7 @@ internal class CommandPetProtocol : CommandProtocol {
         InformSenderClient($"Your pet now has {PetProgress.TalentLabel(talent)}. Relog to see it in the pet window.");
     }
 
-    // `.pet derby get|claim|unclaim`, the same as `.pet talent` for the derby talents (Justin, 2026-10-19).
+    // `.pet derby get|claim|unclaim`, the same as `.pet talent` for the derby talents (Niduus, 2026-10-19).
     [Command("derby")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void DerbyCommand([Remainder] string text) {

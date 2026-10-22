@@ -1,5 +1,5 @@
 /*
- * Polymorph (Justin, 2026-10-21): a kPolymorph effect turns its target into another creature, such as Malistaire the
+ * Polymorph (Niduus, 2026-10-21): a kPolymorph effect turns its target into another creature, such as Malistaire the
  * Undying into Haunted Malistaire ("Afterlife - Malistaire 02", polymorph template 1336084, creature 1336037).
  *
  * The game works the spell out on its own from the cast: its CombatResolver has a kPolymorph handler that calls

@@ -34,7 +34,7 @@ using Avalonia.Platform;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Lookup tab's spell view (Justin, 2026-10-21: "a list on the left with the card on the right of the line I am
+/// The Lookup tab's spell view (Niduus, 2026-10-21: "a list on the left with the card on the right of the line I am
 /// hovering over, defaulting to the one I clicked on"): picking Spell in the Lookup tab shows every spell with its
 /// school, cost and what it does, and a big picture of its card as the game draws it, read from the game files.
 /// </summary>

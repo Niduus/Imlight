@@ -34,7 +34,7 @@ using static Imlight.Setup.AreaStyle;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Customs tab's Custom areas (Justin, 2026-10-22: "more specific, descriptive and modular for people to change
+/// The Customs tab's Custom areas (Niduus, 2026-10-22: "more specific, descriptive and modular for people to change
 /// anything and everything ... organized sections of what and each, using their icons too"). Every area file
 /// (spiraldb-extra/ZoneObjects) opens into sections, one for each part of the file: general, objects (with sigil pads
 /// and battle circles), creatures, spawn swaps, encounters and the room's boss, distinct spawners, left-out objects,

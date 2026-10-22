@@ -25,7 +25,7 @@ using Imlight.Common;
 namespace Imlight.CoreLib.Game.Pet;
 
 /// <summary>
-/// Pet stat maximums raised with `.pet stats` (Justin, 2026-10-19: Strength 220 to 260). Kept in pet-max-stats.txt
+/// Pet stat maximums raised with `.pet stats` (Niduus, 2026-10-19: Strength 220 to 260). Kept in pet-max-stats.txt
 /// next to the server, one "pet id, stat, maximum" per line, so they stay after a restart. A raised maximum is a
 /// floor: talents that give more still give more.
 /// </summary>
@@ -60,7 +60,7 @@ internal static class PetOwnMaxStats {
 
 /// <summary>
 /// How much 0.10.17 added to each of a pet's stats for its selfish talents, so it can be taken back: selfish talents
-/// raise only the maximum (Justin, 2026-10-20). Kept in pet-selfish-stats.txt next to the server.
+/// raise only the maximum (Niduus, 2026-10-20). Kept in pet-selfish-stats.txt next to the server.
 /// </summary>
 internal static class PetSelfishStats {
 

@@ -19,7 +19,7 @@
 namespace Imlight.CoreLib.Game.Sigils;
 
 /// <summary>
-/// The one on/off test for sigil pads, used by the pad and by the countdown alike (Justin, 2026-10-21: "Have Sigils
+/// The one on/off test for sigil pads, used by the pad and by the countdown alike (Niduus, 2026-10-21: "Have Sigils
 /// have a consistent check"). Flat distance only, and a player counts as off only a little past the edge, so standing
 /// on the rim or being slid onto a sigil circle does not flip them on and off.
 /// </summary>

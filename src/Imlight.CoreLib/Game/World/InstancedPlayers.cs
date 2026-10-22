@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * Knows which characters are in an instanced zone (a dungeon, a sigil's private copy, an arena), so a
- * teleport to a friend or group mate there is refused, as on live (Justin, 2026-10-22).
+ * teleport to a friend or group mate there is refused, as on live (Niduus, 2026-10-22).
  *
  * USAGE EXAMPLE:
  * InstancedPlayers.Enter(charId, zone);   // Zone, when a player joins an instance

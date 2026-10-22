@@ -1,5 +1,5 @@
 /*
- * Extra zone objects (Justin, 2026-10-21), read from spiraldb-extra/ZoneObjects/*.json. The game files are never changed.
+ * Extra zone objects (Niduus, 2026-10-21), read from spiraldb-extra/ZoneObjects/*.json. The game files are never changed.
  *
  * Each file names its zone ("Zone": "WizardCity/WC_Ravenwood"; the file is called after it with / as -, such as
  * WizardCity-WC_Ravenwood.json) and adds to that zone each time it loads, before the supervisors see it, so what it
@@ -56,7 +56,7 @@
  *               Sigils/ name, such as CombatSigilDarkmoorMalistaireBoss) and Radius (how near a player joins).
  * Leave Sigil and CombatSigil out for any other object.
  *
- * Placements (Justin, 2026-10-22: "if I have to turn it or move it, it works immediately and does NOT require another
+ * Placements (Niduus, 2026-10-22: "if I have to turn it or move it, it works immediately and does NOT require another
  * prompt or server reset"): the Manager's Customs tab saves where an object stands to spiraldb-extra/Customs/
  * Placements.json, which updates never replace (they replace the files here). For a room (the zone, with @variant for a
  * variant's file) and an object name it holds X, Y, Z, Yaw and Scale over the file's, a TemplateID to swap the object
@@ -238,7 +238,7 @@ internal static class ZoneObjects {
     // A dungeon sigil pad's lit state (MinigameSigilStatesNew: Glowy plays the pad's "On" animation).
     internal const string SIGIL_LIT_STATE = "Glowy";
 
-    // The Advanced Mode look (Justin, 2026-10-22: "Advance Mode" sigils): MinigameSigilStatesNew's Red plays the pad's
+    // The Advanced Mode look (Niduus, 2026-10-22: "Advance Mode" sigils): MinigameSigilStatesNew's Red plays the pad's
     // "On_Red" animation (AnimationData/FX_BattleCircle_4X_New.xml, animation 2), the red glow the game shows when a
     // team picks Advanced Mode at a dungeon sigil. The set only goes to Red from Glowy (Off goes to Red_02, the same
     // red with debug on), so a pad is sent Glowy just before it.

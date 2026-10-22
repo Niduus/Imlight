@@ -26,7 +26,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.ca gained power pip` (Justin, 2026-10-20): in battle, the game's own line with those words shows like a boss's
+/// `.ca gained power pip` (Niduus, 2026-10-20): in battle, the game's own line with those words shows like a boss's
 /// cheat line, in the "Gained Power Pip" spot, before the next round's first spell.
 /// </summary>
 internal class CommandAnnounceProtocol : CommandProtocol {
@@ -64,7 +64,7 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             return;
         }
 
-        // Several lines split by commas show one after another (Justin, 2026-10-20: `.ca 1, 5`).
+        // Several lines split by commas show one after another (Niduus, 2026-10-20: `.ca 1, 5`).
         foreach (var part in text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)) {
             if (!TryResolve(part, out var key, out var shown, out var problem)) {
                 InformSenderClient(problem);
@@ -78,7 +78,7 @@ internal class CommandAnnounceProtocol : CommandProtocol {
 
     /// <summary>
     /// The game line a .ca phrase means: a number is the phrase's number in the app's Lookup tab, words are the
-    /// line that matches them best. The game shows only its own lines, by key (Justin, 2026-10-20: typed text
+    /// line that matches them best. The game shows only its own lines, by key (Niduus, 2026-10-20: typed text
     /// showed nothing).
     /// </summary>
     /// <param name="text">The number or words.</param>

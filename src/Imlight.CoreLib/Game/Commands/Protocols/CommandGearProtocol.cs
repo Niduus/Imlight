@@ -1,5 +1,5 @@
 /*
- * Gives items by kind and name or ID (Justin, 2026-10-20):
+ * Gives items by kind and name or ID (Niduus, 2026-10-20):
  *   .hat 1 Malistaire Veil    .hat 1 60 Malistaire Veil    .pet 1 Chromatic Pet    .robe 2 1234567
  * Kinds: hat, robe, boot, wand, athame, amulet, ring, pet, gear (any item), deck, potion.
  * Form: .<kind> [amount] [level] <name or ID>. The amount is optional (1 when left out). With a name, the best match
@@ -105,7 +105,7 @@ internal class CommandGearProtocol : CommandProtocol {
         }
 
         // Several versions with one name and level (such as Bound Spirit's Cards with a triangle, square or tear
-        // socket) are all given, to pick from (Justin, 2026-10-20).
+        // socket) are all given, to pick from (Niduus, 2026-10-20).
         foreach (var template in templates) {
             GiveCopies(template, copies);
         }

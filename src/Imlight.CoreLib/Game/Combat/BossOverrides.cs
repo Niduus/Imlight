@@ -1,5 +1,5 @@
 /*
- * Boss changes from the app's Bosses tab (Justin, 2026-10-21: "edit the bosses deck and stats"), read from
+ * Boss changes from the app's Bosses tab (Niduus, 2026-10-21: "edit the bosses deck and stats"), read from
  * spiraldb-extra/BossOverrides/<template id>.json, one file per creature template. The game files are never changed.
  *
  * A creature's stats and deck are built when its zone loads (NpcComponent, StatsComponent, CombatCreatureEquipmentComponent

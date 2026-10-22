@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * The pet morphing "Phantom Zone" (ThePhantomZoneWorld/PetGameMorph) that the hatchery sigils send
- * players to, where the game's own hatch window lives (Justin, 2026-10-20). Remembers, per character,
+ * players to, where the game's own hatch window lives (Niduus, 2026-10-20). Remembers, per character,
  * which sigil sent them, who they hatch with and where they go back to, because the player arrives in
  * a new session after the zone transfer.
  *
@@ -31,7 +31,7 @@
  * PetMorphZone.End(charId);
  *
  * NOTE:
- * The zone's own data (decoded from Justin's install): ZONETYPE_DYNAMIC, locations Start and Home,
+ * The zone's own data (decoded from Niduus's install): ZONETYPE_DYNAMIC, locations Start and Home,
  * one object (PetGameMorph, template 174081) and the adjectives ImmediateDisconnect, Gauntlet, NoChat,
  * HomeToFallback, Minigame, NoInventoryAccess. Each visit's character is assigned to the instance of
  * the visit's owner (ZoneInstanceOwners), so the two players of a duo sigil share one instance.
@@ -102,7 +102,7 @@ internal static class PetMorphZone {
     /// <param name="why">Why not, when this returns <c>false</c>.</param>
     internal static bool IsAvailable(out string why) {
         // Once found, the zone stays there. Two players pressing a duo pad together checked the archive at the same
-        // moment and one check failed (Justin, 2026-10-20), so it is checked one at a time and only until it works.
+        // moment and one check failed (Niduus, 2026-10-20), so it is checked one at a time and only until it works.
         if (s_available) {
             why = null;
 

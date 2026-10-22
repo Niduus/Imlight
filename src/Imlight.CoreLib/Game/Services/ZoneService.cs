@@ -90,7 +90,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private DateTime _sigilEntryStarted;
     // After the countdown starts the player is moved onto the pad; their position may lag behind for a moment.
     // Moves while the player is being put on their circle are not theirs; after that any move stops the countdown
-    // (Justin, 2026-10-21: "Sigil cancellation should be from any movement").
+    // (Niduus, 2026-10-21: "Sigil cancellation should be from any movement").
     private static readonly TimeSpan SIGIL_SETTLE_TIME = TimeSpan.FromSeconds(2.5);
     private const float SIGIL_MOVE_TOLERANCE = 10.0f;
     private DateTime _sigilSettleUntil;
@@ -296,7 +296,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        // A player already counting down stays where they stand when the countdown restarts (Justin, 2026-10-21: the
+        // A player already counting down stays where they stand when the countdown restarts (Niduus, 2026-10-21: the
         // players moved when a new one came on).
         var restarted = false;
         if (message.Restart && _activeSigilEntry is not null && !_transferGate.IsQueued) {
@@ -425,7 +425,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     /// <summary>
     /// The countdown is drawn by the pad itself and counts down in each game on its own, so everyone in the zone is
-    /// told, not only the player on it (Justin, 2026-10-21: the timer should show whenever a player is on the sigil).
+    /// told, not only the player on it (Niduus, 2026-10-21: the timer should show whenever a player is on the sigil).
     /// </summary>
     private void SendSigilTimer(Imcodec.MessageLayer.IMessage timerMessage) {
         if (ZoneActor is null) {
@@ -462,9 +462,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         // The small hatchery pads are not sigils the game counts the player as standing on, so it sends this the
-        // moment the countdown starts (Justin, 2026-10-20); the distance check at the end of the countdown stands in.
+        // moment the countdown starts (Niduus, 2026-10-20); the distance check at the end of the countdown stands in.
         // The hatchery pads too: with two players on a duo pad the game sent this a few seconds into the countdown
-        // although both stood still (Justin, 2026-10-20). The distance check at the end of the countdown stands in.
+        // although both stood still (Niduus, 2026-10-20). The distance check at the end of the countdown stands in.
         if (_activeSigilEntry.NoSnap || _activeSigilEntry.OnFailed is CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED) {
             Logger.Information("{0}: the game says the player left the pad; ignored for this pad.", Logger.Args(SigilLogName(_activeSigilEntry)));
 
@@ -524,7 +524,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_GOHOME))]
     private void ReceiveGoHome(WIZARD_12_PROTOCOL.MSG_GOHOME message) {
         // this teleports the wizard to the world hub, NOT their home/dorm. for that you want MSG_GOTODORM. goofy ahh naming scheme
-        // Justin's server: this button always goes to the Commons, from any world.
+        // Niduus's server: this button always goes to the Commons, from any world.
         var wizard = GetActiveWizard();
         Logger.Information("{0} pressed the Commons button in {1}.", Logger.Args(wizard.CharId, wizard.Zone));
         SendTeleportEffects();
@@ -754,7 +754,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        // Stepping off the pad stops the countdown right away, not only when it runs out (Justin, 2026-10-21: the
+        // Stepping off the pad stops the countdown right away, not only when it runs out (Niduus, 2026-10-21: the
         // countdown went on after stepping off). The game's own walk-off message is not sent for every pad.
         if (_activeSigilEntry is { NoSigil: false } entry && GetActiveWizard() is { } wizard) {
             var here = wizard.Location;

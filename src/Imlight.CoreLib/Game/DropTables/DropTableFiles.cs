@@ -17,7 +17,7 @@
  */
 
 /*
- * The drop tables of spiraldb-extra/DropTables as they are now (Justin, 2026-10-22: "Include custom drop tables"). The app's
+ * The drop tables of spiraldb-extra/DropTables as they are now (Niduus, 2026-10-22: "Include custom drop tables"). The app's
  * Drop tables editor saves there; SpiralDB reads the folder only when the server starts, so a table made or changed
  * since is read from its file here, at most every few seconds, and counts from the next roll without a restart.
  * A name not found here is SpiralDB's.

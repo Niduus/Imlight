@@ -151,7 +151,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
     }
 
-    // `.shoptest` (Justin, 2026-10-19): every shop opens with this shop type and menu option, to find what makes the
+    // `.shoptest` (Niduus, 2026-10-19): every shop opens with this shop type and menu option, to find what makes the
     // game open its reagent, snack and jewel windows instead of the robe shop window.
     internal static int? TestShopType;
     internal static string TestOption;

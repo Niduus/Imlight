@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * Offers one service option on a hatchmaking kiosk; using it opens the kiosk window, where pets
- * are listed and hatched (see HatchService). Justin, 2026-10-20.
+ * are listed and hatched (see HatchService). Niduus, 2026-10-20.
  *
  * USAGE EXAMPLE:
  * Attached by the component registry to an object whose template has a HatchmakingKioskBehavior.

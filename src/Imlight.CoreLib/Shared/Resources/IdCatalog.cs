@@ -365,7 +365,7 @@ public static class IdCatalog {
             }
             File.WriteAllText(Path.Combine(OutputPath, QUESTS_NAME), quests.ToString());
 
-            // The game's own lines for .ca, numbered (Justin, 2026-10-20: `.ca 1` plays the first phrase).
+            // The game's own lines for .ca, numbered (Niduus, 2026-10-20: `.ca 1` plays the first phrase).
             var phrases = new StringBuilder().AppendLine("Number,Text,Key");
             var number = 0;
             foreach (var (key, text) in Locale.Phrases) {
@@ -377,7 +377,7 @@ public static class IdCatalog {
             Logger.Warning("Could not write the zone and quest lists for the app. {Exception}", Logger.Args(ex));
         }
 
-        // The bundle list for the app's Lookup tab (Justin, 2026-10-21: the list moved out of the game's chat).
+        // The bundle list for the app's Lookup tab (Niduus, 2026-10-21: the list moved out of the game's chat).
         try {
             var bundles = new StringBuilder().AppendLine("Name,Gifts");
             foreach (var family in Imlight.CoreLib.Game.Commands.Protocols.BundleCatalog.Families) {

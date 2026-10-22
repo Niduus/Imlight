@@ -200,7 +200,7 @@ internal sealed class DropDraft {
 }
 
 /// <summary>
-/// Drop tables of one's own (Justin, 2026-10-22: "Include custom drop tables, including XP and Gold counts"): made, changed
+/// Drop tables of one's own (Niduus, 2026-10-22: "Include custom drop tables, including XP and Gold counts"): made, changed
 /// and copied in the editor's Drops section, saved to spiraldb-extra/DropTables, where the server reads them from the
 /// next battle on (DropTableFiles).
 /// </summary>

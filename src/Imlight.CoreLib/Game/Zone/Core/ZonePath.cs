@@ -460,7 +460,7 @@ public sealed class ZonePath : ZoneEntity {
     }
 
     private SpawnItem PickSpawnItem(SpawnObject spawnObject) {
-        // A ZoneObjects distinct spawner (Justin, 2026-10-22: Malistaire's 3 Draconians are 3 different ones) picks
+        // A ZoneObjects distinct spawner (Niduus, 2026-10-22: Malistaire's 3 Draconians are 3 different ones) picks
         // by chance among the templates it has no living creature of; with none left it spawns nothing.
         if (!Zone.Extras.IsDistinctSpawner(spawnObject.m_name)) {
             return PickRandomSpawnObject(spawnObject.m_spawnList);

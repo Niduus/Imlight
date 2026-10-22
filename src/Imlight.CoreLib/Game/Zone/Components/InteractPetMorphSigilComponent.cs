@@ -23,7 +23,7 @@
  * The pet hatching sigils in the Pet Pavilion hatchery (WizardCity/Interiors/WC_Hatchery). The solo
  * sigils ("Teleport Pet Morphing 1P", tid 266075, PetMorphFor1Sigil01..04) hatch two of the player's
  * own pets; the duo sigils ("Teleport Pet Morphing", tid 112077, PetMorphSigil01..04, two circles)
- * pair the two players standing on them into the in-person hatch. Justin, 2026-10-20: the solo pads
+ * pair the two players standing on them into the in-person hatch. Niduus, 2026-10-20: the solo pads
  * were lit but had no prompt, the duo pads were dark with no prompt.
  *
  * USAGE EXAMPLE:
@@ -78,7 +78,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
 
     private const string RELIGHT_TIMER_KEY = "SigilRelight";
     // The game sets the pad to a blank look when its countdown runs out (ClientCountdownBehavior), a moment after the
-    // players have gone, so the lit look is sent again once that has happened (Justin, 2026-10-21: sigil missing on both).
+    // players have gone, so the lit look is sent again once that has happened (Niduus, 2026-10-21: sigil missing on both).
     private static readonly TimeSpan s_relightDelay = TimeSpan.FromSeconds(2.5);
 
     private const uint SOLO_TEMPLATE_ID = 266075;
@@ -110,29 +110,29 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     private readonly Dictionary<ulong, Occupant> _occupants = [];
     private long _nextOrder;
     // The players of a pair just sent off, until when: when both press X the second press must not pair them again
-    // (Justin, 2026-10-20: both pressed and the trips crossed).
+    // (Niduus, 2026-10-20: both pressed and the trips crossed).
     private readonly Dictionary<ulong, DateTime> _pairedUntil = [];
     private static readonly TimeSpan PAIRED_FOR = TimeSpan.FromSeconds(15);
     // When each player on the pad pressed X: a pair goes only once both have, so pressing never pulls in a player who
-    // is only standing there (Justin, 2026-10-21: player 1 pressed and dragged player 2 in).
+    // is only standing there (Niduus, 2026-10-21: player 1 pressed and dragged player 2 in).
     private readonly Dictionary<ulong, DateTime> _pressedAt = [];
 
     // The circle each player on the pad stands on. A new player takes the lowest free one and nobody else is moved
-    // (Justin, 2026-10-21: "If 1 is empty, they go to that").
+    // (Niduus, 2026-10-21: "If 1 is empty, they go to that").
     private readonly Dictionary<ulong, int> _slots = [];
 
     // The pad's one countdown: when it ends, and whether a second player joining has already restarted it once.
-    // Hopping off and back on joins it instead of starting it over (Justin, 2026-10-21).
+    // Hopping off and back on joins it instead of starting it over (Niduus, 2026-10-21).
     private const float COUNTDOWN_SECONDS = 10.0f;
     private const float MIN_COUNTDOWN_SECONDS = 1.0f;
     private DateTime? _countdownEnds;
     private bool _countdownRestarted;
     private static readonly TimeSpan PRESS_KEPT_FOR = TimeSpan.FromSeconds(30);
     // The players this pad has been lit for. The game shows no prompt on a pad still in its Off state: both state
-    // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Justin, 2026-10-20: the solo pads gave no prompt).
+    // sets (PetGameSigilStates, PetMorphFor1SigilStates) start Off (Niduus, 2026-10-20: the solo pads gave no prompt).
     private readonly HashSet<IActorRef> _litFor = [];
     // The players who stepped off the pad, and when to light it for them again: a stopped countdown leaves the pad
-    // dark for that player (Justin, 2026-10-21: the sigil went missing after stepping off).
+    // dark for that player (Niduus, 2026-10-21: the sigil went missing after stepping off).
     private readonly Dictionary<IActorRef, DateTime> _relightAt = [];
     private static readonly TimeSpan RELIGHT_AFTER = TimeSpan.FromSeconds(2);
     private bool _logged;
@@ -188,7 +188,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         LogPadOnce();
         _litFor.Remove(playerActor);
         // A player coming back into the zone has a new session; an old entry would send the pair's note to the old
-        // one (Justin, 2026-10-21: one player went in alone and the other's presses were ignored).
+        // one (Niduus, 2026-10-21: one player went in alone and the other's presses were ignored).
         if (playerWizard is not null && _occupants.Remove(playerWizard.CharId)) {
             _pressedAt.Remove(playerWizard.CharId);
             _slots.Remove(playerWizard.CharId);
@@ -203,7 +203,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     }
 
     // Sent at join and again on the player's first move: a state sent while the game is still loading the zone can be
-    // lost, which left the duo pads dark (Justin, 2026-10-20).
+    // lost, which left the duo pads dark (Niduus, 2026-10-20).
     private void Light(IActorRef playerActor) {
         if (PetHatching.Enabled && playerActor is not null && _litFor.Add(playerActor)) {
             Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
@@ -264,7 +264,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
             _pairedUntil.Remove(charId);
             _relightAt[playerActor] = DateTime.UtcNow + RELIGHT_AFTER;
             // The countdown runs while anyone is on the pad; it goes off the pad for everyone once the last one leaves
-            // (Justin, 2026-10-21).
+            // (Niduus, 2026-10-21).
             if (_occupants.Count == 0) {
                 PlayerBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = Entity.ActiveGameObject.m_globalID });
             }
@@ -331,7 +331,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         }
 
         // Both stay marked as pressed while on the pad: if one steps off and back on, pressing X again joins the
-        // countdown the other is still on instead of starting a second trip (Justin, 2026-10-21).
+        // countdown the other is still on instead of starting a second trip (Niduus, 2026-10-21).
         _pressedAt[partner.CharId] = now;
         _pairedUntil[playerCharacter.CharId] = now + PAIRED_FOR;
         _pairedUntil[partner.CharId] = now + PAIRED_FOR;
@@ -343,7 +343,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
         toPartner.PartnerCharId = playerCharacter.CharId;
         toPartner.PartnerGameObjectId = playerObject.m_globalID.Full;
         toPartner.PartnerName = Name(playerCharacter);
-        // Circles go by who pressed X first: the partner pressed before this player (Justin, 2026-10-21: the first
+        // Circles go by who pressed X first: the partner pressed before this player (Niduus, 2026-10-21: the first
         // player takes the first circle, the second player the next).
         var (seconds, keep) = CountdownForPair(now);
         toPartner.FaceSlot = SlotOf(partner.CharId);
@@ -372,7 +372,7 @@ internal sealed class InteractPetMorphSigilComponent(ZoneEntity entity)
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT))]
     private void ReceiveRelight(ZONE_102_PROTOCOL.MSG_SIGILRELIGHT message) {
         // Lighting the pad while its countdown runs fights the countdown's numbers, which looked like a distorted
-        // fade when one player stepped off (Justin, 2026-10-21); wait until the countdown is over.
+        // fade when one player stepped off (Niduus, 2026-10-21); wait until the countdown is over.
         if (_countdownEnds is { } ends && ends > DateTime.UtcNow) {
             Timers.StartSingleTimer(RELIGHT_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_SIGILRELIGHT(),
                 ends - DateTime.UtcNow + s_relightDelay);
