@@ -975,6 +975,10 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 48;
         public byte ServiceID { get; } = 102;
 
+        // The client came back on a retry or reattach (a dropped connection, a server restart) and still holds
+        // what it was sent before, such as its quest list.
+        public bool ClientKeptState;
+
     }
     
     public sealed class MSG_REGISTERCRITICALOBJECT : IServerMessage {

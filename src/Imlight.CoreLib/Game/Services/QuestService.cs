@@ -54,6 +54,7 @@ using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Misc;
 using Imlight.CoreLib.WizardData.Models.Player;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -119,8 +120,15 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         var wizard = GetActiveWizard();
         RemoveDungeonQuestsOutsideZone(wizard);
+        ForgetStaleClientQuests(wizard);
 
         foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances) {
+            // A client back on a retry or reattach still lists the quests it had: take each off before it is resent,
+            // or the quest helper shows it twice.
+            if (message.ClientKeptState) {
+                SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = qInstance.ID });
+            }
+
             var qTemplate = QuestTemplateCollection.GetQuestByName(qInstance.QuestName);
             if (qTemplate is null) {
                 Logger.Warning("Quest '{0}' of {1} has no template; it is not sent to the quest book.",
@@ -1008,8 +1016,18 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private void StartQuest(QuestTemplate quest, Wizard wizard) {
+        // A quest the wizard already holds is never added again, so the client is not sent a second copy of it.
+        if (wizard.HasQuest(quest.m_questName)) {
+            Logger.Warning("Player '{0}' already has quest '{1}'; it is not started again.",
+                Logger.Args(wizard.CharId, quest.m_questName));
+
+            return;
+        }
+
         var questInstance = new QuestInstance(quest, wizard.CharId);
-        wizard.AddQuest(questInstance);
+        if (!wizard.AddQuest(questInstance)) {
+            return;
+        }
 
         if (!_cachedQuestTemplates.Contains(quest)) {
             _cachedQuestTemplates.Add(quest);
@@ -1104,7 +1122,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             ActivityType = 0, // ?
         };
 
-        SendToSocket(qSendMsg);
+        SendQuestToClient(qSendMsg, qTemplate.m_questName);
         ShowQuestStartDialogue(qTemplate);
 
         // Send the quest starting goals now.
@@ -1175,7 +1193,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             ActivityType = 0, // ?
         };
 
-        SendToSocket(qSendMsg);
+        SendQuestToClient(qSendMsg, qTemplate.m_questName);
 
         // Send the quest's active goals now.
         foreach (var gTemplate in qTemplate.m_goals) {
@@ -1184,6 +1202,53 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             }
 
             SendGoalMessage(gTemplate, qInstance, forceSendDestZone: true);
+        }
+    }
+
+    // The quest ID each character's client was last sent for each quest, kept across sessions: a client that
+    // still holds an older ID for a quest has that copy taken off before the new one is added.
+    private static readonly ConcurrentDictionary<ulong, Dictionary<string, ulong>> s_clientQuestIds = new();
+
+    private static Dictionary<string, ulong> ClientQuestIdsOf(ulong charId)
+        => s_clientQuestIds.GetOrAdd(charId, _ => new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase));
+
+    private void SendQuestToClient(QUEST_MESSAGES_52_PROTOCOL.MSG_SENDQUEST message, string questName) {
+        var wizard = GetActiveWizard();
+        if (wizard is not null) {
+            var sent = ClientQuestIdsOf(wizard.CharId);
+            lock (sent) {
+                if (sent.TryGetValue(questName, out var previousId) && previousId != message.QuestID) {
+                    Logger.Debug("Quest '{0}' of {1} goes to the client as {2}; its earlier copy {3} is taken off first.",
+                        Logger.Args(questName, wizard.CharId, message.QuestID, previousId));
+                    SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = previousId });
+                }
+
+                sent[questName] = message.QuestID;
+            }
+        }
+
+        SendToSocket(message);
+    }
+
+    // Quests the client was sent that the wizard no longer holds under that ID are taken off its list.
+    private void ForgetStaleClientQuests(Wizard wizard) {
+        if (wizard is null || !s_clientQuestIds.TryGetValue(wizard.CharId, out var sent)) {
+            return;
+        }
+
+        var currentIds = wizard.QuestBehavior.CurrentQuestInstances
+            .Where(q => q is not null)
+            .Select(q => q.ID)
+            .ToHashSet();
+        lock (sent) {
+            foreach (var (questName, questId) in sent.ToList()) {
+                if (currentIds.Contains(questId)) {
+                    continue;
+                }
+
+                sent.Remove(questName);
+                SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = questId });
+            }
         }
     }
 

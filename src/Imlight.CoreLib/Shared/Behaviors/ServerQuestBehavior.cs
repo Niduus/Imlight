@@ -42,7 +42,7 @@ public class ServerQuestBehavior : IClientBehaviorProvider<ServerQuestBehavior> 
         }
 
         if (CurrentQuestIDs.Contains(quest.ID)
-            || CurrentQuestInstances.Any(q => q is not null && q.QuestName == quest.QuestName)) {
+            || CurrentQuestInstances.Any(q => q is not null && string.Equals(q.QuestName, quest.QuestName, StringComparison.OrdinalIgnoreCase))) {
             return false;
         }
 
@@ -126,7 +126,7 @@ public class ServerQuestBehavior : IClientBehaviorProvider<ServerQuestBehavior> 
             return false;
         }
 
-        return CurrentQuestInstances.Any(q => q.QuestName == questName);
+        return CurrentQuestInstances.Any(q => q is not null && string.Equals(q.QuestName, questName, StringComparison.OrdinalIgnoreCase));
     }
 
     public bool HasCompletedQuest(string questName) {
