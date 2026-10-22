@@ -641,7 +641,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
     /// <summary>
     /// Moves each wizard's health globe as the round plays: one MSG_UPDATEHEALTH per step that changed their health,
-    /// when that step's animation is over. The globe only moved on the next round's combat health (Justin,
+    /// when that step's animation is over. The globe only moved on the next round's combat health (Niduus,
     /// 2026-10-22: "when it became the next turn, it did sync, but want it live and dynamic").
     /// </summary>
     private void ScheduleHealthGlobes() {
@@ -919,10 +919,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, DUEL_GRACE_PERIOD_IN_SECONDS));
     }
 
-    // A spiraldb-extra/ZoneObjects encounter (Justin, 2026-10-21: Malistaire the Undying with 3 random Draconians):
+    // A spiraldb-extra/ZoneObjects encounter (Niduus, 2026-10-21: Malistaire the Undying with 3 random Draconians):
     // a battle started against its boss gets MinionCount different minions on the boss's side. The zone's own
     // creatures of the encounter's templates that are walking the room come first, as on live where the minions are
-    // there before the battle (Justin, 2026-10-22); a short wait later, the ones still missing are spawned, picked at
+    // there before the battle (Niduus, 2026-10-22); a short wait later, the ones still missing are spawned, picked at
     // random among the templates not already in. They take the free enemy circles before the first round.
     private void AddEncounterMinions(CombatDuelSubCircle bossCircle, CoreObject boss) {
         _battle++;
@@ -957,7 +957,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             || SubCircles.Any(x => x?.ParticipantObject?.m_globalID == creature.m_globalID)
             // The encounter says how many minions fight (MinionCount), so the usual cap of 2 creatures plus one per
             // wizard does not apply: with one wizard in, only 1 of the room's Draconians joined and the other 2 stayed
-            // walking the room while 2 more were spawned into the circle (Justin, 2026-10-22). A free circle is enough.
+            // walking the room while 2 more were spawned into the circle (Niduus, 2026-10-22). A free circle is enough.
             || GetAvailableSubCircleTeamCreature() is null) {
             return;
         }
@@ -1011,7 +1011,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         m_maxArchmasteryTeam1 = CombatDuelSubCircle.SchoolGaugeOn ? 100f : 0f,
         // TODO: boss cheats. No boss has scripted behavior yet: combat triggers are always empty and
         // NPCBehaviorTemplate.m_triggerList is never read. Needs a trigger hook (round start, spell cast, health
-        // thresholds) and a script per boss. Not to be taken from Wizard101 Central (Justin, 2026-10-18).
+        // thresholds) and a script per boss. Not to be taken from Wizard101 Central (Niduus, 2026-10-18).
         m_duelModifier = new DuelModifier() {
             m_battlefieldEffects = [],
             m_combatTriggers = [],
@@ -1328,7 +1328,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     }
 
     // A wizard who joins a battle that is running must see every creature in it, and a creature that joins must be seen
-    // by every wizard in it (Justin, 2026-10-22: after coming back into a battle the enemy circles were empty while the
+    // by every wizard in it (Niduus, 2026-10-22: after coming back into a battle the enemy circles were empty while the
     // battle went on; the game had no object for the creature, so it drew nothing and its name was blank). Each creature
     // sends its object to the wizard again; a game that has it already ignores the copy.
     private void ShowCreaturesOfDuel(CombatDuelSubCircle joined) {
@@ -2077,7 +2077,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return false;
         }
 
-        // The target card comes as a plain index: reading it as a bit first (0.9.24 to 0.9.71) put Justin's
+        // The target card comes as a plain index: reading it as a bit first (0.9.24 to 0.9.71) put Niduus's
         // Daybreaker for Tower Shield (raw 2) on Sun Serpent (index 1). The bit reading is only a fallback.
         var isBit = rawSpellTarget != 0 && (rawSpellTarget & (rawSpellTarget - 1)) == 0;
         var candidates = isBit ? new[] { rawSpellTarget, spellTarget } : new[] { rawSpellTarget };
@@ -2145,7 +2145,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     }
 
     // drainMana: only the Flee button costs mana. Logging out, a dropped connection or leaving the zone took it all as
-    // well (Justin, 2026-10-22: after logging out of a battle and back in to rejoin it, his mana was gone).
+    // well (Niduus, 2026-10-22: after logging out of a battle and back in to rejoin it, his mana was gone).
     private void HandleFleeAction(CombatDuelSubCircle caster, bool drainMana = true) {
         if (!_isActive) {
             return;
@@ -2265,7 +2265,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         Duel.m_flatParticipantList.Add(participant);
     }
 
-    // [Battle] LateJoinersJoinImmediately (Justin, 2026-10-22: "joining late should immediately put that wizard in"):
+    // [Battle] LateJoinersJoinImmediately (Niduus, 2026-10-22: "joining late should immediately put that wizard in"):
     // a wizard who steps in after the round began plays this round, not the next one.
     private static readonly bool s_lateJoinersJoinImmediately
         = ConfigurationManager.GetValue("Battle.LateJoinersJoinImmediately", true);
@@ -2461,7 +2461,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         });
     }
 
-    // .joinme (Justin, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
+    // .joinme (Niduus, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]
     private void ReceiveCheatJoinMe(COMBAT_106_PROTOCOL.MSG_CHEATJOINME message) {
         var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
@@ -2883,7 +2883,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         // A wizard defeated in a battle their team won stays where they are and gets up with a little health, as on
-        // live (Justin, 2026-10-22: his friend was sent out of the Malistaire room after they won). Only a lost battle
+        // live (Niduus, 2026-10-22: his friend was sent out of the Malistaire room after they won). Only a lost battle
         // or a flee sends a wizard to the hub or the room's exit. Die = Delete keeps its rule: still dead at the end.
         if (!circle.IsAlive && playersWin && !Duel.m_bPVP && !s_dieDelete) {
             ReviveAfterWin(circle);

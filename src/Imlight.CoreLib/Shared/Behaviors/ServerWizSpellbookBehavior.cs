@@ -40,7 +40,7 @@ public class ServerWizSpellbookBehavior : ServerSpellbookBehavior {
     [JsonIgnore] public int MaxTreasureCards { get; set; }
 
     // One entry per crossed out copy: gear can give the same card more than once, and with a set only one of two
-    // crossed out copies stayed crossed out after a zone change (Justin, 2026-10-19).
+    // crossed out copies stayed crossed out after a zone change (Niduus, 2026-10-19).
     public Dictionary<ulong, List<uint>> ExcludedItemSpellIds { get; set; } = [];
 
     public void InitializeProperties(DeckBehaviorTemplate deckTemplate) {

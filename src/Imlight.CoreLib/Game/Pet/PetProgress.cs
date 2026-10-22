@@ -55,7 +55,7 @@ internal static class PetProgress {
     // Double XP & Rewards, which the feed window shows: snack experience counts twice.
     private static bool DoubleSnackXp => s_doubleSnackXp ??= ReadSetting("Pets.DoubleSnackXp", true);
 
-    // Renamed from FavoriteSnackBonus (was 1.5) so old ini values do not stick; Justin's rule has no liked bonus.
+    // Renamed from FavoriteSnackBonus (was 1.5) so old ini values do not stick; Niduus's rule has no liked bonus.
     private static float LikedSnackBonus => s_likedSnackBonus ??= Math.Max(0f, ReadSetting("Pets.LikedSnackBonus", 1.0f));
 
     private static T ReadSetting<T>(string key, T defaultValue) {
@@ -398,7 +398,7 @@ internal static class PetProgress {
             return "Type an amount or max, such as .pet stats strength 150 or .pet stats will max.";
         }
 
-        // An amount above the maximum raises the maximum to it (Justin, 2026-10-19: Strength 220 to 260).
+        // An amount above the maximum raises the maximum to it (Niduus, 2026-10-19: Strength 220 to 260).
         var wanted = useMax ? 0 : Math.Max(0, int.Parse(amount));
         if (string.Equals(statName, "happiness", StringComparison.OrdinalIgnoreCase)) {
             if (!useMax && wanted > behavior.m_maximumHappiness) {
@@ -504,7 +504,7 @@ internal static class PetProgress {
     }
 
     /// <summary>
-    /// The experience a snack gives (Justin, 2026-10-19): the stat numbers on its card added up (Decaversary Cake:
+    /// The experience a snack gives (Niduus, 2026-10-19): the stat numbers on its card added up (Decaversary Cake:
     /// +15 Agility, +15 Intellect, +25 Power = 55), twice that with Double XP, times LikedSnackBonus for a snack the
     /// pet likes.
     /// </summary>
@@ -523,7 +523,7 @@ internal static class PetProgress {
 
     /// <summary>
     /// The stat changes a snack gives: the numbers on its card, twice those with Double XP &amp; Rewards and
-    /// DoubleSnackStats (Justin, 2026-10-19).
+    /// DoubleSnackStats (Niduus, 2026-10-19).
     /// </summary>
     internal static IEnumerable<PetStatModification> SnackStatChanges(PetSnackItemTemplate snack) {
         var changes = snack?.m_statModifierSet?.m_modifications ?? [];
@@ -610,7 +610,7 @@ internal static class PetProgress {
             yield return new ProvideSpellEffectInfo {
                 // The game looks the effect up by this name in its own list (WizardEffects.xml): "ProvideSpell" is the
                 // plain card-giving effect. A made-up name such as "PetPowerCard" matched nothing there, so the deck
-                // window never listed the card with the item cards (Justin, 2026-10-19).
+                // window never listed the card with the item cards (Niduus, 2026-10-19).
                 m_effectName = "ProvideSpell",
                 m_spellName = names[i],
                 m_numSpells = copies,
@@ -697,7 +697,7 @@ internal static class PetProgress {
         }
 
         // Selfish talents raise the maximum: the pet's own and the one of a jewel in its socket (Mighty is +65
-        // Strength). Taking the jewel out puts the maximum back (Justin, 2026-10-20).
+        // Strength). Taking the jewel out puts the maximum back (Niduus, 2026-10-20).
         var pet = s_pets.TryGetValue(behavior, out var found) ? found : null;
         var bonus = (behavior.m_expressedTalents ?? [])
             .Select(PetData.GetTalent)
@@ -711,7 +711,7 @@ internal static class PetProgress {
             BaseMaxStat(template, petId, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
             petId == 0 ? 0 : CappedRaise(petId, name))))];
 
-        // Selfish talents raise only the maximum; the stat itself still has to be trained up (Justin, 2026-10-20).
+        // Selfish talents raise only the maximum; the stat itself still has to be trained up (Niduus, 2026-10-20).
         // 0.10.17 added their points to the stat too, so those points are taken back once.
         foreach (var stat in behavior.m_currentStats ?? []) {
             if (petId != 0 && PetSelfishStats.Get(petId, stat.m_name) is var added and not 0) {
@@ -724,7 +724,7 @@ internal static class PetProgress {
     }
 
     // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
-    // do (Justin, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
+    // do (Niduus, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
     private static int CappedRaise(ulong petId, string name) {
         var raise = PetMaxRaises.Get(petId, name);
         var most = PetRules.MaxStat(name);
@@ -734,7 +734,7 @@ internal static class PetProgress {
 
     // The pet's own maximum (its kind's, or its parents' from hatching) under the server's ceiling ([Pets] MaxStrength
     // and the others, 260 by default). Until 2026-10-22 the ceiling itself was every pet's maximum, so a new pet showed
-    // 260 everywhere (Justin, 2026-10-22). A pet from before then has no own maximum saved and keeps the ceiling it
+    // 260 everywhere (Niduus, 2026-10-22). A pet from before then has no own maximum saved and keeps the ceiling it
     // had, so no pet loses stats.
     private static int BaseMaxStat(PetItemBehaviorTemplate template, ulong petId, string name) {
         var ceiling = PetRules.MaxStat(name);

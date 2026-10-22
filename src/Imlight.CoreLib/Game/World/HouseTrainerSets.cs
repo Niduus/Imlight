@@ -30,7 +30,7 @@ using Imlight.CoreLib.WizardData.Models.World;
 namespace Imlight.CoreLib.Game.World;
 
 /// <summary>
-/// Set trainers (Justin, 2026-10-19): every spell the game's own trainers teach, plus Merle's boss spells and the dev
+/// Set trainers (Niduus, 2026-10-19): every spell the game's own trainers teach, plus Merle's boss spells and the dev
 /// cards, split by kind (attacks, shields, traps, mantles...) into parts of at most <see cref="SpellsPerTrainer"/>, one
 /// part per trainer tome ("Shield Trainer 1", "Shield Trainer 2", ...). A part never takes spells of the next kind. The tomes of a house are handed the parts in order along their row, starting at
 /// the end where the first tome was placed; `.hall flip` starts from the other end. Which tome holds which part is
@@ -187,7 +187,7 @@ internal static class HouseTrainerSets {
         return ordered;
     }
 
-    // The kinds of trainer, in the order they go down the row (Justin, 2026-10-19: "Trainers with Shields, Mantle,
+    // The kinds of trainer, in the order they go down the row (Niduus, 2026-10-19: "Trainers with Shields, Mantle,
     // Traps and so on. Boss cards are their own along with dev cards").
     private static readonly string[] s_kindOrder = [
         "Attack", "All-Enemy Attack", "Heal", "Blade", "Shield", "Trap", "Mantle & Weakness", "Aura", "Global",
@@ -213,7 +213,7 @@ internal static class HouseTrainerSets {
                 .Select(entry => (Id: entry.TemplateID, Level: 0, Spell: CoreObjectFactory.GetCoreTemplate(entry.TemplateID) as SpellTemplate, Kind: "Boss"))
                 .Where(spell => spell.Spell is not null);
 
-            // The weaving (formula) spells, trained or boss, are trainers of their own (Justin).
+            // The weaving (formula) spells, trained or boss, are trainers of their own (Niduus).
             var weaving = WeavingIds();
             var spells = trained.Concat(boss).Concat(DevSpells())
                 .Select(spell => weaving.Contains((uint) spell.Id) ? spell with { Kind = "Weaving" } : spell)

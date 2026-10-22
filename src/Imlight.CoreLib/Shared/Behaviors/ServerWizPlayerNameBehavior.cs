@@ -59,7 +59,7 @@ public class ServerWizPlayerNameBehavior : IClientBehaviorProvider<ClientWizPlay
 
     public string GetWizardNameAsByteHexString() {
         // A custom name is sent as itself, so chat, friends and groups show it rather than the name the keys make
-        // (Justin, 2026-10-21: chat said "Mycin LotusKey" for Walter Blanco).
+        // (Niduus, 2026-10-21: chat said "Mycin LotusKey" for Walter Blanco).
         if (TryGetOverrideNameBytes(out var overrideBytes)) {
             return string.Join(" ", overrideBytes.Select(x => x.ToString("X2")));
         }

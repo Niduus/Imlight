@@ -65,7 +65,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     );
 
     // Building every list takes several seconds. Done on the first request, the window gave up waiting and stayed
-    // empty (Justin's log of 2026-10-19), so the lists are built in the background as soon as a player logs in.
+    // empty (Niduus's log of 2026-10-19), so the lists are built in the background as soon as a player logs in.
     private static readonly Lazy<System.Threading.Tasks.Task> s_warmUp = new(() => System.Threading.Tasks.Task.Run(() => {
         try {
             _ = s_treasureCards.Value;
@@ -133,7 +133,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             case 5:
             case 7:
             case 8:
-                // Buy More is 7 (template only) and Sell More is 8 (with the held item's id), per Justin's log. The
+                // Buy More is 7 (template only) and Sell More is 8 (with the held item's id), per Niduus's log. The
                 // request is matched by what its ids name: a snack or an item the player holds is sold, a bazaar
                 // entry is bought.
                 Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}).",
@@ -169,7 +169,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             LastSegment = 0
         });
 
-        // The game shows only the first list of a visit (Justin, 2026-10-19). Anything past [Bazaar] OneList goes as
+        // The game shows only the first list of a visit (Niduus, 2026-10-19). Anything past [Bazaar] OneList goes as
         // stock updates, which did not add to the list when tried, so OneList should hold everything.
         SendUpdates(entryList.Skip(s_oneList));
     }
@@ -189,7 +189,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private const int UPDATE_ENTRIES = 800;
 
     // [Bazaar] OneList: how many entries the first list may hold. Big lists used to drop the connection, but that was
-    // the long frame length bug (see SocketSender.FixLongFrameLength); 2946 in one list worked after the fix (Justin,
+    // the long frame length bug (see SocketSender.FixLongFrameLength); 2946 in one list worked after the fix (Niduus,
     // 2026-10-19). The list is written with a 16-bit byte length, so 20-byte entries top out at MAX_ONE_LIST. Whatever
     // does not fit goes as stock updates, which the game did not add to the list.
     private const int MAX_ONE_LIST = (ushort.MaxValue - 8) / 20;
@@ -197,7 +197,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
 
     // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
-    // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Justin,
+    // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Niduus,
     // 2026-10-19). Off sends each tab only its own items.
     private static readonly bool s_sendEverything
         = Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
@@ -208,7 +208,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     /// <summary>
     /// Everything the bazaar sells, with the tab asked for first and then the rest of its window. The game shows only
     /// the first list of a visit, so every shortcut has to bring every tab's items, or the tabs of the other shortcuts
-    /// stay empty (Justin, 2026-10-19). One list holds at most MAX_ONE_LIST, so what comes last can be cut.
+    /// stay empty (Niduus, 2026-10-19). One list holds at most MAX_ONE_LIST, so what comes last can be cut.
     /// </summary>
     private static List<AuctionHouseEntry> WholeBazaar(uint category) {
         IEnumerable<AuctionHouseEntry> snacks = s_snacks.Value.Values.Select(snack => snack.Entry);
@@ -240,7 +240,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static List<AuctionHouseEntry> EntriesFor(uint category) {
         var schoolCards = s_shownTreasureCards.Value.Where(card => card.SchoolHash == category).ToList();
         if (schoolCards.Count > 0 || IsTreasureCardCategory(category)) {
-            // One school at a time (Justin): the tab's general request gets the first school, not every card.
+            // One school at a time (Niduus): the tab's general request gets the first school, not every card.
             var cards = schoolCards.Count > 0 ? schoolCards : FirstSchoolCards();
 
             return [.. cards.Take(Math.Min(s_treasureCardLimit, MAX_ENTRIES)).Select(card => card.Entry)];
@@ -248,7 +248,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         if (category == MIXED_CATEGORY) {
             // The window with the snack, reagent, jewel and pin tabs asks this first and fills every one of its tabs
-            // from the answer: only snacks were in it, and only the snack tab had anything (Justin, 2026-10-19).
+            // from the answer: only snacks were in it, and only the snack tab had anything (Niduus, 2026-10-19).
             return [.. s_snacks.Value.Values.Select(snack => snack.Entry)
                 .Concat(s_reagents.Value.ById.Values)
                 .Concat(s_jewelShapes.SelectMany(shape => s_jewels.Value.ByCategory.TryGetValue(StringHash.Compute(shape), out var list)
@@ -267,7 +267,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         if (s_jewels.Value.ByCategory.TryGetValue(category, out var jewels)) {
-            // The Star tab (pet jewels) lists every one of them (Justin, 2026-10-19); the other tabs stay short.
+            // The Star tab (pet jewels) lists every one of them (Niduus, 2026-10-19); the other tabs stay short.
             return [.. jewels.Take(category == s_petJewelTab ? MAX_ENTRIES : s_catalogLimit)];
         }
 
@@ -317,7 +317,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         // The game sends the id with the bazaar's type bits on top (9 << 40); the template is the low 32 bits.
-        // Jewels failed to buy with the full id (Justin, 2026-10-19).
+        // Jewels failed to buy with the full id (Niduus, 2026-10-19).
         Logger.Information("Bazaar: buying {0}.", Logger.Args(templateId));
         templateId &= 0xFFFFFFFFUL;
         if (CoreObjectFactory.FinalizeCoreObject(templateId) is not WizClientObjectItem item) {
@@ -771,14 +771,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         return snacks;
     }
 
-    // Reagents, jewels and pins in the bazaar (Justin, for testing): every one, never sold out, for 1 gold each.
+    // Reagents, jewels and pins in the bazaar (Niduus, for testing): every one, never sold out, for 1 gold each.
     private const int CATALOG_STOCK = 999;
     private const int CATALOG_PRICE = 1;
     private const string REAGENT_FOLDER = "ObjectData/Reagents/";
     private const string JEWEL_FOLDER = "ObjectData/Jewels/";
 
     // Every tab asks with an adjective: the reagent window has Reagent (all of them) and one tab per kind, the jewel
-    // window one tab per shape. Seen in Justin's log of 2026-10-19.
+    // window one tab per shape. Seen in Niduus's log of 2026-10-19.
     private static readonly string[] s_reagentKinds = [
         "Reagent", "ReagentHarvest", "ReagentHarvestRare", "ReagentShop", "ReagentDrop", "ReagentEvent", "ReagentShard", "ReagentPet",
     ];
@@ -789,7 +789,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private static readonly uint s_petJewelTab = StringHash.Compute("PetJewel");
 
     // [Bazaar] TabItems: how many reagents, jewels or pins one tab lists. Square jewels showed only the first 120
-    // (Justin, 2026-10-19), so every one is sent now.
+    // (Niduus, 2026-10-19), so every one is sent now.
     private static readonly int s_catalogLimit
         = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
 
@@ -821,7 +821,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 continue;
             }
 
-            // Every jewel and pin (Justin, 2026-10-19: Tear had only the mana ones; the health and card ones are all
+            // Every jewel and pin (Niduus, 2026-10-19: Tear had only the mana ones; the health and card ones are all
             // FLAG_NoAuction).
             if (keepAll && ((string) template.m_objectName ?? "").Contains("TEST")) {
                 continue;
@@ -853,7 +853,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         // Lowest level first: a tab lists only the first TabItems items, and in file order those were mostly
-        // high level jewels and pins (pins start at level 40), none of which showed (Justin, 2026-10-19).
+        // high level jewels and pins (pins start at level 40), none of which showed (Niduus, 2026-10-19).
         foreach (var list in byCategory.Values) {
             list.Sort((a, b) => levels[(ulong) a.m_templateID].CompareTo(levels[(ulong) b.m_templateID]) is var byLevel and not 0
                 ? byLevel

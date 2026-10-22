@@ -166,7 +166,7 @@ internal static class EquipmentExtras {
                     wizard.AppliedPetEffects.Add((name, effect));
 
                     // Also listed as an effect of the pet's slot, like gear's: the stats page adds up those effects,
-                    // so without it a talent showed only in the hover text, not as a number (Justin, 2026-10-19).
+                    // so without it a talent showed only in the hover text, not as a number (Niduus, 2026-10-19).
                     var shown = effect with {
                         m_itemSlotID = ItemHelper.GetItemSlotHash(template),
                         m_internalID = wizard.NextEffectId(),
@@ -196,7 +196,7 @@ internal static class EquipmentExtras {
 
                                 // Also listed as an effect of the item's slot, like the pet's talents: the stats page
                                 // adds up those effects, so a jewel's flat resist showed only in the hover text, not
-                                // in the row under the schools (Justin, 2026-10-19).
+                                // in the row under the schools (Niduus, 2026-10-19).
                                 if (GameEffectFactory.CreateEffectFromInfo(info, ItemHelper.GetItemSlotHash(template)) is { } shown) {
                                     shown.m_internalID = wizard.NextEffectId();
                                     wizard.GameEffects.Add(shown);

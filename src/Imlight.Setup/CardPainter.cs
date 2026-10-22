@@ -345,7 +345,7 @@ internal sealed class CardCanvas(int width, int height, int originX = 0, int ori
 
 
 /// <summary>
-/// Draws a spell's card the way the game does (Justin, 2026-10-21: "previewing what the card looks like in game";
+/// Draws a spell's card the way the game does (Niduus, 2026-10-21: "previewing what the card looks like in game";
 /// 2026-10-22: "Improve Render of Spell Cards (Also including the x1 symbol)"): the card frame from GUI/Cards (the
 /// school's, or the treasure or item frame), the spell's art behind it, the name across the top in the game's card
 /// font, the pip cost in the triangle, the school icon in the round socket, the spell's own accuracy on the target,

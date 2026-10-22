@@ -383,7 +383,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             }
 
             // A No Shatter jewel goes back to the backpack; any other jewel shatters on the way out unless
-            // [Jewels] KeepShatteredJewels is on (Justin, 2026-10-20).
+            // [Jewels] KeepShatteredJewels is on (Niduus, 2026-10-20).
             var jewelTemplateId = JewelSockets.Unsocket(item, message.SocketNumber);
             var noShatter = JewelSockets.IsNoShatter(CoreObjectFactory.GetCoreTemplate(jewelTemplateId) as WizItemTemplate);
             if (jewelTemplateId == 0) {

@@ -26,7 +26,7 @@ using Imlight.Setup.Blocks;
 namespace Imlight.Setup;
 
 /// <summary>
-/// Every block a boss cheat can be built from (Justin, 2026-10-22: "cheats can have their conditions and such able to
+/// Every block a boss cheat can be built from (Niduus, 2026-10-22: "cheats can have their conditions and such able to
 /// be modified and created"), with the words it shows and what it means. The server reads them as the cheat fields of
 /// spiraldb-extra/BossCheats (see the top of the server's BossCheats.cs): When blocks set When and its numbers, If
 /// blocks set a condition field each, and Do blocks are the cheat's Actions.

@@ -33,7 +33,7 @@ using Imlight.Setup.Blocks;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Cheats section of the boss and custom editors (Justin, 2026-10-21: "modify cheats like the spells that get
+/// The Cheats section of the boss and custom editors (Niduus, 2026-10-21: "modify cheats like the spells that get
 /// cast? Default if unchanged"; 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be
 /// modified and created" and "'block'-like programming"). Each cheat is a script of snapped blocks: a When block, If
 /// blocks and Do blocks, built from the palette at the side. The game's cheats can be changed, turned off or put back

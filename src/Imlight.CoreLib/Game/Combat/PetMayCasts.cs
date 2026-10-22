@@ -1,5 +1,5 @@
 /*
- * Pet May Cast talents (Justin, 2026-10-20), set in [PetCasting] of Imlight.ini.
+ * Pet May Cast talents (Niduus, 2026-10-20), set in [PetCasting] of Imlight.ini.
  *
  * A talent such as Guardian Wall ("Maycast [Tower Shield]") casts the game's pet copy of its card ("Pet - Tower
  * Shield"), for free and on the pet's owner. Each May Cast can go off when the
@@ -30,17 +30,17 @@ internal static class PetMayCasts {
     internal static readonly bool Enabled = ConfigurationManager.GetValue("PetCasting.Enabled", true);
     internal static readonly int MaxPerRound = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxPerRound", 1));
     // Flagged as the pet's, the game looked for the card in the owner's hand and skipped it ("does not spell in
-    // hand"; Justin's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
+    // hand"; Niduus's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
     internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
     internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
     internal static readonly bool Chain = ConfigurationManager.GetValue("PetCasting.Chain", true);
     // The most seconds the next round waits for each May Cast's animation. The cinematic timings ran ~1 s long per
-    // pet cast (Justin's log, 2026-10-20: 16 casts, the round started 15 s after he saw them end).
+    // pet cast (Niduus's log, 2026-10-20: 16 casts, the round started 15 s after he saw them end).
     internal static readonly float CastSeconds = Math.Max(1f, ConfigurationManager.GetValue("PetCasting.CastSeconds", 4f));
     internal static readonly int MaxChain = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
     internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
     // The game takes a card's pips from its template rank plus m_regularAdjust (m_pipCost is never sent), so the pet's
-    // copy goes out with the rank taken off (Justin, 2026-10-20: pets drained his pips and kept casting at 0).
+    // copy goes out with the rank taken off (Niduus, 2026-10-20: pets drained his pips and kept casting at 0).
     internal static readonly bool ZeroCost = ConfigurationManager.GetValue("PetCasting.ZeroCost", true);
     /// <summary>
     /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
@@ -152,7 +152,7 @@ internal static class PetMayCasts {
 
     /// <summary>
     /// The card for a May Cast: the game's pet copy of it ("Pet - Tower Shield", from PetTalentsTriggeredSpells.xml;
-    /// Justin, 2026-10-20), else the card named in the talent's description, else that pet spell without its
+    /// Niduus, 2026-10-20), else the card named in the talent's description, else that pet spell without its
     /// "Pet - " name, else a card shown with the description's name.
     /// </summary>
     private static string FindCard(string cardName, PetTalentTemplate talent) {

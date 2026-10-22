@@ -29,7 +29,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.hatch <pet 1> <pet 2>` hatches two of your own pets at once, for players alone (Justin, 2026-10-20). A pet is
+/// `.hatch <pet 1> <pet 2>` hatches two of your own pets at once, for players alone (Niduus, 2026-10-20). A pet is
 /// named by its number in `.hatch`'s list, its item id, or words of its name.
 /// </summary>
 internal class CommandHatchProtocol : CommandProtocol {

@@ -863,7 +863,7 @@ internal static class CombatEffectApplicator {
     /// Gear and jewel stats are stored in percent (15 for 15%, CanonicalStatEffects multiplies them by 100 for the
     /// game), pet talents and creatures as a fraction (0.15). A total above 1.5 can only come from percent, since no
     /// fraction source gives that much, so it is turned back into a fraction. Before this a player with 15% resist
-    /// took no damage at all, 1 - 15 being below zero (Justin: "it said I had immunity", 2026-10-20).
+    /// took no damage at all, 1 - 15 being below zero (Niduus: "it said I had immunity", 2026-10-20).
     /// </summary>
     internal static float AsFraction(float value)
         => Math.Abs(value) > 1.5f ? value / 100f : value;
@@ -878,7 +878,7 @@ internal static class CombatEffectApplicator {
 
     /// <summary>
     /// The caster's pierce (armor piercing) for a school as a fraction, 0 to 1. Gear, jewels and the Bosses tab give it
-    /// (m_apBonusPercent); before this nothing in battle read it (Justin, 2026-10-21: "I want specifics covered").
+    /// (m_apBonusPercent); before this nothing in battle read it (Niduus, 2026-10-21: "I want specifics covered").
     /// </summary>
     internal static float GetPierce(CombatDuelSubCircle caster, string damageType) {
         var stats = caster.ParticipantGameStats;

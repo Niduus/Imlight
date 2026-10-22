@@ -65,7 +65,7 @@ internal static class PetRules {
 
     /// <summary>
     /// The ceiling on a pet stat's own maximum before talents and jewels: [Pets] MaxStrength, MaxIntellect, MaxAgility,
-    /// MaxWill and MaxPower (260 by default, Justin 2026-10-20). A pet whose kind or parents give less keeps less; it
+    /// MaxWill and MaxPower (260 by default, Niduus 2026-10-20). A pet whose kind or parents give less keeps less; it
     /// is not raised to this. 0 means no ceiling.
     /// </summary>
     internal static int MaxStat(string stat)
@@ -73,7 +73,7 @@ internal static class PetRules {
 
     /// <summary>
     /// [Pets] StartAtMaxStats: when true, a new pet (bought, dropped, given or hatched) gets the server maximum
-    /// (MaxStrength and the others) as its maximum and starts with every stat at it. Off by default (Justin,
+    /// (MaxStrength and the others) as its maximum and starts with every stat at it. Off by default (Niduus,
     /// 2026-10-22): a new pet gets its kind's own maximum, or its parents' from hatching, and starts at its kind's
     /// starting stats; games and snacks train the stats up from there.
     /// </summary>
@@ -87,13 +87,13 @@ internal static class PetRules {
     /// <summary>
     /// When true (the real game), experience past a new age counts toward the next age (244/250 + 110 is the new age
     /// at 104). When false, the extra is lost and the pet starts the new age at 0. Replaces XpCarriesOver, whose old
-    /// false in Justin's ini would otherwise stick (Justin, 2026-10-19).
+    /// false in Niduus's ini would otherwise stick (Niduus, 2026-10-19).
     /// </summary>
     internal static bool KeepExtraXp { get; } = ConfigurationManager.GetValue("Pets.KeepExtraXp", true);
 
     /// <summary>
     /// When true, a pet's XP is a running total that is not reset at a new age, so the 125 XP that made it a Teen
-    /// counts toward the 250 for Adult. Off by default; the real game starts each age over (Justin, 2026-10-19).
+    /// counts toward the 250 for Adult. Off by default; the real game starts each age over (Niduus, 2026-10-19).
     /// </summary>
     internal static bool RunningTotalXp { get; } = ConfigurationManager.GetValue("Pets.RunningTotalXp", false);
 
@@ -108,7 +108,7 @@ internal static class PetRules {
     internal static bool SkipShowsFeedWindow { get; } = ConfigurationManager.GetValue("Pets.SkipShowsFeedWindow", true);
 
     /// <summary>
-    /// When true, a skipped pet game gives its XP and the stats of a track like a win. Off by default (Justin,
+    /// When true, a skipped pet game gives its XP and the stats of a track like a win. Off by default (Niduus,
     /// 2026-10-19): only the snack fed after the skip counts.
     /// </summary>
     internal static bool SkipGameRewards { get; } = ConfigurationManager.GetValue("Pets.SkipGameRewards", false);

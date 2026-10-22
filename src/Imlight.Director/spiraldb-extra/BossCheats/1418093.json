@@ -1,6 +1,6 @@
 {
   // Monstrology copy of Malistaire the Undying, Castle Darkmoor (G14_DM_Malistaire_Boss_MM); same as 1336035.json.
-  // From Wizard101 Central's pages for "Malistaire the Undying (Shadow)" and "Haunted Malistaire" (Justin saved them, 2026-10-21).
+  // From Wizard101 Central's pages for "Malistaire the Undying (Shadow)" and "Haunted Malistaire" (Niduus saved them, 2026-10-21).
   // Mega Taunt - Shadow gives him an afterlife: when defeated he comes back with 100 health. Under 1,000 health he casts
   // Afterlife - Malistaire 02, which polymorphs him in his own circle into Haunted Malistaire (G14-DM-Malistaire_Shadow,
   // model and 48,000 health) until the battle ends; from then on his cheats come from 1336037.json and he draws its deck.

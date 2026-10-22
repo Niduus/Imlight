@@ -1,7 +1,7 @@
 /*
  * PET STITCH
  *
- * Justin (2026-10-20): Prospector Zeke stitches pets like Eloise stitches gear. One pet keeps its stats,
+ * Niduus (2026-10-20): Prospector Zeke stitches pets like Eloise stitches gear. One pet keeps its stats,
  * level and talents and takes the look of the other, which is used up. Unstitching gives the look back as
  * a new baby pet. The pet is changed in place (a fresh pet from its template would lose its talents).
  */

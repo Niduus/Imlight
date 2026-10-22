@@ -32,7 +32,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Bosses tab (Justin, 2026-10-21: "edit the bosses deck and stats"): pick a boss, change its health, stats and
+/// The Bosses tab (Niduus, 2026-10-21: "edit the bosses deck and stats"): pick a boss, change its health, stats and
 /// spells, and save. The server lays the saved file over the game's values from the boss's next battle.
 /// </summary>
 internal sealed partial class ManagerWindow {

@@ -140,7 +140,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
 
     /// <summary>
     /// An item the game cannot make (no such template, or a bundle, which is only ever claimed, never held) makes it
-    /// drop the whole backpack and the connection at login (Justin, 2026-10-21: "can't load my character"). Such items
+    /// drop the whole backpack and the connection at login (Niduus, 2026-10-21: "can't load my character"). Such items
     /// are left out of what the game is sent.
     /// </summary>
     private static bool CanSendToGame(WizClientObjectItem item) {

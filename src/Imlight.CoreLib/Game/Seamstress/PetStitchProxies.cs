@@ -3,7 +3,7 @@
  *
  * The game's stitch window only lists hats, robes, boots and wands from the backpack it knows. So when a pet
  * stitcher (Prospector Zeke) opens it, the client is told about one stand-in wand per pet, named after the pet
- * (Justin, 2026-10-20: "trick Zeke to only show pets"). The stand-ins are never saved; a stitch request naming
+ * (Niduus, 2026-10-20: "trick Zeke to only show pets"). The stand-ins are never saved; a stitch request naming
  * them is mapped back to the pets, and they are taken away again after the request or the next visit.
  */
 

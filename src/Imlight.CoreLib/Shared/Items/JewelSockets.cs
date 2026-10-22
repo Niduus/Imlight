@@ -67,7 +67,7 @@ internal static class JewelSockets {
     /// <summary>
     /// Whether a jewel is No Shatter, so taking it out returns it instead of destroying it. The No Shatter jewels
     /// (the Blackhawk and AM pet jewels: Stuff of Legends Peridot, Lifesaver Jade...) are the jewels marked No Sell,
-    /// and carry an extra behavior (DeletedBehavior, or a second PetJewelBehavior on Lifesaver Jade) (Justin, 2026-10-20).
+    /// and carry an extra behavior (DeletedBehavior, or a second PetJewelBehavior on Lifesaver Jade) (Niduus, 2026-10-20).
     /// </summary>
     internal static bool IsNoShatter(WizItemTemplate template) {
         if (template is null) {

@@ -183,7 +183,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     /// <summary>
     /// Summons the pet again after it reached a new age: the age and talent rating shown with the pet in the world
-    /// (Ancient 15 (51)) come from the summoned copy, which kept the old ones until the next login (Justin, 2026-10-19).
+    /// (Ancient 15 (51)) come from the summoned copy, which kept the old ones until the next login (Niduus, 2026-10-19).
     /// </summary>
     private void ResummonAfterLevelUp(WizClientObjectItem pet, PetProgress.PetGrowth growth) {
         if (pet is not null && growth is { LevelsGained: > 0 }) {
@@ -322,7 +322,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
     /// <summary>
     /// Sends the pet's new state, then the feed result. The feed window shows the XP and stats the pet has when the
     /// result arrives, so sending the state after it showed the numbers from before the snack (46 +15 instead of
-    /// 61 +15). The level-up window did not show when sent after it either (Justin, 2026-10-19).
+    /// 61 +15). The level-up window did not show when sent after it either (Niduus, 2026-10-19).
     /// </summary>
     private void SendHeldThenFeedResult(List<IMessage> held, string gameName, uint xpGained, PetStatModificationSet statMods) {
         held.ForEach(SendToSocket);
@@ -405,7 +405,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
     /// <summary>
     /// Breeds two pets into an egg for this wizard: `.hatch`, the hatchmaking kiosk and hatching in person all
-    /// come here, because the egg's timer lives in this service (Justin, 2026-10-20).
+    /// come here, because the egg's timer lives in this service (Niduus, 2026-10-20).
     /// </summary>
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_BREEDPETS))]
     private void ReceiveBreedPets(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message) {

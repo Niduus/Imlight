@@ -32,7 +32,7 @@ using Imlight.Setup.Blocks;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The boss and custom editor as sections with an icon each (Justin, 2026-10-22): Identity, Stats, Deck, Drops, Forms
+/// The boss and custom editor as sections with an icon each (Niduus, 2026-10-22): Identity, Stats, Deck, Drops, Forms
 /// Rewards and Cheats, with a row of chips at the top to jump to one. Forms show only for a custom, the only kind of
 /// file that has them.
 /// </summary>

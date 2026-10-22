@@ -32,7 +32,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Customs tab (Justin, 2026-10-22: "a new Custom's tab in the manager for this custom area and the custom
+/// The Customs tab (Niduus, 2026-10-22: "a new Custom's tab in the manager for this custom area and the custom
 /// malistaire I plan to make"). Custom mobs: a game creature with its own number, name, stats, deck, cheats and drops,
 /// which count only when it is brought in as that custom (.joinme, or a room set to it); the base creature never
 /// changes. Custom areas: the server's added zones and objects (spiraldb-extra/ZoneObjects), and which boss each room
@@ -145,7 +145,7 @@ internal sealed partial class ManagerWindow {
     }
 
     // ---------------------------------------------------------------------
-    // New custom: a guided wizard (Justin, 2026-10-22: "make making a custom mob/boss easier to understand")
+    // New custom: a guided wizard (Niduus, 2026-10-22: "make making a custom mob/boss easier to understand")
     // ---------------------------------------------------------------------
 
     private readonly Border[] _customStepMarks = new Border[4];

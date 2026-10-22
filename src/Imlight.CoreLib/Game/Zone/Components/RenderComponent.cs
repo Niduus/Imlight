@@ -92,10 +92,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         && gameObjectTemplate.m_behaviors.Any(x => x is RenderBehaviorTemplate)
         || template is CombatSigilTemplate // bug fix: combat sigil templtaes don't have any behaviors
         // A pet game's object (PetGameMorph in the pet morph zone) has no model, but the game runs the pet game's
-        // messages through its ClientPetGameBehavior, so the client must be sent it (Justin, 2026-10-20: no hatch window).
+        // messages through its ClientPetGameBehavior, so the client must be sent it (Niduus, 2026-10-20: no hatch window).
         || template is GameObjectTemplate { m_behaviors: var behaviors } && behaviors.Any(x => x is PetGameBehaviorTemplate)
         // The solo hatchery sigil (Teleport Pet Morphing 1P) has no model either, but the game only shows its press-X
-        // prompt for an object it was sent (Justin, 2026-10-20: the solo sigil had no prompt, the duo one did).
+        // prompt for an object it was sent (Niduus, 2026-10-20: the solo sigil had no prompt, the duo one did).
         || template is GameObjectTemplate { m_templateID: SOLO_HATCH_SIGIL_TEMPLATE_ID };
 
     private const uint SOLO_HATCH_SIGIL_TEMPLATE_ID = 266075;

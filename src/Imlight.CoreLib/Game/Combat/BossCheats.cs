@@ -1,5 +1,5 @@
 /*
- * Boss cheats (Justin, 2026-10-21), read from spiraldb-extra/BossCheats/*.json, one file per boss template.
+ * Boss cheats (Niduus, 2026-10-21), read from spiraldb-extra/BossCheats/*.json, one file per boss template.
  *
  * A cheat is a move a boss makes outside its own turn: a spell cast for free, a line shown over the boss, or both.
  * The game files hold the cheat spells (Spells/G14-CombatTrigger-Spells, AZ-CombatTrigger-Spells and others) and the
@@ -39,7 +39,7 @@
  * The app's Bosses tab changes, turns off and adds cheats in BossOverrides/<template id>.json, laid over this file
  * (BossOverrides.CheatsOf); this file itself is never changed by it.
  *
- * Custom cheats (Justin, 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be modified and
+ * Custom cheats (Niduus, 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be modified and
  * created"), made as When -> If -> Do blocks in the app, add to the fields above:
  *   When         also BossHit (a spell from the other side lands on the boss and hurts it: School, Kind, Category and
  *                Spells narrow it), MinionDefeated (a creature on the boss's side is defeated) and Pips (at the start

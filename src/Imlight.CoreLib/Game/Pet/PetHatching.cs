@@ -22,7 +22,7 @@
  * PURPOSE:
  * Breeds two pets into an egg: the species of one parent, talents and derby talents from both
  * parents' genes, maximum stats near the parents' average. Nothing here saves or sends; PetService
- * adds the egg to the backpack, starts its timer and tells the game (Justin, 2026-10-20).
+ * adds the egg to the backpack, starts its timer and tells the game (Niduus, 2026-10-20).
  *
  * USAGE EXAMPLE:
  * var egg = PetHatching.MakeEgg(wizard.CharId, PetHatching.Snapshot(petA, id), PetHatching.Snapshot(petB, id), Random.Shared, out var seconds, out var problem);
@@ -65,7 +65,7 @@ internal enum HatchSource : byte {
 
 /// <summary>
 /// The status codes of MSG_PETHATCHRESULT. A guess: copied from the trade result codes (TradeError), since the
-/// two windows are built the same way. Check the client's message for each number in Justin's log.
+/// two windows are built the same way. Check the client's message for each number in Niduus's log.
 /// </summary>
 internal enum HatchStatus : uint {
     Success = 0,
@@ -304,10 +304,10 @@ internal static class PetHatching {
         behavior.m_maxStats = AverageStats(template, a, b, random);
 
         // The egg's own maximum, which the hatched pet keeps; before 2026-10-22 hatching replaced it with 260 for every
-        // stat (Justin, 2026-10-22).
+        // stat (Niduus, 2026-10-22).
         PetProgress.RememberOwnMaxStats(egg, behavior.m_maxStats);
 
-        // A new pet gets a name of its own; with none, every pet showed the first name in the tables (Justin, 2026-10-20).
+        // A new pet gets a name of its own; with none, every pet showed the first name in the tables (Niduus, 2026-10-20).
         PetFactory.TrySetPetName(egg, WizardNameBank.RandomPetName(random));
 
         // The species parent's colors are colors that kind can have.
@@ -408,7 +408,7 @@ internal static class PetHatching {
                 ? (int) Math.Round(values.Average()) + random.Next(-STAT_SPREAD, STAT_SPREAD + 1)
                 : OwnMaxStat(template, name);
 
-            // Never above the server's maximum: only selfish talents raise that (Justin, 2026-10-20).
+            // Never above the server's maximum: only selfish talents raise that (Niduus, 2026-10-20).
             stats.Add(new PetStat { m_name = name, m_statID = StringHash.Compute(name), m_value = Math.Clamp(value, 1, Math.Max(1, most)) });
         }
 

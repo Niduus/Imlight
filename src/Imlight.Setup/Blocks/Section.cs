@@ -25,7 +25,7 @@ using Avalonia.Media;
 namespace Imlight.Setup.Blocks;
 
 /// <summary>
-/// A section of an editor page (Justin, 2026-10-22: "organized sections of what and each, using their icons"): a card
+/// A section of an editor page (Niduus, 2026-10-22: "organized sections of what and each, using their icons"): a card
 /// with a coloured icon tile, a title and a line on what it is for, which folds shut when its header is clicked.
 /// </summary>
 internal sealed class Section : Border {

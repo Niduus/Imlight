@@ -105,7 +105,7 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
                 Logger.Args(wizard.CharId, getObjectId(message)));
 
             // The game still holds an object this zone does not have (seen after a server restart: presses on a
-            // hatchery sigil went to an old copy and did nothing, Justin 2026-10-21). Drop it so the real one is used.
+            // hatchery sigil went to an old copy and did nothing, Niduus 2026-10-21). Drop it so the real one is used.
             var unknownId = getObjectId(message);
             if (unknownId <= 2 || !TryGetOnlinePlayer(unknownId - 2, out _)) {
                 SendToSocket(new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = unknownId });

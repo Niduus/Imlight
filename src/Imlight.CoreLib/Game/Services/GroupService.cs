@@ -210,7 +210,7 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        // As on live, nobody teleports into a dungeon (or any other instance) to a group mate (Justin, 2026-10-22).
+        // As on live, nobody teleports into a dungeon (or any other instance) to a group mate (Niduus, 2026-10-22).
         if (targetCharacter.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetCharId)) {
             Logger.Information("Character {CharId} cannot go to group mate {TargetCharId}, who is in an instance.",
                 Logger.Args(wizard.CharId, targetCharId));

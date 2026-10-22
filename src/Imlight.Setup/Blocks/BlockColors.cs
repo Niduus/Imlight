@@ -21,7 +21,7 @@ using Avalonia.Media;
 namespace Imlight.Setup.Blocks;
 
 /// <summary>
-/// The kinds of block (Justin, 2026-10-22: "'block'-like programming for custom stuff"): a When block starts a script
+/// The kinds of block (Niduus, 2026-10-22: "'block'-like programming for custom stuff"): a When block starts a script
 /// (a hat), If blocks narrow it and Do blocks are what happens. One colour for each kind, as Scratch does.
 /// </summary>
 internal enum BlockKind { When, If, Do }

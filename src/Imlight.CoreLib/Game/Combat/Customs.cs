@@ -1,5 +1,5 @@
 /*
- * Custom creatures (Justin, 2026-10-22: "mobs and anything that's considered CUSTOM are their own separate entities.
+ * Custom creatures (Niduus, 2026-10-22: "mobs and anything that's considered CUSTOM are their own separate entities.
  * So like my 100k Mali, if I make a custom using his ID, it will use THAT id when I do a summon for him"), made in the
  * app's Customs tab and read from spiraldb-extra/Customs/<custom id>.json. The game files are never changed.
  *

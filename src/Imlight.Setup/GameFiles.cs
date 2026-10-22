@@ -226,7 +226,7 @@ internal sealed class GameFiles(string installFolder) {
     }
 
     // ---------------------------------------------------------------------
-    // Shop research (Justin, 2026-10-19): every NPC shop opens the robe shop window, so this collects the
+    // Shop research (Niduus, 2026-10-19): every NPC shop opens the robe shop window, so this collects the
     // game's shop window layouts and the shop NPCs into one zip on the desktop to send.
     // ---------------------------------------------------------------------
 

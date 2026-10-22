@@ -544,7 +544,7 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
-    /// Asks PetService to breed two pets into an egg for this session's wizard (Justin, 2026-10-20). ParentA is
+    /// Asks PetService to breed two pets into an egg for this session's wizard (Niduus, 2026-10-20). ParentA is
     /// the wizard's own pet; ParentB may be another player's.
     /// </summary>
     internal sealed class MSG_BREEDPETS : IServerMessage {
@@ -662,7 +662,7 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         // From the in-person hatch window (no sigil): straight to the hatching room, with no countdown.
         public bool FromHatchWindow;
         // The pad's countdown: seconds left for this player (0 = the usual length). The pad runs one countdown; a
-        // player hopping back on joins it instead of starting it over (Justin, 2026-10-21).
+        // player hopping back on joins it instead of starting it over (Niduus, 2026-10-21).
         public float CountdownSeconds;
         // Keep a countdown this player already has running (only the destination changes).
         public bool KeepCountdown;

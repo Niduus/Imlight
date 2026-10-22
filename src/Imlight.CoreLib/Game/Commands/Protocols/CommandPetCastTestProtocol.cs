@@ -1,6 +1,6 @@
 /*
  * `.petcasttest <number>` picks how pet May Casts are sent, without restarting the server; `.petcasttest off` goes back
- * to the [PetCasting] switches. For finding the way the game plays a pet's cast (Justin, 2026-10-20).
+ * to the [PetCasting] switches. For finding the way the game plays a pet's cast (Niduus, 2026-10-20).
  */
 
 using System.Linq;

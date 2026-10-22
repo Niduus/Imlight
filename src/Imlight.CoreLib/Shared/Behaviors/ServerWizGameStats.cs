@@ -190,7 +190,7 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
 
     /// <summary>
     /// Clears what gear, pets and jewels add, so the stats can be added up again. Without it every rebuild added the
-    /// gear on top of the last one: logging in rebuilt twice, so 67% resist was 134% in battle (immune; Justin,
+    /// gear on top of the last one: logging in rebuilt twice, so 67% resist was 134% in battle (immune; Niduus,
     /// 2026-10-20).
     /// </summary>
     internal void ClearEquipmentStats() {

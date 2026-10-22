@@ -139,7 +139,7 @@ internal sealed class SocketSender : ReceiveActor, IDisposable {
     // [Advanced] LongFrameFix. Messages over about 30 KB use the long frame form: 0xF00D, 0x8000, then a 32-bit length.
     // Imcodec writes only the message body there, but the short form counts every byte after the length field (flags,
     // message header, body and the trailing null), so the game read the frame 9 bytes short and dropped the connection
-    // on any big bazaar list (Justin, 2026-10-19). This writes the long length the way the short form counts.
+    // on any big bazaar list (Niduus, 2026-10-19). This writes the long length the way the short form counts.
     private static readonly bool s_longFrameFix = ConfigurationManager.GetValue("Advanced.LongFrameFix", true);
     private const int LONG_FRAME_HEADER = 8;
 

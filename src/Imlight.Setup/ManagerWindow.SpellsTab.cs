@@ -35,7 +35,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Spells tab (Justin, 2026-10-22: "Make a Spell TAB for all the spell cards to be at"): every spell card in the
+/// The Spells tab (Niduus, 2026-10-22: "Make a Spell TAB for all the spell cards to be at"): every spell card in the
 /// game as the game draws it, in a grid that can be searched by name or ID, filtered by school, pip cost, type,
 /// treasure card or not and hidden or cheat spells, and sorted. Clicking a card shows its full stats, effects and
 /// template ID on the right. Only the rows on screen are made, and only the cards on screen are painted, so the

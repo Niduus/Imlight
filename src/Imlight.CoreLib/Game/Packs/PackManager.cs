@@ -101,7 +101,7 @@ public static class PackManager {
                 var count = Math.Max(1, droppedItem.Quantity);
 
                 // The pack window looks a card up by its loot type: a house item sent as a treasure card showed a
-                // question mark (Justin's Friendship Pack, 2026-10-20).
+                // question mark (Niduus's Friendship Pack, 2026-10-20).
                 lootItems.Add(LootFor(itemTemplate, itemTemplateId, count));
 
                 lootRarities.Add(new LootRarity {

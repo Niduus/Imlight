@@ -1,5 +1,5 @@
 /*
- * Renames your wizard or the pet you are wearing (Justin, 2026-10-20):
+ * Renames your wizard or the pet you are wearing (Niduus, 2026-10-20):
  *   .name self Walter Blanco    .name pet Sir Barksalot    .name self reset    .name pet reset
  */
 

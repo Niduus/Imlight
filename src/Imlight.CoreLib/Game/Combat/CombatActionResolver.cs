@@ -339,7 +339,7 @@ internal static class CombatActionResolver {
         }
 
         // A global (a bubble) has no targets: it goes on the battlefield. It used to stop at the empty target list
-        // below, so the card was thrown away as "not worth casting" (Paul's Death Rampage, Justin, 2026-10-22).
+        // below, so the card was thrown away as "not worth casting" (Paul's Death Rampage, Niduus, 2026-10-22).
         if (chosenEffect.m_effectTarget == kEffectTarget.kGlobal) {
             cast.Worth = true;
             cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], caster, [], cast.CritMultiplier, cast.TemplateId);
@@ -582,7 +582,7 @@ internal static class CombatActionResolver {
             case kEffectTarget.kInvalidTarget:
                 targets = [caster];
                 break;
-            // A whole-team spell leaves out the defeated (Justin, 2026-10-22: Malistaire's Roar still listed Paul after he
+            // A whole-team spell leaves out the defeated (Niduus, 2026-10-22: Malistaire's Roar still listed Paul after he
             // was downed, and the game played its hit on him, so he stood up again on his circle while his nameplate
             // said DEFEATED). Only an afterlife (a revive) goes on a defeated teammate.
             case kEffectTarget.kFriendlyTeam:

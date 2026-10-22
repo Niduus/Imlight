@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * Pet hatching with another player (in person, from the player's right-click menu) and at the
- * hatchmaking kiosk (Justin, 2026-10-20: "work on hatching. Solo and player to player."). The egg
+ * hatchmaking kiosk (Niduus, 2026-10-20: "work on hatching. Solo and player to player."). The egg
  * itself is made by PetService (MSG_BREEDPETS), which owns the egg timers.
  *
  * USAGE EXAMPLE:
@@ -103,7 +103,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     // The hatching sigil this session's player hatches two of their own pets from; _soloSigilGid is 0 when there is none.
     private const uint MORPH_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
-    // The game reads a u32 of serializer flags first (SerializerCoreObjects), so they are written (Justin, 2026-10-20:
+    // The game reads a u32 of serializer flags first (SerializerCoreObjects), so they are written (Niduus, 2026-10-20:
     // "Failed to load pet morph partner data" without them).
     private static readonly CoreObjectSerializer s_morphSerializer = new(behaviors: SerializerFlags.SerializeFlags);
     private ulong _soloSigilGid;
@@ -542,7 +542,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                 if (_morph is not null) {
                     // In the hatching room the other player is gone (left or lost connection), so this one is sent
-                    // back shortly (Justin, 2026-10-21). A pop-up, like the lend one: the room hides plain notices.
+                    // back shortly (Niduus, 2026-10-21). A pop-up, like the lend one: the room hides plain notices.
                     InformGameClient($"{_morph.PartnerName ?? "Your partner"} has left.", isImportant: true);
                 }
                 else if (!_bred) {
@@ -605,19 +605,19 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         var wizard = GetActiveWizard();
 
         // The in-person window does not make the egg: once both are ready the game waits to be sent to the hatching
-        // room ("get ready to port") and the egg is made there, in the hatch window (Justin, 2026-10-21: both
+        // room ("get ready to port") and the egg is made there, in the hatch window (Niduus, 2026-10-21: both
         // accepted and were stuck). Each side sends itself; the requester's instance is the shared one.
         if (_morph is null && TryHatchWindowTrip(wizard)) {
             return;
         }
 
-        // A lender gets no egg; the partner hatches with the lent pet (Justin, 2026-10-21).
+        // A lender gets no egg; the partner hatches with the lent pet (Niduus, 2026-10-21).
         if (_morph is not null && _myChoice == CHOICE_LEND) {
             _bred = true;
             Logger.Information("Hatching zone: {0} lent their pet to {1}; no egg on this side.", Logger.Args(wizard?.CharId, _peerCharId));
             InformGameClient("You lent your pet. Your partner's egg is being made.");
             Reset();
-            // The lender goes back once the partner's egg is made (EggMade; Justin, 2026-10-21: the lender had no way
+            // The lender goes back once the partner's egg is made (EggMade; Niduus, 2026-10-21: the lender had no way
             // out). This is in case that never comes.
             ScheduleMorphReturn("the pet was lent and the partner's egg did not come", LEND_RETURN_WAIT);
 
@@ -759,7 +759,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.WaitingForPartner:
                     // The player hops on and counts down as if alone; if the other player presses X in time, both go
-                    // together (Justin, 2026-10-21: players should hop on the sigil regardless).
+                    // together (Niduus, 2026-10-21: players should hop on the sigil regardless).
                     if (TryStartTrip(message, pair: false)) {
                         InformGameClient($"If {message.PartnerName} presses X before the countdown ends, you go together. "
                             + "If not, you hatch on your own.");
@@ -770,7 +770,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
                     break;
                 case CHARACTER_103_PROTOCOL.HatchSigilRole.Alone:
-                    // With nobody else on it, the duo sigil hatches two of the player's own pets, as live does (Justin, 2026-10-20).
+                    // With nobody else on it, the duo sigil hatches two of the player's own pets, as live does (Niduus, 2026-10-20).
                     if (!TryStartTrip(message, pair: false)) {
                         StartSolo(message.SigilGID);
                     }
@@ -788,7 +788,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     /// <summary>
     /// A player counting down alone on a duo pad is paired when someone joins them: the lone countdown stops (without
-    /// a failure, which would end the pair's trip) so the pair's starts (Justin, 2026-10-20: one went alone, the other
+    /// a failure, which would end the pair's trip) so the pair's starts (Niduus, 2026-10-20: one went alone, the other
     /// stayed behind).
     /// </summary>
     private void DropAloneTrip() {
@@ -827,7 +827,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         // A second X press during the countdown must not replace the trip under way: its "busy" failure used to end
-        // that trip, so the player arrived with no hatch to do and was sent straight back (Justin, 2026-10-20).
+        // that trip, so the player arrived with no hatch to do and was sent straight back (Niduus, 2026-10-20).
         if (_morph is not null || _pendingTrip is not null && DateTime.UtcNow - _pendingTripStarted < PENDING_TRIP_MAX) {
             Logger.Information("Hatching sigil: {0} is already on the way to (or in) the hatching room; ignored.", Logger.Args(wizard.CharId));
 
@@ -915,26 +915,26 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             SigilLoc = message.SigilLoc,
             SigilGID = message.SigilGID,
             SigilType = message.SigilType ?? "",
-            // The pad's own radius, so the countdown and the pad agree on who is on it (Justin, 2026-10-21).
+            // The pad's own radius, so the countdown and the pad agree on who is on it (Niduus, 2026-10-21).
             Radius = message.Radius > 0 ? message.Radius : MORPH_TRIP_MIN_RADIUS,
             DestinationZone = PetMorphZone.ZONE,
             DestinationLoc = PetMorphZone.LOCATION,
             InstanceOwnerCharId = owner,
             KeepInstance = isPartner,
             FaceSlot = message.FaceSlot,
-            // Sliding onto the circle took players off the small solo pads (Justin, 2026-10-20: "drags you").
+            // Sliding onto the circle took players off the small solo pads (Niduus, 2026-10-20: "drags you").
             NoSnap = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
             SnapToCentre = message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo,
-            // The one-player sigil goes after 1 s (Justin, 2026-10-21).
+            // The one-player sigil goes after 1 s (Niduus, 2026-10-21).
             CountdownSeconds = message.FromHatchWindow ? HATCH_WINDOW_DELAY
                 : message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Solo ? SOLO_SIGIL_COUNTDOWN
                 : message.CountdownSeconds,
             NoSigil = message.FromHatchWindow,
             // One countdown on the pad: the requester's start shows it to the whole zone, and a player hopping back on
-            // joins the one already shown. Each extra start redrew the numbers, which flashed (Justin, 2026-10-21).
+            // joins the one already shown. Each extra start redrew the numbers, which flashed (Niduus, 2026-10-21).
             NoTimerBroadcast = message.KeepCountdown || message.Role == CHARACTER_103_PROTOCOL.HatchSigilRole.Partner,
             // The pad's countdown is reset only once, when the second player first joins; after that a pair forming
-            // again keeps the countdown already running (Justin, 2026-10-21).
+            // again keeps the countdown already running (Niduus, 2026-10-21).
             Restart = _restartCountdown && !message.KeepCountdown,
             ContinueCountdown = _restartCountdown && message.KeepCountdown,
             OnFailed = new CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED(),
@@ -1211,7 +1211,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         SendMorphStart();
     }
 
-    // The hatch window's picks and its Hatch button, as text (Justin's log, 2026-10-20):
+    // The hatch window's picks and its Hatch button, as text (Niduus's log, 2026-10-20):
     // "set:side=0;id=<pet item id>" when a side's pet changes, "ready:confirmed=1" on Hatch.
     [MessageHandler(typeof(PET_9_PROTOCOL.MSG_PETGAMEDATA))]
     private void ReceivePetGameData(PET_9_PROTOCOL.MSG_PETGAMEDATA message) {
@@ -1405,7 +1405,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        // The countdown goes on until everyone has left the pad (Justin, 2026-10-21); this player now goes alone.
+        // The countdown goes on until everyone has left the pad (Niduus, 2026-10-21); this player now goes alone.
         Logger.Information("Hatching sigil: {0} stepped off {1}; {2} keeps counting down and goes alone.",
             Logger.Args(message.FromCharId, trip.PadName, trip.CharId));
         var alone = new PetMorphVisit(trip.CharId, trip.SigilGid, trip.PadName, trip.ReturnZone, trip.ReturnLocation,
@@ -1430,10 +1430,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        // No egg screen: it read as the lender getting an egg (Justin, 2026-10-21: lending should not give an egg).
+        // No egg screen: it read as the lender getting an egg (Niduus, 2026-10-21: lending should not give an egg).
         Logger.Information("Hatching zone: {0} lent their pet and {1}'s egg is made.", Logger.Args(_morph.CharId, message.FromCharId));
         var partnerName = _morph.PartnerName ?? "Your partner";
-        // A pop-up as soon as the hatch is over (Justin, 2026-10-21: the lender should get a "congratulations" notice
+        // A pop-up as soon as the hatch is over (Niduus, 2026-10-21: the lender should get a "congratulations" notice
         // right away, not only back in the hatchery).
         InformGameClient($"Congratulations on lending your pet! {partnerName} got an egg thanks to you.", isImportant: true);
         Timers.Cancel(MORPH_RETURN_TIMER);
@@ -1653,9 +1653,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         ForgetMorph(visit);
 
         // No MSG_PETGAMEENDING to the game: it takes that message's GlobalID as the player's own object id, and the
-        // player could not move after coming back (Justin, 2026-10-20). The zone change closes the window.
+        // player could not move after coming back (Niduus, 2026-10-20). The zone change closes the window.
 
-        // The lender just moves back, without the teleport effect (Justin, 2026-10-21: "Not TP out, but move them out").
+        // The lender just moves back, without the teleport effect (Niduus, 2026-10-21: "Not TP out, but move them out").
         var effects = !_returnQuietly;
         _returnQuietly = false;
         Teleport(visit.ReturnZone, doTeleportEffects: effects, destinationLocation: visit.ReturnLocation);
@@ -1664,7 +1664,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private bool _returnQuietly;
 
     // Where the player stood, facing the same way, when the trip started (before the sigil snaps them), so they come
-    // back there and not at the pad's centre (Justin, 2026-10-20).
+    // back there and not at the pad's centre (Niduus, 2026-10-20).
     private static string TripReturnLocation(Wizard wizard, string sigilLoc) {
         var at = wizard.Location;
         if (at.X != 0 || at.Y != 0 || at.Z != 0) {
@@ -1907,7 +1907,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     /// <summary>
     /// Hatches at the kiosk. The first pet is the player's; the second is the player's own (so a player alone can
-    /// hatch two of their pets, Justin 2026-10-20) or a pet someone listed at the kiosk.
+    /// hatch two of their pets, Niduus 2026-10-20) or a pet someone listed at the kiosk.
     /// </summary>
     private void KioskHatch(ulong petId1, ulong petId2) {
         try {

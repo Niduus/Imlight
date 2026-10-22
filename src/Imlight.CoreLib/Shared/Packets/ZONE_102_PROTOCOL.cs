@@ -1282,7 +1282,7 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         /// <summary>
         /// With NoSnap: put the player in the middle of the pad (keeping their facing) instead of on a sigil circle, so a
-        /// small hatchery pad holds them like the duo pad does (Justin, 2026-10-20: "It doesn't put me on it").
+        /// small hatchery pad holds them like the duo pad does (Niduus, 2026-10-20: "It doesn't put me on it").
         /// </summary>
         public bool SnapToCentre;
 
@@ -1296,13 +1296,13 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         /// <summary>
         /// Replaces a countdown already running for this player without ending it on screen; the new one starts now.
-        /// Used once, when a second player joins a duo sigil (Justin, 2026-10-21: the countdown should always show and
+        /// Used once, when a second player joins a duo sigil (Niduus, 2026-10-21: the countdown should always show and
         /// only reset when the other player joins).
         /// </summary>
         public bool Restart;
 
         /// <summary>
-        /// Replaces the destination of a countdown already running and leaves the countdown itself alone (Justin,
+        /// Replaces the destination of a countdown already running and leaves the countdown itself alone (Niduus,
         /// 2026-10-21: the countdown goes on until every player has left the sigil).
         /// </summary>
         public bool ContinueCountdown;

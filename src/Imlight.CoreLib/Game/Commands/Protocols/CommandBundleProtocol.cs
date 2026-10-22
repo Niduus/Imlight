@@ -37,7 +37,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
 /// `.bundle list [words]` lists the game's bundles; `.bundle <name>` puts every tier of that bundle in your gift box,
-/// one gift each, so you redeem the tier you want (Justin, 2026-10-21).
+/// one gift each, so you redeem the tier you want (Niduus, 2026-10-21).
 /// </summary>
 internal class CommandBundleProtocol : CommandProtocol {
 
@@ -61,7 +61,7 @@ internal class CommandBundleProtocol : CommandProtocol {
 
         if (text.Length == 0 || text.Equals("list", StringComparison.OrdinalIgnoreCase)
             || text.StartsWith("list ", StringComparison.OrdinalIgnoreCase)) {
-            // The list lives in the Imlight app now (Justin, 2026-10-21: scrap the chat list, search in the app).
+            // The list lives in the Imlight app now (Niduus, 2026-10-21: scrap the chat list, search in the app).
             InformSenderClient("The bundle list is in the Imlight app: Lookup tab, pick Bundle, and search.");
 
             return;
@@ -91,7 +91,7 @@ internal class CommandBundleProtocol : CommandProtocol {
         Send(matches[0]);
     }
 
-    // Empties the gift button list (Justin, 2026-10-21: older .bundle gifts put every tier there one by one).
+    // Empties the gift button list (Niduus, 2026-10-21: older .bundle gifts put every tier there one by one).
     private void Clear() {
         var account = Context.Character.Account;
         if (account is null) {
@@ -117,7 +117,7 @@ internal class CommandBundleProtocol : CommandProtocol {
         }
 
         // The game's gift button list: a set's master bundle opens a picker there, so the player claims the tier
-        // they want (Justin, 2026-10-21: the friend gift box was the wrong one and claiming crashed the game).
+        // they want (Niduus, 2026-10-21: the friend gift box was the wrong one and claiming crashed the game).
         foreach (var templateId in family.Gifts) {
             GiftingService.AddClaimGift(account, templateId);
         }
@@ -155,7 +155,7 @@ internal static class BundleCatalog {
     // Things the game sold with a set that its bundle files do not list (the game data does not link houses, mounts
     // and pets to sets). Keyed by the set's object name prefix; each is one more gift.
     private static readonly Dictionary<string, ulong[]> s_extras = new(StringComparer.OrdinalIgnoreCase) {
-        // Spooky Carnival (Justin, 2026-10-21): Scarousel, 4-Passenger Creepy Clown Car (PERM), Booloon.
+        // Spooky Carnival (Niduus, 2026-10-21): Scarousel, 4-Passenger Creepy Clown Car (PERM), Booloon.
         ["DM2"] = [1421671, 1254268, 1254264],
     };
 
@@ -252,7 +252,7 @@ internal static class BundleCatalog {
         foreach (var (name, group) in groups) {
             var gifts = new List<ulong>();
             // A set's pick-one bundles (gear and wand) open the game's tier picker, so they are the only gifts; the
-            // set's loose tier bundles would each be another entry in the gift list (Justin, 2026-10-21).
+            // set's loose tier bundles would each be another entry in the gift list (Niduus, 2026-10-21).
             var members = group.Members.Where(m => (int) m.Template.m_acquireCondition == CHOOSE_ONE).ToList();
             if (members.Count == 0) {
                 members = group.Members;

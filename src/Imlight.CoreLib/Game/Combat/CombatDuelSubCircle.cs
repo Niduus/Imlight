@@ -1074,7 +1074,7 @@ public class CombatDuelSubCircle {
         }
 
         // A spell school with no stat entry ("All", "None", an empty name, or a list shorter than the schools) has no
-        // school stat. This threw before and took the whole round with it (a PvP duel's planning phase in Justin's log,
+        // school stat. This threw before and took the whole round with it (a PvP duel's planning phase in Niduus's log,
         // 2026-10-21: "List must have a count equal to the max magic school index"), so no spell of that round cast.
         if (MagicSchools.GetMagicSchool(magicSchool) is not { } school) {
             return default;

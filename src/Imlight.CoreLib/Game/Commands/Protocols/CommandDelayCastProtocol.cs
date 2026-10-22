@@ -24,7 +24,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.c1 Fire Cat` and `.c2 Fire Cat` (were .daybreaker/.db and .nightbringer/.nb; Justin renamed them 2026-10-20): in
+/// `.c1 Fire Cat` and `.c2 Fire Cat` (were .daybreaker/.db and .nightbringer/.nb; Niduus renamed them 2026-10-20): in
 /// battle, casts a spell for free this round, before (c1) or after (c2) your own card, or with f/l before anyone's or
 /// after everyone's turn. Type it several times to chain spells.
 /// </summary>
@@ -50,10 +50,10 @@ internal class CommandDelayCastProtocol : CommandProtocol {
 
     /// <summary>
     /// Several spells in one line, split by commas; each part can start with c1 or c2 to pick its queue, else it
-    /// goes in the typed command's queue (Justin, 2026-10-20: `.c1 Tower Shields, c2 Pyrodynamics`).
+    /// goes in the typed command's queue (Niduus, 2026-10-20: `.c1 Tower Shields, c2 Pyrodynamics`).
     /// </summary>
     private void QueueAll(string spells, bool atStart, bool skip) {
-        // A ca part (Justin, 2026-10-20: `.c1 Fire Cat, ca 1, Fire Cat`) goes in the queue of the part before it,
+        // A ca part (Niduus, 2026-10-20: `.c1 Fire Cat, ca 1, Fire Cat`) goes in the queue of the part before it,
         // and shows just before the spell after it.
         var lastAtStart = atStart;
         var lastWhen = 'n';
@@ -88,7 +88,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
     }
 
     /// <summary>
-    /// `.cX [s/f/l/e] [target] spell` (Justin, 2026-10-20): s skips the casting animation, f casts before anyone's
+    /// `.cX [s/f/l/e] [target] spell` (Niduus, 2026-10-20): s skips the casting animation, f casts before anyone's
     /// turn this round, l after everyone's, e adds the best enchantment that fits (Epic, Sharpened Blade...); they
     /// mix, like sfe. The target is p1-p4, e1-e4 or all (a single-target
     /// spell then casts once on each enemy, or each teammate). A number after the spell repeats it.
@@ -123,7 +123,7 @@ internal class CommandDelayCastProtocol : CommandProtocol {
             return when;
         }
 
-        // A number at the end repeats the spell (Justin, 2026-10-20: `.c1 Fire Cat 3`), unless it is part of the
+        // A number at the end repeats the spell (Niduus, 2026-10-20: `.c1 Fire Cat 3`), unless it is part of the
         // spell's name ("Detonate All 200").
         var repeat = 1;
         if (!CommandDrawProtocol.TryFindSpell(name, out var templateId, out var spellName)) {

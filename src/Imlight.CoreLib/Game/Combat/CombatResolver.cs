@@ -158,7 +158,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// <summary>
     /// A wizard's health globe (the orb at the bottom left) at a moment of the round's animations. The game only moves
     /// the globe on a health message, so it showed the health from the start of the round until the next round's
-    /// combat health (Justin, 2026-10-22: his friend's globe caught up only on the next turn). The duel sends each one
+    /// combat health (Niduus, 2026-10-22: his friend's globe caught up only on the next turn). The duel sends each one
     /// as MSG_UPDATEHEALTH when its step of the round has played.
     /// </summary>
     internal readonly record struct HealthBeat(float Seconds, CombatDuelSubCircle Circle, int Health);
@@ -216,7 +216,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     /// <summary>
     /// .cast none: a wizard's spell actions (not their pet's) skip the casting animation. (A school's animation can't
-    /// be shown: the game draws the casting sign from its own copy of the spell, Justin's log 2026-10-20.)
+    /// be shown: the game draws the casting sign from its own copy of the spell, Niduus's log 2026-10-20.)
     /// </summary>
     private void ApplyCastLooks(CombatActionListObj combatActionList) {
         foreach (var action in combatActionList.m_actionList) {
@@ -236,7 +236,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
     }
 
-    // .ca (Justin, 2026-10-20): lines shown like a boss's cheat, in the "Gained Power Pip" spot, as the round plays.
+    // .ca (Niduus, 2026-10-20): lines shown like a boss's cheat, in the "Gained Power Pip" spot, as the round plays.
     private readonly List<(string Text, int Slot)> _announcements = [];
 
     /// <param name="text">The locale key to show.</param>
@@ -246,7 +246,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// <summary>
     /// Shows the waiting .ca lines before the round's first spell. The game plays an action carrying a message
     /// (CombatAction.m_stringKeyMessage, the text boss cheats show) as an announcement and does not cast its spell
-    /// (Justin's log, 2026-10-20: his Minor Blessing never cast), so each line goes on its own copy of that action.
+    /// (Niduus's log, 2026-10-20: his Minor Blessing never cast), so each line goes on its own copy of that action.
     /// </summary>
     /// <returns>The seconds the lines add to the round.</returns>
     private float ShowAnnouncements(CombatActionListObj combatActionList) {
@@ -256,7 +256,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         // The text shows over the action's caster, so each copy is cast by whoever typed .ca; it showed over the
-        // enemy whose spell came first (Justin, 2026-10-20). Their own spell is the copy when they have one.
+        // enemy whose spell came first (Niduus, 2026-10-20). Their own spell is the copy when they have one.
         var spellAction = combatActionList.m_actionList[index];
         var lines = _announcements.Select(a => (combatActionList.m_actionList
                 .FirstOrDefault(x => x.m_spell is not null && x.m_spellCaster == a.Slot) ?? spellAction) with {
@@ -417,7 +417,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         _petCastsThisRound.Clear();
         PetCastCards.Clear();
-        // .c1 f / .c2 f (Justin, 2026-10-20): the queue casts before anyone's turn, then the round goes on.
+        // .c1 f / .c2 f (Niduus, 2026-10-20): the queue casts before anyone's turn, then the round goes on.
         cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
         NoteHealthBeat(cinematicTime);
         // Boss cheats for the start of the round (BossCheats.cs).
@@ -449,7 +449,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         NoteHealthBeat(cinematicTime);
         // .c1 l / .c2 l: the queue casts after everyone's turn, then the round ends.
         cinematicTime += CastEveryonesDelayed('l', combatActionList, cinematicTime);
-        // Malistaire went invisible (Justin, 2026-10-22): a participant defeated by a round-end cheat or a last (.c1 l)
+        // Malistaire went invisible (Niduus, 2026-10-22): a participant defeated by a round-end cheat or a last (.c1 l)
         // cast was never given its afterlife, so the round's end took him out of the battle (MSG_COMBATDEATH and
         // MSG_COMBATREMOVE) while the game, which works out the afterlife itself, still had him standing there.
         ProcessAfterlives();
@@ -479,7 +479,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     /// <summary>
     /// This round's pet May Cast cards per owner. The game casts only cards it finds in the caster's hand (it skipped
-    /// every other way: "does not spell in hand"; a pet item card in hand played with the pet's animation, Justin's
+    /// every other way: "does not spell in hand"; a pet item card in hand played with the pet's animation, Niduus's
     /// log 2026-10-20), so the duel sends the owner a hand holding them before the round's actions.
     /// </summary>
     internal readonly Dictionary<CombatDuelSubCircle, List<Spell>> PetCastCards = [];
@@ -498,7 +498,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         var cinematicTime = step();
 
         try {
-            // A May Cast can set off more May Casts, the pet's own or another pet's (Justin, 2026-10-20), up to
+            // A May Cast can set off more May Casts, the pet's own or another pet's (Niduus, 2026-10-20), up to
             // [PetCasting] MaxChain links; MaxPerRound still caps each pet.
             for (var link = 0; link <= PetMayCasts.MaxChain; link++) {
                 // The pet casts about to be added are the next link's step.
@@ -543,7 +543,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         var passed = new HashSet<CombatTeam>();
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
             var done = combatActionList.m_actionList[i];
-            // Passing counts too (Justin, 2026-10-20).
+            // Passing counts too (Niduus, 2026-10-20).
             if (done.m_spell is null
                     && _subCircles.FirstOrDefault(c => c.Occupied && c.SlotIndex == done.m_spellCaster) is { } passer) {
                 passed.Add(passer.OccupiedTeam);
@@ -554,7 +554,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 cast.Add(caster.OccupiedTeam);
 
                 // A damage or heal spell landing on a teammate counts even when the server's health did not move:
-                // gear can take all of a hit's damage here while the game still shows it (Justin's log, 2026-10-20).
+                // gear can take all of a hit's damage here while the game still shows it (Niduus's log, 2026-10-20).
                 var effects = (CoreObjectFactory.GetCoreTemplate(done.m_spell.m_templateID) as SpellTemplate)?.m_effects ?? [];
                 var damages = effects.Any(e => e is not null && s_damageEffects.Contains(e.m_effectType));
                 var heals = effects.Any(e => e is not null && s_healEffects.Contains(e.m_effectType));
@@ -588,7 +588,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             return 0;
         }
 
-        // A won or lost battle ends without more May Casts, which only made its end wait (Justin, 2026-10-20).
+        // A won or lost battle ends without more May Casts, which only made its end wait (Niduus, 2026-10-20).
         if (BattleDecided()) {
             return 0;
         }
@@ -643,12 +643,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     private float CastPetSpell(CombatDuelSubCircle owner, PetMayCasts.MayCast mayCast, string reason,
                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        // As the pet's item card only with [PetCasting] AsItemCard (Justin, 2026-10-20, wanted that look): flagged so,
+        // As the pet's item card only with [PetCasting] AsItemCard (Niduus, 2026-10-20, wanted that look): flagged so,
         // the game still skipped the cast ("does not spell in hand").
         var test = PetMayCasts.TestMode is not null;
         var normal = test && PetMayCasts.TestNormalCard ? PetMayCasts.NormalCard(mayCast) : null;
         var card = normal is not null ? SpellFactory.GetSpell(normal) : SpellFactory.GetSpell(mayCast.SpellTemplateId);
-        // Free: the game takes a card's pips off the caster when it plays it, so the pet's copy costs none (Justin's
+        // Free: the game takes a card's pips off the caster when it plays it, so the pet's copy costs none (Niduus's
         // pips went down for every May Cast, 2026-10-20).
         var spell = card is null ? null : (!test && PetMayCasts.AsItemCard ? card with { m_itemCard = true } : card)
             with { m_pipCost = new SpellRank() };
@@ -671,7 +671,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         var cinematicTime = Math.Min(HandleSuccessfulAction(action, combatActionList, alreadyPaid: true), PetMayCasts.CastSeconds);
         ShowInHand(owner, spell, template, combatActionList, before);
         // Sent as a plain cast, like the .db/.nb free casts the game plays. Flagged forced, as an item card or as the
-        // pet's, the game skipped it ("does not spell in hand"; Justin's logs, 2026-10-20). The flags stay as tests.
+        // pet's, the game skipped it ("does not spell in hand"; Niduus's logs, 2026-10-20). The flags stay as tests.
         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
             combatActionList.m_actionList[i].m_forceSpell = test ? PetMayCasts.TestForced : PetMayCasts.ForceSpell;
             if (test ? PetMayCasts.TestPetFlags : PetMayCasts.ShowAsPetCast) {
@@ -723,7 +723,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         return AddFreeDelayedCast(caster, spellTemplateId, atStart, out _, target, skipCast, when, enchant);
     }
 
-    // .c1 e (Justin, 2026-10-20): the first of these enchantments that changes the spell goes on it.
+    // .c1 e (Niduus, 2026-10-20): the first of these enchantments that changes the spell goes on it.
     private static readonly string[] s_autoEnchants = Imlight.Common.ConfigurationManager
         .GetValue("Battle.AutoEnchants", "Epic; Primordial; Sharpened Blade; Potent Trap; Potent Ward - Amulet; Aegis; Indemnity")
         .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -827,7 +827,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             }
 
             var action = delayed.Action;
-            // "all" (Justin, 2026-10-20): a single-target spell casts once on each enemy (or each teammate).
+            // "all" (Niduus, 2026-10-20): a single-target spell casts once on each enemy (or each teammate).
             var targets = delayed.Free && delayed.Target == "all"
                 ? AllFreeTargets(caster, action.SpellTemplate)
                 : [delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget];
@@ -861,7 +861,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                         before += lines.Count;
                         lines.Clear();
                     }
-                    // .c1s/.c2s (Justin, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
+                    // .c1s/.c2s (Niduus, 2026-10-20): the game is told not to show the cast, so the wait is shorter.
                     if (delayed.SkipCast) {
                         for (var i = before; i < combatActionList.m_actionList.Count; i++) {
                             combatActionList.m_actionList[i].m_showCast = false;
@@ -871,7 +871,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     }
 
                     cinematicTime += time;
-                    // A command's free cast is in no hand, so the game skipped it when a card had been played (Justin's
+                    // A command's free cast is in no hand, so the game skipped it when a card had been played (Niduus's
                     // log, 2026-10-20) while the next round still waited for it.
                     if (delayed.Free) {
                         ShowInHand(caster, cast.Spell, action.SpellTemplate, combatActionList, before);
@@ -1013,7 +1013,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 var played = InitializeCombatAction(action);
                 played.m_targetSubcircleList.Add(action.SelectedTarget.SlotIndex);
                 // Marks this as the delay itself. With no flag the game cast the card's spell now and again when the
-                // delay ran out (two Tower Shields); with m_delayedEnchanted it cast it now. (Justin, 2026-10-19)
+                // delay ran out (two Tower Shields); with m_delayedEnchanted it cast it now. (Niduus, 2026-10-19)
                 played.m_delayed = true;
                 DoSpellCastConsequences(action.SpellCaster, played);
                 combatActionList.m_actionList.Add(played);

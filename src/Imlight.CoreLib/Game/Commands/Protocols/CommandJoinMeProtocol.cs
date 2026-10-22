@@ -27,11 +27,11 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.joinme Gobbler` (Justin, 2026-10-20): in battle, a creature joins on the enemy side. A number at the end adds
+/// `.joinme Gobbler` (Niduus, 2026-10-20): in battle, a creature joins on the enemy side. A number at the end adds
 /// that many, while the enemy side has room.
-/// Some bosses share one name across worlds; <see cref="s_versions"/> picks the one Justin means (2026-10-21:
+/// Some bosses share one name across worlds; <see cref="s_versions"/> picks the one Niduus means (2026-10-21:
 /// `.joinme Malistaire the Undying` is the Castle Darkmoor boss, `.joinme Malistaire the Undying Azteca` the Azteca one).
-/// A custom of the app's Customs tab (Customs.cs) comes in by its number after the creature it is based on (Justin,
+/// A custom of the app's Customs tab (Customs.cs) comes in by its number after the creature it is based on (Niduus,
 /// 2026-10-22): `.joinme Malistaire the Undying 1` or `.joinme 1336035 1` (or `... custom 1`). A number that is no
 /// custom still adds that many, as before; `x2` at the end always does (`.joinme Gobbler x2`,
 /// `.joinme Malistaire the Undying 1 x2`).

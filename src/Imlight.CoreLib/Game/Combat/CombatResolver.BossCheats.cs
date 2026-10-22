@@ -1,5 +1,5 @@
 /*
- * Boss cheats in a round (Justin, 2026-10-21). The cheats themselves are in BossCheats.cs and spiraldb-extra/BossCheats.
+ * Boss cheats in a round (Niduus, 2026-10-21). The cheats themselves are in BossCheats.cs and spiraldb-extra/BossCheats.
  *
  * Custom cheats (2026-10-22): the app's When -> If -> Do blocks. Each cheat's old fields (Cast, Line, SetPhase...) and
  * its Actions run as one list of steps (BossCheat.Steps). Cheats that interrupt go off before the player's spell
@@ -41,7 +41,7 @@ public partial class CombatResolver {
     private readonly Dictionary<CombatDuelSubCircle, (int Phase, int FirstRound)> _bossPhases = [];
 
     private IEnumerable<(CombatDuelSubCircle Boss, List<BossCheats.BossCheat> Cheats)> BossesWithCheats(bool defeatedToo = false)
-        // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Justin's log, 2026-10-21).
+        // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Niduus's log, 2026-10-21).
         => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && (defeatedToo || c.IsAlive)
                                   && c.ParticipantObject is not null)
             .Select(c => (c, BossCheats.For(CheatTemplate(c))))

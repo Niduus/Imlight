@@ -27,7 +27,7 @@
  * transfer, owned by ZoneService).
  *
  * A pad for several players (MinigameSemiCircleSigil4Actor: 4) sends the players who press it during one
- * countdown into one fresh private copy together, as the hatching duo pad does (Justin, 2026-10-22): the
+ * countdown into one fresh private copy together, as the hatching duo pad does (Niduus, 2026-10-22): the
  * first starts the countdown and owns the copy; each other one joins that countdown on a face of their own
  * and arrives a second after the owner, in the owner's copy. A player who steps off the pad or leaves the
  * zone drops out; when the owner does, the next player takes the copy over.
@@ -152,7 +152,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     // The join-time state may be sent before the game has the pad, which leaves it Off, so it goes once more on the
-    // player's first move, as the hatching pads do (Justin, 2026-10-21: the Ravenwood sigil showed Off).
+    // player's first move, as the hatching pads do (Niduus, 2026-10-21: the Ravenwood sigil showed Off).
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (playerWizard is not null && _litFor.Add(playerActor)) {
             Light(playerActor);

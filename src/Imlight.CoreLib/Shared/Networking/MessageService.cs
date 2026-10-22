@@ -321,7 +321,7 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
             GlobalID = globalId
         };
         // Only the matching object answers, so an unknown id waits for the whole timeout. The session handles nothing
-        // else meanwhile: 20 s of ignored X presses on the hatchery sigils (Justin, 2026-10-21).
+        // else meanwhile: 20 s of ignored X presses on the hatchery sigils (Niduus, 2026-10-21).
         var response = AskOtherService<ZONE_102_PROTOCOL.MSG_QUERYZONEENTITYRSP>(msg, ZONE_OBJECT_QUERY_TIMEOUT);
         if (response is null) {
             return null;
