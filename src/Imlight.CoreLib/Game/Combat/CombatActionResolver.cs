@@ -182,6 +182,15 @@ internal static class CombatActionResolver {
 
             charmsAffectingThisSpell = CombatCharms.FindAppliedCharms(action.SpellCaster, [.. allEffects]);
 
+            // A global (a bubble) has no targets: it goes on the battlefield. It used to stop at the empty target list
+            // below, so the card was thrown away as "not worth casting" (Paul's Death Rampage, Justin, 2026-10-22).
+            if (chosenEffect.m_effectTarget == kEffectTarget.kGlobal) {
+                spellWorthCasting = true;
+                cinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], action.SpellCaster, [], critMultiplier);
+
+                continue;
+            }
+
             var targets = GetEffectTargets(chosenEffect, action.SpellCaster, action.SelectedTarget);
             if (targets.Length == 0) {
                 continue;
@@ -422,13 +431,17 @@ internal static class CombatActionResolver {
             case kEffectTarget.kInvalidTarget:
                 targets = [caster];
                 break;
+            // A whole-team spell leaves out the defeated (Justin, 2026-10-22: Malistaire's Roar still listed Paul after he
+            // was downed, and the game played its hit on him, so he stood up again on his circle while his nameplate
+            // said DEFEATED). Only an afterlife (a revive) goes on a defeated teammate.
             case kEffectTarget.kFriendlyTeam:
             case kEffectTarget.kFriendlyTeamAllAtOnce:
-                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam == caster.OccupiedTeam)];
+                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam == caster.OccupiedTeam
+                                                           && (x.IsAlive || effect.m_effectType == kSpellEffects.kAfterlife))];
                 break;
             case kEffectTarget.kEnemyTeam:
             case kEffectTarget.kEnemyTeamAllAtOnce:
-                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam != caster.OccupiedTeam)];
+                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam != caster.OccupiedTeam && x.IsAlive)];
                 break;
             case kEffectTarget.kGlobal:
                 return [];
