@@ -185,7 +185,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
         PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
-        GrantMobLoot(message.MobTemplateIds);
+        GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds);
         TeachSpellAfterBattle();
     }
 
@@ -218,8 +218,13 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         // (WizGameObjectTemplate.m_lootTable, about 2,225 names such as MS-Level-40-42) but not what is in them, and
         // SpiralDB has no NpcDropTable data. Justin allows Wizard101 Central only boss by boss (2026-10-21: Malistaire the
         // Undying, spiraldb-extra/NpcDropTable).
-        foreach (var templateId in defeatedMobTemplateIds) {
-            var loot = NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
+        foreach (var key in defeatedMobTemplateIds) {
+            // A custom (Customs.cs) drops its own Drops when it names any, else its creature's.
+            var templateId = Imlight.CoreLib.Game.Combat.Customs.BaseOf(key);
+            var customDrops = Imlight.CoreLib.Game.Combat.Customs.Get(Imlight.CoreLib.Game.Combat.Customs.IdOf(key))?.Drops;
+            var loot = customDrops is { Count: > 0 }
+                ? DropTableRoller.Roll([.. customDrops], playerRef, playerObj, wizard)
+                : NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
                 ? DropTableRoller.Roll(npcDropTable.DropTableNames.ToArray(), playerRef, playerObj, wizard)
                 : new Imlight.CoreLib.WizardData.Models.World.DropTableResult();
 

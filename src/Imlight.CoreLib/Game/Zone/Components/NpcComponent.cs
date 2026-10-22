@@ -106,8 +106,10 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
 
         this.MagicSchool = parsedSchool;
         this.Level = _npcBehaviorTemplate.m_nLevel;
-        // A trainer tome's trainer is named after the set trainer part it teaches.
-        this.NameOverride = Imlight.CoreLib.Game.World.HouseTrainers.NameFor(entity.Info?.m_zoneTag)
+        // A custom (Customs.cs) shows its own name; a trainer tome's trainer is named after the set trainer part it
+        // teaches.
+        this.NameOverride = Imlight.CoreLib.Game.Combat.Customs.NameOf(entity.ActiveGameObject?.m_globalID.Full ?? 0)
+            ?? Imlight.CoreLib.Game.World.HouseTrainers.NameFor(entity.Info?.m_zoneTag)
             ?? Imlight.CoreLib.Game.World.HouseVendors.NameFor(entity.Info?.m_zoneTag);
     }
 

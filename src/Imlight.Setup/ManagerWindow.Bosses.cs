@@ -64,6 +64,13 @@ internal sealed partial class ManagerWindow {
     private readonly StackPanel _bossSpellResults = new() { Spacing = 2 };
     private readonly DispatcherTimer _bossSpellDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
 
+    // The editor below is shared: the Bosses tab shows it for a creature (its BossOverrides file), the Customs tab for
+    // a custom (its Customs file), each in a host of its own. These say which file it is editing now.
+    private readonly Border _bossesEditorHost = new();
+    private string _editFolder = "";
+    private string _editFileId = "";
+    private CustomMob? _editCustom;
+
     private BossCatalog? _bossCatalog;
     private DateTime _bossCatalogFrom;
     private BossInfo? _boss;
@@ -187,7 +194,16 @@ internal sealed partial class ManagerWindow {
                     WithMargin(_bossResults, new Thickness(0, 6, 0, 0)),
                 },
             }),
-            _bossEditor);
+            _bossesEditorHost);
+    }
+
+    /// <summary>Puts the shared editor into a tab's host, taking it out of the other one.</summary>
+    private void PlaceBossEditor(Border host) {
+        if (_bossEditor.Parent is Border old && old != host) {
+            old.Child = null;
+        }
+
+        host.Child = _bossEditor;
     }
 
     /// <summary>
@@ -339,20 +355,34 @@ internal sealed partial class ManagerWindow {
     }
 
     private void OpenBoss(BossInfo boss) {
+        _customHeaderCard.IsVisible = false;
+        OpenBossEditor(boss, _manager.BossChangesFolder, boss.Id, null, _bossesEditorHost);
+    }
+
+    /// <summary>
+    /// Shows the editor for a creature's file: its Bosses tab changes, or a custom's file (custom set) based on it.
+    /// </summary>
+    private void OpenBossEditor(BossInfo boss, string folder, string fileId, CustomMob? custom, Border host) {
         if (_bossCatalog is null) {
             return;
         }
 
-        var changes = BossChanges.Load(_manager.BossChangesFolder, boss.Id, _bossCatalog.Spells);
+        _editFolder = folder;
+        _editFileId = fileId;
+        _editCustom = custom;
+        PlaceBossEditor(host);
+        var changes = BossChanges.Load(folder, fileId, _bossCatalog.Spells);
         _boss = boss;
-        _bossTitle.Text = boss.Name;
+        _bossTitle.Text = custom is null ? boss.Name : $"Custom {custom.Id}: {custom.Shown} (based on {boss.Name})";
         _bossGame.Text = $"ID {boss.Id}. In the game: level {boss.Level}, {(boss.School.Length > 0 ? boss.School : "no school")}, " +
                          $"{boss.Health:N0} health{(boss.IsBoss ? ", a boss" : "")}.";
         _bossGameStats.Text = boss.Stats.Length > 0
             ? $"From its gear and the game: {boss.Stats}."
             : "It gets no extra damage, resist or other stats from the game.";
-        _bossChangedNote.Text = changes is null ? "" : "This boss has saved changes. The boxes show them.";
-        _bossChangedNote.IsVisible = changes is not null;
+        var changed = changes is not null && !(changes.IsCustom && changes.WithoutCustom().IsEmpty);
+        _bossChangedNote.Text = !changed ? "" : custom is null ? "This boss has saved changes. The boxes show them."
+            : "This custom has changes. The boxes show them; empty boxes are the game's values.";
+        _bossChangedNote.IsVisible = changed;
 
         _bossHealth.Watermark = $"Game: {boss.Health}";
         _bossHealth.Text = changes?.Health?.ToString(CultureInfo.InvariantCulture) ?? "";
@@ -512,20 +542,42 @@ internal sealed partial class ManagerWindow {
         ApplyOpenCheat();
         changes.Cheats = _cheats?.ToJson();
 
-        var folder = _manager.BossChangesFolder;
-        if (changes.IsEmpty) {
-            File.Delete(BossChanges.FileOf(folder, boss.Id));
+        var folder = _editFolder;
+        if (_editCustom is { } custom) {
+            // A custom keeps its file (its number, name and creature) even with nothing else changed.
+            CustomHeaderInto(changes, custom);
+            changes.Save(folder, _editFileId);
+            Say($"Saved custom {custom.Id}. It uses the changes from its next battle or spawn. No restart needed.");
+        }
+        else if (changes.IsEmpty) {
+            File.Delete(BossChanges.FileOf(folder, _editFileId));
             Say($"Nothing is changed, so {boss.Name} fights as in the game.");
         }
         else {
-            changes.Save(folder, boss.Id);
+            changes.Save(folder, _editFileId);
             Say($"Saved. {boss.Name} uses the changes from its next battle. No restart needed.");
         }
 
-        OpenBoss(boss);
-        RenderBossResults();
+        ReopenBossEditor();
 
         return Task.CompletedTask;
+    }
+
+    // Shows the file just saved or put back, in the tab it is in.
+    private void ReopenBossEditor() {
+        if (_boss is not { } boss) {
+            return;
+        }
+
+        if (_editCustom is { } custom) {
+            var fresh = CustomMob.Load(_manager.CustomsFolder, custom.Id) ?? custom;
+            OpenBossEditor(boss, _editFolder, _editFileId, fresh, _customsEditorHost);
+            RenderCustoms();
+        }
+        else {
+            OpenBossEditor(boss, _editFolder, _editFileId, null, _bossesEditorHost);
+            RenderBossResults();
+        }
     }
 
     private async Task ResetBossAsync() {
@@ -533,14 +585,23 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("Pick a boss first.");
         }
 
-        if (!await ConfirmAsync($"Put back the game's health, stats, deck and cheats for {boss.Name}? Your changes for it are deleted.")) {
+        var what = _editCustom is { } c ? $"custom {c.Id} ({c.Shown})" : boss.Name;
+        if (!await ConfirmAsync($"Put back the game's health, stats, deck and cheats for {what}? Your changes for it are deleted." +
+                                (_editCustom is null ? "" : " The custom itself, its name, drops and forms stay."))) {
             return;
         }
 
-        File.Delete(BossChanges.FileOf(_manager.BossChangesFolder, boss.Id));
-        OpenBoss(boss);
-        RenderBossResults();
-        Say($"{boss.Name} fights as in the game again from its next battle.");
+        var file = BossChanges.FileOf(_editFolder, _editFileId);
+        if (_editCustom is not null && _bossCatalog is not null
+            && BossChanges.Load(_editFolder, _editFileId, _bossCatalog.Spells) is { } saved) {
+            saved.WithoutCustom(clear: true).Save(_editFolder, _editFileId);
+        }
+        else {
+            File.Delete(file);
+        }
+
+        ReopenBossEditor();
+        Say($"{what} fights with the game's values again from its next battle.");
     }
 
     // The grey numbers of a grid row: the row's All when one is typed, else the game's value of each school.

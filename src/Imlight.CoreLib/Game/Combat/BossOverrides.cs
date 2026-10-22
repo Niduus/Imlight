@@ -31,6 +31,8 @@
  *     Added    whole new cheats, after the file's own, as a BossCheats file writes them. A creature with no cheat file
  *              can have them too.
  *   A form a boss is polymorphed into uses its own template's file (Haunted Malistaire: 1336037.json).
+ * A custom creature of the Customs tab (Customs.cs) has a file of this format of its own, in spiraldb-extra/Customs,
+ * with its CustomID, BaseTemplateID, Name (shown in battle), Drops and Forms; For reads it by the custom's key.
  */
 
 using System;
@@ -83,6 +85,11 @@ internal static class BossOverrides {
         public bool? Beguilable { get; set; }
         public List<BossCard> Deck { get; set; }
         public CheatChanges Cheats { get; set; }
+        // A custom's (Customs.cs).
+        public int CustomID { get; set; }
+        public ulong BaseTemplateID { get; set; }
+        public List<string> Drops { get; set; }
+        public Dictionary<string, int> Forms { get; set; }
     }
 
     internal sealed class CheatChanges {
@@ -112,7 +119,9 @@ internal static class BossOverrides {
 
     /// <summary>The changes saved for a creature template, or null.</summary>
     internal static BossOverride For(ulong templateId) {
-        var file = Path.Combine(SpiralDB.ExtraPath, FOLDER, $"{templateId}.json");
+        var file = Customs.IsCustom(templateId)
+            ? Customs.FileOf(Customs.IdOf(templateId))
+            : Path.Combine(SpiralDB.ExtraPath, FOLDER, $"{templateId}.json");
         if (!File.Exists(file)) {
             s_read.TryRemove(templateId, out _);
 
@@ -129,6 +138,11 @@ internal static class BossOverrides {
             boss = JsonSerializer.Deserialize<BossOverride>(File.ReadAllText(file), s_options);
             if (boss is not null) {
                 boss.TemplateID = templateId;
+                if (Customs.IsCustom(templateId)) {
+                    boss.CustomID = Customs.IdOf(templateId);
+                    boss.Drops = boss.Drops?.Where(d => !string.IsNullOrWhiteSpace(d)).ToList();
+                }
+
                 boss.Deck = boss.Deck?.Where(c => c is not null && c.SpellID != 0).ToList();
                 boss.DamageBySchool = Row(boss.DamageBySchool, boss.Damage);
                 boss.ResistBySchool = Row(boss.ResistBySchool, boss.Resist);

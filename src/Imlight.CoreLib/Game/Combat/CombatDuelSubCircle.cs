@@ -1368,7 +1368,8 @@ public class CombatDuelSubCircle {
         var gameStats = creatureStats.GameStats;
         var school = creatureStats.MagicSchool;
         var level = creatureStats.CombatLevel;
-        _bossOverride = BossOverrides.For(ParticipantObject.m_templateID);
+        // A custom (Customs.cs) has its own changes instead of its creature's.
+        _bossOverride = BossOverrides.For(Customs.KeyOf(ParticipantObject));
         if (_bossOverride is { } boss) {
             gameStats = BossOverrides.Apply(boss, gameStats, ref school, ref level);
             spellData = BossOverrides.DeckOf(boss) ?? spellData;

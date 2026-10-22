@@ -182,6 +182,9 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         public string[] MobAdjectives;
         public ulong[] MobTemplateIds;
 
+        /// <summary>What each defeated mob drops by: a custom's key (Customs.cs) or its template id.</summary>
+        public ulong[] MobLootKeys;
+
         /// <summary>
         /// Character IDs of every player who fought in the duel, the winner included.
         /// </summary>
@@ -377,6 +380,8 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
         public uint CreatureTemplateId;
         public string CreatureName;
+        // A custom of the Customs tab (Customs.cs) based on the creature, or 0.
+        public int CustomId;
         public IActorRef Actor;
 
     }

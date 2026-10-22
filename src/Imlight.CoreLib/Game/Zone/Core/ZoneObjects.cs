@@ -21,6 +21,9 @@
  *               the boss's side and fight from the first round: first the zone's own creatures of those templates
  *               that are not fighting (within JoinRadius of the battle circle; 0 for anywhere in the zone), then,
  *               a second later, spawned ones picked at random for the rest.
+ *   ReplaceSpawns  creature templates the zone's spawners (its own and the file's) spawn as a custom of the app's
+ *               Customs tab instead (Customs.cs): { "1336035": 1 } spawns Malistaire the Undying as custom 1. The
+ *               Customs tab's rooms (Customs/Rooms.json) do the same without changing this file, and win over it.
  *   Exit        where the zone's teleports out of it go instead: Zone and Loc ("X,Y,Z,Yaw" or a named place there).
  *               Triggers names the teleports it changes (trigger or door names); empty for every one that leaves
  *               the zone. Doors are object template ids that become press-X doors to the exit in this copy, for an
@@ -73,6 +76,7 @@ internal static class ZoneObjects {
         public List<ulong> Remove { get; set; } = [];
         public List<string> DistinctSpawners { get; set; } = [];
         public List<ZoneEncounter> Encounters { get; set; } = [];
+        public Dictionary<string, int> ReplaceSpawns { get; set; } = [];
         public ZoneExit Exit { get; set; }
     }
 
@@ -121,9 +125,28 @@ internal static class ZoneObjects {
     }
 
     /// <summary>What the files gave one copy of a zone: its encounters and its exit.</summary>
-    internal sealed class Applied(string zonePath, IReadOnlyList<ZoneObjectFile> files) {
+    internal sealed class Applied(string zonePath, string variant, IReadOnlyList<ZoneObjectFile> files) {
 
-        internal static readonly Applied None = new("", []);
+        internal static readonly Applied None = new("", "", []);
+
+        /// <summary>
+        /// The custom (Customs.cs) this copy of the zone spawns instead of a creature template, or 0: the Customs tab's
+        /// rooms first, then the files' ReplaceSpawns.
+        /// </summary>
+        internal int CustomFor(ulong templateId) {
+            if (zonePath.Length == 0) {
+                return 0;
+            }
+
+            // -1 in the rooms: the game's creature, whatever the files say.
+            var room = Imlight.CoreLib.Game.Combat.Customs.RoomCustomFor(zonePath, variant, templateId);
+            if (room != 0) {
+                return Math.Max(0, room);
+            }
+
+            return files.Select(f => f.ReplaceSpawns != null && f.ReplaceSpawns.TryGetValue(templateId.ToString(), out var id) ? id : 0)
+                .LastOrDefault(id => id > 0);
+        }
 
         /// <summary>The encounter for a battle started against this creature template, or null.</summary>
         internal ZoneEncounter EncounterFor(ulong bossTemplateId)
@@ -253,7 +276,7 @@ internal static class ZoneObjects {
         Logger.Information("Zone {0}{1}: added {2} objects and {3} creatures from {4}, left out {5} of the zone's own.",
             Logger.Args(zonePath, string.IsNullOrEmpty(variant) ? "" : $" ({variant})", objects, creatures, FOLDER, removed));
 
-        return new Applied(zonePath, files);
+        return new Applied(zonePath, variant ?? "", files);
     }
 
     /// <summary>Whether any file makes objects of this template a door to its exit (the door component attaches).</summary>
@@ -432,6 +455,7 @@ internal static class ZoneObjects {
                 file.Objects = [.. (file.Objects ?? []).Where(o => IsUsable(fileName, o, names))];
                 file.Creatures = [.. (file.Creatures ?? []).Where(o => IsUsable(fileName, o, names))];
                 file.Remove ??= [];
+                file.ReplaceSpawns ??= [];
                 file.DistinctSpawners = [.. (file.DistinctSpawners ?? []).Where(n => !string.IsNullOrWhiteSpace(n))];
                 if (file.Exit is not null) {
                     file.Exit.Triggers ??= [];

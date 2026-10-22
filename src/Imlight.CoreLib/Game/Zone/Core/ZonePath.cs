@@ -331,6 +331,13 @@ public sealed class ZonePath : ZoneEntity {
         var creatureObj = CoreObjectFactory.FinalizeCoreObject(spawnItemInfo, template);
         spawnItemInfo.m_templateID = originalTemplateId;
         creatureObj = CoreObjectFactory.InitializeCoreObjectBehaviors(creatureObj, template);
+        // A creature this copy of the zone spawns as a custom of the Customs tab (ZoneObjects ReplaceSpawns, the
+        // tab's rooms) is marked before its actor is made, so it has the custom's name and changes.
+        if (!isWisp && Zone.Extras.CustomFor(templateId) is var customId and > 0
+            && Imlight.CoreLib.Game.Combat.Customs.Get(customId)?.BaseTemplateID == templateId) {
+            Imlight.CoreLib.Game.Combat.Customs.Mark(creatureObj.m_globalID.Full, customId);
+        }
+
         if (templateId != originalTemplateId) {
             Randomizer.RememberReplacedCreature(creatureObj.m_globalID, originalTemplateId);
         }

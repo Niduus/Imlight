@@ -783,19 +783,21 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var folder = _manager.BossChangesFolder;
-        if (BossChanges.Load(folder, boss.Id, _bossCatalog.Spells) is { } saved) {
+        var folder = _editFolder;
+        if (BossChanges.Load(folder, _editFileId, _bossCatalog.Spells) is { } saved) {
             saved.Cheats = null;
-            if (saved.IsEmpty) {
-                File.Delete(BossChanges.FileOf(folder, boss.Id));
+            if (saved.IsEmpty && !saved.IsCustom) {
+                File.Delete(BossChanges.FileOf(folder, _editFileId));
             }
             else {
-                saved.Save(folder, boss.Id);
+                saved.Save(folder, _editFileId);
             }
         }
 
-        LoadBossCheats(boss, BossChanges.Load(folder, boss.Id, _bossCatalog.Spells));
-        RenderBossResults();
+        LoadBossCheats(boss, BossChanges.Load(folder, _editFileId, _bossCatalog.Spells));
+        if (_editCustom is null) {
+            RenderBossResults();
+        }
         Say($"{boss.Name} uses the game's cheats again from its next battle.");
     }
 
