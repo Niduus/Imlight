@@ -423,6 +423,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             ResetInstance = !entry.KeepInstance,
             Variant = entry.Variant,
         };
+        ZoneVariants.Remember(wizard.CharId, entry.DestinationZone, entry.Variant);
 
         SendTeleportEffects();
         ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP answer;

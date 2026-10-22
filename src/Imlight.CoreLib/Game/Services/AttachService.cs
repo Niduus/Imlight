@@ -524,12 +524,16 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
     private ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP InternalZoneTransfer(string zoneName, string location, ulong houseOwnerCharId = 0) {
         var (ownerCharId, isPrivate) = ZoneInstanceOwners.Resolve(_wizard.CharId, zoneName, houseOwnerCharId);
+        // A copy loaded with a variant (such as the Ravenwood sigil's Malistaire room) is made again with it when the
+        // server no longer has it, such as after a restart; it is always a private copy.
+        var variant = houseOwnerCharId != 0 ? "" : ZoneVariants.ForAttach(_wizard.CharId, zoneName);
         var zoneMsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = zoneName,
             DestinationLocation = location,
             SendToClient = false,
             OwnerCharId = ownerCharId,
-            IsPrivate = isPrivate,
+            IsPrivate = isPrivate || variant.Length > 0,
+            Variant = variant,
         };
 
         return AskOtherService<ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP>(zoneMsg);
