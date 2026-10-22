@@ -590,6 +590,10 @@ internal sealed partial class SpellBook {
         });
     }
 
+    /// <summary>The picture file names that hold every one of these words (any case), shortest first.</summary>
+    internal List<string> FindImages(params string[] words)
+        => [.. _images.Keys.Where(k => words.All(w => k.Contains(w, StringComparison.OrdinalIgnoreCase))).OrderBy(k => k.Length)];
+
     /// <summary>Whether a picture of this name is anywhere in the game files.</summary>
     internal bool HasImage(string? fileName)
         => !string.IsNullOrWhiteSpace(fileName) && (_images.ContainsKey(Path.GetFileName(fileName)) || _images.ContainsKey(Path.GetFileName(fileName) + ".dds"));
