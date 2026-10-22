@@ -145,11 +145,73 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         AddCasterPassActionIfNeeded();
         SortQueuedActions();
 
+        StartHealthBeats();
         var cinematicTime = ProcessQueuedActions(combatActionListObj);
-        cinematicTime += ShowAnnouncements(combatActionListObj);
+        var announced = ShowAnnouncements(combatActionListObj);
+        cinematicTime += announced;
+        TimeHealthBeats(announced, instant: cinematicTime <= 0 || _subCircles[0]._duelActor.CheatInstantCinematics);
         ApplyCastLooks(combatActionListObj);
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// A wizard's health globe (the orb at the bottom left) at a moment of the round's animations. The game only moves
+    /// the globe on a health message, so it showed the health from the start of the round until the next round's
+    /// combat health (Justin, 2026-10-22: his friend's globe caught up only on the next turn). The duel sends each one
+    /// as MSG_UPDATEHEALTH when its step of the round has played.
+    /// </summary>
+    internal readonly record struct HealthBeat(float Seconds, CombatDuelSubCircle Circle, int Health);
+
+    /// <summary>This round's health globe changes, in the order they play.</summary>
+    internal readonly List<HealthBeat> HealthBeats = [];
+
+    // The health each wizard's globe was last given this round.
+    private readonly Dictionary<CombatDuelSubCircle, int> _beatHealth = [];
+
+    // Wizards whose globe shows their real health. A PvP duel only changes its copy (IsSandboxed).
+    private IEnumerable<CombatDuelSubCircle> GlobeCircles()
+        => _subCircles.Where(c => c is { Occupied: true, AddedToDuel: true, _wizard: not null, IsSandboxed: false }
+            && c.ParticipantGameStats is not null);
+
+    private void StartHealthBeats() {
+        HealthBeats.Clear();
+        _beatHealth.Clear();
+        foreach (var circle in GlobeCircles()) {
+            _beatHealth[circle] = circle.ParticipantGameStats.m_currentHitpoints;
+        }
+    }
+
+    /// <summary>
+    /// Notes the health of every wizard whose health changed in the step that just ended; their globe gets it once
+    /// <paramref name="seconds"/> of the round have played (the end of that step's animation).
+    /// </summary>
+    private void NoteHealthBeat(float seconds) {
+        foreach (var circle in GlobeCircles()) {
+            var health = Math.Max(0, circle.ParticipantGameStats.m_currentHitpoints);
+            if (_beatHealth.TryGetValue(circle, out var was) && was == health) {
+                continue;
+            }
+
+            _beatHealth[circle] = health;
+            HealthBeats.Add(new HealthBeat(seconds, circle, health));
+        }
+    }
+
+    // The .ca lines play before the first spell, so every change comes that much later. With no cinematics they all
+    // go at once, and only each wizard's last health.
+    private void TimeHealthBeats(float announced, bool instant) {
+        if (instant) {
+            var last = HealthBeats.GroupBy(b => b.Circle).Select(g => g.Last() with { Seconds = 0 }).ToList();
+            HealthBeats.Clear();
+            HealthBeats.AddRange(last);
+
+            return;
+        }
+
+        for (var i = 0; i < HealthBeats.Count; i++) {
+            HealthBeats[i] = HealthBeats[i] with { Seconds = HealthBeats[i].Seconds + announced };
+        }
     }
 
     /// <summary>
@@ -357,32 +419,41 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         PetCastCards.Clear();
         // .c1 f / .c2 f (Justin, 2026-10-20): the queue casts before anyone's turn, then the round goes on.
         cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
+        NoteHealthBeat(cinematicTime);
         // Boss cheats for the start of the round (BossCheats.cs).
         cinematicTime += BossCheatsAtRoundStart(combatActionList, cinematicTime);
         ProcessAfterlives();
+        NoteHealthBeat(cinematicTime);
         foreach (var action in _queuedCombatActions) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            NoteHealthBeat(cinematicTime);
             // A boss cheat that interrupts goes off before the spell it answers.
             cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
+            NoteHealthBeat(cinematicTime);
             var before = combatActionList.m_actionList.Count;
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
             // A participant defeated by that move comes back if an afterlife waits on them (CombatResolver.Afterlife.cs).
             ProcessAfterlives();
+            NoteHealthBeat(cinematicTime);
             // A boss answers the move that was just made (a player's cast or pass, or its health falling).
             cinematicTime += BossCheatsAfter(action.SpellCaster, before, combatActionList, cinematicTime);
+            NoteHealthBeat(cinematicTime);
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            NoteHealthBeat(cinematicTime);
         }
         // Boss cheats for the end of the round, after everyone's move.
         cinematicTime += BossCheatsAtRoundEnd(combatActionList, cinematicTime);
+        NoteHealthBeat(cinematicTime);
         // .c1 l / .c2 l: the queue casts after everyone's turn, then the round ends.
         cinematicTime += CastEveryonesDelayed('l', combatActionList, cinematicTime);
         // Malistaire went invisible (Justin, 2026-10-22): a participant defeated by a round-end cheat or a last (.c1 l)
         // cast was never given its afterlife, so the round's end took him out of the battle (MSG_COMBATDEATH and
         // MSG_COMBATREMOVE) while the game, which works out the afterlife itself, still had him standing there.
         ProcessAfterlives();
+        NoteHealthBeat(cinematicTime);
 
         return instantCinematics ? 0 : cinematicTime;
     }
