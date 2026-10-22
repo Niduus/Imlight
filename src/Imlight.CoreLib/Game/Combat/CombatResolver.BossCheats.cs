@@ -598,7 +598,7 @@ public partial class CombatResolver {
                     break;
                 case "cast" or "polymorph":
                     cinematicTime += CheatCast(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList,
-                        cinematicTimeSoFar + cinematicTime);
+                        cinematicTimeSoFar + cinematicTime, custom);
                     break;
                 case "interrupt":
                     _interruptNow = true;
@@ -689,7 +689,7 @@ public partial class CombatResolver {
     // DispelImmune, as it stops a player's spell of that school.
     private float CheatCast(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
                             CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
-                            float cinematicTimeSoFar) {
+                            float cinematicTimeSoFar, bool custom) {
         var (spell, template) = FindSpell(step.Spell, step.SpellID);
         if (template is null) {
             Logger.Warning("Duel {0} | Boss cheat spell \"{1}\" of {2} not found.", Logger.Args(_duel.m_duelID.Full, step.Spell, bossName));
@@ -699,7 +699,10 @@ public partial class CombatResolver {
 
         // Free: no pips are taken for it.
         spell = spell with { m_pipCost = new SpellRank() };
-        var aim = step.Target.Length > 0 ? step.Target : step.Is("Polymorph") && cheat.Target.Length == 0 ? "Self" : cheat.Target;
+        // A polymorph that changes the boss (Afterlife - Malistaire 02) goes on itself unless told otherwise; one that
+        // attacks in another shape (Polymorph - Dragon NA) aims as the cheat or the spell says.
+        var lasting = Flatten(template).FirstOrDefault(e => e.m_effectType == kSpellEffects.kPolymorph);
+        var aim = step.Target.Length > 0 ? step.Target : step.Is("Polymorph") && lasting is not null && cheat.Target.Length == 0 ? "Self" : cheat.Target;
         var cinematicTime = 0.0f;
         foreach (var target in StepTargets(boss, aim, template, trigger, receiver)) {
             if (!boss.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
@@ -722,6 +725,10 @@ public partial class CombatResolver {
             }
 
             cinematicTime += time;
+            if (step.Is("Polymorph") || lasting is not null) {
+                LogPolymorph(custom, boss, bossName, template, lasting, target, before < combatActionList.m_actionList.Count);
+            }
+
             if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
                 cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], [.. lines], boss.SlotIndex);
                 lines.Clear();
@@ -729,6 +736,27 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    // "Custom cheat | ... polymorph": what shape the boss takes and for how long, each time a polymorph cheat goes off.
+    private void LogPolymorph(bool custom, CombatDuelSubCircle boss, string bossName, SpellTemplate template, SpellEffect lasting,
+                              CombatDuelSubCircle target, bool sent) {
+        string shape;
+        if (lasting is not null) {
+            var mob = CombatPolymorph.MobOf(lasting.m_effectParam);
+            var name = CoreObjectFactory.GetCoreTemplate(mob) is GameObjectTemplate t ? (string) t.m_objectName : mob.ToString();
+            shape = $"{(target == boss ? "it turns" : $"slot {target.SlotIndex} turns")} into {name} "
+                    + (lasting.m_numRounds < 0 ? "for the rest of the battle" : $"for {lasting.m_numRounds} rounds");
+        }
+        else {
+            // Polymorph - Dragon NA: its cinematic hides the boss, its other shape (the Black Dragon) comes in its place
+            // and attacks, then goes, and the boss is back in its circle.
+            shape = $"it takes its other shape for this attack on slot {target.SlotIndex}, then turns back";
+        }
+
+        Logger.Information("{0} | Duel {1} | {2} (slot {3}) polymorph with {4}: {5}{6}.",
+            Logger.Args(custom ? "Custom cheat" : "Boss cheat", _duel.m_duelID.Full, bossName, boss.SlotIndex,
+                (string) template.m_name, shape, sent ? "" : " (nothing was sent: the spell found no one)"));
     }
 
     private static (Spell Spell, SpellTemplate Template) FindSpell(string name, uint id) {

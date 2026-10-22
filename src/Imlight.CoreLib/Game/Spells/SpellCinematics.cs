@@ -113,6 +113,12 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
             if (act is SummonCinematicStageTemplate summonCinematicStageTemplate) {
                 return summonCinematicStageTemplate.m_duration;
             }
+
+            // A boss's cheat cinematic (Polymorph - Dragon NA: 4.8 s of Malistaire turning into the Black Dragon) has
+            // a plain stage named Summon; the round waits for it too, so it is not cut off before the dragon goes away.
+            if (act.m_name == "Summon") {
+                return act.m_duration;
+            }
         }
 
         return 0.0f;

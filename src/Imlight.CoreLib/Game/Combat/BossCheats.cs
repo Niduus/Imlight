@@ -51,7 +51,12 @@
  *   MaxTimes     at most this many times a battle (0 = no limit). Cooldown: at least this many rounds between two.
  *   Actions      what it does, in order, after the fields above (Cast, Line, SetPhase... count as the first actions):
  *     { "Do": "Cast", "Spell"/"SpellID", "Target", "Silent", "DispelImmune" }   a free spell.
- *     { "Do": "Polymorph", "Spell" }        a polymorph spell cast on the boss itself (Target to change who).
+ *     { "Do": "Polymorph", "Spell", "Target" }   a polymorph spell. One that changes the boss for good (Afterlife -
+ *                                           Malistaire 02, a kPolymorph) goes on the boss itself unless Target says
+ *                                           otherwise; one that attacks in another shape (Polymorph - Dragon NA: he
+ *                                           turns into the Black Dragon, hits a player and turns back, all in its
+ *                                           cinematic) aims as Target or the spell says. Each is logged as
+ *                                           "... polymorph with <spell>: ...".
  *     { "Do": "Interrupt" }                 the player's spell that set it off fizzles. A cheat with it (PlayerCasts
  *                                           or BossHit) goes off before that spell instead of after it.
  *     { "Do": "RemoveCharms"/"RemoveWards", "Kind": "Good"/"Bad"/"All", "Count" (0 = all), "Target" }
