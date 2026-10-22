@@ -2081,7 +2081,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
         ["Spells"] = ("cards", "Every spell card, as the game draws it."),
-        ["Gear"] = ("shield", "Every hat, robe, wand, mount and pet, as the game's item tooltip shows it."),
+        ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),

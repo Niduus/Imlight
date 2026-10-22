@@ -133,16 +133,15 @@ internal sealed class SpellCard {
     /// <summary>What the card does: the game's own words, then Imlight's corrected words in braces (<see cref="Shown"/>).</summary>
     internal string Does => Shown;
 
-    /// <summary>Imlight's words shown under a short game text that gives no numbers, or "".</summary>
-    internal string Numbers => !Blank && Explained.Length > 0 && !Short.Any(char.IsDigit) && SpellBook.HasAmounts(Explained)
-        ? Explained : "";
-
-    /// <summary>Imlight's corrected words for a card whose game text is blank or gives no numbers, or "".</summary>
-    internal string Corrected => Blank ? Explained : Numbers;
+    /// <summary>
+    /// What the code does, in Imlight's words written from the spell's effects, shown in braces after the game's text on
+    /// every card (Niduus, 2026-10-22: "ALL cards ... should have their written text and {code text}"), or "".
+    /// </summary>
+    internal string Corrected => Explained;
 
     /// <summary>
-    /// The game's text with Imlight's corrected words after it in braces, such as "Skeletal Dragon {Deals 40% of the
-    /// target's max health as damage to all enemies}", so a search for "{" finds every corrected card (Niduus, 2026-10-22).
+    /// The game's text with what the code does after it in braces, such as "710 Death Damage and ... {Deals 710 Death
+    /// damage ...}"; the braced words are searchable too.
     /// </summary>
     internal string Shown => Corrected.Length == 0 ? Short : $"{Short} {{{Corrected.TrimEnd('.')}}}".Trim();
 
@@ -790,6 +789,9 @@ internal sealed partial class SpellBook {
 
     /// <summary>The picture file of one of the game's small text icons (MadlibIcons.xml), such as Accuracy_image.</summary>
     internal string? TokenIcon(string token) => _tokens.TryGetValue(token, out var known) && known.Icon.Length > 0 ? known.Icon : null;
+
+    /// <summary>Every picture file name in the game files.</summary>
+    internal IEnumerable<string> ImageNames => _images.Keys;
 
     /// <summary>The picture file names that hold every one of these words (any case), shortest first.</summary>
     internal List<string> FindImages(params string[] words)

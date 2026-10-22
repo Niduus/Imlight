@@ -67,7 +67,7 @@ internal sealed class GearItem {
 
     internal required string File { get; init; }
 
-    /// <summary>Hat, Robe, Boots, Wand, Athame, Amulet, Ring, Deck, Mount or Pet.</summary>
+    /// <summary>Hat, Robe, Boots, Wand, Athame, Amulet, Ring, Deck, Mount, Pet or Bundle.</summary>
     internal required string Slot { get; init; }
 
     /// <summary>The school a wizard must be to wear it, or "" when any school may.</summary>
@@ -101,6 +101,9 @@ internal sealed class GearItem {
 
     internal required int CrownsCost { get; init; }
 
+    /// <summary>A bundle's items by template ID (what it gives, free items included), or empty for anything else.</summary>
+    internal IReadOnlyList<uint> BundleItems { get; init; } = [];
+
     internal bool CrownsOnly => Flags.Contains("CrownsOnly");
 
     internal bool Retired => Flags.Contains("Retired");
@@ -108,7 +111,7 @@ internal sealed class GearItem {
     internal string Haystack { get; set; } = "";
 
     /// <summary>The chat command that gives it, by ID, so the version is exact (the server's CommandGearProtocol).</summary>
-    internal string Command => (Slot switch {
+    internal string Command => Slot == "Bundle" ? $".bundle {Name}" : (Slot switch {
         "Hat" => ".hat",
         "Robe" => ".robe",
         "Boots" => ".boot",
@@ -131,7 +134,7 @@ internal sealed class GearItem {
 /// </summary>
 internal sealed partial class GearBook {
 
-    internal static readonly string[] SLOTS = ["Hat", "Robe", "Boots", "Wand", "Athame", "Amulet", "Ring", "Deck", "Mount", "Pet"];
+    internal static readonly string[] SLOTS = ["Hat", "Robe", "Boots", "Wand", "Athame", "Amulet", "Ring", "Deck", "Mount", "Pet", "Bundle"];
 
     // Folders of ObjectData that never hold gear, left out so reading is quicker.
     private static readonly string[] s_skipped = [
@@ -171,6 +174,15 @@ internal sealed partial class GearBook {
         gear.Items = [.. items.OrderBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ThenBy(i => i.Level).ThenBy(i => i.Id)];
 
         return gear;
+    }
+
+    private Dictionary<uint, GearItem>? _byId;
+
+    /// <summary>A piece of gear (or bundle) by template ID, or null when it isn't gear.</summary>
+    internal GearItem? Item(uint id) {
+        _byId ??= Items.GroupBy(i => i.Id).ToDictionary(g => g.Key, g => g.First());
+
+        return _byId.GetValueOrDefault(id);
     }
 
     /// <summary>The spell card an item gives, by the spell's game name (ProvideSpellEffectInfo names it so).</summary>
@@ -227,7 +239,9 @@ internal sealed partial class GearBook {
     private GearItem? Read(uint id, string file, WizItemTemplate template) {
         var adjectives = (template.m_adjectiveList ?? []).Select(a => (string) a ?? "").ToList();
         var behaviors = (template.m_behaviors ?? []).Where(b => b is not null).ToList();
-        var slot = SlotOf(adjectives, behaviors);
+        // A bundle (Niduus, 2026-10-22: "I want Bundle to be included") shows the items it gives.
+        var bundle = template as ItemBundleTemplate;
+        var slot = bundle is not null ? "Bundle" : SlotOf(adjectives, behaviors);
         if (slot is null) {
             return null;
         }
@@ -287,6 +301,7 @@ internal sealed partial class GearBook {
             Deck = deck,
             GoldCost = (int) Math.Max(0, template.m_baseCost),
             CrownsCost = (int) Math.Max(0, template.m_creditsCost),
+            BundleItems = bundle is null ? [] : [.. (bundle.m_bundleItems ?? []).Concat(bundle.m_bundleFreeItems ?? []).Select(g => (uint) (ulong) g).Distinct()],
         };
         item.Haystack = $"{item.Name} {item.Code} {item.Id} {item.Slot} {item.SchoolNeeded} {item.School} {string.Join(' ', item.Flags)}".ToLowerInvariant();
 
@@ -408,14 +423,22 @@ internal sealed partial class GearBook {
         var category = (string) effect.m_effectCategory ?? "";
         var school = (string) effect.m_school ?? "";
         var kind = category;
-        if (SchoolPrefix().Match(category) is { Success: true } prefixed) {
+        var effectName = (string) effect.m_effectName ?? "";
+        if (category.StartsWith("ShadowPip", StringComparison.Ordinal)) {
+            // Shadow pip stats start with "Shadow" but aren't Shadow school stats. CanonicalShadowPipRating shares its
+            // category with Shadow pip conversion, so its own name tells them apart; the game shows the shadow pip icon.
+            kind = effectName.Contains("ShadowPipRating", StringComparison.Ordinal) ? "ShadowPipRating"
+                : category == "ShadowPips" ? "ShadowPips" : "PipConversion";
+            school = kind == "PipConversion" ? school : "";
+        }
+        else if (SchoolPrefix().Match(category) is { Success: true } prefixed) {
             school = school.Length > 0 ? school : prefixed.Groups[1].Value;
             kind = prefixed.Groups[2].Value;
         }
 
         // Flat damage shares its category with percent damage (CanonicalIceFlatDamage is IceDamage), so its own name
         // tells them apart, as the server's CanonicalStatEffects does.
-        if (((string) effect.m_effectName ?? "").Contains("Flat", StringComparison.Ordinal) && !kind.Contains("Flat", StringComparison.Ordinal)) {
+        if (effectName.Contains("Flat", StringComparison.Ordinal) && !kind.Contains("Flat", StringComparison.Ordinal)) {
             kind = "Flat" + kind;
         }
 
@@ -457,7 +480,8 @@ internal sealed partial class GearBook {
             "ReduceDamageRating" => new GearStat(value, ["resist"], school, "RATING", "Resist Rating"),
             "PowerPipRating" => new GearStat(value, ["powerpip"], school, "RATING", "Power Pip Rating"),
             "PowerPips" => new GearStat(value, ["powerpip"], school, "", "Power Pip Chance: more of your pips come as power pips"),
-            "ShadowPips" => new GearStat(value, ["shadowpip"], school, "RATING", "Shadow Pip Rating: shadow pips come sooner"),
+            "ShadowPipRating" => new GearStat(value, ["shadowpip"], "", "RATING", "Shadow Pip Rating: shadow pips come sooner"),
+            "ShadowPips" => new GearStat(value, ["shadowpip"], "", "", "Shadow Pip Chance: more chance of a shadow pip"),
             "PipConversion" => new GearStat(value, ["pipconversion"], school, "RATING",
                 "Pip Conversion Rating: more chance a power pip turns into a school pip" + forSchool),
             "ShadowPipConversion" => new GearStat(value, ["pipconversion"], school, "RATING", "Shadow Pip Conversion Rating"),

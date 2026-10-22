@@ -161,7 +161,7 @@ internal sealed partial class ManagerWindow {
                     WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
                         "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies. " +
                         "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
-                        "Words in { } are Imlight's corrected text for a card whose game text is blank or gives no numbers; search for { to list them."),
+                        "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects)."),
                     filters, _spellsCount), Dock.Top),
                 WithMargin(new DockPanel {
                     Children = { WithDock(details, Dock.Right), _spellsScroll },

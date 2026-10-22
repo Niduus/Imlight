@@ -143,9 +143,11 @@ internal sealed partial class ManagerWindow {
                 Children = { _gearTooltipHost, _gearCards, _gearDetails },
             }),
         };
+        // The item's side runs the full height of the tab, beside the search (Niduus, 2026-10-22: "extend the gear view up more").
         var root = new DockPanel {
             Margin = new Thickness(24, 12, 24, 16),
             Children = {
+                WithDock(details, Dock.Right),
                 WithDock(Fold("shield", "Gear", "Find gear",
                     "Search or filter, then click an item to see it as the game shows it.",
                     MissingNote("the give-gear commands (.hat, .robe, .pet and the rest) are " + ServerSource.DefaultName +
@@ -155,9 +157,7 @@ internal sealed partial class ManagerWindow {
                         "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
                         "which players never see."),
                     filters, _gearCount, GearGuide()), Dock.Top),
-                WithMargin(new DockPanel {
-                    Children = { WithDock(details, Dock.Right), _gearList },
-                }, new Thickness(0, 14, 0, 0)),
+                WithMargin(_gearList, new Thickness(0, 14, 0, 0)),
             },
         };
         ShowGear(null);
@@ -191,6 +191,7 @@ internal sealed partial class ManagerWindow {
 
                 var gear = await Task.Run(() => GearBook.Load(book));
                 _gearBook ??= gear;
+                WriteGamePictureNames(book);
             }
             catch (Exception ex) {
                 _gearProblem ??= ex is PanelException ? ex.Message : $"The gear could not be read from the game files: {ex.Message}";
@@ -200,6 +201,20 @@ internal sealed partial class ManagerWindow {
             }
 
             RenderGearTab();
+        }
+    }
+
+    /// <summary>
+    /// Writes the names of the game's pictures to game-picture-names.txt in the app's folder, so the right stat and
+    /// pet icons can be matched to the game's own files later.
+    /// </summary>
+    private void WriteGamePictureNames(SpellBook book) {
+        try {
+            File.WriteAllLines(Path.Combine(_manager.InstallFolder, "game-picture-names.txt"),
+                book.ImageNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase));
+        }
+        catch (Exception) {
+            // Only a help for matching icons; the tab works without it.
         }
     }
 
@@ -269,7 +284,10 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>One item in the list: its school, its name, and its slot, level and ID underneath.</summary>
     private Control GearRow(GearItem item) {
-        var line = $"{item.Slot}" + (item.Level > 0 ? $"  ·  Level {item.Level}+" : "") + $"  ·  ID {item.Id}";
+        // A bundle's tiers differ by the level of what is inside.
+        var level = item.Level > 0 || item.BundleItems.Count == 0 || _gearBook is not { } gear ? item.Level
+            : item.BundleItems.Select(gear.Item).Max(i => i?.Level ?? 0);
+        var line = $"{item.Slot}" + (level > 0 ? $"  ·  Level {level}+" : "") + $"  ·  ID {item.Id}";
         var marks = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
         if (item.CrownsOnly) {
             marks.Children.Add(GearMark("CrownsOnly", 18));
@@ -290,6 +308,7 @@ internal sealed partial class ManagerWindow {
                 "Wand" or "Athame" => "sword",
                 "Ring" => "ring",
                 "Amulet" => "sigil",
+                "Bundle" => "gift",
                 _ => "shield",
             }, 22, ManagerTheme.Accent("Gear"));
 
@@ -324,6 +343,9 @@ internal sealed partial class ManagerWindow {
         }
 
         _gearTooltipHost.Child = GearTooltip(gear, book, item);
+        if (item.BundleItems.Count > 0) {
+            ShowBundleContents(gear, book, item);
+        }
 
         // The item's cards, painted big below the tooltip as the game shows them beside it.
         var cards = item.Spells.Select(s => s.Code).Concat(item.Pet?.Spells ?? []).Distinct(StringComparer.OrdinalIgnoreCase)
@@ -384,6 +406,49 @@ internal sealed partial class ManagerWindow {
         Fact("File", item.File);
     }
 
+    /// <summary>
+    /// A bundle's items under its own tooltip, each as the game's tooltip with its cards, as the game's bundle pictures
+    /// show them side by side. A bundle inside a bundle (a set's tiers) shows its items too.
+    /// </summary>
+    private void ShowBundleContents(GearBook gear, SpellBook book, GearItem bundle) {
+        var seen = new HashSet<uint> { bundle.Id };
+        var others = new List<string>();
+        void Walk(GearItem holder, int depth) {
+            foreach (var id in holder.BundleItems) {
+                if (!seen.Add(id)) {
+                    continue;
+                }
+
+                if (gear.Item(id) is not { } inside) {
+                    others.Add($"Item {id}");
+                    continue;
+                }
+
+                if (inside.BundleItems.Count > 0 && depth < 3) {
+                    _gearCards.Children.Add(WithMargin(GearText(inside.Name, TIP_CYAN, 18), new Thickness(0, 6, 0, 0)));
+                    Walk(inside, depth + 1);
+                    continue;
+                }
+
+                var tooltip = GearTooltip(gear, book, inside);
+                tooltip.Margin = new Thickness(4);
+                tooltip.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+                ToolTip.SetTip(tooltip, $"{inside.Slot}  ·  ID {inside.Id}. Click to see it on its own.");
+                tooltip.PointerPressed += (_, _) => ShowGear(inside);
+                _gearCards.Children.Add(tooltip);
+                foreach (var card in inside.Spells.Select(sp => sp.Code).Concat(inside.Pet?.Spells ?? []).Distinct(StringComparer.OrdinalIgnoreCase)
+                             .Select(gear.Spell).OfType<SpellCard>()) {
+                    _gearCards.Children.Add(WithMargin(SpellThumb(card.Id, card.School, 96), new Thickness(4)));
+                }
+            }
+        }
+
+        Walk(bundle, 0);
+        if (others.Count > 0) {
+            _gearCards.Children.Add(WithMargin(Sub($"Also in it (not gear): {string.Join(", ", others)}"), new Thickness(4)));
+        }
+    }
+
     /// <summary>The command that gives the item: the server's own give-gear command, or .mod additem on another copy.</summary>
     private string GiveGearCommand(GearItem item) => _manager.HasGearCommands ? item.Command : $".mod additem {item.Id}";
 
@@ -430,6 +495,10 @@ internal sealed partial class ManagerWindow {
             var line = TipLine([.. parts]);
             ToolTip.SetTip(line, stat.Words);
             Add(line);
+        }
+
+        if (item.BundleItems.Count > 0) {
+            Add(GearText(item.BundleItems.Count == 1 ? "1 item inside" : $"{item.BundleItems.Count} items inside", TIP_YELLOW, 18));
         }
 
         if (item.Deck is { } deck) {
@@ -703,6 +772,19 @@ internal sealed partial class ManagerWindow {
         ["lock"] = ["Icon_Lock.dds", "Icon_Locked.dds", "Icon_Socket_Locked.dds"],
     };
 
+    // When none of a stat's pictures above is in the game files, the first picture whose name holds all of one of
+    // these word sets is used (Niduus, 2026-10-22: the pet icons weren't the game's), before the drawn stand-in.
+    private static readonly Dictionary<string, string[][]> s_gearIconSearch = new(StringComparer.OrdinalIgnoreCase) {
+        ["strength"] = [["Pet", "Strength"], ["Icon", "Strength"]],
+        ["intellect"] = [["Pet", "Intellect"], ["Icon", "Intellect"]],
+        ["agility"] = [["Pet", "Agility"], ["Icon", "Agility"]],
+        ["will"] = [["Pet", "Will"], ["Icon", "Will_"]],
+        ["power"] = [["Pet", "Power"], ["Icon", "Power_"]],
+        ["happiness"] = [["Pet", "Happiness"], ["Icon", "Happiness"]],
+        ["shadowpip"] = [["Shadow", "Pip"]],
+        ["speed"] = [["Icon", "Speed"]],
+    };
+
     // The drawn stand-in for each stat icon: one of the app's icons in the colour the game gives that stat.
     private static readonly Dictionary<string, (string Icon, uint Color)> s_gearIconStandIns = new(StringComparer.OrdinalIgnoreCase) {
         ["health"] = ("heart", 0xFFE8302A),
@@ -740,6 +822,10 @@ internal sealed partial class ManagerWindow {
     private Control GearIcon(string key, string tip, double size = 20) {
         Control icon;
         var picture = s_gearIconPictures.TryGetValue(key, out var names) ? names.Select(GearPicture).FirstOrDefault(p => p is not null) : null;
+        if (picture is null && _spellBook is { } book && s_gearIconSearch.TryGetValue(key, out var searches)) {
+            picture = searches.SelectMany(words => book.FindImages(words).Where(n => n.EndsWith(".dds", StringComparison.OrdinalIgnoreCase)).Take(1))
+                .Select(GearPicture).FirstOrDefault(p => p is not null);
+        }
         if (picture is not null) {
             icon = new Image { Source = picture, Width = size, Height = size, Stretch = Stretch.Uniform };
         }

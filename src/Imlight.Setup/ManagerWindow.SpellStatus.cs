@@ -32,8 +32,8 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private const string CORRECTED_TIP = "The words in { } are Imlight's, written from the spell's effects, because the game's card " +
-        "text is blank or gives no numbers. Search for { to find every card like this.";
+    private const string CORRECTED_TIP = "The words in { } say what the code does, written by Imlight from the spell's effects; the " +
+        "words before them are the game's own card text.";
 
     // Both spell views have the box; ticking one ticks the other.
     private readonly List<CheckBox> _hideBrokenBoxes = [];
@@ -117,7 +117,7 @@ internal sealed partial class ManagerWindow {
         };
     }
 
-    /// <summary>What the card does: the game's words, then Imlight's corrected words in braces when it has any.</summary>
+    /// <summary>What the card does: the game's words, then what the code does in braces.</summary>
     private static SelectableTextBlock SpellDoesText(SpellCard card, int maxLines = 0) {
         var text = new SelectableTextBlock { Text = card.Shown, TextWrapping = TextWrapping.Wrap };
         if (maxLines > 0) {
