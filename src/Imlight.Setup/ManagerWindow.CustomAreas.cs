@@ -1096,7 +1096,7 @@ internal sealed partial class ManagerWindow {
 
         return new DockPanel {
             Children = {
-                WithDock(new TextBlock { Text = label, Width = LABEL_WIDTH, FontWeight = FontWeight.Medium, Margin = new Thickness(0, 6, 0, 0) }, Dock.Left),
+                WithDock(FieldLabel(label, LABEL_WIDTH), Dock.Left),
                 right,
             },
         };

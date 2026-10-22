@@ -124,6 +124,7 @@ internal sealed partial class ManagerWindow {
         BuildBossSections(stats);
 
         return Page(
+            BossesGuide(),
             Fold("search", "Bosses", "Find a boss",
                 "Search for it, click it, change what you want and press Save changes. " +
                 "Turn off Bosses only to find any creature that fights.",

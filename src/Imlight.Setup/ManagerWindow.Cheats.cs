@@ -73,6 +73,7 @@ internal sealed partial class ManagerWindow {
         var right = new StackPanel {
             Spacing = 8,
             Children = {
+                CheatsGuide(),
                 legend,
                 _cheatNote,
                 _cheatRows,

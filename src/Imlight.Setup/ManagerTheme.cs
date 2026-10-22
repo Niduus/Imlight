@@ -101,6 +101,7 @@ internal static class ManagerTheme {
         ["Lookup"] = BLOCK_IF,
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
+        ["Guides"] = Color.FromRgb(46, 160, 140),
         ["Server"] = Color.FromRgb(63, 167, 160),
         ["Logs"] = Color.FromRgb(108, 122, 140),
         ["Settings"] = ACCENT,
