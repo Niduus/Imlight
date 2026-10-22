@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * Reads the bank settings of Imlight.ini: the default capacities of a character's bank and of an account's
- * shared bank, the shared jewel cap, the object names of the NPCs that open the bank and the two settings of
+ * shared bank, the shared jewel cap, the object names of the objects that open the bank and the two settings of
  * an expansion.
  *
  * USAGE EXAMPLE:
@@ -30,6 +30,10 @@
  * NOTE:
  * The capacities have no default. While [Character] MaxBankItems or MaxSharedBankItems is unset or 0 or less,
  * IsEnabled is false and nothing offers the bank.
+ * The game's own bank objects (BuiltInObjectNames) always open the bank: the dorm bank WC_RVW-Bank and the six
+ * house bank chests HOUSE_BankChest_01 to _06, the only templates of Root.wad whose service text is GUI_UseBank.
+ * [Bank] ObjectNames only adds names. Setup keeps an existing ini key as it is, so a list there from an older
+ * version cannot drop the chests.
  *
  * TODO:
  *
@@ -56,8 +60,20 @@ internal static class BankConfig {
     private const string ObjectNamesKey = "Bank.ObjectNames";
     private const string ExpandElixirAmountKey = "Bank.ExpandElixirAmount";
     private const string MaxBankLimitKey = "Bank.MaxBankItems";
+    private const string ChestNpcKey = "Bank.ChestNpc";
+    private const uint DormBankTemplateId = 44162;
 
     private static int s_warnedDisabled;
+
+    /// <summary>
+    /// The templates of the game that open the bank (Root.wad, BasicNPCServiceBehavior with GUI_UseBank and a
+    /// BankingBehavior): the bank of the dorm, an NPC, and the six bank chests a player places in a house.
+    /// </summary>
+    internal static readonly IReadOnlyList<string> BuiltInObjectNames = [
+        "WC_RVW-Bank",
+        "HOUSE_BankChest_01", "HOUSE_BankChest_02", "HOUSE_BankChest_03",
+        "HOUSE_BankChest_04", "HOUSE_BankChest_05", "HOUSE_BankChest_06",
+    ];
 
     /// <summary>
     /// The default capacity of a character's bank. Zero when the key is unset or not a positive number.
@@ -85,11 +101,11 @@ internal static class BankConfig {
     internal static int MaxBankLimit => Math.Max(0, ConfigurationManager.GetValue(MaxBankLimitKey, 0));
 
     /// <summary>
-    /// The object names of the NPCs that open the bank.
+    /// The object names of the objects that open the bank: the built-in names and the ones of [Bank] ObjectNames.
     /// </summary>
     internal static IReadOnlySet<string> ObjectNames {
         get {
-            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var names = new HashSet<string>(BuiltInObjectNames, StringComparer.OrdinalIgnoreCase);
             var configured = ConfigurationManager.GetValue(ObjectNamesKey, string.Empty);
             foreach (var name in configured.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
                 names.Add(name);
@@ -98,6 +114,14 @@ internal static class BankConfig {
             return names;
         }
     }
+
+    /// <summary>
+    /// The template of the invisible bank that stands on a placed bank chest. Default: the dorm bank WC_RVW-Bank,
+    /// which is itself an invisible NPC on the dorm's chest.
+    /// </summary>
+    internal static uint ChestNpcTemplateId => ConfigurationManager.GetValue(ChestNpcKey, DormBankTemplateId) is var id && id != 0
+        ? id
+        : DormBankTemplateId;
 
     /// <summary>
     /// Whether the bank is on: both default capacities are set above 0.

@@ -20,19 +20,21 @@
  * ========================================================================
  *
  * PURPOSE:
- * Makes the bank NPCs offer the bank. Picking the option opens the bank window through the player's BankService.
+ * Makes the bank objects offer the bank. Picking the option opens the bank window through the player's BankService.
  *
  * USAGE EXAMPLE:
  * Same IServiceComponent + IComponentFactory shape as InteractDyeShopComponent, found by reflection.
  * The requests of the window are handled by BankService.
  *
  * NOTE:
- * Attaches only to NPCs whose object name is in [Bank] ObjectNames, and only while both bank capacities are
- * set, so the bank is not offered until the owner sets them. The NPC stands in the dorm and the housing
- * interiors, see WC_RVW-Bank.
+ * Attaches to any object whose object name is in BankConfig.ObjectNames (the dorm bank WC_RVW-Bank, the house
+ * bank chests and [Bank] ObjectNames), NPC or not, and only while both bank capacities are set, so the bank is
+ * not offered until the owner sets them. A bank chest placed in a house is furniture the server has no object
+ * for, so HouseBanks puts the dorm bank, an invisible NPC, on it.
+ * The option's service name is WizBankingService, the name the client checks when the player picks an option
+ * (it closes the mail window for WizBankingService and ItemFinderService, client 0x14172c64a).
  *
  * TODO:
- * What is the m_serviceName the live server sends for the bank option?
  *
  * Created by: Jay
  * Version: KALI 1.0
@@ -45,6 +47,7 @@ using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -55,7 +58,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class InteractBankComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
 
-    public string ServiceName     => "BankService";
+    public string ServiceName     => "WizBankingService";
     public string NpcIcon         => (Entity.Template as GameObjectTemplate)?.m_sIcon;
     public string NpcNameKey      => null;
     public string NpcTextKey      => null;
@@ -66,10 +69,14 @@ internal sealed class InteractBankComponent(ZoneEntity entity) : ZoneEntityCompo
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate goTemplate
-        && goTemplate.m_behaviors?.Any(x => x is NPCBehaviorTemplate) == true
         && !goTemplate.m_objectName.IsEmpty // Some templates carry a null object name.
         && BankConfig.ObjectNames.Contains(goTemplate.m_objectName.ToString())
         && BankConfig.IsEnabled;
+
+    public override void OnStart()
+        => Logger.Information("Bank: {Name} (object {ObjectId}) offers the bank in {Zone}.",
+            Logger.Args((Entity.Template as GameObjectTemplate)?.m_objectName.ToString(), Entity.ActiveGameObject.m_globalID.Full,
+                Entity.Zone?.ZoneName));
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
         => [
@@ -82,6 +89,8 @@ internal sealed class InteractBankComponent(ZoneEntity entity) : ZoneEntityCompo
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         // The bank data lives with the session, which streams it and then opens the window.
+        Logger.Information("Bank: {CharId} picked the bank option of object {ObjectId}.",
+            Logger.Args(playerCharacter?.CharId, Entity.ActiveGameObject.m_globalID.Full));
         playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_BEGINBANKSESSION { EntityId = Entity.ActiveGameObject.m_globalID });
         SendPlayerIntoWizbang(playerObject.m_globalID);
         SendPlayerIntoState(playerObject.m_globalID);

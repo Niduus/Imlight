@@ -45,6 +45,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Effects;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Items;
@@ -228,6 +229,27 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
                     goldSum += value;
                 }
+
+                continue;
+            }
+
+            // The bank window's sell tab and the quick sell window sell bank items too (they ask for the bank first).
+            var bankItem = wizard.StorageBehavior?.GetItem(quickSellItem.m_sellItemGID);
+            if (bankItem is not null) {
+                var result = BankCollection.TryDeleteOwn(wizard, BankContainer.Bank, bankItem.m_globalID);
+                if (!result.Success) {
+                    Logger.Warning("Bank: refused to sell bank item {ItemId} of {CharId}: {Denial}: {Reason}",
+                        Logger.Args(bankItem.m_globalID, wizard.CharId, result.Denial, result.Reason));
+
+                    continue;
+                }
+
+                SendToSocket(BankSync.StorageRemove(wizard, bankItem.m_globalID, shared: false));
+                var bankTemplate = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(bankItem.m_templateID);
+                var bankValue = (int) Math.Ceiling((bankTemplate?.m_baseCost ?? 0) * 0.05f);
+                goldSum += bankValue;
+                Logger.Information("Bank: {CharId} sold bank item {ItemId} for {Gold} gold.",
+                    Logger.Args(wizard.CharId, bankItem.m_globalID, bankValue));
 
                 continue;
             }

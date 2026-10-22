@@ -256,6 +256,27 @@ public static class WizardItemCollection {
     }
 
     /// <summary>
+    /// Stores a new m_pattern of an item, which holds its dye pattern and, in bit 31, the item lock.
+    /// </summary>
+    /// <param name="item">The item, with the owner it is stored under (a character, or the account for the shared bank).</param>
+    /// <param name="pattern">The new pattern.</param>
+    /// <returns>True if the stored item was found and saved.</returns>
+    public static bool ApplyPattern(WizClientObjectItem item, int pattern) {
+        using var session = s_store.OpenSession();
+        var associatedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .FirstOrDefault(x => x.m_globalID == item.m_globalID && x.m_characterId == item.m_characterId);
+        if (associatedItem is null) {
+            return false;
+        }
+
+        associatedItem.m_pattern = pattern;
+        session.SaveChanges();
+
+        return true;
+    }
+
+    /// <summary>
     /// Applies the secondary dye to a WizClientObjectItem.
     /// </summary>
     /// <param name="item">The WizClientObjectItem to apply the secondary dye to.</param>

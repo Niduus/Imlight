@@ -51,6 +51,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Items;
@@ -69,6 +70,9 @@ namespace Imlight.CoreLib.Game.Bank;
 /// <param name="unequip">Takes an equipped item off the wizard and returns whether it is no longer equipped.</param>
 internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> bankIsOpen, Func<ulong, bool> unequip) {
 
+    private const int LockBit = unchecked((int) 0x80000000);
+    private const uint HouseTransferListMask = 4;
+
     /// <summary>
     /// Opens the bank window: reads the shared bank again, streams the bank and the shared bank, then opens the
     /// window. The window fills its lists from what the client holds when it opens, so the stream goes first.
@@ -79,7 +83,12 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
                 Logger.Args(wizard.Account.AccountId));
         }
 
-        BankSync.StreamBank(session, wizard, includeShared: true);
+        var complete = BankSync.StreamBank(session, wizard, includeShared: true);
+        var shared = wizard.Account?.SharedBank;
+        Logger.Information("Bank: opened for {CharId}: {BankCount} of {BankLimit} bank items, shared bank {SharedItems} items, {SharedReagents} reagent and {SharedSnacks} snack stacks{Missing}.",
+            Logger.Args(wizard.CharId, wizard.StorageBehavior.Items.Count, wizard.StorageBehavior.Limit,
+                shared?.Items.Count ?? 0, shared?.Reagents.Count ?? 0, shared?.Snacks.Count ?? 0,
+                complete ? string.Empty : " (some items could not be sent, see the errors above)"));
         session.Tell(new WIZARD_12_PROTOCOL.MSG_OPENBANK { GlobalID = wizard.GameObjectID });
     }
 
@@ -116,6 +125,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
             Send(BankSync.StorageAdd(wizard, item, shared: false));
             ItemSync.SendRemoved(session, wizard, itemId);
             session.Tell(BankSync.InvToBankConfirm(message.ClientRequestID, itemId, itemId, useShared: false));
+            Done($"moved item {itemId} from the backpack to the bank");
 
             return;
         }
@@ -140,6 +150,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         }
 
         session.Tell(BankSync.InvToBankConfirm(message.ClientRequestID, result.OriginalId, result.NewId, useShared: true));
+        Done($"moved {message.Quantity} of item {itemId} from the backpack to the shared bank (now {result.NewId})");
     }
 
     /// <summary>
@@ -169,6 +180,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
             ItemSync.SendAdded(session, wizard, item);
             session.Tell(BankSync.StorageRemove(wizard, itemId, shared: false));
             session.Tell(BankSync.BankToInvConfirm(message.ClientRequestID, itemId, itemId));
+            Done($"moved item {itemId} from the bank to the backpack");
 
             return;
         }
@@ -194,6 +206,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         }
 
         session.Tell(BankSync.BankToInvConfirm(message.ClientRequestID, result.OriginalId, result.NewId));
+        Done($"moved {message.Quantity} of item {itemId} from the shared bank to the backpack (now {result.NewId})");
     }
 
     /// <summary>
@@ -230,6 +243,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         Send(BankSync.StorageAdd(wizard, result.Destination, shared: toShared));
         session.Tell(BankSync.StorageRemove(wizard, itemId, shared: !toShared));
         session.Tell(BankSync.BankToBankConfirm(message.ClientRequestID, itemId, result.NewId, toShared));
+        Done($"moved item {itemId} from the {(toShared ? "bank to the shared bank" : "shared bank to the bank")} (now {result.NewId})");
     }
 
     /// <summary>
@@ -263,6 +277,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
                 }
 
                 session.Tell(BankSync.BankDeleteConfirm(message.ClientRequestID, itemId, useShared));
+                Done($"deleted item {itemId} from the {from}");
 
                 return;
             }
@@ -297,6 +312,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
                 }
 
                 session.Tell(BankSync.SharedStackDeleteConfirm(message.ClientRequestID, stackId, failed: false));
+                Done($"deleted {message.Quantity} units of shared stack {stackId}");
 
                 return;
             }
@@ -314,6 +330,67 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
     internal void StreamBankFor(IMessage endMarker) {
         BankSync.StreamBank(session, wizard, includeShared: false);
         session.Tell(endMarker);
+        Logger.Information("Bank: sent the {Count} bank items of {CharId} to the window that asked with {Message}.",
+            Logger.Args(wizard.StorageBehavior.Items.Count, wizard.CharId, endMarker.GetType().Name));
+    }
+
+    /// <summary>
+    /// Locks or unlocks an item of the backpack, the worn gear, the bank or the shared bank (the lock buttons of the
+    /// bank window and the backpack). The lock is bit 31 of m_pattern; the client sets the item's m_pattern to the
+    /// IsLocked of the answer and refreshes the window (ClientWizStorageBehavior::MSG_RequestToggleLockItem 0x142120080).
+    /// </summary>
+    /// <param name="message">The client's request. Only ItemGID is set.</param>
+    internal void ToggleLock(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM message) {
+        var itemId = (ulong) message.ItemGID;
+        var request = $"lock of item {itemId}";
+        var item = FindItem(BankContainer.Backpack, itemId) ?? FindItem(BankContainer.Bank, itemId) ?? FindItem(BankContainer.SharedBank, itemId);
+        if (item is null) {
+            ReportUnknown(request, itemId);
+
+            return;
+        }
+
+        if (item is ClientReagentItem or ClientPetSnackItem) {
+            Deny(request, itemId, "reagent and pet snack stacks are not locked");
+
+            return;
+        }
+
+        var pattern = item.m_pattern ^ LockBit;
+        if (!WizardItemCollection.ApplyPattern(item, pattern)) {
+            Deny(request, itemId, "the item could not be saved");
+
+            return;
+        }
+
+        item.m_pattern = pattern;
+        session.Tell(new WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM {
+            ItemGID = itemId,
+            GlobalID = wizard.GameObjectID,
+            IsLocked = unchecked((uint) pattern),
+        });
+        Done($"{((pattern & LockBit) != 0 ? "locked" : "unlocked")} item {itemId}");
+    }
+
+    /// <summary>
+    /// Answers the bank window's question which houses may go to the shared bank. The server keeps houses out of the
+    /// shared bank (BankRules, a house's lot belongs to its character), so the list names none and the window keeps
+    /// them out too (BankingWindow 0x1406a40b0 asks, 0x1406a3920 reads the HouseTransferResultList).
+    /// </summary>
+    internal void SendHouseTransferList() {
+        var list = new HouseTransferResultList {
+            m_houseTransferResultList = [],
+            m_characterGID = wizard.CharId,
+        };
+        var serializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None);
+        if (!serializer.Serialize(list, HouseTransferListMask, out var data)) {
+            Logger.Error("Bank: the house transfer list of {CharId} could not be serialized.", Logger.Args(wizard.CharId));
+
+            return;
+        }
+
+        session.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSETRANSFERLIST { Data = data });
+        Logger.Information("Bank: told {CharId} that no house may go to the shared bank.", Logger.Args(wizard.CharId));
     }
 
     /// <summary>
@@ -410,7 +487,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
 
         var infractionText = $"Player sent the bank request '{request}' for item {itemId}, which they do not have!";
         wizard.Account.AddInfraction(InfractionType.SuspiciousBehavior, infractionText);
-        Logger.Warning("[Bank] {Infraction} This has been logged as a suspicious behavior infraction.", Logger.Args(infractionText));
+        Logger.Warning("Bank: {Infraction} This has been logged as a suspicious behavior infraction.", Logger.Args(infractionText));
     }
 
     private void Send(IMessage message) {
@@ -421,6 +498,9 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
     }
 
     private void Deny(string request, ulong itemId, string reason)
-        => Logger.Warning("[Bank] Refused the {Request} for {CharId}: {Reason} (item {ItemId})", Logger.Args(request, wizard.CharId, reason, itemId));
+        => Logger.Warning("Bank: refused the {Request} for {CharId}: {Reason} (item {ItemId})", Logger.Args(request, wizard.CharId, reason, itemId));
+
+    private void Done(string what)
+        => Logger.Information("Bank: {CharId} {What}.", Logger.Args(wizard.CharId, what));
 
 }
