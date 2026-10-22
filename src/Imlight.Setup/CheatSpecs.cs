@@ -76,6 +76,7 @@ internal static class CheatSpecs {
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
     ];
 
+    private static readonly (string, string)[] s_dispelThen = [("Retry", "retry")];
     private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
     private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first")];
     private static readonly (string, string)[] s_anySchool = [("", "every school"), .. SCHOOLS[1..]];
@@ -236,6 +237,11 @@ internal static class CheatSpecs {
         new("I.Fizzle", BlockKind.If, "stop", "lands or fizzles", "Whether the player's spell has to land, fizzle, or either, for a player-cast When. Without this block only a spell that lands counts.",
             "Only if the spell {Fizzle}", [F("Fizzle", CheatFieldType.Choice, "Fizzled", s_fizzles)],
             b => $"only if the spell {LabelOf(s_fizzles, b.Text("Fizzle"))}"),
+        new("I.Dispelled", BlockKind.If, "stop", "if dispelled", "When a Dispel on it stops one of its spells, the spell fizzles and is cast again: this many more times, or until it gets through with \"continue until cast\" (20 tries at most). With this block a Dispel can stop its spells even when they are marked dispel-proof.",
+            "If dispelled, {DispelThen} {DispelRetries} more times {RetryUntilCast}",
+            [F("DispelThen", CheatFieldType.Choice, "Retry", s_dispelThen), F("DispelRetries", CheatFieldType.Number, 1, max: 20),
+             new("RetryUntilCast", CheatFieldType.Toggle, false, Label: "continue until cast")],
+            b => b.Flag("RetryUntilCast") ? "if dispelled, retry until cast" : $"if dispelled, retry {b.Number("DispelRetries")} more times"),
         new("I.Spells", BlockKind.If, "cards", "these spells", "Only these spells, by name, with commas between. \"Any version of\" makes Scald mean every Scald: its treasure card, item card, a monster's copy and the rest. \"Exactly\" means only spells with that very name.",
             "Only {AnyVersion} these spells: {Spells} {Count}",
             [new("AnyVersion", CheatFieldType.VersionChoice, true), F("Spells", CheatFieldType.Cards), F("Count", CheatFieldType.MatchCount)],

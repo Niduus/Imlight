@@ -395,6 +395,11 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
         Imlight.CoreLib.Game.Pet.PetProgress.EnsureInitialized(item);
         Imlight.CoreLib.Game.Pet.PetCare.Finish(wizard, item, null, SendToSocket);
+
+        // The worn pet is summoned again so the jewel mark beside its name comes and goes.
+        if (wizard.EquipmentBehavior?.GetEquippedPetId() == item.m_globalID) {
+            TellOtherServices(new Imlight.CoreLib.Shared.Packets.CHARACTER_103_PROTOCOL.MSG_RESUMMONPET { PetItemId = item.m_globalID });
+        }
     }
 
     // [Jewels] KeepShatteredJewels: a jewel taken out goes back to the backpack instead of shattering.

@@ -946,6 +946,9 @@ public partial class CombatResolver {
         };
     }
 
+    // "Continue until cast" stops after this many tries, in case dispels keep coming.
+    private const int MaxDispelTries = 20;
+
     // A cheat's spell: free, never fizzles, works through stun. A Dispel on the boss stops it only when it is not
     // DispelImmune, as it stops a player's spell of that school.
     private float CheatCast(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
@@ -986,9 +989,35 @@ public partial class CombatResolver {
             boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
             var before = combatActionList.m_actionList.Count;
             var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
-            var time = !step.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
-                ? HandleFizzleAction(action, combatActionList)
-                : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+            float time;
+            if (string.Equals(cheat.DispelThen, "Retry", StringComparison.OrdinalIgnoreCase)) {
+                // If dispelled, retry: the fizzle plays, then the spell is cast again.
+                var tries = cheat.RetryUntilCast ? MaxDispelTries : 1 + Math.Max(0, cheat.DispelRetries);
+                time = 0;
+                for (var attempt = 1; ; attempt++) {
+                    if (!ConsumeDispell(boss, spell.m_magicSchoolID)) {
+                        time += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+
+                        break;
+                    }
+
+                    time += HandleFizzleAction(action, combatActionList);
+                    Logger.Information("Duel {0} | Slot {1} | {2} was dispelled (try {3} of {4}).",
+                        Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, (string) template.m_name, attempt, tries));
+                    if (attempt >= tries) {
+                        break;
+                    }
+
+                    action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+                }
+            }
+            else {
+                time = !step.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
+                    ? HandleFizzleAction(action, combatActionList)
+                    : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+            }
+
+            ShowFree(spell, template, combatActionList, before);
             // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
             if (step.Silent) {
                 for (var i = before; i < combatActionList.m_actionList.Count; i++) {
@@ -1010,6 +1039,22 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    // The game takes a card's pips from its rank, not from the cost the server sends, so a cheat's spell showed the
+    // boss losing pips (Niduus, 2026-10-22). The copy the game plays has the rank taken off, as with a pet's May Cast.
+    private void ShowFree(Spell spell, SpellTemplate template, CombatActionListObj combatActionList, int before) {
+        var rank = template?.m_spellRank?.m_spellRank ?? 0;
+        if (rank <= 0) {
+            return;
+        }
+
+        var free = spell with { m_regularAdjust = spell.m_regularAdjust - rank };
+        for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+            if (ReferenceEquals(combatActionList.m_actionList[i].m_spell, spell)) {
+                combatActionList.m_actionList[i].m_spell = free;
+            }
+        }
     }
 
     // "Custom cheat | ... polymorph": what shape the boss takes and for how long, each time a polymorph cheat goes off.

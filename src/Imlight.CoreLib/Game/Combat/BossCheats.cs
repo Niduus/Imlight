@@ -49,6 +49,8 @@
  *   CasterSchool only when the player who set it off is of this school.
  *   HealthAbove, HealthUnder   only while the boss's health is above / under this percent of its most.
  *   MaxTimes     at most this many times a battle (0 = no limit). Cooldown: at least this many rounds between two.
+ *   DispelThen   "Retry": a Dispel on the boss can stop the cheat's spells (dispel-proof or not), and one that fizzles
+ *                is cast again, DispelRetries more times, or until it gets through with RetryUntilCast (20 tries at most).
  *   Actions      what it does, in order, after the fields above (Cast, Line, SetPhase... count as the first actions):
  *     { "Do": "Cast", "Spell"/"SpellID", "Target", "Silent", "DispelImmune" }   a free spell.
  *     { "Do": "Polymorph", "Spell", "Target" }   a polymorph spell. One that changes the boss for good (Afterlife -
@@ -181,6 +183,12 @@ internal static class BossCheats {
         // For a player-cast When: "" or "Landed" only a spell that lands sets it off, "Fizzled" only one that fizzles,
         // "Any" either (Niduus, 2026-10-22).
         public string Fizzle { get; set; } = "";
+        // "If dispelled": with DispelThen "Retry", a Dispel on the boss can stop the cheat's spells, and each one that
+        // fizzles is cast again up to DispelRetries more times, or until it gets through with RetryUntilCast
+        // (Niduus, 2026-10-22).
+        public string DispelThen { get; set; } = "";
+        public int DispelRetries { get; set; }
+        public bool RetryUntilCast { get; set; }
         // An added cheat turned off in the app (BossOverrides.CheatsOf).
         public bool Off { get; set; }
 

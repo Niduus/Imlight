@@ -144,7 +144,7 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
             return false;
         }
 
-        index = (byte) slotIndex;
+        index = PublicIndex(slotIndex);
 
         return true;
     }
@@ -192,13 +192,44 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
         return ItemHelper.GetItemTemplate(EquippedItems.FirstOrDefault(item => item.m_globalID == SlotList[slotIndex].ItemId));
     }
 
+    /// <summary>
+    /// The item's place in the game's list of worn items, which is what the public unequip notice removes by. That list
+    /// is built like Character.CharacterHelper.GetEquipmentList: slots in order, skipping a slot whose item isn't
+    /// worn. Counting those skipped slots made the game take off the wrong item (Niduus's wand went invisible).
+    /// </summary>
     public byte GetSlotOfItem(ulong itemId) {
         var slotIndex = SlotList.FindIndex(item => item.ItemId == itemId);
         if (slotIndex == -1) {
             return 255;
         }
 
-        return (byte) slotIndex;
+        return PublicIndex(slotIndex);
+    }
+
+    private byte PublicIndex(int slotIndex) {
+        var index = 0;
+        for (var i = 0; i < slotIndex; i++) {
+            var id = SlotList[i].ItemId.Value;
+            if (EquippedItems?.Any(item => item.m_globalID == id) == true) {
+                index++;
+            }
+        }
+
+        return (byte) Math.Min(index, 254);
+    }
+
+    /// <summary>
+    /// Moves an item's slot to the end, where the game puts an item that is put back on, so later unequips line up.
+    /// </summary>
+    public void MoveSlotToEnd(ulong itemId) {
+        var slotIndex = SlotList.FindIndex(item => item.ItemId == itemId);
+        if (slotIndex == -1) {
+            return;
+        }
+
+        var slot = SlotList[slotIndex];
+        SlotList.RemoveAt(slotIndex);
+        SlotList.Add(slot);
     }
 
     private void UpdateEquipmentSlot(EquipmentSlotType slotType, string itemName,  ulong newItemId) {

@@ -287,6 +287,8 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
             m_activeRating = petItemBehavior?.m_activeRating ?? 0,
             m_petLevel = petItemBehavior?.m_level ?? 0,
             m_templateID = look,
+            // The jewel mark beside the pet's name.
+            m_bHasSocketedJewel = Imlight.CoreLib.Shared.Items.JewelSockets.GetSocketedJewels(pet).Any(),
         };
     }
 

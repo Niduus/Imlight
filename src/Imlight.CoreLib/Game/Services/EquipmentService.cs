@@ -285,9 +285,9 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         var wizEquipmentBehavior = GetActiveWizard().EquipmentBehavior;
 
         try {
-            var slot = wizEquipmentBehavior.GetSlotOfItem(message.ItemId);
-            if (slot < wizEquipmentBehavior.SlotList.Count) {
-                UnequipById(message.ItemId, wizEquipmentBehavior.SlotList[slot].SlotType.ToString());
+            var slot = wizEquipmentBehavior.SlotList.Find(s => s.ItemId == message.ItemId);
+            if (slot is not null) {
+                UnequipById(message.ItemId, slot.SlotType.ToString());
             }
         }
         catch (Exception ex) {
@@ -545,6 +545,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             var slot = equipment.GetSlotOfItem(message.PetItemId);
             SendUnequipItem("Pet", slot, message.PetItemId);
             DismissPetEntity();
+            equipment.MoveSlotToEnd(message.PetItemId);
             SendEquipItem(pet, "Pet");
             SpawnPetEntity(pet);
             Logger.Information("Took named pet {0} off and put it back on so the game animates it.", Logger.Args(message.PetItemId));

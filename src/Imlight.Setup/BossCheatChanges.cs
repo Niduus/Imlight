@@ -168,6 +168,7 @@ internal sealed class CheatRule {
             ["Line"] = "", ["Silent"] = false, ["SetHealth"] = 0, ["SetPhase"] = 0, ["Defeat"] = false, ["Spawn"] = 0,
             ["AnyVersion"] = false, ["CostMin"] = 0, ["CostMax"] = 0, ["PlayersMin"] = 0, ["PlayersMax"] = 0, ["FromRound"] = 0,
             ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "",
+            ["DispelThen"] = "", ["DispelRetries"] = 0, ["RetryUntilCast"] = false,
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
@@ -283,6 +284,12 @@ internal sealed class CheatRule {
 
         if (Text("Fizzle").Length > 0) {
             If("I.Fizzle", new JsonObject { ["Fizzle"] = Text("Fizzle") });
+        }
+
+        if (Text("DispelThen").Length > 0) {
+            If("I.Dispelled", new JsonObject {
+                ["DispelThen"] = Text("DispelThen"), ["DispelRetries"] = Number("DispelRetries"), ["RetryUntilCast"] = Flag("RetryUntilCast"),
+            });
         }
 
         if (Text("Kind").Length > 0) {
