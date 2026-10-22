@@ -834,6 +834,57 @@ public class CombatDuelSubCircle {
         _ => null,
     };
 
+    /// <summary>
+    /// A spell's pip change (kModifyPowerPips, kModifyShadowPips, kModifySchoolPips): above 0 gives, below 0 takes.
+    /// Gains fill free pip slots, then turn normal pips into the kind given, never past the 7 slots.
+    /// </summary>
+    /// <param name="school">For school pips, the school; null for power pips.</param>
+    internal void ChangePips(MagicSchool? school, int amount, bool shadow = false) {
+        if (CombatParticipant?.m_pipCount is not { } pips || amount == 0) {
+            return;
+        }
+
+        if (shadow) {
+            var max = Math.Max(1, MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : MaxShadowPips);
+            pips.m_shadowPips = (byte) Math.Clamp(pips.m_shadowPips + amount, 0, Math.Max(max, pips.m_shadowPips));
+
+            return;
+        }
+
+        byte Get() => school is { } s ? SchoolPips(pips, s) ?? 0 : pips.m_powerPips;
+        void Set(int value) {
+            if (school is { } s) {
+                SetSchoolPips(pips, s, (byte) value);
+            }
+            else {
+                pips.m_powerPips = (byte) value;
+            }
+        }
+
+        if (school is { } known && SchoolPips(pips, known) is null) {
+            return;
+        }
+
+        if (amount < 0) {
+            Set(Math.Max(0, Get() + amount));
+
+            return;
+        }
+
+        for (var i = 0; i < amount; i++) {
+            if (TotalPips(pips) < MAX_PIP_COUNT) {
+                Set(Get() + 1);
+            }
+            else if (pips.m_genericPips > 0) {
+                pips.m_genericPips--;
+                Set(Get() + 1);
+            }
+            else {
+                break;
+            }
+        }
+    }
+
     private static void SetSchoolPips(PipCount pips, MagicSchool school, byte value) {
         switch (school) {
             case MagicSchool.Balance: pips.m_balancePips = value; break;
@@ -1022,15 +1073,16 @@ public class CombatDuelSubCircle {
             throw new ArgumentException("List items must be primitive types or enums");
         }
 
-        // Check if we're over the max index.
-        var maxIndex = MagicSchools.GetMaxMagicSchoolIndex();
-        if (list.Count < maxIndex) {
-            throw new ArgumentException("List must have a count equal to the max magic school index.");
+        // A spell school with no stat entry ("All", "None", an empty name, or a list shorter than the schools) has no
+        // school stat. This threw before and took the whole round with it (a PvP duel's planning phase in Justin's log,
+        // 2026-10-21: "List must have a count equal to the max magic school index"), so no spell of that round cast.
+        if (MagicSchools.GetMagicSchool(magicSchool) is not { } school) {
+            return default;
         }
 
-        var index = (int) MagicSchools.GetMagicSchool(magicSchool).m_schoolIndex;
+        var index = (int) school.m_schoolIndex;
 
-        return list[index];
+        return index >= 0 && index < list.Count ? list[index] : default;
     }
 
     internal bool HasPipsForSpell(Spell spell) {

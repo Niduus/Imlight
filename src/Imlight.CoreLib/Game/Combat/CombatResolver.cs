@@ -971,7 +971,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             if (    action.SpellCaster.CombatParticipant.m_stunned > 0 
                 || (!action.SelectedTarget.IsAlive && !revivesFallenAlly)
                 || !action.SelectedTarget.AddedToDuel) {
-                action.SpellCaster.CombatParticipant.m_stunned--;
+                // Only a stunned caster loses a round of stun (it went below zero for anyone whose target fell).
+                if (action.SpellCaster.CombatParticipant.m_stunned > 0) {
+                    action.SpellCaster.CombatParticipant.m_stunned--;
+                }
 
                 cinematicTime += HandlePassAction(action, combatActionList);
 
@@ -1102,9 +1105,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     private float HandleSuccessfulAction(QueuedCombatAction action, CombatActionListObj combatActionList, bool alreadyPaid = false) {
         var cinematicTime = 0.0f;
         var combatAction = InitializeCombatAction(action);
-        var spellWorthCasting = CombatActionResolver.ProcessedQueuedCombatAction(action, ref combatAction, ref cinematicTime);
+        var spellWorthCasting = CombatActionResolver.ProcessedQueuedCombatAction(action, ref combatAction, ref cinematicTime, out var notes);
 
-        LogCombatAction(action, combatAction, spellWorthCasting);
+        LogCombatAction(action, combatAction, spellWorthCasting, notes);
 
         combatActionList.m_actionList.Add(combatAction);
 
@@ -1129,49 +1132,64 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     }
 
     private float InvokeOverTimeEffects(CombatDuelSubCircle caster) {
-        // Get all DoT and HoT effects. Clone the list to avoid concurrent modification.
-        var dotEffects = caster._hangingEffects
-            .Where(x => x.m_effectType == kSpellEffects.kDamageOverTime)
-            .ToList();
-        var hotEffects = caster._hangingEffects
-            .Where(x => x.m_effectType == kSpellEffects.kHealOverTime)
-            .ToList();
-        var cinematicTime = (dotEffects.Count + hotEffects.Count) * OVER_TIME_ACTIVATION_TIME;
-
-        foreach (var effect in dotEffects) {
-            var initialDamage = effect.m_paramPerRound;
-            var wards = CombatWards.FindAppliedWards(caster, effect).ToList();
-            var damage = CombatWards.GetIncomingDamageFromWards(wards, initialDamage);
-
-            // We don't need to calculate stats from gear because the initial application already did that.
-
-            cinematicTime += HANGING_EFFECT_CONSUME_TIME * wards.Count;
-            caster.DamageParticipant(damage);
-            effect.m_numRounds--;
-
-            // Remove the effect if it's out of rounds.
-            if (effect.m_numRounds <= 0) {
-                caster._hangingEffects.Remove(effect);
-            }
+        var cinematicTime = 0.0f;
+        if (caster?._hangingEffects is null) {
+            return cinematicTime;
         }
 
-        foreach (var effect in hotEffects) {
-            // A heal over time ends with the participant: it never revives them, including after a DoT just now.
-            if (!caster.IsAlive) {
-                caster._hangingEffects.Remove(effect);
-                cinematicTime -= OVER_TIME_ACTIVATION_TIME;
-                continue;
+        try {
+            // A copy of the list, since ticks take effects (and used wards) off it.
+            var overTime = caster._hangingEffects
+                .Where(x => x is not null && CombatRequirements.IsOverTime(x))
+                .ToList();
+            var auras = caster._hangingEffects.Where(CombatRequirements.IsAura).ToList();
+
+            foreach (var effect in overTime) {
+                switch (effect.m_effectType) {
+                    case kSpellEffects.kDamageOverTime: {
+                        cinematicTime += OVER_TIME_ACTIVATION_TIME;
+                        // Only the wards of the tick's school count, and they are used up (they were not before).
+                        var used = CombatEffectApplicator.TickDamage(caster, effect, effect.m_paramPerRound);
+                        cinematicTime += HANGING_EFFECT_CONSUME_TIME * used;
+                        break;
+                    }
+                    case kSpellEffects.kDeferredDamage:
+                        // A bomb waits its rounds, then hits once with all of its damage (it did nothing before).
+                        if (effect.m_numRounds <= 1) {
+                            cinematicTime += OVER_TIME_ACTIVATION_TIME;
+                            cinematicTime += HANGING_EFFECT_CONSUME_TIME
+                                             * CombatEffectApplicator.TickDamage(caster, effect, effect.m_paramPerRound);
+                        }
+                        break;
+                    case kSpellEffects.kHealOverTime:
+                        // A heal over time ends with the participant: it never revives them, including after a DoT now.
+                        if (!caster.IsAlive) {
+                            CombatCharms.RemoveExact(caster._hangingEffects, [effect]);
+                            continue;
+                        }
+
+                        cinematicTime += OVER_TIME_ACTIVATION_TIME;
+                        caster.HealParticipant(effect.m_paramPerRound);
+                        break;
+                }
+
+                effect.m_numRounds--;
+                if (effect.m_numRounds <= 0) {
+                    CombatCharms.RemoveExact(caster._hangingEffects, [effect]);
+                }
             }
 
-            // Todo: are there wards that increase incoming healing?
-            // We don't need to calculate stats from gear because the initial application already did that.
-            caster.HealParticipant(effect.m_paramPerRound);
-            effect.m_numRounds--;
-
-            // Remove the effect if it's out of rounds.
-            if (effect.m_numRounds <= 0) {
-                caster._hangingEffects.Remove(effect);
+            // Auras (Fortify, Amplify, Infallible...) last their rounds and then go (they were used up on the first hit).
+            foreach (var aura in auras) {
+                aura.m_numRounds--;
+                if (aura.m_numRounds <= 0) {
+                    CombatCharms.RemoveExact(caster._hangingEffects, [aura]);
+                }
             }
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Slot {1} | Over time effects failed: {2}",
+                Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, ex));
         }
 
         // Is the participant dead after the effects?
@@ -1198,16 +1216,25 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, spellOrPass, targetOrSelf));
     }
 
-    private void LogCombatAction(QueuedCombatAction action, CombatAction combatAction, bool spellWorthCasting) {
+    private void LogCombatAction(QueuedCombatAction action, CombatAction combatAction, bool spellWorthCasting, string notes) {
+        var spellId = action.Spell?.m_templateID ?? 0;
+        var spellName = action.SpellTemplate?.m_name ?? "?";
         if (spellWorthCasting) {
             var targetsStringForLog = string.Join(", ", combatAction.m_targetSubcircleList);
             var critSuffix = combatAction.m_CritHitList?.Any(x => x.m_mult > 0f) == true ? " (Crits!)" : "";
-            Logger.Debug("Duel {0} | Slot {1} | Spell {2} hits targets [{3}]{4}",
-                Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, action.Spell.m_templateID, targetsStringForLog, critSuffix));
+            Logger.Debug("Duel {0} | Slot {1} | Spell {2} ({3}) hits targets [{4}]{5}",
+                Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, spellId, spellName, targetsStringForLog, critSuffix));
+
+            // Parts of the spell the server skipped (it still cast): say which and why.
+            if (!string.IsNullOrEmpty(notes)) {
+                Logger.Debug("Duel {0} | Slot {1} | Spell {2} ({3}) skipped parts: {4}",
+                    Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, spellId, spellName, notes));
+            }
         }
         else {
-            Logger.Debug("Duel {0} | Slot {1} | Spell {2} not worth casting. Passing turn.",
-                Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, action.Spell.m_templateID));
+            Logger.Debug("Duel {0} | Slot {1} | Spell {2} ({3}) not worth casting ({4}). Passing turn.",
+                Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, spellId, spellName,
+                            string.IsNullOrEmpty(notes) ? "no effect found a target" : notes));
             combatAction.m_spell = null;
         }
     }
@@ -1265,24 +1292,26 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         var spellAccuracy = (int) spell.m_accuracy;
-        var stats = caster.ResolverGameStats;
-        var school = MagicSchools.GetMagicSchool(spell.m_magicSchoolID);
-        var schoolName = school.m_schoolName;
+        var schoolName = MagicSchools.GetMagicSchool(spell.m_magicSchoolID)?.m_schoolName ?? "";
+        try {
+            // Accuracy is in points added to the card's own (a 70% card and 10% accuracy is 80%). The old sum floored
+            // a multiplier, so any accuracy loss below 1.0 made the card 0% (always fizzles) and any gain was lost.
+            var stats = caster.ResolverGameStats;
+            if (stats is not null) {
+                var increase = CombatEffectApplicator.AsFraction(caster.GetStatBySchool(stats.m_accBonusPercent, schoolName) + stats.m_accBonusPercentAll);
+                var decrease = CombatEffectApplicator.AsFraction(caster.GetStatBySchool(stats.m_accReducePercent, schoolName) + stats.m_accReducePercentAll);
+                spellAccuracy += (int) Math.Round((increase - decrease) * 100);
+            }
 
-        var percentIncrease = caster.GetStatBySchool(stats.m_accBonusPercent, schoolName);
-        var percentIncreaseAll = stats.m_accBonusPercentAll;
-        var percentDecrease = caster.GetStatBySchool(stats.m_accReducePercent, schoolName);
-        var percentDecreaseAll = stats.m_accReducePercentAll;
+            // An accuracy bubble on the battlefield.
+            spellAccuracy += CombatEffectApplicator.GetGlobalEffect(caster._duelActor?.Duel, kSpellEffects.kModifyAccuracy, schoolName);
+        }
+        catch (Exception ex) {
+            Logger.Error("Spell {0}: accuracy stats failed: {1}", Logger.Args(spell.m_templateID, ex));
+        }
 
-        // Convert to percentages for calculation
-        var totalIncrease = (percentIncrease + percentIncreaseAll) * 100;
-        var totalDecrease = (percentDecrease + percentDecreaseAll) * 100;
-
-        // Apply percentages to the spell accuracy
-        spellAccuracy *= (int) Math.Floor((1 + totalIncrease / 100.0) * (1 - totalDecrease / 100.0));
-
-        // Apply any hanging accuracy effects
-        spellAccuracy = ConsumeHangingAccuracyEffects(spellAccuracy, caster, spell.m_magicSchoolID);
+        // Apply any hanging accuracy effects (accuracy charms and auras, Smoke Screen style debuffs).
+        spellAccuracy = ConsumeHangingAccuracyEffects(spellAccuracy, caster, schoolName);
 
         var hitChance = Random.Shared.Next(0, 100);
         
@@ -1377,15 +1406,21 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
     }
 
-    private static int ConsumeHangingAccuracyEffects(int startingAccuracy, CombatDuelSubCircle caster, uint magicSchoolId) {
-        var accuracyHangingEffects = caster._hangingEffects
-            .Where(x => x.m_effectType == kSpellEffects.kModifyAccuracy)
-            .Where(x => x.m_damageType == magicSchoolId);
-
-        foreach (var effect in accuracyHangingEffects) {
-            startingAccuracy += (int) Math.Floor(1 + effect.m_effectParam / 100.0);
-            caster._hangingEffects.Remove(effect);
+    /// <remarks>
+    /// The old code matched m_damageType (always 0 in the game data, so no accuracy charm ever counted), added
+    /// floor(1 + param / 100) (1 point) and removed from the list while going through it, which threw.
+    /// </remarks>
+    private static int ConsumeHangingAccuracyEffects(int startingAccuracy, CombatDuelSubCircle caster, string schoolName) {
+        if (caster?._hangingEffects is null) {
+            return startingAccuracy;
         }
+
+        var used = CombatCharms.OnePerSpell(caster._hangingEffects
+            .Where(x => x is not null && x.m_effectType == kSpellEffects.kModifyAccuracy
+                        && CombatCharms.SchoolMatches(x.m_sDamageType, schoolName)));
+
+        startingAccuracy += used.Sum(x => x.m_effectParam);
+        CombatCharms.RemoveExact(caster._hangingEffects, used.Where(x => !CombatRequirements.IsAura(x)));
 
         return startingAccuracy;
     }

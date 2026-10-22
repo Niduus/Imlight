@@ -55,35 +55,34 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </remarks>
 internal static class CombatWards {
 
+    // The wards that change incoming damage: shields, traps, absorbs, prisms and flat ones.
+    private static bool IsDamageWard(SpellEffect x) => x?.m_effectType is kSpellEffects.kModifyIncomingDamage
+        or kSpellEffects.kAbsorbDamage or kSpellEffects.kModifyIncomingDamageType or kSpellEffects.kModifyIncomingDamageFlat;
+
     /// <summary>
-    /// Finds all applied wards on the target that match the given spell effect.
+    /// The wards on the target that change incoming damage, in the order they were put on. Damage auras (Fortify,
+    /// Brace, Frenzy's trap) are among them; they are never used up (see <see cref="Consume"/>).
     /// </summary>
-    /// <param name="target">The target combat actor.</param>
-    /// <param name="spellEffect">The spell effect to match.</param>
-    /// <returns>A list of applied wards.</returns>
     internal static List<SpellEffect> FindAppliedWards(CombatDuelSubCircle target,
                                                        SpellEffect spellEffect,
-                                                       kHangingDisposition disposition = kHangingDisposition.kBoth) {
-        var appliedCharms = new List<SpellEffect>();
+                                                       kHangingDisposition disposition = kHangingDisposition.kBoth)
+        => target?._hangingEffects is { } hanging
+            ? [.. hanging.Where(x => IsDamageWard(x) && CombatCharms.Disposed(x, disposition))]
+            : [];
 
-        // Choose the beneficial or harmful wards based on the disposition.
-        var beneficialWards = GetBeneficialWards(target);
-        var harmfulWards = GetHarmfulWards(target);
-        var wards = disposition switch {
-            kHangingDisposition.kBeneficial => beneficialWards,
-            kHangingDisposition.kHarmful => harmfulWards,
-            _ => [.. beneficialWards, .. harmfulWards]
-        };
-
-        return [.. wards.DistinctBy(x => x.m_spellTemplateID)];
-    }
+    /// <summary>
+    /// Every ward on the participant (not auras) of a disposition, newest first: what a removal or steal takes. Shields
+    /// are the beneficial ones, traps the harmful ones. (The old lists had them the wrong way round, and kept only one
+    /// ward in all, since wards carried no spell id.)
+    /// </summary>
+    internal static List<SpellEffect> All(CombatDuelSubCircle target, kHangingDisposition disposition = kHangingDisposition.kBoth)
+        => target?._hangingEffects is { } hanging
+            ? [.. hanging.Where(x => x is not null && CombatRequirements.IsWard(x) && CombatCharms.Disposed(x, disposition)).Reverse()]
+            : [];
 
     /// <summary>
     /// Calculates the incoming damage from the given wards.
     /// </summary>
-    /// <param name="wards">The array of wards.</param>
-    /// <param name="initialDamage">The initial damage amount.</param>
-    /// <returns>The modified incoming damage.</returns>
     internal static int GetIncomingDamageFromWards(List<SpellEffect> wards, int initialDamage = 0) {
         var noPierce = 0f;
 
@@ -99,7 +98,7 @@ internal static class CombatWards {
             if (ward.m_effectType == kSpellEffects.kAbsorbDamage) {
                 // Absorbs will absorb the flat damage, up to the effect param.
                 var absorbAmount = ward.m_paramPerRound;
-                var absorbedDamage = Math.Min(initialDamage, absorbAmount);
+                var absorbedDamage = Math.Max(0, Math.Min(initialDamage, absorbAmount));
 
                 ward.m_paramPerRound -= absorbedDamage;
 
@@ -109,6 +108,11 @@ internal static class CombatWards {
 
             // Type conversion wards change the school only, never the amount.
             if (ward.m_effectType == kSpellEffects.kModifyIncomingDamageType) {
+                continue;
+            }
+
+            if (ward.m_effectType == kSpellEffects.kModifyIncomingDamageFlat) {
+                initialDamage = Math.Max(0, initialDamage + ward.m_effectParam);
                 continue;
             }
 
@@ -122,41 +126,48 @@ internal static class CombatWards {
             initialDamage = (int) Math.Floor(initialDamage * (1 + damageChange));
         }
 
-        return initialDamage;
+        return Math.Max(0, initialDamage);
     }
 
     /// <summary>
-    /// Retrieves a list of wards based on the specified magic school.
+    /// The wards that change a hit of <paramref name="school"/>, one of each spell. A prism for that school (or for all
+    /// schools) goes first and turns the hit into its school (<paramref name="finalSchool"/>); the shields and traps of
+    /// the new school then count.
     /// </summary>
-    /// <param name="wards">An array of spell effects representing the wards.</param>
-    /// <param name="school">The magic school to filter the wards by.</param>
-    /// <param name="finalSchool">The final magic school determined by the wards.</param>
-    /// <returns>A list of spell effects that match the specified magic school.</returns>
+    /// <remarks>
+    /// A prism's m_sDamageType is the school it converts and m_effectParam the new school's name hash (Fire Prism:
+    /// Fire to 72777, Ice). The prism was read as a school index (so it did nothing) and went off on any school.
+    /// </remarks>
     internal static List<SpellEffect> GetWardsBySchool(SpellEffect[] wards, string school, out string finalSchool) {
-        var schoolWards = new List<SpellEffect>();
         finalSchool = school;
+        var schoolWards = new List<SpellEffect>();
 
-        foreach (var ward in wards) {
-            if (ward.m_effectType == kSpellEffects.kModifyIncomingDamageType) {
-                finalSchool = MagicSchools.GetMagicSchool(ward.m_effectParam)?.m_schoolName ?? school;
+        var prism = wards.FirstOrDefault(w => w.m_effectType == kSpellEffects.kModifyIncomingDamageType
+                                              && CombatCharms.SchoolMatches(w.m_sDamageType, school));
+        if (prism is not null) {
+            var converted = MagicSchools.GetMagicSchool((uint) prism.m_effectParam)?.m_schoolName
+                            ?? MagicSchools.GetMagicSchool(prism.m_effectParam)?.m_schoolName;
+            if (!string.IsNullOrEmpty(converted)) {
+                finalSchool = converted;
             }
 
-            if (ward.m_sDamageType == finalSchool.ToString() || ward.m_sDamageType == "All") {
-                schoolWards.Add(ward);
-            }
+            schoolWards.Add(prism);
         }
+
+        var target = finalSchool;
+        schoolWards.AddRange(CombatCharms.OnePerSpell(wards.Where(w => w.m_effectType != kSpellEffects.kModifyIncomingDamageType
+                                                                       && CombatCharms.SchoolMatches(w.m_sDamageType, target))));
 
         return schoolWards;
     }
 
-    private static List<SpellEffect> GetBeneficialWards(CombatDuelSubCircle target) => [.. target._hangingEffects
-            .Where(x => x.m_effectType is kSpellEffects.kModifyIncomingDamage && x.m_effectParam > 0
-                                       || x.m_effectType == kSpellEffects.kAbsorbDamage)
-            .Reverse()];
-
-    private static List<SpellEffect> GetHarmfulWards(CombatDuelSubCircle target) => [.. target._hangingEffects
-            .Where(x => x.m_effectType is kSpellEffects.kModifyIncomingDamage && x.m_effectParam < 0 ||
-                        x.m_effectType == kSpellEffects.kModifyIncomingDamageType)
-            .Reverse()];
+    /// <summary>
+    /// Takes the used wards off the target: a shield, trap or prism goes once used, an absorb once it has nothing left,
+    /// and an aura stays until its rounds run out.
+    /// </summary>
+    internal static void Consume(CombatDuelSubCircle target, IEnumerable<SpellEffect> used) {
+        CombatCharms.RemoveExact(target?._hangingEffects, used.Where(x => !CombatRequirements.IsAura(x)
+            && (x.m_effectType != kSpellEffects.kAbsorbDamage || x.m_paramPerRound <= 0)));
+    }
 
 }
