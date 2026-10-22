@@ -39,6 +39,33 @@
  * The app's Bosses tab changes, turns off and adds cheats in BossOverrides/<template id>.json, laid over this file
  * (BossOverrides.CheatsOf); this file itself is never changed by it.
  *
+ * Custom cheats (Justin, 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be modified and
+ * created"), made as When -> If -> Do blocks in the app, add to the fields above:
+ *   When         also BossHit (a spell from the other side lands on the boss and hurts it: School, Kind, Category and
+ *                Spells narrow it), MinionDefeated (a creature on the boss's side is defeated) and Pips (at the start
+ *                of a round, the boss, or with PipsOf "Enemy" any player, has at least Pips pips; a power pip is one).
+ *   Category     for PlayerCasts and BossHit: what the card does, worked out from its effects: Damage, Heal, Shield,
+ *                Trap, Blade, Weakness, Aura, Global, Minion, Stun, Steal, Dispel, Polymorph.
+ *   CasterSchool only when the player who set it off is of this school.
+ *   HealthAbove, HealthUnder   only while the boss's health is above / under this percent of its most.
+ *   MaxTimes     at most this many times a battle (0 = no limit). Cooldown: at least this many rounds between two.
+ *   Actions      what it does, in order, after the fields above (Cast, Line, SetPhase... count as the first actions):
+ *     { "Do": "Cast", "Spell"/"SpellID", "Target", "Silent", "DispelImmune" }   a free spell.
+ *     { "Do": "Polymorph", "Spell" }        a polymorph spell cast on the boss itself (Target to change who).
+ *     { "Do": "Interrupt" }                 the player's spell that set it off fizzles. A cheat with it (PlayerCasts
+ *                                           or BossHit) goes off before that spell instead of after it.
+ *     { "Do": "RemoveCharms"/"RemoveWards", "Kind": "Good"/"Bad"/"All", "Count" (0 = all), "Target" }
+ *     { "Do": "AddEffects", "Spell", "Target" }   the charms and wards of a spell go on, with no casting.
+ *     { "Do": "Heal", "Amount", "Percent" (Amount is percent of the most health), "Target" (Self if left out) }
+ *     { "Do": "Minion", "Creature", "Custom" }    a creature (or a custom of the Customs tab) joins the boss's side.
+ *     { "Do": "Form", "Creature", "Custom", "ReplaceBoss" }   a second form, as Spawn (ReplaceBoss as Defeat).
+ *     { "Do": "SetHealth", "Amount" }  { "Do": "SetPhase", "Phase" }  { "Do": "Defeat" }
+ *     { "Do": "Say", "Line" }               a game line over the boss; "Text": words sent to every player's chat.
+ *     { "Do": "Pips", "Amount" (below 0 takes), "Kind": "Normal"/"Power"/"Shadow", "Target" (Self if left out) }
+ *   An action with "Off": true is skipped. Target also takes Attacker (as Caster), WeakestEnemy, Ally (a random one
+ *   on the boss's side) and AllAllies.
+ * Each cheat made or changed in the app (and each cheat of a custom) writes "Custom cheat | ..." to the log as it goes off.
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -90,18 +117,75 @@ internal static class BossCheats {
         public bool Silent { get; set; }
         public List<CheatCast> Casts { get; set; } = [];
         public bool Random { get; set; }
+        public string Category { get; set; } = "";
+        public string CasterSchool { get; set; } = "";
+        public int Pips { get; set; }
+        public string PipsOf { get; set; } = "";
+        public int HealthAbove { get; set; }
+        public int HealthUnder { get; set; }
+        public int MaxTimes { get; set; }
+        public int Cooldown { get; set; }
+        public List<CheatAction> Actions { get; set; } = [];
+        // An added cheat turned off in the app (BossOverrides.CheatsOf).
+        public bool Off { get; set; }
+
+        /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        internal bool Custom { get; set; }
+
+        /// <summary>Whether it stops the player's spell, so it goes off before that spell.</summary>
+        internal bool Interrupts => (Actions ?? []).Any(a => a is not null && !a.Off && a.Is("Interrupt"));
+
+        /// <summary>
+        /// Everything it does, in order: the old fields as actions (a second form, health, phase, line, spells, defeat),
+        /// then Actions. Random keeps one of the spells.
+        /// </summary>
+        internal List<CheatAction> Steps() {
+            var steps = new List<CheatAction>();
+            if (Spawn > 0) {
+                steps.Add(new CheatAction { Do = "Form", Creature = Spawn, ReplaceBoss = Defeat });
+            }
+
+            if (SetHealth > 0) {
+                steps.Add(new CheatAction { Do = "SetHealth", Amount = SetHealth });
+            }
+
+            if (SetPhase > 0) {
+                steps.Add(new CheatAction { Do = "SetPhase", Phase = SetPhase });
+            }
+
+            if (!string.IsNullOrWhiteSpace(Line)) {
+                steps.Add(new CheatAction { Do = "Say", Line = Line });
+            }
+
+            steps.AddRange(CastList(all: true).Select(c => new CheatAction {
+                Do = "Cast", Spell = c.Spell, SpellID = c.SpellID, Silent = c.Silent, DispelImmune = c.DispelImmune, Target = c.Target ?? "",
+            }));
+            if (Defeat && Spawn == 0) {
+                steps.Add(new CheatAction { Do = "Defeat" });
+            }
+
+            steps.AddRange((Actions ?? []).Where(a => a is not null && !a.Off).Select(a => Silent && a.IsCast ? a with { Silent = true } : a));
+            var casts = steps.Where(s => s.IsCast).ToList();
+            if (Random && casts.Count > 1) {
+                var keep = casts[System.Random.Shared.Next(casts.Count)];
+                steps.RemoveAll(s => s.IsCast && s != keep);
+            }
+
+            return steps;
+        }
 
         internal bool Is(string when) => When.Equals(when, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>The spells to cast this time: Casts, or Cast as a list of one; the cheat's Silent counts for each.</summary>
-        internal List<CheatCast> CastList() {
+        internal List<CheatCast> CastList(bool all = false) {
             List<CheatCast> casts = [.. (Casts ?? []).Where(c => c is not null && (c.SpellID != 0 || !string.IsNullOrWhiteSpace(c.Spell)))
                 .Select(c => Silent ? c with { Silent = true } : c)];
             if (casts.Count == 0 && !string.IsNullOrWhiteSpace(Cast)) {
                 casts.Add(new CheatCast { Spell = Cast, Silent = Silent });
             }
 
-            return Random && casts.Count > 1 ? [casts[System.Random.Shared.Next(casts.Count)]] : casts;
+            return !all && Random && casts.Count > 1 ? [casts[System.Random.Shared.Next(casts.Count)]] : casts;
         }
     }
 
@@ -111,6 +195,32 @@ internal static class BossCheats {
         public uint SpellID { get; set; }
         public bool Silent { get; set; }
         public bool DispelImmune { get; set; } = true;
+        public string Target { get; set; } = "";
+    }
+
+    /// <summary>One thing a cheat does (its Actions); see the top of this file.</summary>
+    internal sealed record CheatAction {
+        public string Do { get; set; } = "";
+        public string Spell { get; set; } = "";
+        public uint SpellID { get; set; }
+        public string Target { get; set; } = "";
+        public bool Silent { get; set; }
+        public bool DispelImmune { get; set; } = true;
+        public int Amount { get; set; }
+        public bool Percent { get; set; }
+        public string Kind { get; set; } = "";
+        public int Count { get; set; }
+        public uint Creature { get; set; }
+        public int Custom { get; set; }
+        public bool ReplaceBoss { get; set; }
+        public int Phase { get; set; }
+        public string Line { get; set; } = "";
+        public string Text { get; set; } = "";
+        public bool Off { get; set; }
+
+        internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
+
+        internal bool IsCast => Is("Cast") || Is("Polymorph");
     }
 
     internal static readonly bool Enabled = ConfigurationManager.GetValue("BossCheats.Enabled", true);

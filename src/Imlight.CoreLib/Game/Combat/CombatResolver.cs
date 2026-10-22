@@ -73,6 +73,8 @@ public class QueuedCombatAction {
     public CombatDuelSubCircle SelectedTarget;
     public Spell Spell;
     public SpellTemplate SpellTemplate;
+    // A boss cheat with an Interrupt step went off before it: the spell fizzles (CombatResolver.BossCheats.cs).
+    public bool Interrupted;
     
 }
 
@@ -360,6 +362,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         foreach (var action in _queuedCombatActions) {
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            // A boss cheat that interrupts goes off before the spell it answers.
+            cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
             var before = combatActionList.m_actionList.Count;
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
@@ -883,6 +887,16 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 cinematicTime += HandlePassAction(action, combatActionList);
 
                 Logger.Debug("Duel {0} | Slot {1} | Spell cannot occur because target is dead or caster is stunned.",
+                    Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex));
+
+                return cinematicTime;
+            }
+
+            // A boss cheat interrupted it: it fizzles and the card is used up, as a fizzle.
+            if (action.Interrupted) {
+                cinematicTime += HandleFizzleAction(action, combatActionList);
+                UseUpCard(action.SpellCaster, action.Spell);
+                Logger.Information("Duel {0} | Slot {1} | A boss cheat interrupts the spell.",
                     Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex));
 
                 return cinematicTime;

@@ -22,144 +22,115 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Threading;
+using Imlight.Setup.Blocks;
 
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Cheats part of the Bosses tab (Justin, 2026-10-21: "modify cheats like the spells that get cast? Default if
-/// unchanged"): the moves a boss makes outside its turn, from its cheat file. Each can be changed, turned off or put
-/// back, and new ones added; they are saved with the boss's other changes and the cheat file is never changed.
+/// The Cheats section of the boss and custom editors (Justin, 2026-10-21: "modify cheats like the spells that get
+/// cast? Default if unchanged"; 2026-10-22: "Custom Bosses so cheats can have their conditions and such able to be
+/// modified and created" and "'block'-like programming"). Each cheat is a script of snapped blocks: a When block, If
+/// blocks and Do blocks, built from the palette at the side. The game's cheats can be changed, turned off or put back
+/// and new ones added; they are saved with the boss's other changes and its cheat file is never changed.
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private enum CheatFieldKind { Choice, Whole, Text, Words, Flag }
-
-    /// <summary>
-    /// A box of the cheat editor: the cheat file's name for it, its label and help, and for a Choice or Flag the values
-    /// with their words. Whens: the kinds of cheat it counts for (null = every kind).
-    /// </summary>
-    private sealed record CheatField(string Key, string Label, CheatFieldKind Kind, string Help,
-                                     (string Value, string Label)[]? Options = null, string[]? Whens = null);
-
-    private static readonly (string Value, string Label)[] CHEAT_WHENS = [
-        ("BattleStart", "When the battle starts"),
-        ("RoundStart", "At the start of a round"),
-        ("RoundEnd", "At the end of a round"),
-        ("HealthBelow", "When its health falls below"),
-        ("PlayerCasts", "When a player casts a spell"),
-        ("PlayerPasses", "When a player passes"),
-    ];
-
-    private static readonly (string Value, string Label)[] CHEAT_TARGETS = [
-        ("", "As the spell aims"),
-        ("Self", "The boss itself"),
-        ("Caster", "The player who set it off"),
-        ("Receiver", "Whoever that player's spell was aimed at"),
-        ("Enemy", "A random player"),
-        ("FirstEnemy", "The first player"),
-        ("AllEnemies", "Every player"),
-    ];
-
-    private static readonly (string Value, string Label)[] YES_NO = [("true", "Yes"), ("false", "No")];
-
-    private static readonly string[] ROUNDS = ["RoundStart", "RoundEnd"];
-
-    private static readonly CheatField[] CHEAT_FIELDS = [
-        new("When", "When", CheatFieldKind.Choice, "What sets it off.", CHEAT_WHENS),
-        new("Phase", "Phase", CheatFieldKind.Whole, "Only in this phase of the fight. 0 means every phase; a boss starts in phase 1."),
-        new("Round", "Round", CheatFieldKind.Whole, "The boss's round it happens in (rounds count from the start of the phase). 0 means not set.", Whens: ROUNDS),
-        new("Every", "Every … rounds", CheatFieldKind.Whole, "Again every this many rounds (after Round, if set). 0 means not set; with neither, every round.", Whens: ROUNDS),
-        new("NoAllies", "Only when alone", CheatFieldKind.Flag, "Yes: only when no one else on the boss's side is standing.", YES_NO, ROUNDS),
-        new("Health", "Health below", CheatFieldKind.Whole, "Hit points. 0 means Percent counts instead.", Whens: ["HealthBelow"]),
-        new("Percent", "Health below %", CheatFieldKind.Whole, "Percent of its most health, when Health below is 0.", Whens: ["HealthBelow"]),
-        new("School", "Player's school", CheatFieldKind.Choice, "Only a spell of this school.",
-            [("", "Any school"), .. BossCatalog.SCHOOLS.Select(s => (s, s))], ["PlayerCasts"]),
-        new("Kind", "Card type", CheatFieldKind.Text, "Only a card of this type: Damage, Heal, Ward, Charm, Aura, Global, Steal, " +
-            "Manipulation, Shadow… Type none for any.", Whens: ["PlayerCasts"]),
-        new("Spells", "Player's cards", CheatFieldKind.Words, "Only these cards, by name, with commas between. Type none for any card.", Whens: ["PlayerCasts"]),
-        new("OnBoss", "Aimed at the boss", CheatFieldKind.Flag, "Yes: only a spell aimed at the boss.", YES_NO, ["PlayerCasts"]),
-        new("SingleTarget", "One target only", CheatFieldKind.Flag, "Yes: only a spell that hits one target.", YES_NO, ["PlayerCasts"]),
-        new("Chance", "Chance %", CheatFieldKind.Whole, "The chance it happens each time it could. 100 means always."),
-        new("Once", "Only once", CheatFieldKind.Flag, "Yes: only the first time in a battle.", YES_NO),
-        new("Target", "Spells go on", CheatFieldKind.Choice, "Who the spells below are cast on.", CHEAT_TARGETS),
-        new("Random", "How the spells are cast", CheatFieldKind.Flag, "All of them one after another, or one of them picked at random each time.",
-            [("false", "Cast all, in order"), ("true", "Cast one picked at random")]),
-        new("Line", "Line", CheatFieldKind.Text, "What the boss says: words from the game's line, or its number (Lookup tab, Phrase). Type none for no line."),
-        new("SetHealth", "Health becomes", CheatFieldKind.Whole, "Its most and current health become this, even after it was defeated. 0 means no change."),
-        new("SetPhase", "Moves on to phase", CheatFieldKind.Whole, "The fight moves on to this phase from the next round. 0 means no change."),
-        new("Defeat", "Boss is defeated", CheatFieldKind.Flag, "Yes: the boss is defeated after the cheat.", YES_NO),
-        new("Spawn", "Brings in creature", CheatFieldKind.Whole, "The ID of a creature that joins on the boss's side (a second form). 0 means none."),
-        new("Notes", "Notes", CheatFieldKind.Text, "Your notes. The server does not use them."),
-    ];
-
-    private readonly StackPanel _cheatRows = new() { Spacing = 2 };
+    private readonly StackPanel _cheatRows = new() { Spacing = 10 };
     private readonly TextBlock _cheatNote = Sub("");
-    private readonly StackPanel _cheatEditor = new() { Spacing = 6, IsVisible = false };
-    private readonly TextBox _cheatSpellSearch = new() { Watermark = "Search a spell to add, such as Steal Charm or Meteor" };
-    private readonly StackPanel _cheatSpellResults = new() { Spacing = 2 };
-    private readonly StackPanel _cheatSpellRows = new() { Spacing = 2 };
-    // Made again for each open editor: it sits in the editor's own header, which a closed editor still holds.
-    private TextBlock _cheatSpellsChanged = new();
-    private readonly DispatcherTimer _cheatSpellDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
+    private readonly Dictionary<CheatRule, (TextBlock Summary, TextBlock Marks)> _cheatHeads = [];
+    private readonly HashSet<CheatRule> _cheatExpanded = [];
 
     private BossCheatList? _cheats;
     private CheatLines? _cheatLines;
-    private CheatEdit? _cheatOpen;
-    private List<CheatSpell> _cheatDraftSpells = [];
-    private readonly List<(CheatField Field, Func<JsonNode?> Read)> _cheatReaders = [];
+    private CheatRule? _cheatFocus;
+    private Section? _cheatsSection;
+
+    private static readonly Regex s_sentence = new(@"\{(\w+)\}", RegexOptions.Compiled);
 
     private Control CheatsCard() {
-        _cheatSpellDelay.Tick += (_, _) => {
-            _cheatSpellDelay.Stop();
-            RenderCheatSpellResults();
-        };
-        _cheatSpellSearch.TextChanged += (_, _) => {
-            _cheatSpellDelay.Stop();
-            _cheatSpellDelay.Start();
+        var palette = new BlockPalette(
+            CheatSpecs.All.Where(s => s.Id is not ("W.Other" or "D.Other"))
+                .Select(s => new PaletteEntry(s.Kind, s.Icon, s.Palette, s.Help, s)),
+            entry => Guarded(() => AddFromPalette((CheatSpec) entry.Payload, null, -1)),
+            "Cheat blocks") {
+            Width = 236, MaxHeight = 760, VerticalAlignment = VerticalAlignment.Top,
         };
 
-        return Card(new StackPanel {
+        var legend = new WrapPanel {
             Children = {
-                new DockPanel {
-                    Children = {
-                        WithDock(Danger(Action(Plain("Put back the game's cheats"), ResetCheatsAsync)), Dock.Right),
-                        Heading("Cheats"),
-                    },
-                },
-                Sub("Moves the boss makes outside its turn: free spells and lines, when something happens in the battle. " +
-                    "Change one, turn it off, or add your own; grey shows the game's setting. Press Save changes to keep them."),
-                WithMargin(_cheatNote, new Thickness(0, 6, 0, 0)),
-                WithMargin(_cheatRows, new Thickness(0, 8, 0, 0)),
-                WithMargin(Row(Action(Plain("Add a cheat"), () => {
-                    ApplyOpenCheat();
-                    if (_cheats is null) {
-                        throw new PanelException("Pick a boss first.");
-                    }
+                Legend(BlockKind.When, "When… starts a cheat: what sets it off"),
+                Legend(BlockKind.If, "If… only when something is true"),
+                Legend(BlockKind.Do, "Do… what the boss does, top to bottom"),
+            },
+        };
 
-                    var added = new CheatEdit();
-                    added.Changes["When"] = "RoundStart";
-                    added.Spells = [];
-                    _cheats.Cheats.Add(added);
-                    OpenCheat(added);
+        var right = new StackPanel {
+            Spacing = 8,
+            Children = {
+                legend,
+                _cheatNote,
+                _cheatRows,
+                Row(Action(Primary("New cheat"), () => {
+                    NewCheat(CheatSpecs.Get("W.RoundStart"));
 
                     return Task.CompletedTask;
-                })), new Thickness(0, 10, 0, 0)),
-                WithMargin(_cheatEditor, new Thickness(0, 12, 0, 0)),
+                }), Action(Plain("Open all"), () => {
+                    foreach (var rule in _cheats?.Cheats ?? []) {
+                        _cheatExpanded.Add(rule);
+                    }
+
+                    RenderCheats();
+
+                    return Task.CompletedTask;
+                }), Action(Plain("Close all"), () => {
+                    _cheatExpanded.Clear();
+                    RenderCheats();
+
+                    return Task.CompletedTask;
+                }), Danger(Action(Plain("Put back the game's cheats"), ResetCheatsAsync))),
             },
-        });
+        };
+
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
+        grid.Children.Add(palette);
+        Grid.SetColumn(right, 1);
+        right.Margin = new Thickness(14, 0, 0, 0);
+        grid.Children.Add(right);
+
+        _cheatsSection = new Section("bolt", BlockColors.Accent("cheats"), "Cheats",
+            "Moves the boss makes outside its turn. Each cheat reads as a sentence: When something happens, If it is true, Do these things. " +
+            "Grey words in the list are the game's own cheats; yours show in orange. Press Save changes to keep them.", grid);
+
+        return _cheatsSection;
     }
+
+    private static Control Legend(BlockKind kind, string text) => new StackPanel {
+        Orientation = Orientation.Horizontal, Spacing = 6, Margin = new Thickness(0, 0, 16, 4),
+        Children = {
+            new Border { Width = 14, Height = 14, CornerRadius = new CornerRadius(4), Background = BlockColors.Fill(kind), VerticalAlignment = VerticalAlignment.Center },
+            new TextBlock { Text = text, FontSize = 12, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center },
+        },
+    };
+
+    private void Guarded(Action action) => _ = Guard(() => {
+        action();
+
+        return Task.CompletedTask;
+    });
 
     private string CheatExtraFolder => Path.GetDirectoryName(_manager.BossChangesFolder) ?? "";
 
     /// <summary>Shows the boss's cheats: its cheat file with the saved changes laid over it.</summary>
     private void LoadBossCheats(BossInfo boss, BossChanges? changes) {
         _cheatLines ??= CheatLines.Load(_manager.IdLookupFolder);
+        CheatSpecs.CreatureNames = id => _bossCatalog?.Creatures.FirstOrDefault(c => c.Id == id.ToString(CultureInfo.InvariantCulture)) is { } c ? $"{c.Name} ({id})" : null;
+        CheatSpecs.CustomNames = id => CustomMob.Load(_manager.CustomsFolder, id) is { } custom ? $"custom {id}, {custom.Shown}" : null;
         try {
             _cheats = BossCheatList.Load(CheatExtraFolder, boss.Id, changes?.Cheats);
         }
@@ -168,19 +139,26 @@ internal sealed partial class ManagerWindow {
             Say($"The cheat file of {boss.Name} could not be read: {ex.Message}");
         }
 
-        CloseCheat();
+        _cheatExpanded.Clear();
+        _cheatFocus = null;
         RenderCheats();
+        EnsureGameIcons(() => {
+            if (_cheats is not null) {
+                RenderCheats();
+            }
+        });
     }
 
     private void RenderCheats() {
         _cheatRows.Children.Clear();
+        _cheatHeads.Clear();
         if (_cheats is null) {
             return;
         }
 
         var notes = new List<string>();
         if (!_cheats.HasFile) {
-            notes.Add("This boss has no cheats in the game. Add one below.");
+            notes.Add("This boss has no cheats in the game. Make one with New cheat, or click a When block in the palette.");
         }
 
         if (_cheats.Lost > 0) {
@@ -190,586 +168,613 @@ internal sealed partial class ManagerWindow {
 
         _cheatNote.Text = string.Join(" ", notes);
         _cheatNote.IsVisible = notes.Count > 0;
-
-        var number = 0;
-        foreach (var cheat in _cheats.Cheats) {
-            number++;
-            var marks = new List<string>();
-            if (cheat.Added) {
-                marks.Add("Added by you");
-            }
-            else if (cheat.Off) {
-                marks.Add("Turned off");
-            }
-            else if (cheat.IsChanged) {
-                marks.Add("Changed");
-            }
-
-            var buttons = new List<Control> {
-                Action(Plain("Change"), () => {
-                    ApplyOpenCheat();
-                    OpenCheat(cheat);
-
-                    return Task.CompletedTask;
-                }),
-            };
-            if (!cheat.Added) {
-                buttons.Add(Action(Plain(cheat.Off ? "Turn on" : "Turn off"), () => {
-                    ApplyOpenCheat();
-                    cheat.Off = !cheat.Off;
-                    RenderCheats();
-
-                    return Task.CompletedTask;
-                }));
-            }
-
-            if (cheat.Added || cheat.IsChanged) {
-                buttons.Add(Danger(Action(Plain(cheat.Added ? "Remove" : "Put back"), () => {
-                    if (_cheatOpen == cheat) {
-                        CloseCheat();
-                    }
-                    else {
-                        ApplyOpenCheat();
-                    }
-
-                    if (cheat.Added) {
-                        _cheats.Cheats.Remove(cheat);
-                    }
-                    else {
-                        cheat.Changes.Clear();
-                        cheat.Spells = null;
-                        cheat.Off = false;
-                    }
-
-                    RenderCheats();
-
-                    return Task.CompletedTask;
-                })));
-            }
-
-            var text = new StackPanel { Spacing = 2, VerticalAlignment = VerticalAlignment.Center };
-            text.Children.Add(new StackPanel {
-                Orientation = Orientation.Horizontal, Spacing = 10,
-                Children = {
-                    new TextBlock { Text = $"{number}.", FontWeight = FontWeight.SemiBold },
-                    new TextBlock { Text = string.Join("  ·  ", marks), Foreground = WARN, IsVisible = marks.Count > 0 },
-                },
-            });
-            var summary = new TextBlock { Text = DescribeCheat(cheat), TextWrapping = TextWrapping.Wrap };
-            if (cheat.Off) {
-                summary.Foreground = MUTED;
-                summary.TextDecorations = TextDecorations.Strikethrough;
-            }
-
-            text.Children.Add(summary);
-            if (cheat.Text("Notes") is { Length: > 0 } note) {
-                text.Children.Add(Sub(note));
-            }
-
-            _cheatRows.Children.Add(new Border {
-                Padding = new Thickness(4, 6),
-                BorderBrush = LINE,
-                BorderThickness = new Thickness(0, 0, 0, 1),
-                Background = cheat == _cheatOpen ? LINE : null,
-                Child = new DockPanel {
-                    Children = {
-                        WithDock(WithMargin(Row([.. buttons]), new Thickness(10, 0, 0, 0)), Dock.Right),
-                        text,
-                    },
-                },
-            });
+        for (var i = 0; i < _cheats.Cheats.Count; i++) {
+            _cheatRows.Children.Add(CheatCard(_cheats.Cheats[i], i + 1));
         }
 
-        if (_cheats.Cheats.Count == 0 && _cheats.HasFile) {
-            _cheatRows.Children.Add(Sub("Its cheat file has no cheats."));
+        if (_cheats.Cheats.Count == 0) {
+            _cheatRows.Children.Add(Sub(_cheats.HasFile ? "Its cheat file has no cheats." : "No cheats yet."));
         }
+
+        var changed = _cheats.Cheats.Count(c => c.IsChanged);
+        _cheatsSection?.SetBadge(_cheats.Cheats.Count == 0 ? "" : $"{_cheats.Cheats.Count} cheats" + (changed > 0 ? $", {changed} yours" : ""),
+            changed > 0 ? WARN : null);
     }
 
-    /// <summary>A cheat in plain words, such as "At the end of round 3, then every 5 rounds: casts Supernova Sun on a random player."</summary>
-    private string DescribeCheat(CheatEdit cheat) {
-        var parts = new List<string>();
-        var when = cheat.Text("When");
-        var round = cheat.Number("Round");
-        var every = cheat.Number("Every");
-        var rounds = round > 0 && every > 0 ? $"round {round}, then every {every} rounds"
-            : round > 0 ? $"round {round}" : every > 0 ? $"every {every} rounds" : "every round";
-        var trigger = when.ToLowerInvariant() switch {
-            "battlestart" => "When the battle starts",
-            "roundstart" => $"At the start of {rounds}",
-            "roundend" => $"At the end of {rounds}",
-            "healthbelow" => cheat.Number("Health") > 0 ? $"When its health falls under {cheat.Number("Health"):N0}"
-                : $"When its health falls under {cheat.Number("Percent")}%",
-            "playercasts" => "When a player casts " + PlayerSpell(cheat),
-            "playerpasses" => "When a player passes",
-            "" => "Never (no When is set)",
-            _ => $"When {when}",
+    // One cheat: its number, its sentence and buttons; opened, its blocks.
+    private Control CheatCard(CheatRule rule, int number) {
+        var open = _cheatExpanded.Contains(rule);
+        var summary = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        var marks = new TextBlock { Foreground = WARN, FontSize = 12 };
+        _cheatHeads[rule] = (summary, marks);
+        UpdateCheatHead(rule);
+
+        Button Tool(string icon, string tip, Action click, bool enabled = true) {
+            var button = new Button { Content = BlockIcons.Icon(icon, 15, Brushes.White), Padding = new Thickness(6), IsEnabled = enabled };
+            ToolTip.SetTip(button, tip);
+            button.Click += (_, _) => Guarded(click);
+
+            return button;
+        }
+
+        var list = _cheats!.Cheats;
+        var at = list.IndexOf(rule);
+        var tools = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
+        tools.Children.Add(Action(open ? Plain("Close") : Primary("Edit blocks"), () => {
+            if (!_cheatExpanded.Remove(rule)) {
+                _cheatExpanded.Add(rule);
+                _cheatFocus = rule;
+            }
+
+            RenderCheats();
+
+            return Task.CompletedTask;
+        }));
+        tools.Children.Add(Tool(rule.Off ? "eyeoff" : "eye", rule.Off ? "Turn this cheat back on" : "Turn this cheat off (it stays here)", () => {
+            rule.Off = !rule.Off;
+            RenderCheats();
+        }));
+        tools.Children.Add(Tool("copy", "Make a copy of this cheat, as a new one of yours", () => {
+            var copy = rule.Copy();
+            list.Add(copy);
+            _cheatExpanded.Add(copy);
+            _cheatFocus = copy;
+            RenderCheats();
+            Say("Copied. The copy is at the bottom of the list.");
+        }));
+        // The game's cheats keep their places (the server finds a change by its place); yours move among yours.
+        var movable = rule.Added;
+        tools.Children.Add(Tool("up", movable ? "Move up" : "The game's cheats keep their place", () => Swap(at, at - 1),
+            movable && at > 0 && list[at - 1].Added));
+        tools.Children.Add(Tool("down", movable ? "Move down" : "The game's cheats keep their place", () => Swap(at, at + 1),
+            movable && at + 1 < list.Count && list[at + 1].Added));
+        if (rule.Added) {
+            tools.Children.Add(Tool("trash", "Delete this cheat", () => {
+                list.Remove(rule);
+                _cheatExpanded.Remove(rule);
+                RenderCheats();
+            }));
+        }
+        else if (rule.IsChanged) {
+            tools.Children.Add(Tool("undo", "Put back the game's cheat", () => {
+                var fresh = CheatRule.FromCheat(rule.Game, rule.Index, rule.Game, rule.GameCanonical);
+                list[at] = fresh;
+                if (_cheatExpanded.Remove(rule)) {
+                    _cheatExpanded.Add(fresh);
+                }
+
+                RenderCheats();
+            }));
+        }
+
+        void Swap(int a, int b) {
+            (list[a], list[b]) = (list[b], list[a]);
+            RenderCheats();
+        }
+
+        var head = new DockPanel {
+            Children = {
+                WithDock(new Border {
+                    Width = 30, Height = 30, CornerRadius = new CornerRadius(15), Margin = new Thickness(0, 0, 10, 0),
+                    Background = rule.Off ? LINE : BlockColors.WHEN, VerticalAlignment = VerticalAlignment.Center,
+                    Child = new TextBlock { Text = number.ToString(CultureInfo.InvariantCulture), FontWeight = FontWeight.Bold, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center },
+                }, Dock.Left),
+                WithDock(WithMargin(tools, new Thickness(10, 0, 0, 0)), Dock.Right),
+                new StackPanel { Spacing = 2, VerticalAlignment = VerticalAlignment.Center, Children = { marks, summary } },
+            },
         };
-        if (cheat.Flag("NoAllies") && ROUNDS.Contains(when, StringComparer.OrdinalIgnoreCase)) {
-            trigger += ", when no one else on its side is standing";
+        var card = new StackPanel { Spacing = 10, Children = { head } };
+        if (open) {
+            card.Children.Add(CheatScript(rule));
+            var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
+            notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
+            card.Children.Add(notes);
         }
 
-        if (cheat.Number("Phase") > 0) {
-            trigger = $"In phase {cheat.Number("Phase")}: " + char.ToLowerInvariant(trigger[0]) + trigger[1..];
-        }
+        var border = new Border {
+            Padding = new Thickness(12), CornerRadius = new CornerRadius(10),
+            Background = open ? new SolidColorBrush(Color.FromArgb(30, 128, 128, 128)) : new SolidColorBrush(Color.FromArgb(14, 128, 128, 128)),
+            BorderBrush = rule == _cheatFocus && open ? BlockColors.WHEN : LINE, BorderThickness = new Thickness(rule == _cheatFocus && open ? 2 : 1),
+            Child = card,
+        };
+        border.PointerPressed += (_, _) => {
+            if (open && _cheatFocus != rule) {
+                _cheatFocus = rule;
+                foreach (var other in _cheatRows.Children.OfType<Border>()) {
+                    other.BorderThickness = new Thickness(1);
+                    other.BorderBrush = LINE;
+                }
 
-        var spells = cheat.CurrentSpells;
-        if (spells.Count > 0) {
-            var names = spells.Select(s => s.Name + (s.Silent ? " (silent)" : "") + (s.DispelImmune ? "" : " (can be dispelled)")).ToList();
-            var list = names.Count == 1 ? names[0]
-                : cheat.Flag("Random") ? "one of " + string.Join(", ", names[..^1]) + " or " + names[^1]
-                : string.Join(", then ", names);
-            var target = CHEAT_TARGETS.FirstOrDefault(t => t.Value.Equals(cheat.Text("Target"), StringComparison.OrdinalIgnoreCase)).Label
-                         ?? cheat.Text("Target");
-            parts.Add($"casts {list}" + (cheat.Text("Target").Length > 0 ? $" on {char.ToLowerInvariant(target[0])}{target[1..]}" : ""));
-        }
+                border.BorderBrush = BlockColors.WHEN;
+                border.BorderThickness = new Thickness(2);
+            }
+        };
 
-        if (cheat.Text("Line") is { Length: > 0 } line) {
-            var shown = _cheatLines?.Resolve(line);
-            parts.Add(shown is null ? $"says the line \"{line}\" (not found in the game's lines)" : $"says \"{shown}\"");
-        }
-
-        if (cheat.Number("SetHealth") > 0) {
-            parts.Add($"its health becomes {cheat.Number("SetHealth"):N0}");
-        }
-
-        if (cheat.Number("SetPhase") > 0) {
-            parts.Add($"the fight moves on to phase {cheat.Number("SetPhase")}");
-        }
-
-        if (cheat.Number("Spawn") > 0) {
-            var spawn = cheat.Number("Spawn").ToString(CultureInfo.InvariantCulture);
-            var name = _bossCatalog?.Creatures.FirstOrDefault(c => c.Id == spawn)?.Name;
-            parts.Add($"brings in {(name is null ? "creature " + spawn : $"{name} ({spawn})")}");
-        }
-
-        if (cheat.Flag("Defeat")) {
-            parts.Add("the boss is defeated");
-        }
-
-        var extra = new List<string>();
-        if (cheat.Number("Chance") < 100) {
-            extra.Add($"{cheat.Number("Chance")}% chance");
-        }
-
-        if (cheat.Flag("Once")) {
-            extra.Add("only once");
-        }
-
-        var what = parts.Count == 0 ? "does nothing" : string.Join("; ", parts);
-
-        // A line that ends its own sentence ("…Tartarus.") needs no second full stop.
-        var stop = what.Length > 1 && what[^1] == '"' && ".!?".Contains(what[^2]) ? "" : ".";
-
-        return $"{trigger}: {what}{stop}" +(extra.Count > 0 ? $" ({string.Join(", ", extra)})" : "");
+        return border;
     }
 
-    private static string PlayerSpell(CheatEdit cheat) {
-        var kind = cheat.Text("Kind");
-        var school = cheat.Text("School");
-        var cards = cheat.List("Spells");
-        var text = cards.Count > 0 ? (cards.Count == 1 ? cards[0] : "one of " + string.Join(", ", cards))
-            : $"a {string.Join(' ', new[] { school, kind }.Where(t => t.Length > 0)).Trim()} spell".Replace("a  spell", "a spell");
-        if (cards.Count > 0 && (school.Length > 0 || kind.Length > 0)) {
-            text += $" ({string.Join(' ', new[] { school, kind }.Where(t => t.Length > 0))})";
+    private void UpdateCheatHead(CheatRule rule) {
+        if (!_cheatHeads.TryGetValue(rule, out var head)) {
+            return;
         }
 
-        if (cheat.Flag("OnBoss")) {
-            text += " at the boss";
+        head.Summary.Text = CheatSpecs.Summary(rule);
+        head.Summary.Foreground = rule.Off ? MUTED : rule.IsChanged ? Brushes.White : new SolidColorBrush(Color.FromArgb(210, 200, 200, 200));
+        head.Summary.TextDecorations = rule.Off ? TextDecorations.Strikethrough : null;
+        var marks = new List<string>();
+        if (rule.Added) {
+            marks.Add("Yours");
+        }
+        else if (rule.IsChanged && !rule.Off) {
+            marks.Add("Changed from the game's");
+        }
+        else if (!rule.Off) {
+            marks.Add("The game's");
         }
 
-        if (cheat.Flag("SingleTarget")) {
-            text += " that hits one target";
+        if (rule.Off) {
+            marks.Add("Turned off");
         }
 
-        return text;
+        head.Marks.Text = string.Join("  ·  ", marks);
+        head.Marks.Foreground = rule.Added || rule.IsChanged ? WARN : MUTED;
     }
 
     // ---------------------------------------------------------------------
-    // The editor of one cheat
+    // A cheat's script of blocks
     // ---------------------------------------------------------------------
 
-    private void OpenCheat(CheatEdit cheat) {
-        _cheatOpen = cheat;
-        _cheatReaders.Clear();
-        _cheatEditor.Children.Clear();
-        _cheatDraftSpells = [.. cheat.CurrentSpells];
-        _cheatSpellsChanged = new TextBlock { Foreground = WARN };
+    private Control CheatScript(CheatRule rule) {
+        var stack = new BlockStack("Drop If or Do blocks here, or click one in the palette");
+        var blocks = new List<BlockView> { BlockFor(rule, rule.When) };
+        blocks.AddRange(rule.Ifs.Select(b => BlockFor(rule, b)));
+        blocks.AddRange(rule.Dos.Select(b => BlockFor(rule, b)));
+        stack.SetBlocks(blocks);
+        stack.Moved += (view, to) => Guarded(() => {
+            var block = (CheatBlock) view.Model!;
+            var list = view.Kind == BlockKind.If ? rule.Ifs : rule.Dos;
+            list.Remove(block);
+            list.Insert(Math.Clamp(to, 0, list.Count), block);
+            RenderCheats();
+        });
+        stack.Dropped += (payload, _, index) => Guarded(() => AddFromPalette((CheatSpec) payload, rule, index));
 
-        var number = (_cheats?.Cheats.IndexOf(cheat) ?? 0) + 1;
-        _cheatEditor.Children.Add(Heading($"Cheat {number}"));
-        _cheatEditor.Children.Add(Sub(cheat.Added
-            ? "A cheat you added. Empty boxes keep the server's default, shown grey."
-            : "Leave a box empty, or pick the first choice, to keep the game's setting (shown grey). Changed settings show in orange."));
+        return new Border { Padding = new Thickness(4, 6, 4, 2), Child = stack };
+    }
 
-        var rows = new List<(CheatField Field, Control Row)>();
-        ComboBox? whenBox = null;
-        foreach (var field in CHEAT_FIELDS) {
-            var (control, read) = CheatFieldControl(cheat, field);
-            var label = new TextBlock { Text = field.Label, Width = 190, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center };
-            void Mark() {
-                var changed = !SameCheatValue(field, read(), cheat.GameValue(field.Key));
-                if (changed) {
-                    label.Foreground = WARN;
-                }
-                else {
-                    label.ClearValue(TextBlock.ForegroundProperty);
-                }
+    // A palette block: into the given cheat (or the one being edited), at index among its kind (-1: at the end). A
+    // When block changes what sets the cheat off, or starts a new cheat when none is open.
+    private void AddFromPalette(CheatSpec spec, CheatRule? into, int index) {
+        if (_cheats is null) {
+            throw new PanelException("Pick a boss first.");
+        }
 
-                ToolTip.SetTip(label, changed ? "Changed from the game's setting" : null);
-            }
-
-            switch (control) {
-                case TextBox box:
-                    box.TextChanged += (_, _) => Mark();
-                    break;
-                case ComboBox combo:
-                    combo.SelectionChanged += (_, _) => Mark();
-                    break;
-            }
-
-            Mark();
-            var row = new DockPanel {
-                Children = {
-                    WithDock(label, Dock.Left),
-                    WithDock(control, Dock.Left),
-                    WithMargin(WithCenter(Sub(field.Help)), new Thickness(12, 0, 0, 0)),
-                },
-            };
-            if (field.Key == "Line" && control is TextBox lineBox) {
-                var preview = Sub("");
-                void Preview() {
-                    var line = (lineBox.Text ?? "").Trim();
-                    line = line.Length == 0 ? cheat.Text("Line") : line.Equals("none", StringComparison.OrdinalIgnoreCase) ? "" : line;
-                    preview.Text = line.Length == 0 ? "No line." : _cheatLines?.Resolve(line) is { } shown ? $"Shows: \"{shown}\""
-                        : _cheatLines?.Any == true ? "No game line holds these words." : "";
-                }
-
-                lineBox.TextChanged += (_, _) => Preview();
-                Preview();
-                rows.Add((field, new StackPanel { Spacing = 2, Children = { row, WithMargin(preview, new Thickness(190, 0, 0, 0)) } }));
+        var rule = into ?? (_cheatFocus is { } focus && _cheatExpanded.Contains(focus) && _cheats.Cheats.Contains(focus) ? focus : null);
+        if (rule is null) {
+            if (spec.Kind != BlockKind.When) {
+                NewCheat(CheatSpecs.Get("W.RoundStart"));
+                rule = _cheatFocus!;
             }
             else {
-                rows.Add((field, row));
-            }
+                NewCheat(spec);
 
-            if (field.Key == "When") {
-                whenBox = control as ComboBox;
-            }
-
-            _cheatReaders.Add((field, read));
-        }
-
-        // Boxes that do not count for the kind of cheat picked are hidden.
-        void ShowRows() {
-            var when = (_cheatReaders.First(r => r.Field.Key == "When").Read() as JsonValue)?.ToString()
-                       ?? (cheat.GameValue("When") as JsonValue)?.ToString() ?? "";
-            foreach (var (field, row) in rows) {
-                row.IsVisible = field.Whens is null || field.Whens.Contains(when, StringComparer.OrdinalIgnoreCase);
+                return;
             }
         }
 
-        if (whenBox is not null) {
-            whenBox.SelectionChanged += (_, _) => ShowRows();
-        }
-
-        ShowRows();
-
-        var fieldPanel = new StackPanel { Spacing = 6 };
-        foreach (var (_, row) in rows.Where(r => r.Field.Key != "Notes")) {
-            fieldPanel.Children.Add(row);
-        }
-
-        _cheatEditor.Children.Add(fieldPanel);
-
-        _cheatEditor.Children.Add(WithMargin(new DockPanel {
-            Children = {
-                WithDock(Action(Plain("Put back the game's spells"), () => {
-                    _cheatDraftSpells = [.. cheat.GameSpells];
-                    RenderCheatSpells();
-
-                    return Task.CompletedTask;
-                }), Dock.Right),
-                new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10, Children = { Heading("Spells it casts"), WithCenter(_cheatSpellsChanged) } },
-            },
-        }, new Thickness(0, 10, 0, 0)));
-        _cheatEditor.Children.Add(Sub("Free spells, no pips. Silent: no casting animation. Dispel immune: a Dispel on the boss " +
-                                      "does not stop it (on by default; cheat spells never fizzle and work through stun)."));
-        _cheatEditor.Children.Add(_cheatSpellRows);
-        _cheatEditor.Children.Add(_cheatSpellSearch);
-        _cheatEditor.Children.Add(_cheatSpellResults);
-        _cheatEditor.Children.Add(rows.First(r => r.Field.Key == "Notes").Row);
-        _cheatEditor.Children.Add(WithMargin(Row(
-            Action(Primary("Keep these"), () => {
-                ApplyOpenCheat();
-                CloseCheat();
-                RenderCheats();
-                Say("Kept. Press Save changes to save it for the boss's next battle.");
-
-                return Task.CompletedTask;
-            }),
-            Action(Plain("Cancel"), () => {
-                if (cheat.Added && !cheat.IsChanged) {
-                    _cheats?.Cheats.Remove(cheat);
+        var block = CheatBlock.New(spec);
+        switch (spec.Kind) {
+            case BlockKind.When:
+                // What the old When had in common (its round numbers, school...) stays.
+                foreach (var (key, value) in rule.When.Values) {
+                    if (block.Values.Any(p => p.Key == key)) {
+                        block.Set(key, value?.DeepClone());
+                    }
                 }
 
-                CloseCheat();
-                RenderCheats();
+                rule.When = block;
+                Say($"This cheat now goes off {spec.Summary(block).ToLowerInvariant().Replace("when ", "when ")}.");
+                break;
+            case BlockKind.If:
+                rule.Ifs.Insert(index < 0 ? rule.Ifs.Count : Math.Min(index, rule.Ifs.Count), block);
+                break;
+            default:
+                rule.Dos.Insert(index < 0 ? rule.Dos.Count : Math.Min(index, rule.Dos.Count), block);
+                break;
+        }
 
-                return Task.CompletedTask;
-            })), new Thickness(0, 8, 0, 0)));
-
-        _cheatSpellSearch.Text = "";
-        _cheatSpellResults.Children.Clear();
-        RenderCheatSpells();
-        _cheatEditor.IsVisible = true;
+        _cheatExpanded.Add(rule);
+        _cheatFocus = rule;
         RenderCheats();
     }
 
-    private void CloseCheat() {
-        _cheatOpen = null;
-        _cheatReaders.Clear();
-        _cheatEditor.Children.Clear();
-        _cheatEditor.IsVisible = false;
-    }
-
-    /// <summary>Keeps what the open editor holds in its cheat; a box that cannot be read stops with a message.</summary>
-    private void ApplyOpenCheat() {
-        if (_cheatOpen is not { } cheat) {
-            return;
+    private void NewCheat(CheatSpec when) {
+        if (_cheats is null) {
+            throw new PanelException("Pick a boss first.");
         }
 
-        var values = _cheatReaders.Select(r => (r.Field, Value: r.Read())).ToList();
-        foreach (var (field, value) in values) {
-            if (value is null || SameCheatValue(field, value, cheat.GameValue(field.Key))) {
-                cheat.Changes.Remove(field.Key);
-            }
-            else {
-                cheat.Changes[field.Key] = value;
-            }
-        }
-
-        cheat.Spells = SameSpells(_cheatDraftSpells, cheat.GameSpells) && !cheat.Added ? null : [.. _cheatDraftSpells];
+        var rule = new CheatRule { When = CheatBlock.New(when) };
+        rule.Dos.Add(CheatBlock.New(CheatSpecs.Get("D.Cast")));
+        _cheats.Cheats.Add(rule);
+        _cheatExpanded.Add(rule);
+        _cheatFocus = rule;
+        RenderCheats();
+        Say("A new cheat is at the bottom of the list. Pick its spell, and add blocks from the palette.");
     }
 
-    private static bool SameSpells(List<CheatSpell> a, List<CheatSpell> b) => a.SequenceEqual(b);
+    // A block of a cheat, its boxes wired to the block's values.
+    private BlockView BlockFor(CheatRule rule, CheatBlock block) {
+        var spec = block.Kind;
+        var hat = spec.Kind == BlockKind.When;
+        var view = new BlockView(spec.Kind, spec.Icon, spec.Help + (hat ? " Drag or click another When block in the palette to change it." : ""),
+            canDelete: !hat, canDuplicate: !hat) { Model = block };
+        view.SetOn(hat ? !rule.Off : block.On);
+        view.Toggled += on => Guarded(() => {
+            if (hat) {
+                rule.Off = !on;
+                RenderCheats();
 
-    /// <summary>The box of a field and how to read it: null keeps the game's value; it throws on a value it cannot read.</summary>
-    private (Control Control, Func<JsonNode?> Read) CheatFieldControl(CheatEdit cheat, CheatField field) {
-        var game = cheat.GameValue(field.Key);
-        var changed = cheat.Changes.TryGetValue(field.Key, out var value);
-        switch (field.Kind) {
-            case CheatFieldKind.Choice or CheatFieldKind.Flag: {
-                var options = field.Options ?? [];
-                string Of(JsonNode? node) => field.Kind == CheatFieldKind.Flag
-                    ? (node is JsonValue v && v.TryGetValue<bool>(out var b) && b ? "true" : "false")
-                    : (node as JsonValue)?.ToString() ?? "";
-                string LabelOf(string v) => options.FirstOrDefault(o => o.Value.Equals(v, StringComparison.OrdinalIgnoreCase)).Label ?? v;
-                var items = new List<string>();
-                // An added cheat has no game setting to keep, so its box shows the value itself.
-                var keep = !cheat.Added;
-                if (keep) {
-                    items.Add($"Game's: {LabelOf(Of(game))}");
+                return;
+            }
+
+            block.On = on;
+            UpdateCheatHead(rule);
+        });
+        view.Deleted += () => Guarded(() => {
+            rule.Ifs.Remove(block);
+            rule.Dos.Remove(block);
+            RenderCheats();
+        });
+        view.Duplicated += () => Guarded(() => {
+            var list = spec.Kind == BlockKind.If ? rule.Ifs : rule.Dos;
+            list.Insert(list.IndexOf(block) + 1, block.Copy());
+            RenderCheats();
+        });
+        ToolTip.SetTip(view.Grip, hat ? "The block that starts this cheat" : "Drag to move it up or down");
+
+        void Changed() => UpdateCheatHead(rule);
+
+        var parts = s_sentence.Split(spec.Sentence);
+        // Split keeps the captured names at odd places: words, a box, words, a box...
+        for (var i = 0; i < parts.Length; i++) {
+            if (i % 2 == 0) {
+                foreach (var word in parts[i].Split(' ', StringSplitOptions.RemoveEmptyEntries)) {
+                    view.Text(word, bold: i == 0 && word == parts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault());
                 }
 
-                var current = changed || !keep ? Of(cheat.Get(field.Key)) : null;
-                var at = current is null ? -1 : Array.FindIndex(options, o => o.Value.Equals(current, StringComparison.OrdinalIgnoreCase));
-                if (current is not null && at < 0) {
-                    // A value the file has that is not in the list (a When the server added since) stays pickable.
-                    options = [.. options, (current, current)];
-                    at = options.Length - 1;
+                continue;
+            }
+
+            var field = spec.Fields.FirstOrDefault(f => f.Key == parts[i]);
+            if (field is not null) {
+                view.Field(FieldFor(block, field, Changed));
+            }
+        }
+
+        return view;
+    }
+
+    private Control FieldFor(CheatBlock block, CheatField field, Action changed) {
+        void Set(string key, JsonNode? value) {
+            block.Set(key, value);
+            changed();
+        }
+
+        switch (field.Type) {
+            case CheatFieldType.Number:
+                return BlockFields.Number(block.Number(field.Key), n => Set(field.Key, n), 0, field.Max);
+            case CheatFieldType.Percent:
+                return Inline(BlockFields.Number(block.Number(field.Key), n => Set(field.Key, n), 0, field.Max, 54), "%");
+            case CheatFieldType.Words:
+                return BlockFields.Words(block.Text(field.Key), t => Set(field.Key, t.Trim()), "type here");
+            case CheatFieldType.Cards: {
+                var box = BlockFields.Words(string.Join(", ", block.List(field.Key)),
+                    t => Set(field.Key, new JsonArray([.. t.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                        .Select(w => (JsonNode) JsonValue.Create(w)!)])), "Tower Shield, Fire Blade", 260);
+
+                return box;
+            }
+            case CheatFieldType.Choice:
+                return BlockFields.Choice(field.Options ?? [], block.Text(field.Key), v => Set(field.Key, v));
+            case CheatFieldType.Toggle:
+                return BlockFields.Toggle(field.Label, block.Flag(field.Key), on => Set(field.Key, on));
+            case CheatFieldType.Target:
+                return BlockFields.Choice(CheatSpecs.TARGETS, block.Text(field.Key), v => Set(field.Key, v));
+            case CheatFieldType.Category:
+                return BlockFields.Choice(CheatSpecs.CATEGORIES, block.Text(field.Key), v => Set(field.Key, v));
+            case CheatFieldType.School: {
+                var holder = new Border { Child = SchoolBadge(block.Text(field.Key), 20) };
+                var combo = BlockFields.Choice(CheatSpecs.SCHOOLS, block.Text(field.Key), v => {
+                    Set(field.Key, v);
+                    holder.Child = SchoolBadge(v, 20);
+                });
+
+                return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { WithCenter(holder), combo } };
+            }
+            case CheatFieldType.Rounds:
+                return RoundsField(block, changed);
+            case CheatFieldType.Health: {
+                var hp = block.Number("Health") > 0;
+                var number = BlockFields.Number(hp ? block.Number("Health") : block.Number("Percent"), n => {
+                    if (block.Number("Health") > 0) {
+                        Set("Health", n);
+                    }
+                    else {
+                        Set("Percent", Math.Min(n, 100));
+                    }
+                }, 0, 100_000_000, 80);
+                var unit = BlockFields.Choice([("pct", "% of its health"), ("hp", "hit points")], hp ? "hp" : "pct", v => {
+                    var value = Math.Max(block.Number("Health"), block.Number("Percent"));
+                    block.Set(v == "hp" ? "Health" : "Percent", v == "hp" ? Math.Max(1, value) : Math.Min(100, value));
+                    block.Set(v == "hp" ? "Percent" : "Health", 0);
+                    changed();
+                });
+
+                return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { number, unit } };
+            }
+            case CheatFieldType.HealAmount: {
+                var number = BlockFields.Number(block.Number("Amount"), n => Set("Amount", n), 0, 100_000_000, 80);
+                var unit = BlockFields.Choice([("hp", "hit points"), ("pct", "% of the most health")], block.Flag("Percent") ? "pct" : "hp",
+                    v => Set("Percent", v == "pct"));
+
+                return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { number, unit } };
+            }
+            case CheatFieldType.Sign: {
+                var amount = block.Number(field.Key);
+                var sign = amount < 0 ? -1 : 1;
+                var number = BlockFields.Number(Math.Abs(amount), n => Set(field.Key, n * (block.Number(field.Key) < 0 ? -1 : 1)), 1, field.Max, 48);
+                var choice = BlockFields.Choice([("give", "Give"), ("take", "Take")], sign < 0 ? "take" : "give",
+                    v => Set(field.Key, Math.Abs(block.Number(field.Key)) * (v == "take" ? -1 : 1)));
+
+                return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { choice, number } };
+            }
+            case CheatFieldType.Spell:
+                return SpellField(block, changed);
+            case CheatFieldType.Creature:
+                return CreatureField(block, changed);
+            case CheatFieldType.Line:
+                return LineField(block, changed);
+            default:
+                return new TextBlock { Text = "?" };
+        }
+    }
+
+    private static Control Inline(Control box, string after) => new StackPanel {
+        Orientation = Orientation.Horizontal, Spacing = 3,
+        Children = { box, new TextBlock { Text = after, Foreground = BlockColors.TEXT, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center } },
+    };
+
+    // Rounds: every round, round N, every N rounds, or round N then every M rounds.
+    private static Control RoundsField(CheatBlock block, Action changed) {
+        var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+        var round = BlockFields.Number(Math.Max(1, block.Number("Round")), n => { block.Set("Round", n); changed(); }, 1, 999, 48);
+        var every = BlockFields.Number(Math.Max(2, block.Number("Every")), n => { block.Set("Every", n); changed(); }, 1, 999, 48);
+        var then = new TextBlock { Text = "then every", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
+        var rounds = new TextBlock { Text = "rounds", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
+        var mode = block.Number("Round") > 0 && block.Number("Every") > 0 ? "both" : block.Number("Round") > 0 ? "round"
+            : block.Number("Every") > 1 ? "every" : "each";
+        void Show(string m) {
+            round.IsVisible = m is "round" or "both";
+            every.IsVisible = m is "every" or "both";
+            then.IsVisible = m == "both";
+            rounds.IsVisible = m is "every" or "both";
+        }
+
+        var choice = BlockFields.Choice([("each", "every round"), ("round", "round"), ("every", "every"), ("both", "round")], mode, m => {
+            block.Set("Round", m is "round" or "both" ? Math.Max(1, int.TryParse(round.Text, out var r) ? r : 1) : 0);
+            block.Set("Every", m is "every" or "both" ? Math.Max(1, int.TryParse(every.Text, out var e) ? e : 2) : 0);
+            Show(m);
+            changed();
+        });
+        // Two choices read "round": the second one is "round N, then every M".
+        choice.ItemsSource = new[] { "every round", "round …", "every … rounds", "round … then every …" };
+        Show(mode);
+        panel.Children.Add(choice);
+        panel.Children.Add(round);
+        panel.Children.Add(then);
+        panel.Children.Add(every);
+        panel.Children.Add(rounds);
+
+        return panel;
+    }
+
+    // A spell: its school icon and name; the pop-up searches the spells, with their cards from the game.
+    private Control SpellField(CheatBlock block, Action changed) {
+        Button? button = null;
+        string SchoolOf() => _bossCatalog?.Spells.GetValueOrDefault(block.Id("SpellID"))?.School
+                             ?? _bossCatalog?.Spells.Values.FirstOrDefault(s => s.Name.Equals(block.Text("Spell"), StringComparison.OrdinalIgnoreCase))?.School ?? "";
+        uint IdOf() => block.Id("SpellID") is var id and > 0 ? id
+            : _bossCatalog?.Spells.Values.FirstOrDefault(s => s.Name.Equals(block.Text("Spell"), StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
+        string Name() => block.Text("Spell") is { Length: > 0 } s ? s : block.Id("SpellID") > 0 ? $"spell {block.Id("SpellID")}" : "pick a spell";
+
+        void ShowCard() {
+            if (button is not null && IdOf() is var id and > 0 && CardOf(id) is not null) {
+                ToolTip.SetTip(button, SpellThumb(id, SchoolOf(), 180));
+            }
+        }
+
+        button = BlockFields.Picker(SchoolBadge(SchoolOf(), 18), Name(), flyout => {
+            var search = new TextBox { Watermark = "Search a spell, such as Supernova or Steal Charm", Width = 380, Text = block.Text("Spell") };
+            var results = new StackPanel { Spacing = 4 };
+            void Render() {
+                results.Children.Clear();
+                if (_bossCatalog is null || _bossCatalog.Spells.Count == 0) {
+                    results.Children.Add(Sub("The spell list shows up once the server has made its ID list."));
+
+                    return;
                 }
 
-                items.AddRange(options.Select(o => o.Label));
-                var combo = new ComboBox { Width = 280, ItemsSource = items, SelectedIndex = at < 0 ? 0 : at + (keep ? 1 : 0) };
-                var picked = options;
+                var found = _bossCatalog.SearchSpells(search.Text ?? "", 8);
+                if (found.Count == 0) {
+                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0 ? "Type a few letters of the spell's name." : "No spell matches."));
+                }
 
-                return (combo, () => {
-                    var index = combo.SelectedIndex - (keep ? 1 : 0);
-                    if (index < 0 || index >= picked.Length) {
-                        return null;
-                    }
-
-                    return field.Kind == CheatFieldKind.Flag ? JsonValue.Create(picked[index].Value == "true") : JsonValue.Create(picked[index].Value);
-                });
-            }
-
-            case CheatFieldKind.Whole: {
-                var box = GreyBox(cheat.Added ? $"{(field.Key == "Chance" ? 100 : 0)}" : $"Game's: {CheatNumber(game, field.Key)}");
-                box.Width = 160;
-                box.Text = changed ? CheatNumber(value, field.Key).ToString(CultureInfo.InvariantCulture) : "";
-
-                return (box, () => {
-                    var text = (box.Text ?? "").Trim().TrimEnd('%').Replace(",", "");
-                    if (text.Length == 0) {
-                        return null;
-                    }
-
-                    var max = field.Key is "Chance" or "Percent" ? 100 : field.Key == "Spawn" ? uint.MaxValue : 100_000_000;
-                    if (!long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0 || n > max) {
-                        throw new PanelException($"{field.Label} must be a whole number from 0 to {max:N0}, or empty to keep the game's setting.");
-                    }
-
-                    return JsonValue.Create(n);
-                });
-            }
-
-            default: {
-                string Shown(JsonNode? node) => field.Kind == CheatFieldKind.Words
-                    ? string.Join(", ", (node as JsonArray ?? []).Select(n => n?.ToString()).Where(s => s is { Length: > 0 }))
-                    : (node as JsonValue)?.ToString() ?? "";
-                var gameText = Shown(game);
-                var box = GreyBox(cheat.Added ? "Not set" : gameText.Length == 0 ? "Game's: none" : $"Game's: {gameText}");
-                box.Width = 280;
-                box.Text = changed ? Shown(value) is { Length: > 0 } s ? s : "none" : "";
-
-                return (box, () => {
-                    var text = (box.Text ?? "").Trim();
-                    if (text.Length == 0) {
-                        return null;
-                    }
-
-                    var none = text.Equals("none", StringComparison.OrdinalIgnoreCase);
-                    if (field.Kind == CheatFieldKind.Words) {
-                        return new JsonArray([.. (none ? [] : text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                            .Select(w => (JsonNode) JsonValue.Create(w)!)]);
-                    }
-
-                    return JsonValue.Create(none ? "" : text);
-                });
-            }
-        }
-    }
-
-    private static TextBox GreyBox(string watermark) {
-        var box = new TextBox { Watermark = watermark };
-        foreach (var state in new[] { "", "PointerOver", "Focused" }) {
-            box.Resources[$"TextControlPlaceholderForeground{state}"] = MUTED;
-        }
-
-        return box;
-    }
-
-    private static long CheatNumber(JsonNode? node, string key)
-        => CheatEdit.NumberOf(node) is { } n ? (long) n : key == "Chance" ? 100 : 0;
-
-    // Whether a value is the same as the game's, a field the cheat file leaves out counting as the server's default.
-    private static bool SameCheatValue(CheatField field, JsonNode? value, JsonNode? game) {
-        if (value is null) {
-            return true;
-        }
-
-        return field.Kind switch {
-            CheatFieldKind.Whole => CheatNumber(value, field.Key) == CheatNumber(game, field.Key),
-            CheatFieldKind.Flag => (value is JsonValue a && a.TryGetValue<bool>(out var x) && x) == (game is JsonValue b && b.TryGetValue<bool>(out var y) && y),
-            CheatFieldKind.Words => JsonNode.DeepEquals(value, game ?? new JsonArray()),
-            _ => string.Equals((value as JsonValue)?.ToString() ?? "", (game as JsonValue)?.ToString() ?? "", StringComparison.Ordinal),
-        };
-    }
-
-    // ---------------------------------------------------------------------
-    // The spells of the open cheat
-    // ---------------------------------------------------------------------
-
-    private void RenderCheatSpells() {
-        _cheatSpellRows.Children.Clear();
-        if (_cheatOpen is not { } cheat) {
-            return;
-        }
-
-        _cheatSpellsChanged.Text = SameSpells(_cheatDraftSpells, cheat.GameSpells) ? "" : cheat.Added ? "" : "Changed";
-        if (!cheat.Added && cheat.GameSpells.Count > 0) {
-            _cheatSpellsChanged.Text += (_cheatSpellsChanged.Text.Length > 0 ? " · " : "") + "Game's: " + string.Join(", ", cheat.GameSpells.Select(s => s.Name));
-            _cheatSpellsChanged.Foreground = SameSpells(_cheatDraftSpells, cheat.GameSpells) ? MUTED : WARN;
-        }
-
-        if (_cheatDraftSpells.Count == 0) {
-            _cheatSpellRows.Children.Add(Sub("No spells: it only says its line (or does what is set above). Add one below."));
-        }
-
-        for (var i = 0; i < _cheatDraftSpells.Count; i++) {
-            var at = i;
-            var spell = _cheatDraftSpells[i];
-            var silent = new CheckBox { Content = "Silent", IsChecked = spell.Silent };
-            silent.IsCheckedChanged += (_, _) => {
-                _cheatDraftSpells[at] = _cheatDraftSpells[at] with { Silent = silent.IsChecked == true };
-                RenderCheatSpells();
-            };
-            var immune = new CheckBox { Content = "Dispel immune", IsChecked = spell.DispelImmune };
-            immune.IsCheckedChanged += (_, _) => {
-                _cheatDraftSpells[at] = _cheatDraftSpells[at] with { DispelImmune = immune.IsChecked == true };
-                RenderCheatSpells();
-            };
-            Button Move(string text, int by) {
-                var button = Action(Plain(text), () => {
-                    (_cheatDraftSpells[at], _cheatDraftSpells[at + by]) = (_cheatDraftSpells[at + by], _cheatDraftSpells[at]);
-                    RenderCheatSpells();
-
-                    return Task.CompletedTask;
-                });
-                button.IsEnabled = at + by >= 0 && at + by < _cheatDraftSpells.Count;
-                ToolTip.SetTip(button, by < 0 ? "Cast it earlier" : "Cast it later");
-
-                return button;
-            }
-
-            var remove = Danger(Action(Plain("Remove"), () => {
-                _cheatDraftSpells.RemoveAt(at);
-                RenderCheatSpells();
-
-                return Task.CompletedTask;
-            }));
-            var known = spell.SpellId != 0 ? _bossCatalog?.Spells.GetValueOrDefault(spell.SpellId) : null;
-            _cheatSpellRows.Children.Add(new Border {
-                Padding = new Thickness(4, 4),
-                BorderBrush = LINE,
-                BorderThickness = new Thickness(0, 0, 0, 1),
-                Child = new DockPanel {
-                    Children = {
-                        WithDock(Row(silent, immune, Move("Up", -1), Move("Down", 1), remove), Dock.Right),
-                        new StackPanel {
-                            Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center,
+                foreach (var spell in found) {
+                    var row = new Button {
+                        HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left, Padding = new Thickness(6),
+                        Content = new StackPanel {
+                            Orientation = Orientation.Horizontal, Spacing = 10,
                             Children = {
-                                new TextBlock { Text = $"{at + 1}. {spell.Name}", FontWeight = FontWeight.SemiBold },
-                                new TextBlock {
-                                    Text = string.Join("  ·  ", new[] { known?.School ?? "", spell.SpellId != 0 ? $"ID {spell.SpellId}" : "" }.Where(t => t.Length > 0)),
-                                    Foreground = MUTED,
+                                SpellThumb(spell.Id, spell.School, 40),
+                                new StackPanel {
+                                    VerticalAlignment = VerticalAlignment.Center, Spacing = 2,
+                                    Children = {
+                                        new TextBlock { Text = spell.Name, FontWeight = FontWeight.SemiBold },
+                                        new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { SchoolBadge(spell.School, 14), new TextBlock { Text = $"{spell.School}  ·  ID {spell.Id}", Foreground = MUTED, FontSize = 12 } } },
+                                    },
                                 },
                             },
                         },
-                    },
-                },
-            });
-        }
+                    };
+                    row.Click += (_, _) => {
+                        block.Set("Spell", spell.Name);
+                        block.Set("SpellID", spell.Id);
+                        BlockFields.SetPicker(button!, SchoolBadge(spell.School, 18), spell.Name);
+                        ShowCard();
+                        changed();
+                        flyout.Hide();
+                    };
+                    results.Children.Add(row);
+                }
+            }
+
+            search.TextChanged += (_, _) => Render();
+            Render();
+
+            return new StackPanel { Spacing = 8, Width = 400, Children = { search, new ScrollViewer { MaxHeight = 420, Content = results } } };
+        }, "Click to pick the spell");
+        ShowCard();
+
+        return button;
     }
 
-    private void RenderCheatSpellResults() {
-        _cheatSpellResults.Children.Clear();
-        if (_bossCatalog is null || (_cheatSpellSearch.Text ?? "").Trim().Length == 0) {
-            return;
+    // A creature of the game, or one of the customs.
+    private Control CreatureField(CheatBlock block, Action changed) {
+        Button? button = null;
+        string Shown() => block.Number("Custom") > 0
+            ? CustomMob.Load(_manager.CustomsFolder, block.Number("Custom")) is { } c ? $"custom {c.Id}: {c.Shown}" : $"custom {block.Number("Custom")}"
+            : block.Id("Creature") > 0 ? CreatureName(block.Id("Creature").ToString(CultureInfo.InvariantCulture)) : "pick a creature";
+        string School() {
+            var id = block.Number("Custom") > 0 ? CustomMob.Load(_manager.CustomsFolder, block.Number("Custom"))?.BaseId : block.Id("Creature").ToString(CultureInfo.InvariantCulture);
+
+            return _bossCatalog?.Creatures.FirstOrDefault(c => c.Id == id)?.School ?? "";
         }
 
-        var spells = _bossCatalog.SearchSpells(_cheatSpellSearch.Text ?? "", 8);
-        if (spells.Count == 0) {
-            _cheatSpellResults.Children.Add(Sub(_bossCatalog.Spells.Count == 0
-                ? "The spell list shows up once the server has made its ID list."
-                : "No spell matches."));
+        button = BlockFields.Picker(SchoolBadge(School(), 18), Shown(), flyout => {
+            var search = new TextBox { Watermark = "Search a creature, such as Haunted Malistaire or 1336037", Width = 380 };
+            var results = new StackPanel { Spacing = 4 };
+            void Pick(uint creature, int custom) {
+                block.Set("Creature", creature);
+                block.Set("Custom", custom);
+                BlockFields.SetPicker(button!, SchoolBadge(School(), 18), Shown());
+                changed();
+                flyout.Hide();
+            }
+
+            Button Choice(string name, string details, string school, Action click) {
+                var row = new Button {
+                    HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left, Padding = new Thickness(6),
+                    Content = new StackPanel {
+                        Orientation = Orientation.Horizontal, Spacing = 10,
+                        Children = {
+                            MobPortrait(name, school, 34),
+                            new StackPanel { VerticalAlignment = VerticalAlignment.Center, Children = { new TextBlock { Text = name, FontWeight = FontWeight.SemiBold }, new TextBlock { Text = details, Foreground = MUTED, FontSize = 12 } } },
+                        },
+                    },
+                };
+                row.Click += (_, _) => click();
+
+                return row;
+            }
+
+            void Render() {
+                results.Children.Clear();
+                var customs = CustomMob.All(_manager.CustomsFolder);
+                if (customs.Count > 0) {
+                    results.Children.Add(new TextBlock { Text = "Your customs", FontWeight = FontWeight.SemiBold });
+                    foreach (var custom in customs.Take(8)) {
+                        var baseCreature = _bossCatalog?.Creatures.FirstOrDefault(c => c.Id == custom.BaseId);
+                        results.Children.Add(Choice($"Custom {custom.Id}: {custom.Shown}", $"based on {CreatureName(custom.BaseId)}", baseCreature?.School ?? "",
+                            () => Pick(uint.TryParse(custom.BaseId, out var b) ? b : 0, custom.Id)));
+                    }
+                }
+
+                results.Children.Add(new TextBlock { Text = "The game's creatures", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) });
+                if (_bossCatalog is null || _bossCatalog.Missing is not null) {
+                    results.Children.Add(Sub(_bossCatalog?.Missing ?? "The creature list is not here yet."));
+
+                    return;
+                }
+
+                var found = _bossCatalog.Search(search.Text ?? "", bossesOnly: false, new HashSet<string>(), 8, out _);
+                if (found.Count == 0) {
+                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0 ? "Type a name or ID to search." : "No creature matches."));
+                }
+
+                foreach (var creature in found) {
+                    results.Children.Add(Choice(creature.Name, $"ID {creature.Id}  ·  level {creature.Level}  ·  {creature.Health:N0} health", creature.School,
+                        () => Pick(uint.TryParse(creature.Id, out var id) ? id : 0, 0)));
+                }
+            }
+
+            search.TextChanged += (_, _) => Render();
+            Render();
+
+            return new StackPanel { Spacing = 8, Width = 400, Children = { search, new ScrollViewer { MaxHeight = 420, Content = results } } };
+        }, "Click to pick the creature");
+
+        return button;
+    }
+
+    // A game line: words or its number, what it shows, and a pop-up to find one.
+    private Control LineField(CheatBlock block, Action changed) {
+        var preview = new TextBlock { Foreground = BlockColors.TEXT, FontStyle = FontStyle.Italic, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, MaxWidth = 320, TextTrimming = TextTrimming.CharacterEllipsis };
+        TextBox? box = null;
+        void Preview() {
+            var line = block.Text("Line");
+            preview.Text = line.Length == 0 ? "" : _cheatLines?.Resolve(line) is { } shown ? $"“{shown}”"
+                : _cheatLines?.Any == true ? "(no game line holds these words)" : "";
         }
 
-        foreach (var spell in spells) {
-            _cheatSpellResults.Children.Add(new DockPanel {
-                Children = {
-                    WithDock(Action(Plain("Add"), () => {
-                        _cheatDraftSpells.Add(new CheatSpell(spell.Id, spell.Name, false));
-                        RenderCheatSpells();
+        box = BlockFields.Words(block.Text("Line"), t => {
+            block.Set("Line", t.Trim());
+            Preview();
+            changed();
+        }, "a few words of the line", 200);
+        var find = BlockFields.Picker(BlockIcons.Icon("search", 14, BlockColors.FIELD_TEXT), "find", flyout => {
+            var search = new TextBox { Watermark = "Words of the line, such as cannot be stopped", Width = 380, Text = block.Text("Line") };
+            var results = new StackPanel { Spacing = 2 };
+            void Render() {
+                results.Children.Clear();
+                if (_cheatLines is not { Any: true }) {
+                    results.Children.Add(Sub("The game's lines show up once the server has made its ID list."));
 
-                        return Task.CompletedTask;
-                    }), Dock.Right),
-                    WithCenter(new TextBlock {
-                        Text = string.Join("  ·  ", new[] { spell.Name, spell.School, $"ID {spell.Id}" }.Where(t => t.Length > 0)),
-                    }),
-                },
-            });
-        }
+                    return;
+                }
+
+                foreach (var (number, text) in _cheatLines.Search(search.Text ?? "", 12)) {
+                    var row = new Button { HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left, Content = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap } };
+                    row.Click += (_, _) => {
+                        // The line's number finds exactly this line.
+                        box!.Text = number.ToString(CultureInfo.InvariantCulture);
+                        flyout.Hide();
+                    };
+                    results.Children.Add(row);
+                }
+            }
+
+            search.TextChanged += (_, _) => Render();
+            Render();
+
+            return new StackPanel { Spacing = 8, Width = 400, Children = { search, new ScrollViewer { MaxHeight = 380, Content = results } } };
+        }, "Find a line of the game");
+        Preview();
+
+        return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { box, find, preview } };
+    }
+
+    /// <summary>Kept for the editor's Save: the blocks change their cheat as they are edited, so nothing waits.</summary>
+    private static void ApplyOpenCheat() {
     }
 
     // Takes the Cheats section out of the boss's file; its other changes stay.
