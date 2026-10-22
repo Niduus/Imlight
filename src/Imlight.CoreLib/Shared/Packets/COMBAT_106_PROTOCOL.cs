@@ -407,4 +407,19 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// A timer message of a duel: a step of the round's animations has played, so the wizard's health globe gets the
+    /// health it left them with (CombatResolver.HealthBeats).
+    /// </summary>
+    internal sealed class MSG_HEALTHGLOBEDUE : IServerMessage {
+
+        public byte MessageOrder => 35;
+        public byte ServiceID => 106;
+
+        public IActorRef Actor;
+        public Imlight.CoreLib.WizardData.Models.Player.Wizard Wizard;
+        public int Health;
+
+    }
+
 }

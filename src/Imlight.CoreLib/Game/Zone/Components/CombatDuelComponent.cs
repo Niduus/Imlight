@@ -631,9 +631,65 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             ActionData = buffer,
         };
         ZoneBroadcast(msg);
+        ScheduleHealthGlobes();
 
         Timers.StartSingleTimer(RESOUTION_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION(), actionExecutionTime);
     }
+
+    // Keys of the health globe timers still waiting, so a duel that ends early can drop them.
+    private readonly List<string> _healthGlobeKeys = [];
+
+    /// <summary>
+    /// Moves each wizard's health globe as the round plays: one MSG_UPDATEHEALTH per step that changed their health,
+    /// when that step's animation is over. The globe only moved on the next round's combat health (Justin,
+    /// 2026-10-22: "when it became the next turn, it did sync, but want it live and dynamic").
+    /// </summary>
+    private void ScheduleHealthGlobes() {
+        CancelHealthGlobes();
+        foreach (var beat in CombatResolver.HealthBeats) {
+            if (beat.Circle._wizard is not { } wizard || beat.Circle.ParticipantActor is not { } actor) {
+                continue;
+            }
+
+            var due = new COMBAT_106_PROTOCOL.MSG_HEALTHGLOBEDUE { Actor = actor, Wizard = wizard, Health = beat.Health };
+            if (beat.Seconds <= 0) {
+                SendHealthGlobe(due);
+
+                continue;
+            }
+
+            var key = $"healthGlobe_{Guid.NewGuid():N}";
+            _healthGlobeKeys.Add(key);
+            Timers.StartSingleTimer(key, due, TimeSpan.FromSeconds(beat.Seconds));
+        }
+
+        if (CombatResolver.HealthBeats.Count > 0) {
+            Logger.Debug("Duel {0} | Round {1} | Health globes: {2}",
+                Logger.Args(SigilId, Duel.m_roundNum, string.Join(", ", CombatResolver.HealthBeats
+                    .Select(b => $"slot {b.Circle.SlotIndex} {b.Health} at {b.Seconds:0.0} s"))));
+        }
+    }
+
+    private void CancelHealthGlobes() {
+        foreach (var key in _healthGlobeKeys) {
+            Timers.Cancel(key);
+        }
+        _healthGlobeKeys.Clear();
+    }
+
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_HEALTHGLOBEDUE))]
+    private void ReceiveHealthGlobeDue(COMBAT_106_PROTOCOL.MSG_HEALTHGLOBEDUE message) => SendHealthGlobe(message);
+
+    private static void SendHealthGlobe(COMBAT_106_PROTOCOL.MSG_HEALTHGLOBEDUE due)
+        => due.Actor.Tell(NewHealthGlobe(due.Wizard, due.Health));
+
+    // The globe's health message. Its maximum is the client's own (the game adds its gear bonus itself).
+    private static WIZARD_12_PROTOCOL.MSG_UPDATEHEALTH NewHealthGlobe(Wizard wizard, int health) => new() {
+        CharacterID = wizard.GameObjectID,
+        NewHealth = Math.Max(0, health),
+        NewHealthMax = wizard.GameStats.GetClientTypeAlternative().m_baseHitpoints,
+        DisplayDiff = 0,
+    };
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION))]
     private void ReceiveRoundResolution(COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION message) {
@@ -2498,6 +2554,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         // A queued tutorial card grant must not leak into the next duel on this sigil.
         _tutorialDirector.OnDuelEnded();
 
+        CancelHealthGlobes();
         RemovePlayersFromDuel(playersWin);
 
         if (playersWin) {
@@ -2832,6 +2889,11 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             ReviveAfterWin(circle);
 
             return;
+        }
+
+        // The globe shows the health the battle left, even if a step's timer had not gone off yet.
+        if (circle._wizard is { } wizard && !circle.IsSandboxed) {
+            circle.ParticipantActor.Tell(NewHealthGlobe(wizard, wizard.GameStats.m_currentHitpoints));
         }
 
         // Send any dead players back to the hub. Scripted tutorial duels never count as a death.
