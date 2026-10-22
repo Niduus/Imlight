@@ -32,7 +32,7 @@ namespace Imlight.CoreLib.Game.Tools;
 /// </summary>
 internal static class PlayerPositions {
 
-    private sealed record Position(string Wizard, string Zone, float X, float Y, float Z, float Facing, DateTime Updated);
+    private sealed record Position(string Wizard, string Zone, float X, float Y, float Z, float Facing, DateTime Updated, bool OnThisPc);
 
     private static readonly ConcurrentDictionary<ulong, Position> s_positions = new();
     private static readonly TimeSpan s_forgetAfter = TimeSpan.FromMinutes(10);
@@ -42,8 +42,8 @@ internal static class PlayerPositions {
     /// <summary>
     /// Records a wizard's position. The file is written at most twice a second.
     /// </summary>
-    internal static void Update(ulong charId, string wizard, string zone, float x, float y, float z, float facing) {
-        s_positions[charId] = new Position(wizard ?? "", zone ?? "", x, y, z, facing, DateTime.Now);
+    internal static void Update(ulong charId, string wizard, string zone, float x, float y, float z, float facing, bool onThisPc) {
+        s_positions[charId] = new Position(wizard ?? "", zone ?? "", x, y, z, facing, DateTime.Now, onThisPc);
         Interlocked.Exchange(ref s_dirty, 1);
         if (s_timer is null) {
             Interlocked.CompareExchange(ref s_timer, new Timer(_ => Write(), null, 500, 500), null);
@@ -63,7 +63,8 @@ internal static class PlayerPositions {
                 }
             }
 
-            // One wizard per line, tab separated: name, zone, X, Y, Z, facing (radians), local time of the last move.
+            // One wizard per line, tab separated: name, zone, X, Y, Z, facing (radians), local time of the last move,
+            // and "local" when that wizard's game runs on this PC (else "remote"), so Use my position can pick the host's wizard.
             var text = new StringBuilder();
             foreach (var p in s_positions.Values.OrderByDescending(p => p.Updated)) {
                 text.Append(p.Wizard).Append('\t').Append(p.Zone).Append('\t')
@@ -71,7 +72,8 @@ internal static class PlayerPositions {
                     .Append(p.Y.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)).Append('\t')
                     .Append(p.Z.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)).Append('\t')
                     .Append(p.Facing.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)).Append('\t')
-                    .Append(p.Updated.ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)).Append('\n');
+                    .Append(p.Updated.ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)).Append('\t')
+                    .Append(p.OnThisPc ? "local" : "remote").Append('\n');
             }
 
             var folder = Path.Combine(Directory.GetCurrentDirectory(), "logs");

@@ -751,6 +751,8 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
+        // The wizard whose game runs on this PC comes first, so the copy buttons use the host's own position.
+        lines = lines.OrderBy(line => line.EndsWith("\tlocal", StringComparison.Ordinal) ? 0 : 1).ToArray();
         var shown = new List<string>();
         _firstPositionXyz = "";
         _firstPositionRaw = "";

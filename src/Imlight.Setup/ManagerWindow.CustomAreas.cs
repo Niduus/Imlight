@@ -1694,7 +1694,8 @@ internal sealed partial class ManagerWindow {
         await Task.CompletedTask;
     }
 
-    // Where the wizard who moved last stands and faces, from the server's logs/positions.txt (the Play tab's Position).
+    // Where the wizard on this PC stands and faces (the one who moved last if several, or anyone if no game on this PC has moved),
+    // from the server's logs/positions.txt (the Play tab's Position).
     private (string Who, string X, string Y, string Z, string Yaw) MyPosition(string zone) {
         string[] lines;
         try {
@@ -1704,7 +1705,8 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("The position file is being written; press again.");
         }
 
-        var parts = lines.Select(l => l.Split('\t')).FirstOrDefault(p => p.Length >= 7)
+        var all = lines.Select(l => l.Split('\t')).Where(p => p.Length >= 7).ToList();
+        var parts = all.FirstOrDefault(p => p.Length >= 8 && p[7] == "local") ?? all.FirstOrDefault()
                     ?? throw new PanelException("There is no position yet. Start the server, go into the game and walk a step.");
         if (zone.Length > 0 && !string.Equals(parts[1], zone, StringComparison.OrdinalIgnoreCase)) {
             throw new PanelException($"{parts[0]} is in {parts[1]}, not {zone}. Go there in the game and walk a step.");
