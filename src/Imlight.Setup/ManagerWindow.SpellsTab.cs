@@ -45,6 +45,8 @@ internal sealed partial class ManagerWindow {
 
     private const double SPELL_TILE_WIDTH = 132;
     private const double SPELL_TILE_GAP = 10;
+    // A tile's whole width on screen: the picture plus its frame's padding (3) and border (2) on both sides.
+    private const double SPELL_TILE_OUTER_WIDTH = SPELL_TILE_WIDTH + 2 * (3 + 2);
     private const int SPELL_TILE_SCALE = 2;
     private const int SPELL_BIG_SCALE = 3;
     private const int CARD_BITMAP_CACHE = 900;
@@ -286,9 +288,10 @@ internal sealed partial class ManagerWindow {
     }
 
     private int SpellsColumns() {
-        var width = _spellsScroll.Bounds.Width > 0 ? _spellsScroll.Bounds.Width - 18 : 700;
+        // Leave room for the scroll bar so the last card never runs under the details panel.
+        var width = _spellsScroll.Bounds.Width > 0 ? _spellsScroll.Bounds.Width - 24 : 700;
 
-        return Math.Max(1, (int) ((width + SPELL_TILE_GAP) / (SPELL_TILE_WIDTH + SPELL_TILE_GAP)));
+        return Math.Max(1, (int) ((width + SPELL_TILE_GAP) / (SPELL_TILE_OUTER_WIDTH + SPELL_TILE_GAP)));
     }
 
     /// <summary>Puts the cards found into rows as wide as the grid; only the rows on screen are made.</summary>
