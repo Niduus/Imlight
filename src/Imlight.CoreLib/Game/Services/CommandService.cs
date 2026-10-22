@@ -78,6 +78,11 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> s_thisPc = new();
+
+    /// <summary>Whether a session's game runs on the PC the server runs on (remembered per address).</summary>
+    internal static bool IsThisPcCached(string remoteIp) => s_thisPc.GetOrAdd(remoteIp ?? "", IsThisPc);
+
     private static bool IsThisPc(string remoteIp) {
         // RemoteIp may carry a port or an IPv4-mapped IPv6 form.
         var text = remoteIp ?? "";

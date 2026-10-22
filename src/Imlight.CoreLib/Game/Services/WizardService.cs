@@ -275,7 +275,7 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
 
         // For the Position card in ImlightManager.
         Imlight.CoreLib.Game.Tools.PlayerPositions.Update(_activeWizard.CharId, _activeWizard.PlayerNameBehavior?.GetWizardName(),
-            _activeWizard.Zone, position.X, position.Y, position.Z, radians);
+            _activeWizard.Zone, position.X, position.Y, position.Z, radians, CommandService.IsThisPcCached(SessionActor.RemoteIp));
     }
 
     #endregion
