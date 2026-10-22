@@ -160,7 +160,8 @@ internal sealed partial class ManagerWindow {
                     "Search or filter, then click a card to see its stats and ID.",
                     WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
                         "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies. " +
-                        "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which)."),
+                        "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
+                        "Words in { } are Imlight's corrected text for a card whose game text is blank or gives no numbers; search for { to list them."),
                     filters, _spellsCount), Dock.Top),
                 WithMargin(new DockPanel {
                     Children = { WithDock(details, Dock.Right), _spellsScroll },
@@ -372,7 +373,7 @@ internal sealed partial class ManagerWindow {
                 },
             },
         };
-        var does = card.Blank && card.Explained.Length > 0 ? $"{card.Explained} {DESCRIBED_BY_IMLIGHT}" : card.Short;
+        var does = card.Shown;
         var status = card.Support.Status == SpellStatus.Works ? "" : $"\n{(card.Broken ? "BROKEN" : "PARTLY")}: {card.Support.Summary}";
         ToolTip.SetTip(tile, $"{card.Name}  ·  {card.School}  ·  {card.Cost}  ·  {card.Accuracy}%\n{does}{status}");
         if (card == _spellsPicked) {
@@ -468,7 +469,6 @@ internal sealed partial class ManagerWindow {
 
         string YesNo(bool value) => value ? "Yes" : "No";
         FactWith("Does", card.Does.Length > 0 ? SpellDoesText(card) : null);
-        FactWith("In numbers", SpellNumbersText(card));
         Fact("School", card.School);
         Fact("Pip cost", card.Cost);
         Fact("Accuracy", $"{card.Accuracy}%");

@@ -32,7 +32,8 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private const string DESCRIBED_BY_IMLIGHT = "(described by Imlight)";
+    private const string CORRECTED_TIP = "The words in { } are Imlight's, written from the spell's effects, because the game's card " +
+        "text is blank or gives no numbers. Search for { to find every card like this.";
 
     // Both spell views have the box; ticking one ticks the other.
     private readonly List<CheckBox> _hideBrokenBoxes = [];
@@ -116,29 +117,19 @@ internal sealed partial class ManagerWindow {
         };
     }
 
-    /// <summary>What the card does: the game's words, or Imlight's in italics and marked as such when the game's are blank.</summary>
+    /// <summary>What the card does: the game's words, then Imlight's corrected words in braces when it has any.</summary>
     private static SelectableTextBlock SpellDoesText(SpellCard card, int maxLines = 0) {
-        var generated = card.Blank && card.Explained.Length > 0;
-        var text = new SelectableTextBlock {
-            Text = generated ? $"{card.Explained} {DESCRIBED_BY_IMLIGHT}" : card.Short,
-            TextWrapping = TextWrapping.Wrap,
-            FontStyle = generated ? FontStyle.Italic : FontStyle.Normal,
-        };
+        var text = new SelectableTextBlock { Text = card.Shown, TextWrapping = TextWrapping.Wrap };
         if (maxLines > 0) {
             text.MaxLines = maxLines;
             text.TextTrimming = TextTrimming.CharacterEllipsis;
         }
 
-        if (generated) {
-            ToolTip.SetTip(text, "The game has no card text for this spell, so Imlight wrote this from the spell's effects.");
+        if (card.Corrected.Length > 0) {
+            ToolTip.SetTip(text, CORRECTED_TIP);
         }
 
         return text;
     }
-
-    /// <summary>Imlight's words with numbers under a game text that has none ("In numbers"), or null.</summary>
-    private static SelectableTextBlock? SpellNumbersText(SpellCard card) => card.Numbers.Length == 0 ? null : new SelectableTextBlock {
-        Text = $"{card.Numbers} {DESCRIBED_BY_IMLIGHT}", TextWrapping = TextWrapping.Wrap, FontStyle = FontStyle.Italic, Foreground = MUTED,
-    };
 
 }

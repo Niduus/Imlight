@@ -130,12 +130,21 @@ internal sealed class SpellCard {
     /// <summary>The game's card text is blank, or only a placeholder or an unread text key.</summary>
     internal bool Blank { get; set; }
 
-    /// <summary>What the card does: the game's own words, or Imlight's when the game's are blank.</summary>
-    internal string Does => Blank && Explained.Length > 0 ? Explained : Short;
+    /// <summary>What the card does: the game's own words, then Imlight's corrected words in braces (<see cref="Shown"/>).</summary>
+    internal string Does => Shown;
 
     /// <summary>Imlight's words shown under a short game text that gives no numbers, or "".</summary>
     internal string Numbers => !Blank && Explained.Length > 0 && !Short.Any(char.IsDigit) && SpellBook.HasAmounts(Explained)
         ? Explained : "";
+
+    /// <summary>Imlight's corrected words for a card whose game text is blank or gives no numbers, or "".</summary>
+    internal string Corrected => Blank ? Explained : Numbers;
+
+    /// <summary>
+    /// The game's text with Imlight's corrected words after it in braces, such as "Skeletal Dragon {Deals 40% of the
+    /// target's max health as damage to all enemies}", so a search for "{" finds every corrected card (Niduus, 2026-10-22).
+    /// </summary>
+    internal string Shown => Corrected.Length == 0 ? Short : $"{Short} {{{Corrected.TrimEnd('.')}}}".Trim();
 
     internal string Command => $".sb learn {Id}";
 
@@ -324,7 +333,7 @@ internal sealed partial class SpellBook {
         }
 
         var status = card.Broken ? "broken" : card.Partly ? "partly" : "";
-        card.Haystack = ($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Short} {(card.Blank ? card.Explained : "")} " +
+        card.Haystack = ($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Shown} " +
                          $"{(card.Treasure ? "treasure tc" : "")} {status}").ToLowerInvariant();
 
         return card;

@@ -777,11 +777,16 @@ internal static class CardPainter {
 
         private void Description(GlyphFont font) {
             var pieces = new List<Piece>();
-            // A card with no game text shows Imlight's own words (when short enough to read on the card), in a faded
-            // brown so they don't pass for the game's.
-            var parts = card.Blank && card.Explained.Length is > 0 and <= GENERATED_ON_CARD
-                ? [new DescriptionPart(card.Explained.TrimEnd('.'), GENERATED_COLOR)]
-                : book.Describe(card);
+            // The game's own text, then Imlight's corrected words in braces under it (when short enough to read on the
+            // card), in a faded brown so they don't pass for the game's.
+            var parts = book.Describe(card);
+            if (card.Corrected.Length is > 0 and <= GENERATED_ON_CARD) {
+                if (parts.Count > 0) {
+                    parts.Add(new DescriptionPart("", Break: true));
+                }
+
+                parts.Add(new DescriptionPart($"{{{card.Corrected.TrimEnd('.')}}}", GENERATED_COLOR));
+            }
             foreach (var part in parts) {
                 var color = part.Color == 0xFF000000 ? DESCRIPTION_COLOR : part.Color;
                 if (part.Break) {

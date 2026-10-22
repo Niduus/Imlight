@@ -196,11 +196,9 @@ internal sealed partial class ManagerWindow {
         }
 
         title.Children.Add(WithCenter(new TextBlock { Text = string.Join("  ·  ", facts), Foreground = MUTED }));
-        var generated = spell.Blank && spell.Explained.Length > 0;
         var does = spell.Does.Length > 0
             ? new TextBlock {
-                Text = generated ? $"{spell.Explained} {DESCRIBED_BY_IMLIGHT}" : spell.Short, TextWrapping = TextWrapping.Wrap, MaxLines = 2,
-                TextTrimming = TextTrimming.CharacterEllipsis, FontStyle = generated ? FontStyle.Italic : FontStyle.Normal,
+                Text = spell.Shown, TextWrapping = TextWrapping.Wrap, MaxLines = 2, TextTrimming = TextTrimming.CharacterEllipsis,
             }
             : new TextBlock { Text = "No card text in the game files.", Foreground = MUTED };
 
@@ -359,7 +357,6 @@ internal sealed partial class ManagerWindow {
         }
 
         FactWith("Does", spell.Does.Length > 0 ? SpellDoesText(spell) : null);
-        FactWith("In numbers", SpellNumbersText(spell));
         Fact("Level", spell.Level > 0 ? $"{spell.Level} or higher" : "");
         Fact("Game's name", spell.Code);
     }
