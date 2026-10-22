@@ -661,9 +661,12 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
 
         // Determine how long the cinematics will take.
         var cinematicTimeInSeconds = CombatResolver.ApplyQueuedCombatActions(out var actions);
+        // [Battle] AnimationExtraSeconds: more time on top of the estimate, for a slow PC (none with instant cinematics).
+        var waitSeconds = cinematicTimeInSeconds > 0 ? Math.Max(0f, cinematicTimeInSeconds + s_animationExtraSeconds) : 0f;
         Logger.Information("Duel {0} | Round {1} | Waiting {2:0.0} s for {3} actions to play.",
-            Logger.Args(SigilId, Duel.m_roundNum, cinematicTimeInSeconds, actions?.m_actionList?.Count ?? 0));
-        var actionExecutionTime = TimeSpan.FromSeconds(cinematicTimeInSeconds);
+            Logger.Args(SigilId, Duel.m_roundNum, waitSeconds, actions?.m_actionList?.Count ?? 0));
+        _roundWait = (Duel.m_roundNum, cinematicTimeInSeconds, waitSeconds, DateTime.UtcNow);
+        var actionExecutionTime = TimeSpan.FromSeconds(waitSeconds);
         Duel.m_executionPhaseTimer = (float) actionExecutionTime.TotalSeconds;
 
         // Pet May Cast cards go into their owner's hand first, or the game skips them.
@@ -687,6 +690,33 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         ScheduleHealthGlobes();
 
         Timers.StartSingleTimer(RESOUTION_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION(), actionExecutionTime);
+    }
+
+    // [Battle] AnimationExtraSeconds: seconds added to every round's wait for its animations (0 to 10).
+    private static readonly float s_animationExtraSeconds
+        = Math.Clamp(ConfigurationManager.GetValue("Battle.AnimationExtraSeconds", 1f), 0f, 10f);
+
+    // The round whose animations are playing: its estimate, what the duel waits, and when the actions went out.
+    private (int Round, float Estimate, float Wait, DateTime Sent)? _roundWait;
+
+    /// <summary>
+    /// One line per round on how long its animations were given. The game sends nothing when it has played a round
+    /// (no such message in its protocol, and none in Niduus's logs), so the duel always waits the estimate.
+    /// </summary>
+    private void LogRoundWaitOver() {
+        try {
+            if (_roundWait is not { } wait) {
+                return;
+            }
+
+            _roundWait = null;
+            Logger.Information("Duel {0} | Round {1} | animations done after {2:0.0} s (estimate {3:0.0} s, by timer{4}).",
+                Logger.Args(SigilId, wait.Round, (DateTime.UtcNow - wait.Sent).TotalSeconds, wait.Estimate,
+                    s_animationExtraSeconds > 0 ? $", +{s_animationExtraSeconds:0.#} s extra" : ""));
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Round wait log failed: {1}", Logger.Args(SigilId, e));
+        }
     }
 
     // Keys of the health globe timers still waiting, so a duel that ends early can drop them.
@@ -749,6 +779,8 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         if (!_isActive) {
             return;
         }
+
+        LogRoundWaitOver();
 
         // Iterate through dead creature participants and remove them from the duel.
         // Players can be healed and therefore don't need to be removed.

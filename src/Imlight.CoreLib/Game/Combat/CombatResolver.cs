@@ -95,13 +95,19 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     private static readonly bool s_fullPipConserve = ConfigurationManager.GetValue("Battle.FullPipConserve", false);
 
     private static readonly bool s_manaOnFizzle = ConfigurationManager.GetValue("Battle.ManaOnFizzle", false);
-    private const int SPELL_PASS_TIME = 1;
+    // How long the round waits for each animation. [Battle] FastAnimationTiming (on by default) uses the times measured
+    // in Niduus's game log of 2026-10-22; off, the round waits the old, longer times (if the new ones ever cut a spell short).
+    // Measured over 37 rounds: a pass is over in about 0.35 s, 0.5 s with the turn change (the next caster starts while it
+    // still plays; 1 s each was waited), and a defeat takes 1 to 1.7 s. The casting animation itself takes 3.75 s, but
+    // its 5 s also covers the moments between turns the estimate does not count, so it stays.
+    internal static readonly bool FastAnimationTiming = ConfigurationManager.GetValue("Battle.FastAnimationTiming", true);
+    private static readonly float SPELL_PASS_TIME = FastAnimationTiming ? 0.5f : 1.0f;
     private const float SPELL_CAST_TIME = 5.0f;
     // The most the round waits for a .c1s/.c2s spell, whose casting animation the game skips.
     private static readonly float SkipCastSeconds = Math.Max(0.5f, Imlight.Common.ConfigurationManager.GetValue("Battle.SkipCastSeconds", 2f));
     private const float HANGING_EFFECT_CONSUME_TIME = 1.0f;
     private const float OVER_TIME_ACTIVATION_TIME = 2.0f;
-    private const float DEATH_ANIMATION_TIME = 2.0f;
+    private static readonly float DEATH_ANIMATION_TIME = FastAnimationTiming ? 1.5f : 2.0f;
 
     private readonly Duel _duel = duel;
 
@@ -1258,6 +1264,16 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         var spellName = SpellFactory.GetBaseSpellName(action.Spell.m_templateID);
         var cinematicFactory = SpellCinematics.Instance;
+
+        if (FastAnimationTiming) {
+            try {
+                return SpellCinematics.GetMeasuredSpellTime(spellName, SPELL_CAST_TIME);
+            }
+            catch (Exception e) {
+                Logger.Error("Spell {0} | Could not work out its animation time, using the old one: {1}",
+                    Logger.Args(action.Spell.m_templateID, e));
+            }
+        }
 
         // All spells will always have a summon time.
         var count = SpellCinematics.GetSpellSummonTime(spellName);

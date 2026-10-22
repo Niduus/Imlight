@@ -38,6 +38,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -195,7 +196,59 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
         return totalTime;
     }
 
-    public void DisposeStream() 
+    // Cinematics the game does not play past the caster's casting animation, measured in Niduus's game log
+    // (2026-10-22): Malistaire's Mega Taunt took 3.8 s every time (7 rounds), while its stages add up to 14.5 s,
+    // which kept the first round of his battle waiting about 16 s after everything had played.
+    private static readonly HashSet<string> s_castOnly = ["Malistaire Taunt"];
+
+    /// <summary>
+    /// How long a spell's animation plays: the casting animation, the summon, and the act (both acts of a two-act
+    /// cinematic such as Minotaur or Empower, which the game plays one after the other and the old estimate cut short;
+    /// one of the variants when there are three or more, such as Scarab). With no act stage, every stage plays in turn.
+    /// </summary>
+    /// <param name="name">The spell's base name (its cinematic).</param>
+    /// <param name="castSeconds">The casting animation, for a cinematic with no Casting stage of its own.</param>
+    internal static float GetMeasuredSpellTime(string name, float castSeconds) {
+        var template = string.IsNullOrEmpty(name) ? null : GetCinematicTemplate(name);
+        if (template?.m_stages is not { Count: > 0 } stages || s_castOnly.Contains(name)) {
+            return castSeconds;
+        }
+
+        // The stage GetSpellSummonTime reads.
+        var summon = stages.FirstOrDefault(s => s is SummonCinematicStageTemplate)
+            ?? stages.FirstOrDefault(s => s is not null && s.m_name == "Summon");
+        var casting = stages.FirstOrDefault(s => s is not null && s.m_name == "Casting");
+        var time = (summon?.m_duration ?? 0f) + (casting is { m_duration: > 0.1f } ? casting.m_duration : castSeconds);
+
+        var acts = stages.Where(s => s is ActCinematicStageTemplate && s.m_duration > 0.1f).Select(s => s.m_duration).ToList();
+        if (acts.Count == 0 && stages.FirstOrDefault(s => s is not null && s.m_name == "Act") is { m_duration: > 0.1f } act) {
+            acts.Add(act.m_duration);
+        }
+
+        if (acts.Count > 0) {
+            time += acts.Count == 2 ? acts.Sum() : acts.Max();
+        }
+        else {
+            // The other stages, each once (the old sum counted the summon and casting a second time: Ghoul waited 19.7 s
+            // for 15.6 s of animation).
+            foreach (var stage in stages) {
+                if (stage is null || ReferenceEquals(stage, summon) || ReferenceEquals(stage, casting)) {
+                    continue;
+                }
+
+                if (stage.m_name.ToString().Contains("AddHanging")) {
+                    time += HANGING_EFFECT_ADD_TIME;
+                    continue;
+                }
+
+                time += stage.m_duration;
+            }
+        }
+
+        return time;
+    }
+
+    public void DisposeStream()
         => s_cinematicTemplates.Clear();
 
 }
