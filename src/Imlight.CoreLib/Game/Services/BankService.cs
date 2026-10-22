@@ -41,6 +41,7 @@
 
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Networking;
@@ -58,8 +59,18 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_BEGINBANKSESSION))]
     private void ReceiveBeginBankSession(CHARACTER_103_PROTOCOL.MSG_BEGINBANKSESSION message) {
         _openBankEntityId = message.EntityId;
+        Logger.Information("Bank: session begins for {CharId} at bank object {ObjectId}.",
+            Logger.Args(GetActiveWizard()?.CharId, message.EntityId));
         CreateRequests().Open();
     }
+
+    [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM))]
+    private void ReceiveToggleLockItem(WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM message)
+        => CreateRequests().ToggleLock(message);
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSETRANSFERLIST))]
+    private void ReceiveRequestHouseTransferList(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSETRANSFERLIST message)
+        => CreateRequests().SendHouseTransferList();
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_MOVEINVTOBANK))]
     private void ReceiveMoveInventoryToBank(WIZARD_12_PROTOCOL.MSG_MOVEINVTOBANK message)
@@ -102,8 +113,20 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
         => CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK());
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_DONESHOPPING))]
-    private void ReceiveDoneShopping()
-        => _openBankEntityId = 0;
+    private void ReceiveDoneShopping() {
+        // The bank window sends this when it closes (BankingWindow::HandleExitBank).
+        if (_openBankEntityId == 0) {
+            return;
+        }
+
+        var bankId = _openBankEntityId;
+        _openBankEntityId = 0;
+        Logger.Information("Bank: {CharId} closed the bank window.", Logger.Args(GetActiveWizard()?.CharId));
+
+        // The client drops the bank's option once it is used; offer it again so the bank opens again without walking away.
+        GetZoneObject(bankId)?.GetComponentOfType<InteractServiceMementoComponent>()?.ActorRef.Tell(
+            new ZONE_102_PROTOCOL.MSG_REFRESHSERVICEOPTIONS { PlayerActor = SessionActor.ActorRef });
+    }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONETRANSFER))]
     private void ReceiveZoneTransfer(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message)

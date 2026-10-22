@@ -211,8 +211,11 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         // The same message brings the sellers of seller furniture (HouseVendors).
-        var created = Imlight.CoreLib.Game.World.HouseVendors.IsVendorTag(message.Tag)
-            ? Imlight.CoreLib.Game.World.HouseVendors.TryCreate(message, out var info, out var trainer, out var template)
+        // The same message brings the banks of bank chests (HouseBanks).
+        var created = Imlight.CoreLib.Game.Bank.HouseBanks.IsBankTag(message.Tag)
+            ? Imlight.CoreLib.Game.Bank.HouseBanks.TryCreate(message, out var info, out var trainer, out var template)
+            : Imlight.CoreLib.Game.World.HouseVendors.IsVendorTag(message.Tag)
+            ? Imlight.CoreLib.Game.World.HouseVendors.TryCreate(message, out info, out trainer, out template)
             : Imlight.CoreLib.Game.World.HouseTrainers.TryCreate(message, out info, out trainer, out template);
         if (created) {
             _placed.Add(new PlacedObject(info, template, trainer, CreateEntityActor(trainer, template, info)));
