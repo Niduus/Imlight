@@ -84,6 +84,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     // Players this object has seen join. One that was in the zone before the object was made (added while the zone
     // runs, or brought back by a trigger) got it from OnStart and is counted on their first move.
     private readonly HashSet<IActorRef> _joinedPlayers = [];
+    // A creature in a battle: it stays sent to everyone in it however far they are (MSG_SHOWDUELPARTICIPANT).
+    private bool _heldByDuel;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
@@ -232,7 +234,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             _playersInRange.Add(playerActor);
         }
 
-        if (!_doesDistanceCheck) {
+        if (!_doesDistanceCheck || _heldByDuel) {
             return;
         }
 
@@ -289,6 +291,25 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         OnDisabled();
         Timers.StartSingleTimer(SHOW_AGAIN_TIMER, new ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN(),
             System.TimeSpan.FromMilliseconds(SHOW_AGAIN_DELAY_IN_MS));
+    }
+
+    // A wizard came into the battle this creature is in: their game must have the creature, or the circle stays empty.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SHOWDUELPARTICIPANT))]
+    private void ReceiveShowDuelParticipant(ZONE_102_PROTOCOL.MSG_SHOWDUELPARTICIPANT message) {
+        _heldByDuel = true;
+        var player = message.PlayerActor;
+        if (player is null || Entity.ActiveGameObject is null) {
+            return;
+        }
+
+        // Neither a dynamod nor the spawn requirements hide a creature the wizard is fighting.
+        if (_playerIgnoreBecauseDynamod.Remove(player, out var hiddenWizard) && hiddenWizard is not null) {
+            _playersWithRequirementsMet[hiddenWizard] = player;
+        }
+
+        CreateObjectForPlayer(player);
+        _playersInRange.Add(player);
+        _joinedPlayers.Add(player);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN))]

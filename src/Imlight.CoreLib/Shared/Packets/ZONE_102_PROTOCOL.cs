@@ -1132,6 +1132,21 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by a <see cref="Imlight.CoreLib.Game.Zone.Components.CombatDuelComponent"/> to a creature in its battle when a
+    /// wizard comes into the battle: the creature's object is sent to that wizard's game if it does not have it yet (a
+    /// wizard who came into the zone while the battle ran saw an empty enemy side), and it is not taken away by distance
+    /// while the battle lasts.
+    /// </summary>
+    public sealed class MSG_SHOWDUELPARTICIPANT : IServerMessage {
+
+        public byte MessageOrder { get; } = 99;
+        public byte ServiceID { get; } = 102;
+
+        public IActorRef PlayerActor;
+
+    }
+
+    /// <summary>
     /// Timer-fired message: an object that moved is sent to the players again, at its new place.
     /// </summary>
     public sealed class MSG_ZONEOBJECTSHOWAGAIN : IServerMessage {
