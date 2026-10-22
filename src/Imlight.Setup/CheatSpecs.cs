@@ -175,7 +175,7 @@ internal static class CheatSpecs {
             "When a player flees", [], _ => "When a player flees"),
         new("W.MinionDefeated", BlockKind.When, "skull", "a minion falls", "A creature on its side (a minion or a helper) is defeated.",
             "When a creature on its side is defeated", [], _ => "When one of its minions is defeated"),
-        new("W.Pips", BlockKind.When, "pips", "pips reach", "At the start of a round, when it (or any player) has at least this many pips. A power pip counts as one.",
+        new("W.Pips", BlockKind.When, "pips", "pips reach", "At the start of a round, when it (or any player) has at least this many pips. A power pip counts as one. With \"a player\", it goes off for each player who has them, and \"the attacker\" is that player.",
             "When {PipsOf} has at least {Pips} pips", [F("PipsOf", CheatFieldType.Choice, "", s_pipsOf), F("Pips", CheatFieldType.Number, 5, max: 14)],
             b => $"When {LabelOf(s_pipsOf, b.Text("PipsOf"))} has {b.Number("Pips")} or more pips"),
 

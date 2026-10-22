@@ -108,6 +108,14 @@ public partial class CombatResolver {
         => _subCircles.Any(c => c is not null && c != boss && c.Occupied && c.AddedToDuel && c.IsAlive
                                 && c.OccupiedTeam == boss.OccupiedTeam);
 
+    private static int PipCount(CombatDuelSubCircle c) => c.CombatParticipant?.m_pipCount is { } pips
+        ? CombatDuelSubCircle.TotalPips(pips) + pips.m_shadowPips : 0;
+
+    // The standing players on the other side with at least the cheat's pips.
+    private List<CombatDuelSubCircle> PlayersWithPips(CombatDuelSubCircle boss, BossCheats.BossCheat cheat)
+        => cheat.Pips <= 0 ? [] : [.. _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive
+                                                          && c.OccupiedTeam != boss.OccupiedTeam && PipCount(c) >= cheat.Pips)];
+
     // When "Pips": the boss (or with PipsOf Enemy, any player) has at least that many pips.
     private bool PipsReached(CombatDuelSubCircle boss, BossCheats.BossCheat cheat) {
         static int Count(CombatDuelSubCircle c) => c.CombatParticipant?.m_pipCount is { } pips
@@ -147,6 +155,18 @@ public partial class CombatResolver {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
                     if (!InPhase(boss, cheat) || (cheat.NoAllies && HasAllies(boss))) {
+                        continue;
+                    }
+
+                    // "When a player has at least … pips": it goes off for each such player, who is "the attacker", so
+                    // its spells can aim at the player who saved up (Niduus, 2026-10-22: Fire Dispel on a player with 6
+                    // pips in round 1, against the Incindiate strat).
+                    if (!atEnd && cheat.Is("Pips") && cheat.PipsOf.Equals("Enemy", StringComparison.OrdinalIgnoreCase)) {
+                        foreach (var player in PlayersWithPips(boss, cheat)) {
+                            cinematicTime += TryBossCheat(boss, i, cheat, player, player, $"round {round}, {cheat.Pips}+ pips on slot {player.SlotIndex}",
+                                combatActionList, cinematicTimeSoFar + cinematicTime);
+                        }
+
                         continue;
                     }
 
