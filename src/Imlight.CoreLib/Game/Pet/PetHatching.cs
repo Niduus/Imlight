@@ -303,6 +303,10 @@ internal static class PetHatching {
         behavior.m_expressedDerbyTalents = [];
         behavior.m_maxStats = AverageStats(template, a, b, random);
 
+        // The egg's own maximum, which the hatched pet keeps; before 2026-10-22 hatching replaced it with 260 for every
+        // stat (Justin, 2026-10-22).
+        PetProgress.RememberOwnMaxStats(egg, behavior.m_maxStats);
+
         // A new pet gets a name of its own; with none, every pet showed the first name in the tables (Justin, 2026-10-20).
         PetFactory.TrySetPetName(egg, WizardNameBank.RandomPetName(random));
 
@@ -402,7 +406,7 @@ internal static class PetHatching {
             var most = BaseMaxStat(template, name);
             var value = values.Count > 0
                 ? (int) Math.Round(values.Average()) + random.Next(-STAT_SPREAD, STAT_SPREAD + 1)
-                : most;
+                : OwnMaxStat(template, name);
 
             // Never above the server's maximum: only selfish talents raise that (Justin, 2026-10-20).
             stats.Add(new PetStat { m_name = name, m_statID = StringHash.Compute(name), m_value = Math.Clamp(value, 1, Math.Max(1, most)) });
@@ -411,11 +415,19 @@ internal static class PetHatching {
         return stats;
     }
 
-    // As PetProgress works it out: [Pets] MaxStrength and the others, or the kind's own when that is 0.
+    // The ceiling on a hatched stat: [Pets] MaxStrength and the others, or the kind's own when that is 0.
     private static int BaseMaxStat(PetItemBehaviorTemplate template, string name) {
         var configured = PetRules.MaxStat(name);
 
         return configured > 0 ? configured : PetProgress.GetStat(template.m_maxStats, name);
+    }
+
+    // The kind's own maximum of a stat neither parent has, under the ceiling.
+    private static int OwnMaxStat(PetItemBehaviorTemplate template, string name) {
+        var own = PetProgress.GetStat(template.m_maxStats, name);
+        var configured = PetRules.MaxStat(name);
+
+        return own <= 0 ? configured : configured > 0 ? Math.Min(own, configured) : own;
     }
 
 }

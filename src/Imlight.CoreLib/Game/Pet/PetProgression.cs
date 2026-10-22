@@ -72,6 +72,8 @@ internal static class PetProgression {
             return false;
         }
 
+        // Lets PetProgress find the pet's own maximum stats from the behavior.
+        PetProgress.GetBehavior(pet);
         template = PetFactory.GetPetItemBehaviorTemplate((uint) pet.m_templateID);
         if (template is null) {
             Logger.Warning("Pet {PetId} has the template {TemplateId}, which has no pet item behavior.",
@@ -375,11 +377,7 @@ internal static class PetProgression {
         }
 
         if (behavior.m_currentStats is not { Count: > 0 } && behavior.m_maxStats is { Count: > 0 }) {
-            var start = template.m_startStats is { Count: > 0 } ? template.m_startStats
-                : template.m_conversionStats is { Count: > 0 } ? template.m_conversionStats
-                : [];
-            behavior.m_currentStats = [.. behavior.m_maxStats.Select(max
-                => CopyStat(max, start.FirstOrDefault(stat => stat.m_name == max.m_name)?.m_value ?? 1))];
+            behavior.m_currentStats = PetProgress.StartingStats(behavior, template);
             changed = true;
         }
 

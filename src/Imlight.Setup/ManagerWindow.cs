@@ -125,6 +125,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Pets", "RunningTotalXp", "Pet XP is a running total: XP from earlier ages counts toward the next (off: each age starts over, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "DoubleSnackStats", "Double XP & Rewards also doubles snack stats (+15 becomes +30)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipShowsFeedWindow", "Skipping a pet game opens the feed window", new() { OnContent = "On", OffContent = "Off" }),
+        ("Pets", "StartAtMaxStats", "New pets start with every stat at the server maximum (off: their own starting stats, like the real game)", new() { OnContent = "On", OffContent = "Off" }),
         ("Pets", "SkipGameRewards", "Skipping a pet game gives its XP and stats (off: only the snack counts)", new() { OnContent = "On", OffContent = "Off" }),
         ("Jewels", "KeepShatteredJewels", "Jewels taken out of a socket go back to your backpack (off: they shatter unless they are No Shatter)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
