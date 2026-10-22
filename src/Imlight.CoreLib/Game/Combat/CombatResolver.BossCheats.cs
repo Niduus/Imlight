@@ -970,6 +970,21 @@ public partial class CombatResolver {
                 continue;
             }
 
+            // A lasting polymorph on a boss an afterlife brought back this round: the game still has it defeated, so the
+            // cast hid it (the spell is casterInvisible) and the model never came back (Niduus, 2026-10-22: invisible,
+            // then shown only while the cast played again). The server takes the form now and the game is sent the
+            // cast once, first thing next round, when it has the boss standing.
+            if (lasting is not null && _cameBackThisRound.Contains(target)) {
+                if (CombatPolymorph.Apply(target, lasting, spell.m_templateID)) {
+                    _polymorphReplays[target] = (spell, template);
+                    LogPolymorph(custom, boss, bossName, template, lasting, target, false);
+                    Logger.Information("Duel {0} | Slot {1} | {2} is shown next round, after the game brings it back.",
+                        Logger.Args(_duel.m_duelID.Full, target.SlotIndex, (string) template.m_name));
+                }
+
+                continue;
+            }
+
             boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
             var before = combatActionList.m_actionList.Count;
             var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
@@ -986,10 +1001,6 @@ public partial class CombatResolver {
             }
 
             cinematicTime += time;
-            if (lasting is not null && before < combatActionList.m_actionList.Count) {
-                NotePolymorphReplay(target, spell, template);
-            }
-
             if (step.Is("Polymorph") || lasting is not null) {
                 LogPolymorph(custom, boss, bossName, template, lasting, target, before < combatActionList.m_actionList.Count);
             }
