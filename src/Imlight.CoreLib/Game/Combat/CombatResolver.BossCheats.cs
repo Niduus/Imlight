@@ -293,8 +293,18 @@ public partial class CombatResolver {
 
     private float BossCheatsAfter(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var time = BossCheatsAfterMove(mover, before, combatActionList, cinematicTimeSoFar);
+        time += PlayerCheatsAfter(mover, before, combatActionList, cinematicTimeSoFar + time);
+        // A player cheat's free casts (Incindiate after a pass) can defeat a boss after its own cheats were checked.
+        if (BossCheats.Enabled && mover is not null) {
+            try {
+                time += BossDefeatCheats(mover, [], combatActionList, cinematicTimeSoFar + time);
+            }
+            catch (Exception e) {
+                Logger.Error("Duel {0} | Boss defeat cheats after slot {1}'s move failed: {2}", Logger.Args(_duel.m_duelID.Full, mover.SlotIndex, e));
+            }
+        }
 
-        return time + PlayerCheatsAfter(mover, before, combatActionList, cinematicTimeSoFar + time);
+        return time;
     }
 
     private float BossCheatsAfterMove(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
@@ -413,6 +423,19 @@ public partial class CombatResolver {
                                   || cheat.Category is { Length: > 0 } || cheat.CostMin > 0 || cheat.CostMax > 0 || cheat.SingleTarget || cheat.OnBoss;
                 var by = mover is null ? default
                     : landed.FirstOrDefault(m => Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover));
+                var byWho = mover;
+                // Else the last spell that landed on it this round: a free cast of a player cheat, .db or .cf, or a
+                // move before the round's end (Niduus, 2026-10-22: Incindiate came from a player cheat after a pass).
+                if (by.Spell is null && LastHitOn(boss, combatActionList) is { } last) {
+                    byWho = _subCircles.FirstOrDefault(c => c is not null && c.SlotIndex == last.Action.m_spellCaster);
+                    if (byWho is not null && Matches(cheat, last.Spell, last.Action.m_targetSubcircleList ?? [], boss, byWho)) {
+                        by = last;
+                    }
+                    else {
+                        byWho = mover;
+                    }
+                }
+
                 if (spellBlocks && by.Spell is null) {
                     continue;
                 }
@@ -421,7 +444,7 @@ public partial class CombatResolver {
                     _cheatSpellId = by.Action.m_spell.m_templateID;
                 }
 
-                cinematicTime += TryBossCheat(boss, i, cheat, mover, mover,
+                cinematicTime += TryBossCheat(boss, i, cheat, byWho, byWho,
                     by.Spell is null ? "its defeat" : $"its defeat by {(string) by.Spell.m_name}",
                     combatActionList, cinematicTimeSoFar + cinematicTime);
                 _cheatSpellId = 0;
@@ -433,6 +456,35 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// Which side acts first (.wegofirst, .theygofirst and the Turn order cheat block): who's side, or the other one.
+    /// The order of a round is set when its spells start, so a cheat's change counts from the next round.
+    /// </summary>
+    internal void SetFirstSide(CombatDuelSubCircle who, bool weFirst) {
+        if (_duel.m_bPVP || who is null) {
+            return;
+        }
+
+        var team = weFirst ? who.OccupiedTeam : who.OccupiedTeam == CombatTeam.Player ? CombatTeam.Monster : CombatTeam.Player;
+        _duel.m_firstTeamToAct = (int) team;
+        Logger.Information("Duel {0} | Slot {1} | {2} side goes first now.",
+            Logger.Args(_duel.m_duelID.Full, who.SlotIndex, team == CombatTeam.Player ? "The players'" : "The creatures'"));
+    }
+
+    // The last spell of this round's actions that landed on the boss, with its action.
+    private static (CombatAction Action, SpellTemplate Spell) LastHitOn(CombatDuelSubCircle boss, CombatActionListObj combatActionList) {
+        for (var i = combatActionList.m_actionList.Count - 1; i >= 0; i--) {
+            var action = combatActionList.m_actionList[i];
+            if (action?.m_spell is not null && action.m_spellHits is (char) 1 or (char) 2 && action.m_spellCaster != boss.SlotIndex
+                && (action.m_targetSubcircleList?.Contains(boss.SlotIndex) ?? false)
+                && CoreObjectFactory.GetCoreTemplate(action.m_spell.m_templateID) is SpellTemplate spell) {
+                return (action, spell);
+            }
+        }
+
+        return default;
     }
 
     private float BossHealthCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
@@ -756,6 +808,9 @@ public partial class CombatResolver {
             switch (step.Do.ToLowerInvariant()) {
                 case "form" or "sethealth":
                     break;
+                case "firstturn":
+                    SetFirstSide(boss, !step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase));
+                    break;
                 case "setphase" when step.Phase > 0:
                     // The new phase counts its rounds from the next round.
                     _bossPhases[boss] = (step.Phase, (int) _duel.m_roundNum + 1);
@@ -872,6 +927,7 @@ public partial class CombatResolver {
             "removecharms" or "removewards" => $"{step.Do} {step.Kind} x{(step.Count > 0 ? step.Count : "all")}{on}",
             "addeffects" => $"add the effects of {spell}{on}",
             "setphase" => $"phase {step.Phase}",
+            "firstturn" => step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase) ? "they go first" : "we go first",
             "sethealth" => $"health {step.Amount}",
             "reflect" => "reflect the spell",
             "stealpips" => $"steal {step.Amount} {step.Kind} pips{on}",

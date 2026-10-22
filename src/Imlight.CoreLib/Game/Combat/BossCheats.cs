@@ -282,6 +282,8 @@ internal static class BossCheats {
         public int Times { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
+        // For FirstTurn: Us (the cheat's own side acts first) or Them (the other side).
+        public string Side { get; set; } = "";
         // The enchantments picked for an enchanted FreeCast, put on in this order (none: the best one that fits).
         public List<string> Enchants { get; set; } = [];
 

@@ -344,6 +344,18 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         _currentDuelActor.Tell(message);
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATTURNORDER))]
+    private void ReceiveCheatTurnOrder(COMBAT_106_PROTOCOL.MSG_CHEATTURNORDER message) {
+        if (_currentDuelActor is null) {
+            InformGameClient("You are not in a battle.");
+
+            return;
+        }
+
+        message.Actor = SessionActor.ActorRef;
+        _currentDuelActor.Tell(message);
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]
     private void ReceiveCheatJoinMe(COMBAT_106_PROTOCOL.MSG_CHEATJOINME message) {
         if (_currentDuelActor is null) {

@@ -394,6 +394,19 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// .wegofirst / .theygofirst: the sender's side, or the other side, acts first.
+    /// </summary>
+    internal sealed class MSG_CHEATTURNORDER : IServerMessage {
+
+        public byte MessageOrder => 36;
+        public byte ServiceID => 106;
+
+        public bool WeFirst;
+        public IActorRef Actor;
+
+    }
+
+    /// <summary>
     /// .ca: a line shown like a boss's cheat when the round's animations play.
     /// </summary>
     internal sealed class MSG_CHEATANNOUNCE : IServerMessage {

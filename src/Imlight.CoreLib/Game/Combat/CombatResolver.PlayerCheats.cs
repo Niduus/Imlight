@@ -232,6 +232,9 @@ public partial class CombatResolver {
                         }
 
                         break;
+                    case "firstturn":
+                        SetFirstSide(me, !step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase));
+                        break;
                     case "pickone":
                         break;
                     default:

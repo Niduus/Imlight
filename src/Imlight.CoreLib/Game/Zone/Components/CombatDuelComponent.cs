@@ -2697,6 +2697,25 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         });
     }
 
+    // .wegofirst / .theygofirst (Niduus, 2026-10-22): which side acts first, from this round's spells on.
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATTURNORDER))]
+    private void ReceiveCheatTurnOrder(COMBAT_106_PROTOCOL.MSG_CHEATTURNORDER message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        void Inform(string text) => message.Actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text });
+        if (!_isActive || subCircle is null || IsPvPDuel) {
+            Inform("Use .wegofirst or .theygofirst in a battle against creatures.");
+
+            return;
+        }
+
+        CombatResolver.SetFirstSide(subCircle, message.WeFirst);
+        ShowFirstSide();
+        Inform(message.WeFirst ? "Your side goes first, from this round's spells on." : "The other side goes first, from this round's spells on.");
+    }
+
+    /// <summary>Shows the sun on the side that now acts first.</summary>
+    internal void ShowFirstSide() => SendUpFirst(Duel.m_roundNum);
+
     // .joinme (Niduus, 2026-10-20): a creature joins this battle on the enemy side and fights from the next round.
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATJOINME))]
     private void ReceiveCheatJoinMe(COMBAT_106_PROTOCOL.MSG_CHEATJOINME message) {
