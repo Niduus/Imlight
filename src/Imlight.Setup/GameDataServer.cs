@@ -41,20 +41,27 @@ internal sealed class GameDataServer : IDisposable {
 
     private const int MAX_HEADER_BYTES = 16 * 1024;
 
-    private readonly string _gameDataFolder;
+    // Looked in from first to last: Aurorium's revisions (newest first) when the server takes its files, then Wizard101's.
+    private readonly string[] _gameDataFolders;
+    private readonly string _missingHint;
     private readonly TcpListener _listener;
     private readonly CancellationTokenSource _stop = new();
 
-    private GameDataServer(string gameDataFolder, int port) {
-        _gameDataFolder = Path.GetFullPath(gameDataFolder);
+    private GameDataServer(string[] gameDataFolders, int port, string missingHint) {
+        _gameDataFolders = [.. gameDataFolders.Select(Path.GetFullPath)];
+        _missingHint = missingHint;
         _listener = new TcpListener(IPAddress.Loopback, port);
     }
 
     /// <summary>
     /// Starts serving, or returns null when the port is taken (another patch server is already running).
     /// </summary>
-    internal static GameDataServer? TryStart(string gameDataFolder, int port) {
-        var server = new GameDataServer(gameDataFolder, port);
+    internal static GameDataServer? TryStart(string gameDataFolder, int port)
+        => TryStart([gameDataFolder], port, "is not in your Wizard101 folder yet. Visit that area once in the real game so Wizard101 downloads it.");
+
+    /// <inheritdoc cref="TryStart(string, int)"/>
+    internal static GameDataServer? TryStart(string[] gameDataFolders, int port, string missingHint) {
+        var server = new GameDataServer(gameDataFolders, port, missingHint);
         try {
             server._listener.Start();
         }
@@ -124,8 +131,7 @@ internal sealed class GameDataServer : IDisposable {
         var file = Resolve(relative);
         if (file is null) {
             if (relative.EndsWith(".wad", StringComparison.OrdinalIgnoreCase)) {
-                Write(ConsoleColor.Yellow, $"{Path.GetFileName(relative)} is not in your Wizard101 folder yet. " +
-                    "Visit that area once in the real game so Wizard101 downloads it.");
+                Write(ConsoleColor.Yellow, $"{Path.GetFileName(relative)} {_missingHint}");
             }
 
             await WriteEmptyAsync(stream, "404 Not Found");
@@ -158,7 +164,7 @@ internal sealed class GameDataServer : IDisposable {
     }
 
     /// <summary>
-    /// Finds a requested file in the game data folder. Only files directly inside it are served.
+    /// Finds a requested file in the game data folders, the first that has it. Only files directly inside them are served.
     /// </summary>
     internal string? Resolve(string relative) {
         const string PREFIX = "Data/GameData/";
@@ -168,20 +174,30 @@ internal sealed class GameDataServer : IDisposable {
             return null;
         }
 
-        var full = Path.GetFullPath(Path.Combine(_gameDataFolder, name));
-        var isInside = string.Equals(Path.GetDirectoryName(full), _gameDataFolder.TrimEnd(Path.DirectorySeparatorChar),
-            StringComparison.OrdinalIgnoreCase);
+        foreach (var folder in _gameDataFolders) {
+            var full = Path.GetFullPath(Path.Combine(folder, name));
+            var isInside = string.Equals(Path.GetDirectoryName(full), folder.TrimEnd(Path.DirectorySeparatorChar),
+                StringComparison.OrdinalIgnoreCase);
+            if (isInside && File.Exists(full)) {
+                return full;
+            }
+        }
 
-        return isInside && File.Exists(full) ? full : null;
+        return null;
     }
 
     /// <summary>
-    /// A LatestFileList listing every wad on disk with its size. Imlight compares the sizes to its cache.
+    /// A LatestFileList listing every wad on disk with its size (the copy <see cref="Resolve"/> hands out, when several
+    /// folders have one). Imlight compares the sizes to its cache.
     /// </summary>
     internal string BuildLatestFileList() {
         var builder = new StringBuilder();
         builder.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LatestFileList>\n<Base>\n");
-        foreach (var file in Directory.EnumerateFiles(_gameDataFolder, "*.wad").OrderBy(f => f, StringComparer.OrdinalIgnoreCase)) {
+        var files = _gameDataFolders.Where(Directory.Exists)
+            .SelectMany(folder => Directory.EnumerateFiles(folder, "*.wad"))
+            .DistinctBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
+        foreach (var file in files) {
             var name = SecurityElement.Escape("Data/GameData/" + Path.GetFileName(file));
             builder.Append("<RECORD><SrcFileName>").Append(name).Append("</SrcFileName><TarFileName>").Append(name)
                 .Append("</TarFileName><FileType>0</FileType><Size>").Append(new FileInfo(file).Length)

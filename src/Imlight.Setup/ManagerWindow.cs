@@ -1032,6 +1032,7 @@ internal sealed partial class ManagerWindow : Window {
                 AutoUpdateBox(),
                 AutoInstallSwitch()),
             ServerSourceCard(),
+            AuroriumCard(),
             Fold("folder", "Tools", "Files and folders", $"Installed in {_manager.InstallFolder}.",
                 new WrapPanel {
                     Children = {

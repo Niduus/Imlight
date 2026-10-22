@@ -16,7 +16,7 @@ The same program also builds as **ImlightManager.exe**, which installs this fork
 
 ## No patch server needed
 
-Imlight reads game files from a patch server. On a home computer, starting the server runs a small one built into `Imlight.exe` that hands the server the files from the player's own Wizard101 folder (`Data\GameData`), then starts the server. Nothing is downloaded and nothing leaves the computer. If something else (such as Aurorium) already uses the patch server port, Imlight uses that instead.
+Imlight reads game files from a patch server. On a home computer, starting the server runs a small one built into `Imlight.exe` that hands the server the files from the player's own Wizard101 folder (`Data\GameData`), then starts the server. Nothing is downloaded and nothing leaves the computer. If something else (such as Aurorium) already uses the patch server port, Imlight uses that instead. The Aurorium card on the Tools tab installs [Aurorium](https://github.com/Revive101/Aurorium) into any folder you pick and starts it, so it downloads every game file; with **Server uses Aurorium's files** on, the server is given Aurorium's files (newest revision first), and Wizard101's for any it doesn't have yet.
 
 If the server asks for an area's file that the player's game hasn't downloaded yet, the window says so. Visiting that area once in the real game downloads it.
 

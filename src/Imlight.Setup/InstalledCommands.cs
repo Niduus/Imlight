@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -135,7 +136,18 @@ internal static class InstalledCommands {
             return null;
         }
 
-        if (info.GameDataFolder is not { } gameData || !Directory.Exists(gameData)) {
+        var wizard101 = info.GameDataFolder is { } found && Directory.Exists(found) ? found : null;
+        if (AuroriumFolders(installFolder) is { } aurorium) {
+            var fromAurorium = GameDataServer.TryStart([.. aurorium.Folders, .. wizard101 is null ? Array.Empty<string>() : [wizard101]], uri.Port,
+                "is not in Aurorium's game files yet. Leave Aurorium running until it finishes downloading.");
+            Console.WriteLine(fromAurorium is null
+                ? $"Another patch server is already using port {uri.Port}, so Imlight will use it instead of Aurorium's files."
+                : $"Giving the server game files from Aurorium in {aurorium.Folder}" + (wizard101 is null ? "." : ", and from Wizard101 for any it doesn't have yet."));
+
+            return fromAurorium;
+        }
+
+        if (wizard101 is not { } gameData) {
             Console.WriteLine("Imlight does not know where Wizard101 is. Click \"Update Imlight\" on the Tools tab of the app once to fix that.");
 
             return null;
@@ -147,6 +159,26 @@ internal static class InstalledCommands {
             : $"Giving the server game files from {gameData}.");
 
         return server;
+    }
+
+    /// <summary>
+    /// Aurorium's game file folders when the Aurorium card says the server takes them, or null to use Wizard101's.
+    /// </summary>
+    private static (string Folder, List<string> Folders)? AuroriumFolders(string installFolder) {
+        var settings = Aurorium.Load(installFolder);
+        if (!settings.UseForServer || settings.Folder is not { } folder) {
+            return null;
+        }
+
+        var folders = Aurorium.GameDataFolders(folder);
+        if (folders.Count == 0) {
+            Console.WriteLine($"Aurorium in {folder} has no game files yet, so the server uses your Wizard101 folder this time. " +
+                "Start Aurorium on the Tools tab of the app and leave it running until it finishes downloading.");
+
+            return null;
+        }
+
+        return (folder, folders);
     }
 
     // ---------------------------------------------------------------------
