@@ -47,7 +47,10 @@
  *               MinigameSemiCircleSigil4Actor), Tag (the pad's second tag), Radius (0 = the pad default),
  *               DestinationZone and DestinationLoc (the zone and spot the sigil sends the team to; the spot is
  *               "X,Y,Z,Yaw" or a named place in that zone), Variant (the destination's variant, empty for none) and
- *               LitState (the pad's lit state, Glowy if left out). A pad's own zone resolves its destination from its
+ *               LitState (the pad's look, Glowy if left out: Glowy is the blue glow, Off is dark, and Red (or
+ *               "Advanced") is the red Advanced Mode glow; only pads whose animations have On_Red can show it, such
+ *               as the 4 player pad 107081 and the Skeleton Key sigil art 1313007, not the 2 player pad 1634569). A
+ *               pad's own zone resolves its destination from its
  *               teleport table; an added pad has no teleport there, so it names its destination here.
  *   CombatSigil for a battle circle (a CombatSigilObjectInfo, made by ZoneSigilSupervisor): SigilType (the Root.wad
  *               Sigils/ name, such as CombatSigilDarkmoorMalistaireBoss) and Radius (how near a player joins).
@@ -234,6 +237,19 @@ internal static class ZoneObjects {
 
     // A dungeon sigil pad's lit state (MinigameSigilStatesNew: Glowy plays the pad's "On" animation).
     internal const string SIGIL_LIT_STATE = "Glowy";
+
+    // The Advanced Mode look (Justin, 2026-10-22: "Advance Mode" sigils): MinigameSigilStatesNew's Red plays the pad's
+    // "On_Red" animation (AnimationData/FX_BattleCircle_4X_New.xml, animation 2), the red glow the game shows when a
+    // team picks Advanced Mode at a dungeon sigil. The set only goes to Red from Glowy (Off goes to Red_02, the same
+    // red with debug on), so a pad is sent Glowy just before it.
+    internal const string SIGIL_ADVANCED_STATE = "Red";
+
+    /// <summary>A sigil pad's lit state as its file names it, with "Advanced" (or AdvancedMode) read as Red.</summary>
+    internal static string SigilStateName(string state) {
+        var s = state?.Trim() ?? "";
+
+        return s.Replace(" ", "").ToLowerInvariant() is "advanced" or "advancedmode" or "advance" or "advancemode" ? SIGIL_ADVANCED_STATE : s;
+    }
 
     // A battle circle's join radius when its file gives none.
     private const float DEFAULT_COMBAT_SIGIL_RADIUS = 600.0f;
@@ -534,7 +550,7 @@ internal static class ZoneObjects {
     /// <summary>The lit state an added sigil pad names, or null.</summary>
     internal static string LitStateOf(CoreObjectInfo info)
         => info is not null && s_added.TryGetValue(info, out var added)
-           && !string.IsNullOrEmpty(added.Object.Sigil?.LitState) ? added.Object.Sigil.LitState : null;
+           && !string.IsNullOrWhiteSpace(added.Object.Sigil?.LitState) ? SigilStateName(added.Object.Sigil.LitState) : null;
 
     /// <summary>The file name a zone's objects are kept in: the zone path with / as -, then @variant if it has one.</summary>
     internal static string FileNameOf(string zonePath, string variant = "")
@@ -641,7 +657,7 @@ internal static class ZoneObjects {
         info.m_startState = obj.StartState ?? "";
         // An added sigil pad starts lit: the zone sends a joining player its state after the object, every time.
         if (obj.Sigil is not null && string.IsNullOrEmpty(obj.StartState)) {
-            info.m_startState = string.IsNullOrEmpty(obj.Sigil.LitState) ? SIGIL_LIT_STATE : obj.Sigil.LitState;
+            info.m_startState = string.IsNullOrWhiteSpace(obj.Sigil.LitState) ? SIGIL_LIT_STATE : SigilStateName(obj.Sigil.LitState);
         }
 
         info.m_loadingType = LoadingType.DYNAMIC_SERVER;

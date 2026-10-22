@@ -183,7 +183,13 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
     private void Light(IActorRef playerActor) {
         if (playerActor is not null && IsAvailable) {
-            Entity.ChangeStateExclusiveSender(ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE, playerActor);
+            var state = ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE;
+            // Red (the Advanced Mode look) is only reached from Glowy in the pad's state set.
+            if (state.Equals(ZoneObjects.SIGIL_ADVANCED_STATE, StringComparison.OrdinalIgnoreCase)) {
+                Entity.ChangeStateExclusiveSender(LIT_STATE, playerActor);
+            }
+
+            Entity.ChangeStateExclusiveSender(state, playerActor);
         }
     }
 
