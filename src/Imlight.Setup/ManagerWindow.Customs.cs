@@ -79,7 +79,7 @@ internal sealed partial class ManagerWindow {
         // The custom's own fields now sit in the editor's Identity, Drops and Forms sections (ManagerWindow.CustomBosses.cs).
 
         return Page(
-            CustomsGuides(),
+            CustomsGuide(),
             Fold("paw", "Customs", "Custom mobs",
                 "A custom is its own creature, made from a game creature: it has a number, a name, and stats, a deck, " +
                 "cheats and drops of its own. Changing it never changes the game's creature or the Bosses tab. " +

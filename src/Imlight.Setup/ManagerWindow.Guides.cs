@@ -39,9 +39,9 @@ namespace Imlight.Setup;
 /// <summary>
 /// The "How to" guides (Niduus, 2026-10-22: "Make it very clear and user friendly of how users can make custom
 /// mobs/bosses/drop tables/areas and how to edit them"): numbered, click-by-click steps that name the buttons as the app
-/// shows them, as foldable sections at the top of the Customs and Bosses tabs and all together on the Guides tab. The
-/// words are kept here as data, so a guide is changed in one place; GuidesMarkdown() writes the same words as a printable
-/// page. The "?" hints beside the confusing boxes of the Customs tab are here too.
+/// shows them, all on the Guides tab. The Customs and Bosses tabs and the Cheats section keep one line each that opens
+/// their guide there. The words are kept here as data, so a guide is changed in one place; GuidesMarkdown() writes the
+/// same words as a printable page. The "?" hints beside the confusing boxes of the Customs tab are here too.
 /// </summary>
 internal sealed partial class ManagerWindow {
 
@@ -373,12 +373,12 @@ internal sealed partial class ManagerWindow {
                     GuideText("Each guide is a list of clicks, in order. Words like [Save changes] are the buttons, boxes and sections " +
                               "exactly as the app names them, and words like `.joinme 1336035 1` are what to type. Click a guide's " +
                               "title to open it."),
-                    GuideChips(null, toGuidesTab: false),
+                    GuideChips(),
                 },
             }),
         };
         foreach (var guide in s_guides) {
-            var section = HowTo(guide, open: false, chips: false);
+            var section = HowTo(guide);
             _guideSections[guide.Id] = section;
             cards.Add(section);
         }
@@ -386,40 +386,49 @@ internal sealed partial class ManagerWindow {
         return Page([.. cards]);
     }
 
-    /// <summary>The top of the Customs tab: a row of guides, and the custom mob guide folded.</summary>
-    private Control CustomsGuides() => new StackPanel {
-        Spacing = ManagerTheme.GAP,
-        Children = { GuideBar(), HowTo(GuideOf("mob"), open: false) },
-    };
+    // Where a tab used to hold a guide of its own, it keeps one line that opens that guide on the Guides tab
+    // (Niduus, 2026-10-22: "move all the Guide-related UI's into the Guide section").
 
-    /// <summary>The top of the Bosses tab: a real boss or a custom, folded.</summary>
-    private Control BossesGuide() => HowTo(GuideOf("real"), open: false);
+    /// <summary>The top of the Customs tab: a line that opens How to make a custom mob.</summary>
+    private Control CustomsGuide() => GuideLink("mob", "How do customs work?");
 
-    /// <summary>In the editor's Cheats section: how to build a cheat, folded.</summary>
-    private Control CheatsGuide() => HowTo(GuideOf("boss"), open: false);
+    /// <summary>The top of the Bosses tab: a line that opens How to change a real boss, or make a custom instead.</summary>
+    private Control BossesGuide() => GuideLink("real", "How does changing a boss work?");
 
-    // A slim bar: "How to" and a button for each guide, which opens it on the Guides tab.
-    private Control GuideBar() => new Border {
-        Background = ManagerTheme.Brush(ManagerTheme.ACCENT, 26), BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT, 110),
-        BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(ManagerTheme.RADIUS), Padding = new Thickness(14, 10, 14, 4),
-        Child = new DockPanel {
-            Children = {
-                WithDock(WithMargin(new StackPanel {
-                    Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 4, 0, 0),
-                    Children = {
-                        ManagerTheme.Tile("info", ManagerTheme.Accent("Guides"), 26),
-                        new TextBlock { Text = "How to", FontWeight = FontWeight.SemiBold, FontSize = ManagerTheme.FONT_HEADING, VerticalAlignment = VerticalAlignment.Center },
-                    },
-                }, new Thickness(0, 0, 14, 0)), Dock.Left),
-                GuideChips(null, toGuidesTab: true),
+    /// <summary>In the editor's Cheats section: a line that opens How to make a custom boss and give it cheats.</summary>
+    private Control CheatsGuide() => GuideLink("boss", "How do cheats work?");
+
+    /// <summary>One line: a question, and a button that opens its guide on the Guides tab.</summary>
+    private Control GuideLink(string id, string question) {
+        var guide = GuideOf(id);
+        var open = new Button {
+            Padding = new Thickness(6, 3, 12, 3), CornerRadius = new CornerRadius(16), VerticalAlignment = VerticalAlignment.Center,
+            Cursor = new Cursor(StandardCursorType.Hand),
+            Content = new StackPanel {
+                Orientation = Orientation.Horizontal, Spacing = 6,
+                Children = {
+                    ManagerTheme.Tile(guide.Icon, ManagerTheme.Accent(guide.Accent), 22),
+                    new TextBlock { Text = "Open the guide", VerticalAlignment = VerticalAlignment.Center },
+                },
             },
-        },
-    };
+        };
+        ToolTip.SetTip(open, $"{guide.Title}, on the Guides tab");
+        open.Click += (_, _) => ShowGuide(id);
 
-    // A button for each guide (but the one it is under), and All guides.
-    private Control GuideChips(string? except, bool toGuidesTab) {
+        return new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 10, HorizontalAlignment = HorizontalAlignment.Left,
+            Children = {
+                WithCenter(ManagerTheme.Icon("info", 18, ManagerTheme.Accent("Guides"))),
+                new TextBlock { Text = question, Foreground = ManagerTheme.Brush(ManagerTheme.TEXT_SOFT), VerticalAlignment = VerticalAlignment.Center },
+                open,
+            },
+        };
+    }
+
+    // A button for each guide, which opens it further down the Guides tab.
+    private Control GuideChips() {
         var row = new WrapPanel { Orientation = Orientation.Horizontal };
-        foreach (var guide in s_guides.Where(g => g.Id != except)) {
+        foreach (var guide in s_guides) {
             var chip = new Button {
                 Padding = new Thickness(6, 3, 12, 3), Margin = new Thickness(0, 0, 8, 6), CornerRadius = new CornerRadius(16),
                 Content = new StackPanel {
@@ -431,13 +440,6 @@ internal sealed partial class ManagerWindow {
             var id = guide.Id;
             chip.Click += (_, _) => ShowGuide(id);
             row.Children.Add(chip);
-        }
-
-        if (toGuidesTab) {
-            var all = Plain("All guides");
-            all.Margin = new Thickness(0, 0, 8, 6);
-            all.Click += (_, _) => ShowGuide(null);
-            row.Children.Add(all);
         }
 
         return row;
@@ -464,7 +466,7 @@ internal sealed partial class ManagerWindow {
     // ---------------------------------------------------------------------
 
     /// <summary>A guide as a foldable section of the theme: its steps, words, examples and tips.</summary>
-    private Section HowTo(Guide guide, bool open, bool chips = true) {
+    private Section HowTo(Guide guide) {
         var body = new StackPanel { Spacing = 16 };
         foreach (var bit in guide.Bits) {
             body.Children.Add(bit switch {
@@ -477,16 +479,9 @@ internal sealed partial class ManagerWindow {
             });
         }
 
-        if (chips) {
-            body.Children.Add(new StackPanel {
-                Spacing = 6,
-                Children = { new TextBlock { Text = "More guides", FontWeight = FontWeight.SemiBold, Foreground = ManagerTheme.MUTED_BRUSH }, GuideChips(guide.Id, toGuidesTab: true) },
-            });
-        }
-
         var section = new Section(guide.Icon, ManagerTheme.Accent(guide.Accent), guide.Title, guide.Line, body);
         section.SetBadge("How to");
-        section.SetOpen(open);
+        section.SetOpen(false);
 
         return section;
     }
@@ -802,8 +797,8 @@ internal sealed partial class ManagerWindow {
         md.AppendLine();
         md.AppendLine("Step-by-step guides for making and changing custom mobs, custom bosses and their cheats, drop tables and " +
                       "custom areas. Words in **bold** are the buttons, boxes and sections exactly as the app names them; words " +
-                      "like `.joinme 1336035 1` are what to type. The same guides are in the app: the **Guides** tab, and the " +
-                      "**How to** sections at the top of the **Customs** and **Bosses** tabs.");
+                      "like `.joinme 1336035 1` are what to type. The same guides are in the app, on the **Guides** tab; the " +
+                      "**Customs** and **Bosses** tabs and the **Cheats** section each have an **Open the guide** button for theirs.");
         md.AppendLine();
         md.AppendLine("## Contents");
         md.AppendLine();
