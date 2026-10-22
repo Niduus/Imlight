@@ -106,11 +106,11 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_DELIVERYINVOICEREQUESTBANK))]
     private void ReceiveDeliveryInvoiceRequestBank(WIZARD_12_PROTOCOL.MSG_DELIVERYINVOICEREQUESTBANK message)
-        => CreateRequests().StreamBankFor(new WIZARD_12_PROTOCOL.MSG_DELIVERYINVOICEREQUESTBANK());
+        => CreateRequests().StreamBankFor(new WIZARD_12_PROTOCOL.MSG_DELIVERYINVOICEREQUESTBANK(), includeShared: true);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK))]
     private void ReceiveItemFinderRequestBank(WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK message)
-        => CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK());
+        => CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK(), includeShared: true);
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_DONESHOPPING))]
     private void ReceiveDoneShopping() {

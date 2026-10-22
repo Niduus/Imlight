@@ -690,6 +690,31 @@ public static class WizardCollection {
         session.Delete(Attic.GetDocumentId(character.CharId));
     }
 
+    /// <summary>
+    /// Reads the item documents a character owns. It waits for the index, because an item that just changed owner,
+    /// as one taken out of the shared bank does, is only found under its new owner once the index caught up; a
+    /// relog right after such a move would otherwise leave the item out of the session until the next login.
+    /// </summary>
+    /// <param name="session">The open session.</param>
+    /// <param name="collectionName">The collection of the documents.</param>
+    /// <param name="charId">The character that owns them.</param>
+    /// <returns>The documents, as the index has them when it is still stale after the wait.</returns>
+    private static List<T> QueryOwned<T>(IDocumentSession session, string collectionName, ulong charId) where T : WizClientObjectItem {
+        try {
+            return session.Query<T>(collectionName: collectionName)
+                .Customize(query => query.WaitForNonStaleResults(s_nonStaleWaitTimeout))
+                .Where(x => x.m_characterId == charId)
+                .ToList();
+        } catch (Exception ex) when (ex is TimeoutException or RavenTimeoutException) {
+            Logger.Warning("The {Collection} index was still stale after {Seconds} s, loading the items of character {CharId} as it is.",
+                Logger.Args(collectionName, s_nonStaleWaitTimeout.TotalSeconds, charId));
+
+            return session.Query<T>(collectionName: collectionName)
+                .Where(x => x.m_characterId == charId)
+                .ToList();
+        }
+    }
+
     private static void LoadEquippedItems(IDocumentSession session, Wizard wizard) {
         if (wizard.EquipmentBehavior.EquippedItemIds is not { Count: > 0 }) {
             wizard.EquipmentBehavior.EquippedItems = [];
@@ -697,9 +722,7 @@ public static class WizardCollection {
             return;
         }
 
-        var items = session.Query<WizClientObjectItem>(collectionName: WizardItemCollection.CollectionName)
-            .Where(x => x.m_characterId == wizard.CharId)
-            .ToList();
+        var items = QueryOwned<WizClientObjectItem>(session, WizardItemCollection.CollectionName, wizard.CharId);
         wizard.EquipmentBehavior.EquippedItems = [.. items
             .Where(i => wizard.EquipmentBehavior.EquippedItemIds
             .Any(e => i.m_globalID == e))
@@ -712,9 +735,7 @@ public static class WizardCollection {
         // `Wizard` only keeps track of the IDs of the items in the inventory.
         // The actual items are stored in the `WizClientObjectItem` collection.
         // Load the items in the inventory.
-        var items = session.Query<WizClientObjectItem>(collectionName: WizardItemCollection.CollectionName)
-            .Where(x => x.m_characterId == wizard.CharId)
-            .ToList();
+        var items = QueryOwned<WizClientObjectItem>(session, WizardItemCollection.CollectionName, wizard.CharId);
 
         wizard.InventoryBehavior.Items = [.. items
             .Where(i => wizard.InventoryBehavior.InventoryItemIds
@@ -738,9 +759,7 @@ public static class WizardCollection {
 
         // `AlchemyBehavior` only keeps track of the reagent global IDs.
         // The actual reagent items are stored in the `WizardReagents` collection.
-        var reagents = session.Query<ClientReagentItem>(collectionName: WizardReagentCollection.CollectionName)
-            .Where(x => x.m_characterId == wizard.CharId)
-            .ToList();
+        var reagents = QueryOwned<ClientReagentItem>(session, WizardReagentCollection.CollectionName, wizard.CharId);
 
         wizard.AlchemyBehavior ??= new();
         wizard.AlchemyBehavior.ReagentItemIds ??= [];

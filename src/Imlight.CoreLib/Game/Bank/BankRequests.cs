@@ -54,6 +54,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Misc;
@@ -155,6 +156,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
 
         session.Tell(BankSync.InvToBankConfirm(message.ClientRequestID, result.OriginalId, result.NewId, useShared: true));
         Done($"moved {message.Quantity} of item {itemId} from the backpack to the shared bank (now {result.NewId})");
+        TakeOffKiosk(result.Destination, "it went to the shared bank");
     }
 
     /// <summary>
@@ -211,6 +213,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
 
         session.Tell(BankSync.BankToInvConfirm(message.ClientRequestID, result.OriginalId, result.NewId));
         Done($"moved {message.Quantity} of item {itemId} from the shared bank to the backpack (now {result.NewId})");
+        DrainEnergyForSharedPet(result.Destination);
     }
 
     /// <summary>
@@ -248,6 +251,11 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         session.Tell(BankSync.StorageRemove(wizard, itemId, shared: !toShared));
         session.Tell(BankSync.BankToBankConfirm(message.ClientRequestID, itemId, result.NewId, toShared));
         Done($"moved item {itemId} from the {(toShared ? "bank to the shared bank" : "shared bank to the bank")} (now {result.NewId})");
+        if (toShared) {
+            TakeOffKiosk(result.Destination, "it went to the shared bank");
+        } else {
+            DrainEnergyForSharedPet(result.Destination);
+        }
     }
 
     /// <summary>
@@ -282,6 +290,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
 
                 session.Tell(BankSync.BankDeleteConfirm(message.ClientRequestID, itemId, useShared));
                 Done($"deleted item {itemId} from the {from}");
+                TakeOffKiosk(item, "it was deleted");
 
                 return;
             }
@@ -331,11 +340,21 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
     /// Sends the bank items to a window that asked for them, such as the bazaar, and then the end marker.
     /// </summary>
     /// <param name="endMarker">The message the window asked with, now empty, sent after the stream.</param>
-    internal void StreamBankFor(IMessage endMarker) {
-        BankSync.StreamBank(session, wizard, includeShared: false);
+    /// <param name="includeShared">Whether the shared bank goes too. The item finder lists shared bank items (its
+    /// SharedBankIcon) and the crown shop delivery invoice counts them (NumItemsInSharedBank, NumJewelsInSharedBank).</param>
+    internal void StreamBankFor(IMessage endMarker, bool includeShared = false) {
+        if (includeShared && !AccountCollection.ReloadSharedBank(wizard.Account)) {
+            Logger.Error("The shared bank of account {AccountId} could not be read again, the window gets what the session holds.",
+                Logger.Args(wizard.Account?.AccountId));
+        }
+
+        BankSync.StreamBank(session, wizard, includeShared);
         session.Tell(endMarker);
-        Logger.Information("Bank: sent the {Count} bank items of {CharId} to the window that asked with {Message}.",
-            Logger.Args(wizard.StorageBehavior.Items.Count, wizard.CharId, endMarker.GetType().Name));
+        var shared = includeShared ? wizard.Account?.SharedBank : null;
+        Logger.Information("Bank: sent the {Count} bank items{Shared} of {CharId} to the window that asked with {Message}.",
+            Logger.Args(wizard.StorageBehavior.Items.Count,
+                shared is null ? string.Empty : $" and the {shared.Items.Count + shared.Reagents.Count + shared.Snacks.Count} shared bank items",
+                wizard.CharId, endMarker.GetType().Name));
     }
 
     /// <summary>
@@ -432,6 +451,44 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         }
 
         return item;
+    }
+
+    /// <summary>
+    /// Takes a pet off the hatchmaking kiosk once it went to the shared bank or was deleted. The bank window warns
+    /// about both (GUI2_00000549 "Moving a pet to the Shared Bank will remove it from the Hatchmaking Kiosk",
+    /// GUI2_00000558 "Trashing a pet will remove it from the Hatchmaking Kiosk").
+    /// </summary>
+    /// <param name="item">The item that moved or was deleted.</param>
+    /// <param name="why">Why, for the log.</param>
+    private void TakeOffKiosk(WizClientObjectItem item, string why) {
+        if (item is null || !PetFactory.IsPetTemplate((uint) item.m_templateID)) {
+            return;
+        }
+
+        if (HatchmakingListings.Remove(item.m_globalID)) {
+            Done($"took pet {item.m_globalID.Full} off the hatchmaking kiosk because {why}");
+        }
+    }
+
+    /// <summary>
+    /// Empties the energy of the wizard that took a pet out of the shared bank. The bank window asks first with
+    /// GUI_BankPetFromShared ("Moving a pet out of your Shared Bank will empty your Energy"), so a pet cannot be
+    /// trained on the energy of every wizard of the account in one day.
+    /// </summary>
+    /// <param name="item">The item that came out of the shared bank.</param>
+    private void DrainEnergyForSharedPet(WizClientObjectItem item) {
+        if (item is null || !PetFactory.IsPetTemplate((uint) item.m_templateID) || wizard.PetOwnerBehavior is null) {
+            return;
+        }
+
+        wizard.UpdateEnergy(0);
+        session.Tell(new PET_9_PROTOCOL.MSG_PETENERGYTICK {
+            GlobalID = wizard.GameObjectID,
+            Energy = 0,
+            MaxEnergy = wizard.GameStats.GetClientTypeAlternative().m_energyMax,
+            TickTime = (int) wizard.PetOwnerBehavior.LastEnergyTickEpoch,
+        });
+        Done($"took pet {item.m_globalID.Full} out of the shared bank, so the energy of the wizard is now 0");
     }
 
     private bool EnsureUnequipped(string request, ulong itemId) {
