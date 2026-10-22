@@ -62,6 +62,7 @@ internal sealed partial class ManagerWindow {
     private bool SpellMode => (_lookupKind.SelectedItem as string) == "Spell";
 
     private Control SpellView() {
+        RenderOptions.SetBitmapInterpolationMode(_spellImage, BitmapInterpolationMode.HighQuality);
         _spellResults.ItemTemplate = new FuncDataTemplate<SpellCard>((spell, _) => spell is null ? new Panel() : SpellRow(spell));
         _spellResults.SelectionChanged += (_, _) => ShowSpell(_spellResults.SelectedItem as SpellCard);
 

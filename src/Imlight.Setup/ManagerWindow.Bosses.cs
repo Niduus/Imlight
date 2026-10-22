@@ -389,7 +389,7 @@ internal sealed partial class ManagerWindow {
                         new StackPanel {
                             Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center,
                             Children = {
-                                SpellThumb(card.SpellId, card.School, 30),
+                                SpellThumb(card.SpellId, card.School, 30, card.Copies),
                                 WithCenter(new TextBlock { Text = card.Name, FontWeight = FontWeight.SemiBold }),
                                 WithCenter(new TextBlock { Text = string.Join("  ·  ", new[] { card.School, $"ID {card.SpellId}" }.Where(t => t.Length > 0)), Foreground = MUTED }),
                             },

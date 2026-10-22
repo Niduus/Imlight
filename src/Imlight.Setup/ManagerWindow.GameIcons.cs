@@ -115,12 +115,15 @@ internal sealed partial class ManagerWindow {
         return disc;
     }
 
-    /// <summary>A spell's card as the game draws it, small; painted in the background, a school disc until then.</summary>
-    private Control SpellThumb(uint spellId, string school, double width = 46) {
+    /// <summary>
+    /// A spell's card as the game draws it, small; painted in the background, a school disc until then. A count above
+    /// 0 shows as "xN" on the card, as the game's deck does. A small card shows the card big when pointed at.
+    /// </summary>
+    private Control SpellThumb(uint spellId, string school, double width = 46, int count = CardPainter.AUTO_COUNT) {
         var height = width * CardPainter.CARD_HEIGHT / CardPainter.CARD_WIDTH;
         var host = new Border { Width = width, Height = height, CornerRadius = new CornerRadius(4), ClipToBounds = true };
         var card = CardOf(spellId);
-        if (card is null || _spellBook is null) {
+        if (card is null || _spellBook is not { } book) {
             host.Child = new Border {
                 Background = new SolidColorBrush(Color.FromArgb(60, 128, 128, 128)), CornerRadius = new CornerRadius(4),
                 Child = new Border { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Child = SchoolBadge(school, width * 0.5) },
@@ -129,27 +132,22 @@ internal sealed partial class ManagerWindow {
             return host;
         }
 
-        if (_spellPictures.TryGetValue(card.Id, out var cached)) {
-            host.Child = new Image { Source = cached, Stretch = Stretch.Uniform };
-
-            return host;
-        }
-
         host.Child = SchoolBadge(school, width * 0.5);
-        var book = _spellBook;
-        _ = Task.Run(() => CardPainter.Paint(book, card)).ContinueWith(t => Avalonia.Threading.Dispatcher.UIThread.Post(() => {
-            if (t.Status != TaskStatus.RanToCompletion) {
-                return;
-            }
 
-            if (_spellPictures.Count >= SPELL_CACHE) {
-                _spellPictures.Clear();
-            }
-
-            var bitmap = ToBitmap(t.Result);
-            _spellPictures[card.Id] = bitmap;
-            host.Child = new Image { Source = bitmap, Stretch = Stretch.Uniform };
-        }), TaskScheduler.Default);
+        // Painted about the size it shows (or twice that on a sharp screen), then scaled down smoothly.
+        var scale = Math.Clamp((int) Math.Ceiling(width * 1.5 / CardPainter.CARD_WIDTH), 1, CardPainter.SCALE);
+        RequestCard(book, card, count, scale, () => true, bitmap => {
+            var image = new Image { Source = bitmap, Stretch = Stretch.Uniform };
+            RenderOptions.SetBitmapInterpolationMode(image, BitmapInterpolationMode.HighQuality);
+            host.Child = image;
+        });
+        if (width < 100) {
+            host.PointerEntered += (_, _) => {
+                if (ToolTip.GetTip(host) is null) {
+                    ToolTip.SetTip(host, SpellThumb(spellId, school, 200, count));
+                }
+            };
+        }
 
         return host;
     }
