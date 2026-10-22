@@ -120,6 +120,12 @@ internal sealed partial class ManagerWindow {
 
         var grid = CheatEditor(_playerBoard, [SaveButton()], [SaveButton()], master);
         EnsureGameIcons(() => RenderCheats(_playerBoard));
+        if (_bossCatalog is null || _bossCatalog.Spells.Count == 0) {
+            Dispatcher.UIThread.Post(async () => {
+                await LoadBossCatalogAsync();
+                RenderCheats(_playerBoard);
+            });
+        }
 
         return new ScrollViewer {
             Content = new StackPanel {
@@ -895,7 +901,17 @@ internal sealed partial class ManagerWindow {
             var results = new StackPanel { Spacing = 4 };
             void Render() {
                 results.Children.Clear();
-                if (_bossCatalog is null || _bossCatalog.Spells.Count == 0) {
+                if (_bossCatalog is null) {
+                    results.Children.Add(Sub("Loading the spell list…"));
+                    Dispatcher.UIThread.Post(async () => {
+                        await LoadBossCatalogAsync();
+                        Render();
+                    });
+
+                    return;
+                }
+
+                if (_bossCatalog.Spells.Count == 0) {
                     results.Children.Add(Sub("The spell list shows up once the server has made its ID list."));
 
                     return;

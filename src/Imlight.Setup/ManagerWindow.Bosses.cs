@@ -213,20 +213,35 @@ internal sealed partial class ManagerWindow {
     };
 
     private async Task LoadBossesAsync() {
+        if (_bossCatalog is null || BossCatalogChanged()) {
+            _bossCount.Text = "Loading…";
+            await LoadBossCatalogAsync();
+        }
+
+        RenderBossResults();
+    }
+
+    // When ids.csv or creatures.csv was last written.
+    private DateTime BossCatalogWritten() {
         var folder = _manager.IdLookupFolder;
-        var changed = new[] { BossCatalog.CREATURES_FILE, "ids.csv" }
+
+        return new[] { BossCatalog.CREATURES_FILE, "ids.csv" }
             .Select(name => Path.Combine(folder, name))
             .Where(File.Exists)
             .Select(File.GetLastWriteTimeUtc)
             .DefaultIfEmpty(DateTime.MinValue)
             .Max();
-        if (_bossCatalog is not null && changed <= _bossCatalogFrom) {
-            RenderBossResults();
+    }
 
-            return;
-        }
+    private bool BossCatalogChanged() => BossCatalogWritten() > _bossCatalogFrom;
 
-        _bossCount.Text = "Loading…";
+    /// <summary>
+    /// Reads the creature and spell lists. The cheat editors' spell and creature pickers use them too, so the Player cheats
+    /// tab loads them itself: before, its spell picker said the ID list wasn't made yet unless the Bosses tab was opened first.
+    /// </summary>
+    private async Task LoadBossCatalogAsync() {
+        var folder = _manager.IdLookupFolder;
+        var changed = BossCatalogWritten();
         try {
             _bossCatalog = await Task.Run(() => BossCatalog.Load(folder));
             _bossCatalogFrom = changed;
@@ -234,8 +249,6 @@ internal sealed partial class ManagerWindow {
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             _bossCatalog = BossCatalog.Load("");
         }
-
-        RenderBossResults();
     }
 
     // The IDs of the creatures that have saved changes.
