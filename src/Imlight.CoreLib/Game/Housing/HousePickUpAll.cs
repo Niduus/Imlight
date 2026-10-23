@@ -34,6 +34,7 @@
  *   not support in an attic, and so does every object past the room the attic has left; the result counts the objects that
  *   could have moved but did not.
  * - An object keeps the global id it was placed from, so it comes back as the same item.
+ * - A vault goes with what it holds, which the attic item keeps.
  * - The house and the attic are locked in that order, and nothing takes them the other way round.
  *
  * TODO:
@@ -90,8 +91,7 @@ internal static class HousePickUpAll {
 
         var movable = new List<(PlacedItem Item, HousingFamily Family)>();
         foreach (var item in house.Snapshot().Slots) {
-            // A vault that holds items stays: what it holds would not go with it.
-            if (item is not null && !kept.Contains(item.Id) && !HouseVaults.HoldsItems(item)
+            if (item is not null && !kept.Contains(item.Id)
                 && HousingItems.Check(item.TemplateId, out _, out var family) == HousingPlacement.Allowed
                 && family.AtticSubType is not null) {
                 movable.Add((item, family));
@@ -112,6 +112,7 @@ internal static class HousePickUpAll {
                     Family = entry.Family.Id,
                     Tint = entry.Item.Tint,
                     Custom = entry.Item.Custom,
+                    Vault = entry.Item.Vault,
                 },
                 entry.Family.AtticSubType))
             .ToList();

@@ -78,6 +78,15 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        // A vault would take what it holds with it.
+        if (wizard.IsFilledVault(message.GlobalID)) {
+            Logger.Information("Vaults: refused to throw away vault {ItemId} of {CharId}, it still holds items.",
+                Logger.Args(message.GlobalID, wizard.CharId));
+            InformGameClient("That vault still holds items. Place it in your house and empty it before you throw it away.");
+
+            return;
+        }
+
         // Check if this is an equipped item (e.g. an active elixir).
         var slot = wizard.EquipmentBehavior.SlotList?.FirstOrDefault(s => s.ItemId.Value == message.GlobalID);
         if (slot is not null || wizard.EquipmentBehavior.HasItemEquipped(message.GlobalID)) {
@@ -246,6 +255,14 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             if (ItemHelper.IsLocked(item)) {
                 Logger.Warning("Item lock: refused to quick sell {0} of {1}, the item is locked.",
                     Logger.Args(ItemHelper.DescribeForLog(item), wizard.CharId));
+
+                continue;
+            }
+
+            if (item is not null && wizard.IsFilledVault(item.m_globalID)) {
+                Logger.Information("Vaults: refused to quick sell vault {ItemId} of {CharId}, it still holds items.",
+                    Logger.Args(item.m_globalID.Full, wizard.CharId));
+                InformGameClient("A vault that still holds items cannot be sold.");
 
                 continue;
             }

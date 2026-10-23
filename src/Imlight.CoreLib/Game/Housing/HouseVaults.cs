@@ -42,6 +42,9 @@
  *   holds 1000 (TreasureCardVaultBehaviorBase, 0x141dfca80 and 0x141dfcf10). The poster's is 0xFACE0ACE, version 1, the
  *   spell, the enchantment and a flags byte (0x141dfac70).
  * - The windows show "count/100" for gear, jewels and seeds and "count/1000" for treasure cards, so those are the limits.
+ * - A vault keeps what it holds wherever it goes (Niduus, 2026-10-23): on the PlacedItem in a house, on the AtticItem in
+ *   the attic, and in Wizard.PackedVaults by the item's global id in the backpack and the bank. The gear, jewels and seeds
+ *   keep their stored documents all the way. A vault that holds anything is not thrown away, sold or deleted.
  *
  * TODO:
  * - Check with a capture whether the spell id the client sends is the template id or the name hash; the data echoes it.
@@ -125,10 +128,33 @@ internal static class HouseVaults {
         };
 
     /// <summary>
-    /// Whether a placed item holds items that would be lost if it left the house.
+    /// Keeps the contents of a vault with its backpack item, so a picked up vault holds them wherever it goes and shows
+    /// them again when it is placed. The caller holds HouseDeeds.BackpackLock and writes the owner with the change.
     /// </summary>
-    internal static bool HoldsItems(PlacedItem item)
-        => item?.Vault?.HoldsItems == true;
+    /// <param name="wizard">The owner of the item.</param>
+    /// <param name="itemGid">The global id of the vault's backpack item.</param>
+    /// <param name="vault">What the vault holds; <c>null</c> or empty keeps nothing.</param>
+    /// <returns><c>true</c> when contents were kept.</returns>
+    internal static bool Pack(Wizard wizard, ulong itemGid, HouseVault vault) {
+        if (vault is null || (!vault.HoldsItems && vault.Poster is null)) {
+            return false;
+        }
+
+        wizard.PackedVaults ??= [];
+        wizard.PackedVaults[itemGid] = vault;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Takes the contents kept with a vault's backpack item off it, for the vault to hold them in a house or an attic.
+    /// The caller holds HouseDeeds.BackpackLock and writes the owner with the change.
+    /// </summary>
+    /// <param name="wizard">The owner of the item.</param>
+    /// <param name="itemGid">The global id of the backpack item.</param>
+    /// <returns>The contents, or <c>null</c> when the item keeps none.</returns>
+    internal static HouseVault TakePacked(Wizard wizard, ulong itemGid)
+        => wizard.PackedVaults is not null && wizard.PackedVaults.Remove(itemGid, out var vault) ? vault : null;
 
     /// <summary>
     /// Builds the client's blob entry of a placed item: a custom object with the vault data for storage furniture.

@@ -224,6 +224,11 @@ internal static class BankRules {
             if (IsHouse(template)) {
                 return BankDenial.House;
             }
+
+            // What a vault holds belongs to this character, so a vault that holds anything stays out of the shared bank.
+            if (wizard.IsFilledVault(item.m_globalID)) {
+                return BankDenial.HasContents;
+            }
         }
 
         return to switch {

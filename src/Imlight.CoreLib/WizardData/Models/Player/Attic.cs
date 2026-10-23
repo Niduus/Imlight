@@ -31,6 +31,7 @@
  * - One document per character, id Attics/{charId}. The container id is the id the client files the attic blobs under.
  * - An item keeps the global id it had as a backpack item, so it comes back as the same item.
  * - Family is the id of the housing family the item belongs to. The family decides which blob the item is in.
+ * - A vault keeps what it holds in Vault while it is in the attic.
  * - Revisions has one number per blob subtype, the version of that blob. A subtype with no entry has not been sent.
  *
  * TODO:
@@ -57,6 +58,11 @@ public sealed record AtticItem {
     public string Family { get; init; }
     public int Tint { get; init; }
     public string Custom { get; init; }
+
+    /// <summary>
+    /// What a vault, shed or poster held when it was put away; <c>null</c> for any other item.
+    /// </summary>
+    public HouseVault Vault { get; init; }
 
     /// <summary>
     /// Builds the client's blob entry for the item: the template and the colour, nothing placed.

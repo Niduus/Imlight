@@ -111,6 +111,10 @@ internal static class PetItemFeeding {
             return "That item is locked. Unlock it before feeding it to your pet.";
         }
 
+        if (wizard.IsFilledVault(item.m_globalID)) {
+            return "That vault still holds items. Empty it before feeding it to your pet.";
+        }
+
         if (item.m_globalID == pet.m_globalID || PetProgress.GetBehavior(item) is not null) {
             return "Pets can't eat other pets.";
         }

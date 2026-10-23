@@ -33,7 +33,8 @@
  * - The attic document is created the first time the character needs it, and the client is told its container id then.
  * - The blobs are sent when the window is opened and whenever a client that cannot apply a patch asks for one.
  * - An item keeps its global id in the attic, so it comes back as the same item. Only furniture of a supported family
- *   goes in, because the attic keeps no state beyond the template and the colour.
+ *   goes in, because the attic keeps no state beyond the template, the colour and what a vault holds.
+ * - A vault keeps what it holds in the attic item, and one that holds anything is not deleted (Niduus, 2026-10-23).
  *
  * TODO:
  * - Does the live server list the attic blobs when the player enters the game, or only when the window opens?
@@ -178,11 +179,19 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
                 return;
             }
 
-            change = attic.TryAdd(new AtticItem { ItemGid = itemId, TemplateId = templateId, Family = family.Id }, family.AtticSubType,
+            // A vault takes what it holds into the attic.
+            var packed = HouseVaults.TakePacked(wizard, itemId);
+            change = attic.TryAdd(new AtticItem { ItemGid = itemId, TemplateId = templateId, Family = family.Id, Vault = packed }, family.AtticSubType,
                 document => AtticCollection.SaveWithBackpack(document, wizard));
-            if (!change.Done && !wizard.InventoryBehavior.AddItem(item)) {
-                Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to go in the attic.",
-                    Logger.Args(itemId, wizard.CharId));
+            if (!change.Done) {
+                HouseVaults.Pack(wizard, itemId, packed);
+                if (!wizard.InventoryBehavior.AddItem(item)) {
+                    Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to go in the attic.",
+                        Logger.Args(itemId, wizard.CharId));
+                }
+            } else if (packed is not null) {
+                Logger.Information("Vaults: character {CharId} put vault {ItemId} in the attic with {Items} item(s) and {Cards} treasure card(s).",
+                    Logger.Args(wizard.CharId, itemId, packed.Items?.Count ?? 0, packed.Cards?.Count ?? 0));
             }
         }
 
@@ -246,11 +255,18 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
                 added.Add(addedItem);
             }
 
+            // A vault keeps what it holds in the backpack item.
+            var packed = added.Count == items.Count && HouseVaults.Pack(wizard, item.m_globalID, stored.Vault);
+
             // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
             change = added.Count == items.Count
                 ? attic.TryRemove(stored.Id, document => AtticCollection.SaveWithBackpack(document, wizard, [.. added]))
                 : new AtticChange(HouseEdit.NotFound);
             if (!change.Done) {
+                if (packed) {
+                    HouseVaults.TakePacked(wizard, item.m_globalID);
+                }
+
                 foreach (var addedItem in added) {
                     wizard.InventoryBehavior.RemoveItem(addedItem);
                 }
@@ -280,6 +296,19 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         if (stored is null) {
+            return;
+        }
+
+        // What a vault holds would be lost with it.
+        if (stored.Vault?.HoldsItems == true) {
+            Logger.Information("Vaults: character {CharId} tried to delete attic vault {ItemGid}, which holds {Items} item(s) and {Cards} treasure card(s).",
+                Logger.Args(wizard.CharId, stored.ItemGid, stored.Vault.Items?.Count ?? 0, stored.Vault.Cards?.Count ?? 0));
+            InformGameClient("That vault still holds items. Empty it before you delete it.");
+            // The client may have taken the item off its list already, so the blob puts it back.
+            if (HousingFamilies.All.FirstOrDefault(family => family.Id == stored.Family)?.AtticSubType is { } subType) {
+                SendBlob(attic, subType);
+            }
+
             return;
         }
 

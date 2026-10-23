@@ -239,12 +239,22 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // A vault would be sold with what it holds.
+        if (wizard.IsFilledVault(message.GlobalID)) {
+            Logger.Information("Vaults: refused to sell vault {ItemId} of {CharId} to a shop, it still holds items.",
+                Logger.Args(message.GlobalID, wizard.CharId));
+            InformGameClient("A vault that still holds items cannot be sold. Place it in your house and empty it first.");
+            ProcessFailedSale();
+
+            return;
+        }
+
         // Sell More on a backpack item sells that many copies of it.
         if (quantity > 1) {
             var copies = (wizard.InventoryBehavior.Items ?? [])
                 .Where(other => other.m_templateID == item.m_templateID && other.m_globalID.Full != message.GlobalID
                     && !(wizard.EquipmentBehavior.EquippedItemIds?.Contains(other.m_globalID.Full) ?? false)
-                    && !ItemHelper.IsLocked(other))
+                    && !ItemHelper.IsLocked(other) && !wizard.IsFilledVault(other.m_globalID.Full))
                 .Take(quantity - 1)
                 .Select(other => other.m_globalID.Full)
                 .ToList();

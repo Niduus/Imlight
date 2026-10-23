@@ -86,6 +86,13 @@ public class Wizard {
     /// </summary>
     public Dictionary<uint, ulong> HouseLots { get; set; } = [];
 
+    /// <summary>
+    /// What each picked up vault, shed or poster in the backpack or the bank holds, by the global id of its item. A vault
+    /// keeps its contents wherever it goes (Niduus, 2026-10-23); placed, they are on the house's PlacedItem, in the attic
+    /// on the AtticItem. Changed under HouseDeeds.BackpackLock.
+    /// </summary>
+    public Dictionary<ulong, HouseVault> PackedVaults { get; set; } = [];
+
     public byte World { get; set; }
     public PrivacyOptions PrivacyOptions { get; set; } = new();
     public Imcodec.Math.Vector3 Location {
@@ -696,7 +703,24 @@ public class Wizard {
         return false;
     }
 
+    /// <summary>
+    /// Whether an item of the backpack or the bank is a vault that holds items, which may not be thrown away, sold or
+    /// fed to a pet, because what it holds would go with it.
+    /// </summary>
+    /// <param name="itemId">The global id of the item.</param>
+    /// <returns>True for a vault that holds anything.</returns>
+    public bool IsFilledVault(ulong itemId)
+        => PackedVaults is not null && PackedVaults.TryGetValue(itemId, out var vault) && vault?.HoldsItems == true;
+
     public bool RemoveItemFromInventory(ulong itemId) {
+        // Every caller destroys the item, and a vault would take its contents with it.
+        if (IsFilledVault(itemId)) {
+            Logger.Warning("Vaults: refused to remove vault {ItemId} of {CharId} from the backpack, it still holds items.",
+                Logger.Args(itemId, CharId));
+
+            return false;
+        }
+
         var success = InventoryBehavior.RemoveItem(itemId, out var item);
         if (!success) {
             Logger.Warning("Could not remove item {0} from player {1}'s inventory.",

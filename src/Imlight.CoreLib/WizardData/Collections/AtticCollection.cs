@@ -40,6 +40,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.WizardData.Databases;
@@ -125,7 +126,7 @@ public static class AtticCollection {
     /// is either in the attic or in the backpack, never lost and never in both.
     /// </summary>
     /// <param name="attic">The attic to save.</param>
-    /// <param name="owner">The owner, whose backpack is written as it is in memory.</param>
+    /// <param name="owner">The owner, whose backpack and packed vaults are written as it is in memory.</param>
     /// <param name="addedItems">The items that entered the backpack and are not stored yet; none for an item that left it.</param>
     /// <returns><c>true</c> when both are stored; <c>false</c> when neither changed.</returns>
     public static bool SaveWithBackpack(Attic attic, Wizard owner, params WizClientObjectItem[] addedItems) {
@@ -138,6 +139,7 @@ public static class AtticCollection {
 
                 CopyChanging(attic, stored);
                 storedOwner.InventoryBehavior = owner.InventoryBehavior;
+                storedOwner.PackedVaults = new(owner.PackedVaults ?? new Dictionary<ulong, HouseVault>());
                 foreach (var addedItem in addedItems) {
                     if (addedItem is null) {
                         continue;

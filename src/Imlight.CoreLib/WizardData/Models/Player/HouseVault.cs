@@ -87,7 +87,7 @@ public sealed record VaultCard {
 }
 
 /// <summary>
-/// The contents of a storage object placed in a house.
+/// The contents of a storage object, which it keeps wherever it goes: placed, in the attic, in the backpack or the bank.
 /// </summary>
 public sealed record HouseVault {
 

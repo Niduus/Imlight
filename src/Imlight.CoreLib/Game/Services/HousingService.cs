@@ -38,8 +38,8 @@
  * - Music players and teleporters keep their state as the custom data of their blob entry (Game/Housing/HouseMusic,
  *   HouseTeleporters). A change is stored on the placed item and sent to everyone in the house as a patch.
  * - A music player that is picked up gives its musical scrolls back to the backpack.
- * - The moves of the house's vaults, sheds and posters are in HousingService.Vaults. A vault that is picked up gives back
- *   what it holds, and the pick-up-all leaves a vault that holds items in the house.
+ * - The moves of the house's vaults, sheds and posters are in HousingService.Vaults. A vault that is picked up keeps what
+ *   it holds in Wizard.PackedVaults and shows it again when it is placed (Niduus, 2026-10-23).
  *
  * TODO:
  *
@@ -227,16 +227,39 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         // the two cannot lose the item or leave it in both places.
         var itemId = item.m_globalID;
         HouseChange change;
+        HouseVault packed;
         lock (HouseDeeds.BackpackLock(wizard)) {
-            if (!wizard.InventoryBehavior.RemoveItem(item)) {
+            // A vault shows again what it held when it was picked up; the contents leave the backpack item in the same write.
+            packed = HouseVaults.TakePacked(wizard, itemId);
+            if (packed is not null && !PackedVaultFits(house, placed with { Vault = packed })) {
+                HouseVaults.Pack(wizard, itemId, packed);
+                Logger.Warning("Vaults: character {CharId} cannot place {Vault} {ItemId}: what it holds would not fit in the house's data.",
+                    Logger.Args(wizard.CharId, HouseVaults.NameOf(HouseVaults.KindOf(templateId)), itemId));
+                InformGameClient("This house cannot hold any more in its vaults, so that vault cannot be placed here.");
+
                 return;
             }
 
-            change = house.TryAdd(placed, document => HouseCollection.SaveWithBackpack(document, wizard));
-            if (!change.Done && !wizard.InventoryBehavior.AddItem(item)) {
-                Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to be placed.",
-                    Logger.Args(itemId, wizard.CharId));
+            if (!wizard.InventoryBehavior.RemoveItem(item)) {
+                HouseVaults.Pack(wizard, itemId, packed);
+
+                return;
             }
+
+            change = house.TryAdd(placed with { Vault = packed }, document => HouseCollection.SaveWithBackpack(document, wizard));
+            if (!change.Done) {
+                HouseVaults.Pack(wizard, itemId, packed);
+                if (!wizard.InventoryBehavior.AddItem(item)) {
+                    Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to be placed.",
+                        Logger.Args(itemId, wizard.CharId));
+                }
+            }
+        }
+
+        if (packed is not null && change.Done) {
+            Logger.Information("Vaults: character {CharId} placed {Vault} {ItemId}, which holds {Items} item(s) and {Cards} treasure card(s).",
+                Logger.Args(wizard.CharId, HouseVaults.NameOf(HouseVaults.KindOf(templateId)), itemId,
+                    packed.Items?.Count ?? 0, packed.Cards?.Count ?? 0));
         }
 
         if (!change.Done) {
@@ -384,14 +407,6 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        // The backpack item of a vault carries nothing, so a vault gives back what it holds, as a music player gives
-        // back its scrolls.
-        if (!TryReadVaultContents(wizard, placedItem, out var contents, out var cards)) {
-            RefusePickUp(house);
-
-            return;
-        }
-
         WizClientObjectItem item;
         HouseChange change;
         List<WizClientObjectItem> added;
@@ -400,22 +415,12 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             var scrolls = HouseMusic.Scrolls(placedItem);
             if (placedItem is null
                 || CoreObjectFactory.GetCoreTemplate(placedItem.TemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count + contents.Count
+                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, placedItem.TemplateId))) {
                 if (scrolls.Count > 0) {
                     InformGameClient("Make room in your backpack for the music player and its musical scrolls.");
-                } else if (contents.Count > 0) {
-                    InformGameClient($"Make room in your backpack for the {HouseVaults.NameOf(HouseVaults.KindOf(placedItem.TemplateId))} "
-                        + $"and the {contents.Count} item(s) it holds.");
                 }
 
-                RefusePickUp(house);
-
-                return;
-            }
-
-            if (VaultPickUpRefusal(wizard, placedItem, contents.Count, cards.Count) is { } refusal) {
-                InformGameClient(refusal);
                 RefusePickUp(house);
 
                 return;
@@ -429,27 +434,15 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                 return;
             }
 
-            // What a vault held keeps its stored documents, so it goes back to the backpack and the book without being stored again.
-            if (!TryAddAll(wizard, contents)) {
-                RemoveAll(wizard, added);
-                RefusePickUp(house);
-
-                return;
-            }
-
-            var cardIds = cards.Select(card => card.TemplateId).ToList();
-            wizard.SpellbookBehavior?.AddTreasureCards(cardIds);
+            // A vault keeps what it holds in the backpack item, and the gear, jewels and seeds keep their stored documents.
+            var packed = HouseVaults.Pack(wizard, item.m_globalID, placedItem.Vault);
 
             // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
-            change = house.TryRemove(placedItem.Id, document => cards.Count > 0
-                ? HouseCollection.SaveWithBackpackAndTreasureCards(document, wizard, [.. added])
-                : HouseCollection.SaveWithBackpack(document, wizard, [.. added]));
+            change = house.TryRemove(placedItem.Id, document => HouseCollection.SaveWithBackpack(document, wizard, [.. added]));
             if (!change.Done) {
                 RemoveAll(wizard, added);
-                RemoveAll(wizard, contents);
-                if (cardIds.Count > 0 && wizard.SpellbookBehavior?.TryRemoveTreasureCards(cardIds) != true) {
-                    Logger.Error("Vaults: the treasure book of character {CharId} did not hold the cards it was given for a failed pick up.",
-                        Logger.Args(wizard.CharId));
+                if (packed) {
+                    HouseVaults.TakePacked(wizard, item.m_globalID);
                 }
 
                 RefusePickUp(house);
@@ -470,8 +463,10 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                 Logger.Args(wizard.CharId, placedItem.TemplateId, added.Count - 1));
         }
 
-        if (contents.Count > 0 || cards.Count > 0) {
-            GiveBackVaultContents(wizard, placedItem, contents, cards);
+        if (HouseVaults.KindOf(placedItem.TemplateId) != VaultKind.None) {
+            Logger.Information("Vaults: character {CharId} picked up {Vault} {ItemGid} as item {NewGid}, which keeps {Items} item(s) and {Cards} treasure card(s).",
+                Logger.Args(wizard.CharId, HouseVaults.NameOf(HouseVaults.KindOf(placedItem.TemplateId)), placedItem.ItemGid,
+                    item.m_globalID.Full, placedItem.Vault?.Items?.Count ?? 0, placedItem.Vault?.Cards?.Count ?? 0));
         }
 
         if (HouseTrainers.IsTrainerItem(placedItem.TemplateId)) {
@@ -507,10 +502,6 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         if (!TryGetAttic(out var attic)) {
             return;
-        }
-
-        if (house.Snapshot().Slots.Any(HouseVaults.HoldsItems)) {
-            InformGameClient("Vaults that still hold items stay in the house. Pick each one up by itself to get back what it holds.");
         }
 
         var result = HousePickUpAll.Run(house, attic, kept);

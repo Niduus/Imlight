@@ -652,7 +652,15 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 Logger.Args(ItemHelper.DescribeForLog(item), wizard.CharId));
         }
 
-        var isNoAuction = isLocked || template.m_adjectiveList.Any(x => x == "FLAG_NoAuction") || ItemHelper.IsStitched(item);
+        // A vault would be sold with what it holds.
+        var isFilledVault = wizard.IsFilledVault(item.m_globalID);
+        if (isFilledVault) {
+            Logger.Information("Vaults: refused to sell vault {ItemId} of {CharId} to the bazaar, it still holds items.",
+                Logger.Args(item.m_globalID.Full, wizard.CharId));
+            InformGameClient("A vault that still holds items cannot be sold.");
+        }
+
+        var isNoAuction = isLocked || isFilledVault || template.m_adjectiveList.Any(x => x == "FLAG_NoAuction") || ItemHelper.IsStitched(item);
         if (isNoAuction) { // The item cannot be sold to the bazaar.
             // Todo: respond with error
             var auctionRspErrorMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {

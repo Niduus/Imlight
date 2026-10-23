@@ -277,6 +277,9 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
             Deny(request, itemId, "stacks are not deleted with this request");
         } else if (BankRules.CanDelete(item) is var denial && denial != BankDenial.None) {
             Deny(request, itemId, denial.ToString());
+        } else if (wizard.IsFilledVault(itemId)) {
+            // A vault keeps what it holds wherever it goes, so it would be deleted with it.
+            Deny(request, itemId, $"{BankDenial.HasContents}: the vault still holds items");
         } else if (EnsureUnequipped(request, itemId)) {
             var result = from == BankContainer.SharedBank
                 ? BankCollection.TryDeleteShared(wizard, itemId, 1)
