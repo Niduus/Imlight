@@ -185,9 +185,32 @@ public class Wizard {
      * 12..13 uint16 List count
      * Serialized RadialMenuSlotInfo. Each slot entry in the list has 4 fields
      */
-    public ByteString RadialMenuData { get; set; }
-    public ByteString RadialMenu2Data { get; set; }
-    public ByteString RadialMenu3Data { get; set; }
+    // The menus are binary; a ByteString is stored as UTF-8 text, which mangles bytes above 0x7F (Niduus, 2026-10-23: the
+    // emote wheel did not save). They are stored as base64 instead; the old mangled text is dropped.
+    [JsonIgnore]
+    public ByteString RadialMenuData { get => FromBase64(RadialMenu1Base64); set => RadialMenu1Base64 = ToBase64(value); }
+    [JsonIgnore]
+    public ByteString RadialMenu2Data { get => FromBase64(RadialMenu2Base64); set => RadialMenu2Base64 = ToBase64(value); }
+    [JsonIgnore]
+    public ByteString RadialMenu3Data { get => FromBase64(RadialMenu3Base64); set => RadialMenu3Base64 = ToBase64(value); }
+
+    public string RadialMenu1Base64 { get; set; }
+    public string RadialMenu2Base64 { get; set; }
+    public string RadialMenu3Base64 { get; set; }
+
+    private static string ToBase64(ByteString data) => data.IsEmpty ? null : Convert.ToBase64String((byte[]) data);
+
+    private static ByteString FromBase64(string text) {
+        if (string.IsNullOrEmpty(text)) {
+            return ByteString.Empty;
+        }
+
+        try {
+            return Convert.FromBase64String(text);
+        } catch (FormatException) {
+            return ByteString.Empty;
+        }
+    }
 
     public ByteString CrownShopWishlist { get; set; }
 
