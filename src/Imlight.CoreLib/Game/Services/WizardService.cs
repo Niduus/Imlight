@@ -57,7 +57,9 @@ namespace Imlight.CoreLib.Game.Services;
 
 internal class WizardService(SessionActor sessionActor) : MessageService(sessionActor) {
 
-    private const float ORIENTATION_TOLERANCE = 1.035f;
+    private const float DIRECTION_STEPS = 250f;
+    private static readonly TimeSpan s_locationSaveEvery = TimeSpan.FromSeconds(5);
+    private DateTime _lastLocationSave;
 
     // [Trainers] TrainingPointPerLevel: every level gained also gives TrainingPointsPerLevel training points.
     private static readonly int s_trainingPointsPerLevel
@@ -269,11 +271,17 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
             unchecked((short) message.LocationZ * 4));
         _activeWizard.Location = position;
 
-        // Direction is a byte and it's packed. Unpack it and convert it to radians.
-        var initDir = message.Direction;
-        var degrees = initDir * (360f / byte.MaxValue) * ORIENTATION_TOLERANCE;
-        var radians = degrees * (System.MathF.PI / 180f);
+        // Direction is a byte: 250 steps make a full turn, as the server packs it for MSG_SERVERTELEPORT.
+        var radians = message.Direction / DIRECTION_STEPS * (2 * System.MathF.PI);
         _activeWizard.Orientation = new Vector3(0, 0, radians);
+
+        // Saved every few seconds as well as at logout, so a crash or a stopped server still puts the wizard back
+        // where they stood and facing the same way (Niduus, 2026-10-23).
+        var now = DateTime.UtcNow;
+        if (now - _lastLocationSave >= s_locationSaveEvery) {
+            _lastLocationSave = now;
+            _activeWizard.SaveLocation();
+        }
 
         // For the Position card in ImlightManager.
         Imlight.CoreLib.Game.Tools.PlayerPositions.Update(_activeWizard.CharId, _activeWizard.PlayerNameBehavior?.GetWizardName(),

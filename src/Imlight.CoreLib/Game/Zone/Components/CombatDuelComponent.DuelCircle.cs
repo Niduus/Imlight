@@ -248,18 +248,22 @@ internal sealed partial class CombatDuelComponent {
         StartCircleRoundsIfFull();
     }
 
-    // The wait shows as the battle's own countdown in the middle of the circle, as on a battle sigil (Niduus, 2026-10-23).
+    // The wait shows as the countdown in the middle of the screen that a dungeon sigil shows (Niduus, 2026-10-23: "the
+    // same count down in the center that are on Sigils"). The battle's planning timer sent here showed nothing.
     private void ShowCircleCountdown() {
         if (_duelCountdown <= 0) {
             return;
         }
 
-        HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SHOWCOMBATUI { DuelID = SigilId, AltTurn = 0, AltTurnTeam = 0 });
-        HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SETPLANNINGPHASETIMER {
-            DuelID = SigilId,
-            Time = (byte) Math.Min(_duelCountdown, byte.MaxValue),
+        HumanBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
+            Time = _duelCountdown,
+            SigilGID = SigilId,
+            Teleport = 0,
         });
     }
+
+    private void EndCircleCountdown()
+        => HumanBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = SigilId });
 
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED))]
     private void ReceiveLocalMatchJoined(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED message) {
@@ -336,6 +340,7 @@ internal sealed partial class CombatDuelComponent {
         Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
         _duelCountdown = -1;
         _circleWaiting = false;
+        EndCircleCountdown();
 
         var blue = SubCircles.Count(c => c is { Occupied: true, IsHumanPlayer: true } && c.OccupiedTeam == CombatTeam.Player);
         var red = SubCircles.Count(c => c is { Occupied: true, IsHumanPlayer: true } && c.OccupiedTeam == CombatTeam.Monster);
@@ -372,7 +377,20 @@ internal sealed partial class CombatDuelComponent {
             }
         });
 
+        // A wizard defeated in the duel: the game keeps them "defeated", with no spellbook or buttons, even in the
+        // next duel (Niduus, 2026-10-23). After a lost monster battle the trip to the hub resets that; here the
+        // wizard reloads the zone on the spot they stand on.
+        var defeated = new List<(IActorRef Session, Wizard Wizard)>();
+        EnactActionOnSubCircles(circle => {
+            if (circle.IsHumanPlayer && !circle.IsAlive && circle.ParticipantActor is not null && circle._wizard is { } wizard) {
+                defeated.Add((circle.ParticipantActor, wizard));
+            }
+        });
+
         _pvp.TryFinish();
+        // As after a monster battle: the victory phase, then the end.
+        Duel.m_duelPhase = kDuelPhase.kPhase_Victory;
+        SendCombatPhase((byte) Duel.m_duelPhase);
         Duel.m_duelPhase = kDuelPhase.kPhase_Ended;
         SendCombatPhase((byte) Duel.m_duelPhase);
         ZoneBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_ENDDUEL { DuelID = SigilId });
@@ -380,6 +398,21 @@ internal sealed partial class CombatDuelComponent {
         ReportPvPDuelEnded(winningTeam);
         foreach (var charId in _circleHealth.Keys.ToList()) {
             RestoreCircleHealth(charId);
+        }
+
+        foreach (var (session, wizard) in defeated) {
+            // A house is entered by its lot; reloading one here could land in the wizard's own house instead.
+            if (wizard.AttachedLotGid != 0 || string.IsNullOrEmpty(wizard.Zone)) {
+                continue;
+            }
+
+            Logger.Information("Duel circle {0}: {1} was defeated and reloads the zone where they stand.",
+                Logger.Args(SigilId, wizard.PlayerNameBehavior?.GetWizardName()));
+            session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = wizard.Zone,
+                DestinationLocation = Shared.Resources.Util.GetCompactStringFromVector(wizard.Location, wizard.Orientation),
+                SendToClient = true,
+            });
         }
 
         DespawnDuel();
