@@ -1175,6 +1175,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public List<CoreObjectInfo> Added = [];
         public HashSet<ulong> Removed = [];
 
+        // The files' standing creatures (Niduus, 2026-10-23: a battle added in the Customs tab counts at once): each
+        // added one as the one-node path, node and spawner ZoneObjects makes for it, and the ids of the paths of the
+        // removed ones. A creature that moved or changed is removed and added again.
+        public List<(PathObjectTemplate Path, List<NodeObject> Nodes, SpawnObject Spawner)> AddedCreatures = [];
+        public HashSet<ulong> RemovedCreatures = [];
+
     }
 
     /// <summary>

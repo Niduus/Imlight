@@ -16,6 +16,8 @@
  *   Objects     objects added to the zone's object list (ZoneData m_objectList).
  *   Creatures   creatures spawned in the zone as the zone's own spawns are (a spawner on a one-node path): they stand
  *               still, fight like the zone's creatures and, in an instance, do not come back once defeated.
+ *               Custom (a custom of the Customs tab, Customs.cs) spawns it as that custom; its TemplateID may then
+ *               be left out, the custom's creature is used.
  *   Remove      template ids: the zone's own objects and spawners of these are left out (a boss the file places
  *               itself, so there are not two).
  *   DistinctSpawners  names of the zone's own spawners (SpawnData m_name) that never have two living creatures of
@@ -71,7 +73,8 @@
  * All three are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
  * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
  * object appears and a removed one goes. Encounters, exits, distinct spawners and spawn swaps count from their next
- * use, and battle circles (CombatSigil) at once. Creatures and Remove count from the next time the zone loads.
+ * use, and battle circles (CombatSigil) and creatures at once (Niduus, 2026-10-23: a battle added in the Customs tab
+ * counts at once too). Remove counts from the next time the zone loads.
  */
 
 using System;
@@ -119,6 +122,8 @@ internal static class ZoneObjects {
         public float Yaw { get; set; }
         public float Scale { get; set; } = 1.0f;
         public string StartState { get; set; } = "";
+        // A creature's custom of the Customs tab (Customs.cs), 0 for the creature itself.
+        public int Custom { get; set; }
         public ZoneSigil Sigil { get; set; }
         public ZoneCombatSigil CombatSigil { get; set; }
         // A custom vendor or trainer's name, kind and lists (CustomNpcs.SignatureOf); null for any other object.
@@ -455,33 +460,31 @@ internal static class ZoneObjects {
         foreach (var (zone, (zonePath, variant)) in s_live) {
             LogNextLoadChanges(zonePath, variant, before, after);
             var change = Changes(zonePath, variant, before, after);
-            if (change.Moved.Count + change.Added.Count + change.Removed.Count == 0) {
+            if (change.Moved.Count + change.Added.Count + change.Removed.Count
+                + change.AddedCreatures.Count + change.RemovedCreatures.Count == 0) {
                 continue;
             }
 
-            Logger.Information("Zone {0}{1}: {2} objects moved, {3} added and {4} removed while it runs.",
+            Logger.Information("Zone {0}{1}: {2} objects moved, {3} added and {4} removed, {5} creatures added and {6} removed while it runs.",
                 Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})", change.Moved.Count, change.Added.Count,
-                    change.Removed.Count));
+                    change.Removed.Count, change.AddedCreatures.Count, change.RemovedCreatures.Count));
             zone.Tell(change);
         }
     }
 
-    // Creatures and left-out objects are only read when a zone loads: a change to them is noted in
-    // the log for each copy that runs now, so it is clear why it does not show yet.
+    // Left-out objects are only read when a zone loads: a change to them is noted in the log for each copy that runs
+    // now, so it is clear why it does not show yet.
     private static void LogNextLoadChanges(string zonePath, string variant, Dictionary<string, ZoneObjectFile> before,
                                            Dictionary<string, ZoneObjectFile> after) {
         static string Part(string zonePath, string variant, Dictionary<string, ZoneObjectFile> zones) {
             var files = new[] { KeyOf(zonePath, ""), string.IsNullOrEmpty(variant) ? null : KeyOf(zonePath, variant) }
                 .Where(k => k is not null && zones.ContainsKey(k)).Select(k => zones[k]).ToList();
 
-            return JsonSerializer.Serialize(new {
-                Creatures = files.SelectMany(f => f.Creatures),
-                Remove = files.SelectMany(f => f.Remove),
-            });
+            return JsonSerializer.Serialize(files.SelectMany(f => f.Remove));
         }
 
         if (Part(zonePath, variant, before) != Part(zonePath, variant, after)) {
-            Logger.Information("Zone {0}{1}: its creatures or left-out objects changed; they count from "
+            Logger.Information("Zone {0}{1}: its left-out objects changed; they count from "
                 + "the next time the zone loads.", Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})"));
         }
     }
@@ -517,7 +520,46 @@ internal static class ZoneObjects {
             change.Removed.Add(id);
         }
 
+        // Creatures: one that is new, gone, moved or changed goes and comes back as a whole (its path, node and
+        // spawner), by its path's id.
+        var oldCreatures = CreaturesFor(zonePath, variant, before);
+        var nowCreatures = CreaturesFor(zonePath, variant, after);
+        foreach (var (pathId, (fileVariant, creature, sign)) in nowCreatures) {
+            if (oldCreatures.TryGetValue(pathId, out var was) && was.Sign == sign) {
+                continue;
+            }
+
+            if (was.Creature is not null) {
+                change.RemovedCreatures.Add(pathId);
+            }
+
+            if (MakeCreature(zonePath, fileVariant, creature) is { } made) {
+                change.AddedCreatures.Add((made.Path, [made.Node], made.Spawner));
+            }
+        }
+
+        foreach (var pathId in oldCreatures.Keys.Where(id => !nowCreatures.ContainsKey(id))) {
+            change.RemovedCreatures.Add(pathId);
+        }
+
         return change;
+    }
+
+    private static Dictionary<ulong, (string Variant, ZoneObject Creature, string Sign)> CreaturesFor(
+        string zonePath, string variant, Dictionary<string, ZoneObjectFile> zones) {
+        var creatures = new Dictionary<ulong, (string, ZoneObject, string)>();
+        foreach (var key in new[] { KeyOf(zonePath, ""), string.IsNullOrEmpty(variant) ? null : KeyOf(zonePath, variant) }) {
+            if (key is null || !zones.TryGetValue(key, out var file)) {
+                continue;
+            }
+
+            foreach (var c in file.Creatures) {
+                creatures[GlobalIdOf(zonePath, file.Variant, c.Name, "/path")]
+                    = (file.Variant, c, JsonSerializer.Serialize(new { c.TemplateID, c.X, c.Y, c.Z, c.Yaw, c.Custom }));
+            }
+        }
+
+        return creatures;
     }
 
     private static Dictionary<ulong, (string Variant, ZoneObject Object)> ObjectsFor(string zonePath, string variant,
@@ -614,26 +656,69 @@ internal static class ZoneObjects {
             return false;
         }
 
+        if (MakeCreature(zonePath, variant, creature) is not { } made) {
+            return false;
+        }
+
+        results.NodeData.m_nodeList ??= [];
+        results.NodeData.m_nodeList.Add(made.Node);
+        results.PathData.m_pathList ??= [];
+        results.PathData.m_pathList.Add(made.Path);
+        results.SpawnData.m_spawners ??= [];
+        results.SpawnData.m_spawners.Add(made.Spawner);
+
+        return true;
+    }
+
+    // The customs of the files' creatures, by their spawner's id (ZonePath marks what such a spawner spawns).
+    private static readonly ConcurrentDictionary<ulong, int> s_spawnerCustoms = new();
+
+    /// <summary>The custom (Customs.cs) a spawner made for a file's creature spawns, or 0.</summary>
+    internal static int CustomOfSpawner(ulong spawnerId) => s_spawnerCustoms.TryGetValue(spawnerId, out var id) ? id : 0;
+
+    private static (NodeObject Node, PathObjectTemplate Path, SpawnObject Spawner)? MakeCreature(string zonePath, string variant,
+                                                                                                 ZoneObject creature) {
+        var templateId = creature.TemplateID;
+        if (creature.Custom > 0) {
+            var custom = Imlight.CoreLib.Game.Combat.Customs.Get(creature.Custom);
+            if (custom is null) {
+                Logger.Warning("Zone {0}: creature {1} is custom {2}, which does not exist; it is the creature itself.",
+                    Logger.Args(zonePath, creature.Name, creature.Custom));
+            }
+            else if (templateId == 0) {
+                templateId = custom.BaseTemplateID;
+            }
+        }
+
+        if (templateId == 0) {
+            Logger.Warning("Zone {0}: creature {1} has no creature; not added.", Logger.Args(zonePath, creature.Name));
+
+            return null;
+        }
+
         var nodeId = new GID(GlobalIdOf(zonePath, variant, creature.Name, "/node"));
         var pathId = new GID(GlobalIdOf(zonePath, variant, creature.Name, "/path"));
-        results.NodeData.m_nodeList ??= [];
-        results.NodeData.m_nodeList.Add(new NodeObject {
+        var spawnerId = new GID(GlobalIdOf(zonePath, variant, creature.Name, "/spawner"));
+        if (creature.Custom > 0) {
+            s_spawnerCustoms[spawnerId.Full] = creature.Custom;
+        }
+        else {
+            s_spawnerCustoms.TryRemove(spawnerId.Full, out _);
+        }
+
+        var node = new NodeObject {
             m_id = nodeId,
             m_location = new Vector3(creature.X, creature.Y, creature.Z),
             // A node's direction is in degrees.
             m_direction = (float) (creature.Yaw * (180.0 / Math.PI)),
-        });
-
-        results.PathData.m_pathList ??= [];
-        results.PathData.m_pathList.Add(new PathObjectTemplate {
+        };
+        var path = new PathObjectTemplate {
             m_id = pathId,
             m_name = creature.Name,
             m_nodeIDs = [nodeId],
-        });
-
-        results.SpawnData.m_spawners ??= [];
-        results.SpawnData.m_spawners.Add(new SpawnObject {
-            m_id = new GID(GlobalIdOf(zonePath, variant, creature.Name, "/spawner")),
+        };
+        var spawner = new SpawnObject {
+            m_id = spawnerId,
             m_name = creature.Name,
             m_active = true,
             m_maxNumberOfSpawns = 1,
@@ -643,7 +728,7 @@ internal static class ZoneObjects {
                 new SpawnItem {
                     m_percentChance = 100,
                     m_objectInfo = new SpawnObjectInfo {
-                        m_templateID = creature.TemplateID,
+                        m_templateID = templateId,
                         m_location = new Vector3(creature.X, creature.Y, creature.Z),
                         m_orientation = new Vector3(0, 0, creature.Yaw),
                         m_fScale = 1.0f,
@@ -654,9 +739,9 @@ internal static class ZoneObjects {
                     },
                 },
             ],
-        });
+        };
 
-        return true;
+        return (node, path, spawner);
     }
 
     private static CoreObjectInfo MakeInfo(ZoneObject obj) {
@@ -868,7 +953,7 @@ internal static class ZoneObjects {
             return false;
         }
 
-        if (obj.TemplateID == 0 || string.IsNullOrWhiteSpace(obj.Name)) {
+        if ((obj.TemplateID == 0 && obj.Custom <= 0) || string.IsNullOrWhiteSpace(obj.Name)) {
             Logger.Warning("Zone objects {0}: an object has no TemplateID or Name; skipped.", Logger.Args(fileName));
 
             return false;

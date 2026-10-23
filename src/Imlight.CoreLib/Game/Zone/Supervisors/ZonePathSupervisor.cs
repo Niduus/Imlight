@@ -58,9 +58,41 @@ internal sealed class ZonePathSupervisor(Core.Zone zone) : ZoneEntitySupervisor(
             var creatures = GetCreaturesForPath(path, creatureSpawnData);
             var pathActor = Context.ActorOf(Props.Create(() => new ZonePath(path, nodes, creatures, ZoneRef, Zone)));
             BeginEntityLoad(pathActor, path.m_name);
+            _paths[path.m_id.Full] = pathActor;
         }
 
         ReportLoadedWhenEntitiesLoad();
+    }
+
+    // The paths by id, so a ZoneObjects creature removed while the zone runs can be found.
+    private readonly Dictionary<ulong, IActorRef> _paths = [];
+
+    // ZoneObjects creatures added, removed or changed while the zone runs (Niduus, 2026-10-23: a battle added in the
+    // Customs tab counts at once). A removed one's path takes its creature away and stops; an added one gets a path.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        base.ReceiveZoneObjectsChanged(message);
+
+        foreach (var id in message.RemovedCreatures) {
+            if (_paths.Remove(id, out var pathActor)) {
+                pathActor.Tell(message);
+                EntityActors.Remove(pathActor);
+            }
+        }
+
+        foreach (var (path, nodes, spawner) in message.AddedCreatures) {
+            try {
+                var pathActor = Context.ActorOf(Props.Create(() => new ZonePath(path, nodes, new List<SpawnObject> { spawner }, ZoneRef, Zone)));
+                pathActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONEOBJECTLOADBEGIN());
+                EntityActors.Add(pathActor);
+                _paths[path.m_id.Full] = pathActor;
+                Logger.Information("Zone {0}: creature {1} (template {2}) added while it runs.",
+                    Logger.Args(Zone.ZonePath, path.m_name, spawner.m_spawnList?.FirstOrDefault()?.m_objectInfo?.m_templateID));
+            }
+            catch (Exception e) {
+                Logger.Error("Zone {0}: the added creature {1} could not be made: {2}", Logger.Args(Zone.ZonePath, path.m_name, e));
+            }
+        }
     }
 
     private static bool TryGetNodesForPath(PathObjectTemplate path, Dictionary<ulong, NodeObject> nodesById,

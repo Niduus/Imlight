@@ -5,13 +5,15 @@
  * beside ids.csv; the app's "Add from a preset" copies one into a new vendor or trainer (CustomNpcs.cs), which is then
  * edited like any other.
  *
- * Vendors:
- *   Housing Gauntlets  every item with a housing sigil (HousingSigilBehavior): the gauntlets, Skeleton Key duels and
- *                      rematches, the ones used up after one run (m_usedDisposableDungeonTemplateID names the trophy
- *                      they become) and the ones kept. The game's test ones are left out.
+ * Vendors (Niduus, 2026-10-23: "Split Trainer for Gauntlets. Bundle Gauntlets, One Shot gauntlets, Rematches"), from
+ * every item with a housing sigil (HousingSigilBehavior), the game's test ones left out:
+ *   Bundle Gauntlets   the ones kept after a run (no m_usedDisposableDungeonTemplateID).
+ *   One-Shot Gauntlets the ones used up after one run (that id names the trophy they become), not rematches.
+ *   Rematches          the one-shot boss rematches (object names with "Rematch").
  *   the house sellers' lists (HouseVendors): each reagent kind and jewel shape, Hao's pet snacks and Doctor Purreau's
  *                      elixir recipes, in their own windows.
- * Trainers:
+ * Trainers, each split into fixed parts of at most 50 spells, "<Name> 1 of 2" and so on, so a trainer always teaches
+ * the same set and never pages (Niduus, 2026-10-23: "Split up Trainers into parts so they have a set train"):
  *   All <School> Spells  every spell some trainer of the game teaches, of that school (NpcSpellInventories).
  *   All Schools        all of those (the trainer hall's book).
  *   the test trainers' lists: enchantments, Extract spells, Shadow spells, monster and boss spells.
@@ -42,6 +44,7 @@ internal static class CustomNpcPresets {
     private const string FILE = "presets.json";
     private const string VANILLA_FILE = "Presets/VanillaTrainers.json";
     private const string HOUSING_FOLDER = "ObjectData/Housing/";
+    private const int PART_SIZE = 50;
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
 
     private static readonly JsonSerializerOptions s_write = new() {
@@ -64,7 +67,7 @@ internal static class CustomNpcPresets {
             }
         }
 
-        Add("Housing Gauntlets", () => [HousingGauntlets()]);
+        Add("the housing gauntlets", HousingGauntlets);
         Add("the house sellers", HouseSellers);
         Add("the school trainers", SchoolTrainers);
         Add("the test trainers", TestTrainers);
@@ -89,7 +92,52 @@ internal static class CustomNpcPresets {
     private static Preset Trainer(string name, string help, IEnumerable<ulong> spells)
         => new(name, "Trainer", "", help, [], [.. spells.Select(id => (uint) id).Distinct()]);
 
-    private static Preset HousingGauntlets() {
+    // One trainer, or even parts of at most PART_SIZE spells in the order given; the help says what each part holds.
+    private static IEnumerable<Preset> TrainerParts(string name, string help, IReadOnlyList<(ulong Id, string Label)> spells) {
+        var unique = spells.DistinctBy(s => (uint) s.Id).ToList();
+        if (unique.Count <= PART_SIZE) {
+            yield return Trainer(name, help, unique.Select(s => s.Id));
+
+            yield break;
+        }
+
+        var parts = (unique.Count + PART_SIZE - 1) / PART_SIZE;
+        var size = (unique.Count + parts - 1) / parts;
+        for (var part = 0; part < parts; part++) {
+            var chunk = unique.Skip(part * size).Take(size).ToList();
+            var range = chunk[0].Label == chunk[^1].Label ? chunk[0].Label : $"{chunk[0].Label} to {chunk[^1].Label}";
+            yield return Trainer($"{name} {part + 1} of {parts}", $"{help} Part {part + 1} of {parts}: {range}.", chunk.Select(s => s.Id));
+        }
+    }
+
+    // The lowest level any trainer of the game teaches each spell at.
+    private static Dictionary<uint, int> TrainerLevels()
+        => SpiralDB.NpcSpellInventories.Values
+            .Where(inventory => inventory?.Spells is not null)
+            .SelectMany(inventory => inventory.Spells)
+            .GroupBy(entry => (uint) entry.TemplateID)
+            .ToDictionary(group => group.Key, group => group.Min(entry => entry.Level));
+
+    // The spells sorted by the level trainers teach them at, then by name, labelled with that level.
+    private static List<(ulong Id, string Label)> ByLevel(IEnumerable<ulong> spells, Dictionary<uint, int> levels)
+        => [.. spells
+            .Select(id => (Id: id, Level: levels.TryGetValue((uint) id, out var level) ? level : 0, Name: SpellName(id)))
+            .OrderBy(s => s.Level).ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(s => (s.Id, $"level {s.Level}"))];
+
+    // The spells by name, labelled with their first letter.
+    private static List<(ulong Id, string Label)> ByName(IEnumerable<ulong> spells)
+        => [.. spells
+            .Select(id => (Id: id, Name: SpellName(id)))
+            .OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(s => (s.Id, s.Name.Length > 0 ? s.Name[..1].ToUpperInvariant() : "?"))];
+
+    private static string SpellName(ulong id)
+        => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate spell
+            ? Locale.GetEnglishName((string) spell.m_displayName) ?? (string) spell.m_name ?? ""
+            : "";
+
+    private static IEnumerable<Preset> HousingGauntlets() {
         var gauntlets = HouseVendors.TemplatesIn<WizItemTemplate>(HOUSING_FOLDER)
             .Select(item => (item.Id, item.Template, Sigil: (item.Template.m_behaviors ?? []).OfType<HousingSigilBehaviorTemplate>().FirstOrDefault()))
             .Where(item => item.Sigil is not null)
@@ -97,13 +145,18 @@ internal static class CustomNpcPresets {
         // The game's own test items (TEST_Disposable_Dungeon_01, "Single Use Test Dungeon", a test Rattlebones duel).
         var tests = gauntlets.Where(g => IsTest(g.Template)).ToList();
         var kept = gauntlets.Except(tests).OrderBy(g => Locale.GetEnglishName((string) g.Template.m_displayName) ?? "").ToList();
-        var oneShots = kept.Count(g => g.Sigil.m_usedDisposableDungeonTemplateID != 0);
-        Logger.Information("Vendor presets: {0} housing gauntlets ({1} used up after one run, {2} kept), left out the test ones {3}.",
-            Logger.Args(kept.Count, oneShots, kept.Count - oneShots, string.Join(", ", tests.Select(t => $"{(string) t.Template.m_objectName} ({t.Id})"))));
+        var bundles = kept.Where(g => g.Sigil.m_usedDisposableDungeonTemplateID == 0).ToList();
+        var rematches = kept.Except(bundles).Where(g => ((string) g.Template.m_objectName ?? "").Contains("Rematch", StringComparison.OrdinalIgnoreCase)).ToList();
+        var oneShots = kept.Except(bundles).Except(rematches).ToList();
+        Logger.Information("Vendor presets: {0} housing gauntlets ({1} bundle, {2} one-shot, {3} rematches), left out the test ones {4}.",
+            Logger.Args(kept.Count, bundles.Count, oneShots.Count, rematches.Count, string.Join(", ", tests.Select(t => $"{(string) t.Template.m_objectName} ({t.Id})"))));
 
-        return Vendor("Housing Gauntlets", "Furniture",
-            $"Every housing gauntlet, Skeleton Key duel and rematch: {kept.Count}, {oneShots} of them used up after one run.",
-            kept.Select(g => g.Id));
+        yield return Vendor("Bundle Gauntlets", "Furniture",
+            $"The housing gauntlets and Skeleton Key duels kept after a run: {bundles.Count}.", bundles.Select(g => g.Id));
+        yield return Vendor("One-Shot Gauntlets", "Furniture",
+            $"The housing gauntlets used up after one run, rematches aside: {oneShots.Count}.", oneShots.Select(g => g.Id));
+        yield return Vendor("Rematches", "Furniture",
+            $"The one-shot boss rematches: {rematches.Count}.", rematches.Select(g => g.Id));
     }
 
     private static bool IsTest(WizItemTemplate template) {
@@ -138,13 +191,17 @@ internal static class CustomNpcPresets {
 
     private static IEnumerable<Preset> SchoolTrainers() {
         var trained = TrainedSpells();
+        var levels = TrainerLevels();
+        var presets = new List<Preset>();
         foreach (var school in trained.Select(s => s.School).Where(s => s.Length > 0).Distinct().OrderBy(s => Array.IndexOf(s_schools, s) is var i and >= 0 ? i : 99)) {
-            yield return Trainer($"All {school} Spells", $"Every {school} spell a trainer of the game teaches.",
-                trained.Where(s => s.School == school).Select(s => s.Id));
+            presets.AddRange(TrainerParts($"All {school} Spells", $"Every {school} spell a trainer of the game teaches.",
+                ByLevel(trained.Where(s => s.School == school).Select(s => s.Id), levels)));
         }
 
-        yield return Trainer("All Schools", "Every spell a trainer of the game teaches, every school.",
-            InteractTrainerComponent.TestSpellsOf(InteractTrainerComponent.TestTrainerKind.Hall).Select(e => e.TemplateID));
+        presets.AddRange(TrainerParts("All Schools", "Every spell a trainer of the game teaches, every school.",
+            ByLevel(InteractTrainerComponent.TestSpellsOf(InteractTrainerComponent.TestTrainerKind.Hall).Select(e => e.TemplateID), levels)));
+
+        return presets;
     }
 
     private static IEnumerable<Preset> TestTrainers() {
@@ -155,7 +212,9 @@ internal static class CustomNpcPresets {
             (InteractTrainerComponent.TestTrainerKind.Boss, "Monster and Boss Spells", "Spells only monsters and bosses cast, as Merle Ambrose teaches."),
         };
         foreach (var (kind, name, help) in lists) {
-            yield return Trainer(name, help, InteractTrainerComponent.TestSpellsOf(kind).Select(e => e.TemplateID));
+            foreach (var part in TrainerParts(name, help, ByName(InteractTrainerComponent.TestSpellsOf(kind).Select(e => e.TemplateID)))) {
+                yield return part;
+            }
         }
     }
 
@@ -228,8 +287,11 @@ internal static class CustomNpcPresets {
             Logger.Information("Vanilla {0} trainer: {1} of {2} spells found{3}.",
                 Logger.Args(school, found.Count, spells.Count, missing.Count == 0 ? "" : $"; not found: {string.Join(", ", missing)}"));
 
-            yield return Trainer($"Vanilla {school} Trainer",
-                $"The spells {school} wizards learn from trainers in the game: their school's and the ones other trainers teach them.", found);
+            foreach (var part in TrainerParts($"Vanilla {school} Trainer",
+                         $"The spells {school} wizards learn from trainers in the game: their school's and the ones other trainers teach them.",
+                         [.. found.Select(id => (id, SpellName(id)))])) {
+                yield return part;
+            }
         }
     }
 

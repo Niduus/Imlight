@@ -230,6 +230,29 @@ public sealed class ZonePath : ZoneEntity {
         Context.Stop(message.Entity);
     }
 
+    // A ZoneObjects creature (this path is its own) that was removed or changed while the zone runs: its creature
+    // leaves the players and the path stops (ZonePathSupervisor makes the new one).
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
+    private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        if (!message.RemovedCreatures.Contains(_template.m_id.Full)) {
+            foreach (var actor in _creatureActors) {
+                actor.Forward(message);
+            }
+
+            return;
+        }
+
+        foreach (var id in _spawnedTemplate.Keys) {
+            ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Message = new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = id },
+                Targets = ZoneBroadcastTarget.Players,
+            });
+        }
+
+        Logger.Information("Zone {0}: creature {1} taken away ({2} spawned).", Logger.Args(Zone.ZonePath, _template.m_name, _spawnedTemplate.Count));
+        Context.Stop(Self);
+    }
+
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_DELETEOBJECT))]
     private void ReceiveZoneBroadcast(GAME_5_PROTOCOL.MSG_DELETEOBJECT message) {
         if (_spawnObjectInfo.TryGetValue(message.GameObjectID, out var spawnObject)) {
@@ -377,9 +400,10 @@ public sealed class ZonePath : ZoneEntity {
         var creatureObj = CoreObjectFactory.FinalizeCoreObject(spawnItemInfo, template);
         spawnItemInfo.m_templateID = originalTemplateId;
         creatureObj = CoreObjectFactory.InitializeCoreObjectBehaviors(creatureObj, template);
-        // A creature this copy of the zone spawns as a custom of the Customs tab (ZoneObjects ReplaceSpawns, the
-        // tab's rooms) is marked before its actor is made, so it has the custom's name and changes.
-        if (!isWisp && Zone.Extras.CustomFor(templateId) is var customId and > 0
+        // A creature this copy of the zone spawns as a custom of the Customs tab (a ZoneObjects creature's own Custom,
+        // ReplaceSpawns, the tab's rooms) is marked before its actor is made, so it has the custom's name and changes.
+        var ownCustom = ZoneObjects.CustomOfSpawner(spawnObject.m_id.Full);
+        if (!isWisp && (ownCustom > 0 ? ownCustom : Zone.Extras.CustomFor(templateId)) is var customId and > 0
             && Imlight.CoreLib.Game.Combat.Customs.Get(customId)?.BaseTemplateID == templateId) {
             Imlight.CoreLib.Game.Combat.Customs.Mark(creatureObj.m_globalID.Full, customId);
         }

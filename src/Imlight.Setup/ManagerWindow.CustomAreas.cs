@@ -682,7 +682,7 @@ internal sealed partial class ManagerWindow {
         var creatures = Arr(edit.Work, "Creatures");
         var body = new StackPanel { Spacing = FIELD_SPACING };
         body.Children.Add(Sub("Creatures the server adds to the zone. Each stands still at its place, fights like the zone's own creatures " +
-                              "and, in a private copy, does not come back once defeated."));
+                              "and, in a private copy, does not come back once defeated. Added, changed and removed ones count as soon as you save."));
         foreach (var creature in creatures.OfType<JsonObject>().ToList()) {
             var id = (ulong) CustomArea.Number(creature, "TemplateID");
             var name = CustomArea.Text(creature, "Name");
@@ -691,6 +691,7 @@ internal sealed partial class ManagerWindow {
                 Children = {
                     Field("Name", "Its own name in this area, different from the others.", Text(edit, creature, "Name", "Such as Guard 1", 300, required: true)),
                     Field("Creature", "Which creature. Find searches by name or ID.", TemplateBox(edit, creature, "TemplateID", PickKind.Creature, required: true)),
+                    Field("Spawns as", "One of your Custom mobs in its place, or the creature itself.", CreatureCustomBox(edit, creature)),
                     Field("Where", "Where it stands and which way it faces.", PlaceEditor(edit, creature, () => edit.Zone, withScale: false)),
                     Field("Notes", "Your own notes.", Text(edit, creature, "Notes", "", 560, multiline: true)),
                     Row(Danger(Action(IconButton("Remove", AreaIcon.Delete), () => RemoveEntry(edit, creatures, creature)))),
@@ -708,8 +709,43 @@ internal sealed partial class ManagerWindow {
             ["Name"] = UniqueName(edit, "New creature"), ["TemplateID"] = 0, ["X"] = 0, ["Y"] = 0, ["Z"] = 0, ["Yaw"] = 0,
         }, "/creatures/"))));
 
-        return OpenState(Section(SectionHeader(Tile(Glyph(AreaIcon.Creatures, CREATURES), CREATURES), "Creatures", creatures.Count.ToString(CultureInfo.InvariantCulture), Timing.Reload),
+        return OpenState(Section(SectionHeader(Tile(Glyph(AreaIcon.Creatures, CREATURES), CREATURES), "Creatures", creatures.Count.ToString(CultureInfo.InvariantCulture), Timing.Live),
             body, CREATURES, false), edit.Area.File + "/creatures");
+    }
+
+    // Which of the customs a creature of the area spawns as (its Custom); none is the creature itself.
+    private Control CreatureCustomBox(AreaEdit edit, JsonObject creature) {
+        var customs = CustomMob.All(_manager.CustomsFolder);
+        var now = (int) CustomArea.Number(creature, "Custom");
+        var items = new List<string> { "The creature itself" };
+        items.AddRange(customs.Select(c => $"Custom {c.Id}: {c.Shown}"));
+        if (now > 0 && customs.All(c => c.Id != now)) {
+            items.Add($"Custom {now} (missing)");
+        }
+
+        var box = new ComboBox {
+            Width = 300, ItemsSource = items,
+            SelectedIndex = now <= 0 ? 0 : customs.FindIndex(c => c.Id == now) is var i and >= 0 ? i + 1 : items.Count - 1,
+        };
+        box.SelectionChanged += (_, _) => {
+            if (box.SelectedIndex == 0) {
+                creature.Remove("Custom");
+            }
+            else if (box.SelectedIndex > 0 && box.SelectedIndex <= customs.Count) {
+                var custom = customs[box.SelectedIndex - 1];
+                Set(creature, "Custom", custom.Id);
+                if (CustomArea.Number(creature, "TemplateID") <= 0 && ulong.TryParse(custom.BaseId, NumberStyles.None, CultureInfo.InvariantCulture, out var baseId)) {
+                    Set(creature, "TemplateID", baseId);
+                }
+            }
+            else {
+                return;
+            }
+
+            edit.Changed();
+        };
+
+        return box;
     }
 
     private Control SwapsSection(AreaEdit edit) {
@@ -1072,7 +1108,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (Part(before, "Creatures") != Part(cleaned, "Creatures")) {
-            reload.Add("creatures");
+            live.Add("creatures");
         }
 
         if (Part(before, "Remove") != Part(cleaned, "Remove")) {
