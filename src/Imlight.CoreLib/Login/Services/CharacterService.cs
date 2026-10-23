@@ -225,4 +225,25 @@ internal class CharacterService(SessionActor parentActor) : MessageService(paren
         this._characterCreationStage = message.Stage;
     }
 
+    // The Promo Code button on the character select screen (PromoCodeEntryWindow, promoCodeEntry.gui). Codes are not
+    // set up yet: the code is logged and the window is told so (Niduus, 2026-10-23).
+    [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE))]
+    private void ReceiveFulfillPromoCode(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE message) {
+        try {
+            string code = message.Code;
+            Logger.Information("Promo code: account {0} entered \"{1}\" at character select (Success={2} ItemList=\"{3}\" ErrorDesc=\"{4}\").",
+                Logger.Args(GetSocketAccount()?.Username, code, message.Success, (string) message.ItemList, (string) message.ErrorDesc));
+
+            SendToSocket(new LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE {
+                Code = code,
+                Success = 0,
+                ItemList = "",
+                ErrorDesc = Game.Services.GiftingService.PromoCodesNotSetUp
+            });
+        }
+        catch (Exception ex) {
+            Logger.Error("Promo code: handling a code at character select failed. {0}", Logger.Args(ex.Message));
+        }
+    }
+
 }
