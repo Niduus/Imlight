@@ -1067,7 +1067,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             m_data = new HousingBlob {
                 m_housingBlobObjectList = [.. snapshot.Slots.Select(item => item is null
                     ? new HousingBlobObject()
-                    : HouseVaults.ToBlobObject(map?.Invoke(item) ?? item))],
+                    : HouseVaults.ToBlobObject(HouseMusic.Looping(map?.Invoke(item) ?? item)))],
             },
         };
 

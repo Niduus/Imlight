@@ -213,6 +213,19 @@ internal static class HouseMusic {
     }
 
     /// <summary>
+    /// The item as the game gets it: a one-scroll player saved in another style is sent in the loop-one style, so one placed
+    /// before that rule loops without the zone music too (Niduus, 2026-10-23).
+    /// </summary>
+    internal static PlacedItem Looping(PlacedItem item) {
+        if (item is null || !IsPlayer(item.TemplateId) || string.IsNullOrEmpty(item.Custom)) {
+            return item;
+        }
+
+        var player = Read(item);
+        return KeepLooping(player) && TryWrite(player, out var data) ? item with { Custom = PlacedItem.EncodeCustom(data) } : item;
+    }
+
+    /// <summary>
     /// Describes a player's state for the log.
     /// </summary>
     internal static string Describe(HousingMusicPlayerBehavior player)
