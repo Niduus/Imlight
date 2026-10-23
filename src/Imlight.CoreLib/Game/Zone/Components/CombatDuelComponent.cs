@@ -163,6 +163,14 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     private PvPDuelState _pvp;
     private bool _isActive;
     private bool _awaitingCombatMoves;
+    // A rejected cast leaves the round open until each living player has had a chance to choose another move.
+    private readonly HashSet<CombatDuelSubCircle> _castRejected = [];
+
+    private bool EveryPlayerCastRejected() {
+        var players = SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer && c.IsAlive).ToList();
+
+        return players.Count > 0 && players.All(_castRejected.Contains);
+    }
     // When this round's planning began, so a wizard who joins during it can be given the time left.
     private DateTime _planningStartedAt;
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
@@ -529,6 +537,7 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         AddWaitingCombatParticipants();
         CombatResolver.Reset();
         _awaitingCombatMoves = true;
+        _castRejected.Clear();
 
         // Determine the power pip gain. Alternating turns gain in the opponent's phase: the non-starter now.
         DoPipGain(IsAlternatingPvP ? PvPDuelState.Opposite(_pvp.RoundStarter) : null);
@@ -648,6 +657,9 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
 
         var moveType = (CombatMoveType) message.MoveType;
+
+        // Any replacement move means the earlier rejected cast is no longer awaiting correction.
+        _castRejected.Remove(caster);
 
         // A defeated wizard sits the round out; only fleeing is still theirs to choose.
         if (!caster.IsAlive && moveType != CombatMoveType.Flee) {
@@ -2250,7 +2262,28 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             Logger.Warning("Duel {0} | Slot {1} | Participant does not have enough pips or mana for spell {2}",
                 Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spell.m_templateID));
 
-            CombatResolver.AddCombatMove(CombatMoveType.Pass, caster, null, null);
+            if (!caster.IsHumanPlayer) {
+                CombatResolver.AddCombatMove(CombatMoveType.Pass, caster, null, null);
+
+                return;
+            }
+
+            // Return the card and synchronize the hand/pips. Counting this as a pass silently skips the player's turn.
+            HandleChangeMindAction(caster);
+            _castRejected.Add(caster);
+            SendCombatPips();
+            SendCurrentCombatHand(caster);
+
+            // Keep enemy moves queued while all players get another planning window.
+            if (!IsPvPDuel && EveryPlayerCastRejected()) {
+                _castRejected.Clear();
+                _awaitingCombatMoves = true;
+                SendCombatHand();
+                SendCombatPips();
+                SendCombatUI(PlanningSeconds);
+                Timers.StartSingleTimer(PLANNING_TIME_KEY,
+                    new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(PlanningSeconds));
+            }
 
             return;
         }
