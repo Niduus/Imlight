@@ -456,6 +456,19 @@ public static class AccountCollection {
     }
 
     /// <summary>
+    /// Changes the Tamed Drops pity meters of an account (Account.TamedPity) in one saved write.
+    /// </summary>
+    /// <param name="accountId">The unique identifier of the account to update.</param>
+    /// <param name="update">Changes the meters; called with the stored ones.</param>
+    /// <returns>true if the account was updated; otherwise, false.</returns>
+    public static bool UpdateTamedPity(ulong accountId, Action<Dictionary<string, double>> update) {
+        return UpdateAccount(accountId, acc => {
+            acc.TamedPity ??= new();
+            update(acc.TamedPity);
+        });
+    }
+
+    /// <summary>
     /// Updates the crowns balance for the specified account.
     /// </summary>
     /// <param name="accountId">The unique identifier of the account to update.</param>

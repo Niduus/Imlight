@@ -196,6 +196,12 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         /// </summary>
         public ulong[] AllyCharIds;
 
+        /// <summary>
+        /// The rounds the battle took for Tamed Drops (TamedDrops.cs): a round everyone chose to pass stops counting from
+        /// the third in a row; a stunned or confused wizard's pass is never a choice.
+        /// </summary>
+        public int CountedRounds;
+
     }
 
     public sealed class MSG_COMBATEFFECT : IServerMessage {

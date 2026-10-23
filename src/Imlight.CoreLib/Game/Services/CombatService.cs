@@ -188,7 +188,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
         PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
-        GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds, Math.Max(1, message.AllyCharIds?.Length ?? 1));
+        GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds, Math.Max(1, message.AllyCharIds?.Length ?? 1), message.CountedRounds);
         TeachSpellAfterBattle();
     }
 
@@ -205,7 +205,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
     }
 
-    private void GrantMobLoot(ulong[] defeatedMobTemplateIds, int wizards) {
+    private void GrantMobLoot(ulong[] defeatedMobTemplateIds, int wizards, int rounds) {
         // Rolls and grants drop-table loot for the defeated mobs (raw template ids). Each mob's tables
         // come from NpcDropTableCollection; a single roll across all of a mob's tables yields one combined
         // loot popup for that mob.
@@ -227,11 +227,27 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             var templateId = Imlight.CoreLib.Game.Combat.Customs.BaseOf(key);
             var changes = Imlight.CoreLib.Game.Combat.BossOverrides.For(key);
             var customDrops = changes?.Drops;
-            var loot = customDrops is { Count: > 0 }
-                ? DropTableRoller.Roll([.. customDrops], playerRef, playerObj, wizard)
-                : NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable)
-                ? DropTableRoller.Roll(npcDropTable.DropTableNames.ToArray(), playerRef, playerObj, wizard)
-                : new Imlight.CoreLib.WizardData.Models.World.DropTableResult();
+            string[] tables = customDrops is { Count: > 0 } ? [.. customDrops]
+                : NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable) ? npcDropTable.DropTableNames.ToArray()
+                : [];
+
+            // Tamed Drops: a boss's loot follows how many rounds the battle took, with account-wide pity.
+            Imlight.CoreLib.WizardData.Models.World.DropTableResult loot = null;
+            if (tables.Length > 0 && TamedDrops.AppliesTo(templateId, customDrops is { Count: > 0 })) {
+                try {
+                    loot = TamedDrops.Roll(tables, key, rounds, playerRef, playerObj, wizard, out var note);
+                    InformGameClient(note);
+                }
+                catch (Exception e) {
+                    Logger.Error("Tamed Drops failed for {0}, rolling normally: {1}", Logger.Args(key, e));
+                }
+            }
+
+            if (loot is null) {
+                loot = tables.Length > 0
+                    ? DropTableRoller.Roll(tables, playerRef, playerObj, wizard)
+                    : new Imlight.CoreLib.WizardData.Models.World.DropTableResult();
+            }
 
             // Every defeated monster drops some gold, more for higher levels and bosses.
             if (loot.GoldAmount <= 0) {

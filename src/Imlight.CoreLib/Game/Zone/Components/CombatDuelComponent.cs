@@ -163,6 +163,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private PvPDuelState _pvp;
     private bool _isActive;
     private bool _awaitingCombatMoves;
+
+    // Tamed Drops (TamedDrops.cs): the rounds this battle counts, and how many rounds in a row everyone chose to pass.
+    private int _countedRounds;
+    private int _passStreak;
+    private int _lastRoundCounted = -1;
     // When this round's planning began, so a wizard who joins during it can be given the time left.
     private DateTime _planningStartedAt;
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
@@ -742,6 +747,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         Logger.Debug("Duel {0} | Round {1} over at {2}",
             Logger.Args(Duel.m_duelID.Full, Duel.m_roundNum, DateTime.Now.ToString("HH:mm:ss")));
+
+        CountRoundForTamedDrops();
 
         // The execution phase begins. This is where combat actions take place and we actually see spell cinematics.
         _awaitingCombatMoves = false;
@@ -3287,6 +3294,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                 MobTemplateIds = [.. templateIdsOfDefeatedMobs],
                 MobLootKeys = [.. lootKeysOfDefeatedMobs],
                 AllyCharIds = [.. allyCharIds],
+                CountedRounds = _countedRounds,
             };
             circle.ParticipantActor.Tell(victoryMsg);
         });
@@ -3295,6 +3303,40 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // A won battle (not one everybody fled) leaves health, mana and gold wisps behind.
         BattleDrops.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location);
+    }
+
+    private void CountRoundForTamedDrops() {
+        // Run once per round, before the queued moves are used up. The third round in a row that every wizard chose to
+        // pass (none stunned or confused) and every one after it does not count; a round with a spell cast counts again.
+        if (IsPvPDuel || _lastRoundCounted == Duel.m_roundNum) {
+            return;
+        }
+
+        _lastRoundCounted = Duel.m_roundNum;
+        try {
+            var wizards = 0;
+            var everyoneChosePass = true;
+            EnactActionOnSubCircles(circle => {
+                if (!circle.IsHumanPlayer || !circle.AddedToDuel || !circle.IsAlive || circle.OccupiedTeam != CombatTeam.Player) {
+                    return;
+                }
+
+                wizards++;
+                var forced = circle.CombatParticipant is { } participant && (participant.m_stunned > 0 || participant.m_confused > 0);
+                var passed = CombatResolver.GetQueuedAction(circle)?.Spell is null;
+                if (forced || !passed) {
+                    everyoneChosePass = false;
+                }
+            });
+
+            _passStreak = wizards > 0 && everyoneChosePass ? _passStreak + 1 : 0;
+            if (_passStreak < 3) {
+                _countedRounds++;
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Tamed Drops round count failed: {1}", Logger.Args(SigilId, e));
+        }
     }
 
     private void PostMonsterKilledEvents(List<List<string>> adjectivesPerDefeatedMob) {

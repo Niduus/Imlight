@@ -104,6 +104,9 @@ public class Account {
     /// <summary>Gifts for the game's Claim Gift list (`.bundle`), where a choose-one bundle lets the player pick.</summary>
     public List<ClaimGift> ClaimGifts { get; set; } = new();
 
+    /// <summary>Tamed Drops pity meters of the whole account (TamedDrops.cs), by "&lt;boss&gt;:&lt;tier&gt;": runs filled so far.</summary>
+    public Dictionary<string, double> TamedPity { get; set; } = new();
+
     [JsonIgnore] public List<Wizard> Characters = new();
     [JsonIgnore] public InfractionHistory InfractionHistory { get; set; }
     [JsonIgnore] public SessionActor SessionActor { get; set; }
