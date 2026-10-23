@@ -120,6 +120,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             // Every effect goes out now, the pet's and jewels' cards included.
             EquipmentExtras.TakeCardEffectChanges(playerCharacter);
             SendAddEffects([.. effects]);
+            ShowPetFormToZone(playerCharacter);
 
             // Spawn the equipped pet as a zone entity if one is equipped.
             if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0 && !ReWearIfNamed(null)) {
@@ -561,6 +562,22 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SYNC_PET_FOR_MOUNT))]
     private void ReceiveSyncPetForMount()
         => SpawnPetEntity();
+
+    // A wizard in their pet's look (.petform) keeps it in the new zone, for the players there too.
+    private void ShowPetFormToZone(Wizard wizard) {
+        var form = wizard.GameEffects.Find(e => e is TransformationEffect && e.m_itemSlotID == Commands.Protocols.CommandPetFormProtocol.SlotId);
+        var flags = PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit;
+        if (form is null || !_effectSerializer.Serialize(form, flags, out var data)) {
+            return;
+        }
+
+        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = new GAME_5_PROTOCOL.MSG_ADDEFFECT { GameObjectID = wizard.GameObjectID, EffectData = data },
+            Selfless = true,
+            Sender = SessionActor.ActorRef,
+            Targets = ZoneBroadcastTarget.Players,
+        }, Self);
+    }
 
     private void DismissPetEntity() {
         if (_summonedPetId == 0) {

@@ -1,0 +1,111 @@
+/*
+ * Imlight
+ * Copyright (C) 2026 Revive101
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using Akka.Actor;
+using Imcodec.CoreObject;
+using Imcodec.Cryptography;
+using Imcodec.MessageLayer;
+using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.WizardData.Models.Player;
+
+namespace Imlight.CoreLib.Game.Commands.Protocols;
+
+/// <summary>
+/// `.petform` (Niduus, 2026-10-23: "Play as your pet"): the wizard takes the look of the pet they wear, the way a
+/// transformation elixir works. A pet template names its model by race (PetItemBehaviorTemplate.m_eRace), and
+/// Races.xml holds every pet race, so the transformation effect only needs that race. Typed again, it turns back.
+/// </summary>
+internal class CommandPetFormProtocol : CommandProtocol {
+
+    internal const string EFFECT_NAME = "Transformation";
+
+    // Marks the pet look among the wizard's effects; an elixir's transformation carries its own slot.
+    internal static readonly uint SlotId = StringHash.Compute("PetForm");
+
+    internal override string Group { get; set; } = "";
+
+    [Command("petform")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    [Alias("playaspet")]
+    private void PetFormCommand() {
+        var wizard = Context.Character;
+        var nameId = StringHash.Compute(EFFECT_NAME);
+        var current = wizard.GameEffects.Find(e => e is TransformationEffect && e.m_itemSlotID == SlotId);
+        if (current is not null) {
+            wizard.GameEffects.Remove(current);
+            Broadcast(new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
+                GameObjectID = wizard.GameObjectID,
+                EffectNameID = current.m_effectNameID,
+                InternalID = current.m_internalID,
+            });
+            InformSenderClient("You look like yourself again.");
+
+            return;
+        }
+
+        var pet = PetCare.GetWornPet(wizard);
+        var template = PetProgress.GetTemplate(pet);
+        if (template is null || template.m_eRace == 0) {
+            InformSenderClient("Wear a pet first, then type .petform.");
+
+            return;
+        }
+
+        var effect = new TransformationEffect {
+            m_sRace = template.m_eRace.ToString(),
+            m_eGender = template.m_eGender,
+            m_fScale = template.m_fScale > 0 ? template.m_fScale : 1f,
+            m_effectNameID = nameId,
+            m_itemSlotID = SlotId,
+            m_internalID = wizard.NextEffectId(),
+        };
+
+        var serializer = new CoreObjectSerializer(behaviors: SerializerFlags.None);
+        var flags = PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit;
+        if (!serializer.Serialize(effect, flags, out var data)) {
+            InformSenderClient("Could not turn you into your pet.");
+
+            return;
+        }
+
+        wizard.GameEffects.Add(effect);
+        Broadcast(new GAME_5_PROTOCOL.MSG_ADDEFFECT {
+            GameObjectID = wizard.GameObjectID,
+            EffectData = data,
+        });
+        Logger.Information("{0} took the look of their pet (race {1}).", Logger.Args(wizard.CharId, (string) effect.m_sRace));
+        InformSenderClient("You now look like your pet. Type .petform again to turn back.");
+    }
+
+    // The wizard's own game first, then everyone else in the zone.
+    private void Broadcast(IMessage message) {
+        Context.SessionActor.Tell(message, null);
+        Context.ZoneActor?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = message,
+            Selfless = true,
+            Sender = Context.SessionActor,
+            Targets = ZoneBroadcastTarget.Players,
+        });
+    }
+
+}
