@@ -1547,6 +1547,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        var placeOnCircles = new List<WIZARD_12_PROTOCOL.MSG_AGGRO>();
         foreach (var other in ActiveSubCircles) {
             if (other == joined || other.ParticipantActor is null) {
                 continue;
@@ -1558,6 +1559,29 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             else if (!joined.IsHumanPlayer && !joined.IsSummonedMinion && other.IsHumanPlayer) {
                 joined.ParticipantActor.Tell(new ZONE_102_PROTOCOL.MSG_SHOWDUELPARTICIPANT { PlayerActor = other.ParticipantActor });
             }
+
+            // The wizard's game makes every object of the battle where the zone left it; each one is sent onto its
+            // circle, as everyone else saw it walk in (Niduus, 2026-10-23: after a relog the returning wizard saw two of
+            // four enemies on their circles and his friend in the wrong place).
+            if (joined.IsHumanPlayer && other.ParticipantObject is { } otherObject) {
+                placeOnCircles.Add(new WIZARD_12_PROTOCOL.MSG_AGGRO {
+                    GlobalID = otherObject.m_globalID,
+                    LocX = other.WorldPosition.X,
+                    LocY = other.WorldPosition.Y,
+                    LocZ = other.WorldPosition.Z,
+                    Yaw = other.WorldRotation,
+                    SigilGID = SigilId,
+                });
+            }
+        }
+
+        // A moment later, once the objects have reached the game.
+        if (placeOnCircles.Count > 0 && joined.ParticipantActor is { } wizardActor) {
+            _ = System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1.5)).ContinueWith(_ => {
+                foreach (var aggro in placeOnCircles) {
+                    wizardActor.Tell(aggro);
+                }
+            });
         }
     }
 
