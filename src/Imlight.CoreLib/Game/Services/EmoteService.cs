@@ -272,6 +272,10 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
 
         Logger.Information("Saved updated radial menu data for character {Id}",
             Logger.Args(wizard.CharId));
+
+        // What the game saves, so its layout can be read later.
+        Logger.Debug("[EmoteService] Radial menu 1: {Menu1} | 2: {Menu2} | 3: {Menu3}",
+            Logger.Args(Hex(wizard.RadialMenuData), Hex(wizard.RadialMenu2Data), Hex(wizard.RadialMenu3Data)));
     }
 
     /// <summary>
@@ -279,7 +283,10 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     /// </summary>
     [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTONDEMANDCONVERTEMOTESTOPIISYSTEM))]
     private void ReceiveRequestOnDemandConvertEmotes(WIZARD3_56_PROTOCOL.MSG_REQUESTONDEMANDCONVERTEMOTESTOPIISYSTEM message) {
-        // Client requesting on-demand conversion.
+        // The game asks for its emote menu; it gets the saved one (or an empty one, which it fills itself).
+        var wizard = GetActiveWizard();
+        Logger.Information("[EmoteService] The game asked for the emote menu of character {Id}", Logger.Args(wizard.CharId));
+        SendRadialMenu(wizard);
     }
 
     /// <summary>
@@ -287,17 +294,24 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     /// </summary>
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
+        // Always sent, even with nothing saved yet (from Phill's upstream 990a52ba): the game waits for it before it
+        // shows the emote list.
         var wizard = GetActiveWizard();
-        if (!wizard.RadialMenuData.IsEmpty) {
-            var updateMsg = new WIZARD3_56_PROTOCOL.MSG_PIIUPDATEEMOTESRADIALMENU {
-                RadialMenuData = wizard.RadialMenuData,
-                RadialMenu2Data = wizard.RadialMenu2Data,
-                RadialMenu3Data = wizard.RadialMenu3Data
-            };
-            SendToSocket(updateMsg);
-        }
+        SendRadialMenu(wizard);
 
-        Logger.Information("[EmoteService] Restored radial menu data to client for character {Id}",
-    Logger.Args(wizard.CharId));
+        Logger.Information("[EmoteService] Restored radial menu data to client for character {Id} ({Bytes} bytes saved)",
+            Logger.Args(wizard.CharId, wizard.RadialMenuData.IsEmpty ? 0 : ((byte[]) wizard.RadialMenuData).Length));
     }
+
+    private void SendRadialMenu(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard) {
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_PIIUPDATEEMOTESRADIALMENU {
+            RadialMenuData = OrEmpty(wizard.RadialMenuData),
+            RadialMenu2Data = OrEmpty(wizard.RadialMenu2Data),
+            RadialMenu3Data = OrEmpty(wizard.RadialMenu3Data),
+        });
+    }
+
+    private static ByteString OrEmpty(ByteString data) => data.IsEmpty ? new ByteString(Array.Empty<byte>()) : data;
+
+    private static string Hex(ByteString data) => data.IsEmpty ? "(none)" : Convert.ToHexString((byte[]) data);
 }
