@@ -75,7 +75,11 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
     private const string BlobType = HousingBlobs.BlobType;
     private const string ItemSubType = "Item";
 
+    // A second of steps for every pet and mount of a full house is far less; anything larger is not the client's.
+    private const int MaxPetUpdateLength = 8192;
+
     private HouseState _house;
+    private bool _loggedPetRelay;
     private AtticState _attic;
     private ulong _houseCharId;
 
@@ -291,18 +295,23 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         ItemSync.SendRemoved(SessionActor.ActorRef, wizard, itemId);
-        ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHADDHOUSINGOBJECT {
-            ObjectID = placedTemplateId,
-            LocX = change.Item.X,
-            LocY = change.Item.Y,
-            LocZ = change.Item.Z,
-            Yaw = change.Item.Yaw,
-            SubType = ItemSubType,
-            PackageNumber = 0,
-            VersionNumber = change.Revision,
-            GIDID = change.GidId,
-            ColorBits = (sbyte) change.Item.Tint,
-        }, isSelfless: false, ZoneBroadcastTarget.Players);
+
+        // A pet or mount comes with the blob below: the add patch would make it a plain object that neither walks nor
+        // shows a nameplate.
+        if (creatureData is null) {
+            ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHADDHOUSINGOBJECT {
+                ObjectID = placedTemplateId,
+                LocX = change.Item.X,
+                LocY = change.Item.Y,
+                LocZ = change.Item.Z,
+                Yaw = change.Item.Yaw,
+                SubType = ItemSubType,
+                PackageNumber = 0,
+                VersionNumber = change.Revision,
+                GIDID = change.GidId,
+                ColorBits = (sbyte) change.Item.Tint,
+            }, isSelfless: false, ZoneBroadcastTarget.Players);
+        }
 
         HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
@@ -326,8 +335,10 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             SendBlob(house);
         }
 
-        // Everyone in the house would build the pet or mount from the plain entry of the patch, without its look.
+        // Everyone in the house builds the pet or mount from its custom entry, as a creature that wanders.
         if (creatureData is not null) {
+            Logger.Information("Housing: pet or mount {GidId}, template {TemplateId}, of lot {LotGid} is sent to the house with the blob, revision {Revision}.",
+                Logger.Args(change.GidId, placedTemplateId, house.LotGid, change.Revision));
             BroadcastBlob(house);
         }
     }
@@ -400,6 +411,16 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         if (HouseBanks.IsBankItem(change.Item.TemplateId)) {
             HouseBanks.Remove(SessionActor.GetZoneActor(), change.GidId);
             HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
+        }
+
+        // The move patch names the pet item's template, and the client could build the creature again as a plain object
+        // from it, so a pet or mount is moved with the blob.
+        if (HouseCreatures.IsKept(HouseCastleBlocks.ItemTemplate(change.Item.TemplateId))) {
+            Logger.Information("Housing: pet or mount {GidId}, template {TemplateId}, of lot {LotGid} moved; the house gets the blob, revision {Revision}.",
+                Logger.Args(change.GidId, change.Item.TemplateId, house.LotGid, change.Revision));
+            BroadcastBlob(house);
+
+            return;
         }
 
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHUPDATEHOUSINGOBJECT {
@@ -592,10 +613,37 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET))]
-    private void ReceiveUpdateHousingPet(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET message)
-        // A placed pet stands still for now, so where the client says it went is only logged.
-        => Logger.Debug("Housing: character {CharId} sent a housing pet update for zone {ZoneId} ({Length} bytes).",
-            Logger.Args(GetActiveWizard().CharId, message.ZoneID, ((byte[]) message.Data)?.Length ?? 0));
+    private void ReceiveUpdateHousingPet(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET message) {
+        // Each client walks the house's pets and mounts itself (HousingPetBehavior). While others are in the house it
+        // sends where they went once a second, a serialized HousingPetMovementCompressed of (object, step) pairs, and a
+        // client that is not walking them itself follows those steps (ClientHousingManager::MSG_UpdateHousingPet,
+        // 0x140f58b20, 0x141005870). The server only passes them on to the others in the house.
+        var wizard = GetActiveWizard();
+        var length = ((byte[]) message.Data)?.Length ?? 0;
+        Logger.Debug("Housing: character {CharId} sent a housing pet update for zone {ZoneId} ({Length} bytes).",
+            Logger.Args(wizard.CharId, message.ZoneID, length));
+        if (_house is null || length == 0) {
+            return;
+        }
+
+        if (length > MaxPetUpdateLength) {
+            Logger.Warning("Housing: character {CharId} sent a housing pet update of {Length} bytes, which is more than {Max}; it is not passed on.",
+                Logger.Args(wizard.CharId, length, MaxPetUpdateLength));
+
+            return;
+        }
+
+        if (!_loggedPetRelay) {
+            _loggedPetRelay = true;
+            Logger.Information("Housing: character {CharId} walks the pets of lot {LotGid}; their steps are passed on to the others in the house.",
+                Logger.Args(wizard.CharId, _house.LotGid));
+        }
+
+        ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET {
+            Data = message.Data,
+            ZoneID = message.ZoneID,
+        }, isSelfless: true, ZoneBroadcastTarget.Players);
+    }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_CHANGEBREADCRUMBREQUEST))]
     private void ReceiveChangeBreadCrumb(WIZARDHOUSING_50_PROTOCOL.MSG_CHANGEBREADCRUMBREQUEST message) {

@@ -31,16 +31,21 @@
  * var item = HouseCreatures.TakeBack(wizard, placed.TemplateId, placed.ItemGid, out var kept);
  *
  * NOTE:
+ * - A custom entry of a pet or mount template becomes a HousingPetObject (210072) or a HousingMountObject (337078, or 6
+ *   when it floats) in the client, which shows the creature's look and carries HousingPetBehavior: the client walks it
+ *   around and shows its nameplate (ClientHousingManager, 0x140f319e0). A plain entry stays a still object without a
+ *   nameplate, so pets and mounts are never sent with the add patch, whose "Item" subtype makes a plain entry.
  * - The client builds a placed pet with a ClientPetItemBehavior and a ClientPetNameBehavior and loads the entry's
  *   m_customData into the pet behavior with SerializerBinary(versionable, no flags) and property mask 0x80: the level,
  *   XP, names, ratings, happiness, the m_housingPet* colors, the original GID and the jewel. It copies the colors onto
- *   the object. A mount's data is a MountItemBehavior loaded with mask 0x10000: the original GID and the three colors
+ *   the object and packs the names into the name behavior's m_nameKeys; m_wsNameOverride is never set, so a custom
+ *   name cannot show on a placed pet. A mount's data is a MountItemBehavior loaded with mask 0x10000: the original GID and the three colors
  *   (ClientHousingManager builds the object, 0x140f32420).
  * - A pet or mount keeps its identity (Niduus, 2026-10-23): its stored document is not deleted when it is placed or
  *   put in the attic, and it is the item that comes back. Only an item whose document is gone is made anew.
  *
  * TODO:
- * - Pets wander in the real game (MSG_UPDATEHOUSINGPET, MSG_CHANGEBREADCRUMBREQUEST); here a placed pet stands still.
+ * - Pet paths (bread crumbs, MSG_CHANGEBREADCRUMBREQUEST) are not supported; pets wander freely.
  * - Check with a capture whether the attic shows a pet from its custom data.
  *
  * Created by: Claude
@@ -162,14 +167,15 @@ internal static class HouseCreatures {
     private static ClientPetItemBehavior PetData(WizClientObjectItem item) {
         var pet = PetProgress.GetBehavior(item);
         var jewel = JewelSockets.GetSocketedJewels(item).FirstOrDefault();
+        var (first, middle, last) = NameParts(item, pet);
 
         // Only the properties of mask 0x80 are sent, so only those are copied.
         return new ClientPetItemBehavior {
             m_level = pet?.m_level ?? 1,
             m_XP = pet?.m_XP ?? 0,
-            m_firstName = pet?.m_firstName ?? 0,
-            m_middleName = pet?.m_middleName ?? 0,
-            m_lastName = pet?.m_lastName ?? 0,
+            m_firstName = first,
+            m_middleName = middle,
+            m_lastName = last,
             m_hatchedTimeSecs = pet?.m_hatchedTimeSecs ?? 0,
             m_overallRating = pet?.m_overallRating ?? 0,
             m_activeRating = pet?.m_activeRating ?? 0,
@@ -180,6 +186,25 @@ internal static class HouseCreatures {
             m_housingPetOriginalGID = item.m_globalID,
             m_housingPetJewelTemplateID = jewel?.m_templateID ?? 0,
         };
+    }
+
+    // The client packs the three parts into the name keys of the placed pet's name behavior, which its nameplate
+    // shows. The pet item keeps the keys on its name behavior, and the parts on the item behavior only when it was
+    // named through PetFactory.TrySetPetName, so the keys are the fallback.
+    private static (int First, int Middle, int Last) NameParts(WizClientObjectItem item, ClientPetItemBehavior pet) {
+        var parts = (pet?.m_firstName ?? 0, pet?.m_middleName ?? 0, pet?.m_lastName ?? 0);
+        CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name);
+        if (parts == (0, 0, 0) && name is { m_nameKeys: not 0 }) {
+            parts = WizardNameBank.GetNameParts(name.m_nameKeys);
+        }
+
+        // A custom name lives only in the item's name behavior, which a placed pet never gets.
+        if (name?.m_wsNameOverride.ToString() is { Length: > 0 } custom) {
+            Logger.Information("Housing: pet {ItemId} has the custom name {Name}; a placed pet shows only its pet name keys ({NameKeys}).",
+                Logger.Args(item.m_globalID.Full, custom, name.m_nameKeys));
+        }
+
+        return parts;
     }
 
 }
