@@ -551,6 +551,76 @@ internal sealed class PvPDirector : ReceiveProtocolDispatcher, IWithTimers {
         BeginTravel(match);
     }
 
+    [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_STARTLOCALMATCH))]
+    private void ReceiveStartLocalMatch(PVP_111_PROTOCOL.MSG_STARTLOCALMATCH message) {
+        // A duel circle's duel (Niduus, 2026-10-23): the wizards stand on the circle already, so nobody confirms or
+        // travels, and nobody is sent anywhere when it ends.
+        var circle = message.Circle;
+        if (!PvPTournamentFactory.TryGetPracticeTournament(out var tournament) || !TryGetLocalMatchName(tournament, out var matchNameId)) {
+            Logger.Error("A duel circle duel cannot start: the game data has no practice tournament with a match.");
+            circle.Tell(new PVP_111_PROTOCOL.MSG_MATCHCANCELLED { Reason = PvPCancelReason.NoArena });
+
+            return;
+        }
+
+        var tournamentNameId = StringHash.Compute(tournament.m_tournamentName);
+        var teams = new List<IReadOnlyList<PvPQueueEntry>>();
+        foreach (var side in message.Teams) {
+            var team = new List<PvPQueueEntry>();
+            foreach (var charId in side) {
+                if (!_sessions.ContainsKey(charId) || !_profiles.TryGetValue(charId, out var profile) || !_playerObjects.ContainsKey(charId)
+                    || IsQueuedOrInMatch(charId) || PvPRegistry.IsHosting(charId)
+                    || !TryBuildEntry(profile, tournamentNameId, matchNameId, 0, 0, false, null, out var entry)) {
+                    Logger.Information("Duel circle: {CharId} cannot duel now (queued, in a match or not in the world).", Logger.Args(charId));
+                    circle.Tell(new PVP_111_PROTOCOL.MSG_MATCHCANCELLED { Reason = PvPCancelReason.OpponentLeft });
+
+                    return;
+                }
+
+                team.Add(entry);
+            }
+
+            teams.Add(team);
+        }
+
+        var match = new PvPMatch(++_matchSequence, teams) { State = PvPMatchState.InProgress };
+        _matches[match.Id] = match;
+        foreach (var charId in match.CharIds) {
+            PvPRegistry.SetInMatch(charId, true);
+            _matchIdByPlayer[charId] = match.Id;
+        }
+
+        var roster = match.Entries
+            .Select(entry => new PvPRosterEntry(entry.CharId, _sessions[entry.CharId], _playerObjects[entry.CharId], match.GetSideIndex(entry.CharId)))
+            .ToList();
+        circle.Tell(new ZONE_102_PROTOCOL.MSG_STARTPVPMATCH {
+            MatchId = match.Id,
+            TournamentNameId = tournamentNameId,
+            LeagueId = 0,
+            Roster = roster,
+            Rules = message.Rules
+        });
+
+        Logger.Information("Duel circle duel {MatchId}: {Sides}.", Logger.Args(match.Id,
+            string.Join(" against ", teams.Select(team => string.Join(" and ", team.Select(entry => entry.CharId))))));
+    }
+
+    // The practice tournament's first match the server has a template and level table for.
+    private static bool TryGetLocalMatchName(TournamentTemplate tournament, out uint matchNameId) {
+        foreach (var name in tournament.m_allowedMatches ?? []) {
+            var id = StringHash.Compute(name);
+            if (PvPMatchFactory.TryGetMatch(id, out var template) && PvPMatchFactory.TryGetLevelModifiers(template.m_levelModifiersListID.Full, out _)) {
+                matchNameId = id;
+
+                return true;
+            }
+        }
+
+        matchNameId = 0;
+
+        return false;
+    }
+
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_MATCHCANCELLED))]
     private void ReceiveMatchCancelled(PVP_111_PROTOCOL.MSG_MATCHCANCELLED message) {
         if (!_matches.TryGetValue(message.MatchId, out var match)) {

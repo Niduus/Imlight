@@ -53,7 +53,9 @@
  *               pad's own zone resolves its destination from its
  *               teleport table; an added pad has no teleport there, so it names its destination here.
  *   CombatSigil for a battle circle (a CombatSigilObjectInfo, made by ZoneSigilSupervisor): SigilType (the Root.wad
- *               Sigils/ name, such as CombatSigilDarkmoorMalistaireBoss) and Radius (how near a player joins).
+ *               Sigils/ name, such as CombatSigilDarkmoorMalistaireBoss) and Radius (how near a player joins). A PvP
+ *               circle (PvPSigil8Actor2Sides) is a duel circle: wizards on its two sides duel each other, and Combat
+ *               says how: Turns (the sides take turns, the PvP way, the default) or Together (both sides act at once).
  * Leave Sigil and CombatSigil out for any other object.
  *
  * Placements (Niduus, 2026-10-22: "if I have to turn it or move it, it works immediately and does NOT require another
@@ -130,6 +132,9 @@ internal static class ZoneObjects {
     internal sealed class ZoneCombatSigil {
         public string SigilType { get; set; } = "";
         public float Radius { get; set; }
+        // For a PvP circle (PvPSigil8Actor2Sides): Turns (the sides take turns, the PvP way) or Together (both sides
+        // act at once, the monster battle way). Empty: Turns.
+        public string Combat { get; set; } = "";
     }
 
     internal sealed class ZoneEncounter {
@@ -555,6 +560,10 @@ internal static class ZoneObjects {
 
         return true;
     }
+
+    /// <summary>The battle circle settings of an added battle circle, or null for the zone's own.</summary>
+    internal static ZoneCombatSigil CombatSigilOf(CoreObjectInfo info)
+        => info is not null && s_added.TryGetValue(info, out var added) ? added.Object.CombatSigil : null;
 
     /// <summary>The lit state an added sigil pad names, or null.</summary>
     internal static string LitStateOf(CoreObjectInfo info)

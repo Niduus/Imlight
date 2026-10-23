@@ -348,4 +348,19 @@ public sealed class PVP_111_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// A duel circle (a house's own, or one added in the Customs tab) asking for a duel between the wizards on its two
+    /// sides. The director answers the circle with MSG_STARTPVPMATCH, or MSG_MATCHCANCELLED when it cannot start.
+    /// </summary>
+    public sealed class MSG_STARTLOCALMATCH : IServerMessage {
+
+        public byte MessageOrder { get; } = 20;
+        public byte ServiceID { get; } = 111;
+
+        public IActorRef Circle;
+        public List<List<ulong>> Teams = [];
+        internal PvPDuelRules Rules;
+
+    }
+
 }

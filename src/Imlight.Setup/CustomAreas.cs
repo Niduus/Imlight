@@ -171,8 +171,11 @@ internal sealed class AreaCatalog {
 
     internal static readonly string[] COMBAT_SIGIL_TYPES = [
         "CombatSigil_4EnemySlots", "CombatSigil_3EnemySlots", "CombatSigil_2EnemySlots", "CombatSigil_1EnemySlot",
-        "CombatSigilDarkmoorMalistaireBoss",
+        "CombatSigilDarkmoorMalistaireBoss", PVP_SIGIL_TYPE,
     ];
+
+    /// <summary>The game's PvP circle: as a battle circle it is a duel circle, wizards on its two sides duel.</summary>
+    internal const string PVP_SIGIL_TYPE = "PvPSigil8Actor2Sides";
 
     /// <summary>
     /// A sigil pad's looks, in plain words, with the state the server sends for each (MinigameSigilStatesNew in

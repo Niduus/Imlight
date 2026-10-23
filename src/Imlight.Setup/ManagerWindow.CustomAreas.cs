@@ -468,6 +468,8 @@ internal sealed partial class ManagerWindow {
                     Field("Circle type", "The circle's look and its number of places (the game's Sigils/ name).",
                         Suggest(edit, circle, "SigilType", AreaCatalog.COMBAT_SIGIL_TYPES, "Such as CombatSigil_4EnemySlots", 360)),
                     Field("Join distance", "How near a player must be to join a battle here. 0: 600, the usual.", Number(edit, circle, "Radius", "0", 100)),
+                    Field("Duel", $"With circle type {AreaCatalog.PVP_SIGIL_TYPE} this is a duel circle: wizards who stand on its " +
+                                  "two sides for a few seconds duel each other. Choose how they fight.", DuelStyleBox(edit, circle)),
                 },
             }, COMBAT));
         }
@@ -524,6 +526,24 @@ internal sealed partial class ManagerWindow {
                 LookBox(edit, obj, sigil)),
         },
     };
+
+    // How a duel circle's wizards fight; the file keeps Combat: Turns or Together.
+    private Control DuelStyleBox(AreaEdit edit, JsonObject circle) {
+        var styles = new[] { ("Take turns (the PvP way)", "Turns"), ("Both sides at once (like a monster battle)", "Together") };
+        var now = CustomArea.Text(circle, "Combat").Trim();
+        var box = new ComboBox {
+            Width = 360, ItemsSource = styles.Select(x => x.Item1).ToList(),
+            SelectedIndex = now.Equals("Together", StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+        };
+        box.SelectionChanged += (_, _) => {
+            if (box.SelectedIndex >= 0) {
+                Set(circle, "Combat", styles[box.SelectedIndex].Item2);
+                edit.Changed();
+            }
+        };
+
+        return box;
+    }
 
     // The pad's look in plain words; the file keeps the state the server sends (LitState: Glowy, Red or Off).
     private Control LookBox(AreaEdit edit, JsonObject obj, JsonObject sigil) {

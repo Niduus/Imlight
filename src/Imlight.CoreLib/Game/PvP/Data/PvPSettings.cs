@@ -52,4 +52,21 @@ internal static class PvPSettings {
     public static bool RankedEnabled
         => ConfigurationManager.GetValue("PvP.RankedEnabled", true);
 
+    // Duel circles (Niduus, 2026-10-23): a house's own PvP circle, and a PvP battle circle added in the Customs tab,
+    // start a duel between the wizards standing on its two sides.
+    public static bool DuelCircles
+        => ConfigurationManager.GetValue("PvP.DuelCircles", true);
+
+    // A house's own duel circle takes turns (the PvP way); false: both sides act at once (the monster battle way).
+    public static bool HouseDuelTakesTurns
+        => ConfigurationManager.GetValue("PvP.HouseDuelTakesTurns", true);
+
+    // Seconds both sides must stay on the circle before the duel starts.
+    public static int DuelCircleCountdown
+        => Math.Clamp(ConfigurationManager.GetValue("PvP.DuelCircleCountdown", 5), 1, 60);
+
+    // The wizards' teleport effect plays as they are moved onto their places.
+    public static bool DuelCircleTeleportEffect
+        => ConfigurationManager.GetValue("PvP.DuelCircleTeleportEffect", true);
+
 }

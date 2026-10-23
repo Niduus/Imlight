@@ -85,7 +85,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// positions subcircles according to sigil templates and maintains combat state
 /// including team assignments, turn order, and participant status.
 /// </remarks>
-internal sealed class CombatDuelComponent(ZoneEntity entity)
+internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     : ZoneEntityComponent(entity), IComponentFactory, IWithTimers, IClientBehaviorProvider<WizardClientDuelBehavior> {
 
     private const byte PLANNING_TIME = 30;
@@ -219,6 +219,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (!_isActive) {
+            DuelCircleMove(playerObj, playerActor, playerWizard);
+        }
+
         // The roster of a PvP duel is fixed; nobody joins by walking in.
         if (!_isActive || IsPvPDuel) {
             return;
@@ -460,8 +464,10 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        if (!PvPTournamentFactory.TryGetTournament(message.TournamentNameId, out var tournament)
-            || !PvPGameTypes.TryResolve(tournament.m_pvpDuelModifiers.Select(name => (string) name), out var rules)) {
+        // A duel circle's duel brings its own rules.
+        var rules = message.Rules;
+        if (rules is null && (!PvPTournamentFactory.TryGetTournament(message.TournamentNameId, out var tournament)
+            || !PvPGameTypes.TryResolve(tournament.m_pvpDuelModifiers.Select(name => (string) name), out rules))) {
             Logger.Error("Match {MatchId} has rules the duel does not support.", Logger.Args(message.MatchId));
             CancelPvPMatch(message.MatchId, PvPCancelReason.UnsupportedRules);
 
@@ -473,8 +479,15 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         } catch (Exception ex) {
             Logger.Error("Match {MatchId} could not seat its players: {Exception}", Logger.Args(message.MatchId, ex));
             AbortPvPDuel(message.MatchId, PvPCancelReason.NoArena);
+            if (message.Rules is not null) {
+                DuelCircleFailed("the circle could not seat everyone");
+            }
 
             return;
+        }
+
+        if (message.Rules is not null) {
+            DuelCircleSeated(message.Roster);
         }
 
         ActivateSigil();

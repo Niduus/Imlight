@@ -541,6 +541,11 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public uint LeagueId;
         internal IReadOnlyList<PvPRosterEntry> Roster;
 
+        /// <summary>
+        /// The rules of a duel circle's duel; null for a match from the queue, which takes its tournament's.
+        /// </summary>
+        internal PvPDuelRules Rules;
+
     }
 
     /// <summary>
@@ -1584,6 +1589,19 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 102;
 
         public HashSet<ulong> ResetIds = [];
+
+    }
+
+    /// <summary>
+    /// A duel circle's own timer: each second of the countdown before its duel, and (Go) the duel's start once the
+    /// teleport effect has played.
+    /// </summary>
+    public sealed class MSG_DUELCIRCLETICK : IServerMessage {
+
+        public byte MessageOrder { get; } = 102;
+        public byte ServiceID { get; } = 102;
+
+        public bool Go;
 
     }
 
