@@ -167,6 +167,15 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
                 DisplayDiff = 1
             });
 
+            if (wizard.CapEnergyAtMax()) {
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETENERGYTICK {
+                    GlobalID = wizard.GameObjectID,
+                    Energy = wizard.PetOwnerBehavior.Energy,
+                    MaxEnergy = clientStats.m_energyMax,
+                    TickTime = (int) wizard.PetOwnerBehavior.LastEnergyTickEpoch
+                });
+            }
+
             return;
         }
 

@@ -488,6 +488,20 @@ public class Wizard {
         WizardCollection.UpdateCharacterPetOwnerBehavior(this);
     }
 
+    /// <summary>
+    /// Lowers the energy to the maximum when it is above it, such as after taking off gear that gave energy (Niduus,
+    /// 2026-10-23: energy always drops to the new maximum). Returns true when it was lowered.
+    /// </summary>
+    public bool CapEnergyAtMax() {
+        if (PetOwnerBehavior is null || PetOwnerBehavior.Energy <= GameStats.m_energyMax) {
+            return false;
+        }
+
+        UpdateEnergy(GameStats.m_energyMax);
+
+        return true;
+    }
+
     public void UpdateMaxMana(int newMaxMana) {
         GameStats.m_baseMana = newMaxMana;
 

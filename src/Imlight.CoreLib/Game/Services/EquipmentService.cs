@@ -224,6 +224,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         SendEquipItem(item, message.SlotName);
         SendAddEffects(effects);
         SendCardEffectChanges(wizard);
+        CapEnergy(wizard);
 
         if (RentalItems.TryGetBehavior(item, out _)) {
             TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_STARTRENTAL { ItemId = itemId });
@@ -332,6 +333,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         SendUnequipItem(slotName, slot, itemId);
         SendRemoveEffects(removedEffects);
         SendCardEffectChanges(wizard);
+        CapEnergy(wizard);
 
         if (slotObj is not null && HouseEquipment.IsHouseSlot(slotObj.SlotType)) {
             Logger.Information("{0} unequipped house item {1} from slot {2}; Home now goes to house template {3} (0 = the dorm).",
@@ -390,6 +392,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             if (removal.WasEquipped) {
                 SendUnequipItem(removal.SlotName, removal.SlotIndex, message.ItemId);
                 SendRemoveEffects(removal.RemovedEffects);
+                CapEnergy(wizard);
 
                 if (s_hidePetWhileMounted && removal.SlotType == EquipmentSlotType.Mount) {
                     SpawnPetEntity();
@@ -722,6 +725,20 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
         SendAddEffects(added);
     }
 
+    // Energy above the new maximum (gear that gave energy came off) drops to it.
+    private void CapEnergy(Wizard wizard) {
+        if (!wizard.CapEnergyAtMax()) {
+            return;
+        }
+
+        SendToSocket(new PET_9_PROTOCOL.MSG_PETENERGYTICK {
+            GlobalID = wizard.GameObjectID,
+            Energy = wizard.PetOwnerBehavior.Energy,
+            MaxEnergy = wizard.GameStats.GetClientTypeAlternative().m_energyMax,
+            TickTime = (int) wizard.PetOwnerBehavior.LastEnergyTickEpoch
+        });
+    }
+
     private void SendRemoveEffects(List<GameEffectBase> effects) {
         var charObjId = GetActiveGameObject().m_globalID;
 
@@ -951,6 +968,7 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
     private void SyncHealthAndMana(Wizard wizard, bool clampToMax = false) {
         var clientStats = wizard.GameStats.GetClientTypeAlternative();
         if (clampToMax) {
+            CapEnergy(wizard);
             if (wizard.GameStats.m_currentHitpoints > clientStats.m_baseHitpoints) {
                 wizard.GameStats.m_currentHitpoints = clientStats.m_baseHitpoints;
             }

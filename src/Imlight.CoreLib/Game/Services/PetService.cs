@@ -68,6 +68,8 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceivePostAttach(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         var wizard = GetActiveWizard();
+        // Energy above the maximum (gear that gave energy came off while away) drops to it.
+        wizard.CapEnergyAtMax();
         var petOwnerBehavior = wizard.PetOwnerBehavior;
         var clientMaxEnergy = wizard.GameStats.GetClientTypeAlternative().m_energyMax;
 
@@ -102,8 +104,9 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
 
         var tickTime = (int) (DateTimeOffset.UtcNow.ToUnixTimeSeconds() + EnergyTickIntervalInSeconds);
 
-        if (petOwnerBehavior.Energy < maxEnergy) {
-            wizard.UpdateEnergy(petOwnerBehavior.Energy + 1);
+        // Above the maximum it drops to it; below, it regains one.
+        if (petOwnerBehavior.Energy != maxEnergy) {
+            wizard.UpdateEnergy(petOwnerBehavior.Energy < maxEnergy ? petOwnerBehavior.Energy + 1 : maxEnergy);
             var tickMsg = new PET_9_PROTOCOL.MSG_PETENERGYTICK() {
                 GlobalID = wizard.GameObjectID,
                 Energy = petOwnerBehavior.Energy,
