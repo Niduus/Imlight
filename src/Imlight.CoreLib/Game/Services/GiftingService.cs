@@ -451,28 +451,4 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
-    // The promo code window's Submit button (PromoCodeEntryWindow, opened in game with .code). Codes are not set up
-    // yet: the code is logged so the log shows what the game sends, and the window is told so (Niduus, 2026-10-23).
-    [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE))]
-    private void ReceiveFulfillPromoCode(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE message) {
-        try {
-            string code = message.Code;
-            Logger.Information("Promo code: {0} entered \"{1}\" in game (Success={2} ItemList=\"{3}\" ErrorDesc=\"{4}\").",
-                Logger.Args(GetActiveWizard()?.CharId, code, message.Success, (string) message.ItemList, (string) message.ErrorDesc));
-
-            SendToSocket(new LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE {
-                Code = code,
-                Success = 0,
-                ItemList = "",
-                ErrorDesc = PromoCodesNotSetUp
-            });
-            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = PromoCodesNotSetUp, Modal = 0 });
-        }
-        catch (Exception ex) {
-            Logger.Error("Promo code: handling a code in game failed. {0}", Logger.Args(ex.Message));
-        }
-    }
-
-    internal const string PromoCodesNotSetUp = "Thanks! Codes are not set up on this server yet.";
-
 }

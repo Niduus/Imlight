@@ -644,6 +644,7 @@ internal sealed partial class ManagerWindow : Window {
             _modesCard,
             _battleCard,
             TamedDropsCard(),
+            CodesCard(),
             MemberBenefitsCard(),
             _trainersCard);
     }

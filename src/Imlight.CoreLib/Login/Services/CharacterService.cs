@@ -39,6 +39,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Codes;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
@@ -225,24 +226,24 @@ internal class CharacterService(SessionActor parentActor) : MessageService(paren
         this._characterCreationStage = message.Stage;
     }
 
-    // The Promo Code button on the character select screen (PromoCodeEntryWindow, promoCodeEntry.gui). Codes are not
-    // set up yet: the code is logged and the window is told so (Niduus, 2026-10-23).
+    // The Promo Code button on the character select screen (PromoCodeEntryWindow, promoCodeEntry.gui). A code redeemed
+    // here waits for the next wizard of the account that enters the game (Niduus, 2026-10-23).
     [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE))]
     private void ReceiveFulfillPromoCode(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE message) {
         try {
             string code = message.Code;
-            Logger.Information("Promo code: account {0} entered \"{1}\" at character select (Success={2} ItemList=\"{3}\" ErrorDesc=\"{4}\").",
-                Logger.Args(GetSocketAccount()?.Username, code, message.Success, (string) message.ItemList, (string) message.ErrorDesc));
-
+            var account = GetSocketAccount();
+            Logger.Information("Codes | Account {0} entered \"{1}\" at character select.", Logger.Args(account?.Username, code));
+            var success = PromoCodes.Redeem(account, code, null, SessionActor.ActorRef, out var answer);
             SendToSocket(new LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE {
                 Code = code,
-                Success = 0,
-                ItemList = "",
-                ErrorDesc = Game.Services.GiftingService.PromoCodesNotSetUp
+                Success = success ? 1u : 0u,
+                ItemList = success ? answer : "",
+                ErrorDesc = success ? "" : answer
             });
         }
         catch (Exception ex) {
-            Logger.Error("Promo code: handling a code at character select failed. {0}", Logger.Args(ex.Message));
+            Logger.Error("Codes | Redeeming a code at character select failed. {0}", Logger.Args(ex.Message));
         }
     }
 

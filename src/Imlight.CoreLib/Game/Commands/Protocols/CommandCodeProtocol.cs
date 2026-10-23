@@ -20,6 +20,9 @@ using System;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
+using Imlight.CoreLib.Auth;
+using Imlight.CoreLib.Game.Codes;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Commands.Protocols;
@@ -28,7 +31,8 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// `.code` opens the game's promo code window in game (Niduus, 2026-10-23: "make a .code command to bring up the
 /// code UI"). The game only opens it itself from the Promo Code button on the character select screen
 /// (WizardCharacterSelect, btnPromoCode, promoCodeEntry.gui), so in game it is asked for by file with MSG_SHOWGUI.
-/// `.code 2` to `.code 4` try the other spellings and the friend code window; `.code &lt;file&gt;.gui` tries any window.
+/// `.code HYPER` redeems a code (the Manager's Codes card makes them). `.code gui 2` to `.code gui 4` try other
+/// spellings and the friend code window; `.code gui &lt;file&gt;.gui` tries any window.
 /// </summary>
 internal class CommandCodeProtocol : CommandProtocol {
 
@@ -37,39 +41,60 @@ internal class CommandCodeProtocol : CommandProtocol {
     // 1 is the promo code window as the game names it; the rest are guesses in case the game wants the folder or
     // the window is a different one (the FriendFinder "Enter Code" window).
     private static readonly string[] s_windows = [
-        "promoCodeEntry.gui",
+        PromoCodeService.CODE_WINDOW,
         "GUI/promoCodeEntry.gui",
         "FriendCodeRequest.gui",
         "GUI/FriendCodeRequest.gui",
     ];
 
+    // Anyone may open the window and redeem codes; the window tests are for quality assurance.
     [Command("code")]
-    [Alias("codes")]
-    [AuthRequired(AuthLevel.QualityAssurance)]
+    [Alias("codes", "redeem")]
     private void CodeCommand([Remainder] string text = "") {
         text = (text ?? "").Trim();
-
-        string file;
         if (text.Length == 0) {
-            file = s_windows[0];
+            ShowWindow(s_windows[0]);
+
+            return;
         }
-        else if (int.TryParse(text, out var number) && number >= 1 && number <= s_windows.Length) {
-            file = s_windows[number - 1];
-        }
-        else if (text.EndsWith(".gui", StringComparison.OrdinalIgnoreCase)) {
-            file = text;
-        }
-        else {
-            InformSenderClient($"Use .code, or .code 1 to {s_windows.Length} to try another window, or .code <file>.gui.");
+
+        var words = text.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (words[0].Equals("gui", StringComparison.OrdinalIgnoreCase)) {
+            if (!AuthorityRequester.RequestAuthority(AuthLevel.QualityAssurance, Context.Account, "Command code gui")) {
+                InformSenderClient("You do not have permission to use this command.");
+
+                return;
+            }
+
+            var which = words.Length > 1 ? words[1].Trim() : "1";
+            if (int.TryParse(which, out var number) && number >= 1 && number <= s_windows.Length) {
+                ShowWindow(s_windows[number - 1]);
+            }
+            else if (which.EndsWith(".gui", StringComparison.OrdinalIgnoreCase)) {
+                ShowWindow(which);
+            }
+            else {
+                InformSenderClient($"Use .code gui 1 to {s_windows.Length} to try another window, or .code gui <file>.gui.");
+            }
 
             return;
         }
 
         try {
+            PromoCodes.Redeem(Context.Character?.Account ?? Context.Account, text, Context.Character, Context.SessionActor, out var answer);
+            InformSenderClient(answer);
+        }
+        catch (Exception ex) {
+            Logger.Error("Codes | Redeeming \"{0}\" with .code failed. {1}", Logger.Args(text, ex.Message));
+            InformSenderClient("Something went wrong redeeming that code. Try again.");
+        }
+    }
+
+    private void ShowWindow(string file) {
+        try {
             Context.SessionActor.Tell(new WIZARD_12_PROTOCOL.MSG_SHOWGUI { GUIFileName = file, StageIndex = 0 }, ActorRefs.NoSender);
             Logger.Information("Code: {0} asked the game to show {1}.", Logger.Args(Context.Character?.CharId, file));
-            InformSenderClient($"Asked the game to open {file}. If nothing shows, try .code 2, .code 3 or .code 4. "
-                + "The promo code window also opens from the Promo Code button on the character select screen.");
+            InformSenderClient($"Opening the code window. You can also type .code and the code, such as .code HYPER.");
         }
         catch (Exception ex) {
             Logger.Error("Code: showing {0} failed. {1}", Logger.Args(file, ex.Message));
