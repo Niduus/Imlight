@@ -1159,7 +1159,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(entry.CreateRequest(requestLocation));
 
         StartDeedZoneTimeout();
-        if (entry.Kind == HouseEntryKind.Teleport) {
+        // A door into a house's inside goes unanswered just the same (Niduus, 2026-10-23: "The house could not be prepared"
+        // after the castle's front door), so it gets the same fallback.
+        if (entry.Kind is HouseEntryKind.Teleport or HouseEntryKind.Door) {
             Timers.StartSingleTimer(HouseTeleportFallbackKey, new SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK(), HouseTeleportFallbackTime);
         }
     }
@@ -1169,7 +1171,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK))]
     private void OnHouseTeleportFallback(SERVICE_101_PROTOCOL.MSG_HOUSETELEPORT_FALLBACK _) {
-        if (_pendingHouseEntry is not { Kind: HouseEntryKind.Teleport } || _transferGate.State != ZoneTransferState.Requested) {
+        if (_pendingHouseEntry is not { Kind: HouseEntryKind.Teleport or HouseEntryKind.Door } || _transferGate.State != ZoneTransferState.Requested) {
             return;
         }
 
