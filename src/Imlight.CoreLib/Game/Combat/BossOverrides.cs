@@ -194,7 +194,7 @@ internal static class BossOverrides {
         }
 
         // Each row is laid out school by school, the every-school value set to 0. The damage, resist and pierce totals
-        // pass through CombatEffectApplicator.AsFraction, which reads anything above 1.5 as percent.
+        // are fractions, as battle reads them (CombatEffectApplicator.AsFraction).
         if (boss.DamageBySchool is not null) {
             copy.m_dmgBonusPercent = BySchoolList(s => ForAsFraction(Pick(boss.DamageBySchool, s) ?? GameValue(stats, "Damage", s)));
             copy.m_dmgBonusPercentAll = 0;
@@ -375,9 +375,9 @@ internal static class BossOverrides {
     internal static string Fingerprint(BossCheats.BossCheat cheat)
         => $"{cheat.When}|{cheat.Cast}|{cheat.Line}".ToLowerInvariant();
 
-    // 20% is sent as 0.2, and more than 150% as the percent itself, so AsFraction turns both into the same fraction.
+    // The Bosses tab's percent (20 for 20%) as the fraction battle stats use (0.2).
     private static float ForAsFraction(float percent)
-        => Math.Abs(percent) > 150f ? percent : percent / 100f;
+        => percent / 100f;
 
     /// <summary>The rows of the Bosses tab's school grid, in order, as creatures.csv and the boss files name them.</summary>
     internal static readonly string[] ROWS = ["Damage", "Resist", "IncomingBoost", "Pierce", "Critical", "Block"];

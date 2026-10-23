@@ -57,7 +57,6 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </remarks>
 internal static class CombatEffectApplicator {
 
-    private const float DAMAGE_PERCENT_MAX = 2.45f; // todo: not correct. this should be a limit function
     private const float HANGING_EFFECT_CONSUME_TIME = 1.0f;
 
     // Charms, wards, auras and other effects that sit on a participant until a spell uses or removes them.
@@ -876,18 +875,18 @@ internal static class CombatEffectApplicator {
     }
 
     /// <summary>
-    /// Gear and jewel stats are stored in percent (15 for 15%, CanonicalStatEffects multiplies them by 100 for the
-    /// game), pet talents and creatures as a fraction (0.15). A total above 1.5 can only come from percent, since no
-    /// fraction source gives that much, so it is turned back into a fraction. Before this a player with 15% resist
-    /// took no damage at all, 1 - 15 being below zero (Niduus: "it said I had immunity", 2026-10-20).
+    /// Damage, resist, pierce and accuracy stats are all fractions (0.29 for 29%): gear, jewels, pets and creatures alike,
+    /// as the "Stat added" log lines show. This used to read any total above 1.5 as percent and divide it by 100, so
+    /// The One Ring's +300% damage turned 440% into 4% and the server's Tempest did a third of what the game showed
+    /// (Niduus, 2026-10-23: "could it be because it sees the 3rd value?"). Kept as the one place that says what unit
+    /// a stat is in.
     /// </summary>
     internal static float AsFraction(float value)
-        => Math.Abs(value) > 1.5f ? value / 100f : value;
+        => value;
 
     private static float GetPercentDamageIncrease(CombatDuelSubCircle caster, string damageType) {
         var damagePercentIncrease = caster.GetStatBySchool(caster.ParticipantGameStats.m_dmgBonusPercent, damageType);
         damagePercentIncrease = AsFraction(damagePercentIncrease + caster.ParticipantGameStats.m_dmgBonusPercentAll);
-        damagePercentIncrease = Math.Min(damagePercentIncrease, DAMAGE_PERCENT_MAX);
 
         return damagePercentIncrease;
     }
