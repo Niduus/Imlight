@@ -58,6 +58,9 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </remarks>
 internal static class CombatActionResolver {
 
+    // The enemies the wizard picked for the cast being resolved (a duel resolves one cast at a time on its thread).
+    [ThreadStatic] private static List<CombatDuelSubCircle> s_picked;
+
     // One cast being resolved.
     private sealed class Cast {
         internal QueuedCombatAction Action;
@@ -87,6 +90,16 @@ internal static class CombatActionResolver {
     /// <returns>True if the spell is worth casting, otherwise false.</returns>
     internal static bool ProcessedQueuedCombatAction(QueuedCombatAction action, ref CombatAction combatAction, ref float cinematicTime,
                                                      out string notes) {
+        s_picked = action.PickedTargets;
+        try {
+            return Process(action, ref combatAction, ref cinematicTime, out notes);
+        }
+        finally {
+            s_picked = null;
+        }
+    }
+
+    private static bool Process(QueuedCombatAction action, ref CombatAction combatAction, ref float cinematicTime, out string notes) {
         var cast = new Cast {
             Action = action,
             CombatAction = combatAction,
@@ -272,8 +285,8 @@ internal static class CombatActionResolver {
     }
 
     /// <summary>
-    /// A target-count effect (Qismah's Curse and the like): its lists are for 1, 2, 3... enemies standing, the more
-    /// enemies the less each takes. It was not read before, so the spell did nothing ("not worth casting").
+    /// A target-count effect (Qismah's Curse and the like): its lists are for 1, 2, 3... enemies picked (for a
+    /// creature, standing), the more enemies the less each takes. It was not read before, so the spell did nothing ("not worth casting").
     /// </summary>
     private static void ResolveTargetCount(TargetCountSpellEffect targetCount, Cast cast, CombatDuelSubCircle selected,
                                            CombatDuelSubCircle only) {
@@ -560,11 +573,19 @@ internal static class CombatActionResolver {
                     ? [target]
                     : [.. enemies.Take(1)];
                 break;
-            // Every enemy (or friend) standing: the Fusion spells, Qismah's Curse, Scorching Scimitars and the like.
-            // These had no case either, so the spells did nothing.
-            case kEffectTarget.kMultiTargetEnemy:
-                targets = enemies;
+            // Pick-your-enemies cards (the Fusion spells, Qismah's Curse, the tier B AoEs): the enemies the wizard clicked
+            // that still stand. Before 2026-10-23 every enemy was hit, and a target-count card used the amount for every
+            // enemy standing, not for how many were picked. A creature's cast, or a pick that has all fallen, hits
+            // every enemy standing.
+            case kEffectTarget.kMultiTargetEnemy: {
+                var picked = (s_picked ?? []).Where(p => p.OccupiedTeam != caster.OccupiedTeam && p.IsAlive && p.AddedToDuel)
+                    .Distinct().ToArray();
+                targets = picked.Length > 0 ? picked
+                    : caster.IsHumanPlayer && s_picked is null && target is not null && target.OccupiedTeam != caster.OccupiedTeam
+                        && target.IsAlive ? [target]
+                    : enemies;
                 break;
+            }
             case kEffectTarget.kMultiTargetFriendly:
                 targets = friends;
                 break;

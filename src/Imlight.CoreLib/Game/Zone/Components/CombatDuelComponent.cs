@@ -2205,6 +2205,28 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
+    // The circles named by a target sent as bits, in circle order; empty when it is not a set of bits (no target is all ones).
+    private List<CombatDuelSubCircle> PickedCircles(uint raw) {
+        var circles = new List<CombatDuelSubCircle>();
+        if (raw == 0 || raw == uint.MaxValue) {
+            return circles;
+        }
+
+        for (var i = 0; i < SubCircles.Length && i < 32; i++) {
+            if ((raw & (1u << i)) == 0) {
+                continue;
+            }
+
+            if (SubCircles[i] is not { } circle) {
+                return [];
+            }
+
+            circles.Add(circle);
+        }
+
+        return (raw >> Math.Min(SubCircles.Length, 31)) == 0 ? circles : [];
+    }
+
     private void HandleAttackMove(CombatDuelSubCircle caster, int spellSelection, uint spellTarget, uint rawSpellTarget) {
         var spell = caster.GetSpellFromLastHand((byte) spellSelection);
         if (spell is null) {
@@ -2237,12 +2259,25 @@ internal sealed class CombatDuelComponent(ZoneEntity entity)
         // If the spell doesn't have a target like for AoE spells or self-heals,
         // the value will be the integer cap.
         var target = caster;
-        if (spellTarget < SubCircles.Length) {
+        // A pick-your-enemies card sends one bit per enemy picked (bit n = circle n), several bits for several
+        // enemies; one bit is the usual single target. Several bits used to be read as one circle number, so picking
+        // circles 1 and 2 (6) aimed the card at circle 6.
+        var picked = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate cardTemplate && DivideCards.IsPickCard(cardTemplate)
+            ? PickedCircles(rawSpellTarget) : [];
+        if (picked.Count > 1) {
+            target = picked[0];
+            spellTarget = (uint) target.SlotIndex;
+            Logger.Information("Duel {0} | Slot {1} | Picked {2} enemies (sent as {3}): {4}.",
+                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, picked.Count, rawSpellTarget,
+                    string.Join(", ", picked.Select(p => p.SlotIndex))));
+        }
+        else if (spellTarget < SubCircles.Length) {
             // The client sends raw sigil slots for spell targets (see GetUpFirstSigilSlot).
             target = SubCircles[spellTarget];
         }
 
-        CombatResolver.AddCombatMove(CombatMoveType.Attack, caster, target, spell);
+        CombatResolver.AddCombatMove(CombatMoveType.Attack, caster, target, spell,
+            picked.Count > 1 ? picked : target != caster ? [target] : null);
 
         // Minions are AI-driven; their telegraph comes from ResendMinionMoveSelections, not an echo.
         if (!caster.IsSummonedMinion && !caster.IsAiCreature) {

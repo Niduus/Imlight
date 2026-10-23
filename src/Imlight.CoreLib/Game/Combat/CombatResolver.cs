@@ -71,6 +71,11 @@ public class QueuedCombatAction {
     
     public CombatDuelSubCircle SpellCaster;
     public CombatDuelSubCircle SelectedTarget;
+    // The enemies a wizard clicked for a pick-your-enemies card (kMultiTargetEnemy), or null for anyone else.
+    public List<CombatDuelSubCircle> PickedTargets;
+    // The card the game is told was cast when it is not the card played (a divide card cast as its pick-your-enemies
+    // card, DivideCards). The card played stays in Spell, so it leaves the hand as usual.
+    public uint ShownTemplateId;
     public Spell Spell;
     public SpellTemplate SpellTemplate;
     // A boss cheat with an Interrupt step went off before it: the spell fizzles (CombatResolver.BossCheats.cs).
@@ -314,7 +319,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     public void AddCombatMove(CombatMoveType type,
                               CombatDuelSubCircle caster,
                               CombatDuelSubCircle target,
-                              Spell spell) {
+                              Spell spell,
+                              List<CombatDuelSubCircle> picked = null) {
         if (!IsActing(caster)) {
             Logger.Debug("Duel {0} | Slot {1} | Move dropped, the other team is acting.",
                 Logger.Args(_duel.m_duelID.Full, caster.SlotIndex));
@@ -332,6 +338,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         // Get the spell template.
         SpellTemplate spellTemplate = null;
+        uint shownAs = 0;
         if (spell is not null) {
             spellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(spell.m_templateID);
 
@@ -345,17 +352,28 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             if (spell.m_enchantment != 0 && CoreObjectFactory.GetCoreTemplate(spell.m_enchantment) is SpellTemplate enchantment) {
                 spellTemplate = CombatEnchantments.Apply(spellTemplate, enchantment, out _);
             }
+
+            // A legacy divide card casts as its pick-your-enemies version, for the server and the game alike.
+            if (caster.IsHumanPlayer && DivideCards.PickVersion(spell.m_templateID) is var (pickId, pickTemplate)) {
+                Logger.Information("Duel {0} | Slot {1} | Divide card {2} ({3}) casts as {4} ({5}).",
+                    Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, spell.m_templateID, (string) spellTemplate.m_name, pickId,
+                        (string) pickTemplate.m_name));
+                spellTemplate = pickTemplate;
+                shownAs = pickId;
+            }
         }
 
         var queuedAction = new QueuedCombatAction {
             SpellCaster = caster,
             Spell = type == CombatMoveType.Attack ? spell : null,
             SpellTemplate = spellTemplate,
-            SelectedTarget = target
+            SelectedTarget = target,
+            PickedTargets = picked,
+            ShownTemplateId = shownAs,
         };
         _queuedCombatActions.Add(queuedAction);
 
-        LogQueuedCombatAction(type, caster, target, spell);
+        LogQueuedCombatAction(type, caster, target, spell, picked);
     }
 
     /// <summary>
@@ -1274,7 +1292,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         return cinematicTime;
     }
 
-    private void LogQueuedCombatAction(CombatMoveType type, CombatDuelSubCircle caster, CombatDuelSubCircle target, Spell spell) {
+    private void LogQueuedCombatAction(CombatMoveType type, CombatDuelSubCircle caster, CombatDuelSubCircle target, Spell spell,
+                                       List<CombatDuelSubCircle> picked = null) {
         if (type == CombatMoveType.ChangeMind) {
             Logger.Debug("Duel {0} | Slot {1} | Caster changed their mind and is not casting a spell",
                 Logger.Args(_duel.m_duelID.Full, caster.SlotIndex));
@@ -1287,6 +1306,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         var spellOrPass = spell is null ? "pass" : spell.m_templateID.ToString();
         Logger.Debug("Duel {0} | Slot {1} | Caster is casting spell {2} against target {3}",
             Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, spellOrPass, targetOrSelf));
+        if (picked is { Count: > 1 }) {
+            Logger.Debug("Duel {0} | Slot {1} | Picked enemies: {2}.",
+                Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, string.Join(", ", picked.Select(p => p.SlotIndex))));
+        }
     }
 
     private void LogCombatAction(QueuedCombatAction action, CombatAction combatAction, bool spellWorthCasting, string notes) {
@@ -1361,6 +1384,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     /// <summary>The spell the game is told was cast: for a wizard casting a boss copy, its player twin (same effects).</summary>
     private static Spell ShownSpell(QueuedCombatAction action) {
+        if (action.ShownTemplateId != 0 && action.Spell is not null) {
+            return action.Spell with { m_templateID = action.ShownTemplateId, m_enchantment = 0 };
+        }
+
         if (!s_playerCastsUseNormalAnimation || action.Spell is null || action.SpellCaster is not { IsHumanPlayer: true }
             || !s_lookalikes.Value.TryGetValue(action.Spell.m_templateID, out var twin)) {
             return action.Spell;
