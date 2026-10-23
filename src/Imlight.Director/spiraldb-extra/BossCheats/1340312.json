@@ -5,8 +5,13 @@
   // Built first from blocks that were there; the new blocks used here are "this creature" (Creature, NotCreature),
   // "wait … rounds" (Wait) and "an ally's health drops" (AllyHealthBelow). Her fairies come from the game's own summon
   // spell, which picks one of the 7 Rank 14 fairies at random (1360184-1360190), so each cast is a random school.
+  // Her own page, "Fairy Queen (Rank 14)" (Niduus saved it, 2026-10-23), lists no cheats of its own and agrees with the
+  // stats above. The server takes a creature's most shadow pips from its cheat file, not from the template, so her 2
+  // are set here.
   "TemplateID": 1340312,
   "Name": "Fairy Queen (Rank 14)",
+  // Central: "Shadow Pips 2 max".
+  "ShadowPips": 2,
   "Cheats": [
     { "When": "BattleStart",
       "Casts": [ { "Spell": "Fairy Queen-Epic Summon", "DispelImmune": false }, { "Spell": "Fairy Queen-Epic Summon", "DispelImmune": false } ],
