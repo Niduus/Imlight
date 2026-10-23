@@ -649,6 +649,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // Conceding a PvP duel is the Flee button, and it counts at any time: on the other side's turn too, or
+        // outside of the planning phase (Niduus, 2026-10-23: concede did nothing).
+        if (IsPvPDuel && (CombatMoveType) message.MoveType == CombatMoveType.Flee) {
+            HandleFleeAction(caster);
+
+            return;
+        }
+
         if (!_awaitingCombatMoves) {
             Logger.Warning("Duel {0} | Slot {1} | Received combat move while not expecting it.",
                 Logger.Args(Duel.m_duelID.Full, caster.SlotIndex));
@@ -2984,6 +2992,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         // A forfeit costs the wizard nothing outside of the duel: no mana is drained and nobody is sent to a hub.
+        // A duel circle's wizard stays in the zone, so the game is told it left the battle, as after fleeing;
+        // otherwise it stayed in a battle that no longer had it (Niduus, 2026-10-23).
+        if (_isCircleDuel && session is not null) {
+            session.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT { DiedInDuel = false });
+            session.Tell(new GAME_5_PROTOCOL.MSG_ENTERSTATE { GameObjectID = participantObjId, State = (uint) NPCStates.Idle });
+        }
+
         ForgetParticipant(participantObjId);
         caster.RemoveParticipant();
 
@@ -3085,6 +3100,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         DespawnDuel();
         _isActive = false;
+        _isCircleDuel = false;
         EnactActionOnSubCircles(circle => circle.RemoveParticipant());
     }
 

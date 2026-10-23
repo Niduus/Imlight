@@ -63,6 +63,8 @@ internal sealed partial class CombatDuelComponent {
     private float _duelCircleReach;
     private int _duelCountdown = -1;
     private bool _duelCircleStarting;
+    // The running PvP duel started from this duel circle (its wizards stay in the zone when it ends).
+    private bool _isCircleDuel;
 
     private bool IsDuelCircle
         => PvPSettings.DuelCircles && _sigilTemplate is PvPCombatSigilTemplate && _combatSigilObjectInfo is not null
@@ -241,6 +243,7 @@ internal sealed partial class CombatDuelComponent {
 
         _onDuelCircle.Clear();
         _duelCircleStarting = false;
+        _isCircleDuel = true;
     }
 
     // The circle's duel has its players on their places.

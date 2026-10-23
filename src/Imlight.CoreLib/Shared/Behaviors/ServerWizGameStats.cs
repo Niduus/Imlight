@@ -237,6 +237,7 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     /// <returns></returns>
     public WizGameStats GetCombatGameStats() {
         return new WizGameStats() {
+            m_stunResistancePercent = m_stunResistancePercent,
             m_baseHitpoints = m_baseHitpoints,
             m_currentHitpoints = m_currentHitpoints,
             m_baseMana = m_baseMana,
@@ -298,6 +299,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         var baseStats = MagicLevelsConfig.GetPlayerLevelInfo(MagicSchool, Level);
 
         return new WizGameStats() {
+            // The character sheet shows it (Niduus, 2026-10-23: a friend in The One Ring showed none).
+            m_stunResistancePercent = m_stunResistancePercent,
             // We want *only* base level/magic school stats here.
             // We can't send the character game stats because the EquipmentService will broadcast the equipment effects,
             // causing each stat to duplicate.

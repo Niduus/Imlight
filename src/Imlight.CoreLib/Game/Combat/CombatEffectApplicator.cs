@@ -839,11 +839,12 @@ internal static class CombatEffectApplicator {
             // Stun Resistance (a fraction, 1.45 for 145%) is the chance to shrug the stun off; 100% or more always does.
             var stunResist = target._wizard is not null ? target.ParticipantGameStats?.m_stunResistancePercent ?? 0f : 0f;
             if (stunResist > 0 && Random.Shared.NextDouble() < stunResist) {
-                Logger.Debug("{0} resisted a stun (Stun Resistance {1:P0}).", Logger.Args(target.SlotName, stunResist));
+                Logger.Information("{0} resisted a stun (Stun Resistance {1:P0}).", Logger.Args(target.SlotName, stunResist));
 
                 continue;
             }
 
+            Logger.Information("Stun on {0}: Stun Resistance {1:P0}, not resisted.", Logger.Args(target.SlotName, stunResist));
             if (target.TryStun()) {
                 // A stun of more than one round (m_effectParam) keeps the target stunned for that long.
                 if (effect.m_effectParam > 1) {
