@@ -48,6 +48,8 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 internal sealed partial class CombatDuelComponent {
 
     private const string DUEL_CIRCLE_TIMER_KEY = "DuelCircle";
+    private const string DUEL_CIRCLE_SHOW_KEY = "DuelCircleShow";
+    private static readonly TimeSpan s_showAgainDelay = TimeSpan.FromMilliseconds(500);
     private const string TOGETHER = "Together";
     // How far past the outermost place a wizard still counts as standing on the circle.
     private const float DUEL_CIRCLE_MARGIN = 60f;
@@ -88,8 +90,8 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        var side = SideStoodOn(playerObj);
-        if (side is null) {
+        var standing = SideStoodOn(playerObj);
+        if (standing is null) {
             _mustStepOff.Remove(playerActor);
             if (_onDuelCircle.Remove(playerActor, out var left)) {
                 TellDuelCircle($"{left.Name} stepped off the duel circle.");
@@ -103,17 +105,24 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        if (_onDuelCircle.TryGetValue(playerActor, out var was) && was.Side == side) {
+        // Whoever steps on is given a side in turn, wherever they stand (Niduus, 2026-10-23): the first to team A
+        // (blue), the next to team B (red), and so on, filling the slots in order, until the circle is full or the
+        // countdown ends.
+        if (_onDuelCircle.ContainsKey(playerActor)) {
             return;
         }
 
-        if (_onDuelCircle.Values.Count(w => w.Side == side) >= MAX_PER_SIDE) {
+        var blueCount = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Player);
+        var redCount = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Monster);
+        if (blueCount >= MAX_PER_SIDE && redCount >= MAX_PER_SIDE) {
             return;
         }
+
+        CombatTeam? side = blueCount <= redCount ? CombatTeam.Player : CombatTeam.Monster;
 
         var name = playerWizard.PlayerNameBehavior?.GetWizardName() ?? "A wizard";
         _onDuelCircle[playerActor] = new DuelCircleWizard(playerWizard.CharId, name, side.Value, playerObj.m_globalID);
-        TellDuelCircle($"{name} stands on the {(side == CombatTeam.Player ? "blue" : "red")} side of the duel circle.");
+        TellDuelCircle($"{name} joins team {(side == CombatTeam.Player ? "A (blue)" : "B (red)")} of the duel circle.");
         DuelCircleChanged();
     }
 
@@ -159,6 +168,15 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
+        // A full circle starts at once.
+        if (blue >= MAX_PER_SIDE && red >= MAX_PER_SIDE) {
+            TellDuelCircle($"Duel: {blue} against {red}. The circle is full; it starts now.");
+            _duelCountdown = 1;
+            Timers.StartSingleTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.Zero);
+
+            return;
+        }
+
         // A new wizard starts the count again, so everyone sees how long is left.
         _duelCountdown = PvPSettings.DuelCircleCountdown;
         var style = DuelCircleRules.AlternateTurns ? "taking turns" : "both sides at once";
@@ -166,8 +184,22 @@ internal sealed partial class CombatDuelComponent {
         Timers.StartPeriodicTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.FromSeconds(1));
     }
 
+    private void ShowDuelCircle() {
+        if (IsDuelCircle && _renderComponent is { IsEnabled: false }) {
+            _renderComponent.Enable();
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK))]
     private void ReceiveDuelCircleTick(ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK message) {
+        if (message.Show) {
+            if (!_isActive) {
+                ShowDuelCircle();
+            }
+
+            return;
+        }
+
         if (message.Go) {
             AskForCircleDuel();
 

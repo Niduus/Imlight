@@ -30,7 +30,8 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// `.stats` (Niduus, 2026-10-23: "make sure the server is getting it as well and gear is always as said on the
 /// client"): the damage, resist, pierce and accuracy the server fights with, school by school, to hold next to the
-/// game's own Stats page. No diminishing returns: these are the plain sums of gear, jewels and pet.
+/// game's own Stats page. No diminishing returns: these are the plain sums of gear, jewels and pet. `.stats damage`
+/// turns the per-hit damage lines on or off.
 /// </summary>
 internal class CommandStatsProtocol : CommandProtocol {
 
@@ -40,7 +41,17 @@ internal class CommandStatsProtocol : CommandProtocol {
 
     [Command("stats")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void StatsCommand() {
+    private void StatsCommand(string what = "") {
+        // `.stats damage` turns the "[enemy]: dealt [damage]" lines after each hit on or off; they start off.
+        if (what.Equals("damage", StringComparison.OrdinalIgnoreCase)) {
+            var charId = Context.Character.CharId;
+            var on = CombatEffectApplicator.DamageLinesOn.TryAdd(charId, 0) || !CombatEffectApplicator.DamageLinesOn.TryRemove(charId, out _);
+            InformSenderClient(on ? "Damage lines on: after each hit you see what it dealt to each enemy."
+                : "Damage lines off.");
+
+            return;
+        }
+
         var stats = Context.Character.GameStats;
         if (stats is null) {
             InformSenderClient("No stats found.");

@@ -59,12 +59,15 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
     private readonly HashSet<string> _chainedEvents = [];
     private readonly HashSet<string> _cinematicEndsPosted = [];
     private readonly HashSet<string> _unenforceableTriggers = [];
+    // EnterZone triggers a player was refused on entry, checked again once the quest has updated its goals.
+    private readonly Dictionary<IActorRef, HashSet<string>> _refusedOnEntry = [];
 
     // The objects that enabled triggers own (walls, gates, collision), by trigger name.
     private readonly Dictionary<string, (IActorRef Actor, CoreObject Object, string Tag)> _triggerObjects = new(StringComparer.OrdinalIgnoreCase);
 
     // The activate event a trigger lists to start the zone with it enabled.
     private const string START_ZONE_EVENT = "StartZone";
+    private const string START_ZONE_ENTER_EVENT = "EnterZone";
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS))]
     public override void ReceiveZoneLoadResults(ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS message) {
@@ -117,8 +120,17 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         // (their results are independent), but paired teleporter triggers must not both win:
         // only one ResTeleport trigger may execute (see PickTeleportTrigger).
         var passing = new List<(Trigger Trigger, IActorRef Actor)>();
+        HashSet<string> retry = null;
+        if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.Remove(message.PlayerActor, out retry))) {
+            return;
+        }
+
         foreach (var (trigger, triggerActor) in _orderedTriggers) {
             if (trigger.m_fireEvents is null || !trigger.m_fireEvents.Any(x => x == message.EventName)) {
+                continue;
+            }
+
+            if (retry is not null && !retry.Contains(trigger.m_triggerName)) {
                 continue;
             }
 
@@ -155,11 +167,24 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
                     Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met.",
                         Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name));
                 }
+                else if (retry is null && message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
+                    if (!_refusedOnEntry.TryGetValue(message.PlayerActor, out var refused)) {
+                        _refusedOnEntry[message.PlayerActor] = refused = [];
+                    }
+                    refused.Add(trigger.m_triggerName);
+                }
 
                 continue;
             }
 
             passing.Add((trigger, triggerActor));
+        }
+
+        if (retry is not null) {
+            foreach (var (trigger, _) in passing) {
+                Logger.Information("Zone {0}: trigger {1} fires after the quest updated on entry.",
+                    Logger.Args(Zone.ZonePath, trigger.m_triggerName));
+            }
         }
 
         var teleportWinner = PickTeleportTrigger(passing, message);
@@ -187,6 +212,10 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         }
 
         // Triggers that fired saw the state from before this event; now the event's own enables and disables land.
+        if (retry is not null) {
+            return;
+        }
+
         ApplyTriggerStateEvents(message.EventName, message.PlayerActor, message.PlayerGameObject);
     }
 
@@ -398,7 +427,7 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
 
     // Events raised before object and kill events existed: zone entry, volumes and chained events.
     private bool IsLongRaisedEvent(string eventName)
-        => eventName == "EnterZone"
+        => eventName == START_ZONE_ENTER_EVENT
         || eventName.StartsWith("Enter_", StringComparison.Ordinal)
         || eventName.StartsWith("Exit_", StringComparison.Ordinal)
         || _chainedEvents.Contains(eventName);

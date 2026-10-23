@@ -156,6 +156,8 @@ public abstract class ZoneEntityComponent(ZoneEntity entity) : IZoneComponent {
     public virtual void OnEnabled() { }
     public virtual void OnDisabled() { }
 
+    internal bool IsEnabled => _enabled;
+
     public void Enable() {
         _enabled = true;
         OnEnabled();

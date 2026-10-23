@@ -488,8 +488,13 @@ internal static class CombatEffectApplicator {
 
     // The game works out its own damage number with its diminishing returns, so it can show less than the server
     // dealt. The caster gets the real amount per enemy in chat (Niduus, 2026-10-23).
+    // The lines are off until a wizard turns them on with `.stats damage` (Niduus, 2026-10-23: "make the power test be
+    // command toggle, have it off for now").
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> DamageLinesOn = new();
+
     private static void TellRealDamage(CombatDuelSubCircle caster, List<string> hits) {
-        if (hits.Count == 0 || caster is not { IsHumanPlayer: true, ParticipantActor: not null }) {
+        if (hits.Count == 0 || caster is not { IsHumanPlayer: true, ParticipantActor: not null }
+            || caster._wizard is null || !DamageLinesOn.ContainsKey(caster._wizard.CharId)) {
             return;
         }
 
@@ -817,6 +822,12 @@ internal static class CombatEffectApplicator {
         caster._duelActor.SummonMinion((uint) effect.m_effectParam, caster);
     }
 
+    /// <summary>
+    /// The cast's stun resist roll (0 to 99), sent to the game in its CombatAction (m_stunResistRoll) so the game
+    /// shows the same resist the server decided; null rolls per target.
+    /// </summary>
+    [ThreadStatic] internal static byte? StunResistRoll;
+
     private static float ApplyStunEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {
         var cinematicTime = 0.0f;
 
@@ -838,7 +849,8 @@ internal static class CombatEffectApplicator {
 
             // Stun Resistance (a fraction, 1.45 for 145%) is the chance to shrug the stun off; 100% or more always does.
             var stunResist = target._wizard is not null ? target.ParticipantGameStats?.m_stunResistancePercent ?? 0f : 0f;
-            if (stunResist > 0 && Random.Shared.NextDouble() < stunResist) {
+            var roll = StunResistRoll is { } castRoll ? castRoll / 100.0 : Random.Shared.NextDouble();
+            if (stunResist > 0 && roll < stunResist) {
                 Logger.Information("{0} resisted a stun (Stun Resistance {1:P0}).", Logger.Args(target.ParticipantObject?.m_debugName ?? $"slot {target.SlotIndex}", stunResist));
 
                 continue;

@@ -417,6 +417,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // Get the sigil template.
         _sigilTemplate = (CombatSigilTemplate) SigilFactory.GetSigilTemplate(_combatSigilObjectInfo.m_sigilType);
+
+        // A duel circle is always on the floor, not only during a duel (Niduus, 2026-10-23).
+        ShowDuelCircle();
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL))]
@@ -503,7 +506,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     private void ActivateSigil() {
-        _renderComponent.Enable();
+        // A duel circle is on the floor already.
+        if (!_renderComponent.IsEnabled) {
+            _renderComponent.Enable();
+        }
 
         // Broadcast MSG_DUEL to inform all clients a duel is now active.
         // The live server sends this to enable 3D combat targeting.
@@ -974,6 +980,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         _renderComponent?.Disable();
         Entity.DespawnObject();
+        if (IsDuelCircle) {
+            // Back on the floor once the game has let the battle's circle go.
+            Timers.StartSingleTimer(DUEL_CIRCLE_SHOW_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK { Show = true }, s_showAgainDelay);
+        }
+
         _entitiesInRange.Clear();
         _groupReservations.Clear();
         EndEncounterBattle();

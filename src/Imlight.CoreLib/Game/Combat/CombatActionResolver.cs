@@ -128,6 +128,11 @@ internal static class CombatActionResolver {
             }
         }
 
+        // One stun resist roll per cast, the server's and the game's (Niduus, 2026-10-23: a friend at 100% Stun
+        // Resistance resisted every stun on the server but the game still showed him stunned).
+        combatAction.m_stunResistRoll = (byte) Random.Shared.Next(0, 100);
+        CombatEffectApplicator.StunResistRoll = combatAction.m_stunResistRoll;
+
         foreach (var spellEffect in topEffects) {
             // A broken effect must not take the rest of the spell (or the round) with it: exceptions in the duel's
             // actor vanish, and the round then never plays.
@@ -142,6 +147,7 @@ internal static class CombatActionResolver {
             }
         }
 
+        CombatEffectApplicator.StunResistRoll = null;
         cinematicTime += cast.CinematicTime;
 
         if (cast.CritSlots.Count > 0) {

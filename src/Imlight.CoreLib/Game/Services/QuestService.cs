@@ -168,6 +168,15 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         // Exiting the previous zone may have triggered waypoint goals for quests.
         CheckForWaypointGoalZoneExit(wizard);
+
+        // The zone checked its EnterZone triggers before these goals moved on; triggers waiting on the next goal
+        // (Old Judd in Caretaker's Tower needs "Goal 2" active) get another look now.
+        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "EnterZone",
+            PlayerActor = SessionActor.ActorRef,
+            PlayerGameObject = GetActiveGameObject(),
+            RetryRefused = true,
+        });
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_SENDQUESTOFFERCACHEOPTION))]

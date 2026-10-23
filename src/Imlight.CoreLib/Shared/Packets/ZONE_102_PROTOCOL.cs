@@ -614,6 +614,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// </summary>
         public IReadOnlyList<string> Adjectives;
 
+        /// <summary>
+        /// Checks again only the EnterZone triggers this player was refused on entry: the quest updates its
+        /// enter-the-zone goals after the zone has already checked them (Caretaker's Tower, Old Judd).
+        /// </summary>
+        public bool RetryRefused;
+
     }
 
     /// <summary>
@@ -1602,6 +1608,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 102;
 
         public bool Go;
+
+        // Shows the duel circle again after a duel here.
+        public bool Show;
 
     }
 

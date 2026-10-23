@@ -440,6 +440,14 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
     private void ReceiveTriggerPost(ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
         Logger.Verbose("Zone {ZoneName} received post event {EventName}.", Logger.Args(ZoneName, message.EventName));
 
+        if (message.RetryRefused) {
+            if (message.PlayerActor is not null && _players.Contains(message.PlayerActor)) {
+                _triggerSupervisor.Tell(message);
+            }
+
+            return;
+        }
+
         // A result list that waited can outlive its player; once the player has left, the event is the zone's own.
         if (message.PlayerActor is not null && !_players.Contains(message.PlayerActor)) {
             message = new ZONE_102_PROTOCOL.MSG_POSTEVENT {
