@@ -40,6 +40,9 @@
  * - Only a destination in the same house is used. The client's other zone messages (MSG_REQUESTTELEPORTERHOUSINGZONE,
  *   MSG_REQUESTTELEPORTERHOUSINGCONFIRM) are for teleporters into another house of the residence and for Castle Tours.
  * - A pet teleporter only keeps its destination: the pets that use it walk in the client.
+ * - The client picks the destination before the teleporter is placed: placing one without a destination starts the
+ *   targeting instead (the PlaceObject handler, 0x140f44849), so MSG_SETHOUSETELEPORTER names the backpack item. The
+ *   destination waits here (Remember) until that item is placed, and the client places it again with its destination.
  *
  * TODO:
  * - A destination in the other house of a residence (exterior to interior) is not used yet.
@@ -87,6 +90,9 @@ internal static class HouseTeleporters {
 
     // The teleporter each character stands on, and whether they have to step off every teleporter first.
     private static readonly ConcurrentDictionary<ulong, (uint GidId, bool Blocked)> s_standing = new();
+
+    // The destinations picked for teleporters still in a backpack, by item global id: the lot and the custom data.
+    private static readonly ConcurrentDictionary<ulong, (ulong LotGid, byte[] Data)> s_pending = new();
 
     /// <summary>
     /// Whether a template is a teleporter.
@@ -195,6 +201,9 @@ internal static class HouseTeleporters {
 
         s_standing[charId] = (pad.GidId, false);
         if (pad.IsPet || pad.TargetLot == 0) {
+            Logger.Information("Teleporter: character {CharId} stepped onto house object {GidId} of lot {LotGid}, a {Kind}; nobody is sent.",
+                Logger.Args(charId, pad.GidId, house.LotGid, pad.IsPet ? "pet teleporter" : "teleporter without a destination"));
+
             return null;
         }
 
@@ -210,6 +219,40 @@ internal static class HouseTeleporters {
 
         return pad;
     }
+
+    /// <summary>
+    /// Keeps the destination picked for a teleporter that is still in the backpack, until it is placed.
+    /// </summary>
+    /// <param name="itemGid">The global id of the backpack item.</param>
+    /// <param name="lotGid">The house the destination is in.</param>
+    /// <param name="data">The custom data from <see cref="TryLink"/>.</param>
+    internal static void Remember(ulong itemGid, ulong lotGid, byte[] data) => s_pending[itemGid] = (lotGid, data);
+
+    /// <summary>
+    /// Finds the destination picked for a backpack item that is being placed.
+    /// </summary>
+    /// <param name="itemGid">The global id of the backpack item.</param>
+    /// <param name="lotGid">The house it is placed in.</param>
+    /// <returns>The custom data, or <c>null</c> when no destination in that house was picked.</returns>
+    internal static byte[] PendingFor(ulong itemGid, ulong lotGid) {
+        if (!s_pending.TryGetValue(itemGid, out var pending)) {
+            return null;
+        }
+
+        if (pending.LotGid != lotGid) {
+            Logger.Information("Teleporter: item {ItemGid} has a destination in lot {TargetLot} but is placed in lot {LotGid}; it is not used.",
+                Logger.Args(itemGid, pending.LotGid, lotGid));
+
+            return null;
+        }
+
+        return pending.Data;
+    }
+
+    /// <summary>
+    /// Forgets the destination picked for a backpack item, once it is placed with it.
+    /// </summary>
+    internal static void ForgetPending(ulong itemGid) => s_pending.TryRemove(itemGid, out _);
 
     /// <summary>
     /// Forgets where a character stands, when they leave the house.

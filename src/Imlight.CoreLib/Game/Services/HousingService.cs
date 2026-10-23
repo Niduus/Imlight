@@ -199,6 +199,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
+        // A teleporter whose destination was picked before it was placed takes it along.
+        var teleporterData = HouseTeleporters.IsTeleporter(templateId, out _) ? HouseTeleporters.PendingFor(item.m_globalID, house.LotGid) : null;
         var placed = new PlacedItem {
             ItemGid = item.m_globalID,
             TemplateId = templateId,
@@ -206,6 +208,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             Y = message.LocY,
             Z = message.LocZ,
             Yaw = message.Yaw,
+            Custom = PlacedItem.EncodeCustom(teleporterData),
         }.Normalize();
         if (placed is null) {
             HandleForgedRequest($"place item {message.ObjectID} at a position that is not valid");
@@ -265,8 +268,15 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         DeleteStoredItem(wizard.CharId, itemId);
 
-        // The add patch makes a plain entry, and the client takes vault patches only for a custom one.
-        if (HouseVaults.KindOf(templateId) != VaultKind.None) {
+        // The add patch makes a plain entry, and the client takes vault patches only for a custom one. A teleporter
+        // with a destination is a custom entry too, so the blob carries its destination.
+        if (teleporterData is not null) {
+            HouseTeleporters.ForgetPending(itemId);
+            Logger.Information("Teleporter: item {ItemGid} of character {CharId} is placed as house object {GidId} of lot {LotGid} with its destination.",
+                Logger.Args(itemId, wizard.CharId, change.GidId, house.LotGid));
+        }
+
+        if (HouseVaults.KindOf(templateId) != VaultKind.None || teleporterData is not null) {
             SendBlob(house);
         }
     }
@@ -871,14 +881,11 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        // The targeting names the teleporter by the global id of the backpack item it was placed from, not by its
-        // housing object GID as the music window does, so both are looked up.
+        // The targeting names the teleporter by the global id of the backpack item: a new teleporter picks its
+        // destination before it is placed. A placed one is looked up by the item it came from or by its housing GID.
         if (!house.TryFindByItemGid(message.ObjectID, out var current, out _)
             && !house.TryFindByGid(message.ObjectID, out current, out _)) {
-            // The targeting can be started in one house of a residence and finished in the other, which is not used yet.
-            Logger.Information("Teleporter: object {ObjectGid} is not an object of lot {LotGid}; its destination is not set.",
-                Logger.Args(message.ObjectID, house.LotGid));
-            InformGameClient("A teleporter can only send to a spot in its own house.");
+            SetBackpackTeleporter(house, message);
 
             return;
         }
@@ -889,21 +896,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        if (!HouseTeleporters.IsTeleporter(current.TemplateId, out var isPet)) {
-            HandleForgedRequest($"set the destination of object {message.ObjectID}, template {current.TemplateId}, which is not a teleporter");
-
-            return;
-        }
-
-        if (new PlacedItem { TemplateId = current.TemplateId, X = message.LocX, Y = message.LocY, Z = message.LocZ, Yaw = message.Yaw }.Normalize() is null) {
-            HandleForgedRequest($"set the destination of teleporter {message.ObjectID} to a position that is not valid");
-
-            return;
-        }
-
-        if (!HouseTeleporters.TryLink(house, message.LocX, message.LocY, message.LocZ, message.Yaw, out var data)) {
-            InformGameClient("The teleporter could not be set.");
-
+        if (!TryLinkTeleporter(house, message, current.TemplateId, out var isPet, out var data)) {
             return;
         }
 
@@ -929,6 +922,56 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         // The client has a handler for the same message, which sets the destination on the teleporter it shows.
         SendToSocket(message);
+    }
+
+    // A teleporter in the backpack keeps its destination until it is placed. The echo sets the destination on the
+    // client's item (0x140f4e910), so the client's next placement of it is a plain MSG_PLACEHOUSINGOBJECT.
+    private void SetBackpackTeleporter(HouseState house, WIZARDHOUSING_50_PROTOCOL.MSG_SETHOUSETELEPORTER message) {
+        var wizard = GetActiveWizard();
+        var item = wizard.InventoryBehavior.GetItem(message.ObjectID);
+        if (item is null) {
+            // The targeting can be started in one house of a residence and finished in the other, which is not used yet.
+            Logger.Information("Teleporter: object {ObjectGid} is neither an object of lot {LotGid} nor in the backpack of character {CharId}; its destination is not set.",
+                Logger.Args(message.ObjectID, house.LotGid, wizard.CharId));
+            InformGameClient("A teleporter can only send to a spot in its own house.");
+
+            return;
+        }
+
+        var templateId = (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+        if (!TryLinkTeleporter(house, message, templateId, out var isPet, out var data)) {
+            return;
+        }
+
+        HouseTeleporters.Remember(item.m_globalID, house.LotGid, data);
+        Logger.Information("Teleporter: {Kind} {TemplateId} (backpack item {ObjectGid}) of character {CharId} will send to {X}, {Y}, {Z} in lot {LotGid} once it is placed.",
+            Logger.Args(isPet ? "pet teleporter" : "teleporter", templateId, message.ObjectID, wizard.CharId,
+                message.LocX, message.LocY, message.LocZ, house.LotGid));
+        SendToSocket(message);
+    }
+
+    private bool TryLinkTeleporter(HouseState house, WIZARDHOUSING_50_PROTOCOL.MSG_SETHOUSETELEPORTER message, uint templateId,
+        out bool isPet, out byte[] data) {
+        data = [];
+        if (!HouseTeleporters.IsTeleporter(templateId, out isPet)) {
+            HandleForgedRequest($"set the destination of object {message.ObjectID}, template {templateId}, which is not a teleporter");
+
+            return false;
+        }
+
+        if (new PlacedItem { TemplateId = templateId, X = message.LocX, Y = message.LocY, Z = message.LocZ, Yaw = message.Yaw }.Normalize() is null) {
+            HandleForgedRequest($"set the destination of teleporter {message.ObjectID} to a position that is not valid");
+
+            return false;
+        }
+
+        if (!HouseTeleporters.TryLink(house, message.LocX, message.LocY, message.LocZ, message.Yaw, out data)) {
+            InformGameClient("The teleporter could not be set.");
+
+            return false;
+        }
+
+        return true;
     }
 
     private void TeleportInHouse(Wizard wizard, Vector3 target, float yaw) {
