@@ -401,16 +401,6 @@ internal sealed partial class CombatDuelComponent {
             }
         });
 
-        // A wizard defeated in the duel: the game keeps them "defeated", with no spellbook or buttons, even in the
-        // next duel (Niduus, 2026-10-23). After a lost monster battle the trip to the hub resets that; here the
-        // wizard reloads the zone on the spot they stand on.
-        var defeated = new List<(IActorRef Session, Wizard Wizard)>();
-        EnactActionOnSubCircles(circle => {
-            if (circle.IsHumanPlayer && !circle.IsAlive && circle.ParticipantActor is not null && circle._wizard is { } wizard) {
-                defeated.Add((circle.ParticipantActor, wizard));
-            }
-        });
-
         _pvp.TryFinish();
         // As after a monster battle: the victory phase, then the end.
         Duel.m_duelPhase = kDuelPhase.kPhase_Victory;
@@ -422,22 +412,6 @@ internal sealed partial class CombatDuelComponent {
         ReportPvPDuelEnded(winningTeam);
         foreach (var charId in _circleHealth.Keys.ToList()) {
             RestoreCircleHealth(charId);
-        }
-
-        foreach (var (session, wizard) in defeated) {
-            // A house is entered by its lot; reloading one here could land in the wizard's own house instead.
-            if (wizard.AttachedLotGid != 0 || string.IsNullOrEmpty(wizard.Zone)) {
-                continue;
-            }
-
-            Logger.Information("Duel circle {0}: {1} was defeated and reloads the zone where they stand.",
-                Logger.Args(SigilId, wizard.PlayerNameBehavior?.GetWizardName()));
-            session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-                DestinationZone = wizard.Zone,
-                DestinationLocation = Shared.Resources.Util.GetCompactStringFromVector(wizard.Location, wizard.Orientation),
-                SendToClient = true,
-                ForceReload = true,
-            });
         }
 
         DespawnDuel();
