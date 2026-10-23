@@ -106,14 +106,27 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        Logger.Information("Shop buy: item {0} (ShopID {1}) from NPC {2}, quantity {3}, currency {4}, fixed price {5}.",
+            Logger.Args(itemTemplateID, message.ShopID, message.npcGlobalID, message.quantity, message.CurrencyType, vendorComponent.FixedPrice));
+
+        // A recipe shop's window (Doctor Purreau) buys a recipe. There is no crafting, so the buyer gets what the
+        // recipe makes: the elixir, snack or furniture (Niduus, 2026-10-23).
+        if (CoreObjectFactory.GetCoreTemplate(itemTemplateID) is RecipeTemplate recipe) {
+            var madeId = (uint) recipe.m_itemID;
+            if (madeId == 0) {
+                Logger.Warning("Shop buy: recipe {0} makes no item.", Logger.Args(itemTemplateID));
+                SendShopDenyMessage();
+
+                return;
+            }
+
+            Logger.Information("Shop buy: recipe {0} ({1}) gives item {2}.", Logger.Args(itemTemplateID, (string) recipe.m_recipeName, madeId));
+            itemTemplateID = madeId;
+        }
+
         var playerWizard = GetActiveWizard();
         var template = CoreObjectFactory.GetCoreTemplate(itemTemplateID) as WizItemTemplate;
         var isPet = PetFactory.IsPetTemplate(itemTemplateID);
-        // A window that shows crowns prices asks with currency 1; a fixed price seller still takes its gold price.
-        Logger.Information("Shop buy: item {0} from NPC {1}, quantity {2}, currency {3}, fixed price {4}.",
-            Logger.Args(itemTemplateID, message.npcGlobalID, message.quantity, message.CurrencyType, vendorComponent.FixedPrice));
-        // The window takes the crowns balance from every answer while it shows crowns prices, so it is sent again.
-        var credits = vendorComponent.ShopCredits;
 
         // Snacks go into the snack bag and reagents into the reagent bag, not the backpack (Hao and the house sellers).
         if (template is PetSnackItemTemplate or ReagentItemTemplate) {
@@ -125,7 +138,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         if (BadgeGate.Blocks(template?.m_purchaseRequirements, itemTemplateID, SessionActor.ActorRef, GetActiveGameObject(), playerWizard, SessionActor.GetZoneActor())) {
             Logger.Warning("{0} tried to buy item {1} without the badge it requires.",
                 Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
-            SendShopDenyMessage(credits);
+            SendShopDenyMessage();
 
             return;
         }
@@ -134,7 +147,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         if (RentalItems.TryGetRentalTemplate(template, out var rentalTemplate) && RentalItems.OwnsType(playerWizard, rentalTemplate)) {
             Logger.Warning("{0} tried to buy rental {1} while owning a rental of the same type.",
                 Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
-            SendShopDenyMessage(credits);
+            SendShopDenyMessage();
 
             return;
         }
@@ -142,7 +155,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         WizClientObjectItem item;
         if (isPet) {
             if (!TryCreatePurchasedPet(playerWizard, template, message, out item)) {
-                SendShopDenyMessage(credits);
+                SendShopDenyMessage();
 
                 return;
             }
@@ -156,7 +169,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold < goldCost) {
-            SendShopDenyMessage(credits);
+            SendShopDenyMessage();
 
             return;
         }
@@ -179,12 +192,12 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         if (bought == 0) {
-            SendShopDenyMessage(credits);
+            SendShopDenyMessage();
 
             return;
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Credits = credits });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
         if (bought < copies) {
             InformGameClient($"Bought {bought} of {copies}: not enough gold or room for the rest.");
         }
@@ -600,11 +613,11 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
     private static bool IsPetLayerDye(int dye, int currentDye, int templateColorCount)
         => dye == currentDye || (templateColorCount > 1 && dye < templateColorCount);
 
-    private void SendShopDenyMessage(int credits = 0) {
+    private void SendShopDenyMessage() {
         var shopDenyMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM {
             Failure = 1,
             WebFailure = 0,
-            Credits = credits
+            Credits = 0
         };
         SendToSocket(shopDenyMsg);
     }

@@ -41,6 +41,7 @@ using System.Linq;
 using System.Text.Json;
 using Akka.Actor;
 using Imcodec.Cryptography;
+using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -74,6 +75,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     // The shop's kind, which picks the game's shop window (from the game's shop keepers: 0 equipment, 1 furniture,
     // 2 reagents, 3 recipes, 5 pet snacks). The robe shop window opened for every shop while this was left at 0.
     private int _furnitureShop = 0;
+    private const int RECIPE_SHOP = 3;
     private bool _csrTestShop = false;
     // Abner's lectern shop sells furniture, so it is offered as a housing shop (an equipment shop does not list it).
     private bool _housingShop;
@@ -83,8 +85,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     /// <summary>The price of everything this NPC sells, or null for the items' own prices.</summary>
     public int? FixedPrice { get; private set; }
 
-    /// <summary>The crowns the shop window shows, for a seller whose items have crowns prices only (HouseVendors); 0 otherwise.</summary>
-    public int ShopCredits { get; private set; }
+    // A recipe shop's recipes by name (WizShoppingBehavior.m_recipeList): the recipe window lists these, not m_shopList.
+    private List<ByteString> _recipeList = [];
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has an inventory in Dragon database,
@@ -102,7 +104,6 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _inventory = ShopOrder.Alphabetical(stock.Items.Select(id => new GID((ulong) id)));
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
-            ShopCredits = HouseVendors.ShopCreditsFor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId);
             _furnitureShop = stock.Window switch {
                 HouseVendors.ShopWindow.Reagent => 2,
                 HouseVendors.ShopWindow.Jewel => 4,
@@ -115,13 +116,20 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 _furnitureShop = look.m_furnitureShop != 0 ? look.m_furnitureShop : _furnitureShop;
                 _csrTestShop = look.m_CSRTestShop;
             }
-            else if (Entity.Template?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault() is { } own
-                     && !string.IsNullOrWhiteSpace(own.m_shopTitle)) {
-                // An equipment window keeps the seller's own title (Doctor Purreau: "Purreau's Potions and More").
-                _shopTitle = own.m_shopTitle;
+            else if (Entity.Template?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault() is { } own) {
+                // The seller's own shop (Doctor Purreau: "Purreau's Potions and More"). A recipe shop opens the game's
+                // recipe window, which lists the recipes by name.
+                _shopTitle = string.IsNullOrWhiteSpace(own.m_shopTitle) ? _shopTitle : own.m_shopTitle;
+                if (stock.Window == HouseVendors.ShopWindow.Recipe) {
+                    _shopType = own.m_shopType;
+                    _furnitureShop = RECIPE_SHOP;
+                    _csrTestShop = own.m_CSRTestShop;
+                    var sold = HouseVendors.RecipesOf(Entity.ActiveGameObject.m_templateID.MParts.TemplateId).Select(recipe => recipe.Name).ToHashSet();
+                    _recipeList = [.. (own.m_recipeList ?? []).Where(name => sold.Contains((string) name))];
+                }
             }
-            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop kind {4}, title {5}, crowns shown {6}.",
-                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _furnitureShop, _shopTitle, ShopCredits));
+            Logger.Information("Seller {0} ({1}): {2} items, {3} recipes, {4} window, shop kind {5}, title {6}.",
+                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _recipeList.Count, _window, _furnitureShop, _shopTitle));
 
             return;
         }
@@ -170,6 +178,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             HouseVendors.ShopWindow.Snack => [new PetSnackShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             HouseVendors.ShopWindow.Reagent => [new ReagentShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             HouseVendors.ShopWindow.Jewel => [new JewelShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
+            HouseVendors.ShopWindow.Recipe => [new RecipeShopOption { m_displayKey = "GUI_ShopOptionRecipe", m_iconKey = NpcIcon, m_serviceName = ServiceName }],
             _ => EquipmentOrHousingOptions(),
         };
 
@@ -223,6 +232,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             m_sellModifier = 0.05f,
             m_shopTitle = string.IsNullOrWhiteSpace(_shopTitle) || _shopTitle == "Unknown Shop" ? DefaultShopTitle : _shopTitle,
             m_shopList = _inventory,
+            m_recipeList = _recipeList,
             // Changes the type of currency that is used
             // 0 - Gold
             // 1 - PvP tickets
@@ -247,8 +257,6 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         var shopListMsg = new WIZARD_12_PROTOCOL.MSG_SHOPLIST() {
             GlobalID = Entity.ActiveGameObject.m_globalID.Full,
             Data = serializedShopList,
-            // The crowns balance the window shows and checks once it shows crowns prices (Doctor Purreau).
-            Credits = ShopCredits,
         };
         playerActor.Tell(shopListMsg);
     }

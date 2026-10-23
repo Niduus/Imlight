@@ -41,7 +41,7 @@ namespace Imlight.CoreLib.Game.World;
 /// </summary>
 internal static class HouseVendors {
 
-    internal enum ShopWindow { Equipment, Snack, Reagent, Jewel }
+    internal enum ShopWindow { Equipment, Snack, Reagent, Jewel, Recipe }
 
     internal sealed record Seller(string Key, string Name, uint FurnitureId, ShopWindow Window, Func<List<uint>> Items);
 
@@ -49,7 +49,6 @@ internal static class HouseVendors {
     private const string REAGENT_FOLDER = "ObjectData/Reagents/";
     private const string JEWEL_FOLDER = "ObjectData/Jewels/";
     private const string SNACK_FOLDER = "ObjectData/PetSnacks/";
-    private const string ELIXIR_FOLDER = "ObjectData/Elixirs/";
     private const int MIN_SNACK_RANK = 8;
 
     /// <summary>What everything the sellers sell costs.</summary>
@@ -59,15 +58,12 @@ internal static class HouseVendors {
     private static readonly bool s_specialWindows = ConfigurationManager.GetValue("HallVendors.SpecialShopWindows", true);
 
     private static readonly uint s_snackVendorId = ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
-    // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"), a Pet Pavilion vendor with nothing to sell.
+    // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"). The game's own shop for him is a recipe shop
+    // (WizShoppingBehavior m_furnitureShop 3, the ShoppingRecipeWindow) listing his m_recipeList: the Next Hatch Free,
+    // Purreau's Potion #9 and Hatching Elixir recipes, the Hatchmaking Kiosk, the Hatchery tapestry and pet snacks
+    // (Niduus, 2026-10-23: "Purreau's shop isn't using the right UI"). There is no crafting here, so a bought recipe
+    // gives what it makes.
     private static readonly uint s_petElixirVendorId = ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
-    // The pet elixirs cost crowns only (no gold price), and the game's shop window leaves out an item without a gold
-    // price until it shows crowns prices, which it does once an item with a crowns price is clicked (ShoppingWindow).
-    // So Doctor Purreau also sells the Group +100 Energy Elixir, which has both prices: clicking it shows every elixir
-    // (Niduus, 2026-10-23: "it's not the proper UI so it displays nothing"). Each still costs the sellers' gold price.
-    private static readonly uint s_petElixirKeyItem = ConfigurationManager.GetValue("HallVendors.PetElixirKeyItem", 1549666u);
-    // The crowns the shop window shows while it shows crowns prices; the game refuses a buy above it.
-    private static readonly int s_petElixirShopCredits = ConfigurationManager.GetValue("HallVendors.PetElixirShopCredits", 99999);
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
     // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
@@ -77,11 +73,6 @@ internal static class HouseVendors {
     private static readonly Lazy<List<uint>> s_snacks = new(() => [.. TemplatesIn<PetSnackItemTemplate>(SNACK_FOLDER)
         .Where(snack => snack.Template.m_rank >= MIN_SNACK_RANK)
         .Select(snack => snack.Id)]);
-
-    private static readonly Lazy<List<uint>> s_petElixirs = new(() => [.. TemplatesIn<WizItemTemplate>(ELIXIR_FOLDER)
-        .Where(elixir => PetElixirs.IsPetElixir(elixir.Template))
-        .Select(elixir => elixir.Id)
-        .OrderBy(id => id)]);
 
     // One seller per reagent kind and per jewel shape or pin, each on its own piece of furniture.
     private static readonly Seller[] s_sellers = [
@@ -166,15 +157,48 @@ internal static class HouseVendors {
         }
 
         if (templateId == s_petElixirVendorId) {
-            return (s_petElixirKeyItem == 0 ? s_petElixirs.Value : [s_petElixirKeyItem, .. s_petElixirs.Value], ShopWindow.Equipment);
+            return ([.. RecipesOf(templateId).Select(recipe => recipe.Id)], ShopWindow.Recipe);
         }
 
         return null;
     }
 
-    /// <summary>The crowns an NPC's shop window shows (Doctor Purreau's crowns prices), or 0.</summary>
-    internal static int ShopCreditsFor(uint templateId)
-        => templateId != 0 && templateId == s_petElixirVendorId ? System.Math.Max(s_petElixirShopCredits, 0) : 0;
+    /// <summary>
+    /// The recipes an NPC's own shop lists (WizShoppingBehavior.m_recipeList, by name), with their template ids.
+    /// A name with no recipe template is left out and logged.
+    /// </summary>
+    internal static List<(string Name, uint Id)> RecipesOf(uint npcTemplateId)
+        => s_recipes.GetOrAdd(npcTemplateId, FindRecipes);
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<uint, List<(string Name, uint Id)>> s_recipes = new();
+
+    private static List<(string Name, uint Id)> FindRecipes(uint npcTemplateId) {
+        var names = ((CoreObjectFactory.GetCoreTemplate(npcTemplateId) as GameObjectTemplate)?.m_behaviors ?? [])
+            .OfType<WizShoppingBehaviorTemplate>().FirstOrDefault()?.m_recipeList ?? [];
+        var recipes = new List<(string Name, uint Id)>();
+        foreach (var entry in names) {
+            var name = (string) entry;
+            if (string.IsNullOrWhiteSpace(name)) {
+                continue;
+            }
+
+            try {
+                var file = "/" + name + ".xml";
+                if (CoreObjectFactory.TryGetCoreTemplateID(location => location is not null && ((string) location.m_filename)?.EndsWith(file, StringComparison.OrdinalIgnoreCase) == true, out var id)
+                    && CoreObjectFactory.GetCoreTemplate(id) is RecipeTemplate) {
+                    recipes.Add((name, id));
+                }
+                else {
+                    Logger.Warning("Recipe shop {0}: no recipe template named {1}.", Logger.Args(npcTemplateId, name));
+                }
+            }
+            catch (Exception e) {
+                Logger.Warning("Recipe shop {0}: could not load recipe {1}: {2}", Logger.Args(npcTemplateId, name, e.Message));
+            }
+        }
+
+        return recipes;
+    }
 
     /// <summary>The real shop whose window a seller's window copies, or null for the equipment window.</summary>
     internal static WizShoppingBehaviorTemplate ShopLookFor(ShopWindow window) {
