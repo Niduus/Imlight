@@ -948,6 +948,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                 circle.ParticipantActor.Tell(new COMBAT_106_PROTOCOL.MSG_NEWROUND());
             }
         });
+
+        // A participant's turn flag only reaches the game with the duel object; without it the waiting
+        // team's cards never fade.
+        if (acting is not null) {
+            BroadcastDuel();
+        }
     }
 
     private bool IsPvPMoveAllowed(CombatDuelSubCircle caster) {
