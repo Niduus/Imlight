@@ -75,6 +75,7 @@ public class GameServer : Server {
         this._sessionKeys = new Cache<ByteString, ulong>();
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
+        Tools.MemberBenefits.Start(Context.System);
         World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.

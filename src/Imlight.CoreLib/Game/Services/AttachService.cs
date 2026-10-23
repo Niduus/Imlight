@@ -372,6 +372,23 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
         GiveStartingPotions();
         GiveCrowns();
+        TellMemberBenefits();
+    }
+
+    // Once per login, the member benefits that are on (and their time left), a moment after the wizard arrives so the
+    // chat is up to show them.
+    private void TellMemberBenefits() {
+        var lines = Tools.MemberBenefits.GreetingFor(_wizard.AccountId);
+        if (lines.Count == 0) {
+            return;
+        }
+
+        var session = SessionActor.ActorRef;
+        _ = System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(3)).ContinueWith(_ => {
+            foreach (var line in lines) {
+                session.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 0 });
+            }
+        });
     }
 
     // [Character] StartingCrowns: crowns every wizard starts with. RefillCrowns: crowns go back up to that

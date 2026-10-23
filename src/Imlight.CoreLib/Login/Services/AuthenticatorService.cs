@@ -201,6 +201,7 @@ internal class AuthenticatorService(SessionActor parentActor) : MessageService(p
         };
 
         OnlinePlayerCollection.AddOnlinePlayer(onlinePlayer);
+        Imlight.CoreLib.Game.Tools.MemberBenefits.LoggedIn(account.AccountId);
     }
     
 }

@@ -156,7 +156,6 @@ internal sealed partial class ManagerWindow : Window {
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeItemCards", "Randomizer: random item cards (from gear and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
-        ("Character", "MemberBenefits", "Every wizard is a member with all member benefits", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
     ];
@@ -614,6 +613,7 @@ internal sealed partial class ManagerWindow : Window {
                     "Start the server here. It gets the game files from your Wizard101 folder by itself. Closing this window stops it.")),
             _modesCard,
             _battleCard,
+            MemberBenefitsCard(),
             _trainersCard);
     }
 
