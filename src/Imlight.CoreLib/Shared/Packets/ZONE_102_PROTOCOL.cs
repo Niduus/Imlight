@@ -444,6 +444,18 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// `.petform` turned the wizard's pet look on or off: their summoned pet hides while they look like it.
+    /// </summary>
+    public sealed class MSG_PETFORMCHANGED : IServerMessage {
+
+        public byte MessageOrder { get; } = 103;
+        public byte ServiceID { get; } = 102;
+
+        public bool On;
+
+    }
+
+    /// <summary>
     /// Called by a <see cref="ZonePath"/> to itself to indicate that it's time to spawn a creature,
     /// if possible.
     /// </summary>
@@ -748,6 +760,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool SendToClient = true;
         public bool IsPrivate = false;
         public ulong OwnerCharId;
+
+        /// <summary>
+        /// Loads the zone again even when the player is already in it, instead of moving them inside it. A duel
+        /// circle uses it to reset a defeated wizard's game.
+        /// </summary>
+        public bool ForceReload;
 
         /// <summary>
         /// A fresh dungeon-sigil entry starts a NEW run: GameWorld drops the owner's stale copy of the

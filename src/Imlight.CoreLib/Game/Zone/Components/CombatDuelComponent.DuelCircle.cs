@@ -255,7 +255,8 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        HumanBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
+        // Everyone in the zone sees it, not only the wizards on the circle (Niduus, 2026-10-23).
+        ZoneBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
             Time = _duelCountdown,
             SigilGID = SigilId,
             Teleport = 0,
@@ -263,7 +264,7 @@ internal sealed partial class CombatDuelComponent {
     }
 
     private void EndCircleCountdown()
-        => HumanBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = SigilId });
+        => ZoneBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = SigilId });
 
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED))]
     private void ReceiveLocalMatchJoined(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED message) {
@@ -412,6 +413,7 @@ internal sealed partial class CombatDuelComponent {
                 DestinationZone = wizard.Zone,
                 DestinationLocation = Shared.Resources.Util.GetCompactStringFromVector(wizard.Location, wizard.Orientation),
                 SendToClient = true,
+                ForceReload = true,
             });
         }
 

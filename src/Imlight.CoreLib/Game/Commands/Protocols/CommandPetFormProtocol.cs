@@ -47,18 +47,26 @@ internal class CommandPetFormProtocol : CommandProtocol {
     [Command("petform")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     [Alias("playaspet")]
-    private void PetFormCommand() {
-        var wizard = Context.Character;
-        var nameId = StringHash.Compute(EFFECT_NAME);
+    private void PetFormCommand()
+        => Toggle(Context.Character, Context.SessionActor, Context.ZoneActor, text => InformSenderClient(text));
+
+    internal static bool IsInPetForm(Wizard wizard)
+        => wizard?.GameEffects?.Exists(e => e is TransformationEffect && e.m_itemSlotID == SlotId) == true;
+
+    /// <summary>
+    /// Turns the pet look on, or off when it is on. Used by `.petform` and the game's Play as Pet button.
+    /// </summary>
+    internal static void Toggle(Wizard wizard, IActorRef session, IActorRef zone, System.Action<string> inform) {
         var current = wizard.GameEffects.Find(e => e is TransformationEffect && e.m_itemSlotID == SlotId);
         if (current is not null) {
             wizard.GameEffects.Remove(current);
-            Broadcast(new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
+            Broadcast(session, zone, new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
                 GameObjectID = wizard.GameObjectID,
                 EffectNameID = current.m_effectNameID,
                 InternalID = current.m_internalID,
             });
-            InformSenderClient("You look like yourself again.");
+            session.Tell(new ZONE_102_PROTOCOL.MSG_PETFORMCHANGED { On = false }, null);
+            inform("You look like yourself again.");
 
             return;
         }
@@ -66,7 +74,7 @@ internal class CommandPetFormProtocol : CommandProtocol {
         var pet = PetCare.GetWornPet(wizard);
         var template = PetProgress.GetTemplate(pet);
         if (template is null || template.m_eRace == 0) {
-            InformSenderClient("Wear a pet first, then type .petform.");
+            inform("Wear a pet first.");
 
             return;
         }
@@ -75,7 +83,7 @@ internal class CommandPetFormProtocol : CommandProtocol {
             m_sRace = template.m_eRace.ToString(),
             m_eGender = template.m_eGender,
             m_fScale = template.m_fScale > 0 ? template.m_fScale : 1f,
-            m_effectNameID = nameId,
+            m_effectNameID = StringHash.Compute(EFFECT_NAME),
             m_itemSlotID = SlotId,
             m_internalID = wizard.NextEffectId(),
         };
@@ -83,27 +91,28 @@ internal class CommandPetFormProtocol : CommandProtocol {
         var serializer = new CoreObjectSerializer(behaviors: SerializerFlags.None);
         var flags = PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit;
         if (!serializer.Serialize(effect, flags, out var data)) {
-            InformSenderClient("Could not turn you into your pet.");
+            inform("Could not turn you into your pet.");
 
             return;
         }
 
         wizard.GameEffects.Add(effect);
-        Broadcast(new GAME_5_PROTOCOL.MSG_ADDEFFECT {
+        Broadcast(session, zone, new GAME_5_PROTOCOL.MSG_ADDEFFECT {
             GameObjectID = wizard.GameObjectID,
             EffectData = data,
         });
+        session.Tell(new ZONE_102_PROTOCOL.MSG_PETFORMCHANGED { On = true }, null);
         Logger.Information("{0} took the look of their pet (race {1}).", Logger.Args(wizard.CharId, (string) effect.m_sRace));
-        InformSenderClient("You now look like your pet. Type .petform again to turn back.");
+        inform("You now look like your pet. Press the button or type .petform again to turn back.");
     }
 
     // The wizard's own game first, then everyone else in the zone.
-    private void Broadcast(IMessage message) {
-        Context.SessionActor.Tell(message, null);
-        Context.ZoneActor?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+    private static void Broadcast(IActorRef session, IActorRef zone, IMessage message) {
+        session.Tell(message, null);
+        zone?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
             Message = message,
             Selfless = true,
-            Sender = Context.SessionActor,
+            Sender = session,
             Targets = ZoneBroadcastTarget.Players,
         });
     }

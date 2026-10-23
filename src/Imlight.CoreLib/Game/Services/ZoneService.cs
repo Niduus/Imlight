@@ -245,7 +245,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         if (message.SendToClient && zoneDetails.ErrorCode == 0) {
             // Check if the destination zone is the same as the current zone. If so, just teleport the player.
             var wizard = GetActiveWizard();
-            if (message.DestinationZone == wizard.Zone && message.HouseLotGid == wizard.AttachedLotGid) {
+            if (!message.ForceReload && message.DestinationZone == wizard.Zone && message.HouseLotGid == wizard.AttachedLotGid) {
                 DoTeleport(message.DestinationLocation);
 
                 return zoneDetails;

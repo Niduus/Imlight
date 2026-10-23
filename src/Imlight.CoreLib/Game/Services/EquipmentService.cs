@@ -439,6 +439,13 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        // A wizard who looks like their pet (.petform or the game's Play as Pet button) has no second one beside them.
+        if (Commands.Protocols.CommandPetFormProtocol.IsInPetForm(GetActiveWizard())) {
+            DismissPetEntity();
+
+            return;
+        }
+
         // If petItem is null, we will use the equipped pet from the player's character.
         if (petItem is null) {
             var wizard = GetActiveWizard();
@@ -562,6 +569,31 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SYNC_PET_FOR_MOUNT))]
     private void ReceiveSyncPetForMount()
         => SpawnPetEntity();
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PETFORMCHANGED))]
+    private void ReceivePetFormChanged(ZONE_102_PROTOCOL.MSG_PETFORMCHANGED message) {
+        if (message.On) {
+            DismissPetEntity();
+        }
+        else {
+            SpawnPetEntity();
+        }
+    }
+
+    // The game's Play as Pet button (beside the pet's picture) sends MSG_SWITCHTOPET. It does what `.petform` does,
+    // the transformation that is known to work; what the real server answers with is not known yet.
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_SWITCHTOPET))]
+    private void ReceiveSwitchToPet(WIZARD2_53_PROTOCOL.MSG_SWITCHTOPET message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        Logger.Information("Play as Pet: {0} pressed the button (GlobalID {1}, Status {2}, PetTemplate {3}).",
+            Logger.Args(wizard.CharId, message.GlobalID, message.Status, message.PetTemplate));
+        Commands.Protocols.CommandPetFormProtocol.Toggle(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(),
+            text => InformGameClient(text));
+    }
 
     // A wizard in their pet's look (.petform) keeps it in the new zone, for the players there too.
     private void ShowPetFormToZone(Wizard wizard) {
