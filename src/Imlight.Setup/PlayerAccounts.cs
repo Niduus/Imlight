@@ -151,6 +151,23 @@ internal sealed class PlayerAccounts : IDisposable {
     internal Task SetLockedAsync(string username, bool locked)
         => UpdateAsync(username, doc => doc["IsLocked"] = locked);
 
+    /// <summary>
+    /// Every account's Tamed Drops pity meters (the server's Account.TamedPity): "&lt;boss&gt;:&lt;tier&gt;" to runs filled.
+    /// </summary>
+    internal async Task<List<(string Username, Dictionary<string, double> Meters)>> TamedPityAsync() {
+        var results = await QueryAsync($"from {COLLECTION}", null);
+
+        return [.. results
+            .Select(doc => ((string?) doc["Username"] ?? "?", (doc["TamedPity"] as JsonObject ?? [])
+                .Where(m => m.Value is JsonValue value && value.TryGetValue<double>(out _))
+                .ToDictionary(m => m.Key, m => m.Value!.GetValue<double>())))
+            .OrderBy(a => a.Item1, StringComparer.OrdinalIgnoreCase)];
+    }
+
+    /// <summary>Empties an account's Tamed Drops pity meters.</summary>
+    internal Task ResetTamedPityAsync(string username)
+        => UpdateAsync(username, doc => doc["TamedPity"] = new JsonObject());
+
     private async Task UpdateAsync(string username, Action<JsonObject> change) {
         var results = await QueryAsync($"from {COLLECTION} where Username = $username", new JsonObject { ["username"] = username });
         var document = results.FirstOrDefault() ?? throw new AccountException($"There is no account named {username}.");

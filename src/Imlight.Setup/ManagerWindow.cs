@@ -137,7 +137,6 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "FullPipConserve", "100% pip conserve (a half-used power pip always comes back)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FullPipConversion", "100% pip conversion (with Pip Conversion gear, a spell's school always turns a normal pip into a power pip)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "NoPipsFromDaybreakerNightbringer", "Daybreaker and Nightbringer do not add pips to card", new() { OnContent = "On", OffContent = "Off" }),
-        ("TamedDrops", "Enabled", "Tamed Drops: boss loot depends on how many rounds the battle took, with account-wide pity", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "Enabled", "Archmastery (Power Orb turns power pips into school pips from level 50)", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "AllLevels", "Archmastery at every level, not just 50 and up", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "SchoolPips", "School pips", new() { OnContent = "On", OffContent = "Off" }),
@@ -644,6 +643,7 @@ internal sealed partial class ManagerWindow : Window {
                     "Start the server here. It gets the game files from your Wizard101 folder by itself. Closing this window stops it.")),
             _modesCard,
             _battleCard,
+            TamedDropsCard(),
             MemberBenefitsCard(),
             _trainersCard);
     }
@@ -1150,6 +1150,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _battleCard.IsVisible = Has("Battle", "ManaOnFizzle");
+        ShowTamedDropsSwitch(Has("TamedDrops", "Enabled"), Switch("TamedDrops", "Enabled"));
         foreach (var (section, key, _, toggle) in _battleSwitches) {
             toggle.IsChecked = Switch(section, key);
             toggle.IsEnabled = Has(section, key);

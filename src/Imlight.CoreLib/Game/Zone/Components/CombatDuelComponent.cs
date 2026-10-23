@@ -57,6 +57,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.PvP;
 using Imlight.CoreLib.Game.PvP.Arena;
 using Imlight.CoreLib.Game.PvP.Data;
@@ -3306,14 +3307,16 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     private void CountRoundForTamedDrops() {
-        // Run once per round, before the queued moves are used up. The third round in a row that every wizard chose to
-        // pass (none stunned or confused) and every one after it does not count; a round with a spell cast counts again.
+        // Run once per round, before the queued moves are used up. By default the third round in a row that every wizard
+        // chose to pass (none stunned or confused) and every one after it does not count; a round with a spell cast
+        // counts again. The Manager's Tamed Drops card sets how many passes count and whether forced ones always do.
         if (IsPvPDuel || _lastRoundCounted == Duel.m_roundNum) {
             return;
         }
 
         _lastRoundCounted = Duel.m_roundNum;
         try {
+            var settings = TamedDropsSettings.Current;
             var wizards = 0;
             var everyoneChosePass = true;
             EnactActionOnSubCircles(circle => {
@@ -3324,13 +3327,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                 wizards++;
                 var forced = circle.CombatParticipant is { } participant && (participant.m_stunned > 0 || participant.m_confused > 0);
                 var passed = CombatResolver.GetQueuedAction(circle)?.Spell is null;
-                if (forced || !passed) {
+                if (!passed || (forced && settings.ForcedPassesCount)) {
                     everyoneChosePass = false;
                 }
             });
 
             _passStreak = wizards > 0 && everyoneChosePass ? _passStreak + 1 : 0;
-            if (_passStreak < 3) {
+            if (!settings.PassesStopCounting || _passStreak <= settings.PassesThatCount) {
                 _countedRounds++;
             }
         }

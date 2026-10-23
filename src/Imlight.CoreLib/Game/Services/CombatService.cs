@@ -236,7 +236,9 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             if (tables.Length > 0 && TamedDrops.AppliesTo(templateId, customDrops is { Count: > 0 })) {
                 try {
                     loot = TamedDrops.Roll(tables, key, rounds, playerRef, playerObj, wizard, out var note);
-                    InformGameClient(note);
+                    if (note is not null) {
+                        InformGameClient(note);
+                    }
                 }
                 catch (Exception e) {
                     Logger.Error("Tamed Drops failed for {0}, rolling normally: {1}", Logger.Args(key, e));
