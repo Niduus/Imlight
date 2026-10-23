@@ -1534,7 +1534,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         participant.m_pipCount = pips;
         Logger.Information("Duel {0} | Slot {1} | {2} came back into the battle with their pips ({3} pips, {4} power) and {5} health",
-            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, participant.m_ownerID, pips.m_genericPips, pips.m_powerPips,
+            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, wizard.CharId, pips.m_genericPips, pips.m_powerPips,
                 wizard.GameStats.m_currentHitpoints));
     }
 
