@@ -135,7 +135,7 @@ internal static class HousingItems {
 
     /// <summary>
     /// [Housing] PlaceAnyAsDecoration: an object of a family the server does not support yet is placed as plain
-    /// furniture, which shows it without its feature (a vault does not open, a teleporter does not send). Only families
+    /// furniture, which shows it without its feature (a vault does not open). Only families
     /// whose live entries the client keeps as plain items qualify; castle blocks never do.
     /// </summary>
     private static bool PlacesAsDecoration(IReadOnlyList<HousingFamily> families)

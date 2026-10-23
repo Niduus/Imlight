@@ -114,7 +114,9 @@ internal static class HousingFamilies {
         Declare("Interact", "Interact", "InteractAttic", [typeof(InteractableBehaviorTemplate)]),
         Declare("IntMusic", "IntMusic", "IntMusicAttic", [typeof(InteractiveMusicBehaviorTemplate)]),
         Declare("Music", null, "MusicAttic", [typeof(HousingMusicBehaviorTemplate), typeof(HousingMusicPlayerBehavior)]),
-        Declare("Teleport", "Teleport", "TeleportAttic", [typeof(HousingTeleporterBehaviorTemplate)]),
+        // Teleporters are placed among the plain items: the server sends their destination with the Item blob and
+        // finds a step onto one itself (Game/Housing/HouseTeleporters).
+        Declare("Teleport", "Teleport", "TeleportAttic", [typeof(HousingTeleporterBehaviorTemplate)], enabled: true),
         Declare("Sign", null, "SignAttic", [typeof(HousingSignBehaviorTemplate)]),
         Declare("Magic", "Magic", "MagicAttic", [typeof(CastleMagicBehaviorTemplate)]),
         Declare("Monster", "Monster", "MonsterAttic", [typeof(MonsterArenaBehaviorTemplate)]),
@@ -148,8 +150,8 @@ internal static class HousingFamilies {
     internal static IReadOnlyList<HousingFamily> Of(WizItemTemplate template)
         => s_known.GetOrAdd(template.m_templateID, _ => Resolve(template));
 
-    private static HousingFamily Declare(string id, string blobSubType, string atticSubType, IReadOnlyList<Type> triggers)
-        => new(id, blobSubType, atticSubType, triggers, false);
+    private static HousingFamily Declare(string id, string blobSubType, string atticSubType, IReadOnlyList<Type> triggers, bool enabled = false)
+        => new(id, blobSubType, atticSubType, triggers, enabled);
 
     private static IReadOnlyList<HousingFamily> Resolve(WizItemTemplate template) {
         var behaviorTypes = (template.m_behaviors ?? [])

@@ -44,6 +44,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
@@ -214,37 +215,57 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        WizClientObjectItem item;
+        List<WizClientObjectItem> added = [];
         AtticChange change;
         lock (HouseDeeds.BackpackLock(wizard)) {
+            // A music player gives back the scrolls it holds, so the backpack needs room for them as well.
+            var scrolls = HouseMusic.Scrolls(stored.TemplateId, stored.Custom);
             if (CoreObjectFactory.GetCoreTemplate(stored.TemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= 0
+                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, stored.TemplateId))) {
-                InformGameClient("Your backpack cannot hold that object.");
+                InformGameClient(scrolls.Count > 0
+                    ? "Make room in your backpack for the music player and its musical scrolls."
+                    : "Your backpack cannot hold that object.");
 
                 return;
             }
 
-            item = HousingItems.CreateItem(wizard, stored.TemplateId, stored.ItemGid);
-            if (item is null || !wizard.InventoryBehavior.AddItem(item)) {
+            var item = HousingItems.CreateItem(wizard, stored.TemplateId, stored.ItemGid);
+            if (item is null || !HouseMusic.TryCreateScrolls(wizard, scrolls, out var scrollItems)) {
                 InformGameClient("The object could not be taken out of the attic.");
 
                 return;
             }
 
-            // The new item and the emptied slot are written in one transaction, so a crash between them cannot lose the item.
-            change = attic.TryRemove(stored.Id, document => AtticCollection.SaveWithBackpack(document, wizard, item));
+            List<WizClientObjectItem> items = [item, .. scrollItems];
+            foreach (var addedItem in items) {
+                if (!wizard.InventoryBehavior.AddItem(addedItem)) {
+                    break;
+                }
+
+                added.Add(addedItem);
+            }
+
+            // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
+            change = added.Count == items.Count
+                ? attic.TryRemove(stored.Id, document => AtticCollection.SaveWithBackpack(document, wizard, [.. added]))
+                : new AtticChange(HouseEdit.NotFound);
             if (!change.Done) {
-                wizard.InventoryBehavior.RemoveItem(item);
+                foreach (var addedItem in added) {
+                    wizard.InventoryBehavior.RemoveItem(addedItem);
+                }
+
                 InformGameClient("The object could not be taken out of the attic.");
 
                 return;
             }
         }
 
-        if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, item)) {
-            Logger.Error("Could not tell the client about item {ItemId} taken out of the attic of character {CharId}.",
-                Logger.Args(item.m_globalID, wizard.CharId));
+        foreach (var addedItem in added) {
+            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, addedItem)) {
+                Logger.Error("Could not tell the client about item {ItemId} taken out of the attic of character {CharId}.",
+                    Logger.Args(addedItem.m_globalID, wizard.CharId));
+            }
         }
 
         SendDeletePatch(attic, change);

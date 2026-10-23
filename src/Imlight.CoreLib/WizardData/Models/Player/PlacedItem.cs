@@ -33,6 +33,8 @@
  * - The yaw of an exact angle is stored in the middle of its whole degree, because the client
  *   truncates the angle to whole degrees.
  * - A remap index of 0 is a set index, so the remap is null when it is not used.
+ * - Custom is the custom data of a music player or a teleporter, the bytes of the client's HousingBlobCustomObject,
+ *   kept in base64. An item with custom data is sent as a custom blob entry.
  *
  * TODO:
  *
@@ -118,7 +120,36 @@ public sealed record PlacedItem {
     public int Tint { get; init; }
     public int? WallpaperRemap { get; init; }
     public int? TileRemap { get; init; }
+
+    /// <summary>
+    /// The custom data of the blob entry in base64, or <c>null</c> for a plain entry.
+    /// </summary>
     public string Custom { get; init; }
+
+    /// <summary>
+    /// Encodes the bytes of a custom blob entry for <see cref="Custom"/>.
+    /// </summary>
+    /// <param name="data">The bytes the client reads.</param>
+    /// <returns>The base64 text, or <c>null</c> for no bytes.</returns>
+    public static string EncodeCustom(byte[] data)
+        => data is null || data.Length == 0 ? null : Convert.ToBase64String(data);
+
+    /// <summary>
+    /// Decodes the custom data of a blob entry.
+    /// </summary>
+    /// <param name="custom">The stored <see cref="Custom"/> text.</param>
+    /// <returns>The bytes the client reads; empty when there are none or the text is not base64.</returns>
+    public static byte[] DecodeCustom(string custom) {
+        if (string.IsNullOrEmpty(custom)) {
+            return [];
+        }
+
+        try {
+            return Convert.FromBase64String(custom);
+        } catch (FormatException) {
+            return [];
+        }
+    }
 
     /// <summary>
     /// Creates the placed item of a layout object.
@@ -169,7 +200,7 @@ public sealed record PlacedItem {
     /// <summary>
     /// Packs the item into the client's blob entry. The item should be normalized.
     /// </summary>
-    /// <returns>The blob entry.</returns>
+    /// <returns>The blob entry; a <see cref="HousingBlobCustomObject"/> when the item carries custom data.</returns>
     public HousingBlobObject ToBlobObject() {
         var template = TemplateId & TemplateIdMask;
         var extra = 0u;
@@ -194,11 +225,24 @@ public sealed record PlacedItem {
             extra |= (((uint) Brightness + 1) & BrightnessMask) << (int) BrightnessShift;
         }
 
+        var positionXY = (PackCoordinate(X) << 16) | PackCoordinate(Y);
+        var yaw = (byte) (((uint) Tint << (int) TintShift) | SectorCode(Yaw));
+        if (Custom is not null) {
+            return new HousingBlobCustomObject {
+                m_gameObjectTemplateID = template,
+                m_positionXY = positionXY,
+                m_positionZ = Z,
+                m_yaw = yaw,
+                m_extraData1 = extra,
+                m_customData = DecodeCustom(Custom),
+            };
+        }
+
         return new HousingBlobObject {
             m_gameObjectTemplateID = template,
-            m_positionXY = (PackCoordinate(X) << 16) | PackCoordinate(Y),
+            m_positionXY = positionXY,
             m_positionZ = Z,
-            m_yaw = (byte) (((uint) Tint << (int) TintShift) | SectorCode(Yaw)),
+            m_yaw = yaw,
             m_extraData1 = extra,
         };
     }

@@ -69,13 +69,14 @@ public sealed record AtticItem {
             return entry;
         }
 
+        // Custom is kept the way a placed item keeps it, in base64.
         return new HousingBlobCustomObject {
             m_gameObjectTemplateID = entry.m_gameObjectTemplateID,
             m_positionXY = entry.m_positionXY,
             m_positionZ = entry.m_positionZ,
             m_yaw = entry.m_yaw,
             m_extraData1 = entry.m_extraData1,
-            m_customData = Custom,
+            m_customData = PlacedItem.DecodeCustom(Custom),
         };
     }
 

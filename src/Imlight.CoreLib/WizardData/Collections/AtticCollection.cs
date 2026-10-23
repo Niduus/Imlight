@@ -126,9 +126,9 @@ public static class AtticCollection {
     /// </summary>
     /// <param name="attic">The attic to save.</param>
     /// <param name="owner">The owner, whose backpack is written as it is in memory.</param>
-    /// <param name="addedItem">An item that entered the backpack and is not stored yet, or <c>null</c>.</param>
+    /// <param name="addedItems">The items that entered the backpack and are not stored yet; none for an item that left it.</param>
     /// <returns><c>true</c> when both are stored; <c>false</c> when neither changed.</returns>
-    public static bool SaveWithBackpack(Attic attic, Wizard owner, WizClientObjectItem addedItem = null) {
+    public static bool SaveWithBackpack(Attic attic, Wizard owner, params WizClientObjectItem[] addedItems) {
         try {
             return WizardCollection.UpdateCharacterWithSession(owner.CharId, (session, storedOwner) => {
                 var stored = session.Load<Attic>(attic.Id);
@@ -138,7 +138,11 @@ public static class AtticCollection {
 
                 CopyChanging(attic, stored);
                 storedOwner.InventoryBehavior = owner.InventoryBehavior;
-                if (addedItem is not null) {
+                foreach (var addedItem in addedItems) {
+                    if (addedItem is null) {
+                        continue;
+                    }
+
                     session.Store(addedItem);
                     session.Advanced.GetMetadataFor(addedItem)[Raven.Client.Constants.Documents.Metadata.Collection] = WizardItemCollection.CollectionName;
                 }

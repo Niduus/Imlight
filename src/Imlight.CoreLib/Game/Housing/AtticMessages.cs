@@ -65,7 +65,7 @@ internal static class AtticMessages {
             PackageNumber = 0,
             VersionNumber = change.Revision,
             GIDID = change.GidId,
-            Data = change.Item.Custom ?? string.Empty,
+            Data = PlacedItem.DecodeCustom(change.Item.Custom),
             PrimaryColorIndex = (sbyte) change.Item.Tint,
         };
 

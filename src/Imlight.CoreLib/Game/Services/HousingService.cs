@@ -35,17 +35,22 @@
  * - Only the owner decorates. A visitor sees the same blob and patches, and every edit they send is refused as forged.
  * - Picking up every object moves them into the owner's attic, so the service is a viewer of the attic as well. The house
  *   and the attic are written in one transaction by Game/Housing/HousePickUpAll.
+ * - Music players and teleporters keep their state as the custom data of their blob entry (Game/Housing/HouseMusic,
+ *   HouseTeleporters). A change is stored on the placed item and sent to everyone in the house as a patch.
+ * - A music player that is picked up gives its musical scrolls back to the backpack.
  *
  * TODO:
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/23/2026
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -70,6 +75,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
 
     private HouseState _house;
     private AtticState _attic;
+    private ulong _houseCharId;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new HousingService(parentActor));
@@ -101,6 +107,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         }
 
         _house = house;
+        _houseCharId = wizard.CharId;
 
         // Trainer tomes bring their trainers; a visitor entering a house already showing them adds none.
         HouseTrainers.SpawnAll(SessionActor.GetZoneActor(), house);
@@ -362,36 +369,51 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
 
         WizClientObjectItem item;
         HouseChange change;
+        List<WizClientObjectItem> added;
         lock (HouseDeeds.BackpackLock(wizard)) {
+            // A music player gives back the scrolls it holds, so the backpack needs room for them as well.
+            var scrolls = HouseMusic.Scrolls(placedItem);
             if (placedItem is null
                 || CoreObjectFactory.GetCoreTemplate(placedItem.TemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= 0
+                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, placedItem.TemplateId))) {
+                if (scrolls.Count > 0) {
+                    InformGameClient("Make room in your backpack for the music player and its musical scrolls.");
+                }
+
                 RefusePickUp(house);
 
                 return;
             }
 
             item = HousingItems.CreateItem(wizard, placedItem.TemplateId, placedItem.ItemGid);
-            if (item is null || !wizard.InventoryBehavior.AddItem(item)) {
+            added = item is not null && HouseMusic.TryCreateScrolls(wizard, scrolls, out var scrollItems) ? [item, .. scrollItems] : [];
+            if (added.Count == 0 || !TryAddAll(wizard, added)) {
                 RefusePickUp(house);
 
                 return;
             }
 
-            // The new item and the emptied slot are written in one transaction, so a crash between them cannot lose the item.
-            change = house.TryRemove(placedItem.Id, document => HouseCollection.SaveWithBackpack(document, wizard, item));
+            // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
+            change = house.TryRemove(placedItem.Id, document => HouseCollection.SaveWithBackpack(document, wizard, [.. added]));
             if (!change.Done) {
-                wizard.InventoryBehavior.RemoveItem(item);
+                RemoveAll(wizard, added);
                 RefusePickUp(house);
 
                 return;
             }
         }
 
-        if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, item)) {
-            Logger.Error("Could not tell the client about picked up item {ItemId} of character {CharId}.",
-                Logger.Args(item.m_globalID, wizard.CharId));
+        foreach (var addedItem in added) {
+            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, addedItem)) {
+                Logger.Error("Could not tell the client about picked up item {ItemId} of character {CharId}.",
+                    Logger.Args(addedItem.m_globalID, wizard.CharId));
+            }
+        }
+
+        if (added.Count > 1) {
+            Logger.Information("Music: character {CharId} picked up music player {TemplateId} and got back {Count} musical scrolls.",
+                Logger.Args(wizard.CharId, placedItem.TemplateId, added.Count - 1));
         }
 
         if (HouseTrainers.IsTrainerItem(placedItem.TemplateId)) {
@@ -478,6 +500,410 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_EQUIPHOUSEMUSIC))]
+    private void ReceiveEquipHouseMusic(WIZARDHOUSING_50_PROTOCOL.MSG_EQUIPHOUSEMUSIC message) {
+        Logger.Information("Music: character {CharId} puts scroll item {ItemId} into music player {PlayerGid}.",
+            Logger.Args(GetActiveWizard().CharId, message.MusicGID, message.MusicPlayerGID));
+        try {
+            EquipHouseMusic(message);
+        } catch (Exception exception) {
+            Logger.Error("Music: putting scroll item {ItemId} into music player {PlayerGid} failed: {Error}",
+                Logger.Args(message.MusicGID, message.MusicPlayerGID, exception));
+        }
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REMOVEHOUSEMUSIC))]
+    private void ReceiveRemoveHouseMusic(WIZARDHOUSING_50_PROTOCOL.MSG_REMOVEHOUSEMUSIC message) {
+        Logger.Information("Music: character {CharId} takes scroll {TemplateId} out of music player {PlayerGid}.",
+            Logger.Args(GetActiveWizard().CharId, message.MusicTemplateID, message.MusicPlayerGID));
+        try {
+            RemoveHouseMusic(message);
+        } catch (Exception exception) {
+            Logger.Error("Music: taking scroll {TemplateId} out of music player {PlayerGid} failed: {Error}",
+                Logger.Args(message.MusicTemplateID, message.MusicPlayerGID, exception));
+        }
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_SELECTHOUSEMUSIC))]
+    private void ReceiveSelectHouseMusic(WIZARDHOUSING_50_PROTOCOL.MSG_SELECTHOUSEMUSIC message) {
+        Logger.Information("Music: character {CharId} selects scroll {TemplateId} on music player {PlayerGid}.",
+            Logger.Args(GetActiveWizard().CharId, message.MusicTemplateID, message.MusicPlayerGID));
+        try {
+            EditMusicPlayer("select the music of a music player", message.MusicPlayerGID, player => {
+                if (message.MusicTemplateID != 0 && !player.m_playlist.Contains(message.MusicTemplateID)) {
+                    return "That musical scroll is not in this music player.";
+                }
+
+                player.m_currentSelection = message.MusicTemplateID;
+
+                return null;
+            });
+        } catch (Exception exception) {
+            Logger.Error("Music: selecting scroll {TemplateId} on music player {PlayerGid} failed: {Error}",
+                Logger.Args(message.MusicTemplateID, message.MusicPlayerGID, exception));
+        }
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_SELECTMUSICSTYLE))]
+    private void ReceiveSelectMusicStyle(WIZARDHOUSING_50_PROTOCOL.MSG_SELECTMUSICSTYLE message) {
+        Logger.Information("Music: character {CharId} selects play style {Style} on music player {PlayerGid}.",
+            Logger.Args(GetActiveWizard().CharId, message.MusicStyle, message.MusicPlayerGID));
+        try {
+            EditMusicPlayer("select the play style of a music player", message.MusicPlayerGID, player => {
+                if (message.MusicStyle > HouseMusic.MaxPlayStyle) {
+                    return "That play style is not known.";
+                }
+
+                player.m_playStyle = message.MusicStyle;
+
+                return null;
+            });
+        } catch (Exception exception) {
+            Logger.Error("Music: selecting play style {Style} on music player {PlayerGid} failed: {Error}",
+                Logger.Args(message.MusicStyle, message.MusicPlayerGID, exception));
+        }
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_SETHOUSETELEPORTER))]
+    private void ReceiveSetHouseTeleporter(WIZARDHOUSING_50_PROTOCOL.MSG_SETHOUSETELEPORTER message) {
+        Logger.Information("Teleporter: character {CharId} sets the destination of teleporter {ObjectGid} to {X}, {Y}, {Z}, yaw {Yaw}.",
+            Logger.Args(GetActiveWizard().CharId, message.ObjectID, message.LocX, message.LocY, message.LocZ, message.Yaw));
+        try {
+            SetHouseTeleporter(message);
+        } catch (Exception exception) {
+            Logger.Error("Teleporter: setting the destination of teleporter {ObjectGid} failed: {Error}",
+                Logger.Args(message.ObjectID, exception));
+        }
+    }
+
+    // The client sends these back when the server asked it to load another house or to confirm a Castle Tours teleport,
+    // which the server does not do yet. They are logged so a test log shows when the game sends one anyway.
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTTELEPORTERHOUSINGZONE))]
+    private void ReceiveTeleporterHousingZone(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTTELEPORTERHOUSINGZONE message)
+        => Logger.Information("Teleporter: character {CharId} sent MSG_REQUESTTELEPORTERHOUSINGZONE (object {GlobalId}, status {Status}, "
+                + "template {TemplateGid}, structure {StructureGid}), which the server does not use yet.",
+            Logger.Args(GetActiveWizard().CharId, message.GlobalID, message.Status, message.TemplateGID, message.StructureGID));
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTTELEPORTERHOUSINGCONFIRM))]
+    private void ReceiveTeleporterHousingConfirm(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTTELEPORTERHOUSINGCONFIRM message)
+        => Logger.Information("Teleporter: character {CharId} sent MSG_REQUESTTELEPORTERHOUSINGCONFIRM (object {GlobalId}), which the server does not use yet.",
+            Logger.Args(GetActiveWizard().CharId, message.GlobalID));
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PLAYERMOVE))]
+    private void ReceivePlayerMove(ZONE_102_PROTOCOL.MSG_PLAYERMOVE message) {
+        // Furniture is not a zone object, so the step onto a teleporter is found from the position the move service reports.
+        var house = _house;
+        if (house is null || message.PlayerWizard is not { } wizard) {
+            return;
+        }
+
+        try {
+            if (HouseTeleporters.OnMove(house, wizard.CharId, wizard.Location) is not { } pad) {
+                return;
+            }
+
+            Logger.Information("Teleporter: character {CharId} stepped onto teleporter {GidId} of lot {LotGid} and goes to {X}, {Y}, {Z}.",
+                Logger.Args(wizard.CharId, pad.GidId, house.LotGid, pad.Target.X, pad.Target.Y, pad.Target.Z));
+            TeleportInHouse(wizard, pad.Target, pad.TargetYaw);
+        } catch (Exception exception) {
+            Logger.Error("Teleporter: checking the teleporters of lot {LotGid} for character {CharId} failed: {Error}",
+                Logger.Args(house.LotGid, wizard.CharId, exception));
+        }
+    }
+
+    private void EquipHouseMusic(WIZARDHOUSING_50_PROTOCOL.MSG_EQUIPHOUSEMUSIC message) {
+        if (!TryGetMusicPlayer("put a musical scroll into a music player", message.MusicPlayerGID, out var house, out var current)) {
+            return;
+        }
+
+        // The scroll comes from the server's own backpack, never from the client.
+        var wizard = GetActiveWizard();
+        var scroll = wizard.InventoryBehavior.GetItem(message.MusicGID);
+        var scrollTemplateId = scroll is null ? 0 : (uint) Math.Min((ulong) scroll.m_templateID, uint.MaxValue);
+        if (scroll is null || !HouseMusic.IsScroll(scrollTemplateId)) {
+            HandleForgedRequest($"put item {message.MusicGID}, which is not a musical scroll in the backpack, into a music player");
+
+            return;
+        }
+
+        string refusal = null;
+        byte[] data = [];
+        HouseChange change;
+        lock (HouseDeeds.BackpackLock(wizard)) {
+            if (!wizard.InventoryBehavior.RemoveItem(scroll)) {
+                return;
+            }
+
+            // The backpack changes in memory only and is written together with the house, so the scroll is never lost.
+            change = house.TryUpdate(current.Id, stored => WithMusic(stored, player => {
+                if (player.m_playlist.Count >= HouseMusic.MaxScrolls) {
+                    return "This music player cannot hold any more musical scrolls.";
+                }
+
+                if (player.m_playlist.Contains(scrollTemplateId)) {
+                    return "This music player already holds that musical scroll.";
+                }
+
+                player.m_playlist.Add(scrollTemplateId);
+                if (player.m_currentSelection == 0) {
+                    player.m_currentSelection = scrollTemplateId;
+                }
+
+                return null;
+            }, out refusal, out data), document => HouseCollection.SaveWithBackpack(document, wizard));
+            if (!change.Done && !wizard.InventoryBehavior.AddItem(scroll)) {
+                Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to go into a music player.",
+                    Logger.Args(scroll.m_globalID, wizard.CharId));
+            }
+        }
+
+        if (!FinishMusicChange(house, change, refusal, data)) {
+            return;
+        }
+
+        ItemSync.SendRemoved(SessionActor.ActorRef, wizard, scroll.m_globalID);
+        DeleteStoredItem(wizard.CharId, scroll.m_globalID);
+    }
+
+    private void RemoveHouseMusic(WIZARDHOUSING_50_PROTOCOL.MSG_REMOVEHOUSEMUSIC message) {
+        if (!TryGetMusicPlayer("take a musical scroll out of a music player", message.MusicPlayerGID, out var house, out var current)) {
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        var scrollTemplateId = message.MusicTemplateID;
+        if (!HouseMusic.Read(current).m_playlist.Contains(scrollTemplateId)) {
+            InformGameClient("That musical scroll is not in this music player.");
+            SendBlob(house);
+
+            return;
+        }
+
+        string refusal = null;
+        byte[] data = [];
+        WizClientObjectItem scroll;
+        HouseChange change;
+        lock (HouseDeeds.BackpackLock(wizard)) {
+            if (CoreObjectFactory.GetCoreTemplate(scrollTemplateId) is not WizItemTemplate template
+                || wizard.InventoryBehavior.FreeSlots <= 0
+                || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, scrollTemplateId))) {
+                InformGameClient("Your backpack cannot hold that musical scroll.");
+
+                return;
+            }
+
+            scroll = HousingItems.CreateItem(wizard, scrollTemplateId);
+            if (scroll is null || !wizard.InventoryBehavior.AddItem(scroll)) {
+                InformGameClient("The musical scroll could not be taken out.");
+
+                return;
+            }
+
+            // The new scroll and the player are written in one transaction, so a crash between them cannot lose the scroll.
+            change = house.TryUpdate(current.Id, stored => WithMusic(stored, player => {
+                if (!player.m_playlist.Remove(scrollTemplateId)) {
+                    return "That musical scroll is not in this music player.";
+                }
+
+                if (player.m_currentSelection == scrollTemplateId) {
+                    player.m_currentSelection = player.m_playlist.FirstOrDefault();
+                }
+
+                return null;
+            }, out refusal, out data), document => HouseCollection.SaveWithBackpack(document, wizard, scroll));
+            if (!change.Done) {
+                wizard.InventoryBehavior.RemoveItem(scroll);
+            }
+        }
+
+        if (!FinishMusicChange(house, change, refusal, data)) {
+            return;
+        }
+
+        if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, scroll)) {
+            Logger.Error("Could not tell the client about musical scroll {ItemId} taken out of a music player by character {CharId}.",
+                Logger.Args(scroll.m_globalID, wizard.CharId));
+        }
+    }
+
+    private void EditMusicPlayer(string request, ulong playerGid, Func<HousingMusicPlayerBehavior, string> edit) {
+        if (!TryGetMusicPlayer(request, playerGid, out var house, out var current)) {
+            return;
+        }
+
+        string refusal = null;
+        byte[] data = [];
+        var change = house.TryUpdate(current.Id, stored => WithMusic(stored, edit, out refusal, out data));
+        FinishMusicChange(house, change, refusal, data);
+    }
+
+    // Applies an edit to the music player's state and gives back the item with the new custom data, or null when the
+    // edit is refused or the state cannot be written.
+    private static PlacedItem WithMusic(PlacedItem stored, Func<HousingMusicPlayerBehavior, string> edit, out string refusal, out byte[] data) {
+        data = [];
+        var player = HouseMusic.Read(stored);
+        refusal = edit(player);
+        if (refusal is not null) {
+            return null;
+        }
+
+        if (!HouseMusic.TryWrite(player, out data)) {
+            refusal = "The music player could not be changed.";
+
+            return null;
+        }
+
+        Logger.Information("Music: music player {TemplateId} (item {ItemId}) now has {State}.",
+            Logger.Args(stored.TemplateId, stored.Id, HouseMusic.Describe(player)));
+
+        return stored with { Custom = PlacedItem.EncodeCustom(data) };
+    }
+
+    private bool FinishMusicChange(HouseState house, HouseChange change, string refusal, byte[] data) {
+        if (!change.Done) {
+            // The client's music window may already show the change, so it gets the real state back.
+            InformGameClient(refusal ?? "The music player could not be changed.");
+            SendBlob(house);
+
+            return false;
+        }
+
+        // The patch tells every client's music manager, which plays the selected music.
+        ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHHOUSINGMUSICOBJECT {
+            Data = data,
+            SubType = ItemSubType,
+            PackageNumber = 0,
+            VersionNumber = change.Revision,
+            GIDID = change.GidId,
+        }, isSelfless: false, ZoneBroadcastTarget.Players);
+
+        return true;
+    }
+
+    private bool TryGetMusicPlayer(string request, ulong playerGid, out HouseState house, out PlacedItem current) {
+        current = null;
+        if (!TryGetHouse(request, out house)) {
+            return false;
+        }
+
+        if (!house.TryFindByGid(playerGid, out current, out _)) {
+            HandleForgedRequest($"{request} with object {playerGid}, which is not an object of this house");
+
+            return false;
+        }
+
+        if (current is null) {
+            // The player is gone. The client acted on an older blob, so give it the real state.
+            SendBlob(house);
+
+            return false;
+        }
+
+        if (!HouseMusic.IsPlayer(current.TemplateId)) {
+            HandleForgedRequest($"{request} with object {playerGid}, template {current.TemplateId}, which is not a music player");
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private void SetHouseTeleporter(WIZARDHOUSING_50_PROTOCOL.MSG_SETHOUSETELEPORTER message) {
+        if (!TryGetHouse("set a teleporter's destination", out var house)) {
+            return;
+        }
+
+        if (!house.TryFindByGid(message.ObjectID, out var current, out _)) {
+            // The targeting can be started in one house of a residence and finished in the other, which is not used yet.
+            Logger.Information("Teleporter: object {ObjectGid} is not an object of lot {LotGid}; its destination is not set.",
+                Logger.Args(message.ObjectID, house.LotGid));
+            InformGameClient("A teleporter can only send to a spot in its own house.");
+
+            return;
+        }
+
+        if (current is null) {
+            SendBlob(house);
+
+            return;
+        }
+
+        if (!HouseTeleporters.IsTeleporter(current.TemplateId, out var isPet)) {
+            HandleForgedRequest($"set the destination of object {message.ObjectID}, template {current.TemplateId}, which is not a teleporter");
+
+            return;
+        }
+
+        if (new PlacedItem { TemplateId = current.TemplateId, X = message.LocX, Y = message.LocY, Z = message.LocZ, Yaw = message.Yaw }.Normalize() is null) {
+            HandleForgedRequest($"set the destination of teleporter {message.ObjectID} to a position that is not valid");
+
+            return;
+        }
+
+        if (!HouseTeleporters.TryLink(house, message.LocX, message.LocY, message.LocZ, message.Yaw, out var data)) {
+            InformGameClient("The teleporter could not be set.");
+
+            return;
+        }
+
+        var custom = PlacedItem.EncodeCustom(data);
+        var change = house.TryUpdate(current.Id, stored => stored with { Custom = custom });
+        if (!change.Done) {
+            InformGameClient("The teleporter could not be set.");
+            SendBlob(house);
+
+            return;
+        }
+
+        Logger.Information("Teleporter: {Kind} {TemplateId} (house object {GidId}) of lot {LotGid} now sends to {X}, {Y}, {Z}.",
+            Logger.Args(isPet ? "pet teleporter" : "teleporter", current.TemplateId, change.GidId, house.LotGid, message.LocX, message.LocY, message.LocZ));
+        ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHHOUSINGTELEPORTEROBJECT {
+            Data = data,
+            SubType = ItemSubType,
+            PackageNumber = 0,
+            VersionNumber = change.Revision,
+            GIDID = change.GidId,
+        }, isSelfless: false, ZoneBroadcastTarget.Players);
+
+        // The client has a handler for the same message, which sets the destination on the teleporter it shows.
+        SendToSocket(message);
+    }
+
+    private void TeleportInHouse(Wizard wizard, Vector3 target, float yaw) {
+        // MSG_SERVERTELEPORT carries the position divided by 4 in signed 16-bit fields, as the client's moves do.
+        var direction = yaw % (2 * MathF.PI);
+        if (direction < 0) {
+            direction += 2 * MathF.PI;
+        }
+
+        ZoneBroadcast(new GAME_5_PROTOCOL.MSG_SERVERTELEPORT {
+            LocationX = unchecked((ushort) (short) MathF.Round(target.X / 4)),
+            LocationY = unchecked((ushort) (short) MathF.Round(target.Y / 4)),
+            LocationZ = unchecked((ushort) (short) MathF.Round(target.Z / 4)),
+            Direction = (byte) Math.Round(direction / (2 * MathF.PI) * 250),
+            MobileID = GetActiveGameObject().m_nMobileID,
+        }, isSelfless: false);
+        wizard.Location = target;
+    }
+
+    private static bool TryAddAll(Wizard wizard, IReadOnlyList<WizClientObjectItem> items) {
+        for (var index = 0; index < items.Count; index++) {
+            if (!wizard.InventoryBehavior.AddItem(items[index])) {
+                RemoveAll(wizard, items.Take(index));
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void RemoveAll(Wizard wizard, IEnumerable<WizClientObjectItem> items) {
+        foreach (var item in items) {
+            wizard.InventoryBehavior.RemoveItem(item);
+        }
+    }
+
     private bool TryGetHouse(string request, out HouseState house) {
         house = _house;
         if (house is null) {
@@ -550,6 +976,7 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
+        HouseTeleporters.Forget(_houseCharId);
         HouseRegistry.Release(_house);
         _house = null;
     }
