@@ -435,6 +435,8 @@ internal static class CombatEffectApplicator {
         // A landed critical multiplies the fully-boosted outgoing damage by a variable factor;
         // wards and resist still reduce it.
         damageFromCaster = (int) Math.Floor(damageFromCaster * critMultiplier);
+        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (crit x{4}).",
+            Logger.Args(caster?.SlotIndex, effect.m_effectType, effect.m_effectParam, damageFromCaster, critMultiplier));
 
         // Pierce (armor piercing) goes through the target's shields first, then what is left through its resist.
         var pierce = OutgoingPierce(effect, charms, caster);
@@ -809,7 +811,15 @@ internal static class CombatEffectApplicator {
         var reducedDamage = (int) Math.Floor(damage * (1 - damageReductionPercent) - damageReductionFlat);
 
         // Ensure that damage isn't negative.
-        reducedDamage = CapDamage(target, Math.Max(reducedDamage, 0));
+        var beforeCap = Math.Max(reducedDamage, 0);
+        reducedDamage = CapDamage(target, beforeCap);
+
+        // The game works a hit out on its own; when it gets more than this, it shows a creature dying that the server
+        // keeps alive (Niduus, 2026-10-23: Draconians lost their health circle until the next round). Logged to compare.
+        Logger.Debug("Damage to slot {0}: {1} {2} in, resist {3:P0} (after pierce {4:P0}), flat {5}, {6} after resist{7}, health {8} -> {9}.",
+            Logger.Args(target.SlotIndex, damage, damageType, GetPercentDamageReduction(target, damageType), damageReductionPercent,
+                damageReductionFlat, beforeCap, reducedDamage < beforeCap ? $", capped to {reducedDamage}" : "",
+                target.ParticipantGameStats?.m_currentHitpoints, (target.ParticipantGameStats?.m_currentHitpoints ?? 0) - reducedDamage));
 
         target.DamageParticipant(reducedDamage);
 
