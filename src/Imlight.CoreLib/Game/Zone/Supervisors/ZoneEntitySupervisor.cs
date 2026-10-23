@@ -139,6 +139,9 @@ internal abstract class ZoneEntitySupervisor(Core.Zone zone) : ReceiveProtocolDi
                     && entity.Path.Name == message.Sender.Path.Name) {
                     continue;
                 }
+                if (message.Except is not null && message.Except.Contains(entity)) {
+                    continue;
+                }
                 entity.Forward(message.Message);
             }
 

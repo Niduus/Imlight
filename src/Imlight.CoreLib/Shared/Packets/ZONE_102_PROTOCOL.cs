@@ -425,6 +425,11 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// </summary>
         public ZoneBroadcastTarget Targets = ZoneBroadcastTarget.All;
 
+        /// <summary>
+        /// Players who must not get the client-visible message (they got their own copy directly).
+        /// </summary>
+        public IActorRef[] Except;
+
     }
 
     /// <summary>

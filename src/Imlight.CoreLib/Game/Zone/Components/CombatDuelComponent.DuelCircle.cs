@@ -22,6 +22,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.Math;
+using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
@@ -255,8 +256,7 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        // Everyone in the zone sees it, not only the wizards on the circle (Niduus, 2026-10-23).
-        ZoneBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
+        ShowToCircleAndZone(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMERSTART {
             Time = _duelCountdown,
             SigilGID = SigilId,
             Teleport = 0,
@@ -264,7 +264,25 @@ internal sealed partial class CombatDuelComponent {
     }
 
     private void EndCircleCountdown()
-        => ZoneBroadcast(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = SigilId });
+        => ShowToCircleAndZone(new WIZARD_12_PROTOCOL.MSG_MINIGAMETIMEREND { SigilGID = SigilId });
+
+    // Everyone in the zone sees the countdown, not only the wizards on the circle (Niduus, 2026-10-23). The wizards on
+    // it get theirs directly: a copy through the zone could reach them after the battle began, and in v0.10.191 that
+    // kept the battle from ever showing.
+    private void ShowToCircleAndZone(IMessage message) {
+        var onCircle = SubCircles.Where(c => c is { Occupied: true, IsAiCreature: false } && c.ParticipantActor is not null)
+            .Select(c => c.ParticipantActor).ToArray();
+        foreach (var actor in onCircle) {
+            actor.Tell(message);
+        }
+
+        Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Sender = Self,
+            Message = message,
+            Except = onCircle,
+            Targets = ZoneBroadcastTarget.Players,
+        });
+    }
 
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED))]
     private void ReceiveLocalMatchJoined(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED message) {
