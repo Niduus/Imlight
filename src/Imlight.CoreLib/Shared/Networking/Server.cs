@@ -105,14 +105,33 @@ public abstract class Server : ReceiveProtocolDispatcher {
 
     [MessageHandler(typeof(SERVER_100_PROTOCOL.MSG_ALLOCATESOCKET))]
     protected virtual void ReceiveAllocateSocket(SERVER_100_PROTOCOL.MSG_ALLOCATESOCKET message) {
-        // Create a new child actor, which represents the active socket connection.
-        var id = GetNewUniqueId();
-        var sessionProps = SessionActor.Props(message.Socket, id, Context.Self, _actorFactoryRef);
-        Context.ActorOf(sessionProps, $"SessionActor.{id}");
+        // A connection that closes at once (the Manager checks every 2 s whether the server is up) can have its socket
+        // gone before this runs: reading RemoteEndPoint then threw, which restarted the whole login server and took the
+        // game servers with it, so the game could only reconnect in a loop (Niduus, 2026-10-23). Nothing here may throw.
+        string remote;
+        try {
+            remote = message.Socket.RemoteEndPoint?.ToString();
+        }
+        catch (Exception) {
+            remote = "(already closed)";
+        }
 
-        // Logger
-        Logger.Debug("{Type} new connection from {RemoteEndPoint} given session ID {Id}",
-            Logger.Args(GetType(), message.Socket.RemoteEndPoint?.ToString(), id));
+        try {
+            // Create a new child actor, which represents the active socket connection.
+            var id = GetNewUniqueId();
+            while (!Context.Child($"SessionActor.{id}").IsNobody()) {
+                id = GetNewUniqueId();
+            }
+
+            var sessionProps = SessionActor.Props(message.Socket, id, Context.Self, _actorFactoryRef);
+            Context.ActorOf(sessionProps, $"SessionActor.{id}");
+
+            Logger.Debug("{Type} new connection from {RemoteEndPoint} given session ID {Id}",
+                Logger.Args(GetType(), remote, id));
+        }
+        catch (Exception ex) {
+            Logger.Error("{Name} could not take a connection from {RemoteEndPoint}: {Exception}", Logger.Args(Name, remote, ex));
+        }
     }
 
     [MessageHandler(typeof(SERVER_100_PROTOCOL.MSG_DEALLOCATESOCKET))]
