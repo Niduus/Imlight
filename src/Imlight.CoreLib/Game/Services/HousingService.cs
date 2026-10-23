@@ -38,6 +38,7 @@
  * - Music players and teleporters keep their state as the custom data of their blob entry (Game/Housing/HouseMusic,
  *   HouseTeleporters). A change is stored on the placed item and sent to everyone in the house as a patch.
  * - A music player that is picked up gives its musical scrolls back to the backpack.
+ * - The moves of the house's vaults, sheds and posters are in HousingService.Vaults. A vault that holds items is not picked up.
  *
  * TODO:
  *
@@ -68,7 +69,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
 
-internal class HousingService(SessionActor sessionActor) : MessageService(sessionActor) {
+internal partial class HousingService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const string BlobType = HousingBlobs.BlobType;
     private const string ItemSubType = "Item";
@@ -262,6 +263,11 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
         HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         DeleteStoredItem(wizard.CharId, itemId);
+
+        // The add patch makes a plain entry, and the client takes vault patches only for a custom one.
+        if (HouseVaults.KindOf(templateId) != VaultKind.None) {
+            SendBlob(house);
+        }
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGOBJECT))]
@@ -367,6 +373,16 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
+        // What a vault holds is not carried by the backpack item, so a vault that holds anything stays.
+        if (HouseVaults.HoldsItems(placedItem)) {
+            Logger.Information("Vaults: character {CharId} tried to pick up a {Vault} that still holds items.",
+                Logger.Args(wizard.CharId, HouseVaults.NameOf(HouseVaults.KindOf(placedItem.TemplateId))));
+            InformGameClient($"Empty the {HouseVaults.NameOf(HouseVaults.KindOf(placedItem.TemplateId))} before you pick it up.");
+            RefusePickUp(house);
+
+            return;
+        }
+
         WizClientObjectItem item;
         HouseChange change;
         List<WizClientObjectItem> added;
@@ -449,6 +465,10 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
 
         if (!TryGetAttic(out var attic)) {
             return;
+        }
+
+        if (house.Snapshot().Slots.Any(HouseVaults.HoldsItems)) {
+            InformGameClient("Vaults that still hold items stay in the house.");
         }
 
         var result = HousePickUpAll.Run(house, attic, kept);
@@ -984,24 +1004,30 @@ internal class HousingService(SessionActor sessionActor) : MessageService(sessio
     private void SendBlob(HouseState house) {
         var snapshot = house.Snapshot();
         try {
-            // A removed slot is an empty entry, which the client numbers and does not count.
-            var blob = new Blob {
-                m_type = BlobType,
-                m_subType = ItemSubType,
-                m_versionNumber = snapshot.Revision,
-                m_packageNumber = 0,
-                m_associatedGID = house.LotGid,
-                m_epochDays = HousingBlobs.EpochDaysNow(),
-                m_data = new HousingBlob { m_housingBlobObjectList = [.. snapshot.Slots.Select(item => item?.ToBlobObject() ?? new HousingBlobObject())] },
-            };
             SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_SEND_BLOB {
-                Data = HousingBlobs.Serialize(blob),
+                Data = HousingBlobs.Serialize(BuildBlob(house, snapshot)),
                 UserData = snapshot.GidBase,
             });
         } catch (InvalidOperationException exception) {
             Logger.Error("Could not build the blob of lot {LotGid}: {Reason}", Logger.Args(house.LotGid, exception.Message));
         }
     }
+
+    private static Blob BuildBlob(HouseState house, HouseSnapshot snapshot, Func<PlacedItem, PlacedItem> map = null)
+        // A removed slot is an empty entry, which the client numbers and does not count.
+        => new() {
+            m_type = BlobType,
+            m_subType = ItemSubType,
+            m_versionNumber = snapshot.Revision,
+            m_packageNumber = 0,
+            m_associatedGID = house.LotGid,
+            m_epochDays = HousingBlobs.EpochDaysNow(),
+            m_data = new HousingBlob {
+                m_housingBlobObjectList = [.. snapshot.Slots.Select(item => item is null
+                    ? new HousingBlobObject()
+                    : HouseVaults.ToBlobObject(map?.Invoke(item) ?? item))],
+            },
+        };
 
     private static bool RequestsItemBlob(BlobRequest request, ulong lotGid)
         => request.m_type == BlobType && request.m_associatedGID == lotGid

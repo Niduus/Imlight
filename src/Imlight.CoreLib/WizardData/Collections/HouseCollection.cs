@@ -36,7 +36,7 @@
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/23/2026
  */
 
 using System;
@@ -207,6 +207,34 @@ public static class HouseCollection {
             });
         } catch (Exception ex) {
             Logger.Error("Failed to save house {HouseId} with the backpack of character {CharId}: {Reason}",
+                Logger.Args(house.Id, owner.CharId, ex.Message));
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Writes a house together with its owner's treasure cards in one transaction, so a card that moves between a
+    /// Treasure Card Vault and the treasure book is either in the vault or in the book, never lost and never in both.
+    /// </summary>
+    /// <param name="house">The house to save.</param>
+    /// <param name="owner">The owner, whose treasure cards are written as they are in memory.</param>
+    /// <returns><c>true</c> when both are stored; <c>false</c> when neither changed.</returns>
+    public static bool SaveWithTreasureCards(House house, Wizard owner) {
+        try {
+            return WizardCollection.UpdateCharacterWithSession(owner.CharId, (session, storedOwner) => {
+                var stored = session.Load<House>(house.Id);
+                if (stored is null || storedOwner.SpellbookBehavior is null) {
+                    return false;
+                }
+
+                CopyChanging(house, stored);
+                storedOwner.SpellbookBehavior.TreasureCardTemplateIds = [.. owner.SpellbookBehavior.TreasureCardTemplateIds ?? []];
+
+                return true;
+            });
+        } catch (Exception ex) {
+            Logger.Error("Failed to save house {HouseId} with the treasure cards of character {CharId}: {Reason}",
                 Logger.Args(house.Id, owner.CharId, ex.Message));
 
             return false;

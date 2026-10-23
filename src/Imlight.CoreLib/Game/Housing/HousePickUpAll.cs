@@ -40,7 +40,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/23/2026
  */
 
 using System;
@@ -90,7 +90,8 @@ internal static class HousePickUpAll {
 
         var movable = new List<(PlacedItem Item, HousingFamily Family)>();
         foreach (var item in house.Snapshot().Slots) {
-            if (item is not null && !kept.Contains(item.Id)
+            // A vault that holds items stays: what it holds would not go with it.
+            if (item is not null && !kept.Contains(item.Id) && !HouseVaults.HoldsItems(item)
                 && HousingItems.Check(item.TemplateId, out _, out var family) == HousingPlacement.Allowed
                 && family.AtticSubType is not null) {
                 movable.Add((item, family));

@@ -35,12 +35,13 @@
  * - A remap index of 0 is a set index, so the remap is null when it is not used.
  * - Custom is the custom data of a music player or a teleporter, the bytes of the client's HousingBlobCustomObject,
  *   kept in base64. An item with custom data is sent as a custom blob entry.
+ * - A vault, shed or poster keeps what it holds in Vault; its blob entry is built by Game/Housing/HouseVaults.
  *
  * TODO:
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/23/2026
  */
 
 using System;
@@ -150,6 +151,11 @@ public sealed record PlacedItem {
             return [];
         }
     }
+
+    /// <summary>
+    /// What a vault, shed or poster holds, or <c>null</c> for an object that holds nothing yet.
+    /// </summary>
+    public HouseVault Vault { get; init; }
 
     /// <summary>
     /// Creates the placed item of a layout object.
