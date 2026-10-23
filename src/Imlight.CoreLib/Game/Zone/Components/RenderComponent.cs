@@ -435,6 +435,12 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private List<GAME_5_PROTOCOL.MSG_ENTERSTATE> CreateCurrentStateMessages() {
         var look = Entity.Info is MinigameSigilInfo ? Core.ZoneObjects.LitStateOf(Entity.Info) : null;
         var state = look ?? Entity.Zone.ScriptState.GetObjectState(Entity.Info?.m_zoneTag);
+        // A duel circle (a PvP battle circle, such as a house's) is built Off, so the game shows nothing on the floor;
+        // with no state of its own it is sent lit, the same blue glow as a sigil pad (Niduus, 2026-10-23).
+        if (string.IsNullOrEmpty(state) && IsDuelCircle()) {
+            state = Core.ZoneObjects.SIGIL_LIT_STATE;
+        }
+
         if (IsDespawnState(state)) {
             return [];
         }
@@ -451,6 +457,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             Data = new ByteString(),
         })];
     }
+
+    private bool IsDuelCircle()
+        => Entity.Info is CombatSigilObjectInfo circle
+           && Sigils.SigilFactory.GetSigilTemplate(circle.m_sigilType) is PvPCombatSigilTemplate;
 
     private void DespawnObjectForPlayer(IActorRef player) {
         // Send object data to the player
