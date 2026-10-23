@@ -365,7 +365,7 @@ internal sealed partial class ManagerWindow {
                     ("Customs/Area originals", "Each area as it came with Imlight, kept the first time you save it, for [Go back to the original]."),
                     ("ZoneObjects", "One file for each custom area (its zone, and @variant for a private copy)."),
                     ("BossOverrides", "Your changes to real bosses from the Bosses tab, one file for each creature ID."),
-                    ("BossCheats", "The bosses' cheats as they came with Imlight. They are never changed; your cheat changes are saved in " +
+                    ("BossCheats", "Boss cheat files kept on this PC only; Imlight updates never ship or replace them. Cheat changes made in the app are saved in " +
                                    "the custom's or the BossOverrides file."),
                     ("DropTables, NpcDropTable", "The drop tables, and which tables each game creature drops.")),
                 new GuideActions(BACKUP, OPEN_EXTRA, OPEN_SERVER),
