@@ -568,7 +568,7 @@ internal sealed partial class ManagerWindow : Window {
         });
         Action(_stopButton, async () => {
             if (await ConfirmAsync("Stop the server? Everyone playing is disconnected.")) {
-                Say(_manager.StopServer());
+                Say(await Task.Run(() => _manager.StopServer()));
             }
         });
         Danger(_stopButton);
@@ -1703,6 +1703,8 @@ internal sealed partial class ManagerWindow : Window {
             start.ArgumentList.Add("--start-server");
         }
 
+        // Closing the app stops the server; everyone playing is told why first.
+        ServerManager.StopNotice = "The server is updating now. You will be disconnected; log in again in a few minutes.";
         Process.Start(start)?.Dispose();
         Close();
     }

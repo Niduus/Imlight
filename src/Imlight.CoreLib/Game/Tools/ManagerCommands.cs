@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
@@ -35,6 +36,8 @@ namespace Imlight.CoreLib.Game.Tools;
 internal static class ManagerCommands {
 
     private const string COMMANDS_FILE = "manager-commands.txt";
+    // Lines the app sends every player before it restarts, updates or stops the server (Niduus, 2026-10-23).
+    private const string ANNOUNCEMENTS_FILE = "server-announcements.txt";
 
     private static Timer s_timer;
     private static ActorSystem s_system;
@@ -49,10 +52,12 @@ internal static class ManagerCommands {
 
         // Commands left from before the server started are not run.
         TryDelete(COMMANDS_FILE);
+        TryDelete(ANNOUNCEMENTS_FILE);
         s_timer = new Timer(_ => Poll(), null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(500));
     }
 
     private static void Poll() {
+        PollAnnouncements();
         try {
             if (!File.Exists(COMMANDS_FILE)) {
                 return;
@@ -78,6 +83,32 @@ internal static class ManagerCommands {
         }
         catch (Exception ex) {
             Logger.Error("Could not run the Imlight app's commands: {0}", Logger.Args(ex.Message));
+        }
+    }
+
+    private static void PollAnnouncements() {
+        try {
+            if (!File.Exists(ANNOUNCEMENTS_FILE)) {
+                return;
+            }
+
+            var taken = ANNOUNCEMENTS_FILE + ".sending";
+            File.Move(ANNOUNCEMENTS_FILE, taken, overwrite: true);
+            var lines = File.ReadAllLines(taken).Select(line => line.Trim()).Where(line => line.Length > 0).ToList();
+            TryDelete(taken);
+
+            foreach (var line in lines) {
+                Logger.Information("Imlight app announcement to everyone: {0}", Logger.Args(line));
+                foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
+                    s_system.ActorSelection(player.ActorPath).Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 1 });
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // The app is still writing the file; it is read on the next round.
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not send the Imlight app's announcement: {0}", Logger.Args(ex.Message));
         }
     }
 

@@ -1235,8 +1235,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // The roster is fixed: each player sits on a circle of their side and is moved onto it first, because
         // they stand wherever they arrived in the zone.
+        // A duel circle's wizards walk onto their places, as into a battle with monsters; an arena moves them.
         foreach (var entry in message.Roster) {
-            SeatPvPEntry(entry);
+            SeatPvPEntry(entry, moveThere: message.Rules is null);
         }
 
         _isActive = true;
@@ -1245,17 +1246,19 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, message.MatchId, message.Roster.Count, DUEL_GRACE_PERIOD_IN_SECONDS));
     }
 
-    private void SeatPvPEntry(PvPRosterEntry entry) {
+    private void SeatPvPEntry(PvPRosterEntry entry, bool moveThere) {
         var subCircle = GetAvailableSubCircle((CombatTeam) entry.TeamIndex)
             ?? throw new InvalidOperationException($"No free circle on side {entry.TeamIndex}.");
 
-        ZoneBroadcast(new GAME_5_PROTOCOL.MSG_SERVERTELEPORT {
-            LocationX = CompressTeleportCoordinate(subCircle.WorldPosition.X),
-            LocationY = CompressTeleportCoordinate(subCircle.WorldPosition.Y),
-            LocationZ = CompressTeleportCoordinate(subCircle.WorldPosition.Z),
-            Direction = (byte) Math.Round(subCircle.WorldRotation / (2 * Math.PI) * 250),
-            MobileID = entry.PlayerObject.m_nMobileID,
-        });
+        if (moveThere) {
+            ZoneBroadcast(new GAME_5_PROTOCOL.MSG_SERVERTELEPORT {
+                LocationX = CompressTeleportCoordinate(subCircle.WorldPosition.X),
+                LocationY = CompressTeleportCoordinate(subCircle.WorldPosition.Y),
+                LocationZ = CompressTeleportCoordinate(subCircle.WorldPosition.Z),
+                Direction = (byte) Math.Round(subCircle.WorldRotation / (2 * Math.PI) * 250),
+                MobileID = entry.PlayerObject.m_nMobileID,
+            });
+        }
 
         AssignParticipantToSubCircle(subCircle, entry.Session, entry.PlayerObject);
     }

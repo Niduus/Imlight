@@ -118,7 +118,30 @@ internal sealed partial class ServerManager(string installFolder) {
         return "The server is starting. It is ready for players when the dot turns green.";
     }
 
-    internal string StopServer() {
+    // What everyone playing is told before the app stops the server (Niduus, 2026-10-23); an update sets its own.
+    internal static string StopNotice { get; set; }
+
+    private const string ANNOUNCEMENTS_FILE = "server-announcements.txt";
+
+    /// <summary>
+    /// Tells everyone playing, then gives the server a moment to send it before it stops.
+    /// </summary>
+    private void AnnounceBeforeStop(string notice) {
+        try {
+            if (!InstalledCommands.IsServerRunning(InstallFolder)) {
+                return;
+            }
+
+            File.AppendAllText(Path.Combine(ServerFolder, ANNOUNCEMENTS_FILE), notice.ReplaceLineEndings(" ") + Environment.NewLine);
+            System.Threading.Thread.Sleep(2500);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Nobody is told; the server still stops.
+        }
+    }
+
+    internal string StopServer(string notice = null) {
+        AnnounceBeforeStop(notice ?? StopNotice ?? "The server is shutting down now. You will be disconnected.");
         var exe = Path.GetFullPath(InstalledCommands.ServerExe(InstallFolder));
         var stopped = 0;
         foreach (var process in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(exe))) {
@@ -142,7 +165,7 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     internal async Task<string> RestartServerAsync() {
-        StopServer();
+        await Task.Run(() => StopServer("The server is restarting now. You will be disconnected for a moment; log in again in about a minute."));
         await Task.Delay(1500);
 
         return StartServer();
@@ -413,7 +436,9 @@ internal sealed partial class ServerManager(string installFolder) {
             throw new PanelException($"{exe} is missing. Run {Edition.RELEASE_ASSET} again to repair Imlight.");
         }
 
-        StopServer();
+        StopServer(mode == "--update"
+            ? "The server is updating now. You will be disconnected; log in again in a few minutes."
+            : null);
         Process.Start(new ProcessStartInfo(exe) {
             Arguments = $"{mode} --dir \"{InstallFolder}\"",
             WorkingDirectory = InstallFolder,

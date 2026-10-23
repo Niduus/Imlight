@@ -243,8 +243,22 @@ internal sealed partial class CombatDuelComponent {
 
         _duelCountdown = PvPSettings.DuelCircleWait;
         TellCircleDuel($"The duel starts in {_duelCountdown} seconds. More wizards can step on to join.");
+        ShowCircleCountdown();
         Timers.StartPeriodicTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.FromSeconds(1));
         StartCircleRoundsIfFull();
+    }
+
+    // The wait shows as the battle's own countdown in the middle of the circle, as on a battle sigil (Niduus, 2026-10-23).
+    private void ShowCircleCountdown() {
+        if (_duelCountdown <= 0) {
+            return;
+        }
+
+        HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SHOWCOMBATUI { DuelID = SigilId, AltTurn = 0, AltTurnTeam = 0 });
+        HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SETPLANNINGPHASETIMER {
+            DuelID = SigilId,
+            Time = (byte) Math.Min(_duelCountdown, byte.MaxValue),
+        });
     }
 
     [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED))]
@@ -265,9 +279,10 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        SeatPvPEntry(message.Entry);
+        SeatPvPEntry(message.Entry, moveThere: false);
         _pvp.AddToRoster(message.Entry);
         ShowCircleJoiner(message.Entry);
+        ShowCircleCountdown();
         StartCircleRoundsIfFull();
     }
 
@@ -312,10 +327,6 @@ internal sealed partial class CombatDuelComponent {
         }
 
         _duelCountdown--;
-        if (_duelCountdown is 10 or 5 or 3 or 2 or 1) {
-            TellCircleDuel($"{_duelCountdown}...");
-        }
-
         if (_duelCountdown <= 0) {
             StartCircleRounds();
         }
@@ -348,6 +359,7 @@ internal sealed partial class CombatDuelComponent {
         Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
         if (winningTeam >= 0) {
             TellCircleDuel($"Team {(winningTeam == (int) CombatTeam.Player ? "A (blue)" : "B (red)")} wins the duel!");
+            ZoneBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMATCHRESULT { DuelID = SigilId, WinningTeam = (byte) winningTeam });
         }
 
         EnactActionOnSubCircles(circle => {
