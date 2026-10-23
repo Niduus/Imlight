@@ -66,6 +66,7 @@ internal class CommandPetFormProtocol : CommandProtocol {
                 InternalID = current.m_internalID,
             });
             session.Tell(new ZONE_102_PROTOCOL.MSG_PETFORMCHANGED { On = false }, null);
+            TellGamePlayingAsPet(wizard, session, false);
             inform("You look like yourself again.");
 
             return;
@@ -102,8 +103,20 @@ internal class CommandPetFormProtocol : CommandProtocol {
             EffectData = data,
         });
         session.Tell(new ZONE_102_PROTOCOL.MSG_PETFORMCHANGED { On = true }, null);
+        TellGamePlayingAsPet(wizard, session, true);
         Logger.Information("{0} took the look of their pet (race {1}).", Logger.Args(wizard.CharId, (string) effect.m_sRace));
         inform("You now look like your pet. Press the button or type .petform again to turn back.");
+    }
+
+    // The game's own Play as Pet state (ClientPetOwnerBehavior.m_playingAsPet). Without the answer the game kept sending
+    // "switch to pet" (Status 1) on every press and its HUD never changed. Sent back the way it came, with the new state.
+    private static void TellGamePlayingAsPet(Wizard wizard, IActorRef session, bool on) {
+        wizard.PetOwnerBehavior.PlayingAsPet = on;
+        session.Tell(new WIZARD2_53_PROTOCOL.MSG_SWITCHTOPET {
+            GlobalID = wizard.PetOwnerBehavior.EquippedPetGlobalId,
+            Status = (byte) (on ? 1 : 0),
+            PetTemplate = (uint) wizard.PetOwnerBehavior.EquippedPetTemplateId,
+        }, null);
     }
 
     // The wizard's own game first, then everyone else in the zone.
