@@ -435,8 +435,14 @@ internal static class CombatEffectApplicator {
         // A landed critical multiplies the fully-boosted outgoing damage by a variable factor;
         // wards and resist still reduce it.
         damageFromCaster = (int) Math.Floor(damageFromCaster * critMultiplier);
-        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (crit x{4}).",
-            Logger.Args(caster?.SlotIndex, effect.m_effectType, effect.m_effectParam, damageFromCaster, critMultiplier));
+        var casterStats = caster?.ParticipantGameStats;
+        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (crit x{4}). Raw stats: damage {5} school + {6} all,"
+                     + " flat {7}, pierce {8} school + {9} all, charms [{10}].",
+            Logger.Args(caster?.SlotIndex, effect.m_effectType, effect.m_effectParam, damageFromCaster, critMultiplier,
+                caster?.GetStatBySchool(casterStats?.m_dmgBonusPercent, effect.m_sDamageType), casterStats?.m_dmgBonusPercentAll,
+                caster is null ? 0 : GetFlatDamageIncrease(caster, effect.m_sDamageType),
+                caster?.GetStatBySchool(casterStats?.m_apBonusPercent, effect.m_sDamageType), casterStats?.m_apBonusPercentAll,
+                string.Join(", ", charms.Select(c => $"{c.m_effectType} {c.m_effectParam}"))));
 
         // Pierce (armor piercing) goes through the target's shields first, then what is left through its resist.
         var pierce = OutgoingPierce(effect, charms, caster);

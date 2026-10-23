@@ -223,6 +223,7 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll += statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll += statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent += statistic.m_stunResistancePercent;
+        LogBattleStat("added", effectName, statistic);
 
         if (effectName.Contains("ArmorPiercing")) {
             ApplyArmorPiercing(stats, effectName, statistic.m_armorPiercingBonusPercent);
@@ -276,6 +277,7 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll -= statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll -= statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent -= statistic.m_stunResistancePercent;
+        LogBattleStat("removed", effectName, statistic);
 
         if (effectName.Contains("ArmorPiercing")) {
             ApplyArmorPiercing(stats, effectName, -statistic.m_armorPiercingBonusPercent);
@@ -529,6 +531,17 @@ internal static class CharacterEffectHelper {
                 var schoolName = ExtractSchoolName(effectName);
                 RemoveSchoolEffect(ref stats.m_dmgReducePercent, schoolName, statistic.m_damageReducePercent);
             }
+        }
+    }
+
+    // Damage, pierce and resist as they reach a wizard's stats, to compare with the game's own numbers (Niduus,
+    // 2026-10-23: the server's Tempest did a third of what the game showed, so Draconians looked dead).
+    private static void LogBattleStat(string change, string effectName, WizStatisticEffect statistic) {
+        if (statistic.m_damageBonusPercent != 0 || statistic.m_damageBonusFlat != 0 || statistic.m_armorPiercingBonusPercent != 0
+            || statistic.m_damageReducePercent != 0) {
+            Logger.Debug("Stat {0}: {1} damage {2} flat {3} pierce {4} resist {5}.",
+                Logger.Args(change, effectName, statistic.m_damageBonusPercent, statistic.m_damageBonusFlat,
+                    statistic.m_armorPiercingBonusPercent, statistic.m_damageReducePercent));
         }
     }
 
