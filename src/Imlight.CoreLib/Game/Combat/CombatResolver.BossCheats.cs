@@ -49,12 +49,33 @@ public partial class CombatResolver {
     // .joinme counts its own rounds).
     private readonly Dictionary<CombatDuelSubCircle, (int Phase, int FirstRound)> _bossPhases = [];
 
+    // Everyone in the battle with cheats, each with its own: a creature by its cheat file, and the wizard played on the
+    // server's own PC by the player cheats (PlayerCheats.cs). Every When, If and Do works the same for both (Niduus,
+    // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"): "it" is whoever the cheats are of, and
+    // "a player" is someone on the other side (IsFoe).
     private IEnumerable<(CombatDuelSubCircle Boss, List<BossCheats.BossCheat> Cheats)> BossesWithCheats(bool defeatedToo = false)
         // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Niduus's log, 2026-10-21).
-        => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && (defeatedToo || c.IsAlive)
-                                  && c.ParticipantObject is not null)
-            .Select(c => (c, BossCheats.For(CheatTemplate(c))))
+        => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && (defeatedToo || c.IsAlive) && c.ParticipantObject is not null)
+            .Select(c => (c, c.IsHumanPlayer ? PlayerCheats.IsLocal(c) ? PlayerCheats.Current() : s_noCheats : BossCheats.For(CheatTemplate(c))))
             .Where(b => b.Item2.Count > 0);
+
+    private static readonly List<BossCheats.BossCheat> s_noCheats = [];
+
+    // "A player" of a cheat: someone on the other side. For a creature's cheats that is a wizard (their minions do not
+    // count, as before); for a wizard's player cheats, anyone there.
+    private static bool IsFoe(CombatDuelSubCircle owner, CombatDuelSubCircle other)
+        => other is not null && other.OccupiedTeam != owner.OccupiedTeam && (owner.IsHumanPlayer || other.IsHumanPlayer);
+
+    // Whose cheats they are, for the log: the boss's name, or "player cheat of" the wizard.
+    private string CheaterName(CombatDuelSubCircle owner) {
+        if (!owner.IsHumanPlayer) {
+            return BossCheats.NameOf(_bossCheatTemplates.GetValueOrDefault(owner, Customs.KeyOf(owner.ParticipantObject)));
+        }
+
+        string wizard = owner._wizard?.PlayerNameBehavior?.GetWizardName() ?? "";
+
+        return $"player cheat of {(wizard.Length > 0 ? wizard : "the local wizard")}";
+    }
 
     // The template whose cheat file a boss uses: the creature it was polymorphed into (Haunted Malistaire, 1336037)
     // when that has a file, else its own. A new form starts in phase 1 from the next round, counting its own rounds.
@@ -130,26 +151,23 @@ public partial class CombatResolver {
             : Count(boss) >= cheat.Pips;
     }
 
-    // Boss cheats, then the local player's cheats (CombatResolver.PlayerCheats.cs).
-    private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        var time = BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
+    // The cheats of bosses and of the local player alike (BossesWithCheats).
+    private float BossCheatsAtRoundStart(CombatActionListObj combatActionList, float cinematicTimeSoFar)
+        => BossRoundCheats(atEnd: false, combatActionList, cinematicTimeSoFar);
 
-        return time + PlayerCheatsAtRound(atEnd: false, combatActionList, cinematicTimeSoFar + time);
-    }
-
-    private float BossCheatsAtRoundEnd(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        var time = BossRoundCheats(atEnd: true, combatActionList, cinematicTimeSoFar);
-
-        return time + PlayerCheatsAtRound(atEnd: true, combatActionList, cinematicTimeSoFar + time);
-    }
+    private float BossCheatsAtRoundEnd(CombatActionListObj combatActionList, float cinematicTimeSoFar)
+        => BossRoundCheats(atEnd: true, combatActionList, cinematicTimeSoFar);
 
     private float BossRoundCheats(bool atEnd, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        if (!BossCheats.Enabled) {
-            return 0;
-        }
-
         var cinematicTime = 0.0f;
         try {
+            // A free cast "first in the round" of a cheat that goes off as the round starts is cast at once.
+            _cheatAtRoundStart = !atEnd;
+            if (!atEnd) {
+                cinematicTime += WaitedCheats(combatActionList, cinematicTimeSoFar);
+                cinematicTime += JoinCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            }
+
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 var round = BossRound(boss);
                 for (var i = 0; i < cheats.Count; i++) {
@@ -197,6 +215,9 @@ public partial class CombatResolver {
             Logger.Error("Duel {0} | Boss cheats at round {1} failed: {2}",
                 Logger.Args(_duel.m_duelID.Full, atEnd ? "end" : "start", e));
         }
+        finally {
+            _cheatAtRoundStart = false;
+        }
 
         return cinematicTime;
     }
@@ -205,16 +226,11 @@ public partial class CombatResolver {
     /// Cheats that interrupt (an Interrupt step) go off before the spell that sets them off; the spell then fizzles
     /// (QueuedCombatAction.Interrupted).
     /// </summary>
+    // ICast (its own spell) and EnemyCasts (a spell from the other side) go off just before the spell lands, as do
+    // cheats that interrupt.
     private float BossCheatsBefore(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        var time = PlayerCheatsBefore(action, combatActionList, cinematicTimeSoFar);
-
-        return time + BossCheatsBeforeMove(action, combatActionList, cinematicTimeSoFar + time);
-    }
-
-    private float BossCheatsBeforeMove(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        if (!BossCheats.Enabled || action?.SpellCaster is not { } mover || action.Spell is null || action.SelectedTarget is null
-            || !mover.IsAlive || mover.CombatParticipant is null || mover.CombatParticipant.m_stunned > 0
-            || !action.SelectedTarget.IsAlive || !action.SelectedTarget.AddedToDuel) {
+        if (action?.SpellCaster is not { } mover || action.Spell is null || action.SelectedTarget is null
+            || !mover.IsAlive || mover.CombatParticipant is null || mover.CombatParticipant.m_stunned > 0) {
             return 0;
         }
 
@@ -225,18 +241,30 @@ public partial class CombatResolver {
                 return 0;
             }
 
+            var targetStands = action.SelectedTarget.IsAlive && action.SelectedTarget.AddedToDuel;
             var aimed = AimedAt(mover, action.SelectedTarget, spell);
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
-                    if (!cheat.Interrupts || !InPhase(boss, cheat) || !SetOffBy(cheat, boss, mover, spell, aimed, crit: null)) {
+                    if (!InPhase(boss, cheat)) {
+                        continue;
+                    }
+
+                    var own = cheat.Is("ICast") && mover == boss;
+                    var before = own || (cheat.Is("EnemyCasts") && IsFoe(boss, mover));
+                    if (before ? !Matches(cheat, spell, aimed, boss, mover)
+                            : !cheat.Interrupts || !targetStands || !SetOffBy(cheat, boss, mover, spell, aimed, crit: null)) {
                         continue;
                     }
 
                     _interruptNow = false;
                     _cheatSpellId = action.Spell.m_templateID;
-                    cinematicTime += TryBossCheat(boss, i, cheat, mover, action.SelectedTarget, $"{(string) spell.m_name} (before it lands)",
+                    // A free cast "before my card" of a cheat on its own card is cast at once.
+                    _cheatOwnCard = own;
+                    cinematicTime += TryBossCheat(boss, i, cheat, mover, action.SelectedTarget,
+                        $"{(own ? "its own " : mover == boss ? "" : $"slot {mover.SlotIndex}'s ")}{(string) spell.m_name} (before it lands)",
                         combatActionList, cinematicTimeSoFar + cinematicTime);
+                    _cheatOwnCard = false;
                     _cheatSpellId = 0;
                     if (_interruptNow) {
                         action.Interrupted = true;
@@ -283,7 +311,7 @@ public partial class CombatResolver {
                 return false;
             }
 
-            return mover.IsHumanPlayer && Matches(cheat, spell, aimed, boss, mover)
+            return IsFoe(boss, mover) && Matches(cheat, spell, aimed, boss, mover)
                    && (!s_castWhens.TryGetValue(cheat.When, out var kind) || CategoriesOf(spell).Contains(kind));
         }
 
@@ -293,9 +321,8 @@ public partial class CombatResolver {
 
     private float BossCheatsAfter(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var time = BossCheatsAfterMove(mover, before, combatActionList, cinematicTimeSoFar);
-        time += PlayerCheatsAfter(mover, before, combatActionList, cinematicTimeSoFar + time);
         // A player cheat's free casts (Incindiate after a pass) can defeat a boss after its own cheats were checked.
-        if (BossCheats.Enabled && mover is not null) {
+        if (mover is not null) {
             try {
                 time += BossDefeatCheats(mover, [], combatActionList, cinematicTimeSoFar + time);
             }
@@ -308,7 +335,7 @@ public partial class CombatResolver {
     }
 
     private float BossCheatsAfterMove(CombatDuelSubCircle mover, int before, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
-        if (!BossCheats.Enabled || mover is null) {
+        if (mover is null) {
             return 0;
         }
 
@@ -330,6 +357,7 @@ public partial class CombatResolver {
                     _ => landed,
                 };
 
+            NoteAttackers(mover, landed);
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
@@ -337,16 +365,28 @@ public partial class CombatResolver {
                         continue;
                     }
 
-                    if (cheat.Is("PlayerPasses") && passed && mover.IsHumanPlayer) {
+                    if (cheat.Is("PlayerPasses") && passed && IsFoe(boss, mover)) {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, null, "a pass", combatActionList,
                             cinematicTimeSoFar + cinematicTime);
+                    }
+                    // IPass and ICrit: its own pass, or its own spell landing as a critical hit.
+                    else if (cheat.Is("IPass") && passed && mover == boss) {
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, null, "its own pass", combatActionList,
+                            cinematicTimeSoFar + cinematicTime);
+                    }
+                    else if (cheat.Is("ICrit") && mover == boss
+                             && cast.FirstOrDefault(m => m.Action.m_spellHits == (char) 2
+                                                         && Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover))
+                                 is { Spell: not null } crit) {
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(crit.Action, mover),
+                            $"its own critical {(string) crit.Spell.m_name}", combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
                     else if ((IsCastWhen(cheat) || cheat.Is("BossHit"))
                              && CountedFor(cheat).FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
                                      crit: m.Action.m_spellHits == (char) 2))
                                  is { Spell: not null } move) {
                         _cheatSpellId = move.Action.m_spell.m_templateID;
-                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action),
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action, mover),
                             $"{(string) move.Spell.m_name}{(move.Action.m_spellHits == (char) 2 ? " (a critical hit)" : move.Action.m_spellHits == (char) 0 ? " (fizzled)" : "")}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                         _cheatSpellId = 0;
@@ -367,23 +407,39 @@ public partial class CombatResolver {
         return cinematicTime;
     }
 
-    private CombatDuelSubCircle ReceiverOf(CombatAction action)
-        => (action.m_targetSubcircleList ?? []).Select(slot => _subCircles.FirstOrDefault(c => c is not null && c.Occupied
-                                                                                                   && c.SlotIndex == slot))
-            .FirstOrDefault(c => c is not null);
+    // Whoever a spell was aimed at; for a spell that went on many (Bladestorm), the caster, so a cheat on "whoever that
+    // spell was aimed at" answers the one who cast it (Rattlebones Exalted's Fairy Queen, Central's page).
+    private CombatDuelSubCircle ReceiverOf(CombatAction action, CombatDuelSubCircle caster = null) {
+        var slots = action.m_targetSubcircleList ?? [];
+        if (slots.Count > 1 && caster is not null) {
+            return caster;
+        }
 
-    // When "MinionDefeated": a creature on a boss's side that was standing is now defeated.
+        return slots.Select(slot => _subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.SlotIndex == slot))
+            .FirstOrDefault(c => c is not null);
+    }
+
+    // When "MinionDefeated" (someone on its side that was standing is now defeated) and "PlayerDefeated" (someone on the
+    // other side). Both look at the same list of the newly fallen, so neither takes a defeat from the other.
     private float MinionDefeatCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
-        var fallen = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsHumanPlayer && !c.IsAlive
+        var fallen = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && !c.IsAlive
                                             && c.ParticipantObject is not null
                                             && _seenDefeated.Add((c, c.ParticipantObject.m_globalID.Full)))
             .ToList();
-        foreach (var minion in fallen) {
-            foreach (var (boss, cheats) in BossesWithCheats().Where(b => b.Boss != minion && b.Boss.OccupiedTeam == minion.OccupiedTeam).ToList()) {
+        foreach (var gone in fallen) {
+            foreach (var (boss, cheats) in BossesWithCheats().Where(b => b.Boss != gone).ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
-                    if (cheats[i].Is("MinionDefeated") && InPhase(boss, cheats[i])) {
-                        cinematicTime += TryBossCheat(boss, i, cheats[i], null, minion, $"the defeat of slot {minion.SlotIndex}",
+                    if (!InPhase(boss, cheats[i])) {
+                        continue;
+                    }
+
+                    if (cheats[i].Is("MinionDefeated") && boss.OccupiedTeam == gone.OccupiedTeam) {
+                        cinematicTime += TryBossCheat(boss, i, cheats[i], null, gone, $"the defeat of slot {gone.SlotIndex}",
+                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                    }
+                    else if (cheats[i].Is("PlayerDefeated") && IsFoe(boss, gone)) {
+                        cinematicTime += TryBossCheat(boss, i, cheats[i], null, gone, $"the defeat of the player in slot {gone.SlotIndex}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
                 }
@@ -505,7 +561,8 @@ public partial class CombatResolver {
                 var cheat = cheats[i];
                 var under = cheat.Health > 0 ? health < cheat.Health : health * 100.0 / most < cheat.Percent;
                 // Health cheats go off once each, as the boss's health first falls under the mark.
-                if (!cheat.Is("HealthBelow") || !under || !InPhase(boss, cheat) || CheatUsed(boss, i)
+                // MyHealthBelow is the player cheats' old name for it.
+                if (!(cheat.Is("HealthBelow") || cheat.Is("MyHealthBelow")) || !under || !InPhase(boss, cheat) || CheatUsed(boss, i)
                     || (!boss.IsAlive && !cheat.Steps().Any(s => s.Is("SetHealth") || s.Is("Form")))) {
                     continue;
                 }
@@ -756,13 +813,13 @@ public partial class CombatResolver {
     private float TryBossCheat(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger,
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
-        if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat)) {
+        if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat) || !CreatureAllows(cheat, trigger, receiver)) {
             return 0;
         }
 
         var steps = PickSteps(cheat.Steps());
         var template = _bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject));
-        var bossName = BossCheats.NameOf(template);
+        var bossName = CheaterName(boss);
         var custom = cheat.Custom || Customs.IsCustom(template);
 
         // A second form comes before anything else is checked, so the battle goes on: a new creature (Form) when a
@@ -781,7 +838,13 @@ public partial class CombatResolver {
         }
 
         foreach (var health in steps.Where(s => s.Is("SetHealth") && s.Amount > 0)) {
-            SetBossHealth(boss, health.Amount);
+            // A wizard's most health is their own (it would be saved with them): only their health changes.
+            if (boss.IsHumanPlayer) {
+                SetHealthTo(boss, health.Amount);
+            }
+            else {
+                SetBossHealth(boss, health.Amount);
+            }
         }
 
         if (!boss.IsAlive || BattleDecided() || !PetMayCasts.Roll(cheat.Chance)) {
@@ -799,11 +862,31 @@ public partial class CombatResolver {
                 casts.Count == 0 ? "no spell" : string.Join(", ", casts.Select(c => c.Spell.Length > 0 ? c.Spell : c.SpellID.ToString()))));
         LogCustomCheat(custom, boss, bossName, index, reason, steps);
 
+        return RunCheatSteps(boss, cheat, steps, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar);
+    }
+
+    // A cheat's steps, in order. A Wait step keeps the ones after it for the start of a later round (WaitedCheats).
+    private float RunCheatSteps(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, List<BossCheats.CheatAction> steps,
+                                CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, bool custom,
+                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
         var lines = new List<string>();
         var defeat = false;
-        foreach (var step in steps) {
+        for (var s = 0; s < steps.Count; s++) {
+            var step = steps[s];
             if (!boss.IsAlive && !step.Is("Say")) {
+                break;
+            }
+
+            if (step.Is("Wait")) {
+                var later = steps.Skip(s + 1).ToList();
+                if (later.Count > 0) {
+                    var rounds = Math.Max(1, step.Rounds);
+                    _waitingCheats.Add(new WaitingCheat(boss, cheat, later, (int) _duel.m_roundNum + rounds, trigger, receiver, bossName, custom));
+                    Logger.Information("Duel {0} | Slot {1} | {2} waits {3} rounds before: {4}.", Logger.Args(_duel.m_duelID.Full,
+                        boss.SlotIndex, bossName, rounds, string.Join(", ", later.Select(StepText))));
+                }
+
                 break;
             }
 
@@ -830,9 +913,18 @@ public partial class CombatResolver {
                     }
 
                     if (step.Text.Length > 0) {
-                        TellPlayers($"{bossName}: {step.Text}");
+                        // A player cheat's words go to that wizard's own chat.
+                        if (boss.IsHumanPlayer) {
+                            boss.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = step.Text, Modal = 0 });
+                        }
+                        else {
+                            TellPlayers($"{bossName}: {step.Text}");
+                        }
                     }
 
+                    break;
+                case "freecast":
+                    cinematicTime += QueuePlayerCast(boss, step, trigger, receiver, combatActionList, cinematicTimeSoFar + cinematicTime);
                     break;
                 case "cast" or "polymorph":
                     cinematicTime += CheatCast(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList,
@@ -1313,9 +1405,20 @@ public partial class CombatResolver {
         var allies = boss._duelActor.ActiveSubCircles
             .Where(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam == boss.OccupiedTeam).ToList();
         var others = allies.Where(c => c != boss).ToList();
+        var code = (aim ?? "").Trim().ToLowerInvariant();
+        // The player cheats' circles (p1-p4: its own side's, e1-e4: the other side's, as .c1 numbers them).
+        if (FreeTargetCircle(boss, code) is { } circle) {
+            return circle.IsAlive && circle.AddedToDuel ? [circle] : [];
+        }
 
-        return (aim ?? "").ToLowerInvariant() switch {
-            "self" => [boss],
+        return code switch {
+            "self" or "me" => [boss],
+            // The one who summoned it into the battle (a minion's summoner), while it stands; else no one.
+            "summoner" => Summoner(boss) is { } summoner ? [summoner] : [],
+            // The last one on the other side whose spell hurt it; no one when that one has fallen.
+            "lastattacker" => _lastAttackers.TryGetValue(boss, out var last) && enemies.Contains(last) ? [last] : [],
+            "weakestally" => [others.Count > 0 ? others.OrderBy(HealthShare).First() : boss],
+            "strongestally" => [others.Count > 0 ? others.OrderByDescending(MostHealth).First() : boss],
             "caster" or "attacker" when trigger is not null => [trigger],
             // A spell on a teammate is taken from that teammate; one on many (or on an enemy) from the caster.
             "receiver" when receiver is not null && receiver.OccupiedTeam != boss.OccupiedTeam => [receiver],
@@ -1323,7 +1426,7 @@ public partial class CombatResolver {
             "firstenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.SlotIndex).First()],
             "weakestenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.ParticipantGameStats.m_currentHitpoints).First()],
             "enemy" or "caster" or "attacker" when enemies.Count > 0 => [enemies[Random.Shared.Next(enemies.Count)]],
-            "allenemies" => enemies,
+            "allenemies" or "all" => enemies,
             "ally" => [others.Count > 0 ? others[Random.Shared.Next(others.Count)] : boss],
             "allallies" => allies,
             _ when template is null => [boss],

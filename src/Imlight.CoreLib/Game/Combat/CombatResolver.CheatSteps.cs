@@ -5,6 +5,12 @@
  * Whens: PlayerFlees (a player ran from the battle, answered at the start of the next round), PlayerDefeated (a player
  * falls) and PlayerHealthBelow (a player's health first drops under Percent of their most, once each player).
  * Dos: Reflect, StealPips, RemoveAuras, AddCharm, Boost, Immune, Stun, HealthTo, SwapHealth and PickOne.
+ *
+ * For players and creatures alike (Niduus, 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"):
+ * Whens EnemyJoins (someone joins the other side after round Round) and AllyHealthBelow (someone on its own side first
+ * drops under Percent, or Health); the If on the creature the When is about (Creature, NotCreature); the Do Wait (the
+ * steps after it go off at the start of a round Rounds rounds later); the targets Summoner, LastAttacker, WeakestAlly
+ * and StrongestAlly.
  */
 
 using System;
@@ -52,37 +58,154 @@ public partial class CombatResolver {
         return cinematicTime;
     }
 
-    // PlayerDefeated (a player falls) and PlayerHealthBelow (a player's health drops under Percent, or Health hit points).
+    // PlayerHealthBelow (someone on the other side) and AllyHealthBelow (someone else on its own side): their health first
+    // drops under Percent, or Health hit points, once for each of them. "The attacker" is that one. (A player falling,
+    // PlayerDefeated, is answered with MinionDefeated, MinionDefeatCheats.)
     private float PlayerStateCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
-        var players = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsHumanPlayer && c.ParticipantObject is not null)
+        var standing = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.ParticipantObject is not null)
             .ToList();
-        var fallen = players.Where(c => !c.IsAlive && _seenDefeated.Add((c, c.ParticipantObject.m_globalID.Full))).ToList();
         foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
             for (var i = 0; i < cheats.Count; i++) {
                 var cheat = cheats[i];
-                if (!InPhase(boss, cheat)) {
+                var ally = cheat.Is("AllyHealthBelow");
+                if ((!ally && !cheat.Is("PlayerHealthBelow")) || !InPhase(boss, cheat)) {
                     continue;
                 }
 
-                if (cheat.Is("PlayerDefeated")) {
-                    foreach (var player in fallen.Where(p => p.OccupiedTeam != boss.OccupiedTeam)) {
-                        cinematicTime += TryBossCheat(boss, i, cheat, null, player, $"the defeat of the player in slot {player.SlotIndex}",
-                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                foreach (var other in standing.Where(c => c != boss && (ally ? c.OccupiedTeam == boss.OccupiedTeam : IsFoe(boss, c)))) {
+                    var most = MostHealth(other);
+                    var health = other.ParticipantGameStats.m_currentHitpoints;
+                    var under = cheat.Health > 0 ? health < cheat.Health : most > 0 && health * 100.0 / most < cheat.Percent;
+                    if (!under || !_playerHealthSeen.Add((boss, _bossCheatTemplates.GetValueOrDefault(boss), i, other.ParticipantObject.m_globalID.Full))) {
+                        continue;
                     }
-                }
-                else if (cheat.Is("PlayerHealthBelow")) {
-                    foreach (var player in players.Where(p => p.IsAlive && p.OccupiedTeam != boss.OccupiedTeam)) {
-                        var most = MostHealth(player);
-                        var health = player.ParticipantGameStats.m_currentHitpoints;
-                        var under = cheat.Health > 0 ? health < cheat.Health : most > 0 && health * 100.0 / most < cheat.Percent;
-                        if (!under || !_playerHealthSeen.Add((boss, _bossCheatTemplates.GetValueOrDefault(boss), i, player.ParticipantObject.m_globalID.Full))) {
-                            continue;
-                        }
 
-                        cinematicTime += TryBossCheat(boss, i, cheat, player, player, $"the health of the player in slot {player.SlotIndex} dropping to {health}",
-                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                    cinematicTime += TryBossCheat(boss, i, cheat, other, other,
+                        $"the health of {(ally ? "its ally" : "the player")} in slot {other.SlotIndex} dropping to {health}",
+                        combatActionList, cinematicTimeSoFar + cinematicTime);
+                }
+            }
+        }
+
+        return cinematicTime;
+    }
+
+    // A free cast "first in the round" (FreeCast Timing First) of a cheat going off as the round starts, and one "before
+    // my card" of a cheat on its own card (ICast): both are cast at once, as their queue has already been cast.
+    private bool _cheatAtRoundStart;
+    private bool _cheatOwnCard;
+
+    // The last one on the other side whose spell hurt each participant (the target LastAttacker).
+    private readonly Dictionary<CombatDuelSubCircle, CombatDuelSubCircle> _lastAttackers = [];
+
+    // Each participant's first round in the battle, by its global id (EnemyJoins); the round the count began.
+    private readonly Dictionary<ulong, int> _joinRounds = [];
+    private int _joinFirstRound;
+
+    /// <summary>The steps after a Wait step of a cheat, kept for the start of a later round.</summary>
+    private sealed record WaitingCheat(CombatDuelSubCircle Owner, BossCheats.BossCheat Cheat, List<BossCheats.CheatAction> Steps, int Round,
+                                       CombatDuelSubCircle Trigger, CombatDuelSubCircle Receiver, string Name, bool Custom);
+
+    private readonly List<WaitingCheat> _waitingCheats = [];
+
+    // The share of its most health a participant has (1 when it has no most).
+    private static double HealthShare(CombatDuelSubCircle c)
+        => MostHealth(c) > 0 ? c.ParticipantGameStats.m_currentHitpoints / (double) MostHealth(c) : 1;
+
+    // Who summoned a minion into the battle (its CombatParticipant's m_minionSubCircle), or null.
+    private CombatDuelSubCircle Summoner(CombatDuelSubCircle minion)
+        => minion.IsSummonedMinion && minion.CombatParticipant is { } participant
+            ? _subCircles.FirstOrDefault(c => c is not null && c != minion && c.Occupied && c.IsAlive && c.SlotIndex == participant.m_minionSubCircle)
+            : null;
+
+    // The If "only if it is this creature": the one the When is about (the one that fell for MinionDefeated and
+    // PlayerDefeated, else the one whose move, health or coming in set it off) is of the template Creature, or with
+    // NotCreature is any other one.
+    private static bool CreatureAllows(BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        if (cheat.Creature == 0) {
+            return true;
+        }
+
+        var who = cheat.Is("MinionDefeated") || cheat.Is("PlayerDefeated") ? receiver : trigger ?? receiver;
+        var match = who?.ParticipantObject is { } obj && obj.m_templateID == cheat.Creature;
+
+        return match != cheat.NotCreature;
+    }
+
+    // Each spell of the mover that landed and hurt: the mover is now the last attacker of whoever it hit on the other side.
+    private void NoteAttackers(CombatDuelSubCircle mover, List<(CombatAction Action, SpellTemplate Spell)> landed) {
+        foreach (var (action, spell) in landed.Where(m => Flatten(m.Spell).Any(e => s_damageEffects.Contains(e.m_effectType)))) {
+            foreach (var slot in action.m_targetSubcircleList ?? []) {
+                if (_subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.SlotIndex == slot) is { } hit
+                    && hit.OccupiedTeam != mover.OccupiedTeam) {
+                    _lastAttackers[hit] = mover;
+                }
+            }
+        }
+    }
+
+    // The steps after a Wait step, at the start of the round they waited for, if whoever's cheat it is still stands.
+    private float WaitedCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var round = (int) _duel.m_roundNum;
+        var due = _waitingCheats.Where(w => w.Round <= round).ToList();
+        if (due.Count == 0) {
+            return 0;
+        }
+
+        _waitingCheats.RemoveAll(due.Contains);
+        var cinematicTime = 0.0f;
+        foreach (var waited in due) {
+            if (!waited.Owner.IsAlive || !waited.Owner.AddedToDuel || BattleDecided()) {
+                Logger.Information("Duel {0} | Slot {1} | {2}: the steps it waited for are dropped (it is no longer standing).",
+                    Logger.Args(_duel.m_duelID.Full, waited.Owner.SlotIndex, waited.Name));
+
+                continue;
+            }
+
+            Logger.Information("{0} | Duel {1} | {2} (slot {3}) goes on after waiting, round {4}: {5}.",
+                Logger.Args(waited.Custom ? "Custom cheat" : "Boss cheat", _duel.m_duelID.Full, waited.Name, waited.Owner.SlotIndex, round,
+                    string.Join(", ", waited.Steps.Select(StepText))));
+            cinematicTime += RunCheatSteps(waited.Owner, waited.Cheat, waited.Steps, waited.Trigger, waited.Receiver, waited.Name, waited.Custom,
+                combatActionList, cinematicTimeSoFar + cinematicTime);
+        }
+
+        return cinematicTime;
+    }
+
+    // When "EnemyJoins": someone came into the battle on the other side, and its first round is later than Round of the
+    // battle (Round 2: from round 3 on). For a creature's cheats that is a wizard; Minions: a summoned minion counts too.
+    // "The attacker" and "whoever that spell was aimed at" are the newcomer. Checked at the start of each round.
+    private float JoinCheats(CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var round = (int) _duel.m_roundNum;
+        var first = _joinRounds.Count == 0;
+        if (first) {
+            _joinFirstRound = round;
+        }
+
+        var newcomers = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.ParticipantObject is not null
+                                               && _joinRounds.TryAdd(c.ParticipantObject.m_globalID.Full, round))
+            .ToList();
+        if (first || newcomers.Count == 0) {
+            return 0;
+        }
+
+        var battleRound = round - _joinFirstRound + 1;
+        var cinematicTime = 0.0f;
+        foreach (var newcomer in newcomers) {
+            Logger.Information("Duel {0} | Slot {1} | Came into the battle in round {2}.",
+                Logger.Args(_duel.m_duelID.Full, newcomer.SlotIndex, battleRound));
+            foreach (var (boss, cheats) in BossesWithCheats().Where(b => b.Boss != newcomer).ToList()) {
+                for (var i = 0; i < cheats.Count; i++) {
+                    var cheat = cheats[i];
+                    if (!cheat.Is("EnemyJoins") || !InPhase(boss, cheat) || battleRound <= cheat.Round
+                        || newcomer.OccupiedTeam == boss.OccupiedTeam
+                        || (!cheat.Minions && (newcomer.IsSummonedMinion || !IsFoe(boss, newcomer)))) {
+                        continue;
                     }
+
+                    cinematicTime += TryBossCheat(boss, i, cheat, newcomer, newcomer, $"slot {newcomer.SlotIndex} joining in round {battleRound}",
+                        combatActionList, cinematicTimeSoFar + cinematicTime);
                 }
             }
         }

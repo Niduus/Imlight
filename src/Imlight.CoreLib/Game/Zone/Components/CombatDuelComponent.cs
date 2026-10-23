@@ -1066,7 +1066,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        SpawnAndAssignMinion(message.CreatureTid, message.Caster);
+        // A creature's summon (the Fairy Queen's fairies) brings its minion in on its own side, not the wizards'.
+        SpawnAndAssignMinion(message.CreatureTid, message.Caster,
+            forEnemies: !Duel.m_bPVP && message.Caster.OccupiedTeam == CombatTeam.Monster);
     }
 
     private void InitializeDuel(Dictionary<IActorRef, CoreObject> startingParticipants) {
@@ -1417,12 +1419,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     /// <returns>The circle it took, or null when none was free.</returns>
     internal CombatDuelSubCircle SpawnBossForm(uint creatureTid, CombatDuelSubCircle boss)
         // A custom's second form is the custom its Forms names for that creature (Customs.cs), if any.
-        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true,
+        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: boss.OccupiedTeam == CombatTeam.Monster,
             customId: Customs.IdOf(Customs.FormKey(boss.ParticipantObject, creatureTid)));
 
-    /// <summary>A boss cheat's minion (or a custom's form): a creature, as that custom when customId is set, on the boss's side.</summary>
+    /// <summary>
+    /// A cheat's minion (or a custom's form): a creature, as that custom when customId is set, on the side of whoever's
+    /// cheat it is (a player cheat's minion fights for the wizard).
+    /// </summary>
     internal CombatDuelSubCircle SpawnBossMinion(uint creatureTid, CombatDuelSubCircle boss, int customId)
-        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: true, customId: customId);
+        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: boss.OccupiedTeam == CombatTeam.Monster, customId: customId);
 
     // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
     // customId: it comes in as that custom of the Customs tab (Customs.cs), 0 for the game's creature.
@@ -1463,10 +1468,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return null;
         }
 
-        // An enemy minion belongs to the first enemy in the fight.
-        var owner = forEnemies
+        // An enemy minion belongs to the creature that brought it in, or (.joinme, from a wizard) the first enemy in the fight.
+        var owner = forEnemies && caster?.OccupiedTeam != CombatTeam.Monster
             ? SubCircles.FirstOrDefault(c => c.Occupied && c.OccupiedTeam == CombatTeam.Monster && c != slot)?.SlotIndex ?? slot.SlotIndex
-            : caster.SlotIndex;
+            : caster?.SlotIndex ?? slot.SlotIndex;
         try {
             AssignParticipantToSubCircle(slot, minionActor, minionObj, isSummonedMinion: true,
                                          minionOwnerSubCircle: owner);

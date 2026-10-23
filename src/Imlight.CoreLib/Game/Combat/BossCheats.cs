@@ -108,6 +108,29 @@
  * Each cheat made or changed in the app (and each cheat of a custom) writes "Custom cheat | ..." to the log as it goes off.
  * Player cheats (PlayerCheats.cs) use these same cheats for the wizard played on the server's own PC.
  *
+ * For players and creatures alike (Niduus, 2026-10-23: "IMPLEMENT RULE. ALL CHEATS are to be compatible for PLAYERS and
+ * CREATURES"): every When, If and Do works in a boss's file and in the player cheats, through one set of code
+ * (CombatResolver.BossCheats.cs). "It" or "the boss" is whoever the cheats are of; "a player" is someone on the other
+ * side (for a boss a wizard, for a wizard any creature there).
+ *   When         also ICast (its own spell, just before it lands), ICrit (its own critical hit), IPass (it passes),
+ *                EnemyCasts (a spell from the other side, just before it lands), EnemyJoins (someone joins the other side
+ *                and its first round is after Round of the battle; Minions: a summoned minion counts too; "the
+ *                attacker" is the newcomer) and AllyHealthBelow (someone else on its side first drops under Percent, or
+ *                Health; once each; "the attacker" is that one). MyHealthBelow is HealthBelow, as the player cheats
+ *                first named it.
+ *   Creature, NotCreature   only if the one the When is about (the one that fell for MinionDefeated / PlayerDefeated,
+ *                else the one whose move, health or coming in set it off) is of this creature template (NotCreature:
+ *                is not).
+ *   Actions also:
+ *     { "Do": "FreeCast", ... }             the player cheats' free cast (PlayerCheats.cs), for a boss too.
+ *     { "Do": "Wait", "Rounds" }            the steps after it go off at the start of the round Rounds rounds later, if
+ *                                           it still stands (Rounds 4: a minion falls in round 3, they go in round 7).
+ *   Target also: Summoner (who summoned this minion, while it stands; else no one), LastAttacker (the last one on the other side whose
+ *   spell hurt it; no one when that one has fallen), WeakestAlly (the lowest share of health on its side), StrongestAlly
+ *   (the most health on its side), and the player cheats' me, p1-p4 (its own side's circles), e1-e4 and all.
+ *   Say's Text in a player cheat goes to that wizard's own chat. SetHealth on a wizard sets only their health (their most
+ *   health is their own).
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -192,6 +215,11 @@ internal static class BossCheats {
         public bool RetryUntilCast { get; set; }
         // An added cheat turned off in the app (BossOverrides.CheatsOf).
         public bool Off { get; set; }
+        // Only if the one the When is about is (or with NotCreature, is not) of this creature template (Niduus, 2026-10-23).
+        public uint Creature { get; set; }
+        public bool NotCreature { get; set; }
+        // EnemyJoins: a summoned minion counts too.
+        public bool Minions { get; set; }
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
@@ -281,7 +309,7 @@ internal static class BossCheats {
         public string Line { get; set; } = "";
         public string Text { get; set; } = "";
         public bool Off { get; set; }
-        // For Boost, Immune and Stun: how many rounds (0 = the rest of the battle, or 1 for Stun).
+        // For Boost, Immune and Stun: how many rounds (0 = the rest of the battle, or 1 for Stun); for Wait, how many to wait.
         public int Rounds { get; set; }
         // For Boost, Immune and AddCharm: the school ("" or All = every school).
         public string School { get; set; } = "";

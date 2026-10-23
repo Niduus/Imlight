@@ -178,8 +178,9 @@ internal sealed partial class ManagerWindow {
                     "D|Change the damage of itself by 15 for every school spells for 0 rounds"),
                 new GuideTip("More blocks to try: [a player heals], [a player crits], [a player falls], [a player flees], " +
                              "[reflect the spell], [steal pips], [become immune], [stun], [swap health], [boost or enrage] and " +
-                             "[pick one at random] (only one of the blocks under it goes off). The player cheats on the [Commands] tab " +
-                             "use the same blocks for you."),
+                             "[pick one at random] (only one of the blocks under it goes off), [a player joins], [an ally's health drops], " +
+                             "[this creature] and [wait … rounds]. The player cheats on the [Commands] tab use every one of the same " +
+                             "blocks for you: there \"it\" is you and \"a player\" is a creature you fight."),
                 new GuideSteps("Change or turn off a cheat from the game",
                     "Press [Edit blocks] on the cheat to open it, then change any box. It is marked \"Changed from the game's\".",
                     "Press the eye button on a cheat to turn it off without deleting it. Press it again to turn it back on.",

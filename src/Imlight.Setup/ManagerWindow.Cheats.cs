@@ -652,10 +652,9 @@ internal sealed partial class ManagerWindow {
                 });
             case CheatFieldType.Enchants:
                 return EnchantsField(block, changed);
-            case CheatFieldType.Target:
+            // One list of targets for boss and player cheats alike (the .c1 circles are in it).
+            case CheatFieldType.Target or CheatFieldType.PlayerTarget:
                 return BlockFields.Choice(CheatSpecs.TARGETS, block.Text(field.Key), v => Set(field.Key, v));
-            case CheatFieldType.PlayerTarget:
-                return BlockFields.Choice(CheatSpecs.PLAYER_TARGETS, block.Text(field.Key), v => Set(field.Key, v));
             case CheatFieldType.Category:
                 return BlockFields.Choice(CheatSpecs.CATEGORIES, block.Text(field.Key), v => Set(field.Key, v));
             case CheatFieldType.School: {

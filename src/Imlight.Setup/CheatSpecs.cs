@@ -30,7 +30,10 @@ namespace Imlight.Setup;
 /// conditions and such able to be modified and created"; "Get more expansive with cheats"; "add PLAYER cheats"), with
 /// the words it shows and what it means. The server reads them as the cheat fields of spiraldb-extra/BossCheats (see the
 /// top of the server's BossCheats.cs and PlayerCheats.cs): When blocks set When and its numbers, If blocks set a
-/// condition field each, and Do blocks are the cheat's Actions.
+/// condition field each, and Do blocks are the cheat's Actions. Every block works in a boss's cheats and in the player
+/// cheats alike (Niduus, 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"): "it" is whoever the
+/// cheat is of, and "a player" someone on the other side. The few blocks first made for one side only and the same as
+/// another block are kept, as "alias", to read old files.
 /// </summary>
 internal static class CheatSpecs {
 
@@ -44,14 +47,15 @@ internal static class CheatSpecs {
         ("WeakestEnemy", "the weakest player"),
         ("AllEnemies", "every player"),
         ("Ally", "a random ally"),
+        ("WeakestAlly", "its weakest ally"),
+        ("StrongestAlly", "its strongest ally"),
+        ("Summoner", "whoever summoned it"),
+        ("LastAttacker", "the last one who hurt it"),
         ("AllAllies", "its whole side"),
-    ];
-
-    /// <summary>The player cheats' targets, as the .c1 commands take them.</summary>
-    internal static readonly (string Value, string Label)[] PLAYER_TARGETS = [
-        ("", "where the spell aims"), ("me", "me"), ("p1", "my side's circle 1"), ("p2", "my side's circle 2"),
-        ("p3", "my side's circle 3"), ("p4", "my side's circle 4"), ("e1", "enemy 1"), ("e2", "enemy 2"), ("e3", "enemy 3"),
-        ("e4", "enemy 4"), ("all", "every target"),
+        // The .c1 commands' circles, for players and bosses alike (Niduus, 2026-10-23).
+        ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
+        ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"),
+        ("e4", "the other side's circle 4"),
     ];
 
     internal static readonly (string Value, string Label)[] SCHOOLS = [
@@ -62,7 +66,7 @@ internal static class CheatSpecs {
     internal static readonly (string Value, string Label)[] CATEGORIES = [
         ("", "any"), ("Damage", "damage"), ("Heal", "heal"), ("Charm", "charm (any)"), ("Ward", "ward (any)"),
         ("Charm,Ward", "charm or ward"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"),
-        ("Aura", "aura"), ("Global", "global (bubble)"), ("Aura,Global", "aura or global"), ("Minion", "minion"),
+        ("Aura", "aura"), ("Global", "global (bubble)"), ("Aura,Global", "aura or global"), ("Charm,Global", "charm or global"), ("Minion", "minion"),
         ("Shadow", "shadow"), ("Enchantment", "enchantment"), ("Stun", "stun"), ("Steal", "steal"), ("Dispel", "dispel"),
         ("Polymorph", "polymorph"), ("Treasure", "treasure card"),
     ];
@@ -139,17 +143,17 @@ internal static class CheatSpecs {
             b => $"When a player {verb}{(b.Text("School").Length > 0 ? $" ({b.Text("School")})" : "")}");
 
     internal static readonly CheatSpec[] All = [
-        // When... (a boss's)
+        // When... (first made for bosses; a player cheat's "it" is you, and its "players" the creatures)
         new("W.BattleStart", BlockKind.When, "flag", "the battle starts", "Its first round. A boss brought in later counts from its own first round.",
-            "When the battle starts", [], _ => "When the battle starts", "both"),
+            "When the battle starts", [], _ => "When the battle starts"),
         new("W.RoundStart", BlockKind.When, "clock", "a round starts", "The start of a round, before anyone moves. Pick the round, every few rounds, or both.",
-            "At the start of {Rounds}", [F("Rounds", CheatFieldType.Rounds)], b => $"At the start of {Rounds(b)}", "both"),
+            "At the start of {Rounds}", [F("Rounds", CheatFieldType.Rounds)], b => $"At the start of {Rounds(b)}"),
         new("W.FromRound", BlockKind.When, "clock", "from round … on", "Every round from this round on, such as an enrage after round 10. \"Every\" above 1 skips rounds between.",
             "At the start of every round from round {Round} on, every {Every} rounds", [F("Round", CheatFieldType.Number, 10, max: 999), F("Every", CheatFieldType.Number, 1, max: 99)],
-            b => $"Every {(b.Number("Every") > 1 ? $"{b.Number("Every")} rounds" : "round")} from round {b.Number("Round")} on", "both"),
+            b => $"Every {(b.Number("Every") > 1 ? $"{b.Number("Every")} rounds" : "round")} from round {b.Number("Round")} on"),
         new("W.RoundEnd", BlockKind.When, "clockend", "a round ends", "The end of a round, after everyone has moved.",
-            "At the end of {Rounds}", [F("Rounds", CheatFieldType.Rounds)], b => $"At the end of {Rounds(b)}", "both"),
-        new("W.HealthBelow", BlockKind.When, "heart", "its health drops", "The first time its health falls under the mark (once each phase). Works even after it is defeated, for a second life.",
+            "At the end of {Rounds}", [F("Rounds", CheatFieldType.Rounds)], b => $"At the end of {Rounds(b)}"),
+        new("W.HealthBelow", BlockKind.When, "heart", "its health drops", "The first time its health (in a player cheat, yours) falls under the mark (once each phase). Works even after it is defeated, for a second life.",
             "When its health drops below {Health}", [F("Health", CheatFieldType.Health)],
             b => b.Number("Health") > 0 ? $"When its health drops below {N(b.Number("Health"))}" : $"When its health drops below {b.Number("Percent")}%"),
         new("W.PlayerCasts", BlockKind.When, "sparkle", "a player casts", "A player's spell lands: pick what kind of card (heal, shield, blade, trap, aura, global, minion...) and its school. Add a \"these spells\" block to name spells.",
@@ -184,43 +188,50 @@ internal static class CheatSpecs {
             "When {PipsOf} has at least {Pips} pips", [F("PipsOf", CheatFieldType.Choice, "", s_pipsOf), F("Pips", CheatFieldType.Number, 5, max: 14)],
             b => $"When {LabelOf(s_pipsOf, b.Text("PipsOf"))} has {b.Number("Pips")} or more pips"),
 
-        // When... (a player cheat's)
+        new("W.EnemyJoins", BlockKind.When, "users", "a player joins", "Someone comes into the battle on the other side after this round (2: from round 3 on), such as a wizard who is late. \"The attacker\" is the newcomer. A summoned minion counts only with \"minions too\".",
+            "When a player joins the battle after round {Round} {Minions}", [F("Round", CheatFieldType.Number, 2, max: 999), new("Minions", CheatFieldType.Toggle, false, Label: "minions too")],
+            b => $"When a player joins after round {b.Number("Round")}{(b.Flag("Minions") ? " (minions too)" : "")}"),
+        new("W.AllyHealthBelow", BlockKind.When, "heart", "an ally's health drops", "Someone else on its side first falls under the mark (once for each of them). \"The attacker\" is that ally. Add \"this creature\" to watch only one of them.",
+            "When an ally's health drops below {Health}", [F("Health", CheatFieldType.Health)],
+            b => b.Number("Health") > 0 ? $"When an ally drops below {N(b.Number("Health"))} health" : $"When an ally drops below {b.Number("Percent")}% health"),
+
+        // When... (first made for the player cheats; a boss's "I" is the boss)
         new("W.ICast", BlockKind.When, "sparkle", "I cast", "Your spell, just before it lands. Pick the kind of card and school, and add a \"these spells\" block to name spells.",
             "When I cast a {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
-            b => $"When I cast {Spell(b, "a spell")}", "player"),
+            b => $"When I cast {Spell(b, "a spell")}"),
         new("W.ICrit", BlockKind.When, "bolt", "I crit", "Your spell lands as a critical hit (or a critical heal).",
             "When I land a critical {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
-            b => $"When I crit with {Spell(b, "a spell")}", "player"),
-        new("W.IPass", BlockKind.When, "hourglass", "I pass", "You pass your turn.", "When I pass", [], _ => "When I pass", "player"),
+            b => $"When I crit with {Spell(b, "a spell")}"),
+        new("W.IPass", BlockKind.When, "hourglass", "I pass", "You pass your turn.", "When I pass", [], _ => "When I pass"),
         new("W.EnemyCasts", BlockKind.When, "hit", "an enemy casts", "An enemy's spell, just before it lands. \"Right away\" casts yours before it.",
             "When an enemy casts a {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
-            b => $"When an enemy casts {Spell(b, "a spell")}", "player"),
+            b => $"When an enemy casts {Spell(b, "a spell")}"),
         new("W.MyHealthBelow", BlockKind.When, "heart", "my health drops", "The first time in a battle your health falls under the mark.",
             "When my health drops below {Health}", [F("Health", CheatFieldType.Health)],
-            b => b.Number("Health") > 0 ? $"When my health drops below {N(b.Number("Health"))}" : $"When my health drops below {b.Number("Percent")}%", "player"),
+            b => b.Number("Health") > 0 ? $"When my health drops below {N(b.Number("Health"))}" : $"When my health drops below {b.Number("Percent")}%", "alias"),
         new("W.MyPips", BlockKind.When, "pips", "my pips reach", "At the start of a round, when you have at least this many pips. A power pip counts as one.",
-            "When I have at least {Pips} pips", [F("Pips", CheatFieldType.Number, 7, max: 14)], b => $"When I have {b.Number("Pips")} or more pips", "player"),
+            "When I have at least {Pips} pips", [F("Pips", CheatFieldType.Number, 7, max: 14)], b => $"When I have {b.Number("Pips")} or more pips", "alias"),
         new("W.Other", BlockKind.When, "bolt", "something else", "A When this app does not know, kept as the file has it.",
-            "When {When}", [F("When", CheatFieldType.Words)], b => $"When {b.Text("When")}", "both"),
+            "When {When}", [F("When", CheatFieldType.Words)], b => $"When {b.Text("When")}"),
 
         // If...
         new("I.Chance", BlockKind.If, "dice", "chance", "It goes off only this often. 50 means half the time.",
-            "If a {Chance} chance comes up", [F("Chance", CheatFieldType.Percent, 50, max: 100)], b => $"{b.Number("Chance")}% chance", "both"),
+            "If a {Chance} chance comes up", [F("Chance", CheatFieldType.Percent, 50, max: 100)], b => $"{b.Number("Chance")}% chance"),
         new("I.Once", BlockKind.If, "once", "only the first time", "Only the first time in a battle.",
-            "Only the first time", [], _ => "only the first time", "both"),
+            "Only the first time", [], _ => "only the first time"),
         new("I.MaxTimes", BlockKind.If, "list", "at most … times", "No more than this many times in one battle.",
-            "At most {MaxTimes} times a battle", [F("MaxTimes", CheatFieldType.Number, 3, max: 999)], b => $"at most {b.Number("MaxTimes")} times", "both"),
+            "At most {MaxTimes} times a battle", [F("MaxTimes", CheatFieldType.Number, 3, max: 999)], b => $"at most {b.Number("MaxTimes")} times"),
         new("I.Cooldown", BlockKind.If, "hourglass", "wait between", "After it goes off, it waits this many rounds before it can go off again.",
-            "Then wait {Cooldown} rounds before again", [F("Cooldown", CheatFieldType.Number, 2, max: 99)], b => $"then waits {b.Number("Cooldown")} rounds", "both"),
+            "Then wait {Cooldown} rounds before again", [F("Cooldown", CheatFieldType.Number, 2, max: 99)], b => $"then waits {b.Number("Cooldown")} rounds"),
         new("I.Phase", BlockKind.If, "layers", "in phase", "Only in this phase of the fight. A boss starts in phase 1; a Do block moves it on.",
             "Only in phase {Phase}", [F("Phase", CheatFieldType.Number, 1, max: 99)], b => $"in phase {b.Number("Phase")}"),
         new("I.HealthAbove", BlockKind.If, "heart", "health above", "Only while its health (for a player cheat, yours) is above this share of the most.",
-            "Only while health is above {HealthAbove}", [F("HealthAbove", CheatFieldType.Percent, 50, max: 100)], b => $"while above {b.Number("HealthAbove")}% health", "both"),
+            "Only while health is above {HealthAbove}", [F("HealthAbove", CheatFieldType.Percent, 50, max: 100)], b => $"while above {b.Number("HealthAbove")}% health"),
         new("I.HealthUnder", BlockKind.If, "heart", "health under", "Only while its health (for a player cheat, yours) is under this share of the most.",
-            "Only while health is under {HealthUnder}", [F("HealthUnder", CheatFieldType.Percent, 50, max: 100)], b => $"while under {b.Number("HealthUnder")}% health", "both"),
+            "Only while health is under {HealthUnder}", [F("HealthUnder", CheatFieldType.Percent, 50, max: 100)], b => $"while under {b.Number("HealthUnder")}% health"),
         new("I.Rounds", BlockKind.If, "clock", "in these rounds", "Only in these rounds of the battle. Leave the second box at 0 for no end.",
             "Only from round {FromRound} to round {ToRound}", [F("FromRound", CheatFieldType.Number, 5, max: 999), F("ToRound", CheatFieldType.Number, 0, max: 999)],
-            b => b.Number("ToRound") > 0 ? $"in rounds {b.Number("FromRound")}-{b.Number("ToRound")}" : $"from round {b.Number("FromRound")} on", "both"),
+            b => b.Number("ToRound") > 0 ? $"in rounds {b.Number("FromRound")}-{b.Number("ToRound")}" : $"from round {b.Number("FromRound")} on"),
         new("I.Players", BlockKind.If, "users", "how many players", "Only while this many players are still standing. Leave the top at 0 for no top.",
             "Only while {PlayersMin} to {PlayersMax} players are standing", [F("PlayersMin", CheatFieldType.Number, 1, max: 4), F("PlayersMax", CheatFieldType.Number, 0, max: 4)],
             b => b.Number("PlayersMax") > 0 ? $"with {b.Number("PlayersMin")}-{b.Number("PlayersMax")} players" : $"with {b.Number("PlayersMin")}+ players"),
@@ -231,7 +242,7 @@ internal static class CheatSpecs {
         new("I.OnBoss", BlockKind.If, "target", "aimed at it", "Only a spell aimed at the boss (for When a player casts).",
             "Only if the spell is aimed at it", [], _ => "only spells aimed at it"),
         new("I.SingleTarget", BlockKind.If, "target", "one target", "Only a spell that hits a single target, not a whole side.",
-            "Only if the spell hits one target", [], _ => "only single-target spells", "both"),
+            "Only if the spell hits one target", [], _ => "only single-target spells"),
         new("I.CasterSchool", BlockKind.If, "school", "player's school", "Only when the player who set it off is a wizard of this school.",
             "Only if the player is a {CasterSchool} wizard", [F("CasterSchool", CheatFieldType.Choice, "Fire", SCHOOLS[1..])], b => $"only {b.Text("CasterSchool")} wizards"),
         new("I.Fizzle", BlockKind.If, "stop", "lands or fizzles", "Whether the player's spell has to land, fizzle, or either, for a player-cast When. Without this block only a spell that lands counts.",
@@ -245,14 +256,18 @@ internal static class CheatSpecs {
         new("I.Spells", BlockKind.If, "cards", "these spells", "Only these spells, by name, with commas between. \"Any version of\" makes Scald mean every Scald: its treasure card, item card, a monster's copy and the rest. \"Exactly\" means only spells with that very name.",
             "Only {AnyVersion} these spells: {Spells} {Count}",
             [new("AnyVersion", CheatFieldType.VersionChoice, true), F("Spells", CheatFieldType.Cards), F("Count", CheatFieldType.MatchCount)],
-            b => $"only {string.Join(", ", b.List("Spells"))}{(b.Flag("AnyVersion") ? " (any version)" : "")}", "both"),
+            b => $"only {string.Join(", ", b.List("Spells"))}{(b.Flag("AnyVersion") ? " (any version)" : "")}"),
         new("I.Cost", BlockKind.If, "pips", "pip cost", "Only spells that cost this many pips. Leave the top at 0 for no top.",
             "Only spells that cost {CostMin} to {CostMax} pips", [F("CostMin", CheatFieldType.Number, 4, max: 14), F("CostMax", CheatFieldType.Number, 0, max: 14)],
-            b => b.Number("CostMax") > 0 ? $"only {b.Number("CostMin")}-{b.Number("CostMax")} pip spells" : $"only spells of {b.Number("CostMin")}+ pips", "both"),
+            b => b.Number("CostMax") > 0 ? $"only {b.Number("CostMin")}-{b.Number("CostMax")} pip spells" : $"only spells of {b.Number("CostMin")}+ pips"),
         new("I.CardType", BlockKind.If, "cards", "card type", "Only cards of this type, as the game names it: Damage, Heal, Ward, Charm, Aura, Global, Steal, Manipulation...",
-            "Only cards of type {Kind}", [F("Kind", CheatFieldType.Words, "Damage")], b => $"only {b.Text("Kind")} cards", "both"),
+            "Only cards of type {Kind}", [F("Kind", CheatFieldType.Words, "Damage")], b => $"only {b.Text("Kind")} cards"),
 
-        // Do... (a boss's)
+        new("I.Creature", BlockKind.If, "users", "this creature", "Only when the one the When is about is this creature: the one that fell, whose health dropped or that joined, else the one whose spell or pass set it off. With \"anyone but it\", only when it is someone else.",
+            "Only if it is {Creature} {NotCreature}", [F("Creature", CheatFieldType.Creature), new("NotCreature", CheatFieldType.Toggle, false, Label: "anyone but it")],
+            b => b.Flag("NotCreature") ? $"only if not {Creature(b)}" : $"only if it is {Creature(b)}"),
+
+        // Do... (first made for bosses)
         new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again.",
             "Cast {Spell} on {Target} {Silent}",
             [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
@@ -303,12 +318,12 @@ internal static class CheatSpecs {
         new("D.SetHealth", BlockKind.Do, "heart", "set health", "Its most and current health become this, even after it was defeated (a second life).",
             "Set its health to {Amount}", [F("Amount", CheatFieldType.Number, 10000)], b => $"its health becomes {N(b.Number("Amount"))}"),
         new("D.FirstTurn", BlockKind.Do, "clock", "turn order", "Which side acts first, as .wegofirst and .theygofirst do. \"We\" is the cheat's own side (the boss's, or yours in a player cheat). At the start of a round it counts from that round's spells; later in a round, from the next round. It lasts until the battle ends or the order is changed again.",
-            "Turn order: {Side}", [F("Side", CheatFieldType.Choice, "Us", s_sides)], b => LabelOf(s_sides, b.Text("Side")), "both"),
+            "Turn order: {Side}", [F("Side", CheatFieldType.Choice, "Us", s_sides)], b => LabelOf(s_sides, b.Text("Side"))),
         new("D.SetPhase", BlockKind.Do, "layers", "next phase", "The fight moves on to this phase from the next round. Use In phase blocks to give each phase its own cheats.",
             "Move on to phase {Phase}", [F("Phase", CheatFieldType.Number, 2, max: 99)], b => $"move on to phase {b.Number("Phase")}"),
-        new("D.Say", BlockKind.Do, "quote", "say a line", "A line from the game shown over the boss in battle. Type a few of its words or its number (Phrases tab).",
+        new("D.Say", BlockKind.Do, "quote", "say a line", "A line from the game shown over the boss in battle (over you, in a player cheat). Type a few of its words or its number (Phrases tab).",
             "Say {Line}", [F("Line", CheatFieldType.Line)], b => $"say \"{b.Text("Line")}\""),
-        new("D.Chat", BlockKind.Do, "chat", "chat message", "Any words you like, sent to every player's chat window.",
+        new("D.Chat", BlockKind.Do, "chat", "chat message", "Any words you like, sent to every player's chat window (in a player cheat, to your own).",
             "Tell every player in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell everyone \"{b.Text("Text")}\""),
         new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away.",
             "{Amount} {Kind} pips, for {Target}", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Self")],
@@ -321,30 +336,33 @@ internal static class CheatSpecs {
         new("D.RandomOne", BlockKind.Do, "dice", "one spell at random", "Of all its Cast blocks, only one is cast each time, picked at random.",
             "Cast only one of these spells, picked at random", [], _ => "(only one spell, at random)"),
 
-        // Do... (a player cheat's)
+        // Do... (first made for the player cheats; "alias" ones are the same as a block above, kept to read old files)
         new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked.",
             "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants}",
-            [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.PlayerTarget), F("Timing", CheatFieldType.Choice, "Now", s_timings),
+            [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), F("Timing", CheatFieldType.Choice, "Now", s_timings),
              F("Times", CheatFieldType.Number, 1, max: 10), new("Silent", CheatFieldType.Toggle, false, Label: "silent"), new("Enchant", CheatFieldType.Toggle, false, Label: "enchanted"),
              F("Enchants", CheatFieldType.Enchants)],
-            b => $"cast {SpellName(b)}{(b.Text("Target").Length > 0 ? " on " + LabelOf(PLAYER_TARGETS, b.Text("Target")) : "")} {LabelOf(s_timings, b.Text("Timing"))}"
-                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}", "player"),
+            b => $"cast {SpellName(b)}{Target(b)} {LabelOf(s_timings, b.Text("Timing"))}"
+                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}"),
         new("D.MyPips", BlockKind.Do, "pips", "give me pips", "Gives you pips (or takes them away).",
             "{Amount} {Kind} pips for me", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds)],
-            b => $"{(b.Number("Amount") < 0 ? "take" : "give me")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips", "player"),
+            b => $"{(b.Number("Amount") < 0 ? "take" : "give me")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips", "alias"),
         new("D.MyHeal", BlockKind.Do, "heal", "heal me", "Heals you by hit points, or by a share of your most health.",
-            "Heal me by {Amount}", [F("Amount", CheatFieldType.HealAmount)], b => $"heal me by {(b.Flag("Percent") ? $"{b.Number("Amount")}%" : N(b.Number("Amount")))}", "player"),
+            "Heal me by {Amount}", [F("Amount", CheatFieldType.HealAmount)], b => $"heal me by {(b.Flag("Percent") ? $"{b.Number("Amount")}%" : N(b.Number("Amount")))}", "alias"),
         new("D.Banner", BlockKind.Do, "quote", "show a banner", "A line from the game shown over you in battle, as .ca shows it. Type a few of its words or its number.",
-            "Show {Line} over me", [F("Line", CheatFieldType.Line)], b => b.Text("Line").Length == 0 ? "show (no line picked)" : $"show \"{b.Text("Line")}\"", "player"),
+            "Show {Line} over me", [F("Line", CheatFieldType.Line)], b => b.Text("Line").Length == 0 ? "show (no line picked)" : $"show \"{b.Text("Line")}\"", "alias"),
         new("D.MyChat", BlockKind.Do, "chat", "message to me", "Any words you like, in your own chat window.",
-            "Tell me in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell me \"{b.Text("Text")}\"", "player"),
+            "Tell me in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell me \"{b.Text("Text")}\"", "alias"),
 
         // Do... (both)
+        new("D.Wait", BlockKind.Do, "hourglass", "wait … rounds", "The blocks under this one go off at the start of a round this many rounds later, if it still stands: a minion falls in round 3, and with 4 they go off in round 7.",
+            "Wait {Rounds} rounds, then do the blocks under this one", [F("Rounds", CheatFieldType.Number, 4, max: 99)],
+            b => $"wait {(b.Number("Rounds") == 1 ? "1 round" : $"{Math.Max(1, b.Number("Rounds"))} rounds")}"),
         new("D.PickOne", BlockKind.Do, "dice", "pick one at random", "Of the blocks under this one (how many: 0 is all of them), only one goes off, picked at random. Chances such as 2, 1, 1 make the first twice as likely as each other one.",
             "Do only one of the next {Count} blocks, with chances {Weights}", [F("Count", CheatFieldType.Number, 0, max: 20), F("Weights", CheatFieldType.Words, "")],
-            b => $"(one of the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "blocks")}, at random)", "both"),
+            b => $"(one of the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "blocks")}, at random)"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
-            "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}", "both"),
+            "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),
     ];
 
     private static readonly Dictionary<string, CheatSpec> s_byId = All.ToDictionary(s => s.Id);

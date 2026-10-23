@@ -45,11 +45,13 @@ internal sealed record CheatField(string Key, CheatFieldType Type, JsonNode? Def
 /// A kind of cheat block: a When (what sets the cheat off), an If (only when) or a Do (what it does), with the words of
 /// its sentence ("Cast {Spell} on {Target}": each {Key} is one of its Fields) and what it does in plain words.
 /// </summary>
-/// Scope: "boss" (the boss and custom editors), "player" (Player cheats) or "both".
+/// Scope: "both" (the boss and custom editors and Player cheats alike: Niduus, 2026-10-23, "ALL CHEATS are to be
+/// compatible for PLAYERS and CREATURES"), or "alias": an old block that is the same as another, kept to read old files
+/// and never offered.
 internal sealed record CheatSpec(string Id, BlockKind Kind, string Icon, string Palette, string Help, string Sentence, CheatField[] Fields,
-                                 Func<CheatBlock, string> Summary, string Scope = "boss") {
+                                 Func<CheatBlock, string> Summary, string Scope = "both") {
 
-    internal bool For(bool player) => Scope == "both" || Scope == (player ? "player" : "boss");
+    internal bool For(bool player) => Scope != "alias";
 
 }
 
@@ -167,19 +169,19 @@ internal sealed class CheatRule {
             ["HealthAbove"] = 0, ["HealthUnder"] = 0, ["Random"] = false, ["Target"] = "", ["Cast"] = "", ["Casts"] = new JsonArray(),
             ["Line"] = "", ["Silent"] = false, ["SetHealth"] = 0, ["SetPhase"] = 0, ["Defeat"] = false, ["Spawn"] = 0,
             ["AnyVersion"] = false, ["CostMin"] = 0, ["CostMax"] = 0, ["PlayersMin"] = 0, ["PlayersMax"] = 0, ["FromRound"] = 0,
-            ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "",
+            ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "", ["Creature"] = 0, ["NotCreature"] = false, ["Minions"] = false,
             ["DispelThen"] = "", ["DispelRetries"] = 0, ["RetryUntilCast"] = false,
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
         }
 
         // A When that does not use health keeps none, so a cheat file's leftover does not show as a change.
-        if (When.Spec is not ("W.HealthBelow" or "W.PlayerHealthBelow" or "W.MyHealthBelow")) {
+        if (When.Spec is not ("W.HealthBelow" or "W.PlayerHealthBelow" or "W.MyHealthBelow" or "W.AllyHealthBelow")) {
             json["Health"] = 0;
             json["Percent"] = 0;
         }
@@ -246,13 +248,13 @@ internal sealed class CheatRule {
         var whenBlock = whenSpec is null
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions" }) {
             if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
                 whenBlock.Set(key, value);
             }
         }
 
-        if (whenBlock.Spec is "W.HealthBelow" or "W.PlayerHealthBelow" or "W.MyHealthBelow" && Number("Health") > 0) {
+        if (whenBlock.Spec is "W.HealthBelow" or "W.PlayerHealthBelow" or "W.MyHealthBelow" or "W.AllyHealthBelow" && Number("Health") > 0) {
             whenBlock.Set("Percent", 0);
         }
 
@@ -322,6 +324,10 @@ internal sealed class CheatRule {
             If("I.HasAllies");
         }
 
+        if (Number("Creature") > 0) {
+            If("I.Creature", new JsonObject { ["Creature"] = Number("Creature"), ["NotCreature"] = Flag("NotCreature") });
+        }
+
         // A file's School and Category on a When that has no box for them stay as If blocks would not: keep them on it.
         void Do(string spec, JsonObject? values = null, bool on = true) {
             var block = CheatBlock.New(CheatSpecs.Get(spec), values);
@@ -380,8 +386,15 @@ internal sealed class CheatRule {
 
             var actionOff = BossChanges.FindIn(action, "Off") is JsonValue o && o.TryGetValue<bool>(out var isOff) && isOff;
             var hasLine = BossChanges.FindIn(action, "Line") is JsonValue l && l.ToString().Length > 0;
+            // The player cheats' old "me" and "all" targets are the same as "itself" and "every player".
+            if (BossChanges.FindIn(values, "Target") is JsonValue aim && aim.TryGetValue<string>(out var code)
+                && code.ToLowerInvariant() is "me" or "all") {
+                values.Remove(values.First(p => p.Key.Equals("Target", StringComparison.OrdinalIgnoreCase)).Key);
+                values["Target"] = code.Equals("me", StringComparison.OrdinalIgnoreCase) ? "Self" : "AllEnemies";
+            }
+
             var spec = what.Equals("Say", StringComparison.OrdinalIgnoreCase)
-                ? (player ? (hasLine ? "D.Banner" : "D.MyChat") : hasLine ? "D.Say" : "D.Chat")
+                ? hasLine ? "D.Say" : "D.Chat"
                 : CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.Do && s.For(player)
                                                      && CheatSpecs.DoOf(s.Id).Equals(what, StringComparison.OrdinalIgnoreCase))?.Id;
             if (spec == "D.Cast") {

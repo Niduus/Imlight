@@ -5,7 +5,9 @@
  * wizard, as with the Manager's command box: CommandService.IsThisPc).
  *
  * The file: { "Enabled": true, "Cheats": [ cheat, ... ] }. Enabled false turns every player cheat off. A cheat has the
- * fields of a boss cheat (BossCheats.cs) that make sense for a player:
+ * fields of a boss cheat (BossCheats.cs), every one of them (Niduus, 2026-10-23: "ALL CHEATS are to be compatible for
+ * PLAYERS and CREATURES"): they run through the boss cheats' own code, with the wizard as "it" and the creatures as
+ * "the players". The ones first made for the player cheats:
  *   When   BattleStart, RoundStart, RoundEnd, FromRound (Round, Every as for a boss; rounds of the battle), ICast (my
  *          spell, before it lands), ICrit (my spell was a critical hit), IPass (I pass), EnemyCasts (an enemy's
  *          spell, before it lands), MyHealthBelow (Percent or Health; once a battle), Pips (I have at least Pips).
