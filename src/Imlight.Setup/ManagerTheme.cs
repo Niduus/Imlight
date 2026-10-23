@@ -64,6 +64,9 @@ internal static class ManagerTheme {
     internal static readonly Color BAD = Color.FromRgb(224, 80, 68);
     internal static readonly Color BAD_TEXT = Color.FromRgb(255, 150, 140);
 
+    /// <summary>What the code does, in braces after a spell's own words: bright and full strength so it reads well.</summary>
+    internal static readonly Color CODE_TEXT = Color.FromRgb(120, 205, 255);
+
     internal static readonly Color LOG_BACK = Color.FromRgb(13, 16, 21);
     internal static readonly Color LOG_TEXT = Color.FromRgb(216, 222, 233);
 
@@ -364,7 +367,7 @@ internal static class ManagerTheme {
         ["Edit"] = "pencil", ["Edit blocks"] = "puzzle", ["Close"] = "up", ["Open all"] = "down", ["Close all"] = "up",
         ["Delete"] = "bin", ["Remove"] = "bin", ["Discard"] = "undo",
         ["Put back the game's values"] = "undo", ["Put back the game's deck"] = "undo", ["Put back the game's cheats"] = "undo",
-        ["New password"] = "key", ["Lock"] = "lock", ["Unlock"] = "unlock",
+        ["New password"] = "key", ["Rename"] = "pencil", ["Show"] = "eye", ["Hide"] = "eyeoff", ["Lock"] = "lock", ["Unlock"] = "unlock",
         ["Learn on my wizard"] = "sparkle", ["Send to my gifts"] = "gift",
     };
 

@@ -76,6 +76,12 @@ internal sealed partial class ManagerWindow : Window {
     private readonly SelectableTextBlock _friendAddress = new() { Text = "Finding your address…", FontSize = 16, FontWeight = FontWeight.SemiBold };
     private readonly TextBlock _friendResult = new() { TextWrapping = TextWrapping.Wrap, IsVisible = false };
     private string? _publicIp;
+    // Addresses and ports stay hidden until shown, and hidden again each time the app opens (Niduus, 2026-10-23:
+    // "have IP and port hidden unless revealed").
+    private bool _showFriendAddress;
+    private readonly Button _friendAddressToggle = Plain("Show");
+    private List<string> _friendResultLines = [];
+    private List<string> _friendResultSecrets = [];
 
     // Server.
     private readonly Button _startButton = Primary("Start server");
@@ -414,6 +420,12 @@ internal sealed partial class ManagerWindow : Window {
 
     private Control PlayTab() {
         Action(_playButton, async () => Say(await _manager.PlayHereAsync()));
+        ToolTip.SetTip(_friendAddressToggle, "Shows or hides your address and ports. Copy address copies them either way.");
+        _friendAddressToggle.Click += (_, _) => {
+            _showFriendAddress = !_showFriendAddress;
+            _friendAddressToggle.Content = ManagerTheme.ButtonContent(_showFriendAddress ? "Hide" : "Show");
+            ShowFriendAddress();
+        };
         _playButton.FontSize = 16;
         _playButton.Padding = new Thickness(22, 12);
 
@@ -441,7 +453,8 @@ internal sealed partial class ManagerWindow : Window {
                         WithDock(Row(Action(Primary("Let friends connect"), LetFriendsConnectAsync),
                             Action(Plain("Copy address"), () => _publicIp is null
                                 ? throw new PanelException("Your address is not found yet. Check your internet connection.")
-                                : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}"))), Dock.Right),
+                                : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}", "Copied your address and login port."))), Dock.Right),
+                        WithDock(WithCenter(WithMargin(_friendAddressToggle, new Thickness(10, 0, 10, 0))), Dock.Right),
                         WithCenter(_friendAddress),
                     },
                 }, "Friends on other internet connections join with this address and login port. Click \"Let friends connect\" " +
@@ -457,22 +470,23 @@ internal sealed partial class ManagerWindow : Window {
         _publicIp = result.PublicIp ?? _publicIp;
         ShowFriendAddress();
 
-        var lines = new List<string> {
+        _friendResultLines = [
             (result.Firewall ? "✓ " : "✗ ") + result.FirewallNote,
             (result.Router ? "✓ " : "✗ ") + result.RouterNote,
-        };
+        ];
         if (!result.Router) {
-            lines.Add($"To open them by hand, forward TCP ports {string.Join(", ", result.Ports)} on your router to " +
+            _friendResultLines.Add($"To open them by hand, forward TCP ports {string.Join(", ", result.Ports)} on your router to " +
                       $"{result.HomeIp ?? "this computer"}.");
         }
 
         if (result.SharedAddress) {
-            lines.Add("✗ Your internet company shares one internet address between many homes, so friends cannot reach " +
+            _friendResultLines.Add("✗ Your internet company shares one internet address between many homes, so friends cannot reach " +
                       "this computer through the router. Use a free VPN app such as Radmin VPN instead: you and your friend " +
                       "join the same network in it, and your friend uses your Radmin VPN address.");
         }
 
-        _friendResult.Text = string.Join("\n", lines);
+        _friendResultSecrets = [.. new[] { result.PublicIp, result.HomeIp }.OfType<string>(), .. result.Ports.Select(p => p.ToString())];
+        ShowFriendAddress();
         _friendResult.IsVisible = true;
         Say(result.Firewall && result.Router && !result.SharedAddress
             ? "Friends can connect now. Send them the address shown under \"Play with friends\"."
@@ -481,10 +495,24 @@ internal sealed partial class ManagerWindow : Window {
     }
 
     private void ShowFriendAddress() {
-        var port = FriendAccess.Ports(_manager.InstallFolder)[0];
+        var port = FriendAccess.Ports(_manager.InstallFolder)[0].ToString();
         _friendAddress.Text = _publicIp is null
             ? "Your address could not be found. Check your internet connection."
-            : $"Address: {_publicIp}    Login port: {port}";
+            : $"Address: {Reveal(_publicIp, _showFriendAddress)}    Login port: {Reveal(port, _showFriendAddress)}";
+        _friendResult.Text = HideIn(string.Join("\n", _friendResultLines), _showFriendAddress ? [] : _friendResultSecrets);
+    }
+
+    /// <summary>An address or a port as it is, or with its letters and digits as dots: "•••.•••.•.••".</summary>
+    private static string Reveal(string text, bool shown)
+        => shown ? text : string.Concat(text.Select(c => char.IsLetterOrDigit(c) ? '•' : c));
+
+    /// <summary>The text with each of the addresses and ports in it dotted out, longest first so a port inside an address stays whole.</summary>
+    private static string HideIn(string text, IEnumerable<string> secrets) {
+        foreach (var secret in secrets.Where(s => s.Length > 0).Distinct().OrderByDescending(s => s.Length)) {
+            text = text.Replace(secret, Reveal(secret, false));
+        }
+
+        return text;
     }
 
     private readonly TextBox _commandSearch = new() { Watermark = "Search the commands" };
@@ -1328,23 +1356,38 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         foreach (var server in servers) {
+            // A server saved without a name is named after its address, so the name is dotted out with it.
+            string[] secrets = [server.Host, server.Port.ToString()];
+            var hidden = HideIn(server.Name, secrets);
+            var label = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
+            var shown = false;
+            void ShowLabel() => label.Text = shown
+                ? $"{server.Name}    {server.Host}:{server.Port}"
+                : $"{hidden}    {Reveal(server.Host, false)}:{Reveal(server.Port.ToString(), false)}";
+            ShowLabel();
+            var toggle = Plain("Show");
+            toggle.Click += (_, _) => {
+                shown = !shown;
+                toggle.Content = ManagerTheme.ButtonContent(shown ? "Hide" : "Show");
+                ShowLabel();
+            };
+
             _serverRows.Children.Add(new DockPanel {
                 Children = {
                     WithDock(Row(
+                        toggle,
                         Action(Primary("Play"), async () => {
                             await GameClient.LaunchAsync(_manager.InstallFolder, server.Host, server.Port);
-                            Say($"Starting Wizard101 on {server.Name}.");
+                            Say($"Starting Wizard101 on {hidden}.");
                         }),
                         Danger(Action(Plain("Remove"), async () => {
-                            if (await ConfirmAsync($"Remove {server.Name}?")) {
+                            if (await ConfirmAsync($"Remove {hidden}?")) {
                                 GameClient.RemoveServer(_manager.InstallFolder, server.Name);
                                 RenderServers();
-                                Say($"{server.Name} was removed.");
+                                Say($"{hidden} was removed.");
                             }
                         }))), Dock.Right),
-                    new TextBlock {
-                        Text = $"{server.Name}    {server.Host}:{server.Port}", VerticalAlignment = VerticalAlignment.Center,
-                    },
+                    label,
                 },
             });
         }
@@ -1355,7 +1398,7 @@ internal sealed partial class ManagerWindow : Window {
         var saved = await GameClient.AddServerAsync(_manager.InstallFolder, _newServerName.Text ?? "", _newServerHost.Text ?? "", port);
         _newServerName.Text = _newServerHost.Text = _newServerPort.Text = "";
         RenderServers();
-        Say($"{saved.Name} was saved.");
+        Say($"{HideIn(saved.Name, [saved.Host, saved.Port.ToString()])} was saved.");
     }
 
     // ---------------------------------------------------------------------
@@ -1494,11 +1537,12 @@ internal sealed partial class ManagerWindow : Window {
         Say($"Saved the game log to your desktop as \"{Path.GetFileName(target)}\". Drag it into the chat to send it.");
     }
 
-    private async Task CopyAsync(string text) {
+    /// <param name="said">What the message bar says instead of the text, for text that stays hidden (an address).</param>
+    private async Task CopyAsync(string text, string? said = null) {
         var clipboard = GetTopLevel(this)?.Clipboard ?? throw new PanelException("The clipboard is not available.");
         await clipboard.SetTextAsync(text);
         var lines = text.Split('\n').Length;
-        Say(lines > 1 || text.Length > 80 ? $"Copied {lines} lines. Paste them with Ctrl+V." : $"Copied {text}");
+        Say(said ?? (lines > 1 || text.Length > 80 ? $"Copied {lines} lines. Paste them with Ctrl+V." : $"Copied {text}"));
     }
 
     // ---------------------------------------------------------------------
@@ -1839,6 +1883,16 @@ internal sealed partial class ManagerWindow : Window {
 
             box.TextChanged += (_, _) => Change(setting, box.Text ?? "");
             input = box;
+            if (IsAddressSetting(setting.Key)) {
+                // Dotted out until shown, like the address on the Play tab; typing still works while hidden.
+                box.PasswordChar = '•';
+                var toggle = Plain("Show");
+                toggle.Click += (_, _) => {
+                    box.RevealPassword = !box.RevealPassword;
+                    toggle.Content = ManagerTheme.ButtonContent(box.RevealPassword ? "Hide" : "Show");
+                };
+                input = new DockPanel { Children = { WithDock(WithMargin(toggle, new Thickness(8, 0, 0, 0)), Dock.Right), box } };
+            }
         }
 
         var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*"), Margin = new Thickness(0, 8) };
@@ -1853,6 +1907,12 @@ internal sealed partial class ManagerWindow : Window {
 
         return new Border { BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(0, 0, 0, 8), Child = row };
     }
+
+    /// <summary>The settings that hold an address or a port: LoginServerPort, GameServerIP, PublicAddress, the database's URL...</summary>
+    private static bool IsAddressSetting(string key)
+        => key.EndsWith("Port", StringComparison.OrdinalIgnoreCase) || key.EndsWith("IP", StringComparison.Ordinal)
+            || key.EndsWith("Address", StringComparison.OrdinalIgnoreCase)
+            || key is "PatchServerInternalUrl" or "PlayerDatabaseUrl" or "SeqSinkUrl";
 
     private void Change(Setting setting, string value) {
         if (value == setting.Value) {
@@ -1935,6 +1995,14 @@ internal sealed partial class ManagerWindow : Window {
                 Say($"The password for {account.Username} was changed.");
             }
         });
+        var rename = Action(Plain("Rename"), async () => {
+            if (await AskAsync($"New username for {account.Username}", secret: false, account.Username) is { } text && text != account.Username) {
+                using var accounts = _manager.Accounts();
+                await accounts.RenameAsync(account.Username, text);
+                Say($"{account.Username} is now {text.Trim()}. They log in with the new name; their characters stay with the account.");
+                await LoadAccountsAsync();
+            }
+        });
         var lockButton = Action(Plain(account.IsLocked ? "Unlock" : "Lock"), async () => {
             if (!account.IsLocked && !await ConfirmAsync($"Lock {account.Username}? They cannot log in until unlocked.")) {
                 return;
@@ -1957,13 +2025,25 @@ internal sealed partial class ManagerWindow : Window {
             Foreground = account.IsLocked ? BAD : MUTED,
         };
 
+        // Each account's id, the number the server knows it by (Niduus, 2026-10-23: "give them ID's as well").
+        var copyId = Action(Plain("Copy ID"), () => CopyAsync(account.AccountId));
+        copyId.Padding = new Thickness(6, 1);
+        copyId.FontSize = 11;
+        var idRow = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(0, 2, 0, 0),
+            Children = {
+                WithCenter(new SelectableTextBlock { Text = $"ID {account.AccountId}", Foreground = MUTED, FontSize = 12 }),
+                copyId,
+            },
+        };
+
         return ManagerTheme.Item(new DockPanel {
             Children = {
-                WithDock(Row(level, password, lockButton), Dock.Right),
+                WithDock(Row(level, rename, password, lockButton), Dock.Right),
                 WithDock(WithMargin(WithCenter(ManagerTheme.Tile("user", account.IsLocked ? BAD : ManagerTheme.Accent("Accounts"), 30)), new Thickness(0, 0, 12, 0)), Dock.Left),
                 new StackPanel {
                     VerticalAlignment = VerticalAlignment.Center,
-                    Children = { new TextBlock { Text = account.Username, FontWeight = FontWeight.SemiBold }, details },
+                    Children = { new TextBlock { Text = account.Username, FontWeight = FontWeight.SemiBold }, details, idRow },
                 },
             },
         });
@@ -2025,8 +2105,8 @@ internal sealed partial class ManagerWindow : Window {
         return dialog.ShowDialog<bool>(this);
     }
 
-    private async Task<string?> AskAsync(string question, bool secret) {
-        var box = new TextBox { PasswordChar = secret ? '•' : '\0' };
+    private async Task<string?> AskAsync(string question, bool secret, string? initial = null) {
+        var box = new TextBox { PasswordChar = secret ? '•' : '\0', Text = initial };
         var dialog = Dialog(question, box, out _);
         var confirmed = await dialog.ShowDialog<bool>(this);
 

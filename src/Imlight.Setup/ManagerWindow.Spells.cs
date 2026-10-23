@@ -197,9 +197,7 @@ internal sealed partial class ManagerWindow {
 
         title.Children.Add(WithCenter(new TextBlock { Text = string.Join("  ·  ", facts), Foreground = MUTED }));
         var does = spell.Does.Length > 0
-            ? new TextBlock {
-                Text = spell.Shown, TextWrapping = TextWrapping.Wrap, MaxLines = 2, TextTrimming = TextTrimming.CharacterEllipsis,
-            }
+            ? SpellDoesText(spell, maxLines: 2)
             : new TextBlock { Text = "No card text in the game files.", Foreground = MUTED };
 
         var row = new Border {

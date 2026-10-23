@@ -32,7 +32,7 @@ namespace Imlight.Setup;
 /// A player account as the control panel shows it. The password hash never leaves this class.
 /// </summary>
 internal sealed record AccountSummary(string Username, string AuthLevel, bool IsLocked, int Characters,
-    string? CreationTime, string? LastLoginTime);
+    string? CreationTime, string? LastLoginTime, string AccountId);
 
 /// <summary>
 /// Reads and changes player accounts in the server's embedded RavenDB, through its HTTP API.
@@ -126,6 +126,25 @@ internal sealed class PlayerAccounts : IDisposable {
         return UpdateAsync(username, doc => doc["PasswordHash"] = HashPassword(password));
     }
 
+    /// <summary>
+    /// Gives an account a new username. The server finds accounts by their Username field at login and links characters
+    /// by AccountId, so changing the field is all it takes: the account keeps its id, its document and its characters.
+    /// </summary>
+    internal async Task RenameAsync(string username, string newName) {
+        newName = newName.Trim();
+        if (newName.Length == 0) {
+            throw new AccountException("Enter a new username.");
+        }
+
+        var all = await QueryAsync($"from {COLLECTION}", null);
+        if (all.Any(a => string.Equals((string?) a["Username"], newName, StringComparison.OrdinalIgnoreCase)
+                && !string.Equals((string?) a["Username"], username, StringComparison.OrdinalIgnoreCase))) {
+            throw new AccountException($"There is already an account named {newName}.");
+        }
+
+        await UpdateAsync(username, doc => doc["Username"] = newName);
+    }
+
     internal Task SetAuthLevelAsync(string username, string authLevel)
         => UpdateAsync(username, doc => doc["AuthLevel"] = AuthLevelValue(doc, authLevel));
 
@@ -197,7 +216,9 @@ internal sealed class PlayerAccounts : IDisposable {
             doc["IsLocked"]?.GetValueKind() == System.Text.Json.JsonValueKind.True,
             (doc["CharacterIds"] as JsonArray)?.Count ?? 0,
             (string?) doc["CreationTime"],
-            (string?) doc["LastLoginTime"]);
+            (string?) doc["LastLoginTime"],
+            // The number the server knows the account by (characters, gifts and logs use it), not the document's own id.
+            doc["AccountId"] is JsonValue id ? id.ToString() : "?");
     }
 
     /// <summary>

@@ -771,14 +771,15 @@ internal static class CardPainter {
         // Small pictures in the description are this much of a line's height.
         private const float ICON = 0.86f;
         private const int GENERATED_ON_CARD = 600;
-        private const uint GENERATED_COLOR = 0xFF6E5A40;
+        // A deep blue at full strength: the faded brown it was was hard to read on the parchment (Niduus, 2026-10-23).
+        private const uint GENERATED_COLOR = 0xFF0A3696;
 
         private sealed record Piece(string Text, uint Color, GameImage? Icon, bool Space, bool Break, float Aspect);
 
         private void Description(GlyphFont font) {
             var pieces = new List<Piece>();
             // The game's own text, then what the code does in braces under it (when short enough to read on the card), in
-            // a faded brown so it doesn't pass for the game's.
+            // blue so it doesn't pass for the game's.
             var parts = book.Describe(card);
             if (card.Corrected.Length is > 0 and <= GENERATED_ON_CARD) {
                 if (parts.Count > 0) {

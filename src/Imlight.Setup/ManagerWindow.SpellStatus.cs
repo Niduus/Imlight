@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Layout;
 using Avalonia.Media;
 
@@ -31,6 +32,8 @@ namespace Imlight.Setup;
 /// searched (via toggle, on by default)").
 /// </summary>
 internal sealed partial class ManagerWindow {
+
+    private static readonly IBrush CODE_TEXT = ManagerTheme.Brush(ManagerTheme.CODE_TEXT);
 
     private const string CORRECTED_TIP = "The words in { } say what the code does, written by Imlight from the spell's effects; the " +
         "words before them are the game's own card text.";
@@ -119,7 +122,19 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>What the card does: the game's words, then what the code does in braces.</summary>
     private static SelectableTextBlock SpellDoesText(SpellCard card, int maxLines = 0) {
-        var text = new SelectableTextBlock { Text = card.Shown, TextWrapping = TextWrapping.Wrap };
+        var text = new SelectableTextBlock { TextWrapping = TextWrapping.Wrap };
+        if (card.Corrected.Length > 0) {
+            // The braces in a bright colour of their own, at full strength: in the text colour they read as part of the
+            // game's words, and faded they were hard to read (Niduus, 2026-10-23).
+            text.Inlines = new InlineCollection {
+                new Run(card.Short.Length > 0 ? card.Short + " " : ""),
+                new Run($"{{{card.Corrected.TrimEnd('.')}}}") { Foreground = CODE_TEXT },
+            };
+        }
+        else {
+            text.Text = card.Shown;
+        }
+
         if (maxLines > 0) {
             text.MaxLines = maxLines;
             text.TextTrimming = TextTrimming.CharacterEllipsis;
