@@ -160,7 +160,6 @@ internal sealed partial class ManagerWindow : Window {
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "HouseDuelTakesTurns", "House duel circles take turns, the PvP way (off: both sides act at once)", new() { OnContent = "On", OffContent = "Off" }),
-        ("PvP", "DuelCircleTeleportEffect", "Duel circles play each wizard's teleport effect as they move onto their places", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly NumericUpDown _pointsPerLevel = new() { Minimum = 0, Maximum = 100, Increment = 1, FormatString = "0", Width = 130 };
 

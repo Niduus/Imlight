@@ -61,12 +61,8 @@ internal static class PvPSettings {
     public static bool HouseDuelTakesTurns
         => ConfigurationManager.GetValue("PvP.HouseDuelTakesTurns", true);
 
-    // Seconds both sides must stay on the circle before the duel starts.
-    public static int DuelCircleCountdown
-        => Math.Clamp(ConfigurationManager.GetValue("PvP.DuelCircleCountdown", 5), 1, 60);
-
-    // The wizards' teleport effect plays as they are moved onto their places.
-    public static bool DuelCircleTeleportEffect
-        => ConfigurationManager.GetValue("PvP.DuelCircleTeleportEffect", true);
+    // Seconds a duel circle waits, from its first wizard, for more to step on before the duel begins (Niduus, 2026-10-23: 15).
+    public static int DuelCircleWait
+        => Math.Clamp(ConfigurationManager.GetValue("PvP.DuelCircleWait", 15), 3, 120);
 
 }

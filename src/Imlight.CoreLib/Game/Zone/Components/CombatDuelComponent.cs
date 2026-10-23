@@ -219,9 +219,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (!_isActive) {
-            DuelCircleMove(playerObj, playerActor, playerWizard);
-        }
+        DuelCircleMove(playerObj, playerActor, playerWizard);
 
         // The roster of a PvP duel is fixed; nobody joins by walking in.
         if (!_isActive || IsPvPDuel) {
@@ -484,11 +482,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        if (message.Rules is not null) {
-            DuelCircleSeated(message.Roster);
-        }
-
+        // A duel circle's duel waits for its countdown before the rounds begin.
+        _circleWaiting = message.Rules is not null;
         ActivateSigil();
+        if (message.Rules is not null) {
+            DuelCircleBegin(message.Roster);
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_FORFEITPVPPARTICIPANT))]
@@ -516,6 +515,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         BroadcastDuel();
 
         // Fire a message to self to start the duel after the grace period has ended.
+        if (_circleWaiting) {
+            return;
+        }
+
         var delay = TimeSpan.FromSeconds(DUEL_GRACE_PERIOD_IN_SECONDS);
         Timers.StartSingleTimer(GRACE_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_NEWROUND(), delay);
     }
@@ -1233,24 +1236,28 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // The roster is fixed: each player sits on a circle of their side and is moved onto it first, because
         // they stand wherever they arrived in the zone.
         foreach (var entry in message.Roster) {
-            var subCircle = GetAvailableSubCircle((CombatTeam) entry.TeamIndex)
-                ?? throw new InvalidOperationException($"No free circle on side {entry.TeamIndex}.");
-
-            ZoneBroadcast(new GAME_5_PROTOCOL.MSG_SERVERTELEPORT {
-                LocationX = CompressTeleportCoordinate(subCircle.WorldPosition.X),
-                LocationY = CompressTeleportCoordinate(subCircle.WorldPosition.Y),
-                LocationZ = CompressTeleportCoordinate(subCircle.WorldPosition.Z),
-                Direction = (byte) Math.Round(subCircle.WorldRotation / (2 * Math.PI) * 250),
-                MobileID = entry.PlayerObject.m_nMobileID,
-            });
-
-            AssignParticipantToSubCircle(subCircle, entry.Session, entry.PlayerObject);
+            SeatPvPEntry(entry);
         }
 
         _isActive = true;
 
         Logger.Debug("Duel {0} | PvP match {1} created with {2} players. Grace period over in {3}",
             Logger.Args(Duel.m_duelID.Full, message.MatchId, message.Roster.Count, DUEL_GRACE_PERIOD_IN_SECONDS));
+    }
+
+    private void SeatPvPEntry(PvPRosterEntry entry) {
+        var subCircle = GetAvailableSubCircle((CombatTeam) entry.TeamIndex)
+            ?? throw new InvalidOperationException($"No free circle on side {entry.TeamIndex}.");
+
+        ZoneBroadcast(new GAME_5_PROTOCOL.MSG_SERVERTELEPORT {
+            LocationX = CompressTeleportCoordinate(subCircle.WorldPosition.X),
+            LocationY = CompressTeleportCoordinate(subCircle.WorldPosition.Y),
+            LocationZ = CompressTeleportCoordinate(subCircle.WorldPosition.Z),
+            Direction = (byte) Math.Round(subCircle.WorldRotation / (2 * Math.PI) * 250),
+            MobileID = entry.PlayerObject.m_nMobileID,
+        });
+
+        AssignParticipantToSubCircle(subCircle, entry.Session, entry.PlayerObject);
     }
 
     private void CancelPvPMatch(ulong matchId, PvPCancelReason reason)
@@ -3001,6 +3008,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // A duel circle's wizard stays in the zone, so the game is told it left the battle, as after fleeing;
         // otherwise it stayed in a battle that no longer had it (Niduus, 2026-10-23).
         if (_isCircleDuel && session is not null) {
+            if (caster._wizard is not null) {
+                RestoreCircleHealth(caster._wizard.CharId);
+            }
+
             session.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT { DiedInDuel = false });
             session.Tell(new GAME_5_PROTOCOL.MSG_ENTERSTATE { GameObjectID = participantObjId, State = (uint) NPCStates.Idle });
         }
@@ -3044,6 +3055,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         Logger.Debug("Duel {0} | PvP match ended. Winning team {1}.", Logger.Args(Duel.m_duelID.Full, winningTeam));
 
         Timers.CancelAll();
+        if (_isCircleDuel) {
+            CloseCircleDuel(winningTeam);
+
+            return;
+        }
 
         // The wizards can move again. Nobody gains experience or loot, or is sent to a hub.
         EnactActionOnSubCircles(circle => {

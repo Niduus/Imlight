@@ -34,16 +34,19 @@ using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.WizardData.Models.World;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 /// <summary>
 /// Duel circles (Niduus, 2026-10-23: "we need duel circles enabled in houses"): a house's own PvP circle, and a PvP
-/// battle circle (PvPSigil8Actor2Sides) added in the Customs tab, start a duel between the wizards standing on its two
-/// sides, as on live. Once both sides have someone and stay for [PvP] DuelCircleCountdown seconds, everyone on it
-/// plays their teleport effect, the PvPDirector makes the match and the circle seats them. The duel takes turns (the
-/// PvP way) or lets both sides act at once: the Customs tab's Combat for an added circle, [PvP] HouseDuelTakesTurns
-/// for a house's own. A wizard who fought on the circle steps off before it counts them again.
+/// battle circle (PvPSigil8Actor2Sides) added in the Customs tab. A wizard who steps on goes straight into the battle,
+/// as with a monster ("enter it like they would a battle"): the first on team A (blue), the next on team B (red), and
+/// so on. The first one starts a [PvP] DuelCircleWait (15 s) countdown; the rounds begin when it ends or the circle is
+/// full, or the duel is called off when one side is still empty. The duel takes turns (the PvP way) or lets both
+/// sides act at once: the Customs tab's Combat for an added circle, [PvP] HouseDuelTakesTurns for a house's own. It
+/// ends like a battle, not a PvP arena match: everyone stays where they are, with their health back as before. A
+/// wizard who fought on the circle steps off before it counts them again.
 /// </summary>
 internal sealed partial class CombatDuelComponent {
 
@@ -54,17 +57,22 @@ internal sealed partial class CombatDuelComponent {
     // How far past the outermost place a wizard still counts as standing on the circle.
     private const float DUEL_CIRCLE_MARGIN = 60f;
     private const int MAX_PER_SIDE = 4;
-    private static readonly TimeSpan s_teleportEffectTime = TimeSpan.FromSeconds(1.5);
 
-    private sealed record DuelCircleWizard(ulong CharId, string Name, CombatTeam Side, GID GameObjectId);
+    private sealed record DuelCircleWizard(IActorRef Session, string Name, CombatTeam Side);
 
-    private readonly Dictionary<IActorRef, DuelCircleWizard> _onDuelCircle = [];
-    // The wizards of the last duel here, until they step off.
+    // Wizards who stepped on and wait for the director to put them in the duel, by character id.
+    private readonly Dictionary<ulong, DuelCircleWizard> _circleJoining = [];
+    // The wizards of the last duel here, and the ones already asked for, until they step off.
     private readonly HashSet<IActorRef> _mustStepOff = [];
+    // Each seated wizard's health when they stepped on; it is theirs again when they leave the duel.
+    private readonly Dictionary<ulong, (Wizard Wizard, IActorRef Session, int Health)> _circleHealth = [];
     private (Vector3 Place, CombatTeam Side)[] _duelCirclePlaces;
     private float _duelCircleReach;
     private int _duelCountdown = -1;
+    // The director is making the duel for the first wizards.
     private bool _duelCircleStarting;
+    // The duel is made and waits for its countdown: wizards who step on join it.
+    private bool _circleWaiting;
     // The running PvP duel started from this duel circle (its wizards stay in the zone when it ends).
     private bool _isCircleDuel;
 
@@ -84,55 +92,73 @@ internal sealed partial class CombatDuelComponent {
         }
     }
 
-    // Called for every move of a wizard in the zone while no duel runs here.
+    // Called for every move of a wizard in the zone.
     private void DuelCircleMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (_duelCircleStarting || !IsDuelCircle || playerWizard is null) {
+        if (!IsDuelCircle || playerWizard is null) {
             return;
         }
 
-        var standing = SideStoodOn(playerObj);
-        if (standing is null) {
+        if (SideStoodOn(playerObj) is null) {
             _mustStepOff.Remove(playerActor);
-            if (_onDuelCircle.Remove(playerActor, out var left)) {
-                TellDuelCircle($"{left.Name} stepped off the duel circle.");
-                DuelCircleChanged();
+
+            return;
+        }
+
+        // Rounds running, or a duel that is not this circle's own: nobody walks in.
+        if (_mustStepOff.Contains(playerActor) || playerWizard.IsInDuel || (_isActive && (!_isCircleDuel || !_circleWaiting))) {
+            return;
+        }
+
+        var charId = playerWizard.CharId;
+        if (IsSeatedOnCircle(charId)) {
+            return;
+        }
+
+        // A reconnect gives the wizard a new session; the old one is gone.
+        if (_circleJoining.TryGetValue(charId, out var asked)) {
+            if (asked.Session.Equals(playerActor)) {
+                return;
             }
 
-            return;
-        }
-
-        if (_mustStepOff.Contains(playerActor) || playerWizard.IsInDuel) {
-            return;
+            _circleJoining.Remove(charId);
         }
 
         // Whoever steps on is given a side in turn, wherever they stand (Niduus, 2026-10-23): the first to team A
-        // (blue), the next to team B (red), and so on, filling the slots in order, until the circle is full or the
-        // countdown ends.
-        if (_onDuelCircle.ContainsKey(playerActor)) {
+        // (blue), the next to team B (red), and so on, until the circle is full or the countdown ends.
+        var blue = CircleSideCount(CombatTeam.Player);
+        var red = CircleSideCount(CombatTeam.Monster);
+        if (blue >= MAX_PER_SIDE && red >= MAX_PER_SIDE) {
             return;
         }
 
-        var blueCount = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Player);
-        var redCount = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Monster);
-        if (blueCount >= MAX_PER_SIDE && redCount >= MAX_PER_SIDE) {
-            return;
-        }
-
-        CombatTeam? side = blueCount <= redCount ? CombatTeam.Player : CombatTeam.Monster;
-
+        var side = (blue <= red && blue < MAX_PER_SIDE) || red >= MAX_PER_SIDE ? CombatTeam.Player : CombatTeam.Monster;
         var name = playerWizard.PlayerNameBehavior?.GetWizardName() ?? "A wizard";
-        _onDuelCircle[playerActor] = new DuelCircleWizard(playerWizard.CharId, name, side.Value, playerObj.m_globalID);
-        TellDuelCircle($"{name} joins team {(side == CombatTeam.Player ? "A (blue)" : "B (red)")} of the duel circle.");
-        DuelCircleChanged();
+        _circleJoining[charId] = new DuelCircleWizard(playerActor, name, side);
+        _mustStepOff.Add(playerActor);
+
+        if (_isActive) {
+            AskToJoinCircleDuel(charId, side);
+        }
+        else if (!_duelCircleStarting) {
+            _duelCircleStarting = true;
+            AskForCircleDuel();
+        }
     }
+
+    private bool IsSeatedOnCircle(ulong charId)
+        => _isActive && SubCircles is not null && SubCircles.Any(c => c is { Occupied: true } && c._wizard?.CharId == charId);
+
+    private int CircleSideCount(CombatTeam side)
+        => _circleJoining.Values.Count(w => w.Side == side)
+           + (_isActive && SubCircles is not null ? SubCircles.Count(c => c is { Occupied: true, IsHumanPlayer: true } && c.OccupiedTeam == side) : 0);
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id)
         => DuelCircleLeave(playerActor);
 
     private void DuelCircleLeave(IActorRef playerActor) {
         _mustStepOff.Remove(playerActor);
-        if (!_duelCircleStarting && _onDuelCircle.Remove(playerActor)) {
-            DuelCircleChanged();
+        foreach (var charId in _circleJoining.Where(w => w.Value.Session.Equals(playerActor)).Select(w => w.Key).ToList()) {
+            _circleJoining.Remove(charId);
         }
     }
 
@@ -155,38 +181,117 @@ internal sealed partial class CombatDuelComponent {
             .First().Side;
     }
 
-    private void DuelCircleChanged() {
-        var blue = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Player);
-        var red = _onDuelCircle.Values.Count(w => w.Side == CombatTeam.Monster);
-        if (blue == 0 || red == 0) {
-            if (_duelCountdown >= 0) {
-                Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
-                _duelCountdown = -1;
-                TellDuelCircle("The duel is off: one side is empty.");
+    private void ShowDuelCircle() {
+        if (IsDuelCircle && _renderComponent is { IsEnabled: false }) {
+            _renderComponent.Enable();
+        }
+    }
+
+    private void AskForCircleDuel() {
+        var teams = new List<List<ulong>> {
+            _circleJoining.Where(w => w.Value.Side == CombatTeam.Player).Select(w => w.Key).ToList(),
+            _circleJoining.Where(w => w.Value.Side == CombatTeam.Monster).Select(w => w.Key).ToList(),
+        };
+        if (PvPDirector.Instance is null) {
+            DuelCircleFailed("PvP is not running");
+
+            return;
+        }
+
+        PvPDirector.Instance.Tell(new PVP_111_PROTOCOL.MSG_STARTLOCALMATCH { Circle = Self, Teams = teams, Rules = DuelCircleRules });
+    }
+
+    private void AskToJoinCircleDuel(ulong charId, CombatTeam side)
+        => PvPDirector.Instance?.Tell(new PVP_111_PROTOCOL.MSG_JOINLOCALMATCH {
+            Circle = Self, MatchId = _pvp.MatchId, CharId = charId, Side = (int) side,
+        });
+
+    // The director could not make the duel.
+    [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_MATCHCANCELLED))]
+    private void ReceiveCircleDuelCancelled(PVP_111_PROTOCOL.MSG_MATCHCANCELLED message) {
+        if (_duelCircleStarting && !_isActive) {
+            DuelCircleFailed("someone is in a match, a queue or not in the world");
+        }
+    }
+
+    private void DuelCircleFailed(string why) {
+        foreach (var wizard in _circleJoining.Values) {
+            wizard.Session.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = $"The duel could not start: {why}.", Modal = 0 });
+        }
+
+        Logger.Information("Duel circle {0}: the duel could not start: {1}.", Logger.Args(SigilId, why));
+        _circleJoining.Clear();
+        _duelCircleStarting = false;
+    }
+
+    // The director made the duel and its first wizards sit on their places: show them the battle and start the countdown.
+    private void DuelCircleBegin(IReadOnlyList<PvPRosterEntry> roster) {
+        _duelCircleStarting = false;
+        _isCircleDuel = true;
+        _circleWaiting = true;
+        _circleHealth.Clear();
+
+        foreach (var entry in roster) {
+            _circleJoining.Remove(entry.CharId);
+            ShowCircleJoiner(entry);
+        }
+
+        // Wizards who stepped on while the duel was being made join it now.
+        foreach (var (charId, wizard) in _circleJoining.ToList()) {
+            AskToJoinCircleDuel(charId, wizard.Side);
+        }
+
+        _duelCountdown = PvPSettings.DuelCircleWait;
+        TellCircleDuel($"The duel starts in {_duelCountdown} seconds. More wizards can step on to join.");
+        Timers.StartPeriodicTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.FromSeconds(1));
+        StartCircleRoundsIfFull();
+    }
+
+    [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED))]
+    private void ReceiveLocalMatchJoined(PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED message) {
+        _circleJoining.Remove(message.CharId, out var asked);
+        if (message.Entry is null || !_isActive || !IsPvPDuel || _pvp.MatchId != message.MatchId) {
+            if (message.Entry is null && asked is not null) {
+                asked.Session.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = "You cannot join this duel now.", Modal = 0 });
             }
 
             return;
         }
 
-        // A full circle starts at once.
-        if (blue >= MAX_PER_SIDE && red >= MAX_PER_SIDE) {
-            TellDuelCircle($"Duel: {blue} against {red}. The circle is full; it starts now.");
-            _duelCountdown = 1;
-            Timers.StartSingleTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.Zero);
+        // Too late: the rounds began, or the side filled up.
+        if (!_circleWaiting || GetAvailableSubCircle((CombatTeam) message.Entry.TeamIndex) is null) {
+            message.Entry.Session.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = "This duel is full or has begun.", Modal = 0 });
 
             return;
         }
 
-        // A new wizard starts the count again, so everyone sees how long is left.
-        _duelCountdown = PvPSettings.DuelCircleCountdown;
-        var style = DuelCircleRules.AlternateTurns ? "taking turns" : "both sides at once";
-        TellDuelCircle($"Duel: {blue} against {red}, {style}. It starts in {_duelCountdown} seconds; step off to stay out.");
-        Timers.StartPeriodicTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK(), TimeSpan.FromSeconds(1));
+        SeatPvPEntry(message.Entry);
+        _pvp.AddToRoster(message.Entry);
+        ShowCircleJoiner(message.Entry);
+        StartCircleRoundsIfFull();
     }
 
-    private void ShowDuelCircle() {
-        if (IsDuelCircle && _renderComponent is { IsEnabled: false }) {
-            _renderComponent.Enable();
+    // The wizard sits on their place: the game shows them the battle at once, as with a monster.
+    private void ShowCircleJoiner(PvPRosterEntry entry) {
+        var circle = SubCircles.FirstOrDefault(c => c is { Occupied: true } && c.ParticipantActor?.Equals(entry.Session) == true);
+        if (circle is null) {
+            return;
+        }
+
+        if (circle._wizard is { } wizard) {
+            _circleHealth[entry.CharId] = (wizard, entry.Session, wizard.GameStats.m_currentHitpoints);
+        }
+
+        AddCombatParticipant(circle);
+        var name = circle._wizard?.PlayerNameBehavior?.GetWizardName() ?? "A wizard";
+        TellCircleDuel($"{name} joins team {(circle.OccupiedTeam == CombatTeam.Player ? "A (blue)" : "B (red)")}.");
+    }
+
+    private void StartCircleRoundsIfFull() {
+        if (_circleWaiting && CircleSideCount(CombatTeam.Player) >= MAX_PER_SIDE && CircleSideCount(CombatTeam.Monster) >= MAX_PER_SIDE
+            && _circleJoining.Count == 0) {
+            TellCircleDuel("The circle is full.");
+            StartCircleRounds();
         }
     }
 
@@ -200,110 +305,104 @@ internal sealed partial class CombatDuelComponent {
             return;
         }
 
-        if (message.Go) {
-            AskForCircleDuel();
-
-            return;
-        }
-
-        if (_duelCountdown < 0 || _isActive) {
+        if (_duelCountdown < 0 || !_isActive || !_circleWaiting) {
             Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
 
             return;
         }
 
         _duelCountdown--;
-        if (_duelCountdown is > 0 and <= 3) {
-            TellDuelCircle($"{_duelCountdown}...");
+        if (_duelCountdown is 10 or 5 or 3 or 2 or 1) {
+            TellCircleDuel($"{_duelCountdown}...");
         }
 
-        if (_duelCountdown > 0) {
-            return;
+        if (_duelCountdown <= 0) {
+            StartCircleRounds();
         }
+    }
 
+    private void StartCircleRounds() {
         Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
         _duelCountdown = -1;
-        _duelCircleStarting = true;
+        _circleWaiting = false;
 
-        // Everyone on the circle teleports onto their place; the effect plays before they are moved.
-        if (PvPSettings.DuelCircleTeleportEffect) {
-            foreach (var wizard in _onDuelCircle.Values) {
-                SetWizardState(wizard.GameObjectId, "Teleport");
+        var blue = SubCircles.Count(c => c is { Occupied: true, IsHumanPlayer: true } && c.OccupiedTeam == CombatTeam.Player);
+        var red = SubCircles.Count(c => c is { Occupied: true, IsHumanPlayer: true } && c.OccupiedTeam == CombatTeam.Monster);
+        if (blue == 0 || red == 0) {
+            TellCircleDuel("Nobody stepped on for the other team, so the duel is off.");
+            if (_pvp.BeginEnding(-1, [])) {
+                CloseCircleDuel(-1);
             }
-
-            Timers.StartSingleTimer(DUEL_CIRCLE_TIMER_KEY, new ZONE_102_PROTOCOL.MSG_DUELCIRCLETICK { Go = true }, s_teleportEffectTime);
 
             return;
         }
 
-        AskForCircleDuel();
+        var style = DuelCircleRules.AlternateTurns ? "taking turns" : "both sides at once";
+        TellCircleDuel($"Duel: {blue} against {red}, {style}. Begin!");
+        Timers.StartSingleTimer(GRACE_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_NEWROUND(), TimeSpan.Zero);
     }
 
-    private void AskForCircleDuel() {
-        var teams = new List<List<ulong>> {
-            _onDuelCircle.Values.Where(w => w.Side == CombatTeam.Player).Select(w => w.CharId).ToList(),
-            _onDuelCircle.Values.Where(w => w.Side == CombatTeam.Monster).Select(w => w.CharId).ToList(),
-        };
-        if (teams.Any(team => team.Count == 0) || PvPDirector.Instance is null) {
-            DuelCircleFailed("one side is empty");
+    // The circle's duel is over (won, or called off): everyone leaves the battle where they stand, as after a battle
+    // with monsters, not a PvP arena match (that left the spellbook hidden, Niduus 2026-10-23).
+    private void CloseCircleDuel(int winningTeam) {
+        Timers.Cancel(DUEL_CIRCLE_TIMER_KEY);
+        if (winningTeam >= 0) {
+            TellCircleDuel($"Team {(winningTeam == (int) CombatTeam.Player ? "A (blue)" : "B (red)")} wins the duel!");
+        }
 
+        EnactActionOnSubCircles(circle => {
+            if (circle.IsHumanPlayer && circle.ParticipantActor is not null) {
+                _mustStepOff.Add(circle.ParticipantActor);
+                circle.ParticipantActor.Tell(new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+                    GameObjectID = circle.ParticipantObject.m_globalID,
+                    State = (uint) NPCStates.Idle,
+                });
+            }
+        });
+
+        _pvp.TryFinish();
+        Duel.m_duelPhase = kDuelPhase.kPhase_Ended;
+        SendCombatPhase((byte) Duel.m_duelPhase);
+        ZoneBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_ENDDUEL { DuelID = SigilId });
+
+        ReportPvPDuelEnded(winningTeam);
+        foreach (var charId in _circleHealth.Keys.ToList()) {
+            RestoreCircleHealth(charId);
+        }
+
+        DespawnDuel();
+        _isActive = false;
+        _isCircleDuel = false;
+        _circleWaiting = false;
+        _circleJoining.Clear();
+        EnactActionOnSubCircles(circle => circle.RemoveParticipant());
+    }
+
+    // A duel circle is practice: a wizard leaves it with the health they stepped on with.
+    private void RestoreCircleHealth(ulong charId) {
+        if (!_circleHealth.Remove(charId, out var held)) {
             return;
         }
 
-        PvPDirector.Instance.Tell(new PVP_111_PROTOCOL.MSG_STARTLOCALMATCH { Circle = Self, Teams = teams, Rules = DuelCircleRules });
+        held.Wizard.UpdateHealth(held.Health);
+        held.Session.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEHEALTH {
+            CharacterID = held.Wizard.GameObjectID,
+            NewHealth = held.Health,
+            NewHealthMax = held.Wizard.GameStats.GetClientTypeAlternative().m_baseHitpoints,
+            DisplayDiff = 0,
+        });
     }
 
-    // The director could not make the duel.
-    [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_MATCHCANCELLED))]
-    private void ReceiveCircleDuelCancelled(PVP_111_PROTOCOL.MSG_MATCHCANCELLED message) {
-        if (_duelCircleStarting && !_isActive) {
-            DuelCircleFailed("someone is in a match, a queue or not in the world");
-        }
-    }
-
-    private void DuelCircleFailed(string why) {
-        TellDuelCircle($"The duel could not start: {why}.");
-        if (PvPSettings.DuelCircleTeleportEffect) {
-            foreach (var wizard in _onDuelCircle.Values) {
-                SetWizardState(wizard.GameObjectId, "InWorld");
-            }
-        }
-
-        foreach (var actor in _onDuelCircle.Keys) {
-            _mustStepOff.Add(actor);
-        }
-
-        _onDuelCircle.Clear();
-        _duelCircleStarting = false;
-        _isCircleDuel = true;
-    }
-
-    // The circle's duel has its players on their places.
-    private void DuelCircleSeated(IReadOnlyList<PvPRosterEntry> roster) {
-        if (PvPSettings.DuelCircleTeleportEffect) {
-            foreach (var entry in roster) {
-                SetWizardState(entry.PlayerObject.m_globalID, "InWorld");
-            }
-        }
-
-        foreach (var entry in roster) {
-            _mustStepOff.Add(entry.Session);
-        }
-
-        foreach (var actor in _onDuelCircle.Keys) {
-            _mustStepOff.Add(actor);
-        }
-
-        _onDuelCircle.Clear();
-        _duelCircleStarting = false;
-    }
-
-    private void SetWizardState(GID gameObjectId, string state)
-        => ZoneBroadcast(new GAME_5_PROTOCOL.MSG_ENTERSTATE { GameObjectID = gameObjectId, State = StringHash.Compute(state) });
-
-    private void TellDuelCircle(string text) {
+    private void TellCircleDuel(string text) {
         Logger.Information("Duel circle {0}: {1}", Logger.Args(SigilId, text));
-        foreach (var actor in _onDuelCircle.Keys) {
+        var sessions = new HashSet<IActorRef>(_circleJoining.Values.Select(w => w.Session));
+        if (_isActive && SubCircles is not null) {
+            foreach (var circle in SubCircles.Where(c => c is { Occupied: true, IsHumanPlayer: true } && c.ParticipantActor is not null)) {
+                sessions.Add(circle.ParticipantActor);
+            }
+        }
+
+        foreach (var actor in sessions) {
             actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
         }
     }

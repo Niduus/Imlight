@@ -363,4 +363,31 @@ public sealed class PVP_111_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// A duel circle asking for a wizard who stepped on while its duel waits to begin. The director answers the circle
+    /// with MSG_LOCALMATCHJOINED, or MSG_LOCALMATCHJOINED with no entry when the wizard cannot join.
+    /// </summary>
+    public sealed class MSG_JOINLOCALMATCH : IServerMessage {
+
+        public byte MessageOrder { get; } = 21;
+        public byte ServiceID { get; } = 111;
+
+        public IActorRef Circle;
+        public ulong MatchId;
+        public ulong CharId;
+        public int Side;
+
+    }
+
+    public sealed class MSG_LOCALMATCHJOINED : IServerMessage {
+
+        public byte MessageOrder { get; } = 22;
+        public byte ServiceID { get; } = 111;
+
+        public ulong MatchId;
+        public ulong CharId;
+        internal PvPRosterEntry Entry;
+
+    }
+
 }

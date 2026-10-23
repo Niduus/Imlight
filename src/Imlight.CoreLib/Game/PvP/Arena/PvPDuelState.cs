@@ -58,7 +58,9 @@ internal sealed class PvPDuelState(
     public ulong MatchId { get; } = matchId;
     public uint TournamentNameId { get; } = tournamentNameId;
     public uint LeagueId { get; } = leagueId;
-    public IReadOnlyList<PvPRosterEntry> Roster { get; } = roster;
+    private readonly List<PvPRosterEntry> _roster = [.. roster];
+
+    public IReadOnlyList<PvPRosterEntry> Roster => _roster;
     public PvPDuelRules Rules { get; } = rules;
     public CombatTeam OriginalFirstTeam { get; } = firstTeam;
     public CombatTeam RoundStarter { get; private set; } = firstTeam;
@@ -134,6 +136,10 @@ internal sealed class PvPDuelState(
 
         return true;
     }
+
+    // A wizard who stepped onto a duel circle while its duel waited to begin.
+    public void AddToRoster(PvPRosterEntry entry)
+        => _roster.Add(entry);
 
     public bool HasForfeited(ulong charId)
         => _forfeitedCharIds.Contains(charId);

@@ -565,12 +565,16 @@ internal sealed class PvPDirector : ReceiveProtocolDispatcher, IWithTimers {
 
         var tournamentNameId = StringHash.Compute(tournament.m_tournamentName);
         var teams = new List<IReadOnlyList<PvPQueueEntry>>();
+        // One wizard is in a match once, even when a reconnect left an old session of theirs on the circle.
+        var seen = new HashSet<ulong>();
         foreach (var side in message.Teams) {
             var team = new List<PvPQueueEntry>();
             foreach (var charId in side) {
-                if (!_sessions.ContainsKey(charId) || !_profiles.TryGetValue(charId, out var profile) || !_playerObjects.ContainsKey(charId)
-                    || IsQueuedOrInMatch(charId) || PvPRegistry.IsHosting(charId)
-                    || !TryBuildEntry(profile, tournamentNameId, matchNameId, 0, 0, false, null, out var entry)) {
+                if (!seen.Add(charId)) {
+                    continue;
+                }
+
+                if (!TryBuildLocalEntry(charId, tournamentNameId, matchNameId, out var entry)) {
                     Logger.Information("Duel circle: {CharId} cannot duel now (queued, in a match or not in the world).", Logger.Args(charId));
                     circle.Tell(new PVP_111_PROTOCOL.MSG_MATCHCANCELLED { Reason = PvPCancelReason.OpponentLeft });
 
@@ -603,6 +607,39 @@ internal sealed class PvPDirector : ReceiveProtocolDispatcher, IWithTimers {
 
         Logger.Information("Duel circle duel {MatchId}: {Sides}.", Logger.Args(match.Id,
             string.Join(" against ", teams.Select(team => string.Join(" and ", team.Select(entry => entry.CharId))))));
+    }
+
+    private bool TryBuildLocalEntry(ulong charId, uint tournamentNameId, uint matchNameId, out PvPQueueEntry entry) {
+        entry = null;
+
+        return _sessions.ContainsKey(charId) && _profiles.TryGetValue(charId, out var profile) && _playerObjects.ContainsKey(charId)
+            && !IsQueuedOrInMatch(charId) && !PvPRegistry.IsHosting(charId)
+            && TryBuildEntry(profile, tournamentNameId, matchNameId, 0, 0, false, null, out entry);
+    }
+
+    [MessageHandler(typeof(PVP_111_PROTOCOL.MSG_JOINLOCALMATCH))]
+    private void ReceiveJoinLocalMatch(PVP_111_PROTOCOL.MSG_JOINLOCALMATCH message) {
+        // A wizard steps onto a duel circle whose duel waits to begin (Niduus, 2026-10-23: "enter it like they would
+        // a battle"): they join its side at once.
+        var refused = new PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED { MatchId = message.MatchId, CharId = message.CharId };
+        if (!_matches.TryGetValue(message.MatchId, out var match) || match.State != PvPMatchState.InProgress
+            || match.Entries.Count == 0 || message.Side is < 0 or > 1
+            || !TryBuildLocalEntry(message.CharId, match.Entries[0].TournamentNameId, match.Entries[0].MatchNameId, out var entry)) {
+            Logger.Information("Duel circle: {CharId} cannot join the duel now (queued, in a match or not in the world).",
+                Logger.Args(message.CharId));
+            message.Circle.Tell(refused);
+
+            return;
+        }
+
+        match.Add(message.Side, entry);
+        PvPRegistry.SetInMatch(entry.CharId, true);
+        _matchIdByPlayer[entry.CharId] = match.Id;
+        message.Circle.Tell(new PVP_111_PROTOCOL.MSG_LOCALMATCHJOINED {
+            MatchId = match.Id,
+            CharId = entry.CharId,
+            Entry = new PvPRosterEntry(entry.CharId, _sessions[entry.CharId], _playerObjects[entry.CharId], message.Side),
+        });
     }
 
     // The practice tournament's first match the server has a template and level table for.

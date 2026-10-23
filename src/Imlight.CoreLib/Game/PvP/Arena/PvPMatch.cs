@@ -55,8 +55,11 @@ internal sealed class PvPMatch(ulong id, IReadOnlyList<IReadOnlyList<PvPQueueEnt
     private readonly HashSet<ulong> _arrived = [];
 
     public ulong Id { get; } = id;
-    public IReadOnlyList<IReadOnlyList<PvPQueueEntry>> Teams { get; } = teams;
-    public IReadOnlyList<PvPQueueEntry> Entries { get; } = [.. teams.SelectMany(team => team)];
+    // A duel circle's match takes wizards who step on while it waits to begin, so its sides can grow.
+    private readonly List<List<PvPQueueEntry>> _teams = [.. teams.Select(team => team.ToList())];
+
+    public IReadOnlyList<IReadOnlyList<PvPQueueEntry>> Teams => _teams;
+    public IReadOnlyList<PvPQueueEntry> Entries => [.. _teams.SelectMany(team => team)];
     public IEnumerable<ulong> CharIds => Entries.Select(entry => entry.CharId);
     public PvPMatchState State { get; set; } = PvPMatchState.Confirming;
     public string ArenaZone { get; set; }
@@ -83,5 +86,8 @@ internal sealed class PvPMatch(ulong id, IReadOnlyList<IReadOnlyList<PvPQueueEnt
 
     public PvPQueueEntry GetEntry(ulong charId)
         => Entries.FirstOrDefault(entry => entry.CharId == charId);
+
+    public void Add(int side, PvPQueueEntry entry)
+        => _teams[side].Add(entry);
 
 }

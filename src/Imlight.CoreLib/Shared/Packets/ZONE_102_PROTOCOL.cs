@@ -1607,8 +1607,6 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 102;
         public byte ServiceID { get; } = 102;
 
-        public bool Go;
-
         // Shows the duel circle again after a duel here.
         public bool Show;
 
