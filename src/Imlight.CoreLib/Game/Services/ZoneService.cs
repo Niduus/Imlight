@@ -1152,6 +1152,21 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             }
         }
 
+        // The game never answers a door's or a teleport's house request (Niduus's 2026-10-23 log: 14 of 14 went
+        // unanswered, and the fallback 8 s later made every house room slow to enter). The plain zone transfer request
+        // loads the same zone at once; the lot and the owner stay queued, so the attach still lands in the house.
+        if (entry.Kind is HouseEntryKind.Teleport or HouseEntryKind.Door) {
+            StartDeedZoneTimeout();
+            Logger.Information("Session {SessionId}: {Kind} into {Zone} (lot {Lot}) goes by a plain zone transfer request.",
+                Logger.Args(SessionActor.SessionID, entry.Kind, character.QueuedZoneName, character.QueuedLotGid));
+            SendToSocket(new GAME_5_PROTOCOL.MSG_ZONETRANSFERREQUEST {
+                ZoneName = character.QueuedZoneName,
+                SendAck = 1
+            });
+
+            return;
+        }
+
         // A friend's spot arrives as coordinates, but the teleport request names a location in the house zone. Both
         // visits that sent coordinates here hung on the loading screen (Niduus, 2026-10-22); the transfer itself still
         // takes the player to the coordinates.
