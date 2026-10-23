@@ -1518,8 +1518,24 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         if (isPlayer) {
             ReserveCirclesForGroupOf(participantObject);
+            GiveBackPipsOfLeaver(subCircle);
             JoinLateWizardNow(subCircle);
         }
+    }
+
+    // The pips a wizard had when they logged out or dropped from this battle, by character.
+    private readonly Dictionary<ulong, PipCount> _pipsOfLeavers = new();
+
+    private void GiveBackPipsOfLeaver(CombatDuelSubCircle circle) {
+        if (circle?._wizard is not { } wizard || circle.CombatParticipant is not { } participant
+            || !_pipsOfLeavers.Remove(wizard.CharId, out var pips)) {
+            return;
+        }
+
+        participant.m_pipCount = pips;
+        Logger.Information("Duel {0} | Slot {1} | {2} came back into the battle with their pips ({3} pips, {4} power) and {5} health",
+            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, participant.m_ownerID, pips.m_genericPips, pips.m_powerPips,
+                wizard.GameStats.m_currentHitpoints));
     }
 
     // A wizard who joins a battle that is running must see every creature in it, and a creature that joins must be seen
@@ -2428,6 +2444,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         var actor = caster.ParticipantActor;
         var participantObjId = caster.ParticipantObject.m_globalID;
 
+        // A wizard who logs out or drops keeps their pips for when they come back into this battle (Niduus asked: a
+        // relog mid-battle must not hand out fresh pips). Health already lives on the wizard and carries over.
+        if (!drainMana && caster._wizard is not null && caster.CombatParticipant?.m_pipCount is { } leftPips) {
+            _pipsOfLeavers[caster._wizard.CharId] = leftPips;
+        }
+
         // Fleeing drains the player's mana; creature participants have no wizard.
         if (drainMana && caster._wizard is not null) {
             var clientMaxMana = caster._wizard.GameStats.GetClientTypeAlternative().m_baseMana;
@@ -2974,6 +2996,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     /// <summary>Tells the game the battle is over (phase 7, ENDDUEL) and takes the sigil down.</summary>
     private void FinishEndDuel() {
+        _pipsOfLeavers.Clear();
         _victorySceneBattle = -1;
         Timers.Cancel(VICTORY_SCENE_KEY);
         foreach (var (actor, objectId) in _victoryWinners) {
