@@ -46,6 +46,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -137,6 +138,7 @@ internal static class ItemPlacement {
 
         session.Tell(add);
         session.Tell(BankSync.ItemOverflowToBank(item.m_globalID, countInBank));
+        PetTome.Announce(session, wizard, item);
     }
 
     private static bool IsJewelPouchFull(Wizard wizard) {

@@ -109,6 +109,11 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         var playerWizard = GetActiveWizard();
         var template = CoreObjectFactory.GetCoreTemplate(itemTemplateID) as WizItemTemplate;
         var isPet = PetFactory.IsPetTemplate(itemTemplateID);
+        // A window that shows crowns prices asks with currency 1; a fixed price seller still takes its gold price.
+        Logger.Information("Shop buy: item {0} from NPC {1}, quantity {2}, currency {3}, fixed price {4}.",
+            Logger.Args(itemTemplateID, message.npcGlobalID, message.quantity, message.CurrencyType, vendorComponent.FixedPrice));
+        // The window takes the crowns balance from every answer while it shows crowns prices, so it is sent again.
+        var credits = vendorComponent.ShopCredits;
 
         // Snacks go into the snack bag and reagents into the reagent bag, not the backpack (Hao and the house sellers).
         if (template is PetSnackItemTemplate or ReagentItemTemplate) {
@@ -120,7 +125,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         if (BadgeGate.Blocks(template?.m_purchaseRequirements, itemTemplateID, SessionActor.ActorRef, GetActiveGameObject(), playerWizard, SessionActor.GetZoneActor())) {
             Logger.Warning("{0} tried to buy item {1} without the badge it requires.",
                 Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
-            SendShopDenyMessage();
+            SendShopDenyMessage(credits);
 
             return;
         }
@@ -129,7 +134,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         if (RentalItems.TryGetRentalTemplate(template, out var rentalTemplate) && RentalItems.OwnsType(playerWizard, rentalTemplate)) {
             Logger.Warning("{0} tried to buy rental {1} while owning a rental of the same type.",
                 Logger.Args(playerWizard.PlayerNameBehavior.GetWizardName(), itemTemplateID));
-            SendShopDenyMessage();
+            SendShopDenyMessage(credits);
 
             return;
         }
@@ -137,7 +142,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         WizClientObjectItem item;
         if (isPet) {
             if (!TryCreatePurchasedPet(playerWizard, template, message, out item)) {
-                SendShopDenyMessage();
+                SendShopDenyMessage(credits);
 
                 return;
             }
@@ -151,7 +156,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold < goldCost) {
-            SendShopDenyMessage();
+            SendShopDenyMessage(credits);
 
             return;
         }
@@ -174,12 +179,12 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         if (bought == 0) {
-            SendShopDenyMessage();
+            SendShopDenyMessage(credits);
 
             return;
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Credits = credits });
         if (bought < copies) {
             InformGameClient($"Bought {bought} of {copies}: not enough gold or room for the rest.");
         }
@@ -595,11 +600,11 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
     private static bool IsPetLayerDye(int dye, int currentDye, int templateColorCount)
         => dye == currentDye || (templateColorCount > 1 && dye < templateColorCount);
 
-    private void SendShopDenyMessage() {
+    private void SendShopDenyMessage(int credits = 0) {
         var shopDenyMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM {
             Failure = 1,
             WebFailure = 0,
-            Credits = 0
+            Credits = credits
         };
         SendToSocket(shopDenyMsg);
     }
@@ -688,14 +693,6 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             ItemLocation = 1,
         };
         SendToSocket(itemAcqMsg);
-
-        // A bought pet of a new kind goes into the Pet Tome.
-        if (isPet && PetTome.Add(playerWizard, itemTemplateID)) {
-            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED {
-                GlobalID = playerWizard.GameObjectID,
-                PetTemplateID = itemTemplateID,
-            });
-        }
 
         // Inform the game client that the player's gold has been updated.
         var goldUpdateMsg = new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {

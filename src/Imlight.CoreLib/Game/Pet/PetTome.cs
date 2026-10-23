@@ -45,7 +45,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Akka.Actor;
 using Imcodec.IO;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.WizardData.Collections;
@@ -86,6 +88,35 @@ internal static class PetTome {
 
         return true;
     }
+
+    /// <summary>
+    /// Tells the game that a pet the wizard just got is in the tome, when it is a new kind. The game asks for the tome
+    /// once a session, so without this a new kind showed only after a relog (Niduus, 2026-10-23). An egg is not a pet
+    /// yet; hatching it announces it.
+    /// </summary>
+    internal static void Announce(IActorRef session, Wizard wizard, WizClientObjectItem item) {
+        try {
+            if (session is null || item is null || PetProgress.GetBehavior(item) is not { } pet || pet.m_level == 0
+                || !Add(wizard, (uint) item.m_templateID)) {
+                return;
+            }
+
+            session.Tell(PetAdded(wizard, (uint) item.m_templateID));
+            Logger.Information("Pet tome: {0} got pet kind {1}; the game was told.", Logger.Args(wizard.CharId, item.m_templateID));
+        }
+        catch (Exception e) {
+            Logger.Error("Pet tome: could not announce pet {0}: {1}", Logger.Args(item?.m_templateID, e));
+        }
+    }
+
+    /// <summary>
+    /// The message that adds a kind to the open tome (PetTomeBehavior::MSG_PetTomePetAdded, on the player's object)
+    /// and says "&lt;pet&gt; added to your Pet Tome!" (GUI2_00000494).
+    /// </summary>
+    internal static WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED PetAdded(Wizard wizard, uint templateId) => new() {
+        GlobalID = wizard.GameObjectID,
+        PetTemplateID = templateId,
+    };
 
     /// <summary>
     /// Adds every pet the wizard has now (backpack, worn, bank, attic) to the tome and returns the whole tome.

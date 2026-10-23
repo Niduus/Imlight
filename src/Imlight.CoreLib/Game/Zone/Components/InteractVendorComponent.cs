@@ -83,6 +83,9 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     /// <summary>The price of everything this NPC sells, or null for the items' own prices.</summary>
     public int? FixedPrice { get; private set; }
 
+    /// <summary>The crowns the shop window shows, for a seller whose items have crowns prices only (HouseVendors); 0 otherwise.</summary>
+    public int ShopCredits { get; private set; }
+
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has an inventory in Dragon database,
         // or if the template is a vendor as per game client data.
@@ -99,6 +102,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _inventory = ShopOrder.Alphabetical(stock.Items.Select(id => new GID((ulong) id)));
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
+            ShopCredits = HouseVendors.ShopCreditsFor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId);
             _furnitureShop = stock.Window switch {
                 HouseVendors.ShopWindow.Reagent => 2,
                 HouseVendors.ShopWindow.Jewel => 4,
@@ -116,8 +120,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 // An equipment window keeps the seller's own title (Doctor Purreau: "Purreau's Potions and More").
                 _shopTitle = own.m_shopTitle;
             }
-            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop kind {4}, title {5}.",
-                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _furnitureShop, _shopTitle));
+            Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop kind {4}, title {5}, crowns shown {6}.",
+                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _furnitureShop, _shopTitle, ShopCredits));
 
             return;
         }
@@ -242,7 +246,9 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
 
         var shopListMsg = new WIZARD_12_PROTOCOL.MSG_SHOPLIST() {
             GlobalID = Entity.ActiveGameObject.m_globalID.Full,
-            Data = serializedShopList
+            Data = serializedShopList,
+            // The crowns balance the window shows and checks once it shows crowns prices (Doctor Purreau).
+            Credits = ShopCredits,
         };
         playerActor.Tell(shopListMsg);
     }

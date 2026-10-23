@@ -565,6 +565,7 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
             GlobalID = wizard.GameObjectID,
             SerializedItem = serializedItem
         });
+        PetTome.Announce(SessionActor.ActorRef, wizard, itemCoreObject as WizClientObjectItem);
 
         // Adds the item to 'REVIEW MY ORDER'
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {

@@ -61,6 +61,13 @@ internal static class HouseVendors {
     private static readonly uint s_snackVendorId = ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
     // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"), a Pet Pavilion vendor with nothing to sell.
     private static readonly uint s_petElixirVendorId = ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
+    // The pet elixirs cost crowns only (no gold price), and the game's shop window leaves out an item without a gold
+    // price until it shows crowns prices, which it does once an item with a crowns price is clicked (ShoppingWindow).
+    // So Doctor Purreau also sells the Group +100 Energy Elixir, which has both prices: clicking it shows every elixir
+    // (Niduus, 2026-10-23: "it's not the proper UI so it displays nothing"). Each still costs the sellers' gold price.
+    private static readonly uint s_petElixirKeyItem = ConfigurationManager.GetValue("HallVendors.PetElixirKeyItem", 1549666u);
+    // The crowns the shop window shows while it shows crowns prices; the game refuses a buy above it.
+    private static readonly int s_petElixirShopCredits = ConfigurationManager.GetValue("HallVendors.PetElixirShopCredits", 99999);
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
     // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
@@ -159,11 +166,15 @@ internal static class HouseVendors {
         }
 
         if (templateId == s_petElixirVendorId) {
-            return (s_petElixirs.Value, ShopWindow.Equipment);
+            return (s_petElixirKeyItem == 0 ? s_petElixirs.Value : [s_petElixirKeyItem, .. s_petElixirs.Value], ShopWindow.Equipment);
         }
 
         return null;
     }
+
+    /// <summary>The crowns an NPC's shop window shows (Doctor Purreau's crowns prices), or 0.</summary>
+    internal static int ShopCreditsFor(uint templateId)
+        => templateId != 0 && templateId == s_petElixirVendorId ? System.Math.Max(s_petElixirShopCredits, 0) : 0;
 
     /// <summary>The real shop whose window a seller's window copies, or null for the equipment window.</summary>
     internal static WizShoppingBehaviorTemplate ShopLookFor(ShopWindow window) {
@@ -257,17 +268,22 @@ internal static class HouseVendors {
     /// <summary>The templates of a kind whose files are in a folder of the template manifest.</summary>
     internal static List<(uint Id, T Template)> TemplatesIn<T>(string folder) where T : class {
         var found = new List<(uint, T)>();
-        try {
-            foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
-                string file = location?.m_filename;
-                if (file is not null && file.StartsWith(folder, StringComparison.OrdinalIgnoreCase)
-                    && CoreObjectFactory.GetCoreTemplate(location.m_id) is T template) {
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            string file = location?.m_filename;
+            if (file is null || !file.StartsWith(folder, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            // One template that does not load (an elixir whose result list holds a ReqHasExpansion) stopped the
+            // whole list: Doctor Purreau had 8 of his 13 elixirs (Niduus, 2026-10-23). It is skipped instead.
+            try {
+                if (CoreObjectFactory.GetCoreTemplate(location.m_id) is T template) {
                     found.Add((location.m_id, template));
                 }
             }
-        }
-        catch (Exception e) {
-            Logger.Error("Could not list the sellers' {0}: {1}", Logger.Args(folder, e));
+            catch (Exception e) {
+                Logger.Warning("The sellers skip {0} ({1}): {2}", Logger.Args(file, location.m_id, e.Message));
+            }
         }
 
         return found;

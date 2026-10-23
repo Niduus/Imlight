@@ -35,6 +35,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.World;
@@ -309,6 +310,7 @@ public static class PackManager {
             GlobalID = wizard.GameObjectID,
             SerializedItem = serializedItem
         });
+        PetTome.Announce(sessionActorRef, wizard, itemCoreObject as WizClientObjectItem);
 
         sessionActorRef.Tell(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
             ItemGlobalID = itemCoreObject.m_globalID,

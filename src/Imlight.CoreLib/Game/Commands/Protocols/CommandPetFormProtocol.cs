@@ -33,7 +33,8 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// `.petform` (Niduus, 2026-10-23: "Play as your pet"): the wizard takes the look of the pet they wear, the way a
 /// transformation elixir works. A pet template names its model by race (PetItemBehaviorTemplate.m_eRace), and
-/// Races.xml holds every pet race, so the transformation effect only needs that race. Typed again, it turns back.
+/// Races.xml holds every pet race; the colors and pattern pick the pet's textures, as on the summoned pet
+/// (PetFactory.GetPetLook). Typed again, it turns back.
 /// </summary>
 internal class CommandPetFormProtocol : CommandProtocol {
 
@@ -73,17 +74,24 @@ internal class CommandPetFormProtocol : CommandProtocol {
         }
 
         var pet = PetCare.GetWornPet(wizard);
-        var template = PetProgress.GetTemplate(pet);
-        if (template is null || template.m_eRace == 0) {
+        if (PetFactory.GetPetLook(pet) is not { } look) {
             inform("Wear a pet first.");
 
             return;
         }
 
+        // The race alone gave the race's first texture: pets that share a race (a Black Cat and a Fire Cat) all
+        // showed the same one, and a pet stitched at Zeke showed its own kind (Niduus, 2026-10-23: "sometimes uses
+        // the wrong model"). The game paints a transformation's colors and pattern the way it paints the summoned
+        // pet (ClientTransformationEffect::ApplyEffectToBody), so they carry the pet's own textures.
         var effect = new TransformationEffect {
-            m_sRace = template.m_eRace.ToString(),
-            m_eGender = template.m_eGender,
-            m_fScale = template.m_fScale > 0 ? template.m_fScale : 1f,
+            m_sRace = look.Race.ToString(),
+            m_eGender = look.Gender,
+            m_fScale = look.Scale,
+            m_nPrimaryColor = look.Primary,
+            m_nSecondaryColor = look.Secondary,
+            m_nPatternOption = look.Pattern,
+            m_nGeometryOption = 0,
             m_effectNameID = StringHash.Compute(EFFECT_NAME),
             m_itemSlotID = SlotId,
             m_internalID = wizard.NextEffectId(),
@@ -104,7 +112,8 @@ internal class CommandPetFormProtocol : CommandProtocol {
         });
         session.Tell(new ZONE_102_PROTOCOL.MSG_PETFORMCHANGED { On = true }, null);
         TellGamePlayingAsPet(wizard, session, true);
-        Logger.Information("{0} took the look of their pet (race {1}).", Logger.Args(wizard.CharId, (string) effect.m_sRace));
+        Logger.Information("{0} took the look of their pet {1} (race {2}, colors {3}/{4}, pattern {5}, scale {6}).",
+            Logger.Args(wizard.CharId, pet.m_templateID, (string) effect.m_sRace, look.Primary, look.Secondary, look.Pattern, look.Scale));
         inform("You now look like your pet. Press the button or type .petform again to turn back.");
     }
 

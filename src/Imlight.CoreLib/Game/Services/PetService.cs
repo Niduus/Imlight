@@ -200,12 +200,8 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         }
     }
 
-    // The game adds the kind to its tome and says "<pet> added to your Pet Tome!" (GUI2_00000494).
     private void SendPetTomePetAdded(Wizard wizard, uint templateId)
-        => SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED {
-            GlobalID = wizard.GameObjectID,
-            PetTemplateID = templateId,
-        });
+        => SendToSocket(PetTome.PetAdded(wizard, templateId));
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS))]
     private void ReceivePetFeedHappiness(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS message) {

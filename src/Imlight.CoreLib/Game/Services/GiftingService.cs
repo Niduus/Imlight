@@ -41,6 +41,7 @@ using Imcodec.CoreObject;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Packs;
 using Imlight.CoreLib.Shared.Items;
@@ -216,6 +217,7 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                         GlobalID = wizard.GameObjectID,
                         SerializedItem = serializedItem
                     });
+                    PetTome.Announce(SessionActor.ActorRef, wizard, itemCoreObject as WizClientObjectItem);
                 }
                 break;
         }

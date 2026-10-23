@@ -43,6 +43,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Akka.Actor;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Networking;
@@ -386,6 +387,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             SerializedItem = itemData,
         };
         SendToSocket(addItemMsg);
+        PetTome.Announce(SessionActor.ActorRef, wizard, item);
 
         // Alert client of new item.
         SendItemAcquisition(item.m_globalID, item.m_templateID);

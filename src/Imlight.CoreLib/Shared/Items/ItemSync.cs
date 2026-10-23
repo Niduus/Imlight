@@ -46,6 +46,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Shared.Items;
@@ -84,6 +85,9 @@ internal static class ItemSync {
             GlobalID = wizard.GameObjectID,
             SerializedItem = serializedItem,
         });
+
+        // A pet of a new kind shows in the open Pet Tome at once.
+        PetTome.Announce(session, wizard, item);
 
         return true;
     }

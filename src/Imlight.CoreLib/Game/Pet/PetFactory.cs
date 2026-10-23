@@ -330,6 +330,33 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         };
     }
 
+    /// <summary>
+    /// The look the summoned pet shows (CreatePetAppearance): its race, gender, size and the textures its colors and
+    /// pattern pick, with a pet stitched at Zeke showing the pet whose look it took.
+    /// </summary>
+    internal static (eRace Race, eGender Gender, float Scale, int Primary, int Secondary, int Pattern)? GetPetLook(WizClientObjectItem pet) {
+        if (pet is null) {
+            return null;
+        }
+
+        var look = LookTemplateId(pet);
+        var lookTemplate = GetPetItemBehaviorTemplate(look) ?? GetPetItemBehaviorTemplate((uint) pet.m_templateID);
+        CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(pet, out var itemName);
+        var stitched = look != (uint) pet.m_templateID && lookTemplate is not null;
+        var useItem = !stitched && itemName is not null && itemName.m_eRace != 0;
+        var race = useItem ? itemName.m_eRace : lookTemplate?.m_eRace ?? 0;
+        if (race == 0) {
+            return null;
+        }
+
+        return (race,
+            useItem || lookTemplate is null ? itemName.m_eGender : lookTemplate.m_eGender,
+            lookTemplate?.m_fScale > 0 ? lookTemplate.m_fScale : 1f,
+            GetDyeTexture(lookTemplate?.m_primaryDyeToTexture, pet.m_primaryColor),
+            GetDyeTexture(lookTemplate?.m_secondaryDyeToTexture, pet.m_secondaryColor),
+            GetDyeTexture(lookTemplate?.m_patternToTexture, pet.m_pattern));
+    }
+
     internal static PetItemBehaviorTemplate GetPetItemBehaviorTemplate(uint templateId) {
         var template = s_petTemplates.GetValueOrDefault(templateId)
             ?? CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate;
