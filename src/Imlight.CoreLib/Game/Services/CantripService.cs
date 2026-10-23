@@ -154,19 +154,18 @@ internal class CantripService(SessionActor sessionActor) : MessageService(sessio
         var wizard = GetActiveWizard();
         MaybeBackflip(wizard);
         if (wizard.Account.AuthLevel >= AuthLevel.QualityAssurance) {
-            // The client has a max mana increase effect applied, so sending it here would double the mana client side.
-            var magicSchool = wizard.MagicSchoolBehavior.MagicSchool;
-            var level = wizard.MagicSchoolBehavior.Level;
-            var baseStats = MagicLevelsConfig.GetPlayerLevelInfo(magicSchool, level);
-            var normMaxEnergy = baseStats.m_petEnergy;
+            // Fill to the full energy with gear and pets (Niduus: Refill gave the level's base energy, not the max). The game
+            // adds the gear itself, so its max is sent without it, as the energy ticks do.
+            var fullEnergy = wizard.GameStats.m_energyMax;
+            var clientMaxEnergy = wizard.GameStats.GetClientTypeAlternative().m_energyMax;
 
-            wizard.UpdateEnergy(normMaxEnergy);
+            wizard.UpdateEnergy(fullEnergy);
 
             // Inform the client of the change.
             var networkMessage = new PET_9_PROTOCOL.MSG_PETENERGYTICK() {
                 GlobalID = wizard.GameObject.m_globalID,
-                Energy = normMaxEnergy,
-                MaxEnergy = normMaxEnergy,
+                Energy = fullEnergy,
+                MaxEnergy = clientMaxEnergy,
                 TickTime = (int) wizard.PetOwnerBehavior.LastEnergyTickEpoch
             };
             SendToSocket(networkMessage);

@@ -743,19 +743,18 @@ internal class CommandModifyProtocol : CommandProtocol {
     [Alias("refillen", "refillnrg", "refillpet", "energize")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void MaxEnergyCommand() {
-        // The client has a max mana increase effect applied, so sending it here would double the mana client side.
-        var magicSchool = Context.Character.MagicSchoolBehavior.MagicSchool;
-        var level = Context.Character.MagicSchoolBehavior.Level;
-        var baseStats = MagicLevelsConfig.GetPlayerLevelInfo(magicSchool, level);
-        var normMaxEnergy = baseStats.m_petEnergy;
+        // Fill to the full energy with gear and pets. The game adds the gear itself, so its max is sent without it, as the
+        // energy ticks do.
+        var fullEnergy = Context.Character.GameStats.m_energyMax;
+        var clientMaxEnergy = Context.Character.GameStats.GetClientTypeAlternative().m_energyMax;
 
-        Context.Character.UpdateEnergy(normMaxEnergy);
+        Context.Character.UpdateEnergy(fullEnergy);
 
         // Inform the client of the change.
         var networkMessage = new PET_9_PROTOCOL.MSG_PETENERGYTICK() {
             GlobalID = Context.Character.GameObject.m_globalID,
-            Energy = normMaxEnergy,
-            MaxEnergy = normMaxEnergy,
+            Energy = fullEnergy,
+            MaxEnergy = clientMaxEnergy,
             TickTime = (int) Context.Character.PetOwnerBehavior.LastEnergyTickEpoch
         };
         Context.SessionActor.Tell(networkMessage, null);
