@@ -1359,6 +1359,12 @@ public class CombatDuelSubCircle {
         IsSandboxed = _duelActor.Duel.m_bPVP;
         ParticipantGameStats = IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
         var combatStats = ParticipantGameStats.GetCombatGameStats();
+        // What the game is told this wizard fights with, to hold next to .stats and the game's Stats page.
+        Logger.Debug("Stats sent to the game for {0}: damage [{1}] + {2} all, resist [{3}] + {4} all, pierce [{5}] + {6} all, flat [{7}] + {8} all.",
+            Logger.Args(SlotName, string.Join(", ", combatStats.m_dmgBonusPercent ?? []), combatStats.m_dmgBonusPercentAll,
+                string.Join(", ", combatStats.m_dmgReducePercent ?? []), combatStats.m_dmgReducePercentAll,
+                string.Join(", ", combatStats.m_apBonusPercent ?? []), combatStats.m_apBonusPercentAll,
+                string.Join(", ", combatStats.m_dmgBonusFlat ?? []), combatStats.m_dmgBonusFlatAll));
         if (IsSandboxed && PvPLeagueScaling.TryScaleDuelStats(_duelActor.PvPLeagueId, ParticipantGameStats)) {
             _clientGameStats = combatStats;
             _resolverGameStats = ParticipantGameStats.GetCombatGameStats();
