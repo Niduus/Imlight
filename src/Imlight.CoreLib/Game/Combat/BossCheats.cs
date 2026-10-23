@@ -34,8 +34,10 @@
  * again at phase 1 from the next round (CombatPolymorph.cs).
  * Casts: several spells instead of Cast, each { "Spell": name, "SpellID": id (wins over the name), "Silent": true,
  *   "DispelImmune": false }, cast in order, or one of them at random with Random: true. A cheat's spell never fizzles
- *   and works through stun; DispelImmune (true if left out, and always for Cast) keeps a Dispel on the boss from
- *   stopping it, false lets a Dispel of the spell's school stop it as it stops a player's spell.
+ *   and works through stun. A Dispel of the spell's school on the boss stops it as it stops a player's spell.
+ *   DispelImmune (true if left out) is the old dispel-proof: on a cheat with no DispelThen it now means the spell is
+ *   cast again until it gets through, as "DispelThen": "Retry", "RetryUntilCast": true (Niduus, 2026-10-23). The app
+ *   writes false for its casts and uses the "if dispelled" block instead.
  * The app's Bosses tab changes, turns off and adds cheats in BossOverrides/<template id>.json, laid over this file
  * (BossOverrides.CheatsOf); this file itself is never changed by it.
  *
@@ -49,8 +51,7 @@
  *   CasterSchool only when the player who set it off is of this school.
  *   HealthAbove, HealthUnder   only while the boss's health is above / under this percent of its most.
  *   MaxTimes     at most this many times a battle (0 = no limit). Cooldown: at least this many rounds between two.
- *   DispelThen   "Retry": a Dispel on the boss can stop the cheat's spells (dispel-proof or not), and one that fizzles
- *                is cast again, DispelRetries more times, or until it gets through with RetryUntilCast (20 tries at most).
+ *   DispelThen   "Retry": a cheat spell a Dispel on the boss stops is cast again, DispelRetries more times, or until it gets through with RetryUntilCast (20 tries at most).
  *   Actions      what it does, in order, after the fields above (Cast, Line, SetPhase... count as the first actions):
  *     { "Do": "Cast", "Spell"/"SpellID", "Target", "Silent", "DispelImmune" }   a free spell.
  *     { "Do": "Polymorph", "Spell", "Target" }   a polymorph spell. One that changes the boss for good (Afterlife -

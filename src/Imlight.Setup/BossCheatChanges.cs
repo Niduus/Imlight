@@ -213,6 +213,11 @@ internal sealed class CheatRule {
                 action[key] = value?.DeepClone();
             }
 
+            // Dispel-proof is gone (Niduus, 2026-10-23): a cast can be dispelled, and the "if dispelled" block retries it.
+            if (block.Spec == "D.Cast") {
+                action["DispelImmune"] = false;
+            }
+
             if (!block.On) {
                 action["Off"] = true;
             }
@@ -347,14 +352,16 @@ internal sealed class CheatRule {
             casts.Add(new JsonObject { ["Spell"] = Text("Cast") });
         }
 
+        // A cheat whose spells were dispel-proof (the old default) now retries a dispelled spell until it is cast.
+        var dispelProof = false;
         foreach (var cast in casts) {
             var values = new JsonObject {
                 ["Spell"] = BossChanges.FindIn(cast, "Spell")?.DeepClone() ?? "",
                 ["SpellID"] = BossChanges.FindIn(cast, "SpellID")?.DeepClone() ?? 0,
                 ["Target"] = BossChanges.FindIn(cast, "Target") is JsonValue t && t.ToString().Length > 0 ? t.ToString() : target,
                 ["Silent"] = silent || (BossChanges.FindIn(cast, "Silent") is JsonValue s && s.TryGetValue<bool>(out var b) && b),
-                ["DispelImmune"] = BossChanges.FindIn(cast, "DispelImmune") is not JsonValue d || !d.TryGetValue<bool>(out var immune) || immune,
             };
+            dispelProof |= BossChanges.FindIn(cast, "DispelImmune") is not JsonValue d || !d.TryGetValue<bool>(out var immune) || immune;
             Do("D.Cast", values);
         }
 
@@ -377,6 +384,11 @@ internal sealed class CheatRule {
                 ? (player ? (hasLine ? "D.Banner" : "D.MyChat") : hasLine ? "D.Say" : "D.Chat")
                 : CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.Do && s.For(player)
                                                      && CheatSpecs.DoOf(s.Id).Equals(what, StringComparison.OrdinalIgnoreCase))?.Id;
+            if (spec == "D.Cast") {
+                dispelProof |= values["DispelImmune"] is not JsonValue d || !d.TryGetValue<bool>(out var immune) || immune;
+                values.Remove("DispelImmune");
+            }
+
             if (spec is null) {
                 // An action this app does not know is kept as it is, under its own name.
                 values["Do"] = what;
@@ -388,6 +400,10 @@ internal sealed class CheatRule {
 
         if (Flag("Random")) {
             Do("D.RandomOne");
+        }
+
+        if (dispelProof && !player && Text("DispelThen").Length == 0) {
+            If("I.Dispelled", new JsonObject { ["DispelThen"] = "Retry", ["DispelRetries"] = 1, ["RetryUntilCast"] = true });
         }
 
         return rule;

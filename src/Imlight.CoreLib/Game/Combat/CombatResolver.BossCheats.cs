@@ -949,8 +949,8 @@ public partial class CombatResolver {
     // "Continue until cast" stops after this many tries, in case dispels keep coming.
     private const int MaxDispelTries = 20;
 
-    // A cheat's spell: free, never fizzles, works through stun. A Dispel on the boss stops it only when it is not
-    // DispelImmune, as it stops a player's spell of that school.
+    // A cheat's spell: free, never fizzles, works through stun. A Dispel on the boss of its school stops it, as it
+    // stops a player's spell; with DispelThen "Retry" (or the old DispelImmune) it is cast again.
     private float CheatCast(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
                             CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
                             float cinematicTimeSoFar, bool custom) {
@@ -990,9 +990,13 @@ public partial class CombatResolver {
             var before = combatActionList.m_actionList.Count;
             var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
             float time;
-            if (string.Equals(cheat.DispelThen, "Retry", StringComparison.OrdinalIgnoreCase)) {
+            // Dispel-proof is gone (Niduus, 2026-10-23): a spell that was dispel-proof (DispelImmune, the old default)
+            // retries until cast instead, as the app's "if dispelled" block shows it.
+            var retry = string.Equals(cheat.DispelThen, "Retry", StringComparison.OrdinalIgnoreCase);
+            var legacyProof = !retry && string.IsNullOrEmpty(cheat.DispelThen) && step.DispelImmune;
+            if (retry || legacyProof) {
                 // If dispelled, retry: the fizzle plays, then the spell is cast again.
-                var tries = cheat.RetryUntilCast ? MaxDispelTries : 1 + Math.Max(0, cheat.DispelRetries);
+                var tries = cheat.RetryUntilCast || legacyProof ? MaxDispelTries : 1 + Math.Max(0, cheat.DispelRetries);
                 time = 0;
                 for (var attempt = 1; ; attempt++) {
                     if (!ConsumeDispell(boss, spell.m_magicSchoolID)) {
@@ -1012,7 +1016,7 @@ public partial class CombatResolver {
                 }
             }
             else {
-                time = !step.DispelImmune && ConsumeDispell(boss, spell.m_magicSchoolID)
+                time = ConsumeDispell(boss, spell.m_magicSchoolID)
                     ? HandleFizzleAction(action, combatActionList)
                     : HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
             }

@@ -149,7 +149,7 @@ internal sealed partial class ManagerWindow {
                     "Press [Save changes] at the bottom of the editor. The next battle uses the cheat."),
                 new GuideExample("Worked example: at 50% health it casts Supernova on every player",
                     "W|When its health drops below 50 % of its health",
-                    "D|Cast Supernova on every player, dispel-proof",
+                    "D|Cast Supernova on every player",
                     "D|Tell every player in chat: You cannot stop me!"),
                 new GuideSteps("How to build that example",
                     "Press [New cheat].",

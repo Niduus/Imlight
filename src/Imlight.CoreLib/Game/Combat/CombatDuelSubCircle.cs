@@ -1101,7 +1101,31 @@ public class CombatDuelSubCircle {
             ? genericPips + (powerPips * 2)
             : genericPips + powerPips;
 
+        // School pips left after the spell's own school pip cost pay for its rank too: one of the spell's school as a
+        // power pip, any other as a normal pip. Full pips turn power pips into school pips each round, so without this
+        // a wizard ended up unable to cast while the game still offered the cards (Niduus, 2026-10-23).
+        var (ownSchool, otherSchools) = SpareSchoolPips(spell);
+        totalPips += (isMastered ? ownSchool * 2 : ownSchool) + otherSchools;
+
         return totalPips >= spellRank && HasSchoolPipsForSpell(spell) && HasManaForSpell(spell);
+    }
+
+    // The school pips not needed for the spell's school pip cost: those of the spell's school and the rest.
+    private (int Own, int Other) SpareSchoolPips(Spell spell) {
+        var pips = CombatParticipant.m_pipCount;
+        var costs = SchoolPipCosts(spell?.m_pipCost).ToDictionary(c => c.School, c => (int) c.Cost);
+        int own = 0, other = 0;
+        foreach (var school in s_pipSchools) {
+            var spare = Math.Max(0, (SchoolPips(pips, school) ?? 0) - costs.GetValueOrDefault(school));
+            if ((uint) school == spell?.m_magicSchoolID) {
+                own += spare;
+            }
+            else {
+                other += spare;
+            }
+        }
+
+        return (own, other);
     }
 
     internal bool TryStun() {
@@ -1271,7 +1295,17 @@ public class CombatDuelSubCircle {
                 pipCount.m_genericPips--;
                 spellRank--;
             }
-            else if (pipCount.m_powerPips == 0 && pipCount.m_genericPips == 0) {
+            else if ((SchoolPips(pipCount, school) ?? 0) > 0) {
+                // A school pip of the spell's school pays like a power pip.
+                SetSchoolPips(pipCount, school, (byte) (SchoolPips(pipCount, school).Value - 1));
+                spellRank = (byte) Math.Max(0, spellRank - (isMastered ? 2 : 1));
+            }
+            else if (s_pipSchools.Where(other => (SchoolPips(pipCount, other) ?? 0) > 0).Cast<MagicSchool?>().FirstOrDefault() is { } other) {
+                // Any other school pip pays like a normal pip.
+                SetSchoolPips(pipCount, other, (byte) (SchoolPips(pipCount, other).Value - 1));
+                spellRank--;
+            }
+            else {
                 break;
             }
         }
