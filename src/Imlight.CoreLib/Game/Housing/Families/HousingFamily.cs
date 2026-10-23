@@ -46,7 +46,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/23/2026
  */
 
 using System.Collections.Concurrent;
@@ -97,10 +97,11 @@ internal static class HousingFamilies {
     internal static HousingFamily Plain { get; } = new("Plain", "Item", "Attic", [], true);
 
     /// <summary>
-    /// The family of castle blocks, which the client's place and move messages can switch.
+    /// The family of castle blocks, which the client's place and move messages can switch (Game/Housing/HouseCastleBlocks).
+    /// Their live entries are plain items, so their attic entries are plain attic items too.
     /// </summary>
-    internal static HousingFamily CastleBlock { get; } = Declare("CastleBlock", null, null,
-        [typeof(CastleBlocksBehaviorTemplate), typeof(CastleBlockDoorBehaviorTemplate)]);
+    internal static HousingFamily CastleBlock { get; } = Declare("CastleBlock", null, "Attic",
+        [typeof(CastleBlocksBehaviorTemplate), typeof(CastleBlockDoorBehaviorTemplate)], enabled: true);
 
     /// <summary>
     /// Every declared family, plain furniture first.
@@ -108,9 +109,12 @@ internal static class HousingFamilies {
     internal static IReadOnlyList<HousingFamily> All { get; } = [
         Plain,
         CastleBlock,
-        Declare("ObjectState", null, null, [typeof(ObjectStateBehaviorTemplate)]),
-        Declare("Pet", null, "PetAttic", [typeof(PetItemBehaviorTemplate)]),
-        Declare("Mount", null, "MountAttic", [typeof(RidableBehaviorTemplate), typeof(MountItemBehaviorTemplate)]),
+        // The client keeps the state of an object such as a castle door itself, so a plain entry is all it needs.
+        Declare("ObjectState", null, "Attic", [typeof(ObjectStateBehaviorTemplate)], enabled: true),
+        // Pets and mounts are plain items whose custom data the client shows them from, and they keep their stored
+        // document while placed (Game/Housing/HouseCreatures).
+        Declare("Pet", null, "PetAttic", [typeof(PetItemBehaviorTemplate)], enabled: true),
+        Declare("Mount", null, "MountAttic", [typeof(RidableBehaviorTemplate), typeof(MountItemBehaviorTemplate)], enabled: true),
         Declare("Interact", "Interact", "InteractAttic", [typeof(InteractableBehaviorTemplate)]),
         Declare("IntMusic", "IntMusic", "IntMusicAttic", [typeof(InteractiveMusicBehaviorTemplate)]),
         Declare("Music", null, "MusicAttic", [typeof(HousingMusicBehaviorTemplate), typeof(HousingMusicPlayerBehavior)]),

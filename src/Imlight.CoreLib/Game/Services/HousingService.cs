@@ -183,6 +183,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         var templateId = (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+        Logger.Debug("Character {CharId} places item {ItemId}, template {TemplateId}, at ({X}, {Y}, {Z}), yaw {Yaw}, switch {Switch}.",
+            Logger.Args(wizard.CharId, message.ObjectID, templateId, message.LocX, message.LocY, message.LocZ, message.Yaw, message.SwitchCastleBlock));
         var placement = HousingItems.Check(templateId, out var template, out var family);
         if (placement == HousingPlacement.Refused) {
             HandleForgedRequest($"place item {message.ObjectID}, template {templateId}, which is not placeable furniture");
@@ -190,11 +192,27 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        var switchesBlock = message.SwitchCastleBlock != 0 && !HousingFamilies.CastleBlock.Enabled;
-        if (placement == HousingPlacement.NotEnabled || switchesBlock) {
-            Logger.Information("Character {CharId} tried to place item {ItemId} of the {Family} family, which is not enabled.",
-                Logger.Args(wizard.CharId, message.ObjectID, placement == HousingPlacement.NotEnabled ? family.Id : HousingFamilies.CastleBlock.Id));
+        // A castle block placed on a castle floor becomes its other template, and that one must be placeable too.
+        var placedTemplateId = message.SwitchCastleBlock != 0 ? HouseCastleBlocks.Switched(templateId) : templateId;
+        if (placedTemplateId != templateId) {
+            placement = HousingItems.Check(placedTemplateId, out template, out family);
+            Logger.Information("Housing: character {CharId} places castle block {ItemId}, template {TemplateId}, as template {PlacedTemplateId} ({Placement}).",
+                Logger.Args(wizard.CharId, message.ObjectID, templateId, placedTemplateId, placement));
+        }
+
+        if (placement != HousingPlacement.Allowed) {
+            Logger.Information("Character {CharId} tried to place item {ItemId}, template {TemplateId}, of the {Family} family, which is not enabled.",
+                Logger.Args(wizard.CharId, message.ObjectID, placedTemplateId, family?.Id ?? "unknown"));
             InformGameClient("That kind of object cannot be placed in a house yet.");
+
+            return;
+        }
+
+        // A pet or mount shows itself from its custom data and keeps its stored document while it is placed.
+        var kept = HouseCreatures.IsKept(templateId);
+        var creatureData = kept ? HouseCreatures.BuildCustom(item) : null;
+        if (kept && creatureData is null) {
+            InformGameClient("The object could not be placed.");
 
             return;
         }
@@ -203,12 +221,12 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         var teleporterData = HouseTeleporters.IsTeleporter(templateId, out _) ? HouseTeleporters.PendingFor(item.m_globalID, house.LotGid) : null;
         var placed = new PlacedItem {
             ItemGid = item.m_globalID,
-            TemplateId = templateId,
+            TemplateId = placedTemplateId,
             X = message.LocX,
             Y = message.LocY,
             Z = message.LocZ,
             Yaw = message.Yaw,
-            Custom = PlacedItem.EncodeCustom(teleporterData),
+            Custom = PlacedItem.EncodeCustom(teleporterData ?? creatureData),
         }.Normalize();
         if (placed is null) {
             HandleForgedRequest($"place item {message.ObjectID} at a position that is not valid");
@@ -217,7 +235,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         if (house.LiveCount >= house.ItemLimit
-            || HousingItems.TemplateCopyLimitReached(template, house.CountTemplate(templateId))) {
+            || HousingItems.TemplateCopyLimitReached(template, house.CountTemplate(placedTemplateId))) {
             InformGameClient("This house cannot hold any more of that.");
 
             return;
@@ -274,7 +292,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         ItemSync.SendRemoved(SessionActor.ActorRef, wizard, itemId);
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHADDHOUSINGOBJECT {
-            ObjectID = templateId,
+            ObjectID = placedTemplateId,
             LocX = change.Item.X,
             LocY = change.Item.Y,
             LocZ = change.Item.Z,
@@ -289,7 +307,12 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
-        DeleteStoredItem(wizard.CharId, itemId);
+        if (kept) {
+            Logger.Information("Housing: character {CharId} placed {Kind} {ItemId}, template {TemplateId}, as house object {GidId} of lot {LotGid}; its stored item is kept.",
+                Logger.Args(wizard.CharId, family.Id, itemId, templateId, change.GidId, house.LotGid));
+        } else {
+            DeleteStoredItem(wizard.CharId, itemId);
+        }
 
         // The add patch makes a plain entry, and the client takes vault patches only for a custom one. A teleporter
         // with a destination is a custom entry too, so the blob carries its destination.
@@ -301,6 +324,11 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         if (HouseVaults.KindOf(templateId) != VaultKind.None || teleporterData is not null) {
             SendBlob(house);
+        }
+
+        // Everyone in the house would build the pet or mount from the plain entry of the patch, without its look.
+        if (creatureData is not null) {
+            BroadcastBlob(house);
         }
     }
 
@@ -323,11 +351,10 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        if (message.SwitchCastleBlock != 0 && !HousingFamilies.CastleBlock.Enabled) {
-            InformGameClient("That kind of object cannot be changed in a house yet.");
-            SendBlob(house);
-
-            return;
+        // The client's move message always sends 0 here (0x140f48000), so a switch is only logged and the block keeps its template.
+        if (message.SwitchCastleBlock != 0) {
+            Logger.Information("Housing: character {CharId} asked to switch castle block {ObjectGid}, template {TemplateId}, while moving it ({Switch}).",
+                Logger.Args(GetActiveWizard().CharId, message.ObjectGID, current.TemplateId, message.SwitchCastleBlock));
         }
 
         var invalid = false;
@@ -410,13 +437,16 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         WizClientObjectItem item;
         HouseChange change;
         List<WizClientObjectItem> added;
+        var kept = false;
         lock (HouseDeeds.BackpackLock(wizard)) {
             // A music player gives back the scrolls it holds, so the backpack needs room for them as well.
+            // A castle block goes back as the template it was picked up from.
             var scrolls = HouseMusic.Scrolls(placedItem);
+            var itemTemplateId = placedItem is null ? 0 : HouseCastleBlocks.ItemTemplate(placedItem.TemplateId);
             if (placedItem is null
-                || CoreObjectFactory.GetCoreTemplate(placedItem.TemplateId) is not WizItemTemplate template
+                || CoreObjectFactory.GetCoreTemplate(itemTemplateId) is not WizItemTemplate template
                 || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
-                || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, placedItem.TemplateId))) {
+                || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, itemTemplateId))) {
                 if (scrolls.Count > 0) {
                     InformGameClient("Make room in your backpack for the music player and its musical scrolls.");
                 }
@@ -426,7 +456,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                 return;
             }
 
-            item = HousingItems.CreateItem(wizard, placedItem.TemplateId, placedItem.ItemGid);
+            // A pet or mount is its own stored item again, which is already stored.
+            item = HouseCreatures.TakeBack(wizard, itemTemplateId, placedItem.ItemGid, out kept);
             added = item is not null && HouseMusic.TryCreateScrolls(wizard, scrolls, out var scrollItems) ? [item, .. scrollItems] : [];
             if (added.Count == 0 || !TryAddAll(wizard, added)) {
                 RefusePickUp(house);
@@ -438,7 +469,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             var packed = HouseVaults.Pack(wizard, item.m_globalID, placedItem.Vault);
 
             // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
-            change = house.TryRemove(placedItem.Id, document => HouseCollection.SaveWithBackpack(document, wizard, [.. added]));
+            var stored = kept ? added.Where(addedItem => addedItem != item).ToArray() : [.. added];
+            change = house.TryRemove(placedItem.Id, document => HouseCollection.SaveWithBackpack(document, wizard, stored));
             if (!change.Done) {
                 RemoveAll(wizard, added);
                 if (packed) {
@@ -467,6 +499,12 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             Logger.Information("Vaults: character {CharId} picked up {Vault} {ItemGid} as item {NewGid}, which keeps {Items} item(s) and {Cards} treasure card(s).",
                 Logger.Args(wizard.CharId, HouseVaults.NameOf(HouseVaults.KindOf(placedItem.TemplateId)), placedItem.ItemGid,
                     item.m_globalID.Full, placedItem.Vault?.Items?.Count ?? 0, placedItem.Vault?.Cards?.Count ?? 0));
+        }
+
+        if (kept || placedItem.TemplateId != item.m_templateID) {
+            Logger.Information("Housing: character {CharId} picked up house object {GidId}, template {TemplateId}, as item {ItemId}, template {ItemTemplateId}{Kept}.",
+                Logger.Args(wizard.CharId, change.GidId, placedItem.TemplateId, item.m_globalID.Full, (uint) item.m_templateID,
+                    kept ? ", its own stored item" : string.Empty));
         }
 
         if (HouseTrainers.IsTrainerItem(placedItem.TemplateId)) {
@@ -551,6 +589,20 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             ErrorCode = (sbyte) (result.Edit == HouseEdit.LimitReached || result.Left > 0 ? 1 : 0),
             Exceptions = string.Empty,
         });
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET))]
+    private void ReceiveUpdateHousingPet(WIZARDHOUSING_50_PROTOCOL.MSG_UPDATEHOUSINGPET message)
+        // A placed pet stands still for now, so where the client says it went is only logged.
+        => Logger.Debug("Housing: character {CharId} sent a housing pet update for zone {ZoneId} ({Length} bytes).",
+            Logger.Args(GetActiveWizard().CharId, message.ZoneID, ((byte[]) message.Data)?.Length ?? 0));
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_CHANGEBREADCRUMBREQUEST))]
+    private void ReceiveChangeBreadCrumb(WIZARDHOUSING_50_PROTOCOL.MSG_CHANGEBREADCRUMBREQUEST message) {
+        // Pet paths are not supported yet, so the request is only logged.
+        Logger.Information("Housing: character {CharId} asked to change bread crumb {BreadCrumbGid} with {OtherGid} (add pet {AddPet}, link {Link}, pet behavior {SetPetBehavior}), which is not supported yet.",
+            Logger.Args(GetActiveWizard().CharId, message.BreadCrumbGID, message.OtherGID, message.AddPet, message.LinkBreadCrumb, message.SetPetBehavior));
+        InformGameClient("Pet paths cannot be changed in a house yet.");
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_EQUIPHOUSEMUSIC))]
@@ -1084,6 +1136,18 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                 Data = HousingBlobs.Serialize(BuildBlob(house, snapshot)),
                 UserData = snapshot.GidBase,
             });
+        } catch (InvalidOperationException exception) {
+            Logger.Error("Could not build the blob of lot {LotGid}: {Reason}", Logger.Args(house.LotGid, exception.Message));
+        }
+    }
+
+    private void BroadcastBlob(HouseState house) {
+        var snapshot = house.Snapshot();
+        try {
+            ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_SEND_BLOB {
+                Data = HousingBlobs.Serialize(BuildBlob(house, snapshot)),
+                UserData = snapshot.GidBase,
+            }, isSelfless: false, ZoneBroadcastTarget.Players);
         } catch (InvalidOperationException exception) {
             Logger.Error("Could not build the blob of lot {LotGid}: {Reason}", Logger.Args(house.LotGid, exception.Message));
         }

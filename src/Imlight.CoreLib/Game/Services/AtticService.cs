@@ -170,6 +170,10 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // A pet or mount keeps its stored document in the attic, and its entry the look the house shows.
+        var kept = HouseCreatures.IsKept(templateId);
+        var custom = kept ? PlacedItem.EncodeCustom(HouseCreatures.BuildCustom(item)) : null;
+
         // The backpack changes in memory only and is written together with the attic, so a crash between the
         // two cannot lose the item or leave it in both places.
         var itemId = item.m_globalID;
@@ -181,7 +185,7 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
 
             // A vault takes what it holds into the attic.
             var packed = HouseVaults.TakePacked(wizard, itemId);
-            change = attic.TryAdd(new AtticItem { ItemGid = itemId, TemplateId = templateId, Family = family.Id, Vault = packed }, family.AtticSubType,
+            change = attic.TryAdd(new AtticItem { ItemGid = itemId, TemplateId = templateId, Family = family.Id, Custom = custom, Vault = packed }, family.AtticSubType,
                 document => AtticCollection.SaveWithBackpack(document, wizard));
             if (!change.Done) {
                 HouseVaults.Pack(wizard, itemId, packed);
@@ -209,7 +213,12 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
         SendToSocket(AtticMessages.AddPatch(attic, change));
         SendCount(wizard, attic);
 
-        DeleteStoredItem(wizard.CharId, itemId);
+        if (kept) {
+            Logger.Information("Attic: character {CharId} put {Family} {ItemId}, template {TemplateId}, in the attic; its stored item is kept.",
+                Logger.Args(wizard.CharId, family.Id, itemId, templateId));
+        } else {
+            DeleteStoredItem(wizard.CharId, itemId);
+        }
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_MOVEFROMATTIC))]
@@ -226,6 +235,7 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
 
         List<WizClientObjectItem> added = [];
         AtticChange change;
+        var kept = false;
         lock (HouseDeeds.BackpackLock(wizard)) {
             // A music player gives back the scrolls it holds, so the backpack needs room for them as well.
             var scrolls = HouseMusic.Scrolls(stored.TemplateId, stored.Custom);
@@ -239,7 +249,8 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
                 return;
             }
 
-            var item = HousingItems.CreateItem(wizard, stored.TemplateId, stored.ItemGid);
+            // A pet or mount is its own stored item again, which is already stored.
+            var item = HouseCreatures.TakeBack(wizard, stored.TemplateId, stored.ItemGid, out kept);
             if (item is null || !HouseMusic.TryCreateScrolls(wizard, scrolls, out var scrollItems)) {
                 InformGameClient("The object could not be taken out of the attic.");
 
@@ -260,7 +271,8 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
 
             // The new items and the emptied slot are written in one transaction, so a crash between them cannot lose an item.
             change = added.Count == items.Count
-                ? attic.TryRemove(stored.Id, document => AtticCollection.SaveWithBackpack(document, wizard, [.. added]))
+                ? attic.TryRemove(stored.Id, document => AtticCollection.SaveWithBackpack(document, wizard,
+                    kept ? added.Where(addedItem => addedItem != item).ToArray() : [.. added]))
                 : new AtticChange(HouseEdit.NotFound);
             if (!change.Done) {
                 if (packed) {
@@ -317,6 +329,13 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
             InformGameClient("The object could not be deleted from the attic.");
 
             return;
+        }
+
+        // A pet or mount kept its stored document in the attic, which goes with it.
+        if (stored.ItemGid != 0 && HouseCreatures.IsKept(stored.TemplateId)) {
+            Logger.Information("Attic: character {CharId} deleted {TemplateId} {ItemGid} from the attic with its stored item.",
+                Logger.Args(wizard.CharId, stored.TemplateId, stored.ItemGid));
+            DeleteStoredItem(wizard.CharId, stored.ItemGid);
         }
 
         SendDeletePatch(attic, change);

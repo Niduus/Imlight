@@ -108,7 +108,8 @@ internal static class HousePickUpAll {
             .Select(entry => new AtticAddition(
                 new AtticItem {
                     ItemGid = entry.Item.ItemGid,
-                    TemplateId = entry.Item.TemplateId,
+                    // A castle block goes in as the template it was picked up from.
+                    TemplateId = HouseCastleBlocks.ItemTemplate(entry.Item.TemplateId),
                     Family = entry.Family.Id,
                     Tint = entry.Item.Tint,
                     Custom = entry.Item.Custom,

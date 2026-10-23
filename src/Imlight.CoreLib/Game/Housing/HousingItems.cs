@@ -35,6 +35,7 @@
  *   carries the Housing adjective (ClientUtility get_item_category_name 0x140463250, FurniturePageWindow::IsFurnitureItem
  *   0x140fa56d0), and it empties a blob entry whose template has a seed behavior (BaseClientHousingBlobStrategy::CreateObject
  *   0x1422170f0). Which folder a template lives in is not part of it.
+ * - Pets and mounts are placed too, though they are no objects and carry no Housing adjective (Niduus, 2026-10-23).
  * - Plants, wallpapers and seeds go through their own messages, so they are not furniture.
  * - Furniture of a family that is declared but not enabled is refused without blame, because the client offers it.
  * - A picked up object gets back the global id its backpack item had, unless something holds that id by now.
@@ -43,7 +44,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/14/2026
+ * Last Updated: 10/23/2026
  */
 
 using System;
@@ -88,13 +89,17 @@ internal static class HousingItems {
     /// <param name="template">An item template.</param>
     /// <returns><see cref="HousingItemKind.Furniture"/> when the template passes.</returns>
     internal static HousingItemKind Classify(WizItemTemplate template) {
-        if (template is null || template.m_nObjectType != ObjectType.OT_OBJECT) {
+        if (template is null) {
             return HousingItemKind.NotFurniture;
         }
 
         var adjectives = (template.m_adjectiveList ?? []).Select(adjective => adjective.ToString()).ToList();
-        if (!adjectives.Contains(FurnitureAdjective, StringComparer.Ordinal)
-            || adjectives.Contains(WeaponAdjective, StringComparer.Ordinal)) {
+        if (adjectives.Contains(WeaponAdjective, StringComparer.Ordinal)) {
+            return HousingItemKind.NotFurniture;
+        }
+
+        // Pets and mounts are no objects and carry no Housing adjective, but the client places them all the same.
+        if (!HouseCreatures.IsCreature(template) && (template.m_nObjectType != ObjectType.OT_OBJECT || !adjectives.Contains(FurnitureAdjective, StringComparer.Ordinal))) {
             return HousingItemKind.NotFurniture;
         }
 
