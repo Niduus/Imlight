@@ -197,8 +197,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _tutorialDirector = new TutorialDuelDirector(this, Entity.Zone?.ZonePath ?? "");
     }
 
+    // A duel circle is on the floor before its first duel. Sent without a duel, the game's circle never takes one later
+    // ("has a NULL duel", then every MSG_DUEL and MSG_COMBATADD ignored), so the first duel after a restart never showed.
+    private Duel _restingDuel;
+
     public WizardClientDuelBehavior GetClientBehaviorInstance() => new() {
-        m_pDuel = Duel,
+        m_pDuel = Duel ?? (IsDuelCircle ? _restingDuel ??= CreateDuelWithDefaults() : null),
         // todo: this is the sigil template itself, not for the game object
         m_sigilTemplateID = IsPvPDuel ? StringHash.Compute(_sigilTemplate.m_sigilName) : 1901671683,
     };
