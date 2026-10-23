@@ -339,6 +339,10 @@ public class ZoneEntity(
 
         if (customNpc is not null) {
             AddComponent(customNpc.IsTrainer ? typeof(InteractTrainerComponent) : typeof(InteractVendorComponent));
+            // Its treasure cards are sold in the game's treasure card shop, a service of its own.
+            if (!customNpc.IsTrainer && customNpc.TreasureCards.Count > 0) {
+                AddComponent(typeof(InteractTreasureVendorComponent));
+            }
             Logger.Information("Custom NPC {0} ({1}, {2}) spawned in {3} at {4}, {5}, {6} with look {7}{8}.",
                 Logger.Args(customNpc.Id, customNpc.Name, customNpc.IsTrainer ? "trainer" : "vendor", customNpc.Zone,
                     customNpc.X, customNpc.Y, customNpc.Z, customNpc.TemplateID,

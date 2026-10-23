@@ -140,7 +140,8 @@ internal sealed partial class ManagerWindow {
         _npcCount.Text = npcs.Count == 0 ? "None yet." : npcs.Count == 1 ? "1 vendor or trainer." : $"{npcs.Count} vendors and trainers.";
         foreach (var npc in npcs) {
             var details = new[] {
-                npc.IsTrainer ? $"Trainer, {Plural(npc.Spells.Count, "spell")}" : $"Vendor, {Plural(npc.Items.Count, "item")}",
+                npc.IsTrainer ? $"Trainer, {Plural(npc.Spells.Count, "spell")}"
+                    : $"Vendor, {Plural(npc.Items.Count, "item")}{(npc.TreasureCards.Count > 0 ? $" and {Plural(npc.TreasureCards.Count, "treasure card")}" : "")}",
                 ZoneDisplay(npc.Zone),
                 $"looks like {LookName(npc.TemplateID)}",
             };
@@ -297,10 +298,14 @@ internal sealed partial class ManagerWindow {
             var window = new ComboBox { Width = 360, ItemsSource = CustomNpc.WINDOWS.Select(w => w.Label).ToList() };
             window.SelectedIndex = Math.Max(0, Array.FindIndex(CustomNpc.WINDOWS, w => string.Equals(w.Value, npc.Window, StringComparison.OrdinalIgnoreCase)));
             window.SelectionChanged += (_, _) => npc.Window = CustomNpc.WINDOWS[Math.Max(0, window.SelectedIndex)].Value;
-            body.Children.Add(Field("Shop window", "Which of the game's shop windows opens. Snacks, reagents and jewels each show only in their own window.", window));
+            body.Children.Add(Field("Shop window", "Which of the game's shop windows opens, the one its own shop keepers of that kind of goods open. " +
+                                                   "Automatic picks the kind most of the items are. Snacks, reagents and jewels each show only in their own window.", window));
             body.Children.Add(Field("Items", "Each item's price is in gold (1 if you leave it). The game's window may still show the item's usual price; " +
                                              "buying takes the price set here.",
                 EntryList(npc.Items, "Item", "gold", "Add an item")));
+            body.Children.Add(Field("Treasure cards", "Sold in the game's treasure card shop, a second choice when players talk to it. Each price is in gold " +
+                                                      "(1 if you leave it). Pick a spell and it sells that spell's treasure card.",
+                EntryList(npc.TreasureCards, "Spell", "gold", "Add a treasure card")));
         }
 
         body.Children.Add(WithMargin(Row(

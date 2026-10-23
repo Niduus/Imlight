@@ -290,6 +290,7 @@ internal sealed class CustomNpc {
     public string Window { get; set; } = AUTOMATIC;
     public List<CustomNpcEntry> Items { get; set; } = [];
     public List<CustomNpcEntry> Spells { get; set; } = [];
+    public List<CustomNpcEntry> TreasureCards { get; set; } = [];
 
     internal const string VENDOR = "Vendor";
     internal const string TRAINER = "Trainer";
@@ -298,15 +299,20 @@ internal sealed class CustomNpc {
     /// <summary>Elmer Meadowgrass, a Wizard City shopkeeper (the house sellers' look).</summary>
     internal const ulong DEFAULT_LOOK = 136831;
 
-    /// <summary>The shop windows, as the file names them, and in plain words.</summary>
+    /// <summary>
+    /// The shop windows, as the file names them, and in plain words: the game's own, each as its shop keepers of that
+    /// kind open it (the server's HouseVendors.ShopWindow).
+    /// </summary>
     internal static readonly (string Value, string Label)[] WINDOWS = [
-        (AUTOMATIC, "Pick it from the items (equipment shop for a mix)"),
-        ("Equipment", "Equipment shop (clothes, wands, most things)"),
-        ("Furniture", "Furniture shop"),
+        (AUTOMATIC, "Automatic: the kind most of the items are"),
+        ("Equipment", "Equipment shop (clothes, wands, decks, pets)"),
+        ("Furniture", "Housing shop (furniture, gauntlets, seeds)"),
+        ("Mount", "Mount shop"),
         ("Snack", "Pet snack shop"),
         ("Reagent", "Reagent shop"),
-        ("Jewel", "Jewel shop"),
+        ("Jewel", "Jewel shop (jewels and pins)"),
         ("Recipe", "Recipe shop"),
+        ("Combined", "Combined shop (a mix of everything)"),
     ];
 
     [System.Text.Json.Serialization.JsonIgnore]
@@ -319,6 +325,7 @@ internal sealed class CustomNpc {
         var copy = (CustomNpc) MemberwiseClone();
         copy.Items = [.. Items.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
         copy.Spells = [.. Spells.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+        copy.TreasureCards = [.. TreasureCards.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
 
         return copy;
     }

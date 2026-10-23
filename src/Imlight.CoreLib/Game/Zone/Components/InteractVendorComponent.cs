@@ -67,19 +67,17 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     public string InteractWizBang => "Registrar";
     public string DisplayKey      => "GUI_ShopOptionEquipment";
 
-    private const string DefaultShopTitle = "KrocNPC_00000013";
 
     private List<GID> _inventory;
     private string _shopTitle = "Unknown Shop";
     private int _shopType = 0;
-    // The shop's kind, which picks the game's shop window (from the game's shop keepers: 0 equipment, 1 furniture,
-    // 2 reagents, 3 recipes, 5 pet snacks). The robe shop window opened for every shop while this was left at 0.
+    // The shop's kind, which picks the game's shop window (HouseVendors.ShopWindow: 0 equipment, 1 furniture,
+    // 2 reagents, 3 recipes, 4 mounts, 5 pet snacks, 6 combined, 7 jewels). The robe shop window opened for every shop
+    // while this was left at 0.
     private int _furnitureShop = 0;
-    private const int RECIPE_SHOP = 3;
     private bool _csrTestShop = false;
-    // Abner's lectern shop sells furniture, so it is offered as a housing shop (an equipment shop does not list it).
-    private bool _housingShop;
-    // Hao and the house sellers (HouseVendors): their own window and one price for everything.
+    // The window, which also gives the menu option its kind and words ("Housing Shop", "Reagent Shop"...). Abner's
+    // lectern shop sells furniture, so it is a furniture shop (an equipment shop does not list it).
     private HouseVendors.ShopWindow _window = HouseVendors.ShopWindow.Equipment;
 
     /// <summary>The price of everything this NPC sells, or null for the items' own prices.</summary>
@@ -118,12 +116,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _inventory = ShopOrder.Alphabetical(stock.Items.Select(id => new GID((ulong) id)));
             _window = stock.Window;
             FixedPrice = HouseVendors.Price;
-            _furnitureShop = stock.Window switch {
-                HouseVendors.ShopWindow.Reagent => 2,
-                HouseVendors.ShopWindow.Jewel => 4,
-                HouseVendors.ShopWindow.Snack => 5,
-                _ => 0,
-            };
+            _furnitureShop = stock.Window is HouseVendors.ShopWindow.Recipe ? 0 : HouseVendors.KindOf(stock.Window);
             if (HouseVendors.ShopLookFor(stock.Window) is { } look) {
                 _shopTitle = string.IsNullOrWhiteSpace(look.m_shopTitle) ? _shopTitle : look.m_shopTitle;
                 _shopType = look.m_shopType;
@@ -136,7 +129,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 _shopTitle = string.IsNullOrWhiteSpace(own.m_shopTitle) ? _shopTitle : own.m_shopTitle;
                 if (stock.Window == HouseVendors.ShopWindow.Recipe) {
                     _shopType = own.m_shopType;
-                    _furnitureShop = RECIPE_SHOP;
+                    _furnitureShop = HouseVendors.KindOf(HouseVendors.ShopWindow.Recipe);
                     _csrTestShop = own.m_CSRTestShop;
                     var sold = HouseVendors.RecipesOf(Entity.ActiveGameObject.m_templateID.MParts.TemplateId).Select(recipe => recipe.Name).ToHashSet();
                     _recipeList = [.. (own.m_recipeList ?? []).Where(name => sold.Contains((string) name))];
@@ -152,8 +145,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         if (Entity.Template is GameObjectTemplate template && InteractTreasureVendorComponent.IsAbner(template)
             && !NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out _)) {
             _inventory = [new GID(HouseTrainers.ItemTemplateId)];
-            _housingShop = true;
-            _furnitureShop = 1;
+            _window = HouseVendors.ShopWindow.Furniture;
+            _furnitureShop = HouseVendors.KindOf(_window);
 
             return;
         }
@@ -175,6 +168,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _shopType = shoppingBehavior.m_shopType;
             _furnitureShop = shoppingBehavior.m_furnitureShop;
             _csrTestShop = shoppingBehavior.m_CSRTestShop;
+            // The menu option of the shop's kind, as the game's own (a recipe shop's list is its m_recipeList).
+            _window = HouseVendors.WindowOf(_furnitureShop) is var window and not HouseVendors.ShopWindow.Recipe ? window : _window;
         }
 
         if (!string.IsNullOrWhiteSpace(inventory.ShopTitle)) {
@@ -193,29 +188,21 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
 
         _inventory = ShopOrder.Alphabetical(custom.Items.Where(e => !notItems.Contains(e.ID)).Select(e => new GID((ulong) e.ID)));
-        var (window, furniture) = CustomNpcs.WindowFor(custom);
+        // The window and kind of the game's own shop keepers of that kind of goods; gold is the currency. The title is
+        // the vendor's own name (Niduus, 2026-10-23: "Vendor's are not using proper UI").
+        var window = CustomNpcs.WindowFor(custom);
         _window = window;
-        _housingShop = furniture;
-        _furnitureShop = furniture ? 1 : window switch {
-            HouseVendors.ShopWindow.Reagent => 2,
-            HouseVendors.ShopWindow.Recipe => RECIPE_SHOP,
-            HouseVendors.ShopWindow.Jewel => 4,
-            HouseVendors.ShopWindow.Snack => 5,
-            _ => 0,
-        };
-        // The game picks the window from a real shop of the kind (the house sellers do the same); gold is the currency.
-        if (HouseVendors.ShopLookFor(window) is { } look) {
-            _shopTitle = string.IsNullOrWhiteSpace(look.m_shopTitle) ? _shopTitle : look.m_shopTitle;
-            _furnitureShop = look.m_furnitureShop != 0 ? look.m_furnitureShop : _furnitureShop;
-        }
+        _furnitureShop = HouseVendors.KindOf(window);
+        _shopTitle = CustomNpcs.TitleFor(custom) is { Length: > 0 } title ? title : _shopTitle;
 
         // The recipe window lists its recipes by name.
         if (window == HouseVendors.ShopWindow.Recipe) {
             _recipeList = [.. custom.Items.Select(e => CustomNpcs.RecipeNameOf(e.ID)).Where(name => !string.IsNullOrEmpty(name)).Select(name => (ByteString) name)];
         }
 
-        Logger.Information("Custom vendor {0} ({1}) in {2}: {3} items, {4} window{5}, shop kind {6}, title {7}.",
-            Logger.Args(custom.Id, custom.Name, custom.Zone, _inventory.Count, window, furniture ? " (furniture)" : "", _furnitureShop, _shopTitle));
+        Logger.Information("Custom vendor {0} ({1}) in {2}: {3} items, {4} window ({5}), shop kind {6}, title {7}{8}.",
+            Logger.Args(custom.Id, custom.Name, custom.Zone, _inventory.Count, window, custom.Window, _furnitureShop, _shopTitle,
+                custom.TreasureCards.Count > 0 ? $", and {custom.TreasureCards.Count} treasure cards in the treasure card shop" : ""));
     }
 
     // `.shoptest` (Niduus, 2026-10-19): every shop opens with this shop type and menu option, to find what makes the
@@ -223,14 +210,43 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     internal static int? TestShopType;
     internal static string TestOption;
 
-    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => TestOption is { } test ? [TestOptionFor(test)] : _window switch {
-            HouseVendors.ShopWindow.Snack => [new PetSnackShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
-            HouseVendors.ShopWindow.Reagent => [new ReagentShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
-            HouseVendors.ShopWindow.Jewel => [new JewelShopOption { m_displayKey = DisplayKey, m_iconKey = NpcIcon, m_serviceName = ServiceName }],
-            HouseVendors.ShopWindow.Recipe => [new RecipeShopOption { m_displayKey = "GUI_ShopOptionRecipe", m_iconKey = NpcIcon, m_serviceName = ServiceName }],
-            _ => EquipmentOrHousingOptions(),
+    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _) {
+        if (TestOption is { } test) {
+            return [TestOptionFor(test)];
+        }
+
+        // A custom vendor of treasure cards only has the treasure card shop (InteractTreasureVendorComponent).
+        if (_custom is not null && _inventory.Count == 0 && _custom.TreasureCards.Count > 0) {
+            return [];
+        }
+
+        ServiceOptionBase option = _window switch {
+            HouseVendors.ShopWindow.Snack => new PetSnackShopOption(),
+            HouseVendors.ShopWindow.Reagent => new ReagentShopOption(),
+            HouseVendors.ShopWindow.Jewel => new JewelShopOption(),
+            HouseVendors.ShopWindow.Recipe => new RecipeShopOption(),
+            HouseVendors.ShopWindow.Furniture => new HousingShopOption(),
+            HouseVendors.ShopWindow.Mount => new MountShopOption(),
+            _ => new EquipmentShopOption(),
         };
+        option.m_displayKey = OptionKeyOf(_window);
+        option.m_iconKey = NpcIcon;
+        option.m_serviceName = ServiceName;
+
+        return [option];
+    }
+
+    // The words of the shop's menu option, the game's own (GUI.lang: "Housing Shop", "Reagent Shop"...). Every shop
+    // said "Equipment Shop" before, and the furniture shops' GUI_HousingShop is no line of the game.
+    private static string OptionKeyOf(HouseVendors.ShopWindow window) => window switch {
+        HouseVendors.ShopWindow.Snack => "GUI_ShopOptionPetSnack",
+        HouseVendors.ShopWindow.Reagent => "GUI_ShopOptionReagent",
+        HouseVendors.ShopWindow.Jewel => "GUI_ShopOptionJewel",
+        HouseVendors.ShopWindow.Recipe => "GUI_ShopOptionRecipe",
+        HouseVendors.ShopWindow.Furniture => "GUI_ShopOptionHousing",
+        HouseVendors.ShopWindow.Mount => "GUI_ShopOptionMount",
+        _ => "GUI_ShopOptionEquipment",
+    };
 
     internal static readonly string[] TestOptions = ["equipment", "reagent", "snack", "jewel", "housing", "recipe", "mount"];
 
@@ -244,29 +260,12 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             "mount" => new MountShopOption(),
             _ => new EquipmentShopOption(),
         };
-        result.m_displayKey = option == "housing" ? "GUI_HousingShop" : DisplayKey;
+        result.m_displayKey = option == "housing" ? "GUI_ShopOptionHousing" : DisplayKey;
         result.m_iconKey = NpcIcon;
         result.m_serviceName = ServiceName;
 
         return result;
     }
-
-    private IEnumerable<ServiceOptionBase> EquipmentOrHousingOptions()
-        => _housingShop
-        ? [
-            new HousingShopOption {
-                m_displayKey = "GUI_HousingShop",
-                m_iconKey = NpcIcon,
-                m_serviceName = ServiceName,
-            }
-        ]
-        : [
-            new EquipmentShopOption {
-                m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
-                m_serviceName = ServiceName,
-            }
-        ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         if (_custom is not null) {
@@ -286,7 +285,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private void SendShopOfferings(IActorRef playerActor) {
         var shopOffering = new WizShopOffering() {
             m_sellModifier = 0.05f,
-            m_shopTitle = string.IsNullOrWhiteSpace(_shopTitle) || _shopTitle == "Unknown Shop" ? DefaultShopTitle : _shopTitle,
+            // A shop with no title of its own is called after its kind ("Jewel Shop"), not "Robe Shop" (KrocNPC_00000013).
+            m_shopTitle = string.IsNullOrWhiteSpace(_shopTitle) || _shopTitle == "Unknown Shop" ? OptionKeyOf(_window) : _shopTitle,
             m_shopList = _inventory,
             m_recipeList = _recipeList,
             // Changes the type of currency that is used

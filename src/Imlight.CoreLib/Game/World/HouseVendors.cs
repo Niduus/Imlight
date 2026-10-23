@@ -41,7 +41,38 @@ namespace Imlight.CoreLib.Game.World;
 /// </summary>
 internal static class HouseVendors {
 
-    internal enum ShopWindow { Equipment, Snack, Reagent, Jewel, Recipe }
+    /// <summary>
+    /// The game's shop windows. The window follows the shop's kind (WizShopOffering.m_furnitureShop), which the
+    /// game's own shop keepers give (WizShoppingBehavior): 0 equipment, 1 furniture, 2 reagents, 3 recipes, 4 mounts,
+    /// 5 pet snacks, 6 the combined shop, 7 jewels. The client opens ShoppingWindow.gui for 0 and 4,
+    /// ShoppingFurnitureWindow.gui for 1, ShoppingReagentWindow.gui for 2, ShoppingPetSnackWindow.gui for 5 and
+    /// ShoppingWindowCombined.gui for 6; 3 and 7 have windows of their own (ShoppingRecipeWindow, ShoppingJewelWindow).
+    /// </summary>
+    internal enum ShopWindow { Equipment, Snack, Reagent, Jewel, Recipe, Furniture, Mount, Combined }
+
+    /// <summary>The shop kind (m_furnitureShop) the game's own shop keepers of a window have.</summary>
+    internal static int KindOf(ShopWindow window) => window switch {
+        ShopWindow.Furniture => 1,
+        ShopWindow.Reagent => 2,
+        ShopWindow.Recipe => 3,
+        ShopWindow.Mount => 4,
+        ShopWindow.Snack => 5,
+        ShopWindow.Combined => 6,
+        ShopWindow.Jewel => 7,
+        _ => 0,
+    };
+
+    /// <summary>The window of a shop kind (m_furnitureShop), the other way.</summary>
+    internal static ShopWindow WindowOf(int kind) => kind switch {
+        1 => ShopWindow.Furniture,
+        2 => ShopWindow.Reagent,
+        3 => ShopWindow.Recipe,
+        4 => ShopWindow.Mount,
+        5 => ShopWindow.Snack,
+        6 => ShopWindow.Combined,
+        7 => ShopWindow.Jewel,
+        _ => ShopWindow.Equipment,
+    };
 
     internal sealed record Seller(string Key, string Name, uint FurnitureId, ShopWindow Window, Func<List<uint>> Items);
 

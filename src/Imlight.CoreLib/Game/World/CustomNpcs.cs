@@ -9,10 +9,14 @@
  *   TemplateID  its look: any NPC or creature template. It only gives the look: the template's own shop, spells and
  *               quests are not used, and a creature does not start battles.
  *   Zone, X, Y, Z, Yaw  where it stands (the Yaw in radians, as the position tool writes it).
- *   Window      a vendor's shop window: Automatic (picked from the items: snacks, reagents, jewels, recipes or
- *               furniture each have their own window; anything else, or a mix, the equipment shop), Equipment,
- *               Furniture, Snack, Reagent, Jewel or Recipe.
+ *   Window      a vendor's shop window, the one the game's own shop keepers of that kind open (HouseVendors.
+ *               ShopWindow; Niduus, 2026-10-23: "Vendor's are not using proper UI"): Automatic (the kind most of
+ *               the items are: furniture, mounts, snacks, reagents, jewels, recipes or equipment; the combined shop
+ *               when no kind is more than half), Equipment, Furniture, Mount, Snack, Reagent, Jewel, Recipe or
+ *               Combined.
  *   Items       a vendor's items: ID (the item template) and Price (gold, 1 if left out).
+ *   TreasureCards  a vendor's treasure cards: ID (the spell template) and Price (gold). A vendor with any also
+ *               opens the game's treasure card shop, as the game's treasure card sellers do.
  *   Spells      a trainer's spells: ID (the spell template) and Price (training points, 1 if left out).
  *
  * The NPCs are added to their zone's objects by ZoneObjects.cs, which watches this file as it does its own, so an NPC
@@ -48,6 +52,7 @@ internal static class CustomNpcs {
         public string Window { get; set; } = AUTOMATIC;
         public List<Entry> Items { get; set; } = [];
         public List<Entry> Spells { get; set; } = [];
+        public List<Entry> TreasureCards { get; set; } = [];
 
         internal bool IsTrainer => string.Equals(Kind, TRAINER, StringComparison.OrdinalIgnoreCase);
 
@@ -130,7 +135,8 @@ internal static class CustomNpcs {
             npc.TemplateID = npc.TemplateID == 0 ? DEFAULT_LOOK : npc.TemplateID;
             npc.Items = [.. (npc.Items ?? []).Where(e => e is not null && e.ID != 0).GroupBy(e => e.ID).Select(g => g.First())];
             npc.Spells = [.. (npc.Spells ?? []).Where(e => e is not null && e.ID != 0).GroupBy(e => e.ID).Select(g => g.First())];
-            foreach (var entry in npc.Items.Concat(npc.Spells)) {
+            npc.TreasureCards = [.. (npc.TreasureCards ?? []).Where(e => e is not null && e.ID != 0).GroupBy(e => e.ID).Select(g => g.First())];
+            foreach (var entry in npc.Items.Concat(npc.Spells).Concat(npc.TreasureCards)) {
                 entry.Price = Math.Max(0, entry.Price);
             }
 
@@ -149,58 +155,94 @@ internal static class CustomNpcs {
     /// taken away and made again, so it opens with the new ones.
     /// </summary>
     internal static string SignatureOf(CustomNpc npc)
-        => JsonSerializer.Serialize(new { npc.Name, npc.Kind, npc.Window, npc.Items, npc.Spells });
+        => JsonSerializer.Serialize(new { npc.Name, npc.Kind, npc.Window, npc.Items, npc.Spells, npc.TreasureCards });
 
-    /// <summary>The shop window a vendor opens with, and whether it is the furniture (housing) shop.</summary>
-    internal static (HouseVendors.ShopWindow Window, bool Furniture) WindowFor(CustomNpc npc) {
+    /// <summary>The shop window a vendor opens: the one its file names, or the kind most of its items are.</summary>
+    internal static HouseVendors.ShopWindow WindowFor(CustomNpc npc) {
         var window = (npc.Window ?? "").Replace(" ", "").ToLowerInvariant();
         switch (window) {
-            case "equipment": return (HouseVendors.ShopWindow.Equipment, false);
-            case "furniture" or "housing": return (HouseVendors.ShopWindow.Equipment, true);
-            case "snack" or "snacks" or "petsnack" or "petsnacks": return (HouseVendors.ShopWindow.Snack, false);
-            case "reagent" or "reagents": return (HouseVendors.ShopWindow.Reagent, false);
-            case "jewel" or "jewels": return (HouseVendors.ShopWindow.Jewel, false);
-            case "recipe" or "recipes": return (HouseVendors.ShopWindow.Recipe, false);
+            case "equipment": return HouseVendors.ShopWindow.Equipment;
+            case "furniture" or "housing": return HouseVendors.ShopWindow.Furniture;
+            case "mount" or "mounts": return HouseVendors.ShopWindow.Mount;
+            case "snack" or "snacks" or "petsnack" or "petsnacks": return HouseVendors.ShopWindow.Snack;
+            case "reagent" or "reagents": return HouseVendors.ShopWindow.Reagent;
+            case "jewel" or "jewels": return HouseVendors.ShopWindow.Jewel;
+            case "recipe" or "recipes": return HouseVendors.ShopWindow.Recipe;
+            case "combined" or "mixed": return HouseVendors.ShopWindow.Combined;
         }
 
-        // Automatic: the window every item belongs in, or the equipment shop for a mix.
-        var kinds = npc.Items.Select(e => KindOf(e.ID)).Distinct().ToList();
-        if (kinds.Count != 1) {
-            return (HouseVendors.ShopWindow.Equipment, false);
+        // Automatic: the kind more than half the items are; the combined shop (gear, furniture and more in one
+        // window) when no kind is; the equipment shop when there are none.
+        var kinds = npc.Items.GroupBy(e => KindOf(e.ID)).OrderByDescending(g => g.Count()).ToList();
+        if (kinds.Count == 0) {
+            return HouseVendors.ShopWindow.Equipment;
         }
 
-        return kinds[0] switch {
-            "Snack" => (HouseVendors.ShopWindow.Snack, false),
-            "Reagent" => (HouseVendors.ShopWindow.Reagent, false),
-            "Jewel" => (HouseVendors.ShopWindow.Jewel, false),
-            "Recipe" => (HouseVendors.ShopWindow.Recipe, false),
-            "Furniture" => (HouseVendors.ShopWindow.Equipment, true),
-            _ => (HouseVendors.ShopWindow.Equipment, false),
-        };
+        return kinds[0].Count() * 2 > npc.Items.Count ? kinds[0].Key : HouseVendors.ShopWindow.Combined;
     }
 
     // Which window an item belongs in, the way the house sellers sort them (HouseVendors).
-    private static string KindOf(uint id) {
+    private static HouseVendors.ShopWindow KindOf(uint id) {
         try {
             var template = CoreObjectFactory.GetCoreTemplate(id);
             switch (template) {
                 case PetSnackItemTemplate:
-                    return "Snack";
+                    return HouseVendors.ShopWindow.Snack;
                 case ReagentItemTemplate:
-                    return "Reagent";
+                    return HouseVendors.ShopWindow.Reagent;
                 case RecipeTemplate:
-                    return "Recipe";
+                    return HouseVendors.ShopWindow.Recipe;
                 case WizItemTemplate when (FileOf(id) ?? "").StartsWith("ObjectData/Jewels/", StringComparison.OrdinalIgnoreCase):
-                    return "Jewel";
+                    return HouseVendors.ShopWindow.Jewel;
+                case WizItemTemplate item when (item.m_behaviors ?? []).Any(b => b is MountItemBehaviorTemplate):
+                    return HouseVendors.ShopWindow.Mount;
                 case WizItemTemplate item when HousingItems.Classify(item) == HousingItemKind.Furniture:
-                    return "Furniture";
+                    return HouseVendors.ShopWindow.Furniture;
             }
         }
         catch (Exception e) {
             Logger.Warning("Custom vendor item {0} could not be read: {1}", Logger.Args(id, e.Message));
         }
 
-        return "Equipment";
+        return HouseVendors.ShopWindow.Equipment;
+    }
+
+    /// <summary>
+    /// The title a custom vendor's window shows: its name. The game shows a title by its locale key, so a name the game
+    /// has a line for (such as "Housing Gauntlets") is sent as that line's key; any other name is sent as written.
+    /// </summary>
+    internal static string TitleFor(CustomNpc npc) {
+        var name = (npc.Name ?? "").Trim();
+
+        return name.Length == 0 ? "" : Locale.KeyOf(name) ?? name;
+    }
+
+    /// <summary>
+    /// The spell names a custom vendor's treasure card shop lists, with their prices. A spell that is not a treasure
+    /// card is sold as its treasure card (the spell named "&lt;name&gt; TC") when the game has one.
+    /// </summary>
+    internal static List<(string Name, int Price)> TreasureCardsOf(CustomNpc npc) {
+        var cards = new List<(string Name, int Price)>();
+        HashSet<string> names = null;
+        foreach (var entry in npc.TreasureCards) {
+            if (TemplateOf(entry.ID) is not SpellTemplate spell || string.IsNullOrEmpty((string) spell.m_name)) {
+                Logger.Warning("Custom vendor {0} ({1}): treasure card {2} is not a spell; left out.", Logger.Args(npc.Id, npc.Name, entry.ID));
+
+                continue;
+            }
+
+            string name = spell.m_name;
+            if (!spell.m_Treasure && !name.EndsWith(" TC", StringComparison.Ordinal)) {
+                names ??= [.. Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates().Select(s => (string) s.Template.m_name).Where(n => n is not null)];
+                name = names.Contains(name + " TC") ? name + " TC" : name;
+            }
+
+            if (cards.All(c => c.Name != name)) {
+                cards.Add((name, entry.Price));
+            }
+        }
+
+        return cards;
     }
 
     /// <summary>A template by id, or null when there is none or it does not load.</summary>

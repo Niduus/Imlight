@@ -189,6 +189,37 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         return found.Count > maxResults ? found.GetRange(0, maxResults) : found;
     }
 
+    private static Dictionary<string, string> s_keyByText;
+
+    /// <summary>
+    /// The key of the game's line whose text is exactly <paramref name="text"/> (case aside), or null. A shop's own
+    /// line (WizardShops) comes first, then the other tables by name. Used for the titles of the Customs tab's vendors.
+    /// </summary>
+    public static string KeyOf(string text) {
+        if (string.IsNullOrWhiteSpace(text)) {
+            return null;
+        }
+
+        if (s_keyByText is null) {
+            if (s_data.Count == 0) {
+                _ = Instance;
+            }
+
+            var byText = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (table, lines) in s_data.OrderBy(t => t.Key == "WizardShops" ? 0 : 1).ThenBy(t => t.Key, StringComparer.Ordinal)) {
+                foreach (var (id, line) in lines.OrderBy(l => l.Key, StringComparer.Ordinal)) {
+                    if (!string.IsNullOrWhiteSpace(line) && line.Length <= 100) {
+                        byText.TryAdd(line.Trim(), $"{table}_{id}");
+                    }
+                }
+            }
+
+            s_keyByText = byText;
+        }
+
+        return s_keyByText.TryGetValue(text.Trim(), out var key) ? key : null;
+    }
+
     /// <summary>
     /// Retrieves the English name from the specified table and key.
     /// </summary>

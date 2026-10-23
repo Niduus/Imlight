@@ -59,6 +59,7 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     public string DisplayKey      => "GUI_TreasureShop";
 
     private List<TreasureCardEntry> _inventory;
+    private string _title = "Treasure Cards";
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has a treasure card inventory in SpiralDB, or is one of the
@@ -117,6 +118,15 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     }
 
     public override void OnStart() {
+        // A vendor of the Customs tab sells its own treasure cards at its own prices, under its own name.
+        if (CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
+            _inventory = [.. CustomNpcs.TreasureCardsOf(custom).Select(card => new TreasureCardEntry { SpellName = card.Name, Price = card.Price })];
+            _title = CustomNpcs.TitleFor(custom) is { Length: > 0 } title ? title : _title;
+            Logger.Information("Custom vendor {0} ({1}): {2} treasure cards, title {3}.", Logger.Args(custom.Id, custom.Name, _inventory.Count, _title));
+
+            return;
+        }
+
         if (Entity.Template is GameObjectTemplate template && TestShopFor(template) is not TestShop.None) {
             _inventory = s_allEnchantments.Value;
 
@@ -179,7 +189,7 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
 
     private void SendTreasureShopOfferings(IActorRef playerActor) {
         var shopOffering = new TreasureShopOffering() {
-            m_treasureShopTitle = "Treasure Cards",
+            m_treasureShopTitle = _title,
             m_treasureSpellNames = _inventory.Select(x => (ByteString)x.SpellName).ToList(),
             m_crownShop = false,
             m_pvpCurrencyShop = false,
