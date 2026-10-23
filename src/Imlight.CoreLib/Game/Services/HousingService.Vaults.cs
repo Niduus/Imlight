@@ -34,6 +34,8 @@
  *   backpack or book changes in memory first and is put back when the write fails, so nothing is lost or doubled.
  * - Gear, jewels and seeds keep their item documents while they are in a vault, so they come back as the same items.
  * - Only the owner of the house uses its vaults; a visitor is told so and nothing moves.
+ * - A vault that is picked up gives back what it holds, in the same write as the pick up, because the backpack item of a
+ *   vault carries nothing. When the backpack, the jewel pouch or the treasure book has no room, the vault stays.
  * - A poster shows a card the owner has; the card stays in the treasure book.
  * - Every request is logged with its fields, so a log shows what the game sends.
  *
@@ -543,6 +545,74 @@ internal partial class HousingService {
         Logger.Information("Vaults: character {CharId} shows treasure card {TemplateId} on poster {PosterGid}.",
             Logger.Args(wizard.CharId, templateId, posterGid));
         BroadcastVault(house, VaultKind.Poster, change);
+    }
+
+    private bool TryReadVaultContents(Wizard wizard, PlacedItem vaultItem, out List<WizClientObjectItem> items, out List<VaultCard> cards) {
+        items = [];
+        cards = [.. vaultItem?.Vault?.Cards ?? []];
+        var entries = vaultItem?.Vault?.Items ?? [];
+        if (entries.Count == 0 && cards.Count == 0) {
+            return true;
+        }
+
+        var kind = HouseVaults.KindOf(vaultItem.TemplateId);
+        Logger.Information("Vaults: character {CharId} picks up {Vault} {ItemGid}, which holds {Items} item(s) and {Cards} treasure card(s).",
+            Logger.Args(wizard.CharId, HouseVaults.NameOf(kind), vaultItem.ItemGid, entries.Count, cards.Count));
+
+        // The stored documents are the items; when one cannot be read, the vault stays with all it holds.
+        foreach (var entry in entries) {
+            var item = WizardItemCollection.GetItem(wizard.CharId, entry.ItemGid);
+            if (item is null) {
+                Logger.Error("Vaults: item {ItemId} (template {TemplateId}) in {Vault} {ItemGid} of character {CharId} has no stored document; the vault stays.",
+                    Logger.Args(entry.ItemGid, entry.TemplateId, HouseVaults.NameOf(kind), vaultItem.ItemGid, wizard.CharId));
+                InformGameClient($"Something in the {HouseVaults.NameOf(kind)} cannot be taken out right now, so it stays in the house.");
+
+                return false;
+            }
+
+            items.Add(item);
+        }
+
+        return true;
+    }
+
+    private static string VaultPickUpRefusal(Wizard wizard, PlacedItem vaultItem, int items, int cards) {
+        var kind = HouseVaults.KindOf(vaultItem.TemplateId);
+        if (kind == VaultKind.Jewel && items > 0 && IsJewelPouchFull(wizard, items)) {
+            return $"You cannot carry the {items} jewel(s) in the Jewel Vault. Take some out first.";
+        }
+
+        if (cards > 0 && (wizard.SpellbookBehavior is null
+                || (wizard.SpellbookBehavior.TreasureCardTemplateIds?.Count ?? 0) + cards > TradeLimits.TreasureBookCapacity)) {
+            return $"Make room in your treasure book for the {cards} card(s) in the Treasure Card Vault, or take some out first.";
+        }
+
+        return null;
+    }
+
+    private void GiveBackVaultContents(Wizard wizard, PlacedItem vaultItem, IReadOnlyList<WizClientObjectItem> items, IReadOnlyList<VaultCard> cards) {
+        foreach (var item in items) {
+            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, item)) {
+                Logger.Error("Vaults: could not tell the client about item {ItemId} of character {CharId}, which came out of a picked up vault.",
+                    Logger.Args(item.m_globalID.Full, wizard.CharId));
+            }
+        }
+
+        foreach (var card in cards) {
+            if (CoreObjectFactory.GetCoreTemplate(card.TemplateId) is SpellTemplate template) {
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTOBOOK {
+                    SpellID = (int) StringHash.Compute(template.m_name),
+                    EnchantmentID = (int) card.Enchantment,
+                });
+            }
+        }
+
+        var name = HouseVaults.NameOf(HouseVaults.KindOf(vaultItem.TemplateId));
+        Logger.Information("Vaults: character {CharId} picked up {Vault} {ItemGid} and got back {Items} item(s) and {Cards} treasure card(s).",
+            Logger.Args(wizard.CharId, name, vaultItem.ItemGid, items.Count, cards.Count));
+        InformGameClient(cards.Count > 0
+            ? $"The {cards.Count} card(s) in the {name} went back to your treasure book."
+            : $"The {items.Count} item(s) in the {name} went back to your backpack.");
     }
 
     private bool TryGetVault(VaultKind kind, ulong vaultGid, out HouseState house, out PlacedItem vaultItem) {

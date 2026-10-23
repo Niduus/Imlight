@@ -183,16 +183,34 @@ public static class HouseCollection {
     /// <param name="owner">The owner, whose backpack is written as it is in memory.</param>
     /// <param name="addedItems">The items that entered the backpack and are not stored yet; none for an item that left it.</param>
     /// <returns><c>true</c> when both are stored; <c>false</c> when neither changed.</returns>
-    public static bool SaveWithBackpack(House house, Wizard owner, params WizClientObjectItem[] addedItems) {
+    public static bool SaveWithBackpack(House house, Wizard owner, params WizClientObjectItem[] addedItems)
+        => SaveWithOwner(house, owner, treasureCards: false, addedItems);
+
+    /// <summary>
+    /// Writes a house together with its owner's backpack and treasure cards in one transaction, for a Treasure Card
+    /// Vault that is picked up with the cards it holds.
+    /// </summary>
+    /// <param name="house">The house to save.</param>
+    /// <param name="owner">The owner, whose backpack and treasure cards are written as they are in memory.</param>
+    /// <param name="addedItems">The items that entered the backpack and are not stored yet.</param>
+    /// <returns><c>true</c> when all are stored; <c>false</c> when nothing changed.</returns>
+    public static bool SaveWithBackpackAndTreasureCards(House house, Wizard owner, params WizClientObjectItem[] addedItems)
+        => SaveWithOwner(house, owner, treasureCards: true, addedItems);
+
+    private static bool SaveWithOwner(House house, Wizard owner, bool treasureCards, WizClientObjectItem[] addedItems) {
         try {
             return WizardCollection.UpdateCharacterWithSession(owner.CharId, (session, storedOwner) => {
                 var stored = session.Load<House>(house.Id);
-                if (stored is null) {
+                if (stored is null || (treasureCards && storedOwner.SpellbookBehavior is null)) {
                     return false;
                 }
 
                 CopyChanging(house, stored);
                 storedOwner.InventoryBehavior = owner.InventoryBehavior;
+                if (treasureCards) {
+                    storedOwner.SpellbookBehavior.TreasureCardTemplateIds = [.. owner.SpellbookBehavior.TreasureCardTemplateIds ?? []];
+                }
+
                 foreach (var addedItem in addedItems) {
                     if (addedItem is null) {
                         continue;
