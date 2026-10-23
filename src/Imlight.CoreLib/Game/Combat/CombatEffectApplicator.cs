@@ -38,6 +38,7 @@
  */
 
 using Imcodec.ObjectProperty.TypeCache;
+using Akka.Actor;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -448,6 +449,7 @@ internal static class CombatEffectApplicator {
 
         // Apply damage to each target
         var damageDealt = 0;
+        var hits = new List<string>();
         foreach (var target in targets) {
             if (target?._hangingEffects is null) {
                 continue;
@@ -462,13 +464,59 @@ internal static class CombatEffectApplicator {
             cinematicTime += wards.Count * HANGING_EFFECT_CONSUME_TIME;
             damage = CombatWards.GetIncomingDamageFromWards(wards, damage, ref pierceLeft);
 
-            damageDealt += DoDamageToTarget(target, damage, finalSchool, pierceLeft);
+            var dealt = DoDamageToTarget(target, damage, finalSchool, pierceLeft);
+            damageDealt += dealt;
+            hits.Add($"{TargetName(target)}: dealt {dealt}");
 
             // The shields, traps and prism this hit used go; an absorb stays until it is used up.
             CombatWards.Consume(target, wards);
         }
 
+        TellRealDamage(caster, hits);
+
         return (cinematicTime, damageDealt);
+    }
+
+    // The game works out its own damage number with its diminishing returns, so it can show less than the server
+    // dealt. The caster gets the real amount per enemy in chat (Niduus, 2026-10-23).
+    private static void TellRealDamage(CombatDuelSubCircle caster, List<string> hits) {
+        if (hits.Count == 0 || caster is not { IsHumanPlayer: true, ParticipantActor: not null }) {
+            return;
+        }
+
+        // One line per enemy, so an AoE lists each one (Niduus: "[enemy name]: dealt [damage]").
+        foreach (var hit in hits) {
+            caster.ParticipantActor.Tell(new Imcodec.MessageLayer.Generated.EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = hit, Modal = 0 });
+        }
+    }
+
+    private static readonly Dictionary<ulong, string> s_creatureNames = [];
+
+    // The enemy's name as the game shows it: a custom's own name, else the creature's from the ID catalog.
+    private static string TargetName(CombatDuelSubCircle target) {
+        var creature = target.ParticipantObject;
+        if (target.IsHumanPlayer || creature is null) {
+            return $"Slot {target.SlotIndex + 1}";
+        }
+
+        if (Customs.NameOf(creature.m_globalID.Full) is { } custom) {
+            return custom;
+        }
+
+        var templateId = (ulong) creature.m_templateID.Full;
+        lock (s_creatureNames) {
+            if (!s_creatureNames.TryGetValue(templateId, out var name)) {
+                name = Imlight.CoreLib.Shared.Resources.IdCatalog.IsReady
+                    ? Imlight.CoreLib.Shared.Resources.IdCatalog.Search(Imlight.CoreLib.Shared.Resources.IdCatalogKind.Creature,
+                        templateId.ToString(), 1).FirstOrDefault()?.Name
+                    : null;
+                if (name is not null) {
+                    s_creatureNames[templateId] = name;
+                }
+            }
+
+            return name ?? $"Slot {target.SlotIndex + 1}";
+        }
     }
 
     /// <summary>
