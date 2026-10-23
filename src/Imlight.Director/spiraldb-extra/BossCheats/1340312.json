@@ -19,9 +19,14 @@
       "Notes": "\"Fairies! Protect your Queen!\" First round: 2 fairies of random schools, fighting from the next round. Existing blocks." },
 
     { "When": "MinionDefeated", "Creature": 1340311, "Once": true,
-      "Line": "CombatMessages_00000683", "SetPhase": 2,
+      "SetPhase": 2,
       "Casts": [ { "Spell": "Fairy Queen-Epic Summon", "DispelImmune": false } ],
-      "Notes": "\"Rattlebones will be avenged!\" Rattlebones is defeated: one more fairy at once, and from now on 3 fairies each time (phase 2). New block: this creature." },
+      "Notes": "Rattlebones is defeated: one more fairy at once, and from now on 3 fairies each time (phase 2). New block: this creature." },
+
+    { "When": "EnemyJoins", "Round": 2, "Phase": 2,
+      "Casts": [ { "Spell": "Mana Burn - Rattlebones", "DispelImmune": false } ], "Target": "Caster",
+      "Line": "CombatMessages_00000683",
+      "Notes": "\"Rattlebones will be avenged!\" Once Rattlebones is defeated (phase 2) she casts his tardiness cheat: a wizard who joins after the second round gets Mana Burn (Unbalance stops it). Central lists this line under his tardiness cheat; it was first read as a cheat of its own." },
 
     { "When": "MinionDefeated", "Creature": 1340311, "NotCreature": true, "Phase": 1, "Cooldown": 3,
       "Actions": [
