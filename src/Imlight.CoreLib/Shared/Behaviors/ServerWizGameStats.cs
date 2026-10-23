@@ -202,6 +202,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         m_dmgReduceFlat = null;
         m_criticalHitRatingBySchool = null;
         m_blockRatingBySchool = null;
+        m_pipConversionRatingPerSchool = null;
+        m_pipConversionRatingAll = 0;
         m_dmgBonusPercentAll = 0;
         m_dmgBonusFlatAll = 0;
         m_accBonusPercentAll = 0;

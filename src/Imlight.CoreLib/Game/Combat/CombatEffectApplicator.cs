@@ -458,6 +458,15 @@ internal static class CombatEffectApplicator {
             var damage = damageFromCaster;
             var pierceLeft = pierce;
 
+            // Pierce traps and the like on the target (kModifyIncomingArmorPiercing): more (or, when negative, less)
+            // pierce for hits against it. A trap goes once used; an aura stays.
+            var incomingPierce = CombatCharms.OnePerSpell(target._hangingEffects.Where(x => x?.m_effectType == kSpellEffects.kModifyIncomingArmorPiercing
+                && (string.IsNullOrEmpty(x.m_sDamageType) || CombatCharms.SchoolMatches(x.m_sDamageType, effect.m_sDamageType))));
+            if (incomingPierce.Count > 0) {
+                pierceLeft = Math.Clamp(pierceLeft + incomingPierce.Sum(x => x.m_effectParam) / 100f, 0f, 1f);
+                CombatWards.Consume(target, incomingPierce);
+            }
+
             // Calculate damage changes from target hanging effects.
             var wards = CombatWards.FindAppliedWards(target, effect);
             wards = CombatWards.GetWardsBySchool([.. wards], effect.m_sDamageType, out var finalSchool);
@@ -823,6 +832,14 @@ internal static class CombatEffectApplicator {
                 // Remove the stun block and do nothing else.
                 CombatCharms.RemoveExact(target._hangingEffects, [spellBlock]);
                 cinematicTime += HANGING_EFFECT_CONSUME_TIME;
+
+                continue;
+            }
+
+            // Stun Resistance (a fraction, 1.45 for 145%) is the chance to shrug the stun off; 100% or more always does.
+            var stunResist = target._wizard is not null ? target.ParticipantGameStats?.m_stunResistancePercent ?? 0f : 0f;
+            if (stunResist > 0 && Random.Shared.NextDouble() < stunResist) {
+                Logger.Debug("{0} resisted a stun (Stun Resistance {1:P0}).", Logger.Args(target.SlotName, stunResist));
 
                 continue;
             }

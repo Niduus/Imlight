@@ -1265,6 +1265,60 @@ public class CombatDuelSubCircle {
     private bool HasManaForSpell(Spell spell)
         => _wizard is null || UnlimitedMana || ParticipantGameStats.m_currentMana >= spell.m_pipCost.m_spellRank;
 
+    // [Battle] FullPipConversion (on by default, Niduus 2026-10-23): a wizard with any Pip Conversion for a spell's
+    // school always gets the conversion. Off, the chance is the rating times the game's first-tier scalar (0.00205,
+    // WizStatisticEffectConfig), with no diminishing returns: 100 rating is about 20%, 500 or more is 100%.
+    private static readonly bool s_fullPipConversion = ConfigurationManager.GetValue("Battle.FullPipConversion", true);
+    private const float DEFAULT_PIP_CONVERSION_SCALAR = 0.00205f;
+
+    /// <summary>
+    /// The wizard's Pip Conversion rating for a school: that school's rating plus the all-schools one.
+    /// </summary>
+    internal float PipConversionRating(MagicSchool school) {
+        var stats = ParticipantGameStats;
+        if (_wizard is null || stats is null) {
+            return 0;
+        }
+
+        return stats.m_pipConversionRatingAll + GetStatBySchool(stats.m_pipConversionRatingPerSchool, school.ToString());
+    }
+
+    internal float PipConversionChance(MagicSchool school) {
+        var rating = PipConversionRating(school);
+        if (rating <= 0) {
+            return 0;
+        }
+        if (s_fullPipConversion) {
+            return 1;
+        }
+
+        var scalar = Imlight.CoreLib.Game.Effects.WizStatisticEffectConfigLoader.Config?.m_pipConversionLevelData?
+            .FirstOrDefault()?.m_levelValues?.FirstOrDefault()?.m_scalarBase ?? 0f;
+
+        return Math.Clamp(rating * (scalar > 0 ? scalar : DEFAULT_PIP_CONVERSION_SCALAR), 0f, 1f);
+    }
+
+    /// <summary>
+    /// Pip Conversion (the game's "Converted to Power Pip!"): after a wizard casts a spell that cost pips, the Pip
+    /// Conversion chance for the spell's school turns one of their normal pips into a power pip.
+    /// </summary>
+    internal void TryPipConversion(MagicSchool school) {
+        var pips = CombatParticipant.m_pipCount;
+        if (pips.m_genericPips == 0) {
+            return;
+        }
+
+        var chance = PipConversionChance(school);
+        if (chance <= 0 || Random.Shared.NextDouble() >= chance) {
+            return;
+        }
+
+        pips.m_genericPips--;
+        pips.m_powerPips++;
+        Logger.Debug("Pip Conversion ({0} rating {1}, {2:P0}): {3} had a normal pip turned into a power pip.",
+            Logger.Args(school, PipConversionRating(school), chance, SlotName));
+    }
+
     internal void DeductPips(MagicSchool school, byte spellRank, bool fullPipConserve = false) {
         var isMastered = HasSchoolMastery((uint) school);
         var pipCount = CombatParticipant.m_pipCount;

@@ -129,6 +129,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "MobsJoinLate", "Monsters can join a battle late", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FastAnimationTiming", "Shorter waits between turns, using animation times measured in the game (extra seconds under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FullPipConserve", "100% pip conserve (a half-used power pip always comes back)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "FullPipConversion", "100% pip conversion (with Pip Conversion gear, a spell's school always turns a normal pip into a power pip)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "NoPipsFromDaybreakerNightbringer", "Daybreaker and Nightbringer do not add pips to card", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "Enabled", "Archmastery (Power Orb turns power pips into school pips from level 50)", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "AllLevels", "Archmastery at every level, not just 50 and up", new() { OnContent = "On", OffContent = "Off" }),

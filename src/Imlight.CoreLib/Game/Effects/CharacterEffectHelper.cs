@@ -240,6 +240,9 @@ internal static class CharacterEffectHelper {
         else if (effectName.Contains("Mastery")) {
             ApplySchoolMastery(stats, effectName);
         }
+        else if (effectName.Contains("PipConversion")) {
+            ApplyPipConversion(stats, effectName, statistic.m_pipConversionRating);
+        }
         else if (effectName.Contains("CriticalHit")) {
             // Crit gear is school-based; route like damage, only falling back to the
             // universal bucket when the name carries no valid school.
@@ -294,6 +297,9 @@ internal static class CharacterEffectHelper {
         else if (effectName.Contains("Mastery")) {
             RemoveSchoolMastery(stats, effectName);
         }
+        else if (effectName.Contains("PipConversion")) {
+            ApplyPipConversion(stats, effectName, -statistic.m_pipConversionRating);
+        }
         else if (effectName.Contains("CriticalHit")) {
             var school = effectName.Contains("All") ? null : ExtractSchoolName(effectName);
             if (school is not null && MagicSchools.GetMagicSchool(school) is not null) {
@@ -321,6 +327,22 @@ internal static class CharacterEffectHelper {
         }
         else {
             stats.m_apBonusPercentAll += value;
+        }
+    }
+
+    /// <summary>
+    /// Pip Conversion rating, per school or for all schools. Shadow pip conversion is the shadow pip stat, not this.
+    /// </summary>
+    private static void ApplyPipConversion(ServerWizGameStats stats, string effectName, float rating) {
+        var school = effectName.Contains("All") ? null : ExtractSchoolName(effectName);
+        if (school == "Shadow") {
+            return;
+        }
+        if (school is not null && MagicSchools.GetMagicSchool(school) is not null) {
+            ApplySchoolEffect(ref stats.m_pipConversionRatingPerSchool, school, rating);
+        }
+        else {
+            stats.m_pipConversionRatingAll += rating;
         }
     }
 

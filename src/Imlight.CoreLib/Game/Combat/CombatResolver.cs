@@ -1547,6 +1547,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
             caster.DeductPips((MagicSchool) action.m_spell.m_magicSchoolID, action.m_spell.m_pipCost.m_spellRank, conservePips);
         }
+
+        // Pip Conversion: a spell that cost pips may turn one of the caster's normal pips into a power pip.
+        if (action.m_spell.m_pipCost.m_spellRank > 0 || CombatActionResolver.IsXPipSpell(action.m_spell)) {
+            caster.TryPipConversion((MagicSchool) action.m_spell.m_magicSchoolID);
+        }
     }
 
     private static bool ConsumeDispell(CombatDuelSubCircle caster, uint magicSchoolId) {

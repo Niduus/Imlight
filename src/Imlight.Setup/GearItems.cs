@@ -483,7 +483,7 @@ internal sealed partial class GearBook {
             "ShadowPipRating" => new GearStat(value, ["shadowpip"], "", "RATING", "Shadow Pip Rating: shadow pips come sooner"),
             "ShadowPips" => new GearStat(value, ["shadowpip"], "", "", "Shadow Pip Chance: more chance of a shadow pip"),
             "PipConversion" => new GearStat(value, ["pipconversion"], school, "RATING",
-                "Pip Conversion Rating: more chance a power pip turns into a school pip" + forSchool),
+                "Pip Conversion Rating: more chance a normal pip turns into a power pip after a spell" + forSchool),
             "ShadowPipConversion" => new GearStat(value, ["pipconversion"], school, "RATING", "Shadow Pip Conversion Rating"),
             "Archmastery" => new GearStat(value, ["archmastery"], school, "RATING", "Archmastery Rating: school pips come sooner"),
             "Healing" => new GearStat(value, ["outgoing", "heal"], school, "", "Outgoing Healing: your heals heal more"),

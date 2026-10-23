@@ -63,6 +63,11 @@ internal class CommandStatsProtocol : CommandProtocol {
             Logger.Debug(".stats {0}: raw damage {1}, resist {2}, pierce {3}, accuracy {4}, flat {5}.",
                 Logger.Args(school, damage, resist, pierce, accuracy, flat));
         }
+
+        var conversion = string.Join(", ", s_schools.Where(x => x != "Shadow")
+            .Select(x => $"{x} {Math.Round(School(stats.m_pipConversionRatingPerSchool, x) + stats.m_pipConversionRatingAll)}"));
+        InformSenderClient($"Pip Conversion: {conversion}");
+        InformSenderClient($"Stun Resistance: {Math.Round(stats.m_stunResistancePercent * 100f)}%");
     }
 
 }
