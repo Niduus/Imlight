@@ -106,8 +106,10 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        // A custom vendor's own price for the item as it is listed (a recipe's, not what it makes), or the fixed price.
+        var price = vendorComponent.PriceOf(itemTemplateID);
         Logger.Information("Shop buy: item {0} (ShopID {1}) from NPC {2}, quantity {3}, currency {4}, fixed price {5}.",
-            Logger.Args(itemTemplateID, message.ShopID, message.npcGlobalID, message.quantity, message.CurrencyType, vendorComponent.FixedPrice));
+            Logger.Args(itemTemplateID, message.ShopID, message.npcGlobalID, message.quantity, message.CurrencyType, price));
 
         // A recipe shop's window (Doctor Purreau) buys a recipe. There is no crafting, so the buyer gets what the
         // recipe makes: the elixir, snack or furniture (Niduus, 2026-10-23).
@@ -130,7 +132,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Snacks go into the snack bag and reagents into the reagent bag, not the backpack (Hao and the house sellers).
         if (template is PetSnackItemTemplate or ReagentItemTemplate) {
-            BuyIntoBag(playerWizard, template, vendorComponent.FixedPrice ?? (int) template.m_baseCost, message.quantity);
+            BuyIntoBag(playerWizard, template, price ?? (int) template.m_baseCost, message.quantity);
 
             return;
         }
@@ -165,7 +167,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             item.m_secondaryColor = message.decal;
         }
 
-        var goldCost = vendorComponent.FixedPrice ?? PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
+        var goldCost = price ?? PriceModifiersConfig.GetShopBuyCost(template, message.texture, message.decal);
 
         // Check if the user can afford the item.
         if (playerWizard.GameStats.m_currentGold < goldCost) {

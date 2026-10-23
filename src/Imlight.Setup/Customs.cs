@@ -270,3 +270,114 @@ internal sealed record CustomArea(string File, string Zone, string Variant, stri
     internal IEnumerable<JsonObject> List(string key) => (BossChanges.FindIn(Json, key) as JsonArray ?? []).OfType<JsonObject>();
 
 }
+
+/// <summary>
+/// A vendor or trainer of the Customs tab (Niduus, 2026-10-23: "custom Vendors/Trainer in the Custom section"), one
+/// entry of spiraldb-extra/Customs/VendorsTrainers.json. The server's CustomNpcs.cs reads the file, and ZoneObjects.cs
+/// watches it and puts each NPC in its zone at once.
+/// </summary>
+internal sealed class CustomNpc {
+
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public string Kind { get; set; } = VENDOR;
+    public ulong TemplateID { get; set; } = DEFAULT_LOOK;
+    public string Zone { get; set; } = "";
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Z { get; set; }
+    public double Yaw { get; set; }
+    public string Window { get; set; } = AUTOMATIC;
+    public List<CustomNpcEntry> Items { get; set; } = [];
+    public List<CustomNpcEntry> Spells { get; set; } = [];
+
+    internal const string VENDOR = "Vendor";
+    internal const string TRAINER = "Trainer";
+    internal const string AUTOMATIC = "Automatic";
+
+    /// <summary>Elmer Meadowgrass, a Wizard City shopkeeper (the house sellers' look).</summary>
+    internal const ulong DEFAULT_LOOK = 136831;
+
+    /// <summary>The shop windows, as the file names them, and in plain words.</summary>
+    internal static readonly (string Value, string Label)[] WINDOWS = [
+        (AUTOMATIC, "Pick it from the items (equipment shop for a mix)"),
+        ("Equipment", "Equipment shop (clothes, wands, most things)"),
+        ("Furniture", "Furniture shop"),
+        ("Snack", "Pet snack shop"),
+        ("Reagent", "Reagent shop"),
+        ("Jewel", "Jewel shop"),
+        ("Recipe", "Recipe shop"),
+    ];
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal bool IsTrainer => string.Equals(Kind, TRAINER, StringComparison.OrdinalIgnoreCase);
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal string Shown => Name.Trim().Length > 0 ? Name.Trim() : (IsTrainer ? $"Trainer {Id}" : $"Vendor {Id}");
+
+    internal CustomNpc Copy() {
+        var copy = (CustomNpc) MemberwiseClone();
+        copy.Items = [.. Items.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+        copy.Spells = [.. Spells.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+
+        return copy;
+    }
+
+}
+
+internal sealed class CustomNpcEntry {
+
+    public uint ID { get; set; }
+    public int Price { get; set; } = 1;
+
+}
+
+/// <summary>Reads and writes spiraldb-extra/Customs/VendorsTrainers.json.</summary>
+internal static class CustomNpcs {
+
+    internal const string FILE = "VendorsTrainers.json";
+
+    private static readonly JsonSerializerOptions s_options = new() {
+        WriteIndented = true, PropertyNameCaseInsensitive = true, AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip,
+    };
+
+    internal static List<CustomNpc> Load(string folder) {
+        var file = Path.Combine(folder, FILE);
+
+        return File.Exists(file) ? JsonSerializer.Deserialize<List<CustomNpc>>(File.ReadAllText(file), s_options) ?? [] : [];
+    }
+
+    /// <summary>The lowest number no vendor or trainer has (1, 2, 3...).</summary>
+    internal static int NextId(List<CustomNpc> npcs) {
+        var id = 1;
+        while (npcs.Any(n => n.Id == id)) {
+            id++;
+        }
+
+        return id;
+    }
+
+    /// <summary>Saves one NPC (a new one, or over the one with its number); null with an id deletes that one.</summary>
+    internal static void Set(string folder, int id, CustomNpc? npc) {
+        var npcs = Load(folder);
+        var at = npcs.FindIndex(n => n.Id == id);
+        if (npc is null) {
+            if (at >= 0) {
+                npcs.RemoveAt(at);
+            }
+        }
+        else if (at >= 0) {
+            npcs[at] = npc;
+        }
+        else {
+            npcs.Add(npc);
+        }
+
+        // Written beside the old file and then moved over it, so the server never reads half a file.
+        Directory.CreateDirectory(folder);
+        var file = Path.Combine(folder, FILE);
+        File.WriteAllText(file + ".saving", JsonSerializer.Serialize(npcs.OrderBy(n => n.Id).ToList(), s_options));
+        File.Move(file + ".saving", file, overwrite: true);
+    }
+
+}

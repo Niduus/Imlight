@@ -316,7 +316,14 @@ public class ZoneEntity(
     protected virtual void AutoAttachComponents() {
         var template = Template;
 
+        // A vendor or trainer of the Customs tab only borrows its template's look: it gets the shop or the trainer
+        // and none of the template's own services, quests or battle parts (CustomNpcs).
+        var customNpc = Imlight.CoreLib.Game.World.CustomNpcs.For(Info?.m_zoneTag);
         foreach (var (componentType, shouldAttachToEntity) in ZoneEntityComponentRegistry.GetRegisteredComponents()) {
+            if (customNpc is not null && !KeptForCustomNpc(componentType)) {
+                continue;
+            }
+
             // One component's ShouldAttachToEntity (or constructor) throwing must never abort the rest of
             // this entity's components or wedge the zone load. Activator wraps a constructor's error in a
             // TargetInvocationException; log the inner message and skip only that one component.
@@ -329,7 +336,23 @@ public class ZoneEntity(
                     Logger.Args(componentType.Name, template?.GetType().Name ?? "?", (ex.InnerException ?? ex).Message));
             }
         }
+
+        if (customNpc is not null) {
+            AddComponent(customNpc.IsTrainer ? typeof(InteractTrainerComponent) : typeof(InteractVendorComponent));
+            Logger.Information("Custom NPC {0} ({1}, {2}) spawned in {3} at {4}, {5}, {6} with look {7}{8}.",
+                Logger.Args(customNpc.Id, customNpc.Name, customNpc.IsTrainer ? "trainer" : "vendor", customNpc.Zone,
+                    customNpc.X, customNpc.Y, customNpc.Z, customNpc.TemplateID,
+                    Components.Keys.OfType<NpcComponent>().Any() ? "" : " (not an NPC template: no name over its head)"));
+        }
     }
+
+    // What a custom vendor or trainer keeps of its template's components: everything but the services, quests and
+    // battle parts (the shop or trainer it is given is added after).
+    private static bool KeptForCustomNpc(System.Type componentType)
+        => componentType == typeof(InteractServiceMementoComponent)
+           || !(componentType.Name.StartsWith("Interact", StringComparison.Ordinal)
+                || componentType.Name.StartsWith("Combat", StringComparison.Ordinal)
+                || componentType == typeof(BattleDropComponent));
 
     /// <summary>
     /// Spawns a creature entity actor as a child of this entity, used for combat minions. Mirrors

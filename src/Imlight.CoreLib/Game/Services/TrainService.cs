@@ -93,7 +93,7 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         var spellEntry = trainerComponent.SpellInventory[message.TrainingIndex];
 
         // In randomizer mode the trainer offered this wizard's swapped spell; teach that one.
-        var spellId = trainerComponent.IsTestTrainer
+        var spellId = trainerComponent.TeachesAsListed
             ? (uint) spellEntry.TemplateID
             : Randomizer.MapSpell(wizard, (uint) spellEntry.TemplateID);
         var spellTemplate = (SpellTemplate) CoreObjectFactory.GetCoreTemplate(spellId);
@@ -108,6 +108,11 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         // Determine if the wizard has enough training points to learn the spell.
         // Wizards that are of the same magic school as the spell they are training have a cost of 0.
         var spellCost = trainerComponent.CostFor(wizard, spellTemplate);
+        if (trainerComponent.IsCustom) {
+            Logger.Information("Custom trainer: {0} trains spell {1} (index {2}) for {3} of their {4} training points.",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, message.TrainingIndex, spellCost, wizard.MagicSchoolBehavior.TrainingPoints));
+        }
+
         if (wizard.MagicSchoolBehavior.TrainingPoints < spellCost) {
             Logger.Error("Wizard {0} attempted to train spell {1} but does not have enough training points.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId));

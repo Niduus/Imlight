@@ -85,6 +85,14 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     /// <summary>The price of everything this NPC sells, or null for the items' own prices.</summary>
     public int? FixedPrice { get; private set; }
 
+    // A vendor of the Customs tab (CustomNpcs): its own list, each item at its own price in gold.
+    private CustomNpcs.CustomNpc _custom;
+    private Dictionary<uint, int> _customPrices;
+
+    /// <summary>What an item costs at this NPC: a custom vendor's own price, the fixed price, or null for the item's own.</summary>
+    public int? PriceOf(uint templateId)
+        => _customPrices is not null && _customPrices.TryGetValue(templateId, out var price) ? price : FixedPrice;
+
     // A recipe shop's recipes by name (WizShoppingBehavior.m_recipeList): the recipe window lists these, not m_shopList.
     private List<ByteString> _recipeList = [];
 
@@ -99,6 +107,12 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         || HouseVendors.IsSellerNpc(goTemplate.m_templateID));
 
     public override void OnStart() {
+        if (CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
+            StartCustom(custom);
+
+            return;
+        }
+
         // Hao sells the snacks and a house seller its kind (HouseVendors), whatever the NPC sells elsewhere.
         if (HouseVendors.StockFor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag) is { } stock) {
             _inventory = ShopOrder.Alphabetical(stock.Items.Select(id => new GID((ulong) id)));
@@ -168,6 +182,42 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
     }
 
+    // A vendor of the Customs tab sells exactly its list, in the window its items belong in (or the one it names).
+    private void StartCustom(CustomNpcs.CustomNpc custom) {
+        _custom = custom;
+        _customPrices = custom.Items.ToDictionary(e => e.ID, e => e.Price);
+        // An ID that is not an item (or a recipe) is left out: the game's window has nothing to show for it.
+        var notItems = custom.Items.Where(e => CustomNpcs.TemplateOf(e.ID) is not (WizItemTemplate or RecipeTemplate)).Select(e => e.ID).ToList();
+        if (notItems.Count > 0) {
+            Logger.Warning("Custom vendor {0} ({1}): left out {2}, not items.", Logger.Args(custom.Id, custom.Name, string.Join(", ", notItems)));
+        }
+
+        _inventory = ShopOrder.Alphabetical(custom.Items.Where(e => !notItems.Contains(e.ID)).Select(e => new GID((ulong) e.ID)));
+        var (window, furniture) = CustomNpcs.WindowFor(custom);
+        _window = window;
+        _housingShop = furniture;
+        _furnitureShop = furniture ? 1 : window switch {
+            HouseVendors.ShopWindow.Reagent => 2,
+            HouseVendors.ShopWindow.Recipe => RECIPE_SHOP,
+            HouseVendors.ShopWindow.Jewel => 4,
+            HouseVendors.ShopWindow.Snack => 5,
+            _ => 0,
+        };
+        // The game picks the window from a real shop of the kind (the house sellers do the same); gold is the currency.
+        if (HouseVendors.ShopLookFor(window) is { } look) {
+            _shopTitle = string.IsNullOrWhiteSpace(look.m_shopTitle) ? _shopTitle : look.m_shopTitle;
+            _furnitureShop = look.m_furnitureShop != 0 ? look.m_furnitureShop : _furnitureShop;
+        }
+
+        // The recipe window lists its recipes by name.
+        if (window == HouseVendors.ShopWindow.Recipe) {
+            _recipeList = [.. custom.Items.Select(e => CustomNpcs.RecipeNameOf(e.ID)).Where(name => !string.IsNullOrEmpty(name)).Select(name => (ByteString) name)];
+        }
+
+        Logger.Information("Custom vendor {0} ({1}) in {2}: {3} items, {4} window{5}, shop kind {6}, title {7}.",
+            Logger.Args(custom.Id, custom.Name, custom.Zone, _inventory.Count, window, furniture ? " (furniture)" : "", _furnitureShop, _shopTitle));
+    }
+
     // `.shoptest` (Niduus, 2026-10-19): every shop opens with this shop type and menu option, to find what makes the
     // game open its reagent, snack and jewel windows instead of the robe shop window.
     internal static int? TestShopType;
@@ -219,6 +269,12 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        if (_custom is not null) {
+            Logger.Information("Custom vendor {0} ({1}) clicked by {2}: sending {3} items ({4}) in the {5} window, shop kind {6}.",
+                Logger.Args(_custom.Id, _custom.Name, playerCharacter?.PlayerNameBehavior?.GetWizardName(), _inventory?.Count ?? 0,
+                    string.Join(", ", _custom.Items.Select(e => $"{e.ID} for {e.Price} gold")), _window, TestShopType ?? _furnitureShop));
+        }
+
         SendShopOfferings(playerActor);
         SendPlayerIntoWizbang(playerObject.m_globalID);
         SendPlayerIntoState(playerObject.m_globalID);

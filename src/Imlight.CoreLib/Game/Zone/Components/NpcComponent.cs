@@ -91,7 +91,9 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         this.AggressiveFactor = _npcBehaviorTemplate.m_nAggressiveFactor;
         this.StartingHealth = _npcBehaviorTemplate.m_nStartingHealth;
 
-        this.IsMonster = _duelistBehaviorTemplate is not null;
+        // A custom vendor or trainer with a creature's look never starts a battle (CustomNpcs).
+        this.IsMonster = _duelistBehaviorTemplate is not null
+            && !Imlight.CoreLib.Game.World.CustomNpcs.IsCustomTag(entity.Info?.m_zoneTag);
         this.Proximity = _duelistBehaviorTemplate?.m_npcProximity ?? 0;
         
         // Try to parse the npcBehaviorTemplate.m_schoolOfFocus to a MagicSchool.
@@ -106,9 +108,10 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
 
         this.MagicSchool = parsedSchool;
         this.Level = _npcBehaviorTemplate.m_nLevel;
-        // A custom (Customs.cs) shows its own name; a trainer tome's trainer is named after the set trainer part it
-        // teaches.
-        this.NameOverride = Imlight.CoreLib.Game.Combat.Customs.NameOf(entity.ActiveGameObject?.m_globalID.Full ?? 0)
+        // A custom vendor or trainer (CustomNpcs) and a custom (Customs.cs) show their own name; a trainer tome's
+        // trainer is named after the set trainer part it teaches.
+        this.NameOverride = Imlight.CoreLib.Game.World.CustomNpcs.NameFor(entity.Info?.m_zoneTag)
+            ?? Imlight.CoreLib.Game.Combat.Customs.NameOf(entity.ActiveGameObject?.m_globalID.Full ?? 0)
             ?? Imlight.CoreLib.Game.World.HouseTrainers.NameFor(entity.Info?.m_zoneTag)
             ?? Imlight.CoreLib.Game.World.HouseVendors.NameFor(entity.Info?.m_zoneTag);
     }

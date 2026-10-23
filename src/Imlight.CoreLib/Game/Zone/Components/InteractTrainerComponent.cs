@@ -80,6 +80,20 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
+    /// <summary>
+    /// A trainer of the Customs tab (CustomNpcs): it teaches exactly its list, each spell at its own price in training
+    /// points, at any level and with no spell needed first, in sections of 50 as the test trainers do.
+    /// </summary>
+    public bool IsCustom => _custom is not null;
+
+    /// <summary>Whether the trainer teaches its spells as listed: the randomizer's swaps do not reach them.</summary>
+    public bool TeachesAsListed => IsTestTrainer || IsCustom;
+
+    private Imlight.CoreLib.Game.World.CustomNpcs.CustomNpc _custom;
+    private Dictionary<ulong, int> _customCosts = [];
+    // The last list logged for each wizard, so the once-a-second refresh does not fill the log.
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, string> _customLogged = new();
+
     internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall }
 
     /// <summary>
@@ -258,6 +272,21 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => s_testSpells.Value.TryGetValue(kind, out var spells) ? spells : [];
 
     public override void OnStart() {
+        if (Imlight.CoreLib.Game.World.CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
+            _custom = custom;
+            _customCosts = custom.Spells.ToDictionary(e => (ulong) e.ID, e => e.Price);
+            // An ID that is not a spell is left out here, so the list and its options keep the same indexes.
+            var notSpells = custom.Spells.Where(e => Imlight.CoreLib.Game.World.CustomNpcs.TemplateOf(e.ID) is not SpellTemplate).Select(e => e.ID).ToList();
+            SpellInventory = [.. custom.Spells.Where(e => !notSpells.Contains(e.ID))
+                .Select(e => new NPCSpellEntry { TemplateID = e.ID, RequiredSpellID = 0, Level = 1 })];
+            InitializeServiceBases();
+            Logger.Information("Custom trainer {0} ({1}) in {2}: {3} spells{4}.",
+                Logger.Args(custom.Id, custom.Name, custom.Zone, SpellInventory.Count,
+                    notSpells.Count == 0 ? "" : $", left out {string.Join(", ", notSpells)} (not spells)"));
+
+            return;
+        }
+
         if (Entity.Template is GameObjectTemplate testTrainer && TestTrainerKindOf(testTrainer) is { } kind) {
             IsTestTrainer = true;
             // A trainer tome holding a set trainer part teaches only that part.
@@ -294,7 +323,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// wizard doesn't know yet; walking away and back shows the next section.
     /// </summary>
     private IEnumerable<int> OfferedIndexes(Wizard wizard) {
-        if (!IsTestTrainer) {
+        if (!TeachesAsListed) {
             return Enumerable.Range(0, _serviceOptionBases.Count);
         }
 
@@ -322,7 +351,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
         // Closing the NPC dialog and walking back up should return to the shared service menu.
         _showingSpellOptions.Remove(wizard.CharId);
-        if (!IsTestTrainer) {
+        if (!TeachesAsListed) {
             return;
         }
 
@@ -336,7 +365,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (wizard is null) {
-            return IsTestTrainer ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
+            return TeachesAsListed ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }
 
         // If this trainer also completes an active quest, first offer one trainer choice. The client
@@ -359,7 +388,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         foreach (var i in OfferedIndexes(wizard)) {
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
             var trainerSpellId = (uint) SpellInventory[i].TemplateID;
-            var spellId = IsTestTrainer ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
+            var spellId = TeachesAsListed ? trainerSpellId : Randomizer.MapSpell(wizard, trainerSpellId);
             if (CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate spellTemplate) {
                 continue;
             }
@@ -436,7 +465,24 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             newServiceOptions.Add(newBase);
         }
 
+        if (IsCustom) {
+            LogCustomOffer(wizard, newServiceOptions);
+        }
+
         return newServiceOptions;
+    }
+
+    private void LogCustomOffer(Wizard wizard, List<ServiceOptionBase> offered) {
+        var list = string.Join(", ", offered.OfType<WizTrainingOption>()
+            .Select(o => $"{SpellInventory[o.m_trainingIndex].TemplateID} {(string) o.m_spellName} for {o.m_trainingCost}{(o.m_bCanTrain ? "" : " (can't yet)")}"));
+        if (_customLogged.TryGetValue(wizard.CharId, out var last) && last == list) {
+            return;
+        }
+
+        _customLogged[wizard.CharId] = list;
+        Logger.Information("Custom trainer {0} ({1}) offers {2}: {3} of its {4} spells (they have {5} training points): {6}",
+            Logger.Args(_custom.Id, _custom.Name, wizard.PlayerNameBehavior?.GetWizardName(), offered.Count, SpellInventory.Count,
+                wizard.MagicSchoolBehavior.TrainingPoints, list.Length > 0 ? list : "none (knows them all, or none was found)"));
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
@@ -462,7 +508,18 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// How many training points a spell costs this wizard: none for their own school or with FreeTraining, else one.
     /// </summary>
     internal int CostFor(Wizard wizard, SpellTemplate spellTemplate)
-        => IsTestTrainer ? 0 : TrainingCost(wizard, spellTemplate);
+        => IsCustom ? CustomCostOf(spellTemplate)
+         : IsTestTrainer ? 0 : TrainingCost(wizard, spellTemplate);
+
+    // A custom trainer's price for a spell, found by the spell's name (a spell template has no id of its own); 1 when
+    // it is not in the list.
+    private int CustomCostOf(SpellTemplate spellTemplate) {
+        string name = spellTemplate?.m_name;
+        var id = SpellInventory.Select(e => e.TemplateID)
+            .FirstOrDefault(t => CoreObjectFactory.GetCoreTemplate(t) is SpellTemplate listed && (string) listed.m_name == name);
+
+        return _customCosts.TryGetValue(id, out var cost) ? cost : 1;
+    }
 
     internal static int TrainingCost(Wizard wizard, SpellTemplate spellTemplate) {
         if (Randomizer.FreeTraining) {

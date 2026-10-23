@@ -37,7 +37,7 @@ namespace Imlight.Setup;
 /// malistaire I plan to make"). Custom mobs: a game creature with its own number, name, stats, deck, cheats and drops,
 /// which count only when it is brought in as that custom (.joinme, or a room set to it); the base creature never
 /// changes. Custom areas: the server's added zones and objects (spiraldb-extra/ZoneObjects), and which boss each room
-/// spawns.
+/// spawns. Vendors and trainers: shopkeepers and trainers of your own (ManagerWindow.CustomNpcs.cs).
 /// </summary>
 internal sealed partial class ManagerWindow {
 
@@ -97,6 +97,7 @@ internal sealed partial class ManagerWindow {
                     },
                 },
                 _customRows),
+            CustomNpcsCard(),
             CustomAreasCard(),
             _customHeaderCard,
             _customsEditorHost);
@@ -107,6 +108,7 @@ internal sealed partial class ManagerWindow {
         // The editor may have moved to the Bosses tab since.
         _customHeaderCard.IsVisible = _bossEditor.Parent == _customsEditorHost && _editCustom is not null;
         RenderCustoms();
+        RenderNpcs();
         RenderAreas();
     }
 

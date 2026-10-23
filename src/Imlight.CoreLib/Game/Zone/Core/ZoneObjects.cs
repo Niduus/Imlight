@@ -64,7 +64,11 @@
  * variant's file) and an object name it holds X, Y, Z, Yaw and Scale over the file's, a TemplateID to swap the object
  * (or, with a name the file does not have, to add one), and Removed to leave the object out.
  *
- * Both are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
+ * Vendors and trainers (Niduus, 2026-10-23): the Customs tab's own shopkeepers and trainers, in
+ * spiraldb-extra/Customs/VendorsTrainers.json (CustomNpcs.cs), are added here as objects of their zone too, each named
+ * by its zone tag (CustomNpc_<Id>). An NPC whose name, kind or lists changed goes and comes back as the new one.
+ *
+ * All three are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
  * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
  * object appears and a removed one goes. Encounters, exits, distinct spawners and spawn swaps count from their next
  * use, and battle circles (CombatSigil) at once. Creatures and Remove count from the next time the zone loads.
@@ -117,6 +121,8 @@ internal static class ZoneObjects {
         public string StartState { get; set; } = "";
         public ZoneSigil Sigil { get; set; }
         public ZoneCombatSigil CombatSigil { get; set; }
+        // A custom vendor or trainer's name, kind and lists (CustomNpcs.SignatureOf); null for any other object.
+        internal string CustomNpc { get; set; }
     }
 
     internal sealed class ZoneSigil {
@@ -285,6 +291,7 @@ internal static class ZoneObjects {
     private static Dictionary<string, ZoneObjectFile> s_loaded;
     private static FileSystemWatcher s_watcher;
     private static FileSystemWatcher s_placementsWatcher;
+    private static FileSystemWatcher s_customNpcsWatcher;
     private static Timer s_reloadTimer;
 
     // The loaded copies of zones that use these files, so a change reaches them.
@@ -404,6 +411,7 @@ internal static class ZoneObjects {
             var placements = Path.Combine(SpiralDB.ExtraPath, PLACEMENTS_FOLDER);
             Directory.CreateDirectory(placements);
             s_placementsWatcher = MakeWatcher(placements, PLACEMENTS_FILE);
+            s_customNpcsWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomNpcs.FILE);
         }
         catch (Exception e) {
             Logger.Warning("Zone objects: changes to the files will need a server restart ({0}).", Logger.Args(e.Message));
@@ -495,7 +503,8 @@ internal static class ZoneObjects {
             // duel style): it goes and comes back as the new one.
             if (was.Object.TemplateID != obj.TemplateID || (was.Object.Sigil is null) != (obj.Sigil is null)
                 || (was.Object.CombatSigil is null) != (obj.CombatSigil is null)
-                || JsonSerializer.Serialize(was.Object.CombatSigil) != JsonSerializer.Serialize(obj.CombatSigil)) {
+                || JsonSerializer.Serialize(was.Object.CombatSigil) != JsonSerializer.Serialize(obj.CombatSigil)
+                || was.Object.CustomNpc != obj.CustomNpc) {
                 change.Removed.Add(id);
                 change.Added.Add(InfoFor(zonePath, fileVariant, obj));
             }
@@ -746,6 +755,7 @@ internal static class ZoneObjects {
         }
 
         ApplyPlacements(zones, off);
+        AddCustomNpcs(zones);
         Logger.Information("Zone objects loaded from {0} files ({1} objects, {2} creatures).",
             Logger.Args(zones.Count, zones.Values.Sum(z => z.Objects.Count), zones.Values.Sum(z => z.Creatures.Count)));
 
@@ -828,6 +838,28 @@ internal static class ZoneObjects {
                 obj.Yaw = placement.Yaw ?? obj.Yaw;
                 obj.Scale = placement.Scale is > 0 ? placement.Scale.Value : obj.Scale;
             }
+        }
+    }
+
+    // The Customs tab's vendors and trainers, each an object of its zone (in the file every copy of the zone uses).
+    private static void AddCustomNpcs(Dictionary<string, ZoneObjectFile> zones) {
+        foreach (var npc in Imlight.CoreLib.Game.World.CustomNpcs.Load()) {
+            if (!zones.TryGetValue(KeyOf(npc.Zone, ""), out var file)) {
+                file = new ZoneObjectFile { Zone = npc.Zone };
+                zones[KeyOf(npc.Zone, "")] = file;
+            }
+
+            if (file.Objects.Any(o => string.Equals(o.Name, npc.Tag, StringComparison.OrdinalIgnoreCase))) {
+                Logger.Warning("Custom NPC {0}: {1} already has an object called {2}; skipped.", Logger.Args(npc.Id, npc.Zone, npc.Tag));
+
+                continue;
+            }
+
+            file.Objects.Add(new ZoneObject {
+                Name = npc.Tag, Notes = "A vendor or trainer of the Customs tab.", TemplateID = npc.TemplateID,
+                X = npc.X, Y = npc.Y, Z = npc.Z, Yaw = npc.Yaw,
+                CustomNpc = Imlight.CoreLib.Game.World.CustomNpcs.SignatureOf(npc),
+            });
         }
     }
 

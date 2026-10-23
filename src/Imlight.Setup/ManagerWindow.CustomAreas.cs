@@ -1828,6 +1828,13 @@ internal sealed partial class ManagerWindow {
     // Where the wizard on this PC stands and faces (the one who moved last if several, or anyone if no game on this PC has moved),
     // from the server's logs/positions.txt (the Play tab's Position).
     private (string Who, string X, string Y, string Z, string Yaw) MyPosition(string zone) {
+        var parts = MyPositionLine(zone);
+
+        return (parts[0], parts[2], parts[3], parts[4], parts[5]);
+    }
+
+    // The position file's line for that wizard: name, zone, X, Y, Z, facing, time and where.
+    private string[] MyPositionLine(string zone) {
         string[] lines;
         try {
             lines = File.Exists(PositionFile) ? File.ReadAllLines(PositionFile) : [];
@@ -1843,7 +1850,7 @@ internal sealed partial class ManagerWindow {
             throw new PanelException($"{parts[0]} is in {parts[1]}, not {zone}. Go there in the game and walk a step.");
         }
 
-        return (parts[0], parts[2], parts[3], parts[4], parts[5]);
+        return parts;
     }
 
     private JsonObject SafePlacements() {

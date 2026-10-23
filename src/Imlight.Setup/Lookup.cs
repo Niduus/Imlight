@@ -243,6 +243,15 @@ internal sealed class Lookup {
 
     internal int Count => _entries.Count;
 
+    private Dictionary<(string, string), LookupEntry>? _byId;
+
+    /// <summary>The entry of a kind (Item, Spell, Creature, NPC) with this ID, or null.</summary>
+    internal LookupEntry? ById(string kind, string id) {
+        _byId ??= _entries.Where(e => e.Id.Length > 0).GroupBy(e => (e.Kind, e.Id)).ToDictionary(g => g.Key, g => g.First());
+
+        return _byId.TryGetValue((kind, id), out var entry) ? entry : null;
+    }
+
     /// <summary>
     /// Reads the commands and the lists the server wrote to its ID lookup folder.
     /// </summary>
