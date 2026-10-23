@@ -119,6 +119,8 @@ public static class IdCatalog {
         }
 
         _ = Task.Run(WriteZonesAndQuests);
+        // The Customs tab's vendor and trainer presets, worked out from the game files each boot.
+        _ = Task.Run(() => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
         _ = Task.Run(() => {
             try {
                 if (TryLoadFromDisk()) {

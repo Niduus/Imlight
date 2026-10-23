@@ -1,0 +1,1062 @@
+{
+ "Notes": "The spells each school's trainers teach (section 1) and the ones other schools' trainers teach that school's wizards (section 2), from the 'All <School> Spells' pages Niduus supplied (Niduus, 2026-10-23). Shown is the card's name in the game, School the card's school when the page names one, Template the spell template the server prefers when a trainer of the game does not teach one of that name. The server's CustomNpcPresets.cs reads it.",
+ "Trainers": {
+  "Balance": [
+   {
+    "Shown": "Scarab",
+    "Template": "Scarab"
+   },
+   {
+    "Shown": "Scorpion",
+    "Template": "Scorpion"
+   },
+   {
+    "Shown": "Weakness",
+    "Template": "Weakness"
+   },
+   {
+    "Shown": "Locust Swarm",
+    "Template": "Locust Swarm"
+   },
+   {
+    "Shown": "Sandstorm",
+    "Template": "Sandstorm"
+   },
+   {
+    "Shown": "Elemental Golem",
+    "Template": "SteelGolemBalance_Trainable"
+   },
+   {
+    "Shown": "Gearhead Destroyer",
+    "Template": "GearheadDestroyer_Trainable"
+   },
+   {
+    "Shown": "Balance of Power",
+    "Template": "Balance of Power"
+   },
+   {
+    "Shown": "Spectral Blast",
+    "Template": "Spectral Blast"
+   },
+   {
+    "Shown": "Donate Power",
+    "Template": "Donate Power"
+   },
+   {
+    "Shown": "Blade Dilution",
+    "Template": "Blade Dilution"
+   },
+   {
+    "Shown": "Trap Dilution",
+    "Template": "Trap Dilution"
+   },
+   {
+    "Shown": "Iron Curse",
+    "Template": "SteelGiant_Trainable"
+   },
+   {
+    "Shown": "Hydra",
+    "Template": "Hydra"
+   },
+   {
+    "Shown": "Obsidian Colossus",
+    "Template": "ObsidianColossus_Trainable"
+   },
+   {
+    "Shown": "Righting the Scales",
+    "Template": "Ramp_Balance_01A"
+   },
+   {
+    "Shown": "Eye of Vigilance",
+    "Template": "Ramp_Balance_01B"
+   },
+   {
+    "Shown": "Power Nova",
+    "Template": "Power Nova"
+   },
+   {
+    "Shown": "Ra",
+    "Template": "Ra"
+   },
+   {
+    "Shown": "Jinn's Fortune",
+    "Template": "Ramp_Balance_02"
+   },
+   {
+    "Shown": "Chimera",
+    "Template": "Chimera"
+   },
+   {
+    "Shown": "Duststorm Jinn",
+    "Template": "Gambit_Balance_02"
+   },
+   {
+    "Shown": "Courageous Charge",
+    "Template": "Courageous Charge"
+   },
+   {
+    "Shown": "Spinning Scythe",
+    "Template": "Spinning Scythe"
+   },
+   {
+    "Shown": "Sabertooth",
+    "Template": "Sabertooth"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Balance",
+    "Template": "King Artorius - Balance"
+   },
+   {
+    "Shown": "Oni's Shadow",
+    "Template": "Ramp_Balance_03"
+   },
+   {
+    "Shown": "Tribunal Oni",
+    "Template": "Gambit_Balance_03"
+   },
+   {
+    "Shown": "Elemental Trap",
+    "Template": "Tri Trap"
+   },
+   {
+    "Shown": "Elemental Weakness",
+    "Template": "Elemental Weakness"
+   },
+   {
+    "Shown": "Spirit Weakness",
+    "Template": "Spirit Weakness"
+   },
+   {
+    "Shown": "Spirit Trap",
+    "Template": "Spirit Trap"
+   },
+   {
+    "Shown": "Reshuffle",
+    "Template": "Reshuffle"
+   },
+   {
+    "Shown": "Unbalance",
+    "Template": "Unbalance"
+   },
+   {
+    "Shown": "Elemental Blade",
+    "Template": "Tri Blade"
+   },
+   {
+    "Shown": "Spirit Blade",
+    "Template": "Spirit Blade"
+   },
+   {
+    "Shown": "Purloin Health",
+    "Template": "Sap Health"
+   },
+   {
+    "Shown": "Elemental Spear",
+    "Template": "Tri Spear"
+   },
+   {
+    "Shown": "Spirit Spear",
+    "Template": "Spirit Spear"
+   },
+   {
+    "Shown": "Counterforce",
+    "Template": "Counterforce"
+   },
+   {
+    "Shown": "Precision",
+    "Template": "Precision"
+   }
+  ],
+  "Death": [
+   {
+    "Shown": "Dark Sprite",
+    "Template": "Dark Sprite"
+   },
+   {
+    "Shown": "Ghoul",
+    "Template": "Ghoul"
+   },
+   {
+    "Shown": "Dream Shield",
+    "Template": "Dream Shield"
+   },
+   {
+    "Shown": "Banshee",
+    "Template": "Banshee"
+   },
+   {
+    "Shown": "Vampire",
+    "Template": "Vampire"
+   },
+   {
+    "Shown": "Dream Golem",
+    "Template": "SteelGolemDeath_Trainable"
+   },
+   {
+    "Shown": "Feint",
+    "Template": "Feint"
+   },
+   {
+    "Shown": "Skeletal Pirate",
+    "Template": "Skeletal Pirate"
+   },
+   {
+    "Shown": "Doom and Gloom",
+    "Template": "Doom and Gloom"
+   },
+   {
+    "Shown": "Deadzone",
+    "Template": "DeathGlobal_Deadzone"
+   },
+   {
+    "Shown": "Crimson Phantom",
+    "Template": "GhostTouchRed_Trainable"
+   },
+   {
+    "Shown": "Wraith",
+    "Template": "Wraith"
+   },
+   {
+    "Shown": "Monster Mash",
+    "Template": "MonsterMash_Trainable"
+   },
+   {
+    "Shown": "Putrefaction",
+    "Template": "Ramp_Death_01A"
+   },
+   {
+    "Shown": "Contagion",
+    "Template": "Ramp_Death_01B"
+   },
+   {
+    "Shown": "Scarecrow",
+    "Template": "Scarecrow"
+   },
+   {
+    "Shown": "Skeletal Dragon",
+    "Template": "Skeletal Dragon"
+   },
+   {
+    "Shown": "Jinn's Larceny",
+    "Template": "Ramp_Death_02"
+   },
+   {
+    "Shown": "Dr. Von's Monster",
+    "Template": "Katzenstein's Monster"
+   },
+   {
+    "Shown": "Macabre Jinn",
+    "Template": "Gambit_Death_02"
+   },
+   {
+    "Shown": "Avenging Fossil",
+    "Template": "Avenging Fossil"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Death",
+    "Template": "King Artorius - Death"
+   },
+   {
+    "Shown": "Oni's Morbidity",
+    "Template": "Ramp_Death_03"
+   },
+   {
+    "Shown": "Doom Oni",
+    "Template": "Gambit_Death_03"
+   },
+   {
+    "Shown": "Infection",
+    "Template": "Infection"
+   },
+   {
+    "Shown": "Threefold Fever",
+    "Template": "Threefold Fever"
+   },
+   {
+    "Shown": "Death Shield",
+    "Template": "Death Shield"
+   },
+   {
+    "Shown": "Death Weakness",
+    "Template": "Death Weakness"
+   },
+   {
+    "Shown": "Pacify",
+    "Template": "Pacify"
+   },
+   {
+    "Shown": "Strangle",
+    "Template": "Strangle"
+   },
+   {
+    "Shown": "Steal Health",
+    "Template": "Steal Health"
+   },
+   {
+    "Shown": "Mega Pacify",
+    "Template": "Mega Pacify"
+   },
+   {
+    "Shown": "Mass Death Prism",
+    "Template": "Mass Death Prism"
+   },
+   {
+    "Shown": "Deathspear",
+    "Template": "Deathspear"
+   },
+   {
+    "Shown": "Age of Reckoning",
+    "Template": "Age of Reckoning"
+   },
+   {
+    "Shown": "Death Trap",
+    "Template": "Death Trap"
+   }
+  ],
+  "Fire": [
+   {
+    "Shown": "Fire Cat",
+    "Template": "Fire Cat"
+   },
+   {
+    "Shown": "Fire Elf",
+    "Template": "Fire Elf"
+   },
+   {
+    "Shown": "Glacial Shield",
+    "Template": "Glacial Shield"
+   },
+   {
+    "Shown": "Sunbird",
+    "Template": "Sunbird"
+   },
+   {
+    "Shown": "Fire Trap",
+    "Template": "Fire Trap"
+   },
+   {
+    "Shown": "Glacial Golem",
+    "Template": "SteelGolemFire_Trainable"
+   },
+   {
+    "Shown": "Meteor Strike",
+    "Template": "Meteor Strike"
+   },
+   {
+    "Shown": "Immolate",
+    "Template": "Immolate"
+   },
+   {
+    "Shown": "Wyldfire",
+    "Template": "Wyldfire"
+   },
+   {
+    "Shown": "Phoenix",
+    "Template": "Phoenix"
+   },
+   {
+    "Shown": "Naphtha Scarab",
+    "Template": "FrostBeetleFire_Trainable"
+   },
+   {
+    "Shown": "Helephant",
+    "Template": "Helephant"
+   },
+   {
+    "Shown": "Inferno Salamander",
+    "Template": "InfernoSalamander_Trainable"
+   },
+   {
+    "Shown": "Meltdown",
+    "Template": "Ramp_Fire_01A"
+   },
+   {
+    "Shown": "Backfire",
+    "Template": "Ramp_Fire_01B"
+   },
+   {
+    "Shown": "Fire Dragon",
+    "Template": "Fire Dragon"
+   },
+   {
+    "Shown": "Efreet",
+    "Template": "Efreet"
+   },
+   {
+    "Shown": "Jinn's Reversal",
+    "Template": "Ramp_Fire_02"
+   },
+   {
+    "Shown": "Rain of Fire",
+    "Template": "Rain of Fire"
+   },
+   {
+    "Shown": "Caldera Jinn",
+    "Template": "Gambit_Fire_02"
+   },
+   {
+    "Shown": "Sun Serpent",
+    "Template": "Sun Serpent"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Fire",
+    "Template": "King Artorius - Fire"
+   },
+   {
+    "Shown": "Oni's Forge",
+    "Template": "Ramp_Fire_03"
+   },
+   {
+    "Shown": "Infernal Oni",
+    "Template": "Gambit_Fire_03"
+   },
+   {
+    "Shown": "Fire Shield",
+    "Template": "Fire Shield"
+   },
+   {
+    "Shown": "Fire Weakness",
+    "Template": "Fire Weakness"
+   },
+   {
+    "Shown": "Tranquilize",
+    "Template": "Tranquilize"
+   },
+   {
+    "Shown": "Quench",
+    "Template": "Quench"
+   },
+   {
+    "Shown": "Take Power",
+    "Template": "Take Power"
+   },
+   {
+    "Shown": "Mega Tranquilize",
+    "Template": "Mega Tranquilize"
+   },
+   {
+    "Shown": "Mass Fire Prism",
+    "Template": "Mass Fire Prism"
+   },
+   {
+    "Shown": "Firespear",
+    "Template": "Firespear"
+   },
+   {
+    "Shown": "Combustion",
+    "Template": "Combustion"
+   },
+   {
+    "Shown": "Link",
+    "Template": "Link"
+   }
+  ],
+  "Ice": [
+   {
+    "Shown": "Frost Beetle",
+    "Template": "Frost Beetle"
+   },
+   {
+    "Shown": "Snow Serpent",
+    "Template": "Snow Serpent"
+   },
+   {
+    "Shown": "Volcanic Shield",
+    "Template": "Volcanic Shield"
+   },
+   {
+    "Shown": "Evil Snowman",
+    "Template": "Evil Snowman"
+   },
+   {
+    "Shown": "Tower Shield",
+    "Template": "Tower Shield"
+   },
+   {
+    "Shown": "Volcanic Golem",
+    "Template": "SteelGolemIce_Trainable"
+   },
+   {
+    "Shown": "Ice Wyvern",
+    "Template": "Ice Wyvern"
+   },
+   {
+    "Shown": "Blizzard",
+    "Template": "Blizzard"
+   },
+   {
+    "Shown": "Balefrost",
+    "Template": "Balefrost"
+   },
+   {
+    "Shown": "Blight Hound",
+    "Template": "HeckHoundIce_Trainable"
+   },
+   {
+    "Shown": "Thieving Dragon",
+    "Template": "3PFrostDragon_Trainable"
+   },
+   {
+    "Shown": "Colossus",
+    "Template": "Colossus"
+   },
+   {
+    "Shown": "Frostfeather",
+    "Template": "SnowBird_Trainable"
+   },
+   {
+    "Shown": "Wall of Blades",
+    "Template": "Ramp_Ice_01A"
+   },
+   {
+    "Shown": "Glacial Fortress",
+    "Template": "Ramp_Ice_01B"
+   },
+   {
+    "Shown": "Frost Giant",
+    "Template": "Frost Giant"
+   },
+   {
+    "Shown": "Snow Angel",
+    "Template": "Snow Angel"
+   },
+   {
+    "Shown": "Jinn's Vexation",
+    "Template": "Ramp_Ice_02"
+   },
+   {
+    "Shown": "Woolly Mammoth",
+    "Template": "Woolly Mammoth"
+   },
+   {
+    "Shown": "Iceburn Jinn",
+    "Template": "Gambit_Ice_02"
+   },
+   {
+    "Shown": "Impair",
+    "Template": "Impair"
+   },
+   {
+    "Shown": "Lord of Winter",
+    "Template": "Lord of Winter"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Ice",
+    "Template": "King Artorius - Ice"
+   },
+   {
+    "Shown": "Oni's Destruction",
+    "Template": "Ramp_Ice_03"
+   },
+   {
+    "Shown": "Everwinter Oni",
+    "Template": "Gambit_Ice_03"
+   },
+   {
+    "Shown": "Stun Block",
+    "Template": "Stun Block"
+   },
+   {
+    "Shown": "Snow Shield",
+    "Template": "Snow Shield"
+   },
+   {
+    "Shown": "Ice Weakness",
+    "Template": "Ice Weakness"
+   },
+   {
+    "Shown": "Distract",
+    "Template": "Distract"
+   },
+   {
+    "Shown": "Taunt",
+    "Template": "Taunt"
+   },
+   {
+    "Shown": "Melt",
+    "Template": "Melt"
+   },
+   {
+    "Shown": "Draw Health",
+    "Template": "Draw Health"
+   },
+   {
+    "Shown": "Mega Distract",
+    "Template": "Mega Distract"
+   },
+   {
+    "Shown": "Mega Taunt",
+    "Template": "Mega Taunt"
+   },
+   {
+    "Shown": "Mass Ice Prism",
+    "Template": "Mass Ice Prism"
+   },
+   {
+    "Shown": "Icespear",
+    "Template": "Icespear"
+   },
+   {
+    "Shown": "Katabatic Wind",
+    "Template": "Katabatic Wind"
+   },
+   {
+    "Shown": "Ice Trap",
+    "Template": "Ice Trap"
+   }
+  ],
+  "Life": [
+   {
+    "Shown": "Imp",
+    "Template": "Imp"
+   },
+   {
+    "Shown": "Leprechaun",
+    "Template": "Leprechaun"
+   },
+   {
+    "Shown": "Legend Shield",
+    "Template": "Legend Shield"
+   },
+   {
+    "Shown": "Sprite",
+    "Template": "Sprite"
+   },
+   {
+    "Shown": "Nature's Wrath",
+    "Template": "Nature's Wrath"
+   },
+   {
+    "Shown": "Spirit Armor",
+    "Template": "Spirit Armor"
+   },
+   {
+    "Shown": "Legend Golem",
+    "Template": "SteelGolemLife_Trainable"
+   },
+   {
+    "Shown": "Seraph",
+    "Template": "Seraph"
+   },
+   {
+    "Shown": "Satyr",
+    "Template": "Satyr"
+   },
+   {
+    "Shown": "Hunting Wyrm",
+    "Template": "WyrmHunter_Trainable"
+   },
+   {
+    "Shown": "Regenerate",
+    "Template": "Regenerate"
+   },
+   {
+    "Shown": "Earth Walker",
+    "Template": "Earth Walker"
+   },
+   {
+    "Shown": "Centaur",
+    "Template": "Centaur"
+   },
+   {
+    "Shown": "Sanctuary",
+    "Template": "Sanctuary"
+   },
+   {
+    "Shown": "Circle of Thorns",
+    "Template": "LifeGlobal_CircleOfThorns"
+   },
+   {
+    "Shown": "Infestation",
+    "Template": "SpiderBrown_Trainable"
+   },
+   {
+    "Shown": "Sprite Swarm",
+    "Template": "Sprite Swarm"
+   },
+   {
+    "Shown": "Tranquility",
+    "Template": "Ramp_Life_01A"
+   },
+   {
+    "Shown": "Meditation",
+    "Template": "Ramp_Life_01B"
+   },
+   {
+    "Shown": "Forest Lord",
+    "Template": "Forest Lord"
+   },
+   {
+    "Shown": "Rebirth",
+    "Template": "Rebirth"
+   },
+   {
+    "Shown": "Jinn's Affliction",
+    "Template": "Ramp_Life_02"
+   },
+   {
+    "Shown": "Verdurous Jinn",
+    "Template": "Gambit_Life_02"
+   },
+   {
+    "Shown": "Gnomes!",
+    "Template": "Gnomes"
+   },
+   {
+    "Shown": "Spinysaur",
+    "Template": "Spinysaur"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Life",
+    "Template": "King Artorius - Life"
+   },
+   {
+    "Shown": "Oni's Naturalism",
+    "Template": "Ramp_Life_03"
+   },
+   {
+    "Shown": "Primal Oni",
+    "Template": "Gambit_Life_03"
+   },
+   {
+    "Shown": "Life Shield",
+    "Template": "Life Shield"
+   },
+   {
+    "Shown": "Life Weakness",
+    "Template": "Life Weakness"
+   },
+   {
+    "Shown": "Life Trap",
+    "Template": "Life Trap"
+   },
+   {
+    "Shown": "Calm",
+    "Template": "Calm"
+   },
+   {
+    "Shown": "Entangle",
+    "Template": "Entangle"
+   },
+   {
+    "Shown": "Drain Health",
+    "Template": "Drain Health"
+   },
+   {
+    "Shown": "Mega Calm",
+    "Template": "Mega Calm"
+   },
+   {
+    "Shown": "Mass Life Prism",
+    "Template": "Mass Life Prism"
+   },
+   {
+    "Shown": "Lifespear",
+    "Template": "Lifespear"
+   },
+   {
+    "Shown": "Namaste",
+    "Template": "Namaste"
+   }
+  ],
+  "Myth": [
+   {
+    "Shown": "Blood Bat",
+    "Template": "Bloodbat"
+   },
+   {
+    "Shown": "Troll",
+    "Template": "Troll"
+   },
+   {
+    "Shown": "Myth Trap",
+    "Template": "Myth Trap"
+   },
+   {
+    "Shown": "Cyclops",
+    "Template": "Cyclops"
+   },
+   {
+    "Shown": "Ether Shield",
+    "Template": "Ether Shield"
+   },
+   {
+    "Shown": "Ether Golem",
+    "Template": "SteelGolemMyth_Trainable"
+   },
+   {
+    "Shown": "Humongofrog",
+    "Template": "Humongofrog"
+   },
+   {
+    "Shown": "Time of Legend",
+    "Template": "Blood Moon"
+   },
+   {
+    "Shown": "Minotaur",
+    "Template": "Minotaur"
+   },
+   {
+    "Shown": "Stone Colossus",
+    "Template": "ColossusStone_Trainable"
+   },
+   {
+    "Shown": "Vermin Virtuoso",
+    "Template": "RatMagicianWhite_Trainable"
+   },
+   {
+    "Shown": "Earthquake",
+    "Template": "Earthquake"
+   },
+   {
+    "Shown": "Delusion",
+    "Template": "Ramp_Myth_01A"
+   },
+   {
+    "Shown": "Betrayal",
+    "Template": "Ramp_Myth_01B"
+   },
+   {
+    "Shown": "Orthrus",
+    "Template": "Orthrus"
+   },
+   {
+    "Shown": "Medusa",
+    "Template": "Medusa"
+   },
+   {
+    "Shown": "Jinn's Defense",
+    "Template": "Ramp_Myth_02"
+   },
+   {
+    "Shown": "Basilisk",
+    "Template": "Basilisk"
+   },
+   {
+    "Shown": "Phantastic Jinn",
+    "Template": "Gambit_Myth_02"
+   },
+   {
+    "Shown": "Purge",
+    "Template": "Purge"
+   },
+   {
+    "Shown": "Celestial Calendar",
+    "Template": "Celestial Calendar"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Myth",
+    "Template": "King Artorius - Myth"
+   },
+   {
+    "Shown": "Oni's Projection",
+    "Template": "Ramp_Myth_03"
+   },
+   {
+    "Shown": "Trickster Oni",
+    "Template": "Gambit_Myth_03"
+   },
+   {
+    "Shown": "Myth Shield",
+    "Template": "Myth Shield"
+   },
+   {
+    "Shown": "Myth Weakness",
+    "Template": "Myth Weakness"
+   },
+   {
+    "Shown": "Shield Minion",
+    "Template": "Shield Minion"
+   },
+   {
+    "Shown": "Subdue",
+    "Template": "Subdue"
+   },
+   {
+    "Shown": "Buff Minion",
+    "Template": "Buff Minion"
+   },
+   {
+    "Shown": "Minion Reshuffle",
+    "Template": "Minion Reshuffle"
+   },
+   {
+    "Shown": "Siphon Health",
+    "Template": "Siphon Health"
+   },
+   {
+    "Shown": "Vaporize",
+    "Template": "Vaporize"
+   },
+   {
+    "Shown": "Mend Minion",
+    "Template": "Mend Minion"
+   },
+   {
+    "Shown": "Draw Power",
+    "Template": "Draw Power"
+   },
+   {
+    "Shown": "Mega Subdue",
+    "Template": "Mega Subdue"
+   },
+   {
+    "Shown": "Mass Myth Prism",
+    "Template": "Mass Myth Prism"
+   },
+   {
+    "Shown": "Mythspear",
+    "Template": "Mythspear"
+   },
+   {
+    "Shown": "Saga of Heroes",
+    "Template": "Saga of Heroes"
+   },
+   {
+    "Shown": "Gobbler",
+    "Template": "Gobbler"
+   }
+  ],
+  "Storm": [
+   {
+    "Shown": "Thunder Snake",
+    "Template": "Thunder Snake"
+   },
+   {
+    "Shown": "Lightning Bats",
+    "Template": "Lightning Bats"
+   },
+   {
+    "Shown": "Thermic Shield",
+    "Template": "Thermic Shield"
+   },
+   {
+    "Shown": "Storm Shark",
+    "Template": "Storm Shark"
+   },
+   {
+    "Shown": "Storm Trap",
+    "Template": "Storm Trap"
+   },
+   {
+    "Shown": "Thermic Golem",
+    "Template": "SteelGolemStorm_Trainable"
+   },
+   {
+    "Shown": "Kraken",
+    "Template": "Kraken"
+   },
+   {
+    "Shown": "Windstorm",
+    "Template": "Windstorm"
+   },
+   {
+    "Shown": "Darkwind",
+    "Template": "Darkwind"
+   },
+   {
+    "Shown": "Stormzilla",
+    "Template": "Stormzilla"
+   },
+   {
+    "Shown": "Stormwing",
+    "Template": "PhoenixMutateStorm_Trainable"
+   },
+   {
+    "Shown": "Triton",
+    "Template": "Triton"
+   },
+   {
+    "Shown": "Thunderman",
+    "Template": "Storman_Trainable"
+   },
+   {
+    "Shown": "Reap the Whirlwind",
+    "Template": "Ramp_Storm_01A"
+   },
+   {
+    "Shown": "Energy Transfer",
+    "Template": "Ramp_Storm_01B"
+   },
+   {
+    "Shown": "Storm Lord",
+    "Template": "Storm Lord"
+   },
+   {
+    "Shown": "Leviathan",
+    "Template": "Leviathan"
+   },
+   {
+    "Shown": "Jinn's Restoration",
+    "Template": "Ramp_Storm_02"
+   },
+   {
+    "Shown": "Thundering Jinn",
+    "Template": "Gambit_Storm_02"
+   },
+   {
+    "Shown": "Sirens",
+    "Template": "Sirens"
+   },
+   {
+    "Shown": "Storm Owl",
+    "Template": "Storm Owl"
+   },
+   {
+    "Shown": "King Artorius",
+    "School": "Storm",
+    "Template": "King Artorius - Storm"
+   },
+   {
+    "Shown": "Oni's Attrition",
+    "Template": "Ramp_Storm_03"
+   },
+   {
+    "Shown": "Turmoil Oni",
+    "Template": "Gambit_Storm_03"
+   },
+   {
+    "Shown": "Storm Shield",
+    "Template": "Storm Shield"
+   },
+   {
+    "Shown": "Storm Weakness",
+    "Template": "Storm Weakness"
+   },
+   {
+    "Shown": "Soothe",
+    "Template": "Sooth"
+   },
+   {
+    "Shown": "Dissipate",
+    "Template": "Dissipate"
+   },
+   {
+    "Shown": "Purloin Power",
+    "Template": "Sap Power"
+   },
+   {
+    "Shown": "Mega Soothe",
+    "Template": "Mega Soothe"
+   },
+   {
+    "Shown": "Mass Storm Prism",
+    "Template": "Mass Storm Prism"
+   },
+   {
+    "Shown": "Stormspear",
+    "Template": "Stormspear"
+   },
+   {
+    "Shown": "Astraphobia",
+    "Template": "Astraphobia"
+   }
+  ]
+ }
+}

@@ -47,6 +47,11 @@ internal sealed partial class ManagerWindow {
     private CustomNpc? _npcEdit;
     private bool _npcListsLoading;
 
+    // The ready-made ones the server wrote (presets.json), read again when the tab is drawn.
+    private readonly ComboBox _npcPresets = new() { Width = 420 };
+    private readonly TextBlock _npcPresetHelp = new() { Foreground = MUTED, FontSize = 12, TextWrapping = TextWrapping.Wrap, MaxWidth = 640 };
+    private List<CustomNpcPreset> _npcPresetList = [];
+
     private Control CustomNpcsCard() => Fold("bag", "Customs", "Vendors and trainers",
         "Shopkeepers and trainers of your own. Stand where one should go in the game, then press Add.",
         WithHint(Sub("A vendor sells the items you pick for gold. A trainer teaches the spells you pick for training points."),
@@ -56,6 +61,7 @@ internal sealed partial class ManagerWindow {
             "spell list. Everything here counts at once; the server needs no restart."),
         Row(Action(Primary("Add a vendor here"), () => AddNpcAsync(trainer: false)),
             Action(Plain("Add a trainer here"), () => AddNpcAsync(trainer: true))),
+        PresetRow(),
         _npcCount,
         _npcRows,
         _npcEditorHost);
@@ -69,7 +75,56 @@ internal sealed partial class ManagerWindow {
         }
     }
 
+    // Niduus (2026-10-23): "make Presets for Trainers and Vendors". A preset fills a new one; it is then edited and
+    // moved like any other.
+    private Control PresetRow() {
+        _npcPresets.SelectionChanged += (_, _) => _npcPresetHelp.Text =
+            _npcPresets.SelectedIndex is var i and >= 0 && i < _npcPresetList.Count ? _npcPresetList[i].Help : "";
+
+        return new StackPanel {
+            Spacing = 2,
+            Children = {
+                Row(WithCenter(new TextBlock { Text = "Or a ready-made one:" }), _npcPresets,
+                    Action(Plain("Add this preset here"), AddPresetAsync)),
+                _npcPresetHelp,
+            },
+        };
+    }
+
+    private void LoadNpcPresets() {
+        var picked = _npcPresets.SelectedIndex >= 0 && _npcPresets.SelectedIndex < _npcPresetList.Count ? _npcPresetList[_npcPresets.SelectedIndex].Name : null;
+        try {
+            _npcPresetList = CustomNpcPreset.Load(_manager.IdLookupFolder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+            _npcPresetList = [];
+        }
+
+        _npcPresets.ItemsSource = _npcPresetList.Count > 0
+            ? _npcPresetList.Select(p => p.Label).ToList()
+            : new List<string> { "None yet: start the server once and it makes them" };
+        _npcPresets.SelectedIndex = Math.Max(0, _npcPresetList.FindIndex(p => p.Name == picked));
+    }
+
+    private async Task AddPresetAsync() {
+        if (_npcPresets.SelectedIndex < 0 || _npcPresets.SelectedIndex >= _npcPresetList.Count) {
+            throw new PanelException("There are no presets yet. Start the server once (it makes them from the game files), then come back to this tab.");
+        }
+
+        var preset = _npcPresetList[_npcPresets.SelectedIndex];
+        var (who, zone, x, y, z, yaw) = MySpot();
+        var npc = preset.ToNpc(CustomNpcs.NextId(SafeNpcs()));
+        (npc.Zone, npc.X, npc.Y, npc.Z, npc.Yaw) = (zone, x, y, z, yaw);
+        CustomNpcs.Set(_manager.CustomsFolder, npc.Id, npc);
+        RenderNpcs();
+        OpenNpc(npc);
+        Say($"Added {npc.Shown} where {who} stands in {ZoneDisplay(zone)}, with {(npc.IsTrainer ? Plural(npc.Spells.Count, "spell") : Plural(npc.Items.Count, "item"))} " +
+            "at 1 each. It is in the game now; change anything below and press Save.");
+        await Task.CompletedTask;
+    }
+
     private void RenderNpcs() {
+        LoadNpcPresets();
         // The names come from the Lookup tab's lists and the area pickers' templates; they are read once.
         if (_lookup is null && !_npcListsLoading) {
             _npcListsLoading = true;

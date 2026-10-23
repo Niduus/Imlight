@@ -332,6 +332,48 @@ internal sealed class CustomNpcEntry {
 
 }
 
+/// <summary>
+/// A ready-made vendor or trainer (Niduus, 2026-10-23: "make Presets for Trainers and Vendors"): the server works the
+/// presets out from the game files on each boot and writes them to its ID lookup folder (presets.json, from the
+/// server's CustomNpcPresets.cs). Adding one makes a new vendor or trainer with its lists, edited like any other.
+/// </summary>
+internal sealed class CustomNpcPreset {
+
+    public string Name { get; set; } = "";
+    public string Kind { get; set; } = CustomNpc.VENDOR;
+    public string Window { get; set; } = "";
+    public string Help { get; set; } = "";
+    public List<uint> Items { get; set; } = [];
+    public List<uint> Spells { get; set; } = [];
+
+    internal const string FILE = "presets.json";
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal bool IsTrainer => string.Equals(Kind, CustomNpc.TRAINER, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>How the preset shows in the list: its kind, name and how many it has.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal string Label => IsTrainer ? $"Trainer: {Name} ({Spells.Count} spells)" : $"Vendor: {Name} ({Items.Count} items)";
+
+    private static readonly JsonSerializerOptions s_read = new() { PropertyNameCaseInsensitive = true, AllowTrailingCommas = true };
+
+    /// <summary>The presets the server wrote, or none before it has run once.</summary>
+    internal static List<CustomNpcPreset> Load(string idLookupFolder) {
+        var file = Path.Combine(idLookupFolder, FILE);
+
+        return File.Exists(file) ? JsonSerializer.Deserialize<List<CustomNpcPreset>>(File.ReadAllText(file), s_read) ?? [] : [];
+    }
+
+    /// <summary>A new vendor or trainer made from the preset, every price 1.</summary>
+    internal CustomNpc ToNpc(int id) => new() {
+        Id = id, Name = Name, Kind = IsTrainer ? CustomNpc.TRAINER : CustomNpc.VENDOR,
+        Window = Window.Length > 0 ? Window : CustomNpc.AUTOMATIC,
+        Items = [.. Items.Select(i => new CustomNpcEntry { ID = i, Price = 1 })],
+        Spells = [.. Spells.Select(i => new CustomNpcEntry { ID = i, Price = 1 })],
+    };
+
+}
+
 /// <summary>Reads and writes spiraldb-extra/Customs/VendorsTrainers.json.</summary>
 internal static class CustomNpcs {
 

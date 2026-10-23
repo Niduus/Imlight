@@ -119,6 +119,12 @@ internal static class HouseVendors {
 
     internal static IReadOnlyList<Seller> Sellers => s_sellers;
 
+    /// <summary>The snacks Hao sells (the Customs tab's presets copy them).</summary>
+    internal static IReadOnlyList<uint> Snacks => s_snacks.Value;
+
+    /// <summary>Doctor Purreau, whose recipe shop sells the pet elixirs.</summary>
+    internal static uint PetElixirVendorId => s_petElixirVendorId;
+
     internal static Seller SellerForFurniture(uint templateId)
         => templateId == 0 ? null : s_sellers.FirstOrDefault(seller => seller.FurnitureId == templateId);
 
