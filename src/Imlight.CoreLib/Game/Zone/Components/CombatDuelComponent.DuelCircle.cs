@@ -232,6 +232,11 @@ internal sealed partial class CombatDuelComponent {
         _circleWaiting = true;
         _circleHealth.Clear();
 
+        // The game only takes wizards into a duel it already knows. A circle that came with the zone has none ("Received
+        // MSG_CombatAdd for Duel that does not exist" in the game's log), so the battle never showed. Same way as the
+        // participants after it, so it arrives first.
+        BroadcastDuel();
+
         foreach (var entry in roster) {
             _circleJoining.Remove(entry.CharId);
             ShowCircleJoiner(entry);
@@ -441,6 +446,10 @@ internal sealed partial class CombatDuelComponent {
         _circleWaiting = false;
         _circleJoining.Clear();
         EnactActionOnSubCircles(circle => circle.RemoveParticipant());
+
+        // The circle shows again with this duel: still listing its wizards, the game took them back into combat and hid
+        // their spellbook and buttons ("MSG_Duel received: and we are a part of it" right after the end).
+        Duel.m_flatParticipantList?.Clear();
     }
 
     // A duel circle is practice: a wizard leaves it with the health they stepped on with.
