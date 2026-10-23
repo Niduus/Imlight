@@ -80,9 +80,9 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
     private HouseState _house;
     private bool _loggedPetRelay;
-    // The countdown on a gauntlet, and how far from where it stands the player may be when it ends.
-    private static readonly float GauntletCountdownSeconds = ConfigurationManager.GetValue("Housing.GauntletCountdownSeconds", 5f);
-    private static readonly float GauntletLeaveRadius = ConfigurationManager.GetValue("Housing.GauntletLeaveRadius", 250f);
+    // The house revision the gauntlet sigil pads were last synced for, and whether this visit's move watch was logged.
+    private uint _gauntletRevision = uint.MaxValue;
+    private bool _loggedGauntletWatch;
     private AtticState _attic;
     private ulong _houseCharId;
 
@@ -122,6 +122,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseTrainers.SpawnAll(SessionActor.GetZoneActor(), house);
         HouseVendors.SpawnAll(SessionActor.GetZoneActor(), house);
         HouseBanks.SpawnAll(SessionActor.GetZoneActor(), house);
+        SyncGauntlets("a player entered");
 
         // The client compares this with its cached copy and asks for the blob only when they differ.
         var snapshot = house.Snapshot();
@@ -319,6 +320,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
+        SyncGauntlets("an object was placed");
         if (kept) {
             Logger.Information("Housing: character {CharId} placed {Kind} {ItemId}, template {TemplateId}, as house object {GidId} of lot {LotGid}; its stored item is kept.",
                 Logger.Args(wizard.CharId, family.Id, itemId, templateId, change.GidId, house.LotGid));
@@ -413,6 +415,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             HouseBanks.Remove(SessionActor.GetZoneActor(), change.GidId);
             HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         }
+
+        SyncGauntlets("an object was moved");
 
         // The move patch names the pet item's template, and the client could build the creature again as a plain object
         // from it, so a pet or mount is moved with the blob.
@@ -535,6 +539,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         HouseVendors.Remove(SessionActor.GetZoneActor(), change.GidId, placedItem.TemplateId);
         HouseBanks.Remove(SessionActor.GetZoneActor(), change.GidId);
+        SyncGauntlets("an object was picked up");
 
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHDELETEHOUSINGOBJECT {
             SubType = ItemSubType,
@@ -600,6 +605,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                 GIDID = change.GidId,
             }, isSelfless: false, ZoneBroadcastTarget.Players);
         }
+
+        SyncGauntlets("every object was picked up");
 
         if (result.Added.Count > 0) {
             SendToSocket(AtticMessages.Count(wizard, attic));
@@ -751,15 +758,16 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        try {
-            if (HouseGauntlets.OnMove(house, wizard.CharId, wizard.Location) is { } gauntlet) {
-                StartGauntlet(house, wizard, gauntlet);
+        // The gauntlets' sigil pads follow every change of the house, also one another player or a used up one-shot made.
+        if (!_loggedGauntletWatch) {
+            _loggedGauntletWatch = true;
+            Logger.Debug("Gauntlet: the move watch runs for character {CharId} in lot {LotGid} at ({X:0}, {Y:0}, {Z:0}); the house has {Count} gauntlet(s), revision {Revision}.",
+                Logger.Args(wizard.CharId, house.LotGid, wizard.Location.X, wizard.Location.Y, wizard.Location.Z,
+                    HouseGauntlets.CountIn(house), house.Revision));
+        }
 
-                return;
-            }
-        } catch (Exception exception) {
-            Logger.Error("Gauntlet: checking the gauntlets of lot {LotGid} for character {CharId} failed: {Error}",
-                Logger.Args(house.LotGid, wizard.CharId, exception));
+        if (house.Revision != _gauntletRevision) {
+            SyncGauntlets("the house changed");
         }
 
         try {
@@ -777,43 +785,21 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
     }
 
     /// <summary>
-    /// Starts the countdown of a gauntlet a player stepped onto: its dungeon for the player's level, in a private copy of
-    /// their own (Game/Housing/HouseGauntlets).
+    /// Gives the house zone the sigil pads of the house's gauntlets as they stand now (Game/Housing/HouseGauntlets).
     /// </summary>
-    private void StartGauntlet(HouseState house, Wizard wizard, HouseGauntlet gauntlet) {
-        var level = (int) wizard.MagicSchoolBehavior.Level;
-        var zone = HouseGauntlets.ZoneFor(gauntlet.Sigil, level);
-        Logger.Information("Gauntlet: character {CharId}, level {Level}, stepped onto gauntlet {GidId} (item {ItemId}, template {TemplateId}, {Kind}) of lot {LotGid}; its dungeon is {Zone}.",
-            Logger.Args(wizard.CharId, level, gauntlet.GidId, gauntlet.ItemId, gauntlet.TemplateId,
-                gauntlet.IsOneShot ? $"one-shot, trophy {gauntlet.Sigil.m_usedDisposableDungeonTemplateID}" : "reusable",
-                house.LotGid, zone ?? "none"));
-        if (string.IsNullOrEmpty(zone)) {
+    private void SyncGauntlets(string why) {
+        var house = _house;
+        if (house is null) {
             return;
         }
 
-        // The game's own message for a single use dungeon whose owner is not there.
-        if (gauntlet.IsOneShot && wizard.CharId != house.OwnerCharId) {
-            Logger.Information("Gauntlet: character {CharId} is not the owner {OwnerId} of lot {LotGid}, so one-shot {GidId} does not start.",
-                Logger.Args(wizard.CharId, house.OwnerCharId, house.LotGid, gauntlet.GidId));
-            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_DISPOSABLEDUNGEONNOOWNER());
-
-            return;
+        try {
+            _gauntletRevision = house.Revision;
+            HouseGauntlets.Sync(SessionActor.GetZoneActor(), house, why);
+        } catch (Exception exception) {
+            Logger.Error("Gauntlet: the sigil pads of lot {LotGid} could not be synced ({Why}): {Error}",
+                Logger.Args(house.LotGid, why, exception));
         }
-
-        HouseGauntlets.Begin(wizard.CharId, house, gauntlet, zone);
-        InformGameClient($"Stand still: the gauntlet starts in {GauntletCountdownSeconds:0} seconds.");
-        TellOtherServices(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
-            SigilLoc = Util.GetCompactStringFromVector(new Vector4(gauntlet.Position.X, gauntlet.Position.Y, gauntlet.Position.Z, gauntlet.Yaw)),
-            SigilGID = 0,
-            SigilType = "",
-            Radius = GauntletLeaveRadius,
-            DestinationZone = zone,
-            DestinationLoc = "",
-            NoSnap = true,
-            NoTimerBroadcast = true,
-            CountdownSeconds = GauntletCountdownSeconds,
-            LogName = $"Housing gauntlet {gauntlet.TemplateId}",
-        });
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
@@ -1237,7 +1223,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         HouseTeleporters.Forget(_houseCharId);
-        HouseGauntlets.Leave(_houseCharId);
+        _gauntletRevision = uint.MaxValue;
+        _loggedGauntletWatch = false;
         HouseRegistry.Release(_house);
         _house = null;
     }

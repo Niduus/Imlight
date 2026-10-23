@@ -57,8 +57,10 @@ using System.Text.RegularExpressions;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.Math;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -102,6 +104,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     private const float PARTY_CLOSED_SECONDS = 1.5f;
 
     private ResolvedSigil _resolved;
+    // The dungeon a housing gauntlet's countdown goes to, picked for the player who started it.
+    private string _partyZone;
     // The players counting down on the pad together, the owner of the copy first.
     private readonly List<PartyMember> _party = [];
     private DateTime _partyEnds;
@@ -283,8 +287,38 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             return;
         }
 
+        // The sigil of a housing gauntlet (Game/Housing/HouseGauntlets): its dungeon is picked for the level of the player
+        // who starts the countdown, and only the owner of the house starts a one-shot.
+        var gauntlet = HouseGauntlets.PadOf(obj.m_globalID.Full);
         var size = PartySize();
         var left = (float) (_partyEnds - now).TotalSeconds;
+        var startsTrip = size <= 1 || _party.Count >= size || _party.Count == 0 || left < PARTY_CLOSED_SECONDS;
+        if (gauntlet is not null) {
+            if (startsTrip) {
+                if (gauntlet.Gauntlet.IsOneShot && playerCharacter.CharId != gauntlet.OwnerCharId) {
+                    Logger.Information("Gauntlet: character {CharId} is not the owner {OwnerId} of lot {LotGid}, so one-shot {TemplateId} does not start.",
+                        Logger.Args(playerCharacter.CharId, gauntlet.OwnerCharId, gauntlet.LotGid, gauntlet.Gauntlet.TemplateId));
+                    playerActor.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_DISPOSABLEDUNGEONNOOWNER());
+
+                    return;
+                }
+
+                var level = (int) (playerCharacter.MagicSchoolBehavior?.Level ?? 1);
+                var picked = HouseGauntlets.ZoneFor(gauntlet.Gauntlet.Sigil, level);
+                if (string.IsNullOrEmpty(picked)) {
+                    return;
+                }
+
+                _partyZone = picked;
+                Logger.Information("Gauntlet: character {CharId}, level {Level}, pressed the sigil of gauntlet {TemplateId} of lot {LotGid}; its dungeon is {Zone}.",
+                    Logger.Args(playerCharacter.CharId, level, gauntlet.Gauntlet.TemplateId, gauntlet.LotGid, picked));
+            }
+
+            entry.DestinationZone = _partyZone ?? entry.DestinationZone;
+            entry.LogName = $"Housing gauntlet {gauntlet.Gauntlet.TemplateId}";
+            HouseGauntlets.Begin(playerCharacter.CharId, gauntlet, entry.DestinationZone);
+        }
+
         if (size <= 1 || _party.Count >= size) {
             // A pad for one, or a full team: a trip and a fresh copy of their own.
             playerActor.Tell(entry);
@@ -349,7 +383,9 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                 SigilGID = (ulong) Entity.ActiveGameObject.m_globalID,
                 SigilType = SigilInfo.m_sigilType.ToString() ?? "",
                 Radius = DEFAULT_INTERACTION_RADIUS,
-                DestinationZone = _resolved.DestinationZone,
+                DestinationZone = HouseGauntlets.PadOf(Entity.ActiveGameObject.m_globalID.Full) is not null && _partyZone is not null
+                    ? _partyZone
+                    : _resolved.DestinationZone,
                 DestinationLoc = _resolved.DestinationLoc,
                 Variant = _resolved.Variant,
                 FaceSlot = member.FaceSlot,

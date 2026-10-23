@@ -21,37 +21,43 @@
  *
  * PURPOSE:
  * The housing gauntlets, Skeleton Key duels and rematches placed in a house (items with a HousingSigilBehaviorTemplate,
- * Niduus, 2026-10-23: "Make sure they have Sigils and programmed as best as you can get them"). A player who steps onto
- * one and stands still goes into a private copy of its dungeon; a one-shot (m_usedDisposableDungeonTemplateID set)
- * becomes its trophy where it stands once its boss is beaten.
+ * Niduus, 2026-10-23: "Make sure they have Sigils and programmed as best as you can get them"). Each one gets a dungeon
+ * sigil pad in front of it, the glowing sigil of the game: a player who stands on it and presses X counts down into a
+ * private copy of its dungeon, with up to three others. A one-shot (m_usedDisposableDungeonTemplateID set) becomes its
+ * trophy where it stands once its boss is beaten.
  *
  * USAGE EXAMPLE:
- * if (HouseGauntlets.OnMove(house, charId, location) is { } pad) {
- *     var zone = HouseGauntlets.ZoneFor(pad.Sigil, level);
- *     HouseGauntlets.Begin(charId, house, pad, zone);
- *     // send the session a MSG_STARTSIGILENTRY to zone
+ * HouseGauntlets.Sync(zoneActor, house);       // a player enters the house, or an object is placed, moved or picked up
+ * if (HouseGauntlets.PadOf(padGlobalId) is { } pad) {
+ *     var zone = HouseGauntlets.ZoneFor(pad.Gauntlet.Sigil, level);
+ *     HouseGauntlets.Begin(charId, pad, zone);
  * }
  * HouseGauntlets.OnCombatWin(charId, zoneName, mobTemplateIds);
  *
  * NOTE:
- * - The dungeon is the template's m_sigilZoneInfoList: the first zone whose m_maximumLevel is at least the player's
- *   level (19, 39, ... 999 for the tiered gauntlets). A rematch lists its _STRD zone first and the other second, both
- *   999, so the first is used. The zones are ordinary zones with their own spawns, so the battles, the creatures and
- *   any boss cheats are the zone's own.
- * - Furniture is not a zone object, so the step onto a gauntlet is found from the player's position, like the
- *   teleporters (HouseTeleporters): within Housing.GauntletRadius of where it stands. The art the template shows is the
- *   client's own model; the server adds nothing to it.
- * - The countdown is the session's sigil countdown (ZoneService, MSG_STARTSIGILENTRY): the player is dismounted, any
- *   move stops it, and the trip goes into a fresh private copy. No timer shows over the furniture, because it is not a
- *   sigil object of the zone; the player is told in chat instead.
+ * - The client draws no sigil for a gauntlet: its template is a plain furniture model (the trophy pedestal of a
+ *   Skeleton Key duel, SP_UltraDungeon_*_KH.nif) with a HousingSigilBehavior the client only reads as data
+ *   (WizardGraphicalClient has no code for it but its property class), so the server puts the sigil there, as the
+ *   game's own server does (its HousingSigilManager). The pad is the dungeon sigil octagon 107081 the towers use
+ *   (MinigameSemiCircleSigil4Actor, so a team of 4 can go), added to the running house zone with
+ *   MSG_ZONEOBJECTSCHANGED (ZoneObjects.MakeRuntimeObject) and made a press-X sigil by InteractDungeonSigilComponent.
+ *   Round 6 watched for a step onto the gauntlet itself, which its solid collision keeps players off, so nothing fired.
+ * - The pad stands Housing.GauntletSigilDistance (default 250) in front of the gauntlet: along (-sin yaw, -cos yaw), the
+ *   way a character faces (ZoneService's sigil facing), turned by Housing.GauntletSigilAngle degrees. Its radius is
+ *   Housing.GauntletSigilRadius and its size Housing.GauntletSigilScale. Its global id comes from the lot, the item, its
+ *   template and its placement, so a moved gauntlet's pad goes and comes back, and a trophy has none.
+ * - The dungeon is the template's m_sigilZoneInfoList: the first zone whose m_maximumLevel is at least the level of the
+ *   player who starts the countdown (19, 39, ... 999 for the tiered gauntlets); the others go into that copy. A rematch
+ *   lists its _STRD zone first and the other second, both 999, so the first is used. The zones are ordinary zones with
+ *   their own spawns, so the battles, the creatures and the boss cheats are the zone's own.
  * - A one-shot can be started by the owner of the house only; anyone else gets MSG_DISPOSABLEDUNGEONNOOWNER, the game's
- *   own "the owner must be present" message.
+ *   own "the owner must be present" message, and can join the owner's countdown.
  * - A one-shot is used up by a won battle against a boss (NPCBehaviorTemplate.m_bossMob) in its dungeon: the zone the
  *   trip went to, or one under the same gauntlet folder. Its placed item takes the trophy template in the stored house,
- *   and the house's next blob shows it.
+ *   the house's next blob shows it, and its pad goes on the next sync.
  *
  * TODO:
- * - A team going in together (the zone's dungeon sigils do it on a pad for several players).
+ * - Check with a capture where the game puts the sigil of each gauntlet model, and its template.
  * - Which of a rematch's two zones the game picks.
  *
  * Created by: Claude
@@ -63,9 +69,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Zone.Core;
+using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Housing;
@@ -86,11 +95,27 @@ internal sealed record HouseGauntlet(uint GidId, uint ItemId, uint TemplateId, V
 
 }
 
+/// <summary>
+/// The sigil pad of a placed gauntlet.
+/// </summary>
+/// <param name="GlobalId">The pad's global id in the house zone.</param>
+/// <param name="LotGid">The lot of the house.</param>
+/// <param name="OwnerCharId">The owner of the house.</param>
+/// <param name="Gauntlet">The gauntlet.</param>
+internal sealed record HouseGauntletPad(ulong GlobalId, ulong LotGid, ulong OwnerCharId, HouseGauntlet Gauntlet);
+
 internal static class HouseGauntlets {
 
-    private static readonly float s_radius = ConfigurationManager.GetValue("Housing.GauntletRadius", 120f);
-    private static readonly float s_height = ConfigurationManager.GetValue("Housing.GauntletHeight", 150f);
+    // The dungeon sigil octagon of the towers, a pad for a team of 4.
+    private const uint PadTemplateId = 107081;
+    private const string PadSigilType = "MinigameSemiCircleSigil4Actor";
+
+    private static readonly float s_distance = ConfigurationManager.GetValue("Housing.GauntletSigilDistance", 250f);
+    private static readonly float s_angle = ConfigurationManager.GetValue("Housing.GauntletSigilAngle", 0f);
+    private static readonly float s_padRadius = ConfigurationManager.GetValue("Housing.GauntletSigilRadius", 200f);
+    private static readonly float s_padScale = ConfigurationManager.GetValue("Housing.GauntletSigilScale", 1f);
     private static readonly TimeSpan s_runLifetime = TimeSpan.FromHours(ConfigurationManager.GetValue("Housing.GauntletRunHours", 4.0));
+    private static readonly TimeSpan s_zoneLifetime = TimeSpan.FromHours(12);
 
     // Template id to its sigil behavior, or null for a template that is not a gauntlet.
     private static readonly ConcurrentDictionary<uint, HousingSigilBehaviorTemplate> s_templates = new();
@@ -98,8 +123,16 @@ internal static class HouseGauntlets {
     // The gauntlets of each house, read again when the house's revision moves.
     private static readonly ConcurrentDictionary<ulong, (uint Revision, uint GidBase, IReadOnlyList<HouseGauntlet> Pads)> s_houses = new();
 
-    // The gauntlet each character stands on, so one step starts one countdown.
-    private static readonly ConcurrentDictionary<ulong, uint> s_standing = new();
+    // Every pad made, by its global id, for the sigil that is pressed.
+    private static readonly ConcurrentDictionary<ulong, HouseGauntletPad> s_pads = new();
+
+    // The pads each running house zone has, so every visitor's sync sends only what changed.
+    private sealed class ZonePads {
+        internal readonly HashSet<ulong> Ids = [];
+        internal DateTime Used = DateTime.UtcNow;
+    }
+
+    private static readonly ConcurrentDictionary<IActorRef, ZonePads> s_zones = new();
 
     // The trip each character is on.
     private static readonly ConcurrentDictionary<ulong, Run> s_runs = new();
@@ -120,28 +153,100 @@ internal static class HouseGauntlets {
     }
 
     /// <summary>
-    /// Checks a character's position in a house and finds the gauntlet they just stepped onto.
+    /// Gives a running house zone the sigil pads of the house's gauntlets as they stand now: new ones are added, ones of
+    /// gauntlets that were moved, picked up or used up are taken away.
     /// </summary>
-    /// <param name="house">The house the character is in.</param>
-    /// <param name="charId">The character.</param>
-    /// <param name="location">Where the character stands.</param>
-    /// <returns>The gauntlet, or <c>null</c> when they did not just step onto one.</returns>
-    internal static HouseGauntlet OnMove(HouseState house, ulong charId, Vector3 location) {
-        var pads = PadsOf(house);
-        var pad = pads.Count == 0 ? null : pads.FirstOrDefault(candidate => IsOn(candidate.Position, location));
-        if (pad is null) {
-            s_standing.TryRemove(charId, out _);
-
-            return null;
+    /// <param name="zone">The house zone.</param>
+    /// <param name="house">The house.</param>
+    /// <param name="why">What led to the sync, for the log.</param>
+    internal static void Sync(IActorRef zone, HouseState house, string why) {
+        if (zone is null || zone.IsNobody() || house is null) {
+            return;
         }
 
-        if (s_standing.TryGetValue(charId, out var standing) && standing == pad.GidId) {
-            return null;
+        var gauntlets = PadsOf(house);
+        var wanted = new Dictionary<ulong, HouseGauntlet>();
+        foreach (var gauntlet in gauntlets) {
+            wanted[PadIdOf(house.LotGid, gauntlet)] = gauntlet;
         }
 
-        s_standing[charId] = pad.GidId;
+        Forget();
+        var pads = s_zones.GetOrAdd(zone, _ => new ZonePads());
+        var change = new ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED();
+        lock (pads) {
+            pads.Used = DateTime.UtcNow;
+            foreach (var id in pads.Ids.Where(id => !wanted.ContainsKey(id)).ToList()) {
+                change.Removed.Add(id);
+                pads.Ids.Remove(id);
+                s_pads.TryRemove(id, out _);
+            }
 
-        return pad;
+            foreach (var (id, gauntlet) in wanted) {
+                if (!pads.Ids.Add(id)) {
+                    continue;
+                }
+
+                var zoneName = ZoneFor(gauntlet.Sigil, 1);
+                s_pads[id] = new HouseGauntletPad(id, house.LotGid, house.OwnerCharId, gauntlet);
+                change.Added.Add(ZoneObjects.MakeRuntimeObject(KeyOf(house.LotGid, gauntlet), PadOf(gauntlet, zoneName)));
+            }
+        }
+
+        if (change.Added.Count + change.Removed.Count == 0) {
+            return;
+        }
+
+        zone.Tell(change, ActorRefs.NoSender);
+        Logger.Information("Gauntlet: lot {LotGid} ({Why}) has {Count} gauntlet(s); its zone gets {Added} sigil pad(s) and loses {Removed}: {Pads}.",
+            Logger.Args(house.LotGid, why, gauntlets.Count, change.Added.Count, change.Removed.Count,
+                string.Join("; ", change.Added.Select(info => $"{info.m_zoneTag} at ({info.m_location.X:0}, {info.m_location.Y:0}, {info.m_location.Z:0})"))));
+    }
+
+    /// <summary>
+    /// The gauntlet whose sigil pad has this global id, or <c>null</c> for any other pad.
+    /// </summary>
+    internal static HouseGauntletPad PadOf(ulong globalId) => s_pads.TryGetValue(globalId, out var pad) ? pad : null;
+
+    /// <summary>
+    /// The gauntlets of a house, for the log.
+    /// </summary>
+    internal static int CountIn(HouseState house) => house is null ? 0 : PadsOf(house).Count;
+
+    // Where the pad of a gauntlet stands: in front of it, the way it faces.
+    private static ZoneObjects.ZoneObject PadOf(HouseGauntlet gauntlet, string zoneName) {
+        var heading = gauntlet.Yaw + (s_angle * MathF.PI / 180f);
+
+        return new ZoneObjects.ZoneObject {
+            Name = $"HouseGauntletSigil_{gauntlet.GidId}",
+            TemplateID = PadTemplateId,
+            X = gauntlet.Position.X - (MathF.Sin(heading) * s_distance),
+            Y = gauntlet.Position.Y - (MathF.Cos(heading) * s_distance),
+            Z = gauntlet.Position.Z,
+            Yaw = gauntlet.Yaw,
+            Scale = s_padScale,
+            Sigil = new ZoneObjects.ZoneSigil {
+                SigilType = PadSigilType,
+                Tag = $"HouseGauntlet {gauntlet.TemplateId}",
+                Radius = s_padRadius,
+                DestinationZone = zoneName ?? "",
+                DestinationLoc = "",
+            },
+        };
+    }
+
+    private static string KeyOf(ulong lotGid, HouseGauntlet gauntlet)
+        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{s_distance}/{s_angle}";
+
+    private static ulong PadIdOf(ulong lotGid, HouseGauntlet gauntlet) => ZoneObjects.RuntimeIdOf(KeyOf(lotGid, gauntlet));
+
+    // Zones that have not synced for a long time are gone (a house zone stops when its last player leaves).
+    private static void Forget() {
+        var now = DateTime.UtcNow;
+        foreach (var (zone, pads) in s_zones) {
+            if (now - pads.Used > s_zoneLifetime) {
+                s_zones.TryRemove(zone, out _);
+            }
+        }
     }
 
     /// <summary>
@@ -160,9 +265,14 @@ internal static class HouseGauntlets {
     /// <summary>
     /// Remembers the trip a character starts, so a won boss battle in its dungeon can use up a one-shot.
     /// </summary>
-    internal static void Begin(ulong charId, HouseState house, HouseGauntlet pad, string zone)
-        => s_runs[charId] = new Run(house.LotGid, pad.ItemId, pad.GidId, pad.TemplateId, pad.Sigil.m_usedDisposableDungeonTemplateID,
-            zone, FamilyOf(zone), DateTime.UtcNow);
+    internal static void Begin(ulong charId, HouseGauntletPad pad, string zone) {
+        var gauntlet = pad.Gauntlet;
+        s_runs[charId] = new Run(pad.LotGid, gauntlet.ItemId, gauntlet.GidId, gauntlet.TemplateId,
+            gauntlet.Sigil.m_usedDisposableDungeonTemplateID, zone, FamilyOf(zone), DateTime.UtcNow);
+        Logger.Information("Gauntlet: character {CharId} goes into {Zone} from gauntlet {TemplateId} (item {ItemId}) of lot {LotGid}{OneShot}.",
+            Logger.Args(charId, zone, gauntlet.TemplateId, gauntlet.ItemId, pad.LotGid,
+                gauntlet.IsOneShot ? $", a one-shot that becomes trophy {gauntlet.Sigil.m_usedDisposableDungeonTemplateID} after its boss" : ""));
+    }
 
     /// <summary>
     /// Uses up the one-shot a character went into when they win a battle against a boss in its dungeon.
@@ -223,11 +333,6 @@ internal static class HouseGauntlets {
     /// </summary>
     internal static void Invalidate(ulong lotGid) => s_houses.TryRemove(lotGid, out _);
 
-    /// <summary>
-    /// Forgets where a character stands, when they leave the house.
-    /// </summary>
-    internal static void Leave(ulong charId) => s_standing.TryRemove(charId, out _);
-
     private static bool InDungeon(Run run, string zoneName)
         => string.Equals(zoneName, run.Zone, StringComparison.OrdinalIgnoreCase)
            || (run.Family is not null && zoneName.StartsWith(run.Family, StringComparison.OrdinalIgnoreCase));
@@ -246,13 +351,6 @@ internal static class HouseGauntlets {
     private static bool IsBoss(ulong templateId)
         => (CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_behaviors?
             .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true;
-
-    private static bool IsOn(Vector3 pad, Vector3 location) {
-        var dx = location.X - pad.X;
-        var dy = location.Y - pad.Y;
-
-        return dx * dx + dy * dy <= s_radius * s_radius && Math.Abs(location.Z - pad.Z) <= s_height;
-    }
 
     private static IReadOnlyList<HouseGauntlet> PadsOf(HouseState house) {
         var revision = house.Revision;

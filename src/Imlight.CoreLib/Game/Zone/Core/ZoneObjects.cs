@@ -598,6 +598,24 @@ internal static class ZoneObjects {
     internal static GID? GlobalIdOf(CoreObjectInfo info)
         => info is not null && s_added.TryGetValue(info, out var added) ? new GID(added.GlobalId) : null;
 
+    /// <summary>
+    /// Makes an object another part of the server adds to one running copy of a zone with MSG_ZONEOBJECTSCHANGED, such
+    /// as the sigil pad of a housing gauntlet (Game/Housing/HouseGauntlets). Like a file's object it takes a global id
+    /// of the added range, from its key, and a sigil pad names its own destination.
+    /// </summary>
+    /// <param name="key">What the object is, the same for the same object every time.</param>
+    /// <param name="obj">The object.</param>
+    internal static CoreObjectInfo MakeRuntimeObject(string key, ZoneObject obj) {
+        var info = MakeInfo(obj);
+        s_added.AddOrUpdate(info, new Added(RuntimeIdOf(key), obj));
+
+        return info;
+    }
+
+    /// <summary>The global id <see cref="MakeRuntimeObject"/> gives the object of a key.</summary>
+    internal static ulong RuntimeIdOf(string key)
+        => GLOBAL_ID_MARK | (RandomGen.GenerateHash($"runtime/{key}".ToLowerInvariant()) & GLOBAL_ID_MASK);
+
     /// <summary>Where an added sigil pad sends the team, when its file names it, and the variant it loads.</summary>
     internal static bool TryGetDestination(CoreObjectInfo info, out string zone, out string loc, out string variant) {
         zone = loc = variant = null;

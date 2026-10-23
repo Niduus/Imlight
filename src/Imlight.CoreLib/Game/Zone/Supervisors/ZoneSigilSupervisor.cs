@@ -28,6 +28,7 @@ using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.Game.Zone.Core;
 
 namespace Imlight.CoreLib.Game.Zone.Supervisors;
 
@@ -149,6 +150,11 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
         }
 
         foreach (var objectInfo in message.Added.OfType<MinigameSigilInfo>()) {
+            // A pad the zone has already (a second visitor's house sends the same gauntlet pads) is kept.
+            if (ZoneObjects.GlobalIdOf(objectInfo) is { } id && _pads.ContainsKey(id.Full)) {
+                continue;
+            }
+
             CreatePad(objectInfo, $"_{++_addedWhileRunning}");
         }
 
