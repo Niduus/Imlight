@@ -376,7 +376,7 @@ internal sealed partial class ManagerWindow {
         var body = new StackPanel { Spacing = FIELD_SPACING };
         body.Children.Add(Sub("Things the server puts in the zone: anything with a template, such as a portal, a statue, a sigil pad that " +
                               "sends a team somewhere, or a battle circle. Moving, turning, adding or removing one changes the running " +
-                              "game at once (battle circles count from the next time the zone loads)."));
+                              "game at once, battle circles too. Add a duel circle makes a PvP circle where your wizard stands."));
         if (edit.HasPlacements) {
             body.Children.Add(Note("Some objects were moved earlier with the old live boxes. Those places are shown here and are written " +
                                    "into the file when you press Save area."));
@@ -393,12 +393,76 @@ internal sealed partial class ManagerWindow {
             Action(IconButton("Add a sigil pad", AreaIcon.Sigil), () => AddEntry(edit, objects, new JsonObject {
                 ["Name"] = UniqueName(edit, "New sigil"), ["TemplateID"] = 107081, ["X"] = 0, ["Y"] = 0, ["Z"] = 0, ["Yaw"] = 0, ["Scale"] = 1,
                 ["Sigil"] = DefaultSigil(),
-            }, "/objects/"))));
+            }, "/objects/")),
+            Action(IconButton("Add a duel circle", AreaIcon.CombatCircle), () => AddDuelCircle(edit, objects))));
 
         var count = objects.Count;
 
         return OpenState(Section(SectionHeader(SigilTile(OBJECTS, AreaIcon.Objects), "Objects and sigils", count.ToString(CultureInfo.InvariantCulture), Timing.Live),
             body, OBJECTS, false), edit.Area.File + "/objects");
+    }
+
+    // Niduus (2026-10-23): a duel circle in one press, with the right template and type, where the wizard stands.
+    private Task AddDuelCircle(AreaEdit edit, JsonArray objects) {
+        var circle = new JsonObject {
+            ["Name"] = UniqueName(edit, "Duel circle"), ["TemplateID"] = AreaCatalog.DUEL_CIRCLE_TEMPLATE,
+            ["X"] = 0, ["Y"] = 0, ["Z"] = 0, ["Yaw"] = 0, ["Scale"] = 1,
+            ["CombatSigil"] = new JsonObject { ["SigilType"] = AreaCatalog.PVP_SIGIL_TYPE, ["Radius"] = 0, ["Combat"] = "Turns" },
+        };
+        string said;
+        try {
+            var (who, x, y, z, yaw) = MyPosition(edit.Zone);
+            circle["X"] = double.Parse(x, CultureInfo.InvariantCulture);
+            circle["Y"] = double.Parse(y, CultureInfo.InvariantCulture);
+            circle["Z"] = double.Parse(z, CultureInfo.InvariantCulture);
+            circle["Yaw"] = double.Parse(yaw, CultureInfo.InvariantCulture);
+            said = $"Added a duel circle where {who} stands. Press Save area and it appears at once.";
+        }
+        catch (Exception ex) when (ex is PanelException or FormatException) {
+            said = "Added a duel circle. Stand where it should go in the game, press Use my position on it, then Save area.";
+        }
+
+        AddEntry(edit, objects, circle, "/objects/");
+        Say(said);
+
+        return Task.CompletedTask;
+    }
+
+    // Fixes battle circles set up wrong (Niduus: simpler for anyone, correcting their work): a duel circle (PvP type), or
+    // a circle whose template is a creature, an NPC, an item or nothing, gets the game's Duel circle template; a type
+    // typed with spaces or no type is set right. Says what it changed.
+    private List<string> FixCircles(JsonObject work) {
+        var fixes = new List<string>();
+        foreach (var o in Entries(work, "Objects")) {
+            if (BossChanges.FindIn(o, "CombatSigil") is not JsonObject circle) {
+                continue;
+            }
+
+            var name = CustomArea.Text(o, "Name").Trim();
+            var type = CustomArea.Text(circle, "SigilType").Trim();
+            var template = (ulong) CustomArea.Number(o, "TemplateID");
+            var isDuel = type.Equals(AreaCatalog.PVP_SIGIL_TYPE, StringComparison.OrdinalIgnoreCase);
+            if (type.Length == 0) {
+                Set(circle, "SigilType", AreaCatalog.PVP_SIGIL_TYPE);
+                fixes.Add($"\"{name}\" had no circle type; it is now a duel circle ({AreaCatalog.PVP_SIGIL_TYPE})");
+                isDuel = true;
+            }
+            else if (!isDuel && !AreaCatalog.COMBAT_SIGIL_TYPES.Contains(type, StringComparer.OrdinalIgnoreCase)
+                     && AreaCatalog.COMBAT_SIGIL_TYPES.FirstOrDefault(t => t.Equals(type.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)) is { } typed) {
+                Set(circle, "SigilType", typed);
+                fixes.Add($"\"{name}\" circle type spelled as {typed}");
+            }
+
+            var kind = _areaCatalog is not null && _areaCatalog.Templates.TryGetValue(template, out var known) ? known.Kind : "";
+            var wrongLook = template == 0 || IsCreature(template) || kind is "NPC" or "Creature" or "Item";
+            if (template != AreaCatalog.DUEL_CIRCLE_TEMPLATE && (isDuel || wrongLook)) {
+                var was = template == 0 ? "no template" : $"template {template} ({TemplateName(template, PickKind.Object)})";
+                Set(o, "TemplateID", AreaCatalog.DUEL_CIRCLE_TEMPLATE);
+                fixes.Add($"\"{name}\" had {was}; it is now the game's Duel circle ({AreaCatalog.DUEL_CIRCLE_TEMPLATE})");
+            }
+        }
+
+        return fixes;
     }
 
     private static JsonObject DefaultSigil() => new() {
@@ -462,7 +526,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (circle is not null) {
-            body.Children.Add(SubPart(Tile(Glyph(AreaIcon.CombatCircle, COMBAT, 14), COMBAT, 24), "Battle circle", Timing.Reload, new StackPanel {
+            body.Children.Add(SubPart(Tile(Glyph(AreaIcon.CombatCircle, COMBAT, 14), COMBAT, 24), "Battle circle", Timing.Live, new StackPanel {
                 Spacing = FIELD_SPACING,
                 Children = {
                     Field("Circle type", "The circle's look and its number of places (the game's Sigils/ name).",
@@ -945,6 +1009,8 @@ internal sealed partial class ManagerWindow {
             throw new PanelException(edit.Errors.Values.First());
         }
 
+        var fixes = FixCircles(edit.Work);
+
         var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var part in new[] { "Objects", "Creatures" }) {
             foreach (var o in Entries(edit.Work, part)) {
@@ -1013,11 +1079,6 @@ internal sealed partial class ManagerWindow {
             reload.Add("left-out objects");
         }
 
-        if (string.Join("|", Entries(before, "Objects").Select(o => BossChanges.FindIn(o, "CombatSigil")?.ToJsonString()))
-            != string.Join("|", Entries(cleaned, "Objects").Select(o => BossChanges.FindIn(o, "CombatSigil")?.ToJsonString()))) {
-            reload.Add("battle circles");
-        }
-
         var oldRoom = edit.Area.Room;
         var file = AreaFiles.Save(AreaFolder, _manager.CustomsFolder, edit.Area.File, cleaned);
         if (edit.HasPlacements) {
@@ -1038,6 +1099,10 @@ internal sealed partial class ManagerWindow {
 
         var title = AreaTitle(edit.Zone, edit.Variant);
         var parts = new List<string> { $"Saved {title}." };
+        if (fixes.Count > 0) {
+            parts.Add($"Fixed: {string.Join("; ", fixes)}.");
+        }
+
         if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
             parts.Add("The server is off, so it uses everything when it starts.");
         }

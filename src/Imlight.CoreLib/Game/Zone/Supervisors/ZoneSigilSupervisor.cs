@@ -55,45 +55,47 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
 
         // Initialize any objects found within the zone data.
         foreach (var objectInfo in zoneData.m_objectList) {
-            if (!IsObjectEligibleForSpawn(objectInfo)) {
-                continue;
-            }
-
-            var template = CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) as GameObjectTemplate;
-            if (template is null) {
-                Logger.Warning("Combat sigil template {TemplateId} not found; skipping.",
-                    Logger.Args(objectInfo.m_templateID));
-
-                continue;
-            }
-
-            var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
-            if (coreObject is null) {
-                Logger.Warning("Could not finalize combat sigil (template {TemplateId}); skipping.",
-                    Logger.Args(objectInfo.m_templateID));
-
-                continue;
-            }
-
-            // Sometimes the sigil may spawn in the ground.
-            var newLoc = coreObject.m_location;
-            newLoc.Z += 5;
-            coreObject.m_location = newLoc;
-
-            // Create the sigil actor and inform it of the details.
-            var objectActor = CreateEntityActor(coreObject, template, objectInfo);
-            var detailsMsg = new ZONE_102_PROTOCOL.MSG_SIGILDETAILS {
-                CombatSigilObjectInfo = (CombatSigilObjectInfo) objectInfo,
-            };
-            objectActor.Tell(detailsMsg);
-
-            _sigils.Add(coreObject, objectActor);
-            if (SigilFactory.GetSigilTemplate(((CombatSigilObjectInfo) objectInfo).m_sigilType) is PvPCombatSigilTemplate) {
-                _pvpSigilObjectIds.Add(objectActor, coreObject.m_globalID);
+            if (IsObjectEligibleForSpawn(objectInfo)) {
+                CreateCircle(objectInfo, "");
             }
         }
 
         ReportLoadedWhenEntitiesLoad();
+    }
+
+    private void CreateCircle(CoreObjectInfo objectInfo, string nameSuffix) {
+        var template = CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) as GameObjectTemplate;
+        if (template is null) {
+            Logger.Warning("Combat sigil template {TemplateId} not found; skipping.",
+                Logger.Args(objectInfo.m_templateID));
+
+            return;
+        }
+
+        var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
+        if (coreObject is null) {
+            Logger.Warning("Could not finalize combat sigil (template {TemplateId}); skipping.",
+                Logger.Args(objectInfo.m_templateID));
+
+            return;
+        }
+
+        // Sometimes the sigil may spawn in the ground.
+        var newLoc = coreObject.m_location;
+        newLoc.Z += 5;
+        coreObject.m_location = newLoc;
+
+        // Create the sigil actor and inform it of the details.
+        var objectActor = CreateEntityActor(coreObject, template, objectInfo, nameSuffix);
+        objectActor.Tell(new ZONE_102_PROTOCOL.MSG_SIGILDETAILS {
+            CombatSigilObjectInfo = (CombatSigilObjectInfo) objectInfo,
+        });
+
+        _sigils.Add(coreObject, objectActor);
+        _circles[coreObject.m_globalID.Full] = (objectActor, coreObject);
+        if (SigilFactory.GetSigilTemplate(((CombatSigilObjectInfo) objectInfo).m_sigilType) is PvPCombatSigilTemplate) {
+            _pvpSigilObjectIds.Add(objectActor, coreObject.m_globalID);
+        }
     }
 
     private void CreatePad(CoreObjectInfo objectInfo, string nameSuffix) {
@@ -123,10 +125,13 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
 
     // The dungeon sigil pads, by global id, so one a spiraldb-extra/ZoneObjects change removes can be found.
     private readonly Dictionary<ulong, (IActorRef Actor, CoreObject Object)> _pads = [];
+
+    // The battle circles, by global id, the same way.
+    private readonly Dictionary<ulong, (IActorRef Actor, CoreObject Object)> _circles = [];
     private int _addedWhileRunning;
 
-    // A dungeon sigil pad added or removed while the zone runs; moved ones move themselves (RenderComponent). A battle
-    // circle added or removed counts from the next time the zone loads.
+    // A dungeon sigil pad or battle circle added or removed while the zone runs; moved ones move themselves
+    // (RenderComponent). Niduus (2026-10-23): battle circles count at once too, no restart.
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
     public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
         base.ReceiveZoneObjectsChanged(message);
@@ -135,10 +140,20 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
             if (_pads.Remove(id, out var pad)) {
                 RemoveEntity(pad.Actor, pad.Object);
             }
+
+            if (_circles.Remove(id, out var circle)) {
+                _sigils.Remove(circle.Object);
+                _pvpSigilObjectIds.Remove(circle.Actor);
+                RemoveEntity(circle.Actor, circle.Object);
+            }
         }
 
         foreach (var objectInfo in message.Added.OfType<MinigameSigilInfo>()) {
             CreatePad(objectInfo, $"_{++_addedWhileRunning}");
+        }
+
+        foreach (var objectInfo in message.Added.Where(IsObjectEligibleForSpawn)) {
+            CreateCircle(objectInfo, $"_{++_addedWhileRunning}");
         }
     }
 

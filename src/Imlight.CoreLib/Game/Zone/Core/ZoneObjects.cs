@@ -67,7 +67,7 @@
  * Both are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
  * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
  * object appears and a removed one goes. Encounters, exits, distinct spawners and spawn swaps count from their next
- * use. Creatures, Remove and battle circles (CombatSigil) count from the next time the zone loads.
+ * use, and battle circles (CombatSigil) at once. Creatures and Remove count from the next time the zone loads.
  */
 
 using System;
@@ -458,7 +458,7 @@ internal static class ZoneObjects {
         }
     }
 
-    // Creatures, left-out objects and battle circles are only read when a zone loads: a change to them is noted in
+    // Creatures and left-out objects are only read when a zone loads: a change to them is noted in
     // the log for each copy that runs now, so it is clear why it does not show yet.
     private static void LogNextLoadChanges(string zonePath, string variant, Dictionary<string, ZoneObjectFile> before,
                                            Dictionary<string, ZoneObjectFile> after) {
@@ -469,12 +469,11 @@ internal static class ZoneObjects {
             return JsonSerializer.Serialize(new {
                 Creatures = files.SelectMany(f => f.Creatures),
                 Remove = files.SelectMany(f => f.Remove),
-                Circles = files.SelectMany(f => f.Objects).Where(o => o.CombatSigil is not null).Select(o => o.Name),
             });
         }
 
         if (Part(zonePath, variant, before) != Part(zonePath, variant, after)) {
-            Logger.Information("Zone {0}{1}: its creatures, left-out objects or battle circles changed; they count from "
+            Logger.Information("Zone {0}{1}: its creatures or left-out objects changed; they count from "
                 + "the next time the zone loads.", Logger.Args(zonePath, variant.Length == 0 ? "" : $" ({variant})"));
         }
     }
@@ -492,9 +491,11 @@ internal static class ZoneObjects {
                 continue;
             }
 
-            // Another template, or a pad that became an object: it goes and comes back as the new one.
+            // Another template, a pad that became an object, or a battle circle with other settings (its type, reach or
+            // duel style): it goes and comes back as the new one.
             if (was.Object.TemplateID != obj.TemplateID || (was.Object.Sigil is null) != (obj.Sigil is null)
-                || (was.Object.CombatSigil is null) != (obj.CombatSigil is null)) {
+                || (was.Object.CombatSigil is null) != (obj.CombatSigil is null)
+                || JsonSerializer.Serialize(was.Object.CombatSigil) != JsonSerializer.Serialize(obj.CombatSigil)) {
                 change.Removed.Add(id);
                 change.Added.Add(InfoFor(zonePath, fileVariant, obj));
             }

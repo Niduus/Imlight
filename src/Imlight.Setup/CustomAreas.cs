@@ -196,7 +196,11 @@ internal sealed class AreaCatalog {
         [1634569] = "Sigil pad, 2 players (blue only)",
         [1313007] = "Skeleton Key sigil, for looks (blue, or red for Advanced Mode)",
         [1313009] = "Skeleton Key sigil, invisible pad (no model)",
+        [DUEL_CIRCLE_TEMPLATE] = "Duel circle (the PvP circle houses have)",
     };
+
+    /// <summary>The game's Duel Circle object, the one house duel circles use.</summary>
+    internal const ulong DUEL_CIRCLE_TEMPLATE = 512231;
 
     internal static AreaCatalog Load(string idLookupFolder, string keyDetailsFolder) {
         var catalog = new AreaCatalog();
@@ -317,10 +321,11 @@ internal sealed class AreaCatalog {
             }
         });
 
+        // The sigils are always in the picker, even before the game files are read.
         foreach (var (id, shown) in s_sigilNames) {
-            if (catalog.Templates.TryGetValue(id, out var sigil)) {
-                catalog.Templates[id] = new Template(id, sigil.Name, shown, sigil.Kind, sigil.School);
-            }
+            catalog.Templates[id] = catalog.Templates.TryGetValue(id, out var sigil)
+                ? new Template(id, sigil.Name, shown, sigil.Kind, sigil.School)
+                : new Template(id, shown, shown, "Sigil or trigger", "");
         }
 
         catalog.Zones.AddRange(zones.OrderBy(z => z, StringComparer.OrdinalIgnoreCase));
