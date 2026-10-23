@@ -111,6 +111,11 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 _furnitureShop = look.m_furnitureShop != 0 ? look.m_furnitureShop : _furnitureShop;
                 _csrTestShop = look.m_CSRTestShop;
             }
+            else if (Entity.Template?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault() is { } own
+                     && !string.IsNullOrWhiteSpace(own.m_shopTitle)) {
+                // An equipment window keeps the seller's own title (Doctor Purreau: "Purreau's Potions and More").
+                _shopTitle = own.m_shopTitle;
+            }
             Logger.Information("Seller {0} ({1}): {2} items, {3} window, shop kind {4}, title {5}.",
                 Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.Info?.m_zoneTag, _inventory.Count, _window, _furnitureShop, _shopTitle));
 

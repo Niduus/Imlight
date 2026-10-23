@@ -689,6 +689,14 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         };
         SendToSocket(itemAcqMsg);
 
+        // A bought pet of a new kind goes into the Pet Tome.
+        if (isPet && PetTome.Add(playerWizard, itemTemplateID)) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED {
+                GlobalID = playerWizard.GameObjectID,
+                PetTemplateID = itemTemplateID,
+            });
+        }
+
         // Inform the game client that the player's gold has been updated.
         var goldUpdateMsg = new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
             Gold = playerWizard.GameStats.m_currentGold,

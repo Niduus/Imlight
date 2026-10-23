@@ -1834,7 +1834,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETDATA {
                 PetData = data,
                 PetID = message.PetID,
-                IsInPetTome = (byte) (wizard.OwnedPets.ContainsValue(templateId) ? 1 : 0),
+                IsInPetTome = (byte) (PetTome.Contains(wizard, templateId) ? 1 : 0),
             });
         }
         catch (Exception ex) {

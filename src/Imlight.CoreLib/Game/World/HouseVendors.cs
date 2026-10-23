@@ -25,6 +25,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -35,7 +36,8 @@ namespace Imlight.CoreLib.Game.World;
 /// Sellers moved out of the bazaar (Niduus, 2026-10-19). Hao in the Pet Pavilion sells every snack of rank 8 or
 /// higher, and `.hall vendors` gives one piece of furniture per seller: one per reagent kind (spellements included)
 /// and one per jewel shape and pin. Wherever one is placed in a house its seller stands on it, like the trainer
-/// tomes (<see cref="HouseTrainers"/>). Everything they sell costs <see cref="Price"/> gold.
+/// tomes (<see cref="HouseTrainers"/>). Doctor Purreau in the Pet Pavilion sells every pet elixir (Niduus, 2026-10-23).
+/// Everything they sell costs <see cref="Price"/> gold.
 /// </summary>
 internal static class HouseVendors {
 
@@ -47,6 +49,7 @@ internal static class HouseVendors {
     private const string REAGENT_FOLDER = "ObjectData/Reagents/";
     private const string JEWEL_FOLDER = "ObjectData/Jewels/";
     private const string SNACK_FOLDER = "ObjectData/PetSnacks/";
+    private const string ELIXIR_FOLDER = "ObjectData/Elixirs/";
     private const int MIN_SNACK_RANK = 8;
 
     /// <summary>What everything the sellers sell costs.</summary>
@@ -56,6 +59,8 @@ internal static class HouseVendors {
     private static readonly bool s_specialWindows = ConfigurationManager.GetValue("HallVendors.SpecialShopWindows", true);
 
     private static readonly uint s_snackVendorId = ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
+    // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"), a Pet Pavilion vendor with nothing to sell.
+    private static readonly uint s_petElixirVendorId = ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
     // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
@@ -65,6 +70,11 @@ internal static class HouseVendors {
     private static readonly Lazy<List<uint>> s_snacks = new(() => [.. TemplatesIn<PetSnackItemTemplate>(SNACK_FOLDER)
         .Where(snack => snack.Template.m_rank >= MIN_SNACK_RANK)
         .Select(snack => snack.Id)]);
+
+    private static readonly Lazy<List<uint>> s_petElixirs = new(() => [.. TemplatesIn<WizItemTemplate>(ELIXIR_FOLDER)
+        .Where(elixir => PetElixirs.IsPetElixir(elixir.Template))
+        .Select(elixir => elixir.Id)
+        .OrderBy(id => id)]);
 
     // One seller per reagent kind and per jewel shape or pin, each on its own piece of furniture.
     private static readonly Seller[] s_sellers = [
@@ -133,11 +143,12 @@ internal static class HouseVendors {
     /// <summary>The overhead name for a seller's zone tag, or null.</summary>
     internal static string NameFor(string zoneTag) => SellerForTag(zoneTag)?.Name;
 
-    /// <summary>NPCs that sell from these lists: Hao and the two house seller looks.</summary>
+    /// <summary>NPCs that sell from these lists: Hao, Doctor Purreau and the two house seller looks.</summary>
     internal static bool IsSellerNpc(uint templateId)
-        => templateId != 0 && (templateId == s_snackVendorId || templateId == s_reagentNpcId || templateId == s_jewelNpcId);
+        => templateId != 0 && (templateId == s_snackVendorId || templateId == s_petElixirVendorId
+            || templateId == s_reagentNpcId || templateId == s_jewelNpcId);
 
-    /// <summary>What an NPC sells: Hao the snacks, a house seller its kind; null for every other NPC.</summary>
+    /// <summary>What an NPC sells: Hao the snacks, Doctor Purreau the pet elixirs, a house seller its kind; null for every other NPC.</summary>
     internal static (List<uint> Items, ShopWindow Window)? StockFor(uint templateId, string zoneTag) {
         if (SellerForTag(zoneTag) is { } seller) {
             return (seller.Items(), s_specialWindows ? seller.Window : ShopWindow.Equipment);
@@ -145,6 +156,10 @@ internal static class HouseVendors {
 
         if (templateId == s_snackVendorId) {
             return (s_snacks.Value, s_specialWindows ? ShopWindow.Snack : ShopWindow.Equipment);
+        }
+
+        if (templateId == s_petElixirVendorId) {
+            return (s_petElixirs.Value, ShopWindow.Equipment);
         }
 
         return null;

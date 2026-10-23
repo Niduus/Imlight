@@ -68,6 +68,11 @@ public class ServerPetOwnerBehavior : IClientBehaviorProvider<ClientPetOwnerBeha
     /// </summary>
     public ulong EquippedPetGlobalId { get; set; }
 
+    /// <summary>
+    /// The pet templates in the wizard's Pet Tome: every kind of pet they have owned (PetTome).
+    /// </summary>
+    public List<uint> PetTome { get; set; }
+
     // ctor
     public ServerPetOwnerBehavior() 
         => MorphingSlots = [];

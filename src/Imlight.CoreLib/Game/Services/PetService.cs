@@ -148,6 +148,65 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         HatchEgg(wizard, egg);
     }
 
+    /// <summary>
+    /// The Pet Tome (the Pets page of the spellbook links to it) asks for the pets the wizard has owned. The answer's
+    /// PetData becomes PetTomeBehavior.m_petData (PetTome), and the game then shows the tome.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTPETTOME))]
+    private void ReceiveRequestPetTome(WIZARD2_53_PROTOCOL.MSG_REQUESTPETTOME message) {
+        Logger.Information("Pet tome: game sent MSG_REQUESTPETTOME GlobalID={0} PetData={1} bytes Buffer={2} bytes PremiumPetExceptionCode={3}.",
+            Logger.Args(message.GlobalID, ((byte[]) message.PetData)?.Length ?? 0, ((byte[]) message.Buffer)?.Length ?? 0, message.PremiumPetExceptionCode));
+        try {
+            var wizard = GetActiveWizard();
+            var tome = PetTome.Collect(wizard, out var added);
+
+            // The game reads the premium pet list from Buffer when the code differs from the one it has; an empty
+            // list in the hatchmaking format keeps that read harmless.
+            var premium = new Imcodec.ObjectProperty.ObjectSerializer(Versionable: false, Behaviors: Imcodec.ObjectProperty.SerializerFlags.None);
+            premium.Serialize(new HatchmakingPremiumPetsList { m_addedPremiumPets = [], m_removedPremiumPets = [] },
+                Imcodec.ObjectProperty.PropertyFlags.Prop_Public, out var buffer);
+
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTPETTOME {
+                GlobalID = wizard.GameObjectID,
+                PetData = PetTome.Write(tome),
+                Buffer = buffer,
+                PremiumPetExceptionCode = message.PremiumPetExceptionCode,
+            });
+            Logger.Information("Pet tome: sent {0} pet kinds to {1} ({2} new: {3}).",
+                Logger.Args(tome.Count, wizard.CharId, added.Count, string.Join(",", added)));
+        }
+        catch (Exception ex) {
+            Logger.Error("Pet tome: MSG_REQUESTPETTOME failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    /// <summary>
+    /// The game asks for the attic's pets to be added to the Pet Tome ("you'll need to update the rest").
+    /// </summary>
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_PETTOMESCANATTIC))]
+    private void ReceivePetTomeScanAttic(WIZARDHOUSING_50_PROTOCOL.MSG_PETTOMESCANATTIC message) {
+        Logger.Information("Pet tome: game sent MSG_PETTOMESCANATTIC GlobalID={0}.", Logger.Args(message.GlobalID));
+        try {
+            var wizard = GetActiveWizard();
+            PetTome.Collect(wizard, out var added);
+            foreach (var templateId in added) {
+                SendPetTomePetAdded(wizard, templateId);
+            }
+
+            Logger.Information("Pet tome: the scan added {0} pet kinds for {1}.", Logger.Args(added.Count, wizard.CharId));
+        }
+        catch (Exception ex) {
+            Logger.Error("Pet tome: MSG_PETTOMESCANATTIC failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    // The game adds the kind to its tome and says "<pet> added to your Pet Tome!" (GUI2_00000494).
+    private void SendPetTomePetAdded(Wizard wizard, uint templateId)
+        => SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED {
+            GlobalID = wizard.GameObjectID,
+            PetTemplateID = templateId,
+        });
+
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS))]
     private void ReceivePetFeedHappiness(WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS message) {
         var wizard = GetActiveWizard();
@@ -655,16 +714,14 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             TemplateID = petTemplateId
         });
 
-        // 4. MSG_PETTOMEPETADDED — adds the pet to the player's pet tome.
-        var petTomeGlobalId = RandomGen.GenerateGUID();
+        // 4. MSG_PETTOMEPETADDED — adds the pet to the player's pet tome, on the player's PetTomeBehavior.
+        var newInTome = PetTome.Add(wizard, (uint) petTemplateId);
+        if (newInTome) {
+            SendPetTomePetAdded(wizard, (uint) petTemplateId);
+        }
 
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETTOMEPETADDED {
-            GlobalID = petTomeGlobalId,
-            PetTemplateID = (uint) petTemplateId
-        });
-
-        Logger.Information("Pet hatched! Egg {0} → template {1} (tome entry: {2})",
-            Logger.Args(egg.m_globalID, petTemplateId, petTomeGlobalId));
+        Logger.Information("Pet hatched! Egg {0} → template {1} (new in the pet tome: {2})",
+            Logger.Args(egg.m_globalID, petTemplateId, newInTome));
     }
 
 }

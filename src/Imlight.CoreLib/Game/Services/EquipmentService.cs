@@ -823,12 +823,24 @@ internal class EquipmentService(SessionActor sessionActor) : MessageService(sess
                 ItemID = item.m_globalID
             });
 
-            if (elixirTemplate.m_equipActionList?.m_results?.Count > 0) {
+            // A result the server types do not know reads as null (the Hatching Elixir's), so only the known ones run.
+            var results = elixirTemplate.m_equipActionList?.m_results?.Where(result => result is not null).ToList();
+            if (results?.Count > 0) {
                 ResultDispatcher.ExecuteResults(
                     Context,
-                    elixirTemplate.m_equipActionList,
+                    new ResultList { m_results = results },
                     SessionActor.ActorRef,
                     wizard.GetInitializedGameObject());
+            }
+
+            // The Hatching Elixir hatches every egg waiting in the hatching slots.
+            if (PetElixirs.HatchesAllEggs(itemTemplate)) {
+                var eggs = wizard.PetOwnerBehavior?.MorphingSlots?.ToList() ?? [];
+                Logger.Information("{0} used the Hatching Elixir {1}: hatching {2} eggs.",
+                    Logger.Args(wizard.CharId, item.m_templateID, eggs.Count));
+                foreach (var egg in eggs) {
+                    TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_DOEGGHATCH { EggGlobalId = egg.m_globalID });
+                }
             }
 
             PlaySound(elixirTemplate.m_equipSound);

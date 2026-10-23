@@ -191,12 +191,6 @@ public class Wizard {
 
     public ByteString CrownShopWishlist { get; set; }
 
-    /// <summary>
-    /// Tracks hatched pets for MSG_PETTOMEPETADDED. Key: pet global ID, Value: pet template ID.
-    /// Runtime-only; not persisted (the pet tome behavior blob handles persistence).
-    /// </summary>
-    [JsonIgnore] public readonly Dictionary<ulong, uint> OwnedPets = [];
-
     [JsonIgnore] private bool _hasLocation;
     [JsonIgnore] private bool _hasOrientation;
     [JsonIgnore] private readonly uint _defaultPetTemplateId = 126412; // Black Cat Pet;
