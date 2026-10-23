@@ -42,10 +42,17 @@
  *   (MinigameSemiCircleSigil4Actor, so a team of 4 can go), added to the running house zone with
  *   MSG_ZONEOBJECTSCHANGED (ZoneObjects.MakeRuntimeObject) and made a press-X sigil by InteractDungeonSigilComponent.
  *   Round 6 watched for a step onto the gauntlet itself, which its solid collision keeps players off, so nothing fired.
- * - The pad stands Housing.GauntletSigilDistance (default 250) in front of the gauntlet: along (-sin yaw, -cos yaw), the
- *   way a character faces (ZoneService's sigil facing), turned by Housing.GauntletSigilAngle degrees. Its radius is
- *   Housing.GauntletSigilRadius and its size Housing.GauntletSigilScale. Its global id comes from the lot, the item, its
- *   template and its placement, so a moved gauntlet's pad goes and comes back, and a trophy has none.
+ * - Where the pad goes (round 8, Niduus, 2026-10-23: "a lot of these sigils are wrong / also lacking or even inaccurate
+ *   prompt position"): no gauntlet template names a sigil object, offset or facing (all 41 HousingSigilBehavior items of
+ *   Root.wad were read: render, collision, furniture info, sounds, dependent resources; the models' .col.xml files are
+ *   in HousingObject*-WorldData, which is not here). The semicircle pad's circles stand 270 from its centre in an arc, so
+ *   round 7, which put the centre 250 to one side of the model, left the circles beside or under it, and the prompt (over
+ *   the centre) away from them; its 200 reach also missed the circles. Now the centre goes to the model's front, with
+ *   the model's yaw, so the arc stands before it, and the reach is the pad's own 370. The front distance of each model
+ *   is a guess by its kind (s_fronts); Housing.GauntletSigilDistance.<template id>, Housing.GauntletSigilDistanceScale,
+ *   Housing.GauntletSigilAngle, Housing.GauntletSigilRadius and Housing.GauntletSigilScale correct it without a rebuild.
+ *   Its global id comes from the lot, the item, its template, its placement and its front, so a moved gauntlet's pad goes
+ *   and comes back, and a trophy (no sigil behavior, or named _Trophy) has none.
  * - The dungeon is the template's m_sigilZoneInfoList: the first zone whose m_maximumLevel is at least the level of the
  *   player who starts the countdown (19, 39, ... 999 for the tiered gauntlets); the others go into that copy. A rematch
  *   lists its _STRD zone first and the other second, both 999, so the first is used. The zones are ordinary zones with
@@ -110,10 +117,26 @@ internal static class HouseGauntlets {
     private const uint PadTemplateId = 107081;
     private const string PadSigilType = "MinigameSemiCircleSigil4Actor";
 
-    private static readonly float s_distance = ConfigurationManager.GetValue("Housing.GauntletSigilDistance", 250f);
+    // Turns every pad around its gauntlet, in degrees, and scales every front distance (a correction without a rebuild).
     private static readonly float s_angle = ConfigurationManager.GetValue("Housing.GauntletSigilAngle", 0f);
-    private static readonly float s_padRadius = ConfigurationManager.GetValue("Housing.GauntletSigilRadius", 200f);
+    private static readonly float s_distanceScale = ConfigurationManager.GetValue("Housing.GauntletSigilDistanceScale", 1f);
+    // 0: the pad's own reach (InteractDungeonSigilComponent, 370), which covers its circles 270 from its centre.
+    private static readonly float s_padRadius = ConfigurationManager.GetValue("Housing.GauntletSigilRadius", 0f);
     private static readonly float s_padScale = ConfigurationManager.GetValue("Housing.GauntletSigilScale", 1f);
+
+    // How far the front of each gauntlet model is from where it stands, by the model's file name (a part of it). The
+    // pad's centre goes there, so its circles stand before the model. Guessed from the models' kinds and the screenshots
+    // (Niduus, 2026-10-23); Housing.GauntletSigilDistance.<template id> overrides one.
+    private static readonly (string Model, float Front)[] s_fronts = [
+        ("SP_UltraDungeon_", 40f), ("SP_Rematch", 40f), ("SP_OneShot_", 60f), ("UnreadableBook", 40f),
+        ("SP_RpgBlind", 120f), ("Gauntlet26_Teleporter", 100f), ("TicketBooth", 120f), ("DoomsdayKrok", 150f),
+        ("PA_Fountain_Gauntlet", 150f), ("HighlandsGauntlet", 200f), ("SinbadRuins", 200f), ("SwampBoatDock", 200f),
+        ("AV_CombatArena_Gauntlet", 200f), ("VA_ClockTower", 220f), ("TrainStation", 250f), ("MS_Pagoda_Gauntlet", 250f),
+        ("lot_structure_tower", 250f), ("CL_ExplorersGauntlet", 300f), ("GH_LongHouse_Gauntlet", 350f),
+    ];
+    private const float DefaultFront = 150f;
+    private static readonly ConcurrentDictionary<uint, float> s_frontOf = new();
+
     private static readonly TimeSpan s_runLifetime = TimeSpan.FromHours(ConfigurationManager.GetValue("Housing.GauntletRunHours", 4.0));
     private static readonly TimeSpan s_zoneLifetime = TimeSpan.FromHours(12);
 
@@ -145,7 +168,9 @@ internal static class HouseGauntlets {
     /// <param name="templateId">The template of a placed item.</param>
     /// <param name="sigil">Its sigil behavior when this returns <c>true</c>.</param>
     internal static bool IsGauntlet(uint templateId, out HousingSigilBehaviorTemplate sigil) {
+        // A trophy (a used up one-shot or rematch) has no sigil behavior in the game data; one named as a trophy never gets a pad.
         sigil = templateId == 0 ? null : s_templates.GetOrAdd(templateId, id => CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate template
+                && !template.m_objectName.ToString().EndsWith("_Trophy", StringComparison.OrdinalIgnoreCase)
             ? (template.m_behaviors ?? []).OfType<HousingSigilBehaviorTemplate>().FirstOrDefault(s => s.m_sigilZoneInfoList is { Count: > 0 })
             : null);
 
@@ -212,17 +237,23 @@ internal static class HouseGauntlets {
     /// </summary>
     internal static int CountIn(HouseState house) => house is null ? 0 : PadsOf(house).Count;
 
-    // Where the pad of a gauntlet stands: in front of it, the way it faces.
+    // Where the pad of a gauntlet stands. The pad is the semicircle sigil of the towers (107081, MinigameSemiCircleSigil4Actor):
+    // its four circles stand 270 from its centre, at 126 to 236 degrees of its sigil (ZoneService.TryGetSigilFaceSlot),
+    // which is (-cos yaw, sin yaw) from the centre for a pad of that yaw. A gauntlet model faces that same way (round 7
+    // put the centre along (-sin yaw, -cos yaw), and the circles showed beside the clock tower, Niduus, 2026-10-23), so
+    // the pad takes the gauntlet's yaw and its centre goes to the model's front: the circles stand before the model, and
+    // the game's "Press X" shows over the centre, at the model's door, as at a tower.
     private static ZoneObjects.ZoneObject PadOf(HouseGauntlet gauntlet, string zoneName) {
         var heading = gauntlet.Yaw + (s_angle * MathF.PI / 180f);
+        var front = FrontOf(gauntlet.TemplateId);
 
         return new ZoneObjects.ZoneObject {
             Name = $"HouseGauntletSigil_{gauntlet.GidId}",
             TemplateID = PadTemplateId,
-            X = gauntlet.Position.X - (MathF.Sin(heading) * s_distance),
-            Y = gauntlet.Position.Y - (MathF.Cos(heading) * s_distance),
+            X = gauntlet.Position.X - (MathF.Cos(heading) * front),
+            Y = gauntlet.Position.Y + (MathF.Sin(heading) * front),
             Z = gauntlet.Position.Z,
-            Yaw = gauntlet.Yaw,
+            Yaw = heading,
             Scale = s_padScale,
             Sigil = new ZoneObjects.ZoneSigil {
                 SigilType = PadSigilType,
@@ -234,8 +265,33 @@ internal static class HouseGauntlets {
         };
     }
 
+    /// <summary>
+    /// How far the front of a gauntlet's model is from where it stands.
+    /// </summary>
+    internal static float FrontOf(uint templateId)
+        => s_frontOf.GetOrAdd(templateId, id => {
+            var own = ConfigurationManager.GetValue($"Housing.GauntletSigilDistance.{id}", -1f);
+            if (own >= 0) {
+                return own;
+            }
+
+            var model = ModelOf(id);
+            var front = s_fronts.FirstOrDefault(f => model.Contains(f.Model, StringComparison.OrdinalIgnoreCase)).Front;
+
+            return (front > 0 ? front : DefaultFront) * s_distanceScale;
+        });
+
+    private static string ModelOf(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template
+            ? (template.m_behaviors ?? []).Select(b => b switch {
+                // An AnimationBehaviorTemplate is a RenderBehaviorTemplate too.
+                RenderBehaviorTemplate render => render.m_assetName.ToString(),
+                _ => null,
+            }).FirstOrDefault(name => !string.IsNullOrEmpty(name)) ?? ""
+            : "";
+
     private static string KeyOf(ulong lotGid, HouseGauntlet gauntlet)
-        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{s_distance}/{s_angle}";
+        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{FrontOf(gauntlet.TemplateId)}/{s_angle}/v8";
 
     private static ulong PadIdOf(ulong lotGid, HouseGauntlet gauntlet) => ZoneObjects.RuntimeIdOf(KeyOf(lotGid, gauntlet));
 
