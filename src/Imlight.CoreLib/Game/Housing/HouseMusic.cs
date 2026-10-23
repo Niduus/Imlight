@@ -37,9 +37,10 @@
  *   (ClientBlobPatcher::MSG_PatchHousingMusicObject, 0x140f1b180), which takes m_playlist, m_currentSelection and
  *   m_playStyle. The patch then tells its HousingMusicManager, which plays the music; no MSG_PLAYMUSIC is needed.
  * - A placed musical scroll needs nothing: the client plays its music itself.
- *
- * TODO:
- * - The play style values are the client's own (0 one scroll, 1 all in order, 2 random is a guess); they are stored as sent.
+ * - The play styles are the music window's LoopOneButton (0), LoopAllButton (1) and ShuffleButton (2) (0x140f99b4b).
+ *   The music manager starts the stream with looping only for style 0 (0x140f7eb34). For the others it waits for
+ *   MusicFinished (0x140f7ed90), so the zone music comes back while the next scroll fades in. With one scroll that is
+ *   the same scroll again, so such a playlist is stored with style 0 (HouseMusic.KeepLooping).
  *
  * Created by: Jay
  * Version: KALI 1.0
@@ -73,6 +74,11 @@ internal static class HouseMusic {
     /// The highest play style the server stores. The music window offers three.
     /// </summary>
     internal const uint MaxPlayStyle = 15;
+
+    /// <summary>
+    /// The play style that plays the selected scroll over and over. It is the only style the client loops without a gap.
+    /// </summary>
+    internal const uint LoopOneStyle = 0;
 
     private const string PlayerBehaviorName = "HousingMusicPlayerBehavior";
 
@@ -188,6 +194,22 @@ internal static class HouseMusic {
 
             return false;
         }
+    }
+
+    /// <summary>
+    /// Gives a playlist of one scroll the loop-one style. In the other styles the client lets the zone music play for a
+    /// moment each time the scroll ends before it starts it again (Niduus, 2026-10-23).
+    /// </summary>
+    /// <param name="player">The state, changed in place.</param>
+    /// <returns><c>true</c> when the style was changed.</returns>
+    internal static bool KeepLooping(HousingMusicPlayerBehavior player) {
+        if (player.m_playStyle == LoopOneStyle || (player.m_playlist?.Count ?? 0) > 1) {
+            return false;
+        }
+
+        player.m_playStyle = LoopOneStyle;
+
+        return true;
     }
 
     /// <summary>

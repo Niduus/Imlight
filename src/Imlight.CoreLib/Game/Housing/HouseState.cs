@@ -258,6 +258,33 @@ internal sealed class HouseState {
     }
 
     /// <summary>
+    /// Finds the placed item that was placed from a backpack item. Some windows, such as the teleporter's targeting,
+    /// name an object by that item's global id instead of its housing object GID.
+    /// </summary>
+    /// <param name="itemGid">The global id of the backpack item.</param>
+    /// <param name="item">The placed item when this returns <c>true</c>.</param>
+    /// <param name="slot">Its slot when this returns <c>true</c>.</param>
+    /// <returns><c>true</c> when an item of this house was placed from that backpack item.</returns>
+    internal bool TryFindByItemGid(ulong itemGid, out PlacedItem item, out int slot) {
+        item = null;
+        slot = -1;
+        if (itemGid == 0) {
+            return false;
+        }
+
+        lock (_lock) {
+            slot = _slots.FindIndex(placed => placed?.ItemGid == itemGid);
+            if (slot < 0) {
+                return false;
+            }
+
+            item = _slots[slot];
+
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Counts the placed items of a template.
     /// </summary>
     /// <param name="templateId">The item template.</param>

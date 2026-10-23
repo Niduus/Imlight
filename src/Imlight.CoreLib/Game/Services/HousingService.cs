@@ -767,6 +767,12 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return null;
         }
 
+        var style = player.m_playStyle;
+        if (HouseMusic.KeepLooping(player)) {
+            Logger.Information("Music: music player {TemplateId} (item {ItemId}) holds one scroll, so play style {Style} becomes {LoopStyle}.",
+                Logger.Args(stored.TemplateId, stored.Id, style, player.m_playStyle));
+        }
+
         if (!HouseMusic.TryWrite(player, out data)) {
             refusal = "The music player could not be changed.";
 
@@ -833,7 +839,10 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        if (!house.TryFindByGid(message.ObjectID, out var current, out _)) {
+        // The targeting names the teleporter by the global id of the backpack item it was placed from, not by its
+        // housing object GID as the music window does, so both are looked up.
+        if (!house.TryFindByItemGid(message.ObjectID, out var current, out _)
+            && !house.TryFindByGid(message.ObjectID, out current, out _)) {
             // The targeting can be started in one house of a residence and finished in the other, which is not used yet.
             Logger.Information("Teleporter: object {ObjectGid} is not an object of lot {LotGid}; its destination is not set.",
                 Logger.Args(message.ObjectID, house.LotGid));
@@ -875,8 +884,9 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             return;
         }
 
-        Logger.Information("Teleporter: {Kind} {TemplateId} (house object {GidId}) of lot {LotGid} now sends to {X}, {Y}, {Z}.",
-            Logger.Args(isPet ? "pet teleporter" : "teleporter", current.TemplateId, change.GidId, house.LotGid, message.LocX, message.LocY, message.LocZ));
+        Logger.Information("Teleporter: {Kind} {TemplateId} (object {ObjectGid}, house object {GidId}) of lot {LotGid} now sends to {X}, {Y}, {Z}.",
+            Logger.Args(isPet ? "pet teleporter" : "teleporter", current.TemplateId, message.ObjectID, change.GidId, house.LotGid,
+                message.LocX, message.LocY, message.LocZ));
         ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHHOUSINGTELEPORTEROBJECT {
             Data = data,
             SubType = ItemSubType,
