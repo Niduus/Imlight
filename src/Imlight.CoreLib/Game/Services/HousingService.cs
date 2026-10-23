@@ -80,6 +80,9 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
     private HouseState _house;
     private bool _loggedPetRelay;
+    // The countdown on a gauntlet, and how far from where it stands the player may be when it ends.
+    private static readonly float GauntletCountdownSeconds = ConfigurationManager.GetValue("Housing.GauntletCountdownSeconds", 5f);
+    private static readonly float GauntletLeaveRadius = ConfigurationManager.GetValue("Housing.GauntletLeaveRadius", 250f);
     private AtticState _attic;
     private ulong _houseCharId;
 
@@ -296,22 +299,22 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         ItemSync.SendRemoved(SessionActor.ActorRef, wizard, itemId);
 
-        // A pet or mount comes with the blob below: the add patch would make it a plain object that neither walks nor
-        // shows a nameplate.
-        if (creatureData is null) {
-            ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHADDHOUSINGOBJECT {
-                ObjectID = placedTemplateId,
-                LocX = change.Item.X,
-                LocY = change.Item.Y,
-                LocZ = change.Item.Z,
-                Yaw = change.Item.Yaw,
-                SubType = ItemSubType,
-                PackageNumber = 0,
-                VersionNumber = change.Revision,
-                GIDID = change.GidId,
-                ColorBits = (sbyte) change.Item.Tint,
-            }, isSelfless: false, ZoneBroadcastTarget.Players);
-        }
+        // Every object gets the add patch, a pet or mount too: the placing client keeps the object it dropped as pending
+        // (0x140f6d05d) until the add patch takes it, so without the patch that object stayed beside the creature the
+        // blob built and the house showed two pets (Niduus, 2026-10-23). The patch makes a plain object, which is
+        // swapped for the creature below.
+        ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHADDHOUSINGOBJECT {
+            ObjectID = placedTemplateId,
+            LocX = change.Item.X,
+            LocY = change.Item.Y,
+            LocZ = change.Item.Z,
+            Yaw = change.Item.Yaw,
+            SubType = ItemSubType,
+            PackageNumber = 0,
+            VersionNumber = change.Revision,
+            GIDID = change.GidId,
+            ColorBits = (sbyte) change.Item.Tint,
+        }, isSelfless: false, ZoneBroadcastTarget.Players);
 
         HouseTrainers.Spawn(SessionActor.GetZoneActor(), _house, change.GidId, change.Item);
         HouseVendors.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
@@ -337,9 +340,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         // Everyone in the house builds the pet or mount from its custom entry, as a creature that wanders.
         if (creatureData is not null) {
-            Logger.Information("Housing: pet or mount {GidId}, template {TemplateId}, of lot {LotGid} is sent to the house with the blob, revision {Revision}.",
-                Logger.Args(change.GidId, placedTemplateId, house.LotGid, change.Revision));
-            BroadcastBlob(house);
+            ReplaceWithCreature(house, change);
         }
     }
 
@@ -751,6 +752,17 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         try {
+            if (HouseGauntlets.OnMove(house, wizard.CharId, wizard.Location) is { } gauntlet) {
+                StartGauntlet(house, wizard, gauntlet);
+
+                return;
+            }
+        } catch (Exception exception) {
+            Logger.Error("Gauntlet: checking the gauntlets of lot {LotGid} for character {CharId} failed: {Error}",
+                Logger.Args(house.LotGid, wizard.CharId, exception));
+        }
+
+        try {
             if (HouseTeleporters.OnMove(house, wizard.CharId, wizard.Location) is not { } pad) {
                 return;
             }
@@ -761,6 +773,58 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         } catch (Exception exception) {
             Logger.Error("Teleporter: checking the teleporters of lot {LotGid} for character {CharId} failed: {Error}",
                 Logger.Args(house.LotGid, wizard.CharId, exception));
+        }
+    }
+
+    /// <summary>
+    /// Starts the countdown of a gauntlet a player stepped onto: its dungeon for the player's level, in a private copy of
+    /// their own (Game/Housing/HouseGauntlets).
+    /// </summary>
+    private void StartGauntlet(HouseState house, Wizard wizard, HouseGauntlet gauntlet) {
+        var level = (int) wizard.MagicSchoolBehavior.Level;
+        var zone = HouseGauntlets.ZoneFor(gauntlet.Sigil, level);
+        Logger.Information("Gauntlet: character {CharId}, level {Level}, stepped onto gauntlet {GidId} (item {ItemId}, template {TemplateId}, {Kind}) of lot {LotGid}; its dungeon is {Zone}.",
+            Logger.Args(wizard.CharId, level, gauntlet.GidId, gauntlet.ItemId, gauntlet.TemplateId,
+                gauntlet.IsOneShot ? $"one-shot, trophy {gauntlet.Sigil.m_usedDisposableDungeonTemplateID}" : "reusable",
+                house.LotGid, zone ?? "none"));
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+
+        // The game's own message for a single use dungeon whose owner is not there.
+        if (gauntlet.IsOneShot && wizard.CharId != house.OwnerCharId) {
+            Logger.Information("Gauntlet: character {CharId} is not the owner {OwnerId} of lot {LotGid}, so one-shot {GidId} does not start.",
+                Logger.Args(wizard.CharId, house.OwnerCharId, house.LotGid, gauntlet.GidId));
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_DISPOSABLEDUNGEONNOOWNER());
+
+            return;
+        }
+
+        HouseGauntlets.Begin(wizard.CharId, house, gauntlet, zone);
+        InformGameClient($"Stand still: the gauntlet starts in {GauntletCountdownSeconds:0} seconds.");
+        TellOtherServices(new ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY {
+            SigilLoc = Util.GetCompactStringFromVector(new Vector4(gauntlet.Position.X, gauntlet.Position.Y, gauntlet.Position.Z, gauntlet.Yaw)),
+            SigilGID = 0,
+            SigilType = "",
+            Radius = GauntletLeaveRadius,
+            DestinationZone = zone,
+            DestinationLoc = "",
+            NoSnap = true,
+            NoTimerBroadcast = true,
+            CountdownSeconds = GauntletCountdownSeconds,
+            LogName = $"Housing gauntlet {gauntlet.TemplateId}",
+        });
+    }
+
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
+    private void ReceiveCombatWin(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
+        try {
+            var wizard = GetActiveWizard();
+            if (wizard is not null) {
+                HouseGauntlets.OnCombatWin(wizard.CharId, wizard.Zone, message.MobTemplateIds ?? []);
+            }
+        } catch (Exception exception) {
+            Logger.Error("Gauntlet: checking a won battle for a used up gauntlet failed: {Error}", Logger.Args(exception));
         }
     }
 
@@ -1173,6 +1237,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         HouseTeleporters.Forget(_houseCharId);
+        HouseGauntlets.Leave(_houseCharId);
         HouseRegistry.Release(_house);
         _house = null;
     }
@@ -1186,6 +1251,44 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             });
         } catch (InvalidOperationException exception) {
             Logger.Error("Could not build the blob of lot {LotGid}: {Reason}", Logger.Args(house.LotGid, exception.Message));
+        }
+    }
+
+    /// <summary>
+    /// Swaps the plain object the add patch made for the pet or mount built from its custom entry. A blob does not
+    /// rebuild an object the client already has, so the plain one is deleted by a patch first, and the blob comes a
+    /// revision later so the client takes it as newer than the delete.
+    /// </summary>
+    /// <param name="house">The house.</param>
+    /// <param name="added">The placement of the pet or mount.</param>
+    private void ReplaceWithCreature(HouseState house, HouseChange added) {
+        try {
+            // A copy is a new record, so each update moves the revision without changing what is stored.
+            var deleted = house.TryUpdate(added.Item.Id, stored => stored with { });
+            if (!deleted.Done) {
+                Logger.Warning("Housing: pet or mount {GidId} of lot {LotGid} could not move the revision ({Result}); the house gets the blob as it is.",
+                    Logger.Args(added.GidId, house.LotGid, deleted.Result));
+                BroadcastBlob(house);
+
+                return;
+            }
+
+            ZoneBroadcast(new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHDELETEHOUSINGOBJECT {
+                SubType = ItemSubType,
+                PackageNumber = 0,
+                VersionNumber = deleted.Revision,
+                GIDID = added.GidId,
+            }, isSelfless: false, ZoneBroadcastTarget.Players);
+
+            var rebuilt = house.TryUpdate(added.Item.Id, stored => stored with { });
+            Logger.Information("Housing: pet or mount {GidId}, template {TemplateId}, of lot {LotGid}: add patch at revision {Added}, delete patch at {Deleted}, then the blob at {Blob} builds the creature.",
+                Logger.Args(added.GidId, added.Item.TemplateId, house.LotGid, added.Revision, deleted.Revision,
+                    rebuilt.Done ? rebuilt.Revision : deleted.Revision));
+            BroadcastBlob(house);
+        } catch (Exception exception) {
+            Logger.Error("Housing: could not swap pet or mount {GidId} of lot {LotGid} for its creature: {Reason}",
+                Logger.Args(added.GidId, house.LotGid, exception.Message));
+            BroadcastBlob(house);
         }
     }
 

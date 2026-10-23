@@ -460,6 +460,43 @@ internal sealed class HouseState {
     }
 
     /// <summary>
+    /// Gives a placed item another template where it stands, such as a used up housing gauntlet becoming its trophy
+    /// (Game/Housing/HouseGauntlets). Unlike <see cref="TryUpdate"/> the template changes, so the client needs the blob.
+    /// </summary>
+    /// <param name="itemId">The id of the placed item.</param>
+    /// <param name="fromTemplateId">The template the item must still have.</param>
+    /// <param name="toTemplateId">The template it takes.</param>
+    /// <returns>
+    /// <see cref="HouseEdit.NotFound"/> when the house has no such item or it has another template,
+    /// <see cref="HouseEdit.SaveFailed"/> when the write failed.
+    /// </returns>
+    internal HouseChange TrySwapTemplate(uint itemId, uint fromTemplateId, uint toTemplateId) {
+        lock (_lock) {
+            var slot = _slots.FindIndex(candidate => candidate?.Id == itemId);
+            if (slot < 0 || _slots[slot].TemplateId != fromTemplateId || toTemplateId == 0) {
+                return new HouseChange(HouseEdit.NotFound);
+            }
+
+            var previous = _slots[slot];
+            var replacement = previous with { TemplateId = toTemplateId };
+            var index = _house.Items.FindIndex(candidate => candidate.Id == itemId);
+            var revision = _house.Revision;
+            _house.Items[index] = replacement;
+            _house.Revision = revision + 1;
+            if (!Persist(null)) {
+                _house.Items[index] = previous;
+                _house.Revision = revision;
+
+                return new HouseChange(HouseEdit.SaveFailed);
+            }
+
+            _slots[slot] = replacement;
+
+            return new HouseChange(HouseEdit.Done, slot, GidIdOf(slot), _house.Revision, replacement);
+        }
+    }
+
+    /// <summary>
     /// Counts a player into the house.
     /// </summary>
     /// <returns><c>false</c> when the state was retired by its last viewer leaving; get the house from the registry again.</returns>

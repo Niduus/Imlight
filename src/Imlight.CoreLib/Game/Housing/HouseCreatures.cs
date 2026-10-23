@@ -34,7 +34,9 @@
  * - A custom entry of a pet or mount template becomes a HousingPetObject (210072) or a HousingMountObject (337078, or 6
  *   when it floats) in the client, which shows the creature's look and carries HousingPetBehavior: the client walks it
  *   around and shows its nameplate (ClientHousingManager, 0x140f319e0). A plain entry stays a still object without a
- *   nameplate, so pets and mounts are never sent with the add patch, whose "Item" subtype makes a plain entry.
+ *   nameplate. The add patch's "Item" subtype makes a plain entry, but the placing client keeps the object it dropped
+ *   until an add patch takes it, so a pet or mount gets the add patch, then a delete patch, then the blob, which builds
+ *   it from its custom entry (HousingService.ReplaceWithCreature; Niduus, 2026-10-23: "made 2 but picked up as 1").
  * - The client builds a placed pet with a ClientPetItemBehavior and a ClientPetNameBehavior and loads the entry's
  *   m_customData into the pet behavior with SerializerBinary(versionable, no flags) and property mask 0x80: the level,
  *   XP, names, ratings, happiness, the m_housingPet* colors, the original GID and the jewel. It copies the colors onto

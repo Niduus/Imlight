@@ -136,7 +136,9 @@ internal static class HousingFamilies {
         Declare("Wand", null, "WandAttic", []),
         Declare("JewelWand", null, "JewelWandAttic", []),
         Declare("HouseFish", null, "HouseFishAttic", []),
-        Declare("Sigil", null, null, [typeof(HousingSigilBehaviorTemplate)]),
+        // Housing gauntlets, Skeleton Key duels and rematches are plain items: the server finds a step onto one and starts
+        // its dungeon, and turns a used up one into its trophy (Game/Housing/HouseGauntlets).
+        Declare("Sigil", null, "Attic", [typeof(HousingSigilBehaviorTemplate)], enabled: true),
         Declare("RaidKey", null, null, [typeof(RaidKeyBehaviorTemplate)]),
         Declare("ObjectRemap", null, null, [typeof(ObjectRemapBehaviorTemplate)]),
         Declare("ExtraZone", null, null, [typeof(ExtraHousingZoneBehaviorTemplate)]),
