@@ -417,6 +417,16 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Updates the Magic Mirror look and the avatar (gender) of a wizard.
+    /// </summary>
+    public static void UpdateCharacterMirrorLook(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.MirrorLook = wizard.MirrorLook;
+            existingCharacter.WizardAvatar = wizard.WizardAvatar;
+        });
+    }
+
+    /// <summary>
     /// Updates the character name override for a wizard.
     /// </summary>
     /// <param name="wizard">The wizard object containing the updated character name override.</param>

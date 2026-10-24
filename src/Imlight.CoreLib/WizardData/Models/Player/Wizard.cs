@@ -119,6 +119,8 @@ public class Wizard {
     public Imcodec.Math.Vector3 MarkedOrientation { get; set; }
 
     public WizardCharacterBehavior WizardAvatar { get; set; }
+    // The look picked in the Magic Mirror (MagicMirror.Parts order, -1 = not changed), sent again on every zone entry.
+    public int[] MirrorLook { get; set; }
     public ServerWizPlayerNameBehavior PlayerNameBehavior { get; set; }
     public ServerWizInventoryBehavior InventoryBehavior { get; set; }
     public ServerWizStorageBehavior StorageBehavior { get; set; }
