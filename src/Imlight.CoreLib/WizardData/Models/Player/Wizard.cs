@@ -228,6 +228,9 @@ public class Wizard {
 
     public ByteString CrownShopWishlist { get; set; }
 
+    // Pixie Post messages waiting in the Mail tab of the friends window (PixiePostService).
+    public List<PixiePost> PixiePosts { get; set; } = new();
+
     [JsonIgnore] private bool _hasLocation;
     [JsonIgnore] private bool _hasOrientation;
     [JsonIgnore] private readonly uint _defaultPetTemplateId = 126412; // Black Cat Pet;

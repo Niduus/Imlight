@@ -93,6 +93,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(RenameService),
         typeof(MagicMirrorService),
         typeof(DailyAssignmentService),
+        typeof(PixiePostService),
         typeof(EmoteService),
     ];
 

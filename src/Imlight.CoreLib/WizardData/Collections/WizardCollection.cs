@@ -599,6 +599,28 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Saves the Pixie Post mailbox of a wizard (PixiePostService).
+    /// </summary>
+    public static void UpdateCharacterPixiePosts(Wizard wizard) {
+        var posts = wizard.PixiePosts?.ToList() ?? new();
+        UpdateCharacter(wizard.CharId, character => character.PixiePosts = posts);
+    }
+
+    /// <summary>
+    /// Puts a Pixie Post in the mailbox of a character who is not online. Keeps the newest <paramref name="max"/>.
+    /// </summary>
+    /// <returns><c>false</c> when the character is not found.</returns>
+    public static bool AddCharacterPixiePost(ulong charId, PixiePost post, int max) {
+        return UpdateCharacter(charId, character => {
+            character.PixiePosts ??= new();
+            character.PixiePosts.Add(post);
+            while (character.PixiePosts.Count > Math.Max(max, 1)) {
+                character.PixiePosts.RemoveAt(0);
+            }
+        });
+    }
+
+    /// <summary>
     /// Updates the training points of a wizard.
     /// </summary>
     /// <param name="wizard">The wizard object containing the updated training points count.</param>

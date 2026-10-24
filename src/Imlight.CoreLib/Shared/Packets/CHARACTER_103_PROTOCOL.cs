@@ -731,4 +731,17 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// A Pixie Post for the online wizard whose session gets this (PixiePostService).
+    /// </summary>
+    internal sealed class MSG_PIXIEPOSTDELIVER : IServerMessage {
+
+        public byte MessageOrder { get; } = 78;
+        public byte ServiceID { get; } = 103;
+
+        public ulong RecipientCharId;
+        public PixiePost Post;
+
+    }
+
 }
