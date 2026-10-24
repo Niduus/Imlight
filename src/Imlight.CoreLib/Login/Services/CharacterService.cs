@@ -39,7 +39,6 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
-using Imlight.CoreLib.Game.Codes;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
@@ -253,27 +252,6 @@ internal class CharacterService(SessionActor parentActor) : MessageService(paren
     private void ReceiveLoginLogCharacterCreation(LOGIN_7_PROTOCOL.MSG_LOGINLOGCHARACTERCREATION message) {
         this._characterCreationParameter = message.Parameter;
         this._characterCreationStage = message.Stage;
-    }
-
-    // The Promo Code button on the character select screen (PromoCodeEntryWindow, promoCodeEntry.gui). A code redeemed
-    // here waits for the next wizard of the account that enters the game (Niduus, 2026-10-23).
-    [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE))]
-    private void ReceiveFulfillPromoCode(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE message) {
-        try {
-            string code = message.Code;
-            var account = GetSocketAccount();
-            Logger.Information("Codes | Account {0} entered \"{1}\" at character select.", Logger.Args(account?.Username, code));
-            var success = PromoCodes.Redeem(account, code, null, SessionActor.ActorRef, out var answer);
-            SendToSocket(new LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE {
-                Code = code,
-                Success = success ? 1u : 0u,
-                ItemList = success ? answer : "",
-                ErrorDesc = success ? "" : answer
-            });
-        }
-        catch (Exception ex) {
-            Logger.Error("Codes | Redeeming a code at character select failed. {0}", Logger.Args(ex.Message));
-        }
     }
 
 }

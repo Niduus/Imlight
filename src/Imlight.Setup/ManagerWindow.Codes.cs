@@ -59,8 +59,7 @@ internal sealed partial class ManagerWindow {
         LoadCodes();
 
         return Shut(Fold("gift", "Server", "Codes",
-            "Codes players type in the game's promo code window, or in chat as .code HYPER, to get items, gold and crowns. " +
-            "A code redeemed on the character select screen is given to the next wizard that enters the game. " +
+            "Codes players type in chat as .code HYPER to get items, gold and crowns. " +
             "Press Save codes after a change; the server uses it at once, no restart needed.",
             Row(Action(Primary("Save codes"), SaveCodesAsync), Action(Plain("Add a code"), () => {
                 _codes.Add(new CodeDraft { Code = UniqueCodeName() });

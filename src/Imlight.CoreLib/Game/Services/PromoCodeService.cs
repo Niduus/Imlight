@@ -27,18 +27,12 @@ using Imlight.CoreLib.Shared.Packets;
 namespace Imlight.CoreLib.Game.Services;
 
 /// <summary>
-/// Promo codes in game: the promo code window's Submit button, the Idle button of the Options book (it opens the promo
-/// code window, Niduus 2026-10-23), and giving a wizard what codes redeemed at character select are waiting to give.
+/// Codes in game: giving a wizard what codes redeemed at character select (before 2026-10-24) are still waiting to
+/// give, and `.code watch`. The server never uses the game's promo code window (Niduus, 2026-10-24: "Completely remove
+/// Promo Code UI usage on the server"); codes are redeemed in chat with `.code HYPER`.
 /// </summary>
 internal class PromoCodeService(SessionActor sessionActor) : MessageService(sessionActor) {
 
-    /// <summary>The promo code window, as the game's own character select opens it (PromoCodeEntryWindow).</summary>
-    internal const string CODE_WINDOW = "promoCodeEntry.gui";
-
-    // [Codes] IdleOpensCodeWindow: the Options book's Idle button opens the promo code window.
-    private static readonly bool s_idleOpensWindow = ConfigurationManager.GetValue("Codes.IdleOpensCodeWindow", true);
-
-    private DateTime _lastNotAfk = DateTime.MinValue;
     private System.Threading.Timer _watchTimer;
 
     protected static Props Props(SessionActor parentActor)
@@ -54,27 +48,6 @@ internal class PromoCodeService(SessionActor sessionActor) : MessageService(sess
         }
         catch (Exception ex) {
             Logger.Error("Codes | Giving the waiting code rewards failed. {0}", Logger.Args(ex.Message));
-        }
-    }
-
-    // The promo code window's Submit button.
-    [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE))]
-    private void ReceiveFulfillPromoCode(LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE message) {
-        try {
-            string code = message.Code;
-            var wizard = GetActiveWizard();
-            Logger.Information("Codes | {0} entered \"{1}\" in the code window in game.", Logger.Args(wizard?.CharId, code));
-            var success = PromoCodes.Redeem(wizard?.Account, code, wizard, SessionActor.ActorRef, out var answer);
-            SendToSocket(new LOGIN_7_PROTOCOL.MSG_FULFILLPROMOCODE {
-                Code = code,
-                Success = success ? 1u : 0u,
-                ItemList = success ? answer : "",
-                ErrorDesc = success ? "" : answer
-            });
-            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = answer, Modal = 0 });
-        }
-        catch (Exception ex) {
-            Logger.Error("Codes | Redeeming a code in game failed. {0}", Logger.Args(ex.Message));
         }
     }
 
@@ -94,28 +67,6 @@ internal class PromoCodeService(SessionActor sessionActor) : MessageService(sess
     protected override void OnDispose() {
         base.OnDispose();
         _watchTimer?.Dispose();
-    }
-
-    // The Options book's Idle button (SettingsWindow::OnIdleButtonClick) sends MSG_NOT_AFK and then again every 5
-    // minutes while idle. The game's patcher sends it too, at most every 5 minutes, while it downloads files.
-    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_NOT_AFK))]
-    private void ReceiveNotAfk(GAME_5_PROTOCOL.MSG_NOT_AFK message) {
-        try {
-            var now = DateTime.UtcNow;
-            var gap = (now - _lastNotAfk).TotalSeconds;
-            _lastNotAfk = now;
-
-            // About 5 minutes after the last one is the idle heartbeat, not a new press.
-            var heartbeat = gap is >= 280 and <= 320;
-            Logger.Information("Codes | The game sent MSG_NOT_AFK ({0:0} s after the last one){1}.", Logger.Args(
-                gap > 1e6 ? 0 : gap, !s_idleOpensWindow ? ", [Codes] IdleOpensCodeWindow is off" : heartbeat ? ", the idle heartbeat" : ": opening the code window"));
-            if (s_idleOpensWindow && !heartbeat) {
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOWGUI { GUIFileName = CODE_WINDOW, StageIndex = 0 });
-            }
-        }
-        catch (Exception ex) {
-            Logger.Error("Codes | Answering the Idle button failed. {0}", Logger.Args(ex.Message));
-        }
     }
 
 }
