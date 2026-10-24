@@ -159,7 +159,8 @@
  *                                           Group too.
  *     { "Do": "OnlySchool", "School", "Count", "Target" (Last) }   the next Count steps only if the target is of School.
  *     FirstTurn Side "Swap": the side that went first goes second.
- *   Target also Last (whoever the step before went on), Hit (the ally hit, for AllyHit) and Marked.
+ *   Target also Last (whoever the step before went on; a step on itself does not count), Hit (the ally hit, for
+ *   AllyHit) and Marked.
  *   A SetPhase back to a phase lets its HealthBelow cheats go off again. Line takes a locale key
  *   (CombatMessages_00000676) as well as words.
  *

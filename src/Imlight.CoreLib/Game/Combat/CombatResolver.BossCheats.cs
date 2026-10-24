@@ -1502,7 +1502,20 @@ public partial class CombatResolver {
             return _lastStepTargets = circle.IsAlive && circle.AddedToDuel ? [circle] : [];
         }
 
-        return _lastStepTargets = code switch {
+        // A step on itself does not count as "the block before": a Brace on itself after a spell on a wizard still
+        // lets the next block look at that wizard.
+        var found = TargetsFor(code, boss, template, trigger, receiver, enemies, allies, others);
+        if (code is not ("self" or "me")) {
+            _lastStepTargets = found;
+        }
+
+        return found;
+    }
+
+    private List<CombatDuelSubCircle> TargetsFor(string code, CombatDuelSubCircle boss, SpellTemplate template, CombatDuelSubCircle trigger,
+                                                 CombatDuelSubCircle receiver, List<CombatDuelSubCircle> enemies,
+                                                 List<CombatDuelSubCircle> allies, List<CombatDuelSubCircle> others) {
+        return code switch {
             // Whoever that spell was aimed at, on either side (the ally hit, for AllyHit).
             "hit" when receiver is not null => receiver.IsAlive ? [receiver] : [],
             // Everyone standing who has the step's (or the cheat's) mark.
