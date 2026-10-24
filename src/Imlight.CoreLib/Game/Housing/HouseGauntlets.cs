@@ -155,6 +155,9 @@ internal static class HouseGauntlets {
         [664085] = (100f, 0f, 0.6f),   // MS_Pagoda_Gauntlet: small circles at the base, almost touching it
         [1217443] = (210f, 30f, 1f),   // PA_SpiralCupGauntlet: the place was close; raised to the fountain's step
         [701493] = (280f, 40f, 1f),    // GH_WinterbaneHallGauntlet: on the porch deck before the door, bowing outward
+        // Niduus, 2026-10-24, "Battle of the Bands with Tanglewood Terror":
+        [1217598] = (30f, 15f, 0.8f),  // DD_DS01_Gauntlet, Battle of the Bands: on the hexagonal brick base before the goblet
+        [1346015] = (40f, 8f, 1f),     // DD_PA01_Fountain, Tanglewood Terror: on the round white platform before the fountain
     };
 
     // The Skeleton Key one-shots and the rematches (Niduus, 2026-10-24, the Rattlebones Exalted Duel picture: the pedestal
