@@ -213,9 +213,65 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
         });
     }
 
+    /// <summary>
+    /// The deck window's Archmastery pick, or the Power Orb clicked in battle: the client sets the deck's school
+    /// itself and tells us, so the deck keeps it. In battle the new school counts from the next round.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_SetDeckArchmastery))]
+    private void ReceiveSetDeckArchmastery(WIZARD3_56_PROTOCOL.MSG_SetDeckArchmastery message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        if (Combat.Archmastery.ToSchoolId(message.School) is not { } school) {
+            Logger.Warning("Archmastery school {0} for deck {1} is not one of the seven schools; ignored.",
+                Logger.Args(message.School, message.ItemGID));
+
+            return;
+        }
+
+        try {
+            // The deck named, or the equipped one when none is.
+            var deckId = message.ItemGID;
+            if (deckId == 0) {
+                var deckSlot = wizard.EquipmentBehavior.SlotList.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck);
+                deckId = deckSlot?.ItemId ?? 0;
+            }
+
+            var deckItem = wizard.EquipmentBehavior.EquippedItems.FirstOrDefault(i => i.m_globalID == deckId)
+                ?? wizard.InventoryBehavior.Items.FirstOrDefault(i => i.m_globalID == deckId);
+            if (deckItem is not null && CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)) {
+                deck.m_archmasterySchool = school;
+                WizardData.Collections.WizardItemCollection.SaveItemBehaviors(deckItem);
+                Logger.Information("Deck {0} of {1}: Archmastery school {2}.",
+                    Logger.Args(deckId, wizard.CharId, school == 0 ? "own school" : ((Shared.Behaviors.MagicSchool) school).ToString()));
+            }
+            else {
+                Logger.Warning("Archmastery school {0}: deck {1} not found for {2}.", Logger.Args(school, deckId, wizard.CharId));
+            }
+
+            // Only the equipped deck (or the orb) changes the battle the wizard is in.
+            var equippedDeckId = wizard.EquipmentBehavior.SlotList.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck)?.ItemId;
+            if (message.ItemGID == 0 || deckId == equippedDeckId) {
+                SessionActor.ActorRef.Tell(new COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL { School = school });
+            }
+        }
+        catch (System.Exception e) {
+            Logger.Error("Archmastery school could not be saved for {0}: {1}", Logger.Args(wizard.CharId, e.Message));
+        }
+    }
+
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         var wizard = GetActiveWizard();
+
+        // The Archmastery the character sheet shows (the level table's part; the client adds gear).
+        if (wizard is not null) {
+            SendToSocket(new WIZARD3_56_PROTOCOL.MSG_UPDATEARCHMASTERY {
+                Stat = Combat.Archmastery.BaseRating(wizard.GameStats.MagicSchool, wizard.GameStats.Level),
+            });
+        }
 
         // Find the equipped deck.
         var deckSlot = wizard.EquipmentBehavior.SlotList

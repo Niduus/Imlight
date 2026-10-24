@@ -643,57 +643,76 @@ public class CombatDuelSubCircle {
     /// <summary>
     /// The school the archmastery gauge fills toward, as the client wants it (0 when none).
     /// </summary>
-    internal uint ArchmasterySchool => !(s_gainSchoolPips || ArchmasteryActive) || _wizard is null ? 0
-        : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
+    internal uint ArchmasterySchool {
+        get {
+            if (_wizard is null) {
+                // A creature with Archmastery fills toward its own school.
+                return ArchmasteryActive ? (uint) CombatParticipant.m_primaryMagicSchoolID : 0;
+            }
 
-    // The school picked for the gauge in the equipped deck, or 0 when none was picked.
+            return !(s_gainSchoolPips || ArchmasteryActive) ? 0
+                : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
+        }
+    }
+
+    // The school picked for the gauge in the equipped deck (or on the orb this battle), or 0 when none was picked.
     private uint _deckArchmasterySchool;
 
-    internal static bool SchoolGaugeOn => s_gainSchoolPips || s_archmastery;
+    internal static bool SchoolGaugeOn => s_gainSchoolPips || Archmastery.Enabled;
 
-    private uint DeckArchmasterySchool() {
+    private DeckBehavior EquippedDeck(out int deckSize) {
+        deckSize = 0;
         var equipment = _wizard?.EquipmentBehavior;
         var deckSlot = equipment?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck);
         var deckItem = deckSlot?.ItemId is null ? null
             : equipment.EquippedItems?.FirstOrDefault(i => i.m_globalID == deckSlot.ItemId);
+        if (deckItem is null || !CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)) {
+            return null;
+        }
 
-        return deckItem is not null && CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)
-            ? deck.m_archmasterySchool
-            : 0;
+        var template = CoreObjectFactory.GetCoreTemplate(deckItem.m_templateID);
+        deckSize = template?.m_behaviors?.OfType<DeckBehaviorTemplate>().FirstOrDefault()?.m_maxSpells ?? 0;
+
+        return deck;
+    }
+
+    private uint DeckArchmasterySchool() => EquippedDeck(out _)?.m_archmasterySchool ?? 0;
+
+    /// <summary>
+    /// The school picked on the Power Orb mid-battle (or on the deck while in battle): new school pips come in it
+    /// from the next round. 0 goes back to the wizard's own school.
+    /// </summary>
+    internal void SetArchmasterySchool(uint school) {
+        if (_wizard is null) {
+            return;
+        }
+
+        _deckArchmasterySchool = school;
+        CombatParticipant.m_archmasterySchool = ArchmasterySchool;
+        Logger.Debug("Archmastery school for {0} is now {1}.", Logger.Args(_wizard.CharId, (MagicSchool) ArchmasterySchool));
     }
 
     internal float ArchmasteryPoints => ArchmasterySchool == 0 ? 0
         : ArchmasteryActive ? Math.Min(_archmasteryPower, 1f) * GAUGE_FULL
         : _schoolGauge;
 
-    // [Archmastery] Like the game: wizards gain Archmastery from level 50 (the game's level table), and their
-    // Power Orb fills each round, fastest for whoever has the most Archmastery in the battle. Each point of
-    // power turns a power pip into a school pip; with 3 points left, a white pip becomes a power pip.
-    private static readonly bool s_archmastery = ConfigurationManager.GetValue("Archmastery.Enabled", true);
-    // Gives wizards under level 50 the level 50 Archmastery, so they get school pips too.
-    private static readonly bool s_archmasteryAllLevels = ConfigurationManager.GetValue("Archmastery.AllLevels", false);
-    // Extra Archmastery for every wizard (stands in for gear and jewels).
-    private static readonly float s_archmasteryBonus
-        = Math.Max(0f, ConfigurationManager.GetValue("Archmastery.BonusRating", 0f));
-    // How much the fastest orb fills in a round (1 = a school pip every round). 0 uses the game's own number.
-    private static readonly float s_archmasteryFillOverride
-        = Math.Clamp(ConfigurationManager.GetValue("Archmastery.FillPerRound", 0f), 0f, 1f);
-    private const int ARCHMASTERY_LEVEL = 50;
-    private const float ARCHMASTERY_MAX_POWER = 7f;
-    private const float DEFAULT_ARCHMASTERY_FILL = 0.5f;
-    private const float DEFAULT_POWER_PIP_COST = 3f;
+    // [Archmastery] Like the game: the Power Orb fills each round, fastest for whoever has the most Archmastery in
+    // the battle (see Archmastery.cs). Each point of power turns a power pip into a school pip; with 3 points left,
+    // a white pip becomes a power pip.
     private float _archmasteryPower;
     private float? _archmasteryRating;
+    private float? _archmasteryEfficiency;
 
-    private bool ArchmasteryActive => s_archmastery && _wizard is not null && ArchmasteryRating > 0;
+    private bool ArchmasteryActive => Archmastery.Enabled && ArchmasteryRating > 0;
 
     /// <summary>
-    /// This wizard's Archmastery: the game's level table (0 under level 50) plus [Archmastery] BonusRating.
-    /// Creatures have none.
+    /// This combatant's Archmastery: the level table from level 50, [Archmastery] BonusRating, gear, jewels and pets
+    /// for wizards; the creature's own stats for creatures.
     /// </summary>
     internal float ArchmasteryRating {
         get {
-            if (!s_archmastery || _wizard is null || ParticipantGameStats is null) {
+            // A creature's school and level are on its participant, which may not be made yet.
+            if (!Archmastery.Enabled || ParticipantGameStats is null || (_wizard is null && CombatParticipant is null)) {
                 return 0;
             }
 
@@ -703,37 +722,50 @@ public class CombatDuelSubCircle {
 
     private float ComputeArchmasteryRating() {
         try {
-            var school = (MagicSchool) ParticipantGameStats.m_schoolID;
-            var level = ParticipantGameStats.Level;
-            var rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, level)?.m_archmastery ?? 0f;
-            if (rating <= 0 && (level >= ARCHMASTERY_LEVEL || s_archmasteryAllLevels)) {
-                // The level table may have no number for this level; the level 50 one stands in.
-                rating = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo(school, ARCHMASTERY_LEVEL)?.m_archmastery ?? 0f;
-                if (rating <= 0) {
-                    rating = 1f;
-                }
+            var isPlayer = _wizard is not null;
+            var school = isPlayer ? (MagicSchool) ParticipantGameStats.m_schoolID : (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
+            var level = isPlayer ? ParticipantGameStats.Level : CombatParticipant.m_mobLevel;
+            var rating = Archmastery.RatingOf(ParticipantGameStats, school, level, isPlayer);
+            if (rating > 0) {
+                Logger.Debug("Archmastery for {0} (level {1}): {2}.", Logger.Args(SlotName, level, rating));
             }
-
-            if (level < ARCHMASTERY_LEVEL && !s_archmasteryAllLevels) {
-                rating = 0;
-            }
-
-            rating += s_archmasteryBonus;
-            Logger.Debug("Archmastery for {0} (level {1}): {2}.", Logger.Args(_wizard.CharId, level, rating));
 
             return rating;
         }
         catch (Exception e) {
-            Logger.Error("Archmastery could not be worked out for {0}: {1}", Logger.Args(_wizard.CharId, e.Message));
+            Logger.Error("Archmastery could not be worked out for {0}: {1}", Logger.Args(SlotName, e.Message));
 
             return 0;
         }
     }
 
+    /// <summary>
+    /// "Power Orb Efficiency": 100% outside PvP; in PvP, how full the main deck is of PvP cards.
+    /// </summary>
+    private float ArchmasteryEfficiency {
+        get {
+            if (_archmasteryEfficiency is { } known) {
+                return known;
+            }
+
+            try {
+                var pvp = _duelActor.Duel.m_bPVP;
+                var size = 0;
+                var deck = pvp && _wizard is not null ? EquippedDeck(out size) : null;
+                _archmasteryEfficiency = Archmastery.Efficiency(pvp, deck, size);
+            }
+            catch (Exception e) {
+                Logger.Error("Power Orb efficiency could not be worked out for {0}: {1}", Logger.Args(SlotName, e.Message));
+                _archmasteryEfficiency = 1f;
+            }
+
+            return _archmasteryEfficiency.Value;
+        }
+    }
+
     private void ArchmasteryRound(float highest) {
-        var (fillMax, powerPipCost) = ArchmasteryNumbers();
-        var share = highest > 0 ? Math.Clamp(ArchmasteryRating / highest, 0f, 1f) : 1f;
-        _archmasteryPower = Math.Min(ARCHMASTERY_MAX_POWER, _archmasteryPower + fillMax * share);
+        _archmasteryPower = Math.Min(Archmastery.MAX_POWER,
+            _archmasteryPower + Archmastery.FillThisRound(ArchmasteryRating, highest, ArchmasteryEfficiency));
 
         // Power pips turn into school pips first, a point of power each.
         var pipCount = CombatParticipant.m_pipCount;
@@ -744,28 +776,14 @@ public class CombatDuelSubCircle {
         }
 
         // Then, with enough power left, a white pip turns into a power pip.
+        var powerPipCost = Archmastery.PowerPipCost;
         if (_archmasteryPower >= powerPipCost && pipCount.m_genericPips > 0) {
             pipCount.m_genericPips--;
             pipCount.m_powerPips++;
             _archmasteryPower -= powerPipCost;
         }
-    }
 
-    /// <summary>
-    /// The fastest fill per round and the power a white pip costs, in school pips (1 = one school pip),
-    /// from the game's WizStatisticEffectConfig when it has them.
-    /// </summary>
-    private static (float FillMax, float PowerPipCost) ArchmasteryNumbers() {
-        var config = Imlight.CoreLib.Game.Effects.WizStatisticEffectConfigLoader.Config;
-        var cost = config?.m_archmasteryConversionCost ?? 0f;
-        var fill = s_archmasteryFillOverride > 0 ? s_archmasteryFillOverride
-            : cost > 0 && config.m_archmasteryFillRateMax > 0 ? Math.Min(1f, config.m_archmasteryFillRateMax / cost)
-            : DEFAULT_ARCHMASTERY_FILL;
-        var powerPipCost = cost > 0 && config.m_archmasteryPowerPipCost > 0
-            ? config.m_archmasteryPowerPipCost / cost
-            : DEFAULT_POWER_PIP_COST;
-
-        return (fill, powerPipCost);
+        CombatParticipant.m_archmasteryPoints = ArchmasteryPoints;
     }
 
     /// <summary>
@@ -1617,6 +1635,11 @@ public class CombatDuelSubCircle {
             m_rotation = _rotation,
             m_radius = _radius,
         };
+        // A creature with Archmastery in its stats has a Power Orb of its own school.
+        if (ArchmasterySchool is var orbSchool and not 0) {
+            CombatParticipant.m_maxArchmasteryPoints = GAUGE_FULL;
+            CombatParticipant.m_archmasterySchool = orbSchool;
+        }
         ApplyPipGauges(CombatParticipant.m_pGameStats);
     }
 

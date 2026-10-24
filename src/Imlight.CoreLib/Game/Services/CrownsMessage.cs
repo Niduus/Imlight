@@ -48,9 +48,9 @@ internal static class CrownsMessage {
         return message;
     }
 
-    // Messages for things still being worked out (the badge window, the crown shop, jewels and pins, the deck's Archmastery
-    // school), logged with their fields so the next step can use them.
-    private static readonly string[] s_loggedMessageWords = ["BADGE", "PCS", "CROWNSHOP", "CROWNSERVICE", "ELIXIR", "ARCHMASTERY", "JEWEL", "SOCKET", "PIN"];
+    // Messages for things still being worked out (the badge window, the crown shop, jewels and pins), logged with their
+    // fields so the next step can use them.
+    private static readonly string[] s_loggedMessageWords = ["BADGE", "PCS", "CROWNSHOP", "CROWNSERVICE", "ELIXIR", "JEWEL", "SOCKET", "PIN"];
 
     private static void LogOtherMessages() {
         try {

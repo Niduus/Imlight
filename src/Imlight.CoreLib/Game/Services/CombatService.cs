@@ -402,6 +402,17 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         _currentDuelActor.Tell(message);
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL))]
+    private void ReceiveSetArchmasterySchool(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL message) {
+        // Out of battle the deck keeps it for the next one (SpellBookService saved it).
+        if (_currentDuelActor is null) {
+            return;
+        }
+
+        message.Actor = SessionActor.ActorRef;
+        _currentDuelActor.Tell(message);
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY))]
     private void ReceiveCheatMastery(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY message) {
         if (_currentDuelActor is null) {

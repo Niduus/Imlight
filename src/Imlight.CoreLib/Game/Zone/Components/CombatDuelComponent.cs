@@ -3111,6 +3111,23 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL))]
+    private void ReceiveSetArchmasterySchool(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL message) {
+        var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);
+        if (!_isActive || subCircle is null) {
+            return;
+        }
+
+        try {
+            // Clicking the Power Orb: the next school pip comes in the new school, the orb keeps its power.
+            subCircle.SetArchmasterySchool(message.School);
+            SendCombatPips();
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Archmastery school change failed: {1}", Logger.Args(SigilId, ex));
+        }
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY))]
     private void ReceiveCheatMastery(COMBAT_106_PROTOCOL.MSG_CHEATMASTERY message) {
         var subCircle = SubCircles.FirstOrDefault(x => x is not null && x.ParticipantActor == message.Actor);

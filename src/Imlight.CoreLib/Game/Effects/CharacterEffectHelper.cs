@@ -223,6 +223,8 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll += statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll += statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent += statistic.m_stunResistancePercent;
+        stats.m_archmasteryBonus += statistic.m_archmastery;
+        stats.m_archmasteryBonusPercent += statistic.m_archmasteryBonusPercent;
         LogBattleStat("added", effectName, statistic);
 
         if (effectName.Contains("ArmorPiercing")) {
@@ -280,6 +282,8 @@ internal static class CharacterEffectHelper {
         stats.m_healBonusPercentAll -= statistic.m_healBonusPercent;
         stats.m_healIncBonusPercentAll -= statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent -= statistic.m_stunResistancePercent;
+        stats.m_archmasteryBonus -= statistic.m_archmastery;
+        stats.m_archmasteryBonusPercent -= statistic.m_archmasteryBonusPercent;
         LogBattleStat("removed", effectName, statistic);
 
         if (effectName.Contains("ArmorPiercing")) {

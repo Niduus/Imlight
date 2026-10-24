@@ -447,4 +447,18 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// The wizard picked an Archmastery school on the deck or the Power Orb (MSG_SetDeckArchmastery) while in a
+    /// battle: new school pips come in that school from the next round. 0 is their own school.
+    /// </summary>
+    internal sealed class MSG_SETARCHMASTERYSCHOOL : IServerMessage {
+
+        public byte MessageOrder => 37;
+        public byte ServiceID => 106;
+
+        public uint School;
+        public IActorRef Actor;
+
+    }
+
 }

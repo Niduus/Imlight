@@ -146,6 +146,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     [JsonIgnore] public List<int> m_pipConversionBasePerSchool;
     [JsonIgnore] public float m_archmasteryBase;
     [JsonIgnore] public float m_archmasteryBonus;
+    // Archmastery % from gear, jewels, pets and creature stats (the game's table holds 0.05 for +5%, -0.5 for -50%).
+    [JsonIgnore] public float m_archmasteryBonusPercent;
     [JsonIgnore] public float m_criticalHitPercentAll;
     [JsonIgnore] public float m_blockPercentAll;
     [JsonIgnore] public float m_criticalHitRatingAll;
@@ -206,6 +208,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         m_blockRatingBySchool = null;
         m_pipConversionRatingPerSchool = null;
         m_pipConversionRatingAll = 0;
+        m_archmasteryBonus = 0;
+        m_archmasteryBonusPercent = 0;
         m_dmgBonusPercentAll = 0;
         m_dmgBonusFlatAll = 0;
         m_accBonusPercentAll = 0;
@@ -356,6 +360,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_rememberLastRealm = m_rememberLastRealm,
             m_newSpellbookLayoutWarning = m_newSpellbookLayoutWarning,
             m_pipConversionBaseAllSchools = m_pipConversionBaseAllSchools,
+            // The level table's Archmastery; the client adds gear and jewels to it for the character sheet.
+            m_archmasteryBase = Imlight.CoreLib.Game.Combat.Archmastery.BaseRating(MagicSchool, Level),
             m_purchasedCustomEmotes1 = m_purchasedCustomEmotes1,
             m_purchasedCustomTeleportEffects1 = m_purchasedCustomTeleportEffects1,
             m_photoFilters = Imlight.CoreLib.Game.Photomancy.Photomancy.Filters(m_photoFilters),
