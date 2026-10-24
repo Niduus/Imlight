@@ -39,6 +39,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace Imlight.CoreLib.Game.Madlibs;
@@ -133,14 +134,22 @@ internal static class QuestMadlibs {
                 var templateId = completionDialogEntry?.m_dialogEntries
                     ?.FirstOrDefault()?.m_actorTemplateID ?? 0;
 
-                if (templateId != 0) {
-                    var npcTemplate = CoreObjectFactory.GetCoreTemplate(templateId);
-                    if (npcTemplate is GameObjectTemplate npcGameObjectTemplate) {
-                        var npcFullname = npcGameObjectTemplate.m_displayName;
-                        (firstName, lastName) = Locale.GetEnglishNameKeys(npcFullname);
-                    }
-                }
+                (firstName, lastName) = NameKeysOfTemplate(templateId);
             }
+        }
+
+        // No Completion dialog names the NPC ("I'm With the Band" has none, so its "Talk To" showed no name;
+        // Niduus, 2026-10-24): take the NPC the goal itself names, else one of the goal's other dialogs.
+        if (string.IsNullOrEmpty(firstName) && nameFormat is null) {
+            (firstName, lastName) = NameKeysOfTemplate(TemplateOfPersona((gTemplate as PersonaGoalTemplate)?.m_personaName));
+        }
+
+        if (string.IsNullOrEmpty(firstName) && nameFormat is null && gTemplate.m_dialogList is ActorDialogList otherDialogs) {
+            var templateId = otherDialogs.m_dialogs
+                .SelectMany(d => d.m_dialogEntries ?? [])
+                .Select(e => e?.m_actorTemplateID ?? 0)
+                .FirstOrDefault(id => id != 0);
+            (firstName, lastName) = NameKeysOfTemplate(templateId);
         }
 
         var madLibs = new MadlibBlock() {
@@ -179,6 +188,43 @@ internal static class QuestMadlibs {
         };
 
         return madLibs;
+    }
+
+    /// <summary>
+    /// The first and last name keys of an NPC template's display name. A name the game does not split into a first and
+    /// a last name (one word, or parts the name table lacks) is all first name, which the quest book shows whole.
+    /// </summary>
+    private static (string First, string Last) NameKeysOfTemplate(ulong templateId) {
+        if (templateId == 0 || CoreObjectFactory.GetCoreTemplate(templateId) is not GameObjectTemplate npcTemplate) {
+            return (string.Empty, string.Empty);
+        }
+
+        string fullName = npcTemplate.m_displayName;
+        var (first, last) = Locale.GetEnglishNameKeys(fullName);
+
+        return string.IsNullOrEmpty(first) ? (fullName ?? string.Empty, string.Empty) : (first, last);
+    }
+
+    private static readonly ConcurrentDictionary<string, uint> s_personaTemplates = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The template of the NPC a persona goal names: its object name, or the object name plus "_Persona"
+    /// (GH-HERO-NPC01_Persona is ObjectData/GH/GH-HERO-NPC01.xml). 0 when no template has that name.
+    /// </summary>
+    private static uint TemplateOfPersona(string personaName) {
+        if (string.IsNullOrEmpty(personaName)) {
+            return 0;
+        }
+
+        return s_personaTemplates.GetOrAdd(personaName, name => {
+            const string suffix = "_Persona";
+            var objectName = name.EndsWith(suffix, StringComparison.Ordinal) ? name[..^suffix.Length] : name;
+            var file = "/" + objectName + ".xml";
+
+            return CoreObjectFactory.TryGetCoreTemplateID(
+                location => location is not null && ((string) location.m_filename)?.EndsWith(file, StringComparison.OrdinalIgnoreCase) == true,
+                out var id) ? id : 0;
+        });
     }
 
     private static MadlibArgT_ByteString[] GetTallyArguments(GoalTemplate gTemplate)
