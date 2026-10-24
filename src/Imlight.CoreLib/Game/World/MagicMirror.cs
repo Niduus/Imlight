@@ -25,17 +25,19 @@
  * (MSG_MAGICMIRRORCHANGEPLAYER), and each wizard's saved mirror look (Wizard.MirrorLook).
  *
  * USAGE EXAMPLE:
- * var look = MagicMirror.FromRequest(request, wizard.MirrorLook, out var notes);
+ * var look = MagicMirror.FromRequest(request, wizard.MirrorLook, wizard.WizardAvatar, out var notes);
  * var message = MagicMirror.ChangeMessage(wizard.GameObjectID, look);
  *
  * NOTE:
  * - The mirror NPC's MagicMirrorShopBehaviorTemplate lists its options (m_shopOptions). Each option is an item template
  *   (ObjectData/MagicMirrorShopOptions/...) with a VisualAttributeBehaviorTemplate saying what part it changes.
- * - Not checked in the game yet: whether the request carries those option template ids (the message names them "ID")
- *   or look numbers already. An option id becomes its number: its place in the avatar part lists of Root.wad when its
- *   file is found there, otherwise its place among the mirror's options of the same part and gender. Anything else is
- *   used as it is. Every request is logged with both, and magic-mirror-data.txt (next to the server) lists the
- *   options and the avatar parts, so the numbers can be fixed from real data.
+ * - The window sends the option template ids it picked and 0 for each part it left alone (seen in Niduus's log,
+ *   2026-10-24). An option id becomes its look number from the game's avatar table (HumanTemplate.xml in Root.wad):
+ *   its file's place in its part's list (face paint and glasses count from 1, 0 is none; a hair color counts among
+ *   its own style's colors). Eyebrow and lip colors have no file and use their mirror order, which is the color order.
+ *   A part left alone keeps the saved mirror look, else what the avatar says (hair, hair color, skin, face paint),
+ *   else -1. Every request is logged, and magic-mirror-data.txt (next to the server) lists the options and their
+ *   numbers.
  * - The new look is not written into WizardCharacterBehavior (how its newer packed fields hold eyes, nose and mouth is
  *   not known), so it is sent again each time the wizard enters a zone. Character select shows the old look.
  *
@@ -63,7 +65,7 @@ namespace Imlight.CoreLib.Game.World;
 /// <param name="Type">The part it changes.</param>
 /// <param name="Gender">"Girl", "Boy" or "" from its name or folder.</param>
 /// <param name="Index">The look number it becomes.</param>
-/// <param name="IndexFrom">How the number was found: "avatar part" or "mirror order".</param>
+/// <param name="IndexFrom">How the number was found: "avatar part" (the avatar table) or "mirror order".</param>
 internal sealed record MagicMirrorOption(uint Id, string Name, VisualAttributeType Type, string Gender, string Source,
     string Reference, int Index, string IndexFrom);
 
@@ -80,6 +82,23 @@ internal static class MagicMirror {
         "hair style", "hair color", "skin color", "face", "face paint", "eye color", "nose", "mouth", "accessory",
         "eyebrow color", "lip color"
     ];
+
+    /// <summary>Wizard.MirrorLookVersion of looks saved with the avatar table numbers.</summary>
+    internal const int LOOK_VERSION = 2;
+
+    /// <summary>
+    /// Drops a mirror look saved by v0.10.237, whose numbers were wrong (every part left alone became 0). True when one
+    /// was dropped, and the wizard needs saving.
+    /// </summary>
+    internal static bool DropOldLook(WizardData.Models.Player.Wizard wizard) {
+        if (wizard?.MirrorLook is null || wizard.MirrorLookVersion >= LOOK_VERSION) {
+            return false;
+        }
+
+        wizard.MirrorLook = null;
+
+        return true;
+    }
 
     /// <summary>A part that is not changed.</summary>
     internal const int UNCHANGED = -1;
@@ -125,7 +144,7 @@ internal static class MagicMirror {
             s_optionsFrom = (mirror as GameObjectTemplate)?.m_templateID ?? 0;
             try {
                 var behavior = (mirror as GameObjectTemplate)?.m_behaviors?.OfType<MagicMirrorShopBehaviorTemplate>().FirstOrDefault();
-                var avatarParts = ReadAvatarParts();
+                var race = ReadAvatarTable();
                 var order = new Dictionary<string, int>();
                 foreach (var id in behavior?.m_shopOptions ?? []) {
                     if (CustomNpcs.TemplateOf(id) is not GameObjectTemplate option) {
@@ -146,7 +165,7 @@ internal static class MagicMirror {
                     order.TryGetValue(key, out var place);
                     order[key] = place + 1;
 
-                    var fromAvatar = FindInAvatarParts(avatarParts, gender, source, reference);
+                    var fromAvatar = IndexInAvatarTable(race, visual.m_visualAttributeType, gender, name, source);
                     s_options[id] = new MagicMirrorOption(id, name, visual.m_visualAttributeType, gender, source, reference,
                         fromAvatar ?? place, fromAvatar is null ? "mirror order" : "avatar part");
                 }
@@ -175,28 +194,30 @@ internal static class MagicMirror {
     /// The look the game asked for, on top of the wizard's saved look. <paramref name="notes"/> says, per part, what came
     /// in and what it became (for the log).
     /// </summary>
-    internal static int[] FromRequest(WIZARD2_53_PROTOCOL.MSG_MAGICMIRRORREQUESTCHANGE request, int[] saved, out string notes) {
+    internal static int[] FromRequest(WIZARD2_53_PROTOCOL.MSG_MAGICMIRRORREQUESTCHANGE request, int[] saved,
+        WizardCharacterBehavior avatar, out string notes) {
         uint[] asked = [
             request.HairStyleID, request.HairColorID, request.SkinColorID, request.FaceStyleID, unchecked((uint) request.FacePaintID),
             request.EyeColorID, request.NoseStyleID, request.MouthStyleID, request.AccessoryStyleID, request.EyeBrowColorID,
             request.LipColorID
         ];
 
-        var look = Normalize(saved);
+        // The window sends 0 for every part that was not changed (Niduus's log, 2026-10-24); those keep the look the
+        // wizard has now.
+        var look = Current(saved, avatar);
         var text = new StringBuilder();
         for (var i = 0; i < Parts.Length; i++) {
             var value = asked[i];
             string how;
-            if (value == uint.MaxValue) {
-                how = "unchanged";
+            if (value is 0 or uint.MaxValue) {
+                how = $"unchanged ({look[i]})";
             }
             else if (OptionOf(value) is { } option) {
                 look[i] = option.Index;
                 how = $"option {option.Name} -> {option.Index} ({option.IndexFrom})";
             }
             else {
-                look[i] = (int) value;
-                how = $"{value} as it is";
+                how = $"{value} is no mirror option, unchanged ({look[i]})";
             }
 
             text.Append(i == 0 ? "" : "; ").Append(Parts[i]).Append(' ').Append(how);
@@ -206,6 +227,34 @@ internal static class MagicMirror {
 
         return look;
     }
+
+    /// <summary>
+    /// The look a wizard has now: the saved mirror look, and for parts it never changed, what its avatar says (hair style,
+    /// hair color, skin color and face paint; the newer parts are packed in fields whose layout is not known, so -1).
+    /// </summary>
+    internal static int[] Current(int[] saved, WizardCharacterBehavior avatar) {
+        var look = Normalize(saved);
+        if (avatar is null) {
+            return look;
+        }
+
+        int[] fromAvatar = [avatar.m_nHairModel, avatar.m_nHairColor, avatar.m_nSkinColor, UNCHANGED, avatar.m_nSkinDecal2,
+            UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED];
+        for (var i = 0; i < look.Length; i++) {
+            if (look[i] == UNCHANGED) {
+                look[i] = fromAvatar[i];
+            }
+        }
+
+        return look;
+    }
+
+    /// <summary>The avatar's look fields, for the log (to learn how the newer parts are packed).</summary>
+    internal static string DescribeAvatar(WizardCharacterBehavior a)
+        => a is null ? "no avatar" : $"gender {a.m_eGender}, hair {(int) a.m_nHairModel}, hair color {(int) a.m_nHairColor} " +
+            $"(extended {a.m_extendedHairColor}), skin {(int) a.m_nSkinColor}, skin decal {(int) a.m_nSkinDecal} (extended " +
+            $"{a.m_extendedSkinDecal}), skin decal 2 {a.m_nSkinDecal2}, new options 0x{a.m_newPlayerOptions:X8}, new options 2 " +
+            $"0x{a.m_newPlayerOptions2:X8}";
 
     /// <summary>The message that shows a look on a wizard.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_MAGICMIRRORCHANGEPLAYER ChangeMessage(ulong gameObjectId, int[] look) {
@@ -260,7 +309,7 @@ internal static class MagicMirror {
                 }
 
                 text.AppendLine();
-                text.AppendLine("Avatar parts found in Root.wad:");
+                text.AppendLine("Avatar table (HumanTemplate.xml):");
                 foreach (var line in s_avatarReport) {
                     text.AppendLine(line);
                 }
@@ -314,75 +363,131 @@ internal static class MagicMirror {
         return (dot > 0 ? name[..dot] : name).Trim().ToLowerInvariant();
     }
 
-    // One avatar part list: the file it came from, the part, and the file names of each of its options.
-    private sealed record AvatarPart(string File, string Gender, string Part, List<HashSet<string>> Options, List<HashSet<string>> Textures);
-
-    /// <summary>Every AvatarItemInfoList in Root.wad (files with "avatar" in the name), for placing the options.</summary>
-    private static List<AvatarPart> ReadAvatarParts() {
-        var parts = new List<AvatarPart>();
+    /// <summary>
+    /// The game's avatar table (HumanTemplate.xml in Root.wad, a CharacterRaceTable): per gender, the lists the look
+    /// numbers point into. Every option's file is looked up in its part's list.
+    /// </summary>
+    private static CharacterRaceTable ReadAvatarTable() {
         s_avatarReport = [];
         try {
-            var names = RootArchiveLoader.GetRootWad()?.Files.Keys
-                .Where(n => n.Contains("avatar", StringComparison.OrdinalIgnoreCase) && n.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-                .Take(300)
-                .ToList() ?? [];
-            foreach (var name in names) {
-                PropertyClass file;
-                try {
-                    file = RootArchiveLoader.GetFile<PropertyClass>(name);
-                }
-                catch {
-                    continue;
-                }
-
-                if (file is not AvatarItemInfoList list) {
-                    s_avatarReport.Add($"{name}: {file?.GetType().Name ?? "not readable"}");
-
-                    continue;
-                }
-
-                var gender = GenderOf(name);
-                foreach (var info in list.m_itemInfoList?.OfType<AvatarItemInfo>() ?? []) {
-                    var options = (info.m_options ?? []).Select(o => new HashSet<string> { Stem(o?.m_mesh.ToString()), Stem(o?.m_geometry.ToString()) }).ToList();
-                    var textures = (info.m_textureOptions ?? []).Select(t => new HashSet<string>(
-                        (t?.m_textures ?? []).Concat(t?.m_decals ?? []).Concat(t?.m_decals2 ?? []).Select(s => Stem(s.ToString()))
-                            .Append(Stem(t?.m_materialName.ToString())))).ToList();
-                    var part = new AvatarPart(name, gender, info.m_partName.ToString() ?? "", options, textures);
-                    parts.Add(part);
-                    s_avatarReport.Add($"{name}\tpart {part.Part}\tslot {info.m_slotName}\t{options.Count} options\t{textures.Count} textures\t" +
-                        $"first: {string.Join(",", options.Take(3).Select(o => string.Join("/", o.Where(s => s.Length > 0))))} | " +
-                        $"{string.Join(",", textures.Take(3).Select(t => string.Join("/", t.Where(s => s.Length > 0).Take(2))))}");
-                }
+            var race = RootArchiveLoader.GetFile<CharacterRaceTable>("HumanTemplate.xml");
+            foreach (var table in race?.m_characterTables ?? []) {
+                s_avatarReport.Add($"{table.m_sGender}: hair {table.m_hairElementList?.Count}, hair colors {table.m_hairTextureList?.Count}, " +
+                    $"skin {table.m_skinTextureList?.Count}, face paint {table.m_skinDecalList2?.Count}, faces {table.m_faceElementList?.Count}, " +
+                    $"eye colors {table.m_eyeColorTextureList?.Count}, noses {table.m_noseElementList?.Count}, mouths " +
+                    $"{table.m_mouthElementList?.Count}, accessories {table.m_accessoryElementList?.Count}");
             }
+
+            if (race is null) {
+                s_avatarReport.Add("HumanTemplate.xml could not be read.");
+            }
+
+            return race;
         }
         catch (Exception ex) {
-            s_avatarReport.Add("Reading the avatar parts failed: " + ex.Message);
-        }
+            s_avatarReport.Add("Reading HumanTemplate.xml failed: " + ex.Message);
 
-        return parts;
+            return null;
+        }
     }
 
-    /// <summary>An option's place in an avatar part list whose option uses the same file, or null.</summary>
-    private static int? FindInAvatarParts(List<AvatarPart> parts, string gender, string source, string reference) {
-        var stems = new[] { Stem(source), Stem(reference) }.Where(s => s.Length > 0).ToArray();
-        if (stems.Length == 0) {
+    /// <summary>The look number of an option, from the avatar table, or null when its file is not found there.</summary>
+    private static int? IndexInAvatarTable(CharacterRaceTable race, VisualAttributeType type, string gender, string name, string source) {
+        // Options without a gender (eye colors, glasses) are the same for both; their files sit in the boy folders.
+        var table = race?.m_characterTables?.FirstOrDefault(t => (t.m_sGender.ToString() ?? "")
+            .Equals(gender == "Girl" ? "Female" : "Male", StringComparison.OrdinalIgnoreCase));
+        if (table is null) {
             return null;
         }
 
-        foreach (var part in parts.OrderBy(p => p.Gender == gender ? 0 : 1)) {
-            if (gender.Length > 0 && part.Gender.Length > 0 && part.Gender != gender) {
-                continue;
+        var stem = Stem(source);
+        switch (type) {
+            case VisualAttributeType.VAT_HairStyle:
+                return Find(table.m_hairElementList, stem, byGeometry: false);
+
+            case VisualAttributeType.VAT_HairColor: {
+                // The hair colors are one list for every style (each color's m_id is its style's); the number is the
+                // color's place among its own style's colors.
+                var list = table.m_hairTextureList ?? [];
+                var at = Find(list, stem, byGeometry: false);
+                if (at is not { } index) {
+                    return null;
+                }
+
+                var style = list[index].m_id;
+
+                return list.Take(index).Count(e => e?.m_id == style);
             }
 
-            foreach (var list in new[] { part.Options, part.Textures }) {
-                var index = list.FindIndex(o => stems.Any(o.Contains));
-                if (index >= 0) {
-                    return index;
-                }
+            case VisualAttributeType.VAT_SkinColor:
+                return Find(table.m_skinTextureList, stem, byGeometry: false);
+
+            case VisualAttributeType.VAT_FaceStyle:
+            case VisualAttributeType.VAT_NewFaceStyle:
+                return FaceIndex(table, name) ?? Find(table.m_faceElementList, stem, byGeometry: true);
+
+            case VisualAttributeType.VAT_FacePaint:
+                // 0 is no face paint; the paints count from 1 (Niduus, 2026-10-24: number 3 showed Balance, the
+                // girl list's third paint).
+                return stem.Length == 0 ? 0 : Find(table.m_skinDecalList2, stem, byGeometry: false) + 1;
+
+            case VisualAttributeType.VAT_EyeColor:
+            case VisualAttributeType.VAT_NewEyeColor:
+                return Find(table.m_eyeColorTextureList, stem, byGeometry: false);
+
+            case VisualAttributeType.VAT_NoseStyle:
+                return Find(table.m_noseElementList, stem, byGeometry: true);
+
+            case VisualAttributeType.VAT_MouthStyle:
+                return Find(table.m_mouthElementList, stem, byGeometry: false);
+
+            case VisualAttributeType.VAT_AccessoryStyle:
+                // Like face paint: 0 is none.
+                return stem.Length == 0 ? 0 : Find(table.m_accessoryElementList, stem, byGeometry: false) + 1;
+
+            default:
+                // Eyebrow and lip colors have no file; their mirror order is the game's color order.
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// A face's number from its name (P_G_Headhands_Droop is Droop): the face textures (m_skinDecalList) sit in a folder
+    /// per face and their m_id is face * 100 + color. The face meshes cannot tell, as several faces share a mesh and the
+    /// girl list carries the boy geometry names.
+    /// </summary>
+    private static int? FaceIndex(CharacterElementTable table, string name) {
+        var at = name.LastIndexOf("Headhands_", StringComparison.OrdinalIgnoreCase);
+        if (at < 0) {
+            return null;
+        }
+
+        var folder = "/" + name[(at + "Headhands_".Length)..].Trim() + "/";
+        var texture = table.m_skinDecalList?.FirstOrDefault(e =>
+            (e?.m_assetFilename.ToString() ?? "").Replace('\\', '/').Contains(folder, StringComparison.OrdinalIgnoreCase));
+
+        return texture is null ? null : texture.m_id / 100;
+    }
+
+    /// <summary>
+    /// The place of the element whose file (or, first when <paramref name="byGeometry"/>, whose geometry name) is the
+    /// stem. Faces and noses share files between entries, so they are told apart by geometry.
+    /// </summary>
+    private static int? Find(List<CharacterElement> list, string stem, bool byGeometry) {
+        if (list is null || stem.Length == 0) {
+            return null;
+        }
+
+        if (byGeometry) {
+            var byName = list.FindIndex(e => Stem(e?.m_geometryName.ToString()) == stem);
+            if (byName >= 0) {
+                return byName;
             }
         }
 
-        return null;
+        var byFile = list.FindIndex(e => Stem(e?.m_assetFilename.ToString()) == stem);
+
+        return byFile >= 0 ? byFile : null;
     }
 
 }

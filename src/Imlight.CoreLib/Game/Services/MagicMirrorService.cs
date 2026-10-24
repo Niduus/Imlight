@@ -65,14 +65,18 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
                 MagicMirror.Load(template);
             }
 
+            if (MagicMirror.DropOldLook(wizard)) {
+                WizardCollection.UpdateCharacterMirrorLook(wizard);
+            }
+
             Logger.Information("Magic Mirror | {0} asked for: object {1}, hair style {2}, hair color {3}, skin color {4}, face {5}, " +
                 "eye color {6}, face paint {7}, nose {8}, mouth {9}, accessory {10}, eyebrow color {11}, lip color {12}.",
                 Logger.Args(wizard.CharId, message.GlobalID, message.HairStyleID, message.HairColorID, message.SkinColorID,
                     message.FaceStyleID, message.EyeColorID, message.FacePaintID, message.NoseStyleID, message.MouthStyleID,
                     message.AccessoryStyleID, message.EyeBrowColorID, message.LipColorID));
 
-            var look = MagicMirror.FromRequest(message, wizard.MirrorLook, out var notes);
-            Logger.Information("Magic Mirror | {0}: {1}.", Logger.Args(wizard.CharId, notes));
+            var look = MagicMirror.FromRequest(message, wizard.MirrorLook, wizard.WizardAvatar, out var notes);
+            Logger.Information("Magic Mirror | {0}: {1}. Avatar: {2}.", Logger.Args(wizard.CharId, notes, MagicMirror.DescribeAvatar(wizard.WizardAvatar)));
             Apply(wizard, look);
         }
         catch (Exception ex) {
@@ -106,6 +110,7 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
 
     private void Apply(Wizard wizard, int[] look) {
         wizard.MirrorLook = MagicMirror.Normalize(look);
+        wizard.MirrorLookVersion = MagicMirror.LOOK_VERSION;
         WizardCollection.UpdateCharacterMirrorLook(wizard);
         Show(wizard);
         Logger.Information("Magic Mirror | {0} now looks: {1}.", Logger.Args(wizard.CharId, MagicMirror.Describe(wizard.MirrorLook)));
@@ -117,6 +122,11 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         try {
             var wizard = GetActiveWizard();
+            if (MagicMirror.DropOldLook(wizard)) {
+                WizardCollection.UpdateCharacterMirrorLook(wizard);
+                Logger.Information("Magic Mirror | Dropped {0}'s look from the first mirror version (its numbers were wrong).", Logger.Args(wizard.CharId));
+            }
+
             if (wizard?.MirrorLook is null) {
                 return;
             }

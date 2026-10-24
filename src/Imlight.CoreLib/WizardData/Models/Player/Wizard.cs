@@ -123,6 +123,8 @@ public class Wizard {
     public WizardCharacterBehavior WizardAvatar { get; set; }
     // The look picked in the Magic Mirror (MagicMirror.Parts order, -1 = not changed), sent again on every zone entry.
     public int[] MirrorLook { get; set; }
+    // 2 since the looks are numbered from the game's avatar table; older saved looks were wrong and are dropped.
+    public int MirrorLookVersion { get; set; }
     public ServerWizPlayerNameBehavior PlayerNameBehavior { get; set; }
     public ServerWizInventoryBehavior InventoryBehavior { get; set; }
     public ServerWizStorageBehavior StorageBehavior { get; set; }

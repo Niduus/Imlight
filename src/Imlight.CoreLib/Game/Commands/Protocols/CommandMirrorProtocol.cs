@@ -87,7 +87,7 @@ internal class CommandMirrorProtocol : CommandProtocol {
                     return;
                 }
 
-                var look = MagicMirror.Normalize(wizard.MirrorLook);
+                var look = MagicMirror.Current(MagicMirror.DropOldLook(wizard) ? null : wizard.MirrorLook, wizard.WizardAvatar);
                 for (var i = 0; i < numbers.Count && i < look.Length; i++) {
                     look[i] = numbers[i].Value;
                 }
