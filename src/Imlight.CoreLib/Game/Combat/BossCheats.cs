@@ -139,6 +139,9 @@
  *   Passive "Minions"   Brings (creature ids), BringsCount of BringsRandom: it comes into a battle with them on its
  *                side. A battle started against it gathers them as a ZoneObjects encounter does (the zone's own ones
  *                first, then summoned); anyone else who has it (a wizard, a boss that walks in) gets them summoned.
+ *                With the If "how many players" (PlayersMin / PlayersMax) it is a cheat of its own: its creatures come
+ *                too once that many players are in the battle, while it is in its first round (Wizard404's player
+ *                counts, such as Dr. Neaux's extra minion for 3 wizards). A creature may have several.
  *   When AllyHit       a spell from the other side hurts someone else on its side (School, Category narrow it);
  *                "Hit" is that ally, the attacker the one who cast it.
  *   HasWho, HasKind, HasSpell, HasNot   only if Caster (default), Receiver or Self has a charm, ward, aura or over-time of
@@ -427,9 +430,21 @@ internal static class BossCheats {
         => [.. (words ?? []).Select(w => uint.TryParse((w ?? "").Trim(), out var id) ? id : 0).Where(id => id > 0)];
 
     /// <summary>A passive "Minions" cheat that is on: the creatures a combatant comes into a battle with, or null.</summary>
+    /// <remarks>One with a players count (PlayersMin / PlayersMax) is not this one: see <see cref="MinionsForPlayersOf"/>.</remarks>
     internal static BossCheat MinionsOf(IEnumerable<BossCheat> cheats)
-        => cheats?.LastOrDefault(c => c is { Off: false } && c.Is("Passive") && c.Passive.Equals("Minions", StringComparison.OrdinalIgnoreCase)
-                                      && (Ids(c.Brings).Count > 0 || Ids(c.BringsRandom).Count > 0));
+        => cheats?.LastOrDefault(c => IsMinions(c) && c.PlayersMin <= 0 && c.PlayersMax <= 0);
+
+    /// <summary>The passive "Minions" cheats that are on and wait for a number of players (PlayersMin / PlayersMax).</summary>
+    internal static List<BossCheat> MinionsForPlayersOf(IEnumerable<BossCheat> cheats)
+        => [.. (cheats ?? []).Where(c => IsMinions(c) && (c.PlayersMin > 0 || c.PlayersMax > 0))];
+
+    /// <summary>Whether this many players fit a cheat's PlayersMin / PlayersMax (0 is no limit).</summary>
+    internal static bool PlayersFit(BossCheat cheat, int players)
+        => players >= cheat.PlayersMin && (cheat.PlayersMax <= 0 || players <= cheat.PlayersMax);
+
+    private static bool IsMinions(BossCheat c)
+        => c is { Off: false } && c.Is("Passive") && c.Passive.Equals("Minions", StringComparison.OrdinalIgnoreCase)
+           && (Ids(c.Brings).Count > 0 || Ids(c.BringsRandom).Count > 0);
 
     /// <summary>The creatures a passive "Minions" cheat brings this time: all of Brings, then BringsCount of BringsRandom.</summary>
     internal static List<uint> BroughtBy(BossCheat cheat) {

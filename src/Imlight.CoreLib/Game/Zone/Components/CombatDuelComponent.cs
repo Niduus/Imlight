@@ -1119,6 +1119,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         ReserveCirclesForGroupOf(startingPlayerObject);
         AddEncounterMinions(availableCreatureSubCircle, startingCreatureObject);
         BringPassiveMinions(availablePlayerSubCircle, startingPlayerObject);
+        BringMinionsForPlayers();
 
         Logger.Debug("Duel {0} | Created. Grace period over in {1}",
             Logger.Args(Duel.m_duelID.Full, DUEL_GRACE_PERIOD_IN_SECONDS));
@@ -1172,6 +1173,66 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         return BossCheats.MinionsOf(BossCheats.For(Customs.KeyOf(who)));
+    }
+
+    // Every passive "Minions" cheat of whoever's cheats they are that waits for a number of players. Empty when none.
+    private static List<BossCheats.BossCheat> PassiveMinionsForPlayersOf(CoreObject who) {
+        if (who is null) {
+            return [];
+        }
+
+        if (who.m_templateID == 1) {
+            return Wizard.TryGetCharacterId(who.m_globalID, out var charId) && PlayerCheats.IsLocalChar(charId)
+                ? BossCheats.MinionsForPlayersOf(PlayerCheats.Current()) : [];
+        }
+
+        return BossCheats.MinionsForPlayersOf(BossCheats.For(Customs.KeyOf(who)));
+    }
+
+    // Which players-count "Minions" cheats already brought their creatures, by battle, global id and cheat.
+    private readonly HashSet<(int Battle, ulong Who, int Cheat)> _broughtForPlayers = [];
+
+    // A passive "Minions" cheat with a players count (Wizard404's player counts: Dr. Neaux's extra pool minion and the
+    // Gussied-Up Gator's two more with 3 wizards): once that many stand on the other side, while the battle is still in
+    // its first round, its creatures are summoned onto its side, leaving out those templates already standing there.
+    // Waits for a zone encounter still gathering its minions, so those take their circles first.
+    private void BringMinionsForPlayers() {
+        if (!_isActive || _encounter is not null || Duel.m_roundNum > 1) {
+            return;
+        }
+
+        foreach (var circle in SubCircles.Where(c => c is { Occupied: true, IsAlive: true, IsSummonedMinion: false }).ToList()) {
+            if (circle.ParticipantObject is not { } who) {
+                continue;
+            }
+
+            var cheats = PassiveMinionsForPlayersOf(who);
+            if (cheats.Count == 0) {
+                continue;
+            }
+
+            var players = SubCircles.Count(c => c is not null && c.Occupied && c.IsAlive && c.OccupiedTeam != circle.OccupiedTeam);
+            for (var i = 0; i < cheats.Count; i++) {
+                if (!BossCheats.PlayersFit(cheats[i], players) || !_broughtForPlayers.Add((_battle, who.m_globalID.Full, i))) {
+                    continue;
+                }
+
+                var spawned = new List<uint>();
+                foreach (var tid in BossCheats.BroughtBy(cheats[i]).Distinct()) {
+                    if (SubCircles.Any(c => c is not null && c.Occupied && c.IsAlive && c.OccupiedTeam == circle.OccupiedTeam
+                                            && c.ParticipantObject is { } o && o.m_templateID.Full == tid)) {
+                        continue;
+                    }
+
+                    if (SpawnAndAssignMinion(tid, circle, forEnemies: circle.OccupiedTeam == CombatTeam.Monster) is not null) {
+                        spawned.Add(tid);
+                    }
+                }
+
+                Logger.Information("Duel {0} | {1} comes with more for {2} players: {3} spawned ({4}).",
+                    Logger.Args(Duel.m_duelID.Full, who.m_templateID.Full, players, spawned.Count, string.Join(", ", spawned)));
+            }
+        }
     }
 
     // A battle started against a creature with a passive "Minions" cheat: those creatures join it, as a zone file's
@@ -1251,6 +1312,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         Logger.Information("Duel {0} | encounter for {1}: {2} of the zone's minions joined, {3} of {4} spawned ({5}).",
             Logger.Args(Duel.m_duelID.Full, encounter.Boss, fromZone, spawned, picked.Count, string.Join(", ", picked)));
+        BringMinionsForPlayers();
     }
 
     private Duel CreateDuelWithDefaults() => new() {
@@ -1640,6 +1702,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         ShowCreaturesOfDuel(subCircle);
         BringPassiveMinions(subCircle, participantObject);
+        BringMinionsForPlayers();
 
         if (isPlayer) {
             ReserveCirclesForGroupOf(participantObject);
