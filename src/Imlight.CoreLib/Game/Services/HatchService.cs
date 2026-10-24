@@ -69,6 +69,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -635,6 +636,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         // Each side makes its own egg: this player's pet with the partner's.
         _bred = true;
+        RecentWizards.MetOneWay(wizard.CharId, _peerCharId, RecentWizardKind.Hatch);
         TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS {
             ParentA = pet,
             ParentB = _peerPet,

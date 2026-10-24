@@ -62,6 +62,7 @@ using Imlight.CoreLib.Game.PvP;
 using Imlight.CoreLib.Game.PvP.Arena;
 using Imlight.CoreLib.Game.PvP.Data;
 using Imlight.CoreLib.Game.Sigils;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Networking;
@@ -559,6 +560,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // Add the circles to combat if they are not already.
         AddWaitingCombatParticipants();
+        RememberRecentWizards();
         CombatResolver.Reset();
         _awaitingCombatMoves = true;
 
@@ -1013,7 +1015,28 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         _entitiesInRange.Clear();
         _groupReservations.Clear();
+        _recentWizardsMet.Clear();
         EndEncounterBattle();
+    }
+
+    // The friends window's Recent tab: every wizard in this battle met the others once (players who join late too).
+    private readonly HashSet<(ulong, ulong)> _recentWizardsMet = [];
+
+    private void RememberRecentWizards() {
+        try {
+            var wizards = ActiveSubCircles.Where(c => c.IsHumanPlayer && c._wizard is not null)
+                .Select(c => c._wizard.CharId).Distinct().Order().ToArray();
+            for (var i = 0; i < wizards.Length; i++) {
+                for (var j = i + 1; j < wizards.Length; j++) {
+                    if (_recentWizardsMet.Add((wizards[i], wizards[j]))) {
+                        RecentWizards.Met([wizards[i], wizards[j]], IsPvPDuel ? RecentWizardKind.PvP : RecentWizardKind.Combat);
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Recent wizards | Battle {0}: {1}", Logger.Args(Duel?.m_duelID.Full, ex.Message));
+        }
     }
 
     // The zone's distinct spawners wait while an encounter battle runs; this lets them go and, after a lost battle,

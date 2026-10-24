@@ -53,6 +53,7 @@ using Akka.Actor;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Utilities;
@@ -513,6 +514,9 @@ internal sealed class GroupDirectory : ReceiveProtocolDispatcher, IWithTimers {
 
         group.AddMember(joinerId);
         _groupsByMember[joinerId] = group;
+        foreach (var memberId in group.MemberIds.Where(memberId => memberId != joinerId)) {
+            RecentWizards.Met([joinerId, memberId], RecentWizardKind.Instance);
+        }
 
         if (!group.IsAnnounced) {
             group.IsAnnounced = true;

@@ -98,12 +98,15 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.Math;
+using Imcodec.IO;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
@@ -754,6 +757,64 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             Add = add ? (byte) 1 : (byte) 0
         };
         SendToSocket(msg);
+    }
+
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTRECENTWIZARDS))]
+    private void ReceiveRequestRecentWizards(WIZARD3_56_PROTOCOL.MSG_REQUESTRECENTWIZARDS message) {
+        // The friends window's Recent tab asks for the wizards this one battled, grouped, hatched or dueled with.
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        SendRecentWizards(wizard, message.PlayerGID);
+    }
+
+    /// The Recent tab's list, answered with the same message the window asked with.
+    internal void SendRecentWizards(Wizard wizard, ulong requestedGid) {
+        var list = new RecentWizardInfoList { m_recentWizardInfoList = [] };
+        foreach (var entry in RecentWizards.For(wizard.CharId)) {
+            var other = WizardCollection.GetCharacterUnloaded(entry.CharId);
+            if (other?.PlayerNameBehavior is null) {
+                continue;
+            }
+
+            var isOnline = TryGetOnlinePlayer(entry.CharId, out _);
+            var nameHex = other.PlayerNameBehavior.GetWizardNameAsByteHexString();
+            list.m_recentWizardInfoList.Add(new RecentWizardInfo {
+                m_characterGID = (GID) entry.CharId,
+                m_packedName = new ByteString(DataManipulation.SpacedHexStringToBytes(nameHex)),
+                m_lastSeenTime = entry.LastSeen,
+                m_level = (uint) Math.Max(0, other.MagicSchoolBehavior?.Level ?? 0),
+                m_school = other.MagicSchoolBehavior is null ? 0 : MagicSchoolIndex.ToSocialIndex(other.MagicSchoolBehavior.MagicSchool),
+                m_combatCount = entry.Combat,
+                m_instanceCount = entry.Instance,
+                m_hatchCount = entry.Hatch,
+                m_PVPCount = entry.PvP,
+                m_objectGID = (GID) (isOnline ? Wizard.GetGameObjectId(entry.CharId) : 0),
+                m_isOnline = isOnline,
+            });
+        }
+
+        var serializer = new ObjectSerializer(
+            Versionable: false,
+            Behaviors: SerializerFlags.None
+        );
+
+        if (!serializer.Serialize(list, 1, out var listBytes)) {
+            Logger.Error("Recent wizards | {0} asked for the Recent tab, but the list could not be made.",
+                Logger.Args(wizard.CharId));
+
+            return;
+        }
+
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_REQUESTRECENTWIZARDS {
+            PlayerGID = requestedGid != 0 ? requestedGid : wizard.GameObjectID,
+            Data = listBytes,
+        });
+
+        Logger.Information("Recent wizards | Sent {0} the Recent tab with {1} wizard(s).",
+            Logger.Args(wizard.CharId, list.m_recentWizardInfoList.Count));
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT))]
