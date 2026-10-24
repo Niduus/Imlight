@@ -1,0 +1,13 @@
+{
+  "Name": "KT-CRY5-C01-002",
+  "Description": "Krokotopia quest Get Smart (rewards from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 960,
+  "TrainingPoints": 0,
+  "Items": []
+}

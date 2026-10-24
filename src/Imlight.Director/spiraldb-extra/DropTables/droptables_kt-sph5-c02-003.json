@@ -1,0 +1,20 @@
+{
+  "Name": "KT-SPH5-C02-003",
+  "Description": "Krokotopia quest The Right Combination (rewards from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 845,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "4926",
+      "ItemName": "Sandblasted Dagger",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}
