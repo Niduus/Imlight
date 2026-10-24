@@ -34,13 +34,13 @@
  * - A house without a structure that no deed names (a one-zone house) has no partner.
  * - Whoever owns the houses gets the partner's items and lot issued first, so the client treats them as the owner in
  *   the zone they walk into. The partner house is stored on the first walk through.
- * - A visitor must still be allowed in by the owner.
+ * - A visitor must still be allowed in by the owner, or the house must be on Castle Tours.
  *
  * TODO:
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/24/2026
  */
 
 using System;

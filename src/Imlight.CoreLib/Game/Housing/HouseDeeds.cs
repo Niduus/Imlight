@@ -49,7 +49,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/22/2026
+ * Last Updated: 10/24/2026
  */
 
 using System;
@@ -270,6 +270,31 @@ internal static class HouseDeeds {
                     Logger.Warning("Could not store the lot on house item {ItemId} of character {CharId}.", Logger.Args(item.m_globalID, wizard.CharId));
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Finds the house template of a house item the character holds, such as the deed the Castle Tours window names.
+    /// </summary>
+    /// <param name="wizard">The character.</param>
+    /// <param name="itemGid">The global id of the item.</param>
+    /// <param name="templateId">The house template when this returns <c>true</c>.</param>
+    /// <returns><c>false</c> when the character holds no house item with that id.</returns>
+    internal static bool TryGetHeldTemplate(Wizard wizard, ulong itemGid, out uint templateId) {
+        templateId = 0;
+        if (itemGid == 0) {
+            return false;
+        }
+
+        lock (BackpackLock(wizard)) {
+            var item = HeldItems(wizard).FirstOrDefault(held => (ulong) held.m_globalID == itemGid);
+            if (item is null || !HouseTemplates.TryGet(TemplateIdOf(item), out _)) {
+                return false;
+            }
+
+            templateId = TemplateIdOf(item);
+
+            return true;
         }
     }
 

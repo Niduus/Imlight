@@ -33,12 +33,13 @@
  * - Only the owner decorates. A guest sees the house and never edits it.
  * - The owner's data comes from the store, so the owner can be offline.
  *
+ * - A house listed on Castle Tours (CastleTourBoard) is open to everyone as a guest.
+ *
  * TODO:
- * - A house listed on Castle Tours is open to everyone. Add that rule with the Castle Tours feature.
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/15/2026
+ * Last Updated: 10/24/2026
  */
 
 using Imlight.CoreLib.Game.Social;
@@ -85,6 +86,11 @@ internal static class HouseAccess {
 
         // A guild house is the guild's: its leader's guild mates come in whether or not they are friends.
         if (Guilds.IsGuildHouseTemplate(templateId) && Guilds.SameGuild(visitor.CharId, ownerCharId)) {
+            return HouseAccessLevel.Guest;
+        }
+
+        // A house on Castle Tours lets everyone in.
+        if (templateId != 0 && CastleTourBoard.IsOnTour(ownerCharId, templateId)) {
             return HouseAccessLevel.Guest;
         }
 
