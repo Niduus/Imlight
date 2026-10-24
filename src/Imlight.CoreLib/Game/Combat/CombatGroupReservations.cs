@@ -164,7 +164,7 @@ internal sealed class CombatGroupReservations {
     private bool IsFree(CombatDuelSubCircle circle)
         => !circle.Occupied && !_slotIndexByCharId.ContainsValue(circle.SlotIndex);
 
-    private bool IsHeldForSomeoneElse(CombatDuelSubCircle circle, ulong charId)
+    internal bool IsHeldForSomeoneElse(CombatDuelSubCircle circle, ulong charId)
         => _slotIndexByCharId.Any(reservation => reservation.Value == circle.SlotIndex && reservation.Key != charId);
 
     private static CombatDuelSubCircle GetPreferredCircle(ulong charId, List<CombatDuelSubCircle> playerCircles) {

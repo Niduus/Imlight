@@ -124,7 +124,7 @@ internal sealed class BlockView : BlockShape {
 
     internal BlockView(BlockKind kind, string icon, string help, bool canDelete = true, bool canDuplicate = true, bool canToggle = true) {
         Kind = kind;
-        Hat = kind == BlockKind.When;
+        Hat = BlockColors.IsHat(kind);
         Fill = BlockColors.Fill(kind);
         Edge = BlockColors.Edge(kind);
         Padding = new Thickness(6, (Hat ? HAT_HEIGHT : NOTCH_DEPTH) + 5, 6, 7);

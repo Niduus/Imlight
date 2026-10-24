@@ -178,6 +178,7 @@ internal sealed partial class ManagerWindow {
         Control Legends() => new WrapPanel {
             Children = {
                 Legend(BlockKind.When, "When… starts a cheat: what sets it off"),
+                Legend(BlockKind.Passive, "Passive… always true, with no When (such as its circle)"),
                 Legend(BlockKind.If, "If… only when something is true"),
                 Legend(BlockKind.Do, board.Player ? "Do… what you get, top to bottom" : "Do… what the boss does, top to bottom"),
             },
@@ -514,7 +515,7 @@ internal sealed partial class ManagerWindow {
 
         var rule = into ?? (board.Editing is { } editing && board.List.Cheats.Contains(editing) ? editing : null);
         if (rule is null) {
-            if (spec.Kind != BlockKind.When) {
+            if (!BlockColors.IsHat(spec.Kind)) {
                 NewCheat(board, CheatSpecs.Get(board.Player ? "W.ICast" : "W.RoundStart"));
                 rule = board.Editing!;
             }
@@ -527,7 +528,7 @@ internal sealed partial class ManagerWindow {
 
         var block = CheatBlock.New(spec);
         switch (spec.Kind) {
-            case BlockKind.When:
+            case BlockKind.When or BlockKind.Passive:
                 // What the old When had in common (its round numbers, school...) stays.
                 foreach (var (key, value) in rule.When.Values) {
                     if (block.Values.Any(p => p.Key == key)) {
@@ -536,7 +537,8 @@ internal sealed partial class ManagerWindow {
                 }
 
                 rule.When = block;
-                Say($"This cheat now goes off {spec.Summary(block).ToLowerInvariant()}.");
+                Say(spec.Kind == BlockKind.Passive ? $"This cheat is now a passive: {spec.Summary(block).ToLowerInvariant()}."
+                    : $"This cheat now goes off {spec.Summary(block).ToLowerInvariant()}.");
                 break;
             case BlockKind.If:
                 rule.Ifs.Insert(index < 0 ? rule.Ifs.Count : Math.Min(index, rule.Ifs.Count), block);
@@ -556,7 +558,11 @@ internal sealed partial class ManagerWindow {
         }
 
         var rule = new CheatRule { When = CheatBlock.New(when) };
-        rule.Dos.Add(CheatBlock.New(CheatSpecs.Get(board.Player ? "D.FreeCast" : "D.Cast")));
+        // A passive does its own thing (its circle...), with no Do blocks under it.
+        if (when.Kind != BlockKind.Passive) {
+            rule.Dos.Add(CheatBlock.New(CheatSpecs.Get(board.Player ? "D.FreeCast" : "D.Cast")));
+        }
+
         board.List.Cheats.Add(rule);
         board.Editing = rule;
         RenderCheats(board);
@@ -566,7 +572,7 @@ internal sealed partial class ManagerWindow {
     // A block of a cheat, its boxes wired to the block's values.
     private BlockView BlockFor(CheatBoard board, CheatRule rule, CheatBlock block) {
         var spec = block.Kind;
-        var hat = spec.Kind == BlockKind.When;
+        var hat = BlockColors.IsHat(spec.Kind);
         var view = new BlockView(spec.Kind, spec.Icon, spec.Help + (hat ? " Drag or click another When block in the palette to change it." : ""),
             canDelete: !hat, canDuplicate: !hat) { Model = block };
         view.SetOn(hat ? !rule.Off : block.On);

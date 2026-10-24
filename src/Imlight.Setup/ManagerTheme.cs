@@ -77,6 +77,9 @@ internal static class ManagerTheme {
     internal static readonly Color BLOCK_IF_EDGE = Color.FromRgb(36, 104, 166);
     internal static readonly Color BLOCK_DO = Color.FromRgb(139, 92, 214);
     internal static readonly Color BLOCK_DO_EDGE = Color.FromRgb(101, 56, 168);
+    // Passive blocks (Niduus, 2026-10-24): always true of a combatant, with no When.
+    internal static readonly Color BLOCK_PASSIVE = Color.FromRgb(46, 166, 120);
+    internal static readonly Color BLOCK_PASSIVE_EDGE = Color.FromRgb(28, 121, 86);
 
     // The parts of a custom area (the Customs tab).
     internal static readonly Color AREA_ZONE = Color.FromRgb(64, 176, 168);

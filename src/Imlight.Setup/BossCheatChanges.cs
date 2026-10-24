@@ -171,10 +171,11 @@ internal sealed class CheatRule {
             ["AnyVersion"] = false, ["CostMin"] = 0, ["CostMax"] = 0, ["PlayersMin"] = 0, ["PlayersMax"] = 0, ["FromRound"] = 0,
             ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "", ["Creature"] = 0, ["NotCreature"] = false, ["Minions"] = false,
             ["DispelThen"] = "", ["DispelRetries"] = 0, ["RetryUntilCast"] = false,
+            ["Passive"] = CheatSpecs.PassiveOf(When.Spec), ["Circle"] = 0,
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -242,13 +243,15 @@ internal sealed class CheatRule {
         JsonNode? Node(string key) => BossChanges.FindIn(cheat, key)?.DeepClone();
 
         var when = Text("When");
-        var whenSpec = CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.When && s.For(player)
-                                                          && CheatSpecs.WhenOf(s.Id).Equals(when, StringComparison.OrdinalIgnoreCase));
+        var whenSpec = when.Equals("Passive", StringComparison.OrdinalIgnoreCase)
+            ? CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.Passive && CheatSpecs.PassiveOf(s.Id).Equals(Text("Passive"), StringComparison.OrdinalIgnoreCase))
+            : CheatSpecs.All.FirstOrDefault(s => s.Kind == BlockKind.When && s.For(player)
+                                                 && CheatSpecs.WhenOf(s.Id).Equals(when, StringComparison.OrdinalIgnoreCase));
         var off = when.Equals("Off", StringComparison.OrdinalIgnoreCase) || Flag("Off");
         var whenBlock = whenSpec is null
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle" }) {
             if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
                 whenBlock.Set(key, value);
             }

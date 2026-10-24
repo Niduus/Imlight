@@ -214,6 +214,11 @@ internal static class CheatSpecs {
         new("W.Other", BlockKind.When, "bolt", "something else", "A When this app does not know, kept as the file has it.",
             "When {When}", [F("When", CheatFieldType.Words)], b => $"When {b.Text("When")}"),
 
+        // Passive... (Niduus, 2026-10-24: always true of whoever the cheat is of, with no When)
+        new("P.Circle", BlockKind.Passive, "target", "its circle", "It always takes this circle of its side when it comes into a battle (at the start, walking in, or summoned). If someone already stands there, it takes the free circle nearest to it. Circle 1 is the first of its side, as the game numbers them.",
+            "Always stand on circle {Circle}", [new("Circle", CheatFieldType.Number, 4, Max: 4, Min: 1)],
+            b => $"Always on circle {Math.Clamp(b.Number("Circle"), 1, 4)}"),
+
         // If...
         new("I.Chance", BlockKind.If, "dice", "chance", "It goes off only this often. 50 means half the time.",
             "If a {Chance} chance comes up", [F("Chance", CheatFieldType.Percent, 50, max: 100)], b => $"{b.Number("Chance")}% chance"),
@@ -375,11 +380,18 @@ internal static class CheatSpecs {
     };
 
     /// <summary>The server's When for a When block.</summary>
-    internal static string WhenOf(string id) => id switch { "W.MyPips" => "Pips", _ => id[2..] };
+    internal static string WhenOf(string id) => id switch { "W.MyPips" => "Pips", _ when id.StartsWith("P.", StringComparison.Ordinal) => "Passive", _ => id[2..] };
+
+    /// <summary>The server's Passive (which passive it is) for a Passive block, or "".</summary>
+    internal static string PassiveOf(string id) => id.StartsWith("P.", StringComparison.Ordinal) ? id[2..] : "";
 
     /// <summary>A cheat in one line, such as "When hit by Fire: cast Supernova Sun on the attacker, 50% chance."</summary>
     internal static string Summary(CheatRule rule) {
         var when = rule.When.Kind.Summary(rule.When);
+        if (rule.When.Kind.Kind == BlockKind.Passive) {
+            return $"Passive: {rule.When.Kind.Summary(rule.When).ToLowerInvariant()}.";
+        }
+
         var dos = rule.Dos.Where(d => d.On).Select(d => d.Kind.Summary(d)).ToList();
         var ifs = rule.Ifs.Where(i => i.On).Select(i => i.Kind.Summary(i)).ToList();
         var what = dos.Count == 0 ? "does nothing yet" : string.Join(", then ", dos);

@@ -61,6 +61,9 @@ internal static class PlayerCheats {
     /// <summary>A wizard came into the game (WizardService): whether its game runs on this PC.</summary>
     internal static void NoteWizard(ulong charId, bool onThisPc) => s_thisPc[charId] = onThisPc;
 
+    /// <summary>Whether a wizard (by character id) is played on the server's own PC.</summary>
+    internal static bool IsLocalChar(ulong charId) => s_thisPc.TryGetValue(charId, out var local) && local;
+
     /// <summary>Whether a battle circle is the wizard played on the server's own PC.</summary>
     internal static bool IsLocal(CombatDuelSubCircle circle)
         => circle is { IsHumanPlayer: true, _wizard: { } wizard } && s_thisPc.TryGetValue(wizard.CharId, out var local) && local;

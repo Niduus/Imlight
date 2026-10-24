@@ -75,7 +75,7 @@ internal sealed class BlockPalette : Border {
     private void Render() {
         _groups.Children.Clear();
         var words = (_search.Text ?? "").ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        foreach (var kind in new[] { BlockKind.When, BlockKind.If, BlockKind.Do }) {
+        foreach (var kind in new[] { BlockKind.When, BlockKind.Passive, BlockKind.If, BlockKind.Do }) {
             var found = _entries.Where(e => e.Kind == kind && words.All(w => (e.Label + " " + e.Help).ToLowerInvariant().Contains(w))).ToList();
             if (found.Count == 0) {
                 continue;
@@ -86,7 +86,10 @@ internal sealed class BlockPalette : Border {
                 Children = {
                     new Border { Width = 12, Height = 12, CornerRadius = new CornerRadius(6), Background = BlockColors.Fill(kind), VerticalAlignment = VerticalAlignment.Center },
                     new TextBlock {
-                        Text = kind switch { BlockKind.When => "When… (what sets it off)", BlockKind.If => "If… (only when)", _ => "Do… (what it does)" },
+                        Text = kind switch {
+                            BlockKind.When => "When… (what sets it off)", BlockKind.Passive => "Passive… (always, no When)",
+                            BlockKind.If => "If… (only when)", _ => "Do… (what it does)",
+                        },
                         FontWeight = FontWeight.SemiBold, FontSize = 13,
                     },
                 },
@@ -99,10 +102,10 @@ internal sealed class BlockPalette : Border {
 
     /// <summary>A small block of the palette.</summary>
     internal static BlockShape MiniBlock(PaletteEntry entry) => new() {
-        Hat = entry.Kind == BlockKind.When,
+        Hat = BlockColors.IsHat(entry.Kind),
         Fill = BlockColors.Fill(entry.Kind),
         Edge = BlockColors.Edge(entry.Kind),
-        Padding = new Thickness(8, (entry.Kind == BlockKind.When ? BlockShape.HAT_HEIGHT : BlockShape.NOTCH_DEPTH) + 3, 8, 5),
+        Padding = new Thickness(8, (BlockColors.IsHat(entry.Kind) ? BlockShape.HAT_HEIGHT : BlockShape.NOTCH_DEPTH) + 3, 8, 5),
         MinWidth = 150,
         Child = new StackPanel {
             Orientation = Orientation.Horizontal, Spacing = 6,

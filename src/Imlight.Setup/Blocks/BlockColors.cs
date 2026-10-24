@@ -24,7 +24,10 @@ namespace Imlight.Setup.Blocks;
 /// The kinds of block (Niduus, 2026-10-22: "'block'-like programming for custom stuff"): a When block starts a script
 /// (a hat), If blocks narrow it and Do blocks are what happens. One colour for each kind, as Scratch does.
 /// </summary>
-internal enum BlockKind { When, If, Do }
+// Passive (Niduus, 2026-10-24: "a passive block, this will be a new block type"): a block that starts a cheat as a When
+// does, but is always true of the combatant rather than set off by something. It comes before If so a stack's groups
+// keep their order (the hat, its Ifs, its Dos).
+internal enum BlockKind { When, Passive, If, Do }
 
 /// <summary>The colours of the blocks and their pieces, kept in one place for every editor that uses blocks.</summary>
 internal static class BlockColors {
@@ -38,6 +41,11 @@ internal static class BlockColors {
     internal static readonly IBrush IF_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_IF_EDGE);
     internal static readonly IBrush DO = ManagerTheme.Brush(ManagerTheme.BLOCK_DO);
     internal static readonly IBrush DO_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_DO_EDGE);
+    internal static readonly IBrush PASSIVE = ManagerTheme.Brush(ManagerTheme.BLOCK_PASSIVE);
+    internal static readonly IBrush PASSIVE_EDGE = ManagerTheme.Brush(ManagerTheme.BLOCK_PASSIVE_EDGE);
+
+    /// <summary>Whether a kind starts a cheat (the hat at the top of its stack): When or Passive.</summary>
+    internal static bool IsHat(BlockKind kind) => kind is BlockKind.When or BlockKind.Passive;
 
     /// <summary>Text on a block.</summary>
     internal static readonly IBrush TEXT = Brushes.White;
@@ -52,12 +60,13 @@ internal static class BlockColors {
     /// <summary>The empty place under a script that blocks can be dropped on.</summary>
     internal static readonly IBrush SLOT = Brush(0x22FFFFFF);
 
-    internal static IBrush Fill(BlockKind kind) => kind switch { BlockKind.When => WHEN, BlockKind.If => IF, _ => DO };
+    internal static IBrush Fill(BlockKind kind) => kind switch { BlockKind.When => WHEN, BlockKind.Passive => PASSIVE, BlockKind.If => IF, _ => DO };
 
-    internal static IBrush Edge(BlockKind kind) => kind switch { BlockKind.When => WHEN_EDGE, BlockKind.If => IF_EDGE, _ => DO_EDGE };
+    internal static IBrush Edge(BlockKind kind)
+        => kind switch { BlockKind.When => WHEN_EDGE, BlockKind.Passive => PASSIVE_EDGE, BlockKind.If => IF_EDGE, _ => DO_EDGE };
 
     /// <summary>The word a kind is shown with in a palette.</summary>
-    internal static string Word(BlockKind kind) => kind switch { BlockKind.When => "When…", BlockKind.If => "If…", _ => "Do…" };
+    internal static string Word(BlockKind kind) => kind switch { BlockKind.When => "When…", BlockKind.Passive => "Passive…", BlockKind.If => "If…", _ => "Do…" };
 
     /// <summary>The section colours of an editor page (its icon tiles), by name, from the theme.</summary>
     internal static IBrush Accent(string name) => ManagerTheme.Accent(name);

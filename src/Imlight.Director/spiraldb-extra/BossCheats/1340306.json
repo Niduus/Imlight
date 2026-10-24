@@ -8,6 +8,8 @@
   "TemplateID": 1340306,
   "Name": "Fairy Queen (Rank 7)",
   "Cheats": [
+    { "When": "Passive", "Passive": "Circle", "Circle": 4,
+      "Notes": "She always stands on the 4th circle of the enemy side (Niduus, 2026-10-24: \"make Fairy Queens assign for 4th spot a passive block\")." },
     { "When": "BattleStart",
       "Casts": [ { "Spell": "Fairy Queen-Lesser Epic Summon", "DispelImmune": false }, { "Spell": "Fairy Queen-Lesser Epic Summon", "DispelImmune": false } ],
       "Line": "Spells_00001415", "Once": true,

@@ -38,6 +38,10 @@
  *   DispelImmune (true if left out) is the old dispel-proof: on a cheat with no DispelThen it now means the spell is
  *   cast again until it gets through, as "DispelThen": "Retry", "RetryUntilCast": true (Niduus, 2026-10-23). The app
  *   writes false for its casts and uses the "if dispelled" block instead.
+ * Passive: a cheat with When "Passive" has no trigger and never fires; it is always true (Niduus, 2026-10-24).
+ *   Passive "Circle", Circle n (1-4): it takes circle n of its side whenever it comes into a battle (the battle's
+ *   start, walking in, a late join or a summon); circle 1 is the first of its side as the game numbers them. If
+ *   someone already stands there, it takes the free circle of its side nearest to circle n. Players too (PlayerCheats).
  * The app's Bosses tab changes, turns off and adds cheats in BossOverrides/<template id>.json, laid over this file
  * (BossOverrides.CheatsOf); this file itself is never changed by it.
  *
@@ -220,6 +224,10 @@ internal static class BossCheats {
         public bool NotCreature { get; set; }
         // EnemyJoins: a summoned minion counts too.
         public bool Minions { get; set; }
+        // When "Passive": always true, with no trigger. Passive "Circle": it always takes circle Circle (1-4) of its side
+        // when it comes into a battle (Niduus, 2026-10-24: "make Fairy Queens assign for 4th spot a passive block").
+        public string Passive { get; set; } = "";
+        public int Circle { get; set; }
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
@@ -346,6 +354,14 @@ internal static class BossCheats {
     internal static List<BossCheat> For(ulong templateId)
         => Enabled ? BossOverrides.CheatsOf(templateId,
             s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss) ? boss.Cheats : s_none) : [];
+
+    /// <summary>
+    /// The circle (1-4 of its side) a passive "Circle" cheat says a combatant always takes, or 0. The last one that is
+    /// on wins.
+    /// </summary>
+    internal static int CircleOf(IEnumerable<BossCheat> cheats)
+        => cheats?.LastOrDefault(c => c is { Off: false, Circle: >= 1 and <= 4 } && c.Is("Passive")
+            && c.Passive.Equals("Circle", StringComparison.OrdinalIgnoreCase))?.Circle ?? 0;
 
     // The cheats of a boss with no file, the same list each time so BossOverrides.CheatsOf keeps its own laid over it.
     private static readonly List<BossCheat> s_none = [];

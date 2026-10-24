@@ -1102,7 +1102,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         var startingCreatureObject = startingCreatureActor.Value;
         var startingPlayerObject = startingPlayerActor.Value;
 
-        var availableCreatureSubCircle = GetAvailableSubCircleTeamCreature();
+        var availableCreatureSubCircle = PassiveCircle(true, PassiveCircleOf(startingCreatureObject))
+            ?? GetAvailableSubCircleTeamCreature();
         var availablePlayerSubCircle = ChoosePlayerSubCircle(startingPlayerObject);
 
         if (availableCreatureSubCircle == null || availablePlayerSubCircle == null) {
@@ -1448,8 +1449,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false,
                                                      int customId = 0) {
         // A PvE minion fights for the wizards whoever summoned it; in PvP it fights for its summoner.
-        var slot = forEnemies ? GetAvailableSubCircleTeamCreature()
-            : Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer();
+        var creatureSide = forEnemies || (Duel.m_bPVP && caster?.OccupiedTeam == CombatTeam.Monster);
+        var slot = PassiveCircle(creatureSide,
+                       BossCheats.CircleOf(BossCheats.For(customId > 0 ? Customs.Key(customId) : creatureTid)))
+            ?? (forEnemies ? GetAvailableSubCircleTeamCreature()
+                : Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer());
         if (slot is null) {
             Logger.Information("Duel {0} | minion summon (tid {1}) skipped, no free slot on the side of the caster.",
                 Logger.Args(Duel.m_duelID.Full, creatureTid));
@@ -1510,6 +1514,41 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             .OrderBy(c => (c.WorldPosition - creature.m_location).LengthSquared())
             .FirstOrDefault();
 
+    // Passive "Circle" (BossCheats.cs; Niduus, 2026-10-24): the circle, 1-4 of its side, a creature's cheat file (or,
+    // for the wizard played on this PC, the player cheats) says it always takes, or 0.
+    private static int PassiveCircleOf(CoreObject participant) {
+        if (participant is null) {
+            return 0;
+        }
+
+        if (participant.m_templateID == 1) {
+            return Wizard.TryGetCharacterId(participant.m_globalID, out var charId) && PlayerCheats.IsLocalChar(charId)
+                ? BossCheats.CircleOf(PlayerCheats.Current()) : 0;
+        }
+
+        return BossCheats.CircleOf(BossCheats.For(Customs.KeyOf(participant)));
+    }
+
+    // Circle number (1-4) of a side, counted in slot order; if it is taken (or not allowed), the free allowed circle of
+    // that side nearest to it. Null when number is 0 or nothing on that side is free.
+    private CombatDuelSubCircle PassiveCircle(bool creatureSide, int number, Func<CombatDuelSubCircle, bool> allowed = null) {
+        if (number is < 1 or > 4) {
+            return null;
+        }
+
+        var side = SubCircles.Skip(creatureSide ? 0 : 4).Take(4).Where(c => c is not null).OrderBy(c => c.SlotIndex).ToList();
+        var wanted = side.ElementAtOrDefault(number - 1);
+        if (wanted is null) {
+            return null;
+        }
+
+        bool Free(CombatDuelSubCircle c) => !c.Occupied && (allowed?.Invoke(c) ?? true);
+
+        return Free(wanted) ? wanted
+            : side.Where(Free).OrderBy(c => (c.WorldPosition - wanted.WorldPosition).LengthSquared())
+                .ThenBy(c => Math.Abs(c.SlotIndex - wanted.SlotIndex)).FirstOrDefault();
+    }
+
     /// <param name="preferred">A free enemy circle for a creature to take, or null for the first free one.</param>
     private void AddParticipant(CoreObject participantObject, IActorRef participantActor, CombatDuelSubCircle preferred = null) {
         var isPlayer = participantObject.m_templateID == 1;
@@ -1519,8 +1558,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // A passive circle wins over where it stands (preferred).
         var subCircle = isPlayer ? ChoosePlayerSubCircle(participantObject)
-            : preferred is { Occupied: false } ? preferred : GetAvailableSubCircleTeamCreature();
+            : PassiveCircle(true, PassiveCircleOf(participantObject))
+              ?? (preferred is { Occupied: false } ? preferred : GetAvailableSubCircleTeamCreature());
         if (subCircle is null) {
             if (isPlayer && _groupReservations.Count > 0) {
                 Logger.Debug("Duel {DuelId} | Every free circle is held for a group; {Participant} cannot join.",
@@ -1648,7 +1689,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return GetAvailableSubCircleTeamPlayer();
         }
 
-        var subCircle = _groupReservations.ChoosePlayerCircle(charId, SubCircles);
+        // A passive circle (player cheats), unless a group already holds a circle for this wizard; circles held for
+        // someone else are left to them.
+        var subCircle = _groupReservations.IsReservedFor(charId) ? null
+            : PassiveCircle(false, PassiveCircleOf(playerObject), c => !_groupReservations.IsHeldForSomeoneElse(c, charId));
+        subCircle ??= _groupReservations.ChoosePlayerCircle(charId, SubCircles);
         if (subCircle is not null) {
             _groupReservations.Release(charId);
         }

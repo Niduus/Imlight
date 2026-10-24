@@ -13,6 +13,8 @@
   // Central: "Shadow Pips 2 max".
   "ShadowPips": 2,
   "Cheats": [
+    { "When": "Passive", "Passive": "Circle", "Circle": 4,
+      "Notes": "She always stands on the 4th circle of the enemy side (Niduus, 2026-10-24: \"make Fairy Queens assign for 4th spot a passive block\")." },
     { "When": "BattleStart",
       "Casts": [ { "Spell": "Fairy Queen-Epic Summon", "DispelImmune": false }, { "Spell": "Fairy Queen-Epic Summon", "DispelImmune": false } ],
       "Line": "Spells_00001415", "Once": true,

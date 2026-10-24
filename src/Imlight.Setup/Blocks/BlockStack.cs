@@ -161,7 +161,7 @@ internal sealed class BlockStack : Grid {
 
     internal void ShowMarker(double y, BlockKind kind) {
         var (lo, hi) = Range(kind);
-        var gap = kind == BlockKind.When ? 0 : Math.Clamp(GapAt(y), lo, hi);
+        var gap = BlockColors.IsHat(kind) ? 0 : Math.Clamp(GapAt(y), lo, hi);
         _marker.Width = Math.Max(40, Bounds.Width);
         Canvas.SetLeft(_marker, 0);
         Canvas.SetTop(_marker, Math.Max(0, GapY(gap) - 2));
