@@ -69,7 +69,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
 
-internal class EquipmentService(SessionActor sessionActor) : MessageService(sessionActor) {
+internal partial class EquipmentService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const string ELIXIR_TICK_TIMER_KEY = "elixir-tick";
     private const int ELIXIR_SAVE_INTERVAL_SECONDS = 30;

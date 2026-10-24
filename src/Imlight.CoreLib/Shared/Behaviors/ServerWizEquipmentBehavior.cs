@@ -43,6 +43,9 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
 
     [JsonIgnore] public List<WizClientObjectItem> EquippedItems;
 
+    /// <summary>The backpack's Equipment Sets, in the order the window lists them (GearSets).</summary>
+    public List<GearSet> GearSets;
+
     /// <summary>
     /// How many Victory Dances a wizard wears at once; the game shows five dance slots, and one of them is picked at
     /// random for each won battle (packet capture given to Niduus, 2026-10-22).
@@ -333,7 +336,7 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
     }
 
     public ClientWizEquipmentBehavior GetClientBehaviorInstance() => new() {
-        m_equipmentSets = new List<EquipmentSet>(),
+        m_equipmentSets = Imlight.CoreLib.Game.Equipment.GearSets.ToClientList(this),
         m_slotList = SlotList?.Select(slot => slot.GetClientTypeAlternative()).ToList(),
         m_itemList = EquippedItems?.ConvertAll(item => item as CoreObject),
         m_publicItemList = CharacterHelper.GetEquipmentList(this).m_infoList,
