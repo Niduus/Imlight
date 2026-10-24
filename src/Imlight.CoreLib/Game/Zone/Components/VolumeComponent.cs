@@ -38,6 +38,9 @@
 
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Game.DailyAssignments;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -96,6 +99,17 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
 
         var zonePath = Entity.Zone?.ZonePath;
+
+        // A place some Daily Assignment visits: remembered so the game can be told where it is.
+        try {
+            var center = Entity.ActiveGameObject.m_location;
+            DailyAssignmentData.RememberVolume(zonePath, volumeName, center.X, center.Y, center.Z,
+                _volume.m_radius > 0 ? _volume.m_radius : MathF.Max(_volume.m_length, _volume.m_width) / 2);
+        }
+        catch (Exception ex) {
+            Logger.Error("Daily Assignments | Remembering volume {0} failed. {1}", Logger.Args(volumeName, ex.Message));
+        }
+
         foreach (var quest in QuestTemplateCollection.GetAllQuests()) {
             foreach (var goal in quest.m_goals) {
                 if (goal is not WaypointGoalTemplate waypointGoal
@@ -145,6 +159,11 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Quest proximity goals are tied to the volume by name; if the player has one of
         // this volume's goals active, tell their quest service to complete it.
         NotifyProximityGoals(playerObj, playerActor, playerWizard);
+
+        string volumeName = _volume.m_volumeName;
+        if (DailyAssignmentData.IsAssignmentVolume(volumeName)) {
+            playerActor.Tell(new DailyAssignmentVolumeEntered { ZonePath = Entity.Zone?.ZonePath, VolumeName = volumeName });
+        }
     }
 
     private void NotifyProximityGoals(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
