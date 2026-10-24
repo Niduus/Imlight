@@ -91,6 +91,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(GiftingService),
         typeof(PromoCodeService),
         typeof(PhotomancyService),
+        typeof(GuildMuseumService),
         typeof(RenameService),
         typeof(MagicMirrorService),
         typeof(DailyAssignmentService),

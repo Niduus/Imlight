@@ -1,0 +1,3178 @@
+{
+  "Galleries": [
+    {
+      "World": "Avalon",
+      "Zone": "Housing_Guild/Guild_Starter_Int_Avalon",
+      "DoorTemplateID": 1560316,
+      "LevelScale": 80,
+      "Exhibits": [
+        {
+          "Tag": "Exhibit_A",
+          "Name": "Catapult Exhibit",
+          "NameKey": "GUI3_00000121",
+          "Artifacts": [
+            {
+              "TemplateID": 470445,
+              "Name": "Catapult",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Hobgoblin Plunderer in Caer Lyon in Avalon",
+              "Creatures": [
+                589388
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_B",
+          "Name": "Tomb of Artorius Exhibit",
+          "NameKey": "GUI3_00000122",
+          "Artifacts": [
+            {
+              "TemplateID": 1603029,
+              "Name": "King Artorius Grave",
+              "Tiers": [
+                70,
+                46,
+                46,
+                0
+              ],
+              "From": "Indigo Giant in The Wyrd - Dun Scaith in Avalon",
+              "Creatures": [
+                589437
+              ]
+            },
+            {
+              "TemplateID": 1603030,
+              "Name": "King Artorius Shrine",
+              "Tiers": [
+                36,
+                22,
+                22,
+                0
+              ],
+              "From": "Nameless Knight in The Wyrd - Tomb of the Nameless in Avalon",
+              "Creatures": [
+                589470
+              ]
+            },
+            {
+              "TemplateID": 1603031,
+              "Name": "Rose Shield Banner",
+              "Tiers": [
+                52,
+                30,
+                30,
+                0
+              ],
+              "From": "Dark Knight in Caer Lyon - Dark Knight's Lair in Avalon",
+              "Creatures": [
+                589410
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_C",
+          "Name": "Toadstool Village Exhibit",
+          "NameKey": "GUI3_00000123",
+          "Artifacts": [
+            {
+              "TemplateID": 538040,
+              "Name": "Two Story Mushroom House",
+              "Tiers": [
+                54,
+                30,
+                30,
+                0
+              ],
+              "From": "Ricimer Flavel in The Wild - Ricimer Flavel's Cave in Avalon",
+              "Creatures": [
+                589421
+              ]
+            },
+            {
+              "TemplateID": 538041,
+              "Name": "Tall Mushroom House",
+              "Tiers": [
+                46,
+                26,
+                26,
+                0
+              ],
+              "From": "Bog Witch in Deepwater - Boggy Cave in Avalon",
+              "Creatures": [
+                589459
+              ]
+            },
+            {
+              "TemplateID": 538034,
+              "Name": "Hay With Pitchfork",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Whiptail Pantera in Caer Lyon in Avalon",
+              "Creatures": [
+                589392
+              ]
+            },
+            {
+              "TemplateID": 724102,
+              "Name": "Empty Wheelbarrow",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Hobgoblin Fiend in High Road in Avalon",
+              "Creatures": [
+                589384
+              ]
+            },
+            {
+              "TemplateID": 538031,
+              "Name": "Two Rail Fence",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603035,
+              "Name": "Blue and Purple Tent",
+              "Tiers": [
+                56,
+                32,
+                32,
+                0
+              ],
+              "From": "Porrich in High Road - Red Thorn Tower in Avalon",
+              "Creatures": [
+                589404
+              ]
+            },
+            {
+              "TemplateID": 1603034,
+              "Name": "Green and Yellow Tent",
+              "Tiers": [
+                50,
+                28,
+                28,
+                0
+              ],
+              "From": "Ginther in The Wyrd - Ginther's House in Avalon",
+              "Creatures": [
+                589432
+              ]
+            },
+            {
+              "TemplateID": 1603032,
+              "Name": "Hay Bales",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Stag Charger in Lake Shore in Avalon",
+              "Creatures": [
+                589452
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_D",
+          "Name": "Red Thorn Tower Exhibit",
+          "NameKey": "GUI3_00000124",
+          "Artifacts": [
+            {
+              "TemplateID": 538026,
+              "Name": "Lord's Chair",
+              "Tiers": [
+                56,
+                32,
+                32,
+                0
+              ],
+              "From": "Porrich in High Road - Red Thorn Tower in Avalon",
+              "Creatures": [
+                589404
+              ]
+            },
+            {
+              "TemplateID": 641572,
+              "Name": "Square Pedestal",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641577,
+              "Name": "Gold Swords and Shield",
+              "Tiers": [
+                68,
+                45,
+                45,
+                0
+              ],
+              "From": "Harlequin Knight in High Road - Harlequin Tower in Avalon",
+              "Creatures": [
+                589390
+              ]
+            },
+            {
+              "TemplateID": 1603036,
+              "Name": "Red Thorn Dagger on Pedestal",
+              "Tiers": [
+                78,
+                52,
+                52,
+                0
+              ],
+              "From": "Chagan Nosebiter in Caer Lyon - Nosebiter's Hideout in Avalon",
+              "Creatures": [
+                589409
+              ]
+            },
+            {
+              "TemplateID": 1603037,
+              "Name": "Red Thorn Hammer on Pedestal",
+              "Tiers": [
+                68,
+                45,
+                45,
+                0
+              ],
+              "From": "Harlequin Knight in High Road - Harlequin Tower in Avalon",
+              "Creatures": [
+                589390
+              ]
+            },
+            {
+              "TemplateID": 635622,
+              "Name": "Bow of the Wildgrave",
+              "Tiers": [
+                64,
+                42,
+                42,
+                0
+              ],
+              "From": "Winter Wyrm in The Wild - Frozen Cave in Avalon",
+              "Creatures": [
+                589422
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_E",
+          "Name": "Stag Lord and Poet Garb Exhibit",
+          "NameKey": "GUI3_00000125",
+          "Artifacts": [
+            {
+              "TemplateID": 789100,
+              "Name": "Stag Lord's Helm",
+              "Tiers": [
+                0,
+                0,
+                65,
+                0
+              ],
+              "From": "Tarn the Drowned in Deepwater - Diabhal Cave in Avalon",
+              "Creatures": [
+                589457
+              ]
+            },
+            {
+              "TemplateID": 789108,
+              "Name": "Stag Lord's Cape",
+              "Tiers": [
+                0,
+                0,
+                65,
+                0
+              ],
+              "From": "Tarn the Drowned in Deepwater - Diabhal Cave in Avalon",
+              "Creatures": [
+                589457
+              ]
+            },
+            {
+              "TemplateID": 789104,
+              "Name": "Stag Lord's Striders",
+              "Tiers": [
+                0,
+                0,
+                65,
+                0
+              ],
+              "From": "Tarn the Drowned in Deepwater - Diabhal Cave in Avalon",
+              "Creatures": [
+                589457
+              ]
+            },
+            {
+              "TemplateID": 789099,
+              "Name": "Poet's Crown",
+              "Tiers": [
+                0,
+                0,
+                56,
+                0
+              ],
+              "From": "Black Annie in Lake Shore - Black Annie's Hut in Avalon",
+              "Creatures": [
+                589400
+              ]
+            },
+            {
+              "TemplateID": 789107,
+              "Name": "Poet's Cassock",
+              "Tiers": [
+                0,
+                0,
+                56,
+                0
+              ],
+              "From": "Black Annie in Lake Shore - Black Annie's Hut in Avalon",
+              "Creatures": [
+                589400
+              ]
+            },
+            {
+              "TemplateID": 789103,
+              "Name": "Poet's Slippers",
+              "Tiers": [
+                0,
+                0,
+                56,
+                0
+              ],
+              "From": "Black Annie in Lake Shore - Black Annie's Hut in Avalon",
+              "Creatures": [
+                589400
+              ]
+            },
+            {
+              "TemplateID": 635638,
+              "Name": "Antlered Staff",
+              "Tiers": [
+                0,
+                0,
+                68,
+                0
+              ],
+              "From": "Flevur Flave in Outer Yard - Mysterious Well in Avalon",
+              "Creatures": [
+                640090
+              ]
+            },
+            {
+              "TemplateID": 635615,
+              "Name": "Highland Shillelagh",
+              "Tiers": [
+                0,
+                0,
+                90,
+                0
+              ],
+              "From": "Jabberwock in High Road - Jabberwock's Lair in Avalon",
+              "Creatures": [
+                589403,
+                1340286
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_F",
+          "Name": "Sworn Tower Exhibit",
+          "NameKey": "GUI3_00000126",
+          "Artifacts": [
+            {
+              "TemplateID": 641575,
+              "Name": "Sword and Rose Shield",
+              "Tiers": [
+                50,
+                30,
+                30,
+                0
+              ],
+              "From": "Catalan the Lightning Lizard in Dun Dara - The Lightning Lizard Cave in Avalon",
+              "Creatures": [
+                589441
+              ]
+            },
+            {
+              "TemplateID": 1603038,
+              "Name": "Avalon Stone Slab",
+              "Tiers": [
+                70,
+                46,
+                46,
+                0
+              ],
+              "From": "Indigo Giant in The Wyrd - Dun Scaith in Avalon",
+              "Creatures": [
+                589437
+              ]
+            },
+            {
+              "TemplateID": 1603039,
+              "Name": "Wide Red Rose Banner",
+              "Tiers": [
+                54,
+                30,
+                30,
+                0
+              ],
+              "From": "Caoranach the Fire-Spitter in High Road - Fire-Spitter's Lair in Avalon",
+              "Creatures": [
+                589405
+              ]
+            },
+            {
+              "TemplateID": 1603040,
+              "Name": "Long Red Rose Banner",
+              "Tiers": [
+                50,
+                30,
+                30,
+                0
+              ],
+              "From": "Moros Blunt in Outer Yard - Sworn Tower in Avalon",
+              "Creatures": [
+                589449
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_G",
+          "Name": "Imp Tree Exhibit",
+          "NameKey": "GUI3_00000127",
+          "Artifacts": [
+            {
+              "TemplateID": 1603041,
+              "Name": "Tree with Lantern",
+              "Tiers": [
+                45,
+                26,
+                26,
+                0
+              ],
+              "From": "Maudit Soulban in The Wild - Dread Keep in Avalon",
+              "Creatures": [
+                589420
+              ]
+            },
+            {
+              "TemplateID": 1603042,
+              "Name": "Avalon Well",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Night Goblin in High Road or Caer Lyon in Avalon",
+              "Creatures": [
+                589385
+              ]
+            },
+            {
+              "TemplateID": 1603043,
+              "Name": "Avalon House",
+              "Tiers": [
+                52,
+                30,
+                30,
+                0
+              ],
+              "From": "Feva Earlicker in Caer Lyon - Feva's Hideout in Avalon",
+              "Creatures": [
+                589413
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_H",
+          "Name": "Blue Dahlia Exhibit",
+          "NameKey": "GUI3_00000128",
+          "Artifacts": [
+            {
+              "TemplateID": 538069,
+              "Name": "Valiant Rug",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 538019,
+              "Name": "Serrated Banner",
+              "Tiers": [
+                54,
+                30,
+                30,
+                0
+              ],
+              "From": "Ogre Gaoler in Outer Yard - Prison Tower in Avalon",
+              "Creatures": [
+                589445
+              ]
+            },
+            {
+              "TemplateID": 538017,
+              "Name": "Owl Eye Banner",
+              "Tiers": [
+                52,
+                30,
+                30,
+                0
+              ],
+              "From": "Sir Gerard Monmouth in The Wild - Tower of the Blue Dahlia in Avalon",
+              "Creatures": [
+                589475
+              ]
+            },
+            {
+              "TemplateID": 1603044,
+              "Name": "Avalon Book Stack",
+              "Tiers": [
+                432,
+                240,
+                240,
+                0
+              ],
+              "From": "Fomori Giant in High Road in Avalon",
+              "Creatures": [
+                589402
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_I",
+          "Name": "Knight and Horned King Armor Exhibit",
+          "NameKey": "GUI3_00000129",
+          "Artifacts": [
+            {
+              "TemplateID": 789097,
+              "Name": "Horned King's Helm",
+              "Tiers": [
+                0,
+                75,
+                50,
+                0
+              ],
+              "From": "Malgrin the Scourge in Caer Lyon - Malgrin's Tower in Avalon",
+              "Creatures": [
+                589411
+              ]
+            },
+            {
+              "TemplateID": 789105,
+              "Name": "Horned King's Vestment",
+              "Tiers": [
+                0,
+                75,
+                50,
+                0
+              ],
+              "From": "Malgrin the Scourge in Caer Lyon - Malgrin's Tower in Avalon",
+              "Creatures": [
+                589411
+              ]
+            },
+            {
+              "TemplateID": 789101,
+              "Name": "Horned King's Walkers",
+              "Tiers": [
+                0,
+                75,
+                50,
+                0
+              ],
+              "From": "Malgrin the Scourge in Caer Lyon - Malgrin's Tower in Avalon",
+              "Creatures": [
+                589411
+              ]
+            },
+            {
+              "TemplateID": 789098,
+              "Name": "Knight's Armet",
+              "Tiers": [
+                0,
+                62,
+                42,
+                0
+              ],
+              "From": "Battling Jackie in Outer Yard - Overlook Tower in Avalon",
+              "Creatures": [
+                589448
+              ]
+            },
+            {
+              "TemplateID": 789106,
+              "Name": "Knight's Cuirass",
+              "Tiers": [
+                0,
+                62,
+                42,
+                0
+              ],
+              "From": "Battling Jackie in Outer Yard - Overlook Tower in Avalon",
+              "Creatures": [
+                589448
+              ]
+            },
+            {
+              "TemplateID": 789102,
+              "Name": "Knight's Sabatons",
+              "Tiers": [
+                0,
+                62,
+                42,
+                0
+              ],
+              "From": "Battling Jackie in Outer Yard - Overlook Tower in Avalon",
+              "Creatures": [
+                589448
+              ]
+            },
+            {
+              "TemplateID": 635631,
+              "Name": "Vassal's Longsword",
+              "Tiers": [
+                0,
+                68,
+                45,
+                0
+              ],
+              "From": "Ridenhoer Delish in Outer Yard - Mysterious Well in Avalon",
+              "Creatures": [
+                589665
+              ]
+            },
+            {
+              "TemplateID": 635627,
+              "Name": "Balanced Longbow",
+              "Tiers": [
+                0,
+                64,
+                42,
+                0
+              ],
+              "From": "Winter Wyrm in The Wild - Frozen Cave in Avalon",
+              "Creatures": [
+                589422
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_J",
+          "Name": "Spirituality Exhibit",
+          "NameKey": "GUI3_00000130",
+          "Artifacts": [
+            {
+              "TemplateID": 641579,
+              "Name": "Avalon King Stained Glass",
+              "Tiers": [
+                0,
+                0,
+                846,
+                0
+              ],
+              "From": "Cantrip Chests in Dun Dara in Avalon",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641580,
+              "Name": "Avalon Rose Stained Glass",
+              "Tiers": [
+                0,
+                0,
+                520,
+                0
+              ],
+              "From": "Cantrip Chests in Lake Shore in Avalon",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641576,
+              "Name": "Avalon Shield",
+              "Tiers": [
+                0,
+                0,
+                45,
+                0
+              ],
+              "From": "Kerr Knucklebones in Deepwater - Briny Cave in Avalon",
+              "Creatures": [
+                589458
+              ]
+            },
+            {
+              "TemplateID": 538018,
+              "Name": "Red Rose Banner",
+              "Tiers": [
+                0,
+                0,
+                308,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 538016,
+              "Name": "Royal Rose Banner",
+              "Tiers": [
+                0,
+                0,
+                308,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_K",
+          "Name": "Grand Statues and Banners Exhibit",
+          "NameKey": "GUI3_00000131",
+          "Artifacts": [
+            {
+              "TemplateID": 538015,
+              "Name": "Spade Banner",
+              "Tiers": [
+                0,
+                0,
+                68,
+                0
+              ],
+              "From": "Ogre in Caer Lyon - Ruined Tower in Avalon",
+              "Creatures": [
+                589414
+              ]
+            },
+            {
+              "TemplateID": 538013,
+              "Name": "Rose Banner",
+              "Tiers": [
+                0,
+                0,
+                48,
+                0
+              ],
+              "From": "Drowned Knight in Deepwater - Cavern of Broken Virtues in Avalon",
+              "Creatures": [
+                589456
+              ]
+            },
+            {
+              "TemplateID": 538014,
+              "Name": "Bat Banner",
+              "Tiers": [
+                0,
+                0,
+                308,
+                0
+              ],
+              "From": "Death Seraph in The Wyrd in Avalon",
+              "Creatures": [
+                589435,
+                1305003
+              ]
+            },
+            {
+              "TemplateID": 538012,
+              "Name": "Red Thorn Banner",
+              "Tiers": [
+                0,
+                0,
+                432,
+                0
+              ],
+              "From": "Red Cap in Caer Lyon or The Wild in Avalon",
+              "Creatures": [
+                589397
+              ]
+            },
+            {
+              "TemplateID": 641582,
+              "Name": "Avalon King Statue",
+              "Tiers": [
+                0,
+                0,
+                924,
+                0
+              ],
+              "From": "Cantrip Chests in The Wyrd in Avalon",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641583,
+              "Name": "Avalon Knight Statue",
+              "Tiers": [
+                0,
+                0,
+                598,
+                0
+              ],
+              "From": "Cantrip Chests in Outer Yard in Avalon",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_L",
+          "Name": "Arms Exhibit",
+          "NameKey": "GUI3_00000132",
+          "Artifacts": [
+            {
+              "TemplateID": 641590,
+              "Name": "Avalon Weapons Rack",
+              "Tiers": [
+                0,
+                36,
+                20,
+                0
+              ],
+              "From": "Matkis Axethief in Abbey Road - Hart's Hideaway in Avalon",
+              "Creatures": [
+                589654
+              ]
+            },
+            {
+              "TemplateID": 641591,
+              "Name": "Melee Weapons Rack",
+              "Tiers": [
+                0,
+                48,
+                28,
+                0
+              ],
+              "From": "Viridian the Vile in High Road - Forlorn Tower in Avalon",
+              "Creatures": [
+                589657
+              ]
+            },
+            {
+              "TemplateID": 641592,
+              "Name": "Small Arms Weapons Rack",
+              "Tiers": [
+                0,
+                308,
+                172,
+                0
+              ],
+              "From": "Foul Skirker in Lake Shore in Avalon",
+              "Creatures": [
+                589454
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_M",
+          "Name": "Ambrose Statue Exhibit",
+          "NameKey": "GUI3_00000133",
+          "Artifacts": [
+            {
+              "TemplateID": 1603045,
+              "Name": "Ambrose Statue",
+              "Tiers": [
+                0,
+                0,
+                302,
+                0
+              ],
+              "From": "Pendragon in Pendragon Rematch (Challenge)",
+              "Creatures": [
+                589473,
+                1592136,
+                1663260
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_N",
+          "Name": "Mystic Lore Exhibit",
+          "NameKey": "GUI3_00000134",
+          "Artifacts": [
+            {
+              "TemplateID": 538025,
+              "Name": "Cauldron and Hay Bales",
+              "Tiers": [
+                0,
+                55,
+                32,
+                0
+              ],
+              "From": "Calista in The Wild - Cave of Anguish in Avalon",
+              "Creatures": [
+                589427
+              ]
+            },
+            {
+              "TemplateID": 1603081,
+              "Name": "Tall Avalon Book Stack",
+              "Tiers": [
+                0,
+                308,
+                172,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603080,
+              "Name": "Short Avalon Book Stack",
+              "Tiers": [
+                0,
+                432,
+                240,
+                0
+              ],
+              "From": "Handsome Fomori in Dun Dara in Avalon",
+              "Creatures": [
+                589442
+              ]
+            },
+            {
+              "TemplateID": 1603048,
+              "Name": "Avalon Potted Plant",
+              "Tiers": [
+                0,
+                432,
+                240,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_O",
+          "Name": "Crystal Caves Exhibit",
+          "NameKey": "GUI3_00000135",
+          "Artifacts": [
+            {
+              "TemplateID": 1603049,
+              "Name": "Large Avalon Crystals",
+              "Tiers": [
+                0,
+                66,
+                38,
+                0
+              ],
+              "From": "Unsung Knight in Crystal Caves - Ghost Avalon in Avalon",
+              "Creatures": [
+                589468
+              ]
+            },
+            {
+              "TemplateID": 1603050,
+              "Name": "Owl Gazebo",
+              "Tiers": [
+                0,
+                846,
+                600,
+                0
+              ],
+              "From": "Cantrip Chests in Crystal Caves in Avalon",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_P",
+          "Name": "Objects of Art and Craft Exhibit",
+          "NameKey": "GUI3_00000136",
+          "Artifacts": [
+            {
+              "TemplateID": 641570,
+              "Name": "Harp",
+              "Tiers": [
+                0,
+                0,
+                52,
+                0
+              ],
+              "From": "Oroc Blightmore in Caer Lyon - Harvest House in Avalon",
+              "Creatures": [
+                589546
+              ]
+            },
+            {
+              "TemplateID": 641585,
+              "Name": "Fox Head Statue",
+              "Tiers": [
+                0,
+                0,
+                60,
+                0
+              ],
+              "From": "Feletheus Barca in Caer Lyon - Barca's Tower in Avalon",
+              "Creatures": [
+                589669
+              ]
+            },
+            {
+              "TemplateID": 470453,
+              "Name": "Flat Globe of Avalon",
+              "Tiers": [
+                0,
+                0,
+                40,
+                0
+              ],
+              "From": "Morag Bloodtine in Caer Lyon - Morag Bloodtine's House in Avalon",
+              "Creatures": [
+                589659
+              ]
+            },
+            {
+              "TemplateID": 724081,
+              "Name": "Carved Table and Benches",
+              "Tiers": [
+                0,
+                0,
+                46,
+                0
+              ],
+              "From": "Mord Roughshod in Caer Lyon - Mord's Manor in Avalon",
+              "Creatures": [
+                589642
+              ]
+            },
+            {
+              "TemplateID": 470462,
+              "Name": "Single Candle Holder",
+              "Tiers": [
+                0,
+                0,
+                308,
+                0
+              ],
+              "From": "Corpse Lantern in Crystal Caves in Avalon",
+              "Creatures": [
+                589466
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_Q",
+          "Name": "Queen Gwendolyn Statue Exhibit",
+          "NameKey": "GUI3_00000137",
+          "Artifacts": [
+            {
+              "TemplateID": 1603051,
+              "Name": "Queen Gwendolyn Statue",
+              "Tiers": [
+                0,
+                0,
+                302,
+                0
+              ],
+              "From": "Pendragon in Pendragon Rematch (Challenge)",
+              "Creatures": [
+                589473,
+                1592136,
+                1663260
+              ]
+            },
+            {
+              "TemplateID": 1603052,
+              "Name": "Avalon Potted Flowers",
+              "Tiers": [
+                0,
+                0,
+                52,
+                0
+              ],
+              "From": "Flaccitheus Hauker in Outer Yard - Broken Tower in Avalon",
+              "Creatures": [
+                589446
+              ]
+            },
+            {
+              "TemplateID": 724088,
+              "Name": "Large Birch Tree",
+              "Tiers": [
+                0,
+                0,
+                432,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 724095,
+              "Name": "Large Swirl Tree",
+              "Tiers": [
+                0,
+                0,
+                308,
+                0
+              ],
+              "From": "Tormented Treant in The Wyrd in Avalon",
+              "Creatures": [
+                589428
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_R",
+          "Name": "White Owl Tower Portrait Exhibit",
+          "NameKey": "GUI3_00000106",
+          "Artifacts": [
+            {
+              "TemplateID": 538052,
+              "Name": "Wise Owl Painting",
+              "Tiers": [
+                0,
+                50,
+                30,
+                0
+              ],
+              "From": "Kiva White Talon in The Wild - White Owl Tower in Avalon",
+              "Creatures": [
+                589426
+              ]
+            },
+            {
+              "TemplateID": 538063,
+              "Name": "Devious Owl Painting",
+              "Tiers": [
+                0,
+                50,
+                30,
+                0
+              ],
+              "From": "Kayla White Talon in The Wild - White Owl Tower in Avalon",
+              "Creatures": [
+                589425
+              ]
+            },
+            {
+              "TemplateID": 538056,
+              "Name": "Owl Sorceress Painting",
+              "Tiers": [
+                0,
+                52,
+                30,
+                0
+              ],
+              "From": "Lady of the Blue Dahlia in The Wild - Tower of the Blue Dahlia in Avalon",
+              "Creatures": [
+                589423
+              ]
+            },
+            {
+              "TemplateID": 538061,
+              "Name": "Painting of Fianna Yellowknife",
+              "Tiers": [
+                0,
+                598,
+                424,
+                0
+              ],
+              "From": "Cantrip Chests in The Wild in Avalon",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 538058,
+              "Name": "Noble Owl Painting",
+              "Tiers": [
+                0,
+                62,
+                36,
+                0
+              ],
+              "From": "Keela White Talon in The Wild - White Owl Tower in Avalon",
+              "Creatures": [
+                589424
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_S",
+          "Name": "King Artorius Statue Exhibit",
+          "NameKey": "GUI3_00000138",
+          "Artifacts": [
+            {
+              "TemplateID": 1603053,
+              "Name": "King Artorius Statue",
+              "Tiers": [
+                0,
+                0,
+                302,
+                0
+              ],
+              "From": "Pendragon in Pendragon Rematch (Challenge)",
+              "Creatures": [
+                589473,
+                1592136,
+                1663260
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_T",
+          "Name": "Knight's Arming Encampment Exhibit",
+          "NameKey": "GUI3_00000139",
+          "Artifacts": [
+            {
+              "TemplateID": 641564,
+              "Name": "Armor Display",
+              "Tiers": [
+                0,
+                308,
+                172,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641593,
+              "Name": "Jousting Rack",
+              "Tiers": [
+                0,
+                56,
+                32,
+                0
+              ],
+              "From": "Sir Terrance Thornwhip in High Road - Red Thorn Tower in Avalon",
+              "Creatures": [
+                589408
+              ]
+            },
+            {
+              "TemplateID": 641578,
+              "Name": "Avalon Spear Rack",
+              "Tiers": [
+                0,
+                64,
+                36,
+                0
+              ],
+              "From": "Bane Wyrm in Caliburn - Lair of the Bane Wyrm in Avalon",
+              "Creatures": [
+                589401
+              ]
+            },
+            {
+              "TemplateID": 724083,
+              "Name": "Market Tent",
+              "Tiers": [
+                0,
+                44,
+                25,
+                0
+              ],
+              "From": "Eurgh the Grinder in The Wyrd - Eurgh's Tower in Avalon",
+              "Creatures": [
+                589438
+              ]
+            },
+            {
+              "TemplateID": 683085,
+              "Name": "Archery Target",
+              "Tiers": [
+                0,
+                688,
+                488,
+                0
+              ],
+              "From": "Cantrip Chests in Caer Lyon in Avalon",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_U",
+          "Name": "Castle Avalon Library Exhibit",
+          "NameKey": "GUI3_00000140",
+          "Artifacts": [
+            {
+              "TemplateID": 470464,
+              "Name": "Candelabra",
+              "Tiers": [
+                0,
+                308,
+                172,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 641586,
+              "Name": "Avalon Wooden Table",
+              "Tiers": [
+                0,
+                432,
+                240,
+                0
+              ],
+              "From": "Strangler Goblin in Lake Shore or The Catacombs in Avalon",
+              "Creatures": [
+                589455
+              ]
+            },
+            {
+              "TemplateID": 1603054,
+              "Name": "Avalon Library Bookshelf",
+              "Tiers": [
+                0,
+                700,
+                496,
+                0
+              ],
+              "From": "Cantrip Chests in High Road in Avalon",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_V",
+          "Name": "Morganthe Statue Exhibit",
+          "NameKey": "GUI3_00000141",
+          "Artifacts": [
+            {
+              "TemplateID": 1603055,
+              "Name": "Morganthe Statue",
+              "Tiers": [
+                0,
+                0,
+                302,
+                0
+              ],
+              "From": "Pendragon in Pendragon Rematch (Challenge)",
+              "Creatures": [
+                589473,
+                1592136,
+                1663260
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "World": "Khrysalis",
+      "Zone": "Housing_Guild/Guild_Starter_Int_Khrysalis",
+      "DoorTemplateID": 1650002,
+      "LevelScale": 100,
+      "Exhibits": [
+        {
+          "Tag": "Exhibit_A",
+          "Name": "Khrysalis Gate Exhibit",
+          "NameKey": "GuildMuseum_00000087",
+          "Artifacts": [
+            {
+              "TemplateID": 1603167,
+              "Name": "Ice Archway Portal",
+              "Tiers": [
+                40,
+                25,
+                25,
+                0
+              ],
+              "From": "Ozzric in Moon Cliffs - Butternut Tower in Khrysalis",
+              "Creatures": [
+                1223101
+              ]
+            },
+            {
+              "TemplateID": 1603188,
+              "Name": "Khrysalis Broken Natural Arch",
+              "Tiers": [
+                28,
+                16,
+                16,
+                0
+              ],
+              "From": "Ghalak Poisonthorn in Last Wood - Ghalak Poisonthorn's Tent in Khrysalis",
+              "Creatures": [
+                1223035
+              ]
+            },
+            {
+              "TemplateID": 1603172,
+              "Name": "Kondha Dead Tree",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "Sand Crawler in Crescent Beach in Khrysalis",
+              "Creatures": [
+                1283259
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_B",
+          "Name": "Benighted Burrow Exhibit",
+          "NameKey": "GuildMuseum_00000091",
+          "Artifacts": [
+            {
+              "TemplateID": 1603157,
+              "Name": "Large Burrower Tapestry",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "Digger Drone in Tyrian Gorge in Khrysalis",
+              "Creatures": [
+                1223079
+              ]
+            },
+            {
+              "TemplateID": 1603158,
+              "Name": "Tall Burrower Tapestry",
+              "Tiers": [
+                104,
+                50,
+                50,
+                0
+              ],
+              "From": "Royal Guard in Moon Cliffs in Khrysalis",
+              "Creatures": [
+                468080,
+                1223128,
+                1223239
+              ]
+            },
+            {
+              "TemplateID": 1603156,
+              "Name": "Burrower Rug",
+              "Tiers": [
+                104,
+                50,
+                50,
+                0
+              ],
+              "From": "Banded Hornet in Moon Cliffs in Khrysalis",
+              "Creatures": [
+                1223061
+              ]
+            },
+            {
+              "TemplateID": 1603155,
+              "Name": "Burrower Lamp Pillar",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603160,
+              "Name": "Burrower Warrior Statue On Pedestal",
+              "Tiers": [
+                30,
+                18,
+                18,
+                0
+              ],
+              "From": "Vekan LimeBlight in Silent Market - LimeBlight's Lair in Khrysalis",
+              "Creatures": [
+                1223119
+              ]
+            },
+            {
+              "TemplateID": 1603159,
+              "Name": "Burrower Wall Frieze",
+              "Tiers": [
+                18,
+                10,
+                10,
+                0
+              ],
+              "From": "Ravik Dreamscape in Moon Cliffs - Eclipse Tower (Right) in Khrysalis",
+              "Creatures": [
+                1223103
+              ]
+            },
+            {
+              "TemplateID": 1292127,
+              "Name": "Burrower Bookshelf",
+              "Tiers": [
+                25,
+                15,
+                15,
+                0
+              ],
+              "From": "Razele the TwoFaced in Bastion - TwoFace's Lair in Khrysalis",
+              "Creatures": [
+                1223234
+              ]
+            },
+            {
+              "TemplateID": 1292128,
+              "Name": "Burrower Lectern",
+              "Tiers": [
+                24,
+                15,
+                15,
+                0
+              ],
+              "From": "Cree CurdWright in Bastion - Mausoleum East in Khrysalis",
+              "Creatures": [
+                1223233
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_C",
+          "Name": "Silent Market Dwelling Exhibit",
+          "NameKey": "GuildMuseum_00000098",
+          "Artifacts": [
+            {
+              "TemplateID": 1603206,
+              "Name": "Silent Market Pot",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603205,
+              "Name": "Silent Market Bowl",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603204,
+              "Name": "Silent Market Green Bottle",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292126,
+              "Name": "Burrower Bench",
+              "Tiers": [
+                30,
+                18,
+                18,
+                0
+              ],
+              "From": "Zanza the BurrowBreaker in Silent Market - BurrowBreaker's Quarters in Khrysalis",
+              "Creatures": [
+                1223253
+              ]
+            },
+            {
+              "TemplateID": 1292129,
+              "Name": "Burrower Table",
+              "Tiers": [
+                28,
+                16,
+                16,
+                0
+              ],
+              "From": "Zandra the QuietOne in Silent Market - The QuietOne's Cache in Khrysalis",
+              "Creatures": [
+                1223254
+              ]
+            },
+            {
+              "TemplateID": 1675268,
+              "Name": "Silent Market Hanging Pot",
+              "Tiers": [
+                35,
+                22,
+                22,
+                0
+              ],
+              "From": "Vanek Warscream in Silent Market - War Room in Khrysalis",
+              "Creatures": [
+                1223118
+              ]
+            },
+            {
+              "TemplateID": 1675269,
+              "Name": "Silent Market Fireplace",
+              "Tiers": [
+                34,
+                20,
+                20,
+                0
+              ],
+              "From": "Zaragovia the DoomMask in Silent Market - DoomMask's Dwelling in Khrysalis",
+              "Creatures": [
+                1223132
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_D",
+          "Name": "Last Wood's Idyllic Beauty Exhibit",
+          "NameKey": "GuildMuseum_00000101",
+          "Artifacts": [
+            {
+              "TemplateID": 1603175,
+              "Name": "Last Wood Bush 1",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603176,
+              "Name": "Last Wood Bush 2",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603184,
+              "Name": "Last Wood Tree 1",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603185,
+              "Name": "Last Wood Tree 2",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603186,
+              "Name": "Last Wood Tree 3",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603182,
+              "Name": "Last Wood Pottery Display",
+              "Tiers": [
+                30,
+                18,
+                18,
+                0
+              ],
+              "From": "Ullek EmberTongue in Last Wood - Ullek's Tent in Khrysalis",
+              "Creatures": [
+                1206074
+              ]
+            },
+            {
+              "TemplateID": 1603183,
+              "Name": "Last Wood Stone Circle",
+              "Tiers": [
+                30,
+                18,
+                18,
+                0
+              ],
+              "From": "King Alric FateSailor in Last Wood - Reverence Cave in Khrysalis",
+              "Creatures": [
+                1206087
+              ]
+            },
+            {
+              "TemplateID": 1603179,
+              "Name": "Last Wood Covered Platform",
+              "Tiers": [
+                28,
+                18,
+                18,
+                0
+              ],
+              "From": "Viridan GreenOak in Last Wood - Death's Head Cave in Khrysalis",
+              "Creatures": [
+                1223121
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_E",
+          "Name": "Mice and Squirrel Burrower Garb Exhibit",
+          "NameKey": "GuildMuseum_00000110",
+          "Artifacts": [
+            {
+              "TemplateID": 1203126,
+              "Name": "Burrower's Barbed Helmet",
+              "Tiers": [
+                64,
+                42,
+                42,
+                0
+              ],
+              "From": "Goliath Slasher in Silent Market - Blind Tower in Khrysalis",
+              "Creatures": [
+                1223030
+              ]
+            },
+            {
+              "TemplateID": 1203212,
+              "Name": "Besieged Burrower Armor",
+              "Tiers": [
+                54,
+                36,
+                36,
+                0
+              ],
+              "From": "Warrior Brood in Moon Cliffs - Tamarind Tower in Khrysalis",
+              "Creatures": [
+                1206093
+              ]
+            },
+            {
+              "TemplateID": 1203246,
+              "Name": "Burrower Battlerunners",
+              "Tiers": [
+                35,
+                24,
+                24,
+                0
+              ],
+              "From": "Tymen WhiteFlame in Bastion - WhiteFlame's Study in Khrysalis",
+              "Creatures": [
+                1223117
+              ]
+            },
+            {
+              "TemplateID": 1203666,
+              "Name": "Pepper Grass Blade",
+              "Tiers": [
+                54,
+                36,
+                36,
+                0
+              ],
+              "From": "Papa Jacobo in Ruined Alcazar - Phoenix Tower in Khrysalis",
+              "Creatures": [
+                1283374
+              ]
+            },
+            {
+              "TemplateID": 1359946,
+              "Name": "Khrysalis Armored Helm",
+              "Tiers": [
+                60,
+                40,
+                40,
+                0
+              ],
+              "From": "Grim Mimo in Last Wood - Grim Mimo's Cave in Khrysalis",
+              "Creatures": [
+                1223092
+              ]
+            },
+            {
+              "TemplateID": 1359945,
+              "Name": "Khrysalis Armored Robe",
+              "Tiers": [
+                38,
+                25,
+                25,
+                0
+              ],
+              "From": "Galek WorldRazer in Last Wood - WoldRazer's Tent in Khrysalis",
+              "Creatures": [
+                1223238
+              ]
+            },
+            {
+              "TemplateID": 1359951,
+              "Name": "Khrysalis Armored Boots",
+              "Tiers": [
+                25,
+                16,
+                16,
+                0
+              ],
+              "From": "Atlach-Leng in Tyrian Gorge - Abyssal Cave in Khrysalis",
+              "Creatures": [
+                1223086
+              ]
+            },
+            {
+              "TemplateID": 1203682,
+              "Name": "Sweltering Desert Staff",
+              "Tiers": [
+                26,
+                18,
+                18,
+                0
+              ],
+              "From": "Kravenly the Hunter in Tyrian Gorge - Banyan Tower in Khrysalis",
+              "Creatures": [
+                1223097,
+                1283349
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_F",
+          "Name": "Moon Cliffs Bee Abode Exhibit",
+          "NameKey": "GuildMuseum_00000121",
+          "Artifacts": [
+            {
+              "TemplateID": 1603153,
+              "Name": "Bee Light",
+              "Tiers": [
+                0,
+                0,
+                104,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292133,
+              "Name": "Bumbler Bed",
+              "Tiers": [
+                0,
+                0,
+                470,
+                0
+              ],
+              "From": "Cantrip Chests in Tyrian Gorge in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292134,
+              "Name": "Bumbler Bench",
+              "Tiers": [
+                0,
+                0,
+                428,
+                0
+              ],
+              "From": "Cantrip Chests in Fort Rachias in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292147,
+              "Name": "Bumbler Honeybarrow",
+              "Tiers": [
+                0,
+                0,
+                262,
+                0
+              ],
+              "From": "Cantrip Chests in Crescent Beach in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292149,
+              "Name": "Bumbler Honey Box",
+              "Tiers": [
+                0,
+                0,
+                38,
+                0
+              ],
+              "From": "Zoudica the GreenClaw in Sardonyx - Zoudica's House",
+              "Creatures": [
+                1299004
+              ]
+            },
+            {
+              "TemplateID": 1292143,
+              "Name": "Bumbler End Table",
+              "Tiers": [
+                0,
+                0,
+                48,
+                0
+              ],
+              "From": "Santa Muerte in Kondha Desert - Chamber of the Sun's Shadow in Khrysalis",
+              "Creatures": [
+                1283338,
+                1283339
+              ]
+            },
+            {
+              "TemplateID": 1292144,
+              "Name": "Bumbler Honeycomb Table",
+              "Tiers": [
+                0,
+                0,
+                336,
+                0
+              ],
+              "From": "Cantrip Chests in Ruined Alcazar in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292141,
+              "Name": "Fancy Bumbler Honey Jar",
+              "Tiers": [
+                0,
+                0,
+                26,
+                0
+              ],
+              "From": "Fat Tail Marauder in Crescent Beach - Aphotic Cave in Khrysalis",
+              "Creatures": [
+                1206341
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_G",
+          "Name": "Fort Rachias in Tyrian Gorge Exhibit",
+          "NameKey": "GuildMuseum_00000129",
+          "Artifacts": [
+            {
+              "TemplateID": 1603208,
+              "Name": "Tyrian Dragonfly",
+              "Tiers": [
+                25,
+                15,
+                15,
+                0
+              ],
+              "From": "Broodmother in Moon Cliffs - Throne Room in Khrysalis",
+              "Creatures": [
+                1223028,
+                1223241,
+                1502691,
+                1502692,
+                1502693,
+                1502694,
+                1502695
+              ]
+            },
+            {
+              "TemplateID": 1603207,
+              "Name": "Tyrian Burrower Flower Cottage",
+              "Tiers": [
+                32,
+                20,
+                20,
+                0
+              ],
+              "From": "Scarlet Woolly in Tyrian Gorge - Wampey Cave in Khrysalis",
+              "Creatures": [
+                1223105
+              ]
+            },
+            {
+              "TemplateID": 1603212,
+              "Name": "Tyrian Mine Wagon",
+              "Tiers": [
+                46,
+                28,
+                28,
+                0
+              ],
+              "From": "Sekar SickBlood in Tyrian Gorge - Hatchery Cave in Khrysalis",
+              "Creatures": [
+                1223106
+              ]
+            },
+            {
+              "TemplateID": 1603210,
+              "Name": "Tyrian Lantern Pole",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603211,
+              "Name": "Tyrian Miner Pile",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603209,
+              "Name": "Tyrian Insect Carapace",
+              "Tiers": [
+                18,
+                12,
+                12,
+                0
+              ],
+              "From": "Baleful Empress in Tyrian Gorge - Winter Halo Cave in Khrysalis",
+              "Creatures": [
+                1223080
+              ]
+            },
+            {
+              "TemplateID": 1603213,
+              "Name": "Tyrian Plant",
+              "Tiers": [
+                104,
+                50,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_H",
+          "Name": "Hall of Trophies Diorama Exhibit",
+          "NameKey": "GuildMuseum_00000135",
+          "Artifacts": [
+            {
+              "TemplateID": 1603228,
+              "Name": "Umbra Trophy Display Plinth",
+              "Tiers": [
+                26,
+                16,
+                16,
+                0
+              ],
+              "From": "Quartermaster Rackum in Fort Rachias - Horned Barracks in Khrysalis",
+              "Creatures": [
+                1223110
+              ]
+            },
+            {
+              "TemplateID": 1603227,
+              "Name": "Umbra Dino Head Trophy",
+              "Tiers": [
+                26,
+                16,
+                16,
+                0
+              ],
+              "From": "Hisser in Fort Rachias - Mess Hall in Khrysalis",
+              "Creatures": [
+                1223091
+              ]
+            },
+            {
+              "TemplateID": 1603232,
+              "Name": "Umbra Tooth Trophy",
+              "Tiers": [
+                22,
+                12,
+                12,
+                0
+              ],
+              "From": "Belosto ToeBiter in Moon Cliffs - Water Cavern in Khrysalis",
+              "Creatures": [
+                1223122
+              ]
+            },
+            {
+              "TemplateID": 1603229,
+              "Name": "Umbra Hammer Trophy",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603231,
+              "Name": "Umbra Skull Trophy",
+              "Tiers": [
+                25,
+                15,
+                15,
+                0
+              ],
+              "From": "Jovan HopeDrinker in Fort Rachias - Metamorphosis Chamber in Khrysalis",
+              "Creatures": [
+                1233209
+              ]
+            },
+            {
+              "TemplateID": 1603230,
+              "Name": "Umbra Rug",
+              "Tiers": [
+                155,
+                75,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292155,
+              "Name": "Celestian Crescent Artifact",
+              "Tiers": [
+                28,
+                18,
+                18,
+                0
+              ],
+              "From": "Mago DeathsHead in Moon Cliffs - Hidden Cave in Khrysalis",
+              "Creatures": [
+                1223099
+              ]
+            },
+            {
+              "TemplateID": 1292156,
+              "Name": "Tiki Totem",
+              "Tiers": [
+                28,
+                16,
+                16,
+                0
+              ],
+              "From": "Rezzon in Moon Cliffs - Mandible Cave in Khrysalis",
+              "Creatures": [
+                1223235
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_I",
+          "Name": "Mantis and Millipede Umbra Armor Exhibit",
+          "NameKey": "GuildMuseum_00000143",
+          "Artifacts": [
+            {
+              "TemplateID": 1203134,
+              "Name": "Mantis Hunter's Topper",
+              "Tiers": [
+                0,
+                0,
+                22,
+                0
+              ],
+              "From": "Sofia DarkSide in Moon Cliffs - Eclipse Tower (Left) in Khrysalis",
+              "Creatures": [
+                1223115,
+                1655919
+              ]
+            },
+            {
+              "TemplateID": 1203238,
+              "Name": "Fifth Column's Protection",
+              "Tiers": [
+                0,
+                0,
+                42,
+                0
+              ],
+              "From": "Archmagus Lorcan in The Hive - Chamber of the Orb Weavers in Khrysalis",
+              "Creatures": [
+                1283377,
+                1283378
+              ]
+            },
+            {
+              "TemplateID": 1203278,
+              "Name": "Zaltanna's Combat Boots",
+              "Tiers": [
+                0,
+                0,
+                42,
+                0
+              ],
+              "From": "Actias NightOrb in Tyrian Gorge - Melanos Tower in Khrysalis",
+              "Creatures": [
+                1223237
+              ]
+            },
+            {
+              "TemplateID": 1203681,
+              "Name": "Poleaxe of Mantis Dominion",
+              "Tiers": [
+                0,
+                0,
+                30,
+                0
+              ],
+              "From": "Undrek BlightClaw in The Hive - Tributes Room in Khrysalis",
+              "Creatures": [
+                1283315
+              ]
+            },
+            {
+              "TemplateID": 1203160,
+              "Name": "Dragonfly Keeper's Cap",
+              "Tiers": [
+                0,
+                0,
+                68,
+                0
+              ],
+              "From": "Deep Spawn in Crescent Beach - StarFall Sea in Khrysalis",
+              "Creatures": [
+                1283253,
+                1681268,
+                1681269
+              ]
+            },
+            {
+              "TemplateID": 1203204,
+              "Name": "Thousand Black Boots' Gear",
+              "Tiers": [
+                0,
+                0,
+                24,
+                0
+              ],
+              "From": "Lord Ombra in The Hive - Night Orb Chamber in Khrysalis",
+              "Creatures": [
+                1283306,
+                1283345,
+                1283346
+              ]
+            },
+            {
+              "TemplateID": 1203277,
+              "Name": "Digger Lieutenant's Boots",
+              "Tiers": [
+                0,
+                0,
+                38,
+                0
+              ],
+              "From": "Balor the Broken Fang in Sardonyx - Soothsayer Gate in Khrysalis",
+              "Creatures": [
+                1283273,
+                1283325
+              ]
+            },
+            {
+              "TemplateID": 1203649,
+              "Name": "Shadow's Point",
+              "Tiers": [
+                0,
+                0,
+                18,
+                0
+              ],
+              "From": "Black Baroness in Kondha Desert - Metasoma Cave in Khrysalis",
+              "Creatures": [
+                1283299,
+                1299029
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_J",
+          "Name": "Bastion's Glory Exhibit",
+          "NameKey": "GuildMuseum_00000153",
+          "Artifacts": [
+            {
+              "TemplateID": 1603150,
+              "Name": "Circular Bastion Wall Plaque",
+              "Tiers": [
+                0,
+                0,
+                155,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603151,
+              "Name": "Giant Bastion Wall Plaque",
+              "Tiers": [
+                0,
+                0,
+                74,
+                0
+              ],
+              "From": "Deer Mouse Revenant in Bastion - Mausoleum West in Khrysalis",
+              "Creatures": [
+                1223074,
+                1223075
+              ]
+            },
+            {
+              "TemplateID": 1603152,
+              "Name": "Bastion Warrior Statue",
+              "Tiers": [
+                0,
+                0,
+                24,
+                0
+              ],
+              "From": "Evandyr HalfEar in Kondha Desert - Dry Gulch Cave in Khrysalis",
+              "Creatures": [
+                1283290,
+                1299028
+              ]
+            },
+            {
+              "TemplateID": 1603148,
+              "Name": "Bastion Mage Statue",
+              "Tiers": [
+                0,
+                0,
+                36,
+                0
+              ],
+              "From": "Lost Knight in Ruined Alcazar - Hart Tower in Khrysalis",
+              "Creatures": [
+                1283337,
+                1283350
+              ]
+            },
+            {
+              "TemplateID": 1603147,
+              "Name": "Bastion Arcane Colossus Statue",
+              "Tiers": [
+                0,
+                0,
+                38,
+                0
+              ],
+              "From": "Stieg Quicksand in Crescent Beach - Desert Hopper Cave in Khrysalis",
+              "Creatures": [
+                1283252
+              ]
+            },
+            {
+              "TemplateID": 1603149,
+              "Name": "Bastion Rubicund Colossus Statue",
+              "Tiers": [
+                0,
+                0,
+                34,
+                0
+              ],
+              "From": "Ant Griffin in Crescent Beach - Ant Lion's Warren in Khrysalis",
+              "Creatures": [
+                1283373
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_K",
+          "Name": "Great Beast of the StarFall Sea Exhibit",
+          "NameKey": "GuildMuseum_00000160",
+          "Artifacts": [
+            {
+              "TemplateID": 1603163,
+              "Name": "Great Beast Miniature",
+              "Tiers": [
+                0,
+                0,
+                188,
+                0
+              ],
+              "From": "Morganthe in Morganthe Rematch (Challenge)",
+              "Creatures": [
+                1223038,
+                1283364,
+                1283365,
+                1283366,
+                1283367,
+                1515470,
+                1592147,
+                1663266,
+                1674320
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_L",
+          "Name": "Weapons of Mice and Bees Exhibit",
+          "NameKey": "GuildMuseum_00000163",
+          "Artifacts": [
+            {
+              "TemplateID": 1603162,
+              "Name": "Deco Mouse Wall Frieze",
+              "Tiers": [
+                0,
+                104,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603161,
+              "Name": "Deco Bee Wall Frieze",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292130,
+              "Name": "Burrower Heavy Weapon Rack",
+              "Tiers": [
+                0,
+                470,
+                192,
+                0
+              ],
+              "From": "Cantrip Chests in Last Wood in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292131,
+              "Name": "Burrower Light Weapon Rack",
+              "Tiers": [
+                0,
+                470,
+                192,
+                0
+              ],
+              "From": "Cantrip Chests in Bastion in Khrysalis",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1292145,
+              "Name": "Sharp Bumbler Weapon Rack",
+              "Tiers": [
+                0,
+                16,
+                10,
+                0
+              ],
+              "From": "Ghost Dog in Fort Rachias - Central Keep in Khrysalis",
+              "Creatures": [
+                1223085,
+                1223249,
+                1283318,
+                1283330,
+                1414017
+              ]
+            },
+            {
+              "TemplateID": 1292146,
+              "Name": "Pointy Bumbler Weapon Rack",
+              "Tiers": [
+                0,
+                392,
+                160,
+                0
+              ],
+              "From": "Cantrip Chests in Moon Cliffs in Khrysalis",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_M",
+          "Name": "Shrine of the Hart Exhibit",
+          "NameKey": "GuildMuseum_00000169",
+          "Artifacts": [
+            {
+              "TemplateID": 1603201,
+              "Name": "Khrysalis Hart Shrine",
+              "Tiers": [
+                0,
+                0,
+                188,
+                0
+              ],
+              "From": "Morganthe in Morganthe Rematch (Challenge)",
+              "Creatures": [
+                1223038,
+                1283364,
+                1283365,
+                1283366,
+                1283367,
+                1515470,
+                1592147,
+                1663266,
+                1674320
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_N",
+          "Name": "Mantis Dwelling Artifacts Exhibit",
+          "NameKey": "GuildMuseum_00000171",
+          "Artifacts": [
+            {
+              "TemplateID": 1603195,
+              "Name": "Sardonyx Bookshelf",
+              "Tiers": [
+                0,
+                104,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603199,
+              "Name": "Sardonyx Table",
+              "Tiers": [
+                0,
+                28,
+                18,
+                0
+              ],
+              "From": "Raptorial Munitions Officer in Sardonyx - Munitions Room in Khrysalis",
+              "Creatures": [
+                1301176
+              ]
+            },
+            {
+              "TemplateID": 1603193,
+              "Name": "Sardonyx Bed",
+              "Tiers": [
+                0,
+                30,
+                18,
+                0
+              ],
+              "From": "Torrek WiltedBloom in Sardonyx - Torrek's House in Khrysalis",
+              "Creatures": [
+                1283280
+              ]
+            },
+            {
+              "TemplateID": 1603196,
+              "Name": "Sardonyx Chair",
+              "Tiers": [
+                0,
+                36,
+                22,
+                0
+              ],
+              "From": "Rozimund the LoneBlade in Sardonyx - Rozimund's House in Khrysalis",
+              "Creatures": [
+                1283279
+              ]
+            },
+            {
+              "TemplateID": 1603197,
+              "Name": "Sardonyx End Table",
+              "Tiers": [
+                0,
+                28,
+                18,
+                0
+              ],
+              "From": "Vazivika the SpiritBreaker in Sardonyx - Vazivika's House in Khrysalis",
+              "Creatures": [
+                1299026
+              ]
+            },
+            {
+              "TemplateID": 1603194,
+              "Name": "Sardonyx Bench",
+              "Tiers": [
+                0,
+                40,
+                24,
+                0
+              ],
+              "From": "Zharellia the RunningOne in Sardonyx - Zharellia's House in Khrysalis",
+              "Creatures": [
+                1283281
+              ]
+            },
+            {
+              "TemplateID": 1603198,
+              "Name": "Sardonyx Rug",
+              "Tiers": [
+                0,
+                104,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1206717,
+              "Name": "Mantis Vase",
+              "Tiers": [
+                0,
+                294,
+                120,
+                0
+              ],
+              "From": "Cantrip Chests in Sardonyx in Khrysalis",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_O",
+          "Name": "Queen's Cave in the Kondha Desert Exhibit",
+          "NameKey": "GuildMuseum_00000179",
+          "Artifacts": [
+            {
+              "TemplateID": 1603170,
+              "Name": "Kondha Queen Throne",
+              "Tiers": [
+                0,
+                32,
+                20,
+                0
+              ],
+              "From": "Elana Darksun in Kondha Desert - Chamber of the Sun's Shadow in Khrysalis",
+              "Creatures": [
+                1283362
+              ]
+            },
+            {
+              "TemplateID": 1603173,
+              "Name": "Kondha Weapon Rack 1",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603174,
+              "Name": "Kondha Weapon Rack 2",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603171,
+              "Name": "Kondha Wall Tapestry",
+              "Tiers": [
+                0,
+                34,
+                20,
+                0
+              ],
+              "From": "Hanzo YellowEye in Ruined Alcazar - Hall of Zodiac in Khrysalis",
+              "Creatures": [
+                1283266
+              ]
+            },
+            {
+              "TemplateID": 1603169,
+              "Name": "Giant Kondha Insect Head",
+              "Tiers": [
+                0,
+                30,
+                18,
+                0
+              ],
+              "From": "R'Lorr M'Wah in Kondha Desert - Alluvium Cave in Khrysalis",
+              "Creatures": [
+                1283292
+              ]
+            },
+            {
+              "TemplateID": 1603168,
+              "Name": "Tall Kondha Brazier",
+              "Tiers": [
+                0,
+                32,
+                20,
+                0
+              ],
+              "From": "Sonya Jade-Eye in Kondha Desert - Barrow Tent in Khrysalis",
+              "Creatures": [
+                1283361
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_P",
+          "Name": "Umbra Legion Tools Exhibit",
+          "NameKey": "GuildMuseum_00000185",
+          "Artifacts": [
+            {
+              "TemplateID": 1603223,
+              "Name": "Umbra Shelf",
+              "Tiers": [
+                0,
+                36,
+                22,
+                0
+              ],
+              "From": "Zelda the PhantomKnight in Sardonyx - Walking Stick Gate in Khrysalis",
+              "Creatures": [
+                1283390
+              ]
+            },
+            {
+              "TemplateID": 1603216,
+              "Name": "Umbra Cooking Pot",
+              "Tiers": [
+                0,
+                104,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603225,
+              "Name": "Umbra Training Dummy",
+              "Tiers": [
+                0,
+                34,
+                20,
+                0
+              ],
+              "From": "Second Column Captain in Sardonyx - Diabolica Garrison in Khrysalis",
+              "Creatures": [
+                1283356
+              ]
+            },
+            {
+              "TemplateID": 1603234,
+              "Name": "Umbra Wall Sconce",
+              "Tiers": [
+                0,
+                28,
+                16,
+                0
+              ],
+              "From": "Salicar Stranglevine in Fort Rachias - Salicar's Sanctum in Khrysalis",
+              "Creatures": [
+                1283258
+              ]
+            },
+            {
+              "TemplateID": 1603217,
+              "Name": "Umbra Copper Pan",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603218,
+              "Name": "Umbra Clear Drinking Glass",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603219,
+              "Name": "Umbra Green Drinking Glass",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603220,
+              "Name": "Umbra Bed",
+              "Tiers": [
+                0,
+                34,
+                20,
+                0
+              ],
+              "From": "Drepa Hooktip in Sardonyx - Tower of Pale Beauty in Khrysalis",
+              "Creatures": [
+                1283393
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_Q",
+          "Name": "Shrine of the Crab Exhibit",
+          "NameKey": "GuildMuseum_00000191",
+          "Artifacts": [
+            {
+              "TemplateID": 1603200,
+              "Name": "Khrysalis Crab Shrine",
+              "Tiers": [
+                0,
+                0,
+                188,
+                0
+              ],
+              "From": "Morganthe in Morganthe Rematch (Challenge)",
+              "Creatures": [
+                1223038,
+                1283364,
+                1283365,
+                1283366,
+                1283367,
+                1515470,
+                1592147,
+                1663266,
+                1674320
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_R",
+          "Name": "Umbra Legion Weapons Exhibit",
+          "NameKey": "GuildMuseum_00000193",
+          "Artifacts": [
+            {
+              "TemplateID": 1603235,
+              "Name": "Short Umbra Weapon Rack",
+              "Tiers": [
+                0,
+                104,
+                50,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603236,
+              "Name": "Tall Umbra Weapon Rack",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "Pit Goliath in The Hive - Mutation Chamber A (or B) in Khrysalis",
+              "Creatures": [
+                1283301,
+                1283342
+              ]
+            },
+            {
+              "TemplateID": 1603226,
+              "Name": "Umbra Trebuchet",
+              "Tiers": [
+                0,
+                34,
+                20,
+                0
+              ],
+              "From": "Kozak BlackHeart in The Hive - Metastasis Chamber in Khrysalis",
+              "Creatures": [
+                1299000
+              ]
+            },
+            {
+              "TemplateID": 1603215,
+              "Name": "Umbra Banner Pole",
+              "Tiers": [
+                0,
+                35,
+                22,
+                0
+              ],
+              "From": "Spider Archmagus in The Hive - Reflection Chamber in Khrysalis",
+              "Creatures": [
+                1283309
+              ]
+            },
+            {
+              "TemplateID": 1603214,
+              "Name": "Umbra Wall Axes",
+              "Tiers": [
+                0,
+                25,
+                15,
+                0
+              ],
+              "From": "Ekrevitch BadBlood in The Hive - Warp Tower in Khrysalis",
+              "Creatures": [
+                1299001
+              ]
+            },
+            {
+              "TemplateID": 1292163,
+              "Name": "Umbra Table",
+              "Tiers": [
+                0,
+                314,
+                128,
+                0
+              ],
+              "From": "Cantrip Chests in Kondha Desert in Khrysalis",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_S",
+          "Name": "Shrine of the Phoenix Exhibit",
+          "NameKey": "GuildMuseum_00000200",
+          "Artifacts": [
+            {
+              "TemplateID": 1603202,
+              "Name": "Khrysalis Phoenix Shrine",
+              "Tiers": [
+                0,
+                0,
+                188,
+                0
+              ],
+              "From": "Morganthe in Morganthe Rematch (Challenge)",
+              "Creatures": [
+                1223038,
+                1283364,
+                1283365,
+                1283366,
+                1283367,
+                1515470,
+                1592147,
+                1663266,
+                1674320
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_T",
+          "Name": "The Arachna Hive Exhibit",
+          "NameKey": "GuildMuseum_00000202",
+          "Artifacts": [
+            {
+              "TemplateID": 1603165,
+              "Name": "Hive Umbra Energy Source",
+              "Tiers": [
+                0,
+                18,
+                12,
+                0
+              ],
+              "From": "Sun Darkling in The Hive - The Black Hole in Khrysalis",
+              "Creatures": [
+                1283372
+              ]
+            },
+            {
+              "TemplateID": 1603166,
+              "Name": "Hive Web Wall Spider",
+              "Tiers": [
+                0,
+                26,
+                16,
+                0
+              ],
+              "From": "Interrogator Rentenius in The Hive - Answer Chamber in Khrysalis",
+              "Creatures": [
+                1283385
+              ]
+            },
+            {
+              "TemplateID": 1603164,
+              "Name": "Hive Magi Hall Miniature",
+              "Tiers": [
+                0,
+                30,
+                18,
+                0
+              ],
+              "From": "Tamulus in The Hive - Palace of Fangs Chamber in Khrysalis",
+              "Creatures": [
+                1283314,
+                1283322,
+                1283375
+              ]
+            },
+            {
+              "TemplateID": 1292162,
+              "Name": "Umbra Coffer",
+              "Tiers": [
+                0,
+                470,
+                192,
+                0
+              ],
+              "From": "Cantrip Chests in The Hive in Khrysalis",
+              "Creatures": []
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_U",
+          "Name": "Recluse Chamber Diorama Exhibit",
+          "NameKey": "GuildMuseum_00000208",
+          "Artifacts": [
+            {
+              "TemplateID": 1603192,
+              "Name": "Small Recluse Crystal Cluster",
+              "Tiers": [
+                0,
+                155,
+                75,
+                0
+              ],
+              "From": "",
+              "Creatures": []
+            },
+            {
+              "TemplateID": 1603191,
+              "Name": "Large Recluse Crystal Cluster",
+              "Tiers": [
+                0,
+                32,
+                20,
+                0
+              ],
+              "From": "Xestia SixStripes in The Hive - Recluse Chamber in Khrysalis",
+              "Creatures": [
+                1283308
+              ]
+            }
+          ]
+        },
+        {
+          "Tag": "Exhibit_V",
+          "Name": "Shrine of the Serpent Exhibit",
+          "NameKey": "GuildMuseum_00000211",
+          "Artifacts": [
+            {
+              "TemplateID": 1603203,
+              "Name": "Khrysalis Serpent Shrine",
+              "Tiers": [
+                0,
+                0,
+                188,
+                0
+              ],
+              "From": "Morganthe in Morganthe Rematch (Challenge)",
+              "Creatures": [
+                1223038,
+                1283364,
+                1283365,
+                1283366,
+                1283367,
+                1515470,
+                1592147,
+                1663266,
+                1674320
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

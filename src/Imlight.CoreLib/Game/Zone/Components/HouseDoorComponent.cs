@@ -78,10 +78,33 @@ internal sealed class HouseDoorComponent(ZoneEntity entity) : ZoneEntityComponen
             return;
         }
 
+        // The Guild Museum's gallery doors and their way back (GuildMuseum.cs) lead out of the house, not to its partner.
+        if (MuseumTransfer(playerWizard) is { } museum) {
+            playerActor.Tell(museum);
+
+            return;
+        }
+
         playerActor.Tell(new ZONE_102_PROTOCOL.MSG_HOUSEDOOR {
             DoorGid = Entity.ActiveGameObject.m_globalID,
             LocationName = Door?.m_locationName.ToString(),
         });
+    }
+
+    private ZONE_102_PROTOCOL.MSG_ZONETRANSFER MuseumTransfer(Wizard playerWizard) {
+        var door = Door;
+        if (door is null || !GuildMuseum.GuildMuseum.Enabled) {
+            return null;
+        }
+
+        var extraZone = door.m_housingExtraZone.ToString();
+        if (GuildMuseum.GuildMuseum.GalleryInZone(extraZone) is { } gallery) {
+            return GuildMuseum.GuildMuseum.EntryTransfer(gallery, playerWizard);
+        }
+
+        return extraZone == "Return" && GuildMuseum.GuildMuseum.GalleryInZone(Entity.Zone?.ZonePath) is not null
+            ? GuildMuseum.GuildMuseum.ReturnTransfer(playerWizard)
+            : null;
     }
 
     private TeleportProximityBehaviorTemplate Door

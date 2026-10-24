@@ -365,7 +365,7 @@ internal class CommandGuildProtocol : CommandProtocol {
     /// The guild house is the leader's: the leader gets the deed the first time (like Home), members visit the
     /// leader's grounds once the leader has opened them.
     /// </summary>
-    private static bool TryGetGuildHouseEntry(Wizard me, GuildRecord guild, out HouseEntry entry, out string problem) {
+    internal static bool TryGetGuildHouseEntry(Wizard me, GuildRecord guild, out HouseEntry entry, out string problem) {
         entry = null;
         problem = null;
         if (!HouseTemplates.TryGet(Guilds.HouseTemplateId, out var template)) {

@@ -1,0 +1,24 @@
+{
+  "Zone": "Housing_Guild/GuildStarter_Ext",
+  "Notes": "Guild Museum (GuildMuseum.cs): the doors into the Avalon and Khrysalis galleries, on the museum island beside the curator. Walk into one to enter its gallery; the door at the back of a gallery brings you back here. Move them in the Customs tab if they stand somewhere awkward.",
+  "Objects": [
+    {
+      "Name": "GuildMuseum_AvalonDoor",
+      "Notes": "Guild-Museum-AvalonDoor: walking into it goes to the Avalon Gallery.",
+      "TemplateID": 1560316,
+      "X": -8067,
+      "Y": -11679,
+      "Z": -6,
+      "Yaw": -1.67
+    },
+    {
+      "Name": "GuildMuseum_KhrysalisDoor",
+      "Notes": "Guild-Museum-KhrysalisDoor: walking into it goes to the Khrysalis Gallery.",
+      "TemplateID": 1650002,
+      "X": -7467,
+      "Y": -11679,
+      "Z": -6,
+      "Yaw": -1.67
+    }
+  ]
+}
