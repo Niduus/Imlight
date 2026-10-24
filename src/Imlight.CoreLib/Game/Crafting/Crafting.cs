@@ -107,6 +107,21 @@ internal sealed record CraftingStation(
         [1391042] = "CraftArcanum",     // Arcanum Crafting Anvil
     };
 
+    /// <summary>The station types in plain words, as the stations are named in the game.</summary>
+    internal static readonly Dictionary<string, string> TypeNames = new(StringComparer.OrdinalIgnoreCase) {
+        ["CraftGeneric"] = "Basic Crafting Station",
+        ["CraftEquipable"] = "Equipment Crafting Station",
+        ["CraftCard"] = "Card Crafting Station",
+        ["CraftFurniture"] = "Housing Crafting Station",
+        ["CraftJewel"] = "Jewel Crafting Station",
+        ["CraftDragonspyre"] = "Dragonspyre Crafting Anvil",
+        ["CraftGrizzleheim"] = "Grizzleheim Crafting Anvil",
+        ["CraftArcanum"] = "Arcanum Crafting Anvil",
+        ["CraftTC"] = "Treasure Card crafting",
+        ["CraftMount"] = "Mount crafting",
+        ["CraftTreasureTowerSpells"] = "Treasure Tower spell crafting",
+    };
+
     /// <summary>Every station type, for .craft.</summary>
     internal static readonly string[] AllTypes = [
         "CraftGeneric", "CraftEquipable", "CraftCard", "CraftFurniture", "CraftJewel", "CraftDragonspyre",
@@ -294,6 +309,9 @@ internal static class Crafting {
 
     /// <summary>How many recipe files the game has.</summary>
     internal static int RecipeCount => s_byName.Value.Count;
+
+    /// <summary>Every recipe file of the game, by its name and template id (the vendor presets read them).</summary>
+    internal static IEnumerable<KeyValuePair<string, uint>> AllRecipes => s_byName.Value;
 
     private static uint Search(string name) {
         var file = "/" + name + ".xml";

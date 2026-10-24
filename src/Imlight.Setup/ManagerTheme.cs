@@ -109,6 +109,7 @@ internal static class ManagerTheme {
         ["Phrases"] = Color.FromRgb(150, 110, 210),
         ["Spells"] = Color.FromRgb(196, 74, 112),
         ["Gear"] = Color.FromRgb(52, 170, 200),
+        ["Recipes"] = Color.FromRgb(168, 120, 60),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
         ["Guides"] = Color.FromRgb(46, 160, 140),
@@ -286,6 +287,7 @@ internal static class ManagerTheme {
                     "1 .7 1.6 1.6 1.8 2.7-1.7-.2-3.3.1-4.8.9 1 .6 1.6 1.5 1.8 2.6-2.3.3-4.4 1.6-6.7 3.9z", true),
         ["weight"] = ("M9 8.5a3 3 0 1 1 6 0h-1.7a1.3 1.3 0 1 0-2.6 0z M6 9.5h12l2.2 10.5H3.8z", true),
         ["gavel"] = ("M12.5 3.5l6 6 M9.5 6.5l6 6 M11 5l-2.5 2.5 6 6L17 11 M11.8 10.2 4 18l2 2 7.8-7.8 M3 21h8", false),
+        ["flask"] = ("M9 3h6 M10 3v6l-5.2 9.2A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.8L14 9V3 M7.3 15h9.4", false),
         ["dna"] = ("M7 3c0 6 10 6 10 12 0 2.4-1.2 4.4-3 6 M17 3c0 6-10 6-10 12 0 2.4 1.2 4.4 3 6 M8.5 7h7 M8.5 17h7 M10 12h4", false),
     };
 

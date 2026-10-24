@@ -48,6 +48,7 @@ internal static class CustomNpcPresets {
     private const string VANILLA_FILE = "Presets/VanillaTrainers.json";
     private const string HOUSING_FOLDER = "ObjectData/Housing/";
     private const int PART_SIZE = 50;
+    private const int RECIPE_PART_SIZE = 100;
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
 
     private static readonly JsonSerializerOptions s_write = new() {
@@ -72,6 +73,7 @@ internal static class CustomNpcPresets {
 
         Add("the housing gauntlets", HousingGauntlets);
         Add("the house sellers", HouseSellers);
+        Add("the recipe vendors", RecipeVendors);
         Add("the school trainers", SchoolTrainers);
         Add("the test trainers", TestTrainers);
         Add("the vanilla trainers", VanillaTrainers);
@@ -240,6 +242,55 @@ internal static class CustomNpcPresets {
         yield return Vendor("Pet Snacks", "Snack", "Every pet snack of rank 8 or higher, as Hao sells.", HouseVendors.Snacks);
         yield return Vendor("Pet Elixirs", "Recipe", "Doctor Purreau's recipes: buying one gives what it makes.",
             HouseVendors.RecipesOf(HouseVendors.PetElixirVendorId).Select(r => r.Id));
+    }
+
+    // Niduus (2026-10-24): "make a recipe vendor". A vendor for each crafting station of the game, with every recipe
+    // made there, by name, in parts of at most RECIPE_PART_SIZE; buying one teaches it (ShopService.BuyRecipe).
+    private static IEnumerable<Preset> RecipeVendors() {
+        var byType = new Dictionary<string, List<(uint Id, string Name)>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (file, id) in Crafting.Crafting.AllRecipes) {
+            if (Crafting.Crafting.RecipeOf(id) is not { } recipe) {
+                continue;
+            }
+
+            var type = (recipe.m_adjectives ?? []).Select(adjective => (string) adjective)
+                .FirstOrDefault(adjective => adjective is not null && Crafting.CraftingStation.TypeNames.ContainsKey(adjective));
+            if (type is null) {
+                continue;
+            }
+
+            var shown = Locale.GetEnglishName((string) recipe.m_displayKey);
+            if (!byType.TryGetValue(type, out var list)) {
+                byType[type] = list = [];
+            }
+
+            list.Add((id, string.IsNullOrWhiteSpace(shown) ? file : shown.Trim()));
+        }
+
+        foreach (var type in Crafting.CraftingStation.TypeNames.Keys.Where(byType.ContainsKey)) {
+            var station = Crafting.CraftingStation.TypeNames[type];
+            var recipes = byType[type].DistinctBy(r => r.Id).OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            var name = $"Recipes: {station.Replace(" Crafting", "")}";
+            var help = $"Every recipe crafted at the {station}, by name. Buying one teaches it.";
+            if (recipes.Count <= RECIPE_PART_SIZE) {
+                yield return Vendor(name, "Recipe", help, recipes.Select(r => r.Id));
+
+                continue;
+            }
+
+            var parts = (recipes.Count + RECIPE_PART_SIZE - 1) / RECIPE_PART_SIZE;
+            var size = (recipes.Count + parts - 1) / parts;
+            for (var part = 0; part < parts; part++) {
+                var chunk = recipes.Skip(part * size).Take(size).ToList();
+                if (chunk.Count == 0) {
+                    break;
+                }
+
+                string Letter(string text) => text.Length > 0 ? text[..1].ToUpperInvariant() : "?";
+                var range = Letter(chunk[0].Name) == Letter(chunk[^1].Name) ? Letter(chunk[0].Name) : $"{Letter(chunk[0].Name)} to {Letter(chunk[^1].Name)}";
+                yield return Vendor($"{name} {part + 1} of {parts}", "Recipe", $"{help} Part {part + 1} of {parts}: {range}.", chunk.Select(r => r.Id));
+            }
+        }
     }
 
     // Every spell the game's trainers teach, not treasure cards, with its school.
