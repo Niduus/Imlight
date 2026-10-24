@@ -8,7 +8,10 @@
   "ShadowPips": 2,
   "Cheats": [
     { "When": "Passive", "Passive": "Minions", "Brings": ["1593331", "1593329"],
-      "Notes": "He fights with two Gussied-Up Gators (Wizard404: his minions). The extra one of four with 3 or more wizards is not made. New block: comes with." },
+      "Notes": "He fights with two Gussied-Up Gators (Wizard404: his minions). New block: comes with." },
+
+    { "When": "Passive", "Passive": "Minions", "Brings": [], "BringsRandom": ["1593327", "1593328", "1593325", "1593326"], "BringsCount": 1, "PlayersMin": 3,
+      "Notes": "With 3 or more wizards, one more of four Glowbug Zappers (Wizard404: his pool for 3 players). New block: comes with, and the existing how many players." },
 
     { "When": "EnemyJoins", "Round": 1,
       "Actions": [
