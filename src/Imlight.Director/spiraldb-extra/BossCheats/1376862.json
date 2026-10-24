@@ -14,12 +14,12 @@
       ],
       "Notes": "\"Tardiness will not be tolerated!\" A late wizard: Mana Burn." },
 
-    { "When": "PlayerCasts", "Category": "Weakness,Trap", "OnBoss": true,
+    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000878"},
         {"Do": "Cast", "Spell": "Star Buff", "SpellID": 1426379451, "Target": "Self", "DispelImmune": false}
       ],
-      "Notes": "\"The star is only as good as her supporting cast!\" A jinx (weakness or trap) on her: Star Buff." },
+      "Notes": "\"The star is only as good as her supporting cast!\" A jinx (a trap) on her: Star Buff." },
 
     { "When": "PlayerCasts", "Spells": ["Feint"], "AnyVersion": true, "OnBoss": true,
       "Actions": [

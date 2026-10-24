@@ -14,7 +14,7 @@
       ],
       "Notes": "A wizard joins after round 1: Bad Juju on them." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true,
+    { "When": "PlayerCasts", "Category": "Trap,Weakness", "OnBoss": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001123"},
         {"Do": "Cast", "Spell": "Sacrifice", "SpellID": 761482201, "Target": "Self", "DispelImmune": false}

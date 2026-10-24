@@ -28,14 +28,14 @@
       ],
       "Notes": "A Feint on him (not Mass Feint): Swap Ward." },
 
-    { "When": "PlayerCasts", "Category": "Weakness", "Creature": 1369834, "CreatureWho": "Receiver",
+    { "When": "PlayerCasts", "Category": "Trap", "Creature": 1369834, "CreatureWho": "Receiver",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000823"},
         {"Do": "Cast", "Spell": "Cleanse Ward", "SpellID": 968601166, "Target": "Receiver", "DispelImmune": false}
       ],
       "Notes": "A jinx on a Sea Lion: Cleanse Ward." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "SingleTarget": true, "Creature": 1369834, "CreatureWho": "Receiver",
+    { "When": "PlayerCasts", "Category": "Weakness", "SingleTarget": true, "Creature": 1369834, "CreatureWho": "Receiver",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000824"},
         {"Do": "Cast", "Spell": "Cleanse Charm", "SpellID": 449625782, "Target": "Receiver", "DispelImmune": false}

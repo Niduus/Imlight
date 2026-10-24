@@ -22,7 +22,7 @@
       ],
       "Notes": "Her aura: a minion casts an aura." },
 
-    { "When": "ICast", "Category": "Trap,Weakness",
+    { "When": "ICast", "Category": "Trap",
       "Actions": [
         {"Do": "PickOne", "Count": 2},
         {"Do": "CastBy", "By": "Ally", "Spell": "Ice Trap", "SpellID": 415162663, "Target": "Receiver", "DispelImmune": false},

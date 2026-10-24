@@ -13,7 +13,7 @@
       ],
       "Notes": "A Feint on him: Dark Tribute (Mass Feint does not count)." },
 
-    { "When": "PlayerCasts", "Category": "Trap",
+    { "When": "PlayerCasts", "Category": "Weakness",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000543"},
         {"Do": "Cast", "Spell": "Disarm", "SpellID": 1627273980, "Target": "Caster", "DispelImmune": false}

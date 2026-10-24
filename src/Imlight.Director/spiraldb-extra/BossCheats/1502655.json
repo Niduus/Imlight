@@ -14,7 +14,7 @@
       ],
       "Notes": "A wizard with 7 or more pips: Mana Burn on them." },
 
-    { "When": "PlayerCasts", "Category": "Ward,Weakness",
+    { "When": "PlayerCasts", "Category": "Ward,Trap",
       "Actions": [
         {"Do": "Say", "Line": "WizardBossFights_00000139"},
         {"Do": "Cast", "Spell": "Power Nova", "SpellID": 2062835293, "Target": "", "DispelImmune": false},

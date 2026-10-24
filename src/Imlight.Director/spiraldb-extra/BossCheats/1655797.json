@@ -15,7 +15,7 @@
       ],
       "Notes": "Her helpful charm or global (Central): a minion casts Balanceblade on her." },
 
-    { "When": "ICast", "Category": "Trap,Weakness",
+    { "When": "ICast", "Category": "Trap",
       "Actions": [
         {"Do": "PickOne", "Count": 2},
         {"Do": "CastBy", "By": "Ally", "Spell": "Hex", "SpellID": 92296, "Target": "Receiver", "DispelImmune": false},

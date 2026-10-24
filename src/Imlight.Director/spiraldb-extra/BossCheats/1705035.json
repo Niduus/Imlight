@@ -6,7 +6,7 @@
   "TemplateID": 1705035,
   "Name": "Happy Bear (Rank 25)",
   "Cheats": [
-    { "When": "PlayerCasts", "Category": "Ward,Weakness",
+    { "When": "PlayerCasts", "Category": "Ward,Trap",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00003997"},
         {"Do": "Cast", "Spell": "Legion Shield", "SpellID": 3605232, "Target": "", "DispelImmune": false}

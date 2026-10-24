@@ -6,7 +6,7 @@
   "TemplateID": 469546,
   "Name": "Lyon Lorestriker (Rank 13)",
   "Cheats": [
-    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true, "SingleTarget": true,
+    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true, "SingleTarget": true,
       "Actions": [
         {"Do": "Cast", "Spell": "Cleanse Ward", "SpellID": 1048474958, "Target": "Self", "DispelImmune": false}
       ],

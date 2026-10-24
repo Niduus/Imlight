@@ -71,7 +71,7 @@
       ],
       "Notes": "" },
 
-    { "When": "RoundStart", "HasWho": "AnyEnemy", "HasKind": "Trap", "HasCount": 6,
+    { "When": "RoundStart", "HasWho": "AnyEnemy", "HasKind": "Weakness", "HasCount": 6,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00003878"},
         {"Do": "Cast", "Spell": "Mortality", "SpellID": 1591233994, "Target": "Matched", "DispelImmune": false},

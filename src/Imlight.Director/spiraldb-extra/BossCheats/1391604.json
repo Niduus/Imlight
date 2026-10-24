@@ -74,7 +74,7 @@
       ],
       "Notes": "End of the round: the ward counts start again." },
 
-    { "When": "PlayerCasts", "Category": "Weakness,Trap", "OnBoss": true,
+    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001146"},
         {"Do": "CastBy", "By": "Creature", "Spell": "Cleanse Charm", "SpellID": 343915998, "Target": "Owner", "DispelImmune": false, "Creature": 1391606}

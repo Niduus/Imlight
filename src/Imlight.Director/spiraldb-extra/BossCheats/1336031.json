@@ -14,7 +14,7 @@
       ],
       "Notes": "A charm: Supercharge." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "SingleTarget": true,
+    { "When": "PlayerCasts", "Category": "Weakness", "SingleTarget": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000543"},
         {"Do": "Cast", "Spell": "Dark Tribute", "SpellID": 973103412, "Target": "Caster", "DispelImmune": false}

@@ -41,7 +41,7 @@
       ],
       "Notes": "" },
 
-    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true,
+    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true,
       "Actions": [
         {"Do": "Mark", "Mark": "hurried", "Target": "Self"}
       ],

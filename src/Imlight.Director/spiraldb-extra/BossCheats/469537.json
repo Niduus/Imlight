@@ -24,7 +24,7 @@
       ],
       "Notes": "A trap on him while his minions stand: Cleanse Ward takes one off." },
 
-    { "When": "PlayerCasts", "Category": "Charm,Trap",
+    { "When": "PlayerCasts", "Category": "Charm,Weakness",
       "Actions": [
         {"Do": "Say", "Line": "WizardBossFights_00000111"},
         {"Do": "CastBy", "By": "Creature", "Spell": "Cleanse Charm", "SpellID": 449645256, "Target": "Caster", "DispelImmune": false, "Creature": 469538},

@@ -6,7 +6,7 @@
   "TemplateID": 1705041,
   "Name": "Preceptor of Decadence (Rank 25)",
   "Cheats": [
-    { "When": "PlayerCasts", "Category": "Weakness",
+    { "When": "PlayerCasts", "Category": "Trap",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004198"},
         {"Do": "Cast", "Spell": "Centaur", "SpellID": 1992900310, "Target": "Caster", "DispelImmune": false}

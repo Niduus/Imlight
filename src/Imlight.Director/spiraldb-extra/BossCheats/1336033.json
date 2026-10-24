@@ -21,7 +21,7 @@
       ],
       "Notes": "A shield: Pierce on the one with it." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true,
+    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00000552"},
         {"Do": "Cast", "Spell": "Bad Juju", "SpellID": 1902313520, "Target": "Caster", "DispelImmune": false}

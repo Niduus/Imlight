@@ -46,14 +46,14 @@
       ],
       "Notes": "Three HoTs: Scion of Life." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "HasWho": "Receiver", "HasKind": "Trap", "HasCount": 4,
+    { "When": "PlayerCasts", "Category": "Weakness", "HasWho": "Receiver", "HasKind": "Weakness", "HasCount": 4,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00003944"},
         {"Do": "Cast", "Spell": "Scion of Death", "SpellID": 1657167087, "Target": "Receiver", "DispelImmune": false}
       ],
       "Notes": "Four curses: Scion of Death." },
 
-    { "When": "PlayerCasts", "Category": "Weakness", "HasWho": "Receiver", "HasKind": "Weakness", "HasCount": 4,
+    { "When": "PlayerCasts", "Category": "Trap", "HasWho": "Receiver", "HasKind": "Trap", "HasCount": 4,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00003944"},
         {"Do": "Cast", "Spell": "Scion of Myth", "SpellID": 966495716, "Target": "Receiver", "DispelImmune": false}
@@ -70,7 +70,7 @@
       ],
       "Notes": "A charm: one of his answers." },
 
-    { "When": "PlayerCasts", "Category": "Weakness",
+    { "When": "PlayerCasts", "Category": "Trap",
       "Actions": [
         {"Do": "PickOne", "Count": 2, "Group": 2},
         {"Do": "Say", "Line": "CombatMessages_00002769"},
@@ -100,7 +100,7 @@
       ],
       "Notes": "A DoT: one of his answers." },
 
-    { "When": "PlayerCasts", "Category": "Trap",
+    { "When": "PlayerCasts", "Category": "Weakness",
       "Actions": [
         {"Do": "PickOne", "Count": 2, "Group": 2},
         {"Do": "Say", "Line": "CombatMessages_00002771"},
