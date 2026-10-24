@@ -74,6 +74,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     public int m_pipConversionBaseAllSchools;
     public uint m_purchasedCustomEmotes1;
     public uint m_purchasedCustomTeleportEffects1;
+    // Photomancy filters of this wizard's own (each bit one filter); [Photomancy] AllFilters sends every one.
+    public uint m_photoFilters;
     public uint m_equippedTeleportEffect;
     public uint m_highestWorld1ID;
     public uint m_highestWorld2ID;
@@ -356,6 +358,7 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_pipConversionBaseAllSchools = m_pipConversionBaseAllSchools,
             m_purchasedCustomEmotes1 = m_purchasedCustomEmotes1,
             m_purchasedCustomTeleportEffects1 = m_purchasedCustomTeleportEffects1,
+            m_photoFilters = Imlight.CoreLib.Game.Photomancy.Photomancy.Filters(m_photoFilters),
             m_equippedTeleportEffect = m_equippedTeleportEffect,
             m_highestWorld1ID = m_highestWorld1ID,
             m_highestWorld2ID = m_highestWorld2ID,
