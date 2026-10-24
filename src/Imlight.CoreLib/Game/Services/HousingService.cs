@@ -58,7 +58,6 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
-using Imlight.CoreLib.Game.Gardening;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Housing.Families;
@@ -141,8 +140,9 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                     m_versionNumber = snapshot.Revision,
                     m_packageNumber = 0,
                     m_userData = snapshot.GidBase,
-                    m_objectCount = (uint) snapshot.BlobCount,
-                }
+                    m_objectCount = (uint) snapshot.LiveCount,
+                },
+                GardenRequestEntry(house),
             ],
         };
         SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_REQUEST_BLOBS { Data = HousingBlobs.Serialize(request) });
@@ -171,14 +171,20 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         // The version, count and user data in the request are the client's cache state, or 0 in a resync. Neither
         // decides what is sent.
-        if (!RequestsItemBlob(request, house.LotGid)) {
-            Logger.Warning("Character {CharId} requested blobs that are not the item blob of lot {LotGid}.",
+        if (!RequestsHouseBlob(request, house.LotGid)) {
+            Logger.Warning("Character {CharId} requested blobs that are not the item or garden blob of lot {LotGid}.",
                 Logger.Args(wizard.CharId, house.LotGid));
 
             return;
         }
 
-        SendBlob(house);
+        if (RequestsSubType(request, GardenSubType)) {
+            SendGardenBlob(house);
+        }
+
+        if (RequestsSubType(request, ItemSubType)) {
+            SendBlob(house);
+        }
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_PLACEHOUSINGOBJECT))]
@@ -1362,30 +1368,16 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             m_data = new HousingBlob {
                 m_housingBlobObjectList = [.. snapshot.Slots.Select(item => item is null
                     ? new HousingBlobObject()
-                    : HouseVaults.ToBlobObject(HouseMusic.Looping(map?.Invoke(item) ?? item))),
-                    .. GardenEntries(snapshot)],
+                    : HouseVaults.ToBlobObject(HouseMusic.Looping(map?.Invoke(item) ?? item)))],
             },
         };
 
-    // Empty entries up to the gardening proxy's slot, then the proxy with the garden as its custom data.
-    private static IEnumerable<HousingBlobObject> GardenEntries(HouseSnapshot snapshot) {
-        if (snapshot.GardenSlot < snapshot.Slots.Count) {
-            yield break;
-        }
-
-        for (var slot = snapshot.Slots.Count; slot < snapshot.GardenSlot; slot++) {
-            yield return new HousingBlobObject();
-        }
-
-        yield return new HousingBlobCustomObject {
-            m_gameObjectTemplateID = GardenTemplates.ProxyTemplateId,
-            m_customData = GardenCodec.Write(snapshot.Garden ?? []),
-        };
-    }
-
-    private static bool RequestsItemBlob(BlobRequest request, ulong lotGid)
+    private static bool RequestsHouseBlob(BlobRequest request, ulong lotGid)
         => request.m_type == BlobType && request.m_associatedGID == lotGid
-            && request.m_blobRequestObjectList?.Any(entry => entry is not null
-                && entry.m_subType == ItemSubType && entry.m_packageNumber == 0) == true;
+            && (RequestsSubType(request, ItemSubType) || RequestsSubType(request, GardenSubType));
+
+    private static bool RequestsSubType(BlobRequest request, string subType)
+        => request.m_blobRequestObjectList?.Any(entry => entry is not null
+            && entry.m_subType == subType && entry.m_packageNumber == 0) == true;
 
 }

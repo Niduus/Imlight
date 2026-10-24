@@ -28,6 +28,8 @@
  *   MSG_GARDENINGHARVESTPLANT to harvest. Its gardening window stays locked until MSG_GARDENINGCOMMANDRESPONSE comes,
  *   so every one of them gets it, whatever happened.
  * - Plow All and Plant All send one command per tile; their energy is taken once per cast.
+ * - The garden is its own blob, sub type "Garden": the client patches only a cached Housing/Garden blob whose one entry
+ *   is the gardening proxy (0x140f20430), so the server offers it beside the item blob when a player enters.
  * - The garden grows when a player enters the house and every minute while anyone is there. The times are stored, so
  *   a garden left alone catches up the next time someone comes.
  * - Only the owner plows, plants and harvests; a visitor may cast growing, insect and protection spells.
@@ -67,6 +69,9 @@ internal partial class HousingService {
     private const string GardenTimer = "garden-grow";
     private static readonly TimeSpan GardenInterval = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan AllCastWindow = TimeSpan.FromSeconds(8);
+
+    // The garden's blob: the one MSG_PATCHGARDENING patches.
+    private const string GardenSubType = "Garden";
 
     private bool _gardenLessonsChecked;
     private uint _allCastSpell;
@@ -152,6 +157,48 @@ internal partial class HousingService {
             }
         } catch (Exception exception) {
             Logger.Error("Gardening: the garden of lot {LotGid} could not start: {Reason}", Logger.Args(house.LotGid, exception));
+        }
+    }
+
+    // The garden blob's line in the blob request the server sends when a player enters the house.
+    private static BlobRequestObject GardenRequestEntry(HouseState house) {
+        var garden = house.GardenSnapshot();
+
+        return new BlobRequestObject {
+            m_subType = GardenSubType,
+            m_versionNumber = garden.Revision,
+            m_packageNumber = 0,
+            m_userData = garden.GidBase,
+            m_objectCount = 1,
+        };
+    }
+
+    private void SendGardenBlob(HouseState house) {
+        var garden = house.GardenSnapshot();
+        try {
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_SEND_BLOB {
+                Data = HousingBlobs.Serialize(new Blob {
+                    m_type = BlobType,
+                    m_subType = GardenSubType,
+                    m_versionNumber = garden.Revision,
+                    m_packageNumber = 0,
+                    m_associatedGID = house.LotGid,
+                    m_epochDays = HousingBlobs.EpochDaysNow(),
+                    m_data = new HousingBlob {
+                        m_housingBlobObjectList = [
+                            new HousingBlobCustomObject {
+                                m_gameObjectTemplateID = GardenTemplates.ProxyTemplateId,
+                                m_customData = GardenCodec.Write(garden.Garden),
+                            },
+                        ],
+                    },
+                }),
+                UserData = garden.GidBase,
+            });
+            Logger.Debug("Gardening: sent the garden of lot {LotGid} (version {Revision}, {Count} soil and plants).",
+                Logger.Args(house.LotGid, garden.Revision, garden.Garden.Count));
+        } catch (InvalidOperationException exception) {
+            Logger.Error("Could not build the garden blob of lot {LotGid}: {Reason}", Logger.Args(house.LotGid, exception.Message));
         }
     }
 
@@ -371,7 +418,7 @@ internal partial class HousingService {
     }
 
     private void InspectPlant(HouseState house, int x, int y) {
-        var spot = house.Snapshot().Garden?.FirstOrDefault(s => !s.IsSoil() && s.X == x && s.Y == y);
+        var spot = house.GardenSnapshot().Garden.FirstOrDefault(s => !s.IsSoil() && s.X == x && s.Y == y);
         if (spot is null || GardenTemplates.Plant(spot.TemplateId) is not { } info) {
             return;
         }
@@ -657,6 +704,6 @@ internal partial class HousingService {
 
     /// <summary>For testing: the soil and plants of the garden one is in.</summary>
     internal IReadOnlyList<GardenSpot> GardenSpots()
-        => _house?.Snapshot().Garden;
+        => _house?.GardenSnapshot().Garden;
 
 }

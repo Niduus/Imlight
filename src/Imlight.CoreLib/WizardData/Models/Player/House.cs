@@ -31,8 +31,8 @@
  *   several houses has one document per lot.
  * - Revision is the number the client's blob cache compares. Every stored change moves it forward.
  * - Item ids are never reused: NextItemId is the id of the next item placed.
- * - Garden holds the house's soil and plants (Game/Gardening). It is not a placed item: the client gets it as the
- *   custom data of a gardening proxy the blob adds after the items.
+ * - Garden holds the house's soil and plants (Game/Gardening). It is not a placed item: the client gets it in a blob
+ *   of its own (sub type "Garden"), whose version is GardenRevision.
  * 
  * TODO:
  * 
@@ -60,6 +60,7 @@ public class House {
     public uint NextItemId { get; set; } = 1;
     public List<PlacedItem> Items { get; set; } = [];
     public List<GardenSpot> Garden { get; set; } = [];
+    public uint GardenRevision { get; set; }
     public DateTime CreatedUtc { get; set; }
 
     /// <summary>
