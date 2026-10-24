@@ -79,6 +79,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     : ZoneEntityComponent(entity), IComponentFactory, IWithTimers {
 
     private const string DEFAULT_NAME_KEY = "NPCFormats_Name";
+    // Guild_Pedestal_GuildTome on the guild grounds (Housing_Guild/GuildStarter_Ext).
+    private const uint GUILD_TOME_TEMPLATE_ID = 1529133;
     private const string DEFAULT_TEXT_KEY = "GUI_NPCInteractText";
     private const string WIZBANG_UPDATE_TIMER_KEY = "WIZBANG_UPDATE_TIMER";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
@@ -176,6 +178,19 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             Logger.Args(playerActor.Path.Name, Entity.ActiveGameObject.m_globalID.Full, serviceName, serviceIndex, reinteract,
                 Entity.Info?.m_zoneTag is { Length: > 0 } tag ? tag : Entity.ActiveGameObject.m_debugName.ToString(),
                 Entity.ActiveGameObject.m_templateID));
+
+        // The Guild Tome on the guild grounds shows the guild; the live game opens the guild window there.
+        if (Entity.ActiveGameObject.m_templateID == GUILD_TOME_TEMPLATE_ID && playerCharacter is not null) {
+            var guild = Imlight.CoreLib.Game.Social.Guilds.For(playerCharacter.CharId);
+            playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                Message = guild is null
+                    ? "You are not in a guild yet. Type .guild create <name> to make one, or ask a guild member to .guild invite you. Type .guild for the guild commands."
+                    : Imlight.CoreLib.Game.Commands.Protocols.CommandGuildProtocol.DescribeGuild(guild),
+                Modal = 1,
+            });
+
+            return;
+        }
 
         if (_serviceComponents.Count <= 0) {
             Logger.Warning("No service components found for NPC {0}",

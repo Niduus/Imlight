@@ -41,6 +41,7 @@
  * Last Updated: 10/15/2026
  */
 
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -64,21 +65,27 @@ internal static class HouseAccess {
     /// <param name="house">The stored house.</param>
     /// <returns>The access level; <see cref="HouseAccessLevel.Denied"/> when the house is missing or its owner cannot be loaded.</returns>
     internal static HouseAccessLevel Evaluate(Wizard visitor, House house)
-        => house is null ? HouseAccessLevel.Denied : Evaluate(visitor, house.OwnerCharId);
+        => house is null ? HouseAccessLevel.Denied : Evaluate(visitor, house.OwnerCharId, house.TemplateId);
 
     /// <summary>
     /// Decides what a character may do in the houses of an owner.
     /// </summary>
     /// <param name="visitor">The character who wants in.</param>
     /// <param name="ownerCharId">The owner of the house.</param>
+    /// <param name="templateId">The house's template, or 0 when it is not known. The guild house lets the owner's guild in.</param>
     /// <returns>The access level; <see cref="HouseAccessLevel.Denied"/> when the owner cannot be loaded.</returns>
-    internal static HouseAccessLevel Evaluate(Wizard visitor, ulong ownerCharId) {
+    internal static HouseAccessLevel Evaluate(Wizard visitor, ulong ownerCharId, uint templateId = 0) {
         if (visitor is null) {
             return HouseAccessLevel.Denied;
         }
 
         if (visitor.CharId == ownerCharId) {
             return HouseAccessLevel.Owner;
+        }
+
+        // A guild house is the guild's: its leader's guild mates come in whether or not they are friends.
+        if (Guilds.IsGuildHouseTemplate(templateId) && Guilds.SameGuild(visitor.CharId, ownerCharId)) {
+            return HouseAccessLevel.Guest;
         }
 
         var owner = WizardCollection.GetCharacterUnloaded(ownerCharId);

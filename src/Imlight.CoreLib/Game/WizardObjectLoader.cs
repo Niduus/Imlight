@@ -142,7 +142,16 @@ public static class WizardObjectLoader {
             }
 
             var idx = clientObject.m_inactiveBehaviors.IndexOf(nameBehavior);
-            clientObject.m_inactiveBehaviors[idx] = character.PlayerNameBehavior.GetClientBehaviorInstance();
+            var playerName = character.PlayerNameBehavior.GetClientBehaviorInstance();
+
+            // The guild name over the head comes from the guild list, so joining or leaving needs no save on the wizard.
+            var guildName = Imlight.CoreLib.Game.Social.Guilds.NameKeysFor(character.CharId);
+            if (guildName != 0) {
+                playerName.m_guildName = guildName;
+                playerName.m_guildNameLocale = (int) character.PlayerNameBehavior.LocaleId;
+            }
+
+            clientObject.m_inactiveBehaviors[idx] = playerName;
         }
         else {
             throw new Exception("Behavior ClientWizPlayerNameBehavior not found!");

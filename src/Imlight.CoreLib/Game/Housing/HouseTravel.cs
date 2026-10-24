@@ -192,7 +192,7 @@ internal static class HouseTravel {
             }
 
             newItems = [.. grant.Created.Select(item => (ulong) item.m_globalID)];
-        } else if (HouseAccess.Evaluate(player, owner.CharId) == HouseAccessLevel.Denied) {
+        } else if (HouseAccess.Evaluate(player, owner.CharId, target.TemplateId) == HouseAccessLevel.Denied) {
             failure = HouseTravelFailure.Denied;
 
             return false;

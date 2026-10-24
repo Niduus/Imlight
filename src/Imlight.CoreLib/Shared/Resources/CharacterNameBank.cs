@@ -43,6 +43,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -60,6 +61,10 @@ public class WizardNameBank : RootSingleResourceSingleton<WizardNameBank>, IMemo
     private const string PetLocaleTable = "PetNames";
     private const string PetFirstNameTableName = "FirstName";
     private const string PetLastNameTableName = "LastName";
+    private const string GuildLocaleTable = "AdventurePartyNames";
+    private const string FirstNameGuildTableName = "FirstName_AdventureParty";
+    private const string MiddleNameGuildTableName = "MiddleName_AdventureParty";
+    private const string LastNameGuildTableName = "LastName_AdventureParty";
 
     private static Dictionary<string, List<string>> s_characterNameTable;
 
@@ -210,6 +215,104 @@ public class WizardNameBank : RootSingleResourceSingleton<WizardNameBank>, IMemo
         return first < GetTableSize(firstTable)
             && middle < GetTableSize(MiddleNameHumanTableName)
             && last < GetTableSize(LastNameHumanTableName);
+    }
+
+    /// <summary>
+    /// The English name of a guild (an adventure party name: first, middle and last part, such as "Valiant Crimson
+    /// Dragons"), from packed keys in the same layout as a wizard's.
+    /// </summary>
+    public static string GetGuildEnglishName(uint nameKeys) {
+        var (first, middle, last) = GetNameParts(nameKeys);
+        var parts = new[] {
+            first == 0 ? "" : GetEnglishNamePart(FirstNameGuildTableName, first, GuildLocaleTable),
+            middle == 0 ? "" : GetEnglishNamePart(MiddleNameGuildTableName, middle, GuildLocaleTable),
+            GetEnglishNamePart(LastNameGuildTableName, last, GuildLocaleTable),
+        };
+
+        return string.Join(" ", parts.Where(p => p.Length > 0));
+    }
+
+    /// <summary>
+    /// Finds the packed keys of a guild name written out, such as "Valiant Crimson Dragons" or "Heroic Wolves": an
+    /// optional first word, an optional colour and the last word from the game's adventure party name lists.
+    /// </summary>
+    public static bool TryFindGuildNameKeys(string name, out uint nameKeys) {
+        nameKeys = 0;
+        if (s_characterNameTable is null || string.IsNullOrWhiteSpace(name)) {
+            return false;
+        }
+
+        var words = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length > 3) {
+            return false;
+        }
+
+        var last = FindPart(LastNameGuildTableName, words[^1], GuildLocaleTable);
+        if (last < 0) {
+            return false;
+        }
+
+        int first = 0, middle = 0;
+        if (words.Length == 3) {
+            first = FindPart(FirstNameGuildTableName, words[0], GuildLocaleTable);
+            middle = FindPart(MiddleNameGuildTableName, words[1], GuildLocaleTable);
+        } else if (words.Length == 2) {
+            first = FindPart(FirstNameGuildTableName, words[0], GuildLocaleTable);
+            if (first < 0) {
+                first = 0;
+                middle = FindPart(MiddleNameGuildTableName, words[0], GuildLocaleTable);
+            }
+        }
+
+        if (first < 0 || middle < 0) {
+            return false;
+        }
+
+        nameKeys = (uint) (first << 16 | middle << 8 | last);
+
+        return true;
+    }
+
+    /// <summary>Picks a random guild name with all three parts, as packed keys; 0 if the tables are not loaded.</summary>
+    public static uint RandomGuildName(Random random) {
+        var firsts = Math.Min(GetTableSize(FirstNameGuildTableName), 256);
+        var middles = Math.Min(GetTableSize(MiddleNameGuildTableName), 256);
+        var lasts = Math.Min(GetTableSize(LastNameGuildTableName), 256);
+        if (firsts < 2 || middles < 2 || lasts == 0) {
+            return 0;
+        }
+
+        return (uint) (random.Next(1, firsts) << 16 | random.Next(1, middles) << 8 | random.Next(lasts));
+    }
+
+    /// <summary>The words a guild name can be made of: first words, colours and last words.</summary>
+    public static (List<string> firsts, List<string> middles, List<string> lasts) GuildNameWords() {
+        List<string> Words(string table) {
+            var size = Math.Min(GetTableSize(table), 256);
+            var words = new List<string>();
+            for (var i = 0; i < size; i++) {
+                var word = GetEnglishNamePart(table, i, GuildLocaleTable);
+                if (word.Length > 0) {
+                    words.Add(word);
+                }
+            }
+
+            return words;
+        }
+
+        return (Words(FirstNameGuildTableName), Words(MiddleNameGuildTableName), Words(LastNameGuildTableName));
+    }
+
+    private static int FindPart(string tableName, string word, string localeTable) {
+        var size = Math.Min(GetTableSize(tableName), 256);
+        for (var i = 0; i < size; i++) {
+            var part = GetEnglishNamePart(tableName, i, localeTable);
+            if (part.Length > 0 && part.Equals(word, StringComparison.OrdinalIgnoreCase)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     private static int FindPart(string tableName, string word) {
