@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-ZOCA-C11-002",
+  "Description": "Azteca quest Hollow at the Core (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 940,
+  "MaxGold": 940,
+  "ExperienceAmount": 57750,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730335",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

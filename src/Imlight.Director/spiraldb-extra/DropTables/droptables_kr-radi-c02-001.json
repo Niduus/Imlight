@@ -1,0 +1,13 @@
+{
+  "Name": "KR-RADI-C02-001",
+  "Description": "Khrysalis quest A Dream of Avalon (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 845,
+  "MaxGold": 845,
+  "ExperienceAmount": 87170,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C11-001",
+  "Description": "Zafaria quest Long Winded Warrior (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 45,
+  "MaxGold": 45,
+  "ExperienceAmount": 1270,
+  "TrainingPoints": 0,
+  "Items": []
+}

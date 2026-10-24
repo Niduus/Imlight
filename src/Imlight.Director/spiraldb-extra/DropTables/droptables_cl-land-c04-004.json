@@ -1,0 +1,38 @@
+{
+  "Name": "CL-LAND-C04-004",
+  "Description": "Celestia quest Lighting the Fires (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 295,
+  "MaxGold": 295,
+  "ExperienceAmount": 11575,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106959",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C17-002",
+  "Description": "Azteca quest Decode the Codex (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 900,
+  "MaxGold": 900,
+  "ExperienceAmount": 60560,
+  "TrainingPoints": 0,
+  "Items": []
+}

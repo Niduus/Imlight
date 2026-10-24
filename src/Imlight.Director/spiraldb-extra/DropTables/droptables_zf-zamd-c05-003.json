@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C05-003",
+  "Description": "Zafaria quest Water Beats Fire (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 330,
+  "MaxGold": 330,
+  "ExperienceAmount": 9600,
+  "TrainingPoints": 0,
+  "Items": []
+}

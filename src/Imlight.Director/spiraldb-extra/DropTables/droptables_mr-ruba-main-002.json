@@ -1,0 +1,13 @@
+{
+  "Name": "MR-RUBA-MAIN-002",
+  "Description": "Mirage quest The Mad Baron (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1600,
+  "MaxGold": 1600,
+  "ExperienceAmount": 193500,
+  "TrainingPoints": 0,
+  "Items": []
+}

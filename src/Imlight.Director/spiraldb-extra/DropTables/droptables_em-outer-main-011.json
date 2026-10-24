@@ -1,0 +1,13 @@
+{
+  "Name": "EM-OUTER-MAIN-011",
+  "Description": "Empyrea quest Re-Counciliation (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1060,
+  "MaxGold": 1060,
+  "ExperienceAmount": 76413,
+  "TrainingPoints": 0,
+  "Items": []
+}

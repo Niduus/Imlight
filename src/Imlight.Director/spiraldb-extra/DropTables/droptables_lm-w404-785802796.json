@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-785802796",
+  "Description": "Lemuria quest Bear Necessities (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1500,
+  "MaxGold": 1500,
+  "ExperienceAmount": 185380,
+  "TrainingPoints": 0,
+  "Items": []
+}

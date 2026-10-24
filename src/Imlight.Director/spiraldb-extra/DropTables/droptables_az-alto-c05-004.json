@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ALTO-C05-004",
+  "Description": "Azteca quest Red Paint (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 515,
+  "MaxGold": 515,
+  "ExperienceAmount": 34605,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "CL-Explorer-C01-001",
+  "Description": "Celestia quest Lounging Lizards (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 250,
+  "MaxGold": 250,
+  "ExperienceAmount": 6295,
+  "TrainingPoints": 1,
+  "Items": []
+}

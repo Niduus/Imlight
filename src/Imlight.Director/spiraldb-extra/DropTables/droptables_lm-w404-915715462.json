@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-915715462",
+  "Description": "Lemuria quest Welcome to the Sky (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 625,
+  "MaxGold": 625,
+  "ExperienceAmount": 80600,
+  "TrainingPoints": 0,
+  "Items": []
+}

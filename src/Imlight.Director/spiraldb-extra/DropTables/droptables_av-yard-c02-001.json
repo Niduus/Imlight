@@ -1,0 +1,13 @@
+{
+  "Name": "AV-YARD-C02-001",
+  "Description": "Avalon quest Break the Hand (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 315,
+  "MaxGold": 315,
+  "ExperienceAmount": 16280,
+  "TrainingPoints": 0,
+  "Items": []
+}

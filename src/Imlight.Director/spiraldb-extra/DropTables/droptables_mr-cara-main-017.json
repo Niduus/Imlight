@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CARA-MAIN-017",
+  "Description": "Mirage quest The Eerem Tablet (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 4200,
+  "MaxGold": 4200,
+  "ExperienceAmount": 509000,
+  "TrainingPoints": 0,
+  "Items": []
+}

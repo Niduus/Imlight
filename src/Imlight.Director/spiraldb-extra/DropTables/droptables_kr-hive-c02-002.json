@@ -1,0 +1,20 @@
+{
+  "Name": "KR-HIVE-C02-002",
+  "Description": "Khrysalis quest One Bad Rat (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 770,
+  "MaxGold": 770,
+  "ExperienceAmount": 79420,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1203187",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

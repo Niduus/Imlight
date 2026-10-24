@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-STONE-C20-002",
+  "Description": "Zafaria quest Savaberries (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 495,
+  "MaxGold": 495,
+  "ExperienceAmount": 14815,
+  "TrainingPoints": 0,
+  "Items": []
+}

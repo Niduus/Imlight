@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-785540652",
+  "Description": "Lemuria quest Tosh.Oh! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1950,
+  "MaxGold": 1950,
+  "ExperienceAmount": 185380,
+  "TrainingPoints": 0,
+  "Items": []
+}

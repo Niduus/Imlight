@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CATA-C03-001",
+  "Description": "Avalon quest Drifter (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 50,
+  "MaxGold": 50,
+  "ExperienceAmount": 3050,
+  "TrainingPoints": 0,
+  "Items": []
+}

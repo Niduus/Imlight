@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CARA-MAIN-020",
+  "Description": "Mirage quest Against Time (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 7000,
+  "MaxGold": 7000,
+  "ExperienceAmount": 472500,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C01-002",
+  "Description": "Aquila quest Into the Clouds (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 95,
+  "MaxGold": 95,
+  "ExperienceAmount": 1190,
+  "TrainingPoints": 0,
+  "Items": []
+}

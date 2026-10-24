@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-1029315162",
+  "Description": "Novus quest Strange Things Indeed (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 650,
+  "MaxGold": 650,
+  "ExperienceAmount": 220560,
+  "TrainingPoints": 0,
+  "Items": []
+}

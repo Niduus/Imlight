@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-SIDE-002",
+  "Description": "Polaris quest A Real Slobberknocker (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 960,
+  "MaxGold": 960,
+  "ExperienceAmount": 125600,
+  "TrainingPoints": 0,
+  "Items": []
+}

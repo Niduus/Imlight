@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CALI-C03-001",
+  "Description": "Avalon quest Fields of Barley (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 145,
+  "MaxGold": 145,
+  "ExperienceAmount": 5410,
+  "TrainingPoints": 0,
+  "Items": []
+}

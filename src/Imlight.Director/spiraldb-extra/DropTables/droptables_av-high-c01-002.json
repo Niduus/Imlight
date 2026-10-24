@@ -1,0 +1,13 @@
+{
+  "Name": "AV-HIGH-C01-002",
+  "Description": "Avalon quest Well Poisoned (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 300,
+  "MaxGold": 300,
+  "ExperienceAmount": 12155,
+  "TrainingPoints": 0,
+  "Items": []
+}

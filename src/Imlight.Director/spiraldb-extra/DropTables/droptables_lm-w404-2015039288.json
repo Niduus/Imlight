@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-2015039288",
+  "Description": "Lemuria quest The Buzzing Brain (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2000,
+  "MaxGold": 2000,
+  "ExperienceAmount": 217620,
+  "TrainingPoints": 0,
+  "Items": []
+}

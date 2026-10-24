@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TIER-C03-002",
+  "Description": "Azteca quest Lying in Bait (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 185,
+  "MaxGold": 185,
+  "ExperienceAmount": 13755,
+  "TrainingPoints": 0,
+  "Items": []
+}

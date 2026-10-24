@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TIER-C02-002",
+  "Description": "Azteca quest Children's Lament (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 450,
+  "MaxGold": 450,
+  "ExperienceAmount": 32100,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-763016253",
+  "Description": "Wallaru quest There and Outback Again (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 850,
+  "MaxGold": 850,
+  "ExperienceAmount": 288840,
+  "TrainingPoints": 0,
+  "Items": []
+}

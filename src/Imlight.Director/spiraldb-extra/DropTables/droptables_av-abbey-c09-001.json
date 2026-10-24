@@ -1,0 +1,13 @@
+{
+  "Name": "AV-ABBEY-C09-001",
+  "Description": "Avalon quest Death Wish (II) (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 300,
+  "MaxGold": 300,
+  "ExperienceAmount": 11465,
+  "TrainingPoints": 0,
+  "Items": []
+}

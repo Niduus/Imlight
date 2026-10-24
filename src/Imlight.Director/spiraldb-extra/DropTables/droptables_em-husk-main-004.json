@@ -1,0 +1,13 @@
+{
+  "Name": "EM-HUSK-MAIN-004",
+  "Description": "Empyrea quest Braving the Storm (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1605,
+  "MaxGold": 1605,
+  "ExperienceAmount": 188451,
+  "TrainingPoints": 0,
+  "Items": []
+}

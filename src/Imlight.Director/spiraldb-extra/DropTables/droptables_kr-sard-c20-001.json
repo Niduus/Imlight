@@ -1,0 +1,13 @@
+{
+  "Name": "KR-SARD-C20-001",
+  "Description": "Khrysalis quest Irregular Creatures (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1050,
+  "MaxGold": 1050,
+  "ExperienceAmount": 108475,
+  "TrainingPoints": 0,
+  "Items": []
+}

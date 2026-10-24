@@ -1,0 +1,13 @@
+{
+  "Name": "ZA-POL-MAIN-001",
+  "Description": "Polaris quest Cave of Bad Seeds (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1490,
+  "MaxGold": 1490,
+  "ExperienceAmount": 296770,
+  "TrainingPoints": 0,
+  "Items": []
+}

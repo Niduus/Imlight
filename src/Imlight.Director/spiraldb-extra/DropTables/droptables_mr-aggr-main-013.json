@@ -1,0 +1,13 @@
+{
+  "Name": "MR-AGGR-MAIN-013",
+  "Description": "Mirage quest Enemy at the Gate (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1100,
+  "MaxGold": 1100,
+  "ExperienceAmount": 145000,
+  "TrainingPoints": 0,
+  "Items": []
+}

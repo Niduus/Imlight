@@ -1,0 +1,13 @@
+{
+  "Name": "KR-KOND-C07-003",
+  "Description": "Khrysalis quest Shame About That (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1125,
+  "MaxGold": 1125,
+  "ExperienceAmount": 116230,
+  "TrainingPoints": 0,
+  "Items": []
+}

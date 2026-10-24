@@ -1,0 +1,13 @@
+{
+  "Name": "EM-REV-MAIN-001",
+  "Description": "Empyrea quest Into the Great Beyond (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 680,
+  "MaxGold": 680,
+  "ExperienceAmount": 69034,
+  "TrainingPoints": 0,
+  "Items": []
+}

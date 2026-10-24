@@ -1,0 +1,13 @@
+{
+  "Name": "KM-GOBB-MAIN-005",
+  "Description": "Karamelle quest Work WITCH (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 570,
+  "MaxGold": 570,
+  "ExperienceAmount": 70621,
+  "TrainingPoints": 0,
+  "Items": []
+}

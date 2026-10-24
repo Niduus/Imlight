@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-012",
+  "Description": "Polaris quest Vive la Penguinonia (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 480,
+  "MaxGold": 480,
+  "ExperienceAmount": 62700,
+  "TrainingPoints": 0,
+  "Items": []
+}

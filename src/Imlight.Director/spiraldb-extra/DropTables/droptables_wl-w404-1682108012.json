@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-1682108012",
+  "Description": "Wallaru quest Creatures from Billabong Lagoons (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 670,
+  "MaxGold": 670,
+  "ExperienceAmount": 114540,
+  "TrainingPoints": 0,
+  "Items": []
+}

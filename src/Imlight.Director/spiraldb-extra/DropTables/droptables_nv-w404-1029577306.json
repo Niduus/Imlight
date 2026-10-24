@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-1029577306",
+  "Description": "Novus quest Monkeys of Doom (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 570,
+  "MaxGold": 570,
+  "ExperienceAmount": 192990,
+  "TrainingPoints": 0,
+  "Items": []
+}

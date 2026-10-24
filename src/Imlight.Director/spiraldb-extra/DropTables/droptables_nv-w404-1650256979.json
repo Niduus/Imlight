@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-1650256979",
+  "Description": "Novus quest Dasein Divided (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 130,
+  "MaxGold": 130,
+  "ExperienceAmount": 45950,
+  "TrainingPoints": 0,
+  "Items": []
+}

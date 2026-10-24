@@ -1,0 +1,13 @@
+{
+  "Name": "AV-LAKE-C05-001",
+  "Description": "Avalon quest The Guns of Avalon (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 520,
+  "MaxGold": 520,
+  "ExperienceAmount": 27445,
+  "TrainingPoints": 0,
+  "Items": []
+}

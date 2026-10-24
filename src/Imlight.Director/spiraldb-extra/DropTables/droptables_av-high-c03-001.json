@@ -1,0 +1,13 @@
+{
+  "Name": "AV-HIGH-C03-001",
+  "Description": "Avalon quest Knight of the Sacred Words (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 450,
+  "MaxGold": 450,
+  "ExperienceAmount": 20765,
+  "TrainingPoints": 0,
+  "Items": []
+}

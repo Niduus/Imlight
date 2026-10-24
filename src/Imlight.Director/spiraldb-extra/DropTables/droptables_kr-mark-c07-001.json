@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MARK-C07-001",
+  "Description": "Khrysalis quest Frozen Love (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 140,
+  "MaxGold": 140,
+  "ExperienceAmount": 11580,
+  "TrainingPoints": 0,
+  "Items": []
+}

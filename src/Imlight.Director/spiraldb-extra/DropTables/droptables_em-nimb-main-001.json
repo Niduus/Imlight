@@ -1,0 +1,13 @@
+{
+  "Name": "EM-NIMB-MAIN-001",
+  "Description": "Empyrea quest Sparck Seconds that Emotion (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2040,
+  "MaxGold": 2040,
+  "ExperienceAmount": 161648,
+  "TrainingPoints": 0,
+  "Items": []
+}

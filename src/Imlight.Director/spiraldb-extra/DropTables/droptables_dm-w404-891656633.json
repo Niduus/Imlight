@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-891656633",
+  "Description": "Darkmoor quest Scholomari Parley (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1850,
+  "MaxGold": 1850,
+  "ExperienceAmount": 251020,
+  "TrainingPoints": 0,
+  "Items": []
+}

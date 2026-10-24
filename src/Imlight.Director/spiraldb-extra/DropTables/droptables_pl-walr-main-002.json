@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-002",
+  "Description": "Polaris quest Red Rosa (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 160,
+  "MaxGold": 160,
+  "ExperienceAmount": 22400,
+  "TrainingPoints": 0,
+  "Items": []
+}

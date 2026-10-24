@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-DRUM-C04-001",
+  "Description": "Zafaria quest Shango's Swords (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 600,
+  "MaxGold": 600,
+  "ExperienceAmount": 33680,
+  "TrainingPoints": 0,
+  "Items": []
+}

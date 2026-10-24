@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CATE-MAIN-005",
+  "Description": "Mirage quest Cavern of the Wurm (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3900,
+  "MaxGold": 3900,
+  "ExperienceAmount": 515000,
+  "TrainingPoints": 0,
+  "Items": []
+}

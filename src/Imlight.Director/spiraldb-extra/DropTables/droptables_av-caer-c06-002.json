@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CAER-C06-002",
+  "Description": "Avalon quest Greatest of Sports (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 465,
+  "MaxGold": 465,
+  "ExperienceAmount": 19335,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1851529479",
+  "Description": "Lemuria quest Skyfallen (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 475,
+  "MaxGold": 475,
+  "ExperienceAmount": 72540,
+  "TrainingPoints": 0,
+  "Items": []
+}

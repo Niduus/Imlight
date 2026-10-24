@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-STONE-C11-002",
+  "Description": "Zafaria quest Under the Big Tent (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 580,
+  "MaxGold": 580,
+  "ExperienceAmount": 13800,
+  "TrainingPoints": 0,
+  "Items": []
+}

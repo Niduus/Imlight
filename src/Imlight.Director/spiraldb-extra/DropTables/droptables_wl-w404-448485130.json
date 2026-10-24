@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-448485130",
+  "Description": "Wallaru quest Woop Woop Workaround (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 170,
+  "MaxGold": 170,
+  "ExperienceAmount": 59760,
+  "TrainingPoints": 0,
+  "Items": []
+}

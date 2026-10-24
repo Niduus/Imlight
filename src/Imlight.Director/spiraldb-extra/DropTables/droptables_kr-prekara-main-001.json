@@ -1,0 +1,13 @@
+{
+  "Name": "KR-PreKARA-MAIN-001",
+  "Description": "Khrysalis quest Prawn to King's Fourth (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 945,
+  "MaxGold": 945,
+  "ExperienceAmount": 114759,
+  "TrainingPoints": 0,
+  "Items": []
+}

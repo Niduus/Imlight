@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-007",
+  "Description": "Empyrea quest A Hazy Cosmic Jive (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1580,
+  "MaxGold": 1580,
+  "ExperienceAmount": 164124,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C06-001",
+  "Description": "Khrysalis quest Escape from Apiary (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 645,
+  "MaxGold": 645,
+  "ExperienceAmount": 58545,
+  "TrainingPoints": 0,
+  "Items": []
+}

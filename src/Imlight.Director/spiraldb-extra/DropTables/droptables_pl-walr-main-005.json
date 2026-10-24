@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-005",
+  "Description": "Polaris quest Poisson Party (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 480,
+  "MaxGold": 480,
+  "ExperienceAmount": 67200,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FORL-MAIN-005",
+  "Description": "Polaris quest Flapjack Dreams (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1170,
+  "MaxGold": 1170,
+  "ExperienceAmount": 167780,
+  "TrainingPoints": 0,
+  "Items": []
+}

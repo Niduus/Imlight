@@ -1,0 +1,13 @@
+{
+  "Name": "CL-RIVEN-C02-002",
+  "Description": "Celestia quest Inevitable Betrayal (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 230,
+  "MaxGold": 230,
+  "ExperienceAmount": 8280,
+  "TrainingPoints": 0,
+  "Items": []
+}

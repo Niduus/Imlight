@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-Explorer-C01-001",
+  "Description": "Zafaria quest Hey Hey It's The Monkeys (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 1,
+  "Items": []
+}

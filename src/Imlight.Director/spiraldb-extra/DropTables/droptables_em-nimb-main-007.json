@@ -1,0 +1,13 @@
+{
+  "Name": "EM-NIMB-MAIN-007",
+  "Description": "Empyrea quest We Got a Mandalla Down! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 455,
+  "MaxGold": 455,
+  "ExperienceAmount": 28450,
+  "TrainingPoints": 0,
+  "Items": []
+}

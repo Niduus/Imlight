@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PreEM-MAIN-006",
+  "Description": "Empyrea quest Go Time (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 840,
+  "MaxGold": 840,
+  "ExperienceAmount": 60657,
+  "TrainingPoints": 0,
+  "Items": []
+}

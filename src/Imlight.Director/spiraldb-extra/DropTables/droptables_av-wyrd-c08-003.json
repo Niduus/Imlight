@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WYRD-C08-003",
+  "Description": "Avalon quest Guest Right (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 785,
+  "MaxGold": 785,
+  "ExperienceAmount": 35010,
+  "TrainingPoints": 0,
+  "Items": []
+}

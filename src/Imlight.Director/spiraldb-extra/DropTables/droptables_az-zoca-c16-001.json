@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C16-001",
+  "Description": "Azteca quest Speaker for the Dead (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 130,
+  "MaxGold": 130,
+  "ExperienceAmount": 11580,
+  "TrainingPoints": 0,
+  "Items": []
+}

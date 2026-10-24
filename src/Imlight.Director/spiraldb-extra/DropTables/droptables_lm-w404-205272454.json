@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-205272454",
+  "Description": "Lemuria quest The Duck of Bronze (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1350,
+  "MaxGold": 1350,
+  "ExperienceAmount": 137020,
+  "TrainingPoints": 0,
+  "Items": []
+}

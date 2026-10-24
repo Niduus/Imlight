@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-CLOUD-C06-002",
+  "Description": "Azteca quest Underneath It All (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 55,
+  "MaxGold": 55,
+  "ExperienceAmount": 4585,
+  "TrainingPoints": 0,
+  "Items": []
+}

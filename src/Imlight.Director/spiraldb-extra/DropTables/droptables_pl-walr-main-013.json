@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-013",
+  "Description": "Polaris quest Into the Bleaks (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 320,
+  "MaxGold": 320,
+  "ExperienceAmount": 403200,
+  "TrainingPoints": 0,
+  "Items": []
+}

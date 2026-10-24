@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C05-001",
+  "Description": "Khrysalis quest Lost Signal (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1115,
+  "MaxGold": 1115,
+  "ExperienceAmount": 105150,
+  "TrainingPoints": 0,
+  "Items": []
+}

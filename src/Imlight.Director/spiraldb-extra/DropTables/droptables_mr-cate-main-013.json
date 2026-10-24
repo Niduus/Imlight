@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CATE-MAIN-013",
+  "Description": "Mirage quest Devinn's Dance Squad (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 900,
+  "MaxGold": 900,
+  "ExperienceAmount": 121000,
+  "TrainingPoints": 0,
+  "Items": []
+}

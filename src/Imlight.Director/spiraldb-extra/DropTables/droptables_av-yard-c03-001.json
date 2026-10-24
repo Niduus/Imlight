@@ -1,0 +1,13 @@
+{
+  "Name": "AV-YARD-C03-001",
+  "Description": "Avalon quest Follow the Music (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 445,
+  "MaxGold": 445,
+  "ExperienceAmount": 22385,
+  "TrainingPoints": 0,
+  "Items": []
+}

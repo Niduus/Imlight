@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-MAIN-009",
+  "Description": "Empyrea quest Ain't No Citadel High Enough (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2965,
+  "MaxGold": 2965,
+  "ExperienceAmount": 282000,
+  "TrainingPoints": 0,
+  "Items": []
+}

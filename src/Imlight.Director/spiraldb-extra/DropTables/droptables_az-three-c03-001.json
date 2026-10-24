@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-THREE-C03-001",
+  "Description": "Azteca quest Outsider (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 390,
+  "MaxGold": 390,
+  "ExperienceAmount": 16160,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AV-ABBEY-C09-002",
+  "Description": "Avalon quest Coda (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 340,
+  "MaxGold": 340,
+  "ExperienceAmount": 13375,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635752",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

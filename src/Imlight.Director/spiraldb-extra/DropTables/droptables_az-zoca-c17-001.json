@@ -1,0 +1,38 @@
+{
+  "Name": "AZ-ZOCA-C17-001",
+  "Description": "Azteca quest Night of the Comet (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 380,
+  "MaxGold": 380,
+  "ExperienceAmount": 25955,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641604",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

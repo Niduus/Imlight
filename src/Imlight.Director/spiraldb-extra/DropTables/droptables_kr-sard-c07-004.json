@@ -1,0 +1,13 @@
+{
+  "Name": "KR-SARD-C07-004",
+  "Description": "Khrysalis quest The Eleventh Movement (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 695,
+  "MaxGold": 695,
+  "ExperienceAmount": 71670,
+  "TrainingPoints": 0,
+  "Items": []
+}

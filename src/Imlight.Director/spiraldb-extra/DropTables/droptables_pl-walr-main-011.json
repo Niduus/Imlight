@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-011",
+  "Description": "Polaris quest The Flag Tower (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1610,
+  "MaxGold": 1610,
+  "ExperienceAmount": 224000,
+  "TrainingPoints": 0,
+  "Items": []
+}

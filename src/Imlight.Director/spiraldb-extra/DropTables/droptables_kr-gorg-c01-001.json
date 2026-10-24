@@ -1,0 +1,13 @@
+{
+  "Name": "KR-GORG-C01-001",
+  "Description": "Khrysalis quest Rebel Sign (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 300,
+  "MaxGold": 300,
+  "ExperienceAmount": 27995,
+  "TrainingPoints": 0,
+  "Items": []
+}

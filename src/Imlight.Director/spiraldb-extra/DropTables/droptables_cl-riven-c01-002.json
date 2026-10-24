@@ -1,0 +1,32 @@
+{
+  "Name": "CL-RIVEN-C01-002",
+  "Description": "Celestia quest Ghosts of Celestia (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 565,
+  "MaxGold": 565,
+  "ExperienceAmount": 3885,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "240117",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

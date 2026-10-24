@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CARA-MAIN-008",
+  "Description": "Mirage quest The Jeweled Box (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1800,
+  "MaxGold": 1800,
+  "ExperienceAmount": 218000,
+  "TrainingPoints": 0,
+  "Items": []
+}

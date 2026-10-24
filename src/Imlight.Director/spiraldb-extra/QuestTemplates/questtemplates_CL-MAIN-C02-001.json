@@ -1,0 +1,1028 @@
+{
+  "m_questName": "CL-MAIN-C02-001",
+  "m_questNameID": 0,
+  "m_questTitle": "Press Pass",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsUseItem"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Chariot.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z01i1_Survey_Camp",
+      "m_locationName": "Optio Agenor's Camp",
+      "m_goalName": "1_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Crab.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z02i1_Crab_Realm",
+      "m_locationName": "Coral Castle",
+      "m_goalName": "2_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Fountain.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z03i1_District_of_the_Stars",
+      "m_locationName": "Starkwave's Lair",
+      "m_goalName": "3_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Galleon.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/CL_Z04_Temple_Of_The_Stars",
+      "m_locationName": "ZoneLocName_227137",
+      "m_goalName": "4_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Hound.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z05i4_FloatingLand",
+      "m_locationName": "Bristleclaw's Cave",
+      "m_goalName": "5_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Kraken.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z06i1_StormHaven",
+      "m_locationName": "Sorcerer's Sanctum",
+      "m_goalName": "6_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Loom.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z07i1_Storm_Lord_Temple",
+      "m_locationName": "Storm Lord Temple",
+      "m_goalName": "7_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Messenger.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/CL_Z08_Temple_Of_The_Moon/MoonC2",
+      "m_locationName": "The Lunarium",
+      "m_goalName": "8_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Phoenix.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z09i1_Science_Center",
+      "m_locationName": "Crystal Reactor",
+      "m_goalName": "9_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Serpent.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/Interiors/CL_Z10i3_Kingdom_Of_The_Crabs",
+      "m_locationName": "Calypso's Cavern",
+      "m_goalName": "10_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Stag.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/CL_Z11_Temple_Of_The_Sun",
+      "m_locationName": "The Chancel",
+      "m_goalName": "11_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Zodiac Tome",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_tome_Warden.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "CL_ZodiacTome_Chariot",
+        "CL_ZodiacTome_Crab",
+        "CL_ZodiacTome_Fountain",
+        "CL_ZodiacTome_Galleon",
+        "CL_ZodiacTome_Hound",
+        "CL_ZodiacTome_Kraken",
+        "CL_ZodiacTome_Loom",
+        "CL_ZodiacTome_Messenger"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/CL_Z12_Test_of_the_Spheres/MoonRoom",
+      "m_locationName": "Trial of the Spheres",
+      "m_goalName": "12_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "CL_ZodiacTome_Chariot.AdjRef",
+        "CL_ZodiacTome_Crab.AdjRef",
+        "CL_ZodiacTome_Fountain.AdjRef",
+        "CL_ZodiacTome_Galleon.AdjRef",
+        "CL_ZodiacTome_Hound.AdjRef",
+        "CL_ZodiacTome_Kraken.AdjRef",
+        "CL_ZodiacTome_Loom.AdjRef",
+        "CL_ZodiacTome_Messenger.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You’ve been such a help! I’m thinking about writing a Zodiac column for the newspaper back in Marleybone!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_08.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 311093,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I’ll be sure to credit you for all of your assistance... once we get out of here!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 311093,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Celestia/CL_Hub",
+      "m_locationName": "Celestia Base Camp",
+      "m_goalName": "13_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "CL-MAIN-C02-001"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqMagicLevel, Imcodec.ObjectProperty",
+        "m_magicSchool": "",
+        "m_numericValue": 50,
+        "m_operatorType": "OPERATOR_GREATER_THAN_EQ",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "6_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "6_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "7_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "7_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "8_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "8_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "9_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "9_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "10_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "10_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "11_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "11_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "12_WizardQuestGoalsUseItem"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "12_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "13_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "13_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 48,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Perhaps you could help me, if you’ve got the time to spare? I’m a journalist, traveling with the expedition.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "It’s my duty to chronicle the exploration and to provide information to my readers about what Celestia was like.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "To that end, I need to learn all I can about Celestian culture. The Celestian zodiac fascinates me!",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They left teaching devices around their city, so that life was full of knowledge about the stars that guided them.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Could you read the Celestian Tomes of the Zodiac around the city and learn about them? Your help will be invaluable!",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_06.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Underway",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC06_Parker_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Have you finished learning from the Tomes of the Zodiac located all over Celestia?",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_MB_Ladies_Lower03.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/DeirdreParker_CEL_07.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 311093,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C06-001",
+  "Description": "Khrysalis quest Hole Cards (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 7750,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C17-002",
+  "Description": "Khrysalis quest The Cost (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 630,
+  "MaxGold": 630,
+  "ExperienceAmount": 52110,
+  "TrainingPoints": 0,
+  "Items": []
+}

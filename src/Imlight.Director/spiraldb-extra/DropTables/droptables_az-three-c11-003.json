@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-THREE-C11-003",
+  "Description": "Azteca quest King and Stoneheart (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 245,
+  "MaxGold": 245,
+  "ExperienceAmount": 15400,
+  "TrainingPoints": 0,
+  "Items": []
+}

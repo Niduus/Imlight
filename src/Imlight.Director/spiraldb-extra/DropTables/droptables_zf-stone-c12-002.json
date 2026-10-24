@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-STONE-C12-002",
+  "Description": "Zafaria quest Arrest That Man (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 45,
+  "MaxGold": 45,
+  "ExperienceAmount": 1345,
+  "TrainingPoints": 0,
+  "Items": []
+}

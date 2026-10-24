@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CRAB-C06-001",
+  "Description": "Celestia quest Book Learnin' (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 160,
+  "MaxGold": 160,
+  "ExperienceAmount": 3800,
+  "TrainingPoints": 0,
+  "Items": []
+}

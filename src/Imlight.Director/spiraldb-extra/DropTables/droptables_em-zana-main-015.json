@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-015",
+  "Description": "Empyrea quest The Voyage Home (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1130,
+  "MaxGold": 1130,
+  "ExperienceAmount": 100019,
+  "TrainingPoints": 0,
+  "Items": []
+}

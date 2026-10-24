@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C02-003",
+  "Description": "Khrysalis quest Nightwatch (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 725,
+  "MaxGold": 725,
+  "ExperienceAmount": 62900,
+  "TrainingPoints": 0,
+  "Items": []
+}

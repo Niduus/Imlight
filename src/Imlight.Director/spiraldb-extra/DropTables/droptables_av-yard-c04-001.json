@@ -1,0 +1,13 @@
+{
+  "Name": "AV-YARD-C04-001",
+  "Description": "Avalon quest Sacred Text (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 150,
+  "MaxGold": 150,
+  "ExperienceAmount": 8140,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CATE-MAIN-010",
+  "Description": "Mirage quest Irreverence (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3600,
+  "MaxGold": 3600,
+  "ExperienceAmount": 460500,
+  "TrainingPoints": 0,
+  "Items": []
+}

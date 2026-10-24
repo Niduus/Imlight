@@ -1,0 +1,44 @@
+{
+  "Name": "CL-REALM-C01-006",
+  "Description": "Celestia quest My Dinner with Algae (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 500,
+  "MaxGold": 500,
+  "ExperienceAmount": 13205,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220302",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "240103",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "240103",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220261",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220261",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

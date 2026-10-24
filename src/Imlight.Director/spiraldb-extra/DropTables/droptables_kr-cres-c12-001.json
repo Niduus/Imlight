@@ -1,0 +1,20 @@
+{
+  "Name": "KR-CRES-C12-001",
+  "Description": "Khrysalis quest Diver Down (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 225,
+  "MaxGold": 225,
+  "ExperienceAmount": 23245,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1203237",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

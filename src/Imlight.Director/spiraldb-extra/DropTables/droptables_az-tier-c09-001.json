@@ -1,0 +1,26 @@
+{
+  "Name": "AZ-TIER-C09-001",
+  "Description": "Azteca quest Jewel of Denial (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 445,
+  "MaxGold": 445,
+  "ExperienceAmount": 30280,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641692",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "641692",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

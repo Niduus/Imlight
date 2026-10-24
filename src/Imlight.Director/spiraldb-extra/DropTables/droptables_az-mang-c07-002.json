@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-MANG-C07-002",
+  "Description": "Azteca quest Follow My Nose (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 375,
+  "MaxGold": 375,
+  "ExperienceAmount": 25955,
+  "TrainingPoints": 0,
+  "Items": []
+}

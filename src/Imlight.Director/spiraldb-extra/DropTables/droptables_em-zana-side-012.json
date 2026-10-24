@@ -1,0 +1,20 @@
+{
+  "Name": "EM-ZANA-SIDE-012",
+  "Description": "Empyrea quest House Oddity (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20000,
+  "MaxGold": 20000,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641609",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

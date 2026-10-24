@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C01-001",
+  "Description": "Aquila quest Garden of Evening (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 30,
+  "MaxGold": 30,
+  "ExperienceAmount": 330,
+  "TrainingPoints": 0,
+  "Items": []
+}

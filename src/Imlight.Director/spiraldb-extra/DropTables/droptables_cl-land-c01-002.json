@@ -1,0 +1,13 @@
+{
+  "Name": "CL-LAND-C01-002",
+  "Description": "Celestia quest A Stormy Offering (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 140,
+  "MaxGold": 140,
+  "ExperienceAmount": 3190,
+  "TrainingPoints": 0,
+  "Items": []
+}

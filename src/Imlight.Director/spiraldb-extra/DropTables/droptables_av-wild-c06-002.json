@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C06-002",
+  "Description": "Avalon quest Dread of Knight (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 430,
+  "MaxGold": 430,
+  "ExperienceAmount": 18780,
+  "TrainingPoints": 0,
+  "Items": []
+}

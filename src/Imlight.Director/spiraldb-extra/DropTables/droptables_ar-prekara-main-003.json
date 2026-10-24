@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PreKARA-MAIN-003",
+  "Description": "Karamelle quest Mole Problems (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 970,
+  "MaxGold": 970,
+  "ExperienceAmount": 105931,
+  "TrainingPoints": 0,
+  "Items": []
+}

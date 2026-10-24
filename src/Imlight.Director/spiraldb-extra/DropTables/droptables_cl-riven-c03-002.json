@@ -1,0 +1,20 @@
+{
+  "Name": "CL-RIVEN-C03-002",
+  "Description": "Celestia quest Lunarium Tunes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 5690,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "175579",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

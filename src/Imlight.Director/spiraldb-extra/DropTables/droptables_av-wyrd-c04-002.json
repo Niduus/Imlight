@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WYRD-C04-002",
+  "Description": "Avalon quest Walk the Lonesome Hills (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 750,
+  "MaxGold": 750,
+  "ExperienceAmount": 33800,
+  "TrainingPoints": 0,
+  "Items": []
+}

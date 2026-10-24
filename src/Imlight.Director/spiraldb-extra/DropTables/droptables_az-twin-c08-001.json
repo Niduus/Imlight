@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TWIN-C08-001",
+  "Description": "Azteca quest Jaguar Pounces On A Wizard (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 570,
+  "MaxGold": 570,
+  "ExperienceAmount": 47770,
+  "TrainingPoints": 0,
+  "Items": []
+}

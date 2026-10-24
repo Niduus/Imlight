@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-STONE-C04-003",
+  "Description": "Zafaria quest My Pen! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 260,
+  "MaxGold": 260,
+  "ExperienceAmount": 8080,
+  "TrainingPoints": 0,
+  "Items": []
+}

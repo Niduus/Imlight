@@ -1,0 +1,13 @@
+{
+  "Name": "MR-YAKH-MAIN-002",
+  "Description": "Mirage quest Rebels with a Cause (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3500,
+  "MaxGold": 3500,
+  "ExperienceAmount": 436000,
+  "TrainingPoints": 0,
+  "Items": []
+}

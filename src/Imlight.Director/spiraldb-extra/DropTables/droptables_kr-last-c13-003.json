@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C13-003",
+  "Description": "Khrysalis quest Heart of Glass (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 7750,
+  "TrainingPoints": 0,
+  "Items": []
+}

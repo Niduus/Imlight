@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CHRO-MAIN-003",
+  "Description": "Mirage quest The Sands of Time (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 5300,
+  "MaxGold": 5300,
+  "ExperienceAmount": 630000,
+  "TrainingPoints": 0,
+  "Items": []
+}

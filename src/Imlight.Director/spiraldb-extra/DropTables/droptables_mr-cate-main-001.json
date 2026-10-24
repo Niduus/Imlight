@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CATE-MAIN-001",
+  "Description": "Mirage quest House Under Siege (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1300,
+  "MaxGold": 1300,
+  "ExperienceAmount": 169500,
+  "TrainingPoints": 0,
+  "Items": []
+}

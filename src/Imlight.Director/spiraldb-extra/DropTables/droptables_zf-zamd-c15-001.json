@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C15-001",
+  "Description": "Zafaria quest King of Old Zafaria (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 265,
+  "MaxGold": 265,
+  "ExperienceAmount": 7625,
+  "TrainingPoints": 0,
+  "Items": []
+}

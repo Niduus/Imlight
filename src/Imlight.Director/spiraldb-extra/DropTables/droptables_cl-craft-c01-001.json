@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CRAFT-C01-001",
+  "Description": "Celestia quest That Seven Seas Show (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 7278,
+  "MaxGold": 7278,
+  "ExperienceAmount": 3000,
+  "TrainingPoints": 0,
+  "Items": []
+}

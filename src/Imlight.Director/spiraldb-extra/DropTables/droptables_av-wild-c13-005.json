@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C13-005",
+  "Description": "Avalon quest 'Tis A Magic Place (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 4550,
+  "TrainingPoints": 0,
+  "Items": []
+}

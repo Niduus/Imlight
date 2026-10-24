@@ -1,0 +1,13 @@
+{
+  "Name": "KM-NIBB-SIDE-003",
+  "Description": "Karamelle quest The Case of Charlene Ward (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 10350,
+  "MaxGold": 10350,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

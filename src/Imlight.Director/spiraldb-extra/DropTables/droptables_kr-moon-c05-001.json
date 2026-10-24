@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C05-001",
+  "Description": "Khrysalis quest Detention Block (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 430,
+  "MaxGold": 430,
+  "ExperienceAmount": 39030,
+  "TrainingPoints": 0,
+  "Items": []
+}

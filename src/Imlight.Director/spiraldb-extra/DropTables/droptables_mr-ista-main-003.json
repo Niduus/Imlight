@@ -1,0 +1,13 @@
+{
+  "Name": "MR-ISTA-MAIN-003",
+  "Description": "Mirage quest Construction Junction (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2600,
+  "MaxGold": 2600,
+  "ExperienceAmount": 339000,
+  "TrainingPoints": 0,
+  "Items": []
+}

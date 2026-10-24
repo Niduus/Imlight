@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SEPI-MAIN-002",
+  "Description": "Empyrea quest Belly Aching (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2040,
+  "MaxGold": 2040,
+  "ExperienceAmount": 441723,
+  "TrainingPoints": 0,
+  "Items": []
+}

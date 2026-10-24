@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1198059202",
+  "Description": "Lemuria quest Solomon Joins the Party (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 425,
+  "MaxGold": 425,
+  "ExperienceAmount": 40300,
+  "TrainingPoints": 0,
+  "Items": []
+}

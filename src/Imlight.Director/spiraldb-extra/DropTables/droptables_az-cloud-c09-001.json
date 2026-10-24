@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-CLOUD-C09-001",
+  "Description": "Azteca quest World's a Beast of Burden (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 5155,
+  "TrainingPoints": 0,
+  "Items": []
+}

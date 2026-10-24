@@ -1,0 +1,13 @@
+{
+  "Name": "CL-LAND-C02-003",
+  "Description": "Celestia quest Almost Friends (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 440,
+  "MaxGold": 440,
+  "ExperienceAmount": 3760,
+  "TrainingPoints": 0,
+  "Items": []
+}

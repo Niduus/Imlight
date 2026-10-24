@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C05-004",
+  "Description": "Zafaria quest Back on the Trail (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 170,
+  "MaxGold": 170,
+  "ExperienceAmount": 4800,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WYRD-C03-001",
+  "Description": "Avalon quest Sky Full Of Sulfur (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 270,
+  "MaxGold": 270,
+  "ExperienceAmount": 12075,
+  "TrainingPoints": 0,
+  "Items": []
+}

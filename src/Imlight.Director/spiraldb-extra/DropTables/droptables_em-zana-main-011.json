@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-011",
+  "Description": "Empyrea quest To the Bat's Cave! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 4380,
+  "MaxGold": 4380,
+  "ExperienceAmount": 532197,
+  "TrainingPoints": 0,
+  "Items": []
+}

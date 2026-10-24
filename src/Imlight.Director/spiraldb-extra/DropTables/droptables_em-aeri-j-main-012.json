@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERI-J-MAIN-012",
+  "Description": "Empyrea quest Khan Games (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2050,
+  "MaxGold": 2050,
+  "ExperienceAmount": 99162,
+  "TrainingPoints": 0,
+  "Items": []
+}

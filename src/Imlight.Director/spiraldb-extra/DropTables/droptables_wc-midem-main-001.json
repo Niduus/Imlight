@@ -1,0 +1,13 @@
+{
+  "Name": "WC-MidEM-MAIN-001",
+  "Description": "Empyrea quest With All the Dying Trees I Scream (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3375,
+  "MaxGold": 3375,
+  "ExperienceAmount": 444689,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CRYS-C02-003",
+  "Description": "Avalon quest Caught Somewhere In Time (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 420,
+  "MaxGold": 420,
+  "ExperienceAmount": 23430,
+  "TrainingPoints": 0,
+  "Items": []
+}

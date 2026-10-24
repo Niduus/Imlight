@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-TWIN-C05-001",
+  "Description": "Azteca quest Not a Cold Dead Place (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 5790,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730558",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

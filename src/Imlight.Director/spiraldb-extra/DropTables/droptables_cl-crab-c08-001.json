@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CRAB-C08-001",
+  "Description": "Celestia quest Helping Claw (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 40,
+  "MaxGold": 40,
+  "ExperienceAmount": 950,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AV-CALI-C10-001",
+  "Description": "Avalon quest Variations of the Field (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 45,
+  "MaxGold": 45,
+  "ExperienceAmount": 1805,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635282",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

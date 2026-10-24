@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-MAIN-006",
+  "Description": "Empyrea quest When the Whirlyburly's Done (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2725,
+  "MaxGold": 2725,
+  "ExperienceAmount": 280271,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-763017213",
+  "Description": "Wallaru quest Hero of the Trails (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 470,
+  "MaxGold": 470,
+  "ExperienceAmount": 159360,
+  "TrainingPoints": 0,
+  "Items": []
+}

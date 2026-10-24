@@ -1,0 +1,13 @@
+{
+  "Name": "AV-YARD-C06-002",
+  "Description": "Avalon quest The Long Way Down (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 415,
+  "MaxGold": 415,
+  "ExperienceAmount": 25095,
+  "TrainingPoints": 0,
+  "Items": []
+}

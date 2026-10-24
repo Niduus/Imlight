@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1020289",
+  "Description": "Darkmoor quest Diurnal Visitations (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1320,
+  "MaxGold": 1320,
+  "ExperienceAmount": 179300,
+  "TrainingPoints": 0,
+  "Items": []
+}

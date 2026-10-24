@@ -1,0 +1,13 @@
+{
+  "Name": "KM-W404-537579593",
+  "Description": "Karamelle quest Secret Dross (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2675,
+  "MaxGold": 2675,
+  "ExperienceAmount": 145655,
+  "TrainingPoints": 0,
+  "Items": []
+}

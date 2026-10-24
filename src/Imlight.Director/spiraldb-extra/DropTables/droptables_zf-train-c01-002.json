@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-TRAIN-C01-002",
+  "Description": "Zafaria quest Mane of Terror (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 350,
+  "MaxGold": 350,
+  "ExperienceAmount": 9600,
+  "TrainingPoints": 1,
+  "Items": []
+}

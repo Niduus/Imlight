@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-417879023",
+  "Description": "Novus quest Booth or Consequences (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 510,
+  "MaxGold": 510,
+  "ExperienceAmount": 87305,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SWAMP-C02-001",
+  "Description": "Azteca quest Rattle and Horn (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 50,
+  "MaxGold": 50,
+  "ExperienceAmount": 3630,
+  "TrainingPoints": 0,
+  "Items": []
+}

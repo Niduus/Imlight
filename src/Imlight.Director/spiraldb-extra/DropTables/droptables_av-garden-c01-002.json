@@ -1,0 +1,13 @@
+{
+  "Name": "AV-Garden-C01-002",
+  "Description": "Avalon quest Between Two Shrubs (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 430,
+  "MaxGold": 430,
+  "ExperienceAmount": 19315,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AV-FISH-MAIN-002",
+  "Description": "Avalon quest Angling Upward (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 350,
+  "MaxGold": 350,
+  "ExperienceAmount": 325,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "CL-RIVEN-C01-006",
+  "Description": "Celestia quest An Old Sea Chantry (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 35,
+  "MaxGold": 35,
+  "ExperienceAmount": 9845,
+  "TrainingPoints": 0,
+  "Items": []
+}

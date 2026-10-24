@@ -1,0 +1,20 @@
+{
+  "Name": "AQ-MYTH-C01-001",
+  "Description": "Aquila quest Hatching a Hero (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 550,
+  "MaxGold": 550,
+  "ExperienceAmount": 64600,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257520",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

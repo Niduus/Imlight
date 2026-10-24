@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C04-003",
+  "Description": "Khrysalis quest Blowing Smoke (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 215,
+  "MaxGold": 215,
+  "ExperienceAmount": 19515,
+  "TrainingPoints": 0,
+  "Items": []
+}

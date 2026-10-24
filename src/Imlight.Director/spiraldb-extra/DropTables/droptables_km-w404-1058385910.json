@@ -1,0 +1,13 @@
+{
+  "Name": "KM-W404-1058385910",
+  "Description": "Karamelle quest The King is in the Building (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 385,
+  "MaxGold": 385,
+  "ExperienceAmount": 44138,
+  "TrainingPoints": 0,
+  "Items": []
+}

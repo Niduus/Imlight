@@ -1,0 +1,20 @@
+{
+  "Name": "KR-MOON-C03-004",
+  "Description": "Khrysalis quest Rat in a Cage (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 730,
+  "MaxGold": 730,
+  "ExperienceAmount": 66675,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1248052",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

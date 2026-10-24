@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C03-001",
+  "Description": "Aquila quest Back to the Garden (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 3610,
+  "TrainingPoints": 0,
+  "Items": []
+}

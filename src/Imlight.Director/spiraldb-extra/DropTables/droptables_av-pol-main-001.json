@@ -1,0 +1,13 @@
+{
+  "Name": "AV-POL-MAIN-001",
+  "Description": "Avalon quest Morganthe's Legacy (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1260,
+  "MaxGold": 1260,
+  "ExperienceAmount": 251800,
+  "TrainingPoints": 0,
+  "Items": []
+}

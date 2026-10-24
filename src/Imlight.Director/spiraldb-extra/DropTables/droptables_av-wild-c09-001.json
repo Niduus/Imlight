@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C09-001",
+  "Description": "Avalon quest Weirwood Rover (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 310,
+  "MaxGold": 310,
+  "ExperienceAmount": 13660,
+  "TrainingPoints": 0,
+  "Items": []
+}

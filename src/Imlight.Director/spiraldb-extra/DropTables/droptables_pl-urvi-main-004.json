@@ -1,0 +1,13 @@
+{
+  "Name": "PL-URVI-MAIN-004",
+  "Description": "Polaris quest A New Vision (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 164,
+  "MaxGold": 164,
+  "ExperienceAmount": 27440,
+  "TrainingPoints": 0,
+  "Items": []
+}

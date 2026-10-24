@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-GRAVE-C01-004",
+  "Description": "Zafaria quest Pool Cleaning (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 310,
+  "MaxGold": 310,
+  "ExperienceAmount": 9430,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KR-RADI-C02-002",
+  "Description": "Khrysalis quest A Dream of Wizard City (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 620,
+  "MaxGold": 620,
+  "ExperienceAmount": 63925,
+  "TrainingPoints": 0,
+  "Items": []
+}

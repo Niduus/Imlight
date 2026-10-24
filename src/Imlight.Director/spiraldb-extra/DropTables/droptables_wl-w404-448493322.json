@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-448493322",
+  "Description": "Wallaru quest Up in the Sky, It's a Bird! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 550,
+  "MaxGold": 550,
+  "ExperienceAmount": 189240,
+  "TrainingPoints": 0,
+  "Items": []
+}

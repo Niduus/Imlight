@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-141820514",
+  "Description": "Novus quest Brigands and Beasties (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 570,
+  "MaxGold": 570,
+  "ExperienceAmount": 96495,
+  "TrainingPoints": 0,
+  "Items": []
+}

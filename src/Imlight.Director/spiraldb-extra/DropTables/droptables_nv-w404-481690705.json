@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-481690705",
+  "Description": "Novus quest Greed Isn't Good (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 190,
+  "MaxGold": 190,
+  "ExperienceAmount": 64330,
+  "TrainingPoints": 0,
+  "Items": []
+}

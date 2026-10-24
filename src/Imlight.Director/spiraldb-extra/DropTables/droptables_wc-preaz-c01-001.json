@@ -1,0 +1,13 @@
+{
+  "Name": "WC-PreAZ-C01-001",
+  "Description": "Azteca quest First Star I See Tonight (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 410,
+  "MaxGold": 410,
+  "ExperienceAmount": 22620,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "PL-EXPLORER-002",
+  "Description": "Polaris quest Plotting Out Polar Roses (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1360,
+  "MaxGold": 1360,
+  "ExperienceAmount": 234880,
+  "TrainingPoints": 1,
+  "Items": []
+}

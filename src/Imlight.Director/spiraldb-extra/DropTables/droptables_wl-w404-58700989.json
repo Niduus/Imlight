@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-58700989",
+  "Description": "Wallaru quest Morp and Memories (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 520,
+  "MaxGold": 520,
+  "ExperienceAmount": 179280,
+  "TrainingPoints": 0,
+  "Items": []
+}

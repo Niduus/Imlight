@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SWAMP-C04-003",
+  "Description": "Azteca quest Monkey Shine (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 440,
+  "MaxGold": 440,
+  "ExperienceAmount": 26330,
+  "TrainingPoints": 0,
+  "Items": []
+}

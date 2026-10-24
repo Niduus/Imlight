@@ -1,0 +1,26 @@
+{
+  "Name": "MR-EXPLORER-001",
+  "Description": "Mirage quest Midday At The Oasis (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 7000,
+  "MaxGold": 7000,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 1,
+  "Items": [
+    {
+      "ItemId": "1248060",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "1248060",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

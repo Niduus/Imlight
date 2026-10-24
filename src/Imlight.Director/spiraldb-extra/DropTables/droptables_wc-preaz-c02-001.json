@@ -1,0 +1,13 @@
+{
+  "Name": "WC-PreAZ-C02-001",
+  "Description": "Azteca quest A Little Knowledge (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 170,
+  "MaxGold": 170,
+  "ExperienceAmount": 9695,
+  "TrainingPoints": 0,
+  "Items": []
+}

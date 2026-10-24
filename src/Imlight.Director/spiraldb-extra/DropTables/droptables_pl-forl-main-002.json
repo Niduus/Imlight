@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FORL-MAIN-002",
+  "Description": "Polaris quest Highway Bullies (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 830,
+  "MaxGold": 830,
+  "ExperienceAmount": 119840,
+  "TrainingPoints": 0,
+  "Items": []
+}

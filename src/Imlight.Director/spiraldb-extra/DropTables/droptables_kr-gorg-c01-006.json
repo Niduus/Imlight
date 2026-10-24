@@ -1,0 +1,20 @@
+{
+  "Name": "KR-GORG-C01-006",
+  "Description": "Khrysalis quest Soaring Free (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 7310,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1248058",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

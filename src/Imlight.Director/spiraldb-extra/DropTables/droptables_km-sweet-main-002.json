@@ -1,0 +1,13 @@
+{
+  "Name": "KM-SWEET-MAIN-002",
+  "Description": "Karamelle quest The Witching Scour (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1510,
+  "MaxGold": 1510,
+  "ExperienceAmount": 185380,
+  "TrainingPoints": 0,
+  "Items": []
+}

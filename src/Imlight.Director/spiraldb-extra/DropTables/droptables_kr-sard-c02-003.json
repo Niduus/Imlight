@@ -1,0 +1,20 @@
+{
+  "Name": "KR-SARD-C02-003",
+  "Description": "Khrysalis quest Heard it through the Leaf Vine (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 900,
+  "MaxGold": 900,
+  "ExperienceAmount": 92980,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1203134",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

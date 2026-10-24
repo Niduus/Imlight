@@ -1,0 +1,13 @@
+{
+  "Name": "KM-FARM-MAIN-004",
+  "Description": "Karamelle quest Words of Power (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1460,
+  "MaxGold": 1460,
+  "ExperienceAmount": 176553,
+  "TrainingPoints": 0,
+  "Items": []
+}

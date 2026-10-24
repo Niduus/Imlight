@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-015",
+  "Description": "Empyrea quest A Cry for Help (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1140,
+  "MaxGold": 1140,
+  "ExperienceAmount": 114547,
+  "TrainingPoints": 0,
+  "Items": []
+}

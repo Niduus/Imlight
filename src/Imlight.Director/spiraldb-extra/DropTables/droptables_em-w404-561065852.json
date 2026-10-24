@@ -1,0 +1,13 @@
+{
+  "Name": "EM-W404-561065852",
+  "Description": "Empyrea quest A Light Fight (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1360,
+  "MaxGold": 1360,
+  "ExperienceAmount": 153531,
+  "TrainingPoints": 0,
+  "Items": []
+}

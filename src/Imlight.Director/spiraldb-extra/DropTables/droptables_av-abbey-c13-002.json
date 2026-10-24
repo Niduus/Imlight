@@ -1,0 +1,13 @@
+{
+  "Name": "AV-ABBEY-C13-002",
+  "Description": "Avalon quest Uncut History (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 150,
+  "MaxGold": 150,
+  "ExperienceAmount": 5730,
+  "TrainingPoints": 1,
+  "Items": []
+}

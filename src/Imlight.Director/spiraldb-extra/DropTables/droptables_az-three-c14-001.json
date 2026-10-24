@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-THREE-C14-001",
+  "Description": "Azteca quest Game, Set... Match (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1030,
+  "MaxGold": 1030,
+  "ExperienceAmount": 47585,
+  "TrainingPoints": 0,
+  "Items": []
+}

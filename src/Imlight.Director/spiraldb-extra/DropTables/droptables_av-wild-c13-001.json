@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C13-001",
+  "Description": "Avalon quest Worst Day Since Yesterday (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 520,
+  "MaxGold": 520,
+  "ExperienceAmount": 25045,
+  "TrainingPoints": 0,
+  "Items": []
+}

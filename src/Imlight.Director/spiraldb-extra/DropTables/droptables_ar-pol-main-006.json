@@ -1,0 +1,13 @@
+{
+  "Name": "AR-POL-MAIN-006",
+  "Description": "Polaris quest Knowledge and Information (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 180,
+  "MaxGold": 180,
+  "ExperienceAmount": 35970,
+  "TrainingPoints": 0,
+  "Items": []
+}

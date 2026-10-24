@@ -1,0 +1,13 @@
+{
+  "Name": "AV-LAKE-C01-001",
+  "Description": "Avalon quest The Razor's Edge (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 110,
+  "MaxGold": 110,
+  "ExperienceAmount": 5750,
+  "TrainingPoints": 0,
+  "Items": []
+}

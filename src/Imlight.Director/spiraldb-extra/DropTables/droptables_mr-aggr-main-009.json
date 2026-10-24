@@ -1,0 +1,13 @@
+{
+  "Name": "MR-AGGR-MAIN-009",
+  "Description": "Mirage quest Shock the Monkey (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2900,
+  "MaxGold": 2900,
+  "ExperienceAmount": 363500,
+  "TrainingPoints": 0,
+  "Items": []
+}

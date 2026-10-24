@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C06-001",
+  "Description": "Aquila quest Revenge of the Immortals (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 510,
+  "MaxGold": 510,
+  "ExperienceAmount": 41980,
+  "TrainingPoints": 0,
+  "Items": []
+}

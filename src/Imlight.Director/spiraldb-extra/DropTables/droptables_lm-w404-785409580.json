@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-785409580",
+  "Description": "Lemuria quest Word, Sound & Power (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1450,
+  "MaxGold": 1450,
+  "ExperienceAmount": 145080,
+  "TrainingPoints": 0,
+  "Items": []
+}

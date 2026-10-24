@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1958943180",
+  "Description": "Darkmoor quest Substance of Shadow (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 990,
+  "MaxGold": 990,
+  "ExperienceAmount": 134475,
+  "TrainingPoints": 0,
+  "Items": []
+}

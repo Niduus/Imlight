@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-763016590",
+  "Description": "Darkmoor quest The More You Tarot (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2120,
+  "MaxGold": 2120,
+  "ExperienceAmount": 286880,
+  "TrainingPoints": 0,
+  "Items": []
+}

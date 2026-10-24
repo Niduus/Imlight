@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-013",
+  "Description": "Empyrea quest The Shadow of Death (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 910,
+  "MaxGold": 910,
+  "ExperienceAmount": 86891,
+  "TrainingPoints": 0,
+  "Items": []
+}

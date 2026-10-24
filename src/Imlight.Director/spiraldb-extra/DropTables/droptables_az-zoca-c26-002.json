@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C26-002",
+  "Description": "Azteca quest Gallery of Days (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 835,
+  "MaxGold": 835,
+  "ExperienceAmount": 56225,
+  "TrainingPoints": 0,
+  "Items": []
+}

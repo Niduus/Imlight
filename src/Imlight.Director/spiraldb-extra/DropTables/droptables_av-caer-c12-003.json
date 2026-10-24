@@ -1,0 +1,20 @@
+{
+  "Name": "AV-CAER-C12-003",
+  "Description": "Avalon quest Reinventing the Wheel (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 200,
+  "MaxGold": 200,
+  "ExperienceAmount": 8595,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635330",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

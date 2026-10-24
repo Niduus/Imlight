@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C02-002",
+  "Description": "Khrysalis quest Head to Foot (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 935,
+  "MaxGold": 935,
+  "ExperienceAmount": 84565,
+  "TrainingPoints": 0,
+  "Items": []
+}

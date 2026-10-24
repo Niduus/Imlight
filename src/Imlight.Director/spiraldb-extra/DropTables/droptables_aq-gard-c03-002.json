@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C03-002",
+  "Description": "Aquila quest Into the Sea (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 365,
+  "MaxGold": 365,
+  "ExperienceAmount": 13075,
+  "TrainingPoints": 0,
+  "Items": []
+}

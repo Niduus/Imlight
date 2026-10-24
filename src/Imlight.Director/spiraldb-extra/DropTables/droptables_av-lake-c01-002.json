@@ -1,0 +1,13 @@
+{
+  "Name": "AV-LAKE-C01-002",
+  "Description": "Avalon quest The Simplest Answer (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 500,
+  "MaxGold": 500,
+  "ExperienceAmount": 28755,
+  "TrainingPoints": 0,
+  "Items": []
+}

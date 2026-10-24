@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C14-001",
+  "Description": "Avalon quest Beneath the Haunted Moon (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 150,
+  "MaxGold": 150,
+  "ExperienceAmount": 6830,
+  "TrainingPoints": 0,
+  "Items": []
+}

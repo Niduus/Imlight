@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TWIN-C09-003",
+  "Description": "Azteca quest The Crimson Eagle (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 850,
+  "MaxGold": 850,
+  "ExperienceAmount": 57320,
+  "TrainingPoints": 0,
+  "Items": []
+}

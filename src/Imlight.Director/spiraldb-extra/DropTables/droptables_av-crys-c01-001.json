@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CRYS-C01-001",
+  "Description": "Avalon quest Run Silent Run Deep (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 470,
+  "MaxGold": 470,
+  "ExperienceAmount": 25855,
+  "TrainingPoints": 0,
+  "Items": []
+}

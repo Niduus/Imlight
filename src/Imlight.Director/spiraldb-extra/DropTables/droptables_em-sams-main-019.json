@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-019",
+  "Description": "Empyrea quest Rebuilding the Bat (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1375,
+  "MaxGold": 1375,
+  "ExperienceAmount": 147867,
+  "TrainingPoints": 0,
+  "Items": []
+}

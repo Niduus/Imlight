@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-005",
+  "Description": "Empyrea quest Ruumbaya (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2960,
+  "MaxGold": 2960,
+  "ExperienceAmount": 147507,
+  "TrainingPoints": 0,
+  "Items": []
+}

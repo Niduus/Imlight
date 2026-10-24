@@ -1,0 +1,13 @@
+{
+  "Name": "MR-AGGR-MAIN-016",
+  "Description": "Mirage quest The Djinn Conspiracy (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 400,
+  "MaxGold": 400,
+  "ExperienceAmount": 48000,
+  "TrainingPoints": 0,
+  "Items": []
+}

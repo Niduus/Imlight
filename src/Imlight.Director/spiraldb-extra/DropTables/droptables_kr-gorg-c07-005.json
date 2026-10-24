@@ -1,0 +1,13 @@
+{
+  "Name": "KR-GORG-C07-005",
+  "Description": "Khrysalis quest Barrels of Fun (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 225,
+  "MaxGold": 225,
+  "ExperienceAmount": 21930,
+  "TrainingPoints": 0,
+  "Items": []
+}

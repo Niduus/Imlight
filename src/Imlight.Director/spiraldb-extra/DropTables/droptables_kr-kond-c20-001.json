@@ -1,0 +1,13 @@
+{
+  "Name": "KR-KOND-C20-001",
+  "Description": "Khrysalis quest Stopping the Sand of Time (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 750,
+  "MaxGold": 750,
+  "ExperienceAmount": 77485,
+  "TrainingPoints": 0,
+  "Items": []
+}

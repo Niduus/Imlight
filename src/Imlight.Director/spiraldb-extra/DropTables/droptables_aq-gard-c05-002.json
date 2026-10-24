@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-GARD-C05-002",
+  "Description": "Aquila quest Into the Depths (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 510,
+  "MaxGold": 510,
+  "ExperienceAmount": 41980,
+  "TrainingPoints": 0,
+  "Items": []
+}

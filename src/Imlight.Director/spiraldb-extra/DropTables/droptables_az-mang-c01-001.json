@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-MANG-C01-001",
+  "Description": "Azteca quest Screams All Sound the Same (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 915,
+  "MaxGold": 915,
+  "ExperienceAmount": 52245,
+  "TrainingPoints": 0,
+  "Items": []
+}

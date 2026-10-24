@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C01-002",
+  "Description": "Khrysalis quest Silent Meditation (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 580,
+  "MaxGold": 580,
+  "ExperienceAmount": 47770,
+  "TrainingPoints": 0,
+  "Items": []
+}

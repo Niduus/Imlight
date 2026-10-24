@@ -1,0 +1,13 @@
+{
+  "Name": "KM-W404-537579529",
+  "Description": "Karamelle quest You Don't Know Gumberjack (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2020,
+  "MaxGold": 2020,
+  "ExperienceAmount": 220690,
+  "TrainingPoints": 0,
+  "Items": []
+}

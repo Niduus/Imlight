@@ -1,0 +1,13 @@
+{
+  "Name": "EM-INNER-MAIN-005",
+  "Description": "Empyrea quest Lava at First Sight (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1790,
+  "MaxGold": 1790,
+  "ExperienceAmount": 99237,
+  "TrainingPoints": 0,
+  "Items": []
+}

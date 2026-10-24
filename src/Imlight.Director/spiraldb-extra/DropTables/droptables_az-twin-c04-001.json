@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-TWIN-C04-001",
+  "Description": "Azteca quest One Voice Above The Din (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 920,
+  "MaxGold": 920,
+  "ExperienceAmount": 76720,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "739130",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

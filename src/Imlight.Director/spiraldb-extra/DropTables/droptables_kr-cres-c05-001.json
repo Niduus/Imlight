@@ -1,0 +1,13 @@
+{
+  "Name": "KR-CRES-C05-001",
+  "Description": "Khrysalis quest Bug Works (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 825,
+  "MaxGold": 825,
+  "ExperienceAmount": 85230,
+  "TrainingPoints": 0,
+  "Items": []
+}

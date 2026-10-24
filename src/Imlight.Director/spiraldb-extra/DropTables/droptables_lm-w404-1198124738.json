@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1198124738",
+  "Description": "Lemuria quest Ghast of Us (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1000,
+  "MaxGold": 1000,
+  "ExperienceAmount": 128960,
+  "TrainingPoints": 0,
+  "Items": []
+}

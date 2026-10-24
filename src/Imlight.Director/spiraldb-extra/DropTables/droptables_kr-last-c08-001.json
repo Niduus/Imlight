@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C08-001",
+  "Description": "Khrysalis quest Build Up (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 815,
+  "MaxGold": 815,
+  "ExperienceAmount": 80400,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AV-HIGH-C01-003",
+  "Description": "Avalon quest That Miracle Clove (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 145,
+  "MaxGold": 145,
+  "ExperienceAmount": 6075,
+  "TrainingPoints": 0,
+  "Items": []
+}

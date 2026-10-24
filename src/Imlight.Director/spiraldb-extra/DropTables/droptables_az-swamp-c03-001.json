@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SWAMP-C03-001",
+  "Description": "Azteca quest Funky Monkey (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 360,
+  "MaxGold": 360,
+  "ExperienceAmount": 21790,
+  "TrainingPoints": 0,
+  "Items": []
+}

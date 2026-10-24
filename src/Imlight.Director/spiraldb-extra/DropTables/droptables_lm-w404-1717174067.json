@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1717174067",
+  "Description": "Lemuria quest Mandar the Boarbarian (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1875,
+  "MaxGold": 1875,
+  "ExperienceAmount": 177320,
+  "TrainingPoints": 0,
+  "Items": []
+}

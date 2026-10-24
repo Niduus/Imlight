@@ -1,0 +1,20 @@
+{
+  "Name": "WC-PreKR-C02-001",
+  "Description": "Khrysalis quest Emissaries of Light (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 70,
+  "MaxGold": 70,
+  "ExperienceAmount": 5790,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "258582",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

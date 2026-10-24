@@ -1,0 +1,20 @@
+{
+  "Name": "EM-AERI-J-SIDE-013",
+  "Description": "Empyrea quest Bug's Strife (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 10000,
+  "MaxGold": 10000,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641699",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "CL-STRM-C01-001",
+  "Description": "Celestia quest Dr. Egghead (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 705,
+  "MaxGold": 705,
+  "ExperienceAmount": 83055,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257519",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

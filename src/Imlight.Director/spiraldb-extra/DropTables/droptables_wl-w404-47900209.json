@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-47900209",
+  "Description": "Wallaru quest Dreams of Nothing (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 200,
+  "MaxGold": 200,
+  "ExperienceAmount": 69720,
+  "TrainingPoints": 0,
+  "Items": []
+}

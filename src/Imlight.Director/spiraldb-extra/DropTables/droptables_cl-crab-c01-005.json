@@ -1,0 +1,38 @@
+{
+  "Name": "CL-CRAB-C01-005",
+  "Description": "Celestia quest Plunkett, I Presume? (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 11900,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "240102",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "240102",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220332",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220332",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

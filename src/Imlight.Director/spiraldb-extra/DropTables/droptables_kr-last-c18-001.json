@@ -1,0 +1,26 @@
+{
+  "Name": "KR-LAST-C18-001",
+  "Description": "Khrysalis quest One Cheesy Book (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 770,
+  "MaxGold": 770,
+  "ExperienceAmount": 63690,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220326",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

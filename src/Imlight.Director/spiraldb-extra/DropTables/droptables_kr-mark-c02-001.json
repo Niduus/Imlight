@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MARK-C02-001",
+  "Description": "Khrysalis quest For All the Tea (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1040,
+  "MaxGold": 1040,
+  "ExperienceAmount": 98255,
+  "TrainingPoints": 0,
+  "Items": []
+}

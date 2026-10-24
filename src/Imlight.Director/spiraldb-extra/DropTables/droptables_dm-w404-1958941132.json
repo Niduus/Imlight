@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1958941132",
+  "Description": "Darkmoor quest What We Did in the Shadows (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1980,
+  "MaxGold": 1980,
+  "ExperienceAmount": 268950,
+  "TrainingPoints": 0,
+  "Items": []
+}

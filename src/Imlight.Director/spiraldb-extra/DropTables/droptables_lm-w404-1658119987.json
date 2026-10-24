@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1658119987",
+  "Description": "Lemuria quest No Crane, No Gain (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1025,
+  "MaxGold": 1025,
+  "ExperienceAmount": 104780,
+  "TrainingPoints": 0,
+  "Items": []
+}

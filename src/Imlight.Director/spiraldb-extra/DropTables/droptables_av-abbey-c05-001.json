@@ -1,0 +1,20 @@
+{
+  "Name": "AV-ABBEY-C05-001",
+  "Description": "Avalon quest Call The Banners (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 460,
+  "MaxGold": 460,
+  "ExperienceAmount": 19100,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635397",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

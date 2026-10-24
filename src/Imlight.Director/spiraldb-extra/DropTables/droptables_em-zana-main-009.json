@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-009",
+  "Description": "Empyrea quest Rebel Rebel (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2440,
+  "MaxGold": 2440,
+  "ExperienceAmount": 476934,
+  "TrainingPoints": 0,
+  "Items": []
+}

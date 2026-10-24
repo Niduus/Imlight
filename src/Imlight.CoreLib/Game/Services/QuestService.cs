@@ -1554,6 +1554,38 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         // Chain advance: completion stamps the "Complete" registry entry, which is the ReqHasEntry
         // prerequisite of the next quest in the dungeon's chain.
         TryGrantDungeonQuests(wizard);
+        TryAutoStartQuests(wizard);
+    }
+
+    // Our own quests that have no NPC to offer them (Wizard404 named none) carry this tag and start by themselves as
+    // soon as the quest before them is done (Niduus, 2026-10-24).
+    private const string AUTO_START_TAG = "ImlightAutoStart";
+    private static List<QuestTemplate> s_autoStartQuests;
+
+    private void TryAutoStartQuests(Wizard wizard) {
+        s_autoStartQuests ??= QuestTemplateCollection.GetAllQuests()
+            .Where(q => q?.m_requirements is not null && q.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true)
+            .ToList();
+
+        foreach (var template in s_autoStartQuests) {
+            if (wizard.HasQuest(template.m_questName)
+                || wizard.HasQuestRegistryValue(template.m_questName, QUEST_COMPLETED_ENTRY)) {
+                continue;
+            }
+
+            var context = new GenericRequirementContext(
+                requirements: template.m_requirements,
+                playerRef: SessionActor.ActorRef,
+                playerObj: GetActiveGameObject(),
+                wizard: wizard);
+            if (!RequirementDispatcher.EvaluateRequirements(template.m_requirements, context)) {
+                continue;
+            }
+
+            Logger.Information("Quest '{0}' starts by itself for {1}: it has no NPC to offer it.",
+                Logger.Args(template.m_questName, wizard.CharId));
+            StartQuest(template, wizard);
+        }
     }
 
     private void SendGoalMessage(GoalTemplate gTemplate, QuestInstance qInstance, byte sendType = 0, bool forceSendDestZone = true) {

@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-PITCH-C05-001",
+  "Description": "Azteca quest Hum a Few Bars (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 190,
+  "MaxGold": 190,
+  "ExperienceAmount": 15460,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730207",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

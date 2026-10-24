@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C23-001",
+  "Description": "Azteca quest Sweet Chili 'o' Mine (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 380,
+  "MaxGold": 380,
+  "ExperienceAmount": 25955,
+  "TrainingPoints": 0,
+  "Items": []
+}

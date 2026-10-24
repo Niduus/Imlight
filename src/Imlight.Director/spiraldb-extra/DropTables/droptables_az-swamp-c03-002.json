@@ -1,0 +1,32 @@
+{
+  "Name": "AZ-SWAMP-C03-002",
+  "Description": "Azteca quest Monkey Men (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 485,
+  "MaxGold": 485,
+  "ExperienceAmount": 29055,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220302",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

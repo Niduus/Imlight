@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C19-002",
+  "Description": "Khrysalis quest Shades of Shadow (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1050,
+  "MaxGold": 1050,
+  "ExperienceAmount": 92970,
+  "TrainingPoints": 1,
+  "Items": []
+}

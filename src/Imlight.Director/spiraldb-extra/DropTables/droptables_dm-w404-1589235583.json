@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1589235583",
+  "Description": "Darkmoor quest The Quarrel Plain (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1260,
+  "MaxGold": 1260,
+  "ExperienceAmount": 170335,
+  "TrainingPoints": 0,
+  "Items": []
+}

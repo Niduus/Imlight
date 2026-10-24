@@ -1,0 +1,13 @@
+{
+  "Name": "EM-HUSK-MAIN-001",
+  "Description": "Empyrea quest Timber Timbre (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1145,
+  "MaxGold": 1145,
+  "ExperienceAmount": 130010,
+  "TrainingPoints": 0,
+  "Items": []
+}

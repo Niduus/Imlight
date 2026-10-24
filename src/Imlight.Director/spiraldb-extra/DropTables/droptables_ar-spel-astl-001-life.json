@@ -1,0 +1,13 @@
+{
+  "Name": "AR-SPEL-ASTL-001-LIFE",
+  "Description": "Polaris quest The Sun Never Sets On Celestia (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 360,
+  "MaxGold": 360,
+  "ExperienceAmount": 82360,
+  "TrainingPoints": 0,
+  "Items": []
+}

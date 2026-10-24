@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C16-001",
+  "Description": "Zafaria quest Lost Letter (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 90,
+  "MaxGold": 90,
+  "ExperienceAmount": 2540,
+  "TrainingPoints": 0,
+  "Items": []
+}

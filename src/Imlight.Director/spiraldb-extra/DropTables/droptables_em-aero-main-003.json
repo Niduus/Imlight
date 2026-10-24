@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-MAIN-003",
+  "Description": "Empyrea quest Take Me Down to Velo City (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1135,
+  "MaxGold": 1135,
+  "ExperienceAmount": 104748,
+  "TrainingPoints": 0,
+  "Items": []
+}

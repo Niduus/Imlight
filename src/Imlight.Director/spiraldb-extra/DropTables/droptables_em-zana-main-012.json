@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-012",
+  "Description": "Empyrea quest A Chain of Ice and Fire (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 880,
+  "MaxGold": 880,
+  "ExperienceAmount": 50892,
+  "TrainingPoints": 0,
+  "Items": []
+}

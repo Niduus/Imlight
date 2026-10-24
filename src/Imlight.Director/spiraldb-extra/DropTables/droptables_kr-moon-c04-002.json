@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C04-002",
+  "Description": "Khrysalis quest Test Pattern (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 860,
+  "MaxGold": 860,
+  "ExperienceAmount": 78060,
+  "TrainingPoints": 0,
+  "Items": []
+}

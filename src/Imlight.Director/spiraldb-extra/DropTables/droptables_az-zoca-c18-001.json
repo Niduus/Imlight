@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C18-001",
+  "Description": "Azteca quest Ward to the Wise (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1300,
+  "MaxGold": 1300,
+  "ExperienceAmount": 82190,
+  "TrainingPoints": 0,
+  "Items": []
+}

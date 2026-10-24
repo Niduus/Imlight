@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1959270860",
+  "Description": "Darkmoor quest Icks From the Pit (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 660,
+  "MaxGold": 660,
+  "ExperienceAmount": 89650,
+  "TrainingPoints": 0,
+  "Items": []
+}

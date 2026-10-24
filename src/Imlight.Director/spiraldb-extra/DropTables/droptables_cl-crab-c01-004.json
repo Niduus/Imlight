@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CRAB-C01-004",
+  "Description": "Celestia quest Fire in the Sea (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 285,
+  "MaxGold": 285,
+  "ExperienceAmount": 3890,
+  "TrainingPoints": 0,
+  "Items": []
+}

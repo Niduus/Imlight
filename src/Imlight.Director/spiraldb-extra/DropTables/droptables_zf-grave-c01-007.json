@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-GRAVE-C01-007",
+  "Description": "Zafaria quest Tomb Raiders (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1160,
+  "MaxGold": 1160,
+  "ExperienceAmount": 35025,
+  "TrainingPoints": 0,
+  "Items": []
+}

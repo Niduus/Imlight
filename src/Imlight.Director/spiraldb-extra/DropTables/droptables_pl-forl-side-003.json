@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FORL-SIDE-003",
+  "Description": "Polaris quest Fishing For Forgiveness (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 170,
+  "MaxGold": 170,
+  "ExperienceAmount": 23970,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KM-FARM-SIDE-003",
+  "Description": "Karamelle quest Local Color Out of Space (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 10100,
+  "MaxGold": 10100,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

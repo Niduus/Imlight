@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1198253762",
+  "Description": "Lemuria quest Gasp! Malughast! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1250,
+  "MaxGold": 1250,
+  "ExperienceAmount": 120900,
+  "TrainingPoints": 0,
+  "Items": []
+}

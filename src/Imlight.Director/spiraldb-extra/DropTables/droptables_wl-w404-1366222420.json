@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-1366222420",
+  "Description": "Wallaru quest Thrills and Bills (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 700,
+  "MaxGold": 700,
+  "ExperienceAmount": 239040,
+  "TrainingPoints": 0,
+  "Items": []
+}

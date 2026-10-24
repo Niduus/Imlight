@@ -1,0 +1,26 @@
+{
+  "Name": "AZ-ZOCA-C13-001",
+  "Description": "Azteca quest Secret of the Winds (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 935,
+  "MaxGold": 935,
+  "ExperienceAmount": 61215,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641696",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "641696",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERI-S-MAIN-014",
+  "Description": "Empyrea quest The Deadliest Catch (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2880,
+  "MaxGold": 2880,
+  "ExperienceAmount": 508446,
+  "TrainingPoints": 0,
+  "Items": []
+}

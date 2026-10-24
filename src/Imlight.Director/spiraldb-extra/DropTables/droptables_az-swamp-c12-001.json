@@ -1,0 +1,38 @@
+{
+  "Name": "AZ-SWAMP-C12-001",
+  "Description": "Azteca quest Mutiny on the Bounty (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 640,
+  "MaxGold": 640,
+  "ExperienceAmount": 43255,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220240",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

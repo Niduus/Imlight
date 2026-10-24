@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TIER-C09-002",
+  "Description": "Azteca quest Going for Broke (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 525,
+  "MaxGold": 525,
+  "ExperienceAmount": 35690,
+  "TrainingPoints": 0,
+  "Items": []
+}

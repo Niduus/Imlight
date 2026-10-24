@@ -1,0 +1,13 @@
+{
+  "Name": "KR-GORG-C07-004",
+  "Description": "Khrysalis quest Feed Me (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 670,
+  "MaxGold": 670,
+  "ExperienceAmount": 65785,
+  "TrainingPoints": 0,
+  "Items": []
+}

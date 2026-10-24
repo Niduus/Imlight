@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-FLOAT-C04-001",
+  "Description": "Azteca quest Sky Above, Fields Below (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 89,
+  "MaxGold": 89,
+  "ExperienceAmount": 5790,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C09-001",
+  "Description": "Azteca quest Journey to the Cenote of the Earth (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 950,
+  "MaxGold": 950,
+  "ExperienceAmount": 58715,
+  "TrainingPoints": 0,
+  "Items": []
+}

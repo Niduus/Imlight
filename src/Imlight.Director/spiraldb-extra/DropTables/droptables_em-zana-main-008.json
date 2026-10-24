@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-008",
+  "Description": "Empyrea quest Negative Reinforcement (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2630,
+  "MaxGold": 2630,
+  "ExperienceAmount": 159894,
+  "TrainingPoints": 0,
+  "Items": []
+}

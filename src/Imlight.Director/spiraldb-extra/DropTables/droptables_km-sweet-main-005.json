@@ -1,0 +1,13 @@
+{
+  "Name": "KM-SWEET-MAIN-005",
+  "Description": "Karamelle quest The Face Eaters (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1220,
+  "MaxGold": 1220,
+  "ExperienceAmount": 141243,
+  "TrainingPoints": 0,
+  "Items": []
+}

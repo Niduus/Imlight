@@ -1,0 +1,13 @@
+{
+  "Name": "KM-GOBB-MAIN-009",
+  "Description": "Karamelle quest The Good Kind of Crop Dusting (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1645,
+  "MaxGold": 1645,
+  "ExperienceAmount": 203036,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KM-FARM-MAIN-006",
+  "Description": "Karamelle quest The WITCH in the Woods (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 975,
+  "MaxGold": 975,
+  "ExperienceAmount": 114759,
+  "TrainingPoints": 0,
+  "Items": []
+}

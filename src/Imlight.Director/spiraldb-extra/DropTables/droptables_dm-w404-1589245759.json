@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1589245759",
+  "Description": "Darkmoor quest The Survivors (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1120,
+  "MaxGold": 1120,
+  "ExperienceAmount": 152405,
+  "TrainingPoints": 0,
+  "Items": []
+}

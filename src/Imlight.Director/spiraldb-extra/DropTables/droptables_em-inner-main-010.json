@@ -1,0 +1,13 @@
+{
+  "Name": "EM-INNER-MAIN-010",
+  "Description": "Empyrea quest Athano-More (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3250,
+  "MaxGold": 3250,
+  "ExperienceAmount": 216927,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KM-NIBB-MAIN-005",
+  "Description": "Karamelle quest Better Choco-Late Than Never (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 740,
+  "MaxGold": 740,
+  "ExperienceAmount": 105932,
+  "TrainingPoints": 0,
+  "Items": []
+}

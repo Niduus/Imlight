@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-915848582",
+  "Description": "Lemuria quest The Tour You Know (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3050,
+  "MaxGold": 3050,
+  "ExperienceAmount": 298220,
+  "TrainingPoints": 0,
+  "Items": []
+}

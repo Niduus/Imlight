@@ -1,0 +1,13 @@
+{
+  "Name": "MR-ALKA-MAIN-007",
+  "Description": "Mirage quest Most Valued Treasure (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3800,
+  "MaxGold": 3800,
+  "ExperienceAmount": 484500,
+  "TrainingPoints": 0,
+  "Items": []
+}

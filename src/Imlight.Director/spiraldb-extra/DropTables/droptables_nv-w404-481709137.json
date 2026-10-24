@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-481709137",
+  "Description": "Novus quest One Fish, Shoe Fish (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 220,
+  "MaxGold": 220,
+  "ExperienceAmount": 73520,
+  "TrainingPoints": 0,
+  "Items": []
+}

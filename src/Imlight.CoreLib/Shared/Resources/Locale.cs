@@ -61,6 +61,9 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
     private static Dictionary<string, Dictionary<string, string>> s_data = [];
     private static Dictionary<string, (string firstKey, string lastKey)> s_namePartsMapping = [];
 
+    // The quest dialogue tables (WizQst...), kept only until our own quests' English lines are matched to them.
+    private static Dictionary<string, Dictionary<string, string>> s_questTables = [];
+
     protected override void AfterLoad() {
         // There are aoubt ~5,000 files here. They take up about 200MB of memory.
         // At this point, they are all loaded into memory. This function should process the locales
@@ -74,15 +77,17 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
             var stream = file.Value;
             var record = file.Key;
 
-            if (record.FileName.StartsWith(s_qustFilePrefix, StringComparison.Ordinal)) {
-                continue;
-            }
-
             var data = ProcessLocaleFile(record, stream);
 
             var tableName = record.FileName;
             tableName = tableName.Replace(DirectoryName, "");
             tableName = tableName.Split('.')[0];
+
+            if (record.FileName.StartsWith(s_qustFilePrefix, StringComparison.Ordinal)) {
+                s_questTables[tableName] = data;
+
+                continue;
+            }
 
             s_data.Add(tableName, data);
         }
@@ -257,6 +262,61 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         }
 
         return ("", "");
+    }
+
+    /// <summary>
+    /// Every line of the game's text tables (quest dialogue tables too, while they are kept) whose text, letters and
+    /// digits only, is one of <paramref name="wanted"/>: wanted text to the keys (Table_Id) that hold it. Used to give
+    /// our own quests, written in English, the game's own lines.
+    /// </summary>
+    public static Dictionary<string, List<string>> KeysOfTexts(IReadOnlySet<string> wanted) {
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        var found = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        void Scan(Dictionary<string, Dictionary<string, string>> tables) {
+            foreach (var (table, lines) in tables) {
+                foreach (var (id, text) in lines) {
+                    var plain = PlainText(text);
+                    if (plain.Length == 0 || !wanted.Contains(plain)) {
+                        continue;
+                    }
+
+                    if (!found.TryGetValue(plain, out var keys)) {
+                        keys = [];
+                        found[plain] = keys;
+                    }
+
+                    keys.Add($"{table}_{id}");
+                }
+            }
+        }
+
+        Scan(s_questTables);
+        Scan(s_data);
+
+        return found;
+    }
+
+    /// <summary>The quest dialogue tables are only needed once; this lets them go.</summary>
+    public static void ReleaseQuestTables()
+        => s_questTables = [];
+
+    /// <summary>A line's letters and digits only, in lower case, so small differences in spaces, quotes and dashes match.</summary>
+    public static string PlainText(string text) {
+        if (string.IsNullOrEmpty(text)) {
+            return "";
+        }
+
+        var plain = new StringBuilder(text.Length);
+        foreach (var c in text) {
+            if (char.IsLetterOrDigit(c)) {
+                plain.Append(char.ToLowerInvariant(c));
+            }
+        }
+
+        return plain.ToString();
     }
 
     public void DisposeStream()

@@ -1,0 +1,26 @@
+{
+  "Name": "AZ-ZULT-C03-002",
+  "Description": "Azteca quest Imagination Blind (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 505,
+  "MaxGold": 505,
+  "ExperienceAmount": 32645,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "589166",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

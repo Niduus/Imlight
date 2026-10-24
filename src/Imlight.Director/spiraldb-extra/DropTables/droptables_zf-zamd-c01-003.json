@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-ZAMD-C01-003",
+  "Description": "Zafaria quest Through the Zorse Gates (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 2400,
+  "TrainingPoints": 0,
+  "Items": []
+}

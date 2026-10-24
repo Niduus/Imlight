@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SCI-C03-004",
+  "Description": "Celestia quest Tower of Destruction (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 280,
+  "MaxGold": 280,
+  "ExperienceAmount": 14495,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-892049849",
+  "Description": "Darkmoor quest I Loathe Lucy (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 790,
+  "MaxGold": 790,
+  "ExperienceAmount": 107580,
+  "TrainingPoints": 0,
+  "Items": []
+}

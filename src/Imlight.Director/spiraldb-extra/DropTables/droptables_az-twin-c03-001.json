@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-TWIN-C03-001",
+  "Description": "Azteca quest The Sun Will Light the Way (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 780,
+  "MaxGold": 780,
+  "ExperienceAmount": 65140,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730562",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

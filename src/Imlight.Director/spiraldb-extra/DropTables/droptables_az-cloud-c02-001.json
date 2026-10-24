@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-CLOUD-C02-001",
+  "Description": "Azteca quest Wind Driving In My Face (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 825,
+  "MaxGold": 825,
+  "ExperienceAmount": 53050,
+  "TrainingPoints": 0,
+  "Items": []
+}

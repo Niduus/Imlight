@@ -1,0 +1,32 @@
+{
+  "Name": "AV-CALI-C12-001",
+  "Description": "Avalon quest Chevalier (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 845,
+  "MaxGold": 845,
+  "ExperienceAmount": 34370,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220279",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

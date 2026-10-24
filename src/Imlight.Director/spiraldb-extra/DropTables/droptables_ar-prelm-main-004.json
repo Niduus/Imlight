@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PreLM-MAIN-004",
+  "Description": "Lemuria quest Lemur, Le Merrier (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 650,
+  "MaxGold": 650,
+  "ExperienceAmount": 56420,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-SIDE-005",
+  "Description": "Polaris quest The Wailers' Mane Issue (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 970,
+  "MaxGold": 970,
+  "ExperienceAmount": 134400,
+  "TrainingPoints": 0,
+  "Items": []
+}

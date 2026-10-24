@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-650038354",
+  "Description": "Novus quest World Piece (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 460,
+  "MaxGold": 460,
+  "ExperienceAmount": 156230,
+  "TrainingPoints": 0,
+  "Items": []
+}

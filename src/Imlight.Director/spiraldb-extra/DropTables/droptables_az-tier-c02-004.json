@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TIER-C02-004",
+  "Description": "Azteca quest Reforging the Bond (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 120,
+  "MaxGold": 120,
+  "ExperienceAmount": 9170,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1717165875",
+  "Description": "Lemuria quest Mothly Hospitality (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1750,
+  "MaxGold": 1750,
+  "ExperienceAmount": 314340,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-TWIN-C07-001",
+  "Description": "Azteca quest Remember Me As A Time of Day (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 5790,
+  "TrainingPoints": 0,
+  "Items": []
+}

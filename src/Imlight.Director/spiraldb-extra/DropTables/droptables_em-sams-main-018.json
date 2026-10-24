@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-018",
+  "Description": "Empyrea quest Signal to Noise (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1145,
+  "MaxGold": 1145,
+  "ExperienceAmount": 60229,
+  "TrainingPoints": 0,
+  "Items": []
+}

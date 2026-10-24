@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FROZ-MAIN-011",
+  "Description": "Polaris quest The Witch's Wisdom (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 340,
+  "MaxGold": 340,
+  "ExperienceAmount": 51300,
+  "TrainingPoints": 0,
+  "Items": []
+}

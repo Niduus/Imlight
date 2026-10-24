@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CAMP-C03-001",
+  "Description": "Celestia quest Scrap Metal Sky (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 65,
+  "MaxGold": 65,
+  "ExperienceAmount": 1260,
+  "TrainingPoints": 0,
+  "Items": []
+}

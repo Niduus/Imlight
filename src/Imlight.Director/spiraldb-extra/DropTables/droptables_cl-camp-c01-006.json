@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CAMP-C01-006",
+  "Description": "Celestia quest Johnny-on-the-Spot (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 30,
+  "MaxGold": 30,
+  "ExperienceAmount": 7595,
+  "TrainingPoints": 0,
+  "Items": []
+}

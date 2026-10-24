@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-448487178",
+  "Description": "Wallaru quest Desperate Times, Desperate Dingoes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 760,
+  "MaxGold": 760,
+  "ExperienceAmount": 258960,
+  "TrainingPoints": 0,
+  "Items": []
+}

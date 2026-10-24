@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-010",
+  "Description": "Polaris quest Storming the Basstille (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1930,
+  "MaxGold": 1930,
+  "ExperienceAmount": 268800,
+  "TrainingPoints": 0,
+  "Items": []
+}

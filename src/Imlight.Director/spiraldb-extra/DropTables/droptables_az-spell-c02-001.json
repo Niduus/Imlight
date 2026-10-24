@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SPELL-C02-001",
+  "Description": "Azteca quest Third Star on the Left (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 635,
+  "MaxGold": 635,
+  "ExperienceAmount": 44885,
+  "TrainingPoints": 0,
+  "Items": []
+}

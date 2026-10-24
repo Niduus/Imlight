@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FRIG-MAIN-006",
+  "Description": "Polaris quest Borealis Majoris (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1030,
+  "MaxGold": 1030,
+  "ExperienceAmount": 176170,
+  "TrainingPoints": 0,
+  "Items": []
+}

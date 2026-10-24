@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C09-001",
+  "Description": "Khrysalis quest How I Learned to Stop Worrying (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 750,
+  "MaxGold": 750,
+  "ExperienceAmount": 73100,
+  "TrainingPoints": 0,
+  "Items": []
+}

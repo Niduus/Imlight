@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C12-001",
+  "Description": "Azteca quest How Do Dinosaurs Fly? (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 825,
+  "MaxGold": 825,
+  "ExperienceAmount": 47165,
+  "TrainingPoints": 0,
+  "Items": []
+}

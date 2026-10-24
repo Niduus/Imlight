@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-020",
+  "Description": "Empyrea quest Gathering Shadows (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1605,
+  "MaxGold": 1605,
+  "ExperienceAmount": 376623,
+  "TrainingPoints": 0,
+  "Items": []
+}

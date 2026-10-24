@@ -1,0 +1,13 @@
+{
+  "Name": "KM-SWEET-MAIN-001",
+  "Description": "Karamelle quest Fizzling, Right? (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 995,
+  "MaxGold": 995,
+  "ExperienceAmount": 123587,
+  "TrainingPoints": 0,
+  "Items": []
+}

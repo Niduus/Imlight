@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1959008716",
+  "Description": "Darkmoor quest First, It Knocks (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1190,
+  "MaxGold": 1190,
+  "ExperienceAmount": 161370,
+  "TrainingPoints": 0,
+  "Items": []
+}

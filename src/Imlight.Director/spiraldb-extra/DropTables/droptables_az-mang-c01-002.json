@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-MANG-C01-002",
+  "Description": "Azteca quest Don't Know If I Am Wrong (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 355,
+  "MaxGold": 355,
+  "ExperienceAmount": 20555,
+  "TrainingPoints": 0,
+  "Items": []
+}

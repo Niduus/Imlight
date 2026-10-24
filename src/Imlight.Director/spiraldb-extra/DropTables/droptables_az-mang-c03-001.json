@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-MANG-C03-001",
+  "Description": "Azteca quest War Means Tears (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 110,
+  "MaxGold": 110,
+  "ExperienceAmount": 6850,
+  "TrainingPoints": 0,
+  "Items": []
+}

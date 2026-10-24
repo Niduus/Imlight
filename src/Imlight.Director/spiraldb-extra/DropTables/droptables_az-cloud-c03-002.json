@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-CLOUD-C03-002",
+  "Description": "Azteca quest Yellow of Sun (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 120,
+  "MaxGold": 120,
+  "ExperienceAmount": 8650,
+  "TrainingPoints": 0,
+  "Items": []
+}

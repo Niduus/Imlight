@@ -1,0 +1,38 @@
+{
+  "Name": "AZ-TIER-C08-002",
+  "Description": "Azteca quest Black Hole Moon (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 525,
+  "MaxGold": 525,
+  "ExperienceAmount": 38885,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220316",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

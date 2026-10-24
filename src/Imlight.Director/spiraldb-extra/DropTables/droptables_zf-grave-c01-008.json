@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-GRAVE-C01-008",
+  "Description": "Zafaria quest Tomb Sweet Tomb (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 2690,
+  "TrainingPoints": 0,
+  "Items": []
+}

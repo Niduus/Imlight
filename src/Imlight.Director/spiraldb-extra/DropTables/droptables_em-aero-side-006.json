@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-SIDE-006",
+  "Description": "Empyrea quest I Sought the Sheriff (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 13700,
+  "MaxGold": 13700,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZULT-C01-001",
+  "Description": "Azteca quest Sideways (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 375,
+  "MaxGold": 375,
+  "ExperienceAmount": 24485,
+  "TrainingPoints": 0,
+  "Items": []
+}

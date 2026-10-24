@@ -1,0 +1,13 @@
+{
+  "Name": "KM-KCITY-MAIN-005",
+  "Description": "Karamelle quest World of Spycraft (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 810,
+  "MaxGold": 810,
+  "ExperienceAmount": 88276,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "KM-GUTEN-MAIN-001",
+  "Description": "Karamelle quest Copy Waste-Ya! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 990,
+  "MaxGold": 990,
+  "ExperienceAmount": 105931,
+  "TrainingPoints": 0,
+  "Items": []
+}

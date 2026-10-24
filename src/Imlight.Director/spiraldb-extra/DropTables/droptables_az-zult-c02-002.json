@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZULT-C02-002",
+  "Description": "Azteca quest Start Choppin (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 175,
+  "MaxGold": 175,
+  "ExperienceAmount": 12240,
+  "TrainingPoints": 0,
+  "Items": []
+}

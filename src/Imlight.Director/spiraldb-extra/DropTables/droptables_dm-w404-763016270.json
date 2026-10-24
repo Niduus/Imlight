@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-763016270",
+  "Description": "Darkmoor quest To the Grave! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 530,
+  "MaxGold": 530,
+  "ExperienceAmount": 71720,
+  "TrainingPoints": 0,
+  "Items": []
+}

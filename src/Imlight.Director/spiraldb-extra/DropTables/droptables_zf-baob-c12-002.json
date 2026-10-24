@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-BAOB-C12-002",
+  "Description": "Zafaria quest Lioness Sleeps Tonight (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 520,
+  "MaxGold": 520,
+  "ExperienceAmount": 14340,
+  "TrainingPoints": 0,
+  "Items": []
+}

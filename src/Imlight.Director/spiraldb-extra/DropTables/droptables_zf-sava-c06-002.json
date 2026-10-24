@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-SAVA-C06-002",
+  "Description": "Zafaria quest In The Cold Distance (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 110,
+  "MaxGold": 110,
+  "ExperienceAmount": 3200,
+  "TrainingPoints": 0,
+  "Items": []
+}

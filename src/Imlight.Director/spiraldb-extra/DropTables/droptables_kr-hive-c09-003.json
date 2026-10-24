@@ -1,0 +1,20 @@
+{
+  "Name": "KR-HIVE-C09-003",
+  "Description": "Khrysalis quest Metastasis (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 225,
+  "MaxGold": 225,
+  "ExperienceAmount": 23250,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "589166",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

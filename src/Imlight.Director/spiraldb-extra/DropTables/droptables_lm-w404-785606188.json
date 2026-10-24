@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-785606188",
+  "Description": "Lemuria quest The Chicken's Coup (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1050,
+  "MaxGold": 1050,
+  "ExperienceAmount": 96720,
+  "TrainingPoints": 0,
+  "Items": []
+}

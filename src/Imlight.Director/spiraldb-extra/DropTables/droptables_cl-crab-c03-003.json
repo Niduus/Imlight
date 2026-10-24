@@ -1,0 +1,13 @@
+{
+  "Name": "CL-CRAB-C03-003",
+  "Description": "Celestia quest Finding the Way (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 315,
+  "MaxGold": 315,
+  "ExperienceAmount": 4600,
+  "TrainingPoints": 0,
+  "Items": []
+}

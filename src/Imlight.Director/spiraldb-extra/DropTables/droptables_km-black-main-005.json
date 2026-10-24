@@ -1,0 +1,13 @@
+{
+  "Name": "KM-BLACK-MAIN-005",
+  "Description": "Karamelle quest Down, Down to Gobbler Town (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1200,
+  "MaxGold": 1200,
+  "ExperienceAmount": 123586,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PreEM-MAIN-004",
+  "Description": "Polaris quest Shadow Tricks (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2300,
+  "MaxGold": 2300,
+  "ExperienceAmount": 441648,
+  "TrainingPoints": 0,
+  "Items": []
+}

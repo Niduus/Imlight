@@ -1,0 +1,13 @@
+{
+  "Name": "AV-DARA-C04-002",
+  "Description": "Avalon quest Stairway to Belle Regard (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 545,
+  "MaxGold": 545,
+  "ExperienceAmount": 26235,
+  "TrainingPoints": 0,
+  "Items": []
+}

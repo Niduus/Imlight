@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-763017149",
+  "Description": "Wallaru quest The Way of the Wombat (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 320,
+  "MaxGold": 320,
+  "ExperienceAmount": 109560,
+  "TrainingPoints": 0,
+  "Items": []
+}

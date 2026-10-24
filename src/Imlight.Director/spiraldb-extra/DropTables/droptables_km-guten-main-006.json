@@ -1,0 +1,13 @@
+{
+  "Name": "KM-GUTEN-MAIN-006",
+  "Description": "Karamelle quest Forest Stumps (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1400,
+  "MaxGold": 1400,
+  "ExperienceAmount": 150070,
+  "TrainingPoints": 0,
+  "Items": []
+}

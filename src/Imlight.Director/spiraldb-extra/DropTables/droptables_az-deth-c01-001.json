@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-DETH-C01-001",
+  "Description": "Azteca quest Fossil Fuel (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 625,
+  "MaxGold": 625,
+  "ExperienceAmount": 73825,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257522",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

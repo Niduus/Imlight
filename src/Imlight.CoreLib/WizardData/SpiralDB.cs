@@ -214,6 +214,9 @@ public static class SpiralDB {
             s_badgeDefinitions = badgeDefinitions;
             s_npcSeamstresses = npcSeamstresses;
 
+            // Our own quests are written in English; give them the game's own lines.
+            QuestTextKeys.ResolveAll(questTemplates);
+
             Logger.Information(
                 "SpiralDB loaded {0} files: {1} spellbooks, {2} drop tables, {3} NPC inventories, " +
                 "{4} NPC spell inventories, {5} NPC drop tables, {6} treasure card inventories, " +

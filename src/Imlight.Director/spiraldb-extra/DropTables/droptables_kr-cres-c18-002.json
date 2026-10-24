@@ -1,0 +1,20 @@
+{
+  "Name": "KR-CRES-C18-002",
+  "Description": "Khrysalis quest You Can Take It With You (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 15500,
+  "MaxGold": 15500,
+  "ExperienceAmount": 150,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "589089",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

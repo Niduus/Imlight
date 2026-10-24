@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-MAIN-001",
+  "Description": "Empyrea quest Zanadus and Don'ts (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2490,
+  "MaxGold": 2490,
+  "ExperienceAmount": 136740,
+  "TrainingPoints": 0,
+  "Items": []
+}

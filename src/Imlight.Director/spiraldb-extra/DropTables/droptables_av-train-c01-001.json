@@ -1,0 +1,13 @@
+{
+  "Name": "AV-TRAIN-C01-001",
+  "Description": "Avalon quest The Way of Wyrd (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 130,
+  "MaxGold": 130,
+  "ExperienceAmount": 5730,
+  "TrainingPoints": 1,
+  "Items": []
+}

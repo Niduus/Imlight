@@ -1,0 +1,13 @@
+{
+  "Name": "WC-LIFE-C13-001",
+  "Description": "Avalon quest Let Your Soul Grow (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 9230,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-915715142",
+  "Description": "Lemuria quest Down to Earth Again (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 875,
+  "MaxGold": 875,
+  "ExperienceAmount": 96720,
+  "TrainingPoints": 0,
+  "Items": []
+}

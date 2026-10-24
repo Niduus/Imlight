@@ -1,0 +1,13 @@
+{
+  "Name": "KM-FARM-MAIN-005",
+  "Description": "Karamelle quest Something Wonky This Way Comes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1015,
+  "MaxGold": 1015,
+  "ExperienceAmount": 123587,
+  "TrainingPoints": 0,
+  "Items": []
+}

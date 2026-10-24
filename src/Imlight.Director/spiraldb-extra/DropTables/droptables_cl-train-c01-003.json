@@ -1,0 +1,13 @@
+{
+  "Name": "CL-TRAIN-C01-003",
+  "Description": "Celestia quest Time for Tea (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 75,
+  "MaxGold": 75,
+  "ExperienceAmount": 1790,
+  "TrainingPoints": 1,
+  "Items": []
+}

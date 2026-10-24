@@ -1,0 +1,20 @@
+{
+  "Name": "AV-CATA-C04-001",
+  "Description": "Avalon quest Hallowed Be Thy Name (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 315,
+  "MaxGold": 315,
+  "ExperienceAmount": 18295,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635427",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

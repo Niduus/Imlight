@@ -1,0 +1,13 @@
+{
+  "Name": "EM-OUTER-MAIN-002",
+  "Description": "Empyrea quest Dread Shed (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2190,
+  "MaxGold": 2190,
+  "ExperienceAmount": 134448,
+  "TrainingPoints": 0,
+  "Items": []
+}

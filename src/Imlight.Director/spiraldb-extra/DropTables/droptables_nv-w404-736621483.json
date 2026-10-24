@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-736621483",
+  "Description": "Novus quest Bad to the Marleybone (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 460,
+  "MaxGold": 460,
+  "ExperienceAmount": 156230,
+  "TrainingPoints": 0,
+  "Items": []
+}

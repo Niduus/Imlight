@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-TIER-C02-003",
+  "Description": "Azteca quest Dead Man's Will (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 995,
+  "MaxGold": 995,
+  "ExperienceAmount": 69935,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730234",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

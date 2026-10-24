@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1717143347",
+  "Description": "Lemuria quest The Fane of the Ancient One (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2200,
+  "MaxGold": 2200,
+  "ExperienceAmount": 233740,
+  "TrainingPoints": 0,
+  "Items": []
+}

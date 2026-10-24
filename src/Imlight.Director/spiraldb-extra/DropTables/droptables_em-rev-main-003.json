@@ -1,0 +1,13 @@
+{
+  "Name": "EM-REV-MAIN-003",
+  "Description": "Empyrea quest 'Till Wizard Voices Wake Us (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 450,
+  "MaxGold": 450,
+  "ExperienceAmount": 28450,
+  "TrainingPoints": 0,
+  "Items": []
+}

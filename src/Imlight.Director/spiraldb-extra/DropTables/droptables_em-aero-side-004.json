@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-SIDE-004",
+  "Description": "Empyrea quest The Thrill is in the Chase (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20500,
+  "MaxGold": 20500,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

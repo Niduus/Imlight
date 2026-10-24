@@ -1,0 +1,13 @@
+{
+  "Name": "EM-INNER-SIDE-003",
+  "Description": "Empyrea quest The Man with the Golden Voice (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1000,
+  "MaxGold": 1000,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

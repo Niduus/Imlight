@@ -1,0 +1,26 @@
+{
+  "Name": "KR-BAST-C04-001",
+  "Description": "Khrysalis quest Lair of the White Worm (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 695,
+  "MaxGold": 695,
+  "ExperienceAmount": 71675,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1248056",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

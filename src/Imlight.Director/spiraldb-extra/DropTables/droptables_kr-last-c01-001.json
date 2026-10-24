@@ -1,0 +1,13 @@
+{
+  "Name": "KR-LAST-C01-001",
+  "Description": "Khrysalis quest Mouse Tracks (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 800,
+  "MaxGold": 800,
+  "ExperienceAmount": 73180,
+  "TrainingPoints": 0,
+  "Items": []
+}

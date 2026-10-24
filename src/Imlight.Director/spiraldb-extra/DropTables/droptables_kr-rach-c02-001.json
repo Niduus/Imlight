@@ -1,0 +1,13 @@
+{
+  "Name": "KR-RACH-C02-001",
+  "Description": "Khrysalis quest Bees in their Mouths (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1200,
+  "MaxGold": 1200,
+  "ExperienceAmount": 123970,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-915715334",
+  "Description": "Lemuria quest To the Rescue! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1725,
+  "MaxGold": 1725,
+  "ExperienceAmount": 161200,
+  "TrainingPoints": 0,
+  "Items": []
+}

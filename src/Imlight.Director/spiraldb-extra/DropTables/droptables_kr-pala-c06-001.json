@@ -1,0 +1,20 @@
+{
+  "Name": "KR-PALA-C06-001",
+  "Description": "Khrysalis quest Light and Shadow (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 600,
+  "MaxGold": 600,
+  "ExperienceAmount": 61990,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1203346",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

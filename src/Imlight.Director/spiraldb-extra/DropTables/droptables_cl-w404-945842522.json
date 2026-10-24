@@ -1,0 +1,13 @@
+{
+  "Name": "CL-W404-945842522",
+  "Description": "Celestia quest A Star is Born (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 70,
+  "MaxGold": 70,
+  "ExperienceAmount": 797,
+  "TrainingPoints": 0,
+  "Items": []
+}

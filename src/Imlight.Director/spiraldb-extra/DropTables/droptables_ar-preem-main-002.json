@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PreEM-MAIN-002",
+  "Description": "Empyrea quest Sparck's Ark (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1760,
+  "MaxGold": 1760,
+  "ExperienceAmount": 89652,
+  "TrainingPoints": 0,
+  "Items": []
+}

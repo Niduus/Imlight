@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1589241663",
+  "Description": "Darkmoor quest The Recent Victim (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3170,
+  "MaxGold": 3170,
+  "ExperienceAmount": 430320,
+  "TrainingPoints": 0,
+  "Items": []
+}

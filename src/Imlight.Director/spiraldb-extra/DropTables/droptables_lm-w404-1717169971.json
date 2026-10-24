@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1717169971",
+  "Description": "Lemuria quest Savage Science (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1350,
+  "MaxGold": 1350,
+  "ExperienceAmount": 137020,
+  "TrainingPoints": 0,
+  "Items": []
+}

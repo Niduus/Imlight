@@ -1,0 +1,26 @@
+{
+  "Name": "ZF-BAOB-C14-001",
+  "Description": "Zafaria quest Off the Boil (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 190,
+  "MaxGold": 190,
+  "ExperienceAmount": 5335,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106965",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

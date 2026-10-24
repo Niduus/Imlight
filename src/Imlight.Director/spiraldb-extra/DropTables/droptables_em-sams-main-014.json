@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-014",
+  "Description": "Empyrea quest Save Our Scrolls (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2280,
+  "MaxGold": 2280,
+  "ExperienceAmount": 455456,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AV-CAER-C04-003",
+  "Description": "Avalon quest Great Wild Wood (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 575,
+  "MaxGold": 575,
+  "ExperienceAmount": 24165,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635211",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C11-001",
+  "Description": "Azteca quest Apocalypto Now (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 515,
+  "MaxGold": 515,
+  "ExperienceAmount": 31765,
+  "TrainingPoints": 0,
+  "Items": []
+}

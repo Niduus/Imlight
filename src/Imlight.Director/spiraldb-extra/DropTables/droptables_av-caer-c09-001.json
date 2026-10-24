@@ -1,0 +1,13 @@
+{
+  "Name": "AV-CAER-C09-001",
+  "Description": "Avalon quest 'Twas Brillig (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 475,
+  "MaxGold": 475,
+  "ExperienceAmount": 19335,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AV-HIGH-C02-003",
+  "Description": "Avalon quest Every Rose Has Its Thorn (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1000,
+  "MaxGold": 1000,
+  "ExperienceAmount": 40510,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "635357",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

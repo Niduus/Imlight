@@ -1,0 +1,13 @@
+{
+  "Name": "EM-INNER-MAIN-009",
+  "Description": "Empyrea quest Full Steam Ahead (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 620,
+  "MaxGold": 620,
+  "ExperienceAmount": 50967,
+  "TrainingPoints": 0,
+  "Items": []
+}

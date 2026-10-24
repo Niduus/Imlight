@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FROZ-MAIN-007",
+  "Description": "Polaris quest Trial of Courage (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1180,
+  "MaxGold": 1180,
+  "ExperienceAmount": 179530,
+  "TrainingPoints": 0,
+  "Items": []
+}

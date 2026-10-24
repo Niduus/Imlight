@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERI-S-MAIN-003",
+  "Description": "Empyrea quest Crusher? We Barely Know Her! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1390,
+  "MaxGold": 1390,
+  "ExperienceAmount": 64026,
+  "TrainingPoints": 0,
+  "Items": []
+}

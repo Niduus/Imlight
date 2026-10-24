@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-ZOCA-C24-001",
+  "Description": "Azteca quest Smoking Mirror, Lurking Zombie (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 705,
+  "MaxGold": 705,
+  "ExperienceAmount": 47585,
+  "TrainingPoints": 0,
+  "Items": []
+}

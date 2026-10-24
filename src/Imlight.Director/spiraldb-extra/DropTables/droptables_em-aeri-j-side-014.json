@@ -1,0 +1,20 @@
+{
+  "Name": "EM-AERI-J-SIDE-014",
+  "Description": "Empyrea quest Fight For Your Right (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 5000,
+  "MaxGold": 5000,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1421954",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

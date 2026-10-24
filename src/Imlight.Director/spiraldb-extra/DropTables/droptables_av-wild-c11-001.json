@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WILD-C11-001",
+  "Description": "Avalon quest Out Of The Woods (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 320,
+  "MaxGold": 320,
+  "ExperienceAmount": 18215,
+  "TrainingPoints": 0,
+  "Items": []
+}

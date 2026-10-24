@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-1780226535",
+  "Description": "Wallaru quest Talk of the Town (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 440,
+  "MaxGold": 440,
+  "ExperienceAmount": 149400,
+  "TrainingPoints": 0,
+  "Items": []
+}

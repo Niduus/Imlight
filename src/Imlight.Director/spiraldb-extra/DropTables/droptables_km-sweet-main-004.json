@@ -1,0 +1,13 @@
+{
+  "Name": "KM-SWEET-MAIN-004",
+  "Description": "Karamelle quest Holey Factory Floor! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1405,
+  "MaxGold": 1405,
+  "ExperienceAmount": 185381,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERI-S-MAIN-007",
+  "Description": "Empyrea quest Khan Found It! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 660,
+  "MaxGold": 660,
+  "ExperienceAmount": 41202,
+  "TrainingPoints": 0,
+  "Items": []
+}

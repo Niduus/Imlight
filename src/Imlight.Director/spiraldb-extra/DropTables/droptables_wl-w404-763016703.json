@@ -1,0 +1,13 @@
+{
+  "Name": "WL-W404-763016703",
+  "Description": "Wallaru quest Perchance to Scream (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 350,
+  "MaxGold": 350,
+  "ExperienceAmount": 119520,
+  "TrainingPoints": 0,
+  "Items": []
+}

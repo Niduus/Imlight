@@ -1,0 +1,13 @@
+{
+  "Name": "AV-SPELL-C01-001",
+  "Description": "Avalon quest No Pain, No Agravaine (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 415,
+  "MaxGold": 415,
+  "ExperienceAmount": 16715,
+  "TrainingPoints": 0,
+  "Items": []
+}

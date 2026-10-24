@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C15-001",
+  "Description": "Khrysalis quest That's Not A Knife... (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 420,
+  "MaxGold": 420,
+  "ExperienceAmount": 34740,
+  "TrainingPoints": 0,
+  "Items": []
+}

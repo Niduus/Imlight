@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1589217087",
+  "Description": "Darkmoor quest These Mobs Are Revolting (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1590,
+  "MaxGold": 1590,
+  "ExperienceAmount": 215160,
+  "TrainingPoints": 0,
+  "Items": []
+}

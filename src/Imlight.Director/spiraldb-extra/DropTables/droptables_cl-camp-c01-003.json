@@ -1,0 +1,26 @@
+{
+  "Name": "CL-CAMP-C01-003",
+  "Description": "Celestia quest Fixing a Hole (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 245,
+  "MaxGold": 245,
+  "ExperienceAmount": 3760,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106938",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

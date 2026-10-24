@@ -1,0 +1,13 @@
+{
+  "Name": "DM-W404-1393920463",
+  "Description": "Darkmoor quest Scholhouse Rock (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1980,
+  "MaxGold": 1980,
+  "ExperienceAmount": 268950,
+  "TrainingPoints": 0,
+  "Items": []
+}

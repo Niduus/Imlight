@@ -1,0 +1,13 @@
+{
+  "Name": "KR-RACH-C05-003",
+  "Description": "Khrysalis quest Twelve Toes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1070,
+  "MaxGold": 1070,
+  "ExperienceAmount": 110415,
+  "TrainingPoints": 0,
+  "Items": []
+}

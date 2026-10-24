@@ -1,0 +1,13 @@
+{
+  "Name": "MR-YAKH-MAIN-005",
+  "Description": "Mirage quest The Legend of Babble (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 600,
+  "MaxGold": 600,
+  "ExperienceAmount": 72500,
+  "TrainingPoints": 0,
+  "Items": []
+}

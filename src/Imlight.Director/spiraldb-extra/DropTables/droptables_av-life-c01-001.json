@@ -1,0 +1,20 @@
+{
+  "Name": "AV-LIFE-C01-001",
+  "Description": "Avalon quest Plant Life (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 470,
+  "MaxGold": 470,
+  "ExperienceAmount": 55370,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257521",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

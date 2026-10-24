@@ -1,0 +1,13 @@
+{
+  "Name": "AV-WYRD-C08-007",
+  "Description": "Avalon quest Where The Demons Dwell (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 490,
+  "MaxGold": 490,
+  "ExperienceAmount": 21730,
+  "TrainingPoints": 0,
+  "Items": []
+}

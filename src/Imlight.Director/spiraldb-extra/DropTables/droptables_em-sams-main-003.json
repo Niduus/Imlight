@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-MAIN-003",
+  "Description": "Empyrea quest Wheel in the Sky (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 675,
+  "MaxGold": 675,
+  "ExperienceAmount": 53571,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FROZ-MAIN-004",
+  "Description": "Polaris quest Icefall (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 680,
+  "MaxGold": 680,
+  "ExperienceAmount": 102590,
+  "TrainingPoints": 0,
+  "Items": []
+}

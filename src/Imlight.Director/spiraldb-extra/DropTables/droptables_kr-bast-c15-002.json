@@ -1,0 +1,13 @@
+{
+  "Name": "KR-BAST-C15-002",
+  "Description": "Khrysalis quest Don't Slay the Messenger! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 650,
+  "MaxGold": 650,
+  "ExperienceAmount": 53560,
+  "TrainingPoints": 0,
+  "Items": []
+}

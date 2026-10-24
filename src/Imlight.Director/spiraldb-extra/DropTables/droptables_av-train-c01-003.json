@@ -1,0 +1,13 @@
+{
+  "Name": "AV-TRAIN-C01-003",
+  "Description": "Avalon quest The Art of Magic (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 415,
+  "MaxGold": 415,
+  "ExperienceAmount": 18210,
+  "TrainingPoints": 1,
+  "Items": []
+}

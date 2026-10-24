@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-MAIN-014",
+  "Description": "Polaris quest The Empress and the Rat (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 360,
+  "MaxGold": 360,
+  "ExperienceAmount": 76980,
+  "TrainingPoints": 0,
+  "Items": []
+}

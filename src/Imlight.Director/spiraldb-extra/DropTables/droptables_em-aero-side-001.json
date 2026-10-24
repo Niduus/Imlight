@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-SIDE-001",
+  "Description": "Empyrea quest I Ain't Afraid of No Goats (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 4550,
+  "MaxGold": 4550,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

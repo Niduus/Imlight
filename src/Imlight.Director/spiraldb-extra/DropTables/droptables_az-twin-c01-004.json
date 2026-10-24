@@ -1,0 +1,38 @@
+{
+  "Name": "AZ-TWIN-C01-004",
+  "Description": "Azteca quest Explosions in the Sky (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 410,
+  "MaxGold": 410,
+  "ExperienceAmount": 34740,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220266",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AR-POL-MAIN-007",
+  "Description": "Polaris quest Ancient Insights (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 360,
+  "MaxGold": 360,
+  "ExperienceAmount": 71940,
+  "TrainingPoints": 0,
+  "Items": []
+}

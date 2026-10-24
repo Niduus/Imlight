@@ -1,0 +1,13 @@
+{
+  "Name": "KM-GOBB-MAIN-008",
+  "Description": "Karamelle quest Nothingburger Extra Cheese (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1160,
+  "MaxGold": 1160,
+  "ExperienceAmount": 167726,
+  "TrainingPoints": 0,
+  "Items": []
+}

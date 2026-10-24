@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-SAVA-C09-002",
+  "Description": "Zafaria quest Meddling Wizards (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 370,
+  "MaxGold": 370,
+  "ExperienceAmount": 8800,
+  "TrainingPoints": 0,
+  "Items": []
+}

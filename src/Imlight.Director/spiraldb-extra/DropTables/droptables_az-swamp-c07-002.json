@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SWAMP-C07-002",
+  "Description": "Azteca quest Raise it Up (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 235,
+  "MaxGold": 235,
+  "ExperienceAmount": 14525,
+  "TrainingPoints": 0,
+  "Items": []
+}

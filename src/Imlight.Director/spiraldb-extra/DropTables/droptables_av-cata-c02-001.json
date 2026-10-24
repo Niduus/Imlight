@@ -1,0 +1,32 @@
+{
+  "Name": "AV-CATA-C02-001",
+  "Description": "Avalon quest Another Life (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 480,
+  "MaxGold": 480,
+  "ExperienceAmount": 25155,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "258583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

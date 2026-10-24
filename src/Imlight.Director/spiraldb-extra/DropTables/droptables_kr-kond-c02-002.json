@@ -1,0 +1,13 @@
+{
+  "Name": "KR-KOND-C02-002",
+  "Description": "Khrysalis quest No Country for Old Mice! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 300,
+  "MaxGold": 300,
+  "ExperienceAmount": 30995,
+  "TrainingPoints": 0,
+  "Items": []
+}

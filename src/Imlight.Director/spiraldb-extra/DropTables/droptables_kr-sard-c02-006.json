@@ -1,0 +1,13 @@
+{
+  "Name": "KR-SARD-C02-006",
+  "Description": "Khrysalis quest Can't Go Home Again (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 826,
+  "MaxGold": 826,
+  "ExperienceAmount": 85420,
+  "TrainingPoints": 0,
+  "Items": []
+}

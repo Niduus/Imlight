@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-CLOUD-C05-002",
+  "Description": "Azteca quest Attractive Force (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 515,
+  "MaxGold": 515,
+  "ExperienceAmount": 36685,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,38 @@
+{
+  "Name": "AZ-CENO-C02-001",
+  "Description": "Azteca quest Black Orchid (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 660,
+  "MaxGold": 660,
+  "ExperienceAmount": 37685,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220201",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220219",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220219",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

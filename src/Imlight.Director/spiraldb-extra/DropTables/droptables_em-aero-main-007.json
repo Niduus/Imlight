@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-MAIN-007",
+  "Description": "Empyrea quest Where the Blue-ffalo Roam... (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 910,
+  "MaxGold": 910,
+  "ExperienceAmount": 109618,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "CL-LAND-C04-002",
+  "Description": "Celestia quest Moles Gone Wild (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 180,
+  "MaxGold": 180,
+  "ExperienceAmount": 2985,
+  "TrainingPoints": 0,
+  "Items": []
+}

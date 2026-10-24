@@ -1,0 +1,13 @@
+{
+  "Name": "PL-BORE-SIDE-001",
+  "Description": "Polaris quest ...Or Get Busy Dying (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 680,
+  "MaxGold": 680,
+  "ExperienceAmount": 125680,
+  "TrainingPoints": 0,
+  "Items": []
+}

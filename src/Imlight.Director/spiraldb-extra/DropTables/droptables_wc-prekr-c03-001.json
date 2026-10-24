@@ -1,0 +1,13 @@
+{
+  "Name": "WC-PreKR-C03-001",
+  "Description": "Khrysalis quest Proof of Life (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 420,
+  "MaxGold": 420,
+  "ExperienceAmount": 34740,
+  "TrainingPoints": 0,
+  "Items": []
+}

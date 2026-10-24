@@ -1,0 +1,13 @@
+{
+  "Name": "WC-midMR-MAIN-002",
+  "Description": "Mirage quest Darkkettle's Dark Business (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2000,
+  "MaxGold": 2000,
+  "ExperienceAmount": 266500,
+  "TrainingPoints": 0,
+  "Items": []
+}

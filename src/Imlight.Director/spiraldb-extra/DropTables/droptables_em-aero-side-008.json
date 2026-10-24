@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-SIDE-008",
+  "Description": "Empyrea quest This Insubstantial Pageant (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20600,
+  "MaxGold": 20600,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-SWAMP-C06-001",
+  "Description": "Azteca quest No Time to Cry (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 625,
+  "MaxGold": 625,
+  "ExperienceAmount": 37225,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AZ-ZOCA-C15-001",
+  "Description": "Azteca quest Song of the Swamp (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 850,
+  "MaxGold": 850,
+  "ExperienceAmount": 70930,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "730557",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

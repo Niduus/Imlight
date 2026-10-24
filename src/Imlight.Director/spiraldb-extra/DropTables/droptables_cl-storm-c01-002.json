@@ -1,0 +1,13 @@
+{
+  "Name": "CL-STORM-C01-002",
+  "Description": "Celestia quest Kraken Up (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 380,
+  "MaxGold": 380,
+  "ExperienceAmount": 12660,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-PITCH-C07-001",
+  "Description": "Azteca quest Let the Only Sound Be the Overflow (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 55,
+  "MaxGold": 55,
+  "ExperienceAmount": 5155,
+  "TrainingPoints": 0,
+  "Items": []
+}

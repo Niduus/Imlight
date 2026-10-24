@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1534460223",
+  "Description": "Lemuria quest To Forgive, Dasein (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 400,
+  "MaxGold": 400,
+  "ExperienceAmount": 20150,
+  "TrainingPoints": 0,
+  "Items": []
+}

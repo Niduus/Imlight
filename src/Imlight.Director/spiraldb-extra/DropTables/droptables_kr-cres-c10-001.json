@@ -1,0 +1,13 @@
+{
+  "Name": "KR-CRES-C10-001",
+  "Description": "Khrysalis quest Curse in a Dead Bear's Eye (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 920,
+  "MaxGold": 920,
+  "ExperienceAmount": 94915,
+  "TrainingPoints": 0,
+  "Items": []
+}
