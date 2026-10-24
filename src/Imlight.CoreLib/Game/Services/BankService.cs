@@ -39,10 +39,12 @@
  * Last Updated: 10/14/2026
  */
 
+using System;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
+using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -52,6 +54,10 @@ namespace Imlight.CoreLib.Game.Services;
 internal class BankService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private ulong _openBankEntityId;
+
+    // When the Item Finder last got the bank with its opening, so a request of the window right after is not sent it twice.
+    private static readonly TimeSpan ItemFinderBankReuse = TimeSpan.FromSeconds(10);
+    private DateTime _itemFinderOpenedUtc = DateTime.MinValue;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new BankService(parentActor));
@@ -129,8 +135,43 @@ internal class BankService(SessionActor sessionActor) : MessageService(sessionAc
         => CreateRequests().StreamBankFor(new WIZARD_12_PROTOCOL.MSG_DELIVERYINVOICEREQUESTBANK(), includeShared: true);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK))]
-    private void ReceiveItemFinderRequestBank(WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK message)
-        => CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK(), includeShared: true);
+    private void ReceiveItemFinderRequestBank(WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK message) {
+        // The window was just given the bank when it opened (ReceiveBeginItemFinder); only the end marker again.
+        if (DateTime.UtcNow - _itemFinderOpenedUtc < ItemFinderBankReuse) {
+            SessionActor.ActorRef.Tell(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK());
+
+            return;
+        }
+
+        CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK(), includeShared: true);
+    }
+
+    /// <summary>
+    /// Opens the game's Item Finder window (a Backpack Butler, a bank or the itemfinder command asked) and fills it:
+    /// the bank and shared bank, then the attic and every house, then the end of the houses, which closes the
+    /// window's "please wait" (Game/Housing/HouseItemFinder). The backpack the client has already.
+    /// </summary>
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_BEGINITEMFINDER))]
+    private void ReceiveBeginItemFinder(CHARACTER_103_PROTOCOL.MSG_BEGINITEMFINDER message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        Logger.Information("Item Finder: opening the window for {CharId} (object {ObjectId}).", Logger.Args(wizard.CharId, message.EntityId));
+        SessionActor.ActorRef.Tell(new WIZARD2_53_PROTOCOL.MSG_OPENITEMFINDER { GlobalID = message.EntityId });
+        try {
+            CreateRequests().StreamBankFor(new WIZARD2_53_PROTOCOL.MSG_ITEMFINDERREQUESTBANK(), includeShared: true);
+            _itemFinderOpenedUtc = DateTime.UtcNow;
+        }
+        catch (Exception exception) {
+            Logger.Error("Item Finder: the bank of {CharId} could not be sent: {Error}", Logger.Args(wizard.CharId, exception));
+        }
+
+        foreach (var housing in HouseItemFinder.Messages(wizard)) {
+            SessionActor.ActorRef.Tell(housing);
+        }
+    }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_DONESHOPPING))]
     private void ReceiveDoneShopping() {

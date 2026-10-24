@@ -413,7 +413,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         // A moved bank chest takes its bank along.
-        if (HouseBanks.IsBankItem(change.Item.TemplateId)) {
+        if (HouseBanks.IsServiceItem(change.Item.TemplateId)) {
             HouseBanks.Remove(SessionActor.GetZoneActor(), change.GidId);
             HouseBanks.Spawn(SessionActor.GetZoneActor(), change.GidId, change.Item);
         }

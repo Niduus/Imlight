@@ -484,6 +484,22 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by an Item Finder object (a placed Backpack Butler or a bank) or the itemfinder command to the BankService
+    /// of the player: it opens the game's Item Finder window and fills it with the bank, the attic and the houses.
+    /// </summary>
+    public sealed class MSG_BEGINITEMFINDER : IServerMessage {
+
+        public byte MessageOrder { get; } = 78;
+        public byte ServiceID { get; } = 103;
+
+        /// <summary>
+        /// The global id of the object the window was opened from; 0 for the command.
+        /// </summary>
+        public ulong EntityId;
+
+    }
+
+    /// <summary>
     /// Sent by the EquipmentService to the RentalService after a rental item was equipped: the timer of the rental
     /// starts if it has not started yet.
     /// </summary>

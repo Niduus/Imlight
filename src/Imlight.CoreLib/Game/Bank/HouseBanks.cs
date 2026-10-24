@@ -24,6 +24,8 @@
  * Strongbox, Chest, Trunk, Vault and Box) are furniture, which the client draws from the house blob, so the
  * server has no object to offer the bank from. Wherever one stands, the dorm bank (WC_RVW-Bank, an invisible NPC
  * that stands on the dorm's chest) is put on it, the way HouseTrainers puts a trainer on a trainer tome.
+ * A placed Backpack Butler (InventoryFinderNPC, any template with an ItemFinderBehavior) gets the same invisible NPC
+ * with a HouseItemFinder_ tag, which offers only the Item Finder (InteractItemFinderComponent).
  *
  * USAGE EXAMPLE:
  * HouseBanks.SpawnAll(zoneActor, house);           // a player enters the house
@@ -33,17 +35,18 @@
  * NOTE:
  * A chest is any placed item whose template's object name is in BankConfig.ObjectNames and which is furniture,
  * not an NPC. Every bank opens the bank of the player who uses it, also in another player's house, like live.
- * Nothing is spawned while the bank is off (BankConfig.IsEnabled).
+ * No bank is spawned while the bank is off (BankConfig.IsEnabled); a Butler always gets its Item Finder.
  *
  * TODO:
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/21/2026
+ * Last Updated: 10/24/2026
  */
 
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
@@ -61,6 +64,10 @@ namespace Imlight.CoreLib.Game.Bank;
 internal static class HouseBanks {
 
     private const string TagPrefix = "HouseBank_";
+    private const string ItemFinderTagPrefix = "HouseItemFinder_";
+
+    // Template id to whether it is an Item Finder (the Backpack Butler).
+    private static readonly ConcurrentDictionary<uint, bool> s_itemFinders = new();
 
     // Template id to object name of the furniture templates seen, so a house with many items reads each template once.
     private static readonly ConcurrentDictionary<uint, string> s_furnitureNames = new();
@@ -83,11 +90,33 @@ internal static class HouseBanks {
     }
 
     /// <summary>
-    /// Whether a zone tag is the tag of a bank on a chest.
+    /// Whether a placed item is an Item Finder, the Backpack Butler.
     /// </summary>
-    internal static bool IsBankTag(string zoneTag) => zoneTag?.StartsWith(TagPrefix, StringComparison.Ordinal) == true;
+    /// <param name="templateId">The template of the placed item.</param>
+    /// <returns>True when the template carries an ItemFinderBehavior.</returns>
+    internal static bool IsItemFinderItem(uint templateId)
+        => templateId != 0 && s_itemFinders.GetOrAdd(templateId, id => CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate item
+            && (item.m_behaviors ?? []).Any(behavior => behavior is ItemFinderBehaviorTemplate));
+
+    /// <summary>
+    /// Whether a placed item gets an invisible NPC from here: a bank chest or a Backpack Butler.
+    /// </summary>
+    internal static bool IsServiceItem(uint templateId) => IsBankItem(templateId) || IsItemFinderItem(templateId);
+
+    /// <summary>
+    /// Whether a zone tag is the tag of a bank on a chest or of the Item Finder on a Butler.
+    /// </summary>
+    internal static bool IsBankTag(string zoneTag)
+        => zoneTag?.StartsWith(TagPrefix, StringComparison.Ordinal) == true || IsItemFinderTag(zoneTag);
+
+    /// <summary>
+    /// Whether a zone tag is the tag of the Item Finder on a Butler.
+    /// </summary>
+    internal static bool IsItemFinderTag(string zoneTag) => zoneTag?.StartsWith(ItemFinderTagPrefix, StringComparison.Ordinal) == true;
 
     private static string Tag(uint gidId) => TagPrefix + gidId;
+
+    private static string ItemFinderTag(uint gidId) => ItemFinderTagPrefix + gidId;
 
     /// <summary>
     /// Puts the bank on a placed bank chest. A bank already standing there is kept.
@@ -96,6 +125,16 @@ internal static class HouseBanks {
     /// <param name="gidId">The GIDID of the placed item.</param>
     /// <param name="item">The placed item.</param>
     internal static void Spawn(IActorRef zone, uint gidId, PlacedItem item) {
+        if (zone is not null && item is not null && IsItemFinderItem(item.TemplateId)) {
+            Logger.Information("Item Finder: Butler {TemplateId} (house object {GidId}) gets the Item Finder at {X}, {Y}, {Z}.",
+                Logger.Args(item.TemplateId, gidId, item.X, item.Y, item.Z));
+            zone.Tell(new SERVICE_101_PROTOCOL.MSG_SPAWNHOUSETRAINER {
+                Tag = ItemFinderTag(gidId), X = item.X, Y = item.Y, Z = item.Z, Yaw = item.Yaw,
+            }, ActorRefs.NoSender);
+
+            return;
+        }
+
         if (zone is null || item is null || !IsBankItem(item.TemplateId) || !BankConfig.IsEnabled) {
             return;
         }
@@ -112,8 +151,10 @@ internal static class HouseBanks {
     /// </summary>
     /// <param name="zone">The house zone.</param>
     /// <param name="gidId">The GIDID of the placed item.</param>
-    internal static void Remove(IActorRef zone, uint gidId)
-        => zone?.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT { ObjectName = Tag(gidId) }, ActorRefs.NoSender);
+    internal static void Remove(IActorRef zone, uint gidId) {
+        zone?.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT { ObjectName = Tag(gidId) }, ActorRefs.NoSender);
+        zone?.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT { ObjectName = ItemFinderTag(gidId) }, ActorRefs.NoSender);
+    }
 
     /// <summary>
     /// Puts a bank on every bank chest of a house.

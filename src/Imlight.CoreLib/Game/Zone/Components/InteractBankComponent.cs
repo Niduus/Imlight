@@ -79,13 +79,16 @@ internal sealed class InteractBankComponent(ZoneEntity entity) : ZoneEntityCompo
                 Entity.Zone?.ZoneName));
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => [
-            new WizBankingOption {
-                m_displayKey = DisplayKey,
-                m_iconKey = "Banking",
-                m_serviceName = ServiceName,
-            }
-        ];
+        // The invisible bank on a Backpack Butler only lends it its Item Finder (InteractItemFinderComponent).
+        => HouseBanks.IsItemFinderTag(Entity.Info?.m_zoneTag)
+            ? []
+            : [
+                new WizBankingOption {
+                    m_displayKey = DisplayKey,
+                    m_iconKey = "Banking",
+                    m_serviceName = ServiceName,
+                }
+            ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         // The bank data lives with the session, which streams it and then opens the window.

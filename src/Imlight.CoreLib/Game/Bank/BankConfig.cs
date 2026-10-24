@@ -61,6 +61,7 @@ internal static class BankConfig {
     private const string ExpandElixirAmountKey = "Bank.ExpandElixirAmount";
     private const string MaxBankLimitKey = "Bank.MaxBankItems";
     private const string ChestNpcKey = "Bank.ChestNpc";
+    private const string ItemFinderAtBanksKey = "Bank.ItemFinderAtBanks";
     private const uint DormBankTemplateId = 44162;
 
     private static int s_warnedDisabled;
@@ -122,6 +123,11 @@ internal static class BankConfig {
     internal static uint ChestNpcTemplateId => ConfigurationManager.GetValue(ChestNpcKey, DormBankTemplateId) is var id && id != 0
         ? id
         : DormBankTemplateId;
+
+    /// <summary>
+    /// Whether the banks also offer the Item Finder next to the bank. A placed Backpack Butler always offers it.
+    /// </summary>
+    internal static bool ItemFinderAtBanks => ConfigurationManager.GetValue(ItemFinderAtBanksKey, true);
 
     /// <summary>
     /// Whether the bank is on: both default capacities are set above 0.
