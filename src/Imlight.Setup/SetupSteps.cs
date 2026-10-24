@@ -504,7 +504,8 @@ internal sealed class SetupSteps : IDisposable {
 
     private void InstallServer(string build) {
         var existingConfig = File.Exists(ConfigFile);
-        CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini"]);
+        // DropOdds.json is tuned by hand on this PC (the drop chances of every Wizard404 drop table), so an update keeps it.
+        CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini", "spiraldb-extra/DropOdds.json"]);
         if (!File.Exists(Path.Combine(build, ServerSource.STAMP_FILE))) {
             // An older build's stamp would say the server is still that version.
             File.Delete(Path.Combine(ServerFolder, ServerSource.STAMP_FILE));

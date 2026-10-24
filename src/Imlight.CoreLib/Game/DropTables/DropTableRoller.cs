@@ -107,9 +107,16 @@ public static class DropTableRoller {
         };
 
         // Items don't have drop chance, only the table itself does.
-        // Roll that chance to see if we get any rewards at all.
+        // Roll that chance to see if we get any rewards at all. A table with Odds takes its chance from DropOdds.json;
+        // Tamed Drops' odds for its kind of item then multiply it, as each such table holds one kind.
+        var chance = DropOdds.ChanceOf(dropTable);
+        if (chanceScale is not null && !string.IsNullOrWhiteSpace(dropTable.Odds)
+            && dropTable.Items?.Find(item => !string.IsNullOrEmpty(item.ItemId)) is { } first) {
+            chance = Math.Clamp(chance * Math.Max(0, chanceScale(first)), 0, 1);
+        }
+
         var rollValue = random.NextDouble();
-        if (rollValue > dropTable.RollChance) {
+        if (rollValue > chance) {
             // Failed to enter table, return empty result
             return result;
         }

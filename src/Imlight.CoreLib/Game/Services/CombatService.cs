@@ -220,7 +220,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         // TODO: real mob drops. Every mob drops only gold today: the client names each mob's loot tables
         // (WizGameObjectTemplate.m_lootTable, about 2,225 names such as MS-Level-40-42) but not what is in them, and
         // SpiralDB has no NpcDropTable data. Niduus allows Wizard101 Central only boss by boss (2026-10-21: Malistaire the
-        // Undying, spiraldb-extra/NpcDropTable).
+        // Undying, spiraldb-extra/NpcDropTable). The housing gauntlets' creatures have theirs from Wizard404 (2026-10-24:
+        // spiraldb-extra/NpcDropTable and DropTables/w404-*, their chances in DropOdds.json).
         foreach (var key in defeatedMobTemplateIds) {
             // A custom (Customs.cs) drops its own Drops when it names any, else its creature's.
             // A boss of the Bosses tab (BossOverrides) can name its own Drops too.

@@ -28,6 +28,12 @@ public class DropTable {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public double RollChance { get; set; } = 1.0;
+
+    /// <summary>
+    /// A rank and kind of drop ("Boss/Gear"): the table rolls at spiraldb-extra/DropOdds.json's percent for it
+    /// (Game/DropTables/DropOdds.cs), and RollChance only counts while that file has no such entry. Null: RollChance.
+    /// </summary>
+    public string Odds { get; set; } = null;
     public int Weight { get; set; } = 100;
     public double NoneChance { get; set; } = 0.0;
     public double PityCounter { get; set; } = 0.0;

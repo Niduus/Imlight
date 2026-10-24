@@ -446,6 +446,10 @@ internal sealed partial class ManagerWindow {
         var title = draft.File is null ? (draft.CopiedFrom.Length > 0 ? $"A copy of {draft.CopiedFrom}" : "New drop table") : $"Drop table {draft.Name}";
         var where = draft.File is null ? "It is saved to spiraldb-extra/DropTables when you press Save the table."
             : $"Saved in spiraldb-extra/DropTables/{Path.GetFileName(draft.File)}.";
+        // A Wizard404 gauntlet table takes its chance from DropOdds.json, so its own chance box only counts without one.
+        if (BossChanges.FindIn(draft.Original, "Odds") is JsonValue odds && odds.ToString() is { Length: > 0 } oddsKey) {
+            where += $" Its chance comes from spiraldb-extra/DropOdds.json ({oddsKey}); the chance here counts only if that file has no {oddsKey}.";
+        }
 
         return new Border {
             Margin = new Thickness(0, 12, 0, 0),

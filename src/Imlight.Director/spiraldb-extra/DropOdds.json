@@ -1,0 +1,14 @@
+{
+  // How often each kind of drop rolls, in percent, by the creature's rank (Wizard404's Boss, Elite or Normal).
+  // Wizard404 lists what each gauntlet creature drops but not how often, so these are our own defaults: a table
+  // whose Odds is "Boss/Gear" rolls at Boss Gear's percent and, when it does, gives one of its items. A creature has
+  // one such table per game loot table and kind, so a boss with two gear tables rolls gear twice.
+  // Change a number and it counts from the next battle (no restart). Scale multiplies every percent (2 = twice as often).
+  // Tamed Drops (bosses) then multiplies these by its tier's junk and other odds.
+  "Scale": 1.0,
+  "Odds": {
+    "Boss":   { "Gear": 30, "Pet": 10, "Mount": 3,   "Jewel": 25, "TreasureCard": 50, "Reagent": 60, "Snack": 40, "Seed": 20, "Housing": 20, "Elixir": 15 },
+    "Elite":  { "Gear": 12, "Pet": 4,  "Mount": 1,   "Jewel": 10, "TreasureCard": 25, "Reagent": 35, "Snack": 25, "Seed": 10, "Housing": 8,  "Elixir": 6 },
+    "Normal": { "Gear": 6,  "Pet": 2,  "Mount": 0.5, "Jewel": 6,  "TreasureCard": 15, "Reagent": 25, "Snack": 15, "Seed": 6,  "Housing": 5,  "Elixir": 4 }
+  }
+}

@@ -368,7 +368,10 @@ internal sealed partial class ManagerWindow {
                     ("BossOverrides", "Your changes to real bosses from the Bosses tab, one file for each creature ID."),
                     ("BossCheats", "Boss cheat files kept on this PC only; Imlight updates never ship or replace them. Cheat changes made in the app are saved in " +
                                    "the custom's or the BossOverrides file."),
-                    ("DropTables, NpcDropTable", "The drop tables, and which tables each game creature drops.")),
+                    ("DropTables, NpcDropTable", "The drop tables, and which tables each game creature drops."),
+                    ("DropOdds.json", "How often each kind of drop rolls (gear, jewels, treasure cards...) by the creature's rank, in percent: " +
+                                      "the gauntlet drop tables (W404 ...) take their chance from it. Change a number and it counts from the next " +
+                                      "battle; updates keep your copy.")),
                 new GuideActions(BACKUP, OPEN_EXTRA, OPEN_SERVER),
                 new GuideSteps("Make a backup",
                     $"Press [{BACKUP}]. Imlight puts the whole spiraldb-extra folder (customs, areas, boss changes and drop tables) " +
