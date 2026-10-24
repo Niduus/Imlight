@@ -150,6 +150,79 @@ public class WizardNameBank : RootSingleResourceSingleton<WizardNameBank>, IMemo
         return string.IsNullOrEmpty(firstName) ? lastName : $"{firstName} {lastName}";
     }
 
+    /// <summary>
+    /// Finds the name keys of a wizard name written out, such as "Walter Blanco" or "Mycin LotusKey": the first name
+    /// from the gender's list, then a middle and last name written together. Case and spaces do not matter.
+    /// </summary>
+    /// <param name="name">The name as the game or a player wrote it.</param>
+    /// <param name="gender">The wizard's gender, which picks the first name list.</param>
+    /// <param name="nameKeys">The packed name keys (first, middle and last index), without the top byte.</param>
+    /// <returns>True if every part of the name is in the game's name lists.</returns>
+    public static bool TryFindNameKeys(string name, eGender gender, out uint nameKeys) {
+        nameKeys = 0;
+        if (s_characterNameTable is null || string.IsNullOrWhiteSpace(name)) {
+            return false;
+        }
+
+        var words = name.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        var firstTable = (gender == eGender.Male) ? FirstNameHumanMaleTableName : FirstNameHumanFemaleTableName;
+        var first = FindPart(firstTable, words[0]);
+        if (first < 0) {
+            return false;
+        }
+
+        if (words.Length == 1) {
+            nameKeys = (uint) first << 16;
+
+            return true;
+        }
+
+        var rest = words[1].Replace(" ", "");
+        var middles = Math.Min(GetTableSize(MiddleNameHumanTableName), 256);
+        var lasts = Math.Min(GetTableSize(LastNameHumanTableName), 256);
+        for (var middle = 0; middle < middles; middle++) {
+            var middleName = middle == 0 ? "" : GetEnglishNamePart(MiddleNameHumanTableName, middle);
+            if (!rest.StartsWith(middleName, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            var lastPart = rest[middleName.Length..];
+            for (var last = 0; last < lasts; last++) {
+                var lastName = last == 0 ? "" : GetEnglishNamePart(LastNameHumanTableName, last);
+                if ((middle != 0 || last != 0) && lastPart.Equals(lastName, StringComparison.OrdinalIgnoreCase)) {
+                    nameKeys = (uint) (first << 16 | middle << 8 | last);
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Checks that packed wizard name keys point into the name lists of the gender.
+    /// </summary>
+    public static bool IsValidWizardName(uint nameKeys, eGender gender) {
+        var (first, middle, last) = GetNameParts(nameKeys);
+        var firstTable = (gender == eGender.Male) ? FirstNameHumanMaleTableName : FirstNameHumanFemaleTableName;
+
+        return first < GetTableSize(firstTable)
+            && middle < GetTableSize(MiddleNameHumanTableName)
+            && last < GetTableSize(LastNameHumanTableName);
+    }
+
+    private static int FindPart(string tableName, string word) {
+        var size = Math.Min(GetTableSize(tableName), 256);
+        for (var i = 0; i < size; i++) {
+            if (GetEnglishNamePart(tableName, i).Equals(word, StringComparison.OrdinalIgnoreCase)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private static int GetTableSize(string tableName)
         => s_characterNameTable.TryGetValue(tableName, out var names) ? names.Count : 0;
 

@@ -220,6 +220,35 @@ internal class CharacterService(SessionActor parentActor) : MessageService(paren
         return false;
     }
 
+    // The game's rename window at character select, which comes up for a wizard sent with m_shouldRename (`.rename`).
+    [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_CHANGECHARACTERNAME))]
+    private void ReceiveChangeCharacterName(LOGIN_7_PROTOCOL.MSG_CHANGECHARACTERNAME message) {
+        try {
+            var account = GetSocketAccount();
+            var wizard = account.GetCharacter(message.CharID);
+            string newName = message.NewName.ToString();
+            Logger.Information("Rename | Account {0} asks to rename character {1} to \"{2}\" (server \"{3}\").",
+                Logger.Args(account.Username, message.CharID, newName, message.ServerName.ToString()));
+            if (wizard is null) {
+                Logger.Warning("Rename | Character {0} is not on account {1}.", Logger.Args(message.CharID, account.Username));
+            }
+            else if (WizardRename.TryReadName(wizard, newName, out var nameKeys, out var customName)) {
+                var oldName = wizard.PlayerNameBehavior.GetWizardName();
+                wizard.Rename(nameKeys, customName);
+                Logger.Information("Rename | {0} is now {1}.", Logger.Args(oldName, wizard.PlayerNameBehavior.GetWizardName()));
+            }
+            else {
+                Logger.Warning("Rename | Could not read \"{0}\" as a name.", Logger.Args(newName));
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Rename | Renaming at character select failed. {0}", Logger.Args(ex.Message));
+        }
+
+        // The game has no answer message for this; the character list is sent again with the new name.
+        ReceiveRequestCharacterList(null);
+    }
+
     [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_LOGINLOGCHARACTERCREATION))]
     private void ReceiveLoginLogCharacterCreation(LOGIN_7_PROTOCOL.MSG_LOGINLOGCHARACTERCREATION message) {
         this._characterCreationParameter = message.Parameter;

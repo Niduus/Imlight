@@ -138,6 +138,8 @@ internal static class CharacterHelper {
             m_templateID = 1,
             m_userID = (GID) character.AccountId,
             m_equipmentInfoList = GetEquipmentList(character.EquipmentBehavior),
+            // `.rename`: character select asks for a new name (WizardRename).
+            m_shouldRename = character.WantsRename,
         };
         
         return creationInfo;

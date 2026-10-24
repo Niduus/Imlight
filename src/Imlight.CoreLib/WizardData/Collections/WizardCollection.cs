@@ -426,6 +426,17 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists the wizard's name keys, custom name and rename request (the rename window, `.rename`).
+    /// </summary>
+    public static void UpdateCharacterName(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.PlayerNameBehavior.NameIndices = wizard.PlayerNameBehavior.NameIndices;
+            existingCharacter.PlayerNameBehavior.NameOverride = wizard.PlayerNameBehavior.NameOverride;
+            existingCharacter.RenameAskedAt = wizard.RenameAskedAt;
+        });
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.InteriorStowedMountId"/>: the mount auto-stowed for an interior, to be
     /// re-equipped outdoors. Written the moment it changes because a zone transfer is a disconnect.
     /// </summary>
