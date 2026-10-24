@@ -167,6 +167,24 @@
  *   A SetPhase back to a phase lets its HealthBelow cheats go off again. Line takes a locale key
  *   (CombatMessages_00000676) as well as words.
  *
+ * Every creature's cheats (Niduus, 2026-10-24: "Take all the boss cheats and implement them"; Wizard404's notes for
+ * each creature, made first from the blocks above, then from these few, for players and creatures alike):
+ *   HasCount     the If "has" needs at least this many such effects (0 or 1 = one): Coatl answers a fourth blade.
+ *   HasWho       also AnyEnemy (someone on the other side has it; HasNot: no one there) and AnyAlly (someone on its own
+ *                side, itself too); the one found is the target Matched.
+ *   PipsKind     for When Pips: "Shadow" counts only shadow pips (Vigilant Adapa's Constrain for a shadow pip).
+ *   CreatureWho  "Receiver": for a When about a spell, Creature / NotCreature looks at whoever the spell was aimed at (a
+ *                jinx on a Sea Lion), not its caster.
+ *   CostMax      -1: only a spell of 0 pips (an X spell or a 0-pip card).
+ *   Actions also:
+ *     { "Do": "RemoveEffects", "Kind" (Shield, Trap, Blade, Weakness, Charm, Ward, Aura, DoT, HoT; commas; empty = all),
+ *       "Count" (0 = all), "Spell", "Target" (Self) }   its hanging effects of that kind come off, newest first; protected
+ *                                           ones stay (Personal Daemon's "Stack Overflow").
+ *   Target also Owner (whose cheat it is: for a CastBy, the one whose file it is, not the caster), Matched (whom the If
+ *   "has" found with AnyEnemy / AnyAlly, else the player who set it off, such as the one with the pips), Unmarked (each
+ *   player without the step's or cheat's mark: Mother Sunn's Ra for a wizard who cast no damage) and MostPips (the
+ *   player with the most pips).
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -272,6 +290,15 @@ internal static class BossCheats {
         public string HasKind { get; set; } = "";
         public string HasSpell { get; set; } = "";
         public bool HasNot { get; set; }
+        // HasCount: at least this many such effects (0 or 1 = one). HasWho also AnyEnemy (someone on the other side has
+        // them; with HasNot, no one there) and AnyAlly (someone on its own side, itself too); the target "Matched" is the
+        // one found (Niduus, 2026-10-24: Wizard404's cheats for every creature).
+        public int HasCount { get; set; }
+        // When "Pips": PipsKind "Shadow" counts only shadow pips (empty: all pips, a power pip as one).
+        public string PipsKind { get; set; } = "";
+        // For a When about a spell: CreatureWho "Receiver" makes Creature / NotCreature look at whoever the spell was
+        // aimed at (the one hit) instead of its caster.
+        public string CreatureWho { get; set; } = "";
         // Only while each of AlliesUp (template ids) stands on its side, and none of AlliesDown does.
         public List<string> AlliesUp { get; set; } = [];
         public List<string> AlliesDown { get; set; } = [];

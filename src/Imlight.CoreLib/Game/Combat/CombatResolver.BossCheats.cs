@@ -132,15 +132,18 @@ public partial class CombatResolver {
     private static int PipCount(CombatDuelSubCircle c) => c.CombatParticipant?.m_pipCount is { } pips
         ? CombatDuelSubCircle.TotalPips(pips) + pips.m_shadowPips : 0;
 
+    // The pips a Pips When counts: with PipsKind "Shadow" only the shadow pips.
+    private static int PipCount(CombatDuelSubCircle c, string kind) => kind.Equals("Shadow", StringComparison.OrdinalIgnoreCase)
+        ? (c.CombatParticipant?.m_pipCount is { } pips ? pips.m_shadowPips : 0) : PipCount(c);
+
     // The standing players on the other side with at least the cheat's pips.
     private List<CombatDuelSubCircle> PlayersWithPips(CombatDuelSubCircle boss, BossCheats.BossCheat cheat)
         => cheat.Pips <= 0 ? [] : [.. _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive
-                                                          && c.OccupiedTeam != boss.OccupiedTeam && PipCount(c) >= cheat.Pips)];
+                                                          && c.OccupiedTeam != boss.OccupiedTeam && PipCount(c, cheat.PipsKind ?? "") >= cheat.Pips)];
 
-    // When "Pips": the boss (or with PipsOf Enemy, any player) has at least that many pips.
+    // When "Pips": the boss (or with PipsOf Enemy, any player) has at least that many pips (PipsKind Shadow: shadow pips).
     private bool PipsReached(CombatDuelSubCircle boss, BossCheats.BossCheat cheat) {
-        static int Count(CombatDuelSubCircle c) => c.CombatParticipant?.m_pipCount is { } pips
-            ? CombatDuelSubCircle.TotalPips(pips) + pips.m_shadowPips : 0;
+        int Count(CombatDuelSubCircle c) => PipCount(c, cheat.PipsKind ?? "");
         if (cheat.Pips <= 0) {
             return false;
         }
@@ -776,7 +779,7 @@ public partial class CombatResolver {
             return false;
         }
 
-        if ((cheat.CostMin > 0 || cheat.CostMax > 0) && !SpellNameFamily.CostMatches(CostOf(spell), cheat.CostMin, cheat.CostMax)) {
+        if ((cheat.CostMin > 0 || cheat.CostMax != 0) && !SpellNameFamily.CostMatches(CostOf(spell), cheat.CostMin, cheat.CostMax)) {
             return false;
         }
 
@@ -858,6 +861,9 @@ public partial class CombatResolver {
             return 0;
         }
 
+        // The one the If "has" found (AnyEnemy / AnyAlly), for the target "Matched".
+        var matched = _hasMatch;
+
         // InTurn picks by how many times the cheat went off before.
         var steps = PickSteps(cheat.Steps(), _bossCheatCounts.GetValueOrDefault(CheatKey(boss, index)).Times);
         var template = _bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject));
@@ -904,13 +910,28 @@ public partial class CombatResolver {
                 casts.Count == 0 ? "no spell" : string.Join(", ", casts.Select(c => c.Spell.Length > 0 ? c.Spell : c.SpellID.ToString()))));
         LogCustomCheat(custom, boss, bossName, index, reason, steps);
 
-        return RunCheatSteps(boss, cheat, steps, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar);
+        return RunCheatSteps(boss, cheat, steps, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar, matched);
+    }
+
+    // A cheat's steps, with whose cheat they are (the target "Owner") and whom its If found (the target "Matched")
+    // kept for them, and put back after, as a step's spell can set off another cheat.
+    private float RunCheatSteps(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, List<BossCheats.CheatAction> steps,
+                                CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, bool custom,
+                                CombatActionListObj combatActionList, float cinematicTimeSoFar, CombatDuelSubCircle matched = null) {
+        var (owner, wasMatched) = (_cheatOwner, _cheatMatched);
+        (_cheatOwner, _cheatMatched) = (boss, matched);
+        try {
+            return RunCheatStepsInOrder(boss, cheat, steps, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar);
+        }
+        finally {
+            (_cheatOwner, _cheatMatched) = (owner, wasMatched);
+        }
     }
 
     // A cheat's steps, in order. A Wait step keeps the ones after it for the start of a later round (WaitedCheats).
-    private float RunCheatSteps(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, List<BossCheats.CheatAction> steps,
-                                CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, bool custom,
-                                CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+    private float RunCheatStepsInOrder(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, List<BossCheats.CheatAction> steps,
+                                       CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, bool custom,
+                                       CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
         var lines = new List<string>();
         var defeat = false;
@@ -1112,6 +1133,7 @@ public partial class CombatResolver {
             "reflect" => "reflect the spell",
             "stealpips" => $"steal {step.Amount} {step.Kind} pips{on}",
             "removeauras" => $"remove auras{on}",
+            "removeeffects" => $"remove {(step.Kind.Length > 0 ? step.Kind : "all")} effects x{(step.Count > 0 ? step.Count : "all")}{on}",
             "addcharm" => $"add a {step.Amount}% {SchoolText(step.School)}{step.Kind}{on}",
             "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
             "immune" => $"immune to {SchoolText(step.School)}damage for {RoundsText(step.Rounds)}{on}",
@@ -1521,6 +1543,15 @@ public partial class CombatResolver {
             // Everyone standing who has the step's (or the cheat's) mark.
             "marked" => [.. enemies.Concat(allies).Where(c => HasMark(c, _stepMark))],
             "self" or "me" => [boss],
+            // Whose cheat it is (for a CastBy, the one whose file it is, not the one casting).
+            "owner" => _cheatOwner is { IsAlive: true } owner ? [owner] : [boss],
+            // Whom the If "has" found (AnyEnemy / AnyAlly), else the player who set it off (the one with the pips).
+            "matched" => _cheatMatched is { IsAlive: true } matched ? [matched]
+                : trigger is { IsAlive: true } && trigger.OccupiedTeam != boss.OccupiedTeam ? [trigger] : [],
+            // Everyone standing on the other side without the step's (or the cheat's) mark.
+            "unmarked" => [.. enemies.Where(c => !HasMark(c, _stepMark))],
+            // The one on the other side with the most pips.
+            "mostpips" when enemies.Count > 0 => [enemies.OrderByDescending(c => PipCount(c)).First()],
             // The one who summoned it into the battle (a minion's summoner), while it stands; else no one.
             "summoner" => Summoner(boss) is { } summoner ? [summoner] : [],
             // The last one on the other side whose spell hurt it; no one when that one has fallen.

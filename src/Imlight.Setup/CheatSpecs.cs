@@ -57,6 +57,12 @@ internal static class CheatSpecs {
         ("Last", "the same as the block before"),
         ("Hit", "the one hit"),
         ("Marked", "whoever has the mark"),
+        // Niduus, 2026-10-24 (Wizard404's cheats for every creature): whose cheat it is (for "an ally casts"), whom the
+        // "has" If found on a side, the players without the mark, and the player with the most pips.
+        ("Owner", "itself (whose cheat it is)"),
+        ("Matched", "the one the If found"),
+        ("Unmarked", "every player without the mark"),
+        ("MostPips", "the player with the most pips"),
         // The .c1 commands' circles, for players and bosses alike (Niduus, 2026-10-23).
         ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
         ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"),
@@ -79,6 +85,8 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_charmKinds = [("All", "of any"), ("Good", "good"), ("Bad", "bad")];
     private static readonly (string, string)[] s_pipKinds = [("Normal", "normal"), ("Power", "power"), ("Shadow", "shadow")];
     private static readonly (string, string)[] s_pipsOf = [("", "it"), ("Enemy", "a player")];
+    private static readonly (string, string)[] s_pipsKind = [("", "pips"), ("Shadow", "shadow pips")];
+    private static readonly (string, string)[] s_creatureWho = [("", "the one the When is about"), ("Receiver", "whoever the spell was aimed at")];
     private static readonly (string, string)[] s_addKinds = [("Blade", "blade"), ("Weakness", "weakness"), ("Shield", "shield"), ("Trap", "trap"), ("Absorb", "absorb")];
     private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy")];
     private static readonly (string, string)[] s_timings = [
@@ -88,7 +96,8 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_dispelThen = [("Retry", "retry")];
     private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
     private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first"), ("Swap", "swap who goes first")];
-    private static readonly (string, string)[] s_hasWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it")];
+    private static readonly (string, string)[] s_hasWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"),
+        ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side")];
     private static readonly (string, string)[] s_hasKinds = [
         ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"), ("Charm", "charm (any)"),
         ("Ward", "ward (any)"), ("Aura", "aura"), ("DoT", "damage over time"), ("HoT", "heal over time"),
@@ -200,9 +209,9 @@ internal static class CheatSpecs {
             "When a creature on its side is defeated", [], _ => "When one of its minions is defeated"),
         new("W.BossDefeated", BlockKind.When, "skull", "it is defeated", "It is defeated. Add \"these spells\" (such as Incindiate) to go off only when one of those spells defeated it, and \"set health\" first to bring it back.",
             "When it is defeated", [], _ => "When it is defeated"),
-        new("W.Pips", BlockKind.When, "pips", "pips reach", "At the start of a round, when it (or any player) has at least this many pips. A power pip counts as one. With \"a player\", it goes off for each player who has them, and \"the attacker\" is that player.",
-            "When {PipsOf} has at least {Pips} pips", [F("PipsOf", CheatFieldType.Choice, "", s_pipsOf), F("Pips", CheatFieldType.Number, 5, max: 14)],
-            b => $"When {LabelOf(s_pipsOf, b.Text("PipsOf"))} has {b.Number("Pips")} or more pips"),
+        new("W.Pips", BlockKind.When, "pips", "pips reach", "At the start of a round, when it (or any player) has at least this many pips. A power pip counts as one; \"shadow pips\" counts only those. With \"a player\", it goes off for each player who has them, and \"the attacker\" (and \"the one the If found\") is that player.",
+            "When {PipsOf} has at least {Pips} {PipsKind}", [F("PipsOf", CheatFieldType.Choice, "", s_pipsOf), F("Pips", CheatFieldType.Number, 5, max: 14), F("PipsKind", CheatFieldType.Choice, "", s_pipsKind)],
+            b => $"When {LabelOf(s_pipsOf, b.Text("PipsOf"))} has {b.Number("Pips")} or more {LabelOf(s_pipsKind, b.Text("PipsKind"))}"),
 
         new("W.EnemyJoins", BlockKind.When, "users", "a player joins", "Someone comes into the battle on the other side after this round (2: from round 3 on), such as a wizard who is late. \"The attacker\" is the newcomer. A summoned minion counts only with \"minions too\".",
             "When a player joins the battle after round {Round} {Minions}", [F("Round", CheatFieldType.Number, 2, max: 999), new("Minions", CheatFieldType.Toggle, false, Label: "minions too")],
@@ -286,20 +295,20 @@ internal static class CheatSpecs {
             "Only {AnyVersion} these spells: {Spells} {Count}",
             [new("AnyVersion", CheatFieldType.VersionChoice, true), F("Spells", CheatFieldType.Cards), F("Count", CheatFieldType.MatchCount)],
             b => $"only {string.Join(", ", b.List("Spells"))}{(b.Flag("AnyVersion") ? " (any version)" : "")}"),
-        new("I.Cost", BlockKind.If, "pips", "pip cost", "Only spells that cost this many pips. Leave the top at 0 for no top.",
-            "Only spells that cost {CostMin} to {CostMax} pips", [F("CostMin", CheatFieldType.Number, 4, max: 14), F("CostMax", CheatFieldType.Number, 0, max: 14)],
-            b => b.Number("CostMax") > 0 ? $"only {b.Number("CostMin")}-{b.Number("CostMax")} pip spells" : $"only spells of {b.Number("CostMin")}+ pips"),
+        new("I.Cost", BlockKind.If, "pips", "pip cost", "Only spells that cost this many pips. Leave the top at 0 for no top; -1 in the top means only 0-pip spells (an X spell or a 0-pip card).",
+            "Only spells that cost {CostMin} to {CostMax} pips", [F("CostMin", CheatFieldType.Number, 4, max: 14), new("CostMax", CheatFieldType.Number, 0, Max: 14, Min: -1)],
+            b => b.Number("CostMax") < 0 ? "only 0-pip spells" : b.Number("CostMax") > 0 ? $"only {b.Number("CostMin")}-{b.Number("CostMax")} pip spells" : $"only spells of {b.Number("CostMin")}+ pips"),
         new("I.CardType", BlockKind.If, "cards", "card type", "Only cards of this type, as the game names it: Damage, Heal, Ward, Charm, Aura, Global, Steal, Manipulation...",
             "Only cards of type {Kind}", [F("Kind", CheatFieldType.Words, "Damage")], b => $"only {b.Text("Kind")} cards"),
 
-        new("I.Creature", BlockKind.If, "users", "this creature", "Only when the one the When is about is this creature: the one that fell, whose health dropped or that joined, else the one whose spell or pass set it off. With \"anyone but it\", only when it is someone else.",
-            "Only if it is {Creature} {NotCreature}", [F("Creature", CheatFieldType.Creature), new("NotCreature", CheatFieldType.Toggle, false, Label: "anyone but it")],
-            b => b.Flag("NotCreature") ? $"only if not {Creature(b)}" : $"only if it is {Creature(b)}"),
+        new("I.Creature", BlockKind.If, "users", "this creature", "Only when the one the When is about is this creature: the one that fell, whose health dropped or that joined, else the one whose spell or pass set it off. With \"anyone but it\", only when it is someone else. For a When about a spell, \"whoever the spell was aimed at\" looks at the one it went on (a jinx on a Sea Lion) instead of its caster.",
+            "Only if {CreatureWho} is {Creature} {NotCreature}", [F("CreatureWho", CheatFieldType.Choice, "", s_creatureWho), F("Creature", CheatFieldType.Creature), new("NotCreature", CheatFieldType.Toggle, false, Label: "anyone but it")],
+            b => $"only if {(b.Text("CreatureWho").Length > 0 ? LabelOf(s_creatureWho, b.Text("CreatureWho")) : "it")} is {(b.Flag("NotCreature") ? "not " : "")}{Creature(b)}"),
         // If... (Niduus, 2026-10-24: the gauntlets' cheats)
-        new("I.Has", BlockKind.If, "shield", "has a charm or ward", "Only if that one has a charm, ward, aura or over-time of this kind on them, or one from this spell (any version). With \"has none\", only if they have none: Kurokage answers a wizard who attacks with no shield up.",
-            "Only if {HasWho} has a {HasKind} from {HasSpell} {HasNot}",
-            [F("HasWho", CheatFieldType.Choice, "Caster", s_hasWho), F("HasKind", CheatFieldType.Choice, "Shield", s_hasKinds), F("HasSpell", CheatFieldType.Words, ""), new("HasNot", CheatFieldType.Toggle, false, Label: "has none")],
-            b => $"only if {LabelOf(s_hasWho, b.Text("HasWho"))} {(b.Flag("HasNot") ? "has no" : "has a")} {(b.Text("HasSpell").Length > 0 ? b.Text("HasSpell") + " " : "")}{LabelOf(s_hasKinds, b.Text("HasKind"))}"),
+        new("I.Has", BlockKind.If, "shield", "has a charm or ward", "Only if that one has a charm, ward, aura or over-time of this kind on them, or one from this spell (any version), at least this many (0 or 1: one; Coatl answers a fourth blade). With \"has none\", only if they have fewer: Kurokage answers a wizard who attacks with no shield up. \"Someone on the other side\" or \"someone on its side\" looks at everyone there (\"has none\": no one there), and \"the one the If found\" is the target of its Do blocks.",
+            "Only if {HasWho} has {HasCount} {HasKind} from {HasSpell} {HasNot}",
+            [F("HasWho", CheatFieldType.Choice, "Caster", s_hasWho), F("HasCount", CheatFieldType.Number, 0, max: 99), F("HasKind", CheatFieldType.Choice, "Shield", s_hasKinds), F("HasSpell", CheatFieldType.Words, ""), new("HasNot", CheatFieldType.Toggle, false, Label: "has none")],
+            b => $"only if {LabelOf(s_hasWho, b.Text("HasWho"))} {(b.Flag("HasNot") ? "has no" : b.Number("HasCount") > 1 ? $"has {b.Number("HasCount")} or more" : "has a")} {(b.Text("HasSpell").Length > 0 ? b.Text("HasSpell") + " " : "")}{LabelOf(s_hasKinds, b.Text("HasKind"))}"),
         new("I.Allies", BlockKind.If, "users", "how many allies", "Only while this many others stand on its side. Leave the top at 0 for no top.",
             "Only while {AlliesMin} to {AlliesMax} others stand on its side", [F("AlliesMin", CheatFieldType.Number, 1, max: 7), F("AlliesMax", CheatFieldType.Number, 0, max: 7)],
             b => b.Number("AlliesMax") > 0 ? $"with {b.Number("AlliesMin")}-{b.Number("AlliesMax")} allies" : $"with {b.Number("AlliesMin")}+ allies"),
@@ -331,6 +340,9 @@ internal static class CheatSpecs {
         new("D.RemoveWards", BlockKind.Do, "broom", "remove wards", "Takes wards (shields, traps, absorbs...) off, newest first. 0 means all of them. Name a spell to take off only its wards (any version).",
             "Remove {Count} {Kind} wards from {Target} made by {Spell}", [F("Count", CheatFieldType.Number, 0, max: 99), F("Kind", CheatFieldType.Choice, "All", s_charmKinds), F("Target", CheatFieldType.Target, "AllEnemies"), F("Spell", CheatFieldType.Words, "")],
             b => $"remove {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} {LabelOf(s_charmKinds, b.Text("Kind")).Replace("of any", "")} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}wards{Target(b).Replace(" on ", " from ")}".Replace("  ", " ")),
+        new("D.RemoveEffects", BlockKind.Do, "broom", "remove effects", "Takes hanging effects of a kind (shields, traps, blades, weaknesses, any charm or ward, auras, damage or heal over time) off the target, newest first. 0 means all of them. Name a spell to take off only its effects (any version). Protected ones stay.",
+            "Remove {Count} {Kind} from {Target} made by {Spell}", [F("Count", CheatFieldType.Number, 0, max: 99), F("Kind", CheatFieldType.Choice, "Ward", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Spell", CheatFieldType.Words, "")],
+            b => $"remove {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}{LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}".Replace("  ", " ")),
         new("D.RemoveAuras", BlockKind.Do, "broom", "remove auras", "Takes auras (and boosts from cheats) off.",
             "Remove the auras of {Target}", [F("Target", CheatFieldType.Target, "AllEnemies")], b => $"remove the auras{Target(b).Replace(" on ", " of ")}"),
         new("D.AddEffects", BlockKind.Do, "shield", "add a spell's charms", "The charms and wards of a spell (Tower Shield, Fire Blade, Feint...) go on at once, with no casting.",

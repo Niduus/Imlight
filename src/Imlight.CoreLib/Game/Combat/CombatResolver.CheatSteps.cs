@@ -127,7 +127,9 @@ public partial class CombatResolver {
             return true;
         }
 
-        var who = cheat.Is("MinionDefeated") || cheat.Is("PlayerDefeated") ? receiver : trigger ?? receiver;
+        // CreatureWho "Receiver": for a spell, the one it was aimed at (the one hit), not its caster.
+        var who = cheat.Is("MinionDefeated") || cheat.Is("PlayerDefeated") || cheat.CreatureWho.Equals("Receiver", StringComparison.OrdinalIgnoreCase)
+            ? receiver : trigger ?? receiver;
         var match = who?.ParticipantObject is { } obj && obj.m_templateID == cheat.Creature;
 
         return match != cheat.NotCreature;
@@ -323,20 +325,40 @@ public partial class CombatResolver {
         return has != cheat.NotMarked;
     }
 
-    // The If "has": HasWho has a charm, ward, aura or over-time of HasKind, or one from HasSpell (with HasNot: none).
-    private static bool HasAllows(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+    // The If "has": HasWho has at least HasCount (one if 0) charms, wards, auras or over-times of HasKind, or from
+    // HasSpell (with HasNot: fewer). AnyEnemy / AnyAlly: someone on the other side / its own side (itself too) has them
+    // (with HasNot: no one there); the one found is the target "Matched" of its steps.
+    private bool HasAllows(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        _hasMatch = null;
         if (string.IsNullOrWhiteSpace(cheat.HasKind) && string.IsNullOrWhiteSpace(cheat.HasSpell) && !cheat.HasNot) {
             return true;
         }
 
-        var who = WhoOf(cheat.HasWho, boss, trigger, receiver);
-        var effects = who?.CombatParticipant?.m_hangingEffects ?? [];
         var kinds = (cheat.HasKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var has = effects.Any(e => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
-                                   && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell)));
+        var need = Math.Max(1, cheat.HasCount);
+        bool Has(CombatDuelSubCircle who) => (who?.CombatParticipant?.m_hangingEffects ?? [])
+            .Count(e => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
+                        && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell))) >= need;
 
-        return has != cheat.HasNot;
+        var whoText = (cheat.HasWho ?? "").Trim();
+        var enemy = whoText.Equals("AnyEnemy", StringComparison.OrdinalIgnoreCase);
+        if (enemy || whoText.Equals("AnyAlly", StringComparison.OrdinalIgnoreCase)) {
+            var found = _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive
+                                               && (c.OccupiedTeam != boss.OccupiedTeam) == enemy && Has(c)).ToList();
+            _hasMatch = found.Count > 0 ? found[Random.Shared.Next(found.Count)] : null;
+
+            return (found.Count > 0) != cheat.HasNot;
+        }
+
+        return Has(WhoOf(cheat.HasWho, boss, trigger, receiver)) != cheat.HasNot;
     }
+
+    // The one the If "has" found with AnyEnemy / AnyAlly, for the target "Matched".
+    private CombatDuelSubCircle _hasMatch;
+    private CombatDuelSubCircle _cheatMatched;
+
+    // Whose cheat the running steps are (the target "Owner": for a CastBy, the one whose file it is, not the caster).
+    private CombatDuelSubCircle _cheatOwner;
 
     // Whether a hanging effect is of a kind: Shield, Trap, Blade, Weakness, Charm (any blade, weakness or other charm),
     // Ward (any shield, trap or absorb), Aura, DoT or HoT.
@@ -479,6 +501,22 @@ public partial class CombatResolver {
                     }
 
                     return true;
+                case "removeeffects": {
+                    // Its hanging effects of Kind (Shield, Trap, Blade, Weakness, Charm, Ward, Aura, DoT, HoT; several
+                    // with commas; empty for all) come off the target (itself if none is picked), the newest first, Count
+                    // of them (0 = all); protected ones stay.
+                    var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {
+                        var gone = target._hangingEffects.Where(e => e is not null && !e.m_protected && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
+                                                                     && FromSpell(e, step.Spell))
+                            .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
+                        target._hangingEffects.RemoveAll(gone.Contains);
+                        Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} of its {3} effects.",
+                            Logger.Args(_duel.m_duelID.Full, target.SlotIndex, gone.Count, kinds.Length == 0 ? "hanging" : string.Join("/", kinds)));
+                    }
+
+                    return true;
+                }
                 case "removeauras":
                     foreach (var target in On("AllEnemies").Where(t => t?._hangingEffects is not null)) {
                         var gone = target._hangingEffects.Count(e => CombatRequirements.IsAura(e) && !e.m_protected);

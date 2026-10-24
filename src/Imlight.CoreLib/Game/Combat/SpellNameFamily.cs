@@ -90,6 +90,7 @@ internal static class SpellNameFamily {
                .Any(w => kindsOfSpell.Contains(w, StringComparer.OrdinalIgnoreCase));
 
     /// <summary>Whether a pip cost is in a cheat's range. Max 0 is no top; an X spell costs 0.</summary>
-    internal static bool CostMatches(int cost, int min, int max) => cost >= min && (max <= 0 || cost <= max);
+    // max 0: no top; max -1: exactly 0 pips (an X spell or a 0-pip card).
+    internal static bool CostMatches(int cost, int min, int max) => cost >= min && (max == 0 || (max < 0 ? cost == 0 : cost <= max));
 
 }

@@ -1,0 +1,152 @@
+{
+  // Sphinx (Rank 18, Sun, 20,240 health), Empyrea. Sphinx: Desert Hound for a late wizard, and five riddles each answered with a kind of spell.
+  // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
+  // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
+  // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  "TemplateID": 1462570,
+  "Name": "Sphinx (Rank 18)",
+  "ShadowPips": 2,
+  "Cheats": [
+    { "When": "EnemyJoins", "Round": 1,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001270"},
+        {"Do": "Cast", "Spell": "Desert Hound", "SpellID": 2021255101, "Target": "Caster", "DispelImmune": false}
+      ],
+      "Notes": "A wizard joins after round 1: Desert Hound on them." },
+
+    { "When": "RoundEnd", "Round": 2, "Every": 10,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001271"},
+        {"Do": "Mark", "Mark": "riddle blade", "Target": "AllEnemies"}
+      ],
+      "Notes": "End of round 2 of each 10: the Blade riddle (each wizard must answer)." },
+
+    { "When": "PlayerCasts", "Category": "Blade", "Mark": "riddle blade", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Caster"}
+      ],
+      "Notes": "A blade cast: that wizard answered." },
+
+    { "When": "PlayerPasses", "Mark": "riddle blade", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Caster"}
+      ],
+      "Notes": "Passing is allowed." },
+
+    { "When": "RoundEnd", "Round": 4, "Every": 10, "Mark": "riddle blade", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001378"},
+        {"Do": "Cast", "Spell": "Orthrus", "SpellID": 1849149819, "Target": "", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Marked"}
+      ],
+      "Notes": "Two rounds on, a wizard who did not answer: Orthrus." },
+
+    { "When": "RoundEnd", "Round": 4, "Every": 10,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001272"},
+        {"Do": "Mark", "Mark": "riddle damage", "Target": "AllEnemies"}
+      ],
+      "Notes": "End of round 4 of each 10: the Damage riddle (each wizard must answer)." },
+
+    { "When": "PlayerCasts", "Category": "Damage", "Mark": "riddle damage", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Caster"}
+      ],
+      "Notes": "A damage cast: that wizard answered." },
+
+    { "When": "PlayerPasses", "Mark": "riddle damage", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Caster"}
+      ],
+      "Notes": "Passing is allowed." },
+
+    { "When": "RoundEnd", "Round": 6, "Every": 10, "Mark": "riddle damage", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001378"},
+        {"Do": "Cast", "Spell": "Power Nova", "SpellID": 1985333658, "Target": "", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Marked"}
+      ],
+      "Notes": "Two rounds on, a wizard who did not answer: Power Nova." },
+
+    { "When": "RoundEnd", "Round": 6, "Every": 10,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001273"},
+        {"Do": "Mark", "Mark": "riddle trap", "Target": "AllEnemies"}
+      ],
+      "Notes": "End of round 6 of each 10: the Trap riddle (each wizard must answer)." },
+
+    { "When": "PlayerCasts", "Category": "Trap", "Mark": "riddle trap", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Caster"}
+      ],
+      "Notes": "A trap cast: that wizard answered." },
+
+    { "When": "PlayerPasses", "Mark": "riddle trap", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Caster"}
+      ],
+      "Notes": "Passing is allowed." },
+
+    { "When": "RoundEnd", "Round": 8, "Every": 10, "Mark": "riddle trap", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001378"},
+        {"Do": "Cast", "Spell": "Mass Feint", "SpellID": 2080475294, "Target": "Marked", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Marked"}
+      ],
+      "Notes": "Two rounds on, a wizard who did not answer: Mass Feint." },
+
+    { "When": "RoundEnd", "Round": 8, "Every": 10,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001274"},
+        {"Do": "Mark", "Mark": "riddle weakness", "Target": "AllEnemies"}
+      ],
+      "Notes": "End of round 8 of each 10: the Weakness riddle (each wizard must answer)." },
+
+    { "When": "PlayerCasts", "Category": "Weakness", "Mark": "riddle weakness", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Caster"}
+      ],
+      "Notes": "A weakness cast: that wizard answered." },
+
+    { "When": "PlayerPasses", "Mark": "riddle weakness", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Caster"}
+      ],
+      "Notes": "Passing is allowed." },
+
+    { "When": "RoundEnd", "Round": 10, "Every": 10, "Mark": "riddle weakness", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001378"},
+        {"Do": "Cast", "Spell": "Weakness", "SpellID": 1204556169, "Target": "Marked", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Marked"}
+      ],
+      "Notes": "Two rounds on, a wizard who did not answer: Weakness." },
+
+    { "When": "RoundEnd", "Round": 10, "Every": 10,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001275"},
+        {"Do": "Mark", "Mark": "riddle heal", "Target": "AllEnemies"}
+      ],
+      "Notes": "End of round 10 of each 10: the Heal riddle (each wizard must answer)." },
+
+    { "When": "PlayerCasts", "Category": "Heal", "Mark": "riddle heal", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Caster"}
+      ],
+      "Notes": "A heal cast: that wizard answered." },
+
+    { "When": "PlayerPasses", "Mark": "riddle heal", "MarkWho": "Caster",
+      "Actions": [
+        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Caster"}
+      ],
+      "Notes": "Passing is allowed." },
+
+    { "When": "RoundEnd", "Round": 12, "Every": 10, "Mark": "riddle heal", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001378"},
+        {"Do": "Cast", "Spell": "Blessing", "SpellID": 530133976, "Target": "Self", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Marked"}
+      ],
+      "Notes": "Two rounds on, a wizard who did not answer: Blessing." }
+  ]
+}

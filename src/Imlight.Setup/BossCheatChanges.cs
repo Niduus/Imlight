@@ -175,10 +175,11 @@ internal sealed class CheatRule {
             ["Brings"] = new JsonArray(), ["BringsRandom"] = new JsonArray(), ["BringsCount"] = 0,
             ["HasWho"] = "", ["HasKind"] = "", ["HasSpell"] = "", ["HasNot"] = false, ["AlliesUp"] = new JsonArray(), ["AlliesDown"] = new JsonArray(),
             ["AlliesMin"] = 0, ["AlliesMax"] = 0, ["Mark"] = "", ["MarkWho"] = "", ["NotMarked"] = false, ["MultiTarget"] = false,
+            ["HasCount"] = 0, ["PipsKind"] = "", ["CreatureWho"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -255,7 +256,7 @@ internal sealed class CheatRule {
         var whenBlock = whenSpec is null
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
             if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
                 whenBlock.Set(key, value);
             }
@@ -315,7 +316,7 @@ internal sealed class CheatRule {
             If("I.Spells", new JsonObject { ["Spells"] = spells, ["AnyVersion"] = Flag("AnyVersion") });
         }
 
-        if (Number("CostMin") > 0 || Number("CostMax") > 0) {
+        if (Number("CostMin") > 0 || Number("CostMax") != 0) {
             If("I.Cost", new JsonObject { ["CostMin"] = Number("CostMin"), ["CostMax"] = Number("CostMax") });
         }
 
@@ -332,14 +333,14 @@ internal sealed class CheatRule {
         }
 
         if (Number("Creature") > 0) {
-            If("I.Creature", new JsonObject { ["Creature"] = Number("Creature"), ["NotCreature"] = Flag("NotCreature") });
+            If("I.Creature", new JsonObject { ["CreatureWho"] = Text("CreatureWho"), ["Creature"] = Number("Creature"), ["NotCreature"] = Flag("NotCreature") });
         }
 
         // The gauntlets' Ifs (Niduus, 2026-10-24).
         if (Text("HasKind").Length > 0 || Text("HasSpell").Length > 0 || Flag("HasNot")) {
             If("I.Has", new JsonObject {
-                ["HasWho"] = Text("HasWho").Length > 0 ? Text("HasWho") : "Caster", ["HasKind"] = Text("HasKind"), ["HasSpell"] = Text("HasSpell"),
-                ["HasNot"] = Flag("HasNot"),
+                ["HasWho"] = Text("HasWho").Length > 0 ? Text("HasWho") : "Caster", ["HasCount"] = Number("HasCount"), ["HasKind"] = Text("HasKind"),
+                ["HasSpell"] = Text("HasSpell"), ["HasNot"] = Flag("HasNot"),
             });
         }
 
