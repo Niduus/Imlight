@@ -125,6 +125,7 @@ internal sealed partial class ManagerWindow : Window {
         ("FreeTraining", "Free training (no training points)", new() { OnContent = "On", OffContent = "Off" }),
         ("TrainingPointPerLevel", "Training points for every level gained", new() { OnContent = "On", OffContent = "Off" }),
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
+        ("RespecAtTrainers", "Spell trainers offer to reset training points (needs a restart)", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [

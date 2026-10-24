@@ -368,11 +368,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             return TeachesAsListed ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }
 
-        // If this trainer also completes an active quest, first offer one trainer choice. The client
-        // interprets individual WizTrainingOption entries as the spell picker, so putting them beside
-        // GoalEntry skips the shared "What can I do for you?" choice entirely.
-        if (InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
-                && !_showingSpellOptions.Contains(wizard.CharId)) {
+        // If this trainer also completes an active quest or offers a training point reset, first offer one trainer
+        // choice. The client interprets individual WizTrainingOption entries as the spell picker, so putting them
+        // beside GoalEntry or RespecOption skips the shared "What can I do for you?" choice entirely.
+        if (HasOtherChoice(wizard) && !_showingSpellOptions.Contains(wizard.CharId)) {
             return [new WizTrainingInteraction {
                 m_iconKey = WizBang.ToString(),
                 m_serviceName = ServiceName,
@@ -486,13 +485,16 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        if (playerCharacter is null || !InteractPersonaGoalComponent.HasPendingGoalFor(Entity, playerCharacter)) {
+        if (playerCharacter is null || !HasOtherChoice(playerCharacter)) {
             return;
         }
 
         _showingSpellOptions.Add(playerCharacter.CharId);
         Entity.GetComponentOfType<InteractServiceMementoComponent>()?.ShowServiceOptions(playerActor, reinteract: 2);
     }
+
+    private bool HasOtherChoice(Wizard wizard)
+        => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard);
 
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
         => wizard is not null

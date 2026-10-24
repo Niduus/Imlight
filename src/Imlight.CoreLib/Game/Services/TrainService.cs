@@ -134,6 +134,8 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         };
         SendToSocket(addSpellMsg);
 
+        TrainingReset.Record(wizard, spellId, spellCost);
+
         var newTrainingPoints = wizard.MagicSchoolBehavior.TrainingPoints - spellCost;
         wizard.UpdateTrainingPoints(newTrainingPoints);
 
@@ -149,5 +151,39 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         };
         SendToSocket(trainCompleteMsg);
     }
+
+
+    // The game's reset window (opened by TrainingReset.OpenWindow) answers with one of these; which one is not known
+    // yet, so both are taken, and only from a wizard who was just shown the window.
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_RESPEC))]
+    private void ReceiveRespec(WIZARDHOUSING_50_PROTOCOL.MSG_RESPEC message)
+        => AnswerRespecWindow("MSG_RESPEC");
+
+    [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_RESPECCONFIRM))]
+    private void ReceiveRespecConfirm(WIZARD_12_PROTOCOL.MSG_RESPECCONFIRM message)
+        => AnswerRespecWindow("MSG_RESPECCONFIRM");
+
+    private void AnswerRespecWindow(string messageName) {
+        var wizard = GetActiveWizard();
+        Logger.Information("Respec | {0} answered the reset window with {1}.",
+            Logger.Args(wizard?.PlayerNameBehavior?.GetWizardName(), messageName));
+        if (!TrainingReset.TakeWindowAnswer(wizard)) {
+            return;
+        }
+
+        var (spells, points) = TrainingReset.Reset(SessionActor.ActorRef, wizard);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_RESPECCONFIRM {
+            Failure = 0,
+            WebFailure = 0,
+            Credits = wizard.Account?.Crowns ?? 0
+        });
+        TrainingReset.Tell(SessionActor.ActorRef, ResetText(spells, points));
+    }
+
+    internal static string ResetText(int spells, int points)
+        => spells == 0
+            ? "You have no training points to get back."
+            : $"Your training points are reset: {spells} spells left your spellbook and you got {points} training points back. "
+              + "If your deck still shows them, log out and back in.";
 
 }

@@ -69,6 +69,7 @@ The `[Trainers]` section of `Imlight.ini` works with or without randomizer mode.
 | `TrainingPointPerLevel` | `false` | Every level gained also gives training points. |
 | `TrainingPointsPerLevel` | `1` | How many training points each level gives while `TrainingPointPerLevel` is on (0 to 100). |
 | `PlayersCanGainTrainingPoints` | `true` | Any player can type `.gaintp <amount>` (or `.trainingpoints <amount>`) to give themselves 1 to 100 training points. |
+| `RespecAtTrainers` | `true` | The game's spell trainers offer to reset training points, for free. Every spell bought with training points leaves the spellbook and decks and the points come back; spells of the wizard's own school, free spells and quest spells stay. `.respec` shows what a reset would do and `.respec yes` does it, for any player. |
 
 ## Battle
 
