@@ -53,6 +53,21 @@ internal sealed record FishInfo(
     /// <summary>A whopper is in the biggest tenth of the sizes this fish comes in.</summary>
     internal bool IsWhopper(float size) => MaxSize > MinSize && size >= MaxSize - (MaxSize - MinSize) * 0.1f;
 
+    /// <summary>
+    /// The gold this fish sells for, worked out the way the game's own seller window does (FishBehaviorTemplate's
+    /// price): the sale price, plus up to the sale price again the further the size is from the middle size.
+    /// </summary>
+    internal int PriceOf(float size) {
+        var half = (MaxSize - MinSize) * 0.5f;
+        var extra = 0f;
+        if (half > 0) {
+            var fromMin = Math.Max(MinSize, Math.Min(size, MaxSize)) - MinSize;
+            extra = Math.Abs(half - fromMin) / half;
+        }
+
+        return SalePrice + (int) (SalePrice * extra);
+    }
+
 }
 
 /// <summary>A pond (BodyOfWater) of a zone, read from the zone's FishingInfo file.</summary>

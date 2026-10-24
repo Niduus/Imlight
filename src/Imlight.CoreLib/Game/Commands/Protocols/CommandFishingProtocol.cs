@@ -22,6 +22,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.CoreLib.Game.Fishing;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.WizardData.Collections;
@@ -145,7 +146,7 @@ internal class CommandFishingProtocol : CommandProtocol {
             return;
         }
 
-        var gold = basket.Sum(f => FishingData.Fish(f.TemplateId)?.SalePrice ?? 0);
+        var gold = basket.Sum(f => FishingData.Fish(f.TemplateId)?.PriceOf(f.Size) ?? 0);
         var count = basket.Count;
         basket.Clear();
         WizardCollection.UpdateCharacterFishingBehavior(me);
@@ -154,7 +155,8 @@ internal class CommandFishingProtocol : CommandProtocol {
             Gold = me.GameStats.m_currentGold,
             MaxGold = me.GameStats.m_baseGoldPouch,
         });
-        InformSenderClient($"Sold {count} fish for {gold} gold. Change area or log out and back in to see your basket empty.");
+        Context.SessionActor.Tell(FishingService.BasketMessage(me));
+        InformSenderClient($"Sold {count} fish for {gold} gold.");
     }
 
     private void TeachAll(Wizard me) {

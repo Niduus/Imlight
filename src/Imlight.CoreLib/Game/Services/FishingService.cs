@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
@@ -43,6 +44,8 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
 
     private const string SyncTimer = "fishing-sync";
     private const string ZonedFallbackTimer = "fishing-zoned-fallback";
+    // Any FishingPassport above 1 in the cast answer lets the game cast (0 and 1 are its two "no" answers).
+    private const uint CastAllowed = 2;
     private static readonly TimeSpan SyncInterval = TimeSpan.FromSeconds(5);
     // The client says MSG_CLIENTZONED once it has loaded a zone; when it does not, the fish go out after this.
     private static readonly TimeSpan ZonedFallback = TimeSpan.FromSeconds(8);
@@ -190,6 +193,7 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
                 Logger.Args(wizard.CharId, spell?.m_name.ToString() ?? "unknown spell", message.SpellTemplateID,
                     message.IsTreasureCard, message.FishingPassport, message.IsRecast));
 
+            var allowed = true;
             if (message.IsTreasureCard != 0) {
                 // A fishing treasure card is used up instead of energy.
                 if (wizard.SpellbookBehavior.RemoveTreasureCard(message.SpellTemplateID)) {
@@ -199,15 +203,21 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
                     Logger.Debug("Fishing: {0} has no fishing treasure card {1} to use up.", Logger.Args(wizard.CharId, message.SpellTemplateID));
                 }
             }
-            else if (message.IsTreasureCard == 0 && message.IsRecast == 0 && FishingSettings.UseEnergy
+            else if (message.IsRecast == 0 && FishingSettings.UseEnergy
                      && spell is not null && spell.m_energyCost > 0 && !UseEnergy(wizard, spell.m_energyCost)) {
-                InformGameClient("You don't have enough energy for that fishing spell.");
-
-                return;
+                allowed = false;
             }
 
-            if (FishingSettings.EchoSpellCast) {
-                SendToSocket(message);
+            // The game reads the answer's FishingPassport (FishingManager): 0 shows "Insufficient Energy", 1 shows a
+            // fishing error box, anything else casts the spell.
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_FISHINGSPELLCAST {
+                SpellTemplateID = message.SpellTemplateID,
+                IsTreasureCard = message.IsTreasureCard,
+                FishingPassport = allowed ? CastAllowed : 0u,
+                IsRecast = message.IsRecast,
+            });
+            if (!allowed) {
+                Logger.Information("Fishing: {0} is out of energy for {1}.", Logger.Args(wizard.CharId, spell?.m_name.ToString()));
             }
         }
         catch (Exception e) {
@@ -309,7 +319,7 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         }
         else if ((basket.Basket?.Count ?? 0) >= FishingSettings.BasketSize) {
             SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_NOFISHSPACE { GameObjectID = wizard.GameObjectID });
-            InformGameClient($"Your fish basket is full ({FishingSettings.BasketSize} fish). Sell some with .fishing sell.");
+            InformGameClient($"Your fish basket is full ({FishingSettings.BasketSize} fish). Sell some at Lucky Hookline or a shop.");
         }
         else {
             basket.Add(info.TemplateId, size, smallFry, whopper);
@@ -386,17 +396,114 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTALLFISH))]
-    private void ReceiveRequestAllFish(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTALLFISH message)
-        => Logger.Information("Fishing: the game asked for the fish of {0}, data {1}.", Logger.Args(message.GlobalID, Hex(message.FishData)));
+    private void ReceiveRequestAllFish(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTALLFISH message) {
+        try {
+            var wizard = GetActiveWizard();
+            Logger.Debug("Fishing: the game asked for the fish of {0}, data {1}.", Logger.Args(message.GlobalID, Hex(message.FishData)));
+            SendToSocket(BasketMessage(wizard));
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: sending the fish basket failed: {0}", Logger.Args(e));
+        }
+    }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTFISHHISTORY))]
-    private void ReceiveRequestFishHistory(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTFISHHISTORY message)
-        => Logger.Information("Fishing: the game asked for the fish journal of {0}, data {1}.", Logger.Args(message.GlobalID, Hex(message.FishData)));
+    private void ReceiveRequestFishHistory(WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTFISHHISTORY message) {
+        try {
+            var wizard = GetActiveWizard();
+            Logger.Debug("Fishing: the game asked for the fish journal of {0}, data {1}.", Logger.Args(message.GlobalID, Hex(message.FishData)));
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTFISHHISTORY {
+                GlobalID = wizard.GameObjectID,
+                FishData = HistoryData(wizard.FishingBehavior),
+            });
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: sending the fish journal failed: {0}", Logger.Args(e));
+        }
+    }
 
+    /// <summary>
+    /// The fish seller window's Sell button. FishData is what the game's FishSellingWindow writes: a 2-byte count, then
+    /// each fish's template id (4 bytes) and size (4-byte float).
+    /// </summary>
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_SELLFISHREQUEST))]
     private void ReceiveSellFishRequest(WIZARDHOUSING_50_PROTOCOL.MSG_SELLFISHREQUEST message) {
-        Logger.Information("Fishing: the game asked to sell fish, data {0}.", Logger.Args(Hex(message.FishData)));
-        InformGameClient("Selling at the fish seller is not ready yet. Type .fishing sell to sell your whole basket.");
+        try {
+            var wizard = GetActiveWizard();
+            var basket = wizard.FishingBehavior ??= new ServerFishingBehavior();
+            byte[] data = message.FishData;
+            data ??= [];
+
+            var sold = 0;
+            var gold = 0;
+            if (data.Length >= 2) {
+                var count = BitConverter.ToUInt16(data, 0);
+                for (var i = 0; i < count && 2 + i * 8 + 8 <= data.Length; i++) {
+                    var templateId = BitConverter.ToUInt32(data, 2 + i * 8);
+                    var size = BitConverter.ToSingle(data, 2 + i * 8 + 4);
+                    var taken = basket.Take(templateId, size);
+                    if (taken is null) {
+                        continue;
+                    }
+
+                    sold++;
+                    gold += FishingData.Fish(templateId)?.PriceOf(taken.Size) ?? 0;
+                }
+            }
+
+            Logger.Information("Fishing: {0} sold {1} fish for {2} gold at the fish seller (data {3}).",
+                Logger.Args(wizard.CharId, sold, gold, Hex(message.FishData)));
+            if (sold > 0) {
+                WizardCollection.UpdateCharacterFishingBehavior(wizard);
+                if (gold > 0) {
+                    wizard.AddGold(gold);
+                    SendGold(wizard);
+                }
+            }
+
+            SendToSocket(BasketMessage(wizard));
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: selling fish failed: {0}", Logger.Args(e));
+        }
+    }
+
+    /// <summary>The fish basket the way the game reads it (FishingBehavior's AllFishUpdated): a 2-byte count, then each fish's template id and size.</summary>
+    internal static WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTALLFISH BasketMessage(Wizard wizard) {
+        var basket = wizard.FishingBehavior?.Basket ?? [];
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        var count = Math.Min(basket.Count, ushort.MaxValue);
+        writer.Write((ushort) count);
+        foreach (var fish in basket.Take(count)) {
+            writer.Write(fish.TemplateId);
+            writer.Write(fish.Size);
+        }
+
+        writer.Flush();
+
+        return new WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTALLFISH { GlobalID = wizard.GameObjectID, FishData = stream.ToArray() };
+    }
+
+    /// <summary>The fishing journal the way the game reads it: a 2-byte count, then six 4-byte fields per kind of fish (FishHistory's order).</summary>
+    private static byte[] HistoryData(ServerFishingBehavior behavior) {
+        var history = behavior?.History ?? [];
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        var count = Math.Min(history.Count, ushort.MaxValue);
+        writer.Write((ushort) count);
+        foreach (var record in history.Take(count)) {
+            writer.Write(record.TemplateId);
+            writer.Write(record.Caught);
+            writer.Write(record.Smallest);
+            writer.Write(record.Largest);
+            writer.Write(record.SmallFries);
+            writer.Write(record.Whoppers);
+        }
+
+        writer.Flush();
+
+        return stream.ToArray();
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_ADDFISHTOAQUARIUM))]

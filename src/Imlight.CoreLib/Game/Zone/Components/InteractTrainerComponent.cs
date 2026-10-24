@@ -94,7 +94,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     // The last list logged for each wizard, so the once-a-second refresh does not fill the log.
     private readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, string> _customLogged = new();
 
-    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall }
+    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall, Fishing }
 
     /// <summary>
     /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13), Mellori
@@ -115,6 +115,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             case "WC-HUB-NPC15_B":
                 // The Deckathalon Tome, the trainer hall's trainer.
                 return TestTrainerKind.Hall;
+            case "WC-Pelican-NPC01":
+            case "WC-PARTY-NPC15":
+                // Lucky Hookline, in the Commons and at the party room: every fishing spell.
+                return TestTrainerKind.Fishing;
         }
 
         var names = $"{objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
@@ -263,6 +267,16 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             .ThenBy(pair => (string) pair.Spell.m_name, System.StringComparer.OrdinalIgnoreCase)
             .Select(pair => new NPCSpellEntry { TemplateID = pair.Id, RequiredSpellID = 0, Level = 1 })];
         Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[TestTrainerKind.Hall].Count, TestTrainerKind.Hall));
+
+        // Lucky Hookline teaches every fishing spell players can have (lures, reveals and the rest), by name.
+        result[TestTrainerKind.Fishing] = [.. Imlight.CoreLib.Game.Fishing.FishingData.Spells
+            .Where(s => Imlight.CoreLib.Game.Fishing.FishingData.IsPlayerSpell(s.Template))
+            .GroupBy(s => Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(s.Template.m_displayName.ToString()) is { Length: > 0 } shown
+                ? shown : (string) s.Template.m_name, System.StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.OrderBy(s => ((string) s.Template.m_name).Length).First())
+            .OrderBy(s => (string) s.Template.m_name, System.StringComparer.OrdinalIgnoreCase)
+            .Select(s => new NPCSpellEntry { TemplateID = s.Id, RequiredSpellID = 0, Level = 1 })];
+        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[TestTrainerKind.Fishing].Count, TestTrainerKind.Fishing));
 
         return result;
     }
@@ -494,7 +508,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     private bool HasOtherChoice(Wizard wizard)
-        => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard);
+        => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard)
+        || InteractFishSellingComponent.Offers(Entity, wizard);
 
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
         => wizard is not null

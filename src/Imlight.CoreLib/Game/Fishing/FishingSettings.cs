@@ -41,7 +41,7 @@ internal static class FishingSettings {
     /// <summary>Casting a fishing spell uses its energy.</summary>
     internal static readonly bool UseEnergy = ConfigurationManager.GetValue("Fishing.UseEnergy", true);
 
-    /// <summary>Send a cast request back to the game to say yes (how the game answers its other spell requests).</summary>
-    internal static readonly bool EchoSpellCast = ConfigurationManager.GetValue("Fishing.EchoSpellCast", true);
+    /// <summary>Every shop vendor also offers "Sell Fish" (Lucky Hookline always does).</summary>
+    internal static readonly bool SellAtShops = ConfigurationManager.GetValue("Fishing.SellAtShops", true);
 
 }
