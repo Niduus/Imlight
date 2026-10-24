@@ -11,6 +11,9 @@
   // Central: "Shadow Pips 3 max".
   "ShadowPips": 3,
   "Cheats": [
+    { "When": "Passive", "Passive": "Minions", "Brings": ["1340312"],
+      "Notes": "He fights with the Fairy Queen (Wizard404: his minion, 2026-10-24). A battle started against him brings her in: the room's own Queen first, else she is summoned. New block: comes with." },
+
     { "When": "EnemyJoins", "Round": 2,
       "Casts": [ { "Spell": "Mana Burn - Rattlebones", "DispelImmune": false } ], "Target": "Caster",
       "Line": "CombatMessages_00000676",

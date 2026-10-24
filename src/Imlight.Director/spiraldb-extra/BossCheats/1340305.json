@@ -7,6 +7,9 @@
   "TemplateID": 1340305,
   "Name": "Rattlebones (Rank 7)",
   "Cheats": [
+    { "When": "Passive", "Passive": "Minions", "Brings": ["1340306"],
+      "Notes": "He fights with the Fairy Queen (Wizard404: his minion, 2026-10-24). A battle started against him brings her in: the room's own Queen first, else she is summoned. New block: comes with." },
+
     { "When": "EnemyJoins", "Round": 1,
       "Casts": [ { "Spell": "Mana Burn", "DispelImmune": false } ], "Target": "Caster",
       "Line": "CombatMessages_00000676",
