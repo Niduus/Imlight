@@ -174,8 +174,13 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         foreach (var objectInfo in message.Added) {
-            if (!IsObjectEligibleForSpawn(objectInfo)
-                || CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) is not GameObjectTemplate template
+            // Sigil pads and battle circles are ZoneSigilSupervisor's (round 8 logged every gauntlet pad here as not made,
+            // though ZoneSigilSupervisor made it).
+            if (!IsObjectEligibleForSpawn(objectInfo)) {
+                continue;
+            }
+
+            if (CoreObjectFactory.GetCoreTemplate(objectInfo.m_templateID) is not GameObjectTemplate template
                 || CoreObjectFactory.FinalizeCoreObject(objectInfo, template) is not { } coreObject) {
                 Logger.Warning("Zone {0}: the added object {1} (template {2}) could not be made.",
                     Logger.Args(Zone.ZoneName, objectInfo?.m_zoneTag, objectInfo?.m_templateID.Full));
