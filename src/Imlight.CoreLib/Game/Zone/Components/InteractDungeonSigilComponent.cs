@@ -62,6 +62,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Sigils;
+using Imlight.CoreLib.Game.TeamUp;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
@@ -153,6 +154,23 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _) {
         if (!IsAvailable) {
             return [];
+        }
+
+        // Team Up (Game/TeamUp): the pad is listed by its global id, which the sigil window's Team Up! button sends, and
+        // a pad that takes a team offers the game's sigil option, whose window has that button.
+        var obj = Entity.ActiveGameObject;
+        if (TryResolveDestination(out var sigil) && obj is not null && HouseGauntlets.PadOf(obj.m_globalID.Full) is null) {
+            TeamUpSigils.Register(obj.m_globalID.Full, Entity.Zone?.ZonePath, obj.m_location.X, obj.m_location.Y,
+                sigil.DestinationZone, sigil.DestinationLoc, sigil.Variant);
+            if (TeamUpBoard.IsEnabled && TeamUpBoard.SigilButton && PartySize() > 1) {
+                return [
+                    new MinigameSigilOption {
+                        m_serviceName = ServiceName,
+                        m_teamUpAllowed = 1,
+                        m_successZone = sigil.DestinationZone,
+                    }
+                ];
+            }
         }
 
         return [

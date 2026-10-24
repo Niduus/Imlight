@@ -846,6 +846,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     }
 
     private static bool IsOffSigilPad(Wizard wizard, ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY entry) {
+        // A trip with no pad (a Team Up team, Game/TeamUp) goes from wherever the player is.
+        if (entry.NoSigil && string.IsNullOrEmpty(entry.SigilLoc)) {
+            return false;
+        }
+
         var pad = Util.GetVectorFromCompactString(entry.SigilLoc);
         var pos = wizard.Location;
 
