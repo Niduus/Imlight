@@ -71,7 +71,6 @@ namespace Imlight.CoreLib.Game.Zone.Core;
 public sealed class ZonePath : ZoneEntity {
 
     private const string CREATURE_SPAWN_INTERVAL_LOCK = "CREATURE_SPAWN_INTERVAL_LOCK";
-    private const uint INITIAL_SPAWN_DELAY_IN_SECONDS = 5;
     private const uint MAX_SPAWNS_ALLOWED = 25;
     private const uint OBJECT_CREATION_TIMEOUT_IN_MS = 5000;
 
@@ -144,7 +143,10 @@ public sealed class ZonePath : ZoneEntity {
         // Otherwise, start the interval. This still ticks in an instanced zone so a multi-creature
         // spawn point can populate up to its max on load; CanSpawn is what stops a defeated spawn
         // point from ever refilling there (see _defeatedInInstance).
-        var delay = TimeSpan.FromSeconds(INITIAL_SPAWN_DELAY_IN_SECONDS);
+        // The first spawn comes as the zone loads, as a spawner without an interval's does: a housing gauntlet's boss
+        // (Rattlebones, whose spawner has an interval) came 5 seconds after the zone, while the Fairy Queen (none) stood
+        // there from the start (Niduus, 2026-10-24: "Rattlebones does spawn but not immediate"). Later ones keep the interval.
+        var delay = TimeSpan.Zero;
         Timers.StartPeriodicTimer(timerKey, msg, delay, interval);
 
         // A ZoneObjects distinct spawner (a boss's minions) is full from the first spawn, so they are all there
