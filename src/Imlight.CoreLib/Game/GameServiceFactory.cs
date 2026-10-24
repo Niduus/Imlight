@@ -96,6 +96,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(DailyAssignmentService),
         typeof(PixiePostService),
         typeof(TeamUpService),
+        typeof(TieredSpellService),
         typeof(EmoteService),
         typeof(FishingService),
         typeof(CraftingService),
