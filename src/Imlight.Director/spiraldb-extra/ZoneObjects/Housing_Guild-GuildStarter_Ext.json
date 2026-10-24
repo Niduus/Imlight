@@ -1,6 +1,6 @@
 {
   "Zone": "Housing_Guild/GuildStarter_Ext",
-  "Notes": "Guild Museum (GuildMuseum.cs): the doors into the Avalon and Khrysalis galleries, on the museum island beside the curator. Walk into one to enter its gallery; the door at the back of a gallery brings you back here. Move them in the Customs tab if they stand somewhere awkward.",
+  "Notes": "Guild Museum (GuildMuseum.cs): the doors into the Avalon and Khrysalis galleries, on the museum island beside the curator. Walk into one to enter its gallery; the door at the back of a gallery brings you back here. Move them in the Customs tab if they stand somewhere awkward. Guild islands (Niduus, 2026-10-24: \"Unlock all islands now\"): the live game opens each island with guild reagents and a cantrip (GuildUnlockTrigger1-6, UnlockTriggerBehavior), and each GuildLock_ object turns into its m_unlockedObjectID. Here every island starts open: Remove leaves out the island unlock triggers and the locks, and the objects below are what the locks turn into, at the lock's spot (or the unlocked spot its template names). A lock whose chain ends in no object (the second and third crafting station upgrades) just goes. The raid unlocks (RaidUnlockTrigger1-3) stay as they are.",
   "Objects": [
     {
       "Name": "GuildMuseum_AvalonDoor",
@@ -19,6 +19,88 @@
       "Y": -11679,
       "Z": -6,
       "Yaw": -1.67
+    },
+    {
+      "Name": "GuildIsland_MainDailyReward",
+      "Notes": "Beta, Guild_NPC_DailyReward_MainIsland_01 (unlocked from GuildLock_MainIsland_DailyReward_01).",
+      "TemplateID": 1529150,
+      "X": 1582.835,
+      "Y": -1104.859,
+      "Z": 98.86673,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_MainCrafting",
+      "Notes": "Alpha, Guild_NPC_AlchemyStation_MainIsland_01 (unlocked from Guildlock_AlchemyStation_MainIsland_01).",
+      "TemplateID": 1529146,
+      "X": -40.31,
+      "Y": -1229.4,
+      "Z": 96.14,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_PvPDailyReward",
+      "Notes": "Sparr, Guild_NPC_DailyReward_PvPIsland_01 (unlocked from GuildLock_PvPIsland_DailyReward_01).",
+      "TemplateID": 1529151,
+      "X": -6958.83,
+      "Y": 747.9956,
+      "Z": -273.6383,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_PvPCrafting",
+      "Notes": "Duella, Guild_NPC_AlchemyStation_PvPIsland_01 (unlocked from GuildLock_AlchemyStation_PvPIsland_01).",
+      "TemplateID": 1529147,
+      "X": -8416.01,
+      "Y": -821.32,
+      "Z": -273.64,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_BattleDailyReward",
+      "Notes": "Theena, Guild_NPC_DailyReward_BattleIsland_01 (unlocked from GuildLock_BattleIsland_DailyReward).",
+      "TemplateID": 1529148,
+      "X": 8903.225,
+      "Y": -1600.05,
+      "Z": 53.55153,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_HousingCrafting",
+      "Notes": "Mason, Guild_NPC_AlchemyStation_HousingIsland_01 (unlocked from GuildLock_AlchemyStation_HousingIsland_01).",
+      "TemplateID": 1529145,
+      "X": 7310.03,
+      "Y": -9515.73,
+      "Z": -655.28,
+      "Yaw": 0
+    },
+    {
+      "Name": "GuildIsland_HousingDailyReward",
+      "Notes": "Flip, Guild_NPC_DailyReward_HousingIsland_01 (unlocked from GuildLock_HousingIsland_DailyReward).",
+      "TemplateID": 1529149,
+      "X": 9846.674,
+      "Y": -10163.54,
+      "Z": -655.2797,
+      "Yaw": 0
     }
+  ],
+  "Remove": [
+    1536110,
+    1536111,
+    1536112,
+    1536113,
+    1536114,
+    1560276,
+    1529124,
+    1529126,
+    1529139,
+    1529127,
+    1529128,
+    1529141,
+    1529129,
+    1529130,
+    1529131,
+    1529132,
+    1529137
   ]
 }
