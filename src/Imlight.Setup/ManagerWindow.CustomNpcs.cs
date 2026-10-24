@@ -85,7 +85,7 @@ internal sealed partial class ManagerWindow {
             Spacing = 2,
             Children = {
                 Row(WithCenter(new TextBlock { Text = "Or a ready-made one:" }), _npcPresets,
-                    Action(Plain("Add this preset here"), AddPresetAsync)),
+                    Action(Primary("Add this preset here"), AddPresetAsync)),
                 _npcPresetHelp,
             },
         };
@@ -181,8 +181,8 @@ internal sealed partial class ManagerWindow {
         CustomNpcs.Set(_manager.CustomsFolder, npc.Id, npc);
         RenderNpcs();
         OpenNpc(npc);
-        Say($"Added {(trainer ? "trainer" : "vendor")} {npc.Id} where {who} stands in {ZoneDisplay(zone)}. It is in the game now. " +
-            $"Give it its {(trainer ? "spells" : "items")} below and press Save.");
+        Say($"Added {(trainer ? "trainer" : "vendor")} {npc.Id} where {who} stands in {ZoneDisplay(zone)}, with no {(trainer ? "spells" : "items")} yet. " +
+            $"It is in the game now. Give it its {(trainer ? "spells" : "items")} below, or a preset's with From a preset, and press Save.");
         await Task.CompletedTask;
     }
 
@@ -289,6 +289,9 @@ internal sealed partial class ManagerWindow {
                 Field("Look", "Any NPC or creature of the game. A creature only lends its look: it never starts a battle.", look),
             },
         };
+        if (PresetFill(npc) is { } fill) {
+            body.Children.Add(fill);
+        }
 
         if (npc.IsTrainer) {
             body.Children.Add(Field("Spells", "Each spell's price is in training points (1 if you leave it). Players see only the spells they do not have yet, 50 at a time; walking away and back shows the next 50.",
@@ -321,6 +324,43 @@ internal sealed partial class ManagerWindow {
     }
 
     // The items or spells of the NPC: each with its name, ID, price and Remove; then a search and an ID box to add one.
+    // Niduus (2026-10-24: "Pack gauntlets not using right UI"): a vendor made with Add a vendor here starts empty, and a
+    // vendor made from a preset keeps the list it had then (Bundle Gauntlets kept the 8 Pack Gauntlets). This gives an
+    // open vendor or trainer a preset's list, window and name; Save puts it in the game.
+    private Control? PresetFill(CustomNpc npc) {
+        var presets = _npcPresetList.Where(p => p.IsTrainer == npc.IsTrainer).ToList();
+        if (presets.Count == 0) {
+            return null;
+        }
+
+        var box = new ComboBox { Width = 420, ItemsSource = presets.Select(p => p.Label).ToList() };
+        box.SelectedIndex = Math.Max(0, presets.FindIndex(p => string.Equals(p.Name, npc.Name.Trim(), StringComparison.OrdinalIgnoreCase)));
+
+        return Field("From a preset", $"Gives this {(npc.IsTrainer ? "trainer the preset's spells" : "vendor the preset's items and shop window")} in place of its own, " +
+                                      "and the preset's name when it still has the first one it was given. Press Save after.",
+            Row(box, Action(Plain("Use this preset's list"), () => {
+                if (box.SelectedIndex < 0 || box.SelectedIndex >= presets.Count) {
+                    throw new PanelException("Pick a preset first.");
+                }
+
+                var preset = presets[box.SelectedIndex];
+                var made = preset.ToNpc(npc.Id);
+                if (npc.Name.Trim().Length == 0 || npc.Name.Trim() is "Shopkeeper" or "Spell Trainer") {
+                    npc.Name = made.Name;
+                }
+
+                npc.Window = made.Window;
+                npc.Items = made.Items;
+                npc.Spells = made.Spells;
+                RenderNpcEditor();
+                Say($"{npc.Shown} now has {preset.Name}'s {(npc.IsTrainer ? Plural(npc.Spells.Count, "spell") : Plural(npc.Items.Count, "item"))}" +
+                    (npc.IsTrainer ? "" : $" in the {CustomNpc.WINDOWS.FirstOrDefault(w => w.Value == npc.Window).Label ?? npc.Window} window") +
+                    ". Press Save to put it in the game.");
+
+                return Task.CompletedTask;
+            })));
+    }
+
     private Control EntryList(List<CustomNpcEntry> list, string kind, string unit, string addText) {
         var panel = new StackPanel { Spacing = 4 };
         if (list.Count == 0) {
