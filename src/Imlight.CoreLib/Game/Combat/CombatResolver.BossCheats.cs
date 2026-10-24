@@ -381,6 +381,16 @@ public partial class CombatResolver {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(crit.Action, mover),
                             $"its own critical {(string) crit.Spell.m_name}", combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
+                    // AllyHit: a spell from the other side hurts someone else on its side; that one is "the one hit".
+                    else if (cheat.Is("AllyHit") && mover.OccupiedTeam != boss.OccupiedTeam
+                             && landed.Select(m => (m.Action, m.Spell, Hit: AllyHitBy(boss, m.Action, m.Spell)))
+                                 .FirstOrDefault(m => m.Hit is not null && Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover))
+                                 is { Hit: { } ally } allyMove) {
+                        _cheatSpellId = allyMove.Action.m_spell.m_templateID;
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, ally, $"{(string) allyMove.Spell.m_name} on its ally in slot {ally.SlotIndex}",
+                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                        _cheatSpellId = 0;
+                    }
                     else if ((IsCastWhen(cheat) || cheat.Is("BossHit"))
                              && CountedFor(cheat).FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
                                      crit: m.Action.m_spellHits == (char) 2))
@@ -406,6 +416,13 @@ public partial class CombatResolver {
 
         return cinematicTime;
     }
+
+    // The first one on the boss's side, not the boss, that a damage spell from the other side was aimed at, or null.
+    private CombatDuelSubCircle AllyHitBy(CombatDuelSubCircle boss, CombatAction action, SpellTemplate spell)
+        => !Flatten(spell).Any(e => s_damageEffects.Contains(e.m_effectType)) ? null
+            : (action.m_targetSubcircleList ?? []).Where(slot => slot != boss.SlotIndex)
+                .Select(slot => _subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.SlotIndex == slot))
+                .FirstOrDefault(c => c is not null && c.OccupiedTeam == boss.OccupiedTeam);
 
     // Whoever a spell was aimed at; for a spell that went on many (Bladestorm), the caster, so a cheat on "whoever that
     // spell was aimed at" answers the one who cast it (Rattlebones Exalted's Fairy Queen, Central's page).
@@ -675,6 +692,15 @@ public partial class CombatResolver {
                 found.Add("Minion");
             }
 
+            // DoT and HoT: damage or healing over rounds (Dewey, MacDeath: "If a Wizard casts a :dot:").
+            if (e.m_effectType is kSpellEffects.kDamageOverTime) {
+                found.Add("DoT");
+            }
+
+            if (e.m_effectType is kSpellEffects.kHealOverTime) {
+                found.Add("HoT");
+            }
+
             if (e.m_effectType is kSpellEffects.kStun) {
                 found.Add("Stun");
             }
@@ -730,6 +756,10 @@ public partial class CombatResolver {
         }
 
         if (cheat.SingleTarget && Flatten(spell).Any(e => s_manyTargets.Contains(e.m_effectTarget))) {
+            return false;
+        }
+
+        if (cheat.MultiTarget && !Flatten(spell).Any(e => s_manyTargets.Contains(e.m_effectTarget))) {
             return false;
         }
 
@@ -797,6 +827,16 @@ public partial class CombatResolver {
             return false;
         }
 
+        // NoAllies counts for every When, not only those of a round (Niduus, 2026-10-24: a minion's defeat that leaves
+        // the boss alone, for the gauntlets' summon cycles).
+        if (cheat.NoAllies && HasAllies(boss)) {
+            return false;
+        }
+
+        if (!AlliesAllow(boss, cheat)) {
+            return false;
+        }
+
         var most = MostHealth(boss);
         var percent = most > 0 ? boss.ParticipantGameStats.m_currentHitpoints * 100.0 / most : 0;
 
@@ -813,11 +853,13 @@ public partial class CombatResolver {
     private float TryBossCheat(CombatDuelSubCircle boss, int index, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger,
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
-        if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat) || !CreatureAllows(cheat, trigger, receiver)) {
+        if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat) || !CreatureAllows(cheat, trigger, receiver)
+            || !HasAllows(boss, cheat, trigger, receiver) || !MarkAllows(boss, cheat, trigger, receiver)) {
             return 0;
         }
 
-        var steps = PickSteps(cheat.Steps());
+        // InTurn picks by how many times the cheat went off before.
+        var steps = PickSteps(cheat.Steps(), _bossCheatCounts.GetValueOrDefault(CheatKey(boss, index)).Times);
         var template = _bossCheatTemplates.GetValueOrDefault(boss, Customs.KeyOf(boss.ParticipantObject));
         var bossName = CheaterName(boss);
         var custom = cheat.Custom || Customs.IsCustom(template);
@@ -872,11 +914,15 @@ public partial class CombatResolver {
         var cinematicTime = 0.0f;
         var lines = new List<string>();
         var defeat = false;
+        _lastStepTargets = [];
         for (var s = 0; s < steps.Count; s++) {
             var step = steps[s];
             if (!boss.IsAlive && !step.Is("Say")) {
                 break;
             }
+
+            // The mark a step's "whoever has the mark" means: its own, else the cheat's.
+            _stepMark = step.Mark.Length > 0 ? step.Mark : cheat.Mark;
 
             if (step.Is("Wait")) {
                 var later = steps.Skip(s + 1).ToList();
@@ -894,9 +940,49 @@ public partial class CombatResolver {
                 case "form" or "sethealth":
                     break;
                 case "firstturn":
-                    SetFirstSide(boss, !step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase));
+                    // Swap: the side that goes first now goes second (Dimension Shift).
+                    SetFirstSide(boss, step.Side.Equals("Swap", StringComparison.OrdinalIgnoreCase)
+                        ? _duel.m_firstTeamToAct != (int) boss.OccupiedTeam
+                        : !step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase));
                     break;
+                case "onlyschool": {
+                    // The next Count steps (1 if 0) only if the target (the same as the step before, if none is
+                    // picked) is a wizard or creature of School.
+                    var who = StepTargets(boss, step.Target.Length > 0 ? step.Target : "Last", null, trigger, receiver);
+                    var school = (step.School ?? "").Trim();
+                    if (!who.Any(t => school.Equals(t?.ParticipantGameStats?.MagicSchool.ToString(), StringComparison.OrdinalIgnoreCase))) {
+                        s += Math.Max(1, step.Count);
+                    }
+
+                    break;
+                }
+                case "castby": {
+                    // Someone else on its side casts it: one of Creature's template, or an ally as By says.
+                    var by = CheatCaster(boss, step);
+                    if (by is null) {
+                        Logger.Information("Duel {0} | Slot {1} | {2}: no one on its side to cast {3} ({4}).", Logger.Args(_duel.m_duelID.Full,
+                            boss.SlotIndex, bossName, step.Spell.Length > 0 ? step.Spell : step.SpellID.ToString(),
+                            step.By.Length > 0 ? step.By : $"creature {step.Creature}"));
+                        break;
+                    }
+
+                    var byLines = new List<string>();
+                    if (lines.Count > 0 && by != boss) {
+                        // The cheat's line shows over the boss before the other one's spell.
+                        foreach (var line in lines) {
+                            cinematicTime += ShowBossLine(line, boss, combatActionList);
+                        }
+
+                        lines.Clear();
+                    }
+
+                    cinematicTime += CheatCast(by, cheat, step with { Do = "Cast" }, trigger, receiver, bossName, by == boss ? lines : byLines,
+                        combatActionList, cinematicTimeSoFar + cinematicTime, custom);
+                    break;
+                }
                 case "setphase" when step.Phase > 0:
+                    // Its health cheats of that phase can go off again (a cycle that comes back to a phase starts over).
+                    RearmHealthCheats(boss, step.Phase);
                     // The new phase counts its rounds from the next round.
                     _bossPhases[boss] = (step.Phase, (int) _duel.m_roundNum + 1);
                     Logger.Information("Duel {0} | Slot {1} | Boss moves on to phase {2}.",
@@ -1406,12 +1492,21 @@ public partial class CombatResolver {
             .Where(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam == boss.OccupiedTeam).ToList();
         var others = allies.Where(c => c != boss).ToList();
         var code = (aim ?? "").Trim().ToLowerInvariant();
-        // The player cheats' circles (p1-p4: its own side's, e1-e4: the other side's, as .c1 numbers them).
-        if (FreeTargetCircle(boss, code) is { } circle) {
-            return circle.IsAlive && circle.AddedToDuel ? [circle] : [];
+        // The same as the step before (Imogen Nightgrove: a random wizard, then the Brace of that wizard's school).
+        if (code == "last") {
+            return [.. _lastStepTargets.Where(c => c is not null && c.IsAlive && c.AddedToDuel)];
         }
 
-        return code switch {
+        // The player cheats' circles (p1-p4: its own side's, e1-e4: the other side's, as .c1 numbers them).
+        if (FreeTargetCircle(boss, code) is { } circle) {
+            return _lastStepTargets = circle.IsAlive && circle.AddedToDuel ? [circle] : [];
+        }
+
+        return _lastStepTargets = code switch {
+            // Whoever that spell was aimed at, on either side (the ally hit, for AllyHit).
+            "hit" when receiver is not null => receiver.IsAlive ? [receiver] : [],
+            // Everyone standing who has the step's (or the cheat's) mark.
+            "marked" => [.. enemies.Concat(allies).Where(c => HasMark(c, _stepMark))],
             "self" or "me" => [boss],
             // The one who summoned it into the battle (a minion's summoner), while it stands; else no one.
             "summoner" => Summoner(boss) is { } summoner ? [summoner] : [],
@@ -1423,6 +1518,8 @@ public partial class CombatResolver {
             // A spell on a teammate is taken from that teammate; one on many (or on an enemy) from the caster.
             "receiver" when receiver is not null && receiver.OccupiedTeam != boss.OccupiedTeam => [receiver],
             "receiver" when trigger is not null => [trigger],
+            "hit" when trigger is not null => [trigger],
+            "hit" => [],
             "firstenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.SlotIndex).First()],
             "weakestenemy" when enemies.Count > 0 => [enemies.OrderBy(c => c.ParticipantGameStats.m_currentHitpoints).First()],
             "enemy" or "caster" or "attacker" when enemies.Count > 0 => [enemies[Random.Shared.Next(enemies.Count)]],

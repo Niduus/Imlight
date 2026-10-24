@@ -637,8 +637,9 @@ internal sealed partial class ManagerWindow {
             case CheatFieldType.Cards: {
                 var box = BlockFields.Words(string.Join(", ", block.List(field.Key)),
                     t => Set(field.Key, new JsonArray([.. t.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                        .Select(w => (JsonNode) JsonValue.Create(w)!)])), "Scald, Tower Shield", 220);
-                ToolTip.SetTip(box, "Spell names, with commas between, such as Scald, Tower Shield.");
+                        .Select(w => (JsonNode) JsonValue.Create(w)!)])), field.Key is "Brings" or "BringsRandom" or "AlliesUp" or "AlliesDown" ? "1668859, 1668858" : "Scald, Tower Shield", 220);
+                var creatures = field.Key is "Brings" or "BringsRandom" or "AlliesUp" or "AlliesDown";
+                ToolTip.SetTip(box, creatures ? "Creature ids, with commas between, such as 1668859, 1668858." : "Spell names, with commas between, such as Scald, Tower Shield.");
 
                 return box;
             }
@@ -822,6 +823,8 @@ internal sealed partial class ManagerWindow {
                 case "ModifyIncomingDamage" or "ModifyIncomingDamageFlat": found.Add(e.Amount < 0 ? "Shield" : "Trap"); break;
                 case "ModifyOutgoingDamage" or "ModifyOutgoingDamageFlat": found.Add(e.Amount > 0 ? "Blade" : "Weakness"); break;
                 case "ModifyAccuracy" or "CritBoost" or "ModifyOutgoingHeal" or "ModifyOutgoingArmorPiercing": found.Add("Charm"); break;
+                case "DamageOverTime": found.Add("DoT"); break;
+                case "HealOverTime": found.Add("HoT"); break;
             }
         }
 

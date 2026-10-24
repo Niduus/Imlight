@@ -214,27 +214,39 @@ public partial class CombatResolver {
     }
 
     /// <summary>
-    /// PickOne: of the actions after it (Count of them, or all the rest when 0), only one is kept, picked at random by
-    /// Weights ("2, 1, 1": the first twice as likely as each other one; 1 each when left out).
+    /// PickOne: of the choices after it (Count of them, or all the rest when 0), only one is kept, picked at random by
+    /// Weights ("2, 1, 1": the first twice as likely as each other one; 1 each when left out). InTurn (Niduus,
+    /// 2026-10-24: Dewey's blade cycle): the choices go in turn, the first the first time the cheat goes off, the
+    /// second the next time, and round again. Each choice is Group steps (1 if 0), such as a line and its spell.
     /// </summary>
-    private static List<BossCheats.CheatAction> PickSteps(List<BossCheats.CheatAction> steps) {
-        if (!steps.Any(s => s.Is("PickOne"))) {
+    /// <param name="turn">How many times the cheat went off before.</param>
+    private static List<BossCheats.CheatAction> PickSteps(List<BossCheats.CheatAction> steps, int turn = 0) {
+        if (!steps.Any(s => s.Is("PickOne") || s.Is("InTurn"))) {
             return steps;
         }
 
         var kept = new List<BossCheats.CheatAction>();
         for (var i = 0; i < steps.Count; i++) {
-            if (!steps[i].Is("PickOne")) {
+            if (!steps[i].Is("PickOne") && !steps[i].Is("InTurn")) {
                 kept.Add(steps[i]);
 
                 continue;
             }
 
             var pick = steps[i];
-            var count = pick.Count > 0 ? Math.Min(pick.Count, steps.Count - i - 1) : steps.Count - i - 1;
-            var group = steps.Skip(i + 1).Take(count).ToList();
-            i += count;
+            var size = Math.Max(1, pick.Group);
+            var rest = steps.Count - i - 1;
+            var choices = pick.Count > 0 ? Math.Min(pick.Count, (rest + size - 1) / size) : (rest + size - 1) / size;
+            var taken = Math.Min(rest, choices * size);
+            var group = Enumerable.Range(0, choices).Select(g => steps.Skip(i + 1 + g * size).Take(Math.Min(size, taken - g * size)).ToList()).ToList();
+            i += taken;
             if (group.Count == 0) {
+                continue;
+            }
+
+            if (pick.Is("InTurn")) {
+                kept.AddRange(group[Math.Max(0, turn) % group.Count]);
+
                 continue;
             }
 
@@ -250,7 +262,7 @@ public partial class CombatResolver {
             var roll = Random.Shared.Next(total);
             for (var g = 0; g < group.Count; g++) {
                 if (roll < chances[g]) {
-                    kept.Add(group[g]);
+                    kept.AddRange(group[g]);
                     break;
                 }
 
@@ -259,6 +271,148 @@ public partial class CombatResolver {
         }
 
         return kept;
+    }
+
+    // The targets of the step before (the target "Last"), and the mark the running step means ("Marked").
+    private List<CombatDuelSubCircle> _lastStepTargets = [];
+    private string _stepMark = "";
+
+    // The marks on each participant, by its global id (Mark, Unmark, the If "marked"; Niduus, 2026-10-24: Shadowbones's
+    // "Tag, you're it").
+    private readonly Dictionary<ulong, HashSet<string>> _marks = [];
+
+    private bool HasMark(CombatDuelSubCircle who, string mark)
+        => who?.ParticipantObject is { } obj && !string.IsNullOrWhiteSpace(mark) && _marks.TryGetValue(obj.m_globalID.Full, out var marks)
+           && marks.Contains(mark.Trim());
+
+    private void SetMark(CombatDuelSubCircle who, string mark, bool on) {
+        if (who?.ParticipantObject is not { } obj || string.IsNullOrWhiteSpace(mark)) {
+            return;
+        }
+
+        if (!_marks.TryGetValue(obj.m_globalID.Full, out var marks)) {
+            _marks[obj.m_globalID.Full] = marks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        if (on ? marks.Add(mark.Trim()) : marks.Remove(mark.Trim())) {
+            Logger.Information("Duel {0} | Slot {1} | Cheat {2} the mark \"{3}\".",
+                Logger.Args(_duel.m_duelID.Full, who.SlotIndex, on ? "puts on" : "takes off", mark.Trim()));
+        }
+    }
+
+    // The one an If about someone looks at: Caster (the one who set it off), Receiver (whoever that spell was aimed at,
+    // or the one hit) or Self.
+    private static CombatDuelSubCircle WhoOf(string who, CombatDuelSubCircle boss, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver)
+        => (who ?? "").Trim().ToLowerInvariant() switch {
+            "self" or "me" => boss,
+            "receiver" or "hit" => receiver ?? trigger,
+            _ => trigger ?? receiver,
+        };
+
+    // The If "marked": MarkWho has (or with NotMarked, has not) the mark. AnyEnemy: someone on the other side has it
+    // (NotMarked: no one there has it).
+    private bool MarkAllows(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        if (string.IsNullOrWhiteSpace(cheat.Mark)) {
+            return true;
+        }
+
+        var has = cheat.MarkWho.Equals("AnyEnemy", StringComparison.OrdinalIgnoreCase)
+            ? _subCircles.Any(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam != boss.OccupiedTeam && HasMark(c, cheat.Mark))
+            : HasMark(WhoOf(cheat.MarkWho, boss, trigger, receiver), cheat.Mark);
+
+        return has != cheat.NotMarked;
+    }
+
+    // The If "has": HasWho has a charm, ward, aura or over-time of HasKind, or one from HasSpell (with HasNot: none).
+    private static bool HasAllows(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        if (string.IsNullOrWhiteSpace(cheat.HasKind) && string.IsNullOrWhiteSpace(cheat.HasSpell) && !cheat.HasNot) {
+            return true;
+        }
+
+        var who = WhoOf(cheat.HasWho, boss, trigger, receiver);
+        var effects = who?.CombatParticipant?.m_hangingEffects ?? [];
+        var kinds = (cheat.HasKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var has = effects.Any(e => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
+                                   && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell)));
+
+        return has != cheat.HasNot;
+    }
+
+    // Whether a hanging effect is of a kind: Shield, Trap, Blade, Weakness, Charm (any blade, weakness or other charm),
+    // Ward (any shield, trap or absorb), Aura, DoT or HoT.
+    private static bool IsKind(SpellEffect e, string kind) {
+        var good = CombatRequirements.IsBeneficial(e);
+        var overTime = CombatRequirements.IsOverTime(e);
+        var aura = CombatRequirements.IsAura(e);
+        var ward = s_wardEffects.Contains(e.m_effectType) && !aura;
+        var charm = s_charmEffects.Contains(e.m_effectType) && !aura;
+        var shieldLike = e.m_effectType is kSpellEffects.kModifyIncomingDamage or kSpellEffects.kModifyIncomingDamageFlat or kSpellEffects.kAbsorbDamage;
+        var bladeLike = e.m_effectType is kSpellEffects.kModifyOutgoingDamage or kSpellEffects.kModifyOutgoingDamageFlat;
+
+        return kind.ToLowerInvariant() switch {
+            "shield" => ward && shieldLike && good,
+            "trap" => ward && shieldLike && !good,
+            "blade" => charm && bladeLike && good,
+            "weakness" => charm && bladeLike && !good,
+            "charm" => charm,
+            "ward" => ward,
+            "aura" => aura,
+            "dot" => overTime && e.m_effectType != kSpellEffects.kHealOverTime,
+            "hot" => e.m_effectType == kSpellEffects.kHealOverTime,
+            _ => false,
+        };
+    }
+
+    // The Ifs on its side: AlliesUp each stand, none of AlliesDown does, and AlliesMin to AlliesMax others stand.
+    private bool AlliesAllow(CombatDuelSubCircle boss, BossCheats.BossCheat cheat) {
+        var others = _subCircles.Where(c => c is not null && c != boss && c.Occupied && c.AddedToDuel && c.IsAlive
+                                            && c.OccupiedTeam == boss.OccupiedTeam && c.ParticipantObject is not null).ToList();
+        if (cheat.AlliesMin > 0 && others.Count < cheat.AlliesMin) {
+            return false;
+        }
+
+        if ((cheat.AlliesMax > 0 && others.Count > cheat.AlliesMax) || (cheat.AlliesMax < 0 && others.Count > 0)) {
+            return false;
+        }
+
+        var standing = others.Select(c => (uint) c.ParticipantObject.m_templateID.Full).ToHashSet();
+
+        return BossCheats.Ids(cheat.AlliesUp).All(standing.Contains) && !BossCheats.Ids(cheat.AlliesDown).Any(standing.Contains);
+    }
+
+    // Who casts a CastBy step: someone on its side of Creature's template (By Creature, or no By with a Creature), else
+    // as By says (Ally, WeakestAlly, StrongestAlly, Summoner, or Self). Null when no one there stands.
+    private CombatDuelSubCircle CheatCaster(CombatDuelSubCircle boss, BossCheats.CheatAction step) {
+        var by = (step.By ?? "").Trim();
+        if (step.Creature > 0 && (by.Length == 0 || by.Equals("Creature", StringComparison.OrdinalIgnoreCase))) {
+            return _subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam == boss.OccupiedTeam
+                                                   && c.ParticipantObject is { } obj && obj.m_templateID.Full == step.Creature);
+        }
+
+        if (by.Length == 0 || by.Equals("Self", StringComparison.OrdinalIgnoreCase)) {
+            return boss;
+        }
+
+        var hasOthers = HasAllies(boss);
+        if (!hasOthers && by.ToLowerInvariant() is "ally" or "weakestally" or "strongestally") {
+            return null;
+        }
+
+        var saved = _lastStepTargets;
+        var who = StepTargets(boss, by, null, null, null).FirstOrDefault(c => c is not null && c.IsAlive);
+        _lastStepTargets = saved;
+
+        return who;
+    }
+
+    // A SetPhase back to a phase: its health cheats can go off again.
+    private void RearmHealthCheats(CombatDuelSubCircle boss, int phase) {
+        var cheats = BossesWithCheats(defeatedToo: true).FirstOrDefault(b => b.Boss == boss).Cheats ?? [];
+        for (var i = 0; i < cheats.Count; i++) {
+            if (cheats[i].Phase == phase && (cheats[i].Is("HealthBelow") || cheats[i].Is("MyHealthBelow"))) {
+                _bossCheatsUsed.Remove(CheatKey(boss, i));
+            }
+        }
     }
 
     private static string SchoolText(string school) => string.IsNullOrWhiteSpace(school) || school.Equals("All", StringComparison.OrdinalIgnoreCase)
@@ -312,6 +466,19 @@ public partial class CombatResolver {
 
                     return true;
                 }
+                case "mark":
+                    // A mark of its own name on the target (the attacker if none is picked), for the If "marked".
+                    foreach (var target in On("Caster")) {
+                        SetMark(target, step.Mark, true);
+                    }
+
+                    return true;
+                case "unmark":
+                    foreach (var target in On("Marked")) {
+                        SetMark(target, step.Mark, false);
+                    }
+
+                    return true;
                 case "removeauras":
                     foreach (var target in On("AllEnemies").Where(t => t?._hangingEffects is not null)) {
                         var gone = target._hangingEffects.Count(e => CombatRequirements.IsAura(e) && !e.m_protected);

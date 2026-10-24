@@ -101,6 +101,14 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             return true;
         }
 
+        // A locale key itself (CombatMessages_00000676, as the boss cheat files and Wizard404 give the game's lines):
+        // the words of a line never hold its key, so the search below did not find them (Niduus, 2026-10-24).
+        if (text.Contains('_') && !text.Contains(' ') && Locale.GetEnglishName(text) is { Length: > 0 } english) {
+            (key, shown) = (text, english);
+
+            return true;
+        }
+
         var matches = Locale.Search(text, 1);
         if (matches.Count == 0) {
             problem = $"The game has no line with \"{text}\". Try fewer words.";

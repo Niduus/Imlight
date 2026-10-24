@@ -135,6 +135,34 @@
  *   Say's Text in a player cheat goes to that wizard's own chat. SetHealth on a wizard sets only their health (their most
  *   health is their own).
  *
+ * The gauntlets (Niduus, 2026-10-24: Wizard404's cheats for every housing gauntlet; players and creatures alike):
+ *   Passive "Minions"   Brings (creature ids), BringsCount of BringsRandom: it comes into a battle with them on its
+ *                side. A battle started against it gathers them as a ZoneObjects encounter does (the zone's own ones
+ *                first, then summoned); anyone else who has it (a wizard, a boss that walks in) gets them summoned.
+ *   When AllyHit       a spell from the other side hurts someone else on its side (School, Category narrow it);
+ *                "Hit" is that ally, the attacker the one who cast it.
+ *   HasWho, HasKind, HasSpell, HasNot   only if Caster (default), Receiver or Self has a charm, ward, aura or over-time of
+ *                HasKind (Shield, Trap, Blade, Weakness, Charm, Ward, Aura, DoT, HoT; several with commas) or from the
+ *                spell HasSpell; HasNot: only if none.
+ *   AlliesUp, AlliesDown   only while each of these creatures (ids) stands on its side, and none of these does.
+ *   AlliesMin, AlliesMax   only while this many others stand on its side.
+ *   Mark, MarkWho, NotMarked   only if MarkWho (Caster, Receiver, Self, AnyEnemy) has (NotMarked: has not) the mark.
+ *   MultiTarget  only a spell that hits a whole side. NoAllies now counts for every When, not only a round's.
+ *   Category also DoT and HoT (damage or healing over rounds).
+ *   Actions also:
+ *     { "Do": "CastBy", "By": Creature (with "Creature": its id) / Ally / WeakestAlly / StrongestAlly / Summoner,
+ *       "Spell"/"SpellID", "Target", "Silent" }   someone else on its side casts it, free; nothing if no one stands.
+ *     { "Do": "Mark", "Mark", "Target" (Caster) }  { "Do": "Unmark", "Mark", "Target" (Marked) }   a named mark, for the
+ *                                           If above; it shows nothing in the game.
+ *     { "Do": "InTurn", "Count", "Group" }   of the next Count choices of Group steps (1), the first goes off the first
+ *                                           time the cheat does, the next the next time, and round again. PickOne takes
+ *                                           Group too.
+ *     { "Do": "OnlySchool", "School", "Count", "Target" (Last) }   the next Count steps only if the target is of School.
+ *     FirstTurn Side "Swap": the side that went first goes second.
+ *   Target also Last (whoever the step before went on), Hit (the ally hit, for AllyHit) and Marked.
+ *   A SetPhase back to a phase lets its HealthBelow cheats go off again. Line takes a locale key
+ *   (CombatMessages_00000676) as well as words.
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -228,6 +256,31 @@ internal static class BossCheats {
         // when it comes into a battle (Niduus, 2026-10-24: "make Fairy Queens assign for 4th spot a passive block").
         public string Passive { get; set; } = "";
         public int Circle { get; set; }
+        // Passive "Minions": it comes into a battle with these creatures (template ids) on its side, and BringsCount of
+        // BringsRandom picked at random (Niduus, 2026-10-24: the gauntlets' bosses and their minions).
+        public List<string> Brings { get; set; } = [];
+        public List<string> BringsRandom { get; set; } = [];
+        public int BringsCount { get; set; }
+        // "Has": only if HasWho (Caster, Receiver or Self) has a charm, ward, aura or over-time of HasKind (Shield, Trap,
+        // Blade, Weakness, Charm, Ward, Aura, DoT, HoT; empty for any), or one from the spell HasSpell (any version); with
+        // HasNot, only if it has none.
+        public string HasWho { get; set; } = "";
+        public string HasKind { get; set; } = "";
+        public string HasSpell { get; set; } = "";
+        public bool HasNot { get; set; }
+        // Only while each of AlliesUp (template ids) stands on its side, and none of AlliesDown does.
+        public List<string> AlliesUp { get; set; } = [];
+        public List<string> AlliesDown { get; set; } = [];
+        // Only while this many others stand on its side (AlliesMax 0 = no top; both 0 = no limit, -1 in AlliesMax = none).
+        public int AlliesMin { get; set; }
+        public int AlliesMax { get; set; }
+        // "Marked": only if MarkWho (Caster, Receiver, Self, or AnyEnemy: someone on the other side) has the mark Mark
+        // (a Mark step puts it on); with NotMarked, only if not (AnyEnemy: no one on the other side has it).
+        public string Mark { get; set; } = "";
+        public string MarkWho { get; set; } = "";
+        public bool NotMarked { get; set; }
+        // Only a spell that hits a whole side (the other way round from SingleTarget).
+        public bool MultiTarget { get; set; }
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
@@ -331,6 +384,11 @@ internal static class BossCheats {
         public string Side { get; set; } = "";
         // The enchantments picked for an enchanted FreeCast, put on in this order (none: the best one that fits).
         public List<string> Enchants { get; set; } = [];
+        // For Mark and Unmark: the mark's name. For CastBy: who casts (Creature: one of Creature's template on its side;
+        // Ally, WeakestAlly, StrongestAlly, Summoner). For PickOne and InTurn: how many steps each choice is (1).
+        public string Mark { get; set; } = "";
+        public string By { get; set; } = "";
+        public int Group { get; set; }
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 
@@ -362,6 +420,26 @@ internal static class BossCheats {
     internal static int CircleOf(IEnumerable<BossCheat> cheats)
         => cheats?.LastOrDefault(c => c is { Off: false, Circle: >= 1 and <= 4 } && c.Is("Passive")
             && c.Passive.Equals("Circle", StringComparison.OrdinalIgnoreCase))?.Circle ?? 0;
+
+    /// <summary>The template ids of a list of ids written as words ("1668859").</summary>
+    internal static List<uint> Ids(IEnumerable<string> words)
+        => [.. (words ?? []).Select(w => uint.TryParse((w ?? "").Trim(), out var id) ? id : 0).Where(id => id > 0)];
+
+    /// <summary>A passive "Minions" cheat that is on: the creatures a combatant comes into a battle with, or null.</summary>
+    internal static BossCheat MinionsOf(IEnumerable<BossCheat> cheats)
+        => cheats?.LastOrDefault(c => c is { Off: false } && c.Is("Passive") && c.Passive.Equals("Minions", StringComparison.OrdinalIgnoreCase)
+                                      && (Ids(c.Brings).Count > 0 || Ids(c.BringsRandom).Count > 0));
+
+    /// <summary>The creatures a passive "Minions" cheat brings this time: all of Brings, then BringsCount of BringsRandom.</summary>
+    internal static List<uint> BroughtBy(BossCheat cheat) {
+        if (cheat is null) {
+            return [];
+        }
+
+        var random = Ids(cheat.BringsRandom).OrderBy(_ => System.Random.Shared.Next()).Take(Math.Max(0, cheat.BringsCount));
+
+        return [.. Ids(cheat.Brings).Concat(random)];
+    }
 
     // The cheats of a boss with no file, the same list each time so BossOverrides.CheatsOf keeps its own laid over it.
     private static readonly List<BossCheat> s_none = [];

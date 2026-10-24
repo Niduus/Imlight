@@ -52,6 +52,11 @@ internal static class CheatSpecs {
         ("Summoner", "whoever summoned it"),
         ("LastAttacker", "the last one who hurt it"),
         ("AllAllies", "its whole side"),
+        // Niduus, 2026-10-24 (the gauntlets): the target of the block before, the ally hit (When an ally is hit), and
+        // whoever has the block's mark.
+        ("Last", "the same as the block before"),
+        ("Hit", "the one hit"),
+        ("Marked", "whoever has the mark"),
         // The .c1 commands' circles, for players and bosses alike (Niduus, 2026-10-23).
         ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
         ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"),
@@ -68,7 +73,7 @@ internal static class CheatSpecs {
         ("Charm,Ward", "charm or ward"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"),
         ("Aura", "aura"), ("Global", "global (bubble)"), ("Aura,Global", "aura or global"), ("Charm,Global", "charm or global"), ("Minion", "minion"),
         ("Shadow", "shadow"), ("Enchantment", "enchantment"), ("Stun", "stun"), ("Steal", "steal"), ("Dispel", "dispel"),
-        ("Polymorph", "polymorph"), ("Treasure", "treasure card"),
+        ("Polymorph", "polymorph"), ("Treasure", "treasure card"), ("DoT", "damage over time"), ("HoT", "heal over time"),
     ];
 
     private static readonly (string, string)[] s_charmKinds = [("All", "of any"), ("Good", "good"), ("Bad", "bad")];
@@ -82,7 +87,14 @@ internal static class CheatSpecs {
 
     private static readonly (string, string)[] s_dispelThen = [("Retry", "retry")];
     private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
-    private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first")];
+    private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first"), ("Swap", "swap who goes first")];
+    private static readonly (string, string)[] s_hasWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it")];
+    private static readonly (string, string)[] s_hasKinds = [
+        ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"), ("Charm", "charm (any)"),
+        ("Ward", "ward (any)"), ("Aura", "aura"), ("DoT", "damage over time"), ("HoT", "heal over time"),
+    ];
+    private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side")];
+    private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
     private static readonly (string, string)[] s_anySchool = [("", "every school"), .. SCHOOLS[1..]];
 
     private static CheatField F(string key, CheatFieldType type, JsonNode? first = null, (string, string)[]? options = null, int max = 100_000_000)
@@ -127,6 +139,10 @@ internal static class CheatSpecs {
 
         return words.Length == 0 ? what : $"a {words} spell";
     }
+
+    // Creature ids as names, when the app has them.
+    private static string CreatureList(List<string> ids) => ids.Count == 0 ? "(no creatures picked)"
+        : string.Join(", ", ids.Select(w => uint.TryParse(w, out var id) && CreatureNames?.Invoke(id) is { } name ? name : w));
 
     private static string SchoolWord(CheatBlock b) => b.Text("School").Length > 0 ? b.Text("School") + " " : "";
 
@@ -195,6 +211,10 @@ internal static class CheatSpecs {
             "When an ally's health drops below {Health}", [F("Health", CheatFieldType.Health)],
             b => b.Number("Health") > 0 ? $"When an ally drops below {N(b.Number("Health"))} health" : $"When an ally drops below {b.Number("Percent")}% health"),
 
+        new("W.AllyHit", BlockKind.When, "hit", "an ally is hit", "A spell from the other side hurts someone else on its side. \"The one hit\" is that ally, \"the attacker\" the one who cast it. Pick the school and the kind of card, or any.",
+            "When an ally is hit by a {School} {Category} spell {Count}", [F("School", CheatFieldType.School), F("Category", CheatFieldType.Category), F("Count", CheatFieldType.MatchCount)],
+            b => $"When an ally is hit by {(b.Text("School").Length > 0 || b.Text("Category").Length > 0 ? Spell(b, "a spell") : "anything")}"),
+
         // When... (first made for the player cheats; a boss's "I" is the boss)
         new("W.ICast", BlockKind.When, "sparkle", "I cast", "Your spell, just before it lands. Pick the kind of card and school, and add a \"these spells\" block to name spells.",
             "When I cast a {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
@@ -218,6 +238,10 @@ internal static class CheatSpecs {
         new("P.Circle", BlockKind.Passive, "target", "its circle", "It always takes this circle of its side when it comes into a battle (at the start, walking in, or summoned). If someone already stands there, it takes the free circle nearest to it. Circle 1 is the first of its side, as the game numbers them.",
             "Always stand on circle {Circle}", [new("Circle", CheatFieldType.Number, 4, Max: 4, Min: 1)],
             b => $"Always on circle {Math.Clamp(b.Number("Circle"), 1, 4)}"),
+        new("P.Minions", BlockKind.Passive, "users", "comes with", "It comes into a battle with these creatures on its side (creature ids, with commas between), and this many more picked at random from the second list. When a battle starts against it, the room's own creatures of those kinds join first and the rest are summoned; when it joins a battle later, they are summoned with it.",
+            "Come into a battle with {Brings}, and {BringsCount} picked at random from {BringsRandom}",
+            [F("Brings", CheatFieldType.Cards), F("BringsCount", CheatFieldType.Number, 0, max: 3), F("BringsRandom", CheatFieldType.Cards)],
+            b => $"Comes with {CreatureList(b.List("Brings"))}{(b.Number("BringsCount") > 0 && b.List("BringsRandom").Count > 0 ? $" and {b.Number("BringsCount")} of {CreatureList(b.List("BringsRandom"))}" : "")}"),
 
         // If...
         new("I.Chance", BlockKind.If, "dice", "chance", "It goes off only this often. 50 means half the time.",
@@ -271,6 +295,23 @@ internal static class CheatSpecs {
         new("I.Creature", BlockKind.If, "users", "this creature", "Only when the one the When is about is this creature: the one that fell, whose health dropped or that joined, else the one whose spell or pass set it off. With \"anyone but it\", only when it is someone else.",
             "Only if it is {Creature} {NotCreature}", [F("Creature", CheatFieldType.Creature), new("NotCreature", CheatFieldType.Toggle, false, Label: "anyone but it")],
             b => b.Flag("NotCreature") ? $"only if not {Creature(b)}" : $"only if it is {Creature(b)}"),
+        // If... (Niduus, 2026-10-24: the gauntlets' cheats)
+        new("I.Has", BlockKind.If, "shield", "has a charm or ward", "Only if that one has a charm, ward, aura or over-time of this kind on them, or one from this spell (any version). With \"has none\", only if they have none: Kurokage answers a wizard who attacks with no shield up.",
+            "Only if {HasWho} has a {HasKind} from {HasSpell} {HasNot}",
+            [F("HasWho", CheatFieldType.Choice, "Caster", s_hasWho), F("HasKind", CheatFieldType.Choice, "Shield", s_hasKinds), F("HasSpell", CheatFieldType.Words, ""), new("HasNot", CheatFieldType.Toggle, false, Label: "has none")],
+            b => $"only if {LabelOf(s_hasWho, b.Text("HasWho"))} {(b.Flag("HasNot") ? "has no" : "has a")} {(b.Text("HasSpell").Length > 0 ? b.Text("HasSpell") + " " : "")}{LabelOf(s_hasKinds, b.Text("HasKind"))}"),
+        new("I.Allies", BlockKind.If, "users", "how many allies", "Only while this many others stand on its side. Leave the top at 0 for no top.",
+            "Only while {AlliesMin} to {AlliesMax} others stand on its side", [F("AlliesMin", CheatFieldType.Number, 1, max: 7), F("AlliesMax", CheatFieldType.Number, 0, max: 7)],
+            b => b.Number("AlliesMax") > 0 ? $"with {b.Number("AlliesMin")}-{b.Number("AlliesMax")} allies" : $"with {b.Number("AlliesMin")}+ allies"),
+        new("I.AlliesUp", BlockKind.If, "users", "these allies", "Only while each creature of the first list stands on its side, and none of the second (creature ids, with commas between): Yoshinobu's chain changes as Hisamoto and Kensaburo fall.",
+            "Only while {AlliesUp} stand and {AlliesDown} are down", [F("AlliesUp", CheatFieldType.Cards), F("AlliesDown", CheatFieldType.Cards)],
+            b => string.Join(", ", new[] { b.List("AlliesUp").Count > 0 ? $"while {CreatureList(b.List("AlliesUp"))} stand" : "",
+                b.List("AlliesDown").Count > 0 ? $"once {CreatureList(b.List("AlliesDown"))} are down" : "" }.Where(w => w.Length > 0)) is { Length: > 0 } w ? w : "(no creatures picked)"),
+        new("I.Marked", BlockKind.If, "target", "marked", "Only if that one has a mark a \"mark\" block put on. With \"does not\", only if not; with \"someone on the other side\", whether anyone there has it (\"does not\": no one there has it).",
+            "Only if {MarkWho} has the mark {Mark} {NotMarked}", [F("MarkWho", CheatFieldType.Choice, "Caster", s_markWho), F("Mark", CheatFieldType.Words, "Tag"), new("NotMarked", CheatFieldType.Toggle, false, Label: "does not")],
+            b => $"only if {LabelOf(s_markWho, b.Text("MarkWho"))} {(b.Flag("NotMarked") ? "does not have" : "has")} the mark \"{b.Text("Mark")}\""),
+        new("I.MultiTarget", BlockKind.If, "users", "many targets", "Only a spell that hits a whole side, not one target.",
+            "Only if the spell hits a whole side", [], _ => "only spells on a whole side"),
 
         // Do... (first made for bosses)
         new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again.",
@@ -340,6 +381,23 @@ internal static class CheatSpecs {
             "Defeat itself", [], _ => "defeat itself"),
         new("D.RandomOne", BlockKind.Do, "dice", "one spell at random", "Of all its Cast blocks, only one is cast each time, picked at random.",
             "Cast only one of these spells, picked at random", [], _ => "(only one spell, at random)"),
+        // Do... (Niduus, 2026-10-24: the gauntlets' cheats)
+        new("D.CastBy", BlockKind.Do, "sparkle", "an ally casts", "Someone else on its side casts a free spell, as \"cast a spell\" does: one of this creature's kind (Yoshinobu's chain: Hisamoto casts Unicorn), or an ally. Nothing happens when no such one stands.",
+            "Have {By} {Creature} cast {Spell} on {Target} {Silent}",
+            [F("By", CheatFieldType.Choice, "Creature", s_castBy), F("Creature", CheatFieldType.Creature), F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"{(b.Text("By") is "" or "Creature" ? Creature(b) : LabelOf(s_castBy, b.Text("By")))} casts {SpellName(b)}{Target(b)}{(b.Flag("Silent") ? " (silent)" : "")}"),
+        new("D.Mark", BlockKind.Do, "target", "mark", "Puts a mark of this name on the target (a random player if none is picked), for the \"marked\" If block. It shows nothing in the game; add a line or a spell for that.",
+            "Put the mark {Mark} on {Target}", [F("Mark", CheatFieldType.Words, "Tag"), F("Target", CheatFieldType.Target, "Enemy")],
+            b => $"mark \"{b.Text("Mark")}\"{Target(b)}"),
+        new("D.Unmark", BlockKind.Do, "broom", "take a mark off", "Takes the mark of this name off the target (whoever has it, if none is picked).",
+            "Take the mark {Mark} off {Target}", [F("Mark", CheatFieldType.Words, "Tag"), F("Target", CheatFieldType.Target, "Marked")],
+            b => $"take the mark \"{b.Text("Mark")}\"{Target(b).Replace(" on ", " off ")}"),
+        new("D.InTurn", BlockKind.Do, "list", "in turn", "Of the next choices (how many: 0 is all of them), the first goes off the first time the cheat does, the second the next time, and round again. Each choice is this many blocks, such as a line and its spell.",
+            "Do the next {Count} choices in turn, {Group} blocks each", [F("Count", CheatFieldType.Number, 0, max: 20), new("Group", CheatFieldType.Number, 1, Max: 10, Min: 1)],
+            b => $"(the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "")} choices in turn{(b.Number("Group") > 1 ? $", {b.Number("Group")} blocks each" : "")})".Replace("next  ", "next ")),
+        new("D.OnlySchool", BlockKind.Do, "school", "only for a school", "The next blocks (how many) go off only if the target is a wizard or creature of this school. \"The same as the block before\" checks whoever the block before went on: Imogen Nightgrove's Brace for that wizard's school.",
+            "Do the next {Count} blocks only if {Target} is of {School}", [new("Count", CheatFieldType.Number, 1, Max: 20, Min: 1), F("Target", CheatFieldType.Target, "Last"), F("School", CheatFieldType.Choice, "Fire", SCHOOLS[1..])],
+            b => $"(the next {Math.Max(1, b.Number("Count"))} only for {b.Text("School")}{Target(b).Replace(" on ", ": ")})"),
 
         // Do... (first made for the player cheats; "alias" ones are the same as a block above, kept to read old files)
         new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked.",
@@ -364,7 +422,7 @@ internal static class CheatSpecs {
             "Wait {Rounds} rounds, then do the blocks under this one", [F("Rounds", CheatFieldType.Number, 4, max: 99)],
             b => $"wait {(b.Number("Rounds") == 1 ? "1 round" : $"{Math.Max(1, b.Number("Rounds"))} rounds")}"),
         new("D.PickOne", BlockKind.Do, "dice", "pick one at random", "Of the blocks under this one (how many: 0 is all of them), only one goes off, picked at random. Chances such as 2, 1, 1 make the first twice as likely as each other one.",
-            "Do only one of the next {Count} blocks, with chances {Weights}", [F("Count", CheatFieldType.Number, 0, max: 20), F("Weights", CheatFieldType.Words, "")],
+            "Do only one of the next {Count} choices, {Group} blocks each, with chances {Weights}", [F("Count", CheatFieldType.Number, 0, max: 20), new("Group", CheatFieldType.Number, 1, Max: 10, Min: 1), F("Weights", CheatFieldType.Words, "")],
             b => $"(one of the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "blocks")}, at random)"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
             "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),

@@ -172,10 +172,13 @@ internal sealed class CheatRule {
             ["ToRound"] = 0, ["HasAllies"] = false, ["Fizzle"] = "", ["Creature"] = 0, ["NotCreature"] = false, ["Minions"] = false,
             ["DispelThen"] = "", ["DispelRetries"] = 0, ["RetryUntilCast"] = false,
             ["Passive"] = CheatSpecs.PassiveOf(When.Spec), ["Circle"] = 0,
+            ["Brings"] = new JsonArray(), ["BringsRandom"] = new JsonArray(), ["BringsCount"] = 0,
+            ["HasWho"] = "", ["HasKind"] = "", ["HasSpell"] = "", ["HasNot"] = false, ["AlliesUp"] = new JsonArray(), ["AlliesDown"] = new JsonArray(),
+            ["AlliesMin"] = 0, ["AlliesMax"] = 0, ["Mark"] = "", ["MarkWho"] = "", ["NotMarked"] = false, ["MultiTarget"] = false,
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -194,6 +197,7 @@ internal sealed class CheatRule {
                 case "I.OnBoss": json["OnBoss"] = true; break;
                 case "I.SingleTarget": json["SingleTarget"] = true; break;
                 case "I.HasAllies": json["HasAllies"] = true; break;
+                case "I.MultiTarget": json["MultiTarget"] = true; break;
                 default:
                     foreach (var field in block.Kind.Fields.Where(f => f.Type != CheatFieldType.MatchCount)) {
                         Put(field.Key, BossChanges.FindIn(block.Values, field.Key));
@@ -251,7 +255,7 @@ internal sealed class CheatRule {
         var whenBlock = whenSpec is null
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
             if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
                 whenBlock.Set(key, value);
             }
@@ -329,6 +333,30 @@ internal sealed class CheatRule {
 
         if (Number("Creature") > 0) {
             If("I.Creature", new JsonObject { ["Creature"] = Number("Creature"), ["NotCreature"] = Flag("NotCreature") });
+        }
+
+        // The gauntlets' Ifs (Niduus, 2026-10-24).
+        if (Text("HasKind").Length > 0 || Text("HasSpell").Length > 0 || Flag("HasNot")) {
+            If("I.Has", new JsonObject {
+                ["HasWho"] = Text("HasWho").Length > 0 ? Text("HasWho") : "Caster", ["HasKind"] = Text("HasKind"), ["HasSpell"] = Text("HasSpell"),
+                ["HasNot"] = Flag("HasNot"),
+            });
+        }
+
+        if (Number("AlliesMin") != 0 || Number("AlliesMax") != 0) {
+            If("I.Allies", new JsonObject { ["AlliesMin"] = Number("AlliesMin"), ["AlliesMax"] = Number("AlliesMax") });
+        }
+
+        if (Node("AlliesUp") is JsonArray { Count: > 0 } || Node("AlliesDown") is JsonArray { Count: > 0 }) {
+            If("I.AlliesUp", new JsonObject { ["AlliesUp"] = Node("AlliesUp") ?? new JsonArray(), ["AlliesDown"] = Node("AlliesDown") ?? new JsonArray() });
+        }
+
+        if (Text("Mark").Length > 0) {
+            If("I.Marked", new JsonObject { ["MarkWho"] = Text("MarkWho").Length > 0 ? Text("MarkWho") : "Caster", ["Mark"] = Text("Mark"), ["NotMarked"] = Flag("NotMarked") });
+        }
+
+        if (Flag("MultiTarget")) {
+            If("I.MultiTarget");
         }
 
         // A file's School and Category on a When that has no box for them stay as If blocks would not: keep them on it.
