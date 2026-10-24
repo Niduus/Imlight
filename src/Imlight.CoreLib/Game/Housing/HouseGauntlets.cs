@@ -56,6 +56,8 @@
  *   Round 10 (Niduus, 2026-10-24, pictures of the game's own placements): the gauntlets he showed, and every Skeleton
  *   Key one-shot and rematch pedestal, take a tuned distance, a height (the deck, porch, step or platform the circles
  *   lie on) and a size (s_tuned, s_tunedModels); a smaller pad's face slots and reach shrink with it (ZoneService).
+ *   Round 12 (Niduus, 2026-10-24: "Can we make a feature so I can manually adjust the sigil?"): .sigil (CommandSigil)
+ *   sets a template's pad by hand in the game; GauntletSigils (gauntlet-sigils.json) keeps it and beats every default.
  *   Its global id comes from the lot, the item, its template, its placement and its front, so a moved gauntlet's pad goes
  *   and comes back, and a trophy (no sigil behavior, or named _Trophy) has none.
  * - The dungeon is the template's m_sigilZoneInfoList: the first zone whose m_maximumLevel is at least the level of the
@@ -116,6 +118,19 @@ internal sealed record HouseGauntlet(uint GidId, uint ItemId, uint TemplateId, V
 /// <param name="Gauntlet">The gauntlet.</param>
 internal sealed record HouseGauntletPad(ulong GlobalId, ulong LotGid, ulong OwnerCharId, HouseGauntlet Gauntlet);
 
+/// <summary>
+/// Where a gauntlet's sigil pad stands.
+/// </summary>
+/// <param name="X">The pad centre.</param>
+/// <param name="Y">The pad centre.</param>
+/// <param name="Z">The pad's height in the world.</param>
+/// <param name="Yaw">The pad's yaw; its arc faces (-cos yaw, sin yaw) from the centre.</param>
+/// <param name="Scale">Its size.</param>
+/// <param name="Height">How high it stands over the gauntlet's floor.</param>
+/// <param name="Turn">Its arc's facing, in degrees from the gauntlet's yaw.</param>
+/// <param name="ByHand">Whether gauntlet-sigils.json has its template.</param>
+internal readonly record struct SigilPlace(float X, float Y, float Z, float Yaw, float Scale, float Height, float Turn, bool ByHand);
+
 internal static class HouseGauntlets {
 
     // The dungeon sigil octagon of the towers, a pad for a team of 4.
@@ -147,17 +162,20 @@ internal static class HouseGauntlets {
     // whole distance from the gauntlet to the pad's centre, how high the pad stands over the gauntlet's floor (a deck,
     // porch or step of the model), and the pad's size. Housing.GauntletSigilDistance.<id>, Housing.GauntletSigilHeight.<id>
     // and Housing.GauntletSigilScale.<id> override them. Accursed Play (1441117) is "perfect" at v0.10.218's 180.
-    private static readonly Dictionary<uint, (float Distance, float Height, float Scale)> s_tuned = new() {
-        [1441117] = (180f, 0f, 1f),    // HOUSE_SP_TheaterGauntlet, Accursed Play: kept as it was
-        [1392811] = (200f, 25f, 1f),   // CL_ExplorersGauntlet, ship wheel: wide arc on the deck at the foot of the stairs
-        [1233740] = (60f, 10f, 0.5f),  // HOUSE_AV_HousingGauntlet, tent: small circles hugging its base platform
-        [1381017] = (60f, 0f, 1f),     // VA_Gauntlet_Clock, Great Clock: arc against the door, outer circles past the corners
-        [664085] = (100f, 0f, 0.6f),   // MS_Pagoda_Gauntlet: small circles at the base, almost touching it
-        [1217443] = (210f, 30f, 1f),   // PA_SpiralCupGauntlet: the place was close; raised to the fountain's step
-        [701493] = (280f, 40f, 1f),    // GH_WinterbaneHallGauntlet: on the porch deck before the door, bowing outward
+    private static readonly Dictionary<uint, (float Distance, float Height, float Scale, float Turn)> s_tuned = new() {
+        [1441117] = (180f, 0f, 1f, 0f),    // HOUSE_SP_TheaterGauntlet, Accursed Play: kept as it was
+        [1392811] = (200f, 25f, 1f, 0f),   // CL_ExplorersGauntlet, ship wheel: wide arc on the deck at the foot of the stairs
+        [1233740] = (60f, 10f, 0.5f, 0f),  // HOUSE_AV_HousingGauntlet, tent: small circles hugging its base platform
+        [1381017] = (60f, 0f, 1f, 0f),     // VA_Gauntlet_Clock, Great Clock: arc against the door, outer circles past the corners
+        [664085] = (100f, 0f, 0.6f, 0f),   // MS_Pagoda_Gauntlet: small circles at the base, almost touching it
+        [1217443] = (210f, 30f, 1f, 0f),   // PA_SpiralCupGauntlet: the place was close; raised to the fountain's step
+        // GH_WinterbaneHallGauntlet: on the porch deck before the door, bowing outward. Round 12 (Niduus, 2026-10-24, the
+        // picture of the arc on the grass to the hall's left): this model's front is a quarter turn from its yaw, so the
+        // pad turns -90 degrees round the hall, and comes nearer (280 along the side had been past the side wall).
+        [701493] = (200f, 40f, 1f, -90f),
         // Niduus, 2026-10-24, "Battle of the Bands with Tanglewood Terror":
-        [1217598] = (30f, 15f, 0.8f),  // DD_DS01_Gauntlet, Battle of the Bands: on the hexagonal brick base before the goblet
-        [1346015] = (40f, 8f, 1f),     // DD_PA01_Fountain, Tanglewood Terror: on the round white platform before the fountain
+        [1217598] = (30f, 15f, 0.8f, 0f),  // DD_DS01_Gauntlet, Battle of the Bands: on the hexagonal brick base before the goblet
+        [1346015] = (40f, 8f, 1f, 0f),     // DD_PA01_Fountain, Tanglewood Terror: on the round white platform before the fountain
     };
 
     // The Skeleton Key one-shots and the rematches (Niduus, 2026-10-24, the Rattlebones Exalted Duel picture: the pedestal
@@ -166,7 +184,7 @@ internal static class HouseGauntlets {
         ("SP_UltraDungeon_", 40f, 8f, 0.6f), ("SP_Rematch", 40f, 8f, 0.6f), ("SP_OneShot_", 40f, 8f, 0.6f),
     ];
 
-    private static (float Distance, float Height, float Scale)? TunedOf(uint templateId) {
+    private static (float Distance, float Height, float Scale, float Turn)? TunedOf(uint templateId) {
         if (s_tuned.TryGetValue(templateId, out var tuned)) {
             return tuned;
         }
@@ -174,7 +192,7 @@ internal static class HouseGauntlets {
         var model = ModelOf(templateId);
         foreach (var (name, distance, height, scale) in s_tunedModels) {
             if (model.Contains(name, StringComparison.OrdinalIgnoreCase)) {
-                return (distance, height, scale);
+                return (distance, height, scale, 0f);
             }
         }
 
@@ -276,10 +294,11 @@ internal static class HouseGauntlets {
             Logger.Args(house.LotGid, why, gauntlets.Count, change.Added.Count, change.Removed.Count));
         foreach (var info in change.Added) {
             if (wanted.Values.FirstOrDefault(g => info.m_zoneTag.ToString() == $"HouseGauntletSigil_{g.GidId}") is { } g) {
-                Logger.Information("Gauntlet: {Name} (template {TemplateId}, house object {GidId}) stands at ({X:0}, {Y:0}, {Z:0}), yaw {Yaw:0.###}; its sigil centre is {Front:0} in front, at ({PadX:0}, {PadY:0}), {Height:0} up, size {Scale:0.##}, model {Model}.",
+                var place = PlaceOf(g);
+                Logger.Information("Gauntlet: {Name} (template {TemplateId}, house object {GidId}) stands at ({X:0}, {Y:0}, {Z:0}), yaw {Yaw:0.###}; its sigil centre is at ({PadX:0}, {PadY:0}), {Height:0} up, arc turned {Turn:0} degrees, size {Scale:0.##} ({Source}), model {Model}.",
                     Logger.Args(NameOf(g.TemplateId), g.TemplateId, g.GidId, g.Position.X, g.Position.Y, g.Position.Z, g.Yaw,
-                        FrontOf(g.TemplateId), info.m_location.X, info.m_location.Y, LookOf(g.TemplateId).Height,
-                        LookOf(g.TemplateId).Scale, ModelOf(g.TemplateId)));
+                        info.m_location.X, info.m_location.Y, place.Height, place.Turn, place.Scale,
+                        place.ByHand ? "set by hand, " + GauntletSigils.FILE : "defaults", ModelOf(g.TemplateId)));
             }
         }
     }
@@ -301,17 +320,16 @@ internal static class HouseGauntlets {
     // the pad takes the gauntlet's yaw and its centre goes to the model's front: the circles stand before the model, and
     // the game's "Press X" shows over the centre, at the model's door, as at a tower.
     private static ZoneObjects.ZoneObject PadOf(HouseGauntlet gauntlet, string zoneName) {
-        var heading = gauntlet.Yaw + (s_angle * MathF.PI / 180f);
-        var front = FrontOf(gauntlet.TemplateId);
-        var (height, scale) = LookOf(gauntlet.TemplateId);
+        var place = PlaceOf(gauntlet);
+        var scale = place.Scale;
 
         return new ZoneObjects.ZoneObject {
             Name = $"HouseGauntletSigil_{gauntlet.GidId}",
             TemplateID = PadTemplateId,
-            X = gauntlet.Position.X - (MathF.Cos(heading) * front),
-            Y = gauntlet.Position.Y + (MathF.Sin(heading) * front),
-            Z = gauntlet.Position.Z + height,
-            Yaw = heading,
+            X = place.X,
+            Y = place.Y,
+            Z = place.Z,
+            Yaw = place.Yaw,
             Scale = scale,
             Sigil = new ZoneObjects.ZoneSigil {
                 SigilType = PadSigilType,
@@ -322,6 +340,60 @@ internal static class HouseGauntlets {
             },
         };
     }
+
+    /// <summary>
+    /// Where a gauntlet's pad stands, which way its arc faces and its size: the hand-set sigil of its template
+    /// (gauntlet-sigils.json, the .sigil command) first, then the ini keys, then the code's defaults.
+    /// </summary>
+    internal static SigilPlace PlaceOf(HouseGauntlet gauntlet) {
+        var id = gauntlet.TemplateId;
+        var hand = GauntletSigils.Of(id);
+        var (height, scale) = LookOf(id);
+        height = hand?.Height ?? height;
+        scale = hand?.Scale is > 0 and var own ? own : scale;
+        var turn = hand?.Turn ?? (DefaultTurnOf(id) + s_angle);
+        var yaw = gauntlet.Yaw;
+        var heading = yaw + (turn * MathF.PI / 180f);
+        float x, y;
+        if (hand is { OffsetX: { } along, OffsetY: { } side }) {
+            // The gauntlet's own frame: its front (-cos yaw, sin yaw) and its side (sin yaw, cos yaw), a quarter turn on.
+            x = gauntlet.Position.X - (MathF.Cos(yaw) * along) + (MathF.Sin(yaw) * side);
+            y = gauntlet.Position.Y + (MathF.Sin(yaw) * along) + (MathF.Cos(yaw) * side);
+        } else {
+            // No place set by hand: the centre goes the front distance along the arc's facing, so a turn swings the
+            // whole pad round the gauntlet.
+            var front = FrontOf(id);
+            x = gauntlet.Position.X - (MathF.Cos(heading) * front);
+            y = gauntlet.Position.Y + (MathF.Sin(heading) * front);
+        }
+
+        return new SigilPlace(x, y, gauntlet.Position.Z + height, heading, scale, height, turn, hand is not null);
+    }
+
+    /// <summary>
+    /// The placed gauntlet of a house nearest to a spot, within a reach.
+    /// </summary>
+    internal static HouseGauntlet NearestIn(HouseState house, Vector3 spot, float reach) {
+        if (house is null) {
+            return null;
+        }
+
+        return PadsOf(house)
+            .Select(g => (Gauntlet: g, Distance: MathF.Sqrt(((g.Position.X - spot.X) * (g.Position.X - spot.X)) + ((g.Position.Y - spot.Y) * (g.Position.Y - spot.Y)))))
+            .Where(p => p.Distance <= reach)
+            .OrderBy(p => p.Distance)
+            .Select(p => p.Gauntlet)
+            .FirstOrDefault();
+    }
+
+    /// <summary>
+    /// The name of a gauntlet template, as the game data has it.
+    /// </summary>
+    internal static string NameOf(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template ? template.m_objectName.ToString() : "?";
+
+    // The code's own turn of a gauntlet's pad, in degrees from its yaw (a model whose front is not along its yaw).
+    private static float DefaultTurnOf(uint templateId) => TunedOf(templateId)?.Turn ?? 0f;
 
     /// <summary>
     /// How far the front of a gauntlet's model is from where it stands.
@@ -348,15 +420,12 @@ internal static class HouseGauntlets {
     /// </summary>
     internal static (float Height, float Scale) LookOf(uint templateId)
         => s_lookOf.GetOrAdd(templateId, id => {
-            var tuned = TunedOf(id) ?? (Distance: 0f, Height: 0f, Scale: s_padScale);
+            var tuned = TunedOf(id) ?? (Distance: 0f, Height: 0f, Scale: s_padScale, Turn: 0f);
             var height = ConfigurationManager.GetValue($"Housing.GauntletSigilHeight.{id}", tuned.Height);
             var scale = ConfigurationManager.GetValue($"Housing.GauntletSigilScale.{id}", tuned.Scale);
 
             return (height, scale > 0 ? scale : 1f);
         });
-
-    private static string NameOf(uint templateId)
-        => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template ? template.m_objectName.ToString() : "?";
 
     private static string ModelOf(uint templateId)
         => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template
@@ -368,7 +437,7 @@ internal static class HouseGauntlets {
             : "";
 
     private static string KeyOf(ulong lotGid, HouseGauntlet gauntlet)
-        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{FrontOf(gauntlet.TemplateId)}/{LookOf(gauntlet.TemplateId)}/{s_angle}/v10";
+        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{FrontOf(gauntlet.TemplateId)}/{LookOf(gauntlet.TemplateId)}/{s_angle}/{DefaultTurnOf(gauntlet.TemplateId)}/{GauntletSigils.Of(gauntlet.TemplateId)?.Signature ?? "code"}/v12";
 
     private static ulong PadIdOf(ulong lotGid, HouseGauntlet gauntlet) => ZoneObjects.RuntimeIdOf(KeyOf(lotGid, gauntlet));
 

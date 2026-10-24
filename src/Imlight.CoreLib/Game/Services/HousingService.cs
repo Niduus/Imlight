@@ -83,6 +83,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
     // The house revision the gauntlet sigil pads were last synced for, and whether this visit's move watch was logged.
     private uint _gauntletRevision = uint.MaxValue;
     private bool _loggedGauntletWatch;
+    // The hand-set sigils (gauntlet-sigils.json) the pads were last synced with.
+    private int _sigilVersion = -1;
     private AtticState _attic;
     private ulong _houseCharId;
 
@@ -768,6 +770,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         if (house.Revision != _gauntletRevision) {
             SyncGauntlets("the house changed");
+        } else if (GauntletSigils.Version != _sigilVersion) {
+            SyncGauntlets("a sigil was set by hand");
         }
 
         try {
@@ -795,6 +799,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         try {
             _gauntletRevision = house.Revision;
+            _sigilVersion = GauntletSigils.Version;
             HouseGauntlets.Sync(SessionActor.GetZoneActor(), house, why);
         } catch (Exception exception) {
             Logger.Error("Gauntlet: the sigil pads of lot {LotGid} could not be synced ({Why}): {Error}",
@@ -1225,6 +1230,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseTeleporters.Forget(_houseCharId);
         _gauntletRevision = uint.MaxValue;
         _loggedGauntletWatch = false;
+        _sigilVersion = -1;
         HouseRegistry.Release(_house);
         _house = null;
     }

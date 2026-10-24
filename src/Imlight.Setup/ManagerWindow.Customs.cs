@@ -99,6 +99,7 @@ internal sealed partial class ManagerWindow {
                 _customRows),
             CustomNpcsCard(),
             CustomBattlesCard(),
+            GauntletSigilsCard(),
             CustomAreasCard(),
             _customHeaderCard,
             _customsEditorHost);
@@ -111,6 +112,7 @@ internal sealed partial class ManagerWindow {
         RenderCustoms();
         RenderNpcs();
         LoadBattleCustoms();
+        RenderGauntletSigils();
         RenderAreas();
     }
 
