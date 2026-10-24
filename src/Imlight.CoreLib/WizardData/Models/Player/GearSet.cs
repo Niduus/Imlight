@@ -32,6 +32,12 @@ public class GearSet {
 
     public List<GearSetItem> Items { get; set; } = [];
 
+    /// <summary>
+    /// How the set looked when it was saved (a serialized EquippedItemInfoList of the worn items' looks, as Base64),
+    /// which the Equipment Sets window draws its wizard picture from.
+    /// </summary>
+    public string AppearanceBase64 { get; set; }
+
 }
 
 [Serializable]

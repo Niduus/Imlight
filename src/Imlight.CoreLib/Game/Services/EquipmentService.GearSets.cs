@@ -56,17 +56,23 @@ internal partial class EquipmentService {
             // Saving under a name that is taken updates that set, so a set can be changed without deleting it.
             if (existing >= 0) {
                 behavior.GearSets[existing].Items = items;
+                behavior.GearSets[existing].AppearanceBase64 = GearSets.SnapshotAppearance(behavior, items);
                 WizardCollection.UpdateCharacterItems(wizard);
                 SendGearSetList();
 
                 return;
             }
 
-            var newSet = new GearSet { Name = message.SetName, Items = items };
+            var newSet = new GearSet {
+                Name = message.SetName,
+                Items = items,
+                AppearanceBase64 = GearSets.SnapshotAppearance(behavior, items),
+            };
             behavior.GearSets.Add(newSet);
             WizardCollection.UpdateCharacterItems(wizard);
 
             if (GearSets.TrySerialize(GearSets.ToClient(newSet, behavior), out var data)) {
+                Logger.Information("Gear sets: sent set {0} as {1}.", Logger.Args(newSet.Name, GearSets.Hex(data)));
                 SendToSocket(new WIZARD2_53_PROTOCOL.MSG_EQUIPMENTSETCREATED {
                     NewSet = data,
                     GlobalID = wizard.GameObjectID,

@@ -34,7 +34,7 @@ namespace Imlight.CoreLib.Game.Equipment;
 /// The backpack's Equipment Sets ("gear sets"): a set remembers the worn hat, robe, boots, wand, athame, amulet, ring,
 /// deck and pet (mounts are left out, as in the real game) and puts them all on again with one click.
 /// The client's EquipmentSet carries the set name (picked from the game's name list), whether it is worn, and an
-/// m_serializedItems blob whose layout is not known yet; GearSetItemsFormat in [Character] picks what goes in it.
+/// m_serializedItems blob the window draws its wizard picture from; GearSetItemsLayout in [Character] picks what goes in it.
 /// The server keeps its own item list, so equipping never depends on that blob.
 /// </summary>
 internal static class GearSets {
@@ -50,7 +50,7 @@ internal static class GearSets {
     internal static int MaxSets => Math.Max(1, ConfigurationManager.Settings["Character.MaxGearSets"].AsInt(30));
 
     private static string ItemsFormat
-        => (ConfigurationManager.Settings["Character.GearSetItemsFormat"].AsString("gids") ?? "gids").Trim().ToLowerInvariant();
+        => (ConfigurationManager.Settings["Character.GearSetItemsLayout"].AsString("appearance") ?? "appearance").Trim().ToLowerInvariant();
 
     /// <summary>What is worn now in the slots a set saves.</summary>
     internal static List<GearSetItem> Snapshot(ServerWizEquipmentBehavior behavior) {
@@ -68,8 +68,24 @@ internal static class GearSets {
     internal static bool IsWorn(GearSet set, ServerWizEquipmentBehavior behavior)
         => set.Items.Count > 0 && set.Items.All(item => behavior.HasItemEquipped(item.ItemId));
 
+    /// <summary>
+    /// The looks of the worn items in a set, the same EquippedItemInfoList the character list draws wizards from.
+    /// Called while the items are worn, since only worn items are at hand when the client list is built.
+    /// </summary>
+    internal static string SnapshotAppearance(ServerWizEquipmentBehavior behavior, IEnumerable<GearSetItem> items) {
+        var list = new EquippedItemInfoList { m_infoList = [] };
+        foreach (var item in items) {
+            var worn = behavior.GetItem(item.ItemId);
+            if (worn is not null) {
+                list.m_infoList.Add(ItemHelper.GetPublicItem(worn));
+            }
+        }
+
+        return TrySerialize(list, out var data) ? Convert.ToBase64String(data) : null;
+    }
+
     internal static EquipmentSet ToClient(GearSet set, ServerWizEquipmentBehavior behavior) => new() {
-        m_serializedItems = ItemsBlob(set),
+        m_serializedItems = ItemsBlob(set, behavior),
         m_equipmentSetName = set.Name,
         m_isEquipped = IsWorn(set, behavior),
     };
@@ -132,6 +148,16 @@ internal static class GearSets {
             }
         }
 
+        // Last resort: a set's 4-byte name anywhere in what the client sent.
+        for (var i = 0; i < sets.Count; i++) {
+            var nameBytes = BitConverter.GetBytes(sets[i].Name);
+            if (sets[i].Name > 255 && data.AsSpan().IndexOf(nameBytes) >= 0) {
+                how = $"name {sets[i].Name} found inside the bytes";
+
+                return i;
+            }
+        }
+
         if (uint.TryParse(System.Text.Encoding.ASCII.GetString(data).Trim('\0', ' '), out var textName)) {
             var index = sets.FindIndex(set => set.Name == textName);
             if (index >= 0) {
@@ -163,11 +189,19 @@ internal static class GearSets {
         return false;
     }
 
-    private static ByteString ItemsBlob(GearSet set) {
-        // "gids": each item's 8-byte id. "slots": each item's id and the 4-byte hash of its slot name. "none": empty.
+    private static ByteString ItemsBlob(GearSet set, ServerWizEquipmentBehavior behavior) {
+        // "appearance" (default): the items' looks. "gids": each item's 8-byte id. "slots": each item's id and the
+        // 4-byte hash of its slot name. "none": empty. With gids the window drew a plain wizard (Niduus, 2026-10-24).
         var format = ItemsFormat;
         if (format == "none") {
             return Array.Empty<byte>();
+        }
+
+        if (format != "gids" && format != "slots") {
+            set.AppearanceBase64 ??= SnapshotAppearance(behavior, set.Items);
+            return string.IsNullOrEmpty(set.AppearanceBase64)
+                ? Array.Empty<byte>()
+                : Convert.FromBase64String(set.AppearanceBase64);
         }
 
         var withSlots = format == "slots";
