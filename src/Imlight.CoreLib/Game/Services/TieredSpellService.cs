@@ -43,6 +43,12 @@ internal class TieredSpellService(SessionActor sessionActor) : MessageService(se
                 return;
             }
 
+            // Every tier stays unlocked, as in the game: put back earlier tiers an older upgrade took away.
+            var restored = TieredSpells.RestoreEarlierTiers(SessionActor.ActorRef, GetActiveWizard());
+            if (restored > 0) {
+                Logger.Information("Spell upgrades | Put back {0} earlier spell tiers.", Logger.Args(restored));
+            }
+
             SendVisibility();
         }
         catch (Exception ex) {

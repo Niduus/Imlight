@@ -35,7 +35,10 @@
  * - The game asks with MSG_CANSEETIEREDSPELLGROUPS and reads Visibility as a binary TieredSpellGroupVisibility
  *   (ClientTieredSpellManager::MSG_CanSeeTieredSpellGroups, one entry per group, 1 = shown). Read from the game
  *   program, 2026-10-24.
- * - An upgrade replaces the spell in the spellbook and every copy of it in the wizard's decks.
+ * - Like the game, every tier unlocked on every path stays known ([SpellUpgrades] KeepEveryTier, Niduus 2026-10-24:
+ *   "In base you can get both/all paths"); copies of the spell upgraded from in the decks become the new tier.
+ *   The game sends SpellID 0 when it thinks the spell before is not known, so the tiers before every known tier
+ *   are put back for free (v0.10.250 took the old tier away).
  *
  * TODO:
  * - The Spellements 2.0 "multiple paths" messages (prep, reset, refund all) are not answered.
@@ -78,6 +81,7 @@ internal static class TieredSpells {
     private static readonly bool s_oldCosts = ConfigurationManager.GetValue("SpellUpgrades.UseOldCosts", false);
     private static readonly int s_costPercent = ConfigurationManager.GetValue("SpellUpgrades.CostPercent", 100);
     private static readonly bool s_showAll = ConfigurationManager.GetValue("SpellUpgrades.ShowAllGroups", false);
+    private static readonly bool s_keepEveryTier = ConfigurationManager.GetValue("SpellUpgrades.KeepEveryTier", true);
 
     private static readonly object s_lock = new();
     private static bool s_loaded;
@@ -85,6 +89,8 @@ internal static class TieredSpells {
     private static readonly Dictionary<string, int> s_groupOfSpell = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, TieredSpellRetiredSpellData> s_retired = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, uint> s_templateIds = new(StringComparer.OrdinalIgnoreCase);
+    // Spell name -> the spells whose next tiers name it.
+    private static readonly Dictionary<string, List<string>> s_previous = new(StringComparer.OrdinalIgnoreCase);
 
     internal static bool Enabled => s_enabled;
 
@@ -138,6 +144,25 @@ internal static class TieredSpells {
                     string name = entry?.m_spellName;
                     if (!string.IsNullOrEmpty(name)) {
                         s_retired[name] = entry;
+                    }
+                }
+
+                foreach (var (_, template) in SpellFactory.AllSpellTemplates()) {
+                    if (template is not TieredSpellTemplate tiered) {
+                        continue;
+                    }
+
+                    foreach (var next in tiered.m_nextTierSpells ?? []) {
+                        string nextName = next;
+                        if (string.IsNullOrEmpty(nextName)) {
+                            continue;
+                        }
+
+                        if (!s_previous.TryGetValue(nextName, out var list)) {
+                            s_previous[nextName] = list = [];
+                        }
+
+                        list.Add(tiered.m_name);
                     }
                 }
 
@@ -369,6 +394,11 @@ internal static class TieredSpells {
             from = named;
         }
 
+        if ((from is null || !LeadsTo(from, targetName)) && RestoreEarlierTiers(playerActor, wizard) > 0) {
+            Logger.Information("Spell upgrades | Put back the earlier tiers of {0}'s upgraded spells.",
+                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName()));
+        }
+
         if (from is null || !LeadsTo(from, targetName)) {
             var other = KnownTieredSpells(wizard).FirstOrDefault(k => k.Group == group && LeadsTo(k.Template, targetName));
             if (other.Template is not null) {
@@ -412,7 +442,7 @@ internal static class TieredSpells {
             return false;
         }
 
-        if (from is not null && wizard.UnlearnSpell(fromTemplateId)) {
+        if (!s_keepEveryTier && from is not null && wizard.UnlearnSpell(fromTemplateId)) {
             playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMBOOK { SpellID = (int) fromTemplateId });
         }
 
@@ -422,7 +452,7 @@ internal static class TieredSpells {
 
         message = from is null
             ? $"You learned {targetName} for {cost} Spellements."
-            : $"{(string) from.m_name} became {targetName} for {cost} Spellements" + (swapped > 0 ? $"; {swapped} card(s) in your decks changed too." : ".");
+            : $"{(string) from.m_name} {(s_keepEveryTier ? "unlocked" : "became")} {targetName} for {cost} Spellements" + (swapped > 0 ? $"; {swapped} card(s) in your decks changed too." : ".");
         Logger.Information("Spell upgrades | {0}: {1}", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), message));
 
         return true;
@@ -510,6 +540,53 @@ internal static class TieredSpells {
         Logger.Information("Spell upgrades | {0}: {1}", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), message));
 
         return true;
+    }
+
+    /// <summary>
+    /// With [SpellUpgrades] KeepEveryTier, teaches for free every tier before a tier the wizard knows (back to the
+    /// tier one spell), so all paths stay open. Returns how many spells were put back.
+    /// </summary>
+    internal static int RestoreEarlierTiers(IActorRef playerActor, Wizard wizard) {
+        if (!s_keepEveryTier || wizard is null) {
+            return 0;
+        }
+
+        Load();
+        var known = new HashSet<string>(KnownTieredSpells(wizard).Select(k => (string) k.Template.m_name), StringComparer.OrdinalIgnoreCase);
+        var queue = new Queue<string>(known);
+        var restored = 0;
+        while (queue.Count > 0) {
+            var name = queue.Dequeue();
+            if (!s_previous.TryGetValue(name, out var earlier)) {
+                continue;
+            }
+
+            foreach (var previous in earlier) {
+                if (known.Contains(previous)) {
+                    continue;
+                }
+
+                var id = TemplateIdOf(previous);
+                if (id == 0 || CoreObjectFactory.GetCoreTemplate(id) is TieredSpellTemplate { m_retired: true }
+                    || GroupOf(previous) < 0) {
+                    continue;
+                }
+
+                known.Add(previous);
+                queue.Enqueue(previous);
+                if (wizard.SpellbookBehavior.HasSpell(id)) {
+                    continue;
+                }
+
+                var spell = SpellFactory.GetSpell(id);
+                if (spell is not null && wizard.LearnSpell(spell)) {
+                    playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+                    restored++;
+                }
+            }
+        }
+
+        return restored;
     }
 
     // "Fire Cat - T03 - A" -> "Fire Cat".
