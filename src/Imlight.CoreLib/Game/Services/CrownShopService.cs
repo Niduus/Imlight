@@ -841,6 +841,11 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
         });
     }
 
+    // The item window of an identified house item asks where the item can be had (Game/World/ItemSources).
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_GETITEMINFO))]
+    private void ReceiveGetItemInfo(WIZARD2_53_PROTOCOL.MSG_GETITEMINFO message)
+        => SendToSocket(Game.World.ItemSources.InfoFor(message.ItemID));
+
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PCS_PATCH))]
     private void ReceivePCsPatch(WIZARD_12_PROTOCOL.MSG_PCS_PATCH message) {
         Logger.Warning("What is MSG_PCS_PATCH for? This is called when someone opens player gifts");
