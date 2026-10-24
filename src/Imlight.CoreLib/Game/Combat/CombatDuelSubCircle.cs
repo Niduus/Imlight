@@ -101,6 +101,10 @@ public class CombatDuelSubCircle {
     internal bool IsSummonedMinion { get; private set; }
     // A sandboxed wizard fights with a copy of their stats, so nothing of the duel reaches the saved wizard.
     internal bool IsSandboxed { get; private set; }
+    // A wizard who fights with a copy of their stats: a sandboxed one, or one in the Deckathalon (its own stats, made by
+    // Deckathalon.StatsFor). The battle changes only the copy's health and mana; a Deckathalon battle still uses up the
+    // treasure cards it casts.
+    internal bool FightsWithCopy { get; private set; }
     internal List<SpellEffect> _hangingEffects { get {
         if (CombatParticipant is null) {
             return null;
@@ -375,7 +379,7 @@ public class CombatDuelSubCircle {
 
         var fullMana = ParticipantGameStats.m_baseMana;
         if (fullMana > 0 && ParticipantGameStats.m_currentMana < fullMana) {
-            if (IsSandboxed) {
+            if (FightsWithCopy) {
                 ParticipantGameStats.m_currentMana = fullMana;
             }
             else {
@@ -1141,7 +1145,7 @@ public class CombatDuelSubCircle {
 
     internal void DamageParticipant(int damage) {
         // If the participant is a player, update their health.
-        if (_wizard is not null && !IsSandboxed) {
+        if (_wizard is not null && !FightsWithCopy) {
             var currentHealth = ParticipantGameStats.m_currentHitpoints;
             var newHealth = currentHealth - damage;
 
@@ -1174,7 +1178,7 @@ public class CombatDuelSubCircle {
         }
 
         health = Math.Max(0, health);
-        if (_wizard is not null && !IsSandboxed) {
+        if (_wizard is not null && !FightsWithCopy) {
             _wizard.UpdateHealth(health);
         }
         else {
@@ -1209,7 +1213,7 @@ public class CombatDuelSubCircle {
         }
 
         // If the participant is a player, update their health.
-        if (_wizard is not null && !IsSandboxed) {
+        if (_wizard is not null && !FightsWithCopy) {
             var currentHealth = ParticipantGameStats.m_currentHitpoints;
             var newHealth = currentHealth + heal;
 
@@ -1246,7 +1250,7 @@ public class CombatDuelSubCircle {
         var newMana = Math.Max(0, currentMana - mana);
 
         // Update the mana of the player, and the mana globe on their screen. A PvP duel only changes its copy.
-        if (IsSandboxed) {
+        if (FightsWithCopy) {
             ParticipantGameStats.m_currentMana = newMana;
         }
         else {
@@ -1411,7 +1415,11 @@ public class CombatDuelSubCircle {
         }
 
         IsSandboxed = _duelActor.Duel.m_bPVP;
-        ParticipantGameStats = IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
+        // The Deckathalon (Game/Events/Deckathalon.cs): the stats of the wizard's level and deck, and treasure cards only.
+        var deckathalon = !IsSandboxed && Imlight.CoreLib.Game.Events.Deckathalon.FightsHere(_wizard);
+        FightsWithCopy = IsSandboxed || deckathalon;
+        ParticipantGameStats = deckathalon ? Imlight.CoreLib.Game.Events.Deckathalon.StatsFor(_wizard)
+            : IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
         var combatStats = ParticipantGameStats.GetCombatGameStats();
         // What the game is told this wizard fights with, to hold next to .stats and the game's Stats page.
         Logger.Debug("Stats sent to the game for {0}: damage [{1}] + {2} all, resist [{3}] + {4} all, pierce [{5}] + {6} all, flat [{7}] + {8} all.",
@@ -1496,6 +1504,10 @@ public class CombatDuelSubCircle {
             }
         }
         allSpells.AddRange(temporarySpells);
+        if (deckathalon && Imlight.CoreLib.Game.Events.Deckathalon.TreasureCardsOnly) {
+            Logger.Information("Deckathalon: {0} fights with treasure cards only ({1} in the deck).", Logger.Args(_wizard.CharId, vaultSpells.Sum(v => (int) v.Quantity)));
+            allSpells.Clear();
+        }
         Logger.Information("Battle deck for {0}: deck {1}, {2} item cards from gear, {3} left out as crossed out ({4}); saved crossed out: {5}.",
             Logger.Args(_wizard.CharId, equippedDeckId, _wizard.SpellbookBehavior.TemporarySpells.Count, skipped.Values.Sum(),
                 string.Join(", ", skipped.Select(pair => $"{pair.Key} x{pair.Value}")),

@@ -800,11 +800,7 @@ internal static class ZoneObjects {
         var zones = new Dictionary<string, ZoneObjectFile>();
         var off = new HashSet<string>();
         var dir = Path.Combine(SpiralDB.ExtraPath, FOLDER);
-        if (!Directory.Exists(dir)) {
-            return zones;
-        }
-
-        foreach (var path in Directory.GetFiles(dir, "*.json")) {
+        foreach (var path in Directory.Exists(dir) ? Directory.GetFiles(dir, "*.json") : []) {
             var fileName = Path.GetFileName(path);
             try {
                 var file = JsonSerializer.Deserialize<ZoneObjectFile>(File.ReadAllText(path), s_options);
@@ -857,12 +853,24 @@ internal static class ZoneObjects {
             }
         }
 
+        AddDeckathalonFloors(zones, off);
         ApplyPlacements(zones, off);
         AddCustomNpcs(zones);
         Logger.Information("Zone objects loaded from {0} files ({1} objects, {2} creatures).",
             Logger.Args(zones.Count, zones.Values.Sum(z => z.Objects.Count), zones.Values.Sum(z => z.Creatures.Count)));
 
         return zones;
+    }
+
+    // The Deckathalon's floors (Game/Events/Deckathalon.cs): a variant file for each floor of each tower, made in code.
+    // A file of the folder for the same room and variant wins, so a floor can be changed by hand.
+    private static void AddDeckathalonFloors(Dictionary<string, ZoneObjectFile> zones, HashSet<string> off) {
+        foreach (var file in Imlight.CoreLib.Game.Events.Deckathalon.ZoneFiles()) {
+            var key = KeyOf(file.Zone, file.Variant);
+            if (!zones.ContainsKey(key) && !off.Contains(key)) {
+                zones[key] = file;
+            }
+        }
     }
 
     internal sealed class Placement {

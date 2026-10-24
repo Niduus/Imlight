@@ -653,6 +653,7 @@ internal sealed partial class ManagerWindow : Window {
             TamedDropsCard(),
             CodesCard(),
             MemberBenefitsCard(),
+            EventsCard(),
             _trainersCard);
     }
 

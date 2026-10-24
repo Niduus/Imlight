@@ -183,7 +183,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     // Wizards whose globe shows their real health. A PvP duel only changes its copy (IsSandboxed).
     private IEnumerable<CombatDuelSubCircle> GlobeCircles()
-        => _subCircles.Where(c => c is { Occupied: true, AddedToDuel: true, _wizard: not null, IsSandboxed: false }
+        => _subCircles.Where(c => c is { Occupied: true, AddedToDuel: true, _wizard: not null, FightsWithCopy: false }
             && c.ParticipantGameStats is not null);
 
     private void StartHealthBeats() {
@@ -1483,6 +1483,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// </summary>
     internal static void UseUpCard(CombatDuelSubCircle caster, Spell spell) {
         if (spell.m_treasureCard) {
+            Imlight.CoreLib.Game.Events.Deckathalon.CardUsed(caster._wizard);
             var consumedTemplateId = caster.ConsumeFromVault(spell);
             if (consumedTemplateId != 0 && caster._wizard != null && !caster.IsSandboxed) {
                 // Persist the removal from the player's treasure card book.

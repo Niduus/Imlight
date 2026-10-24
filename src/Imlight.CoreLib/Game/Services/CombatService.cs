@@ -140,6 +140,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
 
         EquipMountSubtle();
+        Imlight.CoreLib.Game.Events.Deckathalon.OnDefeat(SessionActor.ActorRef, wizard);
 
         // We've fled or have been defeated in this duel. Send us back to the world hub.
         var hubMsg = new ZONE_102_PROTOCOL.MSG_SENDTOHUB {
@@ -190,6 +191,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
         GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds, Math.Max(1, message.AllyCharIds?.Length ?? 1), message.CountedRounds);
         TeachSpellAfterBattle();
+        Imlight.CoreLib.Game.Events.Deckathalon.OnWin(SessionActor.ActorRef, GetActiveWizard(), message.MobLootKeys ?? message.MobTemplateIds,
+            message.CountedRounds);
     }
 
     private void TeachSpellAfterBattle() {

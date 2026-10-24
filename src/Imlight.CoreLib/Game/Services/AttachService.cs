@@ -383,6 +383,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     // chat is up to show them.
     private void TellMemberBenefits() {
         var lines = Tools.MemberBenefits.GreetingFor(_wizard.AccountId);
+        lines.AddRange(Events.GameEvents.GreetingFor(_wizard.AccountId));
         if (lines.Count == 0) {
             return;
         }

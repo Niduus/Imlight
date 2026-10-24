@@ -101,6 +101,8 @@ internal sealed class Lookup {
         Imlight("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
         Imlight("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
         Imlight("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
+        Command("Deckathalon", ".deckathalon   or   .deckathalon start", ANYONE_AT_ALL, "Says which Deckathalon is on (the Events card of the Imlight app starts them) and climbs its tower: 30 floors, treasure cards only, no gear stats. .deckathalon leave stops, .deckathalon top shows the best wizards. Also .deck and .tower."),
+        Command("Deckathalon any tower", ".deckathalon start <school>", QA, "Testers can climb any school's tower at any time, such as .deckathalon start ice. These are practice climbs with their own scores."),
         Command("Rename window", ".rename   or   .rename cancel", ANYONE_AT_ALL, "Turns on the game's own rename window for your wizard. Log out to the character select screen and pick the wizard: the game asks you for a new name from its name lists. It stays on for 15 minutes; .rename cancel turns it off."),
         Command("Rename now", ".rename <new name>", ANYONE_AT_ALL, "Renames your wizard straight away. A name from the game's lists (such as .rename Walter Blanco) becomes a real game name; anything else becomes a custom name (up to 31 letters). Relog to see it."),
         Command("Custom name", ".name self <name> or .name pet <name>", QA, "Changes your wizard's name (relog to see it) or the name of the pet you are wearing. Use reset as the name to go back to the old one."),

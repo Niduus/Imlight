@@ -76,6 +76,7 @@ public class GameServer : Server {
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
         Tools.MemberBenefits.Start(Context.System);
+        Events.GameEvents.Start(Context.System);
         World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.
