@@ -40,12 +40,15 @@
  *   new base and a revision no client has seen, when the state is created, and again when it is full. Clients
  *   that still use the old base ask for the blob when a patch does not fit.
  * - Use HouseRegistry.TryEnter and HouseRegistry.Release to count viewers.
+ * - The garden is one more blob entry, the gardening proxy, at a slot kept free past the items (GardenSlot). The client
+ *   numbers the plants after it, so the items never reach it: the table is numbered again first. Each garden patch
+ *   moves the revision by one, like every other change.
  * 
  * TODO:
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/23/2026
+ * Last Updated: 10/24/2026
  */
 
 using System;
@@ -53,6 +56,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Gardening;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -90,7 +94,28 @@ internal readonly record struct HouseChange(HouseEdit Result, int Slot = -1, uin
 /// <param name="GidBase">The base the blob entries are numbered from.</param>
 /// <param name="LiveCount">The number of placed items, not counting removed slots.</param>
 /// <param name="Slots">The items in slot order; a removed slot is <c>null</c>.</param>
-internal readonly record struct HouseSnapshot(uint Revision, uint GidBase, int LiveCount, IReadOnlyList<PlacedItem> Slots);
+/// <param name="GardenSlot">The slot of the gardening proxy, or -1 when the house has no room for one.</param>
+/// <param name="Garden">The soil and plants.</param>
+internal readonly record struct HouseSnapshot(uint Revision, uint GidBase, int LiveCount, IReadOnlyList<PlacedItem> Slots,
+                                              int GardenSlot = -1, IReadOnlyList<GardenSpot> Garden = null) {
+
+    /// <summary>The number of objects in the blob: the items and the gardening proxy.</summary>
+    internal int BlobCount => LiveCount + (GardenSlot >= 0 ? 1 : 0);
+
+}
+
+/// <summary>
+/// The result of a change to the garden.
+/// </summary>
+/// <param name="Result">How the change ended.</param>
+/// <param name="Growth">The garden after the change, with its patches.</param>
+/// <param name="FirstRevision">The revision of the first patch; each later patch is one more.</param>
+/// <param name="GidId">The patches' <c>GIDID</c>: the gardening proxy's.</param>
+internal readonly record struct GardenChange(HouseEdit Result, GardenGrowth Growth = null, uint FirstRevision = 0, uint GidId = 0) {
+
+    internal bool Done => Result == HouseEdit.Done;
+
+}
 
 /// <summary>
 /// The live, persisted state of one house.
@@ -103,12 +128,20 @@ internal sealed class HouseState {
     /// </summary>
     internal const int MaxSlots = HousingGids.MaxSlots;
 
+    // The slots kept free between the items and the gardening proxy, so a renumbering is rare.
+    private const int GardenGap = 64;
+
+    // The last slot the proxy may take: its plants and every entry before it must fit the blob's string field
+    // (header, plain entries, the proxy and the largest garden the client allows).
+    private const int MaxGardenSlot = (65535 - 47 - GardenCodec.MaxSize - 64) / 21 - 1;
+
     private readonly Lock _lock = new();
     private readonly House _house;
     private readonly HouseTemplateInfo _template;
     private List<PlacedItem> _slots;
     private uint _gidBase;
     private int _liveCount;
+    private int _gardenSlot;
     private int _viewers;
     private bool _retired;
 
@@ -118,6 +151,7 @@ internal sealed class HouseState {
         _slots = slots;
         _liveCount = slots.Count;
         _gidBase = NewGidBase();
+        _gardenSlot = GardenSlotFor(slots.Count);
     }
 
     internal ulong LotGid => _house.LotGid;
@@ -148,6 +182,15 @@ internal sealed class HouseState {
         get {
             lock (_lock) {
                 return _liveCount;
+            }
+        }
+    }
+
+    /// <summary>The slot of the gardening proxy, or -1 when the house has no room for one.</summary>
+    internal int GardenSlot {
+        get {
+            lock (_lock) {
+                return _gardenSlot;
             }
         }
     }
@@ -221,7 +264,7 @@ internal sealed class HouseState {
     /// <returns>The revision, base, live count and slots, taken together.</returns>
     internal HouseSnapshot Snapshot() {
         lock (_lock) {
-            return new HouseSnapshot(_house.Revision, _gidBase, _liveCount, [.. _slots]);
+            return new HouseSnapshot(_house.Revision, _gidBase, _liveCount, [.. _slots], _gardenSlot, [.. _house.Garden ?? []]);
         }
     }
 
@@ -316,6 +359,11 @@ internal sealed class HouseState {
                     return new HouseChange(HouseEdit.LimitReached);
                 }
 
+                return new HouseChange(Renumber() ? HouseEdit.NeedsResync : HouseEdit.SaveFailed);
+            }
+
+            // The next item would take the gardening proxy's number, so the proxy moves past it.
+            if (_gardenSlot >= 0 && _slots.Count >= _gardenSlot) {
                 return new HouseChange(Renumber() ? HouseEdit.NeedsResync : HouseEdit.SaveFailed);
             }
 
@@ -497,6 +545,44 @@ internal sealed class HouseState {
     }
 
     /// <summary>
+    /// Changes the garden. Every patch the change makes moves the revision by one; a change without patches is stored
+    /// and keeps the revision.
+    /// </summary>
+    /// <param name="edit">Makes the change on a copy of the garden.</param>
+    /// <returns>The change, with the revision of its first patch and the proxy's GIDID.</returns>
+    internal GardenChange TryEditGarden(Action<GardenGrowth> edit) {
+        lock (_lock) {
+            if (_gardenSlot < 0) {
+                return new GardenChange(HouseEdit.LimitReached);
+            }
+
+            var growth = new GardenGrowth(_house.Garden ?? [], DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            edit(growth);
+            if (GardenCodec.SizeOf(growth.Spots) > GardenCodec.MaxSize + 900) {
+                return new GardenChange(HouseEdit.LimitReached);
+            }
+
+            // Nothing changed, so nothing is written.
+            if (growth.Patches.Count == 0 && growth.Spots.SequenceEqual(_house.Garden ?? [])) {
+                return new GardenChange(HouseEdit.Done, growth, _house.Revision + 1, unchecked(_gidBase + (uint) _gardenSlot));
+            }
+
+            var previousGarden = _house.Garden;
+            var revision = _house.Revision;
+            _house.Garden = growth.Spots;
+            _house.Revision = revision + (uint) growth.Patches.Count;
+            if (!Persist(null)) {
+                _house.Garden = previousGarden;
+                _house.Revision = revision;
+
+                return new GardenChange(HouseEdit.SaveFailed);
+            }
+
+            return new GardenChange(HouseEdit.Done, growth, revision + 1, unchecked(_gidBase + (uint) _gardenSlot));
+        }
+    }
+
+    /// <summary>
     /// Counts a player into the house.
     /// </summary>
     /// <returns><c>false</c> when the state was retired by its last viewer leaving; get the house from the registry again.</returns>
@@ -536,8 +622,10 @@ internal sealed class HouseState {
         var previousSlots = _slots;
         var previousBase = _gidBase;
         var previousRevision = _house.Revision;
+        var previousGardenSlot = _gardenSlot;
         _slots = [.. _house.Items];
         _gidBase = NewGidBase();
+        _gardenSlot = GardenSlotFor(_slots.Count);
         _house.Revision = previousRevision + 1;
         if (HouseCollection.Save(_house)) {
             return true;
@@ -545,9 +633,19 @@ internal sealed class HouseState {
 
         _slots = previousSlots;
         _gidBase = previousBase;
+        _gardenSlot = previousGardenSlot;
         _house.Revision = previousRevision;
 
         return false;
+    }
+
+    private int GardenSlotFor(int slotCount) {
+        var slot = Math.Max(slotCount, _template.ItemLimit + _house.BonusSlots) + GardenGap;
+        if (slot > MaxGardenSlot) {
+            slot = slotCount + 1 <= MaxGardenSlot ? MaxGardenSlot : -1;
+        }
+
+        return slot;
     }
 
     private bool Persist(Func<House, bool> save) {

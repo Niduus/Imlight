@@ -484,6 +484,22 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by the garden command to the HousingService of the player: shows the garden, grows it for testing or sets the
+    /// gardening rank (Game/Services/HousingService.Gardening).
+    /// </summary>
+    public sealed class MSG_GARDENCOMMAND : IServerMessage {
+
+        public byte MessageOrder { get; } = 147;
+        public byte ServiceID { get; } = 103;
+
+        /// <summary>status, grow, ready, rank or spells.</summary>
+        public string Action;
+
+        public int Value;
+
+    }
+
+    /// <summary>
     /// Sent by an Item Finder object (a placed Backpack Butler or a bank) or the itemfinder command to the BankService
     /// of the player: it opens the game's Item Finder window and fills it with the bank, the attic and the houses.
     /// </summary>
