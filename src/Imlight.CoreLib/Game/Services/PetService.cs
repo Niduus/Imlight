@@ -57,7 +57,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
 
-internal class PetService(SessionActor sessionActor) : MessageService(sessionActor) {
+internal partial class PetService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private static int EnergyTickIntervalInSeconds => Imlight.CoreLib.Game.Pet.AdvancedPetsConfig.EnergyTickInSeconds;
     private const int PET_ENERGY_TICK_DELAY = 2;
@@ -93,6 +93,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         Timers.StartPeriodicTimer("petEnergyTick", new CHARACTER_103_PROTOCOL.MSG_DOENERGYTICK(), firstTickDelay, tickInterval);
 
         InitializeEggs(wizard);
+        OnPetGameRoomAttach(wizard);
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_DOENERGYTICK))]
@@ -408,9 +409,10 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
         });
     }
 
-    private bool TryWriteEndData(string gameName, uint xpGained, PetStatModificationSet statMods, out Imcodec.IO.ByteString data) {
+    private bool TryWriteEndData(string gameName, uint xpGained, PetStatModificationSet statMods, out Imcodec.IO.ByteString data,
+                                 float score = 1.0f) {
         var endData = new PetGameEndData {
-            m_Score = 1.0f,
+            m_Score = score,
             m_statMods = statMods,
             m_xpGain = xpGained,
             m_wins = SKIP_WINS,
@@ -456,9 +458,7 @@ internal class PetService(SessionActor sessionActor) : MessageService(sessionAct
             return;
         }
 
-        Logger.Information("Pet game join: game {0}, track {1}.", Logger.Args(message.Game, message.Track));
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEJOINRSP { Game = message.Game, Success = 0 });
-        InformGameClient("Pet games are not in yet. Feed snacks from the snack window or with .pet feed to level your pet.");
+        JoinPetGame(message.Game.ToString(), message.Track.ToString());
     }
 
     /// <summary>
