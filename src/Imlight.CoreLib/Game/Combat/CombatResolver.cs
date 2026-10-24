@@ -471,6 +471,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             var before = combatActionList.m_actionList.Count;
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            // An Extract spell on that move takes Animus (CombatResolver.Monstrology.cs), before any afterlife brings a monster back.
+            NoteExtractions(action, before, combatActionList);
             // A participant defeated by that move comes back if an afterlife waits on them (CombatResolver.Afterlife.cs).
             ProcessAfterlives();
             NoteHealthBeat(cinematicTime);

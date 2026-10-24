@@ -2298,7 +2298,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         foreach (var effect in enchantTemplate.m_effects) {
             // Damage enchants  can only be applied to spells that deal damage (including drains like Vampire)
-            if (effect.m_effectType is kSpellEffects.kModifyCardDamage or kSpellEffects.kModifyCardArmorPiercing) {
+            if (effect.m_effectType is kSpellEffects.kModifyCardDamage or kSpellEffects.kModifyCardArmorPiercing
+                or kSpellEffects.kCollectEssence) {
                 if (!HasDamageEffect(targetTemplate)) {
                     return false;
                 }
@@ -3498,6 +3499,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                 MobLootKeys = [.. lootKeysOfDefeatedMobs],
                 AllyCharIds = [.. allyCharIds],
                 CountedRounds = _countedRounds,
+                Animus = CombatResolver?.TakeAnimus(circle),
             };
             circle.ParticipantActor.Tell(victoryMsg);
         });

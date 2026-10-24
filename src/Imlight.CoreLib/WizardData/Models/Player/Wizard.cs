@@ -81,6 +81,8 @@ public class Wizard {
     public bool Overdose { get; set; }
     // Badges earned by older fork builds. BadgeService moves them into BadgeBehavior at login.
     public List<uint> Badges { get; set; } = [];
+    // The Monstrology tome: the Animus kept for each monster (its tome template id), see Game/Monstrology.
+    public Dictionary<uint, int> MonsterTome { get; set; } = [];
     public string MarkedZone { get; set; }
     public string MarkedZoneDisplayName { get; set; }
     public uint LastLoginTime { get; set; }

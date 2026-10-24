@@ -561,6 +561,16 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Saves the wizard's Monstrology tome (the Animus kept for each monster) and game stats (Monstrology level and XP).
+    /// </summary>
+    public static void UpdateCharacterMonsterTome(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.MonsterTome = wizard.MonsterTome;
+            existingCharacter.GameStats = wizard.GameStats;
+        });
+    }
+
+    /// <summary>
     /// Updates the privacy options of a wizard.
     /// </summary>
     /// <param name="wizard">The wizard whose privacy options should be persisted.</param>

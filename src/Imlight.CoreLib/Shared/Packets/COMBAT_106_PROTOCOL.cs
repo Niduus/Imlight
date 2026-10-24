@@ -202,6 +202,11 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
         /// </summary>
         public int CountedRounds;
 
+        /// <summary>
+        /// The Animus this wizard extracted in the battle (Monstrology), by the monster's tome id, or null.
+        /// </summary>
+        public Dictionary<uint, int> Animus;
+
     }
 
     public sealed class MSG_COMBATEFFECT : IServerMessage {

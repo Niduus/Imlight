@@ -82,7 +82,9 @@ internal static class CombatEnchantments {
         or kSpellEffects.kModifyCardOutgoingAccuracy or kSpellEffects.kModifyCardOutgoingHeal
         or kSpellEffects.kModifyCardOutgoingArmorPiercing or kSpellEffects.kModifyCardIncomingDamage
         or kSpellEffects.kModifyCardAbsorbDamage or kSpellEffects.kModifyCardDamagebyRank
-        or kSpellEffects.kProtectCardBeneficial or kSpellEffects.kProtectCardHarmful;
+        or kSpellEffects.kProtectCardBeneficial or kSpellEffects.kProtectCardHarmful
+        // Extract (Monstrology): the damage spell takes Animus from the monsters it hits (CombatResolver.Monstrology.cs).
+        or kSpellEffects.kCollectEssence;
 
     /// <summary>
     /// Plays <paramref name="enchantment"/> onto <paramref name="target"/>, a card in the hand. Returns false
@@ -149,6 +151,10 @@ internal static class CombatEnchantments {
                 case kSpellEffects.kModifyCardCloak:
                     result = result with { m_cloaked = true };
                     changed = true;
+                    break;
+                // Extract goes only on a damage spell; the spell itself is not changed.
+                case kSpellEffects.kCollectEssence:
+                    changed |= Leaves(result.m_effects).Any(e => IsDamage(e.m_effectType));
                     break;
                 case kSpellEffects.kModifyCardDamage:
                     changed |= Modify(result, IsDamage, e => e with { m_effectParam = e.m_effectParam + amount });
