@@ -31,7 +31,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-4251.812,-9374.036,-112.7362,-1.820614",
+        "m_destinationLoc": "-7812.494,-10283.94,-5.721825,1.383523",
         "m_destinationZone": "Housing_Guild/GuildStarter_Ext"
       }
     },
@@ -42,7 +42,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-7812.494,-10283.94,-5.721825,1.383523",
+        "m_destinationLoc": "-4251.812,-9374.036,-112.7362,-1.820614",
         "m_destinationZone": "Housing_Guild/GuildStarter_Ext"
       }
     },
