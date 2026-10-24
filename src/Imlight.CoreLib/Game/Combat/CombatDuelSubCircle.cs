@@ -646,8 +646,10 @@ public class CombatDuelSubCircle {
     internal uint ArchmasterySchool {
         get {
             if (_wizard is null) {
-                // A creature with Archmastery fills toward its own school.
-                return ArchmasteryActive ? (uint) CombatParticipant.m_primaryMagicSchoolID : 0;
+                // A creature with Archmastery fills toward its own school (one of the seven; Shadow and the Astral
+                // schools have no school pips).
+                var own = (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
+                return ArchmasteryActive && Archmastery.Schools.Contains(own) ? (uint) own : 0;
             }
 
             return !(s_gainSchoolPips || ArchmasteryActive) ? 0
