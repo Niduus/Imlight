@@ -467,7 +467,64 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-Cavity-GummyPlant",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-Cavity-GummyPlant",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Karamelle/Interiors/KM_Z04_GummyPlant",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-QuestLight instance-GummyPlant",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-QuestLight instance-GummyPlant",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Karamelle/KM_Z04_Sweetzburg",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-QuestLight instance-GummyPlant",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "On",
+        "m_zoneName": "Karamelle/Interiors/KM_Z04_GummyPlant",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-GummyFactoryVats",
+        "m_dynaModRemove": true,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Karamelle/Interiors/KM_Z04_GummyPlant",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

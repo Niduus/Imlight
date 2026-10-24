@@ -275,7 +275,59 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC08 instance",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC09 instance",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC10 instance",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC08-B instance",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Mirage/MR_Z04_RubalWastes",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC09-B instance",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Mirage/MR_Z04_RubalWastes",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-RUBAL-NPC10-B instance",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Mirage/MR_Z04_RubalWastes",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

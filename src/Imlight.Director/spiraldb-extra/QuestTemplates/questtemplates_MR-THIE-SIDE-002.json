@@ -237,7 +237,30 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-THIE-NPC10 instance",
+        "m_dynaModRemove": true,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Mirage/MR_Z07_ThievesDen",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "MR-THIE-NPC11 instance",
+        "m_dynaModRemove": true,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Mirage/MR_Z07_ThievesDen",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

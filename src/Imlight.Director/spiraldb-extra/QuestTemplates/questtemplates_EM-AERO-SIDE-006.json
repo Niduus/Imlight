@@ -310,7 +310,47 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM-AERO-NPC16_PortA instance",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Empyrea/EM_Z10_PortAero",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM-AERO-NPC14 instance",
+        "m_dynaModRemove": true,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Empyrea/EM_Z10_PortAero",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM-AERO-NPC16 instance",
+        "m_dynaModRemove": true,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "",
+        "m_zoneName": "Empyrea/EM_Z10_PortAero",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM-AERO-NPC19_PortA",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

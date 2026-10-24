@@ -312,7 +312,41 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM_QuestLight_EM_Z13_KalamarHouse02",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Empyrea/EM_Z13_SamsaraDestroyed",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM_QuestLight_EM_Z13_KalamarHouse03",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Empyrea/EM_Z13_SamsaraDestroyed",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "EM_QuestLight_EM_Z13_KalamarHouse04",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Empyrea/EM_Z13_SamsaraDestroyed",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

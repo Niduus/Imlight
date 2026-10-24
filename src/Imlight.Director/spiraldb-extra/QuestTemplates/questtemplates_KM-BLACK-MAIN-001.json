@@ -411,7 +411,31 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-QuestLight instance KM-Z08-WitchTreeHouse",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-QuestLight instance KM-Z08-WitchTreeHouse",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Karamelle/KM_Z08_LicoriceForest",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KM-BLACK-NPC01 instance",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

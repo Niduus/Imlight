@@ -1161,6 +1161,46 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             questName: questInstance.QuestName,
             skipWorldEffects: !ClaimInstanceStep(InstanceQuestClaimKind.QuestStart, questInstance.QuestName, "")
         );
+
+        ExecuteResults(QuestDynaModResults(qTemplate, starting: true), questInstance.QuestName);
+    }
+
+    /// <summary>
+    /// A quest's own DynaMod list (m_dynaMods): objects it shows in another state (Vestri Hall's sigil "Glowy") or hides
+    /// while the quest is active. They are added when it starts; on completion the ones that do not outlast the quest
+    /// (m_existBeyondQuest) are removed. Niduus, 2026-10-24: the server never read this list.
+    /// </summary>
+    private static ResultList QuestDynaModResults(QuestTemplate qTemplate, bool starting) {
+        var results = new List<Result>();
+        foreach (var mod in qTemplate?.m_dynaMods ?? []) {
+            string tag = mod?.m_zoneTag;
+            if (string.IsNullOrEmpty(tag) || (!mod.m_alterState && !mod.m_hideObjects)) {
+                continue;
+            }
+
+            if (starting) {
+                string state = mod.m_alterState ? mod.m_modState : "Off";
+                results.Add(new ResAddDynaMod { m_dynaModClientTag = tag, m_dynaModState = state, m_zoneName = "", m_persist = true });
+            } else if (!mod.m_existBeyondQuest) {
+                results.Add(new ResRemoveDynaMod { m_dynaModClientTag = tag });
+            }
+        }
+
+        return new ResultList { m_results = results };
+    }
+
+    private void ExecuteResults(ResultList results, string questName) {
+        if (results.m_results.Count == 0) {
+            return;
+        }
+
+        ResultDispatcher.ExecuteResults(
+            actorContext: Context,
+            results: results,
+            playerRef: SessionActor.ActorRef,
+            playerObj: GetActiveGameObject(),
+            zoneActor: SessionActor.GetZoneActor(),
+            questName: questName);
     }
 
     private void SendQuestResumeMessage(QuestTemplate qTemplate, QuestInstance qInstance) {
@@ -1543,6 +1583,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             skipWorldEffects: !ClaimInstanceStep(InstanceQuestClaimKind.QuestComplete, questInstance.QuestName, ""),
             xpScale: xpScale
         );
+
+        ExecuteResults(QuestDynaModResults(qTemplate, starting: false), questInstance.QuestName);
 
         // Fire the "you have learned a new spell!" cinematic for the spell rewards. Only the spells
         // go here; the gold/XP/item popup is already sent by the drop table handlers (MSG_LOOT).
