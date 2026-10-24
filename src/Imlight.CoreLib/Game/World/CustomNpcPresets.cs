@@ -7,6 +7,9 @@
  *
  * Vendors (Niduus, 2026-10-23: "Split Trainer for Gauntlets. Bundle Gauntlets, One Shot gauntlets, Rematches"), from
  * every item with a housing sigil (HousingSigilBehavior), the game's test ones left out:
+ *   Pack Gauntlets     the ones the game has a booster pack of, their own crown shop pack (Niduus, 2026-10-24: "Also
+ *                      include Pack gauntlets as their own vendor"): the Night Mire Gauntlet and the Night Mire Hoard
+ *                      Pack, and so on (PackOf). They are left out of the lists below.
  *   Bundle Gauntlets   the ones kept after a run (no m_usedDisposableDungeonTemplateID).
  *   One-Shot Gauntlets the ones used up after one run (that id names the trophy they become), not rematches.
  *   Rematches          the one-shot boss rematches (object names with "Rematch").
@@ -145,18 +148,80 @@ internal static class CustomNpcPresets {
         // The game's own test items (TEST_Disposable_Dungeon_01, "Single Use Test Dungeon", a test Rattlebones duel).
         var tests = gauntlets.Where(g => IsTest(g.Template)).ToList();
         var kept = gauntlets.Except(tests).OrderBy(g => Locale.GetEnglishName((string) g.Template.m_displayName) ?? "").ToList();
+        var packs = BoosterPacks();
+        var packed = kept.Select(g => (Gauntlet: g, Pack: PackOf(g.Template, packs))).Where(g => g.Pack is not null).ToList();
+        Logger.Information("Vendor presets: {0} gauntlets have a pack of their own: {1}.",
+            Logger.Args(packed.Count, string.Join(", ", packed.Select(g => $"{Locale.GetEnglishName((string) g.Gauntlet.Template.m_displayName)} ({g.Gauntlet.Id}, {g.Pack})"))));
+        kept = [.. kept.Except(packed.Select(g => g.Gauntlet))];
         var bundles = kept.Where(g => g.Sigil.m_usedDisposableDungeonTemplateID == 0).ToList();
         var rematches = kept.Except(bundles).Where(g => ((string) g.Template.m_objectName ?? "").Contains("Rematch", StringComparison.OrdinalIgnoreCase)).ToList();
         var oneShots = kept.Except(bundles).Except(rematches).ToList();
-        Logger.Information("Vendor presets: {0} housing gauntlets ({1} bundle, {2} one-shot, {3} rematches), left out the test ones {4}.",
-            Logger.Args(kept.Count, bundles.Count, oneShots.Count, rematches.Count, string.Join(", ", tests.Select(t => $"{(string) t.Template.m_objectName} ({t.Id})"))));
+        Logger.Information("Vendor presets: {0} housing gauntlets ({1} pack, {2} bundle, {3} one-shot, {4} rematches), left out the test ones {5}.",
+            Logger.Args(kept.Count + packed.Count, packed.Count, bundles.Count, oneShots.Count, rematches.Count,
+                string.Join(", ", tests.Select(t => $"{(string) t.Template.m_objectName} ({t.Id})"))));
 
+        yield return Vendor("Pack Gauntlets", "Furniture",
+            $"The housing gauntlets the game has a booster pack of ({string.Join(", ", packed.Select(g => g.Pack).Distinct())}): {packed.Count}.",
+            packed.Select(g => g.Gauntlet.Id));
         yield return Vendor("Bundle Gauntlets", "Furniture",
             $"The housing gauntlets and Skeleton Key duels kept after a run: {bundles.Count}.", bundles.Select(g => g.Id));
         yield return Vendor("One-Shot Gauntlets", "Furniture",
             $"The housing gauntlets used up after one run, rematches aside: {oneShots.Count}.", oneShots.Select(g => g.Id));
         yield return Vendor("Rematches", "Furniture",
             $"The one-shot boss rematches: {rematches.Count}.", rematches.Select(g => g.Id));
+    }
+
+    private static readonly HashSet<string> s_packStopWords = new(StringComparer.OrdinalIgnoreCase) {
+        "the", "hoard", "pack", "gauntlet", "super", "ultra", "combo", "pk", "ii", "of", "and", "a",
+    };
+
+    // The words of a gauntlet's or pack's English name that tell it apart: no "Gauntlet", "Hoard Pack" or the like.
+    private static HashSet<string> NameWords(string name)
+        => [.. System.Text.RegularExpressions.Regex.Matches((name ?? "").Replace("'s", ""), "[A-Za-z0-9]+")
+            .Select(m => m.Value.ToLowerInvariant())
+            .Where(w => !s_packStopWords.Contains(w) && !w.All(char.IsDigit))];
+
+    // Every booster pack of the game (BoosterPackTemplate), by its English name and that name's words.
+    private static List<(string Name, HashSet<string> Words)> BoosterPacks() {
+        var packs = new List<(string, HashSet<string>)>();
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            string file = location?.m_filename;
+            if (file is null || !file.Contains("BoosterPack", StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            try {
+                if (CoreObjectFactory.GetCoreTemplate(location.m_id) is BoosterPackTemplate pack
+                    && Locale.GetEnglishName((string) pack.m_displayName) is { Length: > 0 } name) {
+                    packs.Add((name.Replace("\\n", " ").Trim(), NameWords(name)));
+                }
+            }
+            catch (Exception e) {
+                Logger.Warning("Vendor presets skip the pack {0} ({1}): {2}", Logger.Args(file, location.m_id, e.Message));
+            }
+        }
+
+        return packs;
+    }
+
+    /// <summary>
+    /// The booster pack that is a gauntlet's own, or null: one whose name holds every word of the gauntlet's ("Night
+    /// Mire Gauntlet", "Night Mire Hoard Pack"), or whose every word is in the gauntlet's name and, a word of five
+    /// letters or more, in its object name too ("Sinbad Hoard Pack", HOUSE_SP_SinbadRuins). The second keeps
+    /// "Terror's Hoard Pack" (Darkmoor) off the Tanglewood Terror Gauntlet.
+    /// </summary>
+    private static string PackOf(WizItemTemplate gauntlet, List<(string Name, HashSet<string> Words)> packs) {
+        var words = NameWords(Locale.GetEnglishName((string) gauntlet.m_displayName));
+        var objectName = (string) gauntlet.m_objectName ?? "";
+        if (words.Count == 0) {
+            return null;
+        }
+
+        return packs.Where(p => p.Words.Count > 0 && (words.IsSubsetOf(p.Words)
+                || (p.Words.IsSubsetOf(words) && p.Words.Any(w => w.Length >= 5 && objectName.Contains(w, StringComparison.OrdinalIgnoreCase)))))
+            .OrderBy(p => p.Name.Length)
+            .Select(p => p.Name)
+            .FirstOrDefault();
     }
 
     private static bool IsTest(WizItemTemplate template) {
