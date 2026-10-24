@@ -528,6 +528,20 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Updates the fish basket and fishing journal of a wizard.
+    /// </summary>
+    /// <param name="wizard">The wizard whose fishing behavior should be persisted.</param>
+    /// <returns>True if the update was successful; otherwise, false.</returns>
+    public static bool UpdateCharacterFishingBehavior(Wizard wizard) {
+        if (wizard is null || wizard.FishingBehavior is null) {
+            return false;
+        }
+
+        return UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.FishingBehavior = wizard.FishingBehavior);
+    }
+
+    /// <summary>
     /// Updates the character spellbook behavior for a wizard; persists the
     /// excluded item spell list and other spellbook state to the database.
     /// </summary>

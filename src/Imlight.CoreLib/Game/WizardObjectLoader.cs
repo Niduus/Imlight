@@ -21,6 +21,7 @@ using Imcodec.IO;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.CoreLib.Game.Bank;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -65,6 +66,7 @@ public static class WizardObjectLoader {
         SetPetOwnerBehavior(clientObject, ref character);
         SetAlchemyBehavior(clientObject, ref character);
         SetBadgeBehavior(clientObject, ref character);
+        SetFishingBehavior(clientObject, character);
         SetAtticBehavior(clientObject, character);
         SetWishlistBehavior(clientObject, ref character);
 
@@ -212,6 +214,17 @@ public static class WizardObjectLoader {
         }
         else {
             throw new Exception("Behavior ClientAlchemyBehavior not found!");
+        }
+    }
+
+    public static void SetFishingBehavior(WizClientObject clientObject, Wizard character) {
+        // The basket and the fishing journal. Characters made before fishing have none, so an empty one is made.
+        character.FishingBehavior ??= new ServerFishingBehavior();
+        if (CoreObjectFactory.FindBehaviorInstance<FishingBehavior>(clientObject, out var fishingBehavior)) {
+            var idx = clientObject.m_inactiveBehaviors.IndexOf(fishingBehavior);
+            var instance = character.FishingBehavior.GetClientBehaviorInstance();
+            instance.m_behaviorTemplateNameID = fishingBehavior.m_behaviorTemplateNameID;
+            clientObject.m_inactiveBehaviors[idx] = instance;
         }
     }
 

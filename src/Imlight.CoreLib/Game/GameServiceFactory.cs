@@ -95,6 +95,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(DailyAssignmentService),
         typeof(PixiePostService),
         typeof(EmoteService),
+        typeof(FishingService),
     ];
 
     public static Props Props() 

@@ -116,6 +116,8 @@ internal sealed class Lookup {
         Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
         Command("Backpack size", ".backpack 300   or   .backpack max", QA, "Sets how many items your backpack holds, up to 500 (max). Change area or log out and back in to see it in the backpack window."),
         Command("Bank size", ".bank 500   or   .bank max", QA, "Sets how many items your bank holds, up to 1000 (max)."),
+        Imlight("Fishing", ".fishing   or   .fishing basket   or   .fishing sell", ANYONE_AT_ALL, "Shows your fishing level and XP, how full your fish basket is and which fish swim in this area. .fishing basket lists your fish; .fishing sell sells the whole basket for gold."),
+        Imlight("Fishing (testing)", ".fishing spells   or   .fishing level 10   or   .fishing reset", QA, "Teaches every fishing spell, sets your fishing level, or fills this area's ponds with new fish."),
         Imlight("Recent wizards", ".recent   or   .recent clear", ANYONE_AT_ALL, "Lists the wizards you battled, grouped, hatched or dueled with lately (the same list as the Friends window's Recent tab). .recent clear empties it."),
         Imlight("Add a recent wizard", ".recent add <wizard name or ID>", QA, "Puts a wizard who is online in your recent wizards list (and you in theirs), to try the Friends window's Recent tab without a battle first."),
         Command("Go to the Bazaar", ".bazaar", QA, "Takes you to the Bazaar in Olde Town."),
