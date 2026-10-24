@@ -454,7 +454,7 @@ internal static class CardPainter {
             }
 
             if ((_fancy ?? _normal) is { } titleFont) {
-                Title(titleFont, card.Name.ToUpperInvariant());
+                Title(titleFont, card.CardTitle.ToUpperInvariant());
             }
 
             if (_text is not null) {

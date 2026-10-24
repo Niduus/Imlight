@@ -40,8 +40,13 @@ internal sealed class SpellCard {
 
     internal required uint Id { get; init; }
 
-    /// <summary>The name shown on the card.</summary>
+    /// <summary>The name shown on the card, with " (tier 5 A)" after an upgraded tier.</summary>
     internal required string Name { get; init; }
+
+    /// <summary>The name printed on the card itself, without the " (tier 5 A)" an upgraded tier gets in lists.</summary>
+    internal string CardTitle => TierStart() is var cut and > 0 ? Name[..cut] : Name;
+
+    private int TierStart() => Name.EndsWith(')') ? Name.LastIndexOf(" (tier ", StringComparison.Ordinal) : -1;
 
     /// <summary>The game's own name for the file, which tells same-named spells apart (such as "Cleanse Ward - Amulet").</summary>
     internal required string Code { get; init; }
@@ -293,7 +298,7 @@ internal sealed partial class SpellBook {
         string description = spell.m_description;
         var card = new SpellCard {
             Id = id,
-            Name = Text(displayName) is { Length: > 0 } shown ? shown.Trim() : code ?? "",
+            Name = (Text(displayName) is { Length: > 0 } shown ? shown.Trim() : code ?? "") + TierLabel(code),
             Code = code ?? "",
             School = spell.m_sMagicSchoolName.ToString() ?? "",
             Type = spell.m_sTypeName.ToString() ?? "",
@@ -339,6 +344,19 @@ internal sealed partial class SpellBook {
 
         return card;
     }
+
+    /// <summary>
+    /// " (tier 5 A)" for an upgraded spell ("Mortality - T05 - A"), so it doesn't look like the plain spell: every tier
+    /// shows the same card name, and learning a top tier by mistake makes the spell look fully upgraded in game.
+    /// </summary>
+    private static string TierLabel(string? code) {
+        var match = code is null ? Match.Empty : TierCode().Match(code);
+
+        return match.Success ? $" (tier {int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)}{(match.Groups[2].Success ? " " + match.Groups[2].Value : "")})" : "";
+    }
+
+    [GeneratedRegex(@" - T(\d\d)(?: - ([A-Z]{1,2}))?$")]
+    private static partial Regex TierCode();
 
     [GeneratedRegex(@"(?i)\b(mob|mobs|boss|bosses|cheat|cheats|test|testing|fortesting|dev|npc|monster|monsters|unused|deprecated|do not use|placeholder|fight specific|raid|gauntlet|tutorial|minion only|archive)\b|mob only|_mob|-mob|\bTEMP\b")]
     private static partial Regex HiddenWords();

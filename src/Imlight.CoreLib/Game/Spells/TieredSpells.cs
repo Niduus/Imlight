@@ -646,6 +646,42 @@ internal static class TieredSpells {
     }
 
     /// <summary>Changes every copy of a spell in the wizard's decks into another spell. Returns how many changed.</summary>
+    /// <summary>
+    /// Takes every upgraded tier of a spell group out of the spellbook, leaving the tier one spell (taught if missing),
+    /// for upgrades that came from somewhere else, such as a top tier learned with .sb learn. Deck copies go back to tier
+    /// one. Spellements are not given back. Returns how many tiers were removed.
+    /// </summary>
+    internal static int ResetGroup(IActorRef playerActor, Wizard wizard, int group) {
+        if (wizard is null || group < 0 || group >= Groups.Count) {
+            return 0;
+        }
+
+        string tierOneName = Groups[group].m_tierOneSpell;
+        var tierOneId = TemplateIdOf(tierOneName);
+        if (tierOneId == 0) {
+            return 0;
+        }
+
+        if (!wizard.SpellbookBehavior.HasSpell(tierOneId) && SpellFactory.GetSpell(tierOneId) is { } tierOne && wizard.LearnSpell(tierOne)) {
+            playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) tierOneId });
+        }
+
+        var removed = 0;
+        foreach (var (templateId, _, known) in KnownTieredSpells(wizard)) {
+            if (known != group || templateId == tierOneId) {
+                continue;
+            }
+
+            SwapInDecks(playerActor, wizard, templateId, tierOneId);
+            if (wizard.UnlearnSpell(templateId)) {
+                playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMBOOK { SpellID = (int) templateId });
+                removed++;
+            }
+        }
+
+        return removed;
+    }
+
     private static int SwapInDecks(IActorRef playerActor, Wizard wizard, uint fromTemplateId, uint toTemplateId) {
         var swapped = 0;
         try {

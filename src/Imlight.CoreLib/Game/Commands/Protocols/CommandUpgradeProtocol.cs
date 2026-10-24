@@ -73,6 +73,24 @@ internal class CommandUpgradeProtocol : CommandProtocol {
             return;
         }
 
+        // .upgrade reset Mortality: back to the plain spell, for upgrades that came from somewhere else.
+        if (text.StartsWith("reset ", StringComparison.OrdinalIgnoreCase)) {
+            var name = text[6..].Trim();
+            var spell = TieredSpells.KnownTieredSpells(Context.Character).FirstOrDefault(k => Matches(k.Template, name));
+            if (spell.Template is null) {
+                InformSenderClient($"You know no upgradable spell called {name}. .upgrades lists yours.");
+
+                return;
+            }
+
+            var removed = TieredSpells.ResetGroup(Context.SessionActor, Context.Character, spell.Group);
+            InformSenderClient(removed == 0
+                ? $"{name} has no upgrades to take away."
+                : $"Took away {removed} upgraded tier(s) of {name}. You keep the plain spell; Spellements are not given back.");
+
+            return;
+        }
+
         // The last word is the path when it is one or two letters (A, B, C, D, AB, BA).
         var path = "";
         var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
