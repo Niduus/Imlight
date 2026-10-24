@@ -28,9 +28,15 @@
  * .sigil here          // the pad's centre goes where you stand; its arc faces away from the gauntlet
  * .sigil here face     // the same, but the arc faces the way you face
  * .sigil size 0.8      .sigil up 10      .sigil down 5      .sigil turn 90      .sigil reset      .sigil info
+ * .sigil forward 10    .sigil back       .sigil left 20     .sigil right 5   // round 13: nudges, 10 with no number
  *
  * NOTE:
  * - Quality assurance and higher, or the owner of the house the caller is in.
+ * - Round 13 (Niduus, 2026-10-24: "can't move this forward, backwards, left or right. Need those commands"): the nudges
+ *   move the pad in the gauntlet's own frame, from where it stands now (its default or a saved .sigil here): forward is
+ *   further out from the gauntlet's front, left and right are as seen standing before the gauntlet, looking at it. Left
+ *   is the frame's +side (sin yaw, cos yaw), which is a guess at the game's handedness; if they come out swapped, the
+ *   LeftSign is the one thing to flip.
  *
  * Created by: Claude
  * Version: KALI 1.0
@@ -52,7 +58,13 @@ internal class CommandSigil : CommandProtocol {
     private const float Reach = 600f;
 
     private const string Usage = "Use .sigil here, .sigil here face, .sigil size <n>, .sigil up <n>, .sigil down <n>, "
-        + ".sigil turn <degrees>, .sigil reset or .sigil info, near a gauntlet in your house.";
+        + ".sigil turn <degrees>, .sigil forward/back/left/right <n>, .sigil reset or .sigil info, near a gauntlet in your house.";
+
+    // The steps of a nudge with no number.
+    private const float Step = 10f;
+
+    // Which way of the frame's side is the left of someone before the gauntlet, looking at it (a guess, see NOTE).
+    private const float LeftSign = 1f;
 
     [Command("sigil")]
     private void SigilCommand([Remainder] string text = "") {
@@ -129,7 +141,7 @@ internal class CommandSigil : CommandProtocol {
                     s.Turn = MathF.Round(turn, 1);
                     s.Height = MathF.Round(height, 1);
                 });
-                said = $"The sigil's centre is now where you stand ({along:0} in front, {side:0} to the side, {height:0} up), its arc turned {turn:0} degrees";
+                said = $"The sigil's centre is now where you stand ({along:0} in front, {SideText(side)}, {height:0} up), its arc turned {turn:0} degrees";
                 break;
             }
 
@@ -151,6 +163,35 @@ internal class CommandSigil : CommandProtocol {
                     + (GauntletSigils.Of(id) is { OffsetX: not null } ? " (it turns where it stands)" : " (the whole sigil swings round the gauntlet)");
                 break;
 
+            case "forward" or "fwd" or "back" or "backward" or "backwards" or "left" or "right": {
+                var by = Step;
+                if (words.Length > 1 && !Number(words, out by)) {
+                    InformSenderClient($"Give a number, such as .sigil {words[0]} 10, or none for {Step:0}.");
+
+                    return;
+                }
+
+                var (along, side) = FrameOf(gauntlet, now);
+                var way = words[0];
+                if (way is "forward" or "fwd") {
+                    along += by;
+                } else if (way is "back" or "backward" or "backwards") {
+                    along -= by;
+                } else {
+                    side += (way == "left" ? by : -by) * LeftSign;
+                }
+
+                // The spot is saved with the arc's facing as it is now, so a nudge from the default keeps its turn.
+                var turnNow = now.Turn;
+                GauntletSigils.Change(id, name, s => {
+                    s.OffsetX = MathF.Round(along, 1);
+                    s.OffsetY = MathF.Round(side, 1);
+                    s.Turn ??= MathF.Round(turnNow, 1);
+                });
+                said = $"The sigil moved {by:0} {(way is "fwd" ? "forward" : way is "backward" or "backwards" ? "back" : way)}: its centre is now {along:0} in front of the gauntlet, {SideText(side)}";
+                break;
+            }
+
             case "reset":
                 said = GauntletSigils.Remove(id) ? "The sigil is back to its defaults" : "The sigil already had its defaults";
                 break;
@@ -170,16 +211,26 @@ internal class CommandSigil : CommandProtocol {
 
     private static string Describe(HouseGauntlet gauntlet, string name) {
         var place = HouseGauntlets.PlaceOf(gauntlet);
+        var (along, side) = FrameOf(gauntlet, place);
+
+        return $"{name} (template {gauntlet.TemplateId}): sigil centre {MathF.Sqrt((along * along) + (side * side)):0} away ({along:0} in front, "
+            + $"{SideText(side)}), {place.Height:0} up, arc turned {place.Turn:0} degrees, size {place.Scale:0.##}; "
+            + (place.ByHand ? $"set by hand ({GauntletSigils.FILE})." : "the defaults.")
+            + " Forward and back are away from and toward the gauntlet's front; left and right are as you stand before it, looking at it.";
+    }
+
+    // Where a pad stands in the gauntlet's own frame: along its front (-cos yaw, sin yaw), and to its side (sin yaw, cos
+    // yaw), which is the left of someone before the gauntlet looking at it when LeftSign is 1.
+    private static (float Along, float Side) FrameOf(HouseGauntlet gauntlet, SigilPlace place) {
         var dx = place.X - gauntlet.Position.X;
         var dy = place.Y - gauntlet.Position.Y;
         var yaw = gauntlet.Yaw;
-        var along = (-dx * MathF.Cos(yaw)) + (dy * MathF.Sin(yaw));
-        var side = (dx * MathF.Sin(yaw)) + (dy * MathF.Cos(yaw));
 
-        return $"{name} (template {gauntlet.TemplateId}): sigil centre {MathF.Sqrt((dx * dx) + (dy * dy)):0} away ({along:0} in front, "
-            + $"{side:0} to the side), {place.Height:0} up, arc turned {place.Turn:0} degrees, size {place.Scale:0.##}; "
-            + (place.ByHand ? $"set by hand ({GauntletSigils.FILE})." : "the defaults.");
+        return ((-dx * MathF.Cos(yaw)) + (dy * MathF.Sin(yaw)), (dx * MathF.Sin(yaw)) + (dy * MathF.Cos(yaw)));
     }
+
+    private static string SideText(float side)
+        => MathF.Abs(side) < 0.5f ? "straight out" : $"{MathF.Abs(side):0} to the {(side * LeftSign > 0 ? "left" : "right")}";
 
     private static bool Number(string[] words, out float value) {
         value = 0;

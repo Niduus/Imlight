@@ -49,7 +49,7 @@ internal sealed partial class ManagerWindow {
         return Fold("home", "Customs", "House gauntlet sigils",
             "The sigils of house gauntlets you set by hand in the game. Each one is for that gauntlet everywhere, in every house.",
             WithHint(Sub("In your house, stand near a placed gauntlet and type .sigil here where the sigil's centre should be, " +
-                    "or .sigil size, up, down, turn, reset or info."),
+                    "or .sigil size, up, down, turn, forward, back, left, right, reset or info."),
                 ".sigil here puts the sigil's centre where you stand, with its arc facing away from the gauntlet (.sigil here " +
                 "face: the way you face). .sigil size 0.8 sets its size, .sigil up 10 and .sigil down 10 raise and lower it, " +
                 ".sigil turn 90 turns its arc, .sigil info shows what it has now and .sigil reset puts it back. Changes show at " +
