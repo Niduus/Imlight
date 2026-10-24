@@ -44,7 +44,7 @@ namespace Imlight.CoreLib.Game.Spells;
 /// bought for 1 point when a spell trainer of the game teaches it (after the randomizer's swap) and it is not of the
 /// wizard's school, the price trainers ask.
 ///
-/// It is free. Trainers offer it ([Trainers] RespecAtTrainers), which opens the game's own reset window (MSG_RESPEC);
+/// It is free. Mr. Lincoln offers it ([Trainers] RespecAtTrainers), which opens the game's own reset window (MSG_RESPEC);
 /// `.respec` does it from the chat for anyone.
 /// </summary>
 internal static class TrainingReset {

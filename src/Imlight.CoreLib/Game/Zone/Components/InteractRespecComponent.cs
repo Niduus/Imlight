@@ -20,11 +20,11 @@
  * ========================================================================
  *
  * PURPOSE:
- * Gives the game's spell trainers a "reset training points" option (the game's RespecOption) beside their spell
- * list. Picking it opens the game's reset window; TrainService takes its answer and TrainingReset does the reset.
+ * Gives Mr. Lincoln a "reset training points" option (the game's RespecOption) beside his spell list (only him,
+ * Niduus 2026-10-24). Picking it opens the game's reset window; TrainService takes its answer and TrainingReset does the reset.
  *
  * NOTE:
- * Only the game's own trainers, while [Trainers] RespecAtTrainers is on, and only for a wizard who has points to
+ * Only Mr. Lincoln, while [Trainers] RespecAtTrainers is on, and only for a wizard who has points to
  * get back. While it is offered the trainer shows one "Spell List" choice first (as it does beside a quest).
  */
 
@@ -37,7 +37,6 @@ using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Resources;
-using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
@@ -73,14 +72,12 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
         => TrainingReset.AtTrainers
         && template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
-        && NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-        && InteractTrainerComponent.TestTrainerKindOf(goTemplate) is null;
+        && InteractTrainerComponent.TestTrainerKindOf(goTemplate) == InteractTrainerComponent.TestTrainerKind.Enchantments;
 
     /// <summary>Whether this NPC offers a wizard the reset right now.</summary>
     internal static bool Offers(ZoneEntity entity, Wizard wizard)
         => wizard is not null
         && entity.GetComponentOfType<InteractRespecComponent>() is not null
-        && entity.GetComponentOfType<InteractTrainerComponent>() is not { TeachesAsListed: true }
         && TrainingReset.PointsBack(wizard) > 0;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
