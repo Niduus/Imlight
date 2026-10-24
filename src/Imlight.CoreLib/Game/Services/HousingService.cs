@@ -346,7 +346,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             SendBlob(house);
         }
 
-        // Everyone in the house may cast onto a Castle Magic object's spells later, so everyone gets its custom entry.
+        // Everyone in the house needs the object's custom entry to take the patches of its spells.
         if (magicData is not null) {
             Logger.Information("Castle Magic: character {CharId} placed Castle Magic object {TemplateId} as house object {GidId} of lot {LotGid}.",
                 Logger.Args(wizard.CharId, placedTemplateId, change.GidId, house.LotGid));
