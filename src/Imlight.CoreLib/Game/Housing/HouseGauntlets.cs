@@ -53,6 +53,9 @@
  *   Housing.GauntletSigilAngle, Housing.GauntletSigilRadius and Housing.GauntletSigilScale correct it without a rebuild.
  *   Round 9: the centre had stood inside a small model (40 from a pedestal's middle), where the game draws the pad's
  *   countdown and its prompt, so they were hidden; it now stands Housing.GauntletSigilMargin beyond the model's front.
+ *   Round 10 (Niduus, 2026-10-24, pictures of the game's own placements): the gauntlets he showed, and every Skeleton
+ *   Key one-shot and rematch pedestal, take a tuned distance, a height (the deck, porch, step or platform the circles
+ *   lie on) and a size (s_tuned, s_tunedModels); a smaller pad's face slots and reach shrink with it (ZoneService).
  *   Its global id comes from the lot, the item, its template, its placement and its front, so a moved gauntlet's pad goes
  *   and comes back, and a trophy (no sigil behavior, or named _Trophy) has none.
  * - The dungeon is the template's m_sigilZoneInfoList: the first zone whose m_maximumLevel is at least the level of the
@@ -139,6 +142,45 @@ internal static class HouseGauntlets {
         ("lot_structure_tower", 250f), ("CL_ExplorersGauntlet", 300f), ("GH_LongHouse_Gauntlet", 350f),
     ];
     private static readonly float s_margin = ConfigurationManager.GetValue("Housing.GauntletSigilMargin", 60f);
+
+    // The gauntlets tuned from the game's own pictures (Niduus, 2026-10-24: "Gauntlet images for sigil placements"): the
+    // whole distance from the gauntlet to the pad's centre, how high the pad stands over the gauntlet's floor (a deck,
+    // porch or step of the model), and the pad's size. Housing.GauntletSigilDistance.<id>, Housing.GauntletSigilHeight.<id>
+    // and Housing.GauntletSigilScale.<id> override them. Accursed Play (1441117) is "perfect" at v0.10.218's 180.
+    private static readonly Dictionary<uint, (float Distance, float Height, float Scale)> s_tuned = new() {
+        [1441117] = (180f, 0f, 1f),    // HOUSE_SP_TheaterGauntlet, Accursed Play: kept as it was
+        [1392811] = (200f, 25f, 1f),   // CL_ExplorersGauntlet, ship wheel: wide arc on the deck at the foot of the stairs
+        [1233740] = (60f, 10f, 0.5f),  // HOUSE_AV_HousingGauntlet, tent: small circles hugging its base platform
+        [1381017] = (60f, 0f, 1f),     // VA_Gauntlet_Clock, Great Clock: arc against the door, outer circles past the corners
+        [664085] = (100f, 0f, 0.6f),   // MS_Pagoda_Gauntlet: small circles at the base, almost touching it
+        [1217443] = (210f, 30f, 1f),   // PA_SpiralCupGauntlet: the place was close; raised to the fountain's step
+        [701493] = (280f, 40f, 1f),    // GH_WinterbaneHallGauntlet: on the porch deck before the door, bowing outward
+    };
+
+    // The Skeleton Key one-shots and the rematches (Niduus, 2026-10-24, the Rattlebones Exalted Duel picture: the pedestal
+    // stands at the back of a tiled platform and the circles lie flat on it before the pedestal, close to it): by model.
+    private static readonly (string Model, float Distance, float Height, float Scale)[] s_tunedModels = [
+        ("SP_UltraDungeon_", 40f, 8f, 0.6f), ("SP_Rematch", 40f, 8f, 0.6f), ("SP_OneShot_", 40f, 8f, 0.6f),
+    ];
+
+    private static (float Distance, float Height, float Scale)? TunedOf(uint templateId) {
+        if (s_tuned.TryGetValue(templateId, out var tuned)) {
+            return tuned;
+        }
+
+        var model = ModelOf(templateId);
+        foreach (var (name, distance, height, scale) in s_tunedModels) {
+            if (model.Contains(name, StringComparison.OrdinalIgnoreCase)) {
+                return (distance, height, scale);
+            }
+        }
+
+        return null;
+    }
+
+    // The pad's own reach (InteractDungeonSigilComponent's default), scaled with a smaller pad.
+    private const float PadReach = 370f;
+    private static readonly ConcurrentDictionary<uint, (float Height, float Scale)> s_lookOf = new();
     private const float DefaultFront = 150f;
     private static readonly ConcurrentDictionary<uint, float> s_frontOf = new();
 
@@ -231,9 +273,10 @@ internal static class HouseGauntlets {
             Logger.Args(house.LotGid, why, gauntlets.Count, change.Added.Count, change.Removed.Count));
         foreach (var info in change.Added) {
             if (wanted.Values.FirstOrDefault(g => info.m_zoneTag.ToString() == $"HouseGauntletSigil_{g.GidId}") is { } g) {
-                Logger.Information("Gauntlet: {Name} (template {TemplateId}, house object {GidId}) stands at ({X:0}, {Y:0}, {Z:0}), yaw {Yaw:0.###}; its sigil centre is {Front:0} in front, at ({PadX:0}, {PadY:0}), model {Model}.",
+                Logger.Information("Gauntlet: {Name} (template {TemplateId}, house object {GidId}) stands at ({X:0}, {Y:0}, {Z:0}), yaw {Yaw:0.###}; its sigil centre is {Front:0} in front, at ({PadX:0}, {PadY:0}), {Height:0} up, size {Scale:0.##}, model {Model}.",
                     Logger.Args(NameOf(g.TemplateId), g.TemplateId, g.GidId, g.Position.X, g.Position.Y, g.Position.Z, g.Yaw,
-                        FrontOf(g.TemplateId), info.m_location.X, info.m_location.Y, ModelOf(g.TemplateId)));
+                        FrontOf(g.TemplateId), info.m_location.X, info.m_location.Y, LookOf(g.TemplateId).Height,
+                        LookOf(g.TemplateId).Scale, ModelOf(g.TemplateId)));
             }
         }
     }
@@ -257,19 +300,20 @@ internal static class HouseGauntlets {
     private static ZoneObjects.ZoneObject PadOf(HouseGauntlet gauntlet, string zoneName) {
         var heading = gauntlet.Yaw + (s_angle * MathF.PI / 180f);
         var front = FrontOf(gauntlet.TemplateId);
+        var (height, scale) = LookOf(gauntlet.TemplateId);
 
         return new ZoneObjects.ZoneObject {
             Name = $"HouseGauntletSigil_{gauntlet.GidId}",
             TemplateID = PadTemplateId,
             X = gauntlet.Position.X - (MathF.Cos(heading) * front),
             Y = gauntlet.Position.Y + (MathF.Sin(heading) * front),
-            Z = gauntlet.Position.Z,
+            Z = gauntlet.Position.Z + height,
             Yaw = heading,
-            Scale = s_padScale,
+            Scale = scale,
             Sigil = new ZoneObjects.ZoneSigil {
                 SigilType = PadSigilType,
                 Tag = $"HouseGauntlet {gauntlet.TemplateId}",
-                Radius = s_padRadius,
+                Radius = s_padRadius > 0 ? s_padRadius : PadReach * scale,
                 DestinationZone = zoneName ?? "",
                 DestinationLoc = "",
             },
@@ -286,10 +330,26 @@ internal static class HouseGauntlets {
                 return own;
             }
 
+            if (TunedOf(id) is { } tuned) {
+                return tuned.Distance;
+            }
+
             var model = ModelOf(id);
             var front = s_fronts.FirstOrDefault(f => model.Contains(f.Model, StringComparison.OrdinalIgnoreCase)).Front;
 
             return ((front > 0 ? front : DefaultFront) * s_distanceScale) + s_margin;
+        });
+
+    /// <summary>
+    /// How high a gauntlet's pad stands over the gauntlet's floor, and its size.
+    /// </summary>
+    internal static (float Height, float Scale) LookOf(uint templateId)
+        => s_lookOf.GetOrAdd(templateId, id => {
+            var tuned = TunedOf(id) ?? (Distance: 0f, Height: 0f, Scale: s_padScale);
+            var height = ConfigurationManager.GetValue($"Housing.GauntletSigilHeight.{id}", tuned.Height);
+            var scale = ConfigurationManager.GetValue($"Housing.GauntletSigilScale.{id}", tuned.Scale);
+
+            return (height, scale > 0 ? scale : 1f);
         });
 
     private static string NameOf(uint templateId)
@@ -305,7 +365,7 @@ internal static class HouseGauntlets {
             : "";
 
     private static string KeyOf(ulong lotGid, HouseGauntlet gauntlet)
-        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{FrontOf(gauntlet.TemplateId)}/{s_angle}/v9";
+        => $"HouseGauntlet/{lotGid}/{gauntlet.ItemId}/{gauntlet.TemplateId}/{gauntlet.Position.X:0.#}/{gauntlet.Position.Y:0.#}/{gauntlet.Position.Z:0.#}/{gauntlet.Yaw:0.###}/{FrontOf(gauntlet.TemplateId)}/{LookOf(gauntlet.TemplateId)}/{s_angle}/v10";
 
     private static ulong PadIdOf(ulong lotGid, HouseGauntlet gauntlet) => ZoneObjects.RuntimeIdOf(KeyOf(lotGid, gauntlet));
 

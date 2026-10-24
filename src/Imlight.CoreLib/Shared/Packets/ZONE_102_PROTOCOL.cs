@@ -1324,6 +1324,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         /// <summary>The pad's detection radius (m_radius); the player must stay within it to enter.</summary>
         public float Radius;
 
+        /// <summary>The pad's size (m_fScale): its face slots stand that much nearer its centre. 0 is 1.</summary>
+        public float SigilScale;
+
         /// <summary>The instance zone the sigil leads to.</summary>
         public string DestinationZone;
 

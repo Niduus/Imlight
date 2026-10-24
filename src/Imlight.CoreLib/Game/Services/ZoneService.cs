@@ -1641,8 +1641,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         double rotationRadians = slot.m_rotation * (Math.PI / 180.0);
-        double sx = pad.X + (slot.m_radius * Math.Cos(rotationRadians - sigilRotation));
-        double sy = pad.Y + (slot.m_radius * Math.Sin(rotationRadians - sigilRotation));
+        // A smaller pad (a housing gauntlet's, HouseGauntlets) has its circles nearer its centre.
+        double slotRadius = slot.m_radius * (entry.SigilScale > 0 ? entry.SigilScale : 1.0);
+        double sx = pad.X + (slotRadius * Math.Cos(rotationRadians - sigilRotation));
+        double sy = pad.Y + (slotRadius * Math.Sin(rotationRadians - sigilRotation));
 
         double faceYaw = Math.Atan2(pad.Y - sy, pad.X - sx);
         faceYaw = (2 * Math.PI) - faceYaw - SIGIL_YAW_ERROR_COMPENSATION;

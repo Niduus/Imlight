@@ -272,6 +272,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             SigilGID = (ulong) obj.m_globalID,
             SigilType = SigilInfo.m_sigilType.ToString() ?? "",
             Radius = DEFAULT_INTERACTION_RADIUS,
+            SigilScale = obj.m_fScale,
             DestinationZone = sigil.DestinationZone,
             DestinationLoc = sigil.DestinationLoc,
             Variant = sigil.Variant,
@@ -383,6 +384,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                 SigilGID = (ulong) Entity.ActiveGameObject.m_globalID,
                 SigilType = SigilInfo.m_sigilType.ToString() ?? "",
                 Radius = DEFAULT_INTERACTION_RADIUS,
+                SigilScale = Entity.ActiveGameObject.m_fScale,
                 DestinationZone = HouseGauntlets.PadOf(Entity.ActiveGameObject.m_globalID.Full) is not null && _partyZone is not null
                     ? _partyZone
                     : _resolved.DestinationZone,
