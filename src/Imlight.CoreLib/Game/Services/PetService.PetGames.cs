@@ -285,6 +285,15 @@ internal partial class PetService {
         }
 
         var data = InitData(_play.Game);
+        if (data.Length == 0) {
+            // The game makes the game's window from this data and crashes without it.
+            Timers.Cancel(PLAY_INIT_TIMER);
+            Logger.Error("Pet game: no game info for {0}; sending the player back instead.", Logger.Args(_play.Game));
+            SchedulePlayReturn("no game info", PLAY_RETURN_DELAY);
+
+            return;
+        }
+
         Logger.Information("Pet game: sending MSG_PETGAMEINIT Game={0} Track={1} ({2} bytes, try {3}).",
             Logger.Args(_play.Game, _play.Track, data.Length, _playInitTries));
         SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMEINIT {
@@ -296,11 +305,14 @@ internal partial class PetService {
     }
 
     /// <summary>
-    /// The obstacle course reads its settings (pet size, gravity, falling penalty, the time of each level) from the
-    /// game's PetObstacleCourseGameInfo, written like the end data; the other games read nothing here.
+    /// Every game's window is made from the game's PetGames.xml entry sent here (the game reads it into the
+    /// PetGameInfo it keeps, and Dance reads its level's scene from it, so an empty one crashes the game); the
+    /// obstacle course also reads its settings (pet size, gravity, falling penalty, the time of each level) from it.
     /// </summary>
     private static Imcodec.IO.ByteString InitData(string gameName) {
-        if (!IsObstacleCourse(gameName) || Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName) is not { } game) {
+        if (Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(gameName) is not { } game) {
+            Logger.Error("Pet game: {0} is not in PetGames.xml.", Logger.Args(gameName));
+
             return "";
         }
 
