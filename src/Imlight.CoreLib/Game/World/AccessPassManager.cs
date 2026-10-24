@@ -86,7 +86,9 @@ internal class AccessPassManager : RootSingleResourceSingleton<AccessPassManager
     /// <param name="partialZoneName">The partial zone name to check.</param>
     /// <returns>True if the zone name contains the partial zone name, false otherwise.</returns>
     internal static string GetContainedZoneName(string partialZoneName)
-        => s_zones.FirstOrDefault(zone => zone.Contains(partialZoneName, System.StringComparison.OrdinalIgnoreCase));
+        // A whole zone name is that zone, not the first longer one with it inside (WC_Hub before WC_Hub_Interiors).
+        => s_zones.FirstOrDefault(zone => zone.Equals(partialZoneName, System.StringComparison.OrdinalIgnoreCase))
+            ?? s_zones.FirstOrDefault(zone => zone.Contains(partialZoneName, System.StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Every zone name, as the teleport command accepts it.

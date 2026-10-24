@@ -409,6 +409,9 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>Whether the server reads its own additions folder (spiraldb-extra), which Bosses, Customs and cheats save to.</summary>
     internal bool HasExtraFolder => ServerKnows("Database.SpiralDBExtraPath");
 
+    /// <summary>Whether the server writes the quest list and each wizard's quests for the Quests tab.</summary>
+    internal bool HasQuestGuide => ServerKnows("quest-guide.txt");
+
     /// <summary>Whether the server writes the ID lists (id-lookup) that Lookup, Bosses and Customs search.</summary>
     internal bool HasIdLookup => ServerKnows("ID Lookup.OutputPath");
 

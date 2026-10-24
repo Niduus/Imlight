@@ -119,6 +119,8 @@ public static class IdCatalog {
         }
 
         _ = Task.Run(WriteZonesAndQuests);
+        // The Manager's Quests tab: every quest in play order, with where it's given.
+        _ = Task.Run(() => Imlight.CoreLib.Game.Tools.QuestGuide.WriteList(OutputPath));
         // The Customs tab's vendor and trainer presets, worked out from the game files each boot.
         _ = Task.Run(() => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
         _ = Task.Run(() => {

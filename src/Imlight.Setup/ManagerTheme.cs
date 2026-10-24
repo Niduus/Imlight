@@ -105,6 +105,7 @@ internal static class ManagerTheme {
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
         ["Lookup"] = BLOCK_IF,
+        ["Quests"] = Color.FromRgb(214, 150, 48),
         ["Phrases"] = Color.FromRgb(150, 110, 210),
         ["Spells"] = Color.FromRgb(196, 74, 112),
         ["Gear"] = Color.FromRgb(52, 170, 200),

@@ -157,6 +157,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         // Drop quest instance IDs that no longer have a backing instance before
         // any grant or waypoint logic runs on them.
         wizard.QuestBehavior.PruneStaleQuestIds();
+        NoteProgress(wizard);
 
         // Dungeon quests are force-added on entry (a quest marked by a ReqInZone requirement for this
         // zone). Grant BEFORE the waypoint check so a fresh quest's enter-the-dungeon goal completes on
@@ -775,6 +776,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        NoteProgress(wizard);
         CommandReply($"Removed quest '{registryName}' ({(wasActive ? "was active" : "was not active")}, "
             + $"{cleared} registry entries cleared). It can be offered again.");
     }
@@ -1043,7 +1045,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         SendQuestStartingMessage(quest, questInstance);
+        NoteProgress(wizard);
     }
+
+    // For the Quests tab of ImlightManager.
+    private void NoteProgress(Wizard wizard)
+        => Imlight.CoreLib.Game.Tools.QuestGuide.Update(wizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatVictory(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
@@ -1555,6 +1562,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         // prerequisite of the next quest in the dungeon's chain.
         TryGrantDungeonQuests(wizard);
         TryAutoStartQuests(wizard);
+        NoteProgress(wizard);
     }
 
     // Our own quests that have no NPC to offer them (Wizard404 named none) carry this tag and start by themselves as

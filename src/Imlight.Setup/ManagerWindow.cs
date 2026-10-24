@@ -276,6 +276,7 @@ internal sealed partial class ManagerWindow : Window {
                 Tab("Play", PlayTab),
                 Tab("Commands", CommandsTab),
                 Tab("Lookup", LookupTab),
+                Tab("Quests", QuestsTab),
                 Tab("Phrases", PhrasesTab),
                 Tab("Spells", SpellsTab),
                 Tab("Gear", GearTab),
@@ -300,6 +301,7 @@ internal sealed partial class ManagerWindow : Window {
             switch ((tabs.SelectedItem as TabItem)?.Tag as string) {
                 case "Play": await LoadPlayAsync(); break;
                 case "Lookup": await LoadLookupAsync(); break;
+                case "Quests": LoadQuests(); break;
                 case "Bosses": await LoadBossesAsync(); break;
                 case "Customs": await LoadCustomsAsync(); break;
                 // The Make a custom wizard on the Guides tab searches the creature list.
@@ -320,6 +322,8 @@ internal sealed partial class ManagerWindow : Window {
             else {
                 _positionTimer.Stop();
             }
+
+            _questTimer.IsEnabled = shownTab == "Quests";
 
             _logTabShown = shownTab == "Logs";
             if (shownTab == "Logs") {
@@ -2209,6 +2213,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Play"] = ("play", "Play Wizard101 on your server, on a friend's, or with friends."),
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
+        ["Quests"] = ("flag", "Which quests your wizard has done and which come next, with Start and Teleport buttons."),
         ["Phrases"] = ("quote", "Every line of the game's text, by number, for .ca and boss cheat lines."),
         ["Spells"] = ("cards", "Every spell card, as the game draws it."),
         ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
