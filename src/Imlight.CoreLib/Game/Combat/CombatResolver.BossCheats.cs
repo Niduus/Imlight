@@ -191,7 +191,9 @@ public partial class CombatResolver {
                         continue;
                     }
 
-                    var due = atEnd ? cheat.Is("RoundEnd") && DueIn(cheat, round)
+                    // A RoundEnd with Pips: only if, at the end of the round, it (PipsOf Enemy: any player) still has them
+                    // (Voice of Death: Mana Burn when a wizard ends the round with pips left).
+                    var due = atEnd ? cheat.Is("RoundEnd") && DueIn(cheat, round) && (cheat.Pips <= 0 || PipsReached(boss, cheat))
                         : cheat.Is("BattleStart") ? round == 1 && PhaseOf(boss).Phase == 1
                         : cheat.Is("Pips") ? PipsReached(boss, cheat)
                         // "FromRound": every round (or every Every rounds) from round Round of its phase on: an enrage.
@@ -384,6 +386,18 @@ public partial class CombatResolver {
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(crit.Action, mover),
                             $"its own critical {(string) crit.Spell.m_name}", combatActionList, cinematicTimeSoFar + cinematicTime);
                     }
+                    // SideFizzles: a spell of its own or of someone on its side fizzles; "the attacker" and "the one hit" are
+                    // the one whose spell fizzled (Adrok's Lightning Strike on the fizzler, Dream Jabberwock's Dark Empower).
+                    else if (cheat.Is("SideFizzles") && mover.OccupiedTeam == boss.OccupiedTeam
+                             && cast.FirstOrDefault(m => m.Action.m_spellHits == (char) 0
+                                                         && Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover))
+                                 is { Spell: not null } fizzled) {
+                        _cheatSpellId = fizzled.Action.m_spell.m_templateID;
+                        cinematicTime += TryBossCheat(boss, i, cheat, mover, mover,
+                            $"{(mover == boss ? "its own" : $"slot {mover.SlotIndex}'s")} {(string) fizzled.Spell.m_name} (fizzled)",
+                            combatActionList, cinematicTimeSoFar + cinematicTime);
+                        _cheatSpellId = 0;
+                    }
                     // AllyHit: a spell from the other side hurts someone else on its side; that one is "the one hit".
                     else if (cheat.Is("AllyHit") && mover.OccupiedTeam != boss.OccupiedTeam
                              && landed.Select(m => (m.Action, m.Spell, Hit: AllyHitBy(boss, m.Action, m.Spell)))
@@ -496,7 +510,8 @@ public partial class CombatResolver {
                 }
 
                 var spellBlocks = cheat.Spells is { Count: > 0 } || cheat.School.Length > 0 || cheat.Kind.Length > 0
-                                  || cheat.Category is { Length: > 0 } || cheat.CostMin > 0 || cheat.CostMax > 0 || cheat.SingleTarget || cheat.OnBoss;
+                                  || cheat.Category is { Length: > 0 } || cheat.CostMin > 0 || cheat.CostMax > 0 || cheat.SingleTarget || cheat.OnBoss || cheat.NotOnCaster
+                                  || cheat.NotCategory is { Length: > 0 };
                 var by = mover is null ? default
                     : landed.FirstOrDefault(m => Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover));
                 var byWho = mover;
@@ -763,6 +778,14 @@ public partial class CombatResolver {
         }
 
         if (cheat.MultiTarget && !Flatten(spell).Any(e => s_manyTargets.Contains(e.m_effectTarget))) {
+            return false;
+        }
+
+        if (cheat.NotOnCaster && mover is not null && aimed.Contains(mover.SlotIndex)) {
+            return false;
+        }
+
+        if (cheat.NotCategory is { Length: > 0 } notCategory && SpellNameFamily.CategoryMatches(notCategory, CategoriesOf(spell))) {
             return false;
         }
 

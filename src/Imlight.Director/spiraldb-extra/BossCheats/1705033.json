@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): phase 2 is four harmful wards and phase 3 four harmful charms (they were the other way round); each phase's line is said once.
   "TemplateID": 1705033,
   "Name": "Alpha Wolf (Rank 25)",
   "Cheats": [
@@ -14,11 +15,11 @@
       ],
       "Notes": "Round 1: Blessing (three HoTs) and Fortify (1 damage at most)." },
 
-    { "When": "PlayerCasts", "Category": "DoT", "OnBoss": true, "Phase": 1, "Cooldown": 1,
+    { "When": "PlayerCasts", "Category": "DoT", "OnBoss": true, "Phase": 1, "Once": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004008"}
       ],
-      "Notes": "A DoT on him." },
+      "Notes": "A DoT on him (said once)." },
 
     { "When": "PlayerCasts", "Category": "DoT", "OnBoss": true, "Phase": 1, "HasWho": "Self", "HasKind": "DoT", "HasCount": 4,
       "Actions": [
@@ -35,19 +36,19 @@
       ],
       "Notes": "Phase 2: Blessing gives three -50% shields." },
 
-    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true, "Phase": 2, "Cooldown": 1,
+    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true, "Phase": 2, "Once": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004011"}
       ],
-      "Notes": "A jinx on him." },
+      "Notes": "Phase 2: a harmful ward on him (said once)." },
 
-    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true, "Phase": 2, "HasWho": "Self", "HasKind": "Weakness", "HasCount": 4,
+    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true, "Phase": 2, "HasWho": "Self", "HasKind": "Trap", "HasCount": 4,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004012"},
         {"Do": "Cast", "Spell": "Sacrifice", "SpellID": 59355030, "Target": "Self", "DispelImmune": false},
         {"Do": "SetPhase", "Phase": 3}
       ],
-      "Notes": "Four jinxes on him at once: Sacrifice and phase 3." },
+      "Notes": "Four harmful wards on him at once: Sacrifice and phase 3." },
 
     { "When": "RoundStart", "Round": 1, "Phase": 3,
       "Actions": [
@@ -56,20 +57,20 @@
       ],
       "Notes": "Phase 3: Blessing gives three +50% blades." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true, "Phase": 3,
+    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true, "Phase": 3, "Once": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004014"}
       ],
-      "Notes": "A curse on him." },
+      "Notes": "Phase 3: a harmful charm on him (said once)." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "OnBoss": true, "Phase": 3, "HasWho": "Self", "HasKind": "Trap", "HasCount": 4,
+    { "When": "PlayerCasts", "Category": "Weakness", "OnBoss": true, "Phase": 3, "HasWho": "Self", "HasKind": "Weakness", "HasCount": 4,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004015"},
         {"Do": "Cast", "Spell": "Sacrifice", "SpellID": 59355030, "Target": "Self", "DispelImmune": false},
         {"Do": "RemoveAuras", "Target": "Self"},
         {"Do": "SetPhase", "Phase": 4}
       ],
-      "Notes": "Four curses at once: Sacrifice, the aura comes off, and he can be hurt freely." },
+      "Notes": "Four harmful charms at once: Sacrifice, the aura comes off, and he can be hurt freely." },
 
     { "When": "PlayerCasts", "Category": "Dispel", "OnBoss": true, "Phase": 1,
       "Actions": [

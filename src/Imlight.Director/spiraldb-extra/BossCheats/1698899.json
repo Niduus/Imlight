@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): an idle round's big spell is one of seven at random (Sandstorm too), not one for each aura.
   "TemplateID": 1698899,
   "Name": "Beast With A Million Eyes (Rank 25)",
   "Cheats": [
@@ -59,13 +60,6 @@
       ],
       "Notes": "Defeated by Balance under Sleet Storm: back to full and Lord of Winter (only Fire or Myth may defeat him)." },
 
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Sleet Storm", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
-      "Actions": [
-        {"Do": "Say", "Line": "CombatMessages_00001894"},
-        {"Do": "Cast", "Spell": "Blizzard", "SpellID": 126627734, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "A round after round 1 he was not hurt, under Sleet Storm: Blizzard." },
-
     { "When": "ICast", "Spells": ["Shift Grendel"], "AnyVersion": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004199"},
@@ -112,13 +106,6 @@
         {"Do": "Cast", "Spell": "Sun Serpent", "SpellID": 141079815, "Target": "", "DispelImmune": false}
       ],
       "Notes": "Defeated by Balance under Furnace: back to full and Sun Serpent (only Life or Storm may defeat him)." },
-
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Furnace", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
-      "Actions": [
-        {"Do": "Say", "Line": "CombatMessages_00001894"},
-        {"Do": "Cast", "Spell": "Meteor Strike", "SpellID": 729953007, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "A round after round 1 he was not hurt, under Furnace: Meteor Strike." },
 
     { "When": "ICast", "Spells": ["Shift Piscean"], "AnyVersion": true,
       "Actions": [
@@ -167,13 +154,6 @@
       ],
       "Notes": "Defeated by Balance under Galvanic Field: back to full and Storm Owl (only Death or Ice may defeat him)." },
 
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Galvanic Field", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
-      "Actions": [
-        {"Do": "Say", "Line": "CombatMessages_00001894"},
-        {"Do": "Cast", "Spell": "Tempest", "SpellID": 1569112959, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "A round after round 1 he was not hurt, under Galvanic Field: Tempest." },
-
     { "When": "ICast", "Spells": ["Shift GreenOak"], "AnyVersion": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004200"},
@@ -220,13 +200,6 @@
         {"Do": "Cast", "Spell": "Spinysaur", "SpellID": 474579317, "Target": "", "DispelImmune": false}
       ],
       "Notes": "Defeated by Balance under Devotion: back to full and Spinysaur (only Death or Storm may defeat him)." },
-
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Devotion", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
-      "Actions": [
-        {"Do": "Say", "Line": "CombatMessages_00001894"},
-        {"Do": "Cast", "Spell": "Ratatoskr's Spin", "SpellID": 1781467837, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "A round after round 1 he was not hurt, under Devotion: Ratatoskr's Spin." },
 
     { "When": "ICast", "Spells": ["Shift Ogre"], "AnyVersion": true,
       "Actions": [
@@ -275,13 +248,6 @@
       ],
       "Notes": "Defeated by Balance under Reliquary: back to full and Celestial Calendar (only Fire or Life may defeat him)." },
 
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Reliquary", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
-      "Actions": [
-        {"Do": "Say", "Line": "CombatMessages_00001894"},
-        {"Do": "Cast", "Spell": "Humongofrog", "SpellID": 1272123051, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "A round after round 1 he was not hurt, under Reliquary: Humongofrog." },
-
     { "When": "ICast", "Spells": ["Shift Sugar Glider"], "AnyVersion": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00004202"},
@@ -329,12 +295,19 @@
       ],
       "Notes": "Defeated by Balance under Virulence: back to full and Avenging Fossil (only Ice or Myth may defeat him)." },
 
-    { "When": "RoundEnd", "FromRound": 2, "HasWho": "Self", "HasSpell": "Virulence", "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
+    { "When": "RoundEnd", "FromRound": 2, "Mark": "hurt this round", "MarkWho": "Self", "NotMarked": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001894"},
+        {"Do": "PickOne", "Count": 7},
+        {"Do": "Cast", "Spell": "Blizzard", "SpellID": 126627734, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Ratatoskr's Spin", "SpellID": 1781467837, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Meteor Strike", "SpellID": 729953007, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Humongofrog", "SpellID": 1272123051, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Tempest", "SpellID": 1569112959, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Sandstorm", "SpellID": 1829994384, "Target": "", "DispelImmune": false},
         {"Do": "Cast", "Spell": "Ship of Fools", "SpellID": 1104648001, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "A round after round 1 he was not hurt, under Virulence: Ship of Fools." },
+      "Notes": "A round after round 1 he was not hurt: one of seven spells at random (Central; not by his aura)." },
 
     { "When": "RoundEnd",
       "Actions": [

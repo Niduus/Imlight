@@ -14,7 +14,10 @@
  *   HealthBelow   the boss's health falls under Percent of its most, or under Health (hit points) when that is set.
  *   PlayerCasts   a player's spell lands. School, Kind (the card's type: Damage, Heal, Ward, Charm, Aura, Global,
  *                 Steal, Manipulation, Shadow...) and Spells (card names) narrow it. OnBoss: only a spell aimed at
- *                 the boss. SingleTarget: only a spell that hits one target.
+ *                 the boss. SingleTarget: only a spell that hits one target. NotOnCaster: only a spell aimed at
+ *                 someone other than the one who cast it (a blade on another wizard; any When that looks at a spell).
+ *                 NotCategory: only a spell that is none of these kinds (commas between; the Sphinx's wrong answer).
+ *   RoundEnd with Pips (PipsOf, PipsKind as for When Pips): only if those pips are still there at the end of the round.
  *   PlayerPasses  a player passes.
  * Target: Self, Caster (the player who set it off), Receiver (whoever that player's spell was aimed at), Enemy (a random
  * player), FirstEnemy, AllEnemies, or empty to pick as the spell aims. Line: words from the game's own line (as .ca
@@ -120,7 +123,9 @@
  *                EnemyCasts (a spell from the other side, just before it lands), EnemyJoins (someone joins the other side
  *                and its first round is after Round of the battle; Minions: a summoned minion counts too; "the
  *                attacker" is the newcomer) and AllyHealthBelow (someone else on its side first drops under Percent, or
- *                Health; once each; "the attacker" is that one). MyHealthBelow is HealthBelow, as the player cheats
+ *                Health; once each; "the attacker" is that one), SideFizzles (a spell of its own or of someone on
+ *                its side fizzles; "the attacker" is the one whose spell fizzled; Spells, School, Category narrow it).
+ *                For a player's fizzle use PlayerCasts with Fizzle "Fizzled". MyHealthBelow is HealthBelow, as the player cheats
  *                first named it.
  *   Creature, NotCreature   only if the one the When is about (the one that fell for MinionDefeated / PlayerDefeated,
  *                else the one whose move, health or coming in set it off) is of this creature template (NotCreature:
@@ -312,6 +317,10 @@ internal static class BossCheats {
         public bool NotMarked { get; set; }
         // Only a spell that hits a whole side (the other way round from SingleTarget).
         public bool MultiTarget { get; set; }
+        // Only a spell aimed at someone other than its caster (Kormak Shadowclaw: a charm on another wizard).
+        public bool NotOnCaster { get; set; }
+        // Only a spell that is none of these kinds ("Blade" or "Charm, Ward"): the Sphinx's wrong answer to a riddle.
+        public string NotCategory { get; set; } = "";
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]

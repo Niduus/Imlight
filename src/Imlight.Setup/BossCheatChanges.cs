@@ -175,7 +175,7 @@ internal sealed class CheatRule {
             ["Brings"] = new JsonArray(), ["BringsRandom"] = new JsonArray(), ["BringsCount"] = 0,
             ["HasWho"] = "", ["HasKind"] = "", ["HasSpell"] = "", ["HasNot"] = false, ["AlliesUp"] = new JsonArray(), ["AlliesDown"] = new JsonArray(),
             ["AlliesMin"] = 0, ["AlliesMax"] = 0, ["Mark"] = "", ["MarkWho"] = "", ["NotMarked"] = false, ["MultiTarget"] = false,
-            ["HasCount"] = 0, ["PipsKind"] = "", ["CreatureWho"] = "",
+            ["NotOnCaster"] = false, ["NotCategory"] = "", ["HasCount"] = 0, ["PipsKind"] = "", ["CreatureWho"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
@@ -199,6 +199,7 @@ internal sealed class CheatRule {
                 case "I.SingleTarget": json["SingleTarget"] = true; break;
                 case "I.HasAllies": json["HasAllies"] = true; break;
                 case "I.MultiTarget": json["MultiTarget"] = true; break;
+                case "I.NotOnCaster": json["NotOnCaster"] = true; break;
                 default:
                     foreach (var field in block.Kind.Fields.Where(f => f.Type != CheatFieldType.MatchCount)) {
                         Put(field.Key, BossChanges.FindIn(block.Values, field.Key));
@@ -287,7 +288,7 @@ internal sealed class CheatRule {
             }
         }
 
-        foreach (var (key, spec) in new[] { ("NoAllies", "I.NoAllies"), ("OnBoss", "I.OnBoss"), ("SingleTarget", "I.SingleTarget") }) {
+        foreach (var (key, spec) in new[] { ("NoAllies", "I.NoAllies"), ("OnBoss", "I.OnBoss"), ("SingleTarget", "I.SingleTarget"), ("NotOnCaster", "I.NotOnCaster") }) {
             if (Flag(key)) {
                 If(spec);
             }
@@ -295,6 +296,14 @@ internal sealed class CheatRule {
 
         if (Text("CasterSchool").Length > 0) {
             If("I.CasterSchool", new JsonObject { ["CasterSchool"] = Text("CasterSchool") });
+        }
+
+        if (whenBlock.Spec == "W.RoundEnd" && Number("Pips") > 0) {
+            If("I.Pips", new JsonObject { ["PipsOf"] = Text("PipsOf"), ["Pips"] = Number("Pips"), ["PipsKind"] = Text("PipsKind") });
+        }
+
+        if (Text("NotCategory").Length > 0) {
+            If("I.NotCategory", new JsonObject { ["NotCategory"] = Text("NotCategory") });
         }
 
         if (Text("Fizzle").Length > 0) {

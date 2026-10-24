@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): Shift counts with Triage; any Feint or Mass Feint; the blade cycle hits the blade's receiver.
   "TemplateID": 1523070,
   "Name": "Stay-Puffed Marshfellow (Rank 19)",
   "ShadowPips": 2,
@@ -30,28 +31,28 @@
       ],
       "Notes": "He has the bomb: he passes it to a minion." },
 
-    { "When": "PlayerCasts", "Spells": ["Triage", "Mass Triage"],
+    { "When": "PlayerCasts", "Spells": ["Triage", "Mass Triage", "Shift"],
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001770"},
         {"Do": "Cast", "Spell": "Banish", "SpellID": 343003124, "Target": "Caster", "DispelImmune": false},
         {"Do": "Cast", "Spell": "Banish", "SpellID": 343003124, "Target": "Receiver", "DispelImmune": false}
       ],
-      "Notes": "Triage or Mass Triage: Banish." },
+      "Notes": "Triage, Mass Triage or Shift (Central): Banish on the caster and on the one it was cast on." },
 
-    { "When": "PlayerCasts", "Spells": ["Feint"], "OnBoss": true,
+    { "When": "PlayerCasts", "Spells": ["Feint", "Mass Feint"],
       "Actions": [
         {"Do": "Cast", "Spell": "Cleanse Ward AOE", "SpellID": 1924801312, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "A Feint on him: Cleanse Ward AOE." },
+      "Notes": "Feint or Mass Feint, on anyone (Balance Feint does not count; Central): Cleanse Ward AOE takes the traps off his side." },
 
     { "When": "PlayerCasts", "Category": "Blade,Global",
       "Actions": [
         {"Do": "InTurn", "Count": 3},
-        {"Do": "Cast", "Spell": "Mana Burn", "SpellID": 1052298331, "Target": "Caster", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Bad Juju", "SpellID": 1317678274, "Target": "Caster", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Double Disarm", "SpellID": 2078137459, "Target": "Caster", "DispelImmune": false}
+        {"Do": "Cast", "Spell": "Mana Burn", "SpellID": 1052298331, "Target": "Receiver", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Bad Juju", "SpellID": 1317678274, "Target": "Receiver", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Double Disarm", "SpellID": 2078137459, "Target": "Receiver", "DispelImmune": false}
       ],
-      "Notes": "A blade or damage global: Mana Burn, Bad Juju, Double Disarm in turn." },
+      "Notes": "A blade or a global: Mana Burn, Bad Juju, Double Disarm in turn, on the one the blade went on (Bladestorm: its caster; Central)." },
 
     { "When": "MinionDefeated", "HasWho": "Receiver", "HasSpell": "Deferred Bomb",
       "Actions": [

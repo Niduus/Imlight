@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): its own and its allies' fizzles also give Empower (new When SideFizzles).
   "TemplateID": 1437129,
   "Name": "Dream Jabberwock (Rank 16)",
   "ShadowPips": 2,
@@ -18,6 +19,12 @@
         {"Do": "Cast", "Spell": "Empower", "SpellID": 1104187399, "Target": "Self", "DispelImmune": false}
       ],
       "Notes": "A wizard fizzles: Empower on itself." },
+
+    { "When": "SideFizzles",
+      "Actions": [
+        {"Do": "Cast", "Spell": "Empower", "SpellID": 1104187399, "Target": "Self", "DispelImmune": false}
+      ],
+      "Notes": "It or an ally fizzles: Empower on itself (Central: the opponents' fizzles too, cheat above; Central calls it a Dark Empower of 2 power pips)." },
 
     { "When": "EnemyJoins", "Round": 1,
       "Actions": [

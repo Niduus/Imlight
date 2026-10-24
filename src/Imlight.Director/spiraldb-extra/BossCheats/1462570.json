@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): a wrong answer (a spell of another kind while a riddle stands) is punished at once; not answering and passing are not (new If NotCategory).
   "TemplateID": 1462570,
   "Name": "Sphinx (Rank 18)",
   "ShadowPips": 2,
@@ -16,137 +17,77 @@
 
     { "When": "RoundEnd", "Round": 2, "Every": 10,
       "Actions": [
+        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Self"},
         {"Do": "Say", "Line": "CombatMessages_00001271"},
-        {"Do": "Mark", "Mark": "riddle blade", "Target": "AllEnemies"}
+        {"Do": "Mark", "Mark": "riddle blade", "Target": "Self"}
       ],
-      "Notes": "End of round 2 of each 10: the Blade riddle (each wizard must answer)." },
+      "Notes": "End of round 2 of each 10: the blade riddle (it stands until the next riddle; the one before it ends)." },
 
-    { "When": "PlayerCasts", "Category": "Blade", "Mark": "riddle blade", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Caster"}
-      ],
-      "Notes": "A blade cast: that wizard answered." },
-
-    { "When": "PlayerPasses", "Mark": "riddle blade", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Caster"}
-      ],
-      "Notes": "Passing is allowed." },
-
-    { "When": "RoundEnd", "Round": 4, "Every": 10, "Mark": "riddle blade", "MarkWho": "AnyEnemy",
+    { "When": "PlayerCasts", "NotCategory": "Blade", "Mark": "riddle blade", "MarkWho": "Self", "Fizzle": "Any",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001378"},
-        {"Do": "Cast", "Spell": "Orthrus", "SpellID": 1849149819, "Target": "", "DispelImmune": false},
-        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Marked"}
+        {"Do": "Cast", "Spell": "Orthrus", "SpellID": 1849149819, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "Two rounds on, a wizard who did not answer: Orthrus." },
+      "Notes": "While the blade riddle stands, a spell that is not the answer (Blade): Orthrus (Central: a wrong answer is punished; passing is not, nor is waiting)." },
 
     { "When": "RoundEnd", "Round": 4, "Every": 10,
       "Actions": [
+        {"Do": "Unmark", "Mark": "riddle blade", "Target": "Self"},
         {"Do": "Say", "Line": "CombatMessages_00001272"},
-        {"Do": "Mark", "Mark": "riddle damage", "Target": "AllEnemies"}
+        {"Do": "Mark", "Mark": "riddle damage", "Target": "Self"}
       ],
-      "Notes": "End of round 4 of each 10: the Damage riddle (each wizard must answer)." },
+      "Notes": "End of round 4 of each 10: the damage riddle (it stands until the next riddle; the one before it ends)." },
 
-    { "When": "PlayerCasts", "Category": "Damage", "Mark": "riddle damage", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Caster"}
-      ],
-      "Notes": "A damage cast: that wizard answered." },
-
-    { "When": "PlayerPasses", "Mark": "riddle damage", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Caster"}
-      ],
-      "Notes": "Passing is allowed." },
-
-    { "When": "RoundEnd", "Round": 6, "Every": 10, "Mark": "riddle damage", "MarkWho": "AnyEnemy",
+    { "When": "PlayerCasts", "NotCategory": "Damage", "Mark": "riddle damage", "MarkWho": "Self", "Fizzle": "Any",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001378"},
-        {"Do": "Cast", "Spell": "Power Nova", "SpellID": 1985333658, "Target": "", "DispelImmune": false},
-        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Marked"}
+        {"Do": "Cast", "Spell": "Power Nova", "SpellID": 1985333658, "Target": "Caster", "DispelImmune": false}
       ],
-      "Notes": "Two rounds on, a wizard who did not answer: Power Nova." },
+      "Notes": "While the damage riddle stands, a spell that is not the answer (Damage): Power Nova on that wizard (Central: a wrong answer is punished; passing is not, nor is waiting)." },
 
     { "When": "RoundEnd", "Round": 6, "Every": 10,
       "Actions": [
+        {"Do": "Unmark", "Mark": "riddle damage", "Target": "Self"},
         {"Do": "Say", "Line": "CombatMessages_00001273"},
-        {"Do": "Mark", "Mark": "riddle trap", "Target": "AllEnemies"}
+        {"Do": "Mark", "Mark": "riddle trap", "Target": "Self"}
       ],
-      "Notes": "End of round 6 of each 10: the Trap riddle (each wizard must answer)." },
+      "Notes": "End of round 6 of each 10: the trap riddle (it stands until the next riddle; the one before it ends)." },
 
-    { "When": "PlayerCasts", "Category": "Trap", "Mark": "riddle trap", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Caster"}
-      ],
-      "Notes": "A trap cast: that wizard answered." },
-
-    { "When": "PlayerPasses", "Mark": "riddle trap", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Caster"}
-      ],
-      "Notes": "Passing is allowed." },
-
-    { "When": "RoundEnd", "Round": 8, "Every": 10, "Mark": "riddle trap", "MarkWho": "AnyEnemy",
+    { "When": "PlayerCasts", "NotCategory": "Trap", "Mark": "riddle trap", "MarkWho": "Self", "Fizzle": "Any",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001378"},
-        {"Do": "Cast", "Spell": "Mass Feint", "SpellID": 2080475294, "Target": "Marked", "DispelImmune": false},
-        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Marked"}
+        {"Do": "Cast", "Spell": "Mass Feint", "SpellID": 2080475294, "Target": "Caster", "DispelImmune": false}
       ],
-      "Notes": "Two rounds on, a wizard who did not answer: Mass Feint." },
+      "Notes": "While the trap riddle stands, a spell that is not the answer (Trap): Mass Feint on that wizard (Central: a wrong answer is punished; passing is not, nor is waiting)." },
 
     { "When": "RoundEnd", "Round": 8, "Every": 10,
       "Actions": [
+        {"Do": "Unmark", "Mark": "riddle trap", "Target": "Self"},
         {"Do": "Say", "Line": "CombatMessages_00001274"},
-        {"Do": "Mark", "Mark": "riddle weakness", "Target": "AllEnemies"}
+        {"Do": "Mark", "Mark": "riddle weakness", "Target": "Self"}
       ],
-      "Notes": "End of round 8 of each 10: the Weakness riddle (each wizard must answer)." },
+      "Notes": "End of round 8 of each 10: the weakness riddle (it stands until the next riddle; the one before it ends)." },
 
-    { "When": "PlayerCasts", "Category": "Weakness", "Mark": "riddle weakness", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Caster"}
-      ],
-      "Notes": "A weakness cast: that wizard answered." },
-
-    { "When": "PlayerPasses", "Mark": "riddle weakness", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Caster"}
-      ],
-      "Notes": "Passing is allowed." },
-
-    { "When": "RoundEnd", "Round": 10, "Every": 10, "Mark": "riddle weakness", "MarkWho": "AnyEnemy",
+    { "When": "PlayerCasts", "NotCategory": "Weakness", "Mark": "riddle weakness", "MarkWho": "Self", "Fizzle": "Any",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001378"},
-        {"Do": "Cast", "Spell": "Weakness", "SpellID": 1204556169, "Target": "Marked", "DispelImmune": false},
-        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Marked"}
+        {"Do": "Cast", "Spell": "Weakness", "SpellID": 1204556169, "Target": "Caster", "DispelImmune": false}
       ],
-      "Notes": "Two rounds on, a wizard who did not answer: Weakness." },
+      "Notes": "While the weakness riddle stands, a spell that is not the answer (Weakness): Weakness on that wizard (Central: a wrong answer is punished; passing is not, nor is waiting)." },
 
     { "When": "RoundEnd", "Round": 10, "Every": 10,
       "Actions": [
+        {"Do": "Unmark", "Mark": "riddle weakness", "Target": "Self"},
         {"Do": "Say", "Line": "CombatMessages_00001275"},
-        {"Do": "Mark", "Mark": "riddle heal", "Target": "AllEnemies"}
+        {"Do": "Mark", "Mark": "riddle heal", "Target": "Self"}
       ],
-      "Notes": "End of round 10 of each 10: the Heal riddle (each wizard must answer)." },
+      "Notes": "End of round 10 of each 10: the heal riddle (it stands until the next riddle; the one before it ends)." },
 
-    { "When": "PlayerCasts", "Category": "Heal", "Mark": "riddle heal", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Caster"}
-      ],
-      "Notes": "A heal cast: that wizard answered." },
-
-    { "When": "PlayerPasses", "Mark": "riddle heal", "MarkWho": "Caster",
-      "Actions": [
-        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Caster"}
-      ],
-      "Notes": "Passing is allowed." },
-
-    { "When": "RoundEnd", "Round": 12, "Every": 10, "Mark": "riddle heal", "MarkWho": "AnyEnemy",
+    { "When": "PlayerCasts", "NotCategory": "Heal, HoT", "Mark": "riddle heal", "MarkWho": "Self", "Fizzle": "Any",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001378"},
-        {"Do": "Cast", "Spell": "Blessing", "SpellID": 530133976, "Target": "Self", "DispelImmune": false},
-        {"Do": "Unmark", "Mark": "riddle heal", "Target": "Marked"}
+        {"Do": "Cast", "Spell": "Blessing", "SpellID": 530133976, "Target": "Self", "DispelImmune": false}
       ],
-      "Notes": "Two rounds on, a wizard who did not answer: Blessing." }
+      "Notes": "While the heal riddle stands, a spell that is not the answer (Heal, HoT): Blessing (Central: a wrong answer is punished; passing is not, nor is waiting)." }
   ]
 }

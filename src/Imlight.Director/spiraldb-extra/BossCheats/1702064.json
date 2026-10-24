@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): the +200% trap comes when the marked wizard drops under 10% health.
   "TemplateID": 1702064,
   "Name": "Broken Branch King (Rank 24)",
   "Cheats": [
@@ -22,12 +23,12 @@
       ],
       "Notes": "End of every 3rd round: Hex (+100% trap) on the King wizard." },
 
-    { "When": "PlayerHealthBelow", "Health": 600, "Mark": "king", "MarkWho": "Caster",
+    { "When": "PlayerHealthBelow", "Mark": "king", "MarkWho": "Caster", "Percent": 10,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00003910"},
         {"Do": "Cast", "Spell": "Hex", "SpellID": 2133755892, "Target": "Caster", "DispelImmune": false}
       ],
-      "Notes": "The King wizard under 600 health: Hex (+200% trap)." },
+      "Notes": "The King wizard under 10% health: Hex (+200% trap) (Central)." },
 
     { "When": "PlayerDefeated", "Mark": "king", "MarkWho": "Receiver",
       "Actions": [

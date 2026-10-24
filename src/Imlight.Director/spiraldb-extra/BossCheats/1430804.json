@@ -3,11 +3,12 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Checked against its Wizard101 Central page (saved 2026-10-24): late join after round 2; power pips one fewer than the wizards; Mass Feint counts as a Feint (Balance Feint does not).
   "TemplateID": 1430804,
   "Name": "Corporal Tenni'syn (Rank 16)",
   "ShadowPips": 7,
   "Cheats": [
-    { "When": "EnemyJoins", "Round": 1,
+    { "When": "EnemyJoins", "Round": 2,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001228"},
         {"Do": "Cast", "Spell": "Natural Attack", "SpellID": 1286778288, "Target": "Enemy", "DispelImmune": false},
@@ -20,25 +21,25 @@
         {"Do": "Cast", "Spell": "Wild Bolt", "SpellID": 1630528836, "Target": "Enemy", "DispelImmune": false},
         {"Do": "Cast", "Spell": "Wild Bolt", "SpellID": 1630528836, "Target": "Enemy", "DispelImmune": false}
       ],
-      "Notes": "A late wizard: Natural Attack, then Wild Bolt up to 7 times." },
-
-    { "When": "RoundEnd", "PlayersMax": 1,
-      "Actions": [
-        {"Do": "Cast", "Spell": "Donate Power", "SpellID": 1001011877, "Target": "", "DispelImmune": false}
-      ],
-      "Notes": "End of each round, 1 wizard: Donate Power." },
+      "Notes": "A wizard who joins after round 2: Natural Attack, then Wild Bolt up to 7 times." },
 
     { "When": "RoundEnd", "PlayersMin": 2, "PlayersMax": 2,
       "Actions": [
+        {"Do": "Cast", "Spell": "Donate Power", "SpellID": 1001011877, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "End of each round, 2 wizards: Donate Power, 1 power pip (Central: one fewer than the wizards; 1 wizard: none)." },
+
+    { "When": "RoundEnd", "PlayersMin": 3, "PlayersMax": 3,
+      "Actions": [
         {"Do": "Cast", "Spell": "Donate Power", "SpellID": 598358693, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "2 wizards." },
+      "Notes": "3 wizards: 2 power pips." },
 
-    { "When": "RoundEnd", "PlayersMin": 3,
+    { "When": "RoundEnd", "PlayersMin": 4,
       "Actions": [
         {"Do": "Cast", "Spell": "Donate Power", "SpellID": 732576421, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "3 or more." },
+      "Notes": "4 wizards: 3 power pips." },
 
     { "When": "Pips", "Pips": 7, "PipsKind": "Shadow",
       "Actions": [
@@ -89,14 +90,14 @@
       ],
       "Notes": "A dispel on him: Cleanse Charm each time; the 4th also Healing Current; then Natural Attack." },
 
-    { "When": "PlayerCasts", "Spells": ["Feint"], "OnBoss": true, "Mark": "feinted", "MarkWho": "Self", "NotMarked": true,
+    { "When": "PlayerCasts", "Spells": ["Feint", "Mass Feint"], "OnBoss": true, "Mark": "feinted", "MarkWho": "Self", "NotMarked": true,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001191"},
         {"Do": "Mark", "Mark": "feinted", "Target": "Self"}
       ],
       "Notes": "The first Feint on him in a round is let through." },
 
-    { "When": "PlayerCasts", "Spells": ["Feint"], "OnBoss": true, "Mark": "feinted", "MarkWho": "Self",
+    { "When": "PlayerCasts", "Spells": ["Feint", "Mass Feint"], "OnBoss": true, "Mark": "feinted", "MarkWho": "Self",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001192"},
         {"Do": "Cast", "Spell": "Cleanse Ward", "SpellID": 55434460, "Target": "Self", "DispelImmune": false}
