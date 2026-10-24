@@ -489,7 +489,7 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
     /// </summary>
     public sealed class MSG_BEGINITEMFINDER : IServerMessage {
 
-        public byte MessageOrder { get; } = 78;
+        public byte MessageOrder { get; } = 90;
         public byte ServiceID { get; } = 103;
 
         /// <summary>

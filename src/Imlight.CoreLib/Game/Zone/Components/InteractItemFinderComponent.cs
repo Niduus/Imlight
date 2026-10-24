@@ -31,6 +31,8 @@
  * puts the invisible dorm bank on it with a HouseItemFinder_ tag; that one offers only the Item Finder.
  * The option is the game's own ItemFinderOption as its constructor fills it (client 0x141b6dc70): icon ItemFinder,
  * text GUI2_00001074. Its service name ItemFinderService is the one the client checks (0x14172c676).
+ * The client's MSG_OpenItemFinder handler is registered once at start-up, not per object, and does not read
+ * GlobalID (0x1410a67e0), so the window opens from any object and from the command alike.
  *
  * TODO:
  *
