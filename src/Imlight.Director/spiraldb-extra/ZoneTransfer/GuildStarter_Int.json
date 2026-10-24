@@ -1,0 +1,138 @@
+{
+  "ZoneName": "Housing_Guild/GuildStarter_Int",
+  "Events": [],
+  "Teleports": [
+    {
+      "TriggerName": "Teleport source-1",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "499.8502,-551.8697,-0.7717046,1.517671",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-2",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "356.9741,-544.4727,549.9996,1.550794",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-3",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "438.0157,-439.2687,-1089.707,1.502858",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-4",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "361.7085,-546.9866,-550.0002,1.606125",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-2-2",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-701.5166,-543.0479,-550.0002,-1.420899",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-3-3",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-613.5363,-567.2758,-0.7717028,-1.435416",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-6054.526,-1055.921,2663.231,-1.601016",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source (1)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-6251.568,-716.7218,826.2387,3.097861",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-Upstairs1",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-3918.097,-1794.951,-275.8458,1.554744",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-Downstairs1",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-3757.324,-2256.61,546.4582,-1.563388",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-Upstairs2",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-8586.289,-1796.301,-288.2643,-1.550796",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    },
+    {
+      "TriggerName": "Teleport source-Downstairs2",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-8751.708,-2243.252,546.3072,1.581913",
+        "m_destinationZone": "Housing_Guild/GuildStarter_Int"
+      }
+    }
+  ]
+}
