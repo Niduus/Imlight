@@ -1256,6 +1256,29 @@ public class Wizard {
         return true;
     }
 
+    /// <summary>
+    /// Takes several units out of a reagent stack and saves the bag (crafting uses up its reagents this way).
+    /// </summary>
+    public bool RemoveReagents(ulong globalId, int count, out ClientReagentItem reagent) {
+        if (!AlchemyBehavior.RemoveReagents(globalId, count, out reagent)) {
+            Logger.Warning("Could not take {0} of reagent {1} from player {2}'s reagent bag.",
+                Logger.Args(count, globalId, PlayerNameBehavior.GetWizardName()));
+
+            return false;
+        }
+
+        // Persistent save.
+        if (reagent.m_quantity <= 0) {
+            WizardReagentCollection.RemoveReagent(reagent);
+        }
+        else {
+            WizardReagentCollection.UpdateReagent(reagent);
+        }
+        WizardCollection.UpdateCharacterItems(this);
+
+        return true;
+    }
+
     public void SetNameOverride(string newName) {
         PlayerNameBehavior.NameOverride = newName;
 

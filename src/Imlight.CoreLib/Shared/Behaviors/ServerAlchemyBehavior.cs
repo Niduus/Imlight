@@ -44,6 +44,21 @@ public class ServerAlchemyBehavior : IClientBehaviorProvider<ClientAlchemyBehavi
     [JsonIgnore] public List<Recipe> Recipes { get; set; }
 
     /// <summary>
+    /// The template ids of the recipes the wizard knows (Game/Crafting).
+    /// </summary>
+    public List<uint> RecipeIds { get; set; }
+
+    /// <summary>
+    /// The recipes the wizard equipped in the recipe book, as the client names them (MSG_EQUIPRECIPE).
+    /// </summary>
+    public List<uint> EquippedRecipes { get; set; }
+
+    /// <summary>
+    /// The crafting slots in use: each craft with a cooldown fills one until its time is up.
+    /// </summary>
+    public List<CraftingCooldown> Cooldowns { get; set; }
+
+    /// <summary>
     /// Adds a reagent to the player's reagent bag.
     /// </summary>
     /// <param name="reagent">The reagent object to be added.</param>
@@ -134,6 +149,30 @@ public class ServerAlchemyBehavior : IClientBehaviorProvider<ClientAlchemyBehavi
     /// <returns>Returns the reagent object with the specified template ID, otherwise null.</returns>
     public ClientReagentItem GetReagent(ulong templateId) => Reagents?.FirstOrDefault(reagent => reagent.m_templateID == templateId) ?? null;
 
+    /// <summary>
+    /// Takes several units out of a reagent stack.
+    /// </summary>
+    /// <param name="reagentId">The global id of the stack.</param>
+    /// <param name="count">How many units to take, at most the stack's quantity.</param>
+    /// <param name="updatedReagent">The stack after the units were taken.</param>
+    /// <returns><c>true</c> when the units were taken.</returns>
+    public bool RemoveReagents(ulong reagentId, int count, out ClientReagentItem updatedReagent) {
+        Reagents ??= [];
+        ReagentItemIds ??= [];
+        updatedReagent = Reagents.FirstOrDefault(x => x.m_globalID == reagentId);
+        if (updatedReagent is null || count <= 0 || updatedReagent.m_quantity < count) {
+            return false;
+        }
+
+        updatedReagent.m_quantity -= count;
+        if (updatedReagent.m_quantity <= 0) {
+            Reagents.Remove(updatedReagent);
+            ReagentItemIds.Remove(reagentId);
+        }
+
+        return true;
+    }
+
     public ClientAlchemyBehavior GetClientBehaviorInstance() => new() {
         m_reagentBag = new ObjectBag() {
             m_maxItemStack = s_maxReagentStackAllowed,
@@ -141,13 +180,34 @@ public class ServerAlchemyBehavior : IClientBehaviorProvider<ClientAlchemyBehavi
         },
         m_craftingSlotsBag = new ObjectBag() {
             m_maxItemStack = 1,
-            m_itemList = CraftingSlots?.ConvertAll(item => (CoreObject) item) ?? []
+            m_itemList = Game.Crafting.Crafting.ClientSlotsOf(this)
         },
         m_recipeBag = new RecipeBag() {
             m_maxItemStack = 1,
-            m_itemList = Recipes?.ConvertAll(item => (CoreObject) item) ?? []
+            m_itemList = Game.Crafting.Crafting.ClientRecipesOf(this)
         },
+        m_bonusCrafting = Game.Crafting.Crafting.BonusSlots,
+        m_timerMultiplier = Game.Crafting.Crafting.TimerMultiplier,
+        m_equippedRecipes = Game.Crafting.Crafting.Enabled ? [.. EquippedRecipes ?? []] : [],
         m_maxReagentStack = s_maxReagentStackAllowed
     };
+
+}
+
+/// <summary>
+/// A crafting slot in use: the recipe crafted and when its cooldown ends.
+/// </summary>
+[Serializable]
+public class CraftingCooldown {
+
+    /// <summary>The slot's global id, which the client names when the slot is freed.</summary>
+    public ulong SlotId { get; set; }
+
+    public uint RecipeId { get; set; }
+
+    public string RecipeName { get; set; }
+
+    /// <summary>When the cooldown ends, in Unix seconds.</summary>
+    public long FinishedAt { get; set; }
 
 }

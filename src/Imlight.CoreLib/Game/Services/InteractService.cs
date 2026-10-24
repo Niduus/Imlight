@@ -106,7 +106,12 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
 
             // The game still holds an object this zone does not have (seen after a server restart: presses on a
             // hatchery sigil went to an old copy and did nothing, Niduus 2026-10-21). Drop it so the real one is used.
+            // Furniture is no zone object either (a crafting station's click is handled by HousingService); it stays.
             var unknownId = getObjectId(message);
+            if (Housing.HousingGids.IsHousingObject(unknownId)) {
+                return;
+            }
+
             if (unknownId <= 2 || !TryGetOnlinePlayer(unknownId - 2, out _)) {
                 SendToSocket(new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = unknownId });
             }

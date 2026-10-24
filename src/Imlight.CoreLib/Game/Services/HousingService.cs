@@ -752,6 +752,39 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         => Logger.Information("Teleporter: character {CharId} sent MSG_REQUESTTELEPORTERHOUSINGCONFIRM (object {GlobalId}), which the server does not use yet.",
             Logger.Args(GetActiveWizard().CharId, message.GlobalID));
 
+    // A crafting station placed in the house is furniture, not a zone object, so pressing it reaches no NPC
+    // (InteractService leaves it alone): the house opens the crafting window itself (Game/Crafting).
+    [MessageHandler(typeof(QUEST_MESSAGES_52_PROTOCOL.MSG_INTERACTNPC))]
+    private void ReceiveFurnitureInteract(QUEST_MESSAGES_52_PROTOCOL.MSG_INTERACTNPC message)
+        => OpenFurnitureStation(message.GlobalID);
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_INTERACTOPTION))]
+    private void ReceiveFurnitureInteractOption(GAME_5_PROTOCOL.MSG_INTERACTOPTION message)
+        => OpenFurnitureStation(message.ObjectID);
+
+    private void OpenFurnitureStation(ulong objectId) {
+        var house = _house;
+        if (house is null || !HousingGids.IsHousingObject(objectId)) {
+            return;
+        }
+
+        try {
+            var snapshot = house.Snapshot();
+            if (!HousingGids.TryGetSlot(objectId, snapshot.GidBase, snapshot.Slots.Count, out var slot) || snapshot.Slots[slot] is not { } item) {
+                return;
+            }
+
+            var template = CoreObjectFactory.GetCoreTemplate(item.TemplateId);
+            Logger.Information("Crafting: character {CharId} used house object {GidId} (template {TemplateId}) in lot {LotGid}.",
+                Logger.Args(GetActiveWizard()?.CharId, unchecked(snapshot.GidBase + (uint) slot), item.TemplateId, house.LotGid));
+            if (template is not null && Crafting.CraftingStation.Of(template, objectId) is { } station) {
+                Crafting.Crafting.OpenStation(SessionActor.ActorRef, GetActiveWizard(), station);
+            }
+        } catch (Exception exception) {
+            Logger.Error("Crafting: opening the house crafting station {ObjectId} failed: {Error}", Logger.Args(objectId, exception));
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PLAYERMOVE))]
     private void ReceivePlayerMove(ZONE_102_PROTOCOL.MSG_PLAYERMOVE message) {
         // Furniture is not a zone object, so the step onto a teleporter is found from the position the move service reports.

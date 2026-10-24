@@ -82,6 +82,15 @@ internal static class HousingGids {
     }
 
     /// <summary>
+    /// Whether an object id is one the client gives a housing blob entry (furniture), not a zone object's.
+    /// </summary>
+    internal static bool IsHousingObject(ulong gid) {
+        var parts = new GID(gid).MParts;
+
+        return parts.Type == ObjectGidType && parts.Block == 0;
+    }
+
+    /// <summary>
     /// Finds the slot an object id names. The client builds the id as <c>(u16 &lt;&lt; 48) | (9 &lt;&lt; 40) | gidId</c>.
     /// </summary>
     /// <param name="gid">The object id the client sent.</param>

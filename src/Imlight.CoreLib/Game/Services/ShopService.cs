@@ -111,8 +111,15 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         Logger.Information("Shop buy: item {0} (ShopID {1}) from NPC {2}, quantity {3}, currency {4}, fixed price {5}.",
             Logger.Args(itemTemplateID, message.ShopID, message.npcGlobalID, message.quantity, message.CurrencyType, price));
 
-        // A recipe shop's window (Doctor Purreau) buys a recipe. There is no crafting, so the buyer gets what the
-        // recipe makes: the elixir, snack or furniture (Niduus, 2026-10-23).
+        // A recipe shop's window buys a recipe, which goes into the recipe book for crafting (Game/Crafting).
+        if (CoreObjectFactory.GetCoreTemplate(itemTemplateID) is RecipeTemplate boughtRecipe && !Crafting.Crafting.ShopGivesItem) {
+            BuyRecipe(itemTemplateID, boughtRecipe, price);
+
+            return;
+        }
+
+        // [Crafting] RecipeShopGivesItem (or crafting turned off): the buyer gets what the recipe makes, the elixir,
+        // snack or furniture, as before crafting (Niduus, 2026-10-23).
         if (CoreObjectFactory.GetCoreTemplate(itemTemplateID) is RecipeTemplate recipe) {
             var madeId = (uint) recipe.m_itemID;
             if (madeId == 0) {
@@ -624,6 +631,45 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
     private static bool IsPetLayerDye(int dye, int currentDye, int templateColorCount)
         => dye == currentDye || (templateColorCount > 1 && dye < templateColorCount);
+
+    private void BuyRecipe(uint recipeId, RecipeTemplate recipe, int? price) {
+        var wizard = GetActiveWizard();
+        var name = Crafting.Crafting.NameOf(recipeId, recipe);
+        if (wizard.AlchemyBehavior?.RecipeIds?.Contains(recipeId) == true) {
+            InformGameClient($"You already know the recipe {name}.");
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        if (BadgeGate.Blocks(recipe.m_purchaseRequirements, recipeId, SessionActor.ActorRef, GetActiveGameObject(), wizard, SessionActor.GetZoneActor())) {
+            Logger.Warning("{0} tried to buy recipe {1} without the badge it requires.", Logger.Args(wizard.CharId, recipeId));
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        var cost = Math.Max(0, price ?? (int) recipe.m_goldCost);
+        if (wizard.GameStats.m_currentGold < cost) {
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        if (!Crafting.Crafting.Learn(SessionActor.ActorRef, wizard, recipeId)) {
+            SendShopDenyMessage();
+
+            return;
+        }
+
+        if (cost > 0) {
+            wizard.RemoveGold(cost);
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD { Gold = wizard.GameStats.m_currentGold, MaxGold = wizard.GameStats.m_baseGoldPouch });
+        }
+
+        Logger.Information("Shop buy: {0} learned recipe {1} ({2}) for {3} gold.", Logger.Args(wizard.CharId, recipeId, name, cost));
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+    }
 
     private void SendShopDenyMessage() {
         var shopDenyMsg = new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM {

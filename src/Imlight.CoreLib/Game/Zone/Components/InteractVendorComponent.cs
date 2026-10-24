@@ -36,6 +36,7 @@
  * Last Updated: 10/14/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -102,7 +103,16 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         && (NpcInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
         || WorldVendorLocations.IsVendor(goTemplate.m_templateID)
         || InteractTreasureVendorComponent.IsAbner(goTemplate)
-        || HouseVendors.IsSellerNpc(goTemplate.m_templateID));
+        || HouseVendors.IsSellerNpc(goTemplate.m_templateID)
+        || IsRecipeShop(goTemplate));
+
+    /// <summary>
+    /// Whether an NPC's own shop is a recipe shop (WizShoppingBehavior m_furnitureShop 3 with an m_recipeList).
+    /// </summary>
+    internal static bool IsRecipeShop(GameObjectTemplate template)
+        => template.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault() is { } shop
+        && HouseVendors.WindowOf(shop.m_furnitureShop) == HouseVendors.ShopWindow.Recipe
+        && shop.m_recipeList is { Count: > 0 };
 
     public override void OnStart() {
         if (CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
@@ -151,6 +161,14 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             return;
         }
 
+        // A recipe shop of the game (Eudora Tangletree, Zasha EmberForge...) sells the recipes of its own list, which
+        // the recipe window shows by name; the recipes go into the recipe book (Game/Crafting).
+        if (Entity.Template is GameObjectTemplate recipeShop && IsRecipeShop(recipeShop)) {
+            StartRecipeShop(recipeShop);
+
+            return;
+        }
+
         if (!NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out var inventory)) {
             Logger.Error("Failed to get vendor inventory for NPC {0}",
                 Logger.Args(Entity.ActiveGameObject.m_templateID));
@@ -175,6 +193,21 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         if (!string.IsNullOrWhiteSpace(inventory.ShopTitle)) {
             _shopTitle = inventory.ShopTitle;
         }
+    }
+
+    private void StartRecipeShop(GameObjectTemplate template) {
+        var shop = template.m_behaviors.OfType<WizShoppingBehaviorTemplate>().First();
+        var recipes = HouseVendors.RecipesOf(template.m_templateID);
+        var sold = recipes.Select(recipe => recipe.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _inventory = [.. recipes.Select(recipe => new GID((ulong) recipe.Id))];
+        _recipeList = [.. shop.m_recipeList.Where(name => sold.Contains((string) name))];
+        _window = HouseVendors.ShopWindow.Recipe;
+        _furnitureShop = shop.m_furnitureShop;
+        _shopType = shop.m_shopType;
+        _csrTestShop = shop.m_CSRTestShop;
+        _shopTitle = string.IsNullOrWhiteSpace(shop.m_shopTitle) ? _shopTitle : shop.m_shopTitle;
+        Logger.Information("Recipe shop {0}: {1} recipes of {2} listed, title {3}.",
+            Logger.Args(template.m_templateID, _recipeList.Count, shop.m_recipeList.Count, _shopTitle));
     }
 
     // A vendor of the Customs tab sells exactly its list, in the window its items belong in (or the one it names).

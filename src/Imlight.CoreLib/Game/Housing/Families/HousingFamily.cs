@@ -104,6 +104,13 @@ internal static class HousingFamilies {
         [typeof(CastleBlocksBehaviorTemplate), typeof(CastleBlockDoorBehaviorTemplate)], enabled: true);
 
     /// <summary>
+    /// The family of crafting stations. Their BasicNPCServiceBehavior only gives the station's prompt, so a station
+    /// is not in the Service family for it.
+    /// </summary>
+    internal static HousingFamily CraftingStation { get; } = Declare("CraftingStation", null, "Attic",
+        [typeof(AlchemyStationBehaviorTemplate)], enabled: true);
+
+    /// <summary>
     /// Every declared family, plain furniture first.
     /// </summary>
     internal static IReadOnlyList<HousingFamily> All { get; } = [
@@ -142,8 +149,10 @@ internal static class HousingFamilies {
         Declare("RaidKey", null, null, [typeof(RaidKeyBehaviorTemplate)]),
         Declare("ObjectRemap", null, null, [typeof(ObjectRemapBehaviorTemplate)]),
         Declare("ExtraZone", null, null, [typeof(ExtraHousingZoneBehaviorTemplate)]),
+        // Crafting stations open the game's crafting window when clicked (Game/Crafting, CraftingService).
+        CraftingStation,
         Declare("Service", null, null, [
-            typeof(BasicNPCServiceBehaviorTemplate), typeof(AlchemyStationBehaviorTemplate), typeof(WizShoppingBehaviorTemplate),
+            typeof(BasicNPCServiceBehaviorTemplate), typeof(WizShoppingBehaviorTemplate),
             typeof(WizardQuestingBehaviorTemplate), typeof(ItemFinderBehaviorTemplate), typeof(HousingHallOfFameBehaviorTemplate),
             typeof(HatchmakingKioskBehaviorTemplate), typeof(PvPKioskBehaviorTemplate), typeof(RitualObjectBehaviorTemplate)]),
     ];
@@ -167,6 +176,16 @@ internal static class HousingFamilies {
         var declared = All
             .Where(family => family != Plain && behaviorTypes.Any(family.IsTriggeredBy))
             .ToList();
+
+        // A crafting station's service behavior is its own prompt: the station only needs the crafting family.
+        if (declared.Contains(CraftingStation)) {
+            var otherServices = behaviorTypes.SelectMany(types => types)
+                .Any(type => type != typeof(BasicNPCServiceBehaviorTemplate) && type != typeof(AlchemyStationBehaviorTemplate)
+                          && declared.Any(family => family.Id == "Service" && family.IsTriggeredBy([type])));
+            if (!otherServices) {
+                declared.RemoveAll(family => family.Id == "Service");
+            }
+        }
 
         return declared.Count == 0 ? [Plain] : declared;
     }
