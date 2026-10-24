@@ -1,0 +1,10 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Boss_05 Elixir",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Boss_05: the elixir drops (1), one picked when it rolls. How often: DropOdds.json Boss/Elixir (15%).",
+  "Odds": "Boss/Elixir",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "512194", "ItemName": "Purreau's Potion #9"}
+  ]
+}

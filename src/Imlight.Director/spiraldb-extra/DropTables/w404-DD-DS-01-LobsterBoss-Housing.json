@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-LobsterBoss Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-LobsterBoss: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160811", "ItemName": "Broken Dragon Bust"},
+    {"ItemId": "160850", "ItemName": "Clawed Statue Base"},
+    {"ItemId": "160895", "ItemName": "Short Corner Wall Ruins"}
+  ]
+}

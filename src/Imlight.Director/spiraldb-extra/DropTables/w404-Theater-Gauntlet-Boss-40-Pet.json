@@ -1,0 +1,16 @@
+{
+  "Name": "W404 Theater-Gauntlet-Boss-40 Pet",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Boss-40: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "212293", "ItemName": "Crimson Spectre"},
+    {"ItemId": "1317109", "ItemName": "Skeletal Gladiator"},
+    {"ItemId": "87115", "ItemName": "Dragon"},
+    {"ItemId": "175580", "ItemName": "Sea Dragon"},
+    {"ItemId": "473118", "ItemName": "Vigilant Dragon"},
+    {"ItemId": "473119", "ItemName": "Utility Dragon"},
+    {"ItemId": "473120", "ItemName": "Assailing Dragon"}
+  ]
+}

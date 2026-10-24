@@ -1,0 +1,25 @@
+{
+  "Name": "W404 RH-Boss-Jokul-01 Gear",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Jokul-01: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "532402", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532403", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532410", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532411", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532418", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532419", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532450", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532451", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532458", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532459", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532466", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532467", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532486", "ItemName": "Raven's Claw of Unkindness"},
+    {"ItemId": "532487", "ItemName": "Raven's Claw of Unkindness"},
+    {"ItemId": "532510", "ItemName": "Raven's Storied Razor"},
+    {"ItemId": "532511", "ItemName": "Raven's Storied Razor"}
+  ]
+}

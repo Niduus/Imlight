@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-40 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-40: the housing drops (5), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82716", "ItemName": "Red Painted Column"},
+    {"ItemId": "82717", "ItemName": "Blue Painted Column"},
+    {"ItemId": "82867", "ItemName": "Long Narrow Table"},
+    {"ItemId": "160741", "ItemName": "Thick Roof Vent"},
+    {"ItemId": "160746", "ItemName": "Clanker's Trapdoor"}
+  ]
+}

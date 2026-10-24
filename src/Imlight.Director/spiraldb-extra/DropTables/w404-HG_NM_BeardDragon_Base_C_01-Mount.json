@@ -1,0 +1,12 @@
+{
+  "Name": "W404 HG_NM_BeardDragon_Base_C_01 Mount",
+  "Description": "Wizard404's drop list of the game's table HG_NM_BeardDragon_Base_C_01: the mount drops (3), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1560211", "ItemName": "Gator Glider (PERM)"},
+    {"ItemId": "1560212", "ItemName": "Gator Glider (7 Day)"},
+    {"ItemId": "1560213", "ItemName": "Gator Glider (1 Day)"}
+  ]
+}

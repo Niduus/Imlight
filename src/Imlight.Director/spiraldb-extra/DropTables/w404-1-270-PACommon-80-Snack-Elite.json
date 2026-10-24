@@ -1,0 +1,13 @@
+{
+  "Name": "W404 1-270-PACommon-80 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-80: the snack drops (4), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220292", "ItemName": "Uni-corn"},
+    {"ItemId": "220311", "ItemName": "Glowing Star Fruit"},
+    {"ItemId": "220325", "ItemName": "Shiny Tomato"},
+    {"ItemId": "446071", "ItemName": "Salmonberry"}
+  ]
+}

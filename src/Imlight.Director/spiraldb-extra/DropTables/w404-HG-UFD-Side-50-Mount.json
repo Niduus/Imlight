@@ -1,0 +1,18 @@
+{
+  "Name": "W404 HG-UFD-Side-50 Mount",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Side-50: the mount drops (9), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1507837", "ItemName": "Dread Loch Monster (PERM)"},
+    {"ItemId": "1507838", "ItemName": "Dire Loch Monster (PERM)"},
+    {"ItemId": "1507839", "ItemName": "Dire Loch Monster (7 Day)"},
+    {"ItemId": "1507840", "ItemName": "Dire Loch Monster (1 Day)"},
+    {"ItemId": "1507842", "ItemName": "Grim Loch Monster (PERM)"},
+    {"ItemId": "1507843", "ItemName": "Grim Loch Monster (7 Day)"},
+    {"ItemId": "1507844", "ItemName": "Grim Loch Monster (1 Day)"},
+    {"ItemId": "1507846", "ItemName": "Dread Loch Monster (7 Day)"},
+    {"ItemId": "1507847", "ItemName": "Dread Loch Monster (1 Day)"}
+  ]
+}

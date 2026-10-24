@@ -1,0 +1,10 @@
+{
+  "Name": "W404 STRD_BR_DS_MalistaireDrake_A_50 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_DS_MalistaireDrake_A_50: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "GuildReagent01_TC", "ItemName": "Azoth"}
+  ]
+}

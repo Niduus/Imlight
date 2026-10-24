@@ -1,0 +1,15 @@
+{
+  "Name": "W404 1-270-PACommon-0 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-0: the snack drops (6), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220193", "ItemName": "Blonde Strawberry"},
+    {"ItemId": "220197", "ItemName": "Green Grapes"},
+    {"ItemId": "220220", "ItemName": "Gummy Firecat"},
+    {"ItemId": "220225", "ItemName": "Nettle Root"},
+    {"ItemId": "220227", "ItemName": "Cracker"},
+    {"ItemId": "220237", "ItemName": "Tiny Fish"}
+  ]
+}

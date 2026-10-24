@@ -1,0 +1,13 @@
+{
+  "Name": "W404 DD-DS-01-LobsterBoss-80 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-LobsterBoss-80: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160798", "ItemName": "Gemcutter Table"},
+    {"ItemId": "160816", "ItemName": "Crystal Storage Chest"},
+    {"ItemId": "160852", "ItemName": "Regal Dragon Statue"},
+    {"ItemId": "160857", "ItemName": "Kraken Statue"}
+  ]
+}

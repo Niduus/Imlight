@@ -1,0 +1,11 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Boss_03 Mount (Elite)",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Boss_03: the mount drops (2), one picked when it rolls. How often: DropOdds.json Elite/Mount (1%).",
+  "Odds": "Elite/Mount",
+  "RollChance": 0.01,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1470042", "ItemName": "Roc (7 Day)"},
+    {"ItemId": "1470043", "ItemName": "Roc (1 Day)"}
+  ]
+}

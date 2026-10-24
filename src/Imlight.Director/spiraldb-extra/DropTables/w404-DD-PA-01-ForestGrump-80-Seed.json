@@ -1,0 +1,11 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump-80 Seed",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump-80: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350198", "ItemName": "Rotten Beets"},
+    {"ItemId": "1350206", "ItemName": "Vampire Carrots"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "Name": "W404 KH-Kaizoku-Fire-R13 Seed",
+  "Description": "Wizard404's drop list of the game's table KH-Kaizoku-Fire-R13: the seed drops (5), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346017", "ItemName": "Deadly Ninja Fig"},
+    {"ItemId": "346031", "ItemName": "Ninja Fig"},
+    {"ItemId": "355073", "ItemName": "Venus Fly Trap"},
+    {"ItemId": "355115", "ItemName": "Orange Dandelion"},
+    {"ItemId": "356099", "ItemName": "Pink Laugh-o-Dil"}
+  ]
+}

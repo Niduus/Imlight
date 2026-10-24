@@ -1,0 +1,17 @@
+{
+  "Name": "W404 BR_MR_Spider_Grandfather_A_Boss_01 Reagent",
+  "Description": "Wizard404's drop list of the game's table BR_MR_Spider_Grandfather_A_Boss_01: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1688486", "ItemName": "Scorching Scimitars"},
+    {"ItemId": "1688488", "ItemName": "Climaclysm"},
+    {"ItemId": "1688483", "ItemName": "Iron Sultan"},
+    {"ItemId": "1688484", "ItemName": "Snake Charmer"},
+    {"ItemId": "1688485", "ItemName": "Lamassu"},
+    {"ItemId": "1688487", "ItemName": "Qismah's Curse"},
+    {"ItemId": "1688482", "ItemName": "Sand Wurm"},
+    {"ItemId": "1688838", "ItemName": "Aethyr Crystal"}
+  ]
+}

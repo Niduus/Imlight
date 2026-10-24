@@ -1,0 +1,11 @@
+{
+  "Name": "W404 HG-Mob-Spanner Pet",
+  "Description": "Wizard404's drop list of the game's table HG-Mob-Spanner: the pet drops (2), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "126979", "ItemName": "Death Leprechaun"},
+    {"ItemId": "225451", "ItemName": "Ash Spider"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "Name": "W404 STRD_BR_AZ_Huac_A_100 Gear",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_AZ_Huac_A_100: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1654621", "ItemName": "Umbra Queen's Dusty Staff"},
+    {"ItemId": "1654622", "ItemName": "Umbra Queen's Grim Staff"},
+    {"ItemId": "1654623", "ItemName": "Umbra Queen's Scorched Staff"},
+    {"ItemId": "1654624", "ItemName": "Umbra Queen's Chill Staff"},
+    {"ItemId": "1654625", "ItemName": "Umbra Queen's Wild Staff"},
+    {"ItemId": "1654626", "ItemName": "Umbra Queen's Furious Staff"},
+    {"ItemId": "1654627", "ItemName": "Umbra Queen's Shocked Staff"},
+    {"ItemId": "1654628", "ItemName": "Umbra Queen's Dusty Staff"},
+    {"ItemId": "1654629", "ItemName": "Umbra Queen's Grim Staff"},
+    {"ItemId": "1654630", "ItemName": "Umbra Queen's Scorched Staff"},
+    {"ItemId": "1654631", "ItemName": "Umbra Queen's Chill Staff"},
+    {"ItemId": "1654632", "ItemName": "Umbra Queen's Wild Staff"},
+    {"ItemId": "1654633", "ItemName": "Umbra Queen's Furious Staff"},
+    {"ItemId": "1654634", "ItemName": "Umbra Queen's Shocked Staff"}
+  ]
+}

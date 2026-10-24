@@ -1,0 +1,16 @@
+{
+  "Name": "W404 SC-Spirit-20 Gear",
+  "Description": "Wizard404's drop list of the game's table SC-Spirit-20: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear (12%).",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "473326", "ItemName": "Greenwarden's Brilliant Mask"},
+    {"ItemId": "473327", "ItemName": "Greenwarden's Brilliant Mask"},
+    {"ItemId": "473340", "ItemName": "Greenwarden's Brilliant Boots"},
+    {"ItemId": "473341", "ItemName": "Greenwarden's Brilliant Boots"},
+    {"ItemId": "1302138", "ItemName": "Spiral Cup Cowl"},
+    {"ItemId": "1302140", "ItemName": "Spiral Cup Boots"},
+    {"ItemId": "1302145", "ItemName": "Vestment of Spirit"}
+  ]
+}

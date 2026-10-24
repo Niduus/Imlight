@@ -1,0 +1,10 @@
+{
+  "Name": "W404 HG-UFD-KB Gear",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-KB: the gear drops (1), one picked when it rolls. How often: DropOdds.json Normal/Gear (6%).",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1548544", "ItemName": "Loch and Key Blade"}
+  ]
+}

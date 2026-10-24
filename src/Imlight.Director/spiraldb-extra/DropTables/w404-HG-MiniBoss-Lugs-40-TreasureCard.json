@@ -1,0 +1,17 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-40 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-40: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Clockwork TC", "ItemName": "Clockwork"},
+    {"ItemId": "Spider Clockwork TC", "ItemName": "Clockwork Spider"},
+    {"ItemId": "Dragonblade TC PP", "ItemName": "Dragonblade"},
+    {"ItemId": "Skeletal Dragon TC PP", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Fire Dragon TC PP", "ItemName": "Fire Dragon"},
+    {"ItemId": "Fire Wyvern TC PP", "ItemName": "Fire Wyvern"},
+    {"ItemId": "Ice Wyvern TC PP", "ItemName": "Ice Wyvern"},
+    {"ItemId": "Squall Wyvern TC PP", "ItemName": "Squall Wyvern"}
+  ]
+}

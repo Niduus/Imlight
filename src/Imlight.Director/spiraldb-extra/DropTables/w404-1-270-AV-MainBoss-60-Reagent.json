@@ -1,0 +1,15 @@
+{
+  "Name": "W404 1-270-AV-MainBoss-60 Reagent",
+  "Description": "Wizard404's drop list of the game's table 1-270-AV-MainBoss-60: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106964", "ItemName": "Spring"},
+    {"ItemId": "106968", "ItemName": "Fire Blossom"},
+    {"ItemId": "106970", "ItemName": "Grendelweed"},
+    {"ItemId": "258582", "ItemName": "Aether"},
+    {"ItemId": "258588", "ItemName": "Aquamarine"}
+  ]
+}

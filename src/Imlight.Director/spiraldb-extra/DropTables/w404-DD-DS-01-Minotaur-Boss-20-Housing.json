@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-Boss-20 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-Boss-20: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160830", "ItemName": "Purple Stone Obelisk"},
+    {"ItemId": "160831", "ItemName": "Orange Stone Obelisk"},
+    {"ItemId": "160851", "ItemName": "Dragonspyre Statue Base"}
+  ]
+}

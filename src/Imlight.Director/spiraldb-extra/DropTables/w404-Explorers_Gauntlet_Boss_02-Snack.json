@@ -1,0 +1,14 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Boss_02 Snack",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Boss_02: the snack drops (5), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220203", "ItemName": "Flowering Pineapple"},
+    {"ItemId": "240081", "ItemName": "Crab Apples"},
+    {"ItemId": "641610", "ItemName": "Crab Knight Cakes"},
+    {"ItemId": "789446", "ItemName": "Kalua Kebab"},
+    {"ItemId": "789450", "ItemName": "Kahuna Tuna"}
+  ]
+}

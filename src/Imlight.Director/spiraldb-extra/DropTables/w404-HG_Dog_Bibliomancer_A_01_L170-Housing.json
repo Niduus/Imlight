@@ -1,0 +1,16 @@
+{
+  "Name": "W404 HG_Dog_Bibliomancer_A_01_L170 Housing",
+  "Description": "Wizard404's drop list of the game's table HG_Dog_Bibliomancer_A_01_L170: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160202", "ItemName": "Lectern"},
+    {"ItemId": "160203", "ItemName": "Books"},
+    {"ItemId": "160216", "ItemName": "Pen and Ink"},
+    {"ItemId": "160272", "ItemName": "Carved Bookshelf"},
+    {"ItemId": "160273", "ItemName": "Bookshelf"},
+    {"ItemId": "160636", "ItemName": "Stone Brazier"},
+    {"ItemId": "1359133", "ItemName": "Regent's Library Shelf"}
+  ]
+}

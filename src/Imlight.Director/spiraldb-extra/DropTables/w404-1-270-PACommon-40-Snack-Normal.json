@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-40 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-40: the snack drops (5), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220258", "ItemName": "Wheat Cracker"},
+    {"ItemId": "220259", "ItemName": "Redskin Peanut"},
+    {"ItemId": "220291", "ItemName": "Golden Squash"},
+    {"ItemId": "220294", "ItemName": "Square Root"},
+    {"ItemId": "220296", "ItemName": "Fire Cracker"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 SC-Equilibrium-60",
+  "Description": "Gold of the game's table SC-Equilibrium-60, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 60,
+  "MaxGold": 80,
+  "EachItem": false,
+  "Items": []
+}

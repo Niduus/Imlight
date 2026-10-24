@@ -1,0 +1,23 @@
+{
+  "Name": "W404 Theater-Gauntlet-MiniBoss-01 Reagent",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-MiniBoss-01: the reagent drops (14), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106946", "ItemName": "Ruby"},
+    {"ItemId": "106947", "ItemName": "Sapphire"},
+    {"ItemId": "106948", "ItemName": "Amethyst"},
+    {"ItemId": "106949", "ItemName": "Citrine"},
+    {"ItemId": "106950", "ItemName": "Peridot"},
+    {"ItemId": "106951", "ItemName": "Onyx"},
+    {"ItemId": "106952", "ItemName": "Jade"},
+    {"ItemId": "258590", "ItemName": "Perfect Amethyst"},
+    {"ItemId": "258591", "ItemName": "Perfect Citrine"},
+    {"ItemId": "258592", "ItemName": "Perfect Jade"},
+    {"ItemId": "258593", "ItemName": "Perfect Onyx"},
+    {"ItemId": "258594", "ItemName": "Perfect Peridot"},
+    {"ItemId": "258595", "ItemName": "Perfect Ruby"},
+    {"ItemId": "258596", "ItemName": "Perfect Sapphire"}
+  ]
+}

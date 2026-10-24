@@ -1,0 +1,24 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Common_04 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Common_04: the snack drops (15), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220231", "ItemName": "Potato Chips"},
+    {"ItemId": "220234", "ItemName": "Drumstick"},
+    {"ItemId": "220243", "ItemName": "Funnel Cake"},
+    {"ItemId": "220253", "ItemName": "Harvest Corn"},
+    {"ItemId": "220255", "ItemName": "Arrow Root"},
+    {"ItemId": "220268", "ItemName": "Medium Fish"},
+    {"ItemId": "220279", "ItemName": "Cow Pie"},
+    {"ItemId": "220299", "ItemName": "Large Pretzel"},
+    {"ItemId": "220305", "ItemName": "Buttered Bread"},
+    {"ItemId": "220309", "ItemName": "7 Layer Taco"},
+    {"ItemId": "537597", "ItemName": "Lemon Daisy"},
+    {"ItemId": "733122", "ItemName": "Chili Peppers"},
+    {"ItemId": "1257585", "ItemName": "Stuffed Bell Pepper"},
+    {"ItemId": "1257587", "ItemName": "Bell Pepper Steak"},
+    {"ItemId": "1359629", "ItemName": "Breakfast Tacos"}
+  ]
+}

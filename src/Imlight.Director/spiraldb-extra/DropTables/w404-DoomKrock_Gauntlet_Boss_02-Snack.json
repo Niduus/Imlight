@@ -1,0 +1,19 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Boss_02 Snack",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Boss_02: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220268", "ItemName": "Medium Fish"},
+    {"ItemId": "220294", "ItemName": "Square Root"},
+    {"ItemId": "220339", "ItemName": "Raising Bran Cereal"},
+    {"ItemId": "473528", "ItemName": "Sandy Corn"},
+    {"ItemId": "537586", "ItemName": "Black Sun Seeds"},
+    {"ItemId": "733125", "ItemName": "Cactus Fruit"},
+    {"ItemId": "789215", "ItemName": "Gator Tots"},
+    {"ItemId": "789216", "ItemName": "Ancient Date"},
+    {"ItemId": "789455", "ItemName": "Loco Nut"},
+    {"ItemId": "1257590", "ItemName": "Prickly Bear Punch"}
+  ]
+}

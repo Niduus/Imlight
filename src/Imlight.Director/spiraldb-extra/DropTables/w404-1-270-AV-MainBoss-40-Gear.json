@@ -1,0 +1,33 @@
+{
+  "Name": "W404 1-270-AV-MainBoss-40 Gear",
+  "Description": "Wizard404's drop list of the game's table 1-270-AV-MainBoss-40: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "635924", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "635925", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "635933", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "635934", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "635942", "ItemName": "Faerie Court Steel Leaf"},
+    {"ItemId": "635943", "ItemName": "Faerie Court Steel Leaf"},
+    {"ItemId": "635951", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "635952", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "635960", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "635961", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "635969", "ItemName": "Pixie's Armor of Encanta"},
+    {"ItemId": "635970", "ItemName": "Pixie's Armor of Encanta"},
+    {"ItemId": "635978", "ItemName": "World's Fool Mask"},
+    {"ItemId": "635979", "ItemName": "World's Fool Mask"},
+    {"ItemId": "635987", "ItemName": "World's Fool Boots"},
+    {"ItemId": "635988", "ItemName": "World's Fool Boots"},
+    {"ItemId": "635996", "ItemName": "World's Fool Armor"},
+    {"ItemId": "635997", "ItemName": "World's Fool Armor"},
+    {"ItemId": "636038", "ItemName": "Misty Mountain Mandolin"},
+    {"ItemId": "636039", "ItemName": "Misty Mountain Mandolin"},
+    {"ItemId": "636047", "ItemName": "Levee Breaking Lute"},
+    {"ItemId": "636048", "ItemName": "Levee Breaking Lute"},
+    {"ItemId": "636056", "ItemName": "Mandolin of Evermore"},
+    {"ItemId": "636057", "ItemName": "Mandolin of Evermore"}
+  ]
+}

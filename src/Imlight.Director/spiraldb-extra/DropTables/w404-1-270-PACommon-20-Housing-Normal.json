@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-20 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-20: the housing drops (5), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82718", "ItemName": "Red Facetted Column"},
+    {"ItemId": "82719", "ItemName": "Blue Facetted Column"},
+    {"ItemId": "82721", "ItemName": "Purple Facetted Column"},
+    {"ItemId": "160647", "ItemName": "Wood Saw"},
+    {"ItemId": "160691", "ItemName": "Tall Crate"}
+  ]
+}

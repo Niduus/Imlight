@@ -1,0 +1,15 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Boss_04 Mount",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Boss_04: the mount drops (6), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1507361", "ItemName": "Moseyin' Armadillo (7 Day)"},
+    {"ItemId": "1507362", "ItemName": "Moseyin' Armadillo (1 Day)"},
+    {"ItemId": "1507364", "ItemName": "Trusty Armadillo (7 Day)"},
+    {"ItemId": "1507365", "ItemName": "Trusty Armadillo (1 Day)"},
+    {"ItemId": "1507367", "ItemName": "Ramblin' Armadillo (7 Day)"},
+    {"ItemId": "1507368", "ItemName": "Ramblin' Armadillo (1 Day)"}
+  ]
+}

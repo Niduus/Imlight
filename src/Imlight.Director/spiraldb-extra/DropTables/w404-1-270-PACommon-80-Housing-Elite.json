@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-80 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-80: the housing drops (5), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82899", "ItemName": "Red Krok Bust"},
+    {"ItemId": "82902", "ItemName": "Blue Krok Bust"},
+    {"ItemId": "82903", "ItemName": "Purple Krok Bust"},
+    {"ItemId": "160679", "ItemName": "Bulletin Board"},
+    {"ItemId": "160760", "ItemName": "Metal Wall Lamp"}
+  ]
+}

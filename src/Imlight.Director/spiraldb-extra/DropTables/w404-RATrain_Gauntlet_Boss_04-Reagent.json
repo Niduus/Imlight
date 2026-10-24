@@ -1,0 +1,17 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Boss_04 Reagent",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Boss_04: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106941", "ItemName": "Bone"},
+    {"ItemId": "106942", "ItemName": "Leather Straps"},
+    {"ItemId": "258579", "ItemName": "Scales"},
+    {"ItemId": "258585", "ItemName": "Sandstone"},
+    {"ItemId": "258586", "ItemName": "Sunstone"},
+    {"ItemId": "537982", "ItemName": "Amber Dust"},
+    {"ItemId": "1500073", "ItemName": "Elemental Retriever"},
+    {"ItemId": "1500076", "ItemName": "Smoke Screen Token"}
+  ]
+}

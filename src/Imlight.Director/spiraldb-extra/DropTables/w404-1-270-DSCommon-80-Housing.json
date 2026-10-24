@@ -1,0 +1,13 @@
+{
+  "Name": "W404 1-270-DSCommon-80 Housing",
+  "Description": "Wizard404's drop list of the game's table 1-270-DSCommon-80: the housing drops (4), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160806", "ItemName": "Burnt Book"},
+    {"ItemId": "160882", "ItemName": "Medium Column"},
+    {"ItemId": "160887", "ItemName": "Jagged Rock Shard"},
+    {"ItemId": "160917", "ItemName": "Thunder Plaque"}
+  ]
+}

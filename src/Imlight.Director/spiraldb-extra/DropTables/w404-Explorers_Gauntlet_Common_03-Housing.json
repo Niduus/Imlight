@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Common_03 Housing",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Common_03: the housing drops (24), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82890", "ItemName": "Pile of Sand"},
+    {"ItemId": "82895", "ItemName": "Palm Shrub"},
+    {"ItemId": "82896", "ItemName": "Potted Palm"},
+    {"ItemId": "82897", "ItemName": "Bushy Palm Tree"},
+    {"ItemId": "82898", "ItemName": "Tall Palm Tree"},
+    {"ItemId": "160632", "ItemName": "Fishbones"},
+    {"ItemId": "181037", "ItemName": "Fish Pot"},
+    {"ItemId": "342082", "ItemName": "Spread Tube Coral"},
+    {"ItemId": "342086", "ItemName": "Giant Crab"},
+    {"ItemId": "342088", "ItemName": "Crab Table"},
+    {"ItemId": "342113", "ItemName": "Water-Mole Spear"},
+    {"ItemId": "342124", "ItemName": "Cephalopod Obelisk"},
+    {"ItemId": "342134", "ItemName": "Lesser Totem"},
+    {"ItemId": "342139", "ItemName": "Shovel"},
+    {"ItemId": "342150", "ItemName": "Leaning Palm Tree"},
+    {"ItemId": "342151", "ItemName": "Broken Palm Tree"},
+    {"ItemId": "342154", "ItemName": "Water-Mole Bowl"},
+    {"ItemId": "469371", "ItemName": "Diving Gear Rack"},
+    {"ItemId": "739087", "ItemName": "Azteca Palm Tree"},
+    {"ItemId": "739148", "ItemName": "Lava Bulb"},
+    {"ItemId": "739154", "ItemName": "Fish Basket"},
+    {"ItemId": "739164", "ItemName": "Large Shell"},
+    {"ItemId": "739173", "ItemName": "Curving Palm Tree"},
+    {"ItemId": "739208", "ItemName": "Shell Shield"}
+  ]
+}

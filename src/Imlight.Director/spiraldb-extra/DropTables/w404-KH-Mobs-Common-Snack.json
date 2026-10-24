@@ -1,0 +1,29 @@
+{
+  "Name": "W404 KH-Mobs-Common Snack",
+  "Description": "Wizard404's drop list of the game's table KH-Mobs-Common: the snack drops (20), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220194", "ItemName": "Sweet Pineapple"},
+    {"ItemId": "220199", "ItemName": "MooShu Broccoli"},
+    {"ItemId": "220204", "ItemName": "Crunch Apple"},
+    {"ItemId": "220206", "ItemName": "Ape Grapes"},
+    {"ItemId": "220216", "ItemName": "Large Watermelon"},
+    {"ItemId": "220291", "ItemName": "Golden Squash"},
+    {"ItemId": "220294", "ItemName": "Square Root"},
+    {"ItemId": "220296", "ItemName": "Fire Cracker"},
+    {"ItemId": "220297", "ItemName": "Golden Peanut"},
+    {"ItemId": "220304", "ItemName": "Flaming Soup"},
+    {"ItemId": "220306", "ItemName": "Large Fish"},
+    {"ItemId": "220308", "ItemName": "Golden Pizza"},
+    {"ItemId": "220310", "ItemName": "King Banana"},
+    {"ItemId": "220326", "ItemName": "Goat Cheese"},
+    {"ItemId": "220328", "ItemName": "Taco Town Special"},
+    {"ItemId": "220332", "ItemName": "Jar of Jelly Beans"},
+    {"ItemId": "240102", "ItemName": "Killer Tomato"},
+    {"ItemId": "589095", "ItemName": "MooShu Cheddar"},
+    {"ItemId": "589096", "ItemName": "Eggplant"},
+    {"ItemId": "589097", "ItemName": "Fire Passion Fruit"}
+  ]
+}

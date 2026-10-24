@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Ultra_Meowiarty_70 Seed",
+  "Description": "Wizard404's drop list of the game's table Ultra_Meowiarty_70 (the boss's chest): the seed drops (12), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350059", "ItemName": "Ultra Alligator Pear Tree"},
+    {"ItemId": "1350083", "ItemName": "Ultra King Parsley"},
+    {"ItemId": "1350093", "ItemName": "Ultra Boom Shroom"},
+    {"ItemId": "1350094", "ItemName": "Ultra Snow Apples"},
+    {"ItemId": "1350103", "ItemName": "Ultra Dandelion"},
+    {"ItemId": "1350111", "ItemName": "Ultra Huckleberries"},
+    {"ItemId": "1350119", "ItemName": "Ultra Trumpet Vine"},
+    {"ItemId": "1350124", "ItemName": "Ultra Helephant Ears"},
+    {"ItemId": "1350131", "ItemName": "Ultra Snap Dragon"},
+    {"ItemId": "1350138", "ItemName": "Ultra Ninja Fig"},
+    {"ItemId": "1350146", "ItemName": "Ultra Tiger Lily"},
+    {"ItemId": "1350155", "ItemName": "Ultra Fly Trap"}
+  ]
+}

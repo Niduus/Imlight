@@ -1,0 +1,26 @@
+{
+  "Name": "W404 1-270-AVMiniBoss-20 Housing",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss-20: the housing drops (17), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160199", "ItemName": "Stained Armoire"},
+    {"ItemId": "160201", "ItemName": "Open Burned Book"},
+    {"ItemId": "160202", "ItemName": "Lectern"},
+    {"ItemId": "160214", "ItemName": "Floor Brazier"},
+    {"ItemId": "160218", "ItemName": "Crystal Ball"},
+    {"ItemId": "160252", "ItemName": "Great Spiral Glyph"},
+    {"ItemId": "160985", "ItemName": "Spiral Shield"},
+    {"ItemId": "206087", "ItemName": "Grandfather Clock"},
+    {"ItemId": "206090", "ItemName": "Birdcage"},
+    {"ItemId": "342149", "ItemName": "Large Willow Tree"},
+    {"ItemId": "470413", "ItemName": "King Artorius Bobblehead"},
+    {"ItemId": "470414", "ItemName": "Bog Witch Bobblehead"},
+    {"ItemId": "470416", "ItemName": "Lady of the Lake Bobblehead"},
+    {"ItemId": "470417", "ItemName": "Sir Pike Del Lago Bobblehead"},
+    {"ItemId": "512161", "ItemName": "Avalon Main Theme"},
+    {"ItemId": "512164", "ItemName": "Avalon Glorious Theme"},
+    {"ItemId": "641547", "ItemName": "Ceara Ashbury Bobblehead"}
+  ]
+}

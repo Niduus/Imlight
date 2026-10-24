@@ -1,0 +1,17 @@
+{
+  "Name": "W404 HG_NM_BeardDragon_Base_B_01 Pet",
+  "Description": "Wizard404's drop list of the game's table HG_NM_BeardDragon_Base_B_01: the pet drops (8), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1596299", "ItemName": "Stormy Ringtail"},
+    {"ItemId": "1596308", "ItemName": "Fiery Glowbug"},
+    {"ItemId": "1596309", "ItemName": "Icy Glowbug"},
+    {"ItemId": "1596310", "ItemName": "Lively Glowbug"},
+    {"ItemId": "1596311", "ItemName": "Deathly Glowbug"},
+    {"ItemId": "1596312", "ItemName": "Mythic Glowbug"},
+    {"ItemId": "1596313", "ItemName": "Zappy Glowbug"},
+    {"ItemId": "1596314", "ItemName": "Balanced Glowbug"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-01",
+  "Description": "Gold of the game's table HG-MiniBoss-Lugs-01, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 5,
+  "MaxGold": 10,
+  "EachItem": false,
+  "Items": []
+}

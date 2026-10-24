@@ -1,0 +1,32 @@
+{
+  "Name": "W404 SC-Mobs-40 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table SC-Mobs-40: the treasurecard drops (23), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Evil Snowman TC", "ItemName": "Evil Snowman"},
+    {"ItemId": "Fire Elemental TC", "ItemName": "Incinerating Touch"},
+    {"ItemId": "Lightning Bats TC", "ItemName": "Lightning Bats"},
+    {"ItemId": "Cyclops TC", "ItemName": "Cyclops"},
+    {"ItemId": "Pixie Life TC", "ItemName": "Fairy"},
+    {"ItemId": "Banshee TC", "ItemName": "Banshee"},
+    {"ItemId": "Locust Swarm TC", "ItemName": "Locust Swarm"},
+    {"ItemId": "Fireblade TC", "ItemName": "Fireblade"},
+    {"ItemId": "Iceblade TC", "ItemName": "Iceblade"},
+    {"ItemId": "Stormblade TC", "ItemName": "Stormblade"},
+    {"ItemId": "Mythblade TC", "ItemName": "Mythblade"},
+    {"ItemId": "Lifeblade TC", "ItemName": "Lifeblade"},
+    {"ItemId": "Deathblade TC", "ItemName": "Deathblade"},
+    {"ItemId": "Balanceblade TC", "ItemName": "Balanceblade"},
+    {"ItemId": "Tri Blade TC", "ItemName": "Elemental Blade"},
+    {"ItemId": "Spirit Blade TC", "ItemName": "Spirit Blade"},
+    {"ItemId": "Ghoul TC", "ItemName": "Ghoul"},
+    {"ItemId": "Fire Elf TC", "ItemName": "Fire Elf"},
+    {"ItemId": "Troll TC", "ItemName": "Troll"},
+    {"ItemId": "Frost Beetle TC", "ItemName": "Frost Beetle"},
+    {"ItemId": "Thunder Snake TC", "ItemName": "Thunder Snake"},
+    {"ItemId": "Leprechaun TC", "ItemName": "Leprechaun"},
+    {"ItemId": "Dragonblade TC", "ItemName": "Dragonblade"}
+  ]
+}

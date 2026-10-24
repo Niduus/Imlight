@@ -1,0 +1,13 @@
+{
+  "Name": "W404 RH-Boss-Jokul-01 Pet",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Jokul-01: the pet drops (4), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100435", "ItemName": "Grumpy Snowman"},
+    {"ItemId": "225404", "ItemName": "Silverback Wildclaw"},
+    {"ItemId": "225447", "ItemName": "Diseased Wildclaw"},
+    {"ItemId": "473441", "ItemName": "Primal Wildclaw"}
+  ]
+}

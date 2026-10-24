@@ -1,0 +1,19 @@
+{
+  "Name": "W404 Theater-Gauntlet-Boss-40 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Boss-40: the treasurecard drops (10), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Pigsie TC", "ItemName": "Pigsie"},
+    {"ItemId": "Skeletal Dragon TC DH", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Polymorph - Draconian TC DH", "ItemName": "Polymorph Dracon"},
+    {"ItemId": "Hydra TC DH", "ItemName": "Hydra"},
+    {"ItemId": "Dragonflies TC DH", "ItemName": "Dragonflies"},
+    {"ItemId": "Fire Dragon TC DH", "ItemName": "Fire Dragon"},
+    {"ItemId": "Dragonblade TC DH", "ItemName": "Dragonblade"},
+    {"ItemId": "Ice Wyvern TC DH", "ItemName": "Ice Wyvern"},
+    {"ItemId": "Fire Wyvern TC DH", "ItemName": "Fire Wyvern"},
+    {"ItemId": "Squall Wyvern TC DH", "ItemName": "Squall Wyvern"}
+  ]
+}

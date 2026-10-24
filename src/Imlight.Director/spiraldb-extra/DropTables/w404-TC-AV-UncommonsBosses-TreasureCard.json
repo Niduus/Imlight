@@ -1,0 +1,25 @@
+{
+  "Name": "W404 TC-AV-UncommonsBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-AV-UncommonsBosses: the treasurecard drops (16), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Efreet TC", "ItemName": "Efreet"},
+    {"ItemId": "Snow Angel TC", "ItemName": "Snow Angel"},
+    {"ItemId": "Leviathan TC", "ItemName": "Leviathan"},
+    {"ItemId": "Forest Lord TC", "ItemName": "Forest Lord"},
+    {"ItemId": "Medusa TC", "ItemName": "Medusa"},
+    {"ItemId": "Skeletal Dragon TC", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Ra TC", "ItemName": "Ra"},
+    {"ItemId": "Unstoppable TC", "ItemName": "Unstoppable"},
+    {"ItemId": "Gargantuan TC", "ItemName": "Gargantuan"},
+    {"ItemId": "Power Nova TC", "ItemName": "Power Nova"},
+    {"ItemId": "Scarecrow TC", "ItemName": "Scarecrow"},
+    {"ItemId": "Orthrus TC", "ItemName": "Orthrus"},
+    {"ItemId": "Rebirth TC", "ItemName": "Rebirth"},
+    {"ItemId": "Storm Lord TC", "ItemName": "Storm Lord"},
+    {"ItemId": "Frost Giant TC", "ItemName": "Frost Giant"},
+    {"ItemId": "Fire Dragon TC", "ItemName": "Fire Dragon"}
+  ]
+}

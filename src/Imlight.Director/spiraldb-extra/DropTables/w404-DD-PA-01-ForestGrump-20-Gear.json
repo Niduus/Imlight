@@ -1,0 +1,33 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump-20 Gear",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump-20: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352102", "ItemName": "Tanglewood Terror Coif"},
+    {"ItemId": "1352103", "ItemName": "Tanglewood Terror Coif"},
+    {"ItemId": "1352113", "ItemName": "Tanglewood Terror Robes"},
+    {"ItemId": "1352114", "ItemName": "Tanglewood Terror Robes"},
+    {"ItemId": "1352124", "ItemName": "Terror of Tanglewood Shoes"},
+    {"ItemId": "1352125", "ItemName": "Terror of Tanglewood Shoes"},
+    {"ItemId": "1352135", "ItemName": "Cap of the Plant Punisher"},
+    {"ItemId": "1352136", "ItemName": "Cap of the Plant Punisher"},
+    {"ItemId": "1352146", "ItemName": "Plant Punisher's Garb"},
+    {"ItemId": "1352147", "ItemName": "Plant Punisher's Garb"},
+    {"ItemId": "1352157", "ItemName": "Plant Punisher's Boots"},
+    {"ItemId": "1352158", "ItemName": "Plant Punisher's Boots"},
+    {"ItemId": "1352168", "ItemName": "Cap of the Tanglewood Hero"},
+    {"ItemId": "1352169", "ItemName": "Cap of the Tanglewood Hero"},
+    {"ItemId": "1352179", "ItemName": "Tanglewood Hero's Husk"},
+    {"ItemId": "1352180", "ItemName": "Tanglewood Hero's Husk"},
+    {"ItemId": "1352190", "ItemName": "Tanglewood Hero's Footgear"},
+    {"ItemId": "1352191", "ItemName": "Tanglewood Hero's Footgear"},
+    {"ItemId": "1352201", "ItemName": "Tanglewood Terror Spear"},
+    {"ItemId": "1352202", "ItemName": "Tanglewood Terror Spear"},
+    {"ItemId": "1352212", "ItemName": "Plant Punisher's Spike"},
+    {"ItemId": "1352213", "ItemName": "Plant Punisher's Spike"},
+    {"ItemId": "1352223", "ItemName": "Tanglewood Hero's Nettle"},
+    {"ItemId": "1352224", "ItemName": "Tanglewood Hero's Nettle"}
+  ]
+}

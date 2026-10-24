@@ -1,0 +1,25 @@
+{
+  "Name": "W404 RH-Mob-Grendel-Housing Housing",
+  "Description": "Wizard404's drop list of the game's table RH-Mob-Grendel-Housing: the housing drops (16), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181033", "ItemName": "Decorative Basket"},
+    {"ItemId": "181037", "ItemName": "Fish Pot"},
+    {"ItemId": "181047", "ItemName": "Hatchet"},
+    {"ItemId": "181048", "ItemName": "Wooden Mallet"},
+    {"ItemId": "181049", "ItemName": "Log"},
+    {"ItemId": "181053", "ItemName": "Square Waterbucket"},
+    {"ItemId": "181072", "ItemName": "Work Hammer"},
+    {"ItemId": "181073", "ItemName": "Trowel"},
+    {"ItemId": "181079", "ItemName": "Pitchfork"},
+    {"ItemId": "181092", "ItemName": "Peat"},
+    {"ItemId": "181096", "ItemName": "Wooden Urn"},
+    {"ItemId": "181098", "ItemName": "Wooden Rake"},
+    {"ItemId": "181105", "ItemName": "Wood-carven Stool"},
+    {"ItemId": "181117", "ItemName": "Small Wheelbarrow"},
+    {"ItemId": "181119", "ItemName": "Wooden Trough"},
+    {"ItemId": "181121", "ItemName": "Rough Wooden Shelf"}
+  ]
+}

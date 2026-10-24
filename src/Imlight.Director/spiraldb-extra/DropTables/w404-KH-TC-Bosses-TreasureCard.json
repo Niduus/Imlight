@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KH-TC-Bosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table KH-TC-Bosses: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Ninja Pig TC KH", "ItemName": "Ninja Pigs"},
+    {"ItemId": "Tamauji TC KH", "ItemName": "Tamauji"},
+    {"ItemId": "Yochimo TC KH", "ItemName": "Yochimo"},
+    {"ItemId": "Aiuchi TC KH", "ItemName": "Aiuchi"},
+    {"ItemId": "Do-Daga TC KH", "ItemName": "Do-Daga"},
+    {"ItemId": "Kakeda Painbringer TC KH", "ItemName": "Kakeda Painbringer"},
+    {"ItemId": "Koto TC KH", "ItemName": "Koto"},
+    {"ItemId": "Otomo Fury TC KH", "ItemName": "Otomo Fury"}
+  ]
+}

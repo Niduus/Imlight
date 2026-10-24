@@ -1,0 +1,33 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-20 Gear",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss-20: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1338970", "ItemName": "Rockstar High Hat"},
+    {"ItemId": "1338971", "ItemName": "Rockstar High Hat"},
+    {"ItemId": "1338981", "ItemName": "Rockstar Threads"},
+    {"ItemId": "1338982", "ItemName": "Rockstar Threads"},
+    {"ItemId": "1338992", "ItemName": "Rockstar Kicks"},
+    {"ItemId": "1338993", "ItemName": "Rockstar Kicks"},
+    {"ItemId": "1352003", "ItemName": "Rocker's Top Hat"},
+    {"ItemId": "1352004", "ItemName": "Rocker's Top Hat"},
+    {"ItemId": "1352014", "ItemName": "Rocker's Stagewear"},
+    {"ItemId": "1352015", "ItemName": "Rocker's Stagewear"},
+    {"ItemId": "1352025", "ItemName": "Rocker's Stompers"},
+    {"ItemId": "1352026", "ItemName": "Rocker's Stompers"},
+    {"ItemId": "1352036", "ItemName": "Headbanger's Topper"},
+    {"ItemId": "1352037", "ItemName": "Headbanger's Topper"},
+    {"ItemId": "1352047", "ItemName": "Headbanger's Getup"},
+    {"ItemId": "1352048", "ItemName": "Headbanger's Getup"},
+    {"ItemId": "1352058", "ItemName": "Headbanger's Spiked Boots"},
+    {"ItemId": "1352059", "ItemName": "Headbanger's Spiked Boots"},
+    {"ItemId": "1352069", "ItemName": "Rockstar Thump Kit"},
+    {"ItemId": "1352070", "ItemName": "Rockstar Thump Kit"},
+    {"ItemId": "1352080", "ItemName": "Rocker's Beat Set"},
+    {"ItemId": "1352081", "ItemName": "Rocker's Beat Set"},
+    {"ItemId": "1352091", "ItemName": "Headbanger's Hit Rig"},
+    {"ItemId": "1352092", "ItemName": "Headbanger's Hit Rig"}
+  ]
+}

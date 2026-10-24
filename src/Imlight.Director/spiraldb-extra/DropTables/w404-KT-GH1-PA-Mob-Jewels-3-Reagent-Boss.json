@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-GH1-PA-Mob-Jewels-3 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-GH1-PA-Mob-Jewels-3: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350012", "ItemName": "Lead"},
+    {"ItemId": "1350013", "ItemName": "Copper"},
+    {"ItemId": "1350231", "ItemName": "Pyrite"},
+    {"ItemId": "1350232", "ItemName": "Iron"}
+  ]
+}

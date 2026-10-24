@@ -1,0 +1,15 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump-60 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump-60: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82878", "ItemName": "Krokotopia Grand Tent"},
+    {"ItemId": "82891", "ItemName": "Red Ancient Statue"},
+    {"ItemId": "82893", "ItemName": "Blue Ancient Statue"},
+    {"ItemId": "160620", "ItemName": "Meowiarty's Blueprints"},
+    {"ItemId": "160637", "ItemName": "Crusher's Milk Bottle"},
+    {"ItemId": "1359101", "ItemName": "Pigswick Student's Desk"}
+  ]
+}

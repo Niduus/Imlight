@@ -1,0 +1,19 @@
+{
+  "Name": "W404 1-270-AVCommon-20 Snack",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVCommon-20: the snack drops (10), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220195", "ItemName": "Wormy Apple"},
+    {"ItemId": "220204", "ItemName": "Crunch Apple"},
+    {"ItemId": "220216", "ItemName": "Large Watermelon"},
+    {"ItemId": "220252", "ItemName": "Big Squash"},
+    {"ItemId": "220255", "ItemName": "Arrow Root"},
+    {"ItemId": "220270", "ItemName": "Grilled Cheese"},
+    {"ItemId": "220279", "ItemName": "Cow Pie"},
+    {"ItemId": "220306", "ItemName": "Large Fish"},
+    {"ItemId": "220316", "ItemName": "Moon Pie"},
+    {"ItemId": "220324", "ItemName": "Glowing Rock Candy"}
+  ]
+}

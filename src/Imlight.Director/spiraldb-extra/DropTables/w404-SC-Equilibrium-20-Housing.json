@@ -1,0 +1,10 @@
+{
+  "Name": "W404 SC-Equilibrium-20 Housing",
+  "Description": "Wizard404's drop list of the game's table SC-Equilibrium-20: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "512153", "ItemName": "Wysteria Combat Theme"}
+  ]
+}

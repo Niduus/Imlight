@@ -1,0 +1,19 @@
+{
+  "Name": "W404 KH-Mobs-Common Reagent",
+  "Description": "Wizard404's drop list of the game's table KH-Mobs-Common: the reagent drops (10), one picked when it rolls. How often: DropOdds.json Elite/Reagent (35%).",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106946", "ItemName": "Ruby"},
+    {"ItemId": "106947", "ItemName": "Sapphire"},
+    {"ItemId": "106948", "ItemName": "Amethyst"},
+    {"ItemId": "106949", "ItemName": "Citrine"},
+    {"ItemId": "106950", "ItemName": "Peridot"},
+    {"ItemId": "106951", "ItemName": "Onyx"},
+    {"ItemId": "106952", "ItemName": "Jade"},
+    {"ItemId": "106954", "ItemName": "Shadow Oil"},
+    {"ItemId": "106955", "ItemName": "Ghost Fire"},
+    {"ItemId": "106958", "ItemName": "Crystal Vial"}
+  ]
+}

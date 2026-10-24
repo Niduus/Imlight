@@ -1,0 +1,25 @@
+{
+  "Name": "W404 HG_NM_Mob_A_01 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table HG_NM_Mob_A_01: the housing drops (16), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160619", "ItemName": "Potted Flower Arrangement"},
+    {"ItemId": "160921", "ItemName": "Spider Egg Sac"},
+    {"ItemId": "181054", "ItemName": "Tanglebrush"},
+    {"ItemId": "181055", "ItemName": "Wild Brush"},
+    {"ItemId": "342151", "ItemName": "Broken Palm Tree"},
+    {"ItemId": "470209", "ItemName": "Koi Pond"},
+    {"ItemId": "538036", "ItemName": "Sickly Mushroom"},
+    {"ItemId": "538037", "ItemName": "Poison Mushroom"},
+    {"ItemId": "683107", "ItemName": "Water-Mole Tribal Shield"},
+    {"ItemId": "1374570", "ItemName": "Glowing Seashrooms"},
+    {"ItemId": "1392464", "ItemName": "Living Log"},
+    {"ItemId": "1421951", "ItemName": "Beastman Hut"},
+    {"ItemId": "1433025", "ItemName": "Sail Fern"},
+    {"ItemId": "1603000", "ItemName": "Night Mire Swamp Combat Theme"},
+    {"ItemId": "1603001", "ItemName": "Night Mire Swamp Eerie Theme"},
+    {"ItemId": "1603002", "ItemName": "Night Mire Swamp Jamboree Theme"}
+  ]
+}

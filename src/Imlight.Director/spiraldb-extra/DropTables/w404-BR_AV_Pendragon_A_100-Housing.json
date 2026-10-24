@@ -1,0 +1,13 @@
+{
+  "Name": "W404 BR_AV_Pendragon_A_100 Housing",
+  "Description": "Wizard404's drop list of the game's table BR_AV_Pendragon_A_100: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1603045", "ItemName": "Ambrose Statue"},
+    {"ItemId": "1603051", "ItemName": "Queen Gwendolyn Statue"},
+    {"ItemId": "1603053", "ItemName": "King Artorius Statue"},
+    {"ItemId": "1603055", "ItemName": "Morganthe Statue"}
+  ]
+}

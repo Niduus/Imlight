@@ -1,0 +1,21 @@
+{
+  "Name": "W404 1-270-PACommon-40 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-40: the reagent drops (12), one picked when it rolls. How often: DropOdds.json Normal/Reagent (25%).",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "106936", "ItemName": "Nightshade"},
+    {"ItemId": "106939", "ItemName": "Cat Tail"},
+    {"ItemId": "106940", "ItemName": "Water Lily"},
+    {"ItemId": "106959", "ItemName": "Red Mandrake"},
+    {"ItemId": "106960", "ItemName": "Blood Moss"},
+    {"ItemId": "106961", "ItemName": "Parchment"},
+    {"ItemId": "106962", "ItemName": "Ancient Scroll"}
+  ]
+}

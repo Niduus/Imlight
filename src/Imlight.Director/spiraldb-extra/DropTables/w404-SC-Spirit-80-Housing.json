@@ -1,0 +1,10 @@
+{
+  "Name": "W404 SC-Spirit-80 Housing",
+  "Description": "Wizard404's drop list of the game's table SC-Spirit-80: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "512152", "ItemName": "Wysteria Theme 2"}
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "Name": "W404 SC-PetSnacks-40 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table SC-PetSnacks-40: the snack drops (24), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220197", "ItemName": "Green Grapes"},
+    {"ItemId": "220204", "ItemName": "Crunch Apple"},
+    {"ItemId": "220205", "ItemName": "Square Watermelon"},
+    {"ItemId": "220206", "ItemName": "Ape Grapes"},
+    {"ItemId": "220208", "ItemName": "Cheese Broccoli"},
+    {"ItemId": "220218", "ItemName": "Sugar Donut"},
+    {"ItemId": "220220", "ItemName": "Gummy Firecat"},
+    {"ItemId": "220225", "ItemName": "Nettle Root"},
+    {"ItemId": "220227", "ItemName": "Cracker"},
+    {"ItemId": "220256", "ItemName": "Caramel Popcorn"},
+    {"ItemId": "220257", "ItemName": "Stinky Cheese"},
+    {"ItemId": "220258", "ItemName": "Wheat Cracker"},
+    {"ItemId": "220259", "ItemName": "Redskin Peanut"},
+    {"ItemId": "220260", "ItemName": "Tasty Biscuit"},
+    {"ItemId": "220265", "ItemName": "Spicy Drumstick"},
+    {"ItemId": "220266", "ItemName": "Meat Soup"},
+    {"ItemId": "220276", "ItemName": "Strawberry Cupcake"},
+    {"ItemId": "220280", "ItemName": "Delicious Cookie"},
+    {"ItemId": "220285", "ItemName": "Gummy Bloodbat"},
+    {"ItemId": "220294", "ItemName": "Square Root"},
+    {"ItemId": "220296", "ItemName": "Fire Cracker"},
+    {"ItemId": "220306", "ItemName": "Large Fish"},
+    {"ItemId": "220324", "ItemName": "Glowing Rock Candy"},
+    {"ItemId": "240117", "ItemName": "Submarine Sandwich"}
+  ]
+}

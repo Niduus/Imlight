@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_MB_Meowiarty_A_50 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_MB_Meowiarty_A_50: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1552052", "ItemName": "Immolate"},
+    {"ItemId": "1552053", "ItemName": "Ice Wyvern"},
+    {"ItemId": "1552056", "ItemName": "Kraken"},
+    {"ItemId": "1552231", "ItemName": "Cyclops Minion"},
+    {"ItemId": "1552054", "ItemName": "Seraph"},
+    {"ItemId": "1552051", "ItemName": "Vampire"},
+    {"ItemId": "1552050", "ItemName": "Gearhead Destroyer"},
+    {"ItemId": "1607833", "ItemName": "Malistaire's Whisker"}
+  ]
+}

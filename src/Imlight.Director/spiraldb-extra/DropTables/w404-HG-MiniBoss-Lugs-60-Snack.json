@@ -1,0 +1,31 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-60 Snack",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-60: the snack drops (22), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "641692", "ItemName": "Marshmellon"},
+    {"ItemId": "641693", "ItemName": "Drake Berry Cobbler"},
+    {"ItemId": "641694", "ItemName": "Ten Pound Cake"},
+    {"ItemId": "641695", "ItemName": "Snack Drakes"},
+    {"ItemId": "641696", "ItemName": "Chocolate Moousse"},
+    {"ItemId": "641697", "ItemName": "Fin Flan"},
+    {"ItemId": "641698", "ItemName": "Chocolate Crickets"},
+    {"ItemId": "641699", "ItemName": "Butter Worms"},
+    {"ItemId": "641700", "ItemName": "Antheneum Delight"},
+    {"ItemId": "641701", "ItemName": "Crystal Bites"},
+    {"ItemId": "641702", "ItemName": "Crystalweb Candy"},
+    {"ItemId": "641703", "ItemName": "Colossal Rutabaga"},
+    {"ItemId": "220264", "ItemName": "Fancy Pudding"},
+    {"ItemId": "220275", "ItemName": "Glowing Dragon Fruit"},
+    {"ItemId": "220282", "ItemName": "Double Popsicle"},
+    {"ItemId": "220292", "ItemName": "Uni-corn"},
+    {"ItemId": "220305", "ItemName": "Buttered Bread"},
+    {"ItemId": "220321", "ItemName": "Fancy Truffle"},
+    {"ItemId": "220325", "ItemName": "Shiny Tomato"},
+    {"ItemId": "446071", "ItemName": "Salmonberry"},
+    {"ItemId": "473582", "ItemName": "Kola Nuts"},
+    {"ItemId": "473583", "ItemName": "Jelly Baby"}
+  ]
+}

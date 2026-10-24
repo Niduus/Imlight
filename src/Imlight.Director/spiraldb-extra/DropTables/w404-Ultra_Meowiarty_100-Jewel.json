@@ -1,0 +1,10 @@
+{
+  "Name": "W404 Ultra_Meowiarty_100 Jewel",
+  "Description": "Wizard404's drop list of the game's table Ultra_Meowiarty_100 (the boss's chest): the jewel drops (1), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1360141", "ItemName": "Shift Meowiarty Opal"}
+  ]
+}

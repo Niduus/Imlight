@@ -1,0 +1,15 @@
+{
+  "Name": "W404 CL-GH3-Mob-Jewels-2 Reagent",
+  "Description": "Wizard404's drop list of the game's table CL-GH3-Mob-Jewels-2: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Normal/Reagent (25%).",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350011", "ItemName": "Tin"},
+    {"ItemId": "1350012", "ItemName": "Lead"},
+    {"ItemId": "1350013", "ItemName": "Copper"},
+    {"ItemId": "1350014", "ItemName": "Nickel"},
+    {"ItemId": "1350015", "ItemName": "Brass"},
+    {"ItemId": "1350233", "ItemName": "Cobalt"}
+  ]
+}

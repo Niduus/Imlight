@@ -1,0 +1,15 @@
+{
+  "Name": "W404 MS-Boss-Jewels Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-Boss-Jewels: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Elite/Reagent (35%).",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350011", "ItemName": "Tin"},
+    {"ItemId": "1350012", "ItemName": "Lead"},
+    {"ItemId": "1350013", "ItemName": "Copper"},
+    {"ItemId": "1350014", "ItemName": "Nickel"},
+    {"ItemId": "1350015", "ItemName": "Brass"},
+    {"ItemId": "1350233", "ItemName": "Cobalt"}
+  ]
+}

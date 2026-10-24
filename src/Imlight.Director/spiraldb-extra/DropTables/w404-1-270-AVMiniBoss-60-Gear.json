@@ -1,0 +1,21 @@
+{
+  "Name": "W404 1-270-AVMiniBoss-60 Gear",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss-60: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "635926", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "635927", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "635935", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "635936", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "635953", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "635954", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "635962", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "635963", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "635980", "ItemName": "World's Fool Mask"},
+    {"ItemId": "635981", "ItemName": "World's Fool Mask"},
+    {"ItemId": "635989", "ItemName": "World's Fool Boots"},
+    {"ItemId": "635990", "ItemName": "World's Fool Boots"}
+  ]
+}

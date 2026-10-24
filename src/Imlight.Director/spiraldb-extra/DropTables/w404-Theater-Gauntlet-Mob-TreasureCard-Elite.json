@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Theater-Gauntlet-Mob TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Mob: the treasurecard drops (12), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Accurate TC", "ItemName": "Accurate"},
+    {"ItemId": "Ghoul TC", "ItemName": "Ghoul"},
+    {"ItemId": "Harvest Lord TC", "ItemName": "Harvest Lord"},
+    {"ItemId": "Imp TC", "ItemName": "Imp"},
+    {"ItemId": "Katzenstein's Monster TC", "ItemName": "Dr. Von's Monster"},
+    {"ItemId": "Krokomummy TC", "ItemName": "Krokomummy"},
+    {"ItemId": "Punishment TC", "ItemName": "Punishment"},
+    {"ItemId": "Scarecrow TC", "ItemName": "Scarecrow"},
+    {"ItemId": "Scarab TC", "ItemName": "Scarab"},
+    {"ItemId": "Skeletal Dragon TC", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Storm Bird TC", "ItemName": "Storm Bird"},
+    {"ItemId": "Troll Yellow TC", "ItemName": "Yellow Troll"}
+  ]
+}

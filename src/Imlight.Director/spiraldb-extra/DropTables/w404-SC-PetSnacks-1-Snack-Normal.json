@@ -1,0 +1,15 @@
+{
+  "Name": "W404 SC-PetSnacks-1 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table SC-PetSnacks-1: the snack drops (6), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220197", "ItemName": "Green Grapes"},
+    {"ItemId": "220208", "ItemName": "Cheese Broccoli"},
+    {"ItemId": "220218", "ItemName": "Sugar Donut"},
+    {"ItemId": "220220", "ItemName": "Gummy Firecat"},
+    {"ItemId": "220225", "ItemName": "Nettle Root"},
+    {"ItemId": "220227", "ItemName": "Cracker"}
+  ]
+}

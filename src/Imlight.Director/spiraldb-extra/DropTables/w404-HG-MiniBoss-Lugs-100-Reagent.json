@@ -1,0 +1,19 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-100 Reagent",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-100: the reagent drops (10), one picked when it rolls. How often: DropOdds.json Elite/Reagent (35%).",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "258582", "ItemName": "Aether"},
+    {"ItemId": "258584", "ItemName": "Golden Pearl"},
+    {"ItemId": "258585", "ItemName": "Sandstone"},
+    {"ItemId": "258586", "ItemName": "Sunstone"},
+    {"ItemId": "258588", "ItemName": "Aquamarine"}
+  ]
+}

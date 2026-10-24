@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-DSCommon-0 Housing",
+  "Description": "Wizard404's drop list of the game's table 1-270-DSCommon-0: the housing drops (5), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160802", "ItemName": "Broken Plank Pieces"},
+    {"ItemId": "160803", "ItemName": "Wood Plank Piece"},
+    {"ItemId": "160889", "ItemName": "Broken Rock Shard"},
+    {"ItemId": "160903", "ItemName": "Rock Chunk"},
+    {"ItemId": "160904", "ItemName": "Stone Fragment"}
+  ]
+}

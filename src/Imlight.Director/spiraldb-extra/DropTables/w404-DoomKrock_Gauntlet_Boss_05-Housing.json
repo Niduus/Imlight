@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Boss_05 Housing",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Boss_05: the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350308", "ItemName": "Novice's Socket Wrench"},
+    {"ItemId": "1499186", "ItemName": "Mini Pyramid"},
+    {"ItemId": "1499187", "ItemName": "Doohickey"},
+    {"ItemId": "1499188", "ItemName": "Krokotopian Pillar"},
+    {"ItemId": "1499189", "ItemName": "Krokotopian Bridge"},
+    {"ItemId": "1499190", "ItemName": "Krokotopian Obelisk"},
+    {"ItemId": "1499191", "ItemName": "Krok Statue Flex"},
+    {"ItemId": "1499192", "ItemName": "Krok Statue Thumbs Up"}
+  ]
+}

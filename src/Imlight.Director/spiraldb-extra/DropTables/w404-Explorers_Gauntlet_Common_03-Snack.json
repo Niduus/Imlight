@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Common_03 Snack",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Common_03: the snack drops (16), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220194", "ItemName": "Sweet Pineapple"},
+    {"ItemId": "220268", "ItemName": "Medium Fish"},
+    {"ItemId": "220306", "ItemName": "Large Fish"},
+    {"ItemId": "473528", "ItemName": "Sandy Corn"},
+    {"ItemId": "733123", "ItemName": "Guava"},
+    {"ItemId": "733124", "ItemName": "Papaya"},
+    {"ItemId": "789217", "ItemName": "Salty Fish"},
+    {"ItemId": "789451", "ItemName": "Tiki Tea"},
+    {"ItemId": "789452", "ItemName": "Candlenut"},
+    {"ItemId": "789453", "ItemName": "Pineapple Spears"},
+    {"ItemId": "789454", "ItemName": "Lava Guava"},
+    {"ItemId": "789455", "ItemName": "Loco Nut"},
+    {"ItemId": "789456", "ItemName": "Big Papa Paya"},
+    {"ItemId": "789458", "ItemName": "Poi Pudding"},
+    {"ItemId": "789459", "ItemName": "Wiki Peas"},
+    {"ItemId": "789460", "ItemName": "Winged Bean"}
+  ]
+}

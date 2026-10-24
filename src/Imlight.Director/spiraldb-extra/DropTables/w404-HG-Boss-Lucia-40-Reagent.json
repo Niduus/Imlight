@@ -1,0 +1,20 @@
+{
+  "Name": "W404 HG-Boss-Lucia-40 Reagent",
+  "Description": "Wizard404's drop list of the game's table HG-Boss-Lucia-40: the reagent drops (11), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "537974", "ItemName": "Amber"},
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "258582", "ItemName": "Aether"},
+    {"ItemId": "258584", "ItemName": "Golden Pearl"},
+    {"ItemId": "258585", "ItemName": "Sandstone"},
+    {"ItemId": "258586", "ItemName": "Sunstone"},
+    {"ItemId": "258588", "ItemName": "Aquamarine"}
+  ]
+}

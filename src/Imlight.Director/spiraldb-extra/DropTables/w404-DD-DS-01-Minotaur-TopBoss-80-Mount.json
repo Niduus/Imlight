@@ -1,0 +1,10 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-80 Mount",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss-80: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350160", "ItemName": "White-Striped Ziger (PERM)"}
+  ]
+}

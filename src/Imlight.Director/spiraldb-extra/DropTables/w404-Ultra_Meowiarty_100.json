@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Ultra_Meowiarty_100",
+  "Description": "Gold of the game's table Ultra_Meowiarty_100, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 500,
+  "MaxGold": 750,
+  "EachItem": false,
+  "Items": []
+}

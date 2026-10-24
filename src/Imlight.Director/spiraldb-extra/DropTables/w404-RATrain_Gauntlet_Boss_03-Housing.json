@@ -1,0 +1,15 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Boss_03 Housing",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Boss_03: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350308", "ItemName": "Novice's Socket Wrench"},
+    {"ItemId": "1522007", "ItemName": "Red Brick Fireplace"},
+    {"ItemId": "1522010", "ItemName": "Card Table"},
+    {"ItemId": "1522014", "ItemName": "Ranch Gate"},
+    {"ItemId": "1522017", "ItemName": "Wooden Outhouse"},
+    {"ItemId": "1522021", "ItemName": "Decorative Skull"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "Name": "W404 1-270-AV-MainBoss Pet",
+  "Description": "Wizard404's drop list of the game's table 1-270-AV-MainBoss: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "653096", "ItemName": "Blaze Beast"},
+    {"ItemId": "653097", "ItemName": "Mythic Beast"},
+    {"ItemId": "653098", "ItemName": "Snow Beast"},
+    {"ItemId": "653099", "ItemName": "Forest Beast"},
+    {"ItemId": "653100", "ItemName": "Desert Beast"},
+    {"ItemId": "653101", "ItemName": "Shadow Beast"},
+    {"ItemId": "653102", "ItemName": "Spark Beast"}
+  ]
+}

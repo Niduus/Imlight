@@ -1,0 +1,26 @@
+{
+  "Name": "W404 HG-Boss-Lucia-20 Housing",
+  "Description": "Wizard404's drop list of the game's table HG-Boss-Lucia-20: the housing drops (17), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160723", "ItemName": "Square Clocktower"},
+    {"ItemId": "160756", "ItemName": "Ornate Wall Clock"},
+    {"ItemId": "206087", "ItemName": "Grandfather Clock"},
+    {"ItemId": "206102", "ItemName": "Cuckoo Clock"},
+    {"ItemId": "470475", "ItemName": "Milos Bookwyrm Bobblehead"},
+    {"ItemId": "470476", "ItemName": "Sylvia Drake Bobblehead"},
+    {"ItemId": "470477", "ItemName": "Zarathax Bobblehead"},
+    {"ItemId": "82910", "ItemName": "Pillory"},
+    {"ItemId": "160847", "ItemName": "Dragonspyre Standard"},
+    {"ItemId": "160857", "ItemName": "Kraken Statue"},
+    {"ItemId": "160875", "ItemName": "Magma Blister"},
+    {"ItemId": "160893", "ItemName": "Volcanic Steam Vent"},
+    {"ItemId": "161009", "ItemName": "Wyrm-footed Dresser"},
+    {"ItemId": "161015", "ItemName": "Wyrm-footed Bookshelf"},
+    {"ItemId": "161017", "ItemName": "Wyrm-crowned Bed"},
+    {"ItemId": "512188", "ItemName": "Krokotopia Pet Derby Theme"},
+    {"ItemId": "512192", "ItemName": "Grizzleheim Pet Derby Theme"}
+  ]
+}

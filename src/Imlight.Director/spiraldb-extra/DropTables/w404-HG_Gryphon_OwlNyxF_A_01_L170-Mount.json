@@ -1,0 +1,13 @@
+{
+  "Name": "W404 HG_Gryphon_OwlNyxF_A_01_L170 Mount",
+  "Description": "Wizard404's drop list of the game's table HG_Gryphon_OwlNyxF_A_01_L170: the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1642060", "ItemName": "Bookwyrm (PERM)"},
+    {"ItemId": "1642061", "ItemName": "Bookwyrm (7 Day)"},
+    {"ItemId": "1642062", "ItemName": "Bookwyrm (1 Day)"},
+    {"ItemId": "1642063", "ItemName": "Bookwyrm (30 Day)"}
+  ]
+}

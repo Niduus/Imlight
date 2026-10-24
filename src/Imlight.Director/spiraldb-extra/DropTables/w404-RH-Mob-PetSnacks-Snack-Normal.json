@@ -1,0 +1,21 @@
+{
+  "Name": "W404 RH-Mob-PetSnacks Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table RH-Mob-PetSnacks: the snack drops (12), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220195", "ItemName": "Wormy Apple"},
+    {"ItemId": "220234", "ItemName": "Drumstick"},
+    {"ItemId": "220237", "ItemName": "Tiny Fish"},
+    {"ItemId": "220258", "ItemName": "Wheat Cracker"},
+    {"ItemId": "473520", "ItemName": "Salmon Joy"},
+    {"ItemId": "537586", "ItemName": "Black Sun Seeds"},
+    {"ItemId": "537590", "ItemName": "Hard Boiled Beetle Eggs"},
+    {"ItemId": "537593", "ItemName": "Beetle Cream Soda"},
+    {"ItemId": "537595", "ItemName": "Cranberry Frog"},
+    {"ItemId": "537597", "ItemName": "Lemon Daisy"},
+    {"ItemId": "537599", "ItemName": "Sweet Mango"},
+    {"ItemId": "537600", "ItemName": "Bunch of Figs"}
+  ]
+}

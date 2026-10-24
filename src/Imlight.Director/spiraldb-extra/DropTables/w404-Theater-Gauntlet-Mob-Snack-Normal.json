@@ -1,0 +1,10 @@
+{
+  "Name": "W404 Theater-Gauntlet-Mob Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Mob: the snack drops (1), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220241", "ItemName": "Dragon Fruit"}
+  ]
+}

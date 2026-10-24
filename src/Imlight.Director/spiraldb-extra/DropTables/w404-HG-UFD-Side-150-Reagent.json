@@ -1,0 +1,12 @@
+{
+  "Name": "W404 HG-UFD-Side-150 Reagent",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Side-150: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1500073", "ItemName": "Elemental Retriever"},
+    {"ItemId": "1500097", "ItemName": "Potboiler Token"},
+    {"ItemId": "1549034", "ItemName": "Spiritual Retriever"}
+  ]
+}

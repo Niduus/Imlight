@@ -1,0 +1,9 @@
+{
+  "Name": "W404 RH-Boss-Tyrfing-20",
+  "Description": "Gold of the game's table RH-Boss-Tyrfing-20, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 40,
+  "MaxGold": 60,
+  "EachItem": false,
+  "Items": []
+}

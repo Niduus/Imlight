@@ -1,0 +1,16 @@
+{
+  "Name": "W404 TC-ZF-RaresBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-ZF-RaresBosses: the treasurecard drops (7), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Efreet TC", "ItemName": "Efreet"},
+    {"ItemId": "Snow Angel TC", "ItemName": "Snow Angel"},
+    {"ItemId": "Leviathan TC", "ItemName": "Leviathan"},
+    {"ItemId": "Forest Lord TC", "ItemName": "Forest Lord"},
+    {"ItemId": "Medusa TC", "ItemName": "Medusa"},
+    {"ItemId": "Skeletal Dragon TC", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Ra TC", "ItemName": "Ra"}
+  ]
+}

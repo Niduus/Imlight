@@ -1,0 +1,11 @@
+{
+  "Name": "W404 SC-Frost-1 Pet",
+  "Description": "Wizard404's drop list of the game's table SC-Frost-1: the pet drops (2), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "175581", "ItemName": "Starfish"},
+    {"ItemId": "225428", "ItemName": "Purple Spider"}
+  ]
+}

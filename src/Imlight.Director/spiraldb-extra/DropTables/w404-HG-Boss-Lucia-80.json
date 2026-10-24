@@ -1,0 +1,9 @@
+{
+  "Name": "W404 HG-Boss-Lucia-80",
+  "Description": "Gold of the game's table HG-Boss-Lucia-80, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 45,
+  "MaxGold": 90,
+  "EachItem": false,
+  "Items": []
+}

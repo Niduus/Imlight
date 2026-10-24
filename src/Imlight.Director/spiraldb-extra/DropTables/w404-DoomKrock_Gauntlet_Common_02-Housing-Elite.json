@@ -1,0 +1,20 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Common_02 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Common_02: the housing drops (11), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82767", "ItemName": "Krok Sun Plaque"},
+    {"ItemId": "82768", "ItemName": "Krok Tree Plaque"},
+    {"ItemId": "82769", "ItemName": "Krok Storm Plaque"},
+    {"ItemId": "82770", "ItemName": "Krok Snake Plaque"},
+    {"ItemId": "82772", "ItemName": "Krok Skull Plaque"},
+    {"ItemId": "82773", "ItemName": "Krok Moon Plaque"},
+    {"ItemId": "82774", "ItemName": "Krok Ice Plaque"},
+    {"ItemId": "82775", "ItemName": "Krok Fire Plaque"},
+    {"ItemId": "82776", "ItemName": "Krok Insect Plaque"},
+    {"ItemId": "82777", "ItemName": "Krok Bird Plaque"},
+    {"ItemId": "82778", "ItemName": "Krok Balance Plaque"}
+  ]
+}

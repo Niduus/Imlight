@@ -1,0 +1,14 @@
+{
+  "Name": "W404 BR_KR_Morganthe_A_100 Housing",
+  "Description": "Wizard404's drop list of the game's table BR_KR_Morganthe_A_100: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1603163", "ItemName": "Great Beast Miniature"},
+    {"ItemId": "1603200", "ItemName": "Khrysalis Crab Shrine"},
+    {"ItemId": "1603201", "ItemName": "Khrysalis Hart Shrine"},
+    {"ItemId": "1603202", "ItemName": "Khrysalis Phoenix Shrine"},
+    {"ItemId": "1603203", "ItemName": "Khrysalis Serpent Shrine"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 BR_MS_JadeOni_A_50 Reagent",
+  "Description": "Wizard404's drop list of the game's table BR_MS_JadeOni_A_50: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1552058", "ItemName": "Phoenix"},
+    {"ItemId": "1552004", "ItemName": "Blight Hound"},
+    {"ItemId": "1552060", "ItemName": "Stormzilla"},
+    {"ItemId": "1552059", "ItemName": "Minotaur"},
+    {"ItemId": "1552005", "ItemName": "Earth Walker"},
+    {"ItemId": "1552057", "ItemName": "Skeletal Pirate"},
+    {"ItemId": "1492526", "ItemName": "Spectral Blast"},
+    {"ItemId": "1607833", "ItemName": "Malistaire's Whisker"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 SC-Borst-60 Seed",
+  "Description": "Wizard404's drop list of the game's table SC-Borst-60: the seed drops (4), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "589145", "ItemName": "Angora Bunny Ears"},
+    {"ItemId": "589180", "ItemName": "Red Huckleberries"},
+    {"ItemId": "589187", "ItemName": "Pink Huckleberries"},
+    {"ItemId": "589194", "ItemName": "Blue Huckleberries"}
+  ]
+}

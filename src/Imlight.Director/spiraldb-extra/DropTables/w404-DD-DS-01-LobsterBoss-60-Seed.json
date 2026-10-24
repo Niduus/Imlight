@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-LobsterBoss-60 Seed",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-LobsterBoss-60: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346003", "ItemName": "Fiery Boom Shroom"},
+    {"ItemId": "356092", "ItemName": "White Laugh-o-dil"},
+    {"ItemId": "653146", "ItemName": "Fish on a Vine"}
+  ]
+}

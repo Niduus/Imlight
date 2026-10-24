@@ -1,0 +1,20 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Common_01 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Common_01: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard (15%).",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Death Prism TC", "ItemName": "Death Prism"},
+    {"ItemId": "Fire Prism TC", "ItemName": "Fire Prism"},
+    {"ItemId": "Ice Prism TC", "ItemName": "Ice Prism"},
+    {"ItemId": "Life Prism TC", "ItemName": "Life Prism"},
+    {"ItemId": "Myth Prism TC", "ItemName": "Myth Prism"},
+    {"ItemId": "Storm Prism TC", "ItemName": "Storm Prism"},
+    {"ItemId": "Dryad TC", "ItemName": "Dryad"},
+    {"ItemId": "Heck Hound TC", "ItemName": "Heck Hound"},
+    {"ItemId": "Tempest TC", "ItemName": "Tempest"},
+    {"ItemId": "Judgement TC", "ItemName": "Judgement"},
+    {"ItemId": "Colossus Sandstone TC", "ItemName": "Sandstone Colossus"}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 TC-Commons TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-Commons: the treasurecard drops (12), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Bloodbat TC", "ItemName": "Blood Bat"},
+    {"ItemId": "Dark Sprite TC", "ItemName": "Dark Sprite"},
+    {"ItemId": "Fire Cat TC", "ItemName": "Fire Cat"},
+    {"ItemId": "Fire Shield TC", "ItemName": "Fire Shield"},
+    {"ItemId": "Imp TC", "ItemName": "Imp"},
+    {"ItemId": "Frost Beetle TC", "ItemName": "Frost Beetle"},
+    {"ItemId": "Keen Eyes TC", "ItemName": "Keen Eyes"},
+    {"ItemId": "Myth Shield TC", "ItemName": "Myth Shield"},
+    {"ItemId": "Scarab TC", "ItemName": "Scarab"},
+    {"ItemId": "Snow Shield TC", "ItemName": "Snow Shield"},
+    {"ItemId": "Storm Shield TC", "ItemName": "Storm Shield"},
+    {"ItemId": "Thunder Snake TC", "ItemName": "Thunder Snake"}
+  ]
+}

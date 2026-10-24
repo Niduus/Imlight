@@ -1,0 +1,11 @@
+{
+  "Name": "W404 Theater-Gauntlet-Mob Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Mob: the seed drops (2), one picked when it rolls. How often: DropOdds.json Normal/Seed (6%).",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1248001", "ItemName": "Sunion"},
+    {"ItemId": "355157", "ItemName": "Snap Dragon"}
+  ]
+}

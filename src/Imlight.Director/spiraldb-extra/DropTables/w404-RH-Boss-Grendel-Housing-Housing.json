@@ -1,0 +1,18 @@
+{
+  "Name": "W404 RH-Boss-Grendel-Housing Housing",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Grendel-Housing: the housing drops (9), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181056", "ItemName": "Wooden Wheelbarrow"},
+    {"ItemId": "181057", "ItemName": "Wooden Barrow"},
+    {"ItemId": "181089", "ItemName": "Tree Lantern"},
+    {"ItemId": "181090", "ItemName": "Hanging Lantern"},
+    {"ItemId": "181091", "ItemName": "Minor Runestone"},
+    {"ItemId": "181103", "ItemName": "Standing Sconce"},
+    {"ItemId": "181116", "ItemName": "Weapons Cache"},
+    {"ItemId": "181123", "ItemName": "Bloodvine Shield"},
+    {"ItemId": "181128", "ItemName": "Lantern Post"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "Name": "W404 SC-Earth-1 Pet",
+  "Description": "Wizard404's drop list of the game's table SC-Earth-1: the pet drops (3), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100420", "ItemName": "Sprite"},
+    {"ItemId": "473253", "ItemName": "Dill Piggle"},
+    {"ItemId": "473441", "ItemName": "Primal Wildclaw"}
+  ]
+}

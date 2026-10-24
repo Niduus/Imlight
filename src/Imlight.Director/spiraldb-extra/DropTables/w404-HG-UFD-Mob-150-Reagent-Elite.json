@@ -1,0 +1,19 @@
+{
+  "Name": "W404 HG-UFD-Mob-150 Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Mob-150: the reagent drops (10), one picked when it rolls. How often: DropOdds.json Elite/Reagent (35%).",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1392187", "ItemName": "Antique Chalice"},
+    {"ItemId": "106960", "ItemName": "Blood Moss"},
+    {"ItemId": "106941", "ItemName": "Bone"},
+    {"ItemId": "106939", "ItemName": "Cat Tail"},
+    {"ItemId": "276291", "ItemName": "Fish Fin"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106936", "ItemName": "Nightshade"},
+    {"ItemId": "258585", "ItemName": "Sandstone"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106940", "ItemName": "Water Lily"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Ultra_Krokopatra_40 Mount",
+  "Description": "Wizard404's drop list of the game's table Ultra_Krokopatra_40 (the boss's chest): the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1359208", "ItemName": "Fire Whirlwind (PERM)"},
+    {"ItemId": "1359211", "ItemName": "Myth Whirlwind (PERM)"},
+    {"ItemId": "1359356", "ItemName": "Fire Whirlwind (7 Day)"},
+    {"ItemId": "1359359", "ItemName": "Myth Whirlwind (7 Day)"}
+  ]
+}

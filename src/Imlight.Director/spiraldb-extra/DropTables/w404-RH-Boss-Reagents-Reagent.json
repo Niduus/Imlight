@@ -1,0 +1,23 @@
+{
+  "Name": "W404 RH-Boss-Reagents Reagent",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Reagents: the reagent drops (14), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "106936", "ItemName": "Nightshade"},
+    {"ItemId": "106937", "ItemName": "Ore"},
+    {"ItemId": "106938", "ItemName": "Diamond"},
+    {"ItemId": "106944", "ItemName": "Spider Silk"},
+    {"ItemId": "106959", "ItemName": "Red Mandrake"},
+    {"ItemId": "106960", "ItemName": "Blood Moss"},
+    {"ItemId": "106969", "ItemName": "Frost Flower"},
+    {"ItemId": "106970", "ItemName": "Grendelweed"},
+    {"ItemId": "258585", "ItemName": "Sandstone"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Ultra_Rattlebones_100 Housing",
+  "Description": "Wizard404's drop list of the game's table Ultra_Rattlebones_100 (the boss's chest): the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1217523", "ItemName": "Gold Skeleton Key"},
+    {"ItemId": "1317819", "ItemName": "Enchanted Wizard's Bed"},
+    {"ItemId": "1317820", "ItemName": "Ravenwood End Table"},
+    {"ItemId": "1317823", "ItemName": "Ravenwood Lounge Chair"},
+    {"ItemId": "1317827", "ItemName": "Ravenwood Dining Chair"},
+    {"ItemId": "1317828", "ItemName": "Enchanted Dining Table"},
+    {"ItemId": "1350312", "ItemName": "Master's Socket Wrench"},
+    {"ItemId": "1350313", "ItemName": "Artisan's Socket Wrench"}
+  ]
+}

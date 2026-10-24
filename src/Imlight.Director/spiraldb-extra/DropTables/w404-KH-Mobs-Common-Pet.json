@@ -1,0 +1,14 @@
+{
+  "Name": "W404 KH-Mobs-Common Pet",
+  "Description": "Wizard404's drop list of the game's table KH-Mobs-Common: the pet drops (5), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100328", "ItemName": "Brown Spider"},
+    {"ItemId": "100329", "ItemName": "Goat Monk"},
+    {"ItemId": "100330", "ItemName": "Ninja Pig"},
+    {"ItemId": "100433", "ItemName": "Yellow Ghost"},
+    {"ItemId": "225435", "ItemName": "Stone Colossus"}
+  ]
+}

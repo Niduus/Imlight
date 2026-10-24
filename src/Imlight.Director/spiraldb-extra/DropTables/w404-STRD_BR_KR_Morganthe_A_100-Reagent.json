@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_KR_Morganthe_A_100 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_KR_Morganthe_A_100: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1640629", "ItemName": "King Artorius"},
+    {"ItemId": "1640630", "ItemName": "King Artorius"},
+    {"ItemId": "1640633", "ItemName": "King Artorius"},
+    {"ItemId": "1640631", "ItemName": "King Artorius"},
+    {"ItemId": "1640632", "ItemName": "King Artorius"},
+    {"ItemId": "1640628", "ItemName": "King Artorius"},
+    {"ItemId": "1640627", "ItemName": "King Artorius"},
+    {"ItemId": "1659475", "ItemName": "Shadow Webbing"}
+  ]
+}

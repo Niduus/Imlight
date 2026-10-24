@@ -1,0 +1,11 @@
+{
+  "Name": "W404 HG-Mob-Clockworker Pet",
+  "Description": "Wizard404's drop list of the game's table HG-Mob-Clockworker: the pet drops (2), one picked when it rolls. How often: DropOdds.json Normal/Pet (2%).",
+  "Odds": "Normal/Pet",
+  "RollChance": 0.02,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "126979", "ItemName": "Death Leprechaun"},
+    {"ItemId": "225451", "ItemName": "Ash Spider"}
+  ]
+}

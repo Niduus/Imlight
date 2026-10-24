@@ -1,0 +1,19 @@
+{
+  "Name": "W404 TC-Uncommons TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-Uncommons: the treasurecard drops (10), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Banshee TC", "ItemName": "Banshee"},
+    {"ItemId": "Blizzard TC", "ItemName": "Blizzard"},
+    {"ItemId": "Evil Snowman TC", "ItemName": "Evil Snowman"},
+    {"ItemId": "Humongofrog TC", "ItemName": "Humongofrog"},
+    {"ItemId": "Meteor Strike TC", "ItemName": "Meteor Strike"},
+    {"ItemId": "Sprite TC", "ItemName": "Sprite"},
+    {"ItemId": "Storm SharkTC", "ItemName": "Storm Shark"},
+    {"ItemId": "Sunbird TC", "ItemName": "Sunbird"},
+    {"ItemId": "Tempest TC", "ItemName": "Tempest"},
+    {"ItemId": "Weakness TC", "ItemName": "Weakness"}
+  ]
+}

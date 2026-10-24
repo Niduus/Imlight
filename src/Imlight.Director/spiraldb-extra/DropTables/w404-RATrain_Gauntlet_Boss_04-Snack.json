@@ -1,0 +1,17 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Boss_04 Snack",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Boss_04: the snack drops (8), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220255", "ItemName": "Arrow Root"},
+    {"ItemId": "220268", "ItemName": "Medium Fish"},
+    {"ItemId": "220279", "ItemName": "Cow Pie"},
+    {"ItemId": "220309", "ItemName": "7 Layer Taco"},
+    {"ItemId": "537597", "ItemName": "Lemon Daisy"},
+    {"ItemId": "733122", "ItemName": "Chili Peppers"},
+    {"ItemId": "1257585", "ItemName": "Stuffed Bell Pepper"},
+    {"ItemId": "1359629", "ItemName": "Breakfast Tacos"}
+  ]
+}

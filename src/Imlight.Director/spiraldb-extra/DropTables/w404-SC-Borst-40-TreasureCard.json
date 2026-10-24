@@ -1,0 +1,11 @@
+{
+  "Name": "W404 SC-Borst-40 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table SC-Borst-40: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Sprite TC WH", "ItemName": "Sprite"},
+    {"ItemId": "Leprechaun TC WH", "ItemName": "Leprechaun"}
+  ]
+}

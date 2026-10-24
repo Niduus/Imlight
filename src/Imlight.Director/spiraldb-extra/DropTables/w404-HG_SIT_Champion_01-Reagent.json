@@ -1,0 +1,16 @@
+{
+  "Name": "W404 HG_SIT_Champion_01 Reagent",
+  "Description": "Wizard404's drop list of the game's table HG_SIT_Champion_01: the reagent drops (7), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1718551", "ItemName": "Bow Tie"},
+    {"ItemId": "1718173", "ItemName": "Orange Power Shard"},
+    {"ItemId": "1718171", "ItemName": "Blue Power Shard"},
+    {"ItemId": "1718172", "ItemName": "Green Power Shard"},
+    {"ItemId": "1718175", "ItemName": "Red Power Shard"},
+    {"ItemId": "1718174", "ItemName": "Purple Power Shard"},
+    {"ItemId": "1718170", "ItemName": "Silver Power Shard"}
+  ]
+}

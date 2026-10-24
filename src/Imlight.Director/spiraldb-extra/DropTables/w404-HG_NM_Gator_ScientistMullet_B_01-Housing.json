@@ -1,0 +1,14 @@
+{
+  "Name": "W404 HG_NM_Gator_ScientistMullet_B_01 Housing",
+  "Description": "Wizard404's drop list of the game's table HG_NM_Gator_ScientistMullet_B_01: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "683110", "ItemName": "Open Campfire"},
+    {"ItemId": "724104", "ItemName": "Cord of Wood"},
+    {"ItemId": "739101", "ItemName": "Bundle of Wood"},
+    {"ItemId": "739179", "ItemName": "Minuteman"},
+    {"ItemId": "1374491", "ItemName": "Seaweed Plant"}
+  ]
+}

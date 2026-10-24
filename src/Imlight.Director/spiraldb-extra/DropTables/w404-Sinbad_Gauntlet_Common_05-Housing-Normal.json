@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Common_05 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Common_05: the housing drops (12), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1479428", "ItemName": "Archer Rack"},
+    {"ItemId": "1479430", "ItemName": "Qhat Book Stand"},
+    {"ItemId": "1479431", "ItemName": "Fence Segment"},
+    {"ItemId": "1479432", "ItemName": "Fence Post"},
+    {"ItemId": "1479434", "ItemName": "Monkey Tail Goblet"},
+    {"ItemId": "1479437", "ItemName": "Gilded Sarcophagus"},
+    {"ItemId": "1479438", "ItemName": "Scroll Case"},
+    {"ItemId": "1479440", "ItemName": "Istanboa Pillar"},
+    {"ItemId": "1479442", "ItemName": "Red Vase"},
+    {"ItemId": "1479443", "ItemName": "Blue Vase"},
+    {"ItemId": "1479445", "ItemName": "Map of Aggrobah"},
+    {"ItemId": "1479446", "ItemName": "Qhat Shield"}
+  ]
+}

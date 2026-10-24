@@ -1,0 +1,10 @@
+{
+  "Name": "W404 BR_KR_Morganthe_A_100 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table BR_KR_Morganthe_A_100: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "GuildReagent01_TC", "ItemName": "Azoth"}
+  ]
+}

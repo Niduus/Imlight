@@ -1,0 +1,21 @@
+{
+  "Name": "W404 RH-Boss-Wyrm-80 Gear",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Wyrm-80: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "667230", "ItemName": "Unkind Axe of Winter"},
+    {"ItemId": "667232", "ItemName": "Trickster's Lying Bow"},
+    {"ItemId": "667237", "ItemName": "Nevermore Talon"},
+    {"ItemId": "667299", "ItemName": "Steel Raven Helmet"},
+    {"ItemId": "667300", "ItemName": "Boots of Steel Wings"},
+    {"ItemId": "667301", "ItemName": "Everwinter Plate"},
+    {"ItemId": "737066", "ItemName": "Steel Raven Helmet"},
+    {"ItemId": "740075", "ItemName": "Everwinter Plate"},
+    {"ItemId": "740084", "ItemName": "Boots of Steel Wings"},
+    {"ItemId": "740163", "ItemName": "Unkind Axe of Winter"},
+    {"ItemId": "740168", "ItemName": "Nevermore Talon"},
+    {"ItemId": "740172", "ItemName": "Trickster's Lying Bow"}
+  ]
+}

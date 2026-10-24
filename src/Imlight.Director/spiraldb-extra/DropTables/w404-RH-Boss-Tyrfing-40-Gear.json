@@ -1,0 +1,25 @@
+{
+  "Name": "W404 RH-Boss-Tyrfing-40 Gear",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Tyrfing-40: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "532406", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532407", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532414", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532415", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532422", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532423", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532454", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532455", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532462", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532463", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532470", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532471", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532506", "ItemName": "Great Axe of the Storyteller"},
+    {"ItemId": "532507", "ItemName": "Great Axe of the Storyteller"},
+    {"ItemId": "532530", "ItemName": "Winter's Whispering Axe"},
+    {"ItemId": "532531", "ItemName": "Winter's Whispering Axe"}
+  ]
+}

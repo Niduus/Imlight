@@ -1,0 +1,21 @@
+{
+  "Name": "W404 HG-Mob-Clockworker TreasureCard",
+  "Description": "Wizard404's drop list of the game's table HG-Mob-Clockworker: the treasurecard drops (12), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard (15%).",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Clockwork TC", "ItemName": "Clockwork"},
+    {"ItemId": "Spider Clockwork TC", "ItemName": "Clockwork Spider"},
+    {"ItemId": "Steel Golem - Balance TC", "ItemName": "Franklinstove"},
+    {"ItemId": "Steel Golem - Death TC", "ItemName": "Kettleblack"},
+    {"ItemId": "Steel Golem - Fire TC", "ItemName": "Firegut"},
+    {"ItemId": "Steel Golem - Ice TC", "ItemName": "Coldiron"},
+    {"ItemId": "Steel Golem - Life TC", "ItemName": "Potboiler"},
+    {"ItemId": "Steel Golem - Myth TC", "ItemName": "Chimenea"},
+    {"ItemId": "Steel Golem - Storm TC", "ItemName": "Rocketstove"},
+    {"ItemId": "Gear Spinner TC", "ItemName": "Gear Spinner"},
+    {"ItemId": "Gearhead Destroyer TC", "ItemName": "Gearhead Destroyer"},
+    {"ItemId": "Gearhead TC", "ItemName": "Gearhead"}
+  ]
+}

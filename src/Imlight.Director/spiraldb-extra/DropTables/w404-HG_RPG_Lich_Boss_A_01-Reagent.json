@@ -1,0 +1,11 @@
+{
+  "Name": "W404 HG_RPG_Lich_Boss_A_01 Reagent",
+  "Description": "Wizard404's drop list of the game's table HG_RPG_Lich_Boss_A_01: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1688125", "ItemName": "Graph Paper"},
+    {"ItemId": "1500101", "ItemName": "Myth Seed Farmer"}
+  ]
+}

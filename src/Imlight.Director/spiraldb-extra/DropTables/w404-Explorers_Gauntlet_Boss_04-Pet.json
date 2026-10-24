@@ -1,0 +1,12 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Boss_04 Pet",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Boss_04: the pet drops (3), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100458", "ItemName": "Sun Bird"},
+    {"ItemId": "690101", "ItemName": "Frosty Fish"},
+    {"ItemId": "789432", "ItemName": "Tiki Kahuna"}
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "Name": "W404 Ultra_Zeus_100 Snack",
+  "Description": "Wizard404's drop list of the game's table Ultra_Zeus_100 (the boss's chest): the snack drops (23), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220190", "ItemName": "Cubby Broccoli"},
+    {"ItemId": "220203", "ItemName": "Flowering Pineapple"},
+    {"ItemId": "220221", "ItemName": "Cherry Tomato"},
+    {"ItemId": "220223", "ItemName": "Yellow Corn"},
+    {"ItemId": "220263", "ItemName": "Fancy Yogurt"},
+    {"ItemId": "220267", "ItemName": "Golden Wheat Bread"},
+    {"ItemId": "220290", "ItemName": "Green Tomato"},
+    {"ItemId": "220312", "ItemName": "Mystic Dragon Fruit"},
+    {"ItemId": "220329", "ItemName": "Sun Fruit"},
+    {"ItemId": "240079", "ItemName": "Hambrosia"},
+    {"ItemId": "240080", "ItemName": "Captain Canteloupe"},
+    {"ItemId": "240081", "ItemName": "Crab Apples"},
+    {"ItemId": "240082", "ItemName": "Baby Carrot"},
+    {"ItemId": "240083", "ItemName": "Dragonhorned Melon"},
+    {"ItemId": "1248054", "ItemName": "Honey Bombs"},
+    {"ItemId": "1248057", "ItemName": "Spicy Stingers"},
+    {"ItemId": "1248058", "ItemName": "Peanut Butterflies"},
+    {"ItemId": "1257584", "ItemName": "Evil Magma Soup"},
+    {"ItemId": "1257586", "ItemName": "King Parsley Soup"},
+    {"ItemId": "1257604", "ItemName": "Alligator Pear"},
+    {"ItemId": "1257605", "ItemName": "Dead Beet Risotto"},
+    {"ItemId": "1257606", "ItemName": "Granny Snow Apple"},
+    {"ItemId": "1257607", "ItemName": "Snow Apple Pie"}
+  ]
+}

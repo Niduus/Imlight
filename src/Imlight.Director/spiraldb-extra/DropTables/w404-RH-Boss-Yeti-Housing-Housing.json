@@ -1,0 +1,17 @@
+{
+  "Name": "W404 RH-Boss-Yeti-Housing Housing",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Yeti-Housing: the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181054", "ItemName": "Tanglebrush"},
+    {"ItemId": "181055", "ItemName": "Wild Brush"},
+    {"ItemId": "181058", "ItemName": "Leaf-bare Tree"},
+    {"ItemId": "181059", "ItemName": "Dewberries"},
+    {"ItemId": "181085", "ItemName": "Purple Dewberries"},
+    {"ItemId": "181086", "ItemName": "Felled Evergreen"},
+    {"ItemId": "181094", "ItemName": "Stumpworm Stump"},
+    {"ItemId": "181110", "ItemName": "Felled Birch Tree"}
+  ]
+}

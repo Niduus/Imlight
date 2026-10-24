@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Boss_02",
+  "Description": "Gold of the game's table Explorers_Gauntlet_Boss_02, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 199,
+  "MaxGold": 300,
+  "EachItem": false,
+  "Items": []
+}

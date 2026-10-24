@@ -1,0 +1,15 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Boss_05 Mount",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Boss_05: the mount drops (6), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1499142", "ItemName": "Sokar's Krokosphinx (7 Day)"},
+    {"ItemId": "1499143", "ItemName": "Sokar's Krokosphinx (1 Day)"},
+    {"ItemId": "1499144", "ItemName": "Setesh's Krokosphinx (7 Day)"},
+    {"ItemId": "1499145", "ItemName": "Setesh's Krokosphinx (1 Day)"},
+    {"ItemId": "1499146", "ItemName": "Apophis' Krokosphinx (7 Day)"},
+    {"ItemId": "1499147", "ItemName": "Apophis' Krokosphinx (1 Day)"}
+  ]
+}

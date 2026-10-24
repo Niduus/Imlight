@@ -1,0 +1,16 @@
+{
+  "Name": "W404 HG-Boss-Lucia-100 Housing",
+  "Description": "Wizard404's drop list of the game's table HG-Boss-Lucia-100: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160618", "ItemName": "Wooden Wall Clock"},
+    {"ItemId": "160723", "ItemName": "Square Clocktower"},
+    {"ItemId": "206087", "ItemName": "Grandfather Clock"},
+    {"ItemId": "206102", "ItemName": "Cuckoo Clock"},
+    {"ItemId": "470475", "ItemName": "Milos Bookwyrm Bobblehead"},
+    {"ItemId": "470476", "ItemName": "Sylvia Drake Bobblehead"},
+    {"ItemId": "470477", "ItemName": "Zarathax Bobblehead"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-80 Pet",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-80: the pet drops (7), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100326", "ItemName": "Brass Golem"},
+    {"ItemId": "100411", "ItemName": "Steel Golem"},
+    {"ItemId": "100431", "ItemName": "Clockwork Golem"},
+    {"ItemId": "126979", "ItemName": "Death Leprechaun"},
+    {"ItemId": "225451", "ItemName": "Ash Spider"},
+    {"ItemId": "100432", "ItemName": "Green Ghost"},
+    {"ItemId": "100451", "ItemName": "Dire Ghoul"}
+  ]
+}

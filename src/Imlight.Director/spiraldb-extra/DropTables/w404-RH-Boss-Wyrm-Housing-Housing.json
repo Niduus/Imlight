@@ -1,0 +1,15 @@
+{
+  "Name": "W404 RH-Boss-Wyrm-Housing Housing",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Wyrm-Housing: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181030", "ItemName": "Runestone Spiral"},
+    {"ItemId": "181050", "ItemName": "Barbaric Throne"},
+    {"ItemId": "181100", "ItemName": "Heroic Runestone"},
+    {"ItemId": "181101", "ItemName": "Sigiled Runestone"},
+    {"ItemId": "181102", "ItemName": "Clawed Runestone"},
+    {"ItemId": "537609", "ItemName": "Raven Tree Statue"}
+  ]
+}

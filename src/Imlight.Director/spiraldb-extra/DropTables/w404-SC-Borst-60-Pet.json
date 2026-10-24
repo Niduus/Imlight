@@ -1,0 +1,10 @@
+{
+  "Name": "W404 SC-Borst-60 Pet",
+  "Description": "Wizard404's drop list of the game's table SC-Borst-60: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1302295", "ItemName": "Rude Goblin"}
+  ]
+}

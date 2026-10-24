@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Ultra_Meowiarty_100 Mount",
+  "Description": "Wizard404's drop list of the game's table Ultra_Meowiarty_100 (the boss's chest): the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1359206", "ItemName": "Balance Whirlwind (PERM)"},
+    {"ItemId": "1359209", "ItemName": "Ice Whirlwind (PERM)"},
+    {"ItemId": "1359357", "ItemName": "Balance Whirlwind (7 Day)"},
+    {"ItemId": "1359358", "ItemName": "Ice Whirlwind (7 Day)"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Common_03 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Common_03: the snack drops (15), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220197", "ItemName": "Green Grapes"},
+    {"ItemId": "220212", "ItemName": "Fries"},
+    {"ItemId": "220226", "ItemName": "Buttered Popcorn"},
+    {"ItemId": "220227", "ItemName": "Cracker"},
+    {"ItemId": "220268", "ItemName": "Medium Fish"},
+    {"ItemId": "220274", "ItemName": "Star Fruit"},
+    {"ItemId": "220294", "ItemName": "Square Root"},
+    {"ItemId": "220339", "ItemName": "Raising Bran Cereal"},
+    {"ItemId": "473528", "ItemName": "Sandy Corn"},
+    {"ItemId": "537586", "ItemName": "Black Sun Seeds"},
+    {"ItemId": "733125", "ItemName": "Cactus Fruit"},
+    {"ItemId": "789215", "ItemName": "Gator Tots"},
+    {"ItemId": "789216", "ItemName": "Ancient Date"},
+    {"ItemId": "789455", "ItemName": "Loco Nut"},
+    {"ItemId": "1257590", "ItemName": "Prickly Bear Punch"}
+  ]
+}

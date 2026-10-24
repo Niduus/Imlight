@@ -1,0 +1,19 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Common_02 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Common_02: the treasurecard drops (10), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Glacial Shield TC IH", "ItemName": "Glacial Shield"},
+    {"ItemId": "Volcanic Shield TC IH", "ItemName": "Volcanic Shield"},
+    {"ItemId": "Thermic Shield TC IH", "ItemName": "Thermic Shield"},
+    {"ItemId": "Legend Shield TC IH", "ItemName": "Legend Shield"},
+    {"ItemId": "Ether Shield TC IH", "ItemName": "Ether Shield"},
+    {"ItemId": "Dream Shield TC IH", "ItemName": "Dream Shield"},
+    {"ItemId": "Strong TC IH", "ItemName": "Strong"},
+    {"ItemId": "Giant TC IH", "ItemName": "Giant"},
+    {"ItemId": "Keen Eyes TC IH", "ItemName": "Keen Eyes"},
+    {"ItemId": "Accurate TC IH", "ItemName": "Accurate"}
+  ]
+}

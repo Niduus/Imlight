@@ -1,0 +1,14 @@
+{
+  "Name": "W404 Theater-Gauntlet-MiniBoss-80 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-MiniBoss-80: the treasurecard drops (5), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Fire Dragon TC DH", "ItemName": "Fire Dragon"},
+    {"ItemId": "Dragonblade TC DH", "ItemName": "Dragonblade"},
+    {"ItemId": "Ice Wyvern TC DH", "ItemName": "Ice Wyvern"},
+    {"ItemId": "Fire Wyvern TC DH", "ItemName": "Fire Wyvern"},
+    {"ItemId": "Squall Wyvern TC DH", "ItemName": "Squall Wyvern"}
+  ]
+}

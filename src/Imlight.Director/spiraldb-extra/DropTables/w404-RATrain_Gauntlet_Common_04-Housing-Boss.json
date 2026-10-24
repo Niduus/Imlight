@@ -1,0 +1,19 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Common_04 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Common_04: the housing drops (10), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1522002", "ItemName": "Bottle Collection"},
+    {"ItemId": "1522004", "ItemName": "Fish Drying Stand"},
+    {"ItemId": "1522005", "ItemName": "Horse Shoes"},
+    {"ItemId": "1522006", "ItemName": "Tribal Woven Rug"},
+    {"ItemId": "1522008", "ItemName": "Grand Steamer Trunk"},
+    {"ItemId": "1522009", "ItemName": "Rugged Bunk"},
+    {"ItemId": "1522011", "ItemName": "Cloth Covered Country Table"},
+    {"ItemId": "1522015", "ItemName": "Ranch Fence"},
+    {"ItemId": "1522018", "ItemName": "Cactus"},
+    {"ItemId": "1522019", "ItemName": "Hanging Keyring"}
+  ]
+}

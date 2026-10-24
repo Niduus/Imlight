@@ -1,0 +1,22 @@
+{
+  "Name": "W404 RH-Mob-Glutton-Housing Housing",
+  "Description": "Wizard404's drop list of the game's table RH-Mob-Glutton-Housing: the housing drops (13), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181035", "ItemName": "Honey Pot"},
+    {"ItemId": "181036", "ItemName": "Drinking Jug"},
+    {"ItemId": "181040", "ItemName": "Fish Skeleton"},
+    {"ItemId": "181046", "ItemName": "Wooden Bucket"},
+    {"ItemId": "181060", "ItemName": "Drinking Horn"},
+    {"ItemId": "181068", "ItemName": "Fire Pit and Kettle"},
+    {"ItemId": "181071", "ItemName": "Trio of Sacks"},
+    {"ItemId": "181076", "ItemName": "Wild Mushrooms"},
+    {"ItemId": "181081", "ItemName": "Hanging Onions"},
+    {"ItemId": "181082", "ItemName": "Strings of Sausages"},
+    {"ItemId": "181083", "ItemName": "String of Sausages"},
+    {"ItemId": "181087", "ItemName": "Herb Shelf"},
+    {"ItemId": "181092", "ItemName": "Peat"}
+  ]
+}

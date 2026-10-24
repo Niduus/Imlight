@@ -1,0 +1,14 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-40 Seed",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-40: the seed drops (5), one picked when it rolls. How often: DropOdds.json Elite/Seed (10%).",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "713126", "ItemName": "Clockwork Flower"},
+    {"ItemId": "346003", "ItemName": "Fiery Boom Shroom"},
+    {"ItemId": "346059", "ItemName": "Frozen Fly Trap"},
+    {"ItemId": "355073", "ItemName": "Venus Fly Trap"},
+    {"ItemId": "356160", "ItemName": "Stinkweed"}
+  ]
+}

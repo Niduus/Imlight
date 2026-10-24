@@ -1,0 +1,18 @@
+{
+  "Name": "W404 KH-Kaizoku-Fire-R13 Pet",
+  "Description": "Wizard404's drop list of the game's table KH-Kaizoku-Fire-R13: the pet drops (9), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100329", "ItemName": "Goat Monk"},
+    {"ItemId": "100433", "ItemName": "Yellow Ghost"},
+    {"ItemId": "126987", "ItemName": "Jade Oni"},
+    {"ItemId": "160130", "ItemName": "Dream Ghoul"},
+    {"ItemId": "225414", "ItemName": "Plague Ninja"},
+    {"ItemId": "225435", "ItemName": "Stone Colossus"},
+    {"ItemId": "225438", "ItemName": "Life Ghoul"},
+    {"ItemId": "589071", "ItemName": "Fiendish Foo Dog"},
+    {"ItemId": "589081", "ItemName": "Ruby Shenlong Dragon"}
+  ]
+}

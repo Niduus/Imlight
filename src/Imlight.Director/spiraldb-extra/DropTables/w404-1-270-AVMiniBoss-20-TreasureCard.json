@@ -1,0 +1,17 @@
+{
+  "Name": "W404 1-270-AVMiniBoss-20 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss-20: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Basilisk TC AV", "ItemName": "Basilisk"},
+    {"ItemId": "Chimera TC AV", "ItemName": "Chimera"},
+    {"ItemId": "Dark Sprite TC AV", "ItemName": "Dark Sprite"},
+    {"ItemId": "Dryad TC AV", "ItemName": "Dryad"},
+    {"ItemId": "Efreet TC", "ItemName": "Efreet"},
+    {"ItemId": "Fire Dragon TC AV", "ItemName": "Fire Dragon"},
+    {"ItemId": "Fire Elf TC AV", "ItemName": "Fire Elf"},
+    {"ItemId": "Frost Giant TC AV", "ItemName": "Frost Giant"}
+  ]
+}

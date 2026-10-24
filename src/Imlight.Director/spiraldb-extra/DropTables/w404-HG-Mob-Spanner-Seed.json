@@ -1,0 +1,10 @@
+{
+  "Name": "W404 HG-Mob-Spanner Seed",
+  "Description": "Wizard404's drop list of the game's table HG-Mob-Spanner: the seed drops (1), one picked when it rolls. How often: DropOdds.json Elite/Seed (10%).",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "713126", "ItemName": "Clockwork Flower"}
+  ]
+}

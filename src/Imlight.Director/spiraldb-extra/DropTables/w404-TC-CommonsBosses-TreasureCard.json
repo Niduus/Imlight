@@ -1,0 +1,18 @@
+{
+  "Name": "W404 TC-CommonsBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-CommonsBosses: the treasurecard drops (9), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Fire Elf TC", "ItemName": "Fire Elf"},
+    {"ItemId": "Ghoul TC", "ItemName": "Ghoul"},
+    {"ItemId": "Guiding Light TC", "ItemName": "Guiding Light"},
+    {"ItemId": "Lightning Bats TC", "ItemName": "Lightning Bats"},
+    {"ItemId": "Locust Swarm TC", "ItemName": "Locust Swarm"},
+    {"ItemId": "Pixie TC", "ItemName": "Pixie"},
+    {"ItemId": "Snow Serpent TC", "ItemName": "Snow Serpent"},
+    {"ItemId": "Troll TC", "ItemName": "Troll"},
+    {"ItemId": "Blood Moon TC", "ItemName": "Time of Legend"}
+  ]
+}

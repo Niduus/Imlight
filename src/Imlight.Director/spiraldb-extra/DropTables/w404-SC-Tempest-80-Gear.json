@@ -1,0 +1,16 @@
+{
+  "Name": "W404 SC-Tempest-80 Gear",
+  "Description": "Wizard404's drop list of the game's table SC-Tempest-80: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear (12%).",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "667267", "ItemName": "Greenwarden's Peaceful Mask"},
+    {"ItemId": "667269", "ItemName": "Greenwarden's Peaceful Boots"},
+    {"ItemId": "737047", "ItemName": "Greenwarden's Peaceful Mask"},
+    {"ItemId": "737048", "ItemName": "Greenwarden's Peaceful Greaves"},
+    {"ItemId": "1302138", "ItemName": "Spiral Cup Cowl"},
+    {"ItemId": "1302140", "ItemName": "Spiral Cup Boots"},
+    {"ItemId": "1302151", "ItemName": "Vestment of Tempest"}
+  ]
+}

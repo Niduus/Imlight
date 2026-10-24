@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_KM_Nothing_Divine_A_01 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_KM_Nothing_Divine_A_01: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1721156", "ItemName": "Nothing"},
+    {"ItemId": "1504150", "ItemName": "S'more Machine"},
+    {"ItemId": "1504148", "ItemName": "Shatterhorn"},
+    {"ItemId": "1504147", "ItemName": "Sound of Musicology"},
+    {"ItemId": "1519005", "ItemName": "Tatzlewurm Terror"},
+    {"ItemId": "1504151", "ItemName": "Grrnadier"},
+    {"ItemId": "1504149", "ItemName": "Snack Attack"},
+    {"ItemId": "1504146", "ItemName": "Mockenspiel"}
+  ]
+}

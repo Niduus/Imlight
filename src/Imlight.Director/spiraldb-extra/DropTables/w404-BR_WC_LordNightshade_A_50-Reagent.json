@@ -1,0 +1,24 @@
+{
+  "Name": "W404 BR_WC_LordNightshade_A_50 Reagent",
+  "Description": "Wizard404's drop list of the game's table BR_WC_LordNightshade_A_50: the reagent drops (15), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1492248", "ItemName": "Fire Cat"},
+    {"ItemId": "1494693", "ItemName": "Fire Elf"},
+    {"ItemId": "1494687", "ItemName": "Frost Beetle"},
+    {"ItemId": "1494694", "ItemName": "Snow Serpent"},
+    {"ItemId": "1494699", "ItemName": "Thunder Snake"},
+    {"ItemId": "1494698", "ItemName": "Lightning Bats"},
+    {"ItemId": "1494696", "ItemName": "Blood Bat"},
+    {"ItemId": "1494697", "ItemName": "Troll"},
+    {"ItemId": "1494695", "ItemName": "Imp"},
+    {"ItemId": "1494688", "ItemName": "Leprechaun"},
+    {"ItemId": "1494689", "ItemName": "Dark Sprite"},
+    {"ItemId": "1494692", "ItemName": "Ghoul"},
+    {"ItemId": "1494690", "ItemName": "Scarab"},
+    {"ItemId": "1494691", "ItemName": "Scorpion"},
+    {"ItemId": "1607833", "ItemName": "Malistaire's Whisker"}
+  ]
+}

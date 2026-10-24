@@ -1,0 +1,12 @@
+{
+  "Name": "W404 RH-Mob-Seeds Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table RH-Mob-Seeds: the seed drops (3), one picked when it rolls. How often: DropOdds.json Normal/Seed (6%).",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346052", "ItemName": "White Desparagus"},
+    {"ItemId": "346059", "ItemName": "Frozen Fly Trap"},
+    {"ItemId": "355185", "ItemName": "Evil Snow Peas"}
+  ]
+}

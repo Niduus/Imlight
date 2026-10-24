@@ -1,0 +1,9 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Common_02",
+  "Description": "Gold of the game's table DoomKrock_Gauntlet_Common_02, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "EachItem": false,
+  "Items": []
+}

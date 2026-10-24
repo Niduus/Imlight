@@ -1,0 +1,19 @@
+{
+  "Name": "W404 SC-Mobs-20 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table SC-Mobs-20: the seed drops (10), one picked when it rolls. How often: DropOdds.json Normal/Seed (6%).",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346038", "ItemName": "Pink Dandelion"},
+    {"ItemId": "346045", "ItemName": "Trumpet Vine"},
+    {"ItemId": "346059", "ItemName": "Frozen Fly Trap"},
+    {"ItemId": "355150", "ItemName": "Dandelion"},
+    {"ItemId": "355171", "ItemName": "Desparagus"},
+    {"ItemId": "355199", "ItemName": "Honey Sickle"},
+    {"ItemId": "356106", "ItemName": "Laugh-o-dil"},
+    {"ItemId": "473124", "ItemName": "Bell Pepper"},
+    {"ItemId": "473138", "ItemName": "Orange Bell Pepper"},
+    {"ItemId": "473180", "ItemName": "Tiger Lily"}
+  ]
+}

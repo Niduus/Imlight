@@ -1,0 +1,32 @@
+{
+  "Name": "W404 Ultra_Zeus_100 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table Ultra_Zeus_100 (the boss's chest): the treasurecard drops (23), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "General Akilles TC", "ItemName": "General Akilles"},
+    {"ItemId": "Brimstone Revenant TC", "ItemName": "Brimstone Revenant"},
+    {"ItemId": "Winter Moon TC", "ItemName": "Winter Moon"},
+    {"ItemId": "Handsome Fomori TC", "ItemName": "Handsome Fomori"},
+    {"ItemId": "Catalan TC", "ItemName": "Catalan"},
+    {"ItemId": "Luminous Weaver TC", "ItemName": "Luminous Weaver"},
+    {"ItemId": "Keeper Sacred Flame TC", "ItemName": "Keeper of the Flame"},
+    {"ItemId": "Deer Knight TC", "ItemName": "Deer Knight"},
+    {"ItemId": "Goat Monk TC", "ItemName": "Goat Monk"},
+    {"ItemId": "Lord of Night TC", "ItemName": "Lord of Night"},
+    {"ItemId": "Samoorai TC", "ItemName": "Samoorai"},
+    {"ItemId": "Ninja Pig TC", "ItemName": "Ninja Pigs"},
+    {"ItemId": "Savage Paw TC", "ItemName": "Savage Paw"},
+    {"ItemId": "Gaze of Fate TC", "ItemName": "Gaze of Fate"},
+    {"ItemId": "Fire from Above TC", "ItemName": "Fire from Above"},
+    {"ItemId": "Winters Web TC", "ItemName": "Abominable Weaver"},
+    {"ItemId": "Glowbug_Squall TC", "ItemName": "Glowbug Squall"},
+    {"ItemId": "Call of Khrulhu TC", "ItemName": "Call of Khrulhu"},
+    {"ItemId": "Hungry Caterpillar TC", "ItemName": "Hungry Caterpillar"},
+    {"ItemId": "Colossus Mantis TC", "ItemName": "Mystic Colossus"},
+    {"ItemId": "Hephaestus Coppersmith - TC", "ItemName": "Hephaestus"},
+    {"ItemId": "Athena Battle Sight - TC", "ItemName": "Athena Battle Sight"},
+    {"ItemId": "Queen Calypso - TC", "ItemName": "Queen Calypso"}
+  ]
+}

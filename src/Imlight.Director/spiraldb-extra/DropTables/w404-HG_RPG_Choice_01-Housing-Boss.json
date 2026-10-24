@@ -1,0 +1,19 @@
+{
+  "Name": "W404 HG_RPG_Choice_01 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table HG_RPG_Choice_01: the housing drops (10), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "470680", "ItemName": "Eagle War Shield"},
+    {"ItemId": "537543", "ItemName": "Frozen Attacking Wolf"},
+    {"ItemId": "537559", "ItemName": "Raven Claw Totem"},
+    {"ItemId": "641577", "ItemName": "Gold Swords and Shield"},
+    {"ItemId": "643122", "ItemName": "Elephant Sword Rack"},
+    {"ItemId": "643126", "ItemName": "Tall Gorilla Mask"},
+    {"ItemId": "1350275", "ItemName": "Playable Electric Violin"},
+    {"ItemId": "1350278", "ItemName": "Playable Keytar"},
+    {"ItemId": "1479632", "ItemName": "Druid Symbol Floor"},
+    {"ItemId": "1520343", "ItemName": "Wolf Standee"}
+  ]
+}

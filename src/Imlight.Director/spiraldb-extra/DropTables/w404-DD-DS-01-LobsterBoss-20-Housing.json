@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-LobsterBoss-20 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-LobsterBoss-20: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160807", "ItemName": "Fire-damaged Book"},
+    {"ItemId": "160809", "ItemName": "Singed Book"},
+    {"ItemId": "160843", "ItemName": "Dragonclaw Pedestal"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "W404 RATrain_Gauntlet_Common_02 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table RATrain_Gauntlet_Common_02: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "3P Voodoo - TC", "ItemName": "Bad Juju"},
+    {"ItemId": "Blademaster TC", "ItemName": "Blademaster"},
+    {"ItemId": "Cripple TC", "ItemName": "Enfeeble"},
+    {"ItemId": "Darkwind TC", "ItemName": "Darkwind"},
+    {"ItemId": "Earthquake TC", "ItemName": "Earthquake"},
+    {"ItemId": "Fuel TC", "ItemName": "Fuel"},
+    {"ItemId": "Furnace TC", "ItemName": "Furnace"},
+    {"ItemId": "Hex TC", "ItemName": "Hex"},
+    {"ItemId": "Judgement TC", "ItemName": "Judgement"},
+    {"ItemId": "Magma Man TC", "ItemName": "Magma Man"},
+    {"ItemId": "Scald TC", "ItemName": "Scald"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "Name": "W404 SC-Chaos-1 Pet",
+  "Description": "Wizard404's drop list of the game's table SC-Chaos-1: the pet drops (2), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "225404", "ItemName": "Silverback Wildclaw"},
+    {"ItemId": "225430", "ItemName": "Mustard Troll"}
+  ]
+}

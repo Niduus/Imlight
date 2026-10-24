@@ -1,0 +1,20 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Common_03 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Common_03: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Locust Swarm TC", "ItemName": "Locust Swarm"},
+    {"ItemId": "Lightning Bats TC", "ItemName": "Lightning Bats"},
+    {"ItemId": "Mander TC", "ItemName": "Mander"},
+    {"ItemId": "Mega Taunt TC", "ItemName": "Mega Taunt"},
+    {"ItemId": "Myth Prism TC", "ItemName": "Myth Prism"},
+    {"ItemId": "Namaste TC", "ItemName": "Namaste"},
+    {"ItemId": "Nekhbet TC", "ItemName": "Nekhbet"},
+    {"ItemId": "Phoenix TC", "ItemName": "Phoenix"},
+    {"ItemId": "Plague TC", "ItemName": "Plague"},
+    {"ItemId": "Scarab TC", "ItemName": "Scarab"},
+    {"ItemId": "Wormguts TC", "ItemName": "Wormguts"}
+  ]
+}

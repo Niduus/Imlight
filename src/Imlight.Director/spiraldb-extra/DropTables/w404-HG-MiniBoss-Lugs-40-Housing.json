@@ -1,0 +1,27 @@
+{
+  "Name": "W404 HG-MiniBoss-Lugs-40 Housing",
+  "Description": "Wizard404's drop list of the game's table HG-MiniBoss-Lugs-40: the housing drops (18), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160618", "ItemName": "Wooden Wall Clock"},
+    {"ItemId": "160723", "ItemName": "Square Clocktower"},
+    {"ItemId": "160756", "ItemName": "Ornate Wall Clock"},
+    {"ItemId": "206087", "ItemName": "Grandfather Clock"},
+    {"ItemId": "206102", "ItemName": "Cuckoo Clock"},
+    {"ItemId": "211126", "ItemName": "Mantle Clock"},
+    {"ItemId": "342122", "ItemName": "Deactivated Golem"},
+    {"ItemId": "683121", "ItemName": "Small Wooden Clock"},
+    {"ItemId": "82910", "ItemName": "Pillory"},
+    {"ItemId": "160847", "ItemName": "Dragonspyre Standard"},
+    {"ItemId": "160857", "ItemName": "Kraken Statue"},
+    {"ItemId": "160875", "ItemName": "Magma Blister"},
+    {"ItemId": "160893", "ItemName": "Volcanic Steam Vent"},
+    {"ItemId": "161009", "ItemName": "Wyrm-footed Dresser"},
+    {"ItemId": "161015", "ItemName": "Wyrm-footed Bookshelf"},
+    {"ItemId": "161017", "ItemName": "Wyrm-crowned Bed"},
+    {"ItemId": "512188", "ItemName": "Krokotopia Pet Derby Theme"},
+    {"ItemId": "512192", "ItemName": "Grizzleheim Pet Derby Theme"}
+  ]
+}

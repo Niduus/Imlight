@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-60 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-60: the housing drops (5), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82707", "ItemName": "Stack of Scrolls"},
+    {"ItemId": "82782", "ItemName": "Open Fire Sarcophagus"},
+    {"ItemId": "82783", "ItemName": "Open Ice Sarcophagus"},
+    {"ItemId": "160616", "ItemName": "Short Cement Post"},
+    {"ItemId": "160707", "ItemName": "Steamer Trunk"}
+  ]
+}

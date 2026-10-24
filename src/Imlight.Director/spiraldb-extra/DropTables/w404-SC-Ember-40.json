@@ -1,0 +1,9 @@
+{
+  "Name": "W404 SC-Ember-40",
+  "Description": "Gold of the game's table SC-Ember-40, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 50,
+  "MaxGold": 70,
+  "EachItem": false,
+  "Items": []
+}

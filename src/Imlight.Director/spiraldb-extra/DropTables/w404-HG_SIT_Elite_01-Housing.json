@@ -1,0 +1,15 @@
+{
+  "Name": "W404 HG_SIT_Elite_01 Housing",
+  "Description": "Wizard404's drop list of the game's table HG_SIT_Elite_01: the housing drops (6), one picked when it rolls. How often: DropOdds.json Elite/Housing (8%).",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "739077", "ItemName": "Stone Azteca Head"},
+    {"ItemId": "739097", "ItemName": "Azteca Sun Dial"},
+    {"ItemId": "739113", "ItemName": "Azteca Books"},
+    {"ItemId": "739114", "ItemName": "Azteca Brazier"},
+    {"ItemId": "739166", "ItemName": "Magic Mirror"},
+    {"ItemId": "739202", "ItemName": "Azteca Rug"}
+  ]
+}

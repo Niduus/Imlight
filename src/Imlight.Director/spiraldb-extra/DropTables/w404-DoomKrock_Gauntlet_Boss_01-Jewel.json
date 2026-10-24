@@ -1,0 +1,13 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Boss_01 Jewel",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Boss_01: the jewel drops (4), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352333", "ItemName": "Cracked Health Opal +7"},
+    {"ItemId": "1352433", "ItemName": "Cracked Mana Opal +5"},
+    {"ItemId": "1352750", "ItemName": "Cracked Damage Opal +2"},
+    {"ItemId": "1352934", "ItemName": "Cracked Resilient Opal +1%"}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "Name": "W404 HG_RPG_Choice_03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table HG_RPG_Choice_03: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1686942", "ItemName": "Array of King Avernus"},
+    {"ItemId": "1686943", "ItemName": "Array of the Skinless King"},
+    {"ItemId": "1686944", "ItemName": "Array of the Night Infernal"},
+    {"ItemId": "1686945", "ItemName": "Array of the Lich Lord"},
+    {"ItemId": "1686946", "ItemName": "Array of the Re-Risen"},
+    {"ItemId": "1686947", "ItemName": "Array of Legendopia"},
+    {"ItemId": "1686948", "ItemName": "Array of Avernal Fury"},
+    {"ItemId": "1686977", "ItemName": "Array of King Avernus"},
+    {"ItemId": "1686978", "ItemName": "Array of the Skinless King"},
+    {"ItemId": "1686979", "ItemName": "Array of the Night Infernal"},
+    {"ItemId": "1686980", "ItemName": "Array of the Lich Lord"},
+    {"ItemId": "1686981", "ItemName": "Array of the Re-Risen"},
+    {"ItemId": "1686982", "ItemName": "Array of Legendopia"},
+    {"ItemId": "1686983", "ItemName": "Array of Avernal Fury"},
+    {"ItemId": "1689026", "ItemName": "Array of King Avernus"},
+    {"ItemId": "1689027", "ItemName": "Array of the Skinless King"},
+    {"ItemId": "1689028", "ItemName": "Array of the Night Infernal"},
+    {"ItemId": "1689029", "ItemName": "Array of the Lich Lord"},
+    {"ItemId": "1689030", "ItemName": "Array of the Re-Risen"},
+    {"ItemId": "1689031", "ItemName": "Array of Legendopia"},
+    {"ItemId": "1689032", "ItemName": "Array of Avernal Fury"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "W404 RH-Boss-TC TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-TC: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Colossus TC", "ItemName": "Colossus"},
+    {"ItemId": "Frost Giant TC", "ItemName": "Frost Giant"},
+    {"ItemId": "Orthrus TC", "ItemName": "Orthrus"},
+    {"ItemId": "Regenerate TC", "ItemName": "Regenerate"},
+    {"ItemId": "Satyr TC", "ItemName": "Satyr"},
+    {"ItemId": "Leviathan TC", "ItemName": "Leviathan"},
+    {"ItemId": "Ra TC", "ItemName": "Ra"},
+    {"ItemId": "Rebirth TC", "ItemName": "Rebirth"},
+    {"ItemId": "Skeletal Dragon TC", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Snow Angel TC", "ItemName": "Snow Angel"},
+    {"ItemId": "Woolly Mammoth TC", "ItemName": "Woolly Mammoth"}
+  ]
+}

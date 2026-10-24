@@ -1,0 +1,17 @@
+{
+  "Name": "W404 TC-RaresBosses1 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-RaresBosses1: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Balefrost TC", "ItemName": "Balefrost"},
+    {"ItemId": "Darkwind TC", "ItemName": "Darkwind"},
+    {"ItemId": "Donate Power TC", "ItemName": "Donate Power"},
+    {"ItemId": "Doom and Gloom TC", "ItemName": "Doom and Gloom"},
+    {"ItemId": "Minotaur TC", "ItemName": "Minotaur"},
+    {"ItemId": "Sanctuary TC", "ItemName": "Sanctuary"},
+    {"ItemId": "Wyldfire TC", "ItemName": "Wyldfire"},
+    {"ItemId": "Accurate TC", "ItemName": "Accurate"}
+  ]
+}

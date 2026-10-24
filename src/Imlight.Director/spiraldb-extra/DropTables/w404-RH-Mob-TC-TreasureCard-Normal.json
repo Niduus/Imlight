@@ -1,0 +1,25 @@
+{
+  "Name": "W404 RH-Mob-TC TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table RH-Mob-TC: the treasurecard drops (16), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard (15%).",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Evil Snowman TC", "ItemName": "Evil Snowman"},
+    {"ItemId": "Frost Beetle TC", "ItemName": "Frost Beetle"},
+    {"ItemId": "Harvest Lord TC", "ItemName": "Harvest Lord"},
+    {"ItemId": "Snow Bird TC", "ItemName": "Snow Bird"},
+    {"ItemId": "Snow Serpent TC", "ItemName": "Snow Serpent"},
+    {"ItemId": "Storm Bird TC", "ItemName": "Storm Bird"},
+    {"ItemId": "Sunbird Ice TC", "ItemName": "Icebird"},
+    {"ItemId": "Sunbird TC", "ItemName": "Sunbird"},
+    {"ItemId": "Blizzard TC", "ItemName": "Blizzard"},
+    {"ItemId": "Blue Phoenix TC", "ItemName": "Blue Phoenix"},
+    {"ItemId": "Cyclone Phoenix TC", "ItemName": "Thunderbird"},
+    {"ItemId": "Freeze TC", "ItemName": "Freeze"},
+    {"ItemId": "Frostbite TC", "ItemName": "Frostbite"},
+    {"ItemId": "Ice Wyvern TC", "ItemName": "Ice Wyvern"},
+    {"ItemId": "Phoenix TC", "ItemName": "Phoenix"},
+    {"ItemId": "Sunbird Crow TC", "ItemName": "Crow"}
+  ]
+}

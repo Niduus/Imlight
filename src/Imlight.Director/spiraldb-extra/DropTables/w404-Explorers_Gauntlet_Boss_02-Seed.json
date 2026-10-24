@@ -1,0 +1,12 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Boss_02 Seed",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Boss_02: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "473078", "ItemName": "Key Limes"},
+    {"ItemId": "653146", "ItemName": "Fish on a Vine"},
+    {"ItemId": "713119", "ItemName": "Boiled Peanuts"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "Name": "W404 HG_RPG_Mimic_Cake_A_01 Mount",
+  "Description": "Wizard404's drop list of the game's table HG_RPG_Mimic_Cake_A_01: the mount drops (2), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1672910", "ItemName": "Dragon Steed (PERM)"},
+    {"ItemId": "1672911", "ItemName": "Dragon Steed (7 Day)"}
+  ]
+}

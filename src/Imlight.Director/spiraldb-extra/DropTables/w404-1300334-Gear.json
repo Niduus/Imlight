@@ -1,0 +1,10 @@
+{
+  "Name": "W404 1300334 Gear",
+  "Description": "Wizard404's drop list of Forest Grump (1300334), drops in no table: the gear drops (1), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352113", "ItemName": "Tanglewood Terror Robes"}
+  ]
+}

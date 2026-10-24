@@ -1,0 +1,25 @@
+{
+  "Name": "W404 RH-Boss-Elexorien-20 Gear",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Elexorien-20: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "532404", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532405", "ItemName": "Raven Helm of Unkindness"},
+    {"ItemId": "532412", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532413", "ItemName": "Unkind Winter Boots"},
+    {"ItemId": "532420", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532421", "ItemName": "Armor of Many Winters"},
+    {"ItemId": "532452", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532453", "ItemName": "Thought and Memory Helm"},
+    {"ItemId": "532460", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532461", "ItemName": "Boots of Whispered Flight"},
+    {"ItemId": "532468", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532469", "ItemName": "Ravenking's Battle Story Armor"},
+    {"ItemId": "532520", "ItemName": "Dark Wing Bow"},
+    {"ItemId": "532521", "ItemName": "Dark Wing Bow"},
+    {"ItemId": "532544", "ItemName": "Raven's Bow of Unkind Winter"},
+    {"ItemId": "532545", "ItemName": "Raven's Bow of Unkind Winter"}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "Name": "W404 1-270-AV-MainBoss-40 Snack",
+  "Description": "Wizard404's drop list of the game's table 1-270-AV-MainBoss-40: the snack drops (20), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "641594", "ItemName": "High Road Haggis"},
+    {"ItemId": "641595", "ItemName": "Toad in the Hole"},
+    {"ItemId": "641596", "ItemName": "Shepherd's Crook Pie"},
+    {"ItemId": "641597", "ItemName": "Bearberry"},
+    {"ItemId": "641598", "ItemName": "Pomegranite"},
+    {"ItemId": "641599", "ItemName": "Wyrmy Apple"},
+    {"ItemId": "641600", "ItemName": "Crystal Custard"},
+    {"ItemId": "641601", "ItemName": "Weirwood Cake"},
+    {"ItemId": "641602", "ItemName": "Lemon Harts"},
+    {"ItemId": "641603", "ItemName": "Deepwater Toffee"},
+    {"ItemId": "641604", "ItemName": "Chocolate Comet"},
+    {"ItemId": "641605", "ItemName": "Bog Witch Beetroot"},
+    {"ItemId": "641606", "ItemName": "Muscle Sprouts"},
+    {"ItemId": "641607", "ItemName": "Pixie Parsnips"},
+    {"ItemId": "641608", "ItemName": "Asparagus Spears"},
+    {"ItemId": "641609", "ItemName": "Seraph Food Cake"},
+    {"ItemId": "641610", "ItemName": "Crab Knight Cakes"},
+    {"ItemId": "641611", "ItemName": "Ogre Meanies"},
+    {"ItemId": "641612", "ItemName": "Black Cap Crisps"},
+    {"ItemId": "641613", "ItemName": "Caliburnt Toast"}
+  ]
+}

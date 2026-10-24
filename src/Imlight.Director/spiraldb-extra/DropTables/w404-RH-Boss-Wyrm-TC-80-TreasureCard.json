@@ -1,0 +1,31 @@
+{
+  "Name": "W404 RH-Boss-Wyrm-TC-80 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Wyrm-TC-80: the treasurecard drops (22), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Colossus TC", "ItemName": "Colossus"},
+    {"ItemId": "Frost Giant TC", "ItemName": "Frost Giant"},
+    {"ItemId": "Orthrus TC", "ItemName": "Orthrus"},
+    {"ItemId": "Regenerate TC", "ItemName": "Regenerate"},
+    {"ItemId": "Satyr TC", "ItemName": "Satyr"},
+    {"ItemId": "Leviathan TC", "ItemName": "Leviathan"},
+    {"ItemId": "Ra TC", "ItemName": "Ra"},
+    {"ItemId": "Rebirth TC", "ItemName": "Rebirth"},
+    {"ItemId": "Skeletal Dragon TC", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "Snow Angel TC", "ItemName": "Snow Angel"},
+    {"ItemId": "Woolly Mammoth TC", "ItemName": "Woolly Mammoth"},
+    {"ItemId": "Potent Trap TC", "ItemName": "Potent Trap"},
+    {"ItemId": "Primordial TC", "ItemName": "Primordial"},
+    {"ItemId": "Sharpened Blade TC", "ItemName": "Sharpened Blade"},
+    {"ItemId": "Chastisement TC", "ItemName": "Chastisement"},
+    {"ItemId": "Cycle of Life TC", "ItemName": "Cycle of Life"},
+    {"ItemId": "Furnace TC", "ItemName": "Furnace"},
+    {"ItemId": "Galvanic Field TC", "ItemName": "Galvanic Field"},
+    {"ItemId": "Punishment TC", "ItemName": "Punishment"},
+    {"ItemId": "Reliquary TC", "ItemName": "Reliquary"},
+    {"ItemId": "Sleet Storm TC", "ItemName": "Sleet Storm"},
+    {"ItemId": "Virulence TC", "ItemName": "Virulence"}
+  ]
+}

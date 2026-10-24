@@ -1,0 +1,9 @@
+{
+  "Name": "W404 RH-Mob-Gold-20",
+  "Description": "Gold of the game's table RH-Mob-Gold-20, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 25,
+  "MaxGold": 40,
+  "EachItem": false,
+  "Items": []
+}

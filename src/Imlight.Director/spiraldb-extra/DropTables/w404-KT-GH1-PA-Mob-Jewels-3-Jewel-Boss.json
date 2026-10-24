@@ -1,0 +1,33 @@
+{
+  "Name": "W404 KT-GH1-PA-Mob-Jewels-3 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-GH1-PA-Mob-Jewels-3: the jewel drops (24), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352581", "ItemName": "Cracked Damage Ruby +5"},
+    {"ItemId": "1352605", "ItemName": "Cracked Damage Sapphire +5"},
+    {"ItemId": "1352629", "ItemName": "Cracked Damage Amethyst +5"},
+    {"ItemId": "1352653", "ItemName": "Cracked Damage Peridot +5"},
+    {"ItemId": "1352677", "ItemName": "Cracked Damage Jade +5"},
+    {"ItemId": "1352701", "ItemName": "Cracked Damage Onyx +5"},
+    {"ItemId": "1352725", "ItemName": "Cracked Damage Citrine +5"},
+    {"ItemId": "1352750", "ItemName": "Cracked Damage Opal +2"},
+    {"ItemId": "1352751", "ItemName": "Cracked Damage Opal +3"},
+    {"ItemId": "1357056", "ItemName": "Chipped Accurate Ruby +3%"},
+    {"ItemId": "1357065", "ItemName": "Chipped Accurate Sapphire +3%"},
+    {"ItemId": "1357074", "ItemName": "Chipped Accurate Amethyst +3%"},
+    {"ItemId": "1357083", "ItemName": "Chipped Accurate Peridot +3%"},
+    {"ItemId": "1357092", "ItemName": "Chipped Accurate Jade +3%"},
+    {"ItemId": "1357101", "ItemName": "Chipped Accurate Onyx +3%"},
+    {"ItemId": "1357110", "ItemName": "Chipped Accurate Citrine +3%"},
+    {"ItemId": "1357247", "ItemName": "Cracked Defense Ruby +11"},
+    {"ItemId": "1357292", "ItemName": "Cracked Defense Sapphire +11"},
+    {"ItemId": "1357337", "ItemName": "Cracked Defense Amethyst +11"},
+    {"ItemId": "1357382", "ItemName": "Cracked Defense Peridot +11"},
+    {"ItemId": "1357427", "ItemName": "Cracked Defense Jade +11"},
+    {"ItemId": "1357472", "ItemName": "Cracked Defense Onyx +11"},
+    {"ItemId": "1357517", "ItemName": "Cracked Defense Citrine +11"},
+    {"ItemId": "1360042", "ItemName": "Chipped Damage Opal +4"}
+  ]
+}

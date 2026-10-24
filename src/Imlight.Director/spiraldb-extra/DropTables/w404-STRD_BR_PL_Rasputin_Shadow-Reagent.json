@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_PL_Rasputin_Shadow Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_PL_Rasputin_Shadow: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1688489", "ItemName": "Raging Bull"},
+    {"ItemId": "1688490", "ItemName": "Snowball Barrage"},
+    {"ItemId": "1688491", "ItemName": "Rusalka's Wrath"},
+    {"ItemId": "1688495", "ItemName": "Witch's House Call"},
+    {"ItemId": "1688493", "ItemName": "Wings of Fate"},
+    {"ItemId": "1688494", "ItemName": "Winged Sorrow"},
+    {"ItemId": "1688492", "ItemName": "Nested Fury"},
+    {"ItemId": "1688838", "ItemName": "Aethyr Crystal"}
+  ]
+}

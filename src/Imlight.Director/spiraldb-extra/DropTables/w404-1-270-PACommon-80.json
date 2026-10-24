@@ -1,0 +1,9 @@
+{
+  "Name": "W404 1-270-PACommon-80",
+  "Description": "Gold of the game's table 1-270-PACommon-80, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 20,
+  "MaxGold": 25,
+  "EachItem": false,
+  "Items": []
+}

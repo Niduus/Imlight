@@ -1,0 +1,10 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss Pet",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350163", "ItemName": "Rockin' Roller"}
+  ]
+}

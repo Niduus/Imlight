@@ -1,0 +1,33 @@
+{
+  "Name": "W404 HG-UFD-Mob-100 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Mob-100: the housing drops (24), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160334", "ItemName": "Wraith Statue"},
+    {"ItemId": "160382", "ItemName": "Dead Briar Tree"},
+    {"ItemId": "470410", "ItemName": "Tower Bell"},
+    {"ItemId": "470462", "ItemName": "Single Candle Holder"},
+    {"ItemId": "538021", "ItemName": "Tattered Banner"},
+    {"ItemId": "538024", "ItemName": "Medium Berry Bush"},
+    {"ItemId": "538026", "ItemName": "Lord's Chair"},
+    {"ItemId": "538030", "ItemName": "Farmer's Equipment"},
+    {"ItemId": "538044", "ItemName": "Mushroom Cottage"},
+    {"ItemId": "538055", "ItemName": "Halls of Avalon Painting"},
+    {"ItemId": "641571", "ItemName": "Wooden Mirror"},
+    {"ItemId": "724089", "ItemName": "Adult Birch Tree"},
+    {"ItemId": "724095", "ItemName": "Large Swirl Tree"},
+    {"ItemId": "1522478", "ItemName": "Small Autumnal Bush"},
+    {"ItemId": "1522479", "ItemName": "Large Autumnal Bush"},
+    {"ItemId": "1522481", "ItemName": "Small Wintry Bush"},
+    {"ItemId": "1522484", "ItemName": "Tall Autumnal Tree"},
+    {"ItemId": "1522485", "ItemName": "Modest Autumnal Tree"},
+    {"ItemId": "1522486", "ItemName": "Short Autumnal Tree"},
+    {"ItemId": "1545070", "ItemName": "Ettin Fan"},
+    {"ItemId": "1545071", "ItemName": "Ettin Spectator"},
+    {"ItemId": "1545074", "ItemName": "Ettin Fanatic"},
+    {"ItemId": "1545076", "ItemName": "Slugfest Spectator"},
+    {"ItemId": "1545077", "ItemName": "Slugfest Fan"}
+  ]
+}

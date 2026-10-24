@@ -1,0 +1,14 @@
+{
+  "TemplateID": 1217583,
+  "DropTableNames": [
+    "W404 DD-DS-01-Minotaur-TopBoss",
+    "W404 DD-DS-01-Minotaur-TopBoss Gear",
+    "W404 DD-DS-01-Minotaur-TopBoss Pet",
+    "W404 DD-DS-01-Minotaur-TopBoss Mount",
+    "W404 DD-DS-01-Minotaur-TopBoss Housing",
+    "W404 TC-CommonsBosses TreasureCard",
+    "W404 WC-BigBoss-Jewels Jewel",
+    "W404 WC-BigBoss-Jewels Reagent",
+    "W404 DD-DS-01-Minotaur-TopBoss-GiveCard Jewel"
+  ]
+}

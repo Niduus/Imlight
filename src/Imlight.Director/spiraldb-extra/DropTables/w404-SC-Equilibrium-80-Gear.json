@@ -1,0 +1,18 @@
+{
+  "Name": "W404 SC-Equilibrium-80 Gear",
+  "Description": "Wizard404's drop list of the game's table SC-Equilibrium-80: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "667265", "ItemName": "Greenwarden's Energetic Shroud"},
+    {"ItemId": "667271", "ItemName": "Greenwarden's Peaceful Shroud"},
+    {"ItemId": "667277", "ItemName": "Greenwarden's Brilliant Shroud"},
+    {"ItemId": "737046", "ItemName": "Greenwarden's Energetic Shroud"},
+    {"ItemId": "737049", "ItemName": "Greenwarden's Peaceful Shroud"},
+    {"ItemId": "737052", "ItemName": "Greenwarden's Brilliant Shroud"},
+    {"ItemId": "1302138", "ItemName": "Spiral Cup Cowl"},
+    {"ItemId": "1302140", "ItemName": "Spiral Cup Boots"},
+    {"ItemId": "1302154", "ItemName": "Vestment of Equilibrium"}
+  ]
+}

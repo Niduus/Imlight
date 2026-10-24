@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_KT_Krokopatra_A_50 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_KT_Krokopatra_A_50: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1552045", "ItemName": "Sunbird"},
+    {"ItemId": "1552047", "ItemName": "Evil Snowman"},
+    {"ItemId": "1552046", "ItemName": "Storm Shark"},
+    {"ItemId": "1552049", "ItemName": "Cyclops"},
+    {"ItemId": "1552048", "ItemName": "Nature's Wrath"},
+    {"ItemId": "1552022", "ItemName": "Banshee"},
+    {"ItemId": "1552021", "ItemName": "Locust Swarm"},
+    {"ItemId": "1607833", "ItemName": "Malistaire's Whisker"}
+  ]
+}

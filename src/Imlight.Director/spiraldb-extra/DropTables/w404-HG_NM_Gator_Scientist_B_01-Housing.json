@@ -1,0 +1,12 @@
+{
+  "Name": "W404 HG_NM_Gator_Scientist_B_01 Housing",
+  "Description": "Wizard404's drop list of the game's table HG_NM_Gator_Scientist_B_01: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "724087", "ItemName": "Grass Tent"},
+    {"ItemId": "739111", "ItemName": "Beetle Plant"},
+    {"ItemId": "739179", "ItemName": "Minuteman"}
+  ]
+}

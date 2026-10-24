@@ -1,0 +1,18 @@
+{
+  "Name": "W404 STRD_BR_ZF_TseTse_A_100 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_ZF_TseTse_A_100: the reagent drops (9), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1640641", "ItemName": "Efreet"},
+    {"ItemId": "1640645", "ItemName": "Snow Angel"},
+    {"ItemId": "1640658", "ItemName": "Leviathan"},
+    {"ItemId": "1640653", "ItemName": "Medusa"},
+    {"ItemId": "1640626", "ItemName": "Ra"},
+    {"ItemId": "1640649", "ItemName": "Rebirth"},
+    {"ItemId": "1640637", "ItemName": "Skeletal Dragon"},
+    {"ItemId": "1659475", "ItemName": "Shadow Webbing"},
+    {"ItemId": "1640648", "ItemName": "Forest Lord"}
+  ]
+}

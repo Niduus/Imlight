@@ -1,0 +1,16 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Boss_02 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Boss_02: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350308", "ItemName": "Novice's Socket Wrench"},
+    {"ItemId": "1479429", "ItemName": "The Boat"},
+    {"ItemId": "1479433", "ItemName": "Desert Forge"},
+    {"ItemId": "1479435", "ItemName": "Glass of Hours"},
+    {"ItemId": "1479436", "ItemName": "Sand Device"},
+    {"ItemId": "1479439", "ItemName": "Double Scroll Case"},
+    {"ItemId": "1479441", "ItemName": "Istanboa Platform"}
+  ]
+}

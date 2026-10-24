@@ -1,0 +1,15 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump-40 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump-40: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82825", "ItemName": "Ice Sarcophagus"},
+    {"ItemId": "82834", "ItemName": "Storm Sarcophagus"},
+    {"ItemId": "82860", "ItemName": "Silver Chest"},
+    {"ItemId": "160659", "ItemName": "Well-traveled Suitcase"},
+    {"ItemId": "160729", "ItemName": "Large Stone Fountain"},
+    {"ItemId": "1359101", "ItemName": "Pigswick Student's Desk"}
+  ]
+}

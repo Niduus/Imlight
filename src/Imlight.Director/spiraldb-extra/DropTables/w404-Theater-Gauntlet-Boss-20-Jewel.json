@@ -1,0 +1,14 @@
+{
+  "Name": "W404 Theater-Gauntlet-Boss-20 Jewel",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Boss-20: the jewel drops (5), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352343", "ItemName": "Chipped Health Opal +17"},
+    {"ItemId": "1352438", "ItemName": "Chipped Mana Opal +10"},
+    {"ItemId": "1352818", "ItemName": "Flawed Mending Opal +2%"},
+    {"ItemId": "1352935", "ItemName": "Flawed Resilient Opal +2%"},
+    {"ItemId": "1358572", "ItemName": "Chipped Defense Opal +7"}
+  ]
+}

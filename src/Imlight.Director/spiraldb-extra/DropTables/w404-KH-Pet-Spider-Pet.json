@@ -1,0 +1,10 @@
+{
+  "Name": "W404 KH-Pet-Spider Pet",
+  "Description": "Wizard404's drop list of the game's table KH-Pet-Spider: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet (4%).",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1374448", "ItemName": "Brown Recluse Spider"}
+  ]
+}

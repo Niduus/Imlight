@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Ultra_Krokopatra_100 Housing",
+  "Description": "Wizard404's drop list of the game's table Ultra_Krokopatra_100 (the boss's chest): the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "689344", "ItemName": "Krokotopian Bed"},
+    {"ItemId": "689345", "ItemName": "Krokotopian Bed Table"},
+    {"ItemId": "689348", "ItemName": "Krokotopian Chair"},
+    {"ItemId": "689352", "ItemName": "Krokotopian Dining Chair"},
+    {"ItemId": "689353", "ItemName": "Krokotopian Dining Table"},
+    {"ItemId": "1217523", "ItemName": "Gold Skeleton Key"},
+    {"ItemId": "1350312", "ItemName": "Master's Socket Wrench"},
+    {"ItemId": "1350313", "ItemName": "Artisan's Socket Wrench"}
+  ]
+}

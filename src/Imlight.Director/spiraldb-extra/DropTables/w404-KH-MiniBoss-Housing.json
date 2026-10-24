@@ -1,0 +1,24 @@
+{
+  "Name": "W404 KH-MiniBoss Housing",
+  "Description": "Wizard404's drop list of the game's table KH-MiniBoss: the housing drops (15), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160467", "ItemName": "Iron Tea Pot"},
+    {"ItemId": "160485", "ItemName": "Tatami Floor Mat"},
+    {"ItemId": "160514", "ItemName": "Low Purple Vase"},
+    {"ItemId": "160527", "ItemName": "Small Wooden Table"},
+    {"ItemId": "160538", "ItemName": "Wooden Memorial"},
+    {"ItemId": "160543", "ItemName": "Bamboo Barrier"},
+    {"ItemId": "160579", "ItemName": "Moodha Bust"},
+    {"ItemId": "160587", "ItemName": "Crossed Naginata Spears"},
+    {"ItemId": "160591", "ItemName": "Green Sword Display"},
+    {"ItemId": "160601", "ItemName": "Pearl Orchid"},
+    {"ItemId": "512099", "ItemName": "MooShu Combat Theme"},
+    {"ItemId": "537632", "ItemName": "Goat Monk Bobblehead"},
+    {"ItemId": "537633", "ItemName": "Oni Bobblehead"},
+    {"ItemId": "537634", "ItemName": "Ninja Pig Bobblehead"},
+    {"ItemId": "537635", "ItemName": "Treant Bobblehead"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 BR_CL_Mithraya_A_100 Reagent",
+  "Description": "Wizard404's drop list of the game's table BR_CL_Mithraya_A_100: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1640640", "ItemName": "Fire Dragon"},
+    {"ItemId": "1640644", "ItemName": "Frost Giant"},
+    {"ItemId": "1640659", "ItemName": "Storm Lord"},
+    {"ItemId": "1640652", "ItemName": "Orthrus"},
+    {"ItemId": "1640648", "ItemName": "Forest Lord"},
+    {"ItemId": "1640636", "ItemName": "Scarecrow"},
+    {"ItemId": "1640625", "ItemName": "Power Nova"},
+    {"ItemId": "1659475", "ItemName": "Shadow Webbing"}
+  ]
+}

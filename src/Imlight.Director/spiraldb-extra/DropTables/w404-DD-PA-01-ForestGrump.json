@@ -1,0 +1,9 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump",
+  "Description": "Gold of the game's table DD-PA-01-ForestGrump, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 30,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

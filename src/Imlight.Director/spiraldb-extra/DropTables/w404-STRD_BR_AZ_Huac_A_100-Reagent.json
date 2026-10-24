@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_AZ_Huac_A_100 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_AZ_Huac_A_100: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1640643", "ItemName": "Sun Serpent"},
+    {"ItemId": "1640647", "ItemName": "Lord of Winter"},
+    {"ItemId": "1640656", "ItemName": "Storm Owl"},
+    {"ItemId": "1640655", "ItemName": "Celestial Calendar"},
+    {"ItemId": "1640651", "ItemName": "Spinysaur"},
+    {"ItemId": "1640639", "ItemName": "Avenging Fossil"},
+    {"ItemId": "1640635", "ItemName": "Sabertooth"},
+    {"ItemId": "1659475", "ItemName": "Shadow Webbing"}
+  ]
+}

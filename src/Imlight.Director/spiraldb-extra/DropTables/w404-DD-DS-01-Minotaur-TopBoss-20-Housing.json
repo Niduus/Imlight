@@ -1,0 +1,22 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-20 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss-20: the housing drops (13), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160836", "ItemName": "Snowflake Obelisk"},
+    {"ItemId": "160841", "ItemName": "Dark Sun Obelisk"},
+    {"ItemId": "160842", "ItemName": "Arboreal Obelisk"},
+    {"ItemId": "1335052", "ItemName": "Baddle of the Bands Theme"},
+    {"ItemId": "1335053", "ItemName": "Baddle Combat Theme"},
+    {"ItemId": "1350273", "ItemName": "Playable Frankenjammer"},
+    {"ItemId": "1350274", "ItemName": "Playable Polka Dot Flying V"},
+    {"ItemId": "1350275", "ItemName": "Playable Electric Violin"},
+    {"ItemId": "1350276", "ItemName": "Playable Xanadu Smashers"},
+    {"ItemId": "1350277", "ItemName": "Playable Moody Groovers"},
+    {"ItemId": "1350278", "ItemName": "Playable Keytar"},
+    {"ItemId": "1350279", "ItemName": "Playable Sassaphone"},
+    {"ItemId": "1350280", "ItemName": "Playable Synthesizer"}
+  ]
+}

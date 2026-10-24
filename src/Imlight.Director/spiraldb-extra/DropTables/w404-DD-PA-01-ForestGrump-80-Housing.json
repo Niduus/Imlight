@@ -1,0 +1,15 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump-80 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump-80: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82784", "ItemName": "Fire Mummy"},
+    {"ItemId": "82879", "ItemName": "Boat Tent"},
+    {"ItemId": "82892", "ItemName": "Purple Ancient Statue"},
+    {"ItemId": "160630", "ItemName": "Jaques' Saw"},
+    {"ItemId": "160656", "ItemName": "Watchdog Statue"},
+    {"ItemId": "1359101", "ItemName": "Pigswick Student's Desk"}
+  ]
+}

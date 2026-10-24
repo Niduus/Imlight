@@ -1,0 +1,24 @@
+{
+  "Name": "W404 RH-Boss-PetSnacks Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-PetSnacks: the snack drops (15), one picked when it rolls. How often: DropOdds.json Elite/Snack (25%).",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220265", "ItemName": "Spicy Drumstick"},
+    {"ItemId": "446071", "ItemName": "Salmonberry"},
+    {"ItemId": "537584", "ItemName": "Caramel Corn"},
+    {"ItemId": "537585", "ItemName": "Peppercorn"},
+    {"ItemId": "537587", "ItemName": "Sunflower Hearts"},
+    {"ItemId": "537588", "ItemName": "Simple Sugar Pop"},
+    {"ItemId": "537589", "ItemName": "Frosty Sugar Cubes"},
+    {"ItemId": "537591", "ItemName": "Pollen Bombs"},
+    {"ItemId": "537592", "ItemName": "Pickled Garlic Grubs"},
+    {"ItemId": "537594", "ItemName": "Lime Peel Rickey"},
+    {"ItemId": "537596", "ItemName": "Fuzzy Peach Fizz"},
+    {"ItemId": "537598", "ItemName": "Fruit & Nut Bar"},
+    {"ItemId": "537601", "ItemName": "Bad Honeyed Dates"},
+    {"ItemId": "537602", "ItemName": "Fried Worms"},
+    {"ItemId": "537603", "ItemName": "Frozen Snails"}
+  ]
+}

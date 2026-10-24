@@ -1,0 +1,33 @@
+{
+  "Name": "W404 HG-Mob-Clockworker Reagent",
+  "Description": "Wizard404's drop list of the game's table HG-Mob-Clockworker: the reagent drops (24), one picked when it rolls. How often: DropOdds.json Normal/Reagent (25%).",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106945", "ItemName": "Bronze Gear"},
+    {"ItemId": "106963", "ItemName": "Scrap Iron"},
+    {"ItemId": "106964", "ItemName": "Spring"},
+    {"ItemId": "1350011", "ItemName": "Tin"},
+    {"ItemId": "1350012", "ItemName": "Lead"},
+    {"ItemId": "1350013", "ItemName": "Copper"},
+    {"ItemId": "1350014", "ItemName": "Nickel"},
+    {"ItemId": "1350015", "ItemName": "Brass"},
+    {"ItemId": "1350016", "ItemName": "Steel"},
+    {"ItemId": "1350017", "ItemName": "Silver"},
+    {"ItemId": "1350231", "ItemName": "Pyrite"},
+    {"ItemId": "1350232", "ItemName": "Iron"},
+    {"ItemId": "1350234", "ItemName": "Bronze"},
+    {"ItemId": "1350241", "ItemName": "Platinum"},
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106932", "ItemName": "Acorn"},
+    {"ItemId": "106933", "ItemName": "Stone Block"},
+    {"ItemId": "106934", "ItemName": "Fossil"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "258582", "ItemName": "Aether"},
+    {"ItemId": "258584", "ItemName": "Golden Pearl"},
+    {"ItemId": "258585", "ItemName": "Sandstone"},
+    {"ItemId": "258586", "ItemName": "Sunstone"},
+    {"ItemId": "258588", "ItemName": "Aquamarine"}
+  ]
+}

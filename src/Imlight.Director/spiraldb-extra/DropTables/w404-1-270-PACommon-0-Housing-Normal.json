@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-PACommon-0 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table 1-270-PACommon-0: the housing drops (5), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82705", "ItemName": "Axe"},
+    {"ItemId": "82727", "ItemName": "Bowl of Dates"},
+    {"ItemId": "82883", "ItemName": "Pile of Dirt"},
+    {"ItemId": "160661", "ItemName": "Empty Milk Cartons"},
+    {"ItemId": "160664", "ItemName": "Crumpled Newspaper"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-80 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss-80: the housing drops (14), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82911", "ItemName": "Pilloried Skeleton"},
+    {"ItemId": "160819", "ItemName": "Plundered Crystal Rack"},
+    {"ItemId": "160856", "ItemName": "Headmaster Statue"},
+    {"ItemId": "160859", "ItemName": "Oni Statue"},
+    {"ItemId": "1335052", "ItemName": "Baddle of the Bands Theme"},
+    {"ItemId": "1335053", "ItemName": "Baddle Combat Theme"},
+    {"ItemId": "1350273", "ItemName": "Playable Frankenjammer"},
+    {"ItemId": "1350274", "ItemName": "Playable Polka Dot Flying V"},
+    {"ItemId": "1350275", "ItemName": "Playable Electric Violin"},
+    {"ItemId": "1350276", "ItemName": "Playable Xanadu Smashers"},
+    {"ItemId": "1350277", "ItemName": "Playable Moody Groovers"},
+    {"ItemId": "1350278", "ItemName": "Playable Keytar"},
+    {"ItemId": "1350279", "ItemName": "Playable Sassaphone"},
+    {"ItemId": "1350280", "ItemName": "Playable Synthesizer"}
+  ]
+}

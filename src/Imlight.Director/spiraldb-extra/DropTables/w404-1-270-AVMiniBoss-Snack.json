@@ -1,0 +1,29 @@
+{
+  "Name": "W404 1-270-AVMiniBoss Snack",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss: the snack drops (20), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220195", "ItemName": "Wormy Apple"},
+    {"ItemId": "220204", "ItemName": "Crunch Apple"},
+    {"ItemId": "220216", "ItemName": "Large Watermelon"},
+    {"ItemId": "220252", "ItemName": "Big Squash"},
+    {"ItemId": "220255", "ItemName": "Arrow Root"},
+    {"ItemId": "220270", "ItemName": "Grilled Cheese"},
+    {"ItemId": "220279", "ItemName": "Cow Pie"},
+    {"ItemId": "220306", "ItemName": "Large Fish"},
+    {"ItemId": "220316", "ItemName": "Moon Pie"},
+    {"ItemId": "220324", "ItemName": "Glowing Rock Candy"},
+    {"ItemId": "641596", "ItemName": "Shepherd's Crook Pie"},
+    {"ItemId": "641599", "ItemName": "Wyrmy Apple"},
+    {"ItemId": "641600", "ItemName": "Crystal Custard"},
+    {"ItemId": "641601", "ItemName": "Weirwood Cake"},
+    {"ItemId": "641604", "ItemName": "Chocolate Comet"},
+    {"ItemId": "641607", "ItemName": "Pixie Parsnips"},
+    {"ItemId": "641608", "ItemName": "Asparagus Spears"},
+    {"ItemId": "641609", "ItemName": "Seraph Food Cake"},
+    {"ItemId": "641612", "ItemName": "Black Cap Crisps"},
+    {"ItemId": "641613", "ItemName": "Caliburnt Toast"}
+  ]
+}

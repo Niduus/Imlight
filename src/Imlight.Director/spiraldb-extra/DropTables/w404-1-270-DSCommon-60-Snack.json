@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-DSCommon-60 Snack",
+  "Description": "Wizard404's drop list of the game's table 1-270-DSCommon-60: the snack drops (5), one picked when it rolls. How often: DropOdds.json Normal/Snack (15%).",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220217", "ItemName": "Golden Grapes"},
+    {"ItemId": "220304", "ItemName": "Flaming Soup"},
+    {"ItemId": "220310", "ItemName": "King Banana"},
+    {"ItemId": "220326", "ItemName": "Goat Cheese"},
+    {"ItemId": "220331", "ItemName": "Gummy Humongofrog"}
+  ]
+}

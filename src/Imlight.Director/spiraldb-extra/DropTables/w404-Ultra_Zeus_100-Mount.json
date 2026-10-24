@@ -1,0 +1,11 @@
+{
+  "Name": "W404 Ultra_Zeus_100 Mount",
+  "Description": "Wizard404's drop list of the game's table Ultra_Zeus_100 (the boss's chest): the mount drops (2), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1359212", "ItemName": "Storm Whirlwind (PERM)"},
+    {"ItemId": "1359355", "ItemName": "Storm Whirlwind (7 Day)"}
+  ]
+}

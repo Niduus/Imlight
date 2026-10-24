@@ -1,0 +1,16 @@
+{
+  "Name": "W404 SC-Borst-80 Reagent",
+  "Description": "Wizard404's drop list of the game's table SC-Borst-80: the reagent drops (7), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106931", "ItemName": "Mist Wood"},
+    {"ItemId": "106935", "ItemName": "Deep Mushroom"},
+    {"ItemId": "106939", "ItemName": "Cat Tail"},
+    {"ItemId": "106959", "ItemName": "Red Mandrake"},
+    {"ItemId": "106965", "ItemName": "Black Lotus"},
+    {"ItemId": "106967", "ItemName": "Lava Lily"},
+    {"ItemId": "106969", "ItemName": "Frost Flower"}
+  ]
+}

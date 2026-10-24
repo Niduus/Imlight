@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-Boss-80 Seed",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-Boss-80: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed (20%).",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346017", "ItemName": "Deadly Ninja Fig"},
+    {"ItemId": "346031", "ItemName": "Ninja Fig"},
+    {"ItemId": "1248001", "ItemName": "Sunion"}
+  ]
+}

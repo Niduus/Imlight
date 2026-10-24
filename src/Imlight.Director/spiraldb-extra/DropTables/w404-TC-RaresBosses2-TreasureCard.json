@@ -1,0 +1,18 @@
+{
+  "Name": "W404 TC-RaresBosses2 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-RaresBosses2: the treasurecard drops (9), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Colossus TC", "ItemName": "Colossus"},
+    {"ItemId": "Earthquake TC", "ItemName": "Earthquake"},
+    {"ItemId": "Helephant TC", "ItemName": "Helephant"},
+    {"ItemId": "Hydra TC", "ItemName": "Hydra"},
+    {"ItemId": "Reshuffle TC", "ItemName": "Reshuffle"},
+    {"ItemId": "Scarecrow TC", "ItemName": "Scarecrow"},
+    {"ItemId": "Seraph TC", "ItemName": "Seraph"},
+    {"ItemId": "Stormzilla TC", "ItemName": "Stormzilla"},
+    {"ItemId": "Strong TC", "ItemName": "Strong"}
+  ]
+}

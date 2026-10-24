@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Ultra_Rattlebones_100 Mount",
+  "Description": "Wizard404's drop list of the game's table Ultra_Rattlebones_100 (the boss's chest): the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1359207", "ItemName": "Death Whirlwind (PERM)"},
+    {"ItemId": "1359210", "ItemName": "Life Whirlwind (PERM)"},
+    {"ItemId": "1359360", "ItemName": "Life Whirlwind (7 Day)"},
+    {"ItemId": "1359361", "ItemName": "Death Whirlwind (7 Day)"}
+  ]
+}

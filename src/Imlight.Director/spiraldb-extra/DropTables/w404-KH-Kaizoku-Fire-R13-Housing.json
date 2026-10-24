@@ -1,0 +1,14 @@
+{
+  "Name": "W404 KH-Kaizoku-Fire-R13 Housing",
+  "Description": "Wizard404's drop list of the game's table KH-Kaizoku-Fire-R13: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "512099", "ItemName": "MooShu Combat Theme"},
+    {"ItemId": "537632", "ItemName": "Goat Monk Bobblehead"},
+    {"ItemId": "537633", "ItemName": "Oni Bobblehead"},
+    {"ItemId": "537634", "ItemName": "Ninja Pig Bobblehead"},
+    {"ItemId": "537635", "ItemName": "Treant Bobblehead"}
+  ]
+}

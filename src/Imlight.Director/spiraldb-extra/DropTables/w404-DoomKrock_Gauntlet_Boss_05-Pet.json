@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DoomKrock_Gauntlet_Boss_05 Pet",
+  "Description": "Wizard404's drop list of the game's table DoomKrock_Gauntlet_Boss_05: the pet drops (3), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1499175", "ItemName": "Sokar's Scarab"},
+    {"ItemId": "1499176", "ItemName": "Setesh's Scarab"},
+    {"ItemId": "1499177", "ItemName": "Apophis' Scarab"}
+  ]
+}

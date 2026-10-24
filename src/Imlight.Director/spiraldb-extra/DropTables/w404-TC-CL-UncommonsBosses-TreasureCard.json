@@ -1,0 +1,11 @@
+{
+  "Name": "W404 TC-CL-UncommonsBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-CL-UncommonsBosses: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Vengeance TC", "ItemName": "Vengeance"},
+    {"ItemId": "Monstrous TC", "ItemName": "Monstrous"}
+  ]
+}

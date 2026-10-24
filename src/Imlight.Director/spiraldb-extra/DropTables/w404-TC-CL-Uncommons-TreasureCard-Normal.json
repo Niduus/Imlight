@@ -1,0 +1,11 @@
+{
+  "Name": "W404 TC-CL-Uncommons TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table TC-CL-Uncommons: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard (15%).",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Sniper TC", "ItemName": "Sniper"},
+    {"ItemId": "Precision TC", "ItemName": "Precision"}
+  ]
+}

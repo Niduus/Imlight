@@ -1,0 +1,25 @@
+{
+  "Name": "W404 HG-Boss-Lucia-60 Pet",
+  "Description": "Wizard404's drop list of the game's table HG-Boss-Lucia-60: the pet drops (16), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100430", "ItemName": "Spider Golem"},
+    {"ItemId": "789470", "ItemName": "Clockwork Paladin"},
+    {"ItemId": "1204451", "ItemName": "Bronze Golem"},
+    {"ItemId": "1374389", "ItemName": "Sister Cheesiwitz"},
+    {"ItemId": "1374522", "ItemName": "Papa Cheesiwitz"},
+    {"ItemId": "1383043", "ItemName": "Mama Cheesiwitz"},
+    {"ItemId": "1383044", "ItemName": "Brother Cheesiwitz"},
+    {"ItemId": "126987", "ItemName": "Jade Oni"},
+    {"ItemId": "212075", "ItemName": "Ianthine Spectre"},
+    {"ItemId": "225410", "ItemName": "Pale Maiden"},
+    {"ItemId": "225433", "ItemName": "Icebat"},
+    {"ItemId": "690108", "ItemName": "Gargoyle"},
+    {"ItemId": "100432", "ItemName": "Green Ghost"},
+    {"ItemId": "100451", "ItemName": "Dire Ghoul"},
+    {"ItemId": "126979", "ItemName": "Death Leprechaun"},
+    {"ItemId": "225451", "ItemName": "Ash Spider"}
+  ]
+}

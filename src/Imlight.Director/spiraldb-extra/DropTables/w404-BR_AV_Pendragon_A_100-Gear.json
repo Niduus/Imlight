@@ -1,0 +1,23 @@
+{
+  "Name": "W404 BR_AV_Pendragon_A_100 Gear",
+  "Description": "Wizard404's drop list of the game's table BR_AV_Pendragon_A_100: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1654579", "ItemName": "Umbra Queen's Dusty Heels"},
+    {"ItemId": "1654580", "ItemName": "Umbra Queen's Grim Heels"},
+    {"ItemId": "1654581", "ItemName": "Umbra Queen's Scorched Heels"},
+    {"ItemId": "1654582", "ItemName": "Umbra Queen's Chill Heels"},
+    {"ItemId": "1654583", "ItemName": "Umbra Queen's Wild Heels"},
+    {"ItemId": "1654584", "ItemName": "Umbra Queen's Furious Heels"},
+    {"ItemId": "1654585", "ItemName": "Umbra Queen's Shocked Heels"},
+    {"ItemId": "1654600", "ItemName": "Umbra Queen's Dusty Heels"},
+    {"ItemId": "1654601", "ItemName": "Umbra Queen's Grim Heels"},
+    {"ItemId": "1654602", "ItemName": "Umbra Queen's Scorched Heels"},
+    {"ItemId": "1654603", "ItemName": "Umbra Queen's Chill Heels"},
+    {"ItemId": "1654604", "ItemName": "Umbra Queen's Wild Heels"},
+    {"ItemId": "1654605", "ItemName": "Umbra Queen's Furious Heels"},
+    {"ItemId": "1654606", "ItemName": "Umbra Queen's Shocked Heels"}
+  ]
+}

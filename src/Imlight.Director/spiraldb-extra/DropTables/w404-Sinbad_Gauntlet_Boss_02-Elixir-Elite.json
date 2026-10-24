@@ -1,0 +1,10 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Boss_02 Elixir (Elite)",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Boss_02: the elixir drops (1), one picked when it rolls. How often: DropOdds.json Elite/Elixir (6%).",
+  "Odds": "Elite/Elixir",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "191110", "ItemName": "Major Gold Elixir"}
+  ]
+}

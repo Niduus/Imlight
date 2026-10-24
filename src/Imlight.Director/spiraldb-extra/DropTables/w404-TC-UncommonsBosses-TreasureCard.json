@@ -1,0 +1,20 @@
+{
+  "Name": "W404 TC-UncommonsBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-UncommonsBosses: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Cyclops TC", "ItemName": "Cyclops"},
+    {"ItemId": "Dryad TC", "ItemName": "Dryad"},
+    {"ItemId": "Fire Trap TC", "ItemName": "Fire Trap"},
+    {"ItemId": "Giant TC", "ItemName": "Giant"},
+    {"ItemId": "Ice Trap TC", "ItemName": "Ice Trap"},
+    {"ItemId": "Pacify TC", "ItemName": "Pacify"},
+    {"ItemId": "Sandstorm TC", "ItemName": "Sandstorm"},
+    {"ItemId": "Sniper TC", "ItemName": "Sniper"},
+    {"ItemId": "Spirit Armor TC", "ItemName": "Spirit Armor"},
+    {"ItemId": "Storm Trap TC", "ItemName": "Storm Trap"},
+    {"ItemId": "Vampire TC", "ItemName": "Vampire"}
+  ]
+}

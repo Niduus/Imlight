@@ -1,0 +1,14 @@
+{
+  "Name": "W404 Theater-Gauntlet-Boss-80 Snack",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Boss-80: the snack drops (5), one picked when it rolls. How often: DropOdds.json Boss/Snack (40%).",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "220312", "ItemName": "Mystic Dragon Fruit"},
+    {"ItemId": "240083", "ItemName": "Dragonhorned Melon"},
+    {"ItemId": "220275", "ItemName": "Glowing Dragon Fruit"},
+    {"ItemId": "220336", "ItemName": "Frosted Drakes Cereal"},
+    {"ItemId": "220241", "ItemName": "Dragon Fruit"}
+  ]
+}

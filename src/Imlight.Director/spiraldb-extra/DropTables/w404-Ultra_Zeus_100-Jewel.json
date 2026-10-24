@@ -1,0 +1,16 @@
+{
+  "Name": "W404 Ultra_Zeus_100 Jewel",
+  "Description": "Wizard404's drop list of the game's table Ultra_Zeus_100 (the boss's chest): the jewel drops (7), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1360142", "ItemName": "Wrath of Ares Ruby"},
+    {"ItemId": "1360143", "ItemName": "Wrath of Poseidon Sapphire"},
+    {"ItemId": "1360144", "ItemName": "Wrath of Zeus Amethyst"},
+    {"ItemId": "1360145", "ItemName": "Wrath of Cronus Peridot"},
+    {"ItemId": "1360146", "ItemName": "Wrath of Apollo Jade"},
+    {"ItemId": "1360147", "ItemName": "Wrath of Hades Onyx"},
+    {"ItemId": "1360148", "ItemName": "Wrath of Aquila Citrine"}
+  ]
+}

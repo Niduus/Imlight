@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_AV_Pendragon_A_100 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_AV_Pendragon_A_100: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1640642", "ItemName": "Rain of Fire"},
+    {"ItemId": "1640646", "ItemName": "Woolly Mammoth"},
+    {"ItemId": "1640657", "ItemName": "Sirens"},
+    {"ItemId": "1640654", "ItemName": "Basilisk"},
+    {"ItemId": "1640650", "ItemName": "Gnomes!"},
+    {"ItemId": "1640638", "ItemName": "Dr. Von's Monster"},
+    {"ItemId": "1640634", "ItemName": "Chimera"},
+    {"ItemId": "1659475", "ItemName": "Shadow Webbing"}
+  ]
+}

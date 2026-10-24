@@ -1,0 +1,27 @@
+{
+  "Name": "W404 1-270-AVMiniBoss-80 Gear",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss-80: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear (30%).",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "635928", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "635937", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "635955", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "635964", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "635982", "ItemName": "World's Fool Mask"},
+    {"ItemId": "635991", "ItemName": "World's Fool Boots"},
+    {"ItemId": "740092", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "740093", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "740094", "ItemName": "World's Fool Mask"},
+    {"ItemId": "740116", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "740117", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "740118", "ItemName": "World's Fool Boots"},
+    {"ItemId": "1257993", "ItemName": "Mask of the Faerie Court"},
+    {"ItemId": "1257994", "ItemName": "Faerie Court Boots"},
+    {"ItemId": "1257996", "ItemName": "Pixie's Mask of Encanta"},
+    {"ItemId": "1257997", "ItemName": "Pixie's Enchanted Boots"},
+    {"ItemId": "1257999", "ItemName": "World's Fool Mask"},
+    {"ItemId": "1302000", "ItemName": "World's Fool Boots"}
+  ]
+}

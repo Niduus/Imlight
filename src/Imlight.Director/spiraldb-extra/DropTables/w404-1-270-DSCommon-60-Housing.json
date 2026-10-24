@@ -1,0 +1,14 @@
+{
+  "Name": "W404 1-270-DSCommon-60 Housing",
+  "Description": "Wizard404's drop list of the game's table 1-270-DSCommon-60: the housing drops (5), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160912", "ItemName": "Inferno Plaque"},
+    {"ItemId": "160913", "ItemName": "Snowflake Plaque"},
+    {"ItemId": "160914", "ItemName": "Dragonmoon Plaque"},
+    {"ItemId": "160916", "ItemName": "Drake Plaque"},
+    {"ItemId": "160918", "ItemName": "Dark Sun Plaque"}
+  ]
+}

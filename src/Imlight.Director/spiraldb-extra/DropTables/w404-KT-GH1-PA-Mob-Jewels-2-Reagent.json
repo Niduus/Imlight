@@ -1,0 +1,11 @@
+{
+  "Name": "W404 KT-GH1-PA-Mob-Jewels-2 Reagent",
+  "Description": "Wizard404's drop list of the game's table KT-GH1-PA-Mob-Jewels-2: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Normal/Reagent (25%).",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350231", "ItemName": "Pyrite"},
+    {"ItemId": "1350232", "ItemName": "Iron"}
+  ]
+}

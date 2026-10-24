@@ -1,0 +1,10 @@
+{
+  "Name": "W404 Sinbad_Gauntlet_Boss_05 TreasureCard",
+  "Description": "Wizard404's drop list of the game's table Sinbad_Gauntlet_Boss_05: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Minion Fire Sinbad - TC", "ItemName": "Sinbad"}
+  ]
+}

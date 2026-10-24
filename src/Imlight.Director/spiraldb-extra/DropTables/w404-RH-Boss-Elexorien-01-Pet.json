@@ -1,0 +1,11 @@
+{
+  "Name": "W404 RH-Boss-Elexorien-01 Pet",
+  "Description": "Wizard404's drop list of the game's table RH-Boss-Elexorien-01: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "589089", "ItemName": "Raven"},
+    {"ItemId": "589220", "ItemName": "Red Cap"}
+  ]
+}

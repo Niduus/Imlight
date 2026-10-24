@@ -1,0 +1,15 @@
+{
+  "Name": "W404 HG-UFD-Mob-150 Jewel (Elite)",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Mob-150: the jewel drops (6), one picked when it rolls. How often: DropOdds.json Elite/Jewel (10%).",
+  "Odds": "Elite/Jewel",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1360539", "ItemName": "Pain-Bringer Opal"},
+    {"ItemId": "1360578", "ItemName": "Pain-Giver Opal"},
+    {"ItemId": "1360471", "ItemName": "Sharp-Eye Opal"},
+    {"ItemId": "1360560", "ItemName": "Sharp-Shot Opal"},
+    {"ItemId": "1360544", "ItemName": "Spell-Defying Opal"},
+    {"ItemId": "1360622", "ItemName": "Spell-Proof Opal"}
+  ]
+}

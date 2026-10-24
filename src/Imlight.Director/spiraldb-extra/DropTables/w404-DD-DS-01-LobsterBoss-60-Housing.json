@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-LobsterBoss-60 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-LobsterBoss-60: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160808", "ItemName": "Charred Book"},
+    {"ItemId": "160865", "ItemName": "Dragonmoon Marker"},
+    {"ItemId": "160922", "ItemName": "Crimson Dragonspyre Banner"}
+  ]
+}

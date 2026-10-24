@@ -1,0 +1,15 @@
+{
+  "Name": "W404 CL-GH3-Boss-Jewels Reagent",
+  "Description": "Wizard404's drop list of the game's table CL-GH3-Boss-Jewels: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1350011", "ItemName": "Tin"},
+    {"ItemId": "1350014", "ItemName": "Nickel"},
+    {"ItemId": "1350015", "ItemName": "Brass"},
+    {"ItemId": "1350016", "ItemName": "Steel"},
+    {"ItemId": "1350233", "ItemName": "Cobalt"},
+    {"ItemId": "1350234", "ItemName": "Bronze"}
+  ]
+}

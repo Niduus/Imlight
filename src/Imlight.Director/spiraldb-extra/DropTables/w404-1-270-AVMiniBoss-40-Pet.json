@@ -1,0 +1,16 @@
+{
+  "Name": "W404 1-270-AVMiniBoss-40 Pet",
+  "Description": "Wizard404's drop list of the game's table 1-270-AVMiniBoss-40: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "100410", "ItemName": "Blue Ghost"},
+    {"ItemId": "100414", "ItemName": "Leprechaun"},
+    {"ItemId": "100429", "ItemName": "Black Spider"},
+    {"ItemId": "100434", "ItemName": "Red Ghost"},
+    {"ItemId": "100448", "ItemName": "Dark Sprite"},
+    {"ItemId": "212076", "ItemName": "Crabling"},
+    {"ItemId": "225473", "ItemName": "Seraph"}
+  ]
+}

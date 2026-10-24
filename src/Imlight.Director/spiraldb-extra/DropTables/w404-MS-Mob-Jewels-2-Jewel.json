@@ -1,0 +1,31 @@
+{
+  "Name": "W404 MS-Mob-Jewels-2 Jewel",
+  "Description": "Wizard404's drop list of the game's table MS-Mob-Jewels-2: the jewel drops (22), one picked when it rolls. How often: DropOdds.json Normal/Jewel (6%).",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1352360", "ItemName": "Flawed Health Opal +34"},
+    {"ItemId": "1352361", "ItemName": "Flawed Health Opal +35"},
+    {"ItemId": "1352362", "ItemName": "Blemished Health Opal +36"},
+    {"ItemId": "1352445", "ItemName": "Blemished Mana Opal +17"},
+    {"ItemId": "1352446", "ItemName": "Blemished Mana Opal +18"},
+    {"ItemId": "1352818", "ItemName": "Flawed Mending Opal +2%"},
+    {"ItemId": "1357057", "ItemName": "Flawed Accurate Ruby +4%"},
+    {"ItemId": "1357066", "ItemName": "Flawed Accurate Sapphire +4%"},
+    {"ItemId": "1357075", "ItemName": "Flawed Accurate Amethyst +4%"},
+    {"ItemId": "1357084", "ItemName": "Flawed Accurate Peridot +4%"},
+    {"ItemId": "1357093", "ItemName": "Flawed Accurate Jade +4%"},
+    {"ItemId": "1357102", "ItemName": "Flawed Accurate Onyx +4%"},
+    {"ItemId": "1357111", "ItemName": "Flawed Accurate Citrine +4%"},
+    {"ItemId": "1357120", "ItemName": "Flawed Accurate Opal +2%"},
+    {"ItemId": "1357128", "ItemName": "Blemished PIP Opal +4%"},
+    {"ItemId": "1357255", "ItemName": "Flawed Defense Ruby +19"},
+    {"ItemId": "1357300", "ItemName": "Flawed Defense Sapphire +19"},
+    {"ItemId": "1357345", "ItemName": "Flawed Defense Amethyst +19"},
+    {"ItemId": "1357390", "ItemName": "Flawed Defense Peridot +19"},
+    {"ItemId": "1357435", "ItemName": "Flawed Defense Jade +19"},
+    {"ItemId": "1357480", "ItemName": "Flawed Defense Onyx +19"},
+    {"ItemId": "1357525", "ItemName": "Flawed Defense Citrine +19"}
+  ]
+}

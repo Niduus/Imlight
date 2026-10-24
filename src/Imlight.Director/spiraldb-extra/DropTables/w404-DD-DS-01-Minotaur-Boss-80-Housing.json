@@ -1,0 +1,13 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-Boss-80 Housing",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-Boss-80: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82912", "ItemName": "Wall Chains"},
+    {"ItemId": "160828", "ItemName": "Magma-filled Fountain"},
+    {"ItemId": "160829", "ItemName": "Memorial Fountain"},
+    {"ItemId": "160901", "ItemName": "Dragonspyre Gate"}
+  ]
+}

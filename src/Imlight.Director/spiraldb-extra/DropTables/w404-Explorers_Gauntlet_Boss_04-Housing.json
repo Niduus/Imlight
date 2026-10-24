@@ -1,0 +1,26 @@
+{
+  "Name": "W404 Explorers_Gauntlet_Boss_04 Housing",
+  "Description": "Wizard404's drop list of the game's table Explorers_Gauntlet_Boss_04: the housing drops (17), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "181070", "ItemName": "Fish Drying Rack"},
+    {"ItemId": "342077", "ItemName": "Coconut Drink"},
+    {"ItemId": "342084", "ItemName": "Clam Chair"},
+    {"ItemId": "342085", "ItemName": "Crab Chimney"},
+    {"ItemId": "342087", "ItemName": "Crab Lean-To"},
+    {"ItemId": "342090", "ItemName": "Diving Helmet"},
+    {"ItemId": "342103", "ItemName": "Outrigger Paddles"},
+    {"ItemId": "342108", "ItemName": "Water-Mole Plate"},
+    {"ItemId": "342109", "ItemName": "Water-Mole Torch"},
+    {"ItemId": "342118", "ItemName": "Wall Starfish"},
+    {"ItemId": "342120", "ItemName": "Crab Claw Statue"},
+    {"ItemId": "342131", "ItemName": "Water-Mole Table"},
+    {"ItemId": "342132", "ItemName": "Tall Tiki Statue"},
+    {"ItemId": "342136", "ItemName": "Skinny Tiki Totem"},
+    {"ItemId": "683107", "ItemName": "Water-Mole Tribal Shield"},
+    {"ItemId": "683108", "ItemName": "Coral Crab Lamp"},
+    {"ItemId": "683109", "ItemName": "Spiral Crab Table"}
+  ]
+}

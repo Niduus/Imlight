@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Theater-Gauntlet-Boss-60 Mount",
+  "Description": "Wizard404's drop list of the game's table Theater-Gauntlet-Boss-60: the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount (3%).",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "470084", "ItemName": "Faithful Dragoness (1 Day)"},
+    {"ItemId": "470085", "ItemName": "Blue Dragon (1 Day)"},
+    {"ItemId": "470086", "ItemName": "Dark Redwing (1 Day)"},
+    {"ItemId": "470096", "ItemName": "Dragon Wings (PERM)"}
+  ]
+}

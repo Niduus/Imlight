@@ -1,0 +1,21 @@
+{
+  "Name": "W404 HG_FL_Mob_A_L170 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table HG_FL_Mob_A_L170: the housing drops (12), one picked when it rolls. How often: DropOdds.json Normal/Housing (5%).",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "160202", "ItemName": "Lectern"},
+    {"ItemId": "160203", "ItemName": "Books"},
+    {"ItemId": "160210", "ItemName": "Stack of 5 Books"},
+    {"ItemId": "160212", "ItemName": "Stack of Paper"},
+    {"ItemId": "160216", "ItemName": "Pen and Ink"},
+    {"ItemId": "160272", "ItemName": "Carved Bookshelf"},
+    {"ItemId": "160273", "ItemName": "Bookshelf"},
+    {"ItemId": "160636", "ItemName": "Stone Brazier"},
+    {"ItemId": "470214", "ItemName": "Night Painting"},
+    {"ItemId": "1202018", "ItemName": "Olympian Herb"},
+    {"ItemId": "1202020", "ItemName": "Grand Statue of Zeus"},
+    {"ItemId": "1359133", "ItemName": "Regent's Library Shelf"}
+  ]
+}

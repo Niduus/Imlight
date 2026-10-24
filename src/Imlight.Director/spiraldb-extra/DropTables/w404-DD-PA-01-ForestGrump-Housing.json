@@ -1,0 +1,15 @@
+{
+  "Name": "W404 DD-PA-01-ForestGrump Housing",
+  "Description": "Wizard404's drop list of the game's table DD-PA-01-ForestGrump: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing (20%).",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "82752", "ItemName": "Green Gem"},
+    {"ItemId": "82881", "ItemName": "Prince Meti Karanahn"},
+    {"ItemId": "82884", "ItemName": "Prince Biti Nirini"},
+    {"ItemId": "160685", "ItemName": "Tri-gage Meter Stand"},
+    {"ItemId": "160710", "ItemName": "Fine Wooden Table"},
+    {"ItemId": "1359101", "ItemName": "Pigswick Student's Desk"}
+  ]
+}

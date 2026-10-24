@@ -1,0 +1,16 @@
+{
+  "Name": "W404 SC-Mobs-80 Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table SC-Mobs-80: the reagent drops (7), one picked when it rolls. How often: DropOdds.json Elite/Reagent (35%).",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "106941", "ItemName": "Bone"},
+    {"ItemId": "106942", "ItemName": "Leather Straps"},
+    {"ItemId": "106944", "ItemName": "Spider Silk"},
+    {"ItemId": "106945", "ItemName": "Bronze Gear"},
+    {"ItemId": "258579", "ItemName": "Scales"},
+    {"ItemId": "276291", "ItemName": "Fish Fin"},
+    {"ItemId": "473724", "ItemName": "Turquoise"}
+  ]
+}

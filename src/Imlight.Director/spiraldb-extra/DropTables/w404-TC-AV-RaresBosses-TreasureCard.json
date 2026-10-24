@@ -1,0 +1,27 @@
+{
+  "Name": "W404 TC-AV-RaresBosses TreasureCard",
+  "Description": "Wizard404's drop list of the game's table TC-AV-RaresBosses: the treasurecard drops (18), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard (50%).",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Extraordinary TC", "ItemName": "Extraordinary"},
+    {"ItemId": "Colossal TC", "ItemName": "Colossal"},
+    {"ItemId": "Amplify TC", "ItemName": "Amplify"},
+    {"ItemId": "Fortify TC", "ItemName": "Fortify"},
+    {"ItemId": "Infallible TC", "ItemName": "Infallible"},
+    {"ItemId": "Vengeance TC", "ItemName": "Vengeance"},
+    {"ItemId": "Empowerment TC", "ItemName": "Empowerment"},
+    {"ItemId": "Berserk TC", "ItemName": "Berserk"},
+    {"ItemId": "Mend TC", "ItemName": "Mend"},
+    {"ItemId": "Unstoppable TC", "ItemName": "Unstoppable"},
+    {"ItemId": "Gargantuan TC", "ItemName": "Gargantuan"},
+    {"ItemId": "Power Nova TC", "ItemName": "Power Nova"},
+    {"ItemId": "Scarecrow TC", "ItemName": "Scarecrow"},
+    {"ItemId": "Orthrus TC", "ItemName": "Orthrus"},
+    {"ItemId": "Rebirth TC", "ItemName": "Rebirth"},
+    {"ItemId": "Storm Lord TC", "ItemName": "Storm Lord"},
+    {"ItemId": "Frost Giant TC", "ItemName": "Frost Giant"},
+    {"ItemId": "Fire Dragon TC", "ItemName": "Fire Dragon"}
+  ]
+}

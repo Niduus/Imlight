@@ -1,0 +1,9 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-60",
+  "Description": "Gold of the game's table DD-DS-01-Minotaur-TopBoss-60, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 60,
+  "MaxGold": 80,
+  "EachItem": false,
+  "Items": []
+}

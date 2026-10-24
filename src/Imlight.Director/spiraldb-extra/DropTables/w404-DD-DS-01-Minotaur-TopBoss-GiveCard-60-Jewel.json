@@ -1,0 +1,12 @@
+{
+  "Name": "W404 DD-DS-01-Minotaur-TopBoss-GiveCard-60 Jewel",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Minotaur-TopBoss-GiveCard-60: the jewel drops (3), one picked when it rolls. How often: DropOdds.json Boss/Jewel (25%).",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1360044", "ItemName": "Punklops Peridot"},
+    {"ItemId": "1360045", "ItemName": "Rocklops Jade"},
+    {"ItemId": "1360046", "ItemName": "Metalops Onyx"}
+  ]
+}

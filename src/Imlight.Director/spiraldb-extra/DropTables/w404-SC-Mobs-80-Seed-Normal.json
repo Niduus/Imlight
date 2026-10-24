@@ -1,0 +1,28 @@
+{
+  "Name": "W404 SC-Mobs-80 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table SC-Mobs-80: the seed drops (19), one picked when it rolls. How often: DropOdds.json Normal/Seed (6%).",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "346010", "ItemName": "Maelstrom Snap Dragon"},
+    {"ItemId": "346031", "ItemName": "Ninja Fig"},
+    {"ItemId": "346038", "ItemName": "Pink Dandelion"},
+    {"ItemId": "346045", "ItemName": "Trumpet Vine"},
+    {"ItemId": "346052", "ItemName": "White Desparagus"},
+    {"ItemId": "346059", "ItemName": "Frozen Fly Trap"},
+    {"ItemId": "355073", "ItemName": "Venus Fly Trap"},
+    {"ItemId": "355080", "ItemName": "Burning Snap Dragon"},
+    {"ItemId": "355150", "ItemName": "Dandelion"},
+    {"ItemId": "355171", "ItemName": "Desparagus"},
+    {"ItemId": "355199", "ItemName": "Honey Sickle"},
+    {"ItemId": "356092", "ItemName": "White Laugh-o-dil"},
+    {"ItemId": "356106", "ItemName": "Laugh-o-dil"},
+    {"ItemId": "404123", "ItemName": "Deadly Helephant Ears"},
+    {"ItemId": "473078", "ItemName": "Key Limes"},
+    {"ItemId": "473124", "ItemName": "Bell Pepper"},
+    {"ItemId": "473138", "ItemName": "Orange Bell Pepper"},
+    {"ItemId": "473180", "ItemName": "Tiger Lily"},
+    {"ItemId": "653139", "ItemName": "Angel Oak"}
+  ]
+}

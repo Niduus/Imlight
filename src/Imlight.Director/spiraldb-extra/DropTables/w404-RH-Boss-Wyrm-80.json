@@ -1,0 +1,9 @@
+{
+  "Name": "W404 RH-Boss-Wyrm-80",
+  "Description": "Gold of the game's table RH-Boss-Wyrm-80, from Wizard404 (always).",
+  "RollChance": 1.0,
+  "MinGold": 100,
+  "MaxGold": 120,
+  "EachItem": false,
+  "Items": []
+}

@@ -1,0 +1,16 @@
+{
+  "Name": "W404 HG-UFD-Mob-150 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table HG-UFD-Mob-150: the treasurecard drops (7), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Harvest Lord TC", "ItemName": "Harvest Lord"},
+    {"ItemId": "Pierce TC", "ItemName": "Pierce"},
+    {"ItemId": "Plague TC", "ItemName": "Plague"},
+    {"ItemId": "Steal Ward TC", "ItemName": "Steal Ward"},
+    {"ItemId": "Triage TC", "ItemName": "Triage"},
+    {"ItemId": "Weakness TC", "ItemName": "Weakness"},
+    {"ItemId": "Wild Bolt TC", "ItemName": "Wild Bolt"}
+  ]
+}

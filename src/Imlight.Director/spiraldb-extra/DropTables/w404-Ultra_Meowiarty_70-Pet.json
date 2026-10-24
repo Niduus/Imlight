@@ -1,0 +1,11 @@
+{
+  "Name": "W404 Ultra_Meowiarty_70 Pet",
+  "Description": "Wizard404's drop list of the game's table Ultra_Meowiarty_70 (the boss's chest): the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet (10%).",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1359365", "ItemName": "Meowiarty's Ghoul"},
+    {"ItemId": "1359366", "ItemName": "Meowiarty's Krok"}
+  ]
+}

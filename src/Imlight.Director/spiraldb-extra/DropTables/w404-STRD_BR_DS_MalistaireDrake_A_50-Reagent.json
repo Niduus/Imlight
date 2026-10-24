@@ -1,0 +1,17 @@
+{
+  "Name": "W404 STRD_BR_DS_MalistaireDrake_A_50 Reagent",
+  "Description": "Wizard404's drop list of the game's table STRD_BR_DS_MalistaireDrake_A_50: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent (60%).",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "1552063", "ItemName": "Helephant"},
+    {"ItemId": "1552064", "ItemName": "Colossus"},
+    {"ItemId": "1552066", "ItemName": "Triton"},
+    {"ItemId": "1552006", "ItemName": "Stone Colossus"},
+    {"ItemId": "1552065", "ItemName": "Centaur"},
+    {"ItemId": "1552062", "ItemName": "Wraith"},
+    {"ItemId": "1552061", "ItemName": "Hydra"},
+    {"ItemId": "1607833", "ItemName": "Malistaire's Whisker"}
+  ]
+}

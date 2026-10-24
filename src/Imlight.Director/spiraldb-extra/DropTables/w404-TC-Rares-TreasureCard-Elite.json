@@ -1,0 +1,18 @@
+{
+  "Name": "W404 TC-Rares TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-Rares: the treasurecard drops (9), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard (25%).",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {"ItemId": "Black Mantle TC", "ItemName": "Black Mantle"},
+    {"ItemId": "Cloak TC", "ItemName": "Cloak"},
+    {"ItemId": "Heck Hound TC", "ItemName": "Heck Hound"},
+    {"ItemId": "Ice Wyvern TC", "ItemName": "Ice Wyvern"},
+    {"ItemId": "Kraken TC", "ItemName": "Kraken"},
+    {"ItemId": "Monstrous TC", "ItemName": "Monstrous"},
+    {"ItemId": "Satyr TC", "ItemName": "Satyr"},
+    {"ItemId": "Skeletal Pirate TC", "ItemName": "Skeletal Pirate"},
+    {"ItemId": "Tough TC", "ItemName": "Tough"}
+  ]
+}
