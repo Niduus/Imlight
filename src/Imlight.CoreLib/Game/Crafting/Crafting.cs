@@ -194,7 +194,7 @@ internal enum CraftError : uint {
 /// <summary>
 /// What a craft did, for the client's answer and the chat window.
 /// </summary>
-internal sealed record CraftResult(CraftError Error, string Message, ulong MadeItemId = 0, int Made = 0, CraftingCooldown Slot = null);
+internal sealed record CraftResult(CraftError Error, string Message, ulong MadeItemId = 0, int Made = 0, CraftingCooldown Slot = null, int Crafted = 0);
 
 /// <summary>
 /// The game's crafting.
@@ -225,6 +225,11 @@ internal static class Crafting {
     // Recipe names to template ids, from the template manifest.
     private static readonly Lazy<Dictionary<string, uint>> s_byName = new(IndexRecipes);
     private static readonly ConcurrentDictionary<string, uint> s_searched = new(StringComparer.OrdinalIgnoreCase);
+
+    // [Crafting] AnswerFailedCrafts: also answer a failed craft in the crafting window (a blank Info box).
+    private static readonly bool s_answerFailed = ConfigurationManager.GetValue("Crafting.AnswerFailedCrafts", false);
+
+    internal static bool AnswerFailedCrafts => s_answerFailed;
 
     internal static bool Enabled => s_enabled;
 
@@ -550,18 +555,21 @@ internal static class Crafting {
 
         ExpireSlots(session, wizard);
         var cooldown = station.NoCooldown ? 0 : (long) Math.Round(Math.Max(0, (int) recipe.m_cookTime) * s_timerMultiplier);
+        quantity = Math.Clamp(quantity, 1, s_maxQuantity);
+        // Niduus (2026-10-24): "you can make as much as you want, it's just each craft takes a crafting slot for
+        // cooldown". As in the game, a recipe cooling down can be crafted again in another free slot; each item made
+        // fills one slot, so a craft makes at most as many as there are free slots.
         if (cooldown > 0) {
-            if (alchemy.Cooldowns.FirstOrDefault(slot => slot.RecipeId == id) is { } busy) {
-                var left = TimeSpan.FromSeconds(Math.Max(1, busy.FinishedAt - DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
-                return new(CraftError.OnCooldown, $"{name} is still cooling down ({Describe(left)} left).");
+            var free = s_slots - alchemy.Cooldowns.Count;
+            if (free <= 0) {
+                var next = alchemy.Cooldowns.Min(slot => slot.FinishedAt);
+                var left = TimeSpan.FromSeconds(Math.Max(1, next - DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
+                return new(CraftError.NoFreeSlot, $"All {s_slots} of your crafting slots are in use. The next one is free in {Describe(left)}.");
             }
 
-            if (alchemy.Cooldowns.Count >= s_slots) {
-                return new(CraftError.NoFreeSlot, $"All {s_slots} of your crafting slots are in use. Wait for one to finish.");
-            }
+            quantity = Math.Min(quantity, free);
         }
 
-        quantity = Math.Clamp(quantity, 1, s_maxQuantity);
         var needs = NeedsOf(recipe, quantity);
         var missing = needs.Where(need => Has(wizard, need) < need.Count).ToList();
         if (missing.Count > 0) {
@@ -581,15 +589,16 @@ internal static class Crafting {
         }
 
         CraftingCooldown slot = null;
-        if (cooldown > 0) {
-            slot = new CraftingCooldown {
+        for (var i = 0; cooldown > 0 && i < quantity; i++) {
+            var filled = new CraftingCooldown {
                 SlotId = RandomGen.GenerateGUID().Full,
                 RecipeId = id,
                 RecipeName = name,
                 FinishedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + cooldown,
             };
-            alchemy.Cooldowns.Add(slot);
-            if (s_serializer.Serialize(ClientSlotOf(slot), SERIALIZATION_FLAGS, out var data)) {
+            slot ??= filled;
+            alchemy.Cooldowns.Add(filled);
+            if (s_serializer.Serialize(ClientSlotOf(filled), SERIALIZATION_FLAGS, out var data)) {
                 session.Tell(new WIZARD_12_PROTOCOL.MSG_CRAFTINGSLOTADD { GlobalID = wizard.GameObjectID, Data = data });
             }
         }
@@ -598,7 +607,7 @@ internal static class Crafting {
         Logger.Information("Crafting: {0} crafted {1} x{2} ({3}) at {4}; cooldown {5} s.",
             Logger.Args(wizard.CharId, name, quantity, id, station.Name, cooldown));
 
-        return new(CraftError.None, null, madeId, made, slot);
+        return new(CraftError.None, null, madeId, made, slot, quantity);
     }
 
     private static string Describe(TimeSpan time)

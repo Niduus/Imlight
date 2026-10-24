@@ -28,7 +28,7 @@
  * Registered in GameServiceFactory; the work is in Game/Crafting/Crafting.
  *
  * NOTE:
- * The client's error numbers for MSG_USERECIPE are not known, so a failed craft also says why in the chat window.
+ * The client's error numbers for MSG_USERECIPE are not known, so a failed craft is said in the chat window instead.
  *
  * TODO:
  *
@@ -95,18 +95,27 @@ internal class CraftingService(SessionActor sessionActor) : MessageService(sessi
             result = new CraftResult(CraftError.NothingMade, "Crafting failed on the server; the log says why.");
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_USERECIPE {
-            RecipeName = recipeName ?? "",
-            FinalItemID = result.MadeItemId,
-            Error = (uint) result.Error,
-            Quantity = (uint) (result.Error == CraftError.None ? quantity : 0),
-        });
+        // The client shows a failed craft's error number as an Info box, and it has no text for the server's numbers
+        // (Niduus, 2026-10-24: "Info is blank"). So a failed craft is only said in the chat window, unless
+        // [Crafting] AnswerFailedCrafts asks for the old answer (if the window ever waits forever after a failed craft).
+        if (result.Error == CraftError.None || Crafting.Crafting.AnswerFailedCrafts) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_USERECIPE {
+                RecipeName = recipeName ?? "",
+                FinalItemID = result.MadeItemId,
+                Error = (uint) result.Error,
+                Quantity = (uint) (result.Error == CraftError.None ? Math.Max(1, result.Crafted) : 0),
+            });
+        }
 
         if (result.Error != CraftError.None) {
             Logger.Information("Crafting: {0} could not be crafted: {1} ({2}).", Logger.Args(recipeName, result.Error, result.Message));
             InformGameClient(result.Message);
 
             return;
+        }
+
+        if (result.Crafted < quantity) {
+            InformGameClient($"Made {result.Crafted} of the {quantity} asked for: each one fills a crafting slot, and only {result.Crafted} were free.");
         }
 
         if (result.Slot is not null) {
