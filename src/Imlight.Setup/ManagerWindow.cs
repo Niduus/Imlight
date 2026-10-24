@@ -461,6 +461,7 @@ internal sealed partial class ManagerWindow : Window {
                    "once: Windows asks to allow the change, and the app asks your router to let friends in. Leave the server running."),
                 _friendResult),
             CommandCard(),
+            AnnouncementCard(),
             PositionCard());
     }
 
@@ -1040,6 +1041,43 @@ internal sealed partial class ManagerWindow : Window {
             }, "Runs a command as the wizard playing on this PC, the same as typing it in chat. "
                + "Friends playing from other PCs are never affected. The Lookup tab lists every command. "
                + "Previous commands lists the last ones you ran: pick one to run it again."));
+    }
+
+    private readonly TextBox _announcementBox = new() { Watermark = "Such as: Double XP weekend starts now!" };
+    private readonly CheckBox _announceBox = new() { Content = "Box on screen", IsChecked = true };
+    private readonly CheckBox _announceChat = new() { Content = "Chat line", IsChecked = true };
+
+    /// <summary>
+    /// Tells everyone playing on the server something (Niduus, 2026-10-23: "add a announcement to the manager so I can
+    /// announce something to the whole server"): the game's message box in the middle of the screen, a chat line, or both.
+    /// </summary>
+    private Control AnnouncementCard() {
+        async Task SendAsync() {
+            var text = (_announcementBox.Text ?? "").Trim();
+            _manager.Announce(text, _announceBox.IsChecked == true, _announceChat.IsChecked == true);
+            _announcementBox.Text = "";
+            Say($"Announced to everyone online: {text}");
+            await Task.CompletedTask;
+        }
+
+        var send = Action(Primary("Announce"), SendAsync);
+        _announcementBox.KeyDown += async (_, e) => {
+            if (e.Key == Avalonia.Input.Key.Enter) {
+                e.Handled = true;
+                await Guard(SendAsync);
+            }
+        };
+
+        return Fold("quote", "Play", "Announcement",
+            "Sends a message to every player online on your server, friends included.",
+            WithHint(new DockPanel {
+                Children = {
+                    WithDock(WithMargin(send, new Thickness(8, 0, 0, 0)), Dock.Right),
+                    _announcementBox,
+                },
+            }, "Box on screen: the game's message box, which each player closes with OK. Chat line: \"Announcement: ...\" in the chat. "
+               + "Only players online right now see it."),
+            Row(_announceBox, _announceChat));
     }
 
     private Control PositionCard() {

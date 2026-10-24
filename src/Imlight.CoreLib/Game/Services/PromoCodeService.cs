@@ -39,6 +39,7 @@ internal class PromoCodeService(SessionActor sessionActor) : MessageService(sess
     private static readonly bool s_idleOpensWindow = ConfigurationManager.GetValue("Codes.IdleOpensCodeWindow", true);
 
     private DateTime _lastNotAfk = DateTime.MinValue;
+    private System.Threading.Timer _watchTimer;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new PromoCodeService(parentActor));
@@ -77,6 +78,24 @@ internal class PromoCodeService(SessionActor sessionActor) : MessageService(sess
         }
     }
 
+    // `.code watch`: every message the game sends for a while is written to the log, to see what a button sends.
+    [InternalMessageHandler(typeof(WatchClientMessages))]
+    private void ReceiveWatch(WatchClientMessages message) {
+        SessionActor.ClientMessageLogPrefix = "Code watch";
+        _watchTimer?.Dispose();
+        _watchTimer = new System.Threading.Timer(_ => {
+            if (SessionActor.ClientMessageLogPrefix == "Code watch") {
+                SessionActor.ClientMessageLogPrefix = null;
+            }
+        }, null, TimeSpan.FromSeconds(message.Seconds), System.Threading.Timeout.InfiniteTimeSpan);
+        Logger.Information("Codes | Writing every message the game sends to the log for {0} seconds.", Logger.Args(message.Seconds));
+    }
+
+    protected override void OnDispose() {
+        base.OnDispose();
+        _watchTimer?.Dispose();
+    }
+
     // The Options book's Idle button (SettingsWindow::OnIdleButtonClick) sends MSG_NOT_AFK and then again every 5
     // minutes while idle. The game's patcher sends it too, at most every 5 minutes, while it downloads files.
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_NOT_AFK))]
@@ -98,5 +117,15 @@ internal class PromoCodeService(SessionActor sessionActor) : MessageService(sess
             Logger.Error("Codes | Answering the Idle button failed. {0}", Logger.Args(ex.Message));
         }
     }
+
+}
+
+/// <summary>Tells a session's PromoCodeService to log every message the game sends for a while (`.code watch`).</summary>
+internal sealed class WatchClientMessages : IServerMessage {
+
+    public byte MessageOrder { get; } = 1;
+    public byte ServiceID { get; } = 104;
+
+    public int Seconds { get; init; } = 120;
 
 }

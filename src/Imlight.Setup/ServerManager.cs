@@ -140,6 +140,29 @@ internal sealed partial class ServerManager(string installFolder) {
         }
     }
 
+    /// <summary>
+    /// Sends an announcement to everyone playing on the server (Niduus, 2026-10-23: "add a announcement to the manager
+    /// so I can announce something to the whole server"): a box in the middle of the screen, a chat line, or both.
+    /// </summary>
+    internal void Announce(string text, bool box, bool chat) {
+        text = (text ?? "").ReplaceLineEndings(" ").Trim();
+        if (text.Length == 0) {
+            throw new PanelException("Type the announcement first.");
+        }
+
+        if (!box && !chat) {
+            throw new PanelException("Pick where it shows: the box on screen, the chat, or both.");
+        }
+
+        if (!InstalledCommands.IsServerRunning(InstallFolder)) {
+            throw new PanelException("Start the server first. Only players who are online see an announcement.");
+        }
+
+        // The server reads "box|", "chat|" or "both|" in front; a line without one is a box (the stop notices).
+        var where = box && chat ? "both" : box ? "box" : "chat";
+        File.AppendAllText(Path.Combine(ServerFolder, ANNOUNCEMENTS_FILE), $"{where}|{text}" + Environment.NewLine);
+    }
+
     internal string StopServer(string notice = null) {
         AnnounceBeforeStop(notice ?? StopNotice ?? "The server is shutting down now. You will be disconnected.");
         var exe = Path.GetFullPath(InstalledCommands.ServerExe(InstallFolder));

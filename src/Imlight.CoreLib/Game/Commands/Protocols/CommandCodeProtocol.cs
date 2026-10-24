@@ -32,7 +32,8 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// code UI"). The game only opens it itself from the Promo Code button on the character select screen
 /// (WizardCharacterSelect, btnPromoCode, promoCodeEntry.gui), so in game it is asked for by file with MSG_SHOWGUI.
 /// `.code HYPER` redeems a code (the Manager's Codes card makes them). `.code gui 2` to `.code gui 4` try other
-/// spellings and the friend code window; `.code gui &lt;file&gt;.gui` tries any window.
+/// spellings and the friend code window; `.code gui &lt;file&gt;.gui` tries any window. `.code watch` logs what the
+/// game sends for 2 minutes.
 /// </summary>
 internal class CommandCodeProtocol : CommandProtocol {
 
@@ -59,6 +60,20 @@ internal class CommandCodeProtocol : CommandProtocol {
         }
 
         var words = text.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (words[0].Equals("watch", StringComparison.OrdinalIgnoreCase)) {
+            // For finding what a button sends (Niduus, 2026-10-23: the Idle button opened nothing).
+            if (!AuthorityRequester.RequestAuthority(AuthLevel.QualityAssurance, Context.Account, "Command code watch")) {
+                InformSenderClient("You do not have permission to use this command.");
+
+                return;
+            }
+
+            Context.SessionActor.Tell(new WatchClientMessages { Seconds = 120 }, ActorRefs.NoSender);
+            InformSenderClient("For the next 2 minutes the server log gets every message your game sends. Press the button now (such as Idle in the Options book).");
+
+            return;
+        }
+
         if (words[0].Equals("gui", StringComparison.OrdinalIgnoreCase)) {
             if (!AuthorityRequester.RequestAuthority(AuthLevel.QualityAssurance, Context.Account, "Command code gui")) {
                 InformSenderClient("You do not have permission to use this command.");

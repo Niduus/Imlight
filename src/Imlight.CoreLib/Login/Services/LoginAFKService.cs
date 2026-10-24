@@ -56,6 +56,11 @@ internal class LoginAFKService : MessageService {
 
     private const string AfkCheckTimerKey = "AfkCheck";
 
+    // [Codes] IdleOpensCodeWindow: the Options book's Idle button opens the promo code window.
+    private static readonly bool s_idleOpensWindow = ConfigurationManager.GetValue("Codes.IdleOpensCodeWindow", true);
+
+    private long _lastNotAfkSeconds;
+
     private bool _halted;
     private bool _disposed;
     private long _lastReceivedSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -87,6 +92,24 @@ internal class LoginAFKService : MessageService {
     [MessageHandler(typeof(LOGIN_7_PROTOCOL.MSG_LOGIN_NOT_AFK))]
     private void ReceiveLoginNotAfk(LOGIN_7_PROTOCOL.MSG_LOGIN_NOT_AFK message) {
         _lastReceivedSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    }
+
+    // The game's own MSG_NOT_AFK, sent here at character select: by the Idle button of the Options book (which then
+    // repeats it every 5 minutes) or by the patcher while it downloads. Idle opens the promo code window, as in game
+    // (Niduus, 2026-10-23: "IDLE button doesn't bring up UI"; the only MSG_NOT_AFK after it came on a login session).
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_NOT_AFK))]
+    private void ReceiveNotAfk(GAME_5_PROTOCOL.MSG_NOT_AFK message) {
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var gap = _lastNotAfkSeconds == 0 ? 0 : now - _lastNotAfkSeconds;
+        _lastNotAfkSeconds = now;
+        _lastReceivedSeconds = now;
+
+        var heartbeat = gap is >= 280 and <= 320;
+        Logger.Information("Codes | The game sent MSG_NOT_AFK at character select ({0} s after the last one){1}.", Logger.Args(
+            gap, !s_idleOpensWindow ? ", [Codes] IdleOpensCodeWindow is off" : heartbeat ? ", the idle heartbeat" : ": opening the code window"));
+        if (s_idleOpensWindow && !heartbeat) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOWGUI { GUIFileName = "promoCodeEntry.gui", StageIndex = 0 });
+        }
     }
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_OPCODE_HALT))]

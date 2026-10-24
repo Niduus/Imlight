@@ -98,9 +98,18 @@ internal static class ManagerCommands {
             TryDelete(taken);
 
             foreach (var line in lines) {
-                Logger.Information("Imlight app announcement to everyone: {0}", Logger.Args(line));
+                // The app's Announcement card puts "box|", "chat|" or "both|" in front; a plain line is a box.
+                var (box, chat, text, fromCard) = Split(line);
+                Logger.Information("Imlight app announcement to everyone ({0}): {1}", Logger.Args(box && chat ? "box and chat" : box ? "box" : "chat", text));
                 foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
-                    s_system.ActorSelection(player.ActorPath).Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 1 });
+                    var actor = s_system.ActorSelection(player.ActorPath);
+                    if (box) {
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? $"<center>Announcement</center>\n{text}" : text, Modal = 1 });
+                    }
+
+                    if (chat) {
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = $"Announcement: {text}", Modal = 0 });
+                    }
                 }
             }
         }
@@ -110,6 +119,18 @@ internal static class ManagerCommands {
         catch (Exception ex) {
             Logger.Error("Could not send the Imlight app's announcement: {0}", Logger.Args(ex.Message));
         }
+    }
+
+    private static (bool Box, bool Chat, string Text, bool FromCard) Split(string line) {
+        var bar = line.IndexOf('|');
+        var where = bar > 0 ? line[..bar].Trim().ToLowerInvariant() : "";
+
+        return where switch {
+            "box" => (true, false, line[(bar + 1)..].Trim(), true),
+            "chat" => (false, true, line[(bar + 1)..].Trim(), true),
+            "both" => (true, true, line[(bar + 1)..].Trim(), true),
+            _ => (true, false, line, false),
+        };
     }
 
     private static void TryDelete(string path) {
