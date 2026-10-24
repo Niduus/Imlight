@@ -1,0 +1,17 @@
+{
+  "Name": "MS-DTH1-C01-005",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 815,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T00:54:55.613116Z",
+  "ModifiedAt": "2026-06-01T00:54:55.613116Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

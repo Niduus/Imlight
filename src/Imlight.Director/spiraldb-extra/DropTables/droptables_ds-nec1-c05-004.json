@@ -1,0 +1,17 @@
+{
+  "Name": "DS-NEC1-C05-004",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 2345,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T01:00:48.336088Z",
+  "ModifiedAt": "2026-06-01T01:00:48.336088Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

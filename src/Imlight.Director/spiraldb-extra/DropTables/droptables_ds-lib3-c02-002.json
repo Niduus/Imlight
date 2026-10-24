@@ -1,0 +1,17 @@
+{
+  "Name": "DS-LIB3-C02-002",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 1785,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T00:59:57.432223Z",
+  "ModifiedAt": "2026-06-01T00:59:57.432223Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

@@ -1,0 +1,24 @@
+{
+  "Name": "DS-NEC1-C01-006",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 118,
+  "MaxGold": 118,
+  "ExperienceAmount": 755,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160810",
+      "ItemName": "Dragon Bust",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T01:00:57.536197Z",
+  "ModifiedAt": "2026-06-01T01:00:57.536197Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

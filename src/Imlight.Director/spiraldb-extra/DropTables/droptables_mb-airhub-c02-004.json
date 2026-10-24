@@ -1,0 +1,24 @@
+{
+  "Name": "MB-AIRHub-C02-004",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 63,
+  "MaxGold": 63,
+  "ExperienceAmount": 205,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160614",
+      "ItemName": "Tower Blueprints",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T00:53:49.967736Z",
+  "ModifiedAt": "2026-06-01T00:53:49.967736Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

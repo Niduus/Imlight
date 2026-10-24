@@ -1,0 +1,24 @@
+{
+  "Name": "MB-AIR1-C01-005",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 116,
+  "MaxGold": 116,
+  "ExperienceAmount": 1140,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "39041",
+      "ItemName": "Thinker's Ring",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T00:53:24.293484Z",
+  "ModifiedAt": "2026-06-01T00:53:24.293484Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

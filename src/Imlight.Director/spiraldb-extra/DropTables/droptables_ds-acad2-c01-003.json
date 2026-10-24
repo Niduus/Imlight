@@ -1,0 +1,17 @@
+{
+  "Name": "DS-ACAD2-C01-003",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 128,
+  "MaxGold": 128,
+  "ExperienceAmount": 890,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T00:58:11.347769Z",
+  "ModifiedAt": "2026-06-01T00:58:11.347769Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

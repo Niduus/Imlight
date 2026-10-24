@@ -1,0 +1,24 @@
+{
+  "Name": "MS-WAR2-C01-006",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 176,
+  "MaxGold": 176,
+  "ExperienceAmount": 2085,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160583",
+      "ItemName": "Wooden Watchtower",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T00:57:38.193176Z",
+  "ModifiedAt": "2026-06-01T00:57:38.193176Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

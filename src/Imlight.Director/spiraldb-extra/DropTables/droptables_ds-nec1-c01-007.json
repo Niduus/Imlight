@@ -1,0 +1,24 @@
+{
+  "Name": "DS-NEC1-C01-007",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 236,
+  "MaxGold": 236,
+  "ExperienceAmount": 2345,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "126664",
+      "ItemName": "Dragonfire Deck",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T01:01:00.232159Z",
+  "ModifiedAt": "2026-06-01T01:01:00.232159Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

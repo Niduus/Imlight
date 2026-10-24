@@ -1,0 +1,24 @@
+{
+  "Name": "MS-DTH2-C01-005",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 103,
+  "MaxGold": 103,
+  "ExperienceAmount": 2270,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160570",
+      "ItemName": "Haunted Samoorai Shrine",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T00:55:17.185266Z",
+  "ModifiedAt": "2026-06-01T00:55:17.185266Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "MB-YARD2-C01-008",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 150,
+  "MaxGold": 150,
+  "ExperienceAmount": 230,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T00:54:33.264627Z",
+  "ModifiedAt": "2026-06-01T00:54:33.264627Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

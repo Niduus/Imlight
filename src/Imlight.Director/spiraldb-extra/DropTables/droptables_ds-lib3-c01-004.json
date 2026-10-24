@@ -1,0 +1,24 @@
+{
+  "Name": "DS-LIB3-C01-004",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 2230,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "146214",
+      "ItemName": "Dragonfire Mantle",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T01:00:03.969781Z",
+  "ModifiedAt": "2026-06-01T01:00:03.969781Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

@@ -1,0 +1,24 @@
+{
+  "Name": "DS-NEC2-C01-004",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 120,
+  "MaxGold": 120,
+  "ExperienceAmount": 2460,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160801",
+      "ItemName": "Phoenix Plaque",
+      "Notes": "",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2026-06-01T01:01:16.217566Z",
+  "ModifiedAt": "2026-06-01T01:01:16.217566Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

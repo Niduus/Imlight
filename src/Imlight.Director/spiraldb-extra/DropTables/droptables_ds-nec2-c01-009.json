@@ -1,0 +1,17 @@
+{
+  "Name": "DS-NEC2-C01-009",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 240,
+  "MaxGold": 240,
+  "ExperienceAmount": 2460,
+  "TrainingPoints": 0,
+  "Items": [],
+  "CreatedAt": "2026-06-01T01:01:36.579464Z",
+  "ModifiedAt": "2026-06-01T01:01:36.579464Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}
