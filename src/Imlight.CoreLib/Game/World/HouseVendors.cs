@@ -92,8 +92,8 @@ internal static class HouseVendors {
     // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"). The game's own shop for him is a recipe shop
     // (WizShoppingBehavior m_furnitureShop 3, the ShoppingRecipeWindow) listing his m_recipeList: the Next Hatch Free,
     // Purreau's Potion #9 and Hatching Elixir recipes, the Hatchmaking Kiosk, the Hatchery tapestry and pet snacks
-    // (Niduus, 2026-10-23: "Purreau's shop isn't using the right UI"). There is no crafting here, so a bought recipe
-    // gives what it makes.
+    // (Niduus, 2026-10-23: "Purreau's shop isn't using the right UI"). A bought recipe goes into the recipe book
+    // for crafting ([Crafting] RecipeShopGivesItem gives what it makes instead).
     private static readonly uint s_petElixirVendorId = ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
     private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
     private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
