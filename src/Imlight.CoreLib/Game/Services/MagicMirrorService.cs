@@ -84,9 +84,20 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
     [InternalMessageHandler(typeof(ApplyMirrorLook))]
     private void ReceiveApplyLook(ApplyMirrorLook message) {
         try {
-            if (GetActiveWizard() is { } wizard) {
-                Apply(wizard, message.Look);
+            if (GetActiveWizard() is not { } wizard) {
+                return;
             }
+
+            // No look: send the saved one again (after entering a zone).
+            if (message.Look is null) {
+                if (wizard.MirrorLook is not null) {
+                    Show(wizard);
+                }
+
+                return;
+            }
+
+            Apply(wizard, message.Look);
         }
         catch (Exception ex) {
             Logger.Error("Magic Mirror | Applying a look failed. {0}", Logger.Args(ex));
@@ -111,15 +122,12 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
             }
 
             Show(wizard);
+
+            // The timer runs off the actor, so it only asks the actor to send it again.
+            var self = Self;
             _resendTimer?.Dispose();
-            _resendTimer = new System.Threading.Timer(_ => {
-                try {
-                    Show(wizard);
-                }
-                catch (Exception ex) {
-                    Logger.Error("Magic Mirror | Sending the look again failed. {0}", Logger.Args(ex.Message));
-                }
-            }, null, TimeSpan.FromSeconds(3), System.Threading.Timeout.InfiniteTimeSpan);
+            _resendTimer = new System.Threading.Timer(_ => self.Tell(new ApplyMirrorLook { Look = null }),
+                null, TimeSpan.FromSeconds(3), System.Threading.Timeout.InfiniteTimeSpan);
         }
         catch (Exception ex) {
             Logger.Error("Magic Mirror | Sending the saved look failed. {0}", Logger.Args(ex));
@@ -139,7 +147,7 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
 
 }
 
-/// <summary>Tells a session's MagicMirrorService to show and save a look (`.mirror look`).</summary>
+/// <summary>Tells a session's MagicMirrorService to show and save a look (`.mirror look`), or with no look to send the saved one again.</summary>
 internal sealed class ApplyMirrorLook : IServerMessage {
 
     public byte MessageOrder { get; } = 1;
