@@ -299,7 +299,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // minions) take nobody who wanders by, and a wandering boss does not join someone else's fight. A plain boss
         // fight does take a monster that walks in, as in the game (Niduus, 2026-10-23: a Rotted Fodder walked into the
         // Harvest Lord's battle and stood there).
-        if (_tutorialDirector.IsActive || _encounter is not null || _encounterBattleCounted || npc.IsBossMonster) {
+        // A boss standing in the circle as the battle is made is part of the same fight and joins it before the first
+        // round (Niduus, 2026-10-23: the Fairy Queen stood beside Rattlebones in the Rattlebones Exalted Challenge and
+        // never came in, "it is a boss"). Only once the rounds have begun is a boss that walks in turned away.
+        var bossOfThisFight = npc.IsBossMonster && Duel.m_roundNum == 0;
+        if (_tutorialDirector.IsActive || _encounter is not null || _encounterBattleCounted || (npc.IsBossMonster && !bossOfThisFight)) {
             Refused(_tutorialDirector.IsActive ? "tutorial battle" : npc.IsBossMonster ? "it is a boss"
                 : "the battle has its own minions");
 
@@ -327,7 +331,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        AddParticipant(creature, suspect);
+        // It takes the free enemy circle nearest to where it stands (the Fairy Queen, placed on circle 4, takes circle 4).
+        AddParticipant(creature, suspect, NearestFreeCreatureCircle(creature));
         var circle = SubCircles.FirstOrDefault(x => x?.ParticipantObject?.m_globalID == creature.m_globalID);
         if (circle is null) {
             entity.ReleaseLateDuelJoin();
@@ -339,7 +344,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         var now = JoinLateCreatureNow(circle);
         Logger.Information("Late mob join: {0} ({1}) joined duel {2} slot {3}{4}",
             Logger.Args(name, creature.m_templateID.Full, Duel.m_duelID.Full,
-                circle.SlotIndex, now ? " and plays this round" : ", from the next round"));
+                circle.SlotIndex, now ? " and plays this round" : Duel.m_roundNum == 0 ? ", from the first round" : ", from the next round"));
     }
 
     /// <summary>
@@ -1499,7 +1504,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         return slot;
     }
 
-    private void AddParticipant(CoreObject participantObject, IActorRef participantActor) {
+    // The free enemy circle nearest to where a creature stands, or null when none is free.
+    private CombatDuelSubCircle NearestFreeCreatureCircle(CoreObject creature)
+        => SubCircles.Take(4).Where(c => c is not null && !c.Occupied)
+            .OrderBy(c => (c.WorldPosition - creature.m_location).LengthSquared())
+            .FirstOrDefault();
+
+    /// <param name="preferred">A free enemy circle for a creature to take, or null for the first free one.</param>
+    private void AddParticipant(CoreObject participantObject, IActorRef participantActor, CombatDuelSubCircle preferred = null) {
         var isPlayer = participantObject.m_templateID == 1;
 
         var alreadyInDuel = SubCircles.Any(x => x?.ParticipantObject?.m_globalID == participantObject.m_globalID);
@@ -1507,7 +1519,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        var subCircle = isPlayer ? ChoosePlayerSubCircle(participantObject) : GetAvailableSubCircleTeamCreature();
+        var subCircle = isPlayer ? ChoosePlayerSubCircle(participantObject)
+            : preferred is { Occupied: false } ? preferred : GetAvailableSubCircleTeamCreature();
         if (subCircle is null) {
             if (isPlayer && _groupReservations.Count > 0) {
                 Logger.Debug("Duel {DuelId} | Every free circle is held for a group; {Participant} cannot join.",
