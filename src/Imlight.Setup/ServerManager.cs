@@ -545,7 +545,9 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>
     /// Runs a command in the game on this PC only, as if typed in chat. Wizards on other PCs never run it.
     /// </summary>
-    internal void SendCommand(string command) {
+    /// <param name="wizardId">When set, only that wizard runs it (the server reads the "@&lt;id&gt; " in front); else every
+    /// wizard playing on this PC does.</param>
+    internal void SendCommand(string command, string wizardId = null) {
         command = command.Trim();
         if (command.Length == 0) {
             throw new PanelException("Type a command first, such as .elixir50.");
@@ -560,7 +562,8 @@ internal sealed partial class ServerManager(string installFolder) {
             throw new PanelException("Start the server and log in to Wizard101 on this PC first.");
         }
 
-        File.AppendAllText(Path.Combine(ServerFolder, COMMANDS_FILE), command.ReplaceLineEndings(" ") + Environment.NewLine);
+        var line = (wizardId is { Length: > 0 } ? $"@{wizardId} " : "") + command.ReplaceLineEndings(" ");
+        File.AppendAllText(Path.Combine(ServerFolder, COMMANDS_FILE), line + Environment.NewLine);
         RememberCommand(command);
     }
 

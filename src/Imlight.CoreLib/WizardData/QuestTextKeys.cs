@@ -32,6 +32,12 @@ public static partial class QuestTextKeys {
         } finally {
             Locale.ReleaseQuestTables();
         }
+
+        try {
+            ResolvePlaces(quests);
+        } catch (Exception ex) {
+            Logger.Warning("Quest places could not be matched to the game's places: {0}", Logger.Args(ex.Message));
+        }
     }
 
     private static IEnumerable<NPCDialogEntry> DialogEntries(ActorDialogListBase list)
@@ -49,7 +55,7 @@ public static partial class QuestTextKeys {
 
         var ours = quests.Where(q => q is not null && (IsText(q.m_questTitle)
             || DialogEntries(q.m_dialogList).Any(e => IsText(e.m_dialog))
-            || q.m_goals.Any(g => IsText(g.m_goalTitle) || IsText(g.m_locationName)
+            || q.m_goals.Any(g => IsText(g.m_goalTitle)
                 || IsText(g.m_tallyCounter?.m_descriptor) || IsText(g.m_tallyCounter?.m_descriptor2)
                 || DialogEntries(g.m_dialogList).Any(e => IsText(e.m_dialog))))).ToList();
         if (ours.Count == 0) {
@@ -64,7 +70,6 @@ public static partial class QuestTextKeys {
 
             foreach (var goal in quest.m_goals) {
                 Want(goal.m_goalTitle);
-                Want(goal.m_locationName);
                 Want(goal.m_tallyCounter?.m_descriptor);
                 Want(goal.m_tallyCounter?.m_descriptor2);
                 foreach (var entry in DialogEntries(goal.m_dialogList)) {
@@ -121,7 +126,6 @@ public static partial class QuestTextKeys {
 
             foreach (var goal in quest.m_goals) {
                 goal.m_goalTitle = Pick(goal.m_goalTitle, null, "WizardQuestGoals");
-                goal.m_locationName = Pick(goal.m_locationName, null, "ZoneLocName", "WizardZone", "WizQst*");
                 if (goal.m_tallyCounter is { } tally) {
                     tally.m_descriptor = Pick(tally.m_descriptor, home, "WizardMobs", "WizItems", "WizardGameObjects", "WizQst*");
                     tally.m_descriptor2 = Pick(tally.m_descriptor2, home, "WizardMobs", "WizItems", "WizardGameObjects", "WizQst*");
@@ -136,5 +140,126 @@ public static partial class QuestTextKeys {
         Logger.Information("Quest text: {0} English lines of {1} quests got the game's own line, {2} the game does not have stay as written.",
             Logger.Args(matched, ours.Count, kept));
     }
+
+
+    private const string PLACE_TABLE = "ZoneLocName";
+
+    // A zone folder whose name is not spelled like its world in the place table.
+    private static readonly Dictionary<string, string> s_worldSpellings = new(StringComparer.Ordinal) {
+        ["dragonspire"] = "dragonspyre",
+    };
+
+    /// <summary>
+    /// The quest book shows where a step is by a line that says "World|Place", mostly a key of the game's place table
+    /// (ZoneLocName_00000002 is "Grizzleheim|Savarstaad Pass"); any other line shows as
+    /// "ERROR: unknown zone. ERROR: unknown world." (Press Pass, Niduus 2026-10-24). Each step of our own quests gets
+    /// the place of its world with the same name, else the place of its zone's name (CL_Z01i1_Survey_Camp is
+    /// Survey Camp), else the place other steps in the same zone use, else in the same area of the world (an inside
+    /// of CL_Z05 takes the place of CL_Z05), else the place the world's steps use most.
+    /// </summary>
+    private static void ResolvePlaces(IReadOnlyList<QuestTemplate> quests) {
+        var places = Locale.Table(PLACE_TABLE);
+        if (places is null || places.Count == 0) {
+            return;
+        }
+
+        var byName = new Dictionary<(string World, string Place), string>();
+        foreach (var (id, text) in places.OrderBy(p => p.Key, StringComparer.Ordinal)) {
+            var bar = text?.IndexOf('|') ?? -1;
+            if (bar > 0) {
+                byName.TryAdd((Locale.PlainText(text[..bar]), Locale.PlainText(text[(bar + 1)..])), $"{PLACE_TABLE}_{id}");
+            }
+        }
+
+        bool IsPlace(string value)
+            => value is not null && value.StartsWith(PLACE_TABLE + "_", StringComparison.Ordinal)
+               && places.ContainsKey(value[(PLACE_TABLE.Length + 1)..]);
+
+        var goals = quests.Where(q => q?.m_goals is not null).SelectMany(q => q.m_goals).Where(g => g is not null).ToList();
+
+        // First the steps whose place is named in the place table, by its own name or its zone's.
+        var unplaced = new List<GoalTemplate>();
+        foreach (var goal in goals) {
+            // A step with no place shows none, as in the game. The game's own quests also name places by a line of
+            // their dialogue table (WizQst1ED24_00000009 says "World|Place"); those are kept.
+            string current = goal.m_locationName;
+            if (string.IsNullOrEmpty(current) || IsPlace(current) || current.StartsWith("WizQst", StringComparison.Ordinal)) {
+                continue;
+            }
+
+            var zone = (string) goal.m_destinationZone ?? "";
+            var world = WorldOf(zone);
+            var name = Locale.PlainText(Locale.GetEnglishName(current) is { Length: > 0 } shown ? shown : current);
+            if ((name.Length > 0 && byName.TryGetValue((world, name), out var key))
+                || byName.TryGetValue((world, ZoneWords(zone)), out key)) {
+                goal.m_locationName = key;
+            } else {
+                unplaced.Add(goal);
+            }
+        }
+
+        // The rest take the place most steps in the same zone, area or world use.
+        var byZone = new Dictionary<string, Dictionary<string, int>>(StringComparer.OrdinalIgnoreCase);
+        void Count(string group, string key) {
+            if (!byZone.TryGetValue(group, out var counts)) {
+                counts = [];
+                byZone[group] = counts;
+            }
+
+            counts[key] = counts.GetValueOrDefault(key) + 1;
+        }
+
+        foreach (var goal in goals.Where(g => IsPlace(g.m_locationName))) {
+            var zone = (string) goal.m_destinationZone ?? "";
+            Count("zone:" + zone, goal.m_locationName);
+            if (AreaOf(zone) is { } area) {
+                Count("area:" + area, goal.m_locationName);
+            }
+
+            Count("world:" + WorldOf(zone), goal.m_locationName);
+        }
+
+        string Most(string group)
+            => byZone.TryGetValue(group, out var counts) ? counts.OrderByDescending(c => c.Value).ThenBy(c => c.Key, StringComparer.Ordinal).First().Key : null;
+
+        int kept = 0;
+        foreach (var goal in unplaced) {
+            var zone = (string) goal.m_destinationZone ?? "";
+            var key = Most("zone:" + zone) ?? (AreaOf(zone) is { } area ? Most("area:" + area) : null) ?? Most("world:" + WorldOf(zone));
+            if (key is null) {
+                kept++;
+                continue;
+            }
+
+            goal.m_locationName = key;
+        }
+
+        Logger.Information("Quest places: {0} steps got a place the game knows, {1} by the place their zone or world uses most; {2} have none.",
+            Logger.Args(goals.Count(g => IsPlace(g.m_locationName)), unplaced.Count - kept, kept));
+    }
+
+    /// <summary>The world of a zone, as the place table spells it: Celestia/Interiors/CL_Z01i1_Survey_Camp is celestia.</summary>
+    private static string WorldOf(string zone) {
+        var world = Locale.PlainText(zone.Split('/')[0]);
+
+        return s_worldSpellings.GetValueOrDefault(world, world);
+    }
+
+    /// <summary>The words of a zone's own name: CL_Z01i1_Survey_Camp is surveycamp.</summary>
+    private static string ZoneWords(string zone)
+        => Locale.PlainText(string.Join(" ", zone.Split('/')[^1].Split('_').Where(part => !ZoneCode().IsMatch(part))));
+
+    /// <summary>The world and numbered area of a zone (CL_Z05 in Celestia), which its insides share; null when it has none.</summary>
+    private static string AreaOf(string zone) {
+        var match = AreaCode().Match(zone);
+
+        return match.Success ? $"{WorldOf(zone)}/{match.Groups[1].Value.ToUpperInvariant()}" : null;
+    }
+
+    [GeneratedRegex(@"^([A-Z]{1,3}\d*|Z\d+\w*|I\d+|i\d+|\d+)$")]
+    private static partial Regex ZoneCode();
+
+    [GeneratedRegex(@"_(Z\d+)", RegexOptions.IgnoreCase)]
+    private static partial Regex AreaCode();
 
 }

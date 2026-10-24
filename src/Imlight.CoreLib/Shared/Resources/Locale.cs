@@ -124,6 +124,15 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         return value;
     }
 
+    /// <summary>One of the game's text tables (ZoneLocName), id to line, or null when the game has no such table.</summary>
+    public static IReadOnlyDictionary<string, string> Table(string tableName) {
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        return s_data.TryGetValue(tableName, out var table) ? table : null;
+    }
+
     private static List<(string Key, string Text)> s_phrases;
 
     /// <summary>

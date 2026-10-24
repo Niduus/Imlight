@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -66,14 +67,14 @@ internal static class ManagerCommands {
             // Moving the file first keeps a command the app adds meanwhile for the next round.
             var taken = COMMANDS_FILE + ".running";
             File.Move(COMMANDS_FILE, taken, overwrite: true);
-            var commands = File.ReadAllLines(taken).Select(line => line.Trim().TrimStart('.').Trim())
-                .Where(line => line.Length > 0).ToList();
+            var commands = File.ReadAllLines(taken).Select(ForWizard)
+                .Where(line => line.Command.Length > 0).ToList();
             TryDelete(taken);
 
             var players = OnlinePlayerCollection.GetOnlinePlayers();
-            foreach (var command in commands) {
-                Logger.Information("Imlight app command: {0}", Logger.Args(command));
-                foreach (var player in players) {
+            foreach (var (wizard, command) in commands) {
+                Logger.Information("Imlight app command: {0}{1}", Logger.Args(command, wizard is { } id ? $" (for wizard {id})" : ""));
+                foreach (var player in players.Where(p => wizard is null || p.CharacterId == wizard)) {
                     s_system.ActorSelection(player.ActorPath).Tell(new SERVICE_101_PROTOCOL.MSG_MANAGERCOMMAND { Command = command });
                 }
             }
@@ -84,6 +85,24 @@ internal static class ManagerCommands {
         catch (Exception ex) {
             Logger.Error("Could not run the Imlight app's commands: {0}", Logger.Args(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// A line the app starts with "@&lt;wizard id&gt; " runs only for that wizard (the Quests tab's buttons, for the wizard
+    /// picked there: Niduus, 2026-10-24, playing two wizards on one PC); any other line runs for every wizard on this PC.
+    /// </summary>
+    private static (ulong? Wizard, string Command) ForWizard(string line) {
+        line = line.Trim();
+        ulong? wizard = null;
+        if (line.StartsWith('@')) {
+            var space = line.IndexOf(' ');
+            if (space > 1 && ulong.TryParse(line.AsSpan(1, space - 1), NumberStyles.None, CultureInfo.InvariantCulture, out var id)) {
+                wizard = id;
+                line = line[(space + 1)..].Trim();
+            }
+        }
+
+        return (wizard, line.TrimStart('.').Trim());
     }
 
     private static void PollAnnouncements() {

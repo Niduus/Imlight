@@ -128,8 +128,10 @@ internal sealed partial class ManagerWindow {
                                 return Task.CompletedTask;
                             })),
                         },
-                    }, "Pick your wizard: the list is what that wizard has done, as the server saw it the last time they played. " +
-                       "Next up: every quest it needs is done, so it is the one to do now. In progress: in your quest book. " +
+                    }, "Pick your wizard: the list is what that wizard has done, as the server saw it the last time they played, " +
+                       "and the buttons work for that wizard only. " +
+                       "Next up: every quest it needs is done, so it is the one to do now, and the ones in your quest book stay " +
+                       "in their place marked In progress. In progress: in your quest book. " +
                        "Not done: Next up and Later together. Start gives you the quest at once (.quest forcegrant), even when the " +
                        "quests before it are not done. Teleport takes you to the zone of the NPC who gives it (.tp). Finish " +
                        "completes a quest you have (.quest complete). The buttons run in the game on this PC, so start the server " +
@@ -346,8 +348,10 @@ internal sealed partial class ManagerWindow {
                 case QuestState.NextUp: next++; break;
             }
 
+            // A quest started from here stays in its place in Next up, marked In progress (Niduus, 2026-10-24: Start
+            // took it out of the list at once).
             var shown = show switch {
-                "Next up" => state == QuestState.NextUp,
+                "Next up" => state is QuestState.NextUp or QuestState.InProgress,
                 "In progress" => state == QuestState.InProgress,
                 "Not done" => state is QuestState.NextUp or QuestState.Later,
                 "Done" => state == QuestState.Done,
@@ -447,9 +451,12 @@ internal sealed partial class ManagerWindow {
 
     private static string ShownZone(string zone) => zone.Length > 0 ? zone : "a place the server can't teleport to";
 
+    // Only the wizard picked at the top runs the buttons' commands, not every wizard playing on this PC (Niduus,
+    // 2026-10-24: Start gave the quest to both of his wizards).
     private Task RunQuestCommand(string command, string said) {
-        _manager.SendCommand(command);
-        Say(said + " The game's chat says if it worked.");
+        var wizard = _questWizard.SelectedItem as QuestWizard;
+        _manager.SendCommand(command, wizard is null ? null : Path.GetFileNameWithoutExtension(wizard.File));
+        Say(said + (wizard is { Name.Length: > 0 } ? $" Only {wizard.Name} gets it." : "") + " The game's chat says if it worked.");
 
         return Task.CompletedTask;
     }
