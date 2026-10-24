@@ -35,7 +35,7 @@
  * - A recipe's adjectives name the stations that make it (CraftEquipable, CraftCard, CraftFurniture...). A station
  *   sends those types, and an NPC crafter (a recipe vendor) the names of its own recipes.
  * - The client names a recipe by the hash of its name (ClientRecipe.m_recipeNameID, MSG_EQUIPRECIPE.RecipeID).
- * - Fish ingredients wait for fishing.
+ * - Fish ingredients come out of the fishing basket, smallest first.
  *
  * TODO:
  * - The quests that teach recipes and give crafting slots (ResAddRecipe, ResAddCraftingSlot) carry no fields yet.
@@ -634,7 +634,8 @@ internal static class Crafting {
         INGREDIENT_TYPE.INGREDIENT_PET_SNACK => wizard.PetSnackBehavior?.GetSnack(need.Id)?.m_quantity ?? 0,
         INGREDIENT_TYPE.INGREDIENT_TREASURE => (wizard.SpellbookBehavior?.TreasureCardTemplateIds ?? []).Count(card => card == need.Id),
         INGREDIENT_TYPE.INGREDIENT_ITEM => BackpackItems(wizard, need.Id).Count,
-        _ => 0, // Fish wait for fishing.
+        INGREDIENT_TYPE.INGREDIENT_FISH => (wizard.FishingBehavior?.Basket ?? []).Count(fish => fish.TemplateId == need.Id),
+        _ => 0,
     };
 
     // Items in the backpack, not worn ones.
@@ -677,6 +678,17 @@ internal static class Crafting {
                     WizardCollection.RemoveTreasureCard(wizard, need.Id);
                     session.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = (int) hash, EnchantmentID = 0, Quantity = 1 });
                 }
+                break;
+            }
+            case INGREDIENT_TYPE.INGREDIENT_FISH: {
+                // The smallest fish of the kind go first.
+                var basket = wizard.FishingBehavior?.Basket ?? [];
+                foreach (var fish in basket.Where(fish => fish.TemplateId == need.Id).OrderBy(fish => fish.Size).Take(need.Count).ToList()) {
+                    basket.Remove(fish);
+                    session.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_DELETEFISH { GlobalID = wizard.GameObjectID, FishTemplateID = fish.TemplateId, Size = fish.Size });
+                }
+
+                WizardCollection.UpdateCharacterFishingBehavior(wizard);
                 break;
             }
             case INGREDIENT_TYPE.INGREDIENT_ITEM: {
