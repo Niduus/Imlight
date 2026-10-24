@@ -46,7 +46,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/23/2026
+ * Last Updated: 10/24/2026
  */
 
 using System.Collections.Concurrent;
@@ -111,6 +111,16 @@ internal static class HousingFamilies {
         [typeof(AlchemyStationBehaviorTemplate)], enabled: true);
 
     /// <summary>
+    /// The family of Castle Magic objects. They are placed among the plain items: their spells are the custom data of their
+    /// Item blob entry, which the client loads into the object's CastleMagicBehavior (Game/Housing/HouseCastleMagic).
+    /// </summary>
+    internal static HousingFamily Magic { get; } = Declare("Magic", "Magic", "MagicAttic", [typeof(CastleMagicBehaviorTemplate)], enabled: true);
+
+    // The family of objects a player clicks. The client runs the click of a Castle Magic object itself, so a Castle Magic
+    // object is not in this family.
+    private const string InteractId = "Interact";
+
+    /// <summary>
     /// Every declared family, plain furniture first.
     /// </summary>
     internal static IReadOnlyList<HousingFamily> All { get; } = [
@@ -122,14 +132,14 @@ internal static class HousingFamilies {
         // document while placed (Game/Housing/HouseCreatures).
         Declare("Pet", null, "PetAttic", [typeof(PetItemBehaviorTemplate)], enabled: true),
         Declare("Mount", null, "MountAttic", [typeof(RidableBehaviorTemplate), typeof(MountItemBehaviorTemplate)], enabled: true),
-        Declare("Interact", "Interact", "InteractAttic", [typeof(InteractableBehaviorTemplate)]),
+        Declare(InteractId, "Interact", "InteractAttic", [typeof(InteractableBehaviorTemplate)]),
         Declare("IntMusic", "IntMusic", "IntMusicAttic", [typeof(InteractiveMusicBehaviorTemplate)]),
         Declare("Music", null, "MusicAttic", [typeof(HousingMusicBehaviorTemplate), typeof(HousingMusicPlayerBehavior)]),
         // Teleporters are placed among the plain items: the server sends their destination with the Item blob and
         // finds a step onto one itself (Game/Housing/HouseTeleporters).
         Declare("Teleport", "Teleport", "TeleportAttic", [typeof(HousingTeleporterBehaviorTemplate)], enabled: true),
         Declare("Sign", null, "SignAttic", [typeof(HousingSignBehaviorTemplate)]),
-        Declare("Magic", "Magic", "MagicAttic", [typeof(CastleMagicBehaviorTemplate)]),
+        Magic,
         Declare("Monster", "Monster", "MonsterAttic", [typeof(MonsterArenaBehaviorTemplate)]),
         Declare("Train", "Train", "TrainAttic", [typeof(TrainBehaviorTemplate)]),
         Declare("Equip", null, "EquipAttic", [typeof(EquipmentBehaviorTemplate)]),
@@ -185,6 +195,11 @@ internal static class HousingFamilies {
             if (!otherServices) {
                 declared.RemoveAll(family => family.Id == "Service");
             }
+        }
+
+        // A Castle Magic lever or button is clicked, which the client's Castle Magic answers itself.
+        if (declared.Contains(Magic)) {
+            declared.RemoveAll(family => family.Id == InteractId);
         }
 
         return declared.Count == 0 ? [Plain] : declared;

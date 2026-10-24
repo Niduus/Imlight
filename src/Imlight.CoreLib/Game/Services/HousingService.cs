@@ -38,6 +38,7 @@
  * - Music players and teleporters keep their state as the custom data of their blob entry (Game/Housing/HouseMusic,
  *   HouseTeleporters). A change is stored on the placed item and sent to everyone in the house as a patch.
  * - A music player that is picked up gives its musical scrolls back to the backpack.
+ * - Castle Magic objects keep their spells the same way; the Castle Magic messages are in HousingService.CastleMagic.
  * - The moves of the house's vaults, sheds and posters are in HousingService.Vaults. A vault that is picked up keeps what
  *   it holds in Wizard.PackedVaults and shows it again when it is placed (Niduus, 2026-10-23).
  *
@@ -45,7 +46,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/23/2026
+ * Last Updated: 10/24/2026
  */
 
 using System;
@@ -119,6 +120,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         _house = house;
         _houseCharId = wizard.CharId;
+        EnterCastleMagic(house, wizard);
 
         // Trainer tomes bring their trainers; a visitor entering a house already showing them adds none.
         HouseTrainers.SpawnAll(SessionActor.GetZoneActor(), house);
@@ -229,6 +231,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         // A teleporter whose destination was picked before it was placed takes it along.
         var teleporterData = HouseTeleporters.IsTeleporter(templateId, out _) ? HouseTeleporters.PendingFor(item.m_globalID, house.LotGid) : null;
+        // A Castle Magic object is a custom entry from the start, so the client takes the patches of its spells.
+        var magicData = HouseCastleMagic.IsObject(placedTemplateId) ? HouseCastleMagic.Empty : null;
         var placed = new PlacedItem {
             ItemGid = item.m_globalID,
             TemplateId = placedTemplateId,
@@ -236,7 +240,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             Y = message.LocY,
             Z = message.LocZ,
             Yaw = message.Yaw,
-            Custom = PlacedItem.EncodeCustom(teleporterData ?? creatureData),
+            Custom = PlacedItem.EncodeCustom(teleporterData ?? creatureData ?? magicData),
         }.Normalize();
         if (placed is null) {
             HandleForgedRequest($"place item {message.ObjectID} at a position that is not valid");
@@ -340,6 +344,13 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
         if (HouseVaults.KindOf(templateId) != VaultKind.None || teleporterData is not null) {
             SendBlob(house);
+        }
+
+        // Everyone in the house may cast onto a Castle Magic object's spells later, so everyone gets its custom entry.
+        if (magicData is not null) {
+            Logger.Information("Castle Magic: character {CharId} placed Castle Magic object {TemplateId} as house object {GidId} of lot {LotGid}.",
+                Logger.Args(wizard.CharId, placedTemplateId, change.GidId, house.LotGid));
+            BroadcastBlob(house);
         }
 
         // Everyone in the house builds the pet or mount from its custom entry, as a creature that wanders.
@@ -801,6 +812,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
                     HouseGauntlets.CountIn(house), house.Revision));
         }
 
+        AnnounceCastleMagicVisitor(house);
+
         if (house.Revision != _gauntletRevision) {
             SyncGauntlets("the house changed");
         } else if (GauntletSigils.Version != _sigilVersion) {
@@ -1153,7 +1166,10 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         return true;
     }
 
-    private void TeleportInHouse(Wizard wizard, Vector3 target, float yaw) {
+    private void TeleportInHouse(Wizard wizard, Vector3 target, float yaw)
+        => TeleportInHouse(wizard, GetActiveGameObject().m_nMobileID, target, yaw);
+
+    private void TeleportInHouse(Wizard wizard, ushort mobileId, Vector3 target, float yaw) {
         // MSG_SERVERTELEPORT carries the position divided by 4 in signed 16-bit fields, as the client's moves do.
         var direction = yaw % (2 * MathF.PI);
         if (direction < 0) {
@@ -1165,7 +1181,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             LocationY = unchecked((ushort) (short) MathF.Round(target.Y / 4)),
             LocationZ = unchecked((ushort) (short) MathF.Round(target.Z / 4)),
             Direction = (byte) Math.Round(direction / (2 * MathF.PI) * 250),
-            MobileID = GetActiveGameObject().m_nMobileID,
+            MobileID = mobileId,
         }, isSelfless: false);
         wizard.Location = target;
     }
@@ -1261,6 +1277,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         }
 
         HouseTeleporters.Forget(_houseCharId);
+        LeaveCastleMagic(_house);
         _gauntletRevision = uint.MaxValue;
         _loggedGauntletWatch = false;
         _sigilVersion = -1;

@@ -108,6 +108,7 @@ internal sealed class Lookup {
         Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
         Command("Pick teleport effect", ".tpstyle <number>", QA, "Wears teleport effect number <number> (0 is the normal one). Try 1, 2, 3 and so on, log out and back in, then teleport to see it."),
         Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),
+        Command("Castle Magic kit", ".castlemagic   or   .castlemagic objects   or   .castlemagic spells", QA, "Gives your character one of every Castle Magic object (levers, buttons, orbs, timers, detectors) and every Castle Magic spell it does not have yet. Place the objects in your house, then cast the spells onto them from the spellbook's Castle Magic tab. The spells are not used up."),
         Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
         Imlight("Give one badge", ".badge grant <badge name or ID>", QA, "Gives your character one badge and its reward. Type the badge's name or its ID number."),
         Imlight("Badge progress", ".badge progress <counter> <amount>", QA, "Adds to a badge counter, such as the number of a creature type you have defeated, and gives any badges it reaches."),

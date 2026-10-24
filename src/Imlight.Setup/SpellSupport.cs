@@ -139,11 +139,10 @@ internal static partial class SpellSupport {
         [kSpellEffects.kDamagePerTotalPipPower] = "damage for each pip (done as plain damage)",
     };
 
-    // Spell kinds the server has no code for at all (cantrips have CantripService, and combat cards the combat code).
+    // Spell kinds the server has no code for at all (cantrips have CantripService, Castle Magic the housing code, and combat cards the combat code).
     private static readonly Dictionary<string, string> s_noServerCode = new(StringComparer.Ordinal) {
         ["GardenSpellTemplate"] = "A gardening spell. The server does not do gardening, so it can't be cast.",
         ["FishingSpellTemplate"] = "A fishing spell. The server does not do fishing, so it can't be cast.",
-        ["CastleMagicSpellTemplate"] = "A Castle Magic spell. The server does not do Castle Magic, so it can't be cast.",
         ["WhirlyBurlySpellTemplate"] = "A Whirly Burly game card. The server does not run Whirly Burly, so it can't be played.",
     };
 
@@ -169,7 +168,8 @@ internal static partial class SpellSupport {
             return new SpellSupportResult(SpellStatus.Broken, none, []);
         }
 
-        if (family == "CantripsSpellTemplate") {
+        // The client runs Castle Magic; the server keeps the spells cast onto house objects (HouseCastleMagic).
+        if (family is "CantripsSpellTemplate" or "CastleMagicSpellTemplate") {
             return new SpellSupportResult(SpellStatus.Works, "", []);
         }
 
