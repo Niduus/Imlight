@@ -1274,7 +1274,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             QuestLevel = qTemplate.m_questLevel,
             QuestTitle = qTemplate.m_questTitle,
             QuestInfo = "", // ?
-            New = 0,
+            // The game's quest arrow only learns a quest from a SENDQUEST marked new; with 0 it never knew any
+            // quest after a login or zone change, so there was no arrow and a quest book pick blanked the goal.
+            New = 1,
             QuestMadlibs = madLibData,
             GoalData = "",
             Rewards = serializedRewards,
