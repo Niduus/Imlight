@@ -189,7 +189,12 @@ public class ServerWizSpellbookBehavior : ServerSpellbookBehavior {
 
     public new ClientSpellbookBehavior GetClientBehaviorInstance() {
         var spellIdList = new List<SpellIDTracker>();
+        var hidden = TieredSpells.TierOnesHiddenFromGame(LearnedSpellTemplateIds);
         foreach (var templateId in LearnedSpellTemplateIds) {
+            if (hidden.Contains(templateId)) {
+                continue;
+            }
+
             spellIdList.Add(new SpellIDTracker {
                 m_isRetired = false,
                 m_spellID = templateId,

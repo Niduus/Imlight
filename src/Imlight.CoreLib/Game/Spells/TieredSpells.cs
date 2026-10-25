@@ -191,6 +191,47 @@ internal static class TieredSpells {
     internal static int GroupOfTemplate(uint templateId)
         => CoreObjectFactory.GetCoreTemplate(templateId) is TieredSpellTemplate template ? GroupOf(template.m_name) : -1;
 
+    /// <summary>
+    /// The tier one spells to leave out of the spellbook the game is told about. The game's upgrade window counts tier
+    /// two of a path as unlocked only when the tier one spell is missing from that list, as on the real servers, where
+    /// an upgrade takes the place of the tier one spell. So once a wizard knows any upgrade of a group, its tier one
+    /// spell is hidden from the game (the server still keeps it, and the window still shows it as owned).
+    /// </summary>
+    internal static HashSet<uint> TierOnesHiddenFromGame(IEnumerable<uint> learned) {
+        var hidden = new HashSet<uint>();
+        if (!s_enabled || !s_keepEveryTier || learned is null) {
+            return hidden;
+        }
+
+        foreach (var templateId in learned) {
+            var group = GroupOfTemplate(templateId);
+            if (group < 0) {
+                continue;
+            }
+
+            var tierOneId = TemplateIdOf(Groups[group].m_tierOneSpell);
+            if (tierOneId != 0 && tierOneId != templateId) {
+                hidden.Add(tierOneId);
+            }
+        }
+
+        return hidden;
+    }
+
+    // Takes a group's tier one spell out of the game's spellbook list once an upgrade of it is known (see
+    // TierOnesHiddenFromGame). Only the game's list changes; the server keeps the spell.
+    private static void HideTierOneFromGame(IActorRef playerActor, Wizard wizard, int group) {
+        if (!s_keepEveryTier || playerActor is null || group < 0 || group >= Groups.Count) {
+            return;
+        }
+
+        var tierOneId = TemplateIdOf(Groups[group].m_tierOneSpell);
+        var learned = wizard.SpellbookBehavior.LearnedSpellTemplateIds?.ToList() ?? [];
+        if (tierOneId != 0 && learned.Contains(tierOneId) && TierOnesHiddenFromGame(learned).Contains(tierOneId)) {
+            playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMBOOK { SpellID = (int) tierOneId });
+        }
+    }
+
     /// <summary>The spell template with this template ID or name hash (the game uses both), or null.</summary>
     internal static SpellTemplate ResolveTemplate(uint id, out uint templateId) {
         templateId = 0;
@@ -467,6 +508,7 @@ internal static class TieredSpells {
             playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
         }
 
+        HideTierOneFromGame(playerActor, wizard, group);
         var swapped = from is null ? 0 : SwapInDecks(playerActor, wizard, fromTemplateId, toTemplateId);
 
         message = from is null
@@ -636,15 +678,26 @@ internal static class TieredSpells {
                     continue;
                 }
 
+                // The tier one spell stays hidden from the game once an upgrade is known (TierOnesHiddenFromGame).
                 var spell = SpellFactory.GetSpell(id);
                 if (spell is not null && wizard.LearnSpell(spell)) {
-                    playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+                    if (!IsTierOne(previous)) {
+                        playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+                    }
+
                     restored++;
                 }
             }
         }
 
         return restored;
+    }
+
+    // Whether this is the tier one spell of its group (Fire Cat, Daybreaker - T01 - Base).
+    private static bool IsTierOne(string name) {
+        var group = GroupOf(name);
+
+        return group >= 0 && string.Equals((string) Groups[group].m_tierOneSpell, name, StringComparison.OrdinalIgnoreCase);
     }
 
     // "Fire Cat - T03 - A" -> "Fire Cat".
@@ -720,8 +773,8 @@ internal static class TieredSpells {
             return 0;
         }
 
-        if (!wizard.SpellbookBehavior.HasSpell(tierOneId) && SpellFactory.GetSpell(tierOneId) is { } tierOne && wizard.LearnSpell(tierOne)) {
-            playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) tierOneId });
+        if (!wizard.SpellbookBehavior.HasSpell(tierOneId) && SpellFactory.GetSpell(tierOneId) is { } tierOne) {
+            wizard.LearnSpell(tierOne);
         }
 
         var removed = 0;
@@ -735,6 +788,11 @@ internal static class TieredSpells {
                 playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMBOOK { SpellID = (int) templateId });
                 removed++;
             }
+        }
+
+        // With no upgrades left, the game shows the tier one spell again.
+        if (wizard.SpellbookBehavior.HasSpell(tierOneId)) {
+            playerActor?.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) tierOneId });
         }
 
         return removed;
