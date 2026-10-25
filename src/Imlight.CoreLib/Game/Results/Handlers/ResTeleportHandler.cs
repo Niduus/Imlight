@@ -20,6 +20,7 @@ using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Results.Contexts;
 using Imlight.CoreLib.Shared.Packets;
 
 namespace Imlight.CoreLib.Game.Results.Handlers;
@@ -39,6 +40,12 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
         var destinationZone = Result.m_destinationZone;
         var destinationLocation = Result.m_destinationLoc;
         if (string.IsNullOrEmpty(destinationZone)) {
+            // A raid's teleport pad names no destination either: it goes to the location at the pad's other end.
+            if (context is GenericResultContext { TriggerName: { } triggerName }
+                && Raids.Raids.TeleportTarget(context.GetZonePath(), triggerName) is { } padTarget) {
+                return RaidResult.MoveTo(context, padTarget);
+            }
+
             // The exits of a house zone name no destination, so the player leaves to the hub of the house's world.
             if (!HouseExits.TryResolve(context.GetZonePath(), out destinationZone, out destinationLocation)) {
                 Logger.Warning("A teleport in {0} names no destination zone; the player stays where they are.",

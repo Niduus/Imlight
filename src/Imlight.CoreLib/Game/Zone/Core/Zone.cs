@@ -61,7 +61,7 @@ namespace Imlight.CoreLib.Game.Zone.Core;
 /// <summary>
 /// Represents a zone in the game world.
 /// </summary>
-public class Zone : ReceiveProtocolDispatcher, IWithTimers {
+public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
     private const ushort RESERVED_MOBILE_ID_MAX = ushort.MaxValue / 20; // 5% of the maximum mobile ID count is reserved for special objects.
     private static readonly Vector4 s_locationFailedGiveaway = new(float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue);
@@ -240,6 +240,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         _players.Add(message.PlayerActor);
+        ScriptState.PlayerCount = _players.Count;
         NoteInstancedPlayer(message.PlayerActor, message.Wizard);
         Timers.Cancel(IDLE_EXPIRE_TIMER);
         InformZoneSupervisors(message.PlayerActor, message);
@@ -295,6 +296,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         // The leaver is counted until the supervisors are told: the Players target is gated on a non-empty set.
         InformZoneSupervisors(message.PlayerActor, message);
         _players.Remove(message.PlayerActor);
+        ScriptState.PlayerCount = _players.Count;
         if (_instancedCharIds.Remove(message.PlayerActor, out var charId)) {
             World.InstancedPlayers.Leave(charId, this);
         }
@@ -375,6 +377,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
         // A change to those files (the Customs tab moving an object) reaches this copy while it runs.
         ZoneObjects.Register(Self, ZonePath, message.Variant);
         ZoneData = message.ZoneData;
+        SetUpRaid(message.TriggerData);
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply
         // to inform the zone that they have loaded their data.
@@ -655,6 +658,7 @@ public class Zone : ReceiveProtocolDispatcher, IWithTimers {
             }
             else if (pendingEvent is ZONE_102_PROTOCOL.MSG_ADDPLAYER addPlayer) {
                 _players.Add(playerActor);
+                ScriptState.PlayerCount = _players.Count;
                 NoteInstancedPlayer(playerActor, addPlayer.Wizard);
                 Timers.Cancel(IDLE_EXPIRE_TIMER);
                 InformZoneSupervisors(playerActor, addPlayer);

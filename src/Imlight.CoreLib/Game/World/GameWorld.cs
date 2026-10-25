@@ -85,6 +85,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         CreatureSpellbookCollection.PreloadSpellbooks();
         NpcDropTableCollection.PreloadDropTables();
         HouseZoneIndex.Preload();
+        Raids.Raids.Preload();
         HouseTemplates.ValidateStarters();
     }
 

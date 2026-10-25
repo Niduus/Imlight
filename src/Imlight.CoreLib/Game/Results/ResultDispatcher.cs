@@ -60,6 +60,7 @@ public static class ResultDispatcher {
     /// <param name="sourceRef">The zone entity whose interact option runs the results (if applicable)</param>
     /// <param name="sourceTemplateId">The template id of that entity</param>
     /// <param name="sourceIsInstance">Whether that entity lives in an instance</param>
+    /// <param name="zonePath">The path of the zone the results run in (if applicable)</param>
     public static void ExecuteResults(IActorContext actorContext,
                                      ResultList results,
                                      IActorRef playerRef,
@@ -75,7 +76,8 @@ public static class ResultDispatcher {
                                      bool playerSpawned = false,
                                      IActorRef sourceRef = null,
                                      ulong sourceTemplateId = 0,
-                                     bool sourceIsInstance = false) {
+                                     bool sourceIsInstance = false,
+                                     string zonePath = null) {
         if (skipWorldEffects && results?.m_results is not null) {
             results = new ResultList { m_results = results.m_results.Where(r => !ChangesZone(r)).ToList() };
         }
@@ -90,11 +92,13 @@ public static class ResultDispatcher {
         var filteredResults = FilterResultsByRequirements(
             results, playerRef, playerObj, zoneActor, questName, goalName, triggerName, scriptState);
         var context = new GenericResultContext(filteredResults, playerRef, playerObj, replyTo, zoneActor, questName, goalName, triggerName) {
+            ScriptState = scriptState,
             XpScale = xpScale,
             PlayerSpawned = playerSpawned,
             SourceRef = sourceRef,
             SourceTemplateId = sourceTemplateId,
             SourceIsInstance = sourceIsInstance,
+            ZonePath = zonePath,
         };
         var executor = CreateExecutorInstance(actorContext, context);
 
@@ -122,9 +126,11 @@ public static class ResultDispatcher {
     private static bool ChangesZone(Result result)
         => result is not null && s_zoneEffectTypes.Contains(result.GetType());
 
-    private static bool RunsWithoutPlayer(Result result) {
+    internal static bool RunsWithoutPlayer(Result result) {
         // The dynamod results are saved on the player they are told to, so they have no zone-wide form.
-        return result is ResWait || (ChangesZone(result) && result is not (ResAddDynaMod or ResRemoveDynaMod));
+        // A branching result runs without a player too; what it chooses is filtered again when it runs.
+        return result is ResWait or ResRandomResults or ResIfThenElse or ResBGAdjustTime or ResCastSigilSpell
+            || (ChangesZone(result) && result is not (ResAddDynaMod or ResRemoveDynaMod));
     }
 
     private static ResultList FilterResultsByRequirements(ResultList results,
@@ -184,6 +190,44 @@ public static class ResultDispatcher {
         }
 
         return passingResults;
+    }
+
+    /// <summary>
+    /// Whether the requirements hold now, for the player and zone the results run for (a ResIfThenElse's test, or
+    /// the requirements of a result a branching result chose).
+    /// </summary>
+    internal static bool RequirementsMet(RequirementList requirements, GenericResultContext context) {
+        if (requirements?.m_requirements is not { Count: > 0 }) {
+            return true;
+        }
+
+        Wizard wizard = null;
+        if (context.PlayerRef is not null) {
+            try {
+                wizard = context.PlayerRef
+                    .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(
+                        new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD(),
+                        TimeSpan.FromSeconds(QUERY_WIZARD_TIMEOUT_SECONDS)).Result?.Wizard;
+            }
+            catch (Exception ex) {
+                Logger.Error("Failed to query wizard for result requirements: {0}", Logger.Args(ex.Message));
+            }
+        }
+
+        var requirementContext = new GenericRequirementContext(
+            requirements: requirements,
+            playerRef: context.PlayerRef,
+            playerObj: context.PlayerObj,
+            wizard: wizard,
+            zoneRef: context.ZoneActor,
+            questName: context.QuestName,
+            goalName: context.GoalName,
+            triggerName: context.TriggerName
+        ) {
+            ScriptState = context.ScriptState,
+        };
+
+        return RequirementDispatcher.EvaluateRequirements(requirements, requirementContext);
     }
 
     /// <summary>

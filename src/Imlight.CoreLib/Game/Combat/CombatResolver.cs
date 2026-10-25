@@ -453,6 +453,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         // Boss cheats for the start of the round (BossCheats.cs).
         var firstTeam = _duel.m_firstTeamToAct;
         cinematicTime += BossCheatsAtRoundStart(combatActionList, cinematicTime);
+        // A raid's sigil spells cast on its battles (CombatResolver.Raids.cs).
+        cinematicTime += RaidSigilSpells(combatActionList, cinematicTime);
         // A turn order cheat at the start of the round (When the battle starts: we go first) counts this round, as no
         // one has moved yet (Niduus, 2026-10-22: it only counted from the second round).
         if (_duel.m_firstTeamToAct != firstTeam) {

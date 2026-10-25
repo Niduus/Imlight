@@ -17,6 +17,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 
@@ -68,10 +69,29 @@ public class GenericResultContext(ResultList results,
     public string GoalName { get; } = goalName;
     public string TriggerName { get; } = triggerName;
 
-    private readonly ResultList _results = results;
+    /// <summary>
+    /// The state of the zone instance the results run in (its counters and tokens), for the requirements of results
+    /// that choose among others (ResIfThenElse, ResRandomResults).
+    /// </summary>
+    public Zone.Core.ZoneScriptState ScriptState { get; init; }
 
-    public IEnumerable<Result> GetResults() 
-        => _results?.m_results ?? [];
+    /// <summary>
+    /// The path of the zone the results run in, if any.
+    /// </summary>
+    public string ZonePath { get; init; }
+
+    private readonly ResultList _results = results;
+    // The results a ResIfThenElse or ResRandomResults chose, so their handlers are found like the others'.
+    private readonly List<Result> _chosen = [];
+
+    public IEnumerable<Result> GetResults()
+        => _chosen.Count == 0 ? _results?.m_results ?? [] : (_results?.m_results ?? []).Concat(_chosen);
+
+    /// <summary>
+    /// Adds the results a branching result chose to run.
+    /// </summary>
+    internal void AddChosen(IEnumerable<Result> results)
+        => _chosen.AddRange(results.Where(r => r is not null));
 
     public IActorRef GetZoneActor() 
         => ZoneActor;
@@ -93,6 +113,9 @@ public class GenericResultContext(ResultList results,
 
     public void EndPlayerSpawn()
         => PlayerSpawned = false;
+
+    public string GetZonePath()
+        => ZonePath;
 
     public IActorRef GetSourceRef()
         => SourceRef;

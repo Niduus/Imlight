@@ -30,8 +30,20 @@ internal sealed class ResDisplayTextHandler : BaseResultHandler<ResDisplayText> 
             Type = Result.m_type
         };
 
-        context.GetPlayerRef().Tell(msg);
-        
+        // A raid's lines are for everyone in it (m_unknown_bool: the whole zone, m_unknown_bool_2: everyone near a spot,
+        // which in a raid is everyone), and a line with no player to tell goes to the zone too.
+        var playerRef = context.GetPlayerRef();
+        if (Raids.Raids.IsRaidZone(context.GetZonePath())
+            && (playerRef is null || Result.m_unknown_bool || Result.m_unknown_bool_2)) {
+            return RaidResult.TellEveryone(context, msg);
+        }
+
+        if (playerRef is null) {
+            return false;
+        }
+
+        playerRef.Tell(msg);
+
         return true;
     }
 

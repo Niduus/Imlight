@@ -127,7 +127,8 @@ public sealed class ZoneTrigger(IActorRef zoneRef, Zone zone, Trigger trigger)
 
         ResultDispatcher.ExecuteResults(Context, results, message.PlayerActor, message.PlayerGameObject,
                                        Sender, ZoneRef, triggerName: TriggerData.m_triggerName,
-                                       scriptState: Zone.ScriptState, playerSpawned: message.PlayerSpawned);
+                                       scriptState: Zone.ScriptState, playerSpawned: message.PlayerSpawned,
+                                       zonePath: Zone.ZonePath);
     }
 
     /// <summary>

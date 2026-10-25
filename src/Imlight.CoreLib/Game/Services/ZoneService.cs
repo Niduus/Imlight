@@ -909,6 +909,28 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         ReceiveZoneTransferRequest(msg);
     }
 
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_MOVEINZONE))]
+    private void ReceiveMoveInZone(CHARACTER_103_PROTOCOL.MSG_MOVEINZONE message) {
+        if (string.IsNullOrEmpty(message.Location) || GetActiveGameObject() is null) {
+            return;
+        }
+
+        DoTeleport(message.Location);
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_RAIDLEAVE))]
+    private void ReceiveRaidLeave(CHARACTER_103_PROTOCOL.MSG_RAIDLEAVE message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || !Raids.Raids.IsRaidZone(wizard.Zone)) {
+            return;
+        }
+
+        var transfer = Raids.Raids.ReturnTransfer(wizard);
+        Logger.Information("Raids | {0} leaves {1} for {2} {3}.",
+            Logger.Args(wizard.CharId, wizard.Zone, transfer.DestinationZone, transfer.DestinationLocation));
+        ReceiveZoneTransferRequest(transfer);
+    }
+
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS))]
     private void ReceiveTeleportEffects(CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS message) {
         SendTeleportEffects();

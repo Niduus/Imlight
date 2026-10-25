@@ -776,4 +776,27 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Moves the player inside the zone they are in, to a spot (a compact "x,y,z,yaw" string): a raid's teleport pads
+    /// (Game/Raids).
+    /// </summary>
+    public sealed class MSG_MOVEINZONE : IServerMessage {
+
+        public byte MessageOrder { get; } = 148;
+        public byte ServiceID { get; } = 103;
+
+        public string Location;
+
+    }
+
+    /// <summary>
+    /// Sends the player out of a raid, back to the guild grounds they came from (Game/Raids).
+    /// </summary>
+    public sealed class MSG_RAIDLEAVE : IServerMessage {
+
+        public byte MessageOrder { get; } = 149;
+        public byte ServiceID { get; } = 103;
+
+    }
+
 }

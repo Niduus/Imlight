@@ -39,6 +39,20 @@ namespace Imlight.CoreLib.Shared.Packets;
 /// <summary>
 /// What a session claims on the instance it is in; the zone answers whether it is the first to do it.
 /// </summary>
+/// <summary>
+/// What a <see cref="ZONE_102_PROTOCOL.MSG_RAIDCONTROL"/> asks of a raid zone.
+/// </summary>
+public enum RaidControlKind : byte {
+    Timer,
+    TimeUp,
+    Win,
+    End,
+    SendHome,
+    ToPlayers,
+    Status,
+    SigilSpell,
+}
+
 public enum InstanceQuestClaimKind : byte {
     QuestStart,
     GoalStart,
@@ -1641,6 +1655,32 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         // Shows the duel circle again after a duel here.
         public bool Show;
+
+    }
+
+    /// <summary>
+    /// A raid's script (Game/Raids) tells its <see cref="Zone"/>: start or stop the raid timer, the raid is won, the raid
+    /// is over (everyone goes back to the guild grounds a little later), or a message for every player in it. The zone's
+    /// own timers send it too (TimeUp, SendHome), and `.raid status` asks with Status.
+    /// </summary>
+    public sealed class MSG_RAIDCONTROL : IServerMessage {
+
+        public byte MessageOrder { get; } = 104;
+        public byte ServiceID { get; } = 102;
+
+        public RaidControlKind Kind;
+
+        // Timer: the seconds the raid has left (0 stops the timer).
+        public int Seconds;
+
+        // ToPlayers: told to every player in the zone.
+        public object Message;
+
+        // SigilSpell: the spells cast into the raid's battles.
+        public string[] Spells = [];
+
+        // Status: the answer.
+        public string Text;
 
     }
 

@@ -46,7 +46,9 @@ internal sealed class ReqZoneCounterHandler : BaseRequirementHandler<ReqZoneCoun
 
     public override bool Evaluate(IRequirementContext context)
         => context is IZoneStateContext { ScriptState: { } state }
-        && NumericRequirement.Compare(Requirement, state.GetCounter(Requirement.m_counterName));
+        && NumericRequirement.Compare(
+            Requirement with { m_numericValue = state.CounterThreshold(Requirement.m_counterName, Requirement.m_numericValue) },
+            state.GetCounter(Requirement.m_counterName));
 
 }
 
@@ -109,5 +111,17 @@ internal sealed class ReqTriggerStateHandler : BaseRequirementHandler<ReqTrigger
             _ => false,
         };
     }
+
+}
+
+/// <summary>
+/// ReqUnknown2E532A74 (m_nameA, m_nameB): two zone counters hold the same number. The raids use it for their coin
+/// puzzles: the coin a wheel shows (Raid_Street1_Wheel1) has to match the coin the zone picked (Raid_Street1_Coin1).
+/// </summary>
+internal sealed class ReqUnknown2E532A74Handler : BaseRequirementHandler<ReqUnknown2E532A74> {
+
+    public override bool Evaluate(IRequirementContext context)
+        => context is IZoneStateContext { ScriptState: { } state }
+        && state.GetCounter(Requirement.m_nameA) == state.GetCounter(Requirement.m_nameB);
 
 }

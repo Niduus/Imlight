@@ -23,6 +23,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Results.Contexts;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Type = System.Type;
@@ -113,6 +114,14 @@ public class ResultExecutorActor(IResultContext context) : ReceiveProtocolDispat
             return;
         }
 
+        // A branching result runs the results it chooses next, in its place (with their waits, in order).
+        if (result is ResRandomResults or ResIfThenElse) {
+            RunChosen(result);
+            ProcessNextResult();
+
+            return;
+        }
+
         var handlerType = ResultDispatcher.FindHandlerForResult(resultType, _context);
 
         if (handlerType is null) {
@@ -152,6 +161,79 @@ public class ResultExecutorActor(IResultContext context) : ReceiveProtocolDispat
 
             ProcessNextResult();
         }
+    }
+
+    private void RunChosen(Result branching) {
+        List<Result> chosen;
+        try {
+            chosen = Choose(branching);
+        }
+        catch (Exception ex) {
+            Logger.Error("Choosing the results of a {0} failed: {1}", Logger.Args(branching.GetType().Name, ex.Message));
+
+            return;
+        }
+
+        if (chosen.Count == 0) {
+            return;
+        }
+
+        if (_context is GenericResultContext generic) {
+            generic.AddChosen(chosen);
+        }
+
+        var rest = _resultQueue.ToList();
+        _resultQueue.Clear();
+        foreach (var next in chosen.Concat(rest)) {
+            _resultQueue.Enqueue(next);
+        }
+    }
+
+    // The results a ResIfThenElse or ResRandomResults runs now: the "then" or "else" list by its requirements, or one
+    // branch picked by the branches' weights (all equally likely when no weights are given). Each chosen result's own
+    // requirements are checked here, as the dispatcher checks the top-level ones.
+    private List<Result> Choose(Result branching) {
+        var generic = _context as GenericResultContext;
+        ResultList list = null;
+        switch (branching) {
+            case ResIfThenElse ifThenElse:
+                var holds = generic is null || ResultDispatcher.RequirementsMet(ifThenElse.m_requirements, generic);
+                list = holds ? ifThenElse.m_thenResults : ifThenElse.m_elseResults;
+                break;
+            case ResRandomResults random:
+                var branches = random.m_results?.Where(b => b is not null).ToList() ?? [];
+                if (branches.Count == 0) {
+                    break;
+                }
+
+                var total = branches.Sum(b => Math.Max(0f, b.m_percent));
+                if (total <= 0f) {
+                    list = branches[Random.Shared.Next(branches.Count)].m_results;
+                    break;
+                }
+
+                var roll = Random.Shared.NextDouble() * total;
+                foreach (var branch in branches) {
+                    roll -= Math.Max(0f, branch.m_percent);
+                    if (roll < 0) {
+                        list = branch.m_results;
+                        break;
+                    }
+                }
+
+                list ??= branches[^1].m_results;
+                break;
+        }
+
+        var results = list?.m_results?.Where(r => r is not null).ToList() ?? [];
+        if (generic is null) {
+            return results;
+        }
+
+        // A loop outlives its player; with nobody to act on, only the results that need no player run.
+        return results.Where(r => (generic.PlayerRef is not null || ResultDispatcher.RunsWithoutPlayer(r))
+                && (r is ResIfThenElse || ResultDispatcher.RequirementsMet(r.m_requirements, generic)))
+            .ToList();
     }
 
     private void SendFinalReply(bool success) {

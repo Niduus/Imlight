@@ -1,6 +1,6 @@
 {
   "Zone": "Housing_Guild/GuildStarter_Ext",
-  "Notes": "Guild Museum (GuildMuseum.cs): the doors into the Avalon and Khrysalis galleries, on the museum island beside the curator. Walk into one to enter its gallery; the door at the back of a gallery brings you back here. Move them in the Customs tab if they stand somewhere awkward. Guild islands (Niduus, 2026-10-24: \"Unlock all islands now\"): the live game opens each island with guild reagents and a cantrip (GuildUnlockTrigger1-6, UnlockTriggerBehavior), and each GuildLock_ object turns into its m_unlockedObjectID. Here every island starts open: Remove leaves out the island unlock triggers and the locks, and the objects below are what the locks turn into, at the lock's spot (or the unlocked spot its template names). A lock whose chain ends in no object (the second and third crafting station upgrades) just goes. The raid unlocks (RaidUnlockTrigger1-3) stay as they are.",
+  "Notes": "Guild Museum (GuildMuseum.cs): the doors into the Avalon and Khrysalis galleries, on the museum island beside the curator. Walk into one to enter its gallery; the door at the back of a gallery brings you back here. Move them in the Customs tab if they stand somewhere awkward. Guild islands (Niduus, 2026-10-24: \"Unlock all islands now\"): the live game opens each island with guild reagents and a cantrip (GuildUnlockTrigger1-6, UnlockTriggerBehavior), and each GuildLock_ object turns into its m_unlockedObjectID. Here every island starts open: Remove leaves out the island unlock triggers and the locks, and the objects below are what the locks turn into, at the lock's spot (or the unlocked spot its template names). A lock whose chain ends in no object (the second and third crafting station upgrades) just goes. Guild raids (Game/Raids, Niduus 2026-10-25): the three raid gates stand open on the battle island where their unlocks (RaidUnlockTrigger1-3, left out) turn into them; press X on a gate to open a raid portal, then walk into it.",
   "Objects": [
     {
       "Name": "GuildMuseum_AvalonDoor",
@@ -82,6 +82,33 @@
       "Y": -10163.54,
       "Z": -655.2797,
       "Yaw": 0
+    },
+    {
+      "Name": "GuildRaid_Gate1",
+      "Notes": "RaidGate1 (unlocked from RaidUnlockTrigger1). Press X to open a raid portal; walk into the open gate to go into the raid.",
+      "TemplateID": 1536116,
+      "X": 9283.96,
+      "Y": 1918.07,
+      "Z": 143.48,
+      "Yaw": 0.5082399
+    },
+    {
+      "Name": "GuildRaid_Gate2",
+      "Notes": "RaidGate2 (unlocked from RaidUnlockTrigger2). Press X to open a raid portal; walk into the open gate to go into the raid.",
+      "TemplateID": 1536122,
+      "X": 9855.44,
+      "Y": 275.11,
+      "Z": 143.14,
+      "Yaw": 1.809906
+    },
+    {
+      "Name": "GuildRaid_Gate3",
+      "Notes": "RaidGate3 (unlocked from RaidUnlockTrigger3). Press X to open a raid portal; walk into the open gate to go into the raid.",
+      "TemplateID": 1536123,
+      "X": 8205.11,
+      "Y": -575.83,
+      "Z": 154.47,
+      "Yaw": 3.656639
     }
   ],
   "Remove": [
@@ -101,6 +128,9 @@
     1529130,
     1529131,
     1529132,
-    1529137
+    1529137,
+    1536119,
+    1536120,
+    1536121
   ]
 }

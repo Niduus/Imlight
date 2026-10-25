@@ -45,6 +45,44 @@ public sealed class ZoneScriptState {
 
     private const string COUNTER_SET = "ZCA_Set";
 
+    private HashSet<string> _presenceCounters = new(StringComparer.OrdinalIgnoreCase);
+    private int _fullPlayerCount;
+    private volatile int _playerCount;
+
+    /// <summary>
+    /// Makes the zone's pads work for a smaller group than the zone is made for (a raid, Game/Raids). The presence
+    /// counters are the ones a pad's Enter_ trigger adds to and its Exit_ trigger takes from; while fewer players than
+    /// <paramref name="fullPlayerCount"/> are in the zone, stepping off such a pad no longer takes the player away
+    /// from it, and a requirement for at least N players on it asks for no more players than the zone has.
+    /// </summary>
+    public void UseSmallGroups(IEnumerable<string> presenceCounters, int fullPlayerCount) {
+        _presenceCounters = new HashSet<string>(presenceCounters ?? [], StringComparer.OrdinalIgnoreCase);
+        _fullPlayerCount = fullPlayerCount;
+    }
+
+    /// <summary>
+    /// The number of players in the zone, kept by the zone for the small group rules.
+    /// </summary>
+    public int PlayerCount {
+        get => _playerCount;
+        set => _playerCount = value;
+    }
+
+    /// <summary>
+    /// The counters a pad keeps the number of players on (empty unless the zone uses small groups).
+    /// </summary>
+    public IReadOnlyCollection<string> PresenceCounters => _presenceCounters;
+
+    private bool IsSmallGroup => _fullPlayerCount > 0 && _playerCount < _fullPlayerCount;
+
+    /// <summary>
+    /// The number a ReqZoneCounter compares with: a presence counter asks a small group for no more players than it has.
+    /// </summary>
+    public float CounterThreshold(string counterName, float required)
+        => IsSmallGroup && required > 1 && counterName is not null && _presenceCounters.Contains(counterName)
+            ? Math.Max(1, Math.Min(required, _playerCount))
+            : required;
+
     /// <summary>
     /// Applies a token, counter or puzzle-variable result for the player (their game object id, 0 for none) who triggered it.
     /// </summary>
@@ -149,6 +187,12 @@ public sealed class ZoneScriptState {
         }
 
         var current = GetCounter(name);
+
+        // A small group's pads keep the players who stood on them.
+        if (counter.m_value < 0 && IsSmallGroup && _presenceCounters.Contains(name)
+            && !string.Equals(counter.m_action, COUNTER_SET, StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
 
         // The client data has two actions: ZCA_Set and ZCA_Add (the value may be negative).
         _counters[name] = string.Equals(counter.m_action, COUNTER_SET, StringComparison.OrdinalIgnoreCase)
