@@ -44,9 +44,9 @@ internal sealed partial class ManagerWindow {
     private static readonly (string Name, string Icon, string Line, string About, string[] Tabs)[] s_groups = [
         ("Play", "play", "Play, commands, quests",
             "Play Wizard101, find chat commands and follow your wizard's quests.", ["Play", "Commands", "Quests"]),
-        ("Database", "search", "IDs, spells, gear, recipes",
-            "Everything in the game, ready to search: IDs, spell cards, gear, recipes and every line of text.",
-            ["Lookup", "Spells", "Gear", "Recipes", "Phrases"]),
+        ("Database", "search", "IDs, spells, gear, recipes, vendors",
+            "Everything in the game, ready to search: IDs, spell cards, gear, recipes, vendors and trainers, and every line of text.",
+            ["Lookup", "Spells", "Gear", "Recipes", "Vendors", "Phrases"]),
         ("Create", "puzzle", "Bosses, cheats, customs",
             "Change bosses, make cheats for yourself, build your own creatures and areas, and word what the server announces.",
             ["Bosses", "Player Cheats", "Customs", "Announcements", "Guides"]),
@@ -381,7 +381,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),

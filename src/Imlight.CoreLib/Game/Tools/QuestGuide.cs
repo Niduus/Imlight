@@ -56,7 +56,10 @@ internal static class QuestGuide {
     /// Writes the quest list. One quest per line, tab separated: code, title, level, "main" or "side", the codes of the
     /// quests it needs (comma separated), the giver's name, the giver's zone, and where that zone came from: "npc" (a
     /// step of some quest talks to the giver there), "step" (the giver's zone is not known, so its first step's zone)
-    /// or "auto" (it starts by itself when the quest before it is done).
+    /// or "auto" (it starts by itself when the quest before it is done). Then, for the Quests tab's filters (Niduus,
+    /// 2026-10-25: "add to manager quests ... searches"): how many steps it has, the kinds of its steps (defeat, collect,
+    /// talk, go to...), the steps' words, the drop tables that reward it, its marks (repeatable, hidden, outdated, pet,
+    /// crafting check) and its activity (Crafting, Fishing, Gardening, Pet, Spell or none).
     /// </summary>
     internal static void WriteList(string folder) {
         try {
@@ -84,7 +87,8 @@ internal static class QuestGuide {
                     .Append(string.Join(',', needs[name].Select(Clean))).Append('\t')
                     .Append(Clean(giver)).Append('\t')
                     .Append(Clean(zone)).Append('\t')
-                    .Append(from).Append('\n');
+                    .Append(from).Append('\t')
+                    .Append(Details(quest)).Append('\n');
             }
 
             Directory.CreateDirectory(folder);
@@ -98,6 +102,61 @@ internal static class QuestGuide {
             Logger.Warning("Could not write the quest list for the Manager. {Exception}", Logger.Args(ex));
         }
     }
+
+    // Its steps, rewards, marks and activity, tab separated (the columns after "from").
+    private static string Details(QuestTemplate quest) {
+        try {
+            var goals = (quest.m_goals ?? []).Where(g => g is not null).ToList();
+            var kinds = goals.Select(g => GoalKind(g.m_goalType)).Where(k => k.Length > 0).Distinct();
+            var words = goals.Select(g => (string) g.m_goalTitle).Where(k => !string.IsNullOrEmpty(k))
+                .Select(k => Locale.GetEnglishName(k) is { Length: > 0 } text ? text : "").Where(t => t.Length > 0);
+            var rewards = (quest.m_endResults?.m_results ?? []).OfType<ResDropTable>().Select(r => (string) r.m_tableName)
+                .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct();
+            var marks = new List<string>();
+            if (quest.m_questRepeat > 0) {
+                marks.Add("repeatable");
+            }
+
+            if (quest.m_isHidden) {
+                marks.Add("hidden");
+            }
+
+            if (quest.m_outdated) {
+                marks.Add("outdated");
+            }
+
+            if (quest.m_playAsYourPetNPC || goals.Any(g => g.m_petOnlyQuest)) {
+                marks.Add("pet");
+            }
+
+            if (quest.m_checkInventoryForCrafting) {
+                marks.Add("crafting");
+            }
+
+            var activity = quest.m_activityType.ToString().Replace("ACTIVITY_", "", StringComparison.Ordinal);
+
+            return string.Join('\t', goals.Count.ToString(CultureInfo.InvariantCulture), string.Join(',', kinds),
+                Clean(string.Join(" | ", words)), string.Join(',', rewards.Select(Clean)), string.Join(',', marks),
+                activity == "NotActivity" ? "" : activity);
+        }
+        catch (Exception) {
+            return "";
+        }
+    }
+
+    private static string GoalKind(GOAL_TYPE type) => type switch {
+        GOAL_TYPE.GOAL_TYPE_BOUNTY => "Defeat",
+        GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT or GOAL_TYPE.GOAL_TYPE_COLLECTAFTERBOUNTY => "Defeat and collect",
+        GOAL_TYPE.GOAL_TYPE_SCAVENGE or GOAL_TYPE.GOAL_TYPE_SCAVENGEFAKE => "Collect",
+        GOAL_TYPE.GOAL_TYPE_PERSONA => "Talk to",
+        GOAL_TYPE.GOAL_TYPE_WAYPOINT or GOAL_TYPE.GOAL_TYPE_ENCOUNTER_WAYPOINT_FOREACH => "Go to",
+        GOAL_TYPE.GOAL_TYPE_ACHIEVERANK => "Reach a rank",
+        GOAL_TYPE.GOAL_TYPE_USAGE => "Use",
+        GOAL_TYPE.GOAL_TYPE_COMPLETEQUEST => "Finish a quest",
+        GOAL_TYPE.GOAL_TYPE_SOCIARANK or GOAL_TYPE.GOAL_TYPE_SOCIACURRENCY or GOAL_TYPE.GOAL_TYPE_SOCIAMINIGAME
+            or GOAL_TYPE.GOAL_TYPE_SOCIAGIVEITEM or GOAL_TYPE.GOAL_TYPE_SOCIAGETITEM => "Other",
+        _ => "",
+    };
 
     private static string Clean(string text) => (text ?? "").Replace('\t', ' ').Replace('\n', ' ').Replace('\r', ' ').Trim();
 

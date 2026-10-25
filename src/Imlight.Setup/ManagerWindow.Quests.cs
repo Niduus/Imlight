@@ -57,7 +57,15 @@ internal sealed partial class ManagerWindow {
     private enum QuestState { Done, InProgress, NextUp, Later }
 
     private sealed record QuestInfo(int Order, string Code, string Title, int Level, bool Main, string[] Needs,
-        string Giver, string Zone, string ZoneFrom, string World);
+        string Giver, string Zone, string ZoneFrom, string World) {
+        // Its steps, rewards and marks (an older quest list leaves them empty).
+        public int Steps { get; init; }
+        public string[] StepKinds { get; init; } = [];
+        public string StepWords { get; init; } = "";
+        public string[] Rewards { get; init; } = [];
+        public string[] Marks { get; init; } = [];
+        public string Activity { get; init; } = "";
+    }
 
     private sealed record QuestRow(QuestInfo Quest, QuestState State, string[] Missing);
 
@@ -69,7 +77,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _questShow = new() { ItemsSource = QUEST_SHOWS, SelectedIndex = 0, Width = 130 };
     private readonly ComboBox _questWorld = new() { Width = 150 };
     private readonly CheckBox _questMainOnly = new() { Content = "Main story only", IsChecked = true };
-    private readonly TextBox _questSearch = new() { Watermark = "Search a quest's name, code, giver or zone" };
+    private readonly TextBox _questSearch = new() { Watermark = "Search a quest's name, code, giver, zone, steps or rewards" };
     // Niduus, 2026-10-25: every detail of a quest to filter by, like the Gear tab's filters.
     private static readonly string[] s_questStarts = [ANY_FILTER, "Given by an NPC", "Starts by itself", "Not known"];
     private static readonly string[] s_questSorts = ["Story order", "Level (low first)", "Level (high first)", "Name", "Giver", "Zone"];
@@ -82,6 +90,15 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _questNeedsMin = FilterNumber(1);
     private readonly NumericUpDown _questNeedsMax = FilterNumber(1);
     private readonly CheckBox _questTeleport = new() { Content = "Only ones I can teleport to" };
+    // Niduus, 2026-10-25: "add to manager quests ... searches": what its steps ask, what it rewards, its marks.
+    private static readonly string[] s_questMarks = [ANY_FILTER, "Repeatable", "Hidden", "Outdated", "Pet", "Crafting", "None of these"];
+    private readonly ComboBox _questStepKind = FilterCombo([ANY_FILTER], 170);
+    private readonly NumericUpDown _questStepsMin = FilterNumber(1);
+    private readonly NumericUpDown _questStepsMax = FilterNumber(1);
+    private readonly ComboBox _questActivity = FilterCombo([ANY_FILTER], 130);
+    private readonly ComboBox _questMark = FilterCombo(s_questMarks, 130);
+    private readonly TextBox _questReward = new() { Watermark = ANY_FILTER, Width = 200 };
+    private readonly TextBox _questStepText = new() { Watermark = ANY_FILTER, Width = 200 };
     private readonly TextBlock _questCount = Sub("");
     private readonly ListBox _questResults = new() { Background = Brushes.Transparent };
     private readonly DispatcherTimer _questTimer = new() { Interval = TimeSpan.FromSeconds(2) };
@@ -112,7 +129,8 @@ internal sealed partial class ManagerWindow {
         _questWorld.SelectionChanged += (_, _) => RenderQuests();
         _questMainOnly.IsCheckedChanged += (_, _) => RenderQuests();
         WhenFiltersChange(RenderQuests, _questLevelMin, _questLevelMax, _questGiver, _questZone, _questStarts, _questSort,
-            _questNeedsMin, _questNeedsMax, _questTeleport);
+            _questNeedsMin, _questNeedsMax, _questTeleport, _questStepKind, _questStepsMin, _questStepsMax, _questActivity,
+            _questMark, _questReward, _questStepText);
         _questWizard.SelectionChanged += (_, _) => {
             if (!_questWizardsFilling) {
                 _questProgressWritten = default;
@@ -159,6 +177,13 @@ internal sealed partial class ManagerWindow {
                         SearchFilter("How it starts", _questStarts),
                         SearchFilter("Quests needed, from", _questNeedsMin),
                         SearchFilter("Quests needed, to", _questNeedsMax),
+                        SearchFilter("A step to", _questStepKind),
+                        SearchFilter("Steps, from", _questStepsMin),
+                        SearchFilter("Steps, to", _questStepsMax),
+                        SearchFilter("Step says", _questStepText),
+                        SearchFilter("Reward (drop table)", _questReward),
+                        SearchFilter("Activity", _questActivity),
+                        SearchFilter("Marked", _questMark),
                         SearchFilter("Sort by", _questSort),
                         SearchTick(_questTeleport)),
                     _questCount), Dock.Top),
@@ -204,7 +229,14 @@ internal sealed partial class ManagerWindow {
                     int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var level) ? level : 0,
                     parts[3] == "main",
                     parts[4].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-                    parts[5], parts[6], parts[7], QuestWorldOf(parts[0], parts[6])));
+                    parts[5], parts[6], parts[7], QuestWorldOf(parts[0], parts[6])) {
+                    Steps = parts.Length > 8 && int.TryParse(parts[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out var steps) ? steps : 0,
+                    StepKinds = parts.Length > 9 ? parts[9].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [],
+                    StepWords = parts.Length > 10 ? parts[10] : "",
+                    Rewards = parts.Length > 11 ? parts[11].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [],
+                    Marks = parts.Length > 12 ? parts[12].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [],
+                    Activity = parts.Length > 13 ? parts[13].Trim() : "",
+                });
             }
 
             _quests = quests;
@@ -215,6 +247,8 @@ internal sealed partial class ManagerWindow {
             _questWorld.SelectedItem = picked is not null && worlds.Contains(picked) ? picked : ALL_WORLDS;
             FillFilterCombo(_questGiver, quests.Select(q => q.Giver).OrderBy(g => g, StringComparer.OrdinalIgnoreCase));
             FillFilterCombo(_questZone, quests.Select(q => q.Zone).OrderBy(z => z, StringComparer.OrdinalIgnoreCase));
+            FillFilterCombo(_questStepKind, quests.SelectMany(q => q.StepKinds).OrderBy(k => k, StringComparer.OrdinalIgnoreCase));
+            FillFilterCombo(_questActivity, quests.Select(q => q.Activity).OrderBy(a => a, StringComparer.OrdinalIgnoreCase));
 
             return true;
         }
@@ -362,6 +396,11 @@ internal sealed partial class ManagerWindow {
         var zone = FilterPick(_questZone);
         var starts = _questStarts.SelectedIndex;
         var teleport = _questTeleport.IsChecked == true;
+        var stepKind = FilterPick(_questStepKind);
+        var activity = FilterPick(_questActivity);
+        var mark = FilterPick(_questMark);
+        var rewardWords = SearchText.Words(_questReward.Text);
+        var stepWords = SearchText.Words(_questStepText.Text);
 
         var rows = new List<QuestRow>();
         int done = 0, now = 0, next = 0, inScope = 0;
@@ -395,6 +434,12 @@ internal sealed partial class ManagerWindow {
                 || (giver is not null && quest.Giver != giver) || (zone is not null && quest.Zone != zone)
                 || (teleport && quest.Zone.Length == 0)
                 || !InFilterRange(quest.Needs.Length, _questNeedsMin, _questNeedsMax)
+                || !InFilterRange(quest.Steps, _questStepsMin, _questStepsMax)
+                || (stepKind is not null && !quest.StepKinds.Contains(stepKind))
+                || (activity is not null && quest.Activity != activity)
+                || (mark is not null && (mark == "None of these" ? quest.Marks.Length > 0 : !quest.Marks.Contains(mark.ToLowerInvariant())))
+                || !AllWordsIn(rewardWords, string.Join(' ', quest.Rewards))
+                || !AllWordsIn(stepWords, quest.StepWords)
                 || starts switch {
                     1 => quest.ZoneFrom != "npc",
                     2 => quest.ZoneFrom != "auto",
@@ -406,7 +451,9 @@ internal sealed partial class ManagerWindow {
 
             if (words.Length > 0) {
                 var text = SearchText.Normalize($"{quest.Title} {quest.Code} {quest.Giver} {quest.Zone} {quest.World} " +
-                                                $"{(quest.Main ? "main story" : "side quest")} level {quest.Level} {string.Join(' ', quest.Needs)}");
+                                                $"{(quest.Main ? "main story" : "side quest")} level {quest.Level} {string.Join(' ', quest.Needs)} " +
+                                                $"{string.Join(' ', quest.StepKinds)} {quest.StepWords} {string.Join(' ', quest.Rewards)} " +
+                                                $"{string.Join(' ', quest.Marks)} {quest.Activity}");
                 if (!words.All(w => text.Contains(w, StringComparison.Ordinal))) {
                     continue;
                 }
@@ -488,6 +535,19 @@ internal sealed partial class ManagerWindow {
                 : $"First step in {ShownZone(quest.Zone)}.",
         };
         details.Children.Add(Sub(where));
+        if (quest.Steps > 0) {
+            var steps = quest.StepWords.Length > 0 ? quest.StepWords.Replace(" | ", "; ") : string.Join(", ", quest.StepKinds);
+            details.Children.Add(Sub($"{quest.Steps} step{(quest.Steps == 1 ? "" : "s")}{(steps.Length > 0 ? $": {steps}" : "")}."));
+        }
+
+        var extra = string.Join("  ·  ", new[] {
+            quest.Rewards.Length > 0 ? $"Rewards: {string.Join(", ", quest.Rewards)}" : "",
+            quest.Activity.Length > 0 ? $"Activity: {quest.Activity}" : "",
+            quest.Marks.Length > 0 ? string.Join(", ", quest.Marks) : "",
+        }.Where(t => t.Length > 0));
+        if (extra.Length > 0) {
+            details.Children.Add(Sub(extra));
+        }
         if (row.Missing.Length > 0) {
             var titles = row.Missing.Take(3).Select(code => _quests.FirstOrDefault(q => q.Code.Equals(code, StringComparison.OrdinalIgnoreCase))?.Title ?? code);
             details.Children.Add(Sub($"Needs first: {string.Join(", ", titles)}{(row.Missing.Length > 3 ? $" and {row.Missing.Length - 3} more" : "")}."));
@@ -499,6 +559,16 @@ internal sealed partial class ManagerWindow {
             BorderThickness = new Thickness(0, 0, 0, 1),
             Child = new DockPanel { Children = { WithDock(buttons, Dock.Right), details } },
         };
+    }
+
+    private static bool AllWordsIn(string[] words, string text) {
+        if (words.Length == 0) {
+            return true;
+        }
+
+        var normal = SearchText.Normalize(text);
+
+        return words.All(w => normal.Contains(w, StringComparison.Ordinal));
     }
 
     private static string ShownZone(string zone) => zone.Length > 0 ? zone : "a place the server can't teleport to";

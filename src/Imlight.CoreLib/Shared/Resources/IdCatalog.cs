@@ -123,6 +123,8 @@ public static class IdCatalog {
         _ = Task.Run(() => Imlight.CoreLib.Game.Tools.QuestGuide.WriteList(OutputPath));
         // The Customs tab's vendor and trainer presets, worked out from the game files each boot.
         _ = Task.Run(() => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
+        // The Manager's Vendors & Trainers search: every shop keeper and trainer, what they sell and teach, where they stand.
+        Imlight.CoreLib.Game.Tools.VendorGuide.WriteLater(OutputPath);
         _ = Task.Run(() => {
             try {
                 if (TryLoadFromDisk()) {
