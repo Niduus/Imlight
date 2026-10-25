@@ -114,6 +114,7 @@ internal static class ManagerTheme {
         ["Customs"] = BLOCK_DO,
         ["Guides"] = Color.FromRgb(46, 160, 140),
         ["Server"] = Color.FromRgb(63, 167, 160),
+        ["Announcements"] = Color.FromRgb(224, 128, 72),
         ["Logs"] = Color.FromRgb(108, 122, 140),
         ["Settings"] = ACCENT,
         ["Accounts"] = Color.FromRgb(199, 92, 154),

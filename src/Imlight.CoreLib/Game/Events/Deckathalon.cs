@@ -650,7 +650,7 @@ internal static class Deckathalon {
                 score.BestFloor = Math.Max(score.BestFloor, floor);
                 if (floor % CHECKPOINT_FLOORS == 0 && floor < s_floors && floor / CHECKPOINT_FLOORS > score.Checkpoint) {
                     score.Checkpoint = Math.Min(floor / CHECKPOINT_FLOORS, MAX_CHECKPOINT);
-                    lines.Add($"Checkpoint saved: next time you enter the tower, you can start from floor {floor + 1}.");
+                    lines.Add(Tools.Announcements.Text("deckathalon.checkpoint", ("floor", floor + 1)));
                 }
 
                 // The event's point for the floor (CPT_DefeatMob), counted like the treasure cards' (CardUsed).
@@ -672,9 +672,9 @@ internal static class Deckathalon {
                 run.Won = true;
                 s_runs.TryRemove(run.CharId, out _);
                 lines.Insert(0, floor >= TOP_FLOOR
-                    ? $"You beat {run.Tower.Professor} and conquered the {run.Tower.School} Deckathalon with {run.Points} points!"
-                    : $"You reached the top of the {run.Tower.School} Deckathalon (floor {floor}) with {run.Points} points!");
-                lines.Add("Walk into the portal to go back to the arena.");
+                    ? Tools.Announcements.Text("deckathalon.conquered", ("professor", run.Tower.Professor), ("school", run.Tower.School), ("points", run.Points))
+                    : Tools.Announcements.Text("deckathalon.top", ("school", run.Tower.School), ("floor", floor), ("points", run.Points)));
+                lines.Add(Tools.Announcements.Text("deckathalon.back"));
                 Tell(session, lines);
 
                 return;
@@ -682,8 +682,8 @@ internal static class Deckathalon {
 
             run.Floor = floor + 1;
             var next = CreatureOf(run.Tower, run.Floor);
-            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor}: "
-                + (run.Floor == TOP_FLOOR ? $"{run.Tower.Professor} waits there." : $"{ShownName(next)}."));
+            lines.Insert(0, Tools.Announcements.Text("deckathalon.floor", ("floor", floor), ("points", run.Points), ("next floor", run.Floor),
+                ("next foe", run.Floor == TOP_FLOOR ? Tools.Announcements.Text("deckathalon.professor", ("professor", run.Tower.Professor)) ?? "" : ShownName(next))));
             Tell(session, lines);
         }
         catch (Exception ex) {
@@ -703,8 +703,8 @@ internal static class Deckathalon {
         Logger.Information("Deckathalon | {0} falls on floor {1} of the {2} tower ({3} points).",
             Logger.Args(run.Name, run.Floor, run.Tower.School, run.Points));
         Tell(session, [
-            $"The Deckathalon is over for this climb: you fell on floor {run.Floor} with {run.Points} points.",
-            $"Your best: floor {score.BestFloor}. Type .deckathalon to climb again.",
+            Tools.Announcements.Text("deckathalon.fell", ("floor", run.Floor), ("points", run.Points)),
+            Tools.Announcements.Text("deckathalon.best", ("best", score.BestFloor)),
         ]);
     }
 
@@ -809,7 +809,7 @@ internal static class Deckathalon {
         if (RunOf(charId) is { } leaving) {
             // Walking out of the tower ends the climb, as .deckathalon leave does.
             s_runs.TryRemove(charId, out _);
-            Tell(session, [$"You left the {leaving.Tower.School} Deckathalon on floor {leaving.Floor} with {leaving.Points} points."]);
+            Tell(session, [Tools.Announcements.Text("deckathalon.left", ("school", leaving.Tower.School), ("floor", leaving.Floor), ("points", leaving.Points))]);
         }
 
         session.Tell(ExitTransfer());
@@ -825,7 +825,8 @@ internal static class Deckathalon {
 
 
     private static void Tell(IActorRef session, IEnumerable<string> lines) {
-        foreach (var line in lines) {
+        // A line turned off in the Manager's Announcements tab is null.
+        foreach (var line in lines.Where(line => line is not null)) {
             session.Tell(new Imcodec.MessageLayer.Generated.EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 0 });
         }
     }

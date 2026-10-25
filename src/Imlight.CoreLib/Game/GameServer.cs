@@ -215,11 +215,10 @@ public class GameServer : Server {
             return;
         }
 
-        var kickedMsg = new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-            Message = "You have been kicked from the server.",
-            Modal = 1
-        };
-        session.ActorRef.Tell(kickedMsg);
+        // The words come from the Manager's Announcements tab; turned off there, the player just leaves.
+        if (Tools.Announcements.Text("server.kicked") is { } kicked) {
+            session.ActorRef.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = kicked, Modal = 1 });
+        }
 
         session.Dispose();
     }
@@ -228,10 +227,9 @@ public class GameServer : Server {
     private void ReceiveDieDelete(SERVER_100_PROTOCOL.MSG_DIEDELETE message) {
         var session = ActiveSessions.FirstOrDefault(s => s.GetAssociatedAccount()?.AccountId == message.AccountID);
         if (session is not null) {
-            session.ActorRef.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                Message = $"{message.CharacterName} died in battle. Die = Delete is on, so this wizard is gone for good.",
-                Modal = 1
-            });
+            if (Tools.Announcements.Text("server.diedelete", ("wizard", message.CharacterName)) is { } gone) {
+                session.ActorRef.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = gone, Modal = 1 });
+            }
             session.Dispose();
         }
 

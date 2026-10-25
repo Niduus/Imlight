@@ -194,7 +194,7 @@ internal class CommandGuildProtocol : CommandProtocol {
 
         var guild = Guilds.For(me.CharId);
         SendGuildNameToSelf(keys);
-        TellGuild(guild, $"[Guild] {NameOf(me.CharId)} renamed the guild to {GuildName(guild)}.", skip: me.CharId);
+        TellGuild(guild, Tools.Announcements.Text("guild.renamed", ("wizard", NameOf(me.CharId)), ("guild", GuildName(guild))), skip: me.CharId);
         InformSenderClient($"Your guild is now {GuildName(guild)}.");
     }
 
@@ -256,7 +256,7 @@ internal class CommandGuildProtocol : CommandProtocol {
         }
 
         SendGuildNameToSelf(guild.NameKeys);
-        TellGuild(guild, $"[Guild] {NameOf(me.CharId)} joined the guild!", skip: me.CharId);
+        TellGuild(guild, Tools.Announcements.Text("guild.joined", ("wizard", NameOf(me.CharId))), skip: me.CharId);
         InformSenderClient($"You joined {GuildName(guild)}! .g talks to the guild and .guild house takes you to the guild house. Your guild name shows over your head after you change areas.", true);
     }
 
@@ -275,7 +275,7 @@ internal class CommandGuildProtocol : CommandProtocol {
             return;
         }
 
-        TellGuild(guild, $"[Guild] {NameOf(me.CharId)} left the guild.", skip: me.CharId);
+        TellGuild(guild, Tools.Announcements.Text("guild.left", ("wizard", NameOf(me.CharId))), skip: me.CharId);
         InformSenderClient($"You left {GuildName(guild)}.");
     }
 
@@ -296,7 +296,7 @@ internal class CommandGuildProtocol : CommandProtocol {
         }
 
         TellWizard(target, $"You were removed from the guild {GuildName(guild)}.", true);
-        TellGuild(guild, $"[Guild] {NameOf(target)} was removed from the guild.", skip: target);
+        TellGuild(guild, Tools.Announcements.Text("guild.removed", ("wizard", NameOf(target))), skip: target);
     }
 
     private void HandOverGuild(Wizard me, string who) {
@@ -315,7 +315,7 @@ internal class CommandGuildProtocol : CommandProtocol {
             return;
         }
 
-        TellGuild(guild, $"[Guild] {NameOf(target)} leads the guild now. The guild house is now {NameOf(target)}'s guild house.", skip: 0);
+        TellGuild(guild, Tools.Announcements.Text("guild.leader", ("wizard", NameOf(target))), skip: 0);
     }
 
     private void DisbandGuild(Wizard me, string confirm) {
@@ -333,7 +333,7 @@ internal class CommandGuildProtocol : CommandProtocol {
         }
 
         SendGuildNameToSelf(0);
-        TellGuild(guild, $"[Guild] {NameOf(me.CharId)} ended the guild {GuildName(guild)}.", skip: me.CharId);
+        TellGuild(guild, Tools.Announcements.Text("guild.ended", ("wizard", NameOf(me.CharId)), ("guild", GuildName(guild))), skip: me.CharId);
         InformSenderClient($"You ended the guild {GuildName(guild)}.");
     }
 
@@ -406,7 +406,8 @@ internal class CommandGuildProtocol : CommandProtocol {
         });
 
     private static int TellGuild(GuildRecord guild, string line, ulong skip) {
-        if (guild is null) {
+        // A line turned off in the Manager's Announcements tab is null.
+        if (guild is null || line is null) {
             return 0;
         }
 

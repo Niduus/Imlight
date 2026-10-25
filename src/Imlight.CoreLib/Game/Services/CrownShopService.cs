@@ -173,8 +173,8 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
             Logger.Information("Crowns Rewards: {0} reached the {1} crowns tier and got {2} ({3}), result {4}.",
                 Logger.Args(wizard.Account.AccountId, tier.Crowns, name, tier.TemplateId, error));
             ServerMessage(error == 0
-                ? $"{rewards.Name}: you spent {tier.Crowns} crowns and got {name}{(tier.Count > 1 ? $" x{tier.Count}" : "")}!"
-                : $"{rewards.Name}: you reached the {tier.Crowns} crowns reward ({name}), but there was no room for it.");
+                ? Tools.Announcements.Text("crowns.got", ("event", rewards.Name), ("crowns", tier.Crowns), ("item", $"{name}{(tier.Count > 1 ? $" x{tier.Count}" : "")}"))
+                : Tools.Announcements.Text("crowns.full", ("event", rewards.Name), ("crowns", tier.Crowns), ("item", name)));
         }
 
         TellCrownsRewards(wizard, rewards);
@@ -184,8 +184,8 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
         var (spent, next) = CrownShopConfig.Standing(wizard.Account.AccountId);
         var ends = rewards.Until is { } until ? $" Ends in {Left(until - DateTime.UtcNow)}." : "";
         ServerMessage(next is null
-            ? $"{rewards.Name}: you spent {spent} crowns and got every reward.{ends}"
-            : $"{rewards.Name}: you spent {spent} crowns. Spend {next.Crowns - spent} more for {ItemName(next.TemplateId)}.{ends}");
+            ? Tools.Announcements.Text("crowns.all", ("event", rewards.Name), ("spent", spent), ("ends", ends))
+            : Tools.Announcements.Text("crowns.next", ("event", rewards.Name), ("spent", spent), ("more", next.Crowns - spent), ("item", ItemName(next.TemplateId)), ("ends", ends)));
     }
 
     private static string Left(TimeSpan left)
@@ -201,8 +201,14 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
         return string.IsNullOrWhiteSpace(shown) ? $"item {templateId}" : shown;
     }
 
-    private void ServerMessage(string text)
-        => SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
+    private void ServerMessage(string text) {
+        if (text is null) {
+            // Turned off in the Manager's Announcements tab.
+            return;
+        }
+
+        SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
+    }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PCS_LIST_REQUEST))]
     private void ReceiveCrownShopListRequest(WIZARD_12_PROTOCOL.MSG_PCS_LIST_REQUEST message) {

@@ -147,7 +147,9 @@ internal static class MemberBenefits {
             return [];
         }
 
-        return ["Member benefits on:", .. active.Select(b => $"{b.Name}{TimeLeft(b.Key)}")];
+        return [.. new[] { Announcements.Text("benefit.login") }
+            .Concat(active.Select(b => Announcements.Text("benefit.login.line", ("benefit", b.Name), ("time left", TimeLeft(b.Key)))))
+            .Where(line => line is not null)];
     }
 
     private static void Tick() {
@@ -164,8 +166,9 @@ internal static class MemberBenefits {
             }
 
             s_active = now;
-            var lines = turnedOn.Select(b => $"Member benefit on: {b.Name}{TimeLeft(b.Key)}")
-                .Concat(turnedOff.Select(b => $"Member benefit off: {b.Name}"))
+            var lines = turnedOn.Select(b => Announcements.Text("benefit.on", ("benefit", b.Name), ("time left", TimeLeft(b.Key))))
+                .Concat(turnedOff.Select(b => Announcements.Text("benefit.off", ("benefit", b.Name))))
+                .Where(line => line is not null)
                 .ToList();
             foreach (var line in lines) {
                 Logger.Information("{0}", Logger.Args(line));

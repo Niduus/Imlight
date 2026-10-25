@@ -155,7 +155,7 @@ internal static class GameEvents {
             return [];
         }
 
-        return [.. s_running.Select(running => $"Event on: {running.Name}{TimeLeft(running)}.{HowToJoin(running)}")];
+        return [.. s_running.Select(EventOnLine).Where(line => line is not null)];
     }
 
     /// <summary>The kind of event a queued one is, for "one of each kind at a time": every Deckathalon is one kind,
@@ -229,8 +229,9 @@ internal static class GameEvents {
 
             s_running = now;
             var lines = new List<string>();
-            lines.AddRange(over.Select(o => $"Event over: {o.Name}.{(o.IsDeckathalon ? "" : " Its rewards can still be claimed for 7 days.")}"));
-            lines.AddRange(started.Select(n => $"Event on: {n.Name}{TimeLeft(n)}.{HowToJoin(n)}"));
+            lines.AddRange(over.Select(o => Tools.Announcements.Text(o.IsDeckathalon ? "event.over.deckathalon" : "event.over", ("event", o.Name)))
+                .Where(line => line is not null));
+            lines.AddRange(started.Select(EventOnLine).Where(line => line is not null));
 
             foreach (var line in lines) {
                 Logger.Information("{0}", Logger.Args(line));
@@ -287,12 +288,14 @@ internal static class GameEvents {
         }
     }
 
-    private static string HowToJoin(RunningEvent running)
-        => running.IsDeckathalon ? " Type .deckathalon to climb the tower."
-            : " Click the event button at the top of the screen to see it, or type .events.";
+    // The words come from the Manager's Announcements tab (Tools/Announcements.cs).
+    private static string EventOnLine(RunningEvent running)
+        => Tools.Announcements.Text("event.on", ("event", running.Name), ("time left", TimeLeft(running)),
+            ("how to join", Tools.Announcements.Text(running.IsDeckathalon ? "event.join.deckathalon" : "event.join.other") ?? ""));
 
     private static void Broadcast(List<string> lines) {
-        if (s_system is null || lines.Count == 0) {
+        // Even with every line turned off in the Manager, the event button still follows the event.
+        if (s_system is null) {
             return;
         }
 

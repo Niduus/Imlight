@@ -61,7 +61,7 @@ public partial class Zone {
                 if (!_raidWon) {
                     _raidWon = true;
                     Logger.Information("Raids | {0}: the raid is won.", Logger.Args(ZonePath));
-                    TellRaid("The raid is won! Well done.");
+                    TellRaid(Tools.Announcements.Text("raid.won"));
                     if (Raids.RaidRewards.Has(ZonePath)) {
                         foreach (var player in _players) {
                             player.Tell(new CHARACTER_103_PROTOCOL.MSG_RAIDREWARD { Zone = ZonePath });
@@ -82,7 +82,7 @@ public partial class Zone {
                     Raids.Raids.CastSigilSpells(ZonePath, _instancedCharIds.Values, message.Spells);
                     Logger.Information("Raids | {0}: sigil spell(s) {1} go into the battles here.",
                         Logger.Args(ZonePath, string.Join(", ", message.Spells)));
-                    TellRaid("A sigil spell is cast on the raid's battles!");
+                    TellRaid(Tools.Announcements.Text("raid.sigil"));
                 }
                 break;
             case RaidControlKind.Status:
@@ -106,7 +106,7 @@ public partial class Zone {
 
         // The short ones (1 or 5 seconds) end a part of the raid at once; only a real timer is worth a line.
         if (seconds >= 60) {
-            TellRaid($"The raid timer has started: {FormatTime(seconds)}.");
+            TellRaid(Tools.Announcements.Text("raid.timer", ("time", FormatTime(seconds))));
         }
     }
 
@@ -123,13 +123,17 @@ public partial class Zone {
         var seconds = Raids.Raids.ReturnSeconds;
         Logger.Information("Raids | {0}: the raid is over ({1}); players go back in {2} seconds.",
             Logger.Args(ZonePath, _raidWon ? "won" : "not won", seconds));
-        TellRaid((_raidWon ? "The raid is complete!" : "The raid is over.")
-            + $" Everyone goes back to the guild grounds in {seconds} seconds.");
+        TellRaid(Tools.Announcements.Text(_raidWon ? "raid.complete" : "raid.over", ("seconds", seconds)));
         Timers.StartSingleTimer(RAID_HOME_TIMER, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL { Kind = RaidControlKind.SendHome },
             TimeSpan.FromSeconds(seconds));
     }
 
     private void TellRaid(string line) {
+        if (line is null) {
+            // Turned off in the Manager's Announcements tab.
+            return;
+        }
+
         foreach (var player in _players) {
             player.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 0 });
         }

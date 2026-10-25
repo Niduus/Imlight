@@ -292,6 +292,7 @@ internal sealed partial class ManagerWindow : Window {
                 Tab("Customs", CustomsTab),
                 Tab("Guides", GuidesTab),
                 Tab("Server", ServerTab),
+                Tab("Announcements", AnnouncementsTab),
                 Tab("Logs", LogsTab),
                 Tab("Settings", SettingsTab),
                 Tab("Accounts", AccountsTab),
@@ -474,7 +475,6 @@ internal sealed partial class ManagerWindow : Window {
                    "once: Windows asks to allow the change, and the app asks your router to let friends in. Leave the server running."),
                 _friendResult),
             CommandCard(),
-            AnnouncementCard(),
             PositionCard());
     }
 
@@ -1085,7 +1085,7 @@ internal sealed partial class ManagerWindow : Window {
             }
         };
 
-        return Fold("quote", "Play", "Announcement",
+        return Fold("quote", "Announcements", "Send an announcement",
             "Sends a message to every player online on your server, friends included.",
             WithHint(new DockPanel {
                 Children = {
@@ -2314,6 +2314,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         ["Server"] = ("server", "Start and stop the server, and switch its modes."),
+        ["Announcements"] = ("chat", "Change the words of everything the server announces, and send your own."),
         ["Logs"] = ("log", "What the server and the game are writing down, as it happens."),
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),

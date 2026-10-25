@@ -304,8 +304,8 @@ internal static class LoyaltyStore {
             }
 
             Logger.Information("Loyalty Store | New wares: {0}.", Logger.Args(Describe(now)));
-            if (Settings.Announce) {
-                Broadcast($"Majid's Loyalty Store has new wares: {now.Rotation.Name}{TimeLeft(now)}. Find him in the Shopping District.");
+            if (Settings.Announce && Tools.Announcements.Text("loyalty.new", ("wares", now.Rotation.Name), ("time left", TimeLeft(now))) is { } line) {
+                Broadcast(line);
             }
         }
         catch (Exception ex) {

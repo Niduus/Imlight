@@ -120,14 +120,17 @@ internal static class ManagerCommands {
                 // The app's Announcement card puts "box|", "chat|" or "both|" in front; a plain line is a box.
                 var (box, chat, text, fromCard) = Split(line);
                 Logger.Information("Imlight app announcement to everyone ({0}): {1}", Logger.Args(box && chat ? "box and chat" : box ? "box" : "chat", text));
+                // The heading and the chat line's start come from the Manager's Announcements tab (Announcements.cs).
+                var boxText = fromCard ? Announcements.Text("manager.box", ("text", text)) ?? text : text;
+                var chatText = Announcements.Text("manager.chat", ("text", text)) ?? text;
                 foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
                     var actor = s_system.ActorSelection(player.ActorPath);
                     if (box) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? $"<center>Announcement</center>\n{text}" : text, Modal = 1 });
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = boxText, Modal = 1 });
                     }
 
                     if (chat) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = $"Announcement: {text}", Modal = 0 });
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = chatText, Modal = 0 });
                     }
                 }
             }
