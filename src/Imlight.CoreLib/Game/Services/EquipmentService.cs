@@ -122,10 +122,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             ShowPetFormToZone(playerCharacter);
 
             // Spawn the equipped pet as a zone entity if one is equipped.
-            // On a mount the new zone takes longer to load, and a re-wear 2 seconds in left the named pet frozen
-            // (Niduus, 2026-10-25), so it waits for the wizard to move there.
-            var mounted = playerCharacter.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is not null;
-            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0 && !ReWearIfNamed(null, mounted)) {
+            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0 && !ReWearIfNamed(null)) {
                 SpawnPetEntity();
             }
 
@@ -258,7 +255,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }
 
         // If this is a pet, spawn it as a zone entity so it appears in the world.
-        if (message.SlotName == "Pet") {
+        // A named pet put on while riding comes out frozen, so it gets the mount-off re-wear (ReceiveReWearNamedPet).
+        if (message.SlotName == "Pet" && !(IsMounted() && ReWearIfNamed(item))) {
             SpawnPetEntity(item);
         }
     }
@@ -544,14 +542,9 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     }
 
     /// <summary>Asks this service to take a named pet off and put it back on, as <see cref="ReWearIfNamed"/> says.</summary>
-    internal sealed record ReWearNamedPet(ulong PetItemId, bool WaitForMove = false, int Round = 0, bool Fallback = false);
+    internal sealed record ReWearNamedPet(ulong PetItemId);
 
     private static readonly TimeSpan ReWearDelay = TimeSpan.FromSeconds(2);
-    private static readonly TimeSpan ReWearMoveFallback = TimeSpan.FromSeconds(10);
-
-    // The named pet waiting for the wizard's first step in the zone, and which zone entry that wait belongs to.
-    private ulong _reWearOnMovePetId;
-    private int _reWearRound;
 
     /// <summary>
     /// A pet named with .name pet glided (no walk or idle), showed far too big and wisps weren't picked up after logging
@@ -559,7 +552,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     /// MSG_EQUIPITEM, or only the public equip notice, before the summon didn't help, so the server now does the whole
     /// take-off and put-on itself a moment later, when the game has loaded the wizard. False when the pet has no name.
     /// </summary>
-    private bool ReWearIfNamed(WizClientObjectItem pet, bool waitForMove = false) {
+    private bool ReWearIfNamed(WizClientObjectItem pet) {
         var equipment = GetActiveWizard()?.EquipmentBehavior;
         pet ??= equipment?.GetEquippedPetId() is { } id and not 0 ? equipment.GetItem(id) : null;
         if (pet is null || !CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(pet, out var petName)
@@ -568,68 +561,50 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }
 
         DismissPetEntity();
-        _reWearOnMovePetId = 0;
-        Context.System.Scheduler.ScheduleTellOnce(ReWearDelay, Self,
-            new ReWearNamedPet(pet.m_globalID, waitForMove, ++_reWearRound), Self);
+        Context.System.Scheduler.ScheduleTellOnce(ReWearDelay, Self, new ReWearNamedPet(pet.m_globalID), Self);
 
         return true;
     }
 
     [InternalMessageHandler(typeof(ReWearNamedPet))]
     private void ReceiveReWearNamedPet(ReWearNamedPet message) {
-        // A wait from an earlier zone entry is over.
-        if (message.Round != 0 && message.Round != _reWearRound) {
-            return;
-        }
-
-        if (message.WaitForMove) {
-            _reWearOnMovePetId = message.PetItemId;
-            Context.System.Scheduler.ScheduleTellOnce(ReWearMoveFallback, Self,
-                new ReWearNamedPet(message.PetItemId, Round: message.Round, Fallback: true), Self);
-
-            return;
-        }
-
-        // The wizard's first step already put the pet back on.
-        if (message.Fallback && _reWearOnMovePetId != message.PetItemId) {
-            return;
-        }
-
-        ReWearNow(message.PetItemId);
-    }
-
-    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENTMOVE))]
-    private void ReceiveClientMove(GAME_5_PROTOCOL.MSG_CLIENTMOVE message) {
-        if (_reWearOnMovePetId != 0) {
-            ReWearNow(_reWearOnMovePetId);
-        }
-    }
-
-    private void ReWearNow(ulong petItemId) {
-        _reWearOnMovePetId = 0;
         try {
             var equipment = GetActiveWizard()?.EquipmentBehavior;
-            if (equipment is null || equipment.GetEquippedPetId() != petItemId || GetActiveGameObject() is null) {
+            if (equipment is null || equipment.GetEquippedPetId() != message.PetItemId || GetActiveGameObject() is null) {
                 return;
             }
 
+            // A named pet put on while the wizard rides comes out frozen (the game log says it can't find the pet's
+            // Idle and Run), even right after taking it off; unnamed pets and unmounted wizards are fine (Niduus,
+            // 2026-10-25). So only the player's own game is told the mount came off for the put-on; the server and
+            // the other players keep the mount on, and it goes back on a moment after the pet is out.
+            var mount = equipment.GetItemInSlot(EquipmentSlotType.Mount);
+            if (mount is not null) {
+                SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM {
+                    ItemID = mount.m_globalID, SlotName = "Mount", IsEquip = 0
+                });
+            }
+
             // The game is told the pet came off, and a moment later that it went back on, like the player's own two
-            // clicks. Both messages back to back still left it frozen after zoning on a mount (Niduus, 2026-10-25, the
-            // log shows that re-wear ran). The server keeps the pet worn throughout, so a zone change in between loses
-            // nothing.
-            var slot = equipment.GetSlotOfItem(petItemId);
-            SendUnequipItem("Pet", slot, petItemId);
+            // clicks. The server keeps the pet worn throughout, so a zone change in between loses nothing.
+            var slot = equipment.GetSlotOfItem(message.PetItemId);
+            SendUnequipItem("Pet", slot, message.PetItemId);
             DismissPetEntity();
-            Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, Self, new PutNamedPetBackOn(petItemId), Self);
-            Logger.Information("Took named pet {0} off; it goes back on in a moment so the game animates it.", Logger.Args(petItemId));
+            Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, Self,
+                new PutNamedPetBackOn(message.PetItemId, mount?.m_globalID ?? 0), Self);
+            Logger.Information("Took named pet {0} off (mount {1} off in the game too); it goes back on in a moment so the game animates it.",
+                Logger.Args(message.PetItemId, mount?.m_globalID ?? 0));
         }
         catch (Exception ex) {
             Logger.Error("Error while taking the named pet off: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
         }
     }
 
-    /// <summary>Puts a named pet that <see cref="ReWearNow"/> took off back on.</summary>
-    internal sealed record PutNamedPetBackOn(ulong PetItemId);
+    /// <summary>Puts a named pet that <see cref="ReceiveReWearNamedPet"/> took off back on, then the mount it took off.</summary>
+    internal sealed record PutNamedPetBackOn(ulong PetItemId, ulong MountItemId);
+
+    /// <summary>Gives the player's game back the mount that came off for a named pet's put-on.</summary>
+    internal sealed record PutMountBackOn(ulong MountItemId);
 
     private static readonly TimeSpan PutBackOnDelay = TimeSpan.FromSeconds(1);
 
@@ -637,20 +612,48 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     private void ReceivePutNamedPetBackOn(PutNamedPetBackOn message) {
         try {
             var equipment = GetActiveWizard()?.EquipmentBehavior;
-            if (equipment is null || equipment.GetEquippedPetId() != message.PetItemId || GetActiveGameObject() is null) {
+            if (equipment is null || GetActiveGameObject() is null) {
                 return;
             }
 
-            var pet = equipment.GetItem(message.PetItemId);
-            equipment.MoveSlotToEnd(message.PetItemId);
-            SendEquipItem(pet, "Pet");
-            SpawnPetEntity(pet);
-            Logger.Information("Put named pet {0} back on.", Logger.Args(message.PetItemId));
+            if (equipment.GetEquippedPetId() == message.PetItemId) {
+                var pet = equipment.GetItem(message.PetItemId);
+                equipment.MoveSlotToEnd(message.PetItemId);
+                SendEquipItem(pet, "Pet");
+                SpawnPetEntity(pet);
+                Logger.Information("Put named pet {0} back on.", Logger.Args(message.PetItemId));
+            }
+
+            // The mount waits until the game has the pet out, so the pet is put on unmounted.
+            if (message.MountItemId != 0) {
+                Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, Self, new PutMountBackOn(message.MountItemId), Self);
+            }
         }
         catch (Exception ex) {
             Logger.Error("Error while putting the named pet back on: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
         }
     }
+
+    [InternalMessageHandler(typeof(PutMountBackOn))]
+    private void ReceivePutMountBackOn(PutMountBackOn message) {
+        try {
+            // Only the player's own game had the mount off; a mount taken off for real since then stays off.
+            var mount = GetActiveWizard()?.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount);
+            if (mount is null || mount.m_globalID != message.MountItemId || GetActiveGameObject() is null) {
+                return;
+            }
+
+            SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM {
+                ItemID = mount.m_globalID, SlotName = "Mount", IsEquip = 1
+            });
+        }
+        catch (Exception ex) {
+            Logger.Error("Error while putting the mount back on: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
+        }
+    }
+
+    private bool IsMounted()
+        => GetActiveWizard()?.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is not null;
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_SYNC_PET_FOR_MOUNT))]
     private void ReceiveSyncPetForMount()
