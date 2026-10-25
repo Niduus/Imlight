@@ -206,6 +206,9 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
             foreach (var packet in packets) {
                 if (IsCriticalPacket(packet)) {
                     _tokenBucket.Spend();
+                } else if (packet is GAME_5_PROTOCOL.MSG_REQASKSERVER) {
+                    // The game asks dozens of these at once on entering some areas (about 50 in Unicorn Way) and waits
+                    // for each answer. Counted, they emptied the bucket for up to 8 s and lost everything else too.
                 } else if (!_tokenBucket.TryAcquire()) {
                     // The rate limit was reached. A short burst only loses the extra messages: Niduus's game was
                     // disconnected a second or two after most logins (9 times on 2026-10-22, once in the middle of

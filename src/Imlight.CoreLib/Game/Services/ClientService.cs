@@ -40,7 +40,11 @@ using System;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Requirements;
+using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 
@@ -49,6 +53,9 @@ namespace Imlight.CoreLib.Game.Services;
 internal class ClientService(SessionActor sessionActor) : MessageService(sessionActor) {
     
     private static readonly TimeSpan s_instanceQueryTimeout = TimeSpan.FromSeconds(2);
+
+    // The properties the game writes in MSG_REQASKSERVER (checked against its bytes for ReqHasEntry).
+    private const uint RequirementMask = 7;
 
     protected static Props Props(SessionActor parentActor) 
         => Akka.Actor.Props.Create(() => new ClientService(parentActor));
@@ -76,10 +83,47 @@ internal class ClientService(SessionActor sessionActor) : MessageService(session
             Logger.Args(SessionActor.SessionID, isInstance));
     }
 
+    /// <summary>
+    /// The game asks the server about a requirement it cannot check itself, mostly "has this wizard finished quest X"
+    /// (a ReqHasEntry on "&lt;quest&gt;_Complete"), and waits for the answer. Unicorn Way asks about 50 of these on the
+    /// way in (Niduus's log of 2026-10-25); none were answered, so the area took long to settle. The answer is the
+    /// requirement's own result: like a requirement list, the game applies its NOT itself.
+    /// </summary>
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQASKSERVER))]
     private void ReceiveReqServer(GAME_5_PROTOCOL.MSG_REQASKSERVER message) {
-        // TODO: Implement this message handler. This is here just so we don't get
-        // a ton of unhandled message exceptions in the logs.
+        var met = false;
+        byte[] bytes = message.Requirement;
+        if (TryParseRequirement(bytes, out var requirement) && GetActiveWizard() is { } wizard) {
+            var context = new GenericRequirementContext(new RequirementList(), SessionActor.ActorRef,
+                GetActiveGameObject(), wizard);
+            met = RequirementDispatcher.EvaluateIndividualRequirement(requirement, context);
+            Logger.Verbose("SessionActor {0}: the game asked about {1} {2}: {3}.",
+                Logger.Args(SessionActor.SessionID, requirement.GetType().Name,
+                            (requirement as ReqHasEntry)?.m_entryName, met));
+        }
+
+        SendToSocket(new GAME_5_PROTOCOL.MSG_REQASKSERVER {
+            RequestID = message.RequestID,
+            Requirement = message.Requirement,
+            Response = met ? 1u : 0u
+        });
+    }
+
+    private static bool TryParseRequirement(byte[] bytes, out Requirement requirement) {
+        requirement = null;
+        if (bytes is null || bytes.Length == 0) {
+            return false;
+        }
+
+        try {
+            return new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None)
+                .Deserialize(bytes, RequirementMask, out requirement) && requirement is not null;
+        }
+        catch (Exception ex) {
+            Logger.Debug("A requirement the game asked about could not be read: {0}", Logger.Args(ex.Message));
+
+            return false;
+        }
     }
 
     private static byte QueryIsInstance(IActorRef zoneActor, ushort sessionId) {
