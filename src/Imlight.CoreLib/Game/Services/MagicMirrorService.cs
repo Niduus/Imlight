@@ -21,15 +21,15 @@
  *
  * PURPOSE:
  * The Magic Mirror window's Buy button (MSG_MAGICMIRRORREQUESTCHANGE): the new look is shown on the wizard
- * (MSG_MAGICMIRRORCHANGEPLAYER, to the wizard and everyone in the zone), saved as Wizard.MirrorLook, and sent again
- * each time the wizard enters a zone. See MagicMirror for what is not known yet.
+ * (MSG_MAGICMIRRORCHANGEPLAYER, to the wizard and everyone in the zone), written into the avatar (so character select
+ * draws it), saved as Wizard.MirrorLook, and sent again each time the wizard enters a zone.
  *
  * NOTE:
  * The mirror is free here (live charges gold for each change).
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/24/2026
+ * Last Updated: 10/25/2026
  */
 
 using System;
@@ -65,7 +65,7 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
                 MagicMirror.Load(template);
             }
 
-            if (MagicMirror.DropOldLook(wizard)) {
+            if (MagicMirror.UpgradeOldLook(wizard)) {
                 WizardCollection.UpdateCharacterMirrorLook(wizard);
             }
 
@@ -111,6 +111,11 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
     private void Apply(Wizard wizard, int[] look) {
         wizard.MirrorLook = MagicMirror.Normalize(look);
         wizard.MirrorLookVersion = MagicMirror.LOOK_VERSION;
+        if (wizard.WizardAvatar is not null) {
+            wizard.MirrorStartLook ??= MagicMirror.FromAvatar(wizard.WizardAvatar);
+            MagicMirror.WriteToAvatar(wizard.WizardAvatar, wizard.MirrorLook);
+        }
+
         WizardCollection.UpdateCharacterMirrorLook(wizard);
         Show(wizard);
         Logger.Information("Magic Mirror | {0} now looks: {1}.", Logger.Args(wizard.CharId, MagicMirror.Describe(wizard.MirrorLook)));
@@ -122,13 +127,23 @@ internal class MagicMirrorService(SessionActor sessionActor) : MessageService(se
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         try {
             var wizard = GetActiveWizard();
-            if (MagicMirror.DropOldLook(wizard)) {
+            if (MagicMirror.UpgradeOldLook(wizard)) {
                 WizardCollection.UpdateCharacterMirrorLook(wizard);
-                Logger.Information("Magic Mirror | Dropped {0}'s look from the first mirror version (its numbers were wrong).", Logger.Args(wizard.CharId));
+                Logger.Information("Magic Mirror | Fixed {0}'s look from an older mirror version.", Logger.Args(wizard.CharId));
             }
 
             if (wizard?.MirrorLook is null) {
                 return;
+            }
+
+            // Looks from before v0.10.292 were not in the avatar yet, so character select did not show them.
+            if (wizard.WizardAvatar is not null) {
+                var start = MagicMirror.FromAvatar(wizard.WizardAvatar);
+                if (MagicMirror.WriteToAvatar(wizard.WizardAvatar, wizard.MirrorLook)) {
+                    wizard.MirrorStartLook ??= start;
+                    WizardCollection.UpdateCharacterMirrorLook(wizard);
+                    Logger.Information("Magic Mirror | Wrote {0}'s mirror look into the avatar.", Logger.Args(wizard.CharId));
+                }
             }
 
             Show(wizard);

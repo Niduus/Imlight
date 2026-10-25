@@ -123,8 +123,11 @@ public class Wizard {
     public WizardCharacterBehavior WizardAvatar { get; set; }
     // The look picked in the Magic Mirror (MagicMirror.Parts order, -1 = not changed), sent again on every zone entry.
     public int[] MirrorLook { get; set; }
-    // 2 since the looks are numbered from the game's avatar table; older saved looks were wrong and are dropped.
+    // 2 since the looks are numbered from the game's avatar table (older saved looks were wrong and are dropped), 3 since
+    // hair colors are the game's own numbers and the look is written into WizardAvatar.
     public int MirrorLookVersion { get; set; }
+    // The look the wizard had before its first Magic Mirror change (MagicMirror.Parts order), for `.mirror reset`.
+    public int[] MirrorStartLook { get; set; }
     public ServerWizPlayerNameBehavior PlayerNameBehavior { get; set; }
     public ServerWizInventoryBehavior InventoryBehavior { get; set; }
     public ServerWizStorageBehavior StorageBehavior { get; set; }

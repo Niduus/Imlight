@@ -33,17 +33,19 @@
  *   (ObjectData/MagicMirrorShopOptions/...) with a VisualAttributeBehaviorTemplate saying what part it changes.
  * - The window sends the option template ids it picked and 0 for each part it left alone (seen in Niduus's log,
  *   2026-10-24). An option id becomes its look number from the game's avatar table (HumanTemplate.xml in Root.wad):
- *   its file's place in its part's list (face paint and glasses count from 1, 0 is none; a hair color counts among
- *   its own style's colors). Eyebrow and lip colors have no file and use their mirror order, which is the color order.
- *   A part left alone keeps the saved mirror look, else what the avatar says (hair, hair color, skin, face paint),
- *   else -1. Every request is logged, and magic-mirror-data.txt (next to the server) lists the options and their
- *   numbers.
- * - The new look is not written into WizardCharacterBehavior (how its newer packed fields hold eyes, nose and mouth is
- *   not known), so it is sent again each time the wizard enters a zone. Character select shows the old look.
+ *   its file's place in its part's list (face paint and glasses count from 1, 0 is none; a hair color is its place
+ *   in the one list of every style's colors). Eyebrow and lip colors have no file and use their mirror order, which
+ *   is the color order. A part left alone keeps what the wizard has now. Every request is logged, and
+ *   magic-mirror-data.txt (next to the server) lists the options and their numbers.
+ * - The look is written into WizardCharacterBehavior the way the game's own MSG_MAGICMIRRORCHANGEPLAYER handler does
+ *   it (read from WizardGraphicalClient.exe, 2026-10-25), so character select and every zone draw it:
+ *   hair style m_nHairModel, hair color m_nHairColor (low 7 bits) + m_extendedHairColor (the rest), skin
+ *   m_nSkinColor, face paint m_nSkinDecal2, eye color m_newPlayerOptions2 bits 0-4, and in m_newPlayerOptions: nose
+ *   bits 0-2, mouth 3-8, face 9-14, accessory 15-21, eyebrow color 22-26, lip color 27-31.
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/24/2026
+ * Last Updated: 10/25/2026
  */
 
 using System;
@@ -53,6 +55,7 @@ using System.Linq;
 using System.Text;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
+using Imcodec.ObjectProperty.Bit;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
@@ -83,19 +86,30 @@ internal static class MagicMirror {
         "eyebrow color", "lip color"
     ];
 
-    /// <summary>Wizard.MirrorLookVersion of looks saved with the avatar table numbers.</summary>
-    internal const int LOOK_VERSION = 2;
+    /// <summary>Wizard.MirrorLookVersion of looks with the game's own hair color numbers.</summary>
+    internal const int LOOK_VERSION = 3;
 
     /// <summary>
-    /// Drops a mirror look saved by v0.10.237, whose numbers were wrong (every part left alone became 0). True when one
-    /// was dropped, and the wizard needs saving.
+    /// Fixes a saved mirror look from an older version: v0.10.237's numbers were wrong (every part left alone became 0)
+    /// and it is dropped; v0.10.256 counted a hair color among its style's colors, so its hair color goes back to the
+    /// avatar's. True when the wizard needs saving.
     /// </summary>
-    internal static bool DropOldLook(WizardData.Models.Player.Wizard wizard) {
+    internal static bool UpgradeOldLook(WizardData.Models.Player.Wizard wizard) {
         if (wizard?.MirrorLook is null || wizard.MirrorLookVersion >= LOOK_VERSION) {
             return false;
         }
 
-        wizard.MirrorLook = null;
+        if (wizard.MirrorLookVersion < 2) {
+            wizard.MirrorLook = null;
+        }
+        else {
+            wizard.MirrorLook = Normalize(wizard.MirrorLook);
+            wizard.MirrorLook[1] = UNCHANGED;
+            wizard.MirrorLook = Current(wizard.MirrorLook, wizard.WizardAvatar);
+            FitHairColor(wizard.MirrorLook, wizard.WizardAvatar);
+        }
+
+        wizard.MirrorLookVersion = LOOK_VERSION;
 
         return true;
     }
@@ -122,6 +136,8 @@ internal static class MagicMirror {
     private static Dictionary<uint, MagicMirrorOption> s_options;
     private static uint s_optionsFrom;
     private static List<string> s_avatarReport = [];
+    private static CharacterRaceTable s_race;
+    private static bool s_raceRead;
     private static bool s_dataWritten;
 
     /// <summary>Whether a template is a Magic Mirror shop NPC.</summary>
@@ -223,23 +239,52 @@ internal static class MagicMirror {
             text.Append(i == 0 ? "" : "; ").Append(Parts[i]).Append(' ').Append(how);
         }
 
+        FitHairColor(look, avatar, text);
         notes = text.ToString();
 
         return look;
     }
 
     /// <summary>
-    /// The look a wizard has now: the saved mirror look, and for parts it never changed, what its avatar says (hair style,
-    /// hair color, skin color and face paint; the newer parts are packed in fields whose layout is not known, so -1).
+    /// Keeps the hair color on the hair style: the game draws the hair color number alone, and each style has its own
+    /// colors, so after a new style the color moves to the same color of the new style.
     /// </summary>
+    private static void FitHairColor(int[] look, WizardCharacterBehavior avatar, StringBuilder notes = null) {
+        if (look[0] < 0 || look[1] < 0 || avatar is null) {
+            return;
+        }
+
+        var colors = TableOf(avatar.m_eGender)?.m_hairTextureList;
+        var styles = TableOf(avatar.m_eGender)?.m_hairElementList;
+        if (colors is null || styles is null || look[0] >= styles.Count || look[1] >= colors.Count) {
+            return;
+        }
+
+        var style = styles[look[0]]?.m_id;
+        var oldStyle = colors[look[1]]?.m_id;
+        if (style is null || oldStyle is null || style == oldStyle) {
+            return;
+        }
+
+        var place = colors.Take(look[1]).Count(e => e?.m_id == oldStyle);
+        var ofStyle = Enumerable.Range(0, colors.Count).Where(i => colors[i]?.m_id == style).ToList();
+        if (ofStyle.Count == 0) {
+            return;
+        }
+
+        var fitted = ofStyle[Math.Min(place, ofStyle.Count - 1)];
+        notes?.Append($"; hair color {look[1]} belongs to another style, now {fitted}");
+        look[1] = fitted;
+    }
+
+    /// <summary>The look a wizard has now: the saved mirror look, and for parts it never changed, what its avatar says.</summary>
     internal static int[] Current(int[] saved, WizardCharacterBehavior avatar) {
         var look = Normalize(saved);
         if (avatar is null) {
             return look;
         }
 
-        int[] fromAvatar = [avatar.m_nHairModel, avatar.m_nHairColor, avatar.m_nSkinColor, UNCHANGED, avatar.m_nSkinDecal2,
-            UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED, UNCHANGED];
+        var fromAvatar = FromAvatar(avatar);
         for (var i = 0; i < look.Length; i++) {
             if (look[i] == UNCHANGED) {
                 look[i] = fromAvatar[i];
@@ -248,6 +293,64 @@ internal static class MagicMirror {
 
         return look;
     }
+
+    /// <summary>The look stored in an avatar (see the note at the top for where each part sits).</summary>
+    internal static int[] FromAvatar(WizardCharacterBehavior a) {
+        var options = a.m_newPlayerOptions;
+
+        return [
+            a.m_nHairModel, a.m_nHairColor + (a.m_extendedHairColor << 7), a.m_nSkinColor, (int) ((options >> 9) & 0x3f),
+            a.m_nSkinDecal2, (int) (a.m_newPlayerOptions2 & 0x1f), (int) (options & 7), (int) ((options >> 3) & 0x3f),
+            (int) ((options >> 15) & 0x7f), (int) ((options >> 22) & 0x1f), (int) (options >> 27)
+        ];
+    }
+
+    /// <summary>
+    /// Writes a look into an avatar the way the game does when it gets MSG_MAGICMIRRORCHANGEPLAYER (-1 parts stay), so
+    /// character select and new zones draw it. True when the avatar changed.
+    /// </summary>
+    internal static bool WriteToAvatar(WizardCharacterBehavior a, int[] look) {
+        if (a is null) {
+            return false;
+        }
+
+        look = Normalize(look);
+        var before = FromAvatar(a);
+        if (look[0] >= 0) {
+            a.m_nHairModel = (Bui4) (byte) Math.Min(look[0], 15);
+        }
+
+        if (look[1] >= 0) {
+            a.m_nHairColor = (Bui7) (byte) (look[1] & 0x7f);
+            a.m_extendedHairColor = (byte) (look[1] >> 7);
+        }
+
+        if (look[2] >= 0) {
+            a.m_nSkinColor = (Bui4) (byte) Math.Min(look[2], 15);
+        }
+
+        if (look[4] >= 0) {
+            a.m_nSkinDecal2 = (ushort) look[4];
+        }
+
+        if (look[5] >= 0) {
+            a.m_newPlayerOptions2 = (a.m_newPlayerOptions2 & ~0x1fu) | ((uint) look[5] & 0x1f);
+        }
+
+        var options = a.m_newPlayerOptions;
+        options = Pack(options, look[6], 0, 0x7);
+        options = Pack(options, look[7], 3, 0x3f);
+        options = Pack(options, look[3], 9, 0x3f);
+        options = Pack(options, look[8], 15, 0x7f);
+        options = Pack(options, look[9], 22, 0x1f);
+        options = Pack(options, look[10], 27, 0x1f);
+        a.m_newPlayerOptions = options;
+
+        return !before.SequenceEqual(FromAvatar(a));
+    }
+
+    private static uint Pack(uint options, int value, int shift, uint mask)
+        => value < 0 ? options : (options & ~(mask << shift)) | (((uint) value & mask) << shift);
 
     /// <summary>The avatar's look fields, for the log (to learn how the newer parts are packed).</summary>
     internal static string DescribeAvatar(WizardCharacterBehavior a)
@@ -371,6 +474,8 @@ internal static class MagicMirror {
         s_avatarReport = [];
         try {
             var race = RootArchiveLoader.GetFile<CharacterRaceTable>("HumanTemplate.xml");
+            s_race = race;
+            s_raceRead = true;
             foreach (var table in race?.m_characterTables ?? []) {
                 s_avatarReport.Add($"{table.m_sGender}: hair {table.m_hairElementList?.Count}, hair colors {table.m_hairTextureList?.Count}, " +
                     $"skin {table.m_skinTextureList?.Count}, face paint {table.m_skinDecalList2?.Count}, faces {table.m_faceElementList?.Count}, " +
@@ -391,6 +496,19 @@ internal static class MagicMirror {
         }
     }
 
+    /// <summary>The avatar table of a gender (read once), or null.</summary>
+    private static CharacterElementTable TableOf(eGender gender) {
+        lock (s_lock) {
+            if (!s_raceRead) {
+                ReadAvatarTable();
+                s_raceRead = true;
+            }
+
+            return s_race?.m_characterTables?.FirstOrDefault(t => (t.m_sGender.ToString() ?? "")
+                .Equals(gender == eGender.Female ? "Female" : "Male", StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
     /// <summary>The look number of an option, from the avatar table, or null when its file is not found there.</summary>
     private static int? IndexInAvatarTable(CharacterRaceTable race, VisualAttributeType type, string gender, string name, string source) {
         // Options without a gender (eye colors, glasses) are the same for both; their files sit in the boy folders.
@@ -405,19 +523,10 @@ internal static class MagicMirror {
             case VisualAttributeType.VAT_HairStyle:
                 return Find(table.m_hairElementList, stem, byGeometry: false);
 
-            case VisualAttributeType.VAT_HairColor: {
-                // The hair colors are one list for every style (each color's m_id is its style's); the number is the
-                // color's place among its own style's colors.
-                var list = table.m_hairTextureList ?? [];
-                var at = Find(list, stem, byGeometry: false);
-                if (at is not { } index) {
-                    return null;
-                }
-
-                var style = list[index].m_id;
-
-                return list.Take(index).Count(e => e?.m_id == style);
-            }
+            case VisualAttributeType.VAT_HairColor:
+                // The hair colors are one list for every style (each color's m_id is its style's); the game draws the
+                // color by its place in that list (his boy: hair style 8 = Shredder, hair color 80 = Shredder Black).
+                return Find(table.m_hairTextureList, stem, byGeometry: false);
 
             case VisualAttributeType.VAT_SkinColor:
                 return Find(table.m_skinTextureList, stem, byGeometry: false);

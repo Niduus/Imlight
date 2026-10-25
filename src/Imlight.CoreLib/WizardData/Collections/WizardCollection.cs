@@ -423,6 +423,7 @@ public static class WizardCollection {
         UpdateCharacter(wizard.CharId, existingCharacter => {
             existingCharacter.MirrorLook = wizard.MirrorLook;
             existingCharacter.MirrorLookVersion = wizard.MirrorLookVersion;
+            existingCharacter.MirrorStartLook = wizard.MirrorStartLook;
             existingCharacter.WizardAvatar = wizard.WizardAvatar;
         });
     }

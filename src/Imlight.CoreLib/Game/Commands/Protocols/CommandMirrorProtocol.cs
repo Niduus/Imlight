@@ -17,7 +17,7 @@
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/24/2026
+ * Last Updated: 10/25/2026
  */
 
 using System;
@@ -62,7 +62,12 @@ internal class CommandMirrorProtocol : CommandProtocol {
                 break;
 
             case "reset":
+                if (wizard.MirrorStartLook is not null) {
+                    MagicMirror.WriteToAvatar(wizard.WizardAvatar, wizard.MirrorStartLook);
+                }
+
                 wizard.MirrorLook = null;
+                wizard.MirrorStartLook = null;
                 WizardCollection.UpdateCharacterMirrorLook(wizard);
                 InformSenderClient("Your Magic Mirror look is gone. Change zones or relog to see your old look.");
 
@@ -87,7 +92,7 @@ internal class CommandMirrorProtocol : CommandProtocol {
                     return;
                 }
 
-                var look = MagicMirror.Current(MagicMirror.DropOldLook(wizard) ? null : wizard.MirrorLook, wizard.WizardAvatar);
+                var look = MagicMirror.Current(MagicMirror.UpgradeOldLook(wizard) ? null : wizard.MirrorLook, wizard.WizardAvatar);
                 for (var i = 0; i < numbers.Count && i < look.Length; i++) {
                     look[i] = numbers[i].Value;
                 }
@@ -134,6 +139,7 @@ internal class CommandMirrorProtocol : CommandProtocol {
         // The mirror look numbers belong to the old gender's lists.
         wizard.WizardAvatar.m_eGender = gender;
         wizard.MirrorLook = null;
+        wizard.MirrorStartLook = null;
         WizardCollection.UpdateCharacterMirrorLook(wizard);
         Logger.Information("Magic Mirror | {0} is now a {1}.", Logger.Args(wizard.CharId, which));
         InformSenderClient($"Your wizard is now a {which}. Log out to character select and back in to see it. Then visit the Magic Mirror to pick a new look.");
