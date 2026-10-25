@@ -458,13 +458,13 @@ public static class WizardCollection {
     }
 
     /// <summary>
-    /// Persists the wizard's name keys, custom name and rename request (the rename window, `.rename`).
+    /// Persists the wizard's name keys, custom name and name gender (the rename window, `.rename`).
     /// </summary>
     public static void UpdateCharacterName(Wizard wizard) {
         UpdateCharacter(wizard.CharId, existingCharacter => {
             existingCharacter.PlayerNameBehavior.NameIndices = wizard.PlayerNameBehavior.NameIndices;
             existingCharacter.PlayerNameBehavior.NameOverride = wizard.PlayerNameBehavior.NameOverride;
-            existingCharacter.RenameAskedAt = wizard.RenameAskedAt;
+            existingCharacter.PlayerNameBehavior.Gender = wizard.PlayerNameBehavior.Gender;
         });
     }
 

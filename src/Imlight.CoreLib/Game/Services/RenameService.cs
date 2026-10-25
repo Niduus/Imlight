@@ -20,18 +20,23 @@ using System;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
-using Imlight.CoreLib.Shared.Character;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Services;
 
 /// <summary>
-/// The game's in-game rename request (MSG_REQUESTRENAMECHARACTER: new name keys, gender and text). What opens it and
-/// what the game wants back are not known, so the server takes the name and logs it all.
-/// The rename window at character select is in CharacterService.
+/// The game's own Change Name or Style window (RenameCharacterWindow.gui, read from the game client 2026-10-25):
+/// the server sends MSG_REQUESTRENAMECHARACTER with Status 0 to open it (`.rename`). The game itself refuses below
+/// level 50 or under 100 crowns. Its OK button sends Status 2 with the picked name keys and gender (style), which the
+/// server takes. Status 1 is the game's "already changed once" box, so it is never sent; renaming is free.
 /// </summary>
 internal class RenameService(SessionActor sessionActor) : MessageService(sessionActor) {
+
+    internal const uint OPEN_WINDOW = 0;
+    private const uint PICKED = 2;
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new RenameService(parentActor));
@@ -40,34 +45,45 @@ internal class RenameService(SessionActor sessionActor) : MessageService(session
     private void ReceiveRequestRenameCharacter(WIZARD3_56_PROTOCOL.MSG_REQUESTRENAMECHARACTER message) {
         try {
             var wizard = GetActiveWizard();
-            string text = message.Text.ToString();
-            Logger.Information("Rename | {0} sent a rename request: status {1}, name keys {2:X8}, gender {3}, text \"{4}\".",
-                Logger.Args(wizard?.CharId, message.Status, message.NewName, message.NewGender, text));
-            if (wizard is null) {
+            Logger.Information("Rename | {0} sent the rename window: status {1}, name keys {2:X8}, gender {3}.",
+                Logger.Args(wizard?.CharId, message.Status, message.NewName, message.NewGender));
+            if (wizard is null || message.Status != PICKED) {
                 return;
             }
 
             var names = wizard.PlayerNameBehavior;
-            var renamed = false;
-            if (message.NewName != 0 && WizardNameBank.IsValidWizardName(message.NewName, names.Gender)) {
-                wizard.Rename((names.NameIndices & 0xFF000000) | (message.NewName & 0x00FFFFFF), "");
-                renamed = true;
-            }
-            else if (WizardRename.TryReadName(wizard, text, out var nameKeys, out var customName)) {
-                wizard.Rename(nameKeys, customName);
-                renamed = true;
+            var oldName = names.GetWizardName();
+            var gender = message.NewGender is (uint) eGender.Male or (uint) eGender.Female
+                ? (eGender) message.NewGender
+                : names.Gender;
+            if (!WizardNameBank.IsValidWizardName(message.NewName, gender)) {
+                SendNote("That name could not be read. Nothing was changed.");
+
+                return;
             }
 
-            if (renamed) {
-                SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                    Message = $"Your name is now {names.GetWizardName()}. Relog to see it everywhere.",
-                    Modal = 0
-                });
+            var styleChanged = wizard.WizardAvatar is not null && wizard.WizardAvatar.m_eGender != gender;
+            if (styleChanged) {
+                // As the Magic Mirror's .mirror girl/boy: the look numbers belong to the old style's lists.
+                wizard.WizardAvatar.m_eGender = gender;
+                wizard.MirrorLook = null;
+                WizardCollection.UpdateCharacterMirrorLook(wizard);
             }
+
+            names.Gender = gender;
+            wizard.Rename((names.NameIndices & 0xFF000000) | (message.NewName & 0x00FFFFFF), "");
+            Logger.Information("Rename | {0} is now {1}{2}.",
+                Logger.Args(oldName, names.GetWizardName(), styleChanged ? $" ({gender})" : ""));
+            SendNote(styleChanged
+                ? $"Your name is now {names.GetWizardName()} and your style changed. Log out to character select and back in to see it."
+                : $"Your name is now {names.GetWizardName()}. Log out to character select and back in to see it everywhere.");
         }
         catch (Exception ex) {
-            Logger.Error("Rename | The in-game rename request failed. {0}", Logger.Args(ex.Message));
+            Logger.Error("Rename | The rename window answer failed. {0}", Logger.Args(ex.Message));
         }
     }
+
+    private void SendNote(string text)
+        => SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
 
 }

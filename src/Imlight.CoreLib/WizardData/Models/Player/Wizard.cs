@@ -75,11 +75,6 @@ public class Wizard {
     public string SafeLocation { get; set; }
 
     public ulong InteriorStowedMountId { get; set; }
-    // `.rename`: when the wizard asked for the game's rename window. Character select offers it for a while after
-    // (RenameWindowMinutes), so a wizard can never be stuck if the window does not come up.
-    public DateTime? RenameAskedAt { get; set; }
-    [JsonIgnore] public bool WantsRename => RenameAskedAt is { } asked && DateTime.UtcNow - asked < RenameWindowTime;
-    [JsonIgnore] internal static readonly TimeSpan RenameWindowTime = TimeSpan.FromMinutes(15);
     // Crowns, and whether the starting crowns were given ([Character] StartingCrowns).
     public int Crowns { get; set; }
     public bool StartingCrownsGiven { get; set; }
@@ -1385,21 +1380,11 @@ public class Wizard {
     }
 
     /// <summary>
-    /// Gives the wizard a new name from the rename window: name keys from the game's name lists, or a custom name
-    /// (empty keeps the keys). Clears the rename request.
+    /// Gives the wizard a new name: name keys from the game's name lists, or a custom name (empty keeps the keys).
     /// </summary>
     public void Rename(uint nameKeys, string customName) {
         PlayerNameBehavior.NameIndices = nameKeys;
         PlayerNameBehavior.NameOverride = customName ?? "";
-        RenameAskedAt = null;
-
-        // Persistent save.
-        WizardCollection.UpdateCharacterName(this);
-    }
-
-    /// <summary>Asks for (or, with false, cancels) the rename window at character select.</summary>
-    public void AskForRename(bool ask) {
-        RenameAskedAt = ask ? DateTime.UtcNow : null;
 
         // Persistent save.
         WizardCollection.UpdateCharacterName(this);

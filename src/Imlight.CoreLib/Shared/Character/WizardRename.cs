@@ -24,9 +24,8 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Shared.Character;
 
 /// <summary>
-/// The game's own rename window (the plan's "real rename window", 2026-10-24): `.rename` marks the wizard, character
-/// select then sends it with m_shouldRename so the game asks for a new name, and the game answers with
-/// MSG_CHANGECHARACTERNAME. What the game puts in NewName is not known yet, so every likely form is read.
+/// Reads a new wizard name typed with `.rename &lt;name&gt;`: name keys, a name from the game's name lists, or a custom name.
+/// The game's own window (RenameService) sends name keys instead.
 /// </summary>
 internal static class WizardRename {
 
