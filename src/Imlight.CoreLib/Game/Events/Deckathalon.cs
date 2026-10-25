@@ -44,7 +44,9 @@
  *   portal to the next floor (Trigger Teleport). The zone's exit and the end of the climb lead back to the arena.
  * - Scores (best floor and points, per event) and the rewards a wizard already had are kept in deckathalon.json next
  *   to the server.
- * - Points: 100 for each floor number cleared, 10 for each treasure card used, and up to 125 more for a quick win.
+ * - Event points, as the game's event counts them: 1 for each floor beaten and 1 for each treasure card used in any
+ *   battle while the event is on (up to 20 a day); kept as tenths (10 a point). A climb also keeps its own points
+ *   for chat: 100 for each floor number cleared, 10 for each treasure card used, and up to 125 more for a quick win.
  * - Rewards, once per event: a Tower Pack of the school every 5 floors, and the event's trophies (3rd place at floor
  *   10, 2nd at 20, 1st at 30).
  *
@@ -174,6 +176,10 @@ internal static class Deckathalon {
         public int Points { get; set; }
         public int Runs { get; set; }
         public List<string> Rewards { get; set; } = [];
+        // The day (UTC, yyyy-MM-dd) of the daily counts below: treasure cards and floors that gave event points.
+        public string Day { get; set; } = "";
+        public int CardsToday { get; set; }
+        public int FloorsToday { get; set; }
     }
 
     private static readonly object s_scoreLock = new();
@@ -243,27 +249,27 @@ internal static class Deckathalon {
         }
     }
 
-    /// <summary>The best wizards of an event: highest floor first, then the most points.</summary>
+    /// <summary>The best wizards of an event: the most event points first (as the game's leaderboard), then the highest floor.</summary>
     internal static List<Score> Top(string eventKey, int count) {
         var scores = Scores;
         lock (s_scoreLock) {
             return scores.Events.TryGetValue(eventKey, out var byWizard)
-                ? [.. byWizard.Values.Where(s => s.BestFloor > 0).OrderByDescending(s => s.BestFloor).ThenByDescending(s => s.Points).Take(count)]
+                ? [.. byWizard.Values.Where(s => s.Points > 0 || s.BestFloor > 0).OrderByDescending(s => s.Points).ThenByDescending(s => s.BestFloor).Take(count)]
                 : [];
         }
     }
 
-    /// <summary>A wizard's best of an event and their place among everyone's (1 is first), or null when they cleared no floor.</summary>
+    /// <summary>A wizard's best of an event and their place among everyone's (1 is first), or null when they have no points yet.</summary>
     internal static (Score Score, int Place)? PlaceOf(string eventKey, ulong charId) {
         var scores = Scores;
         lock (s_scoreLock) {
             if (!scores.Events.TryGetValue(eventKey, out var byWizard) || !byWizard.TryGetValue(charId.ToString(), out var mine)
-                || mine.BestFloor <= 0) {
+                || (mine.Points <= 0 && mine.BestFloor <= 0)) {
                 return null;
             }
 
             var ahead = byWizard.Values.Count(s => s != mine
-                && (s.BestFloor > mine.BestFloor || (s.BestFloor == mine.BestFloor && s.Points > mine.Points)));
+                && (s.Points > mine.Points || (s.Points == mine.Points && s.BestFloor > mine.BestFloor)));
 
             return (mine, ahead + 1);
         }
@@ -411,45 +417,63 @@ internal static class Deckathalon {
         return $"You left the {run.Tower.School} Deckathalon on floor {run.Floor} with {run.Points} points.";
     }
 
-    /// <summary>A treasure card used in battle in the tower: 10 points.</summary>
     /// <summary>
     /// A treasure card used in battle: 10 points of the climb in the tower, and while a Deckathalon is on, a point of the
-    /// event anywhere (Niduus, 2026-10-25: "not getting the +1 to event notification for using a treasure card"), which
-    /// the game shows as its "+1" event toast (MSG_UPDATECLASSPROJECTSTATUS, ClientClassProjectComponent).
+    /// event anywhere, as the game's event counts them (TreasureTower_01_<School>: CPT_CastTreasureCard, 1 point, 20 a
+    /// day). Each point shows the game's "+1" event toast (Niduus, 2026-10-25: "not getting the +1 to event
+    /// notification for using a treasure card", "points not tracking").
     /// </summary>
     internal static void CardUsed(Wizard wizard, IActorRef client) {
         if (!Enabled || wizard is null) {
             return;
         }
 
-        var inTower = FightsHere(wizard) && RunOf(wizard.CharId) is not null;
-        if (inTower && RunOf(wizard.CharId) is { } run) {
+        if (FightsHere(wizard) && RunOf(wizard.CharId) is { } run) {
             run.CardsUsed++;
             run.Points += 10;
         }
 
-        if (CurrentEvent is not { } current || client is null) {
+        if (CurrentEvent is not { } current) {
             return;
         }
 
         var score = ScoreOf(current.Key, wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName() ?? wizard.CharId.ToString());
-        if (!inTower) {
-            // In the tower the climb's points count when its floor is won; elsewhere the card counts straight away.
-            lock (s_scoreLock) {
-                score.Points += 10;
+        lock (s_scoreLock) {
+            Today(score);
+            if (score.CardsToday >= CARDS_PER_DAY) {
+                return;
             }
 
-            SaveScores();
+            score.CardsToday++;
+            score.Points += 10;
         }
 
-        client.Tell(new Imcodec.MessageLayer.Generated.WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTSTATUS {
+        SaveScores();
+        Toast(client, current, score);
+    }
+
+    // The game's event counts: a point for each floor beaten, and a point for each treasure card, up to 20 a day.
+    private const int CARDS_PER_DAY = 20;
+
+    // Starts a new day of a score's daily counts (the event's days are UTC days, as m_currentDay).
+    private static void Today(Score score) {
+        var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        if (score.Day != today) {
+            score.Day = today;
+            score.CardsToday = 0;
+            score.FloorsToday = 0;
+        }
+    }
+
+    // The game's "+1" event toast (ClientClassProjectComponent::UpdateClassProjectStatus shows Points when it is not 0).
+    private static void Toast(IActorRef client, GameEvents.RunningEvent current, Score score)
+        => client?.Tell(new Imcodec.MessageLayer.Generated.WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTSTATUS {
             Status = 1,
             ProjectID = EventButton.ProjectId(current),
             Count = (uint) Math.Max(0, score.Points / 10),
             Points = 1,
             HasUnclaimedReward = 0,
         });
-    }
 
     /// <summary>
     /// A won battle: when it was the wizard's floor, the floor counts (points, best floor, rewards) and, after a few
@@ -471,14 +495,19 @@ internal static class Deckathalon {
             var score = ScoreOf(run.EventKey, run.CharId, run.Name);
             var lines = new List<string>();
             lock (s_scoreLock) {
-                if (floor > score.BestFloor || (floor == score.BestFloor && run.Points > score.Points)) {
-                    score.BestFloor = floor;
-                    score.Points = Math.Max(score.Points, run.Points);
-                }
+                score.BestFloor = Math.Max(score.BestFloor, floor);
+                // The event's point for the floor (CPT_DefeatMob), counted like the treasure cards' (CardUsed).
+                Today(score);
+                score.FloorsToday++;
+                score.Points += 10;
             }
 
             Rewards(session, wizard, run, score, floor, lines);
             SaveScores();
+            if (CurrentEvent is { } current && current.Key == run.EventKey) {
+                Toast(session, current, score);
+            }
+
             Logger.Information("Deckathalon | {0} clears floor {1} of the {2} tower ({3} points).",
                 Logger.Args(run.Name, floor, run.Tower.School, run.Points));
 

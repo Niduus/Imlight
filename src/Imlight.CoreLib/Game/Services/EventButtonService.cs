@@ -35,9 +35,10 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new EventButtonService(parentActor));
 
-    // Where the event window's Go button sends a wizard, as the game's event template says.
+    // Where the event window's Go button sends a wizard: the Library, as the game's event template says, in front of
+    // its event portal (WC-Teleport-LibToArena stands at -1.37, 1315.35, 1.50), facing it, instead of at the doors.
     private const string LIBRARY_ZONE = "WizardCity/Interiors/WC_Library";
-    private const string LIBRARY_LOCATION = "Start";
+    private const string LIBRARY_LOCATION = "-1.37,1150,1.5,3.1416";
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {

@@ -101,16 +101,22 @@ internal static class EventButton {
             });
 
             var score = Deckathalon.PlaceOf(running.Key, wizard.CharId)?.Score;
-            progress.Add(new ClassProjectPlayerProgress {
-                m_projectID = id,
-                m_classProjectPlayer = new ClassProjectPlayer {
-                    m_playerGID = new GID(wizard.GameObjectID),
-                    // The game's tower counts a point a floor and a point a treasure card; ours are ten times that.
-                    m_totalProgress = (ushort) Math.Clamp((score?.Points ?? 0) / 10, 0, ushort.MaxValue),
-                    m_level = (byte) Math.Clamp(score?.BestFloor ?? 0, 0, byte.MaxValue),
-                    m_extendedData = [],
-                },
-            });
+            var player = new ClassProjectPlayer {
+                m_playerGID = new GID(wizard.GameObjectID),
+                // The game's tower counts a point a floor and a point a treasure card; ours are ten times that.
+                m_totalProgress = (ushort) Math.Clamp((score?.Points ?? 0) / 10, 0, ushort.MaxValue),
+                m_level = (byte) Math.Clamp(score?.BestFloor ?? 0, 0, byte.MaxValue),
+                m_extendedData = [],
+            };
+
+            // Today's count of each of the event's activities, the "0/20" of its window: the template's first activity is
+            // beating a floor (CPT_DefeatMob), the second using a treasure card (CPT_CastTreasureCard, 20 a day).
+            if (score is not null && score.Day == DateTime.UtcNow.ToString("yyyy-MM-dd")) {
+                SetGoalProgress(player, 1, score.FloorsToday);
+                SetGoalProgress(player, 2, score.CardsToday);
+            }
+
+            progress.Add(new ClassProjectPlayerProgress { m_projectID = id, m_classProjectPlayer = player });
         }
 
         return new WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO {
@@ -131,6 +137,25 @@ internal static class EventButton {
         });
 
         return new WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD { ProjectID = projectId, TopBuffer = board, Buffer = board };
+    }
+
+    /// <summary>
+    /// Sets ClassProjectPlayer.m_goalProgress1..5: the client keeps today's count of an event activity in the low byte
+    /// (ClientClassProjectComponent's window shows it as "count/limit"). Set by name, since only a type dump from a
+    /// recent game client has these fields; with an older one the window shows 0.
+    /// </summary>
+    private static void SetGoalProgress(ClassProjectPlayer player, int activity, int count) {
+        var property = typeof(ClassProjectPlayer).GetProperty($"m_goalProgress{activity}");
+        if (property?.CanWrite != true) {
+            return;
+        }
+
+        try {
+            property.SetValue(player, Convert.ChangeType(Math.Clamp(count, 0, byte.MaxValue), property.PropertyType));
+        }
+        catch (Exception e) {
+            Logger.Warning("Event button: could not set {0}: {1}", Logger.Args(property.Name, e.Message));
+        }
     }
 
     private static ByteString Serialize(PropertyClass value) {
