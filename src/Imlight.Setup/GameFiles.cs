@@ -144,7 +144,7 @@ internal sealed class GameFiles(string installFolder) {
     private string RequireGameData() {
         var source = GameDataFolder;
         if (source is null || !Directory.Exists(source)) {
-            throw new PanelException("Wizard101 could not be found. Click \"Update Imlight\" on the Tools tab once so the app can find it.");
+            throw new PanelException("Wizard101 could not be found. Click \"Update Ahziael\" on the Tools tab once so the app can find it.");
         }
 
         return source;

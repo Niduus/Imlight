@@ -41,7 +41,7 @@ internal sealed record DropTableInfo(string Name, string Description, string Fil
 /// <summary>An item or spell a drop table can name, from the server's ID list (ids.csv).</summary>
 internal sealed record DropCatalogItem(string Id, string Kind, string Name, string School, string Path) {
 
-    internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
+    internal string Haystack { get; } = SearchText.Normalize($"{Name} {Id} {School}");
 
 }
 
@@ -581,7 +581,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var catalog = DropCatalog();
         var found = query.All(char.IsDigit)
             ? catalog.Where(i => i.Id == query).ToList()

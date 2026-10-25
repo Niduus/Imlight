@@ -331,7 +331,7 @@ internal sealed partial class ManagerWindow {
         var show = _questShow.SelectedItem as string ?? QUEST_SHOWS[0];
         var world = _questWorld.SelectedItem as string ?? ALL_WORLDS;
         var mainOnly = _questMainOnly.IsChecked == true;
-        var words = (_questSearch.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(_questSearch.Text);
 
         var rows = new List<QuestRow>();
         int done = 0, now = 0, next = 0, inScope = 0;
@@ -362,8 +362,8 @@ internal sealed partial class ManagerWindow {
             }
 
             if (words.Length > 0) {
-                var text = $"{quest.Title} {quest.Code} {quest.Giver} {quest.Zone} {quest.World}";
-                if (!words.All(w => text.Contains(w, StringComparison.OrdinalIgnoreCase))) {
+                var text = SearchText.Normalize($"{quest.Title} {quest.Code} {quest.Giver} {quest.Zone} {quest.World}");
+                if (!words.All(w => text.Contains(w, StringComparison.Ordinal))) {
                     continue;
                 }
             }

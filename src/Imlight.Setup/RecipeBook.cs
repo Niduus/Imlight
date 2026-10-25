@@ -227,7 +227,7 @@ internal sealed class RecipeBook {
         };
         recipe.Haystack = $"{recipe.Name} {recipe.Code} {recipe.Id} {recipe.Makes} {recipe.Station} {recipe.Category} {recipe.School} " +
                           string.Join(' ', ingredients.Select(i => i.Name));
-        recipe.Haystack = recipe.Haystack.ToLowerInvariant();
+        recipe.Haystack = SearchText.Normalize(recipe.Haystack);
 
         return recipe;
     }

@@ -321,7 +321,7 @@ internal static class InstalledCommands {
                 Directory.Delete(startMenu, recursive: true);
             }
 
-            foreach (var name in new[] { APP_SHORTCUT, START_SHORTCUT, PLAY_SHORTCUT, PANEL_SHORTCUT }) {
+            foreach (var name in new[] { APP_SHORTCUT, START_SHORTCUT, PLAY_SHORTCUT, PANEL_SHORTCUT }.Concat(Edition.OLD_NAMES.Select(n => n + ".lnk"))) {
                 File.Delete(Path.Combine(desktop, name));
             }
         }

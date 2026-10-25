@@ -134,7 +134,7 @@ internal sealed partial class ManagerWindow {
             try {
                 if (folder is null) {
                     throw new PanelException("Wizard101's game files could not be found, so the spell cards can't be shown. " +
-                        "Click \"Update Imlight\" on the Tools tab once so the app can find Wizard101.");
+                        "Click \"Update Ahziael\" on the Tools tab once so the app can find Wizard101.");
                 }
 
                 _spellBook = await Task.Run(() => SpellBook.Load(folder));

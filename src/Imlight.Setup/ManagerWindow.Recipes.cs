@@ -215,7 +215,7 @@ internal sealed partial class ManagerWindow {
 
         FillRecipeFilters(book);
         var query = (_recipeSearch.Text ?? "").Trim();
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var id = uint.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var number) ? number : (uint?) null;
         var station = _recipeStation.SelectedItem as string ?? ALL_STATIONS;
         var school = _recipeSchool.SelectedItem as string ?? ANY_RECIPE_SCHOOL;

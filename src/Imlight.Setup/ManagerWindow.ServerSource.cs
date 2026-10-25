@@ -80,7 +80,7 @@ internal sealed partial class ManagerWindow {
             _sourceFolderRow,
             WithHint(Row(Action(Primary("Use this server"), SaveServerSourceAsync), _rebuildFromFolder),
                 ServerSource.DefaultName + " is the one this app is made for. Another copy on GitHub is downloaded and built " +
-                "instead, and Update Imlight checks its branch for anything new. A folder on this PC can hold Imlight's source, " +
+                "instead, and Update Ahziael checks its branch for anything new. A folder on this PC can hold Imlight's source, " +
                 "which is built into the app's own Server folder (your folder is never changed), or a server that is already " +
                 "built, which runs right where it is. Some pages of this app only work with " + ServerSource.DefaultName + ".")));
     }
@@ -175,7 +175,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        Say($"Saved. The server comes from {source.Describe()} from the next update: click Update Imlight on the Tools tab.");
+        Say($"Saved. The server comes from {source.Describe()} from the next update: click Update Ahziael on the Tools tab.");
     }
 
     private async Task RebuildFromFolderAsync() {

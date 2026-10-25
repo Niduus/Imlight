@@ -35,14 +35,14 @@ namespace Imlight.Setup;
 internal sealed record BossInfo(string Id, string Name, string School, int Level, int Health, bool IsBoss, List<uint> Spells, string Stats,
                                 Dictionary<string, float[]> Grid) {
 
-    internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
+    internal string Haystack { get; } = SearchText.Normalize($"{Name} {Id} {School}");
 
 }
 
 /// <summary>A spell the Bosses tab can put in a deck, from the server's ids.csv.</summary>
 internal sealed record BossSpell(uint Id, string Name, string School) {
 
-    internal string Haystack { get; } = $"{Name} {Id} {School}".ToLowerInvariant();
+    internal string Haystack { get; } = SearchText.Normalize($"{Name} {Id} {School}");
 
 }
 
@@ -365,7 +365,7 @@ internal sealed class BossCatalog {
 
     /// <summary>Creatures that hold every word of the query, bosses and exact names first.</summary>
     internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total) {
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var pool = words.Length == 0
             ? Creatures.Where(c => changed.Contains(c.Id))
             : Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && words.All(c.Haystack.Contains));
@@ -383,7 +383,7 @@ internal sealed class BossCatalog {
 
     /// <summary>Spells that hold every word of the query, exact and shorter names first.</summary>
     internal List<BossSpell> SearchSpells(string query, int max) {
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         if (words.Length == 0) {
             return [];
         }

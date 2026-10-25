@@ -629,6 +629,11 @@ internal sealed class SetupSteps : IDisposable {
             File.Delete(Path.Combine(desktop, old));
         }
 
+        // The shortcut under the app's old name; the new one is made below.
+        foreach (var oldName in Edition.OLD_NAMES) {
+            File.Delete(Path.Combine(desktop, oldName + ".lnk"));
+        }
+
         try {
             if (Directory.Exists(startMenu)) {
                 Directory.Delete(startMenu, recursive: true);

@@ -243,7 +243,7 @@ internal sealed partial class ManagerWindow {
 
         FillGearFilters(gear);
         var query = (_gearSearch.Text ?? "").Trim();
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var id = uint.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var number) ? number : (uint?) null;
         var slot = _gearSlot.SelectedItem as string ?? ALL_GEAR;
         var school = _gearSchool.SelectedItem as string ?? ALL_SCHOOLS;

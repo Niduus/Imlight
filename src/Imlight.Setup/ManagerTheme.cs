@@ -42,22 +42,26 @@ internal static class ManagerTheme {
     // Colours
     // ---------------------------------------------------------------------
 
-    internal static readonly Color BACKGROUND = Color.FromRgb(19, 22, 28);
-    internal static readonly Color SIDEBAR = Color.FromRgb(14, 17, 22);
-    internal static readonly Color SURFACE = Color.FromRgb(27, 31, 39);
-    internal static readonly Color SURFACE_HIGH = Color.FromRgb(36, 41, 51);
-    internal static readonly Color SURFACE_HOVER = Color.FromRgb(44, 50, 62);
-    internal static readonly Color FIELD = Color.FromRgb(17, 20, 26);
-    internal static readonly Color LINE = Color.FromRgb(43, 49, 61);
-    internal static readonly Color LINE_STRONG = Color.FromRgb(60, 67, 82);
-    internal static readonly Color TEXT = Color.FromRgb(231, 234, 240);
-    internal static readonly Color TEXT_SOFT = Color.FromRgb(176, 183, 196);
-    internal static readonly Color MUTED = Color.FromRgb(142, 150, 166);
+    // Ahziael's look (Niduus, 2026-10-25: "Change up the style to be more nicer"): deep night blues with a violet edge.
+    internal static readonly Color BACKGROUND = Color.FromRgb(16, 18, 27);
+    internal static readonly Color SIDEBAR = Color.FromRgb(11, 13, 20);
+    internal static readonly Color SURFACE = Color.FromRgb(24, 27, 39);
+    internal static readonly Color SURFACE_HIGH = Color.FromRgb(33, 37, 53);
+    internal static readonly Color SURFACE_HOVER = Color.FromRgb(43, 48, 67);
+    internal static readonly Color FIELD = Color.FromRgb(13, 15, 23);
+    internal static readonly Color LINE = Color.FromRgb(39, 44, 62);
+    internal static readonly Color LINE_STRONG = Color.FromRgb(57, 63, 87);
+    internal static readonly Color TEXT = Color.FromRgb(234, 236, 245);
+    internal static readonly Color TEXT_SOFT = Color.FromRgb(180, 186, 205);
+    internal static readonly Color MUTED = Color.FromRgb(140, 148, 172);
 
     /// <summary>The colour of primary buttons, ticks and the selected tab.</summary>
-    internal static readonly Color ACCENT = Color.FromRgb(76, 125, 240);
-    internal static readonly Color ACCENT_LIGHT = Color.FromRgb(104, 147, 246);
-    internal static readonly Color ACCENT_DARK = Color.FromRgb(58, 103, 210);
+    internal static readonly Color ACCENT = Color.FromRgb(118, 100, 245);
+    internal static readonly Color ACCENT_LIGHT = Color.FromRgb(144, 128, 250);
+    internal static readonly Color ACCENT_DARK = Color.FromRgb(94, 76, 212);
+
+    /// <summary>The second colour of Ahziael's name and banners, which fade from the accent into it.</summary>
+    internal static readonly Color ACCENT_GLOW = Color.FromRgb(70, 170, 245);
 
     internal static readonly Color GOOD = Color.FromRgb(46, 170, 98);
     internal static readonly Color WARN = Color.FromRgb(221, 156, 44);
@@ -101,6 +105,10 @@ internal static class ManagerTheme {
 
     /// <summary>The colour of each tab and each kind of section, by name.</summary>
     private static readonly Dictionary<string, Color> s_accents = new() {
+        // The side bar's pages.
+        ["Home"] = Color.FromRgb(118, 100, 245),
+        ["Database"] = Color.FromRgb(58, 143, 217),
+        ["Create"] = Color.FromRgb(217, 101, 59),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
@@ -163,14 +171,14 @@ internal static class ManagerTheme {
     internal const double FONT_BODY = 14;
     internal const double FONT_SMALL = 12;
 
-    internal const double RADIUS = 12;
+    internal const double RADIUS = 14;
     internal const double RADIUS_SMALL = 8;
     internal const double RADIUS_PILL = 999;
 
     internal const double GAP = 14;
     internal const double PAD = 18;
     internal const double CONTROL_HEIGHT = 34;
-    internal const double SIDEBAR_WIDTH = 214;
+    internal const double SIDEBAR_WIDTH = 236;
     internal const double PAGE_MAX_WIDTH = 1060;
 
     // ---------------------------------------------------------------------
@@ -361,7 +369,7 @@ internal static class ManagerTheme {
     private static readonly Dictionary<string, string> s_buttonIcons = new() {
         ["Play Wizard101"] = "play", ["Play"] = "play", ["Run in my game"] = "play", ["Start server"] = "play",
         ["Stop server"] = "square", ["Stop"] = "square", ["Restart"] = "refresh", ["Refresh"] = "refresh",
-        ["Update Imlight"] = "download", ["Uninstall Imlight"] = "bin",
+        ["Update Ahziael"] = "download", ["Uninstall Ahziael"] = "bin",
         ["Save server"] = "save", ["Save changes"] = "save", ["Save shop research"] = "save",
         ["Save log to desktop"] = "download", ["Save game log to desktop"] = "download",
         ["Copy"] = "copy", ["Copy all"] = "copy", ["Copy address"] = "copy", ["Copy command"] = "copy", ["Copy ID"] = "copy",
@@ -375,7 +383,7 @@ internal static class ManagerTheme {
         ["Delete"] = "bin", ["Remove"] = "bin", ["Discard"] = "undo",
         ["Put back the game's values"] = "undo", ["Put back the game's deck"] = "undo", ["Put back the game's cheats"] = "undo",
         ["New password"] = "key", ["Rename"] = "pencil", ["Show"] = "eye", ["Hide"] = "eyeoff", ["Lock"] = "lock", ["Unlock"] = "unlock",
-        ["Learn on my wizard"] = "sparkle", ["Send to my gifts"] = "gift",
+        ["Learn on my wizard"] = "sparkle", ["What's new"] = "sparkle", ["Send to my gifts"] = "gift",
     };
 
     /// <summary>A button with its label's icon. Primary ones are filled with the accent colour.</summary>
@@ -412,6 +420,39 @@ internal static class ManagerTheme {
                     new TextBlock { Text = line, Foreground = MUTED_BRUSH, TextWrapping = TextWrapping.Wrap },
                 },
             },
+        },
+    };
+
+    /// <summary>The accent fading into the glow colour, left to right: Ahziael's name, logo and banners.</summary>
+    internal static IBrush Gradient(byte alpha = 255) => new LinearGradientBrush {
+        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+        GradientStops = {
+            new GradientStop(Color.FromArgb(alpha, ACCENT.R, ACCENT.G, ACCENT.B), 0),
+            new GradientStop(Color.FromArgb(alpha, ACCENT_GLOW.R, ACCENT_GLOW.G, ACCENT_GLOW.B), 1),
+        },
+    };
+
+    /// <summary>A page of the side bar: its icon tile, its name, and a short line of what is inside.</summary>
+    internal static Control NavHeader(string icon, IBrush accent, string title, string line) => new StackPanel {
+        Orientation = Orientation.Horizontal, Spacing = 12,
+        Children = {
+            Tile(icon, accent, 32),
+            new StackPanel {
+                VerticalAlignment = VerticalAlignment.Center, Spacing = 1,
+                Children = {
+                    new TextBlock { Text = title, FontSize = 15 },
+                    new TextBlock { Text = line, FontSize = 11.5, FontWeight = FontWeight.Normal, Foreground = MUTED_BRUSH, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = SIDEBAR_WIDTH - 90 },
+                },
+            },
+        },
+    };
+
+    /// <summary>A tab inside a page, along the top: its icon in its colour and its name.</summary>
+    internal static Control SubTabHeader(string icon, IBrush accent, string title) => new StackPanel {
+        Orientation = Orientation.Horizontal, Spacing = 8,
+        Children = {
+            Icon(icon, 16, accent),
+            new TextBlock { Text = title, VerticalAlignment = VerticalAlignment.Center },
         },
     };
 
@@ -626,10 +667,47 @@ internal static class ManagerTheme {
                 new Setter(Layoutable.WidthProperty, SIDEBAR_WIDTH - 20),
                 new Setter(Layoutable.MarginProperty, new Thickness(10, 2)),
                 new Setter(TemplatedControl.PaddingProperty, new Thickness(14, 0, 12, 0)),
-                new Setter(Layoutable.MinHeightProperty, 44.0),
-                new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(10)),
+                new Setter(Layoutable.MinHeightProperty, 54.0),
+                new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(12)),
                 new Setter(TemplatedControl.FontSizeProperty, 15.0),
                 new Setter(TemplatedControl.FontWeightProperty, FontWeight.SemiBold),
+            },
+        };
+
+        // The tabs inside a page: pills along the top, the chosen one lit in the accent.
+        yield return new Style(x => x.OfType<TabItem>().Class("sub")) {
+            Setters = {
+                new Setter(Layoutable.MarginProperty, new Thickness(0, 0, 6, 6)),
+                new Setter(TemplatedControl.PaddingProperty, new Thickness(14, 0)),
+                new Setter(Layoutable.MinHeightProperty, 36.0),
+                new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(RADIUS_PILL)),
+                new Setter(TemplatedControl.FontSizeProperty, 14.0),
+                new Setter(TemplatedControl.FontWeightProperty, FontWeight.SemiBold),
+                new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(1)),
+                new Setter(TemplatedControl.BorderBrushProperty, Brush(LINE)),
+            },
+        };
+        yield return new Style(x => x.OfType<TabItem>().Class("sub").Template().OfType<Border>().Name("PART_SelectedPipe")) {
+            Setters = { new Setter(Visual.IsVisibleProperty, false) },
+        };
+        yield return new Style(x => x.OfType<TabItem>().Class("sub").Class(":selected").Template().OfType<Border>().Name("PART_LayoutRoot")) {
+            Setters = {
+                new Setter(Border.BackgroundProperty, Brush(ACCENT, 60)),
+                new Setter(Border.BorderBrushProperty, Brush(ACCENT_LIGHT, 170)),
+            },
+        };
+        yield return new Style(x => x.OfType<TabControl>().Class("subnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
+            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(24, 16, 24, 4)) },
+        };
+
+        // The clear button inside search boxes.
+        yield return new Style(x => x.OfType<Button>().Class("clear")) {
+            Setters = {
+                new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
+                new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(0)),
+                new Setter(TemplatedControl.PaddingProperty, new Thickness(6)),
+                new Setter(Layoutable.MarginProperty, new Thickness(0, 0, 4, 0)),
+                new Setter(Layoutable.VerticalAlignmentProperty, VerticalAlignment.Center),
             },
         };
 

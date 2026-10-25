@@ -194,7 +194,7 @@ internal sealed partial class ManagerWindow {
                     .FirstOrDefault(f => f is not null && File.Exists(Path.Combine(f, "Root.wad")));
                 if (folder is null) {
                     throw new PanelException("Wizard101's game files could not be found, so the spell cards can't be shown. " +
-                        "Click \"Update Imlight\" on the Tools tab once so the app can find Wizard101, or read them on the Game Files tab.");
+                        "Click \"Update Ahziael\" on the Tools tab once so the app can find Wizard101, or read them on the Game Files tab.");
                 }
 
                 var book = await Task.Run(() => SpellBook.Load(folder));
@@ -243,7 +243,7 @@ internal sealed partial class ManagerWindow {
 
         FillSpellFilters(book);
         var query = (_spellsSearch.Text ?? "").Trim();
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var school = _spellsSchool.SelectedItem as string ?? ALL_SCHOOLS;
         var pips = _spellsPips.SelectedItem as string ?? ANY;
         var type = (_spellsType.SelectedItem as string ?? ALL_TYPES).Replace(' ', '_');

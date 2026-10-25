@@ -36,7 +36,7 @@ namespace Imlight.Setup;
 internal sealed record LookupEntry(string Kind, string Name, string Id, string Detail, string? Typed, string Help, bool Custom = false) {
 
     /// <summary>All of the text a search looks through, in lower case.</summary>
-    internal string Haystack { get; } = $"{Kind} {Name} {Id} {Detail} {Typed} {Help}".ToLowerInvariant();
+    internal string Haystack { get; } = SearchText.Normalize($"{Kind} {Name} {Id} {Detail} {Typed} {Help}");
 
 }
 
@@ -400,7 +400,7 @@ internal sealed class Lookup {
     /// Entries of a kind that hold every word of the query, best matches first.
     /// </summary>
     internal List<LookupEntry> Search(string kind, string query, int max, out int total) {
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var pool = kind == EVERYTHING ? _entries : _entries.Where(e => e.Kind == kind);
         if (words.Length == 0 && kind == EVERYTHING) {
             pool = COMMANDS;

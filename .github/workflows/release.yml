@@ -37,6 +37,8 @@ jobs:
         uses: actions/checkout@v5
         with:
           submodules: recursive
+          # The whole history and its tags, so the notes can list what changed since the last release.
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -112,4 +114,9 @@ jobs:
           $tag = "${{ steps.version.outputs.tag }}"
           $notes = if ($env:GENERATOR_INPUTS) { "ImlightManager.exe installs this build with its Control Panel. ImlightLauncherSetup.exe installs this build; existing installs update through the launcher." } `
                    else { "ImlightManager.exe installs this build with its Control Panel. Launcher only for this build: attach ImlightServer-win-x64.zip so launchers can update the server." }
+          # What changed since the last release, one line per merged change: the app's What's New window shows these.
+          $previous = git describe --tags --abbrev=0 --exclude $tag HEAD 2>$null
+          $changes = if ($previous) { git log --first-parent --pretty=format:"- %s" "$previous..HEAD" | Where-Object { $_ -notmatch '^- Merge ' } } else { @() }
+          if (-not $changes) { $changes = @("- Small fixes and improvements.") }
+          $notes = "## What's new`n" + ($changes -join "`n") + "`n`n## Downloads`n" + $notes
           gh release create $tag (Get-ChildItem release/*).FullName --title $tag --notes $notes --target "${{ github.sha }}"

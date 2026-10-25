@@ -139,7 +139,7 @@ internal sealed class AreaCatalog {
 
     internal sealed record Template(ulong Id, string Name, string Shown, string Kind, string School) {
 
-        internal string Haystack { get; } = $"{Id} {Name} {Shown} {Kind} {School}".ToLowerInvariant();
+        internal string Haystack { get; } = SearchText.Normalize($"{Id} {Name} {Shown} {Kind} {School}");
 
         internal string Label => Shown.Length > 0 && !Shown.Equals(Name, StringComparison.OrdinalIgnoreCase) ? $"{Shown} ({Name})" : Name;
 
@@ -362,7 +362,7 @@ internal sealed class AreaCatalog {
 
     /// <summary>Templates that hold every word of the query (names, IDs, kinds), exact matches first.</summary>
     internal List<Template> Search(string query, int max, Func<Template, bool>? filter = null) {
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         if (words.Length == 0) {
             return [];
         }

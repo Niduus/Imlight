@@ -63,7 +63,7 @@ internal sealed partial class ManagerWindow : Window {
     // At most a few lines: a copied log shown here in full once covered the whole window (Niduus, 2026-10-20).
     private readonly TextBlock _message = new() { TextWrapping = TextWrapping.Wrap, MaxLines = 4, TextTrimming = TextTrimming.CharacterEllipsis };
     // Shows what a background update is doing on the button itself (downloading 40%, building...).
-    private readonly Button _updateButton = Primary("Update Imlight");
+    private readonly Button _updateButton = Primary("Update Ahziael");
     private readonly Border _messageBar = new() { Padding = new Thickness(16, 10), IsVisible = false };
 
     // Play.
@@ -277,90 +277,55 @@ internal sealed partial class ManagerWindow : Window {
             Content = new Border { Padding = new Thickness(12), Child = new StackPanel { Children = { _logEmpty, _logLines } } },
         };
 
-        var tabs = new TabControl {
-            Padding = new Thickness(0),
-            TabStripPlacement = Dock.Left,
-            ItemsSource = new[] {
-                Tab("Play", PlayTab),
-                Tab("Commands", CommandsTab),
-                Tab("Lookup", LookupTab),
-                Tab("Quests", QuestsTab),
-                Tab("Phrases", PhrasesTab),
-                Tab("Spells", SpellsTab),
-                Tab("Gear", GearTab),
-                Tab("Recipes", RecipesTab),
-                Tab("Bosses", BossesTab),
-                Tab("Customs", CustomsTab),
-                Tab("Guides", GuidesTab),
-                Tab("Server", ServerTab),
-                Tab("Announcements", AnnouncementsTab),
-                Tab("Logs", LogsTab),
-                Tab("Settings", SettingsTab),
-                Tab("Accounts", AccountsTab),
-                Tab("Game Files", GameFilesTab),
-                Tab("Tools", ToolsTab),
-            },
-        };
-        tabs.SelectionChanged += async (_, e) => {
-            // A list or drop-down inside a tab sends its own SelectionChanged up here; only a new tab counts.
-            if (e.Source != tabs) {
-                return;
-            }
+        var tabs = new[] {
+            Tab("Play", PlayTab),
+            Tab("Commands", CommandsTab),
+            Tab("Lookup", LookupTab),
+            Tab("Quests", QuestsTab),
+            Tab("Phrases", PhrasesTab),
+            Tab("Spells", SpellsTab),
+            Tab("Gear", GearTab),
+            Tab("Recipes", RecipesTab),
+            Tab("Bosses", BossesTab),
+            Tab("Customs", CustomsTab),
+            Tab("Guides", GuidesTab),
+            Tab("Server", ServerTab),
+            Tab("Announcements", AnnouncementsTab),
+            Tab("Logs", LogsTab),
+            Tab("Settings", SettingsTab),
+            Tab("Accounts", AccountsTab),
+            Tab("Game Files", GameFilesTab),
+            Tab("Tools", ToolsTab),
+        }.ToDictionary(t => (string) t.Tag!);
+        // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
+        var nav = Navigation(tabs);
+        AddHandler(KeyDownEvent, OnShortcutKey, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
-            RefreshMissingNotes();
-            switch ((tabs.SelectedItem as TabItem)?.Tag as string) {
-                case "Play": await LoadPlayAsync(); break;
-                case "Lookup": await LoadLookupAsync(); break;
-                case "Quests": LoadQuests(); break;
-                case "Bosses": await LoadBossesAsync(); break;
-                case "Customs": await LoadCustomsAsync(); break;
-                // The Make a custom wizard on the Guides tab searches the creature list.
-                case "Guides":
-                    await LoadBossesAsync();
-                    UpdateCustomWizard();
-                    break;
-                case "Settings" when _settings.Count == 0: LoadSettings(); break;
-                case "Accounts": await LoadAccountsAsync(); break;
-            }
-
-            // The position card only reads its file while the Play tab is showing, and the game log only while Logs is.
-            var shownTab = (tabs.SelectedItem as TabItem)?.Tag as string;
-            if (shownTab == "Play") {
-                RefreshPosition();
-                _positionTimer.Start();
-            }
-            else {
-                _positionTimer.Stop();
-            }
-
-            _questTimer.IsEnabled = shownTab == "Quests";
-
-            _logTabShown = shownTab == "Logs";
-            if (shownTab == "Logs") {
-                RefreshLog();
-                RefreshClientLog();
-                _clientLogTimer.Start();
-            }
-            else {
-                _clientLogTimer.Stop();
-            }
-        };
-
-        // The header: the app's name on the left, the server's state as a badge on the right.
+        // The header: the app's name with "Created by Niduus" beside it on the left (Niduus, 2026-10-25: "Add the
+        // 'Created by Niduus' to be next to where the program name would be"), the server's state as a badge on the right.
         _statusBadge = ManagerTheme.Badge(_dot, _statusText);
-        ToolTip.SetTip(_statusBadge, "The server on this computer. Start and stop it on the Server tab.");
+        ToolTip.SetTip(_statusBadge, "The server on this computer. Start and stop it on the Server tab, or on Home.");
         ManagerTheme.PaintBadge(_statusBadge, _statusText, MUTED);
         var header = new Border {
             Background = ManagerTheme.SIDEBAR_BRUSH, BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(18, 12, 24, 12),
             Child = new DockPanel {
                 Children = {
                     WithDock(_statusBadge, Dock.Right),
-                    WithDock(new Border { Margin = new Thickness(0, 0, 12, 0), Child = ManagerTheme.Tile("sparkle", ManagerTheme.Accent("accent"), 34) }, Dock.Left),
+                    WithDock(new Border { Margin = new Thickness(0, 0, 12, 0), Child = ManagerTheme.Tile("sparkle", ManagerTheme.Gradient(), 38) }, Dock.Left),
                     new StackPanel {
-                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center, Spacing = 1,
                         Children = {
-                            new TextBlock { Text = Edition.NAME, FontSize = ManagerTheme.FONT_APP, FontWeight = FontWeight.Bold },
-                            new TextBlock { Text = "Your Wizard101 server", FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED },
+                            new StackPanel {
+                                Orientation = Orientation.Horizontal, Spacing = 12,
+                                Children = {
+                                    new TextBlock {
+                                        Text = Edition.NAME, FontSize = 22, FontWeight = FontWeight.Bold, Foreground = ManagerTheme.Gradient(),
+                                        VerticalAlignment = VerticalAlignment.Center,
+                                    },
+                                    CreditChip(),
+                                },
+                            },
+                            new TextBlock { Text = $"Your Wizard101 server · version {SelfUpdate.CurrentVersion}", FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED },
                         },
                     },
                 },
@@ -379,19 +344,16 @@ internal sealed partial class ManagerWindow : Window {
         _saveBar.BorderBrush = LINE;
         _saveBar.BorderThickness = new Thickness(0, 1, 0, 0);
 
-        // The tabs run down a side bar of their own colour, with the credit pinned to its bottom (ManagerWindow.Credit.cs).
-        var credit = CreditFooter();
+        // The pages run down a side bar of their own colour.
         var body = new Panel {
             Children = {
                 new Border {
                     Width = ManagerTheme.SIDEBAR_WIDTH, HorizontalAlignment = HorizontalAlignment.Left, Background = ManagerTheme.SIDEBAR_BRUSH,
                     BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 1, 0),
                 },
-                WithMargin(tabs, new Thickness(0, 10, 0, 0)),
-                credit,
+                WithMargin(nav, new Thickness(0, 12, 0, 0)),
             },
         };
-        FitCreditFooter(body, tabs, credit);
 
         Content = new DockPanel {
             Children = {
@@ -408,18 +370,18 @@ internal sealed partial class ManagerWindow : Window {
             RefreshMissingNotes();
             await LoadPlayAsync();
             _timer.Start();
-
-            // Play is the first tab, and choosing the tab that is already showing does not count as a change.
-            RefreshPosition();
-            _positionTimer.Start();
+            _shownPage = ShownPage();
             if (ManagerApp.StartServerOnOpen) {
                 await Guard(() => {
-                    Say($"Updated to Imlight {SelfUpdate.CurrentVersion}. " + _manager.StartServer());
+                    Say($"Updated to {Edition.NAME} {SelfUpdate.CurrentVersion}. " + _manager.StartServer());
 
                     return Task.CompletedTask;
                 });
             }
 
+            // The first time the app opens after an update, what that update changed (ManagerWindow.WhatsNew.cs).
+            // Not waited for, so the update check below runs while it is open.
+            _ = Guard(ShowWhatsNewIfUpdatedAsync);
             await Guard(AutoUpdateAsync);
         };
         Closed += (_, _) => {
@@ -432,6 +394,53 @@ internal sealed partial class ManagerWindow : Window {
     // ---------------------------------------------------------------------
     // Tabs
     // ---------------------------------------------------------------------
+
+    /// <summary>Loads what a tab shows when it comes into view, and runs only the timers of the tab in view.</summary>
+    private async void PageChanged() {
+        var shownTab = ShownPage();
+        if (shownTab == _shownPage) {
+            return;
+        }
+
+        _shownPage = shownTab;
+        RefreshMissingNotes();
+        switch (shownTab) {
+            case "Play": await LoadPlayAsync(); break;
+            case "Lookup": await LoadLookupAsync(); break;
+            case "Quests": LoadQuests(); break;
+            case "Bosses": await LoadBossesAsync(); break;
+            case "Customs": await LoadCustomsAsync(); break;
+            // The Make a custom wizard on the Guides tab searches the creature list.
+            case "Guides":
+                await LoadBossesAsync();
+                UpdateCustomWizard();
+                break;
+            case "Settings" when _settings.Count == 0: LoadSettings(); break;
+            case "Accounts": await LoadAccountsAsync(); break;
+        }
+
+        // The position card only reads its file while the Play tab is showing, and the game log only while Logs is.
+        if (shownTab == "Play") {
+            RefreshPosition();
+            _positionTimer.Start();
+        }
+        else {
+            _positionTimer.Stop();
+        }
+
+        _questTimer.IsEnabled = shownTab == "Quests";
+
+        _logTabShown = shownTab == "Logs";
+        if (shownTab == "Logs") {
+            RefreshLog();
+            RefreshClientLog();
+            _clientLogTimer.Start();
+        }
+        else {
+            _clientLogTimer.Stop();
+        }
+    }
+
 
     private Control PlayTab() {
         Action(_playButton, async () => Say(await _manager.PlayHereAsync()));
@@ -545,7 +554,7 @@ internal sealed partial class ManagerWindow : Window {
         var custom = new TabItem { Content = _customCommands, FontSize = 15 };
         var imlight = new TabItem { Content = _imlightCommands, FontSize = 15 };
         void Render() {
-            var words = (_commandSearch.Text ?? "").ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var words = SearchText.Words(_commandSearch.Text);
             var shown = Lookup.COMMANDS.Where(c => words.All(c.Haystack.Contains)).ToList();
             _customCommands.ItemsSource = shown.Where(c => c.Custom).ToList();
             _imlightCommands.ItemsSource = shown.Where(c => !c.Custom).ToList();
@@ -682,7 +691,7 @@ internal sealed partial class ManagerWindow : Window {
             var query = _settingSearch.Text?.Trim() ?? "";
             var settings = _settings.FirstOrDefault(g => g.Section == PET_CASTING).Settings ?? [];
             RenderPetCastRows(settings.Where(s => query.Length == 0
-                || $"{PET_CASTING} {s.Key} {s.Help}".Contains(query, StringComparison.OrdinalIgnoreCase)).ToList());
+                || SearchText.Matches($"{PET_CASTING} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query)).ToList());
         };
 
         return Page(
@@ -1117,7 +1126,7 @@ internal sealed partial class ManagerWindow : Window {
         return Page(
             Fold("download", "Settings", "Updates",
                 $"{Edition.NAME} {SelfUpdate.CurrentVersion}.",
-                Row(Action(_updateButton, UpdateAsync)),
+                Row(Action(_updateButton, UpdateAsync), Action(Plain("What's new"), () => ShowWhatsNewAsync(null))),
                 AutoUpdateBox(),
                 AutoInstallSwitch()),
             ServerSourceCard(),
@@ -1128,7 +1137,7 @@ internal sealed partial class ManagerWindow : Window {
                         Spaced(Action(Plain("Open log folder"), () => Open(_manager.LogFolder))),
                         Spaced(Action(Plain("Open settings folder"), () => Open(_manager.ConfigFolder))),
                         Spaced(Action(Plain("Open install folder"), () => Open(_manager.InstallFolder))),
-                        Spaced(Danger(Action(Plain("Uninstall Imlight"), UninstallAsync))),
+                        Spaced(Danger(Action(Plain("Uninstall Ahziael"), UninstallAsync))),
                     },
                 }));
     }
@@ -1187,12 +1196,13 @@ internal sealed partial class ManagerWindow : Window {
         _dot.Background = status.Ready ? GOOD : status.Running ? WARN : MUTED;
         _statusText.Text = status.Ready ? "Running, ready for players" : status.Running ? "Starting…" : "Stopped";
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
+        ShowHomeStatus(status);
         _startButton.IsEnabled = !status.Running;
         _stopButton.IsEnabled = status.Running;
         _restartButton.IsEnabled = status.Running;
         _playButton.IsEnabled = status.ClientFound;
         if (!status.ClientFound) {
-            _playHelp.Text = "Wizard101 could not be found. Click \"Update Imlight\" on the Tools tab of the app once.";
+            _playHelp.Text = "Wizard101 could not be found. Click \"Update Ahziael\" on the Tools tab of the app once.";
         }
 
         _randomizerCard.IsVisible = status.Randomizer is not null;
@@ -1687,11 +1697,11 @@ internal sealed partial class ManagerWindow : Window {
         try {
             var whenReady = _manager.AutoInstallUpdates ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
             Say("A new Imlight is out. It is downloading and building in the background, so keep playing. " +
-                $"This can take a few minutes; {whenReady}. The Update Imlight button on the Tools tab shows how far along it is.");
+                $"This can take a few minutes; {whenReady}. The Update Ahziael button on the Tools tab shows how far along it is.");
             _updateButton.Content = "Downloading...";
             var progress = new Progress<int>(percent => _updateButton.Content = percent >= 0 ? $"Downloading {percent}%" : "Downloading...");
             if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending"), progress) is not { } download) {
-                Say("The new Imlight could not be downloaded. Check your internet connection, then click Update Imlight on the Tools tab.", true);
+                Say("The new Imlight could not be downloaded. Check your internet connection, then click Update Ahziael on the Tools tab.", true);
 
                 return;
             }
@@ -1701,7 +1711,7 @@ internal sealed partial class ManagerWindow : Window {
         }
         finally {
             _preparingUpdate = false;
-            _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Imlight";
+            _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Ahziael";
         }
     }
 
@@ -1730,7 +1740,7 @@ internal sealed partial class ManagerWindow : Window {
         }
         finally {
             _preparingUpdate = false;
-            _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Imlight";
+            _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Ahziael";
         }
     }
 
@@ -1792,7 +1802,7 @@ internal sealed partial class ManagerWindow : Window {
         else if (!await ConfirmAsync($"{update.Name} is ready. Restart Imlight now to use it?" + (running
                 ? " The server restarts with it, so anyone playing is disconnected for a moment."
                 : ""))) {
-            Say($"{update.Name} is ready. Click Update Imlight on the Tools tab when you want to restart into it.");
+            Say($"{update.Name} is ready. Click Update Ahziael on the Tools tab when you want to restart into it.");
 
             return;
         }
@@ -1885,7 +1895,7 @@ internal sealed partial class ManagerWindow : Window {
             var matches = 0;
             var petMatches = new List<Setting>();
             foreach (var (setting, row) in rows) {
-                var match = query.Length == 0 || $"{section} {setting.Key} {setting.Help}".Contains(query, StringComparison.OrdinalIgnoreCase);
+                var match = query.Length == 0 || SearchText.Matches($"{section} {setting.Key} {SearchText.SplitCamel(setting.Key)} {setting.Help}", query);
                 matches += match ? 1 : 0;
                 if (section == PET_CASTING) {
                     if (match) {
@@ -1918,7 +1928,7 @@ internal sealed partial class ManagerWindow : Window {
         var shown = 0;
         foreach (var (setting, row) in _petCastRowList) {
             row.IsVisible = allowed.Contains(setting)
-                && (query.Length == 0 || $"{setting.Key} {setting.Help}".Contains(query, StringComparison.OrdinalIgnoreCase));
+                && (query.Length == 0 || SearchText.Matches($"{setting.Key} {SearchText.SplitCamel(setting.Key)} {setting.Help}", query));
             shown += row.IsVisible ? 1 : 0;
         }
 
@@ -2320,10 +2330,10 @@ internal sealed partial class ManagerWindow : Window {
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
         ["Game Files"] = ("folder", "Read the game's data files, without ever changing them."),
-        ["Tools"] = ("wrench", "Update Imlight, open its folders, or remove it."),
+        ["Tools"] = ("wrench", "Update Ahziael, open its folders, or remove it."),
     };
 
-    /// <summary>A tab of the side bar: its icon and name there, and a header with its one line above its page.</summary>
+    /// <summary>A tab inside one of the side bar's pages: its icon and name along the top, and a header with its one line above it.</summary>
     private static TabItem Tab(string header, Func<Control> build) {
         var content = UiTiming.Measure($"build {header} tab", build);
         var (icon, line) = s_tabs[header];
@@ -2331,8 +2341,8 @@ internal sealed partial class ManagerWindow : Window {
 
         return new TabItem {
             Tag = header,
-            Classes = { "nav" },
-            Header = ManagerTheme.TabHeader(icon, accent, header),
+            Classes = { "sub" },
+            Header = ManagerTheme.SubTabHeader(icon, accent, header),
             Content = new DockPanel { Children = { WithDock(ManagerTheme.PageHeader(icon, accent, header, line), Dock.Top), content } },
         };
     }

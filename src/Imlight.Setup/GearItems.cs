@@ -217,7 +217,7 @@ internal sealed partial class GearBook {
         foreach (var item in gear.Items) {
             if (item.SetId != 0 && setsById.TryGetValue(item.SetId, out var set)) {
                 item.Set = set;
-                item.Haystack += $" {set.Name} {set.Code}".ToLowerInvariant();
+                item.Haystack += " " + SearchText.Normalize($"{set.Name} {set.Code}");
             }
         }
 
@@ -334,7 +334,7 @@ internal sealed partial class GearBook {
             SetId = template.m_itemSetBonusTemplateID,
             BundleItems = bundle is null ? [] : [.. (bundle.m_bundleItems ?? []).Concat(bundle.m_bundleFreeItems ?? []).Select(g => (uint) (ulong) g).Distinct()],
         };
-        item.Haystack = $"{item.Name} {item.Code} {item.Id} {item.Slot} {item.SchoolNeeded} {item.School} {string.Join(' ', item.Flags)}".ToLowerInvariant();
+        item.Haystack = SearchText.Normalize($"{item.Name} {item.Code} {item.Id} {item.Slot} {item.SchoolNeeded} {item.School} {string.Join(' ', item.Flags)}");
 
         return item;
     }

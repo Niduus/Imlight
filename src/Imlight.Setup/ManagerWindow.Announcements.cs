@@ -184,7 +184,7 @@ internal sealed partial class ManagerWindow {
             var shown = 0;
             foreach (var row in rows) {
                 var match = query.Length == 0
-                    || $"{group} {row.Line.Name} {row.Line.When} {row.Line.Default} {row.Words.Text}".Contains(query, StringComparison.OrdinalIgnoreCase);
+                    || SearchText.Matches($"{group} {row.Line.Name} {row.Line.When} {row.Line.Default} {row.Words.Text}", query);
                 row.View.IsVisible = match;
                 shown += match ? 1 : 0;
             }

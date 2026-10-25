@@ -27,7 +27,11 @@ internal static class Edition {
 
 #if MANAGER_EDITION
     internal const bool IS_MANAGER = true;
-    internal const string NAME = "Imlight Manager";
+    // The app's name everywhere it shows (Niduus, 2026-10-25: rename it from "Imlight Manager" to "Ahziael"). The exe,
+    // install folder and Apps list key keep their old names, so updates and existing installs carry on as they were.
+    internal const string NAME = "Ahziael";
+    // Names it went by before, whose desktop shortcuts are swapped for the new one.
+    internal static readonly string[] OLD_NAMES = ["Imlight Manager"];
     internal const string DEFAULT_REPOSITORY = "Niduus/Imlight";
     internal const string INSTALL_FOLDER_NAME = "ImlightManager";
     internal const string RELEASE_ASSET = "ImlightManager.exe";
@@ -35,6 +39,7 @@ internal static class Edition {
 #else
     internal const bool IS_MANAGER = false;
     internal const string NAME = "Imlight Server";
+    internal static readonly string[] OLD_NAMES = [];
     internal const string DEFAULT_REPOSITORY = "Revive101/Imlight";
     internal const string INSTALL_FOLDER_NAME = "ImlightServer";
     internal const string RELEASE_ASSET = "ImlightSetup.exe";

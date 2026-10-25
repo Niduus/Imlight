@@ -414,7 +414,7 @@ internal sealed partial class ManagerWindow {
                     "and builds it, which takes a few minutes, then the app opens again. A built folder is used straight away.",
                     "Start the server again on the [Server] tab. Your accounts and characters are kept."),
                 new GuideSteps("Keep it up to date",
-                    "A copy on GitHub: [Update Imlight] on the [Tools] tab checks its branch and builds anything new in the " +
+                    "A copy on GitHub: [Update Ahziael] on the [Tools] tab checks its branch and builds anything new in the " +
                     "background, the same as a new version of the app.",
                     "A folder with Imlight's source: after it changes, press [Rebuild from folder] under [Server source].",
                     "A built folder: the app runs whatever is in it. Build it again yourself, then restart the server."),
@@ -523,14 +523,6 @@ internal sealed partial class ManagerWindow {
         }
 
         return row;
-    }
-
-    /// <summary>Shows the side bar's tab of that name (its Tag).</summary>
-    private void SelectTab(string name) {
-        var tabs = this.GetLogicalDescendants().OfType<TabControl>().FirstOrDefault(t => t.TabStripPlacement == Dock.Left);
-        if (tabs?.Items.OfType<TabItem>().FirstOrDefault(t => (t.Tag as string) == name) is { } tab) {
-            tabs.SelectedItem = tab;
-        }
     }
 
     /// <summary>The Customs tab's New custom… button: the Guides tab, with the Make a custom wizard open and in view.</summary>
@@ -889,7 +881,7 @@ internal sealed partial class ManagerWindow {
         }));
 
         var md = new StringBuilder();
-        md.AppendLine("# Making customs in the Imlight Manager");
+        md.AppendLine("# Making customs in Ahziael");
         md.AppendLine();
         md.AppendLine("Step-by-step guides for making and changing custom mobs, custom bosses and their cheats, drop tables and " +
                       "custom areas. Words in **bold** are the buttons, boxes and sections exactly as the app names them; words " +

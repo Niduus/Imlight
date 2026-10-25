@@ -131,7 +131,7 @@ internal sealed partial class ManagerWindow {
                     if (f.Count >= 3 && int.TryParse(f[0], NumberStyles.None, CultureInfo.InvariantCulture, out var number)) {
                         var key = f[2];
                         var cut = key.IndexOf('_');
-                        rows.Add(new PhraseRow(number, f[1], key, cut > 0 ? key[..cut] : key, (f[1] + " " + key).ToLowerInvariant()));
+                        rows.Add(new PhraseRow(number, f[1], key, cut > 0 ? key[..cut] : key, SearchText.Normalize(f[1] + " " + key)));
                     }
                 }
 
@@ -165,7 +165,7 @@ internal sealed partial class ManagerWindow {
         }
 
         var query = (_phraseSearch.Text ?? "").Trim();
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var number = int.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var n) ? n : (int?) null;
         var picked = _phraseGroup.SelectedItem as string ?? ALL_PHRASES;
         var group = picked == ALL_PHRASES ? null : picked[..picked.LastIndexOf(" (", StringComparison.Ordinal)];

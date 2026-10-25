@@ -236,7 +236,7 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
-            var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var words = SearchText.Words(query);
             var catalog = DropCatalog().Where(i => i.Kind == "Item").ToList();
             var found = query.All(char.IsDigit)
                 ? catalog.Where(i => i.Id == query).ToList()

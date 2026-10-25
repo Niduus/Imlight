@@ -214,7 +214,7 @@ internal sealed partial class SpellBook {
         var rootPath = Path.Combine(folder, "Root.wad");
         if (!System.IO.File.Exists(rootPath)) {
             throw new PanelException("The game's Root.wad could not be found, so the spell cards can't be shown. " +
-                "Click \"Update Imlight\" on the Tools tab once so the app can find Wizard101.");
+                "Click \"Update Ahziael\" on the Tools tab once so the app can find Wizard101.");
         }
 
         var root = ArchiveParser.Parse(OpenRead(rootPath)) ?? throw new PanelException("The game's Root.wad could not be read.");
@@ -339,8 +339,8 @@ internal sealed partial class SpellBook {
         }
 
         var status = card.Broken ? "broken" : card.Partly ? "partly" : "";
-        card.Haystack = ($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Shown} " +
-                         $"{(card.Treasure ? "treasure tc" : "")} {status}").ToLowerInvariant();
+        card.Haystack = SearchText.Normalize($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Shown} " +
+                                             $"{(card.Treasure ? "treasure tc" : "")} {status}");
 
         return card;
     }
@@ -494,7 +494,7 @@ internal sealed partial class SpellBook {
     /// left out (and counted in <paramref name="brokenHidden"/>) unless asked for by their ID.
     /// </summary>
     internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden) {
-        var words = query.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = SearchText.Words(query);
         var exact = query.Trim();
         var matches = Spells.Where(s => words.All(s.Haystack.Contains)).ToList();
         brokenHidden = 0;

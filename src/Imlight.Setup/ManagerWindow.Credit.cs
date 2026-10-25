@@ -30,19 +30,19 @@ using Avalonia.Platform;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The credit at the bottom of the side bar (Niduus, 2026-10-22: "Add my Github picture and credit 'Created by Niduus'
-/// in this section of the manager"): his GitHub picture in a circle and the line beside it. It opens his GitHub page.
+/// The credit (Niduus, 2026-10-22: "Add my Github picture and credit 'Created by Niduus'"): his GitHub picture in a
+/// circle and the line beside it, next to the app's name in the header since 2026-10-25. It opens his GitHub page.
 /// </summary>
 internal sealed partial class ManagerWindow {
 
     private const string CREDIT_URL = "https://github.com/Niduus";
-    private const double CREDIT_AVATAR_SIZE = 30;
+    private const double CREDIT_AVATAR_SIZE = 22;
 
-    /// <summary>The credit row, pinned to the bottom of the side bar over its background.</summary>
-    private static Border CreditFooter() {
+    /// <summary>The credit beside the app's name in the header: a pill with the picture and "Created by Niduus".</summary>
+    private static Border CreditChip() {
         var avatar = new Ellipse {
             Width = CREDIT_AVATAR_SIZE, Height = CREDIT_AVATAR_SIZE,
-            Stroke = LINE, StrokeThickness = 1,
+            Stroke = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 150), StrokeThickness = 1,
             VerticalAlignment = VerticalAlignment.Center,
         };
         var picture = LoadAvatar();
@@ -50,70 +50,32 @@ internal sealed partial class ManagerWindow {
             ? ManagerTheme.SURFACE_HIGH_BRUSH
             : new ImageBrush(picture) { Stretch = Stretch.UniformToFill };
 
-        var row = new Border {
-            CornerRadius = new CornerRadius(10), Padding = new Thickness(10, 6), Background = Brushes.Transparent,
-            Cursor = new Cursor(StandardCursorType.Hand),
+        var idle = ManagerTheme.Brush(ManagerTheme.ACCENT, 34);
+        var chip = new Border {
+            CornerRadius = new CornerRadius(ManagerTheme.RADIUS_PILL), Padding = new Thickness(3, 3, 12, 3), Background = idle,
+            BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 90), BorderThickness = new Thickness(1),
+            VerticalAlignment = VerticalAlignment.Center, Cursor = new Cursor(StandardCursorType.Hand),
             Child = new StackPanel {
-                Orientation = Orientation.Horizontal, Spacing = 10,
+                Orientation = Orientation.Horizontal, Spacing = 8,
                 Children = {
                     avatar,
                     new TextBlock {
-                        Text = "Created by Niduus", FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED,
-                        VerticalAlignment = VerticalAlignment.Center,
+                        Text = "Created by Niduus", FontSize = ManagerTheme.FONT_SMALL, FontWeight = FontWeight.SemiBold,
+                        Foreground = ManagerTheme.Brush(ManagerTheme.TEXT_SOFT), VerticalAlignment = VerticalAlignment.Center,
                     },
                 },
             },
         };
-        ToolTip.SetTip(row, "github.com/Niduus");
-        row.PointerEntered += (_, _) => row.Background = ManagerTheme.SURFACE_BRUSH;
-        row.PointerExited += (_, _) => row.Background = Brushes.Transparent;
-        row.PointerReleased += (_, e) => {
+        ToolTip.SetTip(chip, "github.com/Niduus");
+        chip.PointerEntered += (_, _) => chip.Background = ManagerTheme.Brush(ManagerTheme.ACCENT, 80);
+        chip.PointerExited += (_, _) => chip.Background = idle;
+        chip.PointerReleased += (_, e) => {
             if (e.InitialPressMouseButton == MouseButton.Left) {
                 OpenInBrowser(CREDIT_URL);
             }
         };
 
-        return new Border {
-            Width = ManagerTheme.SIDEBAR_WIDTH - 1, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Bottom,
-            Background = ManagerTheme.SIDEBAR_BRUSH, BorderBrush = LINE, BorderThickness = new Thickness(0, 1, 0, 0),
-            Padding = new Thickness(10, 6),
-            Child = row,
-        };
-    }
-
-    /// <summary>
-    /// Shows the credit only while the side bar has room for it under its lowest tab, so on a short window (where the
-    /// tabs run on into a second column) it never covers a tab.
-    /// </summary>
-    private static void FitCreditFooter(Panel body, TabControl tabs, Border footer) {
-        // Its height while shown (a hidden control measures as 0), kept so showing and hiding it never see-saw.
-        var footerHeight = 55.0;
-
-        void Fit() {
-            if (footer.IsVisible && footer.DesiredSize.Height > 0) {
-                footerHeight = footer.DesiredSize.Height;
-            }
-
-            var lowest = 0.0;
-            for (var i = 0; i < tabs.ItemCount; i++) {
-                if (tabs.ContainerFromIndex(i) is not Control tab
-                    || tab.TranslatePoint(new Point(0, tab.Bounds.Height), body) is not { } point) {
-                    return;
-                }
-
-                if (point.X < ManagerTheme.SIDEBAR_WIDTH) {
-                    lowest = Math.Max(lowest, point.Y);
-                }
-            }
-
-            var fits = lowest + 2 + footerHeight <= body.Bounds.Height;
-            if (footer.IsVisible != fits) {
-                footer.IsVisible = fits;
-            }
-        }
-
-        body.SizeChanged += (_, _) => Fit();
-        tabs.LayoutUpdated += (_, _) => Fit();
+        return chip;
     }
 
     private static Bitmap? LoadAvatar() {

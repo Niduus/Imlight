@@ -88,7 +88,7 @@ internal sealed class SetupOptions {
           --dir <folder>             Where to install. Default: %LOCALAPPDATA%\ImlightServer
           --game <folder>            Your Wizard101 folder, if setup cannot find it.
           --type-dump <file>         A wiztype type dump to use instead of the bundled one.
-          --repo <owner/repo>        Build from another GitHub repository. Default: Revive101/Imlight (Niduus/Imlight for Imlight Manager)
+          --repo <owner/repo>        Build from another GitHub repository. Default: Revive101/Imlight (Niduus/Imlight for Ahziael)
           --branch <name>            Build another branch. Default: quality-assurance
           --source-folder <folder>   Build an Imlight source folder on this PC, or run a server already built there.
                                      Without --repo or this, the app's Server source choice (Tools tab) is used.
