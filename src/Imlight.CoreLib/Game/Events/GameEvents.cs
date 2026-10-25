@@ -204,6 +204,9 @@ internal static class GameEvents {
             foreach (var line in lines) {
                 session.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = line, Modal = 0 });
             }
+
+            // The game's event button follows the event (EventButton.cs).
+            session.Tell(EventButton.ButtonMessage());
         }
     }
 
