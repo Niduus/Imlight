@@ -243,9 +243,14 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     internal static int? TestShopType;
     internal static string TestOption;
 
-    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _) {
+    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (TestOption is { } test) {
             return [TestOptionFor(test)];
+        }
+
+        // A garden trainer's spell list is shown alone: the game takes training options beside a shop as the spell picker.
+        if (InteractTrainerComponent.IsShowingSpellOptions(Entity, wizard)) {
+            return [];
         }
 
         // A custom vendor of treasure cards only has the treasure card shop (InteractTreasureVendorComponent).

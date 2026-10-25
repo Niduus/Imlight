@@ -15,6 +15,7 @@
  *   Rematches          the one-shot boss rematches (object names with "Rematch").
  *   the house sellers' lists (HouseVendors): each reagent kind and jewel shape, Hao's pet snacks and Doctor Purreau's
  *                      elixir recipes, in their own windows.
+ *   Garden Seeds       the seeds the game's garden vendors sell; All Seeds: every seed of the game, by name, in parts.
  * Trainers, each split into fixed parts of at most 50 spells, "<Name> 1 of 2" and so on, so a trainer always teaches
  * the same set and never pages (Niduus, 2026-10-23: "Split up Trainers into parts so they have a set train"):
  *   All <School> Spells  every spell some trainer of the game teaches, of that school (NpcSpellInventories).
@@ -74,6 +75,7 @@ internal static class CustomNpcPresets {
         Add("the housing gauntlets", HousingGauntlets);
         Add("the house sellers", HouseSellers);
         Add("the recipe vendors", RecipeVendors);
+        Add("the seed vendors", SeedVendors);
         Add("the school trainers", SchoolTrainers);
         Add("the test trainers", TestTrainers);
         Add("the vanilla trainers", VanillaTrainers);
@@ -290,6 +292,41 @@ internal static class CustomNpcPresets {
                 var range = Letter(chunk[0].Name) == Letter(chunk[^1].Name) ? Letter(chunk[0].Name) : $"{Letter(chunk[0].Name)} to {Letter(chunk[^1].Name)}";
                 yield return Vendor($"{name} {part + 1} of {parts}", "Recipe", $"{help} Part {part + 1} of {parts}: {range}.", chunk.Select(r => r.Id));
             }
+        }
+    }
+
+    // Niduus (2026-10-25): "make seed vendor for gardening". What the game's garden vendors sell (Farley and the
+    // others, with spiraldb-extra/NpcInventory/garden-*.json), and every seed of the game by name, in parts of at most
+    // RECIPE_PART_SIZE.
+    private static IEnumerable<Preset> SeedVendors() {
+        var seeds = Gardening.GardenTemplates.SeedItems.ToHashSet();
+        var sold = SpiralDB.NpcInventories.Values
+            .Where(inventory => inventory?.Inventory is not null && Gardening.GardenLessons.IsTrainer((uint) inventory.TemplateID))
+            .SelectMany(inventory => inventory.Inventory)
+            .Select(id => (uint) id)
+            .Where(seeds.Contains)
+            .Distinct()
+            .ToList();
+        yield return Vendor("Garden Seeds", "Furniture", "The seeds the game's garden vendors (Farley, Charley, Barley and the others) sell.", sold);
+
+        string Name(uint id) => CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate template
+            ? Locale.GetEnglishName((string) template.m_displayName) ?? (string) template.m_objectName ?? ""
+            : "";
+        var all = seeds.Select(id => (Id: id, Name: Name(id).Trim()))
+            .Where(seed => seed.Name.Length > 0)
+            .OrderBy(seed => seed.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var parts = Math.Max(1, (all.Count + RECIPE_PART_SIZE - 1) / RECIPE_PART_SIZE);
+        var size = Math.Max(1, (all.Count + parts - 1) / parts);
+        for (var part = 0; part < parts; part++) {
+            var chunk = all.Skip(part * size).Take(size).ToList();
+            if (chunk.Count == 0) {
+                break;
+            }
+
+            var name = parts == 1 ? "All Seeds" : $"All Seeds {part + 1} of {parts}";
+            var range = $"{chunk[0].Name[..1].ToUpperInvariant()} to {chunk[^1].Name[..1].ToUpperInvariant()}";
+            yield return Vendor(name, "Furniture", $"Every seed of the game, by name. Part {part + 1} of {parts}: {range}.", chunk.Select(seed => seed.Id));
         }
     }
 

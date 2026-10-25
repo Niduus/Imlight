@@ -1,327 +1,513 @@
 {
-  "Note": "Garden spells the garden trainers teach (from Wizard404). Level is the gardening rank they need. The server teaches each spell when the wizard reaches its rank.",
+  "Note": "Garden spells the garden trainers teach (from Wizard404): Level is the gardening rank they need, Gold their price, Trainers the NPC templates that teach them (Farley 346179, Charley 346176, Barley 1223222, Harley 346178, Marley 346177, Narley 557077, Roger the Shrubber 617242). Spells with no trainer come free with rank 1.",
   "Spells": [
     {
       "SpellId": 2105981444,
       "Name": "Inspect",
       "Level": 1,
       "Gold": 0,
-      "Trainer": null
+      "Trainer": null,
+      "Trainers": [],
+      "Order": 0
     },
     {
       "SpellId": 2799024,
       "Name": "Plow",
       "Level": 1,
       "Gold": 0,
-      "Trainer": null
+      "Trainer": null,
+      "Trainers": [],
+      "Order": 0
     },
     {
       "SpellId": 982594924,
       "Name": "Plant Seed",
       "Level": 1,
       "Gold": 0,
-      "Trainer": null
+      "Trainer": null,
+      "Trainers": [],
+      "Order": 0
     },
     {
       "SpellId": 990984473,
       "Name": "Small Soil",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 0
     },
     {
       "SpellId": 1885065734,
       "Name": "Warming Rays",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 2
     },
     {
       "SpellId": 2835725,
       "Name": "Mist",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 3
     },
     {
       "SpellId": 1602476601,
       "Name": "Worker Bee",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 4
     },
     {
       "SpellId": 1981906805,
       "Name": "Touch of Magic",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 5
     },
     {
       "SpellId": 999099438,
       "Name": "Flute Solo",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 6
     },
     {
       "SpellId": 1675553743,
       "Name": "Bug Bolt",
       "Level": 1,
       "Gold": 100,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 7
     },
     {
       "SpellId": 1639123435,
       "Name": "Medium Soil",
       "Level": 2,
       "Gold": 1000,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 1
     },
     {
       "SpellId": 989885758,
       "Name": "Gusty Winds",
       "Level": 2,
       "Gold": 1000,
-      "Trainer": "Farley"
+      "Trainer": "Farley",
+      "Trainers": [
+        346179
+      ],
+      "Order": 8
     },
     {
       "SpellId": 896251392,
       "Name": "Pest Zapper",
       "Level": 2,
       "Gold": 75000,
-      "Trainer": "Narley"
+      "Trainer": "Narley",
+      "Trainers": [
+        557077
+      ],
+      "Order": 0
     },
     {
       "SpellId": 998569096,
       "Name": "Large Soil",
       "Level": 3,
       "Gold": 3000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 0
     },
     {
       "SpellId": 515222797,
       "Name": "Streaming Sunlight",
       "Level": 3,
       "Gold": 1000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 2
     },
     {
       "SpellId": 1602570957,
       "Name": "Shower",
       "Level": 3,
       "Gold": 1000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 3
     },
     {
       "SpellId": 918479110,
       "Name": "Bee Team",
       "Level": 3,
       "Gold": 1000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 4
     },
     {
       "SpellId": 439030506,
       "Name": "Bold Magic",
       "Level": 3,
       "Gold": 1000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 5
     },
     {
       "SpellId": 74553863,
       "Name": "Flute Duet",
       "Level": 3,
       "Gold": 1000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 6
     },
     {
       "SpellId": 852091976,
       "Name": "Deep Freeze",
       "Level": 3,
       "Gold": 5000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 7
     },
     {
       "SpellId": 429286677,
       "Name": "Dragonflies",
       "Level": 3,
       "Gold": 150000,
-      "Trainer": "Narley"
+      "Trainer": "Narley",
+      "Trainers": [
+        557077
+      ],
+      "Order": 1
     },
     {
       "SpellId": 1471297304,
       "Name": "Enchanted Sm. Soil",
       "Level": 4,
       "Gold": 5000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 1
     },
     {
       "SpellId": 2077555477,
       "Name": "Pest Bomb",
       "Level": 4,
       "Gold": 12500,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 6
     },
     {
       "SpellId": 454071204,
       "Name": "Brilliant Beams",
       "Level": 5,
       "Gold": 5000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 1
     },
     {
       "SpellId": 618244287,
       "Name": "Downpour",
       "Level": 5,
       "Gold": 5000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 2
     },
     {
       "SpellId": 315534590,
       "Name": "Bee Swarm",
       "Level": 5,
       "Gold": 5000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 3
     },
     {
       "SpellId": 1164143460,
       "Name": "Grand Magic",
       "Level": 5,
       "Gold": 5000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 4
     },
     {
       "SpellId": 1538806703,
       "Name": "Flute Ensemble",
       "Level": 5,
       "Gold": 5000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 5
     },
     {
       "SpellId": 328099050,
       "Name": "Fly Swatter",
       "Level": 5,
       "Gold": 25000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 7
     },
     {
       "SpellId": 1016079423,
       "Name": "Enchanted Med. Soil",
       "Level": 5,
       "Gold": 10000,
-      "Trainer": "Marley"
+      "Trainer": "Marley",
+      "Trainers": [
+        346177
+      ],
+      "Order": 0
     },
     {
       "SpellId": 1389246232,
       "Name": "Enchanted Lg. Soil",
       "Level": 6,
       "Gold": 15000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178,
+        346177
+      ],
+      "Order": 0
     },
     {
       "SpellId": 1149700589,
       "Name": "Summon Pixie",
       "Level": 10,
       "Gold": 175000,
-      "Trainer": "Charley"
+      "Trainer": "Charley",
+      "Trainers": [
+        346176
+      ],
+      "Order": 8
     },
     {
       "SpellId": 1455477594,
       "Name": "Pungent Bug Spray",
       "Level": 10,
       "Gold": 10000,
-      "Trainer": "Harley"
+      "Trainer": "Harley",
+      "Trainers": [
+        346178
+      ],
+      "Order": 8
     },
     {
       "SpellId": 1791871391,
       "Name": "Putrid Bug Spray",
       "Level": 10,
       "Gold": 175000,
-      "Trainer": "Roger the Shrubber"
+      "Trainer": "Roger the Shrubber",
+      "Trainers": [
+        617242
+      ],
+      "Order": 0
     },
     {
       "SpellId": 2088695571,
       "Name": "Miniature Bloodbats",
       "Level": 12,
       "Gold": 200000,
-      "Trainer": "Roger the Shrubber"
+      "Trainer": "Roger the Shrubber",
+      "Trainers": [
+        617242
+      ],
+      "Order": 1
     },
     {
       "SpellId": 1382040902,
       "Name": "Solar Flares",
       "Level": 15,
       "Gold": 125000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 0
     },
     {
       "SpellId": 450408926,
       "Name": "Monsoon",
       "Level": 15,
       "Gold": 125000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 1
     },
     {
       "SpellId": 276897471,
       "Name": "Bee Hive",
       "Level": 15,
       "Gold": 125000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 2
     },
     {
       "SpellId": 1712010492,
       "Name": "Growzone Layer",
       "Level": 15,
       "Gold": 125000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 3
     },
     {
       "SpellId": 1197989453,
       "Name": "Wind Chimes",
       "Level": 15,
       "Gold": 125000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 4
     },
     {
       "SpellId": 1354849154,
       "Name": "Ant Lion",
       "Level": 15,
       "Gold": 75000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 5
     },
     {
       "SpellId": 502697612,
       "Name": "Itsy Bitsy Spider",
       "Level": 15,
       "Gold": 50000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 6
     },
     {
       "SpellId": 999120437,
       "Name": "Strawman",
       "Level": 15,
       "Gold": 300000,
-      "Trainer": "Barley"
+      "Trainer": "Barley",
+      "Trainers": [
+        1223222
+      ],
+      "Order": 7
     },
     {
       "SpellId": 1564963149,
       "Name": "Second Spring",
       "Level": 15,
       "Gold": 250000,
-      "Trainer": "Roger the Shrubber"
+      "Trainer": "Roger the Shrubber",
+      "Trainers": [
+        617242
+      ],
+      "Order": 2
     },
     {
       "SpellId": 1197871043,
       "Name": "Plant All",
       "Level": 15,
       "Gold": 300000,
-      "Trainer": "Roger the Shrubber"
+      "Trainer": "Roger the Shrubber",
+      "Trainers": [
+        617242
+      ],
+      "Order": 3
     },
     {
       "SpellId": 1110095811,
       "Name": "Plow All",
       "Level": 15,
       "Gold": 200000,
-      "Trainer": "Roger the Shrubber"
+      "Trainer": "Roger the Shrubber",
+      "Trainers": [
+        617242
+      ],
+      "Order": 4
     }
   ]
 }

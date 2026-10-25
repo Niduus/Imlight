@@ -33,10 +33,10 @@
  * - The garden grows when a player enters the house and every minute while anyone is there. The times are stored, so
  *   a garden left alone catches up the next time someone comes.
  * - Only the owner plows, plants and harvests; a visitor may cast growing, insect and protection spells.
- * - The garden trainers' spells are taught when a wizard reaches their gardening rank (GardenLessons).
+ * - The garden trainers sell their garden spells for gold (InteractTrainerComponent, TrainService); the spells no trainer
+ *   sells come with rank 1, and [Gardening] FreeSpells gives every spell with its rank (GardenLessons).
  *
  * TODO:
- * - Garden trainers selling the spells for gold, instead of the spells coming with each rank.
  *
  * Created by: Claude
  * Version: KALI 1.0
@@ -521,7 +521,7 @@ internal partial class HousingService {
         wizard.GameStats.m_gardeningXP = GardenLevels.XpOf(level);
         WizardCollection.UpdateCharacterGameStats(wizard);
         SendGardenXp(wizard);
-        CheckGardenLessons(wizard, level, force: true);
+        CheckGardenLessons(wizard, level, force: true, all: true);
 
         return level;
     }
@@ -543,16 +543,19 @@ internal partial class HousingService {
         return stats.m_gardeningLevel;
     }
 
-    /// <summary>Teaches the garden spells of a wizard's rank that they do not know yet.</summary>
+    /// <summary>
+    /// Teaches the garden spells of a wizard's rank that they do not know yet: those no trainer sells, or every one with
+    /// <paramref name="all"/> (the test command) or [Gardening] FreeSpells.
+    /// </summary>
     /// <returns>The names of the spells taught.</returns>
-    internal List<string> CheckGardenLessons(Wizard wizard, int level, bool force = false) {
+    internal List<string> CheckGardenLessons(Wizard wizard, int level, bool force = false, bool all = false) {
         var taught = new List<string>();
         if (_gardenLessonsChecked && !force) {
             return taught;
         }
 
         _gardenLessonsChecked = true;
-        foreach (var lesson in GardenLessons.UpTo(level)) {
+        foreach (var lesson in GardenLessons.UpTo(level).Where(lesson => all || GardenLessons.FreeSpells || lesson.Trainers.Count == 0)) {
             if (wizard.SpellbookBehavior.HasSpell(lesson.SpellId)) {
                 continue;
             }
@@ -630,7 +633,7 @@ internal partial class HousingService {
                     break;
                 }
                 case "spells": {
-                    var taught = CheckGardenLessons(wizard, GardenLevelOf(wizard), force: true);
+                    var taught = CheckGardenLessons(wizard, GardenLevelOf(wizard), force: true, all: true);
                     if (taught.Count == 0) {
                         InformGameClient($"You know every garden spell of rank {GardenLevelOf(wizard)} already.");
                     }

@@ -114,7 +114,7 @@ internal sealed class Lookup {
         Command("Garden status", ".garden", QA, "Shows your gardening rank and XP, and in a house how much soil and how many plants its garden has, how many are ready to harvest and how many need water, sun, pests taken away and so on."),
         Command("Garden: grow now", ".garden grow   or   .garden ready", QA, "In your own house: .garden grow moves every plant on to its next stage with all its needs met; .garden ready only makes the grown plants ready to harvest. For testing, so you do not wait hours."),
         Command("Garden: set rank", ".garden rank <1-20>", QA, "Sets your gardening rank, such as .garden rank 5, and teaches the garden spells of that rank."),
-        Command("Garden: spells and seeds", ".garden spells   or   .garden seeds", QA, ".garden spells teaches the garden spells of your rank you do not know yet. .garden seeds gives you 3 of each of a few seeds Farley sells."),
+        Command("Garden: spells and seeds", ".garden spells   or   .garden seeds", QA, ".garden spells teaches, for free, every garden spell of your rank you do not know yet (normally you buy them from the garden trainers, Farley and the others). .garden seeds gives you 3 of each of a few seeds Farley sells."),
         Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
         Imlight("Give one badge", ".badge grant <badge name or ID>", QA, "Gives your character one badge and its reward. Type the badge's name or its ID number."),
         Imlight("Badge progress", ".badge progress <counter> <amount>", QA, "Adds to a badge counter, such as the number of a creature type you have defeated, and gives any badges it reaches."),

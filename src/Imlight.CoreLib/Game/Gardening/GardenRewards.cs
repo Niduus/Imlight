@@ -28,8 +28,9 @@
  *
  * NOTE:
  * - The XP table is the client's GardeningXPConfig: the XP to go from each level to the next, up to level 20.
- * - spiraldb-extra/Gardening/Spells.json lists the garden trainers' spells (from Wizard404) with the rank each needs.
- *   The server teaches them when a wizard reaches the rank, instead of selling them at the trainers.
+ * - spiraldb-extra/Gardening/Spells.json lists the garden trainers' spells (from Wizard404): the rank each needs, its
+ *   price and the trainers that teach it. The trainers sell them for gold; the spells no trainer sells come with rank 1.
+ *   [Gardening] FreeSpells = true gives every spell with its rank instead.
  * - Harvests are not in the game files, so the server makes them: gold by the plant's rewards rating, a reagent or two
  *   by the seed's rank, and seeds back now and then (always 1 to 3 from an elder plant). A file
  *   spiraldb-extra/Gardening/Harvests.json may give a seed its own harvest: { "<seed template id>": { "Gold": [min, max],
@@ -90,7 +91,7 @@ internal static class GardenLevels {
 }
 
 /// <summary>A garden spell a gardening rank teaches.</summary>
-internal sealed record GardenLesson(uint SpellId, string Name, int Level, int Gold, string Trainer);
+internal sealed record GardenLesson(uint SpellId, string Name, int Level, int Gold, string Trainer, IReadOnlyList<uint> Trainers, int Order);
 
 /// <summary>
 /// The garden spells and the rank each needs.
@@ -100,6 +101,40 @@ internal static class GardenLessons {
     private static readonly Lazy<IReadOnlyList<GardenLesson>> s_lessons = new(Load);
 
     internal static IReadOnlyList<GardenLesson> All => s_lessons.Value;
+
+    private static readonly Lazy<HashSet<uint>> s_trainers = new(() => [.. All.SelectMany(lesson => lesson.Trainers)]);
+
+    /// <summary>
+    /// Whether every garden spell comes with its rank. Off (the default), only the spells no trainer sells (Plow, Plant
+    /// Seed, Inspect) come with rank 1, and the garden trainers sell the rest.
+    /// </summary>
+    internal static bool FreeSpells => ConfigurationManager.GetValue("Gardening.FreeSpells", false);
+
+    /// <summary>Whether an NPC template is a garden trainer.</summary>
+    internal static bool IsTrainer(uint npcTemplateId)
+        => npcTemplateId != 0 && s_trainers.Value.Contains(npcTemplateId);
+
+    /// <summary>The spells a garden trainer teaches, in its own order.</summary>
+    internal static IEnumerable<GardenLesson> ForTrainer(uint npcTemplateId)
+        => All.Where(lesson => lesson.Trainers.Contains(npcTemplateId)).OrderBy(lesson => lesson.Level).ThenBy(lesson => lesson.Order);
+
+    /// <summary>A wizard's gardening rank (1 when never set).</summary>
+    internal static int RankOf(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard)
+        => Math.Max(1, (int) (wizard?.GameStats?.m_gardeningLevel ?? 1));
+
+    /// <summary>The gold a garden spell costs at a trainer: the spell's own price, or the trainer list's.</summary>
+    internal static int PriceOf(Imcodec.ObjectProperty.TypeCache.SpellTemplate spell) {
+        if (spell is null) {
+            return 0;
+        }
+
+        if (spell.m_baseCost > 0) {
+            return spell.m_baseCost;
+        }
+
+        string name = spell.m_name;
+        return All.FirstOrDefault(lesson => string.Equals(lesson.Name, name, StringComparison.OrdinalIgnoreCase))?.Gold ?? 0;
+    }
 
     /// <summary>The spells a wizard of a gardening level may know.</summary>
     internal static IEnumerable<GardenLesson> UpTo(int level)
@@ -122,7 +157,11 @@ internal static class GardenLessons {
                     entry.TryGetProperty("Name", out var name) ? name.GetString() ?? "" : "",
                     entry.TryGetProperty("Level", out var level) ? level.GetInt32() : 1,
                     entry.TryGetProperty("Gold", out var gold) ? gold.GetInt32() : 0,
-                    entry.TryGetProperty("Trainer", out var trainer) && trainer.ValueKind == JsonValueKind.String ? trainer.GetString() : null));
+                    entry.TryGetProperty("Trainer", out var trainer) && trainer.ValueKind == JsonValueKind.String ? trainer.GetString() : null,
+                    entry.TryGetProperty("Trainers", out var trainers) && trainers.ValueKind == JsonValueKind.Array
+                        ? [.. trainers.EnumerateArray().Select(id => id.GetUInt32())]
+                        : [],
+                    entry.TryGetProperty("Order", out var order) ? order.GetInt32() : 0));
             }
 
             return lessons;

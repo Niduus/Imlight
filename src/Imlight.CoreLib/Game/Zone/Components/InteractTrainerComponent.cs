@@ -72,7 +72,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
             || TestTrainerKindOf(goTemplate) is not null
-            || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null);
+            || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null
+            || Imlight.CoreLib.Game.Gardening.GardenLessons.IsTrainer(goTemplate.m_templateID));
 
     /// <summary>
     /// A test trainer teaches a whole kind of spell for free, at any level. In Ravenwood: Mr. Lincoln every
@@ -88,7 +89,13 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public bool IsCustom => _custom is not null;
 
     /// <summary>Whether the trainer teaches its spells as listed: the randomizer's swaps do not reach them.</summary>
-    public bool TeachesAsListed => IsTestTrainer || IsCustom;
+    public bool TeachesAsListed => IsTestTrainer || IsCustom || IsGardenTrainer;
+
+    /// <summary>
+    /// A garden trainer (Farley, Charley, Barley, Harley, Marley, Narley, Roger the Shrubber): it teaches its garden spells
+    /// for gold, the spell's own price, from the gardening rank each needs (Game/Gardening/GardenLessons).
+    /// </summary>
+    public bool IsGardenTrainer { get; private set; }
 
     // A fishing or gardening trainer of the real game (TradeTrainers).
     private bool _isTradeTrainer;
@@ -316,7 +323,20 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             return;
         }
 
-        // A fishing or gardening trainer of the real game teaches its own spells, free and at any rank.
+        // A garden trainer sells its garden spells for gold, from the rank each needs (GardenLessons); it comes before
+        // TradeTrainers, which would teach them free.
+        if (Entity.Template is GameObjectTemplate gardenTrainer && Imlight.CoreLib.Game.Gardening.GardenLessons.IsTrainer(gardenTrainer.m_templateID)) {
+            IsGardenTrainer = true;
+            SpellInventory = [.. Imlight.CoreLib.Game.Gardening.GardenLessons.ForTrainer(gardenTrainer.m_templateID)
+                .Where(lesson => CoreObjectFactory.GetCoreTemplate(lesson.SpellId) is SpellTemplate)
+                .Select(lesson => new NPCSpellEntry { TemplateID = lesson.SpellId, RequiredSpellID = 0, Level = lesson.Level })];
+            InitializeServiceBases();
+            Logger.Information("Garden trainer {0} teaches {1} garden spells.", Logger.Args(gardenTrainer.m_templateID, SpellInventory.Count));
+
+            return;
+        }
+
+        // A fishing trainer of the real game teaches its own spells, free and at any rank (garden trainers sell theirs, above).
         if (Entity.Template is GameObjectTemplate tradeTemplate
             && Imlight.CoreLib.Game.World.TradeTrainers.For(tradeTemplate.m_templateID) is { } trade) {
             IsTestTrainer = true;
@@ -440,6 +460,21 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             // Training costs nothing for the wizard's own school (or for everyone with FreeTraining), else one point.
             newBase.m_trainingCost = CostFor(wizard, spellTemplate);
 
+            // A garden spell needs its gardening rank and costs gold, not training points or a wizard level.
+            if (IsGardenTrainer) {
+                var rank = Imlight.CoreLib.Game.Gardening.GardenLessons.RankOf(wizard);
+                var needed = SpellInventory[i].Level;
+                newBase.m_requiredLevel = 0;
+                newBase.m_requirements = spellTemplate.m_purchaseRequirements;
+                newBase.m_bCanTrain = rank >= needed && wizard.GameStats.m_currentGold >= Imlight.CoreLib.Game.Gardening.GardenLessons.PriceOf(spellTemplate);
+                newBase.m_failedRequirement = rank >= needed
+                    ? null
+                    : spellTemplate.m_purchaseRequirements?.m_requirements?.OfType<ReqGardeningLevel>().FirstOrDefault();
+                newServiceOptions.Add(newBase);
+
+                continue;
+            }
+
             // NoLevelRequirements lets any level train any spell.
             var requiredLevel = Randomizer.NoLevelRequirements ? 1 : SpellInventory[i].Level;
             newBase.m_requiredLevel = requiredLevel;
@@ -530,7 +565,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard)
         || InteractFishSellingComponent.Offers(Entity, wizard)
         // A fishing or gardening trainer that also runs a shop (Farley's seeds) keeps the shop beside "Spell List".
-        || (_isTradeTrainer && Entity.GetComponentsOfType<IServiceComponent>()
+        || ((_isTradeTrainer || IsGardenTrainer) && Entity.GetComponentsOfType<IServiceComponent>()
             .Any(c => c != this && (c.GetServiceOptions(wizard)?.Any() ?? false)));
 
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
@@ -548,7 +583,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// </summary>
     internal int CostFor(Wizard wizard, SpellTemplate spellTemplate)
         => IsCustom ? CustomCostOf(spellTemplate)
-         : IsTestTrainer ? 0 : TrainingCost(wizard, spellTemplate);
+         : IsTestTrainer || IsGardenTrainer ? 0 : TrainingCost(wizard, spellTemplate);
 
     // A custom trainer's price for a spell, found by the spell's name (a spell template has no id of its own); 1 when
     // it is not in the list.

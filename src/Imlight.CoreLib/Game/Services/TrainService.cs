@@ -41,6 +41,8 @@ using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Badges;
+using Imlight.CoreLib.Game.DropTables;
+using Imlight.CoreLib.Game.Gardening;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Game.Spells;
@@ -113,6 +115,20 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, message.TrainingIndex, spellCost, wizard.MagicSchoolBehavior.TrainingPoints));
         }
 
+        // A garden trainer sells for gold, from the gardening rank the spell needs.
+        var gold = 0;
+        if (trainerComponent.IsGardenTrainer) {
+            gold = GardenLessons.PriceOf(spellTemplate);
+            var rank = GardenLessons.RankOf(wizard);
+            if (rank < spellEntry.Level || wizard.GameStats.m_currentGold < gold) {
+                Logger.Warning("Wizard {0} tried to buy garden spell {1} ({2} gold, rank {3}) with {4} gold at rank {5}.",
+                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, gold, spellEntry.Level, wizard.GameStats.m_currentGold, rank));
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "WizTraining_00000040", Success = 0 });
+
+                return;
+            }
+        }
+
         if (wizard.MagicSchoolBehavior.TrainingPoints < spellCost) {
             Logger.Error("Wizard {0} attempted to train spell {1} but does not have enough training points.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId));
@@ -134,7 +150,16 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         };
         SendToSocket(addSpellMsg);
 
-        TrainingReset.Record(wizard, spellId, spellCost);
+        if (gold > 0) {
+            LootGranter.UpdateWizardGold(SessionActor.ActorRef, wizard, -gold);
+            Logger.Information("Gardening: {0} bought garden spell {1} for {2} gold.",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, gold));
+        }
+
+        // A garden spell costs no training points, so a training point reset leaves it alone.
+        if (!trainerComponent.IsGardenTrainer) {
+            TrainingReset.Record(wizard, spellId, spellCost);
+        }
 
         var newTrainingPoints = wizard.MagicSchoolBehavior.TrainingPoints - spellCost;
         wizard.UpdateTrainingPoints(newTrainingPoints);
