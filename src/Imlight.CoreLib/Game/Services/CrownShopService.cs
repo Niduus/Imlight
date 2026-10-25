@@ -153,7 +153,7 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
     private void ReceiveCrownShopListRequest(WIZARD_12_PROTOCOL.MSG_PCS_LIST_REQUEST message) {
         var nextUpdateId = message.UpdateID == 0 ? 1u : message.UpdateID + 1;
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_PCS_LIST_RESPONSE {
-            Data = CrownShopHandler.GetCrownShopData(),
+            Data = CrownShopHandler.GetCrownShopData(GetActiveWizard().MagicSchoolBehavior.Level),
             Updates = string.Empty,
             UpdateID = nextUpdateId,
             Error = 0
@@ -332,9 +332,17 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
 
             case ItemBundleTemplate itemBundle:
                 for (var i = 0; i < message.Count; i++) {
-                    foreach (var templateId in itemBundle.m_bundleItems) {
-                        if (!TryAddItemToInventory(wizard, templateId, message.Texture, message.Decal)) {
-                            return s_errorInvFull;
+                    foreach (var templateId in BundleContents(wizard, itemBundle, message.ItemLocator)) {
+                        // Each piece is given as if bought on its own: a pack opens, a pet hatches, a reagent goes to the bag.
+                        var error = TryGrantPurchasedItem(wizard, new WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_REQUEST {
+                            Item = templateId,
+                            Count = 1,
+                            Texture = message.Texture,
+                            Decal = message.Decal,
+                            PetName = message.PetName
+                        });
+                        if (error != 0) {
+                            return error;
                         }
                     }
                 }
@@ -347,6 +355,27 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                 Logger.Warning("Unhandled TemplateID: {0}", Logger.Args(message.Item));
                 return s_errorPurchase;
         }
+    }
+
+    /// <summary>
+    /// What a bundle gives: its items and its free items. A choose-one bundle (Prestigious Attire) gives the piece the
+    /// game picked, else the one for the wizard's school, else its first.
+    /// </summary>
+    private static List<ulong> BundleContents(Wizard wizard, ItemBundleTemplate bundle, uint chosen) {
+        var items = (bundle.m_bundleItems ?? []).Select(id => (ulong) id).ToList();
+        if (bundle.m_acquireCondition == AcquireConditionType.kChooseOne && items.Count > 1) {
+            var school = wizard.MagicSchoolBehavior.MagicSchool.ToString();
+            var pick = items.FirstOrDefault(id => (uint) id == chosen && chosen != 0);
+            if (pick == 0) {
+                pick = items.FirstOrDefault(id => CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate item
+                    && string.Equals((string) item.m_school, school, StringComparison.OrdinalIgnoreCase));
+            }
+            items = [pick != 0 ? pick : items[0]];
+        }
+
+        items.AddRange((bundle.m_bundleFreeItems ?? []).Select(id => (ulong) id));
+
+        return items;
     }
 
     private int TryGrantReagent(Wizard wizard, ulong reagentTemplateId, int count) {

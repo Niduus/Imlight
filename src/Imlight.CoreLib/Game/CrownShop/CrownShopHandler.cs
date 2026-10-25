@@ -81,7 +81,15 @@ public static class CrownShopHandler {
     private static Dictionary<ulong, CrownShopItem> s_items = new();
 
 
-    private static ByteString s_serializedCrownShopData = new();
+    // [CrownShop] ShopListBytes: the biggest the packed list may be. The game reads it with a 2 byte length.
+    private static readonly int s_maxListBytes
+        = Math.Clamp(ConfigurationManager.GetValue("CrownShop.ShopListBytes", 60000), 1000, 65000);
+
+    private static List<CrownShopItem> s_shownToAll = [];
+    private static List<CrownShopGameItems.Versioned> s_versioned = [];
+    private static CrownShopLayout s_layout = new() { m_tabs = [], m_categories = [] };
+    private static readonly Dictionary<int, ByteString> s_dataByVersions = [];
+    private static List<int> s_versionLevels = [];
 
     public static void Load() {
         if (!s_enabled) {
@@ -198,39 +206,34 @@ public static class CrownShopHandler {
                 }
             }
 
-            s_items = crownShopItems;
+            // The items the game files price in crowns that SpiralDB's list leaves out; gear and bundles with level
+            // versions are added per wizard level in GetCrownShopData.
+            var (gameItems, versioned) = CrownShopGameItems.Load();
+            var shownToAll = crownShopItems.Values.ToList();
+            foreach (var entry in gameItems.Where(e => !crownShopItems.ContainsKey(e.TemplateId))) {
+                var gameItem = ToShopItem(entry);
+                crownShopItems[entry.TemplateId] = gameItem;
+                shownToAll.Add(gameItem);
+            }
 
-            var crownShopLayout = new CrownShopLayout() {
+            var versionedItems = new List<CrownShopGameItems.Versioned>();
+            foreach (var group in versioned.Where(g => g.Versions.All(v => !crownShopItems.ContainsKey(v.TemplateId)))) {
+                group.Versions.ForEach(version => crownShopItems[version.TemplateId] = ToShopItem(version));
+                versionedItems.Add(group);
+            }
+
+            s_items = crownShopItems;
+            s_shownToAll = shownToAll;
+            s_versioned = versionedItems;
+            s_layout = new CrownShopLayout() {
                 m_tabs = layoutTabs,
                 m_categories = layoutCategories
             };
+            s_versionLevels = [.. versionedItems.SelectMany(g => g.Versions).Select(v => v.Level).Distinct().Order()];
+            s_dataByVersions.Clear();
 
-            var crownShopData = new CrownShopData() {
-                m_items = crownShopItems.Values.ToList(),
-                m_crownShopLayout = crownShopLayout,
-                m_wishlistMaxSize = (int) s_wishlistMaxSize,
-                m_wishlistSBExpansionSize = (int) s_wishlistSBExpansionSize,
-                // Probably has something todo with MSG_PCS_SEGDATA_RESPONSE
-                m_crownShopSegReqsSummary = new(),
-                // todo: recommended items?
-                m_recomendedItems = new LevelData()
-            };
-
-            var serializer = new ObjectSerializer(
-                Versionable: false,
-                Behaviors: SerializerFlags.SerializeFlags | SerializerFlags.Compress
-            );
-
-            var propertyFlags = PropertyFlags.Prop_Save | PropertyFlags.Prop_Public;
-            if (!serializer.Serialize(crownShopData, propertyFlags, out var serializedData)) {
-                Logger.Error("Failed to serialize CrownShopData");
-                return;
-            }
-
-            s_serializedCrownShopData = serializedData;
-
-            Logger.Information("CrownShop successfully initialized: {0} tabs, {1} categories.",
-                Logger.Args(s_crownShopTabs.Count, s_crownShopCategories.Count));
+            Logger.Information("CrownShop successfully initialized: {0} tabs, {1} categories, {2} items for every wizard and {3} with level versions.",
+                Logger.Args(s_crownShopTabs.Count, s_crownShopCategories.Count, shownToAll.Count, versionedItems.Count));
 
             if (s_autoReloadOnChanges && s_watcher == null) {
                 SetupAutoReloadWatcher(basePath);
@@ -266,7 +269,88 @@ public static class CrownShopHandler {
         Load();
     }
 
-    public static ByteString GetCrownShopData() => s_serializedCrownShopData;
+    /// <summary>
+    /// The packed list for a wizard of this level: every item, with the level version of gear and bundles for them.
+    /// Wizards whose level picks the same versions share one packed list.
+    /// </summary>
+    public static ByteString GetCrownShopData(int level) {
+        // Two levels pick the same versions when no version starts between them.
+        var key = s_versionLevels.LastOrDefault(start => start <= level, -1);
+        lock (s_reloadLock) {
+            if (s_dataByVersions.TryGetValue(key, out var cached)) {
+                return cached;
+            }
+
+            var listed = s_crownShopTabs.SelectMany(t => t.Items).Select(i => i.TemplateId).ToHashSet();
+            var spiral = s_shownToAll.Where(item => listed.Contains(item.m_itemTemplateId)).ToList();
+            var extras = s_shownToAll.Where(item => !listed.Contains(item.m_itemTemplateId))
+                .Concat(s_versioned.Select(group => s_items[group.ForLevel(level).TemplateId]))
+                .ToList();
+
+            // A list too big for the game is cut down, the game file items last in first out, until it fits.
+            var take = extras.Count;
+            var data = Serialize([.. spiral, .. extras]);
+            while (data is { } packed && packed.Length > s_maxListBytes && take > 0) {
+                take = take * 3 / 4;
+                data = Serialize([.. spiral, .. extras.Take(take)]);
+            }
+
+            if (take < extras.Count) {
+                Logger.Warning("CrownShop: the list for level {0} was over ShopListBytes ({1}), so {2} of {3} game file items are shown.",
+                    Logger.Args(level, s_maxListBytes, take, extras.Count));
+            }
+            Logger.Information("CrownShop: list for level {0} has {1} items ({2} bytes).",
+                Logger.Args(level, spiral.Count + take, data?.Length ?? 0));
+
+            s_dataByVersions[key] = data ?? new ByteString();
+
+            return s_dataByVersions[key];
+        }
+    }
+
+    private static ByteString? Serialize(List<CrownShopItem> items) {
+        var crownShopData = new CrownShopData() {
+            m_items = items,
+            m_crownShopLayout = s_layout,
+            m_wishlistMaxSize = (int) s_wishlistMaxSize,
+            m_wishlistSBExpansionSize = (int) s_wishlistSBExpansionSize,
+            // Probably has something todo with MSG_PCS_SEGDATA_RESPONSE
+            m_crownShopSegReqsSummary = new(),
+            // todo: recommended items?
+            m_recomendedItems = new LevelData()
+        };
+
+        var serializer = new ObjectSerializer(
+            Versionable: false,
+            Behaviors: SerializerFlags.SerializeFlags | SerializerFlags.Compress
+        );
+
+        var propertyFlags = PropertyFlags.Prop_Save | PropertyFlags.Prop_Public;
+        if (!serializer.Serialize(crownShopData, propertyFlags, out var serializedData)) {
+            Logger.Error("Failed to serialize CrownShopData");
+            return null;
+        }
+
+        return serializedData;
+    }
+
+    private static CrownShopItem ToShopItem(CrownShopGameItems.Entry entry) => new() {
+        m_itemTemplateId = entry.TemplateId,
+        m_itemFlags = 0,
+        m_goldCost = entry.GoldCost,
+        m_strikethruGold = 0,
+        m_crownsCost = entry.CrownsCost,
+        m_strikethruCrowns = 0,
+        m_ticketCost = 0,
+        m_displayPriority = $"{entry.Category}:0",
+        m_combatOnly = false,
+        m_noGift = entry.NoGift,
+        m_recommendIfOwned = false,
+        m_saleID = 0,
+        m_description = "",
+        m_segReqsPoolsStatements = [],
+        m_segReqsStatement = "",
+    };
 
     public static List<CrownShopItem> GetCrownShopItems() => s_items.Values.ToList();
     public static bool TryGetCrownShopItem(ulong id, out CrownShopItem item)
