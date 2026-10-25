@@ -332,8 +332,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // It takes the free enemy circle nearest to where it stands (the Fairy Queen, placed on circle 4, takes circle 4).
-        AddParticipant(creature, suspect, NearestFreeCreatureCircle(creature));
+        // A boss of this fight takes the free enemy circle nearest to where it stands (the Fairy Queen, placed on circle
+        // 4, takes circle 4). Any other monster fills the first free circle, so two monsters stand on circles 1 and 2,
+        // not 1 and 4 (Niduus, 2026-10-25: two Lost Souls in Wizard City stood on the outer circles with a gap; "The
+        // only time this is to occur is in the rattlebones fight").
+        AddParticipant(creature, suspect, bossOfThisFight ? NearestFreeCreatureCircle(creature) : null);
         var circle = SubCircles.FirstOrDefault(x => x?.ParticipantObject?.m_globalID == creature.m_globalID);
         if (circle is null) {
             entity.ReleaseLateDuelJoin();
