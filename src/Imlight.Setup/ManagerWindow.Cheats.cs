@@ -599,7 +599,16 @@ internal sealed partial class ManagerWindow {
         });
         ToolTip.SetTip(view.Grip, hat ? "The block that starts this cheat" : "Drag to move it up or down");
 
-        void Changed() => UpdateCheatHead(board, rule);
+        Action? refreshNote = null;
+        void Changed() {
+            UpdateCheatHead(board, rule);
+            refreshNote?.Invoke();
+        }
+
+        if (block.Spec == "D.AddCharm") {
+            refreshNote = () => view.Note(AddCharmWarning(block));
+            refreshNote();
+        }
 
         var parts = s_sentence.Split(spec.Sentence);
         // Split keeps the captured names at odd places: words, a box, words, a box...
@@ -619,6 +628,71 @@ internal sealed partial class ManagerWindow {
         }
 
         return view;
+    }
+
+    /// <summary>
+    /// "Add an effect of your own size": a warning when the spell cast for it (its cast animation, "shown as", or the
+    /// one it falls back to) puts on an effect of another school than yours. The game then shows that one and uses it
+    /// on that school's hits, while the server uses yours, so they no longer go together (Niduus's log, 2026-10-25:
+    /// a Sun cast of a 666% Shadow blade kept its Sun Blade icon after the Shadow hit used the server's blade up).
+    /// </summary>
+    private string? AddCharmWarning(CheatBlock block) {
+        var kind = block.Text("Kind");
+        if (kind is "DoT" or "HoT") {
+            return null;
+        }
+
+        var school = block.Text("School");
+        var look = block.Text("Look");
+        var spell = block.Text("Spell");
+        var global = CheatLookalikes.IsGlobal(kind);
+        var word = CheatLookalikes.KindWord(kind);
+        var target = block.Text("Target");
+        var onCaster = global || target.Equals("Self", StringComparison.OrdinalIgnoreCase)
+                       || target.Length == 0 && kind is not ("Weakness" or "Trap");
+        static string SchoolWord(string s) => string.IsNullOrWhiteSpace(s) || s.Equals("All", StringComparison.OrdinalIgnoreCase) ? "all-school" : s;
+        static string A(string w) => "aeiou".Contains(char.ToLowerInvariant(w[0])) ? $"an {w}" : $"a {w}";
+        string shown;
+        string shownSchool;
+        var fellBack = "";
+        if (spell.Length > 0 || block.Id("SpellID") > 0) {
+            var known = _bossCatalog?.Spells.GetValueOrDefault(block.Id("SpellID"))
+                        ?? _bossCatalog?.Spells.Values.FirstOrDefault(s => s.Name.Equals(spell, StringComparison.OrdinalIgnoreCase));
+            shown = known?.Name ?? spell;
+            shownSchool = CheatLookalikes.EffectSchoolOf(shown) ?? known?.School ?? "";
+            if (shownSchool.Length == 0) {
+                return null;
+            }
+        }
+        else {
+            var cast = CheatLookalikes.WithCast(kind, school, look, onCaster);
+            if (cast is null && look.Length > 0) {
+                fellBack = $"The game has no {look} {word}, so the normal one is cast. ";
+            }
+
+            var picked = cast ?? CheatLookalikes.Plain(kind, school);
+            if (picked is null) {
+                return null;
+            }
+
+            shown = picked.Value.Spell;
+            shownSchool = picked.Value.EffectSchool;
+        }
+
+        // A healing global changes healing of every school, so only a damage global's school counts.
+        if (kind is "HealGlobal" or "GloomGlobal" || CheatLookalikes.SameSchool(shownSchool, school)) {
+            return fellBack.Length > 0 ? fellBack.Trim() : null;
+        }
+
+        var fix = school.Length > 0 && CheatLookalikes.WithCast(kind, school, school, onCaster) is { } same && CheatLookalikes.SameSchool(same.EffectSchool, school)
+            ? $" Pick {(spell.Length > 0 ? $"no \"shown as\" and the {school} animation" : school)} to keep them in step."
+            : CheatLookalikes.Plain(kind, school) is { } plain && CheatLookalikes.SameSchool(plain.EffectSchool, school)
+                ? $" Pick {(spell.Length > 0 ? "no \"shown as\" and the normal animation" : "the normal animation")} to keep them in step."
+                : "";
+        var used = global ? "won't count for the same hits" : "won't be used up by the same hits";
+
+        return $"{fellBack}The game shows {A($"{SchoolWord(shownSchool)} {word}")} ({shown}) but the server uses {A($"{SchoolWord(school)} {word}")}, "
+               + $"so the shown {word} {used}.{fix}";
     }
 
     private Control FieldFor(CheatBoard board, CheatRule rule, CheatBlock block, CheatField field, Action changed) {

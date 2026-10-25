@@ -1179,6 +1179,8 @@ public partial class CombatResolver {
             "stealpips" => $"steal {step.Amount} {step.Kind} pips{on}",
             "removeauras" => $"remove auras{on}",
             "removeeffects" => $"remove {(step.Kind.Length > 0 ? step.Kind : "all")} effects x{(step.Count > 0 ? step.Count : "all")}{on}",
+            "addcharm" when CheatLookalikes.IsGlobal(step.Kind)
+                => $"put up a {(step.Kind.Equals("GloomGlobal", StringComparison.OrdinalIgnoreCase) ? -Math.Abs(step.Amount) : Math.Abs(step.Amount))}% {SchoolText(step.School)}{CheatLookalikes.KindWord(step.Kind)}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
             "addcharm" => step.Kind.ToLowerInvariant() is "dot" or "hot"
                 ? $"add a {step.Amount} {SchoolText(step.School)}{step.Kind} over {Math.Max(1, step.Rounds)} rounds{on}"
                 : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
