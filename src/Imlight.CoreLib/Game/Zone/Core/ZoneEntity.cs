@@ -320,8 +320,10 @@ public class ZoneEntity(
         // A vendor or trainer of the Customs tab only borrows its template's look: it gets the shop or the trainer
         // and none of the template's own services, quests or battle parts (CustomNpcs).
         var customNpc = Imlight.CoreLib.Game.World.CustomNpcs.For(Info?.m_zoneTag);
+        // A stone of the Customs tab's teleporter hubs likewise only borrows its look (CustomTeleporters).
+        var customTeleporter = Imlight.CoreLib.Game.World.CustomTeleporters.For(Info?.m_zoneTag);
         foreach (var (componentType, shouldAttachToEntity) in ZoneEntityComponentRegistry.GetRegisteredComponents()) {
-            if (customNpc is not null && !KeptForCustomNpc(componentType)) {
+            if ((customNpc is not null || customTeleporter is not null) && !KeptForCustomNpc(componentType)) {
                 continue;
             }
 
@@ -336,6 +338,10 @@ public class ZoneEntity(
                 Logger.Warning("Component {0} threw while attaching to a '{1}' entity, skipping it: {2}",
                     Logger.Args(componentType.Name, template?.GetType().Name ?? "?", (ex.InnerException ?? ex).Message));
             }
+        }
+
+        if (customTeleporter is not null) {
+            AddComponent(typeof(CustomTeleporterComponent));
         }
 
         if (customNpc is not null) {

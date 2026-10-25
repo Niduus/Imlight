@@ -70,6 +70,10 @@
  * spiraldb-extra/Customs/VendorsTrainers.json (CustomNpcs.cs), are added here as objects of their zone too, each named
  * by its zone tag (CustomNpc_<Id>). An NPC whose name, kind or lists changed goes and comes back as the new one.
  *
+ * Teleporter hubs (Niduus, 2026-10-25): the Customs tab's hub and street teleporters, in
+ * spiraldb-extra/Customs/Teleporters.json (CustomTeleporters.cs), are added the same way, each named by its zone tag
+ * (CustomTeleporter_<Id>_<pad>, with _Street for a street teleporter).
+ *
  * All three are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
  * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
  * object appears and a removed one goes. Encounters, exits, distinct spawners and spawn swaps count from their next
@@ -297,6 +301,7 @@ internal static class ZoneObjects {
     private static FileSystemWatcher s_watcher;
     private static FileSystemWatcher s_placementsWatcher;
     private static FileSystemWatcher s_customNpcsWatcher;
+    private static FileSystemWatcher s_customTeleportersWatcher;
     private static Timer s_reloadTimer;
 
     // The loaded copies of zones that use these files, so a change reaches them.
@@ -417,6 +422,7 @@ internal static class ZoneObjects {
             Directory.CreateDirectory(placements);
             s_placementsWatcher = MakeWatcher(placements, PLACEMENTS_FILE);
             s_customNpcsWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomNpcs.FILE);
+            s_customTeleportersWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomTeleporters.FILE);
         }
         catch (Exception e) {
             Logger.Warning("Zone objects: changes to the files will need a server restart ({0}).", Logger.Args(e.Message));
@@ -855,6 +861,7 @@ internal static class ZoneObjects {
 
         ApplyPlacements(zones, off);
         AddCustomNpcs(zones);
+        AddCustomTeleporters(zones);
         Logger.Information("Zone objects loaded from {0} files ({1} objects, {2} creatures).",
             Logger.Args(zones.Count, zones.Values.Sum(z => z.Objects.Count), zones.Values.Sum(z => z.Creatures.Count)));
 
@@ -958,6 +965,29 @@ internal static class ZoneObjects {
                 Name = npc.Tag, Notes = "A vendor or trainer of the Customs tab.", TemplateID = npc.TemplateID,
                 X = npc.X, Y = npc.Y, Z = npc.Z, Yaw = npc.Yaw,
                 CustomNpc = Imlight.CoreLib.Game.World.CustomNpcs.SignatureOf(npc),
+            });
+        }
+    }
+
+    // The Customs tab's teleporter hubs: each hub stone and street teleporter an object of its zone (in the file every
+    // copy of the zone uses).
+    private static void AddCustomTeleporters(Dictionary<string, ZoneObjectFile> zones) {
+        foreach (var stone in Imlight.CoreLib.Game.World.CustomTeleporters.Load()) {
+            if (!zones.TryGetValue(KeyOf(stone.Zone, ""), out var file)) {
+                file = new ZoneObjectFile { Zone = stone.Zone };
+                zones[KeyOf(stone.Zone, "")] = file;
+            }
+
+            if (file.Objects.Any(o => string.Equals(o.Name, stone.Tag, StringComparison.OrdinalIgnoreCase))) {
+                Logger.Warning("Teleporter hubs: {0} already has an object called {1}; skipped.", Logger.Args(stone.Zone, stone.Tag));
+
+                continue;
+            }
+
+            file.Objects.Add(new ZoneObject {
+                Name = stone.Tag, Notes = "A teleporter of the Customs tab.", TemplateID = stone.Look,
+                X = stone.X, Y = stone.Y, Z = stone.Z, Yaw = stone.Yaw,
+                CustomNpc = Imlight.CoreLib.Game.World.CustomTeleporters.SignatureOf(stone),
             });
         }
     }

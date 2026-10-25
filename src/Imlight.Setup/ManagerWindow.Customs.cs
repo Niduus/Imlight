@@ -98,6 +98,7 @@ internal sealed partial class ManagerWindow {
                 },
                 _customRows),
             CustomNpcsCard(),
+            CustomTeleportersCard(),
             CustomBattlesCard(),
             GauntletSigilsCard(),
             CustomAreasCard(),
@@ -111,6 +112,7 @@ internal sealed partial class ManagerWindow {
         _customHeaderCard.IsVisible = _bossEditor.Parent == _customsEditorHost && _editCustom is not null;
         RenderCustoms();
         RenderNpcs();
+        RenderHubs();
         LoadBattleCustoms();
         RenderGauntletSigils();
         RenderAreas();

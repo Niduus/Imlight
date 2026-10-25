@@ -1445,9 +1445,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         var serverTele = new GAME_5_PROTOCOL.MSG_SERVERTELEPORT() {
-            LocationX = (ushort) compressedCoords.X,
-            LocationY = (ushort) compressedCoords.Y,
-            LocationZ = (ushort) compressedCoords.Z,
+            // Signed 16-bit fields, as the client's moves send them: a plain cast would turn a negative spot into 0.
+            LocationX = unchecked((ushort) (short) MathF.Round(compressedCoords.X)),
+            LocationY = unchecked((ushort) (short) MathF.Round(compressedCoords.Y)),
+            LocationZ = unchecked((ushort) (short) MathF.Round(compressedCoords.Z)),
             Direction = (byte) Math.Round(directionYaw / (2 * Math.PI) * 250),
             MobileID = GetActiveGameObject().m_nMobileID,
         };

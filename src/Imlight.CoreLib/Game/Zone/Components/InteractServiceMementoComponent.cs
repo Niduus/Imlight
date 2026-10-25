@@ -449,8 +449,10 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             },
         };
 
-        // A custom vendor or trainer's dialog shows the name it was given, as written (CustomNpcs).
-        if (Imlight.CoreLib.Game.World.CustomNpcs.NameFor(Entity.Info?.m_zoneTag) is { } customName) {
+        // A custom vendor or trainer's dialog shows the name it was given, as written (CustomNpcs), and so does a
+        // teleporter hub's stone (CustomTeleporters).
+        if ((Imlight.CoreLib.Game.World.CustomNpcs.NameFor(Entity.Info?.m_zoneTag)
+             ?? Imlight.CoreLib.Game.World.CustomTeleporters.For(Entity.Info?.m_zoneTag)?.Name) is { } customName) {
             madlibList = [new MadlibArgT_WideByteString { m_madlibArgument = customName, m_madlibToken = "NAME" }];
         }
 
