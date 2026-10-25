@@ -29,13 +29,13 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// Spell upgrades by chat, the same as the game's upgrade window (see <see cref="TieredSpells"/>): `.upgrades` lists
 /// the upgradable spells you know, their next tiers and costs; `.upgrade Fire Cat B` upgrades Fire Cat along path B
-/// (path A when none is given). `.spellements 200` gives 200 Spellements for every upgradable spell you know (QA).
+/// (path A when none is given). `.spellements 200` sets your Spellements to 200 for every upgradable spell you know (QA).
 /// </summary>
 internal class CommandUpgradeProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    // The most Spellements one .spellements gives per spell (the reagent bag holds 999 of each).
+    // The most Spellements .spellements sets per spell (the upgrade window shows "999+" above this).
     private const int MAX_SHARDS = 999;
 
     [Command("upgrades")]
@@ -140,8 +140,8 @@ internal class CommandUpgradeProtocol : CommandProtocol {
         each = Math.Min(each, MAX_SHARDS);
         var given = TieredSpells.GiveShardsForKnownSpells(Context.SessionActor, Context.Character, each);
         InformSenderClient(given == 0
-            ? "You know no upgradable spells, or your Spellements are full (999 each)."
-            : $"You got {given} Spellements for your upgradable spells.");
+            ? $"Your Spellements are now {each} for each upgradable spell you know (or you know none)."
+            : $"Your Spellements are now {each} for each upgradable spell you know ({given} given).");
     }
 
     // "Fire Cat - T03 - A" -> "A"; "Fire Cat - T02" -> "A" (the game's only path there).

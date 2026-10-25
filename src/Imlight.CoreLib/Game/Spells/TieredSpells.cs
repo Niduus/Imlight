@@ -722,12 +722,62 @@ internal static class TieredSpells {
         var total = 0;
         foreach (var group in KnownTieredSpells(wizard).Select(k => k.Group).Distinct()) {
             var shard = ShardOf(group);
-            if (shard != 0) {
-                total += LootGranter.GrantReagent(playerActor, wizard, shard, each);
+            if (shard == 0) {
+                continue;
+            }
+
+            // Sets the count to exactly this many: the window shows "999+" above 999, so more is trimmed too.
+            var have = ShardCount(wizard, shard);
+            if (have > each) {
+                TakeShards(playerActor, wizard, shard, have - each);
+            }
+            else if (have < each) {
+                total += LootGranter.GrantReagent(playerActor, wizard, shard, each - have);
             }
         }
 
         return total;
+    }
+
+    /// <summary>
+    /// The game's Spellements 2.0 list of spells "done prep for multiple paths". A spell not on it uses the old upgrade
+    /// window, which shows only one path as unlocked (Poison path A looked locked after path B, though known). Every
+    /// upgradable spell is on it, so all paths show what the wizard knows. Group numbers are added too, in case the
+    /// game keys the list by group; they never clash with template IDs.
+    /// </summary>
+    internal static WIZARD3_56_PROTOCOL.MSG_UPDATETSDONEPREPFORMP DonePrepMessage() {
+        Load();
+        if (s_donePrepData is null) {
+            var ids = new List<uint>();
+            for (var group = 0; group < s_groups.Count; group++) {
+                ids.Add((uint) group);
+            }
+
+            ids.AddRange(s_groupOfSpell.Keys.Select(TemplateIdOf).Where(id => id != 0).Distinct());
+            s_donePrepData = Serialize(new TSDonePrepForMPList { m_spellIDList = ids });
+        }
+
+        return s_donePrepData is null ? null : new WIZARD3_56_PROTOCOL.MSG_UPDATETSDONEPREPFORMP { Data = s_donePrepData };
+    }
+
+    /// <summary>The game's list of tiered spells marked as untrained: always empty here.</summary>
+    internal static WIZARD3_56_PROTOCOL.MSG_UPDATETSMARKEDASUNTRAINED MarkedAsUntrainedMessage() {
+        var data = Serialize(new TSMarkedAsUntrainedList { m_spellIDList = [] });
+
+        return data is null ? null : new WIZARD3_56_PROTOCOL.MSG_UPDATETSMARKEDASUNTRAINED { Data = data };
+    }
+
+    private static byte[] s_donePrepData;
+
+    private static byte[] Serialize(PropertyClass value) {
+        var serializer = new ObjectSerializer(Versionable: false);
+        if (!serializer.Serialize(value, VISIBILITY_MASK, out var data)) {
+            Logger.Error("Spell upgrades | {0} could not be serialized.", Logger.Args(value.GetType().Name));
+
+            return null;
+        }
+
+        return (byte[]) data;
     }
 
 }

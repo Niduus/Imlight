@@ -103,9 +103,48 @@ internal class TieredSpellService(SessionActor sessionActor) : MessageService(se
         SendVisibility();
     }
 
+    // Spellements 2.0: the game asks which spells use the multiple paths window. All of them do.
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTTSDONEPREPFORMP))]
+    private void ReceiveRequestDonePrep(WIZARD3_56_PROTOCOL.MSG_REQUESTTSDONEPREPFORMP message) {
+        try {
+            SendDonePrep();
+        }
+        catch (Exception ex) {
+            Logger.Error("Spell upgrades | Answering the multiple paths list failed. {0}", Logger.Args(ex.Message));
+        }
+    }
+
+    // Spellements 2.0: the game asks which upgraded spells are marked untrained. None are.
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTTSMARKEDASUNTRAINED))]
+    private void ReceiveRequestMarkedAsUntrained(WIZARD3_56_PROTOCOL.MSG_REQUESTTSMARKEDASUNTRAINED message) {
+        try {
+            if (TieredSpells.MarkedAsUntrainedMessage() is { } answer) {
+                SendToSocket(answer);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Spell upgrades | Answering the untrained list failed. {0}", Logger.Args(ex.Message));
+        }
+    }
+
+    // Spellements 2.0's one-time Reset or Keep choice: every spell already uses multiple paths, so keeping just works.
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_TIEREDSPELLDOPREPFORMP))]
+    private void ReceiveDoPrep(WIZARD3_56_PROTOCOL.MSG_TIEREDSPELLDOPREPFORMP message) {
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_TIEREDSPELLDOPREPFORMPRESP { Success = 1 });
+        SendDonePrep();
+        SendVisibility();
+    }
+
+    private void SendDonePrep() {
+        if (TieredSpells.Enabled && TieredSpells.DonePrepMessage() is { } answer) {
+            SendToSocket(answer);
+        }
+    }
+
     private void SendVisibility() {
         var answer = TieredSpells.VisibilityMessage(GetActiveWizard());
         if (answer is not null) {
+            SendDonePrep();
             SendToSocket(answer);
         }
     }
