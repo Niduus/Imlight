@@ -318,8 +318,10 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         }
 
         var bar = key?.LastIndexOf('_') ?? -1;
+        // The file names carry the locale folder, so the quest tables can sit with the others in s_data
+        // (v0.10.382 found none to check and left out nothing; Niduus 2026-10-25, Lady Oriel).
         if (bar <= 0 || !key.StartsWith(s_qustFilePrefix, StringComparison.Ordinal)
-            || !s_questTables.TryGetValue(key[..bar], out var lines)) {
+            || !(s_questTables.TryGetValue(key[..bar], out var lines) || s_data.TryGetValue(key[..bar], out lines))) {
             return null;
         }
 
