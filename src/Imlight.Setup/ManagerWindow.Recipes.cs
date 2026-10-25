@@ -226,7 +226,8 @@ internal sealed partial class ManagerWindow {
         _recipesShown = [.. book.Recipes.Where(r =>
                 (r.Id == id || words.All(r.Haystack.Contains))
                 // The game's other recipes (spellements, idols, jewel trades) are no station's; they show when asked for.
-                && (noStation || changedOnly || r.Stations.Count > 0 || r.Id == id)
+                // A search finds them too (Niduus, 2026-10-25: the Fortune Coin Gold Skeleton Key is no station's).
+                && (noStation || changedOnly || words.Length > 0 || r.Stations.Count > 0 || r.Id == id)
                 && (!changedOnly || _recipeChanged.Contains(r.Id))
                 && (station == ALL_STATIONS || r.Stations.Contains(station))
                 && (school == ANY_RECIPE_SCHOOL || r.School.Equals(school, StringComparison.OrdinalIgnoreCase)))
