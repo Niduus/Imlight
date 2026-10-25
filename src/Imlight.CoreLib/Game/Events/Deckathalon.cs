@@ -100,9 +100,10 @@ internal static class Deckathalon {
 
     // Credits (Niduus, 2026-10-25: "Deckathalon starts with a claim of 3 credits every 24 hours (Config this) and you can
     // stash them during THAT event. Each entry is a credit"). Credits belong to one event and are kept until it ends.
-    private static readonly int s_claimCredits = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimCredits", 3));
-    private static readonly double s_claimHours = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimHours", 24.0));
-    private static readonly int s_entryCredits = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.EntryCredits", 1));
+    // Read each time, so a change in the Manager's Settings applies without a server restart.
+    private static int s_claimCredits => Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimCredits", 3));
+    private static double s_claimHours => Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimHours", 24.0));
+    private static int s_entryCredits => Math.Max(0, ConfigurationManager.GetValue("Deckathalon.EntryCredits", 1));
 
     // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
     internal const string ARENA_ZONE = "WizardCity/WC_Duel_Arena";

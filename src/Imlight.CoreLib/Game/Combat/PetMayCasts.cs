@@ -73,7 +73,8 @@ internal static class PetMayCasts {
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
     private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
     private static readonly int s_onPass = ConfigurationManager.GetValue("PetCasting.OnPass", 10);
-    private static readonly string s_deckathalon = ConfigurationManager.GetSetting("PetCasting.Deckathalon") ?? "";
+    // Read each time, so a change in the Manager's Settings applies without a server restart.
+    private static string s_deckathalon => ConfigurationManager.GetSetting("PetCasting.Deckathalon") ?? "";
 
     // Talent name to its May Cast; null for a talent that is not one or whose card was not found.
     private static readonly ConcurrentDictionary<string, MayCast> s_byTalent = new(StringComparer.OrdinalIgnoreCase);
