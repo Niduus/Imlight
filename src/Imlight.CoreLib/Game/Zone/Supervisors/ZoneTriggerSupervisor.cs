@@ -368,8 +368,11 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
 
     // The teleport handler sends a player with no destination zone out of a house zone only; anywhere else it does nothing.
     private bool LeadsSomewhere(Trigger trigger)
+        => NamesDestination(trigger) || (HasTeleportResult(trigger) && HouseExits.TryResolve(Zone.ZonePath, out _, out _));
+
+    private static bool NamesDestination(Trigger trigger)
         => trigger.m_results?.m_results?.Any(result => result is ResTeleport teleport
-            && (!string.IsNullOrEmpty(teleport.m_destinationZone) || HouseExits.TryResolve(Zone.ZonePath, out _, out _))) == true;
+            && !string.IsNullOrEmpty(teleport.m_destinationZone)) == true;
 
     private Trigger PickTeleportTrigger(List<(Trigger Trigger, IActorRef Actor)> passing, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
         // ReqHasQuest also passes for a completed quest: prefer the trigger naming a currently active quest, else the last passing one.
@@ -388,6 +391,21 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
             }
 
             teleports = leading;
+        }
+
+        // In a house zone a trigger naming its own destination beats one that only falls back to the world's hub. The
+        // dorm's exit pairs the boys' and girls' door triggers (each to its Ravenwood tower) with the first quest's
+        // Trigger-WC-COMMONS-MAIN-002, which has none and would send the wizard to the Commons (Niduus, 2026-10-25).
+        var named = teleports.Where(NamesDestination).ToList();
+        if (named.Count > 0 && named.Count < teleports.Count) {
+            foreach (var fallback in teleports.Except(named)) {
+                if (_deadTeleportsLogged.Add(fallback.m_triggerName)) {
+                    Logger.Information("Trigger {0} in {1} only leads to the world's hub; {2} names its destination and takes the player instead.",
+                        Logger.Args(fallback.m_triggerName, Zone.ZonePath, named[^1].m_triggerName));
+                }
+            }
+
+            teleports = named;
         }
 
         if (teleports.Count <= 1) {

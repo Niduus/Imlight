@@ -1,0 +1,28 @@
+{
+  "ZoneName": "WizardCity/Interiors/WC_Housing_Dorm_Interior",
+  "Events": [],
+  "Teleports": [
+    {
+      "TriggerName": "FemaleTeleport",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "Target location (Ravenwood Tower2 Exit)",
+        "m_destinationZone": "WizardCity/WC_Ravenwood"
+      }
+    },
+    {
+      "TriggerName": "MaleTeleport",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "Target location (Ravenwood Tower1 Exit)",
+        "m_destinationZone": "WizardCity/WC_Ravenwood"
+      }
+    }
+  ]
+}
