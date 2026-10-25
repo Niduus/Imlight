@@ -63,12 +63,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
     private const uint NO_AGGRO_EFFECT_STRINGID = 1618528611;
 
-    /// <summary>
-    /// [Combat] NoAggroSeconds: how long creatures leave a wizard alone after a won battle. 0 (the default): a creature
-    /// the wizard touches starts the next battle right away (Niduus, 2026-10-25).
-    /// </summary>
-    private static readonly uint s_noAggroSeconds
-        = (uint) Math.Clamp(ConfigurationManager.GetValue("Combat.NoAggroSeconds", 0), 0, 60);
+    private const uint NO_AGGRO_EFFECT_DURATION_IN_SECONDS = 3;
 
     /// <summary>
     /// Die = Delete mode: a character that is still dead when its battle ends is deleted.
@@ -175,16 +170,16 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         GetActiveWizard().IsInDuel = false;
         _currentDuelActor = null;
         EquipMount();
-        if (s_noAggroSeconds > 0) {
-            SetNoAggroGrace();
+        // Creatures leave a wizard alone for 3 seconds after a won battle; one touched then starts the next battle
+        // the moment it ends (Niduus, 2026-10-25).
+        SetNoAggroGrace();
 
-            // Send a message to ourselves to end the no aggro grace period.
-            var noAggroGraceOverMsg = new COMBAT_106_PROTOCOL.MSG_NOAGGROGRACEOVER();
-            Timers.StartSingleTimer(
-                "NoAggroGraceOver",
-                noAggroGraceOverMsg,
-                TimeSpan.FromSeconds(s_noAggroSeconds));
-        }
+        // Send a message to ourselves to end the no aggro grace period.
+        var noAggroGraceOverMsg = new COMBAT_106_PROTOCOL.MSG_NOAGGROGRACEOVER();
+        Timers.StartSingleTimer(
+            "NoAggroGraceOver",
+            noAggroGraceOverMsg,
+            TimeSpan.FromSeconds(NO_AGGRO_EFFECT_DURATION_IN_SECONDS));
 
         // Gain 3 XP per pip used in the duel.
         var usedPips = message.UsedPips;
@@ -715,7 +710,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         var effectInternalId = wizard.NextEffectId();
 
         var epoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var endTime = epoch + s_noAggroSeconds;
+        var endTime = epoch + NO_AGGRO_EFFECT_DURATION_IN_SECONDS;
 
         var effect = new NamedEffect {
             m_effectNameID = NO_AGGRO_EFFECT_STRINGID,
