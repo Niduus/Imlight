@@ -29,19 +29,15 @@ internal class CommandEventsProtocol : CommandProtocol {
             }
 
             var lines = new List<string>();
-            if (Deckathalon.CurrentEvent is { } deckathalon) {
-                lines.Add($"{deckathalon.Name}{GameEvents.TimeLeft(deckathalon)}: type .deckathalon.");
-            }
-
-            foreach (var running in ClassProjects.Active()) {
-                var mine = ClassProjects.Find(running, me.CharId);
+            foreach (var running in ClassProjects.Deckathalons().Concat(ClassProjects.Active())) {
+                var points = ClassProjects.PointsOf(running, me.CharId);
                 var rewards = running.Template.m_rewardList ?? [];
-                var next = rewards.FirstOrDefault(r => r is not null && r.m_goalCount > (mine?.Points ?? 0));
-                var waiting = ClassProjects.Unclaimed(running, mine).Count;
+                var next = rewards.FirstOrDefault(r => r is not null && r.m_goalCount > points);
+                var waiting = ClassProjects.Unclaimed(running, me.CharId).Count;
                 var when = running.Ending
                     ? $"ended, rewards can be claimed for {Math.Max(0, (running.End.AddDays(GameEvents.ENDED_DAYS) - DateTime.UtcNow).Days)}d more"
                     : $"{(running.End - DateTime.UtcNow).Days}d left";
-                lines.Add($"{running.Shown} ({when}): {mine?.Points ?? 0} points"
+                lines.Add($"{running.Shown} ({when}): {points} points"
                     + (next is null ? ", every reward reached" : $", next reward at {next.m_goalCount}")
                     + (waiting > 0 ? $", {waiting} reward{(waiting == 1 ? "" : "s")} to claim (.events claim)." : "."));
             }

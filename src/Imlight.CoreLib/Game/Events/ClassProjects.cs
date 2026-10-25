@@ -81,7 +81,9 @@ internal static class ClassProjects {
 
     /// <summary>An event that is on: its template and when it started and ends.</summary>
     /// <param name="Ending">The event is over and stays in the window for its rewards until End + a week: no more points.</param>
-    internal sealed record Running(ClassProjectTemplate Template, DateTime Start, DateTime End, string Shown, bool Ending = false) {
+    /// <param name="ScoreKey">For a Deckathalon, its scores in deckathalon.json (its points are the tower's).</param>
+    internal sealed record Running(ClassProjectTemplate Template, DateTime Start, DateTime End, string Shown, bool Ending = false,
+        string ScoreKey = null) {
         internal string Name => Template.m_projectName.ToString();
         internal uint Id => StringHash.Compute(Name);
         internal string Key => $"{Name}@{Start:yyyy-MM-ddTHH:mm}";
@@ -243,6 +245,32 @@ internal static class ClassProjects {
 
     internal static Running ActiveOf(uint projectId) => Active().FirstOrDefault(r => r.Id == projectId);
 
+    /// <summary>
+    /// The Deckathalon on now and those that ended in the last week, as events whose rewards can be claimed (their
+    /// template's reward bar; the points are the tower's, Deckathalon.cs).
+    /// </summary>
+    internal static List<Running> Deckathalons() {
+        var list = new List<Running>();
+        foreach (var (e, ending) in GameEvents.Running.Where(e => e.IsDeckathalon).Select(e => (e, false))
+                     .Concat(GameEvents.Ended.Where(e => e.IsDeckathalon).Select(e => (e, true)))) {
+            if (TemplateOf(EventButton.ProjectName(e)) is { } template && !list.Any(d => d.Name == template.m_projectName.ToString())) {
+                list.Add(new Running(template, e.Start, e.End, e.Name, ending, e.Key));
+            }
+        }
+
+        return list;
+    }
+
+    /// <summary>Every event whose rewards can be claimed now: the ones in the window, the Deckathalons included.</summary>
+    internal static Running ClaimableOf(uint projectId)
+        => Active().FirstOrDefault(r => r.Id == projectId) ?? Deckathalons().FirstOrDefault(r => r.Id == projectId);
+
+    /// <summary>A wizard's points in an event: the Deckathalon's tower points, or the event's own.</summary>
+    internal static int PointsOf(Running running, ulong charId)
+        => running.ScoreKey is { } key
+            ? Math.Max(0, (Deckathalon.PlaceOf(key, charId)?.Score.Points ?? 0) / 10)
+            : Find(running, charId)?.Points ?? 0;
+
     /// <summary>Whether an event is on now (not one that has ended and only waits for its rewards).</summary>
     internal static bool IsActive(string projectName)
         => !string.IsNullOrEmpty(projectName)
@@ -337,7 +365,7 @@ internal static class ClassProjects {
             ProjectID = running.Id,
             Count = (uint) Math.Max(0, progress.Points),
             Points = (uint) gained,
-            HasUnclaimedReward = (byte) (Unclaimed(running, progress).Count > 0 ? 1 : 0),
+            HasUnclaimedReward = (byte) (Unclaimed(running, wizard.CharId).Count > 0 ? 1 : 0),
         });
     }
 
@@ -390,16 +418,14 @@ internal static class ClassProjects {
     #region Rewards
 
     /// <summary>The reward tiers a wizard has the points for and has not claimed yet.</summary>
-    internal static List<int> Unclaimed(Running running, Progress progress) {
+    internal static List<int> Unclaimed(Running running, ulong charId) {
         var rewards = running.Template.m_rewardList ?? [];
         var ready = new List<int>();
-        if (progress is null) {
-            return ready;
-        }
-
+        var points = PointsOf(running, charId);
+        var progress = Find(running, charId);
         lock (s_lock) {
             for (var i = 0; i < rewards.Count; i++) {
-                if (rewards[i] is { } reward && progress.Points >= reward.m_goalCount && !progress.Claimed.Contains(i) && Allowed(reward)) {
+                if (rewards[i] is { } reward && points >= reward.m_goalCount && progress?.Claimed.Contains(i) != true && Allowed(reward)) {
                     ready.Add(i);
                 }
             }
@@ -413,11 +439,12 @@ internal static class ClassProjects {
 
     /// <summary>
     /// The window's claim button (MSG_CLASSPROJECTCLAIMREWARD): gives the reward tier's items once, when the wizard has
-    /// its points. Returns what to tell them.
+    /// its points. Works while the event is on and for a week after it ended (Niduus, 2026-10-25), the Deckathalon's
+    /// reward bar included. Returns what to tell them.
     /// </summary>
     internal static string Claim(IActorRef session, Wizard wizard, uint projectId, int index) {
-        if (ActiveOf(projectId) is not { } running) {
-            return "That event is not on.";
+        if (ClaimableOf(projectId) is not { } running) {
+            return "That event ended more than 7 days ago, so its rewards can no longer be claimed.";
         }
 
         var rewards = running.Template.m_rewardList ?? [];
@@ -425,14 +452,15 @@ internal static class ClassProjects {
             return "There is no such reward.";
         }
 
+        var points = PointsOf(running, wizard.CharId);
         var progress = ProgressOf(running.Key, wizard);
         lock (s_lock) {
             if (progress.Claimed.Contains(index)) {
                 return "You already have that reward.";
             }
 
-            if (progress.Points < reward.m_goalCount) {
-                return $"That reward needs {reward.m_goalCount} points; you have {progress.Points}.";
+            if (points < reward.m_goalCount) {
+                return $"That reward needs {reward.m_goalCount} points; you have {points}.";
             }
 
             if (!Allowed(reward)) {
@@ -454,8 +482,8 @@ internal static class ClassProjects {
     /// <summary>Claims every reward a wizard has the points for, in every event on (the .events claim command).</summary>
     internal static List<string> ClaimAll(IActorRef session, Wizard wizard) {
         var lines = new List<string>();
-        foreach (var running in Active()) {
-            foreach (var index in Unclaimed(running, Find(running, wizard.CharId))) {
+        foreach (var running in Active().Concat(Deckathalons())) {
+            foreach (var index in Unclaimed(running, wizard.CharId)) {
                 lines.Add(Claim(session, wizard, running.Id, index));
             }
         }

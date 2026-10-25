@@ -140,6 +140,12 @@ internal static class EventButton {
                 SetGoalProgress(player, 2, score.CardsToday);
             }
 
+            // The rewards of the bar already claimed: bit i of m_flags for an event that is not a season pass.
+            if (ClassProjects.Deckathalons().FirstOrDefault(d => d.Id == id) is { } bar) {
+                ClassProjects.ClaimedBits(ClassProjects.Find(bar, wizard.CharId), out var flags);
+                player.m_flags = flags;
+            }
+
             progress.Add(new ClassProjectPlayerProgress { m_projectID = id, m_classProjectPlayer = player });
         }
 
