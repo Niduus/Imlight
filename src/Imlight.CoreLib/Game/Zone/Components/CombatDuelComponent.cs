@@ -315,12 +315,21 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // Any free enemy circle, up to 4 enemies, even where the usual cap (one monster per wizard in starter areas
-        // such as Wizard City) would say no (Niduus, 2026-10-22: walk-ins should join in Wizard City too). A monster
-        // that finds no room vanishes, as before.
+        // Any free enemy circle, up to 4 enemies, even where the usual cap of 2 plus one per wizard would say no
+        // (Niduus, 2026-10-22: walk-ins should join in Wizard City too), except on starter-street circles (below). A
+        // monster that finds no room vanishes, as before.
         if (GetAvailableSubCircleTeamCreature() is null) {
             Refused($"the enemy side is full ({CreatureCount} monsters)");
             suspect.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
+
+            return;
+        }
+
+        // Starter streets (Unicorn Way): the zone's own battle circle data marks the circle (IsNewbieSigil), and there
+        // the real game fights one monster per wizard, so nobody walks in on a solo wizard (Niduus, 2026-10-25: "All
+        // duels in Unicorn way are to be locked to 1 mob via vanilla"). Other streets still take walk-ins up to 4.
+        if (IsNewbieSigil && !IsSlotAvailable(CombatTeam.Monster)) {
+            Refused($"starter street circle: one monster per wizard ({CreatureCount} monsters, {PlayerCount} wizards)");
 
             return;
         }
@@ -3714,8 +3723,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, REVIVE_AFTER_WIN_HEALTH));
     }
 
+    // The game's zone data marks starter-street battle circles: in Unicorn Way every circle has m_unknown_uint_3 = 1 and
+    // m_unknown_uint_4 = 1122, while Colossus Boulevard, Triton Avenue, Firecat Alley and the Sunken City leave both 0.
+    private bool IsNewbieSigil => _combatSigilObjectInfo is { m_unknown_uint_4: not 0 };
+
     private bool IsSlotAvailable(CombatTeam team) {
-        var IsNewbieZone = _combatSigilObjectInfo is { m_unknown_uint_4: not 0 };
+        var IsNewbieZone = IsNewbieSigil;
         var IsDangerousZone = false;
 
         // Newbie sigils (marked in the sigil info) can only have 1 creature as a base.
