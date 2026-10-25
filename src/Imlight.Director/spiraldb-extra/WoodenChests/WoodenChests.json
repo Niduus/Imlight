@@ -1,0 +1,8311 @@
+{
+ "Description": "What the world's wooden chests give besides gold. Made by tools/wooden-chests/make_wooden_chests.py from Wizard404. How often each kind drops and how much gold: Imlight.ini [WoodenChests].",
+ "Chests": {
+  "1784432": {
+   "Name": "AH-Chest-Common-001",
+   "World": "Ahmarra",
+   "Tables": [
+    "WoodenChestLoot-AH"
+   ]
+  },
+  "1370122": {
+   "Name": "AR-Chest-Common-001",
+   "World": "Arcanum",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "617142": {
+   "Name": "AV-Chest-Common-001",
+   "World": "Avalon",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "617144": {
+   "Name": "AV-ChestUnderwater-Common-001",
+   "World": "Avalon",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "643235": {
+   "Name": "AZ-Chest-Common-001",
+   "World": "Azteca",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "643237": {
+   "Name": "AZ-ChestUnderwater-Common-001",
+   "World": "Azteca",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "310073": {
+   "Name": "CL-Chest-Common-001",
+   "World": "Celestia",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "225877": {
+   "Name": "CL-ChestUnderwater-Common-001",
+   "World": "Celestia",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "1233729": {
+   "Name": "DM-Chest-Common-001",
+   "World": "Darkmoor",
+   "Tables": [
+    "WoodenChestLoot-DM"
+   ]
+  },
+  "147082": {
+   "Name": "DS-Chest-Common-001",
+   "World": "DragonSpire",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-DS-001"
+   ]
+  },
+  "1413148": {
+   "Name": "EM-Chest-Common-001",
+   "World": "Empyrea",
+   "Tables": [
+    "WoodenChestLoot-PL"
+   ]
+  },
+  "224081": {
+   "Name": "GH-Chest-Common-001",
+   "World": "Grizzleheim",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-KT-001"
+   ]
+  },
+  "224083": {
+   "Name": "GH-Chest-Common-002",
+   "World": "Grizzleheim",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-MB-001"
+   ]
+  },
+  "224084": {
+   "Name": "GH-Chest-Common-003",
+   "World": "Grizzleheim",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-MS-001"
+   ]
+  },
+  "224085": {
+   "Name": "GH-Chest-Common-004",
+   "World": "Grizzleheim",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-DS-001"
+   ]
+  },
+  "358262": {
+   "Name": "GH2-Chest-Common-001",
+   "World": "Grizzleheim",
+   "Tables": [
+    "WoodenChestLoot-GH2"
+   ]
+  },
+  "1488319": {
+   "Name": "KM-Chest-Common-001",
+   "World": "Karamelle",
+   "Tables": [
+    "WoodenChestLoot-KM"
+   ]
+  },
+  "1217452": {
+   "Name": "KR-Chest-Common-001",
+   "World": "Khrysalis",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  },
+  "77825": {
+   "Name": "KT-Chest-Common-001",
+   "World": "Krokotopia",
+   "Tables": [
+    "TC-CommonsBosses",
+    "Gold-KT-001"
+   ]
+  },
+  "1677011": {
+   "Name": "KT-Chest-Common-002",
+   "World": "Krokotopia",
+   "Tables": [
+    "WoodenChestLoot-KT-SE-01"
+   ]
+  },
+  "1677008": {
+   "Name": "KT-Chest-Common-003",
+   "World": "Wallaru",
+   "Tables": [
+    "WoodenChestLoot-WL"
+   ]
+  },
+  "1524971": {
+   "Name": "LM-Chest-Common-001",
+   "World": "Lemuria",
+   "Tables": [
+    "WoodenChestLoot-LM"
+   ]
+  },
+  "77826": {
+   "Name": "MB-Chest-Common-001",
+   "World": "Marleybone",
+   "Tables": [
+    "TC-Uncommons",
+    "Gold-MB-001"
+   ]
+  },
+  "77884": {
+   "Name": "MB_BB_Chest1",
+   "World": "Marleybone",
+   "Tables": [
+    "Gold-KT-001",
+    "TC-CommonsBosses-SilverChest"
+   ]
+  },
+  "1397134": {
+   "Name": "MR-Chest-Wood",
+   "World": "Mirage",
+   "Tables": [
+    "WoodenChestLoot-MR"
+   ]
+  },
+  "77827": {
+   "Name": "MS-Chest-Common-001",
+   "World": "MooShu",
+   "Tables": [
+    "TC-UncommonsBosses",
+    "Gold-MS-001"
+   ]
+  },
+  "1520553": {
+   "Name": "NV-Chest-Common-001",
+   "World": "Novus",
+   "Tables": [
+    "WoodenChestLoot-NV"
+   ]
+  },
+  "470099": {
+   "Name": "PA-Chest-Common-001",
+   "World": "Wysteria",
+   "Tables": [
+    "TC-Uncommons",
+    "Gold-MB-001"
+   ]
+  },
+  "1217999": {
+   "Name": "PL-Chest-Common-001",
+   "World": "Polaris",
+   "Tables": [
+    "WoodenChestLoot-PL"
+   ]
+  },
+  "1562742": {
+   "Name": "Raid-Chest-Inviso-001",
+   "World": "Azteca",
+   "Tables": [
+    "Raid_AZ_DirtMound_01"
+   ]
+  },
+  "77823": {
+   "Name": "WC-Chest-Common-001",
+   "World": "WizardCity",
+   "Tables": [
+    "TC-Commons",
+    "Gold-WC-001"
+   ]
+  },
+  "1562823": {
+   "Name": "WL-Chest-Common-001",
+   "World": "Wallaru",
+   "Tables": [
+    "WoodenChestLoot-WL"
+   ]
+  },
+  "465271": {
+   "Name": "ZF-Chest-Common-001",
+   "World": "Zafaria",
+   "Tables": [
+    "WoodenChestLoot-CL"
+   ]
+  }
+ },
+ "TreasureCardTables": {
+  "TC-Commons": [
+   "Bloodbat TC",
+   "Dark Sprite TC",
+   "Fire Cat TC",
+   "Fire Shield TC",
+   "Imp TC",
+   "Frost Beetle TC",
+   "Keen Eyes TC",
+   "Myth Shield TC",
+   "Scarab TC",
+   "Snow Shield TC",
+   "Storm Shield TC",
+   "Thunder Snake TC"
+  ],
+  "TC-CommonsBosses": [
+   "Fire Elf TC",
+   "Ghoul TC",
+   "Guiding Light TC",
+   "Lightning Bats TC",
+   "Locust Swarm TC",
+   "Pixie TC",
+   "Snow Serpent TC",
+   "Troll TC",
+   "Blood Moon TC"
+  ],
+  "TC-Uncommons": [
+   "Banshee TC",
+   "Blizzard TC",
+   "Evil Snowman TC",
+   "Humongofrog TC",
+   "Meteor Strike TC",
+   "Sprite TC",
+   "Storm SharkTC",
+   "Sunbird TC",
+   "Tempest TC",
+   "Weakness TC"
+  ],
+  "TC-UncommonsBosses": [
+   "Cyclops TC",
+   "Dryad TC",
+   "Fire Trap TC",
+   "Giant TC",
+   "Ice Trap TC",
+   "Pacify TC",
+   "Sandstorm TC",
+   "Sniper TC",
+   "Spirit Armor TC",
+   "Storm Trap TC",
+   "Vampire TC"
+  ]
+ },
+ "Fallbacks": {
+  "G14_DM": "Darkmoor",
+  "G14_HS": "Celestia",
+  "G14_SB": "Krokotopia",
+  "Wallaru": "Novus",
+  "Ahmarra": "Novus",
+  "Raids": "Azteca"
+ },
+ "Worlds": [
+  {
+   "World": "WizardCity",
+   "Tier": 0,
+   "Creatures": 427,
+   "Reagents": [
+    {
+     "Id": 1441827,
+     "Name": "Myth Rune",
+     "Weight": 150
+    },
+    {
+     "Id": 1441824,
+     "Name": "Balance Rune",
+     "Weight": 149
+    },
+    {
+     "Id": 1441818,
+     "Name": "Life Rune",
+     "Weight": 120
+    },
+    {
+     "Id": 1441821,
+     "Name": "Death Rune",
+     "Weight": 120
+    },
+    {
+     "Id": 1441828,
+     "Name": "Enhanced Myth Rune",
+     "Weight": 120
+    },
+    {
+     "Id": 1441815,
+     "Name": "Storm Rune",
+     "Weight": 119
+    },
+    {
+     "Id": 1441825,
+     "Name": "Enhanced Balance Rune",
+     "Weight": 119
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 97
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 96
+    },
+    {
+     "Id": 1441819,
+     "Name": "Enhanced Life Rune",
+     "Weight": 96
+    },
+    {
+     "Id": 1441822,
+     "Name": "Enhanced Death Rune",
+     "Weight": 96
+    },
+    {
+     "Id": 1441816,
+     "Name": "Enhanced Storm Rune",
+     "Weight": 95
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 91
+    },
+    {
+     "Id": 1441808,
+     "Name": "Fire Rune",
+     "Weight": 89
+    },
+    {
+     "Id": 1441812,
+     "Name": "Ice Rune",
+     "Weight": 89
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 88
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 85
+    },
+    {
+     "Id": 1441810,
+     "Name": "Superior Fire Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441814,
+     "Name": "Superior Ice Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441817,
+     "Name": "Superior Storm Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441820,
+     "Name": "Superior Life Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441823,
+     "Name": "Superior Death Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441826,
+     "Name": "Superior Balance Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 1441829,
+     "Name": "Superior Myth Rune",
+     "Weight": 84
+    },
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 78
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 72
+    },
+    {
+     "Id": 1441809,
+     "Name": "Enhanced Fire Rune",
+     "Weight": 71
+    },
+    {
+     "Id": 1441813,
+     "Name": "Enhanced Ice Rune",
+     "Weight": 71
+    },
+    {
+     "Id": 1472087,
+     "Name": "Augmentation Rune",
+     "Weight": 70
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 69
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 79
+    },
+    {
+     "Id": 220193,
+     "Name": "Blonde Strawberry",
+     "Weight": 77
+    },
+    {
+     "Id": 220208,
+     "Name": "Cheese Broccoli",
+     "Weight": 77
+    },
+    {
+     "Id": 220213,
+     "Name": "Chocolate Strawberry",
+     "Weight": 76
+    },
+    {
+     "Id": 220218,
+     "Name": "Sugar Donut",
+     "Weight": 76
+    },
+    {
+     "Id": 220220,
+     "Name": "Gummy Firecat",
+     "Weight": 76
+    },
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 66
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 66
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 66
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 66
+    },
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 66
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 65
+    },
+    {
+     "Id": 641700,
+     "Name": "Antheneum Delight",
+     "Weight": 65
+    },
+    {
+     "Id": 733120,
+     "Name": "Fern Jelly",
+     "Weight": 65
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 65
+    },
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 65
+    },
+    {
+     "Id": 1359624,
+     "Name": "Decimatoes",
+     "Weight": 65
+    },
+    {
+     "Id": 220222,
+     "Name": "Squash",
+     "Weight": 64
+    },
+    {
+     "Id": 220234,
+     "Name": "Drumstick",
+     "Weight": 63
+    },
+    {
+     "Id": 220239,
+     "Name": "Pizza",
+     "Weight": 63
+    },
+    {
+     "Id": 220245,
+     "Name": "Cherry Pie",
+     "Weight": 63
+    },
+    {
+     "Id": 220303,
+     "Name": "BBQ Drumstick",
+     "Weight": 63
+    },
+    {
+     "Id": 220313,
+     "Name": "Sprinkle Cupcake",
+     "Weight": 63
+    },
+    {
+     "Id": 220333,
+     "Name": "Rock and Roll Candy",
+     "Weight": 63
+    },
+    {
+     "Id": 1257588,
+     "Name": "Discord Grape Jelly",
+     "Weight": 63
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 157
+    },
+    {
+     "Id": "Sprite TC",
+     "Name": "Sprite",
+     "Weight": 151
+    },
+    {
+     "Id": "Pixie TC",
+     "Name": "Pixie",
+     "Weight": 145
+    },
+    {
+     "Id": "Amplify TC",
+     "Name": "Amplify",
+     "Weight": 144
+    },
+    {
+     "Id": "Dryad TC",
+     "Name": "Dryad",
+     "Weight": 144
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 142
+    },
+    {
+     "Id": "Minor Blessing TC",
+     "Name": "Minor Blessing",
+     "Weight": 140
+    },
+    {
+     "Id": "Pixie Life TC",
+     "Name": "Fairy",
+     "Weight": 140
+    },
+    {
+     "Id": "Regenerate TC",
+     "Name": "Regenerate",
+     "Weight": 140
+    },
+    {
+     "Id": "Helping Hands TC",
+     "Name": "Helping Hands",
+     "Weight": 140
+    },
+    {
+     "Id": "Feint TC",
+     "Name": "Feint",
+     "Weight": 140
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 140
+    },
+    {
+     "Id": "Tower Shield TC",
+     "Name": "Tower Shield",
+     "Weight": 121
+    },
+    {
+     "Id": "Weakness TC",
+     "Name": "Weakness",
+     "Weight": 103
+    },
+    {
+     "Id": "Defibrillate TC",
+     "Name": "Healing Current",
+     "Weight": 100
+    },
+    {
+     "Id": "Bloodbat TC",
+     "Name": "Blood Bat",
+     "Weight": 85
+    },
+    {
+     "Id": "Storm Shield TC",
+     "Name": "Storm Shield",
+     "Weight": 84
+    },
+    {
+     "Id": "Dark Sprite TC",
+     "Name": "Dark Sprite",
+     "Weight": 83
+    },
+    {
+     "Id": "Fire Cat TC",
+     "Name": "Fire Cat",
+     "Weight": 83
+    },
+    {
+     "Id": "Fire Shield TC",
+     "Name": "Fire Shield",
+     "Weight": 83
+    },
+    {
+     "Id": "Imp TC",
+     "Name": "Imp",
+     "Weight": 83
+    },
+    {
+     "Id": "Frost Beetle TC",
+     "Name": "Frost Beetle",
+     "Weight": 83
+    },
+    {
+     "Id": "Myth Shield TC",
+     "Name": "Myth Shield",
+     "Weight": 83
+    },
+    {
+     "Id": "Scarab TC",
+     "Name": "Scarab",
+     "Weight": 83
+    },
+    {
+     "Id": "Snow Shield TC",
+     "Name": "Snow Shield",
+     "Weight": 83
+    },
+    {
+     "Id": "Thunder Snake TC",
+     "Name": "Thunder Snake",
+     "Weight": 83
+    },
+    {
+     "Id": "Keen Eyes TC",
+     "Name": "Keen Eyes",
+     "Weight": 68
+    },
+    {
+     "Id": "Cleanse Charm TC",
+     "Name": "Cleanse Charm",
+     "Weight": 68
+    },
+    {
+     "Id": "Tri Shield TC",
+     "Name": "Elemental Shield",
+     "Weight": 64
+    },
+    {
+     "Id": "Ghoul TC",
+     "Name": "Ghoul",
+     "Weight": 60
+    }
+   ]
+  },
+  {
+   "World": "Krokotopia",
+   "Tier": 1,
+   "Creatures": 228,
+   "Reagents": [
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 112
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 99
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 70
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 56
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 47
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 38
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 33
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 33
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 31
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 30
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 29
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 25
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220197,
+     "Name": "Green Grapes",
+     "Weight": 107
+    },
+    {
+     "Id": 220225,
+     "Name": "Nettle Root",
+     "Weight": 107
+    },
+    {
+     "Id": 220227,
+     "Name": "Cracker",
+     "Weight": 107
+    },
+    {
+     "Id": 220237,
+     "Name": "Tiny Fish",
+     "Weight": 107
+    },
+    {
+     "Id": 220205,
+     "Name": "Square Watermelon",
+     "Weight": 18
+    },
+    {
+     "Id": 220256,
+     "Name": "Caramel Popcorn",
+     "Weight": 18
+    },
+    {
+     "Id": 220257,
+     "Name": "Stinky Cheese",
+     "Weight": 18
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 18
+    },
+    {
+     "Id": 220259,
+     "Name": "Redskin Peanut",
+     "Weight": 18
+    },
+    {
+     "Id": 220268,
+     "Name": "Medium Fish",
+     "Weight": 18
+    },
+    {
+     "Id": 220285,
+     "Name": "Gummy Bloodbat",
+     "Weight": 18
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Banshee TC",
+     "Name": "Banshee",
+     "Weight": 93
+    },
+    {
+     "Id": "Blizzard TC",
+     "Name": "Blizzard",
+     "Weight": 92
+    },
+    {
+     "Id": "Evil Snowman TC",
+     "Name": "Evil Snowman",
+     "Weight": 92
+    },
+    {
+     "Id": "Humongofrog TC",
+     "Name": "Humongofrog",
+     "Weight": 92
+    },
+    {
+     "Id": "Meteor Strike TC",
+     "Name": "Meteor Strike",
+     "Weight": 92
+    },
+    {
+     "Id": "Sprite TC",
+     "Name": "Sprite",
+     "Weight": 92
+    },
+    {
+     "Id": "Storm SharkTC",
+     "Name": "Storm Shark",
+     "Weight": 92
+    },
+    {
+     "Id": "Sunbird TC",
+     "Name": "Sunbird",
+     "Weight": 92
+    },
+    {
+     "Id": "Tempest TC",
+     "Name": "Tempest",
+     "Weight": 92
+    },
+    {
+     "Id": "Weakness TC",
+     "Name": "Weakness",
+     "Weight": 92
+    },
+    {
+     "Id": "Krokotillian TC",
+     "Name": "Krokotillian",
+     "Weight": 51
+    },
+    {
+     "Id": "Cyclops TC",
+     "Name": "Cyclops",
+     "Weight": 41
+    },
+    {
+     "Id": "Dryad TC",
+     "Name": "Dryad",
+     "Weight": 39
+    },
+    {
+     "Id": "Sandstorm TC",
+     "Name": "Sandstorm",
+     "Weight": 39
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 39
+    },
+    {
+     "Id": "Fire Trap TC",
+     "Name": "Fire Trap",
+     "Weight": 38
+    },
+    {
+     "Id": "Giant TC",
+     "Name": "Giant",
+     "Weight": 38
+    },
+    {
+     "Id": "Ice Trap TC",
+     "Name": "Ice Trap",
+     "Weight": 38
+    },
+    {
+     "Id": "Pacify TC",
+     "Name": "Pacify",
+     "Weight": 38
+    },
+    {
+     "Id": "Spirit Armor TC",
+     "Name": "Spirit Armor",
+     "Weight": 38
+    },
+    {
+     "Id": "Storm Trap TC",
+     "Name": "Storm Trap",
+     "Weight": 38
+    },
+    {
+     "Id": "Vampire TC",
+     "Name": "Vampire",
+     "Weight": 38
+    },
+    {
+     "Id": "Snow Serpent TC",
+     "Name": "Snow Serpent",
+     "Weight": 22
+    },
+    {
+     "Id": "Troll TC",
+     "Name": "Troll",
+     "Weight": 22
+    },
+    {
+     "Id": "Fire Elf TC",
+     "Name": "Fire Elf",
+     "Weight": 21
+    },
+    {
+     "Id": "Ghoul TC",
+     "Name": "Ghoul",
+     "Weight": 21
+    },
+    {
+     "Id": "Guiding Light TC",
+     "Name": "Guiding Light",
+     "Weight": 21
+    },
+    {
+     "Id": "Lightning Bats TC",
+     "Name": "Lightning Bats",
+     "Weight": 21
+    },
+    {
+     "Id": "Locust Swarm TC",
+     "Name": "Locust Swarm",
+     "Weight": 21
+    },
+    {
+     "Id": "Pixie TC",
+     "Name": "Pixie",
+     "Weight": 21
+    }
+   ]
+  },
+  {
+   "World": "Marleybone",
+   "Tier": 2,
+   "Creatures": 135,
+   "Reagents": [
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 117
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 117
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 115
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 96
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 88
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 87
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 43
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 41
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 36
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 34
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 28
+    },
+    {
+     "Id": 1742018,
+     "Name": "Jackall & Hound",
+     "Weight": 9
+    },
+    {
+     "Id": 1721990,
+     "Name": "Ratstabber",
+     "Weight": 9
+    },
+    {
+     "Id": 1721999,
+     "Name": "Clean Sweep",
+     "Weight": 9
+    },
+    {
+     "Id": 1721988,
+     "Name": "Mark of Meowiarty",
+     "Weight": 9
+    },
+    {
+     "Id": 1721977,
+     "Name": "Whiplash",
+     "Weight": 9
+    },
+    {
+     "Id": 1721978,
+     "Name": "Jacques Scratches!",
+     "Weight": 9
+    },
+    {
+     "Id": 1721967,
+     "Name": "Pops' Knuckles",
+     "Weight": 9
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 8
+    },
+    {
+     "Id": 1740088,
+     "Name": "Royal Brooch",
+     "Weight": 7
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220205,
+     "Name": "Square Watermelon",
+     "Weight": 89
+    },
+    {
+     "Id": 220256,
+     "Name": "Caramel Popcorn",
+     "Weight": 89
+    },
+    {
+     "Id": 220257,
+     "Name": "Stinky Cheese",
+     "Weight": 89
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 89
+    },
+    {
+     "Id": 220259,
+     "Name": "Redskin Peanut",
+     "Weight": 89
+    },
+    {
+     "Id": 220268,
+     "Name": "Medium Fish",
+     "Weight": 89
+    },
+    {
+     "Id": 220285,
+     "Name": "Gummy Bloodbat",
+     "Weight": 67
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 27
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 25
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 25
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 24
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 24
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 11
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 11
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 10
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 10
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 10
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 10
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 10
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 7
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Sandstorm TC",
+     "Name": "Sandstorm",
+     "Weight": 71
+    },
+    {
+     "Id": "Vampire TC",
+     "Name": "Vampire",
+     "Weight": 71
+    },
+    {
+     "Id": "Dryad TC",
+     "Name": "Dryad",
+     "Weight": 70
+    },
+    {
+     "Id": "Pacify TC",
+     "Name": "Pacify",
+     "Weight": 70
+    },
+    {
+     "Id": "Spirit Armor TC",
+     "Name": "Spirit Armor",
+     "Weight": 69
+    },
+    {
+     "Id": "Cyclops TC",
+     "Name": "Cyclops",
+     "Weight": 68
+    },
+    {
+     "Id": "Fire Trap TC",
+     "Name": "Fire Trap",
+     "Weight": 68
+    },
+    {
+     "Id": "Giant TC",
+     "Name": "Giant",
+     "Weight": 68
+    },
+    {
+     "Id": "Ice Trap TC",
+     "Name": "Ice Trap",
+     "Weight": 68
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 68
+    },
+    {
+     "Id": "Storm Trap TC",
+     "Name": "Storm Trap",
+     "Weight": 68
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 48
+    },
+    {
+     "Id": "Kraken TC",
+     "Name": "Kraken",
+     "Weight": 48
+    },
+    {
+     "Id": "Black Mantle TC",
+     "Name": "Black Mantle",
+     "Weight": 47
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 46
+    },
+    {
+     "Id": "Cloak TC",
+     "Name": "Cloak",
+     "Weight": 45
+    },
+    {
+     "Id": "Heck Hound TC",
+     "Name": "Heck Hound",
+     "Weight": 45
+    },
+    {
+     "Id": "Monstrous TC",
+     "Name": "Monstrous",
+     "Weight": 45
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 45
+    },
+    {
+     "Id": "Tough TC",
+     "Name": "Tough",
+     "Weight": 45
+    },
+    {
+     "Id": "Pest Zapper TC",
+     "Name": "Pest Zapper",
+     "Weight": 29
+    },
+    {
+     "Id": "Dragonflies TC",
+     "Name": "Dragonflies",
+     "Weight": 29
+    },
+    {
+     "Id": "Spider Clockwork TC",
+     "Name": "Clockwork Spider",
+     "Weight": 13
+    },
+    {
+     "Id": "Cat Thug TC",
+     "Name": "Cat Thug",
+     "Weight": 7
+    }
+   ]
+  },
+  {
+   "World": "MooShu",
+   "Tier": 3,
+   "Creatures": 134,
+   "Reagents": [
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 122
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 120
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 118
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 116
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 116
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 104
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 97
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 53
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 44
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 39
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 38
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 37
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 36
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 19
+    },
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 19
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 19
+    },
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 19
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 14
+    },
+    {
+     "Id": 1580060,
+     "Name": "Pixels",
+     "Weight": 14
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 8
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220294,
+     "Name": "Square Root",
+     "Weight": 95
+    },
+    {
+     "Id": 220204,
+     "Name": "Crunch Apple",
+     "Weight": 93
+    },
+    {
+     "Id": 220206,
+     "Name": "Ape Grapes",
+     "Weight": 93
+    },
+    {
+     "Id": 220216,
+     "Name": "Large Watermelon",
+     "Weight": 93
+    },
+    {
+     "Id": 220291,
+     "Name": "Golden Squash",
+     "Weight": 93
+    },
+    {
+     "Id": 220296,
+     "Name": "Fire Cracker",
+     "Weight": 93
+    },
+    {
+     "Id": 220297,
+     "Name": "Golden Peanut",
+     "Weight": 93
+    },
+    {
+     "Id": 220306,
+     "Name": "Large Fish",
+     "Weight": 93
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 19
+    },
+    {
+     "Id": 733181,
+     "Name": "Cheese Cake",
+     "Weight": 17
+    },
+    {
+     "Id": 220273,
+     "Name": "Tiki Banana",
+     "Weight": 17
+    },
+    {
+     "Id": 220212,
+     "Name": "Fries",
+     "Weight": 14
+    },
+    {
+     "Id": 220191,
+     "Name": "Carrot",
+     "Weight": 14
+    },
+    {
+     "Id": 220226,
+     "Name": "Buttered Popcorn",
+     "Weight": 14
+    },
+    {
+     "Id": 220327,
+     "Name": "French Fries",
+     "Weight": 14
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 8
+    },
+    {
+     "Id": 220209,
+     "Name": "Diamond Carrot",
+     "Weight": 7
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Pest Zapper TC",
+     "Name": "Pest Zapper",
+     "Weight": 97
+    },
+    {
+     "Id": "Dragonflies TC",
+     "Name": "Dragonflies",
+     "Weight": 97
+    },
+    {
+     "Id": "Black Mantle TC",
+     "Name": "Black Mantle",
+     "Weight": 88
+    },
+    {
+     "Id": "Cloak TC",
+     "Name": "Cloak",
+     "Weight": 88
+    },
+    {
+     "Id": "Heck Hound TC",
+     "Name": "Heck Hound",
+     "Weight": 88
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 88
+    },
+    {
+     "Id": "Kraken TC",
+     "Name": "Kraken",
+     "Weight": 88
+    },
+    {
+     "Id": "Monstrous TC",
+     "Name": "Monstrous",
+     "Weight": 88
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 88
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 88
+    },
+    {
+     "Id": "Tough TC",
+     "Name": "Tough",
+     "Weight": 88
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 56
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 56
+    },
+    {
+     "Id": "Doom and Gloom TC",
+     "Name": "Doom and Gloom",
+     "Weight": 56
+    },
+    {
+     "Id": "Minotaur TC",
+     "Name": "Minotaur",
+     "Weight": 41
+    },
+    {
+     "Id": "Sanctuary TC",
+     "Name": "Sanctuary",
+     "Weight": 41
+    },
+    {
+     "Id": "Donate Power TC",
+     "Name": "Donate Power",
+     "Weight": 39
+    },
+    {
+     "Id": "Wyldfire TC",
+     "Name": "Wyldfire",
+     "Weight": 39
+    },
+    {
+     "Id": "Accurate TC",
+     "Name": "Accurate",
+     "Weight": 39
+    },
+    {
+     "Id": "Ninja Pig TC",
+     "Name": "Ninja Pigs",
+     "Weight": 26
+    },
+    {
+     "Id": "Gargantuan TC",
+     "Name": "Gargantuan",
+     "Weight": 20
+    },
+    {
+     "Id": "Brilliant Light TC",
+     "Name": "Brilliant Light",
+     "Weight": 17
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 17
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 17
+    },
+    {
+     "Id": "Tri Blade TC",
+     "Name": "Elemental Blade",
+     "Weight": 17
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 17
+    },
+    {
+     "Id": "Mythspear TC",
+     "Name": "Mythspear",
+     "Weight": 17
+    },
+    {
+     "Id": "Blood Moon TC",
+     "Name": "Time of Legend",
+     "Weight": 17
+    },
+    {
+     "Id": "Deathspear TC",
+     "Name": "Deathspear",
+     "Weight": 17
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 17
+    }
+   ]
+  },
+  {
+   "World": "Wysteria",
+   "Tier": 3,
+   "Creatures": 32,
+   "Reagents": [
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 18
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 16
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 15
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 15
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 15
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 14
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 13
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 13
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 8
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 8
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 7
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 4
+    },
+    {
+     "Id": 1507393,
+     "Name": "Angry Snowpig",
+     "Weight": 4
+    },
+    {
+     "Id": 1507398,
+     "Name": "Ninja Piglets",
+     "Weight": 4
+    },
+    {
+     "Id": 1507388,
+     "Name": "Pigsie",
+     "Weight": 4
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 3
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 2
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 2
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 2
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 2
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 2
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 2
+    },
+    {
+     "Id": 1350238,
+     "Name": "Draconium",
+     "Weight": 2
+    },
+    {
+     "Id": 1421828,
+     "Name": "Participation Trophy",
+     "Weight": 2
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 27
+    },
+    {
+     "Id": 220197,
+     "Name": "Green Grapes",
+     "Weight": 14
+    },
+    {
+     "Id": 220208,
+     "Name": "Cheese Broccoli",
+     "Weight": 14
+    },
+    {
+     "Id": 220213,
+     "Name": "Chocolate Strawberry",
+     "Weight": 14
+    },
+    {
+     "Id": 220218,
+     "Name": "Sugar Donut",
+     "Weight": 14
+    },
+    {
+     "Id": 220220,
+     "Name": "Gummy Firecat",
+     "Weight": 14
+    },
+    {
+     "Id": 220225,
+     "Name": "Nettle Root",
+     "Weight": 14
+    },
+    {
+     "Id": 220227,
+     "Name": "Cracker",
+     "Weight": 14
+    },
+    {
+     "Id": 220237,
+     "Name": "Tiny Fish",
+     "Weight": 14
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 13
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 13
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 13
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 13
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 13
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 13
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 13
+    },
+    {
+     "Id": 220204,
+     "Name": "Crunch Apple",
+     "Weight": 3
+    },
+    {
+     "Id": 220205,
+     "Name": "Square Watermelon",
+     "Weight": 3
+    },
+    {
+     "Id": 220206,
+     "Name": "Ape Grapes",
+     "Weight": 3
+    },
+    {
+     "Id": 220216,
+     "Name": "Large Watermelon",
+     "Weight": 3
+    },
+    {
+     "Id": 220256,
+     "Name": "Caramel Popcorn",
+     "Weight": 3
+    },
+    {
+     "Id": 220257,
+     "Name": "Stinky Cheese",
+     "Weight": 3
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 3
+    },
+    {
+     "Id": 220259,
+     "Name": "Redskin Peanut",
+     "Weight": 3
+    },
+    {
+     "Id": 220260,
+     "Name": "Tasty Biscuit",
+     "Weight": 3
+    },
+    {
+     "Id": 220266,
+     "Name": "Meat Soup",
+     "Weight": 3
+    },
+    {
+     "Id": 220268,
+     "Name": "Medium Fish",
+     "Weight": 3
+    },
+    {
+     "Id": 220285,
+     "Name": "Gummy Bloodbat",
+     "Weight": 3
+    },
+    {
+     "Id": 220291,
+     "Name": "Golden Squash",
+     "Weight": 3
+    },
+    {
+     "Id": 220294,
+     "Name": "Square Root",
+     "Weight": 3
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Pest Zapper TC",
+     "Name": "Pest Zapper",
+     "Weight": 26
+    },
+    {
+     "Id": "Banshee TC",
+     "Name": "Banshee",
+     "Weight": 20
+    },
+    {
+     "Id": "Blizzard TC",
+     "Name": "Blizzard",
+     "Weight": 20
+    },
+    {
+     "Id": "Evil Snowman TC",
+     "Name": "Evil Snowman",
+     "Weight": 20
+    },
+    {
+     "Id": "Humongofrog TC",
+     "Name": "Humongofrog",
+     "Weight": 20
+    },
+    {
+     "Id": "Meteor Strike TC",
+     "Name": "Meteor Strike",
+     "Weight": 20
+    },
+    {
+     "Id": "Sprite TC",
+     "Name": "Sprite",
+     "Weight": 20
+    },
+    {
+     "Id": "Storm SharkTC",
+     "Name": "Storm Shark",
+     "Weight": 20
+    },
+    {
+     "Id": "Sunbird TC",
+     "Name": "Sunbird",
+     "Weight": 20
+    },
+    {
+     "Id": "Tempest TC",
+     "Name": "Tempest",
+     "Weight": 20
+    },
+    {
+     "Id": "Weakness TC",
+     "Name": "Weakness",
+     "Weight": 20
+    },
+    {
+     "Id": "Dragonflies TC",
+     "Name": "Dragonflies",
+     "Weight": 12
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 12
+    },
+    {
+     "Id": "Precision TC",
+     "Name": "Precision",
+     "Weight": 12
+    },
+    {
+     "Id": "Black Mantle TC",
+     "Name": "Black Mantle",
+     "Weight": 8
+    },
+    {
+     "Id": "Cloak TC",
+     "Name": "Cloak",
+     "Weight": 8
+    },
+    {
+     "Id": "Heck Hound TC",
+     "Name": "Heck Hound",
+     "Weight": 8
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 8
+    },
+    {
+     "Id": "Kraken TC",
+     "Name": "Kraken",
+     "Weight": 8
+    },
+    {
+     "Id": "Monstrous TC",
+     "Name": "Monstrous",
+     "Weight": 8
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 8
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 8
+    },
+    {
+     "Id": "Tough TC",
+     "Name": "Tough",
+     "Weight": 8
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 8
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 8
+    },
+    {
+     "Id": "Donate Power TC",
+     "Name": "Donate Power",
+     "Weight": 8
+    },
+    {
+     "Id": "Doom and Gloom TC",
+     "Name": "Doom and Gloom",
+     "Weight": 8
+    },
+    {
+     "Id": "Minotaur TC",
+     "Name": "Minotaur",
+     "Weight": 8
+    },
+    {
+     "Id": "Sanctuary TC",
+     "Name": "Sanctuary",
+     "Weight": 8
+    },
+    {
+     "Id": "Wyldfire TC",
+     "Name": "Wyldfire",
+     "Weight": 8
+    }
+   ]
+  },
+  {
+   "World": "DragonSpire",
+   "Tier": 4,
+   "Creatures": 161,
+   "Reagents": [
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 153
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 151
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 135
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 135
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 94
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 82
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 82
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 40
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 37
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 34
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 34
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 31
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 127
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 127
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 127
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 127
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 127
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Pest Zapper TC",
+     "Name": "Pest Zapper",
+     "Weight": 127
+    },
+    {
+     "Id": "Dragonflies TC",
+     "Name": "Dragonflies",
+     "Weight": 127
+    }
+   ]
+  },
+  {
+   "World": "Grizzleheim",
+   "Tier": 4,
+   "Creatures": 176,
+   "Reagents": [
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 124
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 94
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 82
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 82
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 76
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 65
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 61
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 49
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 38
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 36
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 35
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 31
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 30
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 30
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 28
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 65
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 65
+    },
+    {
+     "Id": 220215,
+     "Name": "Golden Apple",
+     "Weight": 50
+    },
+    {
+     "Id": 220292,
+     "Name": "Uni-corn",
+     "Weight": 49
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 49
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 49
+    },
+    {
+     "Id": 446071,
+     "Name": "Salmonberry",
+     "Weight": 49
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 44
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 44
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 43
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 43
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 43
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 43
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 42
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 42
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 42
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 42
+    },
+    {
+     "Id": 220324,
+     "Name": "Glowing Rock Candy",
+     "Weight": 42
+    },
+    {
+     "Id": 220260,
+     "Name": "Tasty Biscuit",
+     "Weight": 42
+    },
+    {
+     "Id": 220266,
+     "Name": "Meat Soup",
+     "Weight": 42
+    },
+    {
+     "Id": 220316,
+     "Name": "Moon Pie",
+     "Weight": 40
+    },
+    {
+     "Id": 220275,
+     "Name": "Glowing Dragon Fruit",
+     "Weight": 20
+    },
+    {
+     "Id": 220228,
+     "Name": "Chocolate Peanut",
+     "Weight": 9
+    },
+    {
+     "Id": 220251,
+     "Name": "Lollipop",
+     "Weight": 9
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Monstrous TC",
+     "Name": "Monstrous",
+     "Weight": 57
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 53
+    },
+    {
+     "Id": "Black Mantle TC",
+     "Name": "Black Mantle",
+     "Weight": 49
+    },
+    {
+     "Id": "Cloak TC",
+     "Name": "Cloak",
+     "Weight": 49
+    },
+    {
+     "Id": "Heck Hound TC",
+     "Name": "Heck Hound",
+     "Weight": 49
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 49
+    },
+    {
+     "Id": "Kraken TC",
+     "Name": "Kraken",
+     "Weight": 49
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 49
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 49
+    },
+    {
+     "Id": "Tough TC",
+     "Name": "Tough",
+     "Weight": 49
+    },
+    {
+     "Id": "Giant TC",
+     "Name": "Giant",
+     "Weight": 43
+    },
+    {
+     "Id": "Cyclops TC",
+     "Name": "Cyclops",
+     "Weight": 41
+    },
+    {
+     "Id": "Dryad TC",
+     "Name": "Dryad",
+     "Weight": 41
+    },
+    {
+     "Id": "Fire Trap TC",
+     "Name": "Fire Trap",
+     "Weight": 41
+    },
+    {
+     "Id": "Ice Trap TC",
+     "Name": "Ice Trap",
+     "Weight": 41
+    },
+    {
+     "Id": "Pacify TC",
+     "Name": "Pacify",
+     "Weight": 41
+    },
+    {
+     "Id": "Sandstorm TC",
+     "Name": "Sandstorm",
+     "Weight": 41
+    },
+    {
+     "Id": "Spirit Armor TC",
+     "Name": "Spirit Armor",
+     "Weight": 41
+    },
+    {
+     "Id": "Storm Trap TC",
+     "Name": "Storm Trap",
+     "Weight": 41
+    },
+    {
+     "Id": "Vampire TC",
+     "Name": "Vampire",
+     "Weight": 41
+    },
+    {
+     "Id": "Banshee TC",
+     "Name": "Banshee",
+     "Weight": 27
+    },
+    {
+     "Id": "Sunbird TC",
+     "Name": "Sunbird",
+     "Weight": 27
+    },
+    {
+     "Id": "Blizzard TC",
+     "Name": "Blizzard",
+     "Weight": 26
+    },
+    {
+     "Id": "Evil Snowman TC",
+     "Name": "Evil Snowman",
+     "Weight": 26
+    },
+    {
+     "Id": "Humongofrog TC",
+     "Name": "Humongofrog",
+     "Weight": 26
+    },
+    {
+     "Id": "Meteor Strike TC",
+     "Name": "Meteor Strike",
+     "Weight": 26
+    },
+    {
+     "Id": "Sprite TC",
+     "Name": "Sprite",
+     "Weight": 26
+    },
+    {
+     "Id": "Storm SharkTC",
+     "Name": "Storm Shark",
+     "Weight": 26
+    },
+    {
+     "Id": "Tempest TC",
+     "Name": "Tempest",
+     "Weight": 26
+    },
+    {
+     "Id": "Weakness TC",
+     "Name": "Weakness",
+     "Weight": 26
+    }
+   ]
+  },
+  {
+   "World": "Celestia",
+   "Tier": 5,
+   "Creatures": 110,
+   "Reagents": [
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 98
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 97
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 67
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 66
+    },
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 46
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 40
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 40
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 29
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 20
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 20
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 15
+    },
+    {
+     "Id": 258585,
+     "Name": "Sandstone",
+     "Weight": 14
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 96
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 95
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 94
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 93
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 93
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 93
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 93
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Pest Zapper TC",
+     "Name": "Pest Zapper",
+     "Weight": 59
+    },
+    {
+     "Id": "Dragonflies TC",
+     "Name": "Dragonflies",
+     "Weight": 59
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 44
+    },
+    {
+     "Id": "Monstrous TC",
+     "Name": "Monstrous",
+     "Weight": 44
+    },
+    {
+     "Id": "Black Mantle TC",
+     "Name": "Black Mantle",
+     "Weight": 27
+    },
+    {
+     "Id": "Cloak TC",
+     "Name": "Cloak",
+     "Weight": 27
+    },
+    {
+     "Id": "Heck Hound TC",
+     "Name": "Heck Hound",
+     "Weight": 27
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 27
+    },
+    {
+     "Id": "Kraken TC",
+     "Name": "Kraken",
+     "Weight": 27
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 27
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 27
+    },
+    {
+     "Id": "Tough TC",
+     "Name": "Tough",
+     "Weight": 27
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 26
+    },
+    {
+     "Id": "Precision TC",
+     "Name": "Precision",
+     "Weight": 26
+    },
+    {
+     "Id": "Strong TC",
+     "Name": "Strong",
+     "Weight": 25
+    },
+    {
+     "Id": "Keen Eyes TC",
+     "Name": "Keen Eyes",
+     "Weight": 25
+    },
+    {
+     "Id": "Banshee TC",
+     "Name": "Banshee",
+     "Weight": 25
+    },
+    {
+     "Id": "Blizzard TC",
+     "Name": "Blizzard",
+     "Weight": 25
+    },
+    {
+     "Id": "Evil Snowman TC",
+     "Name": "Evil Snowman",
+     "Weight": 25
+    },
+    {
+     "Id": "Humongofrog TC",
+     "Name": "Humongofrog",
+     "Weight": 25
+    },
+    {
+     "Id": "Meteor Strike TC",
+     "Name": "Meteor Strike",
+     "Weight": 25
+    },
+    {
+     "Id": "Sprite TC",
+     "Name": "Sprite",
+     "Weight": 25
+    },
+    {
+     "Id": "Storm SharkTC",
+     "Name": "Storm Shark",
+     "Weight": 25
+    },
+    {
+     "Id": "Sunbird TC",
+     "Name": "Sunbird",
+     "Weight": 25
+    },
+    {
+     "Id": "Tempest TC",
+     "Name": "Tempest",
+     "Weight": 25
+    },
+    {
+     "Id": "Weakness TC",
+     "Name": "Weakness",
+     "Weight": 25
+    },
+    {
+     "Id": "Giant TC",
+     "Name": "Giant",
+     "Weight": 25
+    },
+    {
+     "Id": "Accurate TC",
+     "Name": "Accurate",
+     "Weight": 24
+    },
+    {
+     "Id": "Vengeance TC",
+     "Name": "Vengeance",
+     "Weight": 18
+    },
+    {
+     "Id": "Cyclops TC",
+     "Name": "Cyclops",
+     "Weight": 18
+    }
+   ]
+  },
+  {
+   "World": "Zafaria",
+   "Tier": 6,
+   "Creatures": 106,
+   "Reagents": [
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 98
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 90
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 64
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 59
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 51
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 25
+    },
+    {
+     "Id": 106931,
+     "Name": "Mist Wood",
+     "Weight": 25
+    },
+    {
+     "Id": 106933,
+     "Name": "Stone Block",
+     "Weight": 25
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 25
+    },
+    {
+     "Id": 106937,
+     "Name": "Ore",
+     "Weight": 25
+    },
+    {
+     "Id": 106939,
+     "Name": "Cat Tail",
+     "Weight": 25
+    },
+    {
+     "Id": 106959,
+     "Name": "Red Mandrake",
+     "Weight": 25
+    },
+    {
+     "Id": 106961,
+     "Name": "Parchment",
+     "Weight": 25
+    },
+    {
+     "Id": 106965,
+     "Name": "Black Lotus",
+     "Weight": 25
+    },
+    {
+     "Id": 106967,
+     "Name": "Lava Lily",
+     "Weight": 25
+    },
+    {
+     "Id": 106969,
+     "Name": "Frost Flower",
+     "Weight": 25
+    },
+    {
+     "Id": 258583,
+     "Name": "Pearl",
+     "Weight": 25
+    },
+    {
+     "Id": 258587,
+     "Name": "Shell",
+     "Weight": 25
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 20
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 18
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 17
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 13
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 12
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 7
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 7
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 473582,
+     "Name": "Kola Nuts",
+     "Weight": 72
+    },
+    {
+     "Id": 473583,
+     "Name": "Jelly Baby",
+     "Weight": 72
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 59
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 59
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 58
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 55
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 55
+    },
+    {
+     "Id": 220215,
+     "Name": "Golden Apple",
+     "Weight": 54
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 54
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 54
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 48
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 48
+    },
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 48
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 47
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 47
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 47
+    },
+    {
+     "Id": 220292,
+     "Name": "Uni-corn",
+     "Weight": 25
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 25
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 25
+    },
+    {
+     "Id": 446071,
+     "Name": "Salmonberry",
+     "Weight": 25
+    },
+    {
+     "Id": 473222,
+     "Name": "Dr. Jalapeno",
+     "Weight": 17
+    },
+    {
+     "Id": 220275,
+     "Name": "Glowing Dragon Fruit",
+     "Weight": 16
+    },
+    {
+     "Id": 220197,
+     "Name": "Green Grapes",
+     "Weight": 10
+    },
+    {
+     "Id": 220208,
+     "Name": "Cheese Broccoli",
+     "Weight": 10
+    },
+    {
+     "Id": 220213,
+     "Name": "Chocolate Strawberry",
+     "Weight": 10
+    },
+    {
+     "Id": 220218,
+     "Name": "Sugar Donut",
+     "Weight": 10
+    },
+    {
+     "Id": 220220,
+     "Name": "Gummy Firecat",
+     "Weight": 10
+    },
+    {
+     "Id": 220225,
+     "Name": "Nettle Root",
+     "Weight": 10
+    },
+    {
+     "Id": 220227,
+     "Name": "Cracker",
+     "Weight": 10
+    },
+    {
+     "Id": 220237,
+     "Name": "Tiny Fish",
+     "Weight": 10
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Polymorph - Treant TC",
+     "Name": "Polymorph Treant",
+     "Weight": 23
+    },
+    {
+     "Id": "Polymorph - Ice Colossus TC",
+     "Name": "Polymorph Colossus",
+     "Weight": 23
+    },
+    {
+     "Id": "Polymorph - Fire Elemental TC",
+     "Name": "Polymorph Elemental",
+     "Weight": 23
+    },
+    {
+     "Id": "Polymorph - Storm Elemental TC",
+     "Name": "Polymorph Elemental",
+     "Weight": 23
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 23
+    },
+    {
+     "Id": "Stun Block TC",
+     "Name": "Stun Block",
+     "Weight": 23
+    },
+    {
+     "Id": "Minotaur TC",
+     "Name": "Minotaur",
+     "Weight": 22
+    },
+    {
+     "Id": "Phoenix TC",
+     "Name": "Phoenix",
+     "Weight": 21
+    },
+    {
+     "Id": "Helephant TC",
+     "Name": "Helephant",
+     "Weight": 21
+    },
+    {
+     "Id": "Colossus TC",
+     "Name": "Colossus",
+     "Weight": 21
+    },
+    {
+     "Id": "Ice Wyvern TC",
+     "Name": "Ice Wyvern",
+     "Weight": 21
+    },
+    {
+     "Id": "Stormzilla TC",
+     "Name": "Stormzilla",
+     "Weight": 21
+    },
+    {
+     "Id": "Triton TC",
+     "Name": "Triton",
+     "Weight": 21
+    },
+    {
+     "Id": "Satyr TC",
+     "Name": "Satyr",
+     "Weight": 21
+    },
+    {
+     "Id": "Centaur TC",
+     "Name": "Centaur",
+     "Weight": 21
+    },
+    {
+     "Id": "Earthquake TC",
+     "Name": "Earthquake",
+     "Weight": 21
+    },
+    {
+     "Id": "Skeletal Pirate TC",
+     "Name": "Skeletal Pirate",
+     "Weight": 21
+    },
+    {
+     "Id": "Wraith TC",
+     "Name": "Wraith",
+     "Weight": 21
+    },
+    {
+     "Id": "Spectral Blast TC",
+     "Name": "Spectral Blast",
+     "Weight": 21
+    },
+    {
+     "Id": "Hydra TC",
+     "Name": "Hydra",
+     "Weight": 21
+    },
+    {
+     "Id": "Sniper TC",
+     "Name": "Sniper",
+     "Weight": 18
+    },
+    {
+     "Id": "Precision TC",
+     "Name": "Precision",
+     "Weight": 18
+    },
+    {
+     "Id": "Unstoppable TC",
+     "Name": "Unstoppable",
+     "Weight": 15
+    },
+    {
+     "Id": "Gargantuan TC",
+     "Name": "Gargantuan",
+     "Weight": 15
+    },
+    {
+     "Id": "Efreet TC",
+     "Name": "Efreet",
+     "Weight": 14
+    },
+    {
+     "Id": "Snow Angel TC",
+     "Name": "Snow Angel",
+     "Weight": 14
+    },
+    {
+     "Id": "Leviathan TC",
+     "Name": "Leviathan",
+     "Weight": 14
+    },
+    {
+     "Id": "Forest Lord TC",
+     "Name": "Forest Lord",
+     "Weight": 14
+    },
+    {
+     "Id": "Medusa TC",
+     "Name": "Medusa",
+     "Weight": 14
+    },
+    {
+     "Id": "Skeletal Dragon TC",
+     "Name": "Skeletal Dragon",
+     "Weight": 14
+    }
+   ]
+  },
+  {
+   "World": "Avalon",
+   "Tier": 7,
+   "Creatures": 120,
+   "Reagents": [
+    {
+     "Id": 106931,
+     "Name": "Mist Wood",
+     "Weight": 104
+    },
+    {
+     "Id": 106933,
+     "Name": "Stone Block",
+     "Weight": 104
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 104
+    },
+    {
+     "Id": 106937,
+     "Name": "Ore",
+     "Weight": 104
+    },
+    {
+     "Id": 106959,
+     "Name": "Red Mandrake",
+     "Weight": 104
+    },
+    {
+     "Id": 106965,
+     "Name": "Black Lotus",
+     "Weight": 104
+    },
+    {
+     "Id": 106967,
+     "Name": "Lava Lily",
+     "Weight": 104
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 104
+    },
+    {
+     "Id": 106939,
+     "Name": "Cat Tail",
+     "Weight": 96
+    },
+    {
+     "Id": 106961,
+     "Name": "Parchment",
+     "Weight": 96
+    },
+    {
+     "Id": 106969,
+     "Name": "Frost Flower",
+     "Weight": 96
+    },
+    {
+     "Id": 258583,
+     "Name": "Pearl",
+     "Weight": 96
+    },
+    {
+     "Id": 258587,
+     "Name": "Shell",
+     "Weight": 96
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 93
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 84
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 75
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 71
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 56
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 8
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 8
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 8
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 7
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 6
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 6
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 6
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 35
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 25
+    },
+    {
+     "Id": 473582,
+     "Name": "Kola Nuts",
+     "Weight": 25
+    },
+    {
+     "Id": 473583,
+     "Name": "Jelly Baby",
+     "Weight": 25
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 22
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 22
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 22
+    },
+    {
+     "Id": 473717,
+     "Name": "Treant Bark",
+     "Weight": 21
+    },
+    {
+     "Id": 473718,
+     "Name": "Gummy Wyrms",
+     "Weight": 21
+    },
+    {
+     "Id": 473719,
+     "Name": "Deviled Eggs",
+     "Weight": 21
+    },
+    {
+     "Id": 473720,
+     "Name": "Roasted Chickpeas",
+     "Weight": 21
+    },
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 21
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 19
+    },
+    {
+     "Id": 473716,
+     "Name": "Bogwich",
+     "Weight": 18
+    },
+    {
+     "Id": 473721,
+     "Name": "Pigeon Pie",
+     "Weight": 18
+    },
+    {
+     "Id": 220215,
+     "Name": "Golden Apple",
+     "Weight": 18
+    },
+    {
+     "Id": 220276,
+     "Name": "Strawberry Cupcake",
+     "Weight": 18
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 18
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 18
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 18
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 18
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 18
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 16
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 14
+    },
+    {
+     "Id": 220292,
+     "Name": "Uni-corn",
+     "Weight": 13
+    },
+    {
+     "Id": 446071,
+     "Name": "Salmonberry",
+     "Weight": 13
+    },
+    {
+     "Id": 733130,
+     "Name": "Caramel Apple",
+     "Weight": 6
+    },
+    {
+     "Id": 733140,
+     "Name": "Tamales",
+     "Weight": 6
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Unstoppable TC",
+     "Name": "Unstoppable",
+     "Weight": 98
+    },
+    {
+     "Id": "Gargantuan TC",
+     "Name": "Gargantuan",
+     "Weight": 98
+    },
+    {
+     "Id": "Power Nova TC",
+     "Name": "Power Nova",
+     "Weight": 98
+    },
+    {
+     "Id": "Scarecrow TC",
+     "Name": "Scarecrow",
+     "Weight": 98
+    },
+    {
+     "Id": "Orthrus TC",
+     "Name": "Orthrus",
+     "Weight": 98
+    },
+    {
+     "Id": "Storm Lord TC",
+     "Name": "Storm Lord",
+     "Weight": 98
+    },
+    {
+     "Id": "Frost Giant TC",
+     "Name": "Frost Giant",
+     "Weight": 98
+    },
+    {
+     "Id": "Fire Dragon TC",
+     "Name": "Fire Dragon",
+     "Weight": 98
+    },
+    {
+     "Id": "Efreet TC",
+     "Name": "Efreet",
+     "Weight": 67
+    },
+    {
+     "Id": "Snow Angel TC",
+     "Name": "Snow Angel",
+     "Weight": 67
+    },
+    {
+     "Id": "Leviathan TC",
+     "Name": "Leviathan",
+     "Weight": 67
+    },
+    {
+     "Id": "Forest Lord TC",
+     "Name": "Forest Lord",
+     "Weight": 67
+    },
+    {
+     "Id": "Medusa TC",
+     "Name": "Medusa",
+     "Weight": 67
+    },
+    {
+     "Id": "Skeletal Dragon TC",
+     "Name": "Skeletal Dragon",
+     "Weight": 67
+    },
+    {
+     "Id": "Ra TC",
+     "Name": "Ra",
+     "Weight": 67
+    },
+    {
+     "Id": "Rebirth TC",
+     "Name": "Rebirth",
+     "Weight": 55
+    },
+    {
+     "Id": "Extraordinary TC",
+     "Name": "Extraordinary",
+     "Weight": 34
+    },
+    {
+     "Id": "Colossal TC",
+     "Name": "Colossal",
+     "Weight": 34
+    },
+    {
+     "Id": "Amplify TC",
+     "Name": "Amplify",
+     "Weight": 34
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 34
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 34
+    },
+    {
+     "Id": "Vengeance TC",
+     "Name": "Vengeance",
+     "Weight": 34
+    },
+    {
+     "Id": "Empowerment TC",
+     "Name": "Empowerment",
+     "Weight": 34
+    },
+    {
+     "Id": "Berserk TC",
+     "Name": "Berserk",
+     "Weight": 34
+    },
+    {
+     "Id": "Mend TC",
+     "Name": "Mend",
+     "Weight": 34
+    },
+    {
+     "Id": "Disarm TC",
+     "Name": "Disarm",
+     "Weight": 11
+    },
+    {
+     "Id": "Cleanse Charm TC",
+     "Name": "Cleanse Charm",
+     "Weight": 11
+    },
+    {
+     "Id": "Wild Bolt TC",
+     "Name": "Wild Bolt",
+     "Weight": 11
+    },
+    {
+     "Id": "Insane Bolt TC",
+     "Name": "Insane Bolt",
+     "Weight": 11
+    },
+    {
+     "Id": "Cripple TC",
+     "Name": "Enfeeble",
+     "Weight": 11
+    }
+   ]
+  },
+  {
+   "World": "Aquila",
+   "Tier": 7,
+   "Creatures": 63,
+   "Reagents": [
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 38
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 38
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 38
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 38
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 38
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 38
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 38
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 27
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 27
+    },
+    {
+     "Id": 106931,
+     "Name": "Mist Wood",
+     "Weight": 25
+    },
+    {
+     "Id": 106933,
+     "Name": "Stone Block",
+     "Weight": 25
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 25
+    },
+    {
+     "Id": 106937,
+     "Name": "Ore",
+     "Weight": 25
+    },
+    {
+     "Id": 106959,
+     "Name": "Red Mandrake",
+     "Weight": 25
+    },
+    {
+     "Id": 106965,
+     "Name": "Black Lotus",
+     "Weight": 25
+    },
+    {
+     "Id": 106967,
+     "Name": "Lava Lily",
+     "Weight": 25
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 19
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 17
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 17
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 17
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 16
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 12
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 12
+    },
+    {
+     "Id": 1699140,
+     "Name": "Phoebus' Will",
+     "Weight": 11
+    },
+    {
+     "Id": 1699143,
+     "Name": "Fires of Mars",
+     "Weight": 11
+    },
+    {
+     "Id": 1699141,
+     "Name": "Neptune's Fury",
+     "Weight": 11
+    },
+    {
+     "Id": 1699138,
+     "Name": "Jupiter's Might",
+     "Weight": 11
+    },
+    {
+     "Id": 1699139,
+     "Name": "Saturn's Reaping",
+     "Weight": 11
+    },
+    {
+     "Id": 1699144,
+     "Name": "Pluto's Peril",
+     "Weight": 11
+    },
+    {
+     "Id": 1699147,
+     "Name": "Terminus' Strike",
+     "Weight": 11
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220204,
+     "Name": "Crunch Apple",
+     "Weight": 27
+    },
+    {
+     "Id": 220205,
+     "Name": "Square Watermelon",
+     "Weight": 27
+    },
+    {
+     "Id": 220206,
+     "Name": "Ape Grapes",
+     "Weight": 27
+    },
+    {
+     "Id": 220216,
+     "Name": "Large Watermelon",
+     "Weight": 27
+    },
+    {
+     "Id": 220256,
+     "Name": "Caramel Popcorn",
+     "Weight": 27
+    },
+    {
+     "Id": 220257,
+     "Name": "Stinky Cheese",
+     "Weight": 27
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 27
+    },
+    {
+     "Id": 220259,
+     "Name": "Redskin Peanut",
+     "Weight": 27
+    },
+    {
+     "Id": 220268,
+     "Name": "Medium Fish",
+     "Weight": 27
+    },
+    {
+     "Id": 220285,
+     "Name": "Gummy Bloodbat",
+     "Weight": 27
+    },
+    {
+     "Id": 220291,
+     "Name": "Golden Squash",
+     "Weight": 27
+    },
+    {
+     "Id": 220296,
+     "Name": "Fire Cracker",
+     "Weight": 27
+    },
+    {
+     "Id": 220297,
+     "Name": "Golden Peanut",
+     "Weight": 27
+    },
+    {
+     "Id": 220306,
+     "Name": "Large Fish",
+     "Weight": 27
+    },
+    {
+     "Id": 733139,
+     "Name": "Zocalo Wings",
+     "Weight": 22
+    },
+    {
+     "Id": 733123,
+     "Name": "Guava",
+     "Weight": 19
+    },
+    {
+     "Id": 733114,
+     "Name": "Maize",
+     "Weight": 18
+    },
+    {
+     "Id": 733119,
+     "Name": "Fried Ice Cream",
+     "Weight": 18
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 17
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 16
+    },
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 16
+    },
+    {
+     "Id": 473718,
+     "Name": "Gummy Wyrms",
+     "Weight": 16
+    },
+    {
+     "Id": 473719,
+     "Name": "Deviled Eggs",
+     "Weight": 16
+    },
+    {
+     "Id": 473583,
+     "Name": "Jelly Baby",
+     "Weight": 15
+    },
+    {
+     "Id": 733122,
+     "Name": "Chili Peppers",
+     "Weight": 15
+    },
+    {
+     "Id": 733124,
+     "Name": "Papaya",
+     "Weight": 15
+    },
+    {
+     "Id": 733130,
+     "Name": "Caramel Apple",
+     "Weight": 15
+    },
+    {
+     "Id": 733140,
+     "Name": "Tamales",
+     "Weight": 15
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 14
+    },
+    {
+     "Id": 733112,
+     "Name": "Yucca",
+     "Weight": 14
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Amplify TC",
+     "Name": "Amplify",
+     "Weight": 26
+    },
+    {
+     "Id": "Berserk TC",
+     "Name": "Berserk",
+     "Weight": 26
+    },
+    {
+     "Id": "Empowerment TC",
+     "Name": "Empowerment",
+     "Weight": 26
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 26
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 26
+    },
+    {
+     "Id": "Mend TC",
+     "Name": "Mend",
+     "Weight": 26
+    },
+    {
+     "Id": "Vengeance TC",
+     "Name": "Vengeance",
+     "Weight": 26
+    },
+    {
+     "Id": "Colossal TC",
+     "Name": "Colossal",
+     "Weight": 23
+    },
+    {
+     "Id": "Extraordinary TC",
+     "Name": "Extraordinary",
+     "Weight": 23
+    },
+    {
+     "Id": "Efreet TC",
+     "Name": "Efreet",
+     "Weight": 18
+    },
+    {
+     "Id": "Forest Lord TC",
+     "Name": "Forest Lord",
+     "Weight": 18
+    },
+    {
+     "Id": "Leviathan TC",
+     "Name": "Leviathan",
+     "Weight": 18
+    },
+    {
+     "Id": "Medusa TC",
+     "Name": "Medusa",
+     "Weight": 18
+    },
+    {
+     "Id": "Ra TC",
+     "Name": "Ra",
+     "Weight": 18
+    },
+    {
+     "Id": "Skeletal Dragon TC",
+     "Name": "Skeletal Dragon",
+     "Weight": 18
+    },
+    {
+     "Id": "Snow Angel TC",
+     "Name": "Snow Angel",
+     "Weight": 18
+    },
+    {
+     "Id": "Cloud DemonTC",
+     "Name": "Cloud Demon",
+     "Weight": 18
+    },
+    {
+     "Id": "Frost Demon TC",
+     "Name": "Frost Demon",
+     "Weight": 18
+    },
+    {
+     "Id": "Fire Dragon TC",
+     "Name": "Fire Dragon",
+     "Weight": 8
+    },
+    {
+     "Id": "Frost Giant TC",
+     "Name": "Frost Giant",
+     "Weight": 8
+    },
+    {
+     "Id": "Orthrus TC",
+     "Name": "Orthrus",
+     "Weight": 8
+    },
+    {
+     "Id": "Power Nova TC",
+     "Name": "Power Nova",
+     "Weight": 8
+    },
+    {
+     "Id": "Rebirth TC",
+     "Name": "Rebirth",
+     "Weight": 8
+    },
+    {
+     "Id": "Scarecrow TC",
+     "Name": "Scarecrow",
+     "Weight": 8
+    },
+    {
+     "Id": "Storm Lord TC",
+     "Name": "Storm Lord",
+     "Weight": 8
+    },
+    {
+     "Id": "Gargantuan TC",
+     "Name": "Gargantuan",
+     "Weight": 8
+    },
+    {
+     "Id": "Unstoppable TC",
+     "Name": "Unstoppable",
+     "Weight": 8
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 8
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 8
+    },
+    {
+     "Id": "Donate Power TC",
+     "Name": "Donate Power",
+     "Weight": 8
+    }
+   ]
+  },
+  {
+   "World": "Azteca",
+   "Tier": 8,
+   "Creatures": 136,
+   "Reagents": [
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 122
+    },
+    {
+     "Id": 106931,
+     "Name": "Mist Wood",
+     "Weight": 121
+    },
+    {
+     "Id": 106933,
+     "Name": "Stone Block",
+     "Weight": 121
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 121
+    },
+    {
+     "Id": 106937,
+     "Name": "Ore",
+     "Weight": 121
+    },
+    {
+     "Id": 106959,
+     "Name": "Red Mandrake",
+     "Weight": 121
+    },
+    {
+     "Id": 106965,
+     "Name": "Black Lotus",
+     "Weight": 121
+    },
+    {
+     "Id": 106967,
+     "Name": "Lava Lily",
+     "Weight": 121
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 120
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 120
+    },
+    {
+     "Id": 1350234,
+     "Name": "Bronze",
+     "Weight": 120
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 97
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 87
+    },
+    {
+     "Id": 106960,
+     "Name": "Blood Moss",
+     "Weight": 79
+    },
+    {
+     "Id": 106966,
+     "Name": "Black Pearl",
+     "Weight": 79
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 78
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 78
+    },
+    {
+     "Id": 106934,
+     "Name": "Fossil",
+     "Weight": 77
+    },
+    {
+     "Id": 106936,
+     "Name": "Nightshade",
+     "Weight": 77
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 77
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 77
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 64
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 55
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 54
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 54
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 17
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 17
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 733139,
+     "Name": "Zocalo Wings",
+     "Weight": 74
+    },
+    {
+     "Id": 733114,
+     "Name": "Maize",
+     "Weight": 62
+    },
+    {
+     "Id": 733137,
+     "Name": "Quetzal Pretzel",
+     "Weight": 57
+    },
+    {
+     "Id": 733123,
+     "Name": "Guava",
+     "Weight": 56
+    },
+    {
+     "Id": 733134,
+     "Name": "Rex Tea",
+     "Weight": 56
+    },
+    {
+     "Id": 733130,
+     "Name": "Caramel Apple",
+     "Weight": 45
+    },
+    {
+     "Id": 733140,
+     "Name": "Tamales",
+     "Weight": 45
+    },
+    {
+     "Id": 733117,
+     "Name": "Tenochti-flan",
+     "Weight": 45
+    },
+    {
+     "Id": 733125,
+     "Name": "Cactus Fruit",
+     "Weight": 45
+    },
+    {
+     "Id": 733119,
+     "Name": "Fried Ice Cream",
+     "Weight": 42
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 35
+    },
+    {
+     "Id": 733141,
+     "Name": "Stego Waffles",
+     "Weight": 35
+    },
+    {
+     "Id": 473222,
+     "Name": "Dr. Jalapeno",
+     "Weight": 33
+    },
+    {
+     "Id": 733113,
+     "Name": "Pterotomatoes",
+     "Weight": 33
+    },
+    {
+     "Id": 733115,
+     "Name": "Apatotatoes",
+     "Weight": 33
+    },
+    {
+     "Id": 733120,
+     "Name": "Fern Jelly",
+     "Weight": 31
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 29
+    },
+    {
+     "Id": 733112,
+     "Name": "Yucca",
+     "Weight": 29
+    },
+    {
+     "Id": 733118,
+     "Name": "Avocado Milkshake",
+     "Weight": 29
+    },
+    {
+     "Id": 733128,
+     "Name": "Marzipan Maize",
+     "Weight": 29
+    },
+    {
+     "Id": 733133,
+     "Name": "Chapulines",
+     "Weight": 29
+    },
+    {
+     "Id": 733124,
+     "Name": "Papaya",
+     "Weight": 25
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 24
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 24
+    },
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 24
+    },
+    {
+     "Id": 473583,
+     "Name": "Jelly Baby",
+     "Weight": 24
+    },
+    {
+     "Id": 473718,
+     "Name": "Gummy Wyrms",
+     "Weight": 24
+    },
+    {
+     "Id": 473719,
+     "Name": "Deviled Eggs",
+     "Weight": 24
+    },
+    {
+     "Id": 733122,
+     "Name": "Chili Peppers",
+     "Weight": 24
+    },
+    {
+     "Id": 733116,
+     "Name": "Cacao Beans",
+     "Weight": 24
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Colossal TC",
+     "Name": "Colossal",
+     "Weight": 95
+    },
+    {
+     "Id": "Extraordinary TC",
+     "Name": "Extraordinary",
+     "Weight": 95
+    },
+    {
+     "Id": "Amplify TC",
+     "Name": "Amplify",
+     "Weight": 74
+    },
+    {
+     "Id": "Berserk TC",
+     "Name": "Berserk",
+     "Weight": 74
+    },
+    {
+     "Id": "Empowerment TC",
+     "Name": "Empowerment",
+     "Weight": 74
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 74
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 74
+    },
+    {
+     "Id": "Mend TC",
+     "Name": "Mend",
+     "Weight": 74
+    },
+    {
+     "Id": "Vengeance TC",
+     "Name": "Vengeance",
+     "Weight": 74
+    },
+    {
+     "Id": "Basilisk TC",
+     "Name": "Basilisk",
+     "Weight": 56
+    },
+    {
+     "Id": "Chimera TC",
+     "Name": "Chimera",
+     "Weight": 56
+    },
+    {
+     "Id": "Gnomes TC",
+     "Name": "Gnomes!",
+     "Weight": 56
+    },
+    {
+     "Id": "Katzenstein's Monster TC",
+     "Name": "Dr. Von's Monster",
+     "Weight": 56
+    },
+    {
+     "Id": "Rain of Fire TC",
+     "Name": "Rain of Fire",
+     "Weight": 56
+    },
+    {
+     "Id": "Sirens TC",
+     "Name": "Sirens",
+     "Weight": 56
+    },
+    {
+     "Id": "Woolly Mammoth TC",
+     "Name": "Woolly Mammoth",
+     "Weight": 56
+    },
+    {
+     "Id": "Potent Trap TC",
+     "Name": "Potent Trap",
+     "Weight": 56
+    },
+    {
+     "Id": "Primordial TC",
+     "Name": "Primordial",
+     "Weight": 56
+    },
+    {
+     "Id": "Sharpened Blade TC",
+     "Name": "Sharpened Blade",
+     "Weight": 56
+    },
+    {
+     "Id": "Efreet TC",
+     "Name": "Efreet",
+     "Weight": 46
+    },
+    {
+     "Id": "Forest Lord TC",
+     "Name": "Forest Lord",
+     "Weight": 46
+    },
+    {
+     "Id": "Leviathan TC",
+     "Name": "Leviathan",
+     "Weight": 46
+    },
+    {
+     "Id": "Medusa TC",
+     "Name": "Medusa",
+     "Weight": 46
+    },
+    {
+     "Id": "Ra TC",
+     "Name": "Ra",
+     "Weight": 46
+    },
+    {
+     "Id": "Skeletal Dragon TC",
+     "Name": "Skeletal Dragon",
+     "Weight": 46
+    },
+    {
+     "Id": "Snow Angel TC",
+     "Name": "Snow Angel",
+     "Weight": 46
+    },
+    {
+     "Id": "Cloud DemonTC",
+     "Name": "Cloud Demon",
+     "Weight": 45
+    },
+    {
+     "Id": "Frost Demon TC",
+     "Name": "Frost Demon",
+     "Weight": 45
+    },
+    {
+     "Id": "Fire Dragon TC",
+     "Name": "Fire Dragon",
+     "Weight": 30
+    },
+    {
+     "Id": "Frost Giant TC",
+     "Name": "Frost Giant",
+     "Weight": 30
+    }
+   ]
+  },
+  {
+   "World": "Khrysalis",
+   "Tier": 9,
+   "Creatures": 232,
+   "Reagents": [
+    {
+     "Id": 106931,
+     "Name": "Mist Wood",
+     "Weight": 211
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 211
+    },
+    {
+     "Id": 106937,
+     "Name": "Ore",
+     "Weight": 211
+    },
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 211
+    },
+    {
+     "Id": 106959,
+     "Name": "Red Mandrake",
+     "Weight": 211
+    },
+    {
+     "Id": 106967,
+     "Name": "Lava Lily",
+     "Weight": 211
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 165
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 162
+    },
+    {
+     "Id": 1350238,
+     "Name": "Draconium",
+     "Weight": 162
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 161
+    },
+    {
+     "Id": 106933,
+     "Name": "Stone Block",
+     "Weight": 160
+    },
+    {
+     "Id": 106965,
+     "Name": "Black Lotus",
+     "Weight": 160
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 140
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 139
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 139
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 139
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 120
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 102
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 101
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 101
+    },
+    {
+     "Id": 106934,
+     "Name": "Fossil",
+     "Weight": 100
+    },
+    {
+     "Id": 106936,
+     "Name": "Nightshade",
+     "Weight": 100
+    },
+    {
+     "Id": 106960,
+     "Name": "Blood Moss",
+     "Weight": 100
+    },
+    {
+     "Id": 106966,
+     "Name": "Black Pearl",
+     "Weight": 100
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 75
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 71
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 71
+    },
+    {
+     "Id": 1350232,
+     "Name": "Iron",
+     "Weight": 70
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220215,
+     "Name": "Golden Apple",
+     "Weight": 135
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 135
+    },
+    {
+     "Id": 220304,
+     "Name": "Flaming Soup",
+     "Weight": 135
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 135
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 135
+    },
+    {
+     "Id": 220331,
+     "Name": "Gummy Humongofrog",
+     "Weight": 135
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 101
+    },
+    {
+     "Id": 220292,
+     "Name": "Uni-corn",
+     "Weight": 100
+    },
+    {
+     "Id": 220305,
+     "Name": "Buttered Bread",
+     "Weight": 100
+    },
+    {
+     "Id": 220325,
+     "Name": "Shiny Tomato",
+     "Weight": 100
+    },
+    {
+     "Id": 240117,
+     "Name": "Submarine Sandwich",
+     "Weight": 100
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 100
+    },
+    {
+     "Id": 446071,
+     "Name": "Salmonberry",
+     "Weight": 100
+    },
+    {
+     "Id": 220275,
+     "Name": "Glowing Dragon Fruit",
+     "Weight": 59
+    },
+    {
+     "Id": 473221,
+     "Name": "Flapjacks",
+     "Weight": 59
+    },
+    {
+     "Id": 473222,
+     "Name": "Dr. Jalapeno",
+     "Weight": 59
+    },
+    {
+     "Id": 1248051,
+     "Name": "Gummy Bees",
+     "Weight": 45
+    },
+    {
+     "Id": 1248052,
+     "Name": "Sugar Khrystals",
+     "Weight": 45
+    },
+    {
+     "Id": 1248055,
+     "Name": "Honeycombs",
+     "Weight": 45
+    },
+    {
+     "Id": 1248059,
+     "Name": "HoneyDon't Melon",
+     "Weight": 45
+    },
+    {
+     "Id": 1248060,
+     "Name": "Honeycrisp Apples",
+     "Weight": 45
+    },
+    {
+     "Id": 1248053,
+     "Name": "Punk Rock Candy",
+     "Weight": 25
+    },
+    {
+     "Id": 1248054,
+     "Name": "Honey Bombs",
+     "Weight": 25
+    },
+    {
+     "Id": 1248056,
+     "Name": "Hive Rinds",
+     "Weight": 25
+    },
+    {
+     "Id": 1248057,
+     "Name": "Spicy Stingers",
+     "Weight": 25
+    },
+    {
+     "Id": 1248058,
+     "Name": "Peanut Butterflies",
+     "Weight": 25
+    },
+    {
+     "Id": 1257588,
+     "Name": "Discord Grape Jelly",
+     "Weight": 15
+    },
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 12
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Scorpion TC KR",
+     "Name": "Scorpion",
+     "Weight": 182
+    },
+    {
+     "Id": "Spider Black Widow TC KR",
+     "Name": "Black Widow",
+     "Weight": 182
+    },
+    {
+     "Id": "Choke TC KR",
+     "Name": "Choke",
+     "Weight": 182
+    },
+    {
+     "Id": "Sanctuary TC KR",
+     "Name": "Sanctuary",
+     "Weight": 182
+    },
+    {
+     "Id": "Pierce TC KR",
+     "Name": "Pierce",
+     "Weight": 182
+    },
+    {
+     "Id": "Disarm TC KR",
+     "Name": "Disarm",
+     "Weight": 169
+    },
+    {
+     "Id": "Scarab TC KR",
+     "Name": "Scarab",
+     "Weight": 164
+    },
+    {
+     "Id": "Scarab Death TC KR",
+     "Name": "Death Scarab",
+     "Weight": 164
+    },
+    {
+     "Id": "Scarab Life TC KR",
+     "Name": "Life Scarab",
+     "Weight": 164
+    },
+    {
+     "Id": "Frost Beetle TC KR",
+     "Name": "Frost Beetle",
+     "Weight": 164
+    },
+    {
+     "Id": "Mass Infection TC KR",
+     "Name": "Mass Infection",
+     "Weight": 164
+    },
+    {
+     "Id": "Doom and Gloom TC KR",
+     "Name": "Doom and Gloom",
+     "Weight": 148
+    },
+    {
+     "Id": "Rat Illusionist TC",
+     "Name": "Rat Illusionist",
+     "Weight": 142
+    },
+    {
+     "Id": "Giant Spider TC KR",
+     "Name": "Giant Spider",
+     "Weight": 142
+    },
+    {
+     "Id": "Crystal Spider TC KR",
+     "Name": "Crystal Spider",
+     "Weight": 120
+    },
+    {
+     "Id": "O'Leary Charlatan TC KR",
+     "Name": "O'Leary Charlatan",
+     "Weight": 118
+    },
+    {
+     "Id": "Avenging Fossil TC",
+     "Name": "Avenging Fossil",
+     "Weight": 116
+    },
+    {
+     "Id": "Frost Beetle Fire TC KR",
+     "Name": "Fire Beetle",
+     "Weight": 103
+    },
+    {
+     "Id": "Spinysaur TC",
+     "Name": "Spinysaur",
+     "Weight": 99
+    },
+    {
+     "Id": "Celestial Calendar TC",
+     "Name": "Celestial Calendar",
+     "Weight": 99
+    },
+    {
+     "Id": "Sun Serpent TC",
+     "Name": "Sun Serpent",
+     "Weight": 95
+    },
+    {
+     "Id": "Reliquary TC - KR",
+     "Name": "Reliquary",
+     "Weight": 77
+    },
+    {
+     "Id": "Cycle of Life TC - KR",
+     "Name": "Cycle of Life",
+     "Weight": 77
+    },
+    {
+     "Id": "Virulence TC - KR",
+     "Name": "Virulence",
+     "Weight": 77
+    },
+    {
+     "Id": "Chastisement TC - KR",
+     "Name": "Chastisement",
+     "Weight": 77
+    },
+    {
+     "Id": "Punishment TC - KR",
+     "Name": "Punishment",
+     "Weight": 77
+    },
+    {
+     "Id": "Galvanic Field TC - KR",
+     "Name": "Galvanic Field",
+     "Weight": 77
+    },
+    {
+     "Id": "Furnace TC - KR",
+     "Name": "Furnace",
+     "Weight": 77
+    },
+    {
+     "Id": "Sleet Storm TC - KR",
+     "Name": "Sleet Storm",
+     "Weight": 77
+    },
+    {
+     "Id": "Lord of Winter TC",
+     "Name": "Lord of Winter",
+     "Weight": 77
+    }
+   ]
+  },
+  {
+   "World": "Darkmoor",
+   "Tier": 9,
+   "Creatures": 176,
+   "Reagents": [
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 140
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 140
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 77
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 76
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 76
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 76
+    },
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 76
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 76
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 76
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 76
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 76
+    },
+    {
+     "Id": 1492428,
+     "Name": "Lord of the Jungle",
+     "Weight": 11
+    },
+    {
+     "Id": 1702505,
+     "Name": "Mortality",
+     "Weight": 9
+    },
+    {
+     "Id": 1621727,
+     "Name": "Rainbow Serpent",
+     "Weight": 9
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 220225,
+     "Name": "Nettle Root",
+     "Weight": 140
+    },
+    {
+     "Id": 225465,
+     "Name": "Evil Carrot",
+     "Weight": 77
+    },
+    {
+     "Id": 1248064,
+     "Name": "Gingerbread House",
+     "Weight": 76
+    },
+    {
+     "Id": 220294,
+     "Name": "Square Root",
+     "Weight": 76
+    },
+    {
+     "Id": 220207,
+     "Name": "Spicy Bubblegum",
+     "Weight": 76
+    },
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 76
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 76
+    },
+    {
+     "Id": 220209,
+     "Name": "Diamond Carrot",
+     "Weight": 76
+    },
+    {
+     "Id": 220242,
+     "Name": "Frosted Cupcake",
+     "Weight": 64
+    },
+    {
+     "Id": 473716,
+     "Name": "Bogwich",
+     "Weight": 64
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Hex TC",
+     "Name": "Hex",
+     "Weight": 76
+    },
+    {
+     "Id": "Life Trap TC",
+     "Name": "Life Trap",
+     "Weight": 76
+    },
+    {
+     "Id": "Feint TC",
+     "Name": "Feint",
+     "Weight": 76
+    },
+    {
+     "Id": "Spirit Trap TC",
+     "Name": "Spirit Trap",
+     "Weight": 76
+    },
+    {
+     "Id": "Storm Trap TC",
+     "Name": "Storm Trap",
+     "Weight": 76
+    },
+    {
+     "Id": "Fireblade TC",
+     "Name": "Fireblade",
+     "Weight": 76
+    },
+    {
+     "Id": "Mythblade TC",
+     "Name": "Mythblade",
+     "Weight": 76
+    },
+    {
+     "Id": "Ice Trap TC",
+     "Name": "Ice Trap",
+     "Weight": 64
+    },
+    {
+     "Id": "Myth Trap TC",
+     "Name": "Myth Trap",
+     "Weight": 64
+    },
+    {
+     "Id": "Iceblade TC",
+     "Name": "Iceblade",
+     "Weight": 64
+    },
+    {
+     "Id": "Deathblade TC",
+     "Name": "Deathblade",
+     "Weight": 64
+    }
+   ]
+  },
+  {
+   "World": "Polaris",
+   "Tier": 10,
+   "Creatures": 90,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 86
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 73
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 73
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 73
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 73
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 73
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 72
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 72
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 72
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 72
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 72
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 72
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 72
+    },
+    {
+     "Id": 258582,
+     "Name": "Aether",
+     "Weight": 71
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 52
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 50
+    },
+    {
+     "Id": 1350239,
+     "Name": "Palladium",
+     "Weight": 48
+    },
+    {
+     "Id": 473723,
+     "Name": "Agave Nectar",
+     "Weight": 25
+    },
+    {
+     "Id": 537974,
+     "Name": "Amber",
+     "Weight": 25
+    },
+    {
+     "Id": 537985,
+     "Name": "Merle's Whisker",
+     "Weight": 25
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 25
+    },
+    {
+     "Id": 1350238,
+     "Name": "Draconium",
+     "Weight": 25
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 24
+    },
+    {
+     "Id": 537976,
+     "Name": "Braided Vine",
+     "Weight": 24
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 24
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 22
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 22
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 22
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 22
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 22
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 84
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 84
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 84
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 84
+    },
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 84
+    },
+    {
+     "Id": 1359604,
+     "Name": "Chalupacabra",
+     "Weight": 83
+    },
+    {
+     "Id": 1359606,
+     "Name": "Ships 'n' Queso",
+     "Weight": 83
+    },
+    {
+     "Id": 1359612,
+     "Name": "Polaris Fries",
+     "Weight": 83
+    },
+    {
+     "Id": 1359613,
+     "Name": "Mustachios",
+     "Weight": 83
+    },
+    {
+     "Id": 1359626,
+     "Name": "Penne Dreadful",
+     "Weight": 83
+    },
+    {
+     "Id": 537603,
+     "Name": "Frozen Snails",
+     "Weight": 68
+    },
+    {
+     "Id": 537589,
+     "Name": "Frosty Sugar Cubes",
+     "Weight": 51
+    },
+    {
+     "Id": 641690,
+     "Name": "Rhubarbed Wire",
+     "Weight": 51
+    },
+    {
+     "Id": 641700,
+     "Name": "Antheneum Delight",
+     "Weight": 51
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 51
+    },
+    {
+     "Id": 733176,
+     "Name": "Snow Apple Cider",
+     "Weight": 51
+    },
+    {
+     "Id": 1257606,
+     "Name": "Granny Snow Apple",
+     "Weight": 51
+    },
+    {
+     "Id": 1257607,
+     "Name": "Snow Apple Pie",
+     "Weight": 51
+    },
+    {
+     "Id": 220290,
+     "Name": "Green Tomato",
+     "Weight": 50
+    },
+    {
+     "Id": 473525,
+     "Name": "Jolly Rancher",
+     "Weight": 50
+    },
+    {
+     "Id": 641594,
+     "Name": "High Road Haggis",
+     "Weight": 50
+    },
+    {
+     "Id": 641603,
+     "Name": "Deepwater Toffee",
+     "Weight": 50
+    },
+    {
+     "Id": 220313,
+     "Name": "Sprinkle Cupcake",
+     "Weight": 20
+    },
+    {
+     "Id": 641684,
+     "Name": "Frozen Perogies",
+     "Weight": 20
+    },
+    {
+     "Id": 220269,
+     "Name": "Chili Cheese Fries",
+     "Weight": 19
+    },
+    {
+     "Id": 220278,
+     "Name": "Large Ice Cream",
+     "Weight": 19
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 19
+    },
+    {
+     "Id": 220301,
+     "Name": "Gourmet Yogurt",
+     "Weight": 19
+    },
+    {
+     "Id": 220315,
+     "Name": "Huge Ice Cream",
+     "Weight": 19
+    },
+    {
+     "Id": 220318,
+     "Name": "Super Cold Popsicle",
+     "Weight": 19
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 73
+    },
+    {
+     "Id": "Sabertooth Ice TC",
+     "Name": "Frostfang",
+     "Weight": 71
+    },
+    {
+     "Id": "Katabatic Wind TC",
+     "Name": "Katabatic Wind",
+     "Weight": 70
+    },
+    {
+     "Id": "Astraphobia TC",
+     "Name": "Astraphobia",
+     "Weight": 70
+    },
+    {
+     "Id": "Saga of Heroes TC",
+     "Name": "Saga of Heroes",
+     "Weight": 70
+    },
+    {
+     "Id": "Namaste TC",
+     "Name": "Namaste",
+     "Weight": 70
+    },
+    {
+     "Id": "Age of Reckoning TC",
+     "Name": "Age of Reckoning",
+     "Weight": 70
+    },
+    {
+     "Id": "Counterforce TC",
+     "Name": "Counterforce",
+     "Weight": 70
+    },
+    {
+     "Id": "Mutate - Colossus to Fire TC",
+     "Name": "Mutate Colossus",
+     "Weight": 67
+    },
+    {
+     "Id": "Mutate - Colossus to Storm TC",
+     "Name": "Mutate Colossus",
+     "Weight": 67
+    },
+    {
+     "Id": "Skeletal Dragon Fire TC",
+     "Name": "Ashen Bones",
+     "Weight": 48
+    },
+    {
+     "Id": "Troll Death TC",
+     "Name": "Death Troll",
+     "Weight": 46
+    },
+    {
+     "Id": "Troll Yellow TC",
+     "Name": "Yellow Troll",
+     "Weight": 46
+    },
+    {
+     "Id": "Colossus Magma TC",
+     "Name": "Magma Colossus",
+     "Weight": 46
+    },
+    {
+     "Id": "Colossus Sandstone TC",
+     "Name": "Sandstone Colossus",
+     "Weight": 46
+    },
+    {
+     "Id": "Colossus Steel TC",
+     "Name": "Steel Colossus",
+     "Weight": 46
+    },
+    {
+     "Id": "Colossus Stone TC",
+     "Name": "Stone Colossus",
+     "Weight": 46
+    },
+    {
+     "Id": "Firey Colossus TC",
+     "Name": "Fiery Colossus",
+     "Weight": 46
+    },
+    {
+     "Id": "Mutate - Helephant to Ice TC",
+     "Name": "Mutate Helephant",
+     "Weight": 43
+    },
+    {
+     "Id": "Mutate - Helephant to Storm TC",
+     "Name": "Mutate Helephant",
+     "Weight": 42
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 30
+    },
+    {
+     "Id": "Firespear TC",
+     "Name": "Firespear",
+     "Weight": 30
+    },
+    {
+     "Id": "Icespear TC",
+     "Name": "Icespear",
+     "Weight": 30
+    },
+    {
+     "Id": "Lifespear TC",
+     "Name": "Lifespear",
+     "Weight": 30
+    },
+    {
+     "Id": "Mythspear TC",
+     "Name": "Mythspear",
+     "Weight": 30
+    },
+    {
+     "Id": "Spirit Spear TC",
+     "Name": "Spirit Spear",
+     "Weight": 30
+    },
+    {
+     "Id": "Stormspear TC",
+     "Name": "Stormspear",
+     "Weight": 30
+    },
+    {
+     "Id": "Tri Spear TC",
+     "Name": "Elemental Spear",
+     "Weight": 30
+    },
+    {
+     "Id": "Steel Golem - Ice TC",
+     "Name": "Coldiron",
+     "Weight": 28
+    },
+    {
+     "Id": "Sunbird Ice TC",
+     "Name": "Icebird",
+     "Weight": 28
+    }
+   ]
+  },
+  {
+   "World": "Mirage",
+   "Tier": 11,
+   "Creatures": 161,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 135
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 91
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 91
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 91
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 91
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 91
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 91
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 91
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 91
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 91
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 91
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 91
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 91
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 91
+    },
+    {
+     "Id": 1350240,
+     "Name": "Iridium",
+     "Weight": 91
+    },
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 79
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 54
+    },
+    {
+     "Id": 258582,
+     "Name": "Aether",
+     "Weight": 54
+    },
+    {
+     "Id": 473723,
+     "Name": "Agave Nectar",
+     "Weight": 54
+    },
+    {
+     "Id": 537974,
+     "Name": "Amber",
+     "Weight": 54
+    },
+    {
+     "Id": 537976,
+     "Name": "Braided Vine",
+     "Weight": 54
+    },
+    {
+     "Id": 537985,
+     "Name": "Merle's Whisker",
+     "Weight": 54
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 54
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 54
+    },
+    {
+     "Id": 1350238,
+     "Name": "Draconium",
+     "Weight": 54
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 50
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 48
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 48
+    },
+    {
+     "Id": 106960,
+     "Name": "Blood Moss",
+     "Weight": 48
+    },
+    {
+     "Id": 106962,
+     "Name": "Ancient Scroll",
+     "Weight": 48
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 537590,
+     "Name": "Hard Boiled Beetle Eggs",
+     "Weight": 154
+    },
+    {
+     "Id": 537593,
+     "Name": "Beetle Cream Soda",
+     "Weight": 154
+    },
+    {
+     "Id": 1359604,
+     "Name": "Chalupacabra",
+     "Weight": 154
+    },
+    {
+     "Id": 1359606,
+     "Name": "Ships 'n' Queso",
+     "Weight": 154
+    },
+    {
+     "Id": 1359613,
+     "Name": "Mustachios",
+     "Weight": 154
+    },
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 154
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 154
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 154
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 154
+    },
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 154
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 72
+    },
+    {
+     "Id": 220290,
+     "Name": "Green Tomato",
+     "Weight": 72
+    },
+    {
+     "Id": 473525,
+     "Name": "Jolly Rancher",
+     "Weight": 72
+    },
+    {
+     "Id": 537589,
+     "Name": "Frosty Sugar Cubes",
+     "Weight": 72
+    },
+    {
+     "Id": 589097,
+     "Name": "Fire Passion Fruit",
+     "Weight": 72
+    },
+    {
+     "Id": 641594,
+     "Name": "High Road Haggis",
+     "Weight": 72
+    },
+    {
+     "Id": 641690,
+     "Name": "Rhubarbed Wire",
+     "Weight": 72
+    },
+    {
+     "Id": 641700,
+     "Name": "Antheneum Delight",
+     "Weight": 72
+    },
+    {
+     "Id": 733120,
+     "Name": "Fern Jelly",
+     "Weight": 72
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 72
+    },
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 72
+    },
+    {
+     "Id": 1359624,
+     "Name": "Decimatoes",
+     "Weight": 72
+    },
+    {
+     "Id": 220269,
+     "Name": "Chili Cheese Fries",
+     "Weight": 48
+    },
+    {
+     "Id": 220278,
+     "Name": "Large Ice Cream",
+     "Weight": 48
+    },
+    {
+     "Id": 220280,
+     "Name": "Delicious Cookie",
+     "Weight": 48
+    },
+    {
+     "Id": 220301,
+     "Name": "Gourmet Yogurt",
+     "Weight": 48
+    },
+    {
+     "Id": 220313,
+     "Name": "Sprinkle Cupcake",
+     "Weight": 48
+    },
+    {
+     "Id": 220315,
+     "Name": "Huge Ice Cream",
+     "Weight": 48
+    },
+    {
+     "Id": 220318,
+     "Name": "Super Cold Popsicle",
+     "Weight": 48
+    },
+    {
+     "Id": 220327,
+     "Name": "French Fries",
+     "Weight": 48
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Mutate - Colossus to Fire TC",
+     "Name": "Mutate Colossus",
+     "Weight": 111
+    },
+    {
+     "Id": "Mutate - Colossus to Storm TC",
+     "Name": "Mutate Colossus",
+     "Weight": 111
+    },
+    {
+     "Id": "Sabertooth Ice TC",
+     "Name": "Frostfang",
+     "Weight": 108
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 108
+    },
+    {
+     "Id": "Katabatic Wind TC",
+     "Name": "Katabatic Wind",
+     "Weight": 108
+    },
+    {
+     "Id": "Astraphobia TC",
+     "Name": "Astraphobia",
+     "Weight": 108
+    },
+    {
+     "Id": "Saga of Heroes TC",
+     "Name": "Saga of Heroes",
+     "Weight": 108
+    },
+    {
+     "Id": "Namaste TC",
+     "Name": "Namaste",
+     "Weight": 108
+    },
+    {
+     "Id": "Age of Reckoning TC",
+     "Name": "Age of Reckoning",
+     "Weight": 108
+    },
+    {
+     "Id": "Counterforce TC",
+     "Name": "Counterforce",
+     "Weight": 108
+    },
+    {
+     "Id": "Colossus Magma TC",
+     "Name": "Magma Colossus",
+     "Weight": 93
+    },
+    {
+     "Id": "Colossus Sandstone TC",
+     "Name": "Sandstone Colossus",
+     "Weight": 93
+    },
+    {
+     "Id": "Colossus Steel TC",
+     "Name": "Steel Colossus",
+     "Weight": 93
+    },
+    {
+     "Id": "Colossus Stone TC",
+     "Name": "Stone Colossus",
+     "Weight": 93
+    },
+    {
+     "Id": "Firey Colossus TC",
+     "Name": "Fiery Colossus",
+     "Weight": 93
+    },
+    {
+     "Id": "Troll Death TC",
+     "Name": "Death Troll",
+     "Weight": 93
+    },
+    {
+     "Id": "Troll Yellow TC",
+     "Name": "Yellow Troll",
+     "Weight": 93
+    },
+    {
+     "Id": "Skeletal Dragon Fire TC",
+     "Name": "Ashen Bones",
+     "Weight": 74
+    },
+    {
+     "Id": "Mutate - Helephant to Ice TC",
+     "Name": "Mutate Helephant",
+     "Weight": 68
+    },
+    {
+     "Id": "Mutate - Helephant to Storm TC",
+     "Name": "Mutate Helephant",
+     "Weight": 68
+    },
+    {
+     "Id": "Raging Bull TC",
+     "Name": "Raging Bull",
+     "Weight": 50
+    },
+    {
+     "Id": "Wings of Fate TC",
+     "Name": "Wings of Fate",
+     "Weight": 50
+    },
+    {
+     "Id": "Rusalka's Wrath TC",
+     "Name": "Rusalka's Wrath",
+     "Weight": 50
+    },
+    {
+     "Id": "Nested Fury TC",
+     "Name": "Nested Fury",
+     "Weight": 50
+    },
+    {
+     "Id": "Snowball Barrage TC",
+     "Name": "Snowball Barrage",
+     "Weight": 50
+    },
+    {
+     "Id": "Witch's Housecall TC",
+     "Name": "Witch's House Call",
+     "Weight": 50
+    },
+    {
+     "Id": "Winged Sorrow TC",
+     "Name": "Winged Sorrow",
+     "Weight": 50
+    },
+    {
+     "Id": "Punklops Death Fire - TC",
+     "Name": "Metalops",
+     "Weight": 48
+    },
+    {
+     "Id": "Punklops Ice Myth - TC",
+     "Name": "Punklops",
+     "Weight": 48
+    },
+    {
+     "Id": "Punklops Life Storm - TC",
+     "Name": "Rocklops",
+     "Weight": 48
+    }
+   ]
+  },
+  {
+   "World": "Arcanum",
+   "Tier": 11,
+   "Creatures": 34,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 26
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 20
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 20
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 16
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 16
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 16
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 16
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 13
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 12
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 11
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 11
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 11
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 11
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 11
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 11
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 11
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 11
+    },
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 11
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 10
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 10
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 9
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 9
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 9
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 8
+    },
+    {
+     "Id": 258582,
+     "Name": "Aether",
+     "Weight": 8
+    },
+    {
+     "Id": 473723,
+     "Name": "Agave Nectar",
+     "Weight": 8
+    },
+    {
+     "Id": 537974,
+     "Name": "Amber",
+     "Weight": 8
+    },
+    {
+     "Id": 537976,
+     "Name": "Braided Vine",
+     "Weight": 8
+    },
+    {
+     "Id": 537985,
+     "Name": "Merle's Whisker",
+     "Weight": 8
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 8
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 21
+    },
+    {
+     "Id": 220294,
+     "Name": "Square Root",
+     "Weight": 14
+    },
+    {
+     "Id": 1359606,
+     "Name": "Ships 'n' Queso",
+     "Weight": 11
+    },
+    {
+     "Id": 1359613,
+     "Name": "Mustachios",
+     "Weight": 11
+    },
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 11
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 11
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 11
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 11
+    },
+    {
+     "Id": 1359604,
+     "Name": "Chalupacabra",
+     "Weight": 10
+    },
+    {
+     "Id": 220225,
+     "Name": "Nettle Root",
+     "Weight": 10
+    },
+    {
+     "Id": 1248064,
+     "Name": "Gingerbread House",
+     "Weight": 9
+    },
+    {
+     "Id": 220207,
+     "Name": "Spicy Bubblegum",
+     "Weight": 9
+    },
+    {
+     "Id": 220265,
+     "Name": "Spicy Drumstick",
+     "Weight": 9
+    },
+    {
+     "Id": 220209,
+     "Name": "Diamond Carrot",
+     "Weight": 9
+    },
+    {
+     "Id": 225465,
+     "Name": "Evil Carrot",
+     "Weight": 9
+    },
+    {
+     "Id": 1359612,
+     "Name": "Polaris Fries",
+     "Weight": 7
+    },
+    {
+     "Id": 1359626,
+     "Name": "Penne Dreadful",
+     "Weight": 7
+    },
+    {
+     "Id": 220227,
+     "Name": "Cracker",
+     "Weight": 6
+    },
+    {
+     "Id": 220222,
+     "Name": "Squash",
+     "Weight": 6
+    },
+    {
+     "Id": 220316,
+     "Name": "Moon Pie",
+     "Weight": 6
+    },
+    {
+     "Id": 220237,
+     "Name": "Tiny Fish",
+     "Weight": 6
+    },
+    {
+     "Id": 589096,
+     "Name": "Eggplant",
+     "Weight": 6
+    },
+    {
+     "Id": 220231,
+     "Name": "Potato Chips",
+     "Weight": 6
+    },
+    {
+     "Id": 220272,
+     "Name": "Taco",
+     "Weight": 6
+    },
+    {
+     "Id": 220235,
+     "Name": "Tomato Soup",
+     "Weight": 6
+    },
+    {
+     "Id": 537586,
+     "Name": "Black Sun Seeds",
+     "Weight": 6
+    },
+    {
+     "Id": 220196,
+     "Name": "Sliced Watermelon",
+     "Weight": 6
+    },
+    {
+     "Id": 220218,
+     "Name": "Sugar Donut",
+     "Weight": 6
+    },
+    {
+     "Id": 220216,
+     "Name": "Large Watermelon",
+     "Weight": 6
+    },
+    {
+     "Id": 1359629,
+     "Name": "Breakfast Tacos",
+     "Weight": 6
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Hex TC",
+     "Name": "Hex",
+     "Weight": 9
+    },
+    {
+     "Id": "Life Trap TC",
+     "Name": "Life Trap",
+     "Weight": 9
+    },
+    {
+     "Id": "Feint TC",
+     "Name": "Feint",
+     "Weight": 9
+    },
+    {
+     "Id": "Spirit Trap TC",
+     "Name": "Spirit Trap",
+     "Weight": 9
+    },
+    {
+     "Id": "Storm Trap TC",
+     "Name": "Storm Trap",
+     "Weight": 9
+    },
+    {
+     "Id": "Fireblade TC",
+     "Name": "Fireblade",
+     "Weight": 9
+    },
+    {
+     "Id": "Mythblade TC",
+     "Name": "Mythblade",
+     "Weight": 9
+    },
+    {
+     "Id": "Sabertooth Ice TC",
+     "Name": "Frostfang",
+     "Weight": 8
+    },
+    {
+     "Id": "Skeletal Dragon Fire TC",
+     "Name": "Ashen Bones",
+     "Weight": 8
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 8
+    },
+    {
+     "Id": "Katabatic Wind TC",
+     "Name": "Katabatic Wind",
+     "Weight": 8
+    },
+    {
+     "Id": "Astraphobia TC",
+     "Name": "Astraphobia",
+     "Weight": 8
+    },
+    {
+     "Id": "Saga of Heroes TC",
+     "Name": "Saga of Heroes",
+     "Weight": 8
+    },
+    {
+     "Id": "Namaste TC",
+     "Name": "Namaste",
+     "Weight": 8
+    },
+    {
+     "Id": "Age of Reckoning TC",
+     "Name": "Age of Reckoning",
+     "Weight": 8
+    },
+    {
+     "Id": "Counterforce TC",
+     "Name": "Counterforce",
+     "Weight": 8
+    },
+    {
+     "Id": "Raging Bull TC",
+     "Name": "Raging Bull",
+     "Weight": 8
+    },
+    {
+     "Id": "Wings of Fate TC",
+     "Name": "Wings of Fate",
+     "Weight": 8
+    },
+    {
+     "Id": "Rusalka's Wrath TC",
+     "Name": "Rusalka's Wrath",
+     "Weight": 8
+    },
+    {
+     "Id": "Nested Fury TC",
+     "Name": "Nested Fury",
+     "Weight": 8
+    },
+    {
+     "Id": "Snowball Barrage TC",
+     "Name": "Snowball Barrage",
+     "Weight": 8
+    },
+    {
+     "Id": "Witch's Housecall TC",
+     "Name": "Witch's House Call",
+     "Weight": 8
+    },
+    {
+     "Id": "Winged Sorrow TC",
+     "Name": "Winged Sorrow",
+     "Weight": 8
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 7
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 7
+    },
+    {
+     "Id": "Life Prism TC",
+     "Name": "Life Prism",
+     "Weight": 7
+    },
+    {
+     "Id": "Triage TC",
+     "Name": "Triage",
+     "Weight": 7
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 6
+    },
+    {
+     "Id": "Myth Prism TC",
+     "Name": "Myth Prism",
+     "Weight": 6
+    },
+    {
+     "Id": "Storm Prism TC",
+     "Name": "Storm Prism",
+     "Weight": 6
+    }
+   ]
+  },
+  {
+   "World": "Empyrea",
+   "Tier": 12,
+   "Creatures": 233,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 222
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 207
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 206
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 205
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 205
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 204
+    },
+    {
+     "Id": 106960,
+     "Name": "Blood Moss",
+     "Weight": 204
+    },
+    {
+     "Id": 106962,
+     "Name": "Ancient Scroll",
+     "Weight": 204
+    },
+    {
+     "Id": 106964,
+     "Name": "Spring",
+     "Weight": 204
+    },
+    {
+     "Id": 106966,
+     "Name": "Black Pearl",
+     "Weight": 204
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 204
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 204
+    },
+    {
+     "Id": 1392189,
+     "Name": "Antique Coins",
+     "Weight": 204
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 107
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 107
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 107
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 107
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 107
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 106
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 106
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 106
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 106
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 106
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 106
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 106
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 106
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 85
+    },
+    {
+     "Id": 1392216,
+     "Name": "Glass Sliver",
+     "Weight": 85
+    },
+    {
+     "Id": 1421824,
+     "Name": "Flying Squid Ink",
+     "Weight": 50
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 37
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 193
+    },
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 193
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 193
+    },
+    {
+     "Id": 733120,
+     "Name": "Fern Jelly",
+     "Weight": 192
+    },
+    {
+     "Id": 220222,
+     "Name": "Squash",
+     "Weight": 191
+    },
+    {
+     "Id": 220234,
+     "Name": "Drumstick",
+     "Weight": 191
+    },
+    {
+     "Id": 220239,
+     "Name": "Pizza",
+     "Weight": 191
+    },
+    {
+     "Id": 220245,
+     "Name": "Cherry Pie",
+     "Weight": 191
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 191
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 191
+    },
+    {
+     "Id": 220303,
+     "Name": "BBQ Drumstick",
+     "Weight": 191
+    },
+    {
+     "Id": 220313,
+     "Name": "Sprinkle Cupcake",
+     "Weight": 191
+    },
+    {
+     "Id": 220333,
+     "Name": "Rock and Roll Candy",
+     "Weight": 191
+    },
+    {
+     "Id": 641700,
+     "Name": "Antheneum Delight",
+     "Weight": 191
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 191
+    },
+    {
+     "Id": 1257588,
+     "Name": "Discord Grape Jelly",
+     "Weight": 191
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 191
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 191
+    },
+    {
+     "Id": 1359624,
+     "Name": "Decimatoes",
+     "Weight": 191
+    },
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 191
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 89
+    },
+    {
+     "Id": 220241,
+     "Name": "Dragon Fruit",
+     "Weight": 87
+    },
+    {
+     "Id": 220338,
+     "Name": "Crackle Jacks Cereal",
+     "Weight": 87
+    },
+    {
+     "Id": 789221,
+     "Name": "Waterworks Wonton",
+     "Weight": 87
+    },
+    {
+     "Id": 1317095,
+     "Name": "Roly Poly Fishheads",
+     "Weight": 87
+    },
+    {
+     "Id": 1359606,
+     "Name": "Ships 'n' Queso",
+     "Weight": 87
+    },
+    {
+     "Id": 1359608,
+     "Name": "Tasty Rainbow",
+     "Weight": 87
+    },
+    {
+     "Id": 1392079,
+     "Name": "Krakamari",
+     "Weight": 87
+    },
+    {
+     "Id": 220290,
+     "Name": "Green Tomato",
+     "Weight": 85
+    },
+    {
+     "Id": 473525,
+     "Name": "Jolly Rancher",
+     "Weight": 85
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Mass Fire Prism TC",
+     "Name": "Mass Fire Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Mass Ice Prism TC",
+     "Name": "Mass Ice Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Mass Life Prism TC",
+     "Name": "Mass Life Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Mass Myth Prism TC",
+     "Name": "Mass Myth Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Mass Storm Prism TC",
+     "Name": "Mass Storm Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Mass Death Prism TC",
+     "Name": "Mass Death Prism",
+     "Weight": 207
+    },
+    {
+     "Id": "Blood Moon TC",
+     "Name": "Time of Legend",
+     "Weight": 192
+    },
+    {
+     "Id": "Doom and Gloom TC",
+     "Name": "Doom and Gloom",
+     "Weight": 190
+    },
+    {
+     "Id": "Sanctuary TC",
+     "Name": "Sanctuary",
+     "Weight": 190
+    },
+    {
+     "Id": "Power Play TC",
+     "Name": "Power Play",
+     "Weight": 190
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 190
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 190
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 190
+    },
+    {
+     "Id": "Mass Triage TC",
+     "Name": "Mass Triage",
+     "Weight": 190
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Life Prism TC",
+     "Name": "Life Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Myth Prism TC",
+     "Name": "Myth Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Storm Prism TC",
+     "Name": "Storm Prism",
+     "Weight": 85
+    },
+    {
+     "Id": "Firespear TC",
+     "Name": "Firespear",
+     "Weight": 85
+    },
+    {
+     "Id": "Icespear TC",
+     "Name": "Icespear",
+     "Weight": 85
+    },
+    {
+     "Id": "Lifespear TC",
+     "Name": "Lifespear",
+     "Weight": 85
+    },
+    {
+     "Id": "Mythspear TC",
+     "Name": "Mythspear",
+     "Weight": 85
+    },
+    {
+     "Id": "Spirit Spear TC",
+     "Name": "Spirit Spear",
+     "Weight": 85
+    },
+    {
+     "Id": "Stormspear TC",
+     "Name": "Stormspear",
+     "Weight": 85
+    },
+    {
+     "Id": "Tri Spear TC",
+     "Name": "Elemental Spear",
+     "Weight": 85
+    },
+    {
+     "Id": "Tri Blade TC",
+     "Name": "Elemental Blade",
+     "Weight": 85
+    },
+    {
+     "Id": "Elemental Defuse TC",
+     "Name": "Elemental Defuse",
+     "Weight": 85
+    },
+    {
+     "Id": "Tri Shield TC",
+     "Name": "Elemental Shield",
+     "Weight": 85
+    }
+   ]
+  },
+  {
+   "World": "Karamelle",
+   "Tier": 13,
+   "Creatures": 164,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 162
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 119
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 118
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 118
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 118
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 118
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 118
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 117
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 55
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 55
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 54
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 54
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 54
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 54
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 54
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 54
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 54
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 54
+    },
+    {
+     "Id": 1504091,
+     "Name": "Toffee Bean",
+     "Weight": 54
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 53
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 53
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 53
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 35
+    },
+    {
+     "Id": 1392216,
+     "Name": "Glass Sliver",
+     "Weight": 34
+    },
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 23
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 22
+    },
+    {
+     "Id": 258582,
+     "Name": "Aether",
+     "Weight": 22
+    },
+    {
+     "Id": 473723,
+     "Name": "Agave Nectar",
+     "Weight": 22
+    },
+    {
+     "Id": 537974,
+     "Name": "Amber",
+     "Weight": 22
+    },
+    {
+     "Id": 537976,
+     "Name": "Braided Vine",
+     "Weight": 22
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 1359625,
+     "Name": "Beast Wellington",
+     "Weight": 162
+    },
+    {
+     "Id": 1359622,
+     "Name": "Eye Candy",
+     "Weight": 161
+    },
+    {
+     "Id": 220239,
+     "Name": "Pizza",
+     "Weight": 160
+    },
+    {
+     "Id": 220258,
+     "Name": "Wheat Cracker",
+     "Weight": 160
+    },
+    {
+     "Id": 220284,
+     "Name": "Glowing Taffy",
+     "Weight": 160
+    },
+    {
+     "Id": 220313,
+     "Name": "Sprinkle Cupcake",
+     "Weight": 160
+    },
+    {
+     "Id": 220333,
+     "Name": "Rock and Roll Candy",
+     "Weight": 160
+    },
+    {
+     "Id": 641700,
+     "Name": "Antheneum Delight",
+     "Weight": 160
+    },
+    {
+     "Id": 733120,
+     "Name": "Fern Jelly",
+     "Weight": 160
+    },
+    {
+     "Id": 733121,
+     "Name": "Aztecan Hot Chocolate",
+     "Weight": 160
+    },
+    {
+     "Id": 1257588,
+     "Name": "Discord Grape Jelly",
+     "Weight": 160
+    },
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 160
+    },
+    {
+     "Id": 1359618,
+     "Name": "Veggie Juice",
+     "Weight": 160
+    },
+    {
+     "Id": 1359619,
+     "Name": "Hot Cross Buns",
+     "Weight": 160
+    },
+    {
+     "Id": 1359623,
+     "Name": "Satyr Chow",
+     "Weight": 160
+    },
+    {
+     "Id": 1359624,
+     "Name": "Decimatoes",
+     "Weight": 160
+    },
+    {
+     "Id": 220222,
+     "Name": "Squash",
+     "Weight": 132
+    },
+    {
+     "Id": 220234,
+     "Name": "Drumstick",
+     "Weight": 131
+    },
+    {
+     "Id": 220245,
+     "Name": "Cherry Pie",
+     "Weight": 131
+    },
+    {
+     "Id": 220303,
+     "Name": "BBQ Drumstick",
+     "Weight": 131
+    },
+    {
+     "Id": 220241,
+     "Name": "Dragon Fruit",
+     "Weight": 50
+    },
+    {
+     "Id": 220311,
+     "Name": "Glowing Star Fruit",
+     "Weight": 50
+    },
+    {
+     "Id": 220338,
+     "Name": "Crackle Jacks Cereal",
+     "Weight": 50
+    },
+    {
+     "Id": 789221,
+     "Name": "Waterworks Wonton",
+     "Weight": 50
+    },
+    {
+     "Id": 1317095,
+     "Name": "Roly Poly Fishheads",
+     "Weight": 50
+    },
+    {
+     "Id": 1359606,
+     "Name": "Ships 'n' Queso",
+     "Weight": 50
+    },
+    {
+     "Id": 1359608,
+     "Name": "Tasty Rainbow",
+     "Weight": 50
+    },
+    {
+     "Id": 1392079,
+     "Name": "Krakamari",
+     "Weight": 50
+    },
+    {
+     "Id": 220290,
+     "Name": "Green Tomato",
+     "Weight": 31
+    },
+    {
+     "Id": 473525,
+     "Name": "Jolly Rancher",
+     "Weight": 31
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Doom and Gloom TC",
+     "Name": "Doom and Gloom",
+     "Weight": 117
+    },
+    {
+     "Id": "Sanctuary TC",
+     "Name": "Sanctuary",
+     "Weight": 117
+    },
+    {
+     "Id": "Power Play TC",
+     "Name": "Power Play",
+     "Weight": 117
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 117
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 117
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 117
+    },
+    {
+     "Id": "Blood Moon TC",
+     "Name": "Time of Legend",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Fire Prism TC",
+     "Name": "Mass Fire Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Ice Prism TC",
+     "Name": "Mass Ice Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Life Prism TC",
+     "Name": "Mass Life Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Myth Prism TC",
+     "Name": "Mass Myth Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Storm Prism TC",
+     "Name": "Mass Storm Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Triage TC",
+     "Name": "Mass Triage",
+     "Weight": 117
+    },
+    {
+     "Id": "Mass Death Prism TC",
+     "Name": "Mass Death Prism",
+     "Weight": 117
+    },
+    {
+     "Id": "Tri Spear TC",
+     "Name": "Elemental Spear",
+     "Weight": 46
+    },
+    {
+     "Id": "Tri Blade TC",
+     "Name": "Elemental Blade",
+     "Weight": 46
+    },
+    {
+     "Id": "Elemental Defuse TC",
+     "Name": "Elemental Defuse",
+     "Weight": 46
+    },
+    {
+     "Id": "Tri Shield TC",
+     "Name": "Elemental Shield",
+     "Weight": 46
+    },
+    {
+     "Id": "Tri Trap TC",
+     "Name": "Elemental Trap",
+     "Weight": 46
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Life Prism TC",
+     "Name": "Life Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Myth Prism TC",
+     "Name": "Myth Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Storm Prism TC",
+     "Name": "Storm Prism",
+     "Weight": 34
+    },
+    {
+     "Id": "Firespear TC",
+     "Name": "Firespear",
+     "Weight": 34
+    },
+    {
+     "Id": "Icespear TC",
+     "Name": "Icespear",
+     "Weight": 34
+    },
+    {
+     "Id": "Lifespear TC",
+     "Name": "Lifespear",
+     "Weight": 34
+    },
+    {
+     "Id": "Mythspear TC",
+     "Name": "Mythspear",
+     "Weight": 34
+    },
+    {
+     "Id": "Spirit Spear TC",
+     "Name": "Spirit Spear",
+     "Weight": 34
+    }
+   ]
+  },
+  {
+   "World": "Lemuria",
+   "Tier": 14,
+   "Creatures": 189,
+   "Reagents": [
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 185
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 129
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 129
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 129
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 129
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 126
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 125
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 125
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 108
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 108
+    },
+    {
+     "Id": 473724,
+     "Name": "Turquoise",
+     "Weight": 108
+    },
+    {
+     "Id": 473722,
+     "Name": "Agave Leaves",
+     "Weight": 104
+    },
+    {
+     "Id": 1206362,
+     "Name": "Astral Shard",
+     "Weight": 104
+    },
+    {
+     "Id": 1350236,
+     "Name": "Mithril",
+     "Weight": 104
+    },
+    {
+     "Id": 1350017,
+     "Name": "Silver",
+     "Weight": 104
+    },
+    {
+     "Id": 1350016,
+     "Name": "Steel",
+     "Weight": 104
+    },
+    {
+     "Id": 258586,
+     "Name": "Sunstone",
+     "Weight": 104
+    },
+    {
+     "Id": 1522158,
+     "Name": "Synthonium",
+     "Weight": 104
+    },
+    {
+     "Id": 258588,
+     "Name": "Aquamarine",
+     "Weight": 104
+    },
+    {
+     "Id": 1392216,
+     "Name": "Glass Sliver",
+     "Weight": 104
+    },
+    {
+     "Id": 537977,
+     "Name": "Vine",
+     "Weight": 104
+    },
+    {
+     "Id": 537982,
+     "Name": "Amber Dust",
+     "Weight": 104
+    },
+    {
+     "Id": 258584,
+     "Name": "Golden Pearl",
+     "Weight": 78
+    },
+    {
+     "Id": 1206361,
+     "Name": "Stardust",
+     "Weight": 78
+    },
+    {
+     "Id": 258582,
+     "Name": "Aether",
+     "Weight": 29
+    },
+    {
+     "Id": 537974,
+     "Name": "Amber",
+     "Weight": 29
+    },
+    {
+     "Id": 1350238,
+     "Name": "Draconium",
+     "Weight": 29
+    },
+    {
+     "Id": 106968,
+     "Name": "Fire Blossom",
+     "Weight": 29
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 29
+    },
+    {
+     "Id": 1350237,
+     "Name": "Orichalcum",
+     "Weight": 29
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 589096,
+     "Name": "Eggplant",
+     "Weight": 181
+    },
+    {
+     "Id": 220216,
+     "Name": "Large Watermelon",
+     "Weight": 118
+    },
+    {
+     "Id": 220306,
+     "Name": "Large Fish",
+     "Weight": 118
+    },
+    {
+     "Id": 220227,
+     "Name": "Cracker",
+     "Weight": 117
+    },
+    {
+     "Id": 220222,
+     "Name": "Squash",
+     "Weight": 117
+    },
+    {
+     "Id": 220316,
+     "Name": "Moon Pie",
+     "Weight": 117
+    },
+    {
+     "Id": 220237,
+     "Name": "Tiny Fish",
+     "Weight": 117
+    },
+    {
+     "Id": 220231,
+     "Name": "Potato Chips",
+     "Weight": 117
+    },
+    {
+     "Id": 220272,
+     "Name": "Taco",
+     "Weight": 117
+    },
+    {
+     "Id": 220235,
+     "Name": "Tomato Soup",
+     "Weight": 117
+    },
+    {
+     "Id": 537586,
+     "Name": "Black Sun Seeds",
+     "Weight": 117
+    },
+    {
+     "Id": 220196,
+     "Name": "Sliced Watermelon",
+     "Weight": 117
+    },
+    {
+     "Id": 220218,
+     "Name": "Sugar Donut",
+     "Weight": 117
+    },
+    {
+     "Id": 1359629,
+     "Name": "Breakfast Tacos",
+     "Weight": 117
+    },
+    {
+     "Id": 1359628,
+     "Name": "Chilly Con Queso",
+     "Weight": 117
+    },
+    {
+     "Id": 1257587,
+     "Name": "Bell Pepper Steak",
+     "Weight": 104
+    },
+    {
+     "Id": 1257599,
+     "Name": "Bread Fruit Fruit",
+     "Weight": 104
+    },
+    {
+     "Id": 789452,
+     "Name": "Candlenut",
+     "Weight": 104
+    },
+    {
+     "Id": 1257600,
+     "Name": "Desparagus Salad",
+     "Weight": 104
+    },
+    {
+     "Id": 1248054,
+     "Name": "Honey Bombs",
+     "Weight": 104
+    },
+    {
+     "Id": 220326,
+     "Name": "Goat Cheese",
+     "Weight": 104
+    },
+    {
+     "Id": 1248056,
+     "Name": "Hive Rinds",
+     "Weight": 104
+    },
+    {
+     "Id": 1317844,
+     "Name": "Boiled Spider Legs",
+     "Weight": 104
+    },
+    {
+     "Id": 1257597,
+     "Name": "Boom Stroganoff",
+     "Weight": 104
+    },
+    {
+     "Id": 240118,
+     "Name": "Cauliflowers",
+     "Weight": 104
+    },
+    {
+     "Id": 733133,
+     "Name": "Chapulines",
+     "Weight": 104
+    },
+    {
+     "Id": 537602,
+     "Name": "Fried Worms",
+     "Weight": 104
+    },
+    {
+     "Id": 641704,
+     "Name": "Hickory Chicory",
+     "Weight": 104
+    },
+    {
+     "Id": 220294,
+     "Name": "Square Root",
+     "Weight": 96
+    },
+    {
+     "Id": 220295,
+     "Name": "Spicy Popcorn",
+     "Weight": 91
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Life Prism TC",
+     "Name": "Life Prism",
+     "Weight": 127
+    },
+    {
+     "Id": "Blaze Beetle TC",
+     "Name": "Blaze Beetle",
+     "Weight": 127
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 127
+    },
+    {
+     "Id": "Triage TC",
+     "Name": "Triage",
+     "Weight": 127
+    },
+    {
+     "Id": "Bloodbat TC",
+     "Name": "Blood Bat",
+     "Weight": 127
+    },
+    {
+     "Id": "Cat Thug TC",
+     "Name": "Cat Thug",
+     "Weight": 127
+    },
+    {
+     "Id": "Black Widow TC",
+     "Name": "Green Widow",
+     "Weight": 127
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 127
+    },
+    {
+     "Id": "Tri Trap TC",
+     "Name": "Elemental Trap",
+     "Weight": 104
+    },
+    {
+     "Id": "Fortify TC",
+     "Name": "Fortify",
+     "Weight": 104
+    },
+    {
+     "Id": "Mass Death Prism TC",
+     "Name": "Mass Death Prism",
+     "Weight": 104
+    },
+    {
+     "Id": "Mass Life Prism TC",
+     "Name": "Mass Life Prism",
+     "Weight": 104
+    },
+    {
+     "Id": "Infallible TC",
+     "Name": "Infallible",
+     "Weight": 104
+    },
+    {
+     "Id": "Pacify TC",
+     "Name": "Pacify",
+     "Weight": 104
+    },
+    {
+     "Id": "Mass Ice Prism TC",
+     "Name": "Mass Ice Prism",
+     "Weight": 104
+    },
+    {
+     "Id": "Storm Prism TC",
+     "Name": "Storm Prism",
+     "Weight": 101
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 101
+    },
+    {
+     "Id": "Crystal Spider TC",
+     "Name": "Crystal Spider",
+     "Weight": 101
+    },
+    {
+     "Id": "Myth Prism TC",
+     "Name": "Myth Prism",
+     "Weight": 101
+    },
+    {
+     "Id": "Centaur TC",
+     "Name": "Centaur",
+     "Weight": 101
+    },
+    {
+     "Id": "Blue Phoenix TC",
+     "Name": "Blue Phoenix",
+     "Weight": 101
+    },
+    {
+     "Id": "Mass Myth Prism TC",
+     "Name": "Mass Myth Prism",
+     "Weight": 88
+    },
+    {
+     "Id": "Feint TC",
+     "Name": "Feint",
+     "Weight": 82
+    },
+    {
+     "Id": "Guidance TC",
+     "Name": "Guidance",
+     "Weight": 78
+    },
+    {
+     "Id": "Mass Storm Prism TC",
+     "Name": "Mass Storm Prism",
+     "Weight": 78
+    },
+    {
+     "Id": "Mass Fire Prism TC",
+     "Name": "Mass Fire Prism",
+     "Weight": 78
+    },
+    {
+     "Id": "Mass Triage TC",
+     "Name": "Mass Triage",
+     "Weight": 78
+    },
+    {
+     "Id": "Link TC",
+     "Name": "Link",
+     "Weight": 60
+    },
+    {
+     "Id": "Ether Shield TC",
+     "Name": "Ether Shield",
+     "Weight": 60
+    },
+    {
+     "Id": "Tri Blade TC",
+     "Name": "Elemental Blade",
+     "Weight": 58
+    }
+   ]
+  },
+  {
+   "World": "Novus",
+   "Tier": 15,
+   "Creatures": 161,
+   "Reagents": [
+    {
+     "Id": 106941,
+     "Name": "Bone",
+     "Weight": 146
+    },
+    {
+     "Id": 106945,
+     "Name": "Bronze Gear",
+     "Weight": 146
+    },
+    {
+     "Id": 1350011,
+     "Name": "Tin",
+     "Weight": 146
+    },
+    {
+     "Id": 1350015,
+     "Name": "Brass",
+     "Weight": 145
+    },
+    {
+     "Id": 1350233,
+     "Name": "Cobalt",
+     "Weight": 145
+    },
+    {
+     "Id": 106943,
+     "Name": "Ectoplasm",
+     "Weight": 145
+    },
+    {
+     "Id": 276291,
+     "Name": "Fish Fin",
+     "Weight": 145
+    },
+    {
+     "Id": 1350012,
+     "Name": "Lead",
+     "Weight": 145
+    },
+    {
+     "Id": 106942,
+     "Name": "Leather Straps",
+     "Weight": 145
+    },
+    {
+     "Id": 1350014,
+     "Name": "Nickel",
+     "Weight": 145
+    },
+    {
+     "Id": 1350231,
+     "Name": "Pyrite",
+     "Weight": 145
+    },
+    {
+     "Id": 258579,
+     "Name": "Scales",
+     "Weight": 145
+    },
+    {
+     "Id": 106944,
+     "Name": "Spider Silk",
+     "Weight": 145
+    },
+    {
+     "Id": 1350235,
+     "Name": "Tungsten",
+     "Weight": 145
+    },
+    {
+     "Id": 1392207,
+     "Name": "Turmeric",
+     "Weight": 145
+    },
+    {
+     "Id": 1350013,
+     "Name": "Copper",
+     "Weight": 145
+    },
+    {
+     "Id": 1580060,
+     "Name": "Pixels",
+     "Weight": 114
+    },
+    {
+     "Id": 1350018,
+     "Name": "Titanium",
+     "Weight": 112
+    },
+    {
+     "Id": 106935,
+     "Name": "Deep Mushroom",
+     "Weight": 35
+    }
+   ],
+   "Snacks": [
+    {
+     "Id": 733181,
+     "Name": "Cheese Cake",
+     "Weight": 145
+    },
+    {
+     "Id": 220273,
+     "Name": "Tiki Banana",
+     "Weight": 145
+    },
+    {
+     "Id": 220212,
+     "Name": "Fries",
+     "Weight": 111
+    },
+    {
+     "Id": 220191,
+     "Name": "Carrot",
+     "Weight": 111
+    },
+    {
+     "Id": 220217,
+     "Name": "Golden Grapes",
+     "Weight": 111
+    },
+    {
+     "Id": 220226,
+     "Name": "Buttered Popcorn",
+     "Weight": 111
+    },
+    {
+     "Id": 220327,
+     "Name": "French Fries",
+     "Weight": 111
+    },
+    {
+     "Id": 789456,
+     "Name": "Big Papa Paya",
+     "Weight": 35
+    },
+    {
+     "Id": 220209,
+     "Name": "Diamond Carrot",
+     "Weight": 35
+    },
+    {
+     "Id": 220310,
+     "Name": "King Banana",
+     "Weight": 35
+    },
+    {
+     "Id": 473521,
+     "Name": "Rotten Candy",
+     "Weight": 35
+    }
+   ],
+   "TreasureCards": [
+    {
+     "Id": "Brilliant Light TC",
+     "Name": "Brilliant Light",
+     "Weight": 145
+    },
+    {
+     "Id": "Combustion TC",
+     "Name": "Combustion",
+     "Weight": 145
+    },
+    {
+     "Id": "Darkwind TC",
+     "Name": "Darkwind",
+     "Weight": 145
+    },
+    {
+     "Id": "Death Prism TC",
+     "Name": "Death Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Tri Blade TC",
+     "Name": "Elemental Blade",
+     "Weight": 145
+    },
+    {
+     "Id": "Ice Prism TC",
+     "Name": "Ice Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Gargantuan TC",
+     "Name": "Gargantuan",
+     "Weight": 145
+    },
+    {
+     "Id": "Mythspear TC",
+     "Name": "Mythspear",
+     "Weight": 145
+    },
+    {
+     "Id": "Blood Moon TC",
+     "Name": "Time of Legend",
+     "Weight": 145
+    },
+    {
+     "Id": "Deathspear TC",
+     "Name": "Deathspear",
+     "Weight": 145
+    },
+    {
+     "Id": "Fire Prism TC",
+     "Name": "Fire Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Firespear TC",
+     "Name": "Firespear",
+     "Weight": 145
+    },
+    {
+     "Id": "Lifespear TC",
+     "Name": "Lifespear",
+     "Weight": 145
+    },
+    {
+     "Id": "Myth Prism TC",
+     "Name": "Myth Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Storm Shield TC",
+     "Name": "Storm Shield",
+     "Weight": 145
+    },
+    {
+     "Id": "Storm Prism TC",
+     "Name": "Storm Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Stormspear TC",
+     "Name": "Stormspear",
+     "Weight": 145
+    },
+    {
+     "Id": "Doom and Gloom TC",
+     "Name": "Doom and Gloom",
+     "Weight": 145
+    },
+    {
+     "Id": "Tri Trap TC",
+     "Name": "Elemental Trap",
+     "Weight": 145
+    },
+    {
+     "Id": "Life Prism TC",
+     "Name": "Life Prism",
+     "Weight": 145
+    },
+    {
+     "Id": "Balefrost TC",
+     "Name": "Balefrost",
+     "Weight": 145
+    },
+    {
+     "Id": "Icespear TC",
+     "Name": "Icespear",
+     "Weight": 145
+    },
+    {
+     "Id": "Power Play TC",
+     "Name": "Power Play",
+     "Weight": 145
+    },
+    {
+     "Id": "Pacify TC",
+     "Name": "Pacify",
+     "Weight": 111
+    },
+    {
+     "Id": "Death Trap TC",
+     "Name": "Death Trap",
+     "Weight": 35
+    }
+   ]
+  },
+  {
+   "World": "Wallaru",
+   "Tier": 16,
+   "Creatures": 123,
+   "Reagents": [],
+   "Snacks": [],
+   "TreasureCards": []
+  },
+  {
+   "World": "Ahmarra",
+   "Tier": 17,
+   "Creatures": 0,
+   "Reagents": [],
+   "Snacks": [],
+   "TreasureCards": []
+  }
+ ]
+}

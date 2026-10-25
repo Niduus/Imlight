@@ -20,18 +20,16 @@
  * ========================================================================
  * 
  * PURPOSE:
- * This component handles the interaction logic for wooden chests in the game.
- * The gold value is randomly generated between 10 and 100.
- * 
- * USAGE EXAMPLE:
- * 
+ * One use of a wooden chest in the world opens it: the Open animation plays once, the gold is added to the wizard's
+ * (never set), and the chest gives the basic drops of its world (WoodenChestLoot.cs, Imlight.ini [WoodenChests]).
+ *
  * NOTE:
- * 
- * TODO:
- * 
+ * The chest's template also has an Open state option; InteractObjectStateComponent leaves wooden chests to this
+ * component, or the first use only played the animation and a second one paid out.
+ *
  * Created by: Phill
  * Version: KALI 1.0
- * Last Updated: 10/09/2025
+ * Last Updated: 10/25/2026
  */
 
 using System;
@@ -40,10 +38,10 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
-using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
@@ -54,11 +52,12 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class WoodenChestComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory, IWithTimers {
 
-    private const int ANIMATION_TIME = 1;
-
     private static readonly uint[] s_treasureChestTemplateIDs = [1233729, 77825, 77884, 77826, 77827, 1562742, 77823, 470099];
     private static readonly uint s_openSoundTemplateID = 1374674914;
-    private readonly TimeSpan _chestOpenAnimationTimeSpan = TimeSpan.FromSeconds(ANIMATION_TIME);
+
+    // How long the chest stays after it opens, so the Open animation plays out (Imlight.ini [WoodenChests]).
+    private static TimeSpan OpenAnimationTime
+        => TimeSpan.FromSeconds(Math.Clamp(ConfigurationManager.GetValue("WoodenChests.OpenSeconds", 1.5), 0.1, 30));
 
     public string ServiceName => "Interact";
     public string NpcIcon => "GUI/QuestButtons/Art_Quest_Chest_Wood.dds";
@@ -73,20 +72,22 @@ internal sealed class WoodenChestComponent(ZoneEntity entity) : ZoneEntityCompon
 
     private bool _hasInteracted = false;
 
-    public static bool ShouldAttachToEntity(CoreTemplate template) =>
-        template is GameObjectTemplate goTemplate
-        && s_treasureChestTemplateIDs.Contains(goTemplate.m_templateID);
+    public static bool ShouldAttachToEntity(CoreTemplate template)
+        => template is GameObjectTemplate goTemplate
+        && (s_treasureChestTemplateIDs.Contains(goTemplate.m_templateID) || WoodenChestLoot.IsWoodenChest(goTemplate.m_templateID));
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => [
-            new ServiceOptionBase() {
-                m_displayKey = DisplayKey,
-                m_forceInteract = false,
-                m_iconKey = NpcIcon,
-                m_serviceName = ServiceName,
-                m_serviceIndex = 0
-            }
-         ];
+        => _hasInteracted
+            ? []
+            : [
+                new ServiceOptionBase() {
+                    m_displayKey = DisplayKey,
+                    m_forceInteract = false,
+                    m_iconKey = NpcIcon,
+                    m_serviceName = ServiceName,
+                    m_serviceIndex = 0
+                }
+            ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         if (_hasInteracted) {
@@ -95,15 +96,23 @@ internal sealed class WoodenChestComponent(ZoneEntity entity) : ZoneEntityCompon
 
         _hasInteracted = true;
 
-        var goldAmount = Random.Shared.Next(10, 101);
+        try {
+            var loot = WoodenChestLoot.Roll(Entity.ActiveGameObject.m_templateID, Zone?.ZonePath);
+            FitGoldToPouch(loot, playerCharacter);
 
-        SendLoot(playerActor, goldAmount);
-        UpdateGold(playerActor, playerCharacter, goldAmount);
+            // Adds the gold (and tells the client the new total), puts the drops away and shows the loot popup.
+            LootGranter.GrantAndDisplay(playerActor, playerCharacter, loot);
+        }
+        catch (Exception ex) {
+            Logger.Error("Wooden chest {0} could not give its loot: {1}", Logger.Args(Entity.ActiveGameObject.m_templateID, ex));
+        }
+
         PlaySound(playerActor);
         TriggerChestAnimation();
+        PostQuestEvents(playerActor, playerObject);
 
         var delayedDeleteMsg = new ZONE_102_PROTOCOL.MSG_DELAYEDDELETEOBJECT();
-        Timers.StartSingleTimer("deletechestobject", delayedDeleteMsg, _chestOpenAnimationTimeSpan);
+        Timers.StartSingleTimer("deletechestobject", delayedDeleteMsg, OpenAnimationTime);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DELAYEDDELETEOBJECT))]
@@ -111,63 +120,37 @@ internal sealed class WoodenChestComponent(ZoneEntity entity) : ZoneEntityCompon
         => Entity.DeleteObject();
 
     private void TriggerChestAnimation() {
-        var chestStates = new uint[] { StringHash.Compute(StateName), StringHash.Compute("NotInteracting") };
-        for (int i = 0; i < chestStates.Length; i++) {
-            var enterState = new GAME_5_PROTOCOL.MSG_ENTERSTATE {
-                Data = "",
-                GameObjectID = Entity.ActiveGameObject.m_globalID,
-                IgnoreIfCurrentStateIsOff = 0,
-                State = chestStates[i]
-            };
-
-            var broadcastMsg = new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
-                Message = enterState,
-                Selfless = false,
-            };
-
-            Entity.ZoneRef.Tell(broadcastMsg);
-        }
-    }
-
-    private void SendLoot(IActorRef playerActor, int goldAmount) {
-        var lootInfoList = new LootInfoList {
-            m_loot = [],
-            m_goldInfo = new GoldLootInfo {
-                m_goldAmount = goldAmount,
-                m_lootType = LOOT_TYPE.LOOT_TYPE_GOLD,
-            },
-            m_lootRarityList = new LootRarityList {
-                m_loot = []
-            }
+        var enterState = new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+            Data = "",
+            GameObjectID = Entity.ActiveGameObject.m_globalID,
+            IgnoreIfCurrentStateIsOff = 0,
+            State = StringHash.Compute(StateName)
         };
 
-        var serializer = new ObjectSerializer(
-            false,
-            Behaviors: SerializerFlags.None
-        );
+        Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = enterState,
+            Selfless = false,
+        });
+    }
 
-        if (!serializer.Serialize(lootInfoList, 4, out var data)) {
-            Logger.Error("Failed to serialize LootInfoList.");
-
+    // What the template's own Open option tells the zone (quests and triggers that wait on a chest).
+    private void PostQuestEvents(IActorRef playerActor, CoreObject playerObject) {
+        if (Entity.Template is not GameObjectTemplate template) {
             return;
         }
 
-        var loot = new WIZARD_12_PROTOCOL.MSG_LOOT {
-            GlobalID = Entity.ActiveGameObject.m_globalID,
-            LootList = data
-        };
-
-        playerActor.Tell(loot);
+        foreach (var eventName in InteractObjectStateComponent.GetQuestEvents(template)) {
+            ZoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+                EventName = eventName,
+                PlayerActor = playerActor,
+                PlayerGameObject = playerObject,
+            });
+        }
     }
 
-    private static void UpdateGold(IActorRef playerActor, Wizard playerCharacter, int goldAmount) {
-        var updateGold = new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
-            Gold = goldAmount,
-            MaxGold = playerCharacter.GameStats.m_baseGoldPouch
-        };
-
-        playerActor.Tell(updateGold);
-        playerCharacter.AddGold(goldAmount);
+    private static void FitGoldToPouch(Imlight.CoreLib.WizardData.Models.World.DropTableResult loot, Wizard wizard) {
+        var room = Math.Max(0, wizard.GameStats.m_baseGoldPouch - wizard.GameStats.m_currentGold);
+        loot.GoldAmount = Math.Min(loot.GoldAmount, room);
     }
 
     private static void PlaySound(IActorRef playerActor) {
