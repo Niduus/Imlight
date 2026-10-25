@@ -143,12 +143,17 @@ internal sealed record CraftingStation(
             return null;
         }
 
+        var templateId = (uint) ((GameObjectTemplate) template).m_templateID;
         var types = new List<string>();
-        foreach (var part in (station.m_stringA ?? "").Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)) {
-            types.Add(part.Trim());
+        if (StationTypesInFile(templateId) is { } listed) {
+            types.AddRange(listed);
+        }
+        else {
+            foreach (var part in (station.m_stringA ?? "").Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)) {
+                types.Add(part.Trim());
+            }
         }
 
-        var templateId = (uint) ((GameObjectTemplate) template).m_templateID;
         if (types.Count == 0 && s_knownTypes.TryGetValue(templateId, out var known)) {
             types.Add(known);
         }
@@ -164,6 +169,79 @@ internal sealed record CraftingStation(
         return new CraftingStation(objectId, name ?? "", types,
             [.. (station.m_recipeList ?? []).Select(recipe => (string) recipe).Where(recipe => !string.IsNullOrWhiteSpace(recipe))],
             station.m_noCooldown, station.m_noCategories, station.m_titleOverride ?? "", station.m_createButtonOverride ?? "");
+    }
+
+    // The game's AlchemyStationBehavior keeps its station types as a list of strings (hash 0x9E4F2A12), which the
+    // server type reads as one string (m_stringA): the Deckathalon Crafting Stations list "FireTT, CraftCardTT" and
+    // came out as "F", which crafted nothing of their own (Niduus, 2026-10-25: "acting like a crafting station in
+    // general instead of a specific crafting station"). So the list is read from the template's own file.
+    private const uint STATION_TYPES_HASH = 0x9E4F2A12;
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<uint, string[]> s_fileTypes = new();
+
+    /// <summary>The station types the template's file lists, or null when it lists none or cannot be read.</summary>
+    internal static string[] StationTypesInFile(uint templateId) {
+        var types = s_fileTypes.GetOrAdd(templateId, ReadStationTypes);
+
+        return types.Length > 0 ? types : null;
+    }
+
+    private static string[] ReadStationTypes(uint templateId) {
+        try {
+            var file = CoreObjectFactory.TemplateManifest?.m_serializedTemplates?
+                .FirstOrDefault(location => location?.m_id == templateId)?.m_filename;
+            if (string.IsNullOrEmpty(file)) {
+                return [];
+            }
+
+            using var stream = RootArchiveLoader.GetFileStream(file);
+            var data = stream.ToArray();
+            var hash = BitConverter.GetBytes(STATION_TYPES_HASH);
+            var at = data.AsSpan().IndexOf(hash);
+            if (at < 0) {
+                return [];
+            }
+
+            // After the hash: the list's length, then each string's length and its bytes (lengths are written as
+            // a byte holding twice the value, or four bytes when the low bit is set).
+            var position = at + hash.Length;
+            var count = ReadCompactLength(data, ref position);
+            var types = new List<string>();
+            for (var i = 0; i < count && position < data.Length; i++) {
+                var length = ReadCompactLength(data, ref position);
+                if (length <= 0 || position + length > data.Length) {
+                    break;
+                }
+
+                types.Add(System.Text.Encoding.ASCII.GetString(data, position, length));
+                position += length;
+            }
+
+            return [.. types.Where(type => type.Length > 0)];
+        }
+        catch (Exception e) {
+            Logger.Warning("Crafting: could not read the station types of template {0}: {1}", Logger.Args(templateId, e.Message));
+
+            return [];
+        }
+    }
+
+    private static int ReadCompactLength(byte[] data, ref int position) {
+        if (position >= data.Length) {
+            return 0;
+        }
+
+        if ((data[position] & 1) == 0) {
+            return data[position++] >> 1;
+        }
+
+        if (position + 4 > data.Length) {
+            return 0;
+        }
+
+        var value = BitConverter.ToUInt32(data, position);
+        position += 4;
+
+        return (int) (value >> 1);
     }
 
     /// <summary>

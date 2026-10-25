@@ -128,7 +128,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
                 return TestTrainerKind.Boss;
             case "WC-HUB-NPC15_A":
             case "WC-HUB-NPC15_B":
-                // The Deckathalon Tome, the trainer hall's trainer.
+                // The Deckathalon Tome, the trainer hall's trainer (only as a house trainer: elsewhere it reads its
+                // Deckathalon pages, InteractDeckathalonTomeComponent).
                 return TestTrainerKind.Hall;
             case "WC-Pelican-NPC01":
             case "WC-PARTY-NPC15":
@@ -435,6 +436,12 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
+        // The Deckathalon Tome teaches only as a house trainer; anywhere else it reads its Deckathalon pages, as in the
+        // game (InteractDeckathalonTomeComponent).
+        if (InteractDeckathalonTomeComponent.ReadsPages(Entity)) {
+            return [];
+        }
+
         if (wizard is null) {
             return TeachesAsListed ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }

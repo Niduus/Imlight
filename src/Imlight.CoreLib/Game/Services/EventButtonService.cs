@@ -80,11 +80,31 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSETOKEN))]
     private void ReceiveUseToken(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSETOKEN message)
-        => Climb(message.ProjectID);
+        => Enter(message.ProjectID, message.Level);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS))]
     private void ReceiveUseCrowns(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS message)
-        => Climb(message.ProjectID);
+        => Enter(message.ProjectID, message.Level);
+
+    // The tower portal window's Use button (InteractDeckathalonPortalComponent opened it): starts the climb from the
+    // checkpoint picked (its Level: 0 is floor 1, 1 floor 4, ...). Without that window, it is the Go button.
+    private void Enter(uint projectId, uint level) {
+        try {
+            var wizard = GetActiveWizard();
+            if (Deckathalon.TakePortalOffer(wizard.CharId) is not { } school) {
+                Climb(projectId);
+
+                return;
+            }
+
+            Deckathalon.TryStart(SessionActor.ActorRef, wizard, school, false, out var reply, (int) Math.Min(level, Deckathalon.MAX_CHECKPOINT));
+            Logger.Information("Deckathalon | {0} enters the {1} tower from checkpoint {2}: {3}", Logger.Args(wizard.CharId, school, level, reply));
+            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = reply, Modal = 0 });
+        }
+        catch (Exception e) {
+            Logger.Error("Event button: the tower portal's Use failed: {0}", Logger.Args(e));
+        }
+    }
 
     // The window's Go button: as in the game, it takes the wizard to the Library (the event's m_eventTeleportZone), where
     // the event's portal to the Duel Arena stands while it is on; the arena's tower portal starts the climb.

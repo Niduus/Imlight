@@ -50,6 +50,9 @@ internal static class HouseTrainers {
         => zoneTag?.StartsWith(TAG_PREFIX, System.StringComparison.Ordinal) != true ? null
             : HouseTrainerSets.SetFor(zoneTag)?.Name ?? (s_trainerName.Length > 0 ? s_trainerName : null);
 
+    /// <summary>Whether an object with this zone tag is a house trainer (a trainer tome brought by its furniture).</summary>
+    internal static bool IsHouseTrainer(string zoneTag) => zoneTag?.StartsWith(TAG_PREFIX, System.StringComparison.Ordinal) == true;
+
     /// <summary>The furniture that brings a trainer.</summary>
     internal static uint ItemTemplateId => s_itemTemplateId;
 

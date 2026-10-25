@@ -108,6 +108,18 @@ internal sealed class InteractDeckathalonPortalComponent(ZoneEntity entity)
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         try {
             if (TowerSchool is { } school) {
+                // With a saved checkpoint, the game's portal window asks where to start (Niduus, 2026-10-25: "While I
+                // have a save point, IIRS I should get a UI asking where I want to start from previous check points").
+                if (Deckathalon.CheckpointOf(playerCharacter, school) is > 0 and var checkpoint && !playerCharacter.IsInDuel) {
+                    Deckathalon.OfferPortal(playerCharacter.CharId, school);
+                    playerActor.Tell(EventButton.InfoMessage(playerCharacter, 0));
+                    playerActor.Tell(EventButton.PortalMessage(playerCharacter, checkpoint));
+                    Logger.Information("Deckathalon | {0} used the {1} tower portal: picks a start (checkpoint {2}).",
+                        Logger.Args(playerCharacter.CharId, school, checkpoint));
+
+                    return;
+                }
+
                 Deckathalon.TryStart(playerActor, playerCharacter, school, false, out var reply);
                 Logger.Information("Deckathalon | {0} used the {1} tower portal: {2}", Logger.Args(playerCharacter.CharId, school, reply));
                 playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = reply, Modal = 0 });

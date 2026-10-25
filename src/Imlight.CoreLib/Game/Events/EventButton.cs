@@ -126,6 +126,25 @@ internal static class EventButton {
         };
     }
 
+    /// <summary>
+    /// The tower portal's window (the client's ClassProjectPortalWindow) for a wizard with a saved checkpoint: its Use
+    /// button sends MSG_CLASSPROJECTUSETOKEN with the checkpoint picked, and its checkpoint button opens the game's floor
+    /// picker (ClasProjectsFloorSelectWindow), one button for each checkpoint up to Level. The client shows the Use
+    /// button only with a token, and the picker only when TeleporterCheckPoint is 0; entry is free here, so one token
+    /// is always shown, and ClaimedDailyCredits hides the game's credit button.
+    /// </summary>
+    internal static WIZARD2_53_PROTOCOL.MSG_OPENCLASSPROJECTPORTAL PortalMessage(Wizard wizard, int checkpoint)
+        => new() {
+            ProjectID = ProjectId(GameEvents.Current),
+            Tokens = 1,
+            Level = (uint) Math.Max(0, checkpoint),
+            ClaimedDailyCredits = 1,
+            TeleporterCheckPoint = 0,
+            GlobalID = wizard.GameObjectID,
+            WebFailure = 0,
+            Credits = 0,
+        };
+
     /// <summary>The event window's leaderboard: the best wizards of the event that is on.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD LeaderboardMessage(uint projectId) {
         var running = GameEvents.Current;

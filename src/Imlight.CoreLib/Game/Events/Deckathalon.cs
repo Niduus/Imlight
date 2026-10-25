@@ -93,7 +93,10 @@ internal static class Deckathalon {
     private static readonly bool s_noGearStats = ConfigurationManager.GetValue("Deckathalon.NoGearStats", true);
     private static readonly bool s_alwaysOpen = ConfigurationManager.GetValue("Deckathalon.AlwaysOpen", false);
     private static readonly bool s_starterPack = ConfigurationManager.GetValue("Deckathalon.StarterPack", true);
-    private static readonly double s_nextFloorSeconds = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.NextFloorSeconds", 30.0), 1.0, 60.0);
+    private static readonly double s_nextFloorSeconds = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.NextFloorSeconds", 0.0), 0.0, 60.0);
+    // 0 (the default): only the floor's portal takes a wizard on, as in the game (Niduus, 2026-10-25: "wrongfully TP'd
+    // to the 4th floor whilst trying to interact with the NPC").
+    private static bool TimedMove => s_nextFloorSeconds > 0;
     private static readonly int s_floors = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
 
     // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
@@ -103,6 +106,11 @@ internal static class Deckathalon {
     // The game's tower zones (WizardCity/TreasureTower/WC_TT01_<School>_L<Floor>), and the triggers of their portals.
     private const string FLOOR_ZONE_PREFIX = "WizardCity/TreasureTower/WC_TT01_";
     private const string NEXT_FLOOR_TRIGGER = "Trigger Teleport";
+
+    // Every 3rd floor is a checkpoint, as the game's TreasureTower_01_<School> template lists them (its m_locationList:
+    // checkpoint 1 starts on floor 4, 2 on floor 7, ... 9 on floor 28).
+    internal const int CHECKPOINT_FLOORS = 3;
+    internal const int MAX_CHECKPOINT = 9;
 
     /// <summary>A school's tower: its creatures by floor (1 to 30), its professor, its Tower Pack and its trophies.</summary>
     internal sealed record Tower(string School, MagicSchool Magic, uint[] Floors, string Professor, uint TowerPack,
@@ -180,7 +188,12 @@ internal static class Deckathalon {
         public string Day { get; set; } = "";
         public int CardsToday { get; set; }
         public int FloorsToday { get; set; }
+        // The highest checkpoint reached (0 = none, 1 = floor 3 cleared, ...): a later climb can start after it.
+        public int Checkpoint { get; set; }
     }
+
+    // The tower portal's window was opened for these wizards (with the school), so its Use button starts their climb.
+    private static readonly ConcurrentDictionary<ulong, string> s_portalOffers = new();
 
     private static readonly object s_scoreLock = new();
     private static ScoreFile s_scores;
@@ -326,7 +339,7 @@ internal static class Deckathalon {
     /// Starts a climb from floor 1: the school's tower when its Deckathalon is on, or (for the server's testers, or with
     /// [Deckathalon] AlwaysOpen) any school's. Returns false with the reason when it cannot.
     /// </summary>
-    internal static bool TryStart(IActorRef session, Wizard wizard, string school, bool tester, out string reply) {
+    internal static bool TryStart(IActorRef session, Wizard wizard, string school, bool tester, out string reply, int checkpoint = 0) {
         reply = "";
         if (!Enabled) {
             reply = "The Deckathalon is turned off on this server.";
@@ -366,11 +379,15 @@ internal static class Deckathalon {
             Tower = tower,
             EventKey = isEvent ? current.Key : $"Practice-{tower.School}",
         };
-        s_runs[wizard.CharId] = run;
         var score = ScoreOf(run.EventKey, wizard.CharId, name);
         lock (s_scoreLock) {
             score.Runs++;
+            // A saved checkpoint the wizard picked: the climb starts on the floor after it.
+            run.Floor = Math.Clamp(Math.Min(checkpoint, score.Checkpoint) * CHECKPOINT_FLOORS + 1, 1, s_floors);
         }
+
+        s_runs[wizard.CharId] = run;
+        s_portalOffers.TryRemove(wizard.CharId, out _);
 
         SaveScores();
         Logger.Information("Deckathalon | {0} starts the {1} tower ({2}).", Logger.Args(name, tower.School, run.EventKey));
@@ -396,12 +413,35 @@ internal static class Deckathalon {
             TryOpenPack(session, wizard, tower.TowerPack);
         }
 
+        if (run.Floor > 1) {
+            lines.Add($"You start from your checkpoint, on floor {run.Floor}.");
+        }
+
         lines.Add("Step into the battle circle to fight. Win to go up a floor. Type .deckathalon leave to leave.");
         reply = string.Join("<br>", lines);
         GoToFloor(session, run, 0);
 
         return true;
     }
+
+    /// <summary>
+    /// The highest checkpoint a wizard reached in the school's tower during the event that is on (0 when none, or no
+    /// such event is on: practice climbs always start from floor 1 at the portal).
+    /// </summary>
+    internal static int CheckpointOf(Wizard wizard, string school) {
+        if (!Enabled || wizard is null || CurrentEvent is not { } current || TowerOf(school) is not { } tower
+            || current.School != tower.School) {
+            return 0;
+        }
+
+        return Math.Clamp(ScoreOf(current.Key, wizard.CharId, null).Checkpoint, 0, Math.Min(MAX_CHECKPOINT, (s_floors - 1) / CHECKPOINT_FLOORS));
+    }
+
+    /// <summary>Remembers that the tower portal's window was opened for a wizard, so its Use button starts the climb.</summary>
+    internal static void OfferPortal(ulong charId, string school) => s_portalOffers[charId] = school;
+
+    /// <summary>The school of the tower portal window opened for a wizard, once; null when none was.</summary>
+    internal static string TakePortalOffer(ulong charId) => s_portalOffers.TryRemove(charId, out var school) ? school : null;
 
     /// <summary>Ends a climb and sends the wizard out of the tower.</summary>
     internal static string Leave(IActorRef session, Wizard wizard) {
@@ -496,6 +536,11 @@ internal static class Deckathalon {
             var lines = new List<string>();
             lock (s_scoreLock) {
                 score.BestFloor = Math.Max(score.BestFloor, floor);
+                if (floor % CHECKPOINT_FLOORS == 0 && floor < s_floors && floor / CHECKPOINT_FLOORS > score.Checkpoint) {
+                    score.Checkpoint = Math.Min(floor / CHECKPOINT_FLOORS, MAX_CHECKPOINT);
+                    lines.Add($"Checkpoint saved: next time you enter the tower, you can start from floor {floor + 1}.");
+                }
+
                 // The event's point for the floor (CPT_DefeatMob), counted like the treasure cards' (CardUsed).
                 Today(score);
                 score.FloorsToday++;
@@ -517,19 +562,26 @@ internal static class Deckathalon {
                 lines.Insert(0, floor >= TOP_FLOOR
                     ? $"You beat {run.Tower.Professor} and conquered the {run.Tower.School} Deckathalon with {run.Points} points!"
                     : $"You reached the top of the {run.Tower.School} Deckathalon (floor {floor}) with {run.Points} points!");
-                lines.Add($"Walk into the portal to go back to the arena, or you leave by yourself in {s_nextFloorSeconds:0} seconds.");
+                lines.Add(TimedMove
+                    ? $"Walk into the portal to go back to the arena, or you leave by yourself in {s_nextFloorSeconds:0} seconds."
+                    : "Walk into the portal to go back to the arena.");
                 Tell(session, lines);
-                Later(session, ExitTransfer(), () => IsFloorZone(wizard.Zone));
+                if (TimedMove) {
+                    Later(session, ExitTransfer(), () => IsFloorZone(wizard.Zone));
+                }
 
                 return;
             }
 
             run.Floor = floor + 1;
             var next = CreatureOf(run.Tower, run.Floor);
-            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor} (or you go up by yourself in {s_nextFloorSeconds:0} seconds): "
+            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor}"
+                + (TimedMove ? $" (or you go up by yourself in {s_nextFloorSeconds:0} seconds)" : "") + ": "
                 + (run.Floor == TOP_FLOOR ? $"{run.Tower.Professor} waits there." : $"{ShownName(next)}."));
             Tell(session, lines);
-            GoToFloor(session, run, s_nextFloorSeconds);
+            if (TimedMove) {
+                GoToFloor(session, run, s_nextFloorSeconds);
+            }
         }
         catch (Exception ex) {
             Logger.Error("Deckathalon | the win on floor {0} of {1} failed: {2}", Logger.Args(run.Floor, run.Name, ex));
