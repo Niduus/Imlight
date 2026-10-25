@@ -98,6 +98,12 @@ internal static class Deckathalon {
     // ONLY THEN").
     private static readonly int s_floors = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
 
+    // Credits (Niduus, 2026-10-25: "Deckathalon starts with a claim of 3 credits every 24 hours (Config this) and you can
+    // stash them during THAT event. Each entry is a credit"). Credits belong to one event and are kept until it ends.
+    private static readonly int s_claimCredits = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimCredits", 3));
+    private static readonly double s_claimHours = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.ClaimHours", 24.0));
+    private static readonly int s_entryCredits = Math.Max(0, ConfigurationManager.GetValue("Deckathalon.EntryCredits", 1));
+
     // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
     internal const string ARENA_ZONE = "WizardCity/WC_Duel_Arena";
     internal const string ARENA_LOCATION = "From TT01";
@@ -189,6 +195,8 @@ internal static class Deckathalon {
         public int Checkpoint { get; set; }
         // The event credits the tower portal's window shows (given with `.credits`).
         public int Credits { get; set; }
+        // When the wizard last claimed credits (UTC, round-trip format); empty when never.
+        public string LastClaim { get; set; } = "";
     }
 
     // The tower portal's window was opened for these wizards (with the school), so its Use button starts their climb.
@@ -384,6 +392,22 @@ internal static class Deckathalon {
         }
 
         var name = wizard.PlayerNameBehavior?.GetWizardName() ?? wizard.CharId.ToString();
+
+        // A climb of the event's tower costs credits; practice climbs of another tower are free.
+        if (isEvent && s_entryCredits > 0) {
+            var paying = ScoreOf(current.Key, wizard.CharId, name);
+            lock (s_scoreLock) {
+                if (paying.Credits < s_entryCredits) {
+                    reply = $"You need {s_entryCredits} Deckathalon credit{(s_entryCredits == 1 ? "" : "s")} to climb and have {paying.Credits}. "
+                        + (s_claimCredits > 0 ? $"Claim {s_claimCredits} free credits at the arena's tower portal every {s_claimHours:0.#} hours." : "");
+
+                    return false;
+                }
+
+                paying.Credits -= s_entryCredits;
+            }
+        }
+
         var run = new Run {
             CharId = wizard.CharId,
             Name = name,
@@ -473,6 +497,50 @@ internal static class Deckathalon {
         return now;
     }
 
+    /// <summary>How many credits one climb of the event's tower costs ([Deckathalon] EntryCredits; 0 = free).</summary>
+    internal static int EntryCredits => s_entryCredits;
+
+    /// <summary>Whether a wizard can claim credits now: never claimed in this event, or ClaimHours have passed since.</summary>
+    internal static bool CanClaim(Wizard wizard) {
+        if (!Enabled || s_claimCredits <= 0 || wizard is null || CurrentEvent is not { } current) {
+            return false;
+        }
+
+        var score = ScoreOf(current.Key, wizard.CharId, null);
+        lock (s_scoreLock) {
+            return ClaimDue(score);
+        }
+    }
+
+    private static bool ClaimDue(Score score)
+        => !DateTime.TryParse(score.LastClaim, null, System.Globalization.DateTimeStyles.RoundtripKind, out var last)
+            || DateTime.UtcNow >= last.ToUniversalTime().AddHours(s_claimHours);
+
+    /// <summary>Claims the wizard's credits in the event that is on when they are due.</summary>
+    /// <returns>A message for the wizard, or null when nothing was due.</returns>
+    internal static string Claim(Wizard wizard) {
+        if (!Enabled || s_claimCredits <= 0 || wizard is null || CurrentEvent is not { } current) {
+            return null;
+        }
+
+        int now;
+        var score = ScoreOf(current.Key, wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName());
+        lock (s_scoreLock) {
+            if (!ClaimDue(score)) {
+                return null;
+            }
+
+            score.Credits = (int) Math.Min((long) score.Credits + s_claimCredits, int.MaxValue);
+            score.LastClaim = DateTime.UtcNow.ToString("o");
+            now = score.Credits;
+        }
+
+        SaveScores();
+        Logger.Information("Deckathalon | {0} claimed {1} credits ({2} now).", Logger.Args(wizard.CharId, s_claimCredits, now));
+
+        return $"You claimed {s_claimCredits} Deckathalon credits. You have {now} now; each climb uses {s_entryCredits}.";
+    }
+
     /// <summary>Whether the school's tower is the one of the Deckathalon that is on.</summary>
     internal static bool IsEventTower(string school)
         => Enabled && CurrentEvent is { } current && TowerOf(school) is { } tower && current.School == tower.School;
@@ -481,6 +549,9 @@ internal static class Deckathalon {
     internal static void OfferPortal(ulong charId, string school) => s_portalOffers[charId] = school;
 
     /// <summary>The school of the tower portal window opened for a wizard, once; null when none was.</summary>
+    /// <summary>The tower a wizard's open portal window is for, without taking the offer.</summary>
+    internal static string PortalOfferOf(ulong charId) => s_portalOffers.TryGetValue(charId, out var school) ? school : null;
+
     internal static string TakePortalOffer(ulong charId) => s_portalOffers.TryRemove(charId, out var school) ? school : null;
 
     /// <summary>Ends a climb and sends the wizard out of the tower.</summary>

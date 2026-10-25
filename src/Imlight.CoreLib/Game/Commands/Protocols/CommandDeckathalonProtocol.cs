@@ -124,6 +124,11 @@ internal class CommandDeckathalonProtocol : CommandProtocol {
             lines.Add($"You are on floor {run.Floor} of the {run.Tower.School} tower with {run.Points} points (.deckathalon leave to stop).");
         }
 
+        if (current is not null && Deckathalon.EntryCredits > 0) {
+            lines.Add($"You have {Deckathalon.CreditsOf(me)} credits; each climb uses {Deckathalon.EntryCredits}."
+                + (Deckathalon.CanClaim(me) ? " Free credits are ready to claim at the arena's tower portal." : ""));
+        }
+
         if (current is not null && Deckathalon.PlaceOf(current.Key, me.CharId) is ({ } score, var place)) {
             lines.Add($"Your best: floor {score.BestFloor}, {score.Points} points, place {place}.");
         }
