@@ -413,6 +413,16 @@ internal static class ClassProjects {
         }
     }
 
+    /// <summary>The best wizards of an event with their character ids, in the order of <see cref="Top"/>.</summary>
+    internal static List<(ulong CharId, Progress Progress)> TopWithIds(Running running, int count) {
+        lock (s_lock) {
+            return File().Events.TryGetValue(running.Key, out var byWizard)
+                ? [.. byWizard.Where(e => e.Value.Points > 0).OrderByDescending(e => e.Value.Points).Take(count)
+                    .Select(e => (ulong.TryParse(e.Key, out var id) ? id : 0UL, e.Value))]
+                : [];
+        }
+    }
+
     #endregion
 
     #region Rewards

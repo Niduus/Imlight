@@ -26,6 +26,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Events;
@@ -217,19 +218,26 @@ internal static class EventButton {
             TeleporterCheckPoint = 0,
             GlobalID = wizard.GameObjectID,
             WebFailure = 0,
-            Credits = 0,
+            Credits = Deckathalon.CreditsOf(wizard),
         };
 
     /// <summary>The event window's leaderboard: the best wizards of the event that is on.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD LeaderboardMessage(uint projectId) {
         var running = Deckathalons().Select(d => d.Event).FirstOrDefault(d => ProjectId(d) == projectId);
-        var points = running is not null
-            ? Deckathalon.Top(running.Key, 100).Select(s => Math.Max(0, s.Points / 10)).ToList()
-            : ClassProjects.ActiveOf(projectId) is { } other ? ClassProjects.Top(other, 100).Select(p => p.Points).ToList() : [];
+        var entries = running is not null
+            ? Deckathalon.TopWithIds(running.Key, 100).Select(e => (e.CharId, Points: Math.Max(0, e.Score.Points / 10))).ToList()
+            : ClassProjects.ActiveOf(projectId) is { } other ? ClassProjects.TopWithIds(other, 100).Select(e => (e.CharId, e.Progress.Points)).ToList() : [];
+
+        // Each row needs the wizard's id and packed name keys, or the game shows the points with no name
+        // (Niduus, 2026-10-25: "Where are the Deckathalon leaderboards at?").
         var board = Serialize(new ClassProjectLeaderboard {
-            m_leaderboardSize = points.Count,
+            m_leaderboardSize = entries.Count,
             m_topEntry = 0,
-            m_leaderboardList = [.. points.Select(p => new ClassProjectLeaderboardPlayer { m_points = (uint) p })],
+            m_leaderboardList = [.. entries.Select(e => new ClassProjectLeaderboardPlayer {
+                m_playerGID = new GID(e.CharId),
+                m_packedName = WizardCollection.GetCharacterUnloaded(e.CharId)?.PlayerNameBehavior?.NameIndices ?? 0,
+                m_points = (uint) e.Points,
+            })],
         });
 
         return new WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD { ProjectID = projectId, TopBuffer = board, Buffer = board };

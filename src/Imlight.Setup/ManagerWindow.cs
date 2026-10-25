@@ -180,6 +180,13 @@ internal sealed partial class ManagerWindow : Window {
     private const string PET_CASTING = "PetCasting";
     private readonly TextBox _petCastSearch = new() { Watermark = "Search May Cast cards, such as Aura, Ward, trap, Fire or Tower Shield" };
     private readonly StackPanel _petCastRows = new();
+    // The four May Cast chances show as one table: the normal (PvE) chance and the Deckathalon chance side by side
+    // (Niduus, 2026-10-25: "shows in the same sequence the PvE | Deckathalon %'s next to one another").
+    private const string PET_CHANCES = "Chances";
+    private const string PET_DECKATHALON = "Deckathalon";
+    private static readonly (string Key, string Label)[] PET_CHANCE_ROWS =
+        [("OnCast", "Casts a spell"), ("OnDamage", "Takes damage"), ("OnHeal", "Is healed"), ("OnPass", "Passes")];
+    private readonly Dictionary<string, Setting> _petChanceSettings = new(StringComparer.OrdinalIgnoreCase);
 
     // Accounts.
     private readonly TextBox _newUsername = new() { Watermark = "Username", Width = 180 };
@@ -1818,11 +1825,11 @@ internal sealed partial class ManagerWindow : Window {
     private void LoadSettings() {
         // Each May Cast card's key gets what the card does, so it can be searched by kind (Niduus: typing Aura shows every aura).
         _settings = _manager.ReadSettings()
-            .Select(group => (group.Section, group.Section != PET_CASTING ? group.Settings : group.Settings
+            .Select(group => (group.Section, group.Section != PET_CASTING ? group.Settings : PetChanceTable(group.Settings
                 .Select(s => PetCastCards.Details.TryGetValue(s.Key, out var card)
                     ? s with { Help = s.Help.Length > 0 ? $"{card}\n{s.Help}" : card }
                     : s)
-                .ToList()))
+                .ToList())))
             .ToList();
         _pending.Clear();
         UpdateSaveBar();
@@ -1853,7 +1860,7 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             foreach (var setting in settings) {
-                var row = SettingRow(setting);
+                var row = section == PET_CASTING && setting.Key == PET_CHANCES ? PetChancesRow() : SettingRow(setting);
                 list.Add((setting, row));
                 (section == PET_CASTING ? _petCastRows : rows).Children.Add(row);
             }
@@ -1915,6 +1922,86 @@ internal sealed partial class ManagerWindow : Window {
 
         _petCastNone.Text = $"No May Cast setting matches \"{query}\".";
         _petCastNone.IsVisible = shown == 0;
+    }
+
+    // Takes OnCast, OnDamage, OnHeal, OnPass and Deckathalon out of the [PetCasting] rows and puts one table row where
+    // OnCast was. The table still saves each of them as its own key.
+    private List<Setting> PetChanceTable(List<Setting> settings) {
+        _petChanceSettings.Clear();
+        var keys = PET_CHANCE_ROWS.Select(row => row.Key).Append(PET_DECKATHALON).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var setting in settings.Where(s => keys.Contains(s.Key))) {
+            _petChanceSettings[setting.Key] = setting;
+        }
+
+        var at = settings.FindIndex(s => keys.Contains(s.Key));
+        if (at < 0) {
+            return settings;
+        }
+
+        var list = settings.Where(s => !keys.Contains(s.Key)).ToList();
+        list.Insert(Math.Min(at, list.Count), new Setting(PET_CASTING, PET_CHANCES, "",
+            "May Cast chances PvE Deckathalon OnCast OnDamage OnHeal OnPass cast damage heal pass percent"));
+
+        return list;
+    }
+
+    // The May Cast chances as a table: what sets one off, the normal (PvE) chance, and the Deckathalon chance next to it.
+    // The Deckathalon boxes are saved together as Deckathalon = cast/damage/heal/pass; an empty box uses the PvE chance.
+    private Control PetChancesRow() {
+        string Current(Setting setting)
+            => _pending.TryGetValue((setting.Section, setting.Key), out var changed) ? changed.Value : setting.Value;
+
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*,12,*"), Margin = new Thickness(0, 8) };
+        void Add(Control control, int row, int column) {
+            Grid.SetRow(control, row);
+            Grid.SetColumn(control, column);
+            grid.Children.Add(control);
+        }
+
+        TextBlock Head(string text) => new() { Text = text, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center };
+
+        grid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+        Add(Head("May Cast chance (%) when you or a teammate..."), 0, 0);
+        Add(Head("PvE"), 0, 1);
+        _petChanceSettings.TryGetValue(PET_DECKATHALON, out var deckathalon);
+        if (deckathalon is not null) {
+            Add(Head("Deckathalon"), 0, 3);
+        }
+
+        // One number in Deckathalon sets all four boxes, like the server reads it.
+        var parts = deckathalon is null || Current(deckathalon).Trim().Length == 0 ? [] : Current(deckathalon).Split('/', StringSplitOptions.TrimEntries);
+        var towerBoxes = new List<TextBox>();
+        for (var i = 0; i < PET_CHANCE_ROWS.Length; i++) {
+            var (key, label) = PET_CHANCE_ROWS[i];
+            grid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+            Add(new TextBlock { Text = label, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 4) }, i + 1, 0);
+            if (_petChanceSettings.TryGetValue(key, out var normal)) {
+                var box = new TextBox { Text = Current(normal), Margin = new Thickness(0, 4) };
+                box.TextChanged += (_, _) => Change(normal, box.Text ?? "");
+                Add(box, i + 1, 1);
+            }
+
+            if (deckathalon is not null) {
+                var tower = new TextBox { Text = parts.Length == 0 ? "" : parts[Math.Min(i, parts.Length - 1)], Watermark = "Same as PvE", Margin = new Thickness(0, 4) };
+                tower.TextChanged += (_, _) => {
+                    var values = towerBoxes.Select(b => b.Text?.Trim() ?? "").ToList();
+                    Change(deckathalon, values.All(v => v.Length == 0) ? "" : string.Join("/", values));
+                };
+                towerBoxes.Add(tower);
+                Add(tower, i + 1, 3);
+            }
+        }
+
+        var row = new StackPanel {
+            Children = {
+                grid,
+                Sub("Chance in percent, 0 to 100. PvE is used in every battle. Deckathalon is used only on Deckathalon floors, " +
+                    "for every May Cast there (also the cards with their own chances below). 0 turns May Casts off there; " +
+                    "an empty Deckathalon box uses the PvE chance."),
+            },
+        };
+
+        return new Border { BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(0, 0, 0, 8), Child = row };
     }
 
     private Control SettingRow(Setting setting) {

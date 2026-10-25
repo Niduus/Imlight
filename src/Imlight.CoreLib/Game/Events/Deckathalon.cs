@@ -187,6 +187,8 @@ internal static class Deckathalon {
         public int FloorsToday { get; set; }
         // The highest checkpoint reached (0 = none, 1 = floor 3 cleared, ...): a later climb can start after it.
         public int Checkpoint { get; set; }
+        // The event credits the tower portal's window shows (given with `.credits`).
+        public int Credits { get; set; }
     }
 
     // The tower portal's window was opened for these wizards (with the school), so its Use button starts their climb.
@@ -265,6 +267,18 @@ internal static class Deckathalon {
         lock (s_scoreLock) {
             return scores.Events.TryGetValue(eventKey, out var byWizard)
                 ? [.. byWizard.Values.Where(s => s.Points > 0 || s.BestFloor > 0).OrderByDescending(s => s.Points).ThenByDescending(s => s.BestFloor).Take(count)]
+                : [];
+        }
+    }
+
+    /// <summary>The best wizards of an event with their character ids, in the order of <see cref="Top"/>.</summary>
+    internal static List<(ulong CharId, Score Score)> TopWithIds(string eventKey, int count) {
+        var scores = Scores;
+        lock (s_scoreLock) {
+            return scores.Events.TryGetValue(eventKey, out var byWizard)
+                ? [.. byWizard.Where(e => e.Value.Points > 0 || e.Value.BestFloor > 0)
+                    .OrderByDescending(e => e.Value.Points).ThenByDescending(e => e.Value.BestFloor).Take(count)
+                    .Select(e => (ulong.TryParse(e.Key, out var id) ? id : 0UL, e.Value))]
                 : [];
         }
     }
@@ -432,6 +446,31 @@ internal static class Deckathalon {
         }
 
         return Math.Clamp(ScoreOf(current.Key, wizard.CharId, null).Checkpoint, 0, Math.Min(MAX_CHECKPOINT, (s_floors - 1) / CHECKPOINT_FLOORS));
+    }
+
+    /// <summary>A wizard's credits in the Deckathalon that is on (0 when none is on).</summary>
+    internal static int CreditsOf(Wizard wizard)
+        => Enabled && wizard is not null && CurrentEvent is { } current ? ScoreOf(current.Key, wizard.CharId, null).Credits : 0;
+
+    /// <summary>
+    /// Gives a wizard credits in the Deckathalon that is on (a negative amount takes them away, never below 0).
+    /// </summary>
+    /// <returns>The wizard's credits now, or null when no Deckathalon is on.</returns>
+    internal static int? AddCredits(Wizard wizard, int amount) {
+        if (!Enabled || wizard is null || CurrentEvent is not { } current) {
+            return null;
+        }
+
+        int now;
+        var score = ScoreOf(current.Key, wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName());
+        lock (s_scoreLock) {
+            score.Credits = (int) Math.Clamp((long) score.Credits + amount, 0, int.MaxValue);
+            now = score.Credits;
+        }
+
+        SaveScores();
+
+        return now;
     }
 
     /// <summary>Whether the school's tower is the one of the Deckathalon that is on.</summary>

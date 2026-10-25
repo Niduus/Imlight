@@ -414,6 +414,30 @@ internal static class Crafting {
         return World.CustomNpcs.RecipeNameOf(id) ?? id.ToString();
     }
 
+    /// <summary>
+    /// The name the recipe window shows (its display key, else what it makes), for messages: the file name can be another
+    /// school's (the Fire tower's "Fire Deckathlete's Deck 1" is Recipe-TT-Deck-DU-T1-Ice-01 in the game files).
+    /// </summary>
+    internal static string ShownNameOf(uint id, RecipeTemplate recipe) {
+        foreach (var key in new[] { (string) recipe?.m_displayKey,
+                     (CoreObjectFactory.GetCoreTemplate((uint) (recipe?.m_itemID ?? 0)) as WizItemTemplate) is { } made ? (string) made.m_displayName : null }) {
+            if (string.IsNullOrWhiteSpace(key)) {
+                continue;
+            }
+
+            try {
+                if (Locale.GetEnglishName(key) is { Length: > 0 } shown && shown != key) {
+                    return shown;
+                }
+            }
+            catch (Exception) {
+                // A key the locale does not have falls through to the next name.
+            }
+        }
+
+        return NameOf(id, recipe);
+    }
+
     /// <summary>The number the client names a recipe by (MSG_EQUIPRECIPE, MSG_RECIPEREMOVE).</summary>
     internal static uint NameIdOf(uint id, RecipeTemplate recipe) => StringHash.Compute(NameOf(id, recipe));
 

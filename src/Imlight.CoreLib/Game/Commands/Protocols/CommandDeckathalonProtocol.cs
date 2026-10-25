@@ -66,6 +66,49 @@ internal class CommandDeckathalonProtocol : CommandProtocol {
         }
     }
 
+    /// <summary>
+    /// `.credits` shows your Deckathalon credits, `.credits 10` gives you 10 more and `.credits -5` takes 5 away
+    /// (Niduus, 2026-10-25: "add a .credits commands so I can give myself credits").
+    /// </summary>
+    [Command("credits")]
+    [Alias("credit")]
+    private void CreditsCommand([Remainder] string text = "") {
+        try {
+            var me = Context.Character;
+            var word = (text ?? "").Trim();
+            if (Deckathalon.CurrentEvent is null) {
+                InformSenderClient("No Deckathalon is on right now. The Events card of the Imlight app starts one.");
+
+                return;
+            }
+
+            if (word.Length == 0) {
+                InformSenderClient($"You have {Deckathalon.CreditsOf(me)} Deckathalon credits. Type .credits 10 to get 10 more.");
+
+                return;
+            }
+
+            if (!int.TryParse(word, out var amount)) {
+                InformSenderClient("Type .credits and a number, such as .credits 10 (or .credits -5 to take some away).");
+
+                return;
+            }
+
+            if (Context.Account.AuthLevel < AuthLevel.QualityAssurance) {
+                InformSenderClient("Only the server's testers can give credits.");
+
+                return;
+            }
+
+            var now = Deckathalon.AddCredits(me, amount);
+            InformSenderClient(now is null ? "No Deckathalon is on right now." : $"You now have {now} Deckathalon credits.");
+        }
+        catch (Exception ex) {
+            Logger.Error("Deckathalon | .credits {0} failed: {1}", Logger.Args(text, ex));
+            InformSenderClient("The credits command did not work. The server log has the details.");
+        }
+    }
+
     private void Start(Wizard me, string school, bool tester) {
         Deckathalon.TryStart(Context.SessionActor, me, school, tester, out var reply);
         InformSenderClient(reply);

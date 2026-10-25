@@ -636,6 +636,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         var wizard = GetActiveWizard();
         var name = Crafting.Crafting.NameOf(recipeId, recipe);
         if (wizard.AlchemyBehavior?.RecipeIds?.Contains(recipeId) == true) {
+            name = Crafting.Crafting.ShownNameOf(recipeId, recipe);
             InformGameClient($"You already know the recipe {name}.");
             SendShopDenyMessage();
 
