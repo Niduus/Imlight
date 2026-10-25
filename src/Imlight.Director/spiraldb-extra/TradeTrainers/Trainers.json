@@ -1,0 +1,227 @@
+{
+ "_about": "Fishing and gardening spell trainers of the real game (Wizard404 'taught_by', fishing_training and garden_training) and the spells each teaches. Imlight teaches them free, at any rank.",
+ "Trainers": [
+  {
+   "TemplateId": 164737,
+   "Name": "Haarek Silverscale",
+   "Kind": "Fishing",
+   "Spells": [
+    1068559057,
+    1764759196,
+    1887457961,
+    187282056,
+    2055279273,
+    1547619671,
+    242677398
+   ]
+  },
+  {
+   "TemplateId": 346176,
+   "Name": "Charley",
+   "Kind": "Gardening",
+   "Spells": [
+    998569096,
+    515222797,
+    1602570957,
+    918479110,
+    439030506,
+    74553863,
+    852091976,
+    1471297304,
+    1149700589
+   ]
+  },
+  {
+   "TemplateId": 346177,
+   "Name": "Marley",
+   "Kind": "Gardening",
+   "Spells": [
+    2077555477,
+    1016079423,
+    454071204,
+    618244287,
+    315534590,
+    1164143460,
+    1538806703,
+    328099050,
+    1389246232
+   ]
+  },
+  {
+   "TemplateId": 346178,
+   "Name": "Harley",
+   "Kind": "Gardening",
+   "Spells": [
+    2077555477,
+    454071204,
+    618244287,
+    315534590,
+    1164143460,
+    1538806703,
+    328099050,
+    1389246232,
+    1455477594
+   ]
+  },
+  {
+   "TemplateId": 346179,
+   "Name": "Farley",
+   "Kind": "Gardening",
+   "Spells": [
+    990984473,
+    1885065734,
+    2835725,
+    1602476601,
+    1981906805,
+    999099438,
+    1675553743,
+    1639123435,
+    989885758
+   ]
+  },
+  {
+   "TemplateId": 557077,
+   "Name": "Narley",
+   "Kind": "Gardening",
+   "Spells": [
+    896251392,
+    429286677
+   ]
+  },
+  {
+   "TemplateId": 617242,
+   "Name": "Roger the Shrubber",
+   "Kind": "Gardening",
+   "Spells": [
+    1791871391,
+    2088695571,
+    1564963149,
+    1197871043,
+    1110095811
+   ]
+  },
+  {
+   "TemplateId": 1206837,
+   "Name": "Lucky Hookline",
+   "Kind": "Fishing",
+   "Spells": [
+    1068755665,
+    1764759132,
+    1887457967,
+    2055279279,
+    1547619665,
+    242677334,
+    473596371,
+    1116409207
+   ]
+  },
+  {
+   "TemplateId": 1206838,
+   "Name": "Floyd",
+   "Kind": "Fishing",
+   "Spells": [
+    417263570,
+    150489001,
+    153343801,
+    1347074023,
+    1068559057,
+    1764759196,
+    1887457961,
+    187282056,
+    2055279273,
+    1547619671,
+    242677398
+   ]
+  },
+  {
+   "TemplateId": 1206840,
+   "Name": "Frode Silverscale",
+   "Kind": "Fishing",
+   "Spells": [
+    417263570,
+    150489001,
+    153343801
+   ]
+  },
+  {
+   "TemplateId": 1223222,
+   "Name": "Barley",
+   "Kind": "Gardening",
+   "Spells": [
+    1382040902,
+    450408926,
+    276897471,
+    1712010492,
+    1197989453,
+    1354849154,
+    502697612,
+    999120437
+   ]
+  },
+  {
+   "TemplateId": 1233889,
+   "Name": "Timor Flamecaster",
+   "Kind": "Fishing",
+   "Spells": [
+    596474623,
+    1516658451,
+    1409486282,
+    719241558,
+    355043835,
+    1428236972,
+    354457644,
+    1810382011
+   ]
+  },
+  {
+   "TemplateId": 1353028,
+   "Name": "Yuri Smokesnare",
+   "Kind": "Fishing",
+   "Spells": [
+    506425907,
+    569769644,
+    1068624593,
+    1764759260,
+    1887457963,
+    455717512,
+    2055279275,
+    1547619669,
+    242677462
+   ]
+  },
+  {
+   "TemplateId": 1391025,
+   "Name": "Ryoshi",
+   "Kind": "Fishing",
+   "Spells": [
+    714808595,
+    714284307
+   ]
+  },
+  {
+   "TemplateId": 1435191,
+   "Name": "Alejandro de la Paz",
+   "Kind": "Fishing",
+   "Spells": [
+    769751142
+   ]
+  },
+  {
+   "TemplateId": 1752675,
+   "Name": "Quilla",
+   "Kind": "Fishing",
+   "Spells": [
+    1988208360,
+    1457865561,
+    1887457957,
+    1797894792,
+    242677526,
+    1547619675,
+    2055279269,
+    1764759324,
+    1068952273,
+    845296343
+   ]
+  }
+ ]
+}

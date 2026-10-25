@@ -71,7 +71,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => template is GameObjectTemplate goTemplate 
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
-            || TestTrainerKindOf(goTemplate) is not null);
+            || TestTrainerKindOf(goTemplate) is not null
+            || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null);
 
     /// <summary>
     /// A test trainer teaches a whole kind of spell for free, at any level. In Ravenwood: Mr. Lincoln every
@@ -88,6 +89,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
     /// <summary>Whether the trainer teaches its spells as listed: the randomizer's swaps do not reach them.</summary>
     public bool TeachesAsListed => IsTestTrainer || IsCustom;
+
+    // A fishing or gardening trainer of the real game (TradeTrainers).
+    private bool _isTradeTrainer;
 
     private Imlight.CoreLib.Game.World.CustomNpcs.CustomNpc _custom;
     private Dictionary<ulong, int> _customCosts = [];
@@ -312,6 +316,21 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             return;
         }
 
+        // A fishing or gardening trainer of the real game teaches its own spells, free and at any rank.
+        if (Entity.Template is GameObjectTemplate tradeTemplate
+            && Imlight.CoreLib.Game.World.TradeTrainers.For(tradeTemplate.m_templateID) is { } trade) {
+            IsTestTrainer = true;
+            _isTradeTrainer = true;
+            SpellInventory = [.. trade.Spells
+                .Where(id => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate)
+                .Select(id => new NPCSpellEntry { TemplateID = id, RequiredSpellID = 0, Level = 1 })];
+            InitializeServiceBases();
+            Logger.Debug("{0} trainer {1} teaches {2} of its {3} spells.",
+                Logger.Args(trade.Kind, trade.Name, SpellInventory.Count, trade.Spells.Count));
+
+            return;
+        }
+
         // Search Dragon database for our spell inventory.
         if (    Entity.Template is not GameObjectTemplate goTemplate
             || !NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out var spellInventory)) {
@@ -509,7 +528,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
     private bool HasOtherChoice(Wizard wizard)
         => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard)
-        || InteractFishSellingComponent.Offers(Entity, wizard);
+        || InteractFishSellingComponent.Offers(Entity, wizard)
+        // A fishing or gardening trainer that also runs a shop (Farley's seeds) keeps the shop beside "Spell List".
+        || (_isTradeTrainer && Entity.GetComponentsOfType<IServiceComponent>()
+            .Any(c => c != this && (c.GetServiceOptions(wizard)?.Any() ?? false)));
 
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
         => wizard is not null

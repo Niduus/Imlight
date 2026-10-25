@@ -159,7 +159,8 @@ internal sealed class FishPond {
             }
         }
 
-        var fish = new LiveFish(_nextId++, pick.Info.TemplateId, RandomSize(pick.Info), water.Index);
+        // The game puts a fish in the pond numbered by the low 4 bits of its id (FishingManager), so the pond goes there.
+        var fish = new LiveFish((_nextId++ << 4) | (uint) (water.Index & 0xF), pick.Info.TemplateId, RandomSize(pick.Info), water.Index);
         _fish[fish.Id] = fish;
         Version++;
     }

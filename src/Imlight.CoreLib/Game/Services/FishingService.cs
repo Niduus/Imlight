@@ -160,12 +160,16 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
 
         var ids = fish.Select(f => f.Id).ToHashSet();
         var full = _sentVersion < 0 || _sentFish.Any(id => !ids.Contains(id));
+        var added = 0;
         if (full) {
+            // The game keeps this list and builds the zone's fish from it again once it has read the zone's ponds, so
+            // every fish goes in it (an empty list there wipes fish sent one by one).
             _sentFish.Clear();
-            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_SETINSTANCEFISH { ZoneNameID = _zoneNameId, Data = Array.Empty<byte>() });
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_SETINSTANCEFISH { ZoneNameID = _zoneNameId, Data = InstanceFishData(fish) });
+            _sentFish.UnionWith(ids);
+            added = fish.Count;
         }
 
-        var added = 0;
         foreach (var live in fish.Where(f => !_sentFish.Contains(f.Id))) {
             SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_ADDINSTANCEFISH {
                 ZoneNameID = _zoneNameId,
@@ -466,6 +470,23 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         catch (Exception e) {
             Logger.Error("Fishing: selling fish failed: {0}", Logger.Args(e));
         }
+    }
+
+    /// <summary>A zone's fish the way the game's MSG_SETINSTANCEFISH reads them: a 2-byte count, then each fish's template id, fish id and size.</summary>
+    private static byte[] InstanceFishData(IReadOnlyList<LiveFish> fish) {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        var count = Math.Min(fish.Count, ushort.MaxValue);
+        writer.Write((ushort) count);
+        foreach (var live in fish.Take(count)) {
+            writer.Write(live.TemplateId);
+            writer.Write(live.Id);
+            writer.Write(live.Size);
+        }
+
+        writer.Flush();
+
+        return stream.ToArray();
     }
 
     /// <summary>The fish basket the way the game reads it (FishingBehavior's AllFishUpdated): a 2-byte count, then each fish's template id and size.</summary>
