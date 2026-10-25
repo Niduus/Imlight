@@ -234,10 +234,10 @@ internal static class QuestMadlibs {
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ActorDialog, object> s_namedDialogs = [];
 
     /// <summary>
-    /// Gives the speakers of a Prep or Completion dialog that names nobody (our built quests, and game quests copied
+    /// Gives the speakers of a dialog that names nobody (our built quests, and game quests copied
     /// without it) what the game's own dialogs carry: the NPC's name format, its portrait, and an NPC madlib block per
     /// persona, keyed by the persona name's hash. Without them the dialog showed no name and some other NPC's picture
-    /// (Llewella Corey in "About the Astrals"; Niduus, 2026-10-25). Underway and Hyperlink lines stay nameless, like the game's.
+    /// (Llewella Corey in "About the Astrals"; an Underway line of Olivia Dawnwillow's showed a guard; Niduus, 2026-10-25).
     /// </summary>
     internal static void NameDialogSpeakers(ActorDialog dialog) {
         if (dialog?.m_dialogEntries is null || s_namedDialogs.TryGetValue(dialog, out _)) {
@@ -249,15 +249,17 @@ internal static class QuestMadlibs {
                 return;
             }
 
-            string tag = dialog.m_dialogTag;
-            if (tag is "Underway" or "Hyperlink" || dialog.m_madlibs is { Count: > 0 }) {
+            if (dialog.m_madlibs is { Count: > 0 }) {
                 return;
             }
 
             var madlibs = new System.Collections.Generic.List<ActorMadlib>();
 
             foreach (var entry in dialog.m_dialogEntries.OfType<NPCDialogEntry>().Where(e => e.m_nameSTKey.IsEmpty)) {
-                ulong templateId = entry.m_actorTemplateID != 0 ? entry.m_actorTemplateID : TemplateOfPersona(entry.m_personaName);
+                // The persona says who speaks; the actor template ID can be another NPC's ("pesky Skeletal Pirates" is
+                // Olivia Dawnwillow's persona with Ceren Nightchant's template; Niduus, 2026-10-25).
+                ulong personaTemplate = TemplateOfPersona(entry.m_personaName);
+                ulong templateId = personaTemplate != 0 ? personaTemplate : entry.m_actorTemplateID;
 
                 // A line whose picture is another NPC's is that NPC's: "Quests marked with a star..." shows Gamma but
                 // names Ceren Nightchant's persona (Niduus, 2026-10-25). The picture's own persona speaks it instead.

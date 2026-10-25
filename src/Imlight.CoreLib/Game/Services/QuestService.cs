@@ -1285,7 +1285,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             NoQuestHelper = qTemplate.m_noQuestHelper ? (byte) 1 : (byte) 0,
             Mainline = qTemplate.m_mainline ? (byte) 1 : (byte) 0,
             ReadyToTurnIn = qInstance.IsReadyForTurnIn() ? (byte) 1 : (byte) 0,
-            SkipQHAutoSelect = 0,
+            // Marked new (above), the game would make each re-sent quest the followed one in turn.
+            SkipQHAutoSelect = 1,
             PetOnlyQuest = qTemplate.m_playAsYourPetNPC ? (byte) 1 : (byte) 0,
             ActivityType = 0, // ?
         };
