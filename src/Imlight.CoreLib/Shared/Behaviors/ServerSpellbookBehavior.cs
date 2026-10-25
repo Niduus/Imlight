@@ -123,7 +123,7 @@ public class ServerSpellbookBehavior : IClientBehaviorProvider<ClientSpellbookBe
 
     public ClientSpellbookBehavior GetClientBehaviorInstance() {
         var spellIdList = new List<SpellIDTracker>();
-        var hidden = Imlight.CoreLib.Game.Spells.TieredSpells.TierOnesHiddenFromGame(LearnedSpellTemplateIds);
+        var hidden = Imlight.CoreLib.Game.Spells.TieredSpells.SpellsHiddenFromGame(LearnedSpellTemplateIds);
         foreach (var spellTemplateId in LearnedSpellTemplateIds) {
             if (hidden.Contains(spellTemplateId)) {
                 continue;
