@@ -361,19 +361,22 @@ internal sealed partial class ManagerWindow {
             })));
     }
 
-    private Control EntryList(List<CustomNpcEntry> list, string kind, string unit, string addText) {
+    // rerender draws the editor again after a change (the custom NPC editor's by default); emptyPrice is the price of an
+    // entry whose box is left empty.
+    private Control EntryList(List<CustomNpcEntry> list, string kind, string unit, string addText, Action? rerender = null, int emptyPrice = 1) {
+        rerender ??= RenderNpcEditor;
         var panel = new StackPanel { Spacing = 4 };
         if (list.Count == 0) {
             panel.Children.Add(Sub($"None yet. {addText} below."));
         }
 
         foreach (var entry in list) {
-            var price = new TextBox { Width = 70, Text = entry.Price.ToString(CultureInfo.InvariantCulture), Watermark = "1" };
+            var price = new TextBox { Width = 70, Text = entry.Price.ToString(CultureInfo.InvariantCulture), Watermark = emptyPrice.ToString(CultureInfo.InvariantCulture) };
             var normal = price.BorderBrush;
             price.TextChanged += (_, _) => {
                 var text = (price.Text ?? "").Trim();
                 var ok = text.Length == 0 || (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n >= 0);
-                entry.Price = text.Length == 0 ? 1 : ok ? int.Parse(text, CultureInfo.InvariantCulture) : entry.Price;
+                entry.Price = text.Length == 0 ? emptyPrice : ok ? int.Parse(text, CultureInfo.InvariantCulture) : entry.Price;
                 price.BorderBrush = ok ? normal : BAD;
             };
             panel.Children.Add(new DockPanel {
@@ -381,7 +384,7 @@ internal sealed partial class ManagerWindow {
                     WithDock(Row(price, WithCenter(new TextBlock { Text = unit, Foreground = MUTED }),
                         Danger(Action(Plain("Remove"), () => {
                             list.Remove(entry);
-                            RenderNpcEditor();
+                            rerender();
 
                             return Task.CompletedTask;
                         }))), Dock.Right),
@@ -401,8 +404,8 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
-            list.Add(new CustomNpcEntry { ID = (uint) id, Price = 1 });
-            RenderNpcEditor();
+            list.Add(new CustomNpcEntry { ID = (uint) id, Price = emptyPrice });
+            rerender();
         }
 
         var byId = new TextBox { Width = 140, Watermark = $"or type an {kind.ToLowerInvariant()} ID" };

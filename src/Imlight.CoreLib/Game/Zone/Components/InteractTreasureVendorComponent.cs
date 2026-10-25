@@ -73,7 +73,8 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
         => template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && (NpcTreasureCardInventoryCollection.TryGetInventory(goTemplate.m_templateID, out _)
-            || TestShopFor(goTemplate) is not TestShop.None);
+            || TestShopFor(goTemplate) is not TestShop.None
+            || NpcChanges.For(goTemplate.m_templateID) is { HideTreasureCards: false, TreasureCards.Count: > 0 });
 
     // Test shop: Abner K. Doodle sells every enchantment treasure card. (Every other treasure card is in the
     // Bazaar's treasure card tab, see AuctionHouseService.)
@@ -161,15 +162,61 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
         }
     }
 
-    // What the shop sells now: its own cards, and the Deckathalon's while one is on.
-    private List<TreasureCardEntry> Stock => _eventCards switch {
+    // What the shop sells now: its own cards, and the Deckathalon's while one is on, with the Customs tab's changes.
+    private List<TreasureCardEntry> Stock => Changed(_eventCards switch {
         EventCards.Only => DeckathalonShopCards.Current(),
         EventCards.Added => [.. _inventory.Concat(DeckathalonShopCards.Current()).DistinctBy(card => card.SpellName)],
         _ => _inventory,
-    };
+    });
+
+    // The Customs tab's changes to a game treasure card seller (NpcChanges): cards added (or the whole list replaced),
+    // cards taken out, prices, or no treasure card shop. A card's price 0 is its own price.
+    private int _changesVersion = -1;
+    private NpcChanges.Change _change;
+    private List<(string Name, int Price)> _changeCards = [];
+    private HashSet<string> _changeRemoved = [];
+
+    private List<TreasureCardEntry> Changed(List<TreasureCardEntry> own) {
+        if (CustomNpcs.IsCustomTag(Entity.Info?.m_zoneTag)) {
+            return own;
+        }
+
+        var version = NpcChanges.Version;
+        if (version != _changesVersion) {
+            _changesVersion = version;
+            _change = NpcChanges.For(Entity.ActiveGameObject.m_templateID.MParts.TemplateId);
+            _changeCards = _change is null ? [] : CustomNpcs.TreasureCardsOf(new CustomNpcs.CustomNpc {
+                Name = _change.Name, TreasureCards = [.. _change.TreasureCards.Select(e => new CustomNpcs.Entry { ID = e.ID, Price = e.Price })],
+            });
+            _changeRemoved = _change is null ? [] : [.. CustomNpcs.TreasureCardsOf(new CustomNpcs.CustomNpc {
+                Name = _change.Name, TreasureCards = [.. _change.RemoveTreasureCards.Select(id => new CustomNpcs.Entry { ID = id })],
+            }).Select(card => card.Name)];
+        }
+
+        if (_change is null) {
+            return own;
+        }
+
+        if (_change.HideTreasureCards) {
+            return [];
+        }
+
+        var cards = _change.ReplacesTreasureCards ? [] : own.Where(card => !_changeRemoved.Contains(card.SpellName))
+            .Select(card => new TreasureCardEntry { SpellName = card.SpellName, Price = card.Price }).ToList();
+        foreach (var (name, price) in _changeCards.Where(card => !_changeRemoved.Contains(card.Name))) {
+            if (cards.Find(card => card.SpellName == name) is { } had) {
+                had.Price = price > 0 ? price : had.Price;
+            }
+            else {
+                cards.Add(new TreasureCardEntry { SpellName = name, Price = price > 0 ? price : DeckathalonShopCards.PriceOf(name) });
+            }
+        }
+
+        return cards;
+    }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => _eventCards == EventCards.Only && Stock.Count == 0 ? [] : [
+        => Stock.Count == 0 ? [] : [
             new TreasureShopOption {
                 m_displayKey = DisplayKey,
                 m_iconKey = "TreasureShop",

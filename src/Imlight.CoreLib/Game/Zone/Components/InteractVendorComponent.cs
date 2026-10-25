@@ -94,8 +94,19 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     private Dictionary<uint, int> _customPrices;
 
     /// <summary>What an item costs at this NPC: a custom vendor's own price, the fixed price, or null for the item's own.</summary>
-    public int? PriceOf(uint templateId)
-        => _customPrices is not null && _customPrices.TryGetValue(templateId, out var price) ? price : FixedPrice;
+    public int? PriceOf(uint templateId) {
+        UseChanges();
+
+        return _changePrices is not null && _changePrices.TryGetValue(templateId, out var changed) ? changed
+            : _customPrices is not null && _customPrices.TryGetValue(templateId, out var price) ? price : FixedPrice;
+    }
+
+    // The Customs tab's changes to this game vendor (NpcChanges), used over what it sells by itself (_base).
+    private sealed record BaseShop(List<GID> Inventory, HouseVendors.ShopWindow Window, int Kind, List<ShopSection> MoreShops);
+    private BaseShop _base;
+    private int _changesVersion = -1;
+    private Dictionary<uint, int> _changePrices;
+    private bool _hideShop;
 
     // A recipe shop's recipes by name (WizShoppingBehavior.m_recipeList): the recipe window lists these, not m_shopList.
     private List<ByteString> _recipeList = [];
@@ -116,7 +127,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         || WorldVendorLocations.IsVendor(goTemplate.m_templateID)
         || InteractTreasureVendorComponent.IsAbner(goTemplate)
         || HouseVendors.IsSellerNpc(goTemplate.m_templateID)
-        || IsRecipeShop(goTemplate));
+        || IsRecipeShop(goTemplate)
+        || NpcChanges.For(goTemplate.m_templateID) is { HideShop: false, Items.Count: > 0 });
 
     /// <summary>
     /// What an NPC sells in the live game: the shop list of its own shop (WizShoppingBehavior m_shopList), or null.
@@ -133,6 +145,66 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         && shop.m_recipeList is { Count: > 0 };
 
     public override void OnStart() {
+        StartShop();
+        _base = new BaseShop(_inventory ?? [], _window, _furnitureShop, [.. _moreShops]);
+    }
+
+    // What the Customs tab changed (NpcChanges), applied to what the vendor sells by itself when the file has changed
+    // since the last time: items added or the whole list replaced, items taken out, prices, the window, or no shop.
+    private void UseChanges() {
+        if (_custom is not null || _base is null) {
+            return;
+        }
+
+        var version = NpcChanges.Version;
+        if (version == _changesVersion) {
+            return;
+        }
+
+        _changesVersion = version;
+        _inventory = _base.Inventory;
+        _window = _base.Window;
+        _furnitureShop = _base.Kind;
+        _moreShops.Clear();
+        _moreShops.AddRange(_base.MoreShops);
+        _changePrices = null;
+        _hideShop = false;
+
+        var templateId = Entity.ActiveGameObject.m_templateID.MParts.TemplateId;
+        if (NpcChanges.For(templateId) is not { } change) {
+            return;
+        }
+
+        _hideShop = change.HideShop;
+        var removed = change.RemoveItems.ToHashSet();
+        var items = change.ReplacesItems ? [] : _inventory.Where(item => !removed.Contains(item.MParts.TemplateId)).ToList();
+        var added = KnownItems(change.Items.Where(e => !removed.Contains(e.ID)).Select(e => new GID((ulong) e.ID)))
+            .Where(item => items.All(had => had.MParts.TemplateId != item.MParts.TemplateId));
+        _inventory = ShopOrder.Alphabetical(items.Concat(added));
+        _changePrices = change.Items.Where(e => e.Price > 0).ToDictionary(e => e.ID, e => e.Price);
+
+        var more = change.ReplacesItems ? [] : _base.MoreShops
+            .Select(shop => shop with { Inventory = [.. shop.Inventory.Where(item => !removed.Contains(item.MParts.TemplateId))] })
+            .Where(shop => shop.Inventory.Count > 0).ToList();
+        _moreShops.Clear();
+        _moreShops.AddRange(more);
+
+        if (!string.IsNullOrWhiteSpace(change.Window)) {
+            var window = CustomNpcs.WindowFor(new CustomNpcs.CustomNpc {
+                Window = change.Window,
+                Items = [.. _inventory.Select(item => new CustomNpcs.Entry { ID = item.MParts.TemplateId })],
+            });
+            if (window != HouseVendors.ShopWindow.Recipe) {
+                _window = window;
+                _furnitureShop = HouseVendors.KindOf(window);
+            }
+        }
+
+        Logger.Information("Vendor {0} ({1}) uses the Customs tab's changes: {2}{3} items, {4} window{5}.", Logger.Args(templateId,
+            change.Name, change.ReplacesItems ? "only its " : "", _inventory.Count, _window, _hideShop ? ", shop hidden" : ""));
+    }
+
+    private void StartShop() {
         if (CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
             StartCustom(custom);
 
@@ -333,12 +405,13 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     internal static string TestOption;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
+        UseChanges();
         if (TestOption is { } test) {
             return [TestOptionFor(test)];
         }
 
         // A garden trainer's spell list is shown alone: the game takes training options beside a shop as the spell picker.
-        if (InteractTrainerComponent.IsShowingSpellOptions(Entity, wizard)) {
+        if (InteractTrainerComponent.IsShowingSpellOptions(Entity, wizard) || _hideShop) {
             return [];
         }
 
@@ -405,6 +478,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        UseChanges();
         if (_custom is not null) {
             Logger.Information("Custom vendor {0} ({1}) clicked by {2}: sending {3} items ({4}) in the {5} window, shop kind {6}.",
                 Logger.Args(_custom.Id, _custom.Name, playerCharacter?.PlayerNameBehavior?.GetWizardName(), _inventory?.Count ?? 0,
@@ -421,8 +495,14 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public bool HasItem(GID itemGID)
-        => (_inventory is not null && _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId))
+        => UseChangesThen(true) && (_inventory is not null && _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId))
         || _moreShops.Any(shop => shop.Inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId));
+
+    private bool UseChangesThen(bool value) {
+        UseChanges();
+
+        return value;
+    }
 
     private void SendShopOfferings(IActorRef playerActor, ShopSection shop) {
         var shopOffering = new WizShopOffering() {

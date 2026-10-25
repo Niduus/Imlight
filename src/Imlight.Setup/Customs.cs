@@ -434,3 +434,105 @@ internal static class CustomNpcs {
     }
 
 }
+
+/// <summary>
+/// Changes to one of the game's own vendors or trainers (Niduus, 2026-10-25: "add custom options for existing vendors
+/// and trainers (In detail)"), as the server's NpcChanges.cs reads them: what it sells and teaches, prices, its shop
+/// window, and which of its choices it shows. Every copy of the NPC in the game changes.
+/// </summary>
+internal sealed class NpcChange {
+
+    public uint TemplateID { get; set; }
+    public string Name { get; set; } = "";
+
+    public bool HideShop { get; set; }
+    public string ShopMode { get; set; } = ADD;
+    public string Window { get; set; } = "";
+    public List<CustomNpcEntry> Items { get; set; } = [];
+    public List<uint> RemoveItems { get; set; } = [];
+
+    public bool HideTreasureCards { get; set; }
+    public string TreasureCardMode { get; set; } = ADD;
+    public List<CustomNpcEntry> TreasureCards { get; set; } = [];
+    public List<uint> RemoveTreasureCards { get; set; } = [];
+
+    public bool HideTraining { get; set; }
+    public string SpellMode { get; set; } = ADD;
+    public List<CustomNpcEntry> Spells { get; set; } = [];
+    public List<uint> RemoveSpells { get; set; } = [];
+
+    internal const string ADD = "Add";
+    internal const string REPLACE = "Replace";
+
+    /// <summary>What it changes, in a few words, for its row in the list.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal string Summary {
+        get {
+            var parts = new List<string>();
+            void Part(bool hidden, string mode, int added, int removed, string what, string one) {
+                if (hidden) {
+                    parts.Add($"no {what}");
+                }
+                else if (mode == REPLACE) {
+                    parts.Add($"{what}: only {added} {one}{(added == 1 ? "" : "s")}");
+                }
+                else if (added + removed > 0) {
+                    parts.Add($"{what}: {added} added, {removed} taken out");
+                }
+            }
+
+            Part(HideShop, ShopMode, Items.Count, RemoveItems.Count, "shop", "item");
+            Part(HideTreasureCards, TreasureCardMode, TreasureCards.Count, RemoveTreasureCards.Count, "treasure cards", "card");
+            Part(HideTraining, SpellMode, Spells.Count, RemoveSpells.Count, "spells", "spell");
+            if (Window.Length > 0 && !HideShop) {
+                parts.Add($"{Window} window");
+            }
+
+            return parts.Count == 0 ? "no changes" : string.Join("; ", parts);
+        }
+    }
+
+    internal NpcChange Copy() {
+        var copy = (NpcChange) MemberwiseClone();
+        copy.Items = [.. Items.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+        copy.TreasureCards = [.. TreasureCards.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+        copy.Spells = [.. Spells.Select(e => new CustomNpcEntry { ID = e.ID, Price = e.Price })];
+        copy.RemoveItems = [.. RemoveItems];
+        copy.RemoveTreasureCards = [.. RemoveTreasureCards];
+        copy.RemoveSpells = [.. RemoveSpells];
+
+        return copy;
+    }
+
+}
+
+/// <summary>Reads and writes spiraldb-extra/Customs/NpcChanges.json.</summary>
+internal static class NpcChanges {
+
+    internal const string FILE = "NpcChanges.json";
+
+    private static readonly JsonSerializerOptions s_options = new() {
+        WriteIndented = true, PropertyNameCaseInsensitive = true, AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip,
+    };
+
+    internal static List<NpcChange> Load(string folder) {
+        var file = Path.Combine(folder, FILE);
+
+        return File.Exists(file) ? JsonSerializer.Deserialize<List<NpcChange>>(File.ReadAllText(file), s_options) ?? [] : [];
+    }
+
+    /// <summary>Saves one NPC's changes (over its old ones); null takes all its changes away.</summary>
+    internal static void Set(string folder, uint templateId, NpcChange? change) {
+        var changes = Load(folder).Where(c => c.TemplateID != templateId).ToList();
+        if (change is not null) {
+            changes.Add(change);
+        }
+
+        // Written beside the old file and then moved over it, so the server never reads half a file.
+        Directory.CreateDirectory(folder);
+        var file = Path.Combine(folder, FILE);
+        File.WriteAllText(file + ".saving", JsonSerializer.Serialize(changes.OrderBy(c => c.Name).ThenBy(c => c.TemplateID).ToList(), s_options));
+        File.Move(file + ".saving", file, overwrite: true);
+    }
+
+}

@@ -112,6 +112,7 @@ internal sealed partial class ManagerWindow {
                     SearchTick(_customListBoss)),
                 _customRows),
             CustomNpcsCard(),
+            NpcChangesCard(),
             CustomTeleportersCard(),
             CustomBattlesCard(),
             GauntletSigilsCard(),
@@ -127,6 +128,7 @@ internal sealed partial class ManagerWindow {
         RenderCustoms();
         RenderCustomBaseResults();
         RenderNpcs();
+        RenderNpcChanges();
         RenderHubs();
         LoadBattleCustoms();
         RenderGauntletSigils();

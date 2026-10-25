@@ -74,7 +74,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
             || TestTrainerKindOf(goTemplate) is not null
             || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null
-            || Imlight.CoreLib.Game.Gardening.GardenLessons.IsTrainer(goTemplate.m_templateID));
+            || Imlight.CoreLib.Game.Gardening.GardenLessons.IsTrainer(goTemplate.m_templateID)
+            || Imlight.CoreLib.Game.World.NpcChanges.For(goTemplate.m_templateID) is { HideTraining: false, Spells.Count: > 0 });
 
     /// <summary>
     /// A test trainer teaches a whole kind of spell for free, at any level. In Ravenwood: Monstrologist Burke every
@@ -92,7 +93,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public bool IsCustom => _custom is not null;
 
     /// <summary>Whether the trainer teaches its spells as listed: the randomizer's swaps do not reach them.</summary>
-    public bool TeachesAsListed => IsTestTrainer || IsCustom || IsGardenTrainer;
+    public bool TeachesAsListed => IsTestTrainer || IsCustom || IsGardenTrainer
+        || (_change is not null && SpellInventory.Count > TEST_TRAINER_MAX_OPTIONS);
 
     /// <summary>
     /// A garden trainer (Farley, Charley, Barley, Harley, Marley, Narley, Roger the Shrubber): it teaches its garden spells
@@ -320,6 +322,62 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => s_testSpells.Value.TryGetValue(kind, out var spells) ? spells : [];
 
     public override void OnStart() {
+        StartTraining();
+        _baseSpells = SpellInventory;
+    }
+
+    // The Customs tab's changes to this game trainer (NpcChanges), used over what it teaches by itself (_baseSpells):
+    // spells added or the whole list replaced, spells taken out, their prices in training points, or no spell list.
+    private List<NPCSpellEntry> _baseSpells;
+    private int _changesVersion = -1;
+    private Imlight.CoreLib.Game.World.NpcChanges.Change _change;
+    private Dictionary<ulong, int> _changeCosts = [];
+
+    private void UseChanges() {
+        if (IsCustom || _baseSpells is null) {
+            return;
+        }
+
+        var version = Imlight.CoreLib.Game.World.NpcChanges.Version;
+        if (version == _changesVersion) {
+            return;
+        }
+
+        _changesVersion = version;
+        var templateId = Entity.ActiveGameObject.m_templateID.MParts.TemplateId;
+        _change = Imlight.CoreLib.Game.World.NpcChanges.For(templateId);
+        _changeCosts = [];
+        if (_change is null) {
+            SpellInventory = _baseSpells;
+            InitializeServiceBases();
+
+            return;
+        }
+
+        var removed = _change.RemoveSpells.Select(id => (ulong) id).ToHashSet();
+        var spells = _change.ReplacesSpells ? [] : _baseSpells.Where(entry => !removed.Contains(entry.TemplateID)).ToList();
+        foreach (var entry in _change.Spells.Where(e => !removed.Contains(e.ID))) {
+            if (CoreObjectFactory.GetCoreTemplate(entry.ID) is not SpellTemplate) {
+                continue;
+            }
+
+            if (spells.All(had => had.TemplateID != entry.ID)) {
+                spells.Add(new NPCSpellEntry { TemplateID = entry.ID, RequiredSpellID = 0, Level = 1 });
+            }
+
+            if (entry.Price >= 0) {
+                _changeCosts[entry.ID] = entry.Price;
+            }
+        }
+
+        SpellInventory = spells;
+        InitializeServiceBases();
+        _sectionStart.Clear();
+        Logger.Information("Trainer {0} ({1}) uses the Customs tab's changes: {2}{3} spells{4}.", Logger.Args(templateId, _change.Name,
+            _change.ReplacesSpells ? "only its " : "", SpellInventory.Count, _change.HideTraining ? ", spell list hidden" : ""));
+    }
+
+    private void StartTraining() {
         if (Imlight.CoreLib.Game.World.CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
             _custom = custom;
             _customCosts = custom.Spells.ToDictionary(e => (ulong) e.ID, e => e.Price);
@@ -440,6 +498,11 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
+        UseChanges();
+        if (_change?.HideTraining == true) {
+            return [];
+        }
+
         // The Deckathalon Tome teaches only as a house trainer; anywhere else it reads its Deckathalon pages, as in the
         // game (InteractDeckathalonTomeComponent).
         if (InteractDeckathalonTomeComponent.ReadsPages(Entity)) {
@@ -612,6 +675,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     internal int CostFor(Wizard wizard, SpellTemplate spellTemplate)
         => IsCustom && IsTradeSpell(spellTemplate) ? 0
          : IsCustom ? CustomCostOf(spellTemplate)
+         : ChangedCostOf(spellTemplate) is { } changed ? changed
          : IsTestTrainer || IsGardenTrainer ? 0 : TrainingCost(wizard, spellTemplate);
 
     /// <summary>
@@ -635,6 +699,22 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             .FirstOrDefault(t => CoreObjectFactory.GetCoreTemplate(t) is SpellTemplate listed && (string) listed.m_name == name);
 
         return _customCosts.TryGetValue(id, out var cost) ? cost : 1;
+    }
+
+    // The Customs tab's price for a spell of a changed game trainer, found by name as for a custom trainer, or null.
+    private int? ChangedCostOf(SpellTemplate spellTemplate) {
+        if (_changeCosts.Count == 0) {
+            return null;
+        }
+
+        string name = spellTemplate?.m_name;
+        foreach (var (id, cost) in _changeCosts) {
+            if (CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate listed && (string) listed.m_name == name) {
+                return cost;
+            }
+        }
+
+        return null;
     }
 
     internal static int TrainingCost(Wizard wizard, SpellTemplate spellTemplate) {

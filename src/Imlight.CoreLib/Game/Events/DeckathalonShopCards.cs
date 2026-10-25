@@ -82,6 +82,10 @@ internal static class DeckathalonShopCards {
 
     private static readonly ConcurrentDictionary<string, List<TreasureCardEntry>> s_lists = new();
 
+    /// <summary>A treasure card's own gold price (its spell's), at least 1; 1 for a name the game does not have.</summary>
+    internal static int PriceOf(string spellName)
+        => spellName is not null && s_prices.Value.TryGetValue(spellName, out var price) ? price : 1;
+
     /// <summary>Whether the Deckathalon's cards are sold while one is on ([Deckathalon] ShopCards).</summary>
     internal static bool Enabled => ConfigurationManager.GetValue("Deckathalon.ShopCards", true);
 
