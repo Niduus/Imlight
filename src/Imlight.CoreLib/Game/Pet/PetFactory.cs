@@ -63,8 +63,19 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
     public static bool IsPetTemplate(uint templateId) => s_petTemplates.ContainsKey(templateId);
 
-    public static WizClientObjectItem CreateHatchedPet(ulong ownerId, uint templateId)
-        => CreatePet(ownerId, templateId, preHatch: true);
+    /// <summary>
+    /// Builds a hatched pet with a random name, the way the game names a new pet. Every way of getting a pet (shops,
+    /// the Crown Shop, packs, drops, commands) comes through here; before, only hatched eggs got a name, so the others
+    /// all showed the first name in the tables (Niduus, 2026-10-25).
+    /// </summary>
+    public static WizClientObjectItem CreateHatchedPet(ulong ownerId, uint templateId) {
+        var pet = CreatePet(ownerId, templateId, preHatch: true);
+        if (pet is not null) {
+            TrySetPetName(pet, WizardNameBank.RandomPetName(Random.Shared));
+        }
+
+        return pet;
+    }
 
     public static WizClientObjectItem CreatePet(
             ulong ownerId,
