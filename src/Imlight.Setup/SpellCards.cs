@@ -811,7 +811,7 @@ internal sealed partial class SpellBook {
 
         string? icon;
         try {
-            icon = Decode<PropertyClass>(_root, templateFile.Replace('\\', '/')) switch {
+            icon = DecodeTemplate(templateFile.Replace('\\', '/')) switch {
                 ReagentItemTemplate reagent => (string) reagent.m_imageName,
                 ItemTemplate item => (string) item.m_sIcon,
                 _ => null,
@@ -839,6 +839,42 @@ internal sealed partial class SpellBook {
 
     /// <summary>A data file of Root.wad, decoded, or null.</summary>
     internal PropertyClass? DecodeFile(string file) => Decode<PropertyClass>(_root, file);
+
+    /// <summary>
+    /// A template of the game's list, decoded, or null. A name shaped |Dir|WorldData|path lives in the game folder's
+    /// Dir-WorldData.wad (the recipes are in Recipes-WorldData.wad), as the server reads it; any other in Root.wad.
+    /// </summary>
+    internal PropertyClass? DecodeTemplate(string file) {
+        if (WorldDataWad(file) is { } place) {
+            return place.Archive is { } archive ? Decode<PropertyClass>(archive, place.Path) : null;
+        }
+
+        return DecodeFile(file);
+    }
+
+    /// <summary>The WorldData archive a |Dir|WorldData|path name lives in (null when it is not in the game folder), or null for any other name.</summary>
+    internal (string Wad, Archive? Archive, string Path)? WorldDataWad(string file) {
+        if (!file.StartsWith('|')) {
+            return null;
+        }
+
+        var parts = file.Split('|', 4);
+        if (parts.Length != 4 || parts[2] != "WorldData") {
+            return null;
+        }
+
+        var wad = $"{parts[1]}-WorldData.wad";
+        var archive = _archives.GetOrAdd(Path.Combine(_folder, wad), path => {
+            try {
+                return System.IO.File.Exists(path) ? ArchiveParser.Parse(OpenRead(path)) : null;
+            }
+            catch (Exception) {
+                return null;
+            }
+        });
+
+        return (wad, archive, parts[3]);
+    }
 
     /// <summary>The picture file of one of the game's small text icons (MadlibIcons.xml), such as Accuracy_image.</summary>
     internal string? TokenIcon(string token) => _tokens.TryGetValue(token, out var known) && known.Icon.Length > 0 ? known.Icon : null;

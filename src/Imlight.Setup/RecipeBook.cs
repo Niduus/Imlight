@@ -142,7 +142,7 @@ internal sealed class RecipeBook {
         var other = 0;
         System.Threading.Tasks.Parallel.ForEach(files, file => {
             try {
-                var decoded = book.DecodeFile(file.File);
+                var decoded = book.DecodeTemplate(file.File);
                 if (decoded is RecipeTemplate template) {
                     if (recipes.Read(file.Id, file.File, template) is { } recipe) {
                         read.Add(recipe);
@@ -150,7 +150,9 @@ internal sealed class RecipeBook {
                 }
                 else {
                     System.Threading.Interlocked.Increment(ref other);
-                    recipes._problems.TryAdd(decoded is null ? "could not be read" : $"is a {decoded.GetType().Name}", file.File);
+                    recipes._problems.TryAdd(decoded is not null ? $"is a {decoded.GetType().Name}"
+                        : book.WorldDataWad(file.File) is { Archive: null } place ? $"is in {place.Wad}, which is not in the game folder {book.Folder}"
+                        : "could not be read", file.File);
                 }
             }
             catch (Exception e) {
@@ -242,7 +244,7 @@ internal sealed class RecipeBook {
             }
 
             try {
-                if (_book.DecodeFile(file) is GameObjectTemplate template) {
+                if (_book.DecodeTemplate(file) is GameObjectTemplate template) {
                     var shown = _book.Text((string) template.m_displayName);
 
                     return shown.Length > 0 ? shown.Trim() : (string) template.m_objectName ?? $"Item {id}";
