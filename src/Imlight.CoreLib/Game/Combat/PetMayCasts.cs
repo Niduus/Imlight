@@ -73,6 +73,7 @@ internal static class PetMayCasts {
     private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
     private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
     private static readonly int s_onPass = ConfigurationManager.GetValue("PetCasting.OnPass", 10);
+    private static readonly string s_deckathalon = ConfigurationManager.GetSetting("PetCasting.Deckathalon") ?? "";
 
     // Talent name to its May Cast; null for a talent that is not one or whose card was not found.
     private static readonly ConcurrentDictionary<string, MayCast> s_byTalent = new(StringComparer.OrdinalIgnoreCase);
@@ -100,8 +101,13 @@ internal static class PetMayCasts {
     }
 
     /// <summary>The chances in percent for a May Cast: when a spell is cast, damage is taken, healing is had, and a turn is passed.</summary>
-    internal static (int Cast, int Damage, int Heal, int Pass) Chances(MayCast mayCast) {
-        var text = ConfigurationManager.GetSetting($"PetCasting.{mayCast.Key}")?.Trim();
+    /// <param name="mayCast">The May Cast.</param>
+    /// <param name="inDeckathalon">Whether the battle is a Deckathalon floor: the [PetCasting] Deckathalon chances,
+    /// when set, are used there instead of every other chance (Niduus, 2026-10-25: "add to maycast section in the
+    /// manager for Deckathalon's OWN % chance to casts").</param>
+    internal static (int Cast, int Damage, int Heal, int Pass) Chances(MayCast mayCast, bool inDeckathalon = false) {
+        var text = (inDeckathalon && !string.IsNullOrWhiteSpace(s_deckathalon) ? s_deckathalon
+            : ConfigurationManager.GetSetting($"PetCasting.{mayCast.Key}"))?.Trim();
         if (string.IsNullOrEmpty(text)) {
             return (s_onCast, s_onDamage, s_onHeal, s_onPass);
         }

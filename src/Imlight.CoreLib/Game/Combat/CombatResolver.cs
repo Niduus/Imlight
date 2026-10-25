@@ -648,7 +648,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     break;
                 }
 
-                var chances = PetMayCasts.Chances(mayCast);
+                var chances = PetMayCasts.Chances(mayCast, Events.Deckathalon.FightsHere(owner._wizard));
                 var reason = cast.Contains(team) && PetMayCasts.Roll(chances.Cast) ? "a cast"
                     : damaged.Contains(team) && PetMayCasts.Roll(chances.Damage) ? "damage"
                     : healed.Contains(team) && PetMayCasts.Roll(chances.Heal) ? "a heal"
