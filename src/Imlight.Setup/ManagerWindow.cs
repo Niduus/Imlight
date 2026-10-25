@@ -287,6 +287,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Gear", GearTab),
             Tab("Recipes", RecipesTab),
             Tab("Bosses", BossesTab),
+            Tab("Player Cheats", PlayerCheatsTab),
             Tab("Customs", CustomsTab),
             Tab("Guides", GuidesTab),
             Tab("Server", ServerTab),
@@ -409,6 +410,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Lookup": await LoadLookupAsync(); break;
             case "Quests": LoadQuests(); break;
             case "Bosses": await LoadBossesAsync(); break;
+            case "Player Cheats": ShowPlayerCheats(); break;
             case "Customs": await LoadCustomsAsync(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
             case "Guides":
@@ -568,13 +570,13 @@ internal sealed partial class ManagerWindow : Window {
         return new DockPanel {
             Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
             Children = {
-                WithDock(WithMargin(MissingNote("the Custom commands and the cheats here are made for " + ServerSource.DefaultName +
+                WithDock(WithMargin(MissingNote("the Custom commands here are made for " + ServerSource.DefaultName +
                     ", so many of them won't work on it.", () => !_manager.HasIdLookup), new Thickness(0, 0, 0, 10)), Dock.Top),
                 WithDock(Fold("search", "Commands", "Find a command",
                     "Type them in the game's chat, starting with the dot.",
                     WithHint(_commandSearch, "Custom has the commands made for your build. Imlight has the ones the server comes with. " +
                         "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard.")), Dock.Top),
-                WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight, PlayerCheatsTab() } }), new Thickness(0, 14, 0, 0)),
+                WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight } }), new Thickness(0, 14, 0, 0)),
             },
         };
     }
@@ -2322,6 +2324,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
         ["Recipes"] = ("flask", "Every crafting recipe: what it needs, what it makes, and recipe vendors of your own."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
+        ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         ["Server"] = ("server", "Start and stop the server, and switch its modes."),

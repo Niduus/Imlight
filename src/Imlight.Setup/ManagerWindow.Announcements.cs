@@ -102,7 +102,7 @@ internal sealed partial class ManagerWindow {
         cards.Add(Fold("sword", "Bosses", "Battle announcements",
             "Lines a boss or cheat shows in battle are part of each cheat, so you change them where the cheat is made.",
             Sub("Open the Bosses tab, pick the boss, and change the words in its cheat's blocks (such as say a line, "
-                + "show a banner or announce to the battle). Player cheats are on the Commands tab under Player cheats. "
+                + "show a banner or announce to the battle). Player cheats are on the Player Cheats tab (Create). "
                 + "The \"Announcement\" heading and chat start that announce to the battle puts around its words are the two "
                 + "lines under Your announcements above.")));
 

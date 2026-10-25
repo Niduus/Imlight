@@ -1,6 +1,6 @@
 /*
  * Player cheats (Niduus, 2026-10-22: "add PLAYER cheats for the local player to do. This is just a fun idea that uses
- * the C commands"). Cheats like a boss's, made in the Manager (Commands tab, Player cheats) and saved as
+ * the C commands"). Cheats like a boss's, made in the Manager (Create page, Player Cheats tab) and saved as
  * spiraldb-extra/PlayerCheats.json, that go off for the wizard played on the server's own PC only (never a friend's
  * wizard, as with the Manager's command box: CommandService.IsThisPc).
  *

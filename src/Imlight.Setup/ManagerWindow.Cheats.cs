@@ -41,7 +41,7 @@ namespace Imlight.Setup;
 /// modified and created" and "'block'-like programming"). Each cheat is a script of snapped blocks: a When block, If
 /// blocks and Do blocks, built from the palette at the side. The game's cheats can be changed, turned off or put back
 /// and new ones added; they are saved with the boss's other changes and its cheat file is never changed.
-/// The same editor shows the player cheats (Commands tab), each one a cheat of the player's own.
+/// The same editor shows the player cheats (Player Cheats tab), each one a cheat of the player's own.
 /// </summary>
 internal sealed partial class ManagerWindow {
 
@@ -88,16 +88,16 @@ internal sealed partial class ManagerWindow {
         return _bossBoard.Section;
     }
 
-    /// <summary>The Player cheats tab of the Commands tab, made when it is first opened.</summary>
-    private TabItem PlayerCheatsTab() {
-        var tab = new TabItem { Header = "Player cheats", FontSize = 15 };
-        tab.PropertyChanged += (_, e) => {
-            if (e.Property == TabItem.IsSelectedProperty && tab.IsSelected && tab.Content is null) {
-                Guarded(() => tab.Content = PlayerCheatsPanel());
-            }
-        };
+    // The Player Cheats tab (Niduus, 2026-10-25: "Make a new tab for player cheats in manager"); it was a sub-tab of
+    // Commands before. Its editor is made when the tab is first shown (PageChanged), as it reads the cheat files then.
+    private readonly ContentControl _playerCheatsPage = new();
 
-        return tab;
+    private Control PlayerCheatsTab() => _playerCheatsPage;
+
+    private void ShowPlayerCheats() {
+        if (_playerCheatsPage.Content is null) {
+            Guarded(() => _playerCheatsPage.Content = PlayerCheatsPanel());
+        }
     }
 
     private Control PlayerCheatsPanel() {
@@ -127,16 +127,11 @@ internal sealed partial class ManagerWindow {
             });
         }
 
-        return new ScrollViewer {
-            Content = new StackPanel {
-                Margin = new Thickness(4, 10, 4, 4), Spacing = 10,
-                Children = {
-                    Sub("Cheats for you, like a boss's: When something happens, If it is true, Do these things. They use the free casts of " +
-                        "the .c1 and .c2 commands. They only work for the wizard you play on this PC, never for a friend's wizard."),
-                    grid,
-                },
-            },
-        };
+        return Page(Fold("bolt", "Player Cheats", "Your cheats",
+            "Cheats for you, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
+            "works here too, with you as \"it\" and the monsters as \"the players\". They only work for the wizard you play on this PC, " +
+            "never for a friend's wizard. Saved changes count from the next round, with no restart.",
+            grid));
     }
 
     private void LoadPlayerCheats() {
