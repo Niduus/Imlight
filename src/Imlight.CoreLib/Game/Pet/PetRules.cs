@@ -130,6 +130,8 @@ internal static class PetRules {
     /// <param name="source">Where the XP comes from.</param>
     /// <returns>The factor, 1 when the source gets no bonus.</returns>
     internal static int GetXpMultiplier(PetXpSource source)
-        => source is PetXpSource.Game or PetXpSource.Snack ? MemberXpMultiplier : 1;
+        => source is PetXpSource.Game or PetXpSource.Snack
+           && Imlight.CoreLib.Game.Tools.MemberBenefits.IsOn(Imlight.CoreLib.Game.Tools.MemberBenefits.DOUBLE_PET_XP)
+            ? MemberXpMultiplier : 1;
 
 }

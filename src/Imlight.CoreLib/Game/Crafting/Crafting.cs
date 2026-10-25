@@ -635,7 +635,8 @@ internal static class Crafting {
         }
 
         ExpireSlots(session, wizard);
-        var cooldown = station.NoCooldown ? 0 : (long) Math.Round(Math.Max(0, (int) recipe.m_cookTime) * s_timerMultiplier);
+        // The Crafting Bonus member benefit takes the cooldowns away.
+        var cooldown = station.NoCooldown || Tools.MemberBenefits.IsOn(Tools.MemberBenefits.CRAFTING) ? 0 : (long) Math.Round(Math.Max(0, (int) recipe.m_cookTime) * s_timerMultiplier);
         quantity = Math.Clamp(quantity, 1, s_maxQuantity);
         // Niduus (2026-10-24): "you can make as much as you want, it's just each craft takes a crafting slot for
         // cooldown". As in the game, a recipe cooling down can be crafted again in another free slot; each item made

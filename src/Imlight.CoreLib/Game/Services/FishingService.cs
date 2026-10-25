@@ -208,6 +208,7 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
                 }
             }
             else if (message.IsRecast == 0 && FishingSettings.UseEnergy
+                     && !Tools.MemberBenefits.IsOn(Tools.MemberBenefits.FISHING)
                      && spell is not null && spell.m_energyCost > 0 && !UseEnergy(wizard, spell.m_energyCost)) {
                 allowed = false;
             }

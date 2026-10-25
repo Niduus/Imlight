@@ -293,16 +293,19 @@ internal class DailyAssignmentService(SessionActor sessionActor) : MessageServic
         }
 
         var session = SessionActor.ActorRef;
+        // The Daily Quest Bonus member benefit doubles gold and crowns and gives a chest's own double loot table.
+        var bonus = Tools.MemberBenefits.IsOn(Tools.MemberBenefits.DAILY_QUEST);
+        var quantity = bonus ? reward.m_quantity * 2 : reward.m_quantity;
         switch ((int) reward.m_rewardType) {
             case DailyAssignmentData.RT_GOLD:
-                return GiveGold(wizard, reward.m_quantity);
+                return GiveGold(wizard, quantity);
             case DailyAssignmentData.RT_CROWNS: {
                 var account = wizard.Account ?? GetActiveAccount();
                 if (account is null) {
-                    return GiveGold(wizard, reward.m_quantity * 10);
+                    return GiveGold(wizard, quantity * 10);
                 }
 
-                account.SetCrowns(account.Crowns + reward.m_quantity);
+                account.SetCrowns(account.Crowns + quantity);
                 session.Tell(new WIZARD_12_PROTOCOL.MSG_CROWNBALANCE {
                     Failure = 0,
                     TotalCrowns = account.Crowns,
@@ -310,12 +313,19 @@ internal class DailyAssignmentService(SessionActor sessionActor) : MessageServic
                     CacheBalanceForCSSegmentation = 1
                 });
 
-                return $"{reward.m_quantity} Crowns";
+                return $"{quantity} Crowns";
             }
             case DailyAssignmentData.RT_CHEST: {
-                var names = new[] { (string) reward.m_lootTable }
+                // With the bonus: the double loot table, or the chest twice when the server does not have that table.
+                var doubleTable = (string) reward.m_doubleLootTable;
+                var hasDouble = bonus && !string.IsNullOrWhiteSpace(doubleTable) && DropTableCollection.GetDropTable(doubleTable) is not null;
+                var names = new[] { hasDouble ? doubleTable : (string) reward.m_lootTable }
                     .Where(n => !string.IsNullOrWhiteSpace(n) && DropTableCollection.GetDropTable(n) is not null)
                     .ToArray();
+                if (bonus && !hasDouble) {
+                    names = [.. names, .. names];
+                }
+
                 if (names.Length == 0) {
                     Logger.Information("Daily Assignments | The server has no drop table {0}; giving {1} Gold instead.",
                         Logger.Args((string) reward.m_lootTable, DailyAssignmentData.ChestFallbackGold));

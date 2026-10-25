@@ -59,7 +59,9 @@ namespace Imlight.CoreLib.Game.Services;
 
 internal partial class PetService(SessionActor sessionActor) : MessageService(sessionActor) {
 
-    private static int EnergyTickIntervalInSeconds => Imlight.CoreLib.Game.Pet.AdvancedPetsConfig.EnergyTickInSeconds;
+    // The game's energy tick, shorter while the Faster Energy Regeneration member benefit is on.
+    private static int EnergyTickIntervalInSeconds
+        => Imlight.CoreLib.Game.Tools.MemberBenefits.EnergyTickSeconds(Imlight.CoreLib.Game.Pet.AdvancedPetsConfig.EnergyTickInSeconds);
     private const int PET_ENERGY_TICK_DELAY = 2;
 
     protected static Props Props(SessionActor parentActor)
@@ -89,8 +91,8 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
         var tickTimeSeconds = tickTime - DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var firstTickDelay = TimeSpan.FromSeconds(tickTimeSeconds + PET_ENERGY_TICK_DELAY);
-        var tickInterval = TimeSpan.FromSeconds(EnergyTickIntervalInSeconds + PET_ENERGY_TICK_DELAY);
-        Timers.StartPeriodicTimer("petEnergyTick", new CHARACTER_103_PROTOCOL.MSG_DOENERGYTICK(), firstTickDelay, tickInterval);
+        // Each tick starts the next one, so a member benefit switched on or off changes the time from the next tick on.
+        Timers.StartSingleTimer("petEnergyTick", new CHARACTER_103_PROTOCOL.MSG_DOENERGYTICK(), firstTickDelay);
 
         InitializeEggs(wizard);
         OnPetGameRoomAttach(wizard);
@@ -103,7 +105,10 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
         var maxEnergy = wizard.GameStats.m_energyMax;
         var clientMaxEnergy = wizard.GameStats.GetClientTypeAlternative().m_energyMax;
 
-        var tickTime = (int) (DateTimeOffset.UtcNow.ToUnixTimeSeconds() + EnergyTickIntervalInSeconds);
+        var interval = EnergyTickIntervalInSeconds;
+        var tickTime = (int) (DateTimeOffset.UtcNow.ToUnixTimeSeconds() + interval);
+        Timers.StartSingleTimer("petEnergyTick", new CHARACTER_103_PROTOCOL.MSG_DOENERGYTICK(),
+            TimeSpan.FromSeconds(interval + PET_ENERGY_TICK_DELAY));
 
         // Above the maximum it drops to it; below, it regains one.
         if (petOwnerBehavior.Energy != maxEnergy) {

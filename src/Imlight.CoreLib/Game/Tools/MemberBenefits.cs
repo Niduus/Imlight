@@ -58,6 +58,7 @@ internal static class MemberBenefits {
 
     private static readonly uint s_allFlags = All.Aggregate(0u, (sum, b) => sum | b.Flag);
     private static readonly bool s_iniDefault = ConfigurationManager.GetValue("Character.MemberBenefits", true);
+    private static readonly double s_energyFactor = Math.Clamp(ConfigurationManager.GetValue("Character.FasterEnergyFactor", 2.0), 1.0, 60.0);
 
     private static Timer s_timer;
     private static ActorSystem s_system;
@@ -96,6 +97,26 @@ internal static class MemberBenefits {
 
         return flags == s_allFlags ? uint.MaxValue : flags;
     }
+
+    /// <summary>
+    /// Whether a benefit (a key of <see cref="All"/>) is on right now, for the server's own systems that it changes.
+    /// </summary>
+    internal static bool IsOn(string key)
+        => s_hasFile ? s_active.Contains(key) : s_iniDefault;
+
+    /// <summary>
+    /// The seconds between energy ticks: the game's own time, or that divided by [Character] FasterEnergyFactor while
+    /// Faster Energy Regeneration is on.
+    /// </summary>
+    internal static int EnergyTickSeconds(int gameSeconds)
+        => IsOn(FASTER_ENERGY) ? Math.Max(1, (int) Math.Round(gameSeconds / s_energyFactor)) : gameSeconds;
+
+    internal const string GARDENING = "GardeningBonus";
+    internal const string DOUBLE_PET_XP = "DoublePetXP";
+    internal const string DAILY_QUEST = "DailyQuestBonus";
+    internal const string FISHING = "FishingBonus";
+    internal const string CRAFTING = "CraftingBonus";
+    internal const string FASTER_ENERGY = "FasterEnergyRegeneration";
 
     /// <summary>
     /// The login server calls this when an account logs in; its next arrival in the world tells it the benefits.

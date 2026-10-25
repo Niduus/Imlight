@@ -406,10 +406,19 @@ internal partial class HousingService {
         }
 
         var loot = GardenHarvests.Roll(harvested, seedTemplateId, elder: harvested.Stage == PlantStage.PS_Angel);
+        // The Gardening Bonus member benefit doubles what a harvest gives and its gardening XP.
+        var bonus = Tools.MemberBenefits.IsOn(Tools.MemberBenefits.GARDENING) ? 2 : 1;
+        if (bonus > 1) {
+            loot.GoldAmount *= bonus;
+            foreach (var item in loot.Items) {
+                item.Quantity *= bonus;
+            }
+        }
+
         LootGranter.GrantAndDisplay(SessionActor.ActorRef, wizard, loot);
         Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_HarvestPlant);
         var levelBefore = GardenLevelOf(wizard);
-        var level = GiveGardenXp(wizard, Math.Max(1, harvested.HarvestXp));
+        var level = GiveGardenXp(wizard, Math.Max(1, harvested.HarvestXp) * bonus);
         if (level > levelBefore) {
             CheckGardenLessons(wizard, level, force: true);
         }

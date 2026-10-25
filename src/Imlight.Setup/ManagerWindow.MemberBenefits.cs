@@ -22,18 +22,18 @@ internal sealed partial class ManagerWindow {
     private const string MEMBER_BENEFITS_FILE = "member-benefits.json";
 
     // The game's member benefits, as the server's MemberBenefits.All has them.
-    private static readonly (string Key, string Name)[] s_memberBenefits = [
-        ("GardeningBonus", "Gardening Bonus"),
-        ("DoublePetXP", "Double Pet XP"),
-        ("FreeRespec", "Free Respec"),
-        ("DailyQuestBonus", "Daily Quest Bonus"),
-        ("MonsterMagic", "Monster Magic"),
-        ("DailyPvPBonus", "Daily PvP Bonus"),
-        ("FishingBonus", "Fishing Bonus"),
-        ("CraftingBonus", "Crafting Bonus"),
-        ("SecondChanceChestBonus", "Second Chance Chest"),
-        ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points"),
-        ("FasterEnergyRegeneration", "Faster Energy Regeneration"),
+    private static readonly (string Key, string Name, string Does)[] s_memberBenefits = [
+        ("GardeningBonus", "Gardening Bonus", "Harvests give twice the gold, items and gardening XP."),
+        ("DoublePetXP", "Double Pet XP", "Pet games and snacks give double pet XP."),
+        ("FreeRespec", "Free Respec", "Training point resets are always free on this server, on or off."),
+        ("DailyQuestBonus", "Daily Quest Bonus", "Daily Assignments give twice the gold and crowns, and better chests."),
+        ("MonsterMagic", "Monster Magic", "Monstrology extracts give double Animus."),
+        ("DailyPvPBonus", "Daily PvP Bonus", "Not on this server yet: it has no daily PvP assignments."),
+        ("FishingBonus", "Fishing Bonus", "Fishing costs no energy."),
+        ("CraftingBonus", "Crafting Bonus", "No crafting cooldowns."),
+        ("SecondChanceChestBonus", "Second Chance Chest", "Not on this server yet: it has no second chance chests."),
+        ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", "Not on this server yet: it has no Scroll of Fortune."),
+        ("FasterEnergyRegeneration", "Faster Energy Regeneration", "Energy comes back twice as fast."),
     ];
 
     private sealed class BenefitRow {
@@ -52,7 +52,7 @@ internal sealed partial class ManagerWindow {
 
     private Control MemberBenefitsCard() {
         var rows = new StackPanel { Spacing = 4 };
-        foreach (var (key, name) in s_memberBenefits) {
+        foreach (var (key, name, does) in s_memberBenefits) {
             var row = new BenefitRow { Key = key };
             _benefitRows.Add(row);
             row.Switch.IsCheckedChanged += async (_, _) => {
@@ -76,7 +76,7 @@ internal sealed partial class ManagerWindow {
                 new TextBlock { Text = "days", VerticalAlignment = VerticalAlignment.Center }, row.Hours,
                 new TextBlock { Text = "hours", VerticalAlignment = VerticalAlignment.Center });
             rows.Children.Add(SwitchRow(name, row.Switch));
-            rows.Children.Add(WithMargin(new StackPanel { Spacing = 2, Children = { timer, row.Left } }, new Thickness(14, 0, 0, 8)));
+            rows.Children.Add(WithMargin(new StackPanel { Spacing = 2, Children = { Sub(does), timer, row.Left } }, new Thickness(14, 0, 0, 8)));
         }
 
         LoadBenefits();
@@ -90,7 +90,7 @@ internal sealed partial class ManagerWindow {
         return Shut(Fold("star", "Server", "Member benefits",
             "Turn each member benefit on or off. Everyone online is told when one changes, and wizards logging in are told " +
             "which are on. Set days or hours to have a benefit turn itself off after that long (0 and 0: it stays on). " +
-            "These change what the game treats as active; a bonus the server does not do yet still does nothing.",
+            "Under each one is what it does on this server.",
             Row(Action(Plain("All on"), () => SetAllBenefitsAsync(true)), Action(Plain("All off"), () => SetAllBenefitsAsync(false))),
             rows));
     }
