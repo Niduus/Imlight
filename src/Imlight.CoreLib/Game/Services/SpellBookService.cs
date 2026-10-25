@@ -219,6 +219,7 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
     /// </summary>
     [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_SetDeckArchmastery))]
     private void ReceiveSetDeckArchmastery(WIZARD3_56_PROTOCOL.MSG_SetDeckArchmastery message) {
+        Logger.Information("The game picked Archmastery school {0} for deck {1}.", Logger.Args(message.School, message.ItemGID));
         var wizard = GetActiveWizard();
         if (wizard is null) {
             return;

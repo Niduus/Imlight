@@ -70,6 +70,23 @@ internal static class Archmastery {
         MagicSchool.Life, MagicSchool.Death, MagicSchool.Balance,
     ];
 
+    // The order the game numbers the seven schools in for the Power Orb (WizardGraphicalClient.exe: Balance, Death,
+    // Fire, Ice, Life, Myth, Storm). CombatParticipant m_archmasteryFlags has bit N set for the school at N.
+    private static readonly MagicSchool[] s_flagOrder = [
+        MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,
+        MagicSchool.Life, MagicSchool.Myth, MagicSchool.Storm,
+    ];
+
+    /// <summary>Every school's bit in m_archmasteryFlags.</summary>
+    internal const uint ALL_SCHOOL_FLAGS = 0x7F;
+
+    /// <summary>The school's bit in CombatParticipant m_archmasteryFlags, or 0 for a school with no school pips.</summary>
+    internal static uint FlagOf(MagicSchool school) {
+        var index = Array.IndexOf(s_flagOrder, school);
+
+        return index < 0 ? 0 : 1u << index;
+    }
+
     /// <summary>
     /// The school the client sent for the deck or the orb as one of the seven schools, or null when it is not one.
     /// 0 means "my own school". The client sends the school's id; an index (0 to 6) is taken too, just in case.

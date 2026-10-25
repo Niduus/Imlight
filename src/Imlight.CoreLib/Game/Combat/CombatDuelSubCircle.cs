@@ -691,7 +691,8 @@ public class CombatDuelSubCircle {
 
         _deckArchmasterySchool = school;
         CombatParticipant.m_archmasterySchool = ArchmasterySchool;
-        Logger.Debug("Archmastery school for {0} is now {1}.", Logger.Args(_wizard.CharId, (MagicSchool) ArchmasterySchool));
+        CombatParticipant.m_archmasteryFlags = ArchmasterySchool != 0 ? Archmastery.ALL_SCHOOL_FLAGS : 0;
+        Logger.Information("Archmastery school for {0} is now {1}.", Logger.Args(_wizard.CharId, (MagicSchool) ArchmasterySchool));
     }
 
     internal float ArchmasteryPoints => ArchmasterySchool == 0 ? 0
@@ -1560,6 +1561,8 @@ public class CombatDuelSubCircle {
             m_shadowPipRateThreshold = GAUGE_FULL,
             m_maxArchmasteryPoints = GAUGE_FULL,
             m_archmasterySchool = ArchmasterySchool,
+            // The schools the Power Orb may be switched to in battle: any of the seven, like the deck window.
+            m_archmasteryFlags = ArchmasterySchool != 0 ? Archmastery.ALL_SCHOOL_FLAGS : 0,
             m_pvp = IsSandboxed,
 
             m_color = _color,
@@ -1641,6 +1644,7 @@ public class CombatDuelSubCircle {
         if (ArchmasterySchool is var orbSchool and not 0) {
             CombatParticipant.m_maxArchmasteryPoints = GAUGE_FULL;
             CombatParticipant.m_archmasterySchool = orbSchool;
+            CombatParticipant.m_archmasteryFlags = Archmastery.FlagOf((MagicSchool) orbSchool);
         }
         ApplyPipGauges(CombatParticipant.m_pGameStats);
     }

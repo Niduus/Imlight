@@ -2195,9 +2195,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
 
             var school = CombatDuelSubCircle.TotalPips(pips) - pips.m_genericPips - pips.m_powerPips;
+            // Which schools the school pips are, to check the Power Orb's pick (e.g. "2S Ice").
+            var schools = string.Join(" ", new (string Name, byte Count)[] {
+                ("Balance", pips.m_balancePips), ("Death", pips.m_deathPips), ("Fire", pips.m_firePips),
+                ("Ice", pips.m_icePips), ("Life", pips.m_lifePips), ("Myth", pips.m_mythPips), ("Storm", pips.m_stormPips),
+            }.Where(p => p.Count > 0).Select(p => $"{p.Count} {p.Name}"));
             slots.Add(string.Create(System.Globalization.CultureInfo.InvariantCulture,
                 $"{circle.SlotIndex} {circle.ParticipantObject?.m_debugName}: pips {pips.m_genericPips}+{pips.m_powerPips}P"
-                + $"+{school}S+{pips.m_shadowPips}Sh (acq {circle.PipAcquired}), health {stats.m_currentHitpoints}/"
+                + $"+{school}S{(schools.Length > 0 ? $" [{schools}]" : "")}+{pips.m_shadowPips}Sh (acq {circle.PipAcquired}), health {stats.m_currentHitpoints}/"
                 + $"{circle.CombatParticipant.m_maxPlayerHealth}{(circle.AddedToDuel ? "" : " (not in yet)")}"));
         });
 
