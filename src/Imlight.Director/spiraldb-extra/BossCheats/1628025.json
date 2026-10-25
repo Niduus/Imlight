@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): a Crash Attack for 2 matching school pips (the If "school pips"), no longer a random school every fourth round.
   "TemplateID": 1628025,
   "Name": "Crash the Bandit Coot (Rank 23)",
   "Cheats": [
@@ -13,18 +14,60 @@
       ],
       "Notes": "End of every second round: Empower (a random school pip)." },
 
-    { "When": "RoundEnd", "Round": 4, "Every": 4,
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Fire",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00002981"},
-        {"Do": "PickOne", "Count": 7},
         {"Do": "Cast", "Spell": "Sun Serpent", "SpellID": 141079815, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Lord of Winter", "SpellID": 1695700605, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Storm Owl", "SpellID": 990349312, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Celestial Calendar", "SpellID": 119326103, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Spinysaur", "SpellID": 474579317, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Avenging Fossil", "SpellID": 250531677, "Target": "Enemy", "DispelImmune": false},
-        {"Do": "Cast", "Spell": "Sabertooth", "SpellID": 1829426808, "Target": "Enemy", "DispelImmune": false}
+        {"Do": "Pips", "Amount": -2, "Kind": "Fire", "Target": "Self"}
       ],
-      "Notes": "End of every fourth round (as two Empowers): a Crash Attack of one of the seven schools." }
+      "Notes": "End of a round with 2 or more Fire school pips: a Crash Attack of Fire (Sun Serpent), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Ice",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Lord of Winter", "SpellID": 1695700605, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Ice", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Ice school pips: a Crash Attack of Ice (Lord of Winter), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Storm",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Storm Owl", "SpellID": 990349312, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Storm", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Storm school pips: a Crash Attack of Storm (Storm Owl), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Myth",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Celestial Calendar", "SpellID": 119326103, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Myth", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Myth school pips: a Crash Attack of Myth (Celestial Calendar), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Life",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Spinysaur", "SpellID": 474579317, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Life", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Life school pips: a Crash Attack of Life (Spinysaur), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Death",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Avenging Fossil", "SpellID": 250531677, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Death", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Death school pips: a Crash Attack of Death (Avenging Fossil), the 2 pips spent." },
+
+    { "When": "RoundEnd", "SchoolPips": 2, "SchoolPipsSchool": "Balance",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00002981"},
+        {"Do": "Cast", "Spell": "Sabertooth", "SpellID": 1829426808, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Pips", "Amount": -2, "Kind": "Balance", "Target": "Self"}
+      ],
+      "Notes": "End of a round with 2 or more Balance school pips: a Crash Attack of Balance (Sabertooth), the 2 pips spent." }
   ]
 }

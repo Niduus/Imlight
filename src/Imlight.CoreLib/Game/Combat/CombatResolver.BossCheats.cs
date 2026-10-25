@@ -264,6 +264,7 @@ public partial class CombatResolver {
 
                     _interruptNow = false;
                     _cheatSpellId = action.Spell.m_templateID;
+                    _cheatCard = action.Spell;
                     // A free cast "before my card" of a cheat on its own card is cast at once.
                     _cheatOwnCard = own;
                     cinematicTime += TryBossCheat(boss, i, cheat, mover, action.SelectedTarget,
@@ -271,6 +272,7 @@ public partial class CombatResolver {
                         combatActionList, cinematicTimeSoFar + cinematicTime);
                     _cheatOwnCard = false;
                     _cheatSpellId = 0;
+                    _cheatCard = null;
                     if (_interruptNow) {
                         action.Interrupted = true;
                         _interruptNow = false;
@@ -393,10 +395,12 @@ public partial class CombatResolver {
                                                          && Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover))
                                  is { Spell: not null } fizzled) {
                         _cheatSpellId = fizzled.Action.m_spell.m_templateID;
+                        _cheatCard = fizzled.Action.m_spell;
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, mover,
                             $"{(mover == boss ? "its own" : $"slot {mover.SlotIndex}'s")} {(string) fizzled.Spell.m_name} (fizzled)",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                         _cheatSpellId = 0;
+                        _cheatCard = null;
                     }
                     // AllyHit: a spell from the other side hurts someone else on its side; that one is "the one hit".
                     else if (cheat.Is("AllyHit") && mover.OccupiedTeam != boss.OccupiedTeam
@@ -404,23 +408,28 @@ public partial class CombatResolver {
                                  .FirstOrDefault(m => m.Hit is not null && Matches(cheat, m.Spell, m.Action.m_targetSubcircleList ?? [], boss, mover))
                                  is { Hit: { } ally } allyMove) {
                         _cheatSpellId = allyMove.Action.m_spell.m_templateID;
+                        _cheatCard = allyMove.Action.m_spell;
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ally, $"{(string) allyMove.Spell.m_name} on its ally in slot {ally.SlotIndex}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                         _cheatSpellId = 0;
+                        _cheatCard = null;
                     }
                     else if ((IsCastWhen(cheat) || cheat.Is("BossHit"))
                              && CountedFor(cheat).FirstOrDefault(m => SetOffBy(cheat, boss, mover, m.Spell, m.Action.m_targetSubcircleList ?? [],
                                      crit: m.Action.m_spellHits == (char) 2))
                                  is { Spell: not null } move) {
                         _cheatSpellId = move.Action.m_spell.m_templateID;
+                        _cheatCard = move.Action.m_spell;
                         cinematicTime += TryBossCheat(boss, i, cheat, mover, ReceiverOf(move.Action, mover),
                             $"{(string) move.Spell.m_name}{(move.Action.m_spellHits == (char) 2 ? " (a critical hit)" : move.Action.m_spellHits == (char) 0 ? " (fizzled)" : "")}",
                             combatActionList, cinematicTimeSoFar + cinematicTime);
                         _cheatSpellId = 0;
+                        _cheatCard = null;
                     }
                 }
             }
 
+            cinematicTime += MoreWhenCheats(mover, landed, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossDefeatCheats(mover, landed, combatActionList, cinematicTimeSoFar + cinematicTime);
@@ -533,12 +542,14 @@ public partial class CombatResolver {
 
                 if (by.Spell is not null) {
                     _cheatSpellId = by.Action.m_spell.m_templateID;
+                    _cheatCard = by.Action.m_spell;
                 }
 
                 cinematicTime += TryBossCheat(boss, i, cheat, byWho, byWho,
                     by.Spell is null ? "its defeat" : $"its defeat by {(string) by.Spell.m_name}",
                     combatActionList, cinematicTimeSoFar + cinematicTime);
                 _cheatSpellId = 0;
+                _cheatCard = null;
             }
 
             if (boss.IsAlive) {
@@ -811,6 +822,11 @@ public partial class CombatResolver {
             return false;
         }
 
+        // What the spell does: "a different spell that also clears DoTs" (CombatResolver.MoreCheats.cs).
+        if (!SpellDoesAllows(cheat, spell)) {
+            return false;
+        }
+
         if (cheat.Spells is { Count: > 0 }) {
             string name = spell.m_name;
             string displayKey = spell.m_displayName;
@@ -880,7 +896,8 @@ public partial class CombatResolver {
                                CombatDuelSubCircle receiver, string reason, CombatActionListObj combatActionList,
                                float cinematicTimeSoFar) {
         if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat) || !CreatureAllows(cheat, trigger, receiver)
-            || !HasAllows(boss, cheat, trigger, receiver) || !MarkAllows(boss, cheat, trigger, receiver)) {
+            || !HasAllows(boss, cheat, trigger, receiver) || !MarkAllows(boss, cheat, trigger, receiver)
+            || !MoreAllows(boss, cheat, trigger, receiver)) {
             return 0;
         }
 
@@ -1191,6 +1208,7 @@ public partial class CombatResolver {
             "immune" => $"immune to {SchoolText(step.School)}damage for {RoundsText(step.Rounds)}{on}",
             "stun" => $"stun for {Math.Max(1, step.Rounds)} rounds{on}",
             "healthto" => $"health to {step.Amount}%{on}",
+            "damagecap" => step.Amount > 0 ? $"damage capped at {step.Amount} for {RoundsText(step.Rounds)}{on}" : $"damage caps off{on}",
             "swaphealth" => $"swap health{on}",
             "freecast" => $"free cast {spell}{on} x{Math.Max(1, step.Times)} ({(step.Timing.Length > 0 ? step.Timing : "Now")}"
                           + $"{(step.Silent ? ", silent" : "")}{(step.Enchant ? ", enchanted" : "")})",
@@ -1458,6 +1476,11 @@ public partial class CombatResolver {
     private int ChangePips(CombatDuelSubCircle target, string kind, int amount) {
         if (target?.CombatParticipant?.m_pipCount is not { } pips || amount == 0) {
             return 0;
+        }
+
+        // A school's pips (Kind Fire...: Crash the Bandit Coot spends his two matching pips; CombatResolver.MoreCheats.cs).
+        if (ChangeSchoolPips(target, kind, amount) is { } changed) {
+            return changed;
         }
 
         var name = (kind ?? "").ToLowerInvariant() switch { "power" => "power", "shadow" => "shadow", _ => "light" };

@@ -324,6 +324,11 @@ public partial class CombatResolver {
             return true;
         }
 
+        // Every enemy (CombatResolver.MoreCheats.cs).
+        if (AllMarked(boss, cheat) is { } all) {
+            return all != cheat.NotMarked;
+        }
+
         var has = cheat.MarkWho.Equals("AnyEnemy", StringComparison.OrdinalIgnoreCase)
             ? _subCircles.Any(c => c is not null && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam != boss.OccupiedTeam && HasMark(c, cheat.Mark))
             : HasMark(WhoOf(cheat.MarkWho, boss, trigger, receiver), cheat.Mark);
@@ -342,9 +347,15 @@ public partial class CombatResolver {
 
         var kinds = (cheat.HasKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var need = Math.Max(1, cheat.HasCount);
-        bool Has(CombatDuelSubCircle who) => (who?.CombatParticipant?.m_hangingEffects ?? [])
+        bool Has(CombatDuelSubCircle who) => Count(who) >= need;
+
+        int Count(CombatDuelSubCircle who) => (who?.CombatParticipant?.m_hangingEffects ?? [])
             .Count(e => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
-                        && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell))) >= need;
+                        && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell)));
+        // Someone without it, or a whole side together (CombatResolver.MoreCheats.cs).
+        if (MoreHasAllows(boss, cheat, Count, need) is { } more) {
+            return more;
+        }
 
         var whoText = (cheat.HasWho ?? "").Trim();
         var enemy = whoText.Equals("AnyEnemy", StringComparison.OrdinalIgnoreCase);
@@ -377,7 +388,7 @@ public partial class CombatResolver {
         var shieldLike = e.m_effectType is kSpellEffects.kModifyIncomingDamage or kSpellEffects.kModifyIncomingDamageFlat or kSpellEffects.kAbsorbDamage;
         var bladeLike = e.m_effectType is kSpellEffects.kModifyOutgoingDamage or kSpellEffects.kModifyOutgoingDamageFlat;
 
-        return kind.ToLowerInvariant() switch {
+        return SpellNameFamily.KindSynonym(kind).ToLowerInvariant() switch {
             "shield" => ward && shieldLike && good,
             "trap" => ward && shieldLike && !good,
             "blade" => charm && bladeLike && good,
@@ -766,6 +777,10 @@ public partial class CombatResolver {
 
                     return true;
                 }
+                case "damagecap":
+                    CapDamageOf(On("Self"), step);
+
+                    return true;
                 case "stun":
                     foreach (var target in On("Caster").Where(t => t?.CombatParticipant is not null && t.IsAlive)) {
                         if (!target.TryStun()) {

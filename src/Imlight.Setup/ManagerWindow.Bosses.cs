@@ -41,8 +41,11 @@ internal sealed partial class ManagerWindow {
     private const string GAME_VALUE = "The game's value";
     private static readonly string[] TRI_STATE = [GAME_VALUE, "Yes", "No"];
 
-    private readonly TextBox _bossSearch = new() { Watermark = "Search a boss by name or ID, such as Malistaire or Rattlebones" };
+    private readonly TextBox _bossSearch = new() { Watermark = "Search a boss by name or ID, such as Rattlebones, or world:Darkmoor, uses:Supernova" };
     private readonly CheckBox _bossesOnly = new() { Content = "Bosses only", IsChecked = true, Margin = new Thickness(10, 0, 0, 0) };
+    // Niduus, 2026-10-25 ("search methods"): only creatures with cheats, and the words looked for in their cheats too.
+    private readonly CheckBox _bossHasCheats = new() { Content = "Has cheats", Margin = new Thickness(10, 0, 0, 0) };
+    private readonly CheckBox _bossInCheats = new() { Content = "Search their cheats", Margin = new Thickness(10, 0, 0, 0) };
     private readonly TextBlock _bossCount = Sub("");
     private readonly ListBox _bossResults = new() { Background = Brushes.Transparent, MaxHeight = 260 };
     private readonly DispatcherTimer _bossDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
@@ -87,6 +90,8 @@ internal sealed partial class ManagerWindow {
             _bossDelay.Start();
         };
         _bossesOnly.IsCheckedChanged += (_, _) => RenderBossResults();
+        _bossHasCheats.IsCheckedChanged += (_, _) => RenderBossResults();
+        _bossInCheats.IsCheckedChanged += (_, _) => RenderBossResults();
         _bossResults.ItemTemplate = new FuncDataTemplate<BossInfo>((boss, _) => boss is null ? new Panel() : BossRow(boss));
         _bossResults.SelectionChanged += async (_, _) => {
             if (_bossResults.SelectedItem is BossInfo boss && boss != _boss) {
@@ -130,9 +135,15 @@ internal sealed partial class ManagerWindow {
             Fold("search", "Bosses", "Find a boss",
                 "Search for it, click it, change it and press Save changes.",
                 WithHint(new DockPanel {
-                    Children = { WithDock(WithCenter(_bossesOnly), Dock.Right), _bossSearch },
+                    Children = {
+                        WithDock(WithCenter(_bossInCheats), Dock.Right), WithDock(WithCenter(_bossHasCheats), Dock.Right),
+                        WithDock(WithCenter(_bossesOnly), Dock.Right), _bossSearch,
+                    },
                 }, "Search for it, click it, change what you want and press Save changes. " +
-                   "Turn off Bosses only to find any creature that fights."),
+                   "Turn off Bosses only to find any creature that fights. A name typed partly or with a slip finds it too. " +
+                   "Search their cheats finds bosses whose cheats use those words, blocks or spells (\"remove dot\", \"cap damage\", Supernova; " +
+                   "a jinx is a trap and a curse a weakness). Typed filters: world:Darkmoor, zone:DM_ (the game file's name), has:cheats, " +
+                   "uses:\"Storm Global\"."),
                 _bossCount,
                 _bossResults),
             _bossesEditorHost);
@@ -275,9 +286,10 @@ internal sealed partial class ManagerWindow {
         const int MAX = 200;
         var query = _bossSearch.Text ?? "";
         var changed = ChangedBosses();
-        var results = _bossCatalog.Search(query, _bossesOnly.IsChecked == true, changed, MAX, out var total);
+        var results = FindCreatures(query, _bossesOnly.IsChecked == true, changed, MAX, out var total, _bossInCheats.IsChecked == true,
+            _bossHasCheats.IsChecked == true);
         _bossResults.ItemsSource = results;
-        _bossCount.Text = query.Trim().Length == 0
+        _bossCount.Text = query.Trim().Length == 0 && _bossHasCheats.IsChecked != true
             ? changed.Count == 0 ? "Type a name to find a boss." : $"Bosses you changed ({total}). Type a name to find another."
             : total == 0 ? _bossesOnly.IsChecked == true ? "No boss matches. Turn off Bosses only to search every creature." : "Nothing matches."
             : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words to narrow it down."
@@ -292,6 +304,7 @@ internal sealed partial class ManagerWindow {
             boss.IsBoss ? "Boss" : "",
             $"ID {boss.Id}",
             changed ? "Changed" : "",
+            CreatureNote(boss, _bossSearch.Text ?? "", _bossInCheats.IsChecked == true),
         }.Where(t => t.Length > 0);
 
         return new Border {
@@ -421,7 +434,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var spells = _bossCatalog.SearchSpells(_bossSpellSearch.Text ?? "", 8);
+        var spells = FindSpells(_bossSpellSearch.Text ?? "", "", "", "", 8, out _).Select(s => s.Spell).ToList();
         if (spells.Count == 0) {
             _bossSpellResults.Children.Add(Sub(_bossCatalog.Spells.Count == 0
                 ? "The spell list shows up once the server has made its ID list."

@@ -36,7 +36,7 @@ internal sealed record PaletteEntry(BlockKind Kind, string Icon, string Label, s
 internal sealed class BlockPalette : Border {
 
     private readonly StackPanel _groups = new() { Spacing = 4 };
-    private readonly TextBox _search = new() { Watermark = "Find a block", FontSize = 13 };
+    private readonly TextBox _search = new() { Watermark = "Find a block: jinx, curse, clear, pips…", FontSize = 13 };
     private readonly List<PaletteEntry> _entries;
     private readonly Action<PaletteEntry> _picked;
 
@@ -74,9 +74,11 @@ internal sealed class BlockPalette : Border {
 
     private void Render() {
         _groups.Children.Clear();
-        var words = (_search.Text ?? "").ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Words that mean the same count (a jinx is a trap, a curse a weakness), and so do a word's start and a slip.
+        var query = _search.Text ?? "";
         foreach (var kind in new[] { BlockKind.When, BlockKind.Passive, BlockKind.If, BlockKind.Do }) {
-            var found = _entries.Where(e => e.Kind == kind && words.All(w => (e.Label + " " + e.Help).ToLowerInvariant().Contains(w))).ToList();
+            var found = _entries.Where(e => e.Kind == kind && CheatSearch.Matches(e.Label + " " + e.Help, query))
+                .OrderByDescending(e => CheatSearch.NameScore(e.Label, query) > 0).ToList();
             if (found.Count == 0) {
                 continue;
             }

@@ -87,7 +87,22 @@ internal static class SpellNameFamily {
     internal static bool CategoryMatches(string? wanted, ICollection<string> kindsOfSpell)
         => string.IsNullOrWhiteSpace(wanted)
            || wanted.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-               .Any(w => kindsOfSpell.Contains(w, StringComparer.OrdinalIgnoreCase));
+               .Any(w => kindsOfSpell.Contains(KindSynonym(w), StringComparer.OrdinalIgnoreCase));
+
+    // Wizard404's and the players' words for kinds (Niduus, 2026-10-25: "jinx=trap, curse=weakness").
+    private static readonly Dictionary<string, string> s_kindSynonyms = new(StringComparer.OrdinalIgnoreCase) {
+        ["Jinx"] = "Trap", ["Jinxes"] = "Trap", ["Traps"] = "Trap", ["Curse"] = "Weakness", ["Curses"] = "Weakness",
+        ["Weaknesses"] = "Weakness", ["Blades"] = "Blade", ["Shields"] = "Shield", ["Charms"] = "Charm", ["Wards"] = "Ward",
+        ["Auras"] = "Aura", ["DoTs"] = "DoT", ["HoTs"] = "HoT", ["DamageOverTime"] = "DoT", ["HealOverTime"] = "HoT",
+        ["Buff"] = "Blade", ["Debuff"] = "Weakness", ["Bubble"] = "Global", ["Minions"] = "Minion", ["Heals"] = "Heal",
+    };
+
+    /// <summary>The kind a word stands for ("Jinx" is Trap, "Curse" is Weakness), or the word itself.</summary>
+    internal static string KindSynonym(string? word) {
+        var w = (word ?? "").Trim();
+
+        return s_kindSynonyms.TryGetValue(w, out var kind) ? kind : w;
+    }
 
     /// <summary>Whether a pip cost is in a cheat's range. Max 0 is no top; an X spell costs 0.</summary>
     // max 0: no top; max -1: exactly 0 pips (an X spell or a 0-pip card).

@@ -4,16 +4,17 @@
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
   // Checked against its Wizard101 Central page (saved 2026-10-24): Mana Burn at the end of a round when a wizard has pips left (RoundEnd now takes Pips).
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): Quicken when anyone, not only it, has no aura (the "has" If for "anyone without").
   "TemplateID": 1607011,
   "Name": "Voice of Death (Rank 22)",
   "ShadowPips": 2,
   "Cheats": [
-    { "When": "RoundStart", "HasWho": "Self", "HasKind": "Aura", "HasNot": true,
+    { "When": "RoundStart", "HasWho": "AnyoneWithout", "HasKind": "Aura",
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00002823"},
         {"Do": "Cast", "Spell": "Quicken", "SpellID": 440354206, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "No aura on it: Quicken (7 power pips a round for all)." },
+      "Notes": "Someone in the battle (it or a wizard) has no aura (Central): Quicken (7 power pips a round for all)." },
 
     { "When": "RoundEnd", "Pips": 1, "PipsOf": "Enemy",
       "Actions": [

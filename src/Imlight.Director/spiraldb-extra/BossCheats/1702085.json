@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): her Scald two rounds after every DoT is cleared (the When "an effect is removed" and the "has" If for the other side together).
   "TemplateID": 1702085,
   "Name": "Empress of Flames (Rank 24)",
   "Cheats": [
@@ -11,6 +12,14 @@
         {"Do": "Say", "Line": "CombatMessages_00003918"},
         {"Do": "Cast", "Spell": "Scald", "SpellID": 1018087321, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "Round 1 and every 6: Scald." }
+      "Notes": "Round 1 and every 6: Scald." },
+
+    { "When": "EffectRemoved", "RemovedFrom": "AnyEnemy", "RemovedKind": "DoT", "HasWho": "EnemySide", "HasKind": "DoT", "HasNot": true,
+      "Actions": [
+        {"Do": "Wait", "Rounds": 2},
+        {"Do": "Say", "Line": "CombatMessages_00003918"},
+        {"Do": "Cast", "Spell": "Scald", "SpellID": 1018087321, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "A wizard's spell clears the last DoT on the wizards: Scald again 2 rounds later." }
   ]
 }

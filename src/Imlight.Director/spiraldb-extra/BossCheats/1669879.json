@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): any other spell that clears the same kind does what the given card does (the If "the spell does").
   "TemplateID": 1669879,
   "Name": "Rotten Rob (Rank 9)",
   "Cheats": [
@@ -40,6 +41,14 @@
         {"Do": "Cast", "Spell": "Triage", "SpellID": 866678457, "Target": "AllEnemies", "DispelImmune": false},
         {"Do": "Mark", "Mark": "cheat off", "Target": "Self"}
       ],
-      "Notes": "The given Stormzilla cast: Triage on all wizards, and the cheat is off." }
+      "Notes": "The given Stormzilla cast: Triage on all wizards, and the cheat is off." },
+
+    { "When": "PlayerCasts", "SpellDoes": "RemoveDoT", "Mark": "cheat off", "MarkWho": "Self", "NotMarked": true,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003464"},
+        {"Do": "Cast", "Spell": "Triage", "SpellID": 866678457, "Target": "AllEnemies", "DispelImmune": false},
+        {"Do": "Mark", "Mark": "cheat off", "Target": "Self"}
+      ],
+      "Notes": "Another DoT-clearing spell: Triage on all wizards, and the cheat is off." }
   ]
 }

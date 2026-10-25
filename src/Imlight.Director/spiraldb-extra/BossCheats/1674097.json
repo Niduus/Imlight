@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): Break Free once every wizard has the mark (the If "marked" for every player).
   "TemplateID": 1674097,
   "Name": "Khonsu (Rank 24)",
   "ShadowPips": 2,
@@ -48,6 +49,12 @@
         {"Do": "Say", "Line": "CombatMessages_00003412"},
         {"Do": "Polymorph", "Spell": "Polymorph", "SpellID": 940551784, "Target": "Self"}
       ],
-      "Notes": "Under 20%." }
+      "Notes": "Under 20%." },
+
+    { "When": "PlayerCasts", "OnBoss": true, "CostMin": 8, "CostMax": 12, "Mark": "broke free", "MarkWho": "AllEnemies", "Once": true,
+      "Actions": [
+        {"Do": "Cast", "Spell": "give", "SpellID": 491321646, "Target": "AllEnemies", "DispelImmune": false}
+      ],
+      "Notes": "Every wizard has hit him with an 8-12 pip spell: Break Free given to all wizards." }
   ]
 }

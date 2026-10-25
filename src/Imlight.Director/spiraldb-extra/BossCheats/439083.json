@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): his answer to a wizard outside the first circle (the If "in circle").
   "TemplateID": 439083,
   "Name": "Luska Charmbeak (Rank 12)",
   "Cheats": [
@@ -28,6 +29,15 @@
         {"Do": "Say", "Line": "WizardBossFights_00000064"},
         {"Do": "Cast", "Spell": "Inked", "SpellID": 591813771, "Target": "AllEnemies", "DispelImmune": false}
       ],
-      "Notes": "Under 75%: every wizard Inked." }
+      "Notes": "Under 75%: every wizard Inked." },
+
+    { "When": "PlayerCasts", "OnBoss": true, "SingleTarget": true, "Circles": "2, 3, 4",
+      "Actions": [
+        {"Do": "Say", "Line": "WizardBossFights_00000065"},
+        {"Do": "InTurn", "Count": 2},
+        {"Do": "Cast", "Spell": "Power Link", "SpellID": 890210692, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Skeletal Dragon", "SpellID": 1814329639, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "A single-target spell on him from a wizard not in the first circle: Power Link and Skeletal Dragon in turn." }
   ]
 }

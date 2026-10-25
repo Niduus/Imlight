@@ -176,10 +176,15 @@ internal sealed class CheatRule {
             ["HasWho"] = "", ["HasKind"] = "", ["HasSpell"] = "", ["HasNot"] = false, ["AlliesUp"] = new JsonArray(), ["AlliesDown"] = new JsonArray(),
             ["AlliesMin"] = 0, ["AlliesMax"] = 0, ["Mark"] = "", ["MarkWho"] = "", ["NotMarked"] = false, ["MultiTarget"] = false,
             ["NotOnCaster"] = false, ["NotCategory"] = "", ["HasCount"] = 0, ["PipsKind"] = "", ["CreatureWho"] = "",
+            ["RemovedKind"] = "", ["RemovedSpell"] = "", ["RemovedFrom"] = "", ["SpellDoes"] = "", ["NotSpellDoes"] = false,
+            ["Enchant"] = "", ["NotEnchant"] = false, ["Global"] = "", ["GlobalSchool"] = "", ["GlobalSpell"] = "", ["SchoolPips"] = 0,
+            ["SchoolPipsSchool"] = "", ["SchoolPipsWho"] = "", ["SchoolPipsMost"] = false, ["PipsMin"] = 0, ["PipsMax"] = 0, ["PipsWho"] = "",
+            ["Circles"] = "", ["CirclesWho"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
+                     "RemovedKind", "RemovedSpell", "RemovedFrom" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -257,7 +262,8 @@ internal sealed class CheatRule {
         var whenBlock = whenSpec is null
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
-        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount" }) {
+        foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
+                     "RemovedKind", "RemovedSpell", "RemovedFrom" }) {
             if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
                 whenBlock.Set(key, value);
             }
@@ -367,6 +373,34 @@ internal sealed class CheatRule {
 
         if (Flag("MultiTarget")) {
             If("I.MultiTarget");
+        }
+
+        // Closer to the real bosses (Niduus, 2026-10-25).
+        if (Text("SpellDoes").Length > 0) {
+            If("I.SpellDoes", new JsonObject { ["SpellDoes"] = Text("SpellDoes"), ["NotSpellDoes"] = Flag("NotSpellDoes") });
+        }
+
+        if (Text("Enchant").Length > 0) {
+            If("I.Enchanted", new JsonObject { ["Enchant"] = Text("Enchant"), ["NotEnchant"] = Flag("NotEnchant") });
+        }
+
+        if (Text("Global").Length > 0) {
+            If("I.Global", new JsonObject { ["Global"] = Text("Global"), ["GlobalSchool"] = Text("GlobalSchool"), ["GlobalSpell"] = Text("GlobalSpell") });
+        }
+
+        if (Number("SchoolPips") > 0) {
+            If("I.SchoolPips", new JsonObject {
+                ["SchoolPipsWho"] = Text("SchoolPipsWho"), ["SchoolPips"] = Number("SchoolPips"), ["SchoolPipsSchool"] = Text("SchoolPipsSchool"),
+                ["SchoolPipsMost"] = Flag("SchoolPipsMost"),
+            });
+        }
+
+        if (Number("PipsMin") > 0 || Number("PipsMax") != 0) {
+            If("I.PipsNow", new JsonObject { ["PipsWho"] = Text("PipsWho"), ["PipsMin"] = Number("PipsMin"), ["PipsMax"] = Number("PipsMax") });
+        }
+
+        if (Text("Circles").Length > 0) {
+            If("I.Circle", new JsonObject { ["CirclesWho"] = Text("CirclesWho"), ["Circles"] = Text("Circles") });
         }
 
         // A file's School and Category on a When that has no box for them stay as If blocks would not: keep them on it.

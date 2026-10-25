@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): any other spell that clears the same kind does what the given card does (the If "the spell does").
   "TemplateID": 1669921,
   "Name": "Grizzlebort the Unsociable (Rank 9)",
   "Cheats": [
@@ -47,6 +48,14 @@
         {"Do": "Cast", "Spell": "Cleanse Charm", "SpellID": 1392661104, "Target": "AllEnemies", "DispelImmune": false},
         {"Do": "Mark", "Mark": "cheat off", "Target": "Self"}
       ],
-      "Notes": "The given Stone Colossus cast: Cleanse Charm on all wizards, and the cheat is off." }
+      "Notes": "The given Stone Colossus cast: Cleanse Charm on all wizards, and the cheat is off." },
+
+    { "When": "PlayerCasts", "SpellDoes": "RemoveWeakness", "Mark": "cheat off", "MarkWho": "Self", "NotMarked": true,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003467"},
+        {"Do": "Cast", "Spell": "Cleanse Charm", "SpellID": 1392661104, "Target": "Caster", "DispelImmune": false},
+        {"Do": "Mark", "Mark": "cheat off", "Target": "Self"}
+      ],
+      "Notes": "Another curse-clearing spell: Cleanse Charm on that wizard, and the cheat is off." }
   ]
 }

@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): Convert Blade when an ally blades him (the When "an ally's spell lands").
   "TemplateID": 1593386,
   "Name": "Buck Gordon (Rank 21)",
   "ShadowPips": 2,
@@ -34,6 +35,13 @@
         {"Do": "Cast", "Spell": "Rain of Fire", "SpellID": 1038559747, "Target": "", "DispelImmune": false},
         {"Do": "Unmark", "Mark": "warned", "Target": "Self"}
       ],
-      "Notes": "Not hit: Rain of Fire." }
+      "Notes": "Not hit: Rain of Fire." },
+
+    { "When": "AllyCasts", "Category": "Blade", "OnBoss": true,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001880"},
+        {"Do": "Cast", "Spell": "Convert Blade", "SpellID": 2098080587, "Target": "Self", "DispelImmune": false}
+      ],
+      "Notes": "An ally blades him (Stallion Quartermane's page): Convert Blade (twice the blade, as Fire)." }
   ]
 }

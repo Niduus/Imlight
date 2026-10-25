@@ -322,23 +322,31 @@ internal sealed class BossCatalog {
     internal List<BossInfo> Creatures { get; }
     internal Dictionary<uint, BossSpell> Spells { get; }
 
+    /// <summary>Each creature's template file in the game (ids.csv), by ID: its world is in it ("ObjectData/DM/...").</summary>
+    internal Dictionary<string, string> CreaturePaths { get; } = [];
+
     /// <summary>Why the creature list is not here yet, or null when it is.</summary>
     internal string? Missing { get; }
 
-    private BossCatalog(List<BossInfo> creatures, Dictionary<uint, BossSpell> spells, string? missing) {
+    private BossCatalog(List<BossInfo> creatures, Dictionary<uint, BossSpell> spells, string? missing, Dictionary<string, string>? paths = null) {
         Creatures = creatures;
         Spells = spells;
         Missing = missing;
+        CreaturePaths = paths ?? [];
     }
 
     /// <summary>Reads creatures.csv and the spells of ids.csv from the server's ID lookup folder.</summary>
     internal static BossCatalog Load(string folder) {
         var spells = new Dictionary<uint, BossSpell>();
+        var paths = new Dictionary<string, string>();
         var ids = Path.Combine(folder, "ids.csv");
         if (File.Exists(ids)) {
             foreach (var fields in Lookup.ReadCsv(ids)) {
                 if (fields.Count >= 4 && fields[1] == "Spell" && uint.TryParse(fields[0], out var id)) {
                     spells[id] = new BossSpell(id, fields[2], fields[3]);
+                }
+                else if (fields.Count >= 6 && fields[1] == "Creature") {
+                    paths[fields[0]] = fields[5];
                 }
             }
         }
@@ -347,7 +355,7 @@ internal sealed class BossCatalog {
         var file = Path.Combine(folder, CREATURES_FILE);
         if (!File.Exists(file)) {
             return new BossCatalog(creatures, spells, "The boss list shows up here once the server has made it. "
-                + "Start the server and give it a few minutes (the first start after an update takes longest).");
+                + "Start the server and give it a few minutes (the first start after an update takes longest).", paths);
         }
 
         foreach (var f in Lookup.ReadCsv(file)) {
@@ -360,21 +368,33 @@ internal sealed class BossCatalog {
                 f[7], f.Count > 8 ? ParseGrid(f[8]) : []));
         }
 
-        return new BossCatalog(creatures, spells, null);
+        return new BossCatalog(creatures, spells, null, paths);
     }
 
-    /// <summary>Creatures that hold every word of the query, bosses and exact names first.</summary>
-    internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total) {
+    /// <summary>
+    /// Creatures that hold every word of the query, bosses and exact names first. A name typed partly or with a slip
+    /// finds it too when nothing holds every word as typed (CheatSearch). Filter: only these (the filters typed in the
+    /// box: world, has cheats...); with one, an empty query lists everything it lets through. Also: another way a
+    /// creature fits the query (its world, its cheats).
+    /// </summary>
+    internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total,
+                                   Func<BossInfo, bool>? filter = null, Func<BossInfo, string, bool>? also = null) {
         var words = SearchText.Words(query);
+        var allowed = Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && (filter is null || filter(c)));
         var pool = words.Length == 0
-            ? Creatures.Where(c => changed.Contains(c.Id))
-            : Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && words.All(c.Haystack.Contains));
+            ? filter is null ? Creatures.Where(c => changed.Contains(c.Id)) : allowed
+            : allowed.Where(c => words.All(c.Haystack.Contains) || (also?.Invoke(c, query) ?? false));
         var matches = pool.ToList();
+        if (matches.Count == 0 && words.Length > 0) {
+            matches = [.. allowed.Where(c => CheatSearch.Matches($"{c.Name} {c.Id} {c.School}", query))];
+        }
+
         total = matches.Count;
         var exact = query.Trim();
 
         return [.. matches
             .OrderBy(c => !(c.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || c.Id == exact))
+            .ThenByDescending(c => CheatSearch.NameScore(c.Name, query))
             .ThenBy(c => !c.IsBoss)
             .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
             .ThenBy(c => c.Level)
@@ -389,10 +409,15 @@ internal sealed class BossCatalog {
         }
 
         var exact = query.Trim();
+        var found = Spells.Values.Where(s => words.All(s.Haystack.Contains)).ToList();
+        // "supnova", "lord winter": partly or with a slip, when nothing holds every word as typed.
+        if (found.Count == 0) {
+            found = [.. Spells.Values.Where(s => CheatSearch.NameScore(s.Name, query) > 0)];
+        }
 
-        return [.. Spells.Values
-            .Where(s => words.All(s.Haystack.Contains))
+        return [.. found
             .OrderBy(s => !(s.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || s.Id.ToString() == exact))
+            .ThenByDescending(s => CheatSearch.NameScore(s.Name, query))
             .ThenBy(s => !words.All(s.Name.ToLowerInvariant().Contains))
             .ThenBy(s => s.Name.Length)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)

@@ -470,6 +470,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             // A boss cheat that interrupts goes off before the spell it answers.
             cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
+            // What everyone has on before the move, for cheats that answer an effect being taken off.
+            NoteEffectsBeforeMove();
             var before = combatActionList.m_actionList.Count;
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);

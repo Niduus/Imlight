@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): Aegis, Indemnity and Melt keep a card safe from its answers (the If "card's enchantment").
   "TemplateID": 1619121,
   "Name": "Despair (Rank 23)",
   "ShadowPips": 2,
@@ -31,11 +32,11 @@
       ],
       "Notes": "Hurt by a spell (each hit; DoTs do not count): Virulent Plague on itself." },
 
-    { "When": "PlayerCharms", "Category": "Blade",
+    { "When": "PlayerCharms", "Category": "Blade", "Enchant": "Aegis", "NotEnchant": true,
       "Actions": [
         {"Do": "Cast", "Spell": "Balanceblade", "SpellID": 578086463, "Target": "Self", "DispelImmune": false}
       ],
-      "Notes": "A blade: Balanceblade (protected) on Despair." },
+      "Notes": "A blade not enchanted with Aegis: Balanceblade (protected) on Despair." },
 
     { "When": "PlayerAuras",
       "Actions": [
@@ -43,16 +44,16 @@
       ],
       "Notes": "An aura: Supernova on the caster (a negative aura on Despair: on itself)." },
 
-    { "When": "PlayerWards", "Category": "Shield",
+    { "When": "PlayerWards", "Category": "Shield", "Enchant": "Aegis", "NotEnchant": true,
       "Actions": [
         {"Do": "Cast", "Spell": "Shatter", "SpellID": 370212829, "Target": "AllEnemies", "DispelImmune": false}
       ],
-      "Notes": "A shield: Shatter on all wizards." },
+      "Notes": "A shield not enchanted with Aegis: Shatter on all wizards." },
 
-    { "When": "PlayerCasts", "Spells": ["Feint", "Mass Feint"], "AnyVersion": true,
+    { "When": "PlayerCasts", "Spells": ["Feint", "Mass Feint"], "AnyVersion": true, "Enchant": "Indemnity, Melt", "NotEnchant": true,
       "Actions": [
         {"Do": "Cast", "Spell": "Swap Ward", "SpellID": 1221439341, "Target": "Caster", "DispelImmune": false}
       ],
-      "Notes": "A Feint or Mass Feint: Swap Ward on the caster." }
+      "Notes": "A Feint or Mass Feint not enchanted with Indemnity or Melt: Swap Ward on the caster." }
   ]
 }

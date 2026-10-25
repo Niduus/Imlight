@@ -3,6 +3,7 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): The Rat and The Scorpion answering each other (the When "an ally's spell lands"; The Scorpion's answers are its "an ally casts" blocks on The Rat's own spells).
   "TemplateID": 1462168,
   "Name": "The Rat (Rank 17)",
   "ShadowPips": 3,
@@ -14,6 +15,34 @@
         {"Do": "Cast", "Spell": "Steal Shadow Pip", "SpellID": 1999903973, "Target": "Ally", "DispelImmune": false},
         {"Do": "CastBy", "By": "Creature", "Spell": "Steal Pips", "SpellID": 1473099408, "Target": "Owner", "DispelImmune": false, "Creature": 1462169}
       ],
-      "Notes": "Round 1: the Scorpion's Donate Shadow, the Rat steals the pip, the Scorpion steals pips back." }
+      "Notes": "Round 1: the Scorpion's Donate Shadow, the Rat steals the pip, the Scorpion steals pips back." },
+
+    { "When": "AllyCasts", "Creature": 1462169, "Spells": ["Enfeeble", "Glowbug Squall"], "AnyVersion": true,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001293"},
+        {"Do": "Cast", "Spell": "Shade Scimitars", "SpellID": 449513169, "Target": "Caster", "DispelImmune": false}
+      ],
+      "Notes": "The Scorpion casts Enfeeble or Glowbug Squall: Shade Scimitars on The Scorpion." },
+
+    { "When": "AllyCasts", "Creature": 1462169, "Spells": ["Iron Sultan"], "AnyVersion": true, "OnBoss": true, "Chance": 50,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00001294"},
+        {"Do": "Cast", "Spell": "Grand Blue Phoenix", "SpellID": 2040437643, "Target": "Caster", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Impede", "SpellID": 1906062967, "Target": "Caster", "DispelImmune": false}
+      ],
+      "Notes": "Sometimes (50% is a guess), The Scorpion's Iron Sultan on The Rat: Grand Blue Phoenix and Impede on The Scorpion." },
+
+    { "When": "ICast", "Spells": ["Steal Charm", "Steal Ward"], "AnyVersion": true,
+      "Actions": [
+        {"Do": "CastBy", "By": "Creature", "Creature": 1462169, "Spell": "Iron Sultan", "SpellID": 1138035958, "Target": "Owner", "DispelImmune": false}
+      ],
+      "Notes": "The Rat casts Steal Charm or Steal Ward: The Scorpion's Iron Sultan on The Rat (its line is The Scorpion's, so not shown over The Rat)." },
+
+    { "When": "ICast", "Spells": ["Shade Scimitars"], "AnyVersion": true, "Chance": 50,
+      "Actions": [
+        {"Do": "CastBy", "By": "Creature", "Creature": 1462169, "Spell": "Impede", "SpellID": 1906062967, "Target": "Owner", "DispelImmune": false},
+        {"Do": "CastBy", "By": "Creature", "Creature": 1462169, "Spell": "Supernova", "SpellID": 1768326543, "Target": "Owner", "DispelImmune": false}
+      ],
+      "Notes": "Sometimes (50% is a guess), The Rat's Shade Scimitars: The Scorpion's Impede and Supernova on The Rat." }
   ]
 }

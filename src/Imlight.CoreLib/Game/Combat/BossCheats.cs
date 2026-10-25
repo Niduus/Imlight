@@ -211,6 +211,37 @@
  *   player without the step's or cheat's mark: Mother Sunn's Ra for a wizard who cast no damage) and MostPips (the
  *   player with the most pips).
  *
+ * Closer to the real bosses (Niduus, 2026-10-25: "Expand on existing cheats and search methods"; CombatResolver.MoreCheats.cs,
+ * for players and creatures alike). Wizard404's words work too: a jinx is a trap and a curse is a weakness, wherever a
+ * kind is asked for (Category, NotCategory, HasKind, RemovedKind, RemoveEffects' Kind).
+ *   When         also EffectRemoved (someone else's spell takes one of its charms, wards, auras or over-times off:
+ *                RemovedKind, RemovedSpell narrow it; RemovedFrom AnyAlly or AnyEnemy looks at a side instead of only
+ *                itself, Anyone at everyone; "the attacker" is the one whose spell took it, "the one hit" the one it came
+ *                off) and AllyCasts (someone else on its side casts a spell that lands; School, Kind, Category, Spells,
+ *                OnBoss narrow it; "the attacker" is that ally).
+ *   SpellDoes    only if the spell that set it off does one of these (commas): RemoveCharm, RemoveBlade, RemoveWeakness,
+ *                RemoveWard, RemoveShield, RemoveTrap, RemoveOverTime, RemoveDoT, RemoveHoT, RemoveAura, Steal, Push, Swap,
+ *                Detonate, Dispel, Stun, Polymorph, Pips (gives or takes pips), Heal, Damage (Clear is Remove, Jinx Trap,
+ *                Curse Weakness: "ClearJinx"). NotSpellDoes: only if it does none of them.
+ *   Enchant      only if the card that set it off is enchanted with one of these (commas; any version), Any (any
+ *                enchantment) or None. NotEnchant: only if it is not (Despair lets an Aegis blade through).
+ *   Global       Up: only while a global (battlefield bubble) is up, None: only while none is; GlobalSchool and
+ *                GlobalSpell (any version) say which.
+ *   SchoolPips   only if SchoolPipsWho (Self if left out, Caster, Receiver, AnyEnemy, AnyAlly) has at least this many
+ *                school pips of SchoolPipsSchool, or of any one school when that is empty (Crash's two matching pips).
+ *                SchoolPipsMost: that school is the one they have the most school pips of.
+ *   PipsMin, PipsMax   only if PipsWho (Self if left out, Caster, Receiver, AnyEnemy, AnyAlly) has this many pips now,
+ *                for any When (PipsMax 0 = no top, -1 = none; PipsKind Shadow counts only shadow pips).
+ *   Circles      only if CirclesWho (Caster if left out, Receiver, Self) stands in one of these circles of its own side
+ *                ("2, 3, 4": Luska answers a wizard not in the first circle).
+ *   HasWho       also EnemyWithout, AllyWithout and AnyoneWithout (someone there does not have it; the target Matched),
+ *                and EnemySide and AllySide (HasCount counts them on the whole side together).
+ *   MarkWho      also AllEnemies: everyone standing on the other side has the mark (with NotMarked: not everyone).
+ *   Actions also:
+ *     { "Do": "DamageCap", "Amount", "Rounds" (0 = the rest of the battle), "Target" (Self) }   no one hit does more than
+ *                                           Amount damage to the target (Crash's 4,000 after his first defeat). Amount 0
+ *                                           takes its caps off.
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -342,6 +373,33 @@ internal static class BossCheats {
         public bool NotOnCaster { get; set; }
         // Only a spell that is none of these kinds ("Blade" or "Charm, Ward"): the Sphinx's wrong answer to a riddle.
         public string NotCategory { get; set; } = "";
+        // Closer to the real bosses (Niduus, 2026-10-25; CombatResolver.MoreCheats.cs). EffectRemoved: what came off (kinds
+        // as HasKind; the spell it came from) and from whom ("" itself, AnyAlly, AnyEnemy, Anyone).
+        public string RemovedKind { get; set; } = "";
+        public string RemovedSpell { get; set; } = "";
+        public string RemovedFrom { get; set; } = "";
+        // What the spell that set it off does (RemoveCharm, RemoveDoT... commas); NotSpellDoes: none of these.
+        public string SpellDoes { get; set; } = "";
+        public bool NotSpellDoes { get; set; }
+        // The card's enchantment (names with commas, Any or None); NotEnchant: not one of these.
+        public string Enchant { get; set; } = "";
+        public bool NotEnchant { get; set; }
+        // A global: Up or None, of GlobalSchool, from GlobalSpell.
+        public string Global { get; set; } = "";
+        public string GlobalSchool { get; set; } = "";
+        public string GlobalSpell { get; set; } = "";
+        // At least SchoolPips school pips of SchoolPipsSchool ("" any one school) on SchoolPipsWho; SchoolPipsMost: their most.
+        public int SchoolPips { get; set; }
+        public string SchoolPipsSchool { get; set; } = "";
+        public string SchoolPipsWho { get; set; } = "";
+        public bool SchoolPipsMost { get; set; }
+        // PipsWho has PipsMin to PipsMax pips now (PipsMax 0 = no top, -1 = none).
+        public int PipsMin { get; set; }
+        public int PipsMax { get; set; }
+        public string PipsWho { get; set; } = "";
+        // CirclesWho stands in one of these circles of its side ("2, 3, 4").
+        public string Circles { get; set; } = "";
+        public string CirclesWho { get; set; } = "";
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]

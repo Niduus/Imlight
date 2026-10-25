@@ -76,14 +76,17 @@ internal static class CheatSpecs {
 
     internal static readonly (string Value, string Label)[] CATEGORIES = [
         ("", "any"), ("Damage", "damage"), ("Heal", "heal"), ("Charm", "charm (any)"), ("Ward", "ward (any)"),
-        ("Charm,Ward", "charm or ward"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"),
+        ("Charm,Ward", "charm or ward"), ("Shield", "shield"), ("Trap", "trap (jinx)"), ("Blade", "blade"), ("Weakness", "weakness (curse)"),
         ("Aura", "aura"), ("Global", "global (bubble)"), ("Aura,Global", "aura or global"), ("Charm,Global", "charm or global"), ("Minion", "minion"),
         ("Shadow", "shadow"), ("Enchantment", "enchantment"), ("Stun", "stun"), ("Steal", "steal"), ("Dispel", "dispel"),
         ("Polymorph", "polymorph"), ("Treasure", "treasure card"), ("DoT", "damage over time"), ("HoT", "heal over time"),
     ];
 
     private static readonly (string, string)[] s_charmKinds = [("All", "of any"), ("Good", "good"), ("Bad", "bad")];
-    private static readonly (string, string)[] s_pipKinds = [("Normal", "normal"), ("Power", "power"), ("Shadow", "shadow")];
+    private static readonly (string, string)[] s_pipKinds = [("Normal", "normal"), ("Power", "power"), ("Shadow", "shadow"),
+        // A school's own pips (Niduus, 2026-10-25: Crash the Bandit Coot spends his two matching pips).
+        ("Fire", "Fire school"), ("Ice", "Ice school"), ("Storm", "Storm school"), ("Myth", "Myth school"), ("Life", "Life school"),
+        ("Death", "Death school"), ("Balance", "Balance school")];
     private static readonly (string, string)[] s_pipsOf = [("", "it"), ("Enemy", "a player")];
     private static readonly (string, string)[] s_pipsKind = [("", "pips"), ("Shadow", "shadow pips")];
     private static readonly (string, string)[] s_creatureWho = [("", "the one the When is about"), ("Receiver", "whoever the spell was aimed at")];
@@ -104,14 +107,34 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
     private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first"), ("Swap", "swap who goes first")];
     private static readonly (string, string)[] s_hasWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"),
-        ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side")];
+        ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side"),
+        // Niduus, 2026-10-25: someone without it, and a whole side counted together.
+        ("EnemyWithout", "someone on the other side without"), ("AllyWithout", "someone on its side without"), ("AnyoneWithout", "anyone without"),
+        ("EnemySide", "the other side together"), ("AllySide", "its side together")];
     private static readonly (string, string)[] s_hasKinds = [
-        ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap"), ("Blade", "blade"), ("Weakness", "weakness"), ("Charm", "charm (any)"),
+        ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap (jinx)"), ("Blade", "blade"), ("Weakness", "weakness (curse)"), ("Charm", "charm (any)"),
         ("Ward", "ward (any)"), ("Aura", "aura"), ("DoT", "damage over time"), ("HoT", "heal over time"),
     ];
-    private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side")];
+    private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side"),
+        ("AllEnemies", "every player")];
     private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
     private static readonly (string, string)[] s_anySchool = [("", "every school"), .. SCHOOLS[1..]];
+    // Niduus, 2026-10-25 ("Expand on existing cheats"): the blocks of CombatResolver.MoreCheats.cs.
+    private static readonly (string, string)[] s_removedFrom = [("", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"), ("Anyone", "anyone")];
+    private static readonly (string, string)[] s_spellDoes = [
+        ("RemoveCharm", "removes a charm"), ("RemoveBlade", "removes a blade"), ("RemoveWeakness", "removes a weakness (curse)"),
+        ("RemoveWard", "removes a ward"), ("RemoveShield", "removes a shield"), ("RemoveTrap", "removes a trap (jinx)"),
+        ("RemoveOverTime", "removes an over-time"), ("RemoveDoT", "removes a damage over time"), ("RemoveHoT", "removes a heal over time"),
+        ("RemoveAura", "removes an aura"), ("Steal", "steals an effect"), ("Push", "pushes an effect"), ("Swap", "swaps effects"),
+        ("Detonate", "detonates over-times"), ("Dispel", "dispels"), ("Stun", "stuns"), ("Polymorph", "polymorphs"),
+        ("Pips", "gives or takes pips"), ("Damage", "does damage"), ("Heal", "heals"),
+    ];
+    private static readonly (string, string)[] s_global = [("Up", "a"), ("None", "no")];
+    private static readonly (string, string)[] s_pipsWho = [("", "it"), ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"),
+        ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side")];
+    private static readonly (string, string)[] s_pipSchools = [("", "matching (any one school)"), ("Fire", "Fire"), ("Ice", "Ice"), ("Storm", "Storm"),
+        ("Myth", "Myth"), ("Life", "Life"), ("Death", "Death"), ("Balance", "Balance")];
+    private static readonly (string, string)[] s_circlesWho = [("", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it")];
 
     private static CheatField F(string key, CheatFieldType type, JsonNode? first = null, (string, string)[]? options = null, int max = 100_000_000)
         => new(key, type, first, options, Max: max);
@@ -231,6 +254,14 @@ internal static class CheatSpecs {
             "When an ally is hit by a {School} {Category} spell {Count}", [F("School", CheatFieldType.School), F("Category", CheatFieldType.Category), F("Count", CheatFieldType.MatchCount)],
             b => $"When an ally is hit by {(b.Text("School").Length > 0 || b.Text("Category").Length > 0 ? Spell(b, "a spell") : "anything")}"),
 
+        new("W.AllyCasts", BlockKind.When, "sparkle", "an ally's spell lands", "Someone else on its side casts a spell that lands. \"The attacker\" is that ally. The Rat answers The Scorpion's Enfeeble: an ally's spell lands, \"these spells\" Enfeeble, \"this creature\" The Scorpion, cast Shade Scimitars on the attacker. Add \"aimed at it\" for an ally's spell on it (Buck Gordon's Convert Blade).",
+            "When an ally casts a {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
+            b => $"When an ally casts {Spell(b, "a spell")}"),
+        new("W.EffectRemoved", BlockKind.When, "stop", "an effect is removed", "Someone else's spell takes a charm, ward, aura or over-time off it (or off someone on a side), not one used up by a hit. \"The attacker\" is the one whose spell took it, \"the one hit\" the one it came off. Xibalba: aura removed, cast Blessing on itself. Empress of Flames: a DoT removed from someone on the other side, only if the other side together has no DoT, wait 2 rounds, cast Scald.",
+            "When {RemovedFrom} loses a {RemovedKind} from {RemovedSpell} to a spell",
+            [F("RemovedFrom", CheatFieldType.Choice, "", s_removedFrom), F("RemovedKind", CheatFieldType.Choice, "", s_hasKinds), F("RemovedSpell", CheatFieldType.Words, "")],
+            b => $"When {LabelOf(s_removedFrom, b.Text("RemovedFrom"))} loses {(b.Text("RemovedSpell").Length > 0 ? b.Text("RemovedSpell") + " " : "a ")}{LabelOf(s_hasKinds, b.Text("RemovedKind"))}"),
+
         // When... (first made for the player cheats; a boss's "I" is the boss)
         new("W.ICast", BlockKind.When, "sparkle", "I cast", "Your spell, just before it lands. Pick the kind of card and school, and add a \"these spells\" block to name spells.",
             "When I cast a {Category} spell of {School} {Count}", [F("Category", CheatFieldType.Category), F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
@@ -339,6 +370,27 @@ internal static class CheatSpecs {
         new("I.MultiTarget", BlockKind.If, "users", "many targets", "Only a spell that hits a whole side, not one target.",
             "Only if the spell hits a whole side", [], _ => "only spells on a whole side"),
 
+        new("I.SpellDoes", BlockKind.If, "cards", "the spell does", "Only a spell that does this, judged from its own effects, so any card that does it counts: Rotten Rob answers \"another spell that clears DoTs\" (a player casts, the spell removes a damage over time: Triage on every player). With \"does not\", only a spell that does not. A file can list several with commas (RemoveDoT, RemoveTrap).",
+            "Only if the spell {SpellDoes} {NotSpellDoes}", [F("SpellDoes", CheatFieldType.Choice, "RemoveCharm", s_spellDoes), new("NotSpellDoes", CheatFieldType.Toggle, false, Label: "does not")],
+            b => $"only spells that {(b.Flag("NotSpellDoes") ? "do not " : "")}{LabelOf(s_spellDoes, b.Text("SpellDoes")).Replace("removes", b.Flag("NotSpellDoes") ? "remove" : "removes")}"),
+        new("I.Enchanted", BlockKind.If, "sparkle", "card's enchantment", "Only a card enchanted with one of these (names with commas, any version), Any (any enchantment) or None. With \"is not\", only a card that is not: Despair answers a blade unless it is enchanted with Aegis, and a Feint unless Indemnity or Melt.",
+            "Only if the card is enchanted with {Enchant} {NotEnchant}", [F("Enchant", CheatFieldType.Words, "Aegis"), new("NotEnchant", CheatFieldType.Toggle, false, Label: "is not")],
+            b => $"only cards {(b.Flag("NotEnchant") ? "not " : "")}enchanted with {(b.Text("Enchant").Length > 0 ? b.Text("Enchant") : "(nothing picked)")}"),
+        new("I.Global", BlockKind.If, "school", "a global is up", "Only while a global (a battlefield bubble) is up, or with \"no\", while none is. Pick its school, or name its spell (any version): Winged Sorrow heals back to full only under its own Winged Sorrow - Storm Global.",
+            "Only while {Global} global of {GlobalSchool} from {GlobalSpell} is up", [F("Global", CheatFieldType.Choice, "Up", s_global), F("GlobalSchool", CheatFieldType.Choice, "", SCHOOLS), F("GlobalSpell", CheatFieldType.Words, "")],
+            b => $"only while {(b.Text("Global").Equals("None", StringComparison.OrdinalIgnoreCase) ? "no" : "a")} {(b.Text("GlobalSchool").Length > 0 ? b.Text("GlobalSchool") + " " : "")}{(b.Text("GlobalSpell").Length > 0 ? b.Text("GlobalSpell") + " " : "")}global is up"),
+        new("I.SchoolPips", BlockKind.If, "pips", "school pips", "Only if that one has at least this many school pips of a school, or of any one school (\"matching\"). \"Its most\" asks for the school they have the most pips of. Crash the Bandit Coot: 2 matching Fire school pips, Sun Serpent. Someone on a side is \"the one the If found\".",
+            "Only if {SchoolPipsWho} has {SchoolPips} {SchoolPipsSchool} school pips {SchoolPipsMost}",
+            [F("SchoolPipsWho", CheatFieldType.Choice, "", s_pipsWho), F("SchoolPips", CheatFieldType.Number, 2, max: 7), F("SchoolPipsSchool", CheatFieldType.Choice, "", s_pipSchools),
+             new("SchoolPipsMost", CheatFieldType.Toggle, false, Label: "its most")],
+            b => $"only if {LabelOf(s_pipsWho, b.Text("SchoolPipsWho"))} has {b.Number("SchoolPips")}+ {(b.Text("SchoolPipsSchool").Length > 0 ? b.Text("SchoolPipsSchool") : "matching")} school pips{(b.Flag("SchoolPipsMost") ? " (its most)" : "")}"),
+        new("I.PipsNow", BlockKind.If, "pips", "pips now", "Only if that one has this many pips at the moment the When goes off, for any When (a power pip counts as one). Leave the top at 0 for no top; -1 in the top means no pips. Locomaton answers Conductor's Whistle with Mass Feint at 6 pips and Power Nova at 7.",
+            "Only if {PipsWho} has {PipsMin} to {PipsMax} pips now", [F("PipsWho", CheatFieldType.Choice, "", s_pipsWho), F("PipsMin", CheatFieldType.Number, 6, max: 14), new("PipsMax", CheatFieldType.Number, 0, Max: 14, Min: -1)],
+            b => $"only if {LabelOf(s_pipsWho, b.Text("PipsWho"))} has {(b.Number("PipsMax") < 0 ? "no" : b.Number("PipsMax") > 0 ? $"{b.Number("PipsMin")}-{b.Number("PipsMax")}" : $"{b.Number("PipsMin")}+")} pips"),
+        new("I.Circle", BlockKind.If, "target", "in circle", "Only if that one stands in one of these circles of its own side (1-4 as the game numbers them, with commas between). Luska Charmbeak answers a single-target spell from a wizard not in the first circle: circles 2, 3, 4.",
+            "Only if {CirclesWho} stands in circle {Circles}", [F("CirclesWho", CheatFieldType.Choice, "", s_circlesWho), F("Circles", CheatFieldType.Words, "2, 3, 4")],
+            b => $"only if {LabelOf(s_circlesWho, b.Text("CirclesWho"))} is in circle {(b.Text("Circles").Length > 0 ? b.Text("Circles") : "(none picked)")}"),
+
         // Do... (first made for bosses)
         new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again.",
             "Cast {Spell} on {Target} {Silent}",
@@ -382,6 +434,9 @@ internal static class CheatSpecs {
         new("D.Immune", BlockKind.Do, "shield", "become immune", "No damage from that school (or any) for some rounds; 0 rounds is the rest of the battle. Pierce still gets through, as against a shield.",
             "Make {Target} immune to {School} damage for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.Choice, "Fire", s_anySchool), F("Rounds", CheatFieldType.Number, 2, max: 99)],
             b => $"immune to {SchoolWord(b)}damage{Target(b)} for {RoundsFor(b)}"),
+        new("D.DamageCap", BlockKind.Do, "shield", "cap damage", "No hit does more than this much damage to the target, for some rounds (0 is the rest of the battle), as Equalize does for a whole battle. 0 damage takes the cap off. Crash the Bandit Coot: defeated the first time, back to full, cap his damage at 4,000.",
+            "Cap the damage {Target} takes at {Amount} for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("Amount", CheatFieldType.Number, 4000), F("Rounds", CheatFieldType.Number, 0, max: 99)],
+            b => b.Number("Amount") > 0 ? $"cap damage{Target(b)} at {N(b.Number("Amount"))} for {RoundsFor(b)}" : $"take the damage cap off{Target(b)}"),
         new("D.Stun", BlockKind.Do, "stop", "stun", "The target misses this many turns, as from a stun spell (with no stun animation; cast a stun spell for that).",
             "Stun {Target} for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Caster"), F("Rounds", CheatFieldType.Number, 1, max: 9)],
             b => $"stun{Target(b)} for {(b.Number("Rounds") > 1 ? $"{b.Number("Rounds")} rounds" : "1 round")}"),
@@ -411,7 +466,7 @@ internal static class CheatSpecs {
         new("D.Announce", BlockKind.Do, "chat", "announce to the battle", "A server announcement, as the Announcement card sends it, but only to the wizards in this battle: a message box with \"Announcement\" on top, an \"Announcement:\" chat line, or both. {boss} in the words is the boss (or you, in a player cheat), {player} the wizard who set it off, {round} the round. Example: a Round 3 cheat that does this with \"The ground trembles...\" as a box. Unlike \"say a line\" (a game line over the boss) and \"chat message\" (chat with the boss's name in front), it reads as from the server.",
             "Announce {Text} to {Who} {Style}", [F("Text", CheatFieldType.Words, ""), F("Who", CheatFieldType.Choice, "", s_announceWho), F("Style", CheatFieldType.Choice, "Box", s_announceStyles)],
             b => $"announce \"{b.Text("Text")}\" to {LabelOf(s_announceWho, b.Text("Who"))} {LabelOf(s_announceStyles, b.Text("Style").Length > 0 ? b.Text("Style") : "Box")}"),
-        new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away.",
+        new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away. A school's pips too: Crash the Bandit Coot spends his two matching Fire pips (take 2 Fire school pips from itself) after his Crash Attack.",
             "{Amount} {Kind} pips, for {Target}", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Self")],
             b => $"{(b.Number("Amount") < 0 ? "take" : "give")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips{Target(b).Replace(" on ", b.Number("Amount") < 0 ? " from " : " to ")}"),
         new("D.StealPips", BlockKind.Do, "pips", "steal pips", "Takes pips from the target and gives them to the boss.",

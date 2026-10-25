@@ -958,6 +958,12 @@ internal sealed partial class ManagerWindow {
         return panel;
     }
 
+    // The spell picker's pip costs.
+    private static readonly (string Value, string Label)[] s_pipChoices = [
+        ("", "any pips"), ("0", "0 pips"), ("1", "1 pip"), ("2", "2 pips"), ("3", "3 pips"), ("4", "4 pips"), ("5", "5 pips"), ("6", "6 pips"),
+        ("7", "7 pips"), ("8+", "8+ pips"), ("x", "X pips"),
+    ];
+
     // A spell: its school icon and name; the pop-up searches the spells, with their cards from the game.
     private Control SpellField(CheatBlock block, Action changed) {
         Button? button = null;
@@ -974,8 +980,17 @@ internal sealed partial class ManagerWindow {
         }
 
         button = BlockFields.Picker(SchoolBadge(SchoolOf(), 18), Name(), flyout => {
-            var search = new TextBox { Watermark = "Search a spell, such as Supernova or Steal Charm", Width = 380, Text = block.Text("Spell") };
+            var search = new TextBox { Watermark = "Search a spell: Supernova, supnova, Steal Charm, or school:Fire kind:jinx pips:4", Width = 380, Text = block.Text("Spell") };
             var results = new StackPanel { Spacing = 4 };
+            // Niduus, 2026-10-25 ("search methods"): narrow by school, kind of card and pip cost; an empty name lists them.
+            var (pickSchool, pickKind, pickPips) = ("", "", "");
+            var filters = new WrapPanel {
+                Children = {
+                    BlockFields.Choice(CheatSpecs.SCHOOLS, "", v => { pickSchool = v; Render(); }, 120),
+                    BlockFields.Choice(CheatSpecs.CATEGORIES.Select(c => c.Value.Length == 0 ? (c.Value, "any kind") : c).ToArray(), "", v => { pickKind = v; Render(); }, 150),
+                    BlockFields.Choice(s_pipChoices, "", v => { pickPips = v; Render(); }, 110),
+                },
+            };
             void Render() {
                 results.Children.Clear();
                 if (_bossCatalog is null) {
@@ -994,12 +1009,17 @@ internal sealed partial class ManagerWindow {
                     return;
                 }
 
-                var found = _bossCatalog.SearchSpells(search.Text ?? "", 8);
-                if (found.Count == 0) {
-                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0 ? "Type a few letters of the spell's name." : "No spell matches."));
+                var found = FindSpells(search.Text ?? "", pickSchool, pickKind, pickPips, 12, out var note);
+                if (note.Length > 0) {
+                    results.Children.Add(Sub(note));
                 }
 
-                foreach (var spell in found) {
+                if (found.Count == 0) {
+                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0 && pickSchool.Length + pickKind.Length + pickPips.Length == 0
+                        ? "Type a few letters of the spell's name, or pick a school, kind or pip cost." : "No spell matches."));
+                }
+
+                foreach (var (spell, detail) in found) {
                     var row = new Button {
                         HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left, Padding = new Thickness(6),
                         Content = new StackPanel {
@@ -1010,7 +1030,7 @@ internal sealed partial class ManagerWindow {
                                     VerticalAlignment = VerticalAlignment.Center, Spacing = 2,
                                     Children = {
                                         new TextBlock { Text = spell.Name, FontWeight = FontWeight.SemiBold },
-                                        new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { SchoolBadge(spell.School, 14), new TextBlock { Text = $"{spell.School}  ·  ID {spell.Id}", Foreground = MUTED, FontSize = 12 } } },
+                                        new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { SchoolBadge(spell.School, 14), new TextBlock { Text = detail, Foreground = MUTED, FontSize = 12 } } },
                                     },
                                 },
                             },
@@ -1031,7 +1051,7 @@ internal sealed partial class ManagerWindow {
             search.TextChanged += (_, _) => Render();
             Render();
 
-            return new StackPanel { Spacing = 8, Width = 400, Children = { search, new ScrollViewer { MaxHeight = 420, Content = results } } };
+            return new StackPanel { Spacing = 8, Width = 400, Children = { search, filters, new ScrollViewer { MaxHeight = 420, Content = results } } };
         }, "Click to pick the spell");
         ShowCard();
 
@@ -1118,7 +1138,7 @@ internal sealed partial class ManagerWindow {
         }
 
         button = BlockFields.Picker(SchoolBadge(School(), 18), Shown(), flyout => {
-            var search = new TextBox { Watermark = "Search a creature, such as Haunted Malistaire or 1336037", Width = 380 };
+            var search = new TextBox { Watermark = "Search a creature: Winged Sorrow, 1336037, world:Darkmoor, has:cheats", Width = 380 };
             var results = new StackPanel { Spacing = 4 };
             void Pick(uint creature, int custom) {
                 block.Set("Creature", creature);
@@ -1163,13 +1183,16 @@ internal sealed partial class ManagerWindow {
                     return;
                 }
 
-                var found = _bossCatalog.Search(search.Text ?? "", bossesOnly: false, new HashSet<string>(), 8, out _);
+                // By name or ID (partly, or with a slip), world:, zone:, has:cheats and uses: (ManagerWindow.CheatSearch.cs).
+                var found = FindCreatures(search.Text ?? "", bossesOnly: false, new HashSet<string>(), 8, out _);
                 if (found.Count == 0) {
-                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0 ? "Type a name or ID to search." : "No creature matches."));
+                    results.Children.Add(Sub((search.Text ?? "").Trim().Length == 0
+                        ? "Type a name or ID to search, or world:Darkmoor, zone:DM_ or has:cheats." : "No creature matches."));
                 }
 
                 foreach (var creature in found) {
-                    results.Children.Add(Choice(creature.Name, $"ID {creature.Id}  ·  level {creature.Level}  ·  {creature.Health:N0} health", creature.School,
+                    var note = CreatureNote(creature, search.Text ?? "", inCheats: false);
+                    results.Children.Add(Choice(creature.Name, $"ID {creature.Id}  ·  level {creature.Level}  ·  {creature.Health:N0} health{(note.Length > 0 ? "  ·  " + note : "")}", creature.School,
                         () => Pick(uint.TryParse(creature.Id, out var id) ? id : 0, 0)));
                 }
             }

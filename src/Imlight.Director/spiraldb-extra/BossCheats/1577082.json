@@ -3,15 +3,28 @@
   // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove; ones it marks as needing verification are made as if confirmed).
   // Built first from blocks that were there, then from new universal blocks where a Notes names one (Niduus,
   // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"). Lines are the game's own, by key.
+  // Re-made with the closer blocks (Niduus, 2026-10-25: "Expand on existing cheats"): its answers to Conductor's Whistle by the pips it has (the If "pips now").
   "TemplateID": 1577082,
   "Name": "Locomaton (Rank 1)",
   "Cheats": [
-    { "When": "EnemyCasts", "Spells": ["Conductor's Whistle"], "AnyVersion": true,
+    { "When": "EnemyCasts", "Spells": ["Conductor's Whistle"], "AnyVersion": true, "PipsMax": 5,
       "Actions": [
         {"Do": "PickOne", "Count": 2},
         {"Do": "Cast", "Spell": "Dragonblade", "SpellID": 736547457, "Target": "Self", "DispelImmune": false},
         {"Do": "Cast", "Spell": "Donate Power", "SpellID": 1484841148, "Target": "Self", "DispelImmune": false}
       ],
-      "Notes": "Conductor's Whistle: Dragonblade or Donate Power." }
+      "Notes": "Conductor's Whistle at 5 pips or fewer: Dragonblade or Donate Power." },
+
+    { "When": "EnemyCasts", "Spells": ["Conductor's Whistle"], "AnyVersion": true, "PipsMin": 6, "PipsMax": 6,
+      "Actions": [
+        {"Do": "Cast", "Spell": "Mass Feint", "SpellID": 203556948, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "Conductor's Whistle at 6 pips: Mass Feint." },
+
+    { "When": "EnemyCasts", "Spells": ["Conductor's Whistle"], "AnyVersion": true, "PipsMin": 7,
+      "Actions": [
+        {"Do": "Cast", "Spell": "Power Nova", "SpellID": 2062835293, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "Conductor's Whistle at 7 pips or more: Power Nova." }
   ]
 }
