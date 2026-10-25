@@ -199,10 +199,6 @@ internal sealed partial class ManagerWindow {
         kind = SpellNameFamily.KindSynonym(query.Filter("kind") is { Length: > 0 } typedKind ? typedKind : kind);
         var cost = CheatSearch.PipRange(query.Filter("pips") is { Length: > 0 } typedPips ? typedPips : pips);
         var words = query.Words;
-        if (words.Length == 0 && school.Length == 0 && kind.Length == 0 && cost is null) {
-            return [];
-        }
-
         bool SchoolOk(string s) => school.Length == 0 || school.Equals(s, StringComparison.OrdinalIgnoreCase);
         if (_spellBook is { } book) {
             var cards = book.Spells.Where(c => SchoolOk(c.School) && CheatSearch.CostFits(cost, c.Pips, c.XPips)

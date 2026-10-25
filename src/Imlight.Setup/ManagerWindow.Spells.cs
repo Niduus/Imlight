@@ -163,7 +163,9 @@ internal sealed partial class ManagerWindow {
         }
 
         var query = _lookupSearch.Text ?? "";
-        var results = _spellBook.Search(query, SPELL_MAX, HideBroken, out var total, out var brokenHidden);
+        var school = FilterPick(_lookupSchool);
+        var results = _spellBook.Search(query, SPELL_MAX, HideBroken, out var total, out var brokenHidden,
+            school is null ? null : s => s.School.Equals(school, StringComparison.OrdinalIgnoreCase));
         var selected = _spellResults.SelectedItem as SpellCard;
         _spellResults.ItemsSource = results;
         if (selected is not null && results.Contains(selected)) {

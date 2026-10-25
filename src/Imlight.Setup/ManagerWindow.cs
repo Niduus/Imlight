@@ -92,6 +92,11 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ToggleSwitch _randomizer = new() { OnContent = "On", OffContent = "Off" };
     private readonly CheckBox _hideDebug = new() { Content = "Hide debug lines", IsChecked = true };
     private readonly CheckBox _hideWarnings = new() { Content = "Hide warnings" };
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's; the logs had no search at all.
+    private readonly TextBox _logSearch = new() { Watermark = "Search the server log, such as error, a wizard's name or a zone" };
+    private readonly ComboBox _logLevel = FilterCombo([ANY_FILTER, "Errors", "Warnings", "Warnings and errors", "Information", "Debug"], 180);
+    private readonly CheckBox _logRepeated = new() { Content = "Only lines that repeated" };
+    private readonly TextBox _clientLogSearch = new() { Watermark = "Search the game log" };
     private readonly CheckBox _follow = new() { Content = "Follow", IsChecked = true };
     private readonly CheckBox _pauseLog = new() { Content = "Pause" };
     private List<string> _shownLog = [];
@@ -172,7 +177,12 @@ internal sealed partial class ManagerWindow : Window {
     private readonly NumericUpDown _pointsPerLevel = new() { Minimum = 0, Maximum = 100, Increment = 1, FormatString = "0", Width = 130 };
 
     // Settings.
-    private readonly TextBox _settingSearch = new() { Watermark = "Search settings" };
+    private readonly TextBox _settingSearch = new() { Watermark = "Search settings by name, what they do or their value" };
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's.
+    private static readonly string[] s_settingKinds = [ANY_FILTER, "On/off switches", "Switches that are on", "Switches that are off", "Numbers", "Words", "Empty"];
+    private readonly ComboBox _settingSection = FilterCombo([ANY_FILTER], 180);
+    private readonly ComboBox _settingKind = FilterCombo(s_settingKinds, 180);
+    private readonly CheckBox _settingUnsaved = new() { Content = "Only ones I changed and haven't saved" };
     private readonly StackPanel _settingsList = new() { Spacing = 8 };
     private readonly Dictionary<(string Section, string Key), Setting> _pending = [];
     private readonly Border _saveBar = new() { IsVisible = false, Padding = new Thickness(16, 10) };
@@ -195,11 +205,30 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _newLevel = new() { Width = 180 };
     private readonly StackPanel _accountRows = new() { Spacing = 6 };
     private readonly TextBlock _accountsNote = Sub("");
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's.
+    private readonly TextBox _accountSearch = new() { Watermark = "Search accounts by username or account ID" };
+    private readonly ComboBox _accountLevel = FilterCombo(new[] { ANY_FILTER }.Concat(PlayerAccounts.AUTH_LEVELS.Select(LevelName)), 170);
+    private readonly ComboBox _accountLocked = FilterCombo([ANY_FILTER, "Can log in", "Locked"], 130);
+    private readonly ComboBox _accountLogin = FilterCombo([ANY_FILTER, "Today", "In the last 7 days", "In the last 30 days", "Not in 30 days", "Never"], 170);
+    private readonly NumericUpDown _accountCharsMin = FilterNumber(1);
+    private readonly NumericUpDown _accountCharsMax = FilterNumber(1);
+    private readonly ComboBox _accountSort = FilterCombo(["Username", "Last login (newest first)", "Made (newest first)", "Most characters", "Level"], 190);
+    private List<AccountSummary> _accountList = [];
 
     // Lookup.
     private readonly TextBox _lookupSearch = new() { Watermark = "Search by name, ID or what it does, such as gold, Fire Cat or 1317127" };
     private readonly ComboBox _lookupKind = new() { ItemsSource = Lookup.KINDS, SelectedIndex = 0, Width = 150 };
     private readonly TextBlock _lookupCount = Sub("");
+    // The Lookup tab's filters (Niduus, 2026-10-25: "have all searches be in detail like the gear search").
+    private readonly ComboBox _lookupSchool = FilterCombo([ANY_FILTER], 130);
+    private readonly NumericUpDown _lookupLevelMin = FilterNumber(10);
+    private readonly NumericUpDown _lookupLevelMax = FilterNumber(10);
+    private readonly NumericUpDown _lookupIdMin = FilterNumber(1000, 150);
+    private readonly NumericUpDown _lookupIdMax = FilterNumber(1000, 150);
+    private readonly ComboBox _lookupWho = FilterCombo([ANY_FILTER], 200);
+    private readonly ComboBox _lookupMadeFor = FilterCombo([ANY_FILTER, "Custom (made for this build)", "Imlight's own"], 200);
+    private readonly ComboBox _lookupSort = FilterCombo(Lookup.SORTS, 160);
+    private readonly CheckBox _lookupHasCommand = new() { Content = "Only ones with a command" };
     private readonly ListBox _lookupResults = new() { Background = Brushes.Transparent };
     private readonly DispatcherTimer _lookupDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private Lookup? _lookup;
@@ -556,9 +585,29 @@ internal sealed partial class ManagerWindow : Window {
 
         var custom = new TabItem { Content = _customCommands, FontSize = 15 };
         var imlight = new TabItem { Content = _imlightCommands, FontSize = 15 };
+        // Niduus, 2026-10-25: every search with filters like the Gear tab's.
+        var who = FilterCombo(new[] { ANY_FILTER }.Concat(Lookup.COMMANDS.Select(c => c.Who).Distinct()), 220);
+        var needs = FilterCombo([ANY_FILTER, "Nothing after it", "Something after it (a name, number or time)", "Clicking a player first"], 230);
+        var sort = FilterCombo(["The usual order", "Name (A to Z)", "Command (A to Z)"], 170);
+        var count = Sub("");
         void Render() {
             var words = SearchText.Words(_commandSearch.Text);
-            var shown = Lookup.COMMANDS.Where(c => words.All(c.Haystack.Contains)).ToList();
+            var whoPicked = FilterPick(who);
+            IEnumerable<LookupEntry> matches = Lookup.COMMANDS.Where(c => words.All(c.Haystack.Contains)
+                && (whoPicked is null || c.Who == whoPicked)
+                && needs.SelectedIndex switch {
+                    1 => c.Typed?.Contains('<') != true,
+                    2 => c.Typed?.Contains('<') == true,
+                    3 => c.Help.Contains("Click a player", StringComparison.OrdinalIgnoreCase),
+                    _ => true,
+                });
+            matches = sort.SelectedIndex switch {
+                1 => matches.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase),
+                2 => matches.OrderBy(c => c.Typed, StringComparer.OrdinalIgnoreCase),
+                _ => matches,
+            };
+            var shown = matches.ToList();
+            count.Text = FilterCount(shown.Count, Lookup.COMMANDS.Length, "commands");
             _customCommands.ItemsSource = shown.Where(c => c.Custom).ToList();
             _imlightCommands.ItemsSource = shown.Where(c => !c.Custom).ToList();
             custom.Header = $"Custom ({shown.Count(c => c.Custom)})";
@@ -566,6 +615,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _commandSearch.TextChanged += (_, _) => Render();
+        WhenFiltersChange(Render, who, needs, sort);
         Render();
 
         return new DockPanel {
@@ -576,7 +626,10 @@ internal sealed partial class ManagerWindow : Window {
                 WithDock(Fold("search", "Commands", "Find a command",
                     "Type them in the game's chat, starting with the dot.",
                     WithHint(_commandSearch, "Custom has the commands made for your build. Imlight has the ones the server comes with. " +
-                        "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard.")), Dock.Top),
+                        "Type them in the game's chat, starting with the dot. Copy command puts the text on your clipboard. " +
+                        "Narrow the list by who can use a command and what it needs typed after it."),
+                    SearchFilters(SearchFilter("Who can use it", who), SearchFilter("Needs", needs), SearchFilter("Sort by", sort)),
+                    count), Dock.Top),
                 WithMargin(Card(new TabControl { ItemsSource = new[] { custom, imlight } }), new Thickness(0, 14, 0, 0)),
             },
         };
@@ -596,6 +649,18 @@ internal sealed partial class ManagerWindow : Window {
             RenderLookup();
         };
         _lookupResults.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
+        WhenFiltersChange(RenderLookup, _lookupSchool, _lookupLevelMin, _lookupLevelMax, _lookupIdMin, _lookupIdMax, _lookupWho,
+            _lookupMadeFor, _lookupSort, _lookupHasCommand);
+        var filters = SearchFilters(
+            SearchFilter("School", _lookupSchool),
+            SearchFilter("Level from", _lookupLevelMin),
+            SearchFilter("Level to", _lookupLevelMax),
+            SearchFilter("ID from", _lookupIdMin),
+            SearchFilter("ID to", _lookupIdMax),
+            SearchFilter("Who can use the command", _lookupWho),
+            SearchFilter("Command made for", _lookupMadeFor),
+            SearchFilter("Sort by", _lookupSort),
+            SearchTick(_lookupHasCommand));
 
         return new DockPanel {
             Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
@@ -607,7 +672,10 @@ internal sealed partial class ManagerWindow : Window {
                     WithHint(new DockPanel {
                         Children = { WithDock(WithMargin(_lookupKind, new Thickness(8, 0, 0, 0)), Dock.Right), _lookupSearch },
                     }, "Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
-                       "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card."),
+                       "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card. " +
+                       "Leave the box empty to list everything, then narrow it with the filters: school (items, spells and creatures), " +
+                       "level (creatures), template ID, who can use a command and whether it was made for this build."),
+                    filters,
                     _lookupCount), Dock.Top),
                 WithMargin(Card(new Panel { Children = { _lookupResults, SpellView() } }), new Thickness(0, 14, 0, 0)),
             },
@@ -697,16 +765,21 @@ internal sealed partial class ManagerWindow : Window {
                 || SearchText.Matches($"{PET_CASTING} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query)).ToList());
         };
 
+        WhenFiltersChange(RenderSettings, _settingSection, _settingKind, _settingUnsaved);
+
         return Page(
             Fold("search", "Settings", "Find a setting",
                 "Changes apply the next time the server starts.",
-                WithHint(_settingSearch, "Every setting in the server's Imlight.ini. Changes apply the next time the server starts.")),
+                WithHint(_settingSearch, "Every setting in the server's Imlight.ini. Changes apply the next time the server starts. " +
+                    "Search by its name, what it does or the value it has now, or narrow it to one section or kind of setting."),
+                SearchFilters(SearchFilter("Section", _settingSection), SearchFilter("Kind", _settingKind), SearchTick(_settingUnsaved))),
             _settingsList);
     }
 
     private Control AccountsTab() {
         _newLevel.ItemsSource = PlayerAccounts.AUTH_LEVELS.Select(LevelName).ToList();
         _newLevel.SelectedIndex = 0;
+        WhenFiltersChange(RenderAccounts, _accountSearch, _accountLevel, _accountLocked, _accountLogin, _accountCharsMin, _accountCharsMax, _accountSort);
 
         // One card: the accounts, and the boxes to add one under them (they were two cards).
         return Page(
@@ -714,6 +787,10 @@ internal sealed partial class ManagerWindow : Window {
                 new DockPanel {
                     Children = { WithDock(Action(Plain("Refresh"), LoadAccountsAsync), Dock.Right), WithCenter(_accountsNote) },
                 },
+                _accountSearch,
+                SearchFilters(SearchFilter("Level", _accountLevel), SearchFilter("Can log in", _accountLocked),
+                    SearchFilter("Last login", _accountLogin), SearchFilter("Characters from", _accountCharsMin),
+                    SearchFilter("Characters to", _accountCharsMax), SearchFilter("Sort by", _accountSort)),
                 _accountRows,
                 new TextBlock { Text = "New account", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
                 new WrapPanel {
@@ -972,9 +1049,16 @@ internal sealed partial class ManagerWindow : Window {
         _clientLogReading = true;
         try {
             var folder = _manager.InstallFolder;
+            var words = SearchText.Words(_clientLogSearch.Text);
             (log, text) = await Task.Run(() => {
                 var read = GameClient.ReadClientLog(folder);
                 var lines = read.File is null ? Array.Empty<string>() : read.Text.Split('\n');
+                if (words.Length > 0) {
+                    lines = [.. lines.Where(l => words.All(SearchText.Normalize(l).Contains))];
+                    if (read.File is not null && lines.Length == 0) {
+                        return (read, "No line of the game log has every word of the search.");
+                    }
+                }
 
                 return (read, read.File is null ? "Play once to see the game's log here."
                     : string.Join("\n", lines.Length > CLIENT_LOG_SHOWN_LINES ? lines[^CLIENT_LOG_SHOWN_LINES..] : lines));
@@ -1002,18 +1086,24 @@ internal sealed partial class ManagerWindow : Window {
 
     private Control LogsTab() {
         _clientLogTimer.Tick += (_, _) => RefreshClientLog();
+        WhenFiltersChange(RefreshLog, _logSearch, _logLevel, _logRepeated);
+        WhenFiltersChange(RefreshClientLog, _clientLogSearch);
 
         return Page(
             Fold("server", "Server", "Server log",
                 "What the server on this computer is doing.",
                 WithHint(Row(_hideDebug, _hideWarnings, _follow, _pauseLog),
                     "What the server on this computer is doing. The same message repeated in a row shows once, with how many times it happened."),
+                WithHint(_logSearch, "Shows only the lines with every word you type. Pick a kind of line to see only errors, warnings, " +
+                    "information or debug lines (debug lines show here even with Hide debug lines ticked)."),
+                SearchFilters(SearchFilter("Kind of line", _logLevel), SearchTick(_logRepeated)),
                 LogWell(_logScroll),
                 Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync))),
             // Folded shut at first: the server log is the one looked at most. It still reads while this tab is open.
             Shut(Fold("log", "Logs", "Game log",
                 "The newest log Wizard101 wrote, updated every 2 seconds.",
                 _clientLogFile,
+                _clientLogSearch,
                 LogWell(_clientLogBox),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
                     Action(Plain("Save game log to desktop"), SaveClientLogAsync),
@@ -1242,7 +1332,7 @@ internal sealed partial class ManagerWindow : Window {
 
     // The log is read away from the window, only while the Logs tab shows, and only when the file has changed; the
     // lines already on screen are kept and only new ones are added (redrawing all 400 every 2 seconds made it skip).
-    private (string? File, long Length, DateTime Written, bool HideDebug, bool HideWarnings) _logReadFrom;
+    private (string? File, long Length, DateTime Written, bool HideDebug, bool HideWarnings, string Filter) _logReadFrom;
     private bool _logTabShown;
     private bool _logReading;
     private bool _logAgain;
@@ -1262,19 +1352,34 @@ internal sealed partial class ManagerWindow : Window {
         var manager = _manager;
         var hideDebug = _hideDebug.IsChecked == true;
         var hideWarnings = _hideWarnings.IsChecked == true;
+        var words = SearchText.Words(_logSearch.Text);
+        var level = _logLevel.SelectedIndex;
+        var repeated = _logRepeated.IsChecked == true;
+        var filter = $"{string.Join(' ', words)}|{level}|{repeated}";
         var last = _logReadFrom;
         _logReading = true;
         try {
             var (from, raw, rows) = await Task.Run(() => {
                 var file = manager.NewestLogFile();
-                var stamp = (file?.FullName, file?.Length ?? 0, file?.LastWriteTimeUtc ?? DateTime.MinValue, hideDebug, hideWarnings);
+                var stamp = (file?.FullName, file?.Length ?? 0, file?.LastWriteTimeUtc ?? DateTime.MinValue, hideDebug, hideWarnings, filter);
                 if (stamp == last) {
                     return (stamp, -1, (List<LogRow>?) null);
                 }
 
                 var lines = manager.ReadLog();
                 var shown = lines
-                    .Where(line => !((hideDebug && line.Level is "DBG" or "VRB") || (hideWarnings && line.Level == "WRN")))
+                    // A level picked in the filter shows those lines even when the ticks above hide them.
+                    .Where(line => (level > 0 || !((hideDebug && line.Level is "DBG" or "VRB") || (hideWarnings && line.Level == "WRN")))
+                                   && level switch {
+                                       1 => line.Level is "ERR" or "FTL",
+                                       2 => line.Level == "WRN",
+                                       3 => line.Level is "WRN" or "ERR" or "FTL",
+                                       4 => line.Level == "INF",
+                                       5 => line.Level is "DBG" or "VRB",
+                                       _ => true,
+                                   }
+                                   && (!repeated || line.Count > 1)
+                                   && (words.Length == 0 || words.All(SearchText.Normalize(line.Text).Contains)))
                     .Select(line => new LogRow(line.Count > 1 ? $"{line.Text}   ×{line.Count}" : line.Text, line.Level switch {
                         "WRN" => WARN,
                         "ERR" or "FTL" => BAD,
@@ -1502,6 +1607,7 @@ internal sealed partial class ManagerWindow : Window {
             _lookup = Lookup.Load("");
         }
 
+        _lookupFiltersFilled = false;
         RenderLookup();
     }
 
@@ -1517,15 +1623,44 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         const int MAX = 300;
+        FillLookupFilters(_lookup);
         var kind = _lookupKind.SelectedItem as string ?? Lookup.EVERYTHING;
         var query = _lookupSearch.Text ?? "";
-        var results = _lookup.Search(kind, query, MAX, out var total);
+        var school = FilterPick(_lookupSchool);
+        var who = FilterPick(_lookupWho);
+        var madeFor = _lookupMadeFor.SelectedIndex;
+        var hasCommand = _lookupHasCommand.IsChecked == true;
+        var levels = _lookupLevelMin.Value is not null || _lookupLevelMax.Value is not null;
+        var ids = _lookupIdMin.Value is not null || _lookupIdMax.Value is not null;
+        bool Filter(LookupEntry e) => (school is null || e.School.Equals(school, StringComparison.OrdinalIgnoreCase))
+                                      && (!levels || (e.Level > 0 && InFilterRange(e.Level, _lookupLevelMin, _lookupLevelMax)))
+                                      && (!ids || (e.Number > 0 && InFilterRange(e.Number, _lookupIdMin, _lookupIdMax)))
+                                      && (who is null || e.Who == who)
+                                      && (madeFor == 0 || (e.Kind == "Command" && e.Custom == (madeFor == 1)))
+                                      && (!hasCommand || e.Typed is not null);
+        var filtered = school is not null || who is not null || madeFor > 0 || hasCommand || levels || ids;
+        var results = _lookup.Search(kind, query, MAX, out var total, filtered ? Filter : null, _lookupSort.SelectedItem as string ?? Lookup.SORT_BEST);
         _lookupResults.ItemsSource = results;
 
-        var count = query.Trim().Length == 0 && kind == Lookup.EVERYTHING
-            ? $"Showing all {total} commands. Type to search everything ({_lookup.Count:N0} entries)."
-            : total == 0 ? "Nothing matches." : total > MAX ? $"{total:N0} matches. Showing the best {MAX}; add words to narrow it down." : $"{total:N0} matches.";
+        var count = total == 0 ? "Nothing matches. Clear the search or set the filters back to Any."
+            : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words or filters to narrow it down."
+            : total == 1 ? "1 match." : $"{total:N0} matches.";
         _lookupCount.Text = _lookup.Missing is null ? count : $"{count} {_lookup.Missing}";
+    }
+
+    private bool _lookupFiltersFilled;
+
+    /// <summary>The Lookup filters' choices, from the lists the server wrote.</summary>
+    private void FillLookupFilters(Lookup lookup) {
+        if (_lookupFiltersFilled) {
+            return;
+        }
+
+        _lookupFiltersFilled = true;
+        string[] mainSchools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow"];
+        FillFilterCombo(_lookupSchool, lookup.Entries.Select(e => e.School).Where(s => s.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_lookupWho, Lookup.COMMANDS.Select(c => c.Who).Distinct());
     }
 
     private Control LookupRow(LookupEntry entry) {
@@ -1898,11 +2033,36 @@ internal sealed partial class ManagerWindow : Window {
 
     private void RenderSettings() {
         var query = _settingSearch.Text?.Trim() ?? "";
+        FillFilterCombo(_settingSection, _settingFolds.Select(f => f.Section));
+        var pickedSection = FilterPick(_settingSection);
+        var kind = _settingKind.SelectedIndex;
+        var unsaved = _settingUnsaved.IsChecked == true;
+        var filtered = pickedSection is not null || kind > 0 || unsaved;
+        bool Fits(Setting setting) {
+            var value = _pending.TryGetValue((setting.Section, setting.Key), out var changed) ? changed.Value : setting.Value;
+            var isSwitch = bool.TryParse(setting.Value, out _);
+
+            return (!unsaved || _pending.ContainsKey((setting.Section, setting.Key)))
+                   && kind switch {
+                       1 => isSwitch,
+                       2 => isSwitch && value.Equals("true", StringComparison.OrdinalIgnoreCase),
+                       3 => isSwitch && value.Equals("false", StringComparison.OrdinalIgnoreCase),
+                       4 => !isSwitch && double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _),
+                       5 => !isSwitch && value.Trim().Length > 0 && !double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _),
+                       6 => value.Trim().Length == 0,
+                       _ => true,
+                   };
+        }
+
+        // Its value is searched too, but not a password's or an address's.
+        string ValueOf(Setting setting) => setting.Key.Contains("password", StringComparison.OrdinalIgnoreCase) || IsAddressSetting(setting.Key) ? ""
+            : _pending.TryGetValue((setting.Section, setting.Key), out var changed) ? changed.Value : setting.Value;
         foreach (var (section, fold, rows) in _settingFolds) {
             var matches = 0;
             var petMatches = new List<Setting>();
             foreach (var (setting, row) in rows) {
-                var match = query.Length == 0 || SearchText.Matches($"{section} {setting.Key} {SearchText.SplitCamel(setting.Key)} {setting.Help}", query);
+                var match = (pickedSection is null || section == pickedSection) && Fits(setting)
+                    && (query.Length == 0 || SearchText.Matches($"{section} {setting.Key} {SearchText.SplitCamel(setting.Key)} {setting.Help} {ValueOf(setting)}", query));
                 matches += match ? 1 : 0;
                 if (section == PET_CASTING) {
                     if (match) {
@@ -1924,7 +2084,7 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             fold.SetBadge(matches == 1 ? "1 setting" : $"{matches} settings");
-            fold.SetOpen(query.Length > 0 || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0));
+            fold.SetOpen(query.Length > 0 || filtered || section == "Randomizer" || (section == PET_CASTING && _petCastSearch.Text?.Trim().Length > 0));
         }
     }
 
@@ -2123,9 +2283,42 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
-        _accountsNote.Text = $"{list.Count} account{(list.Count == 1 ? "" : "s")}. Level changes apply the next time that player logs in. " +
-            "To delete an account, use .account delete in game.";
-        foreach (var account in list) {
+        _accountList = list;
+        RenderAccounts();
+    }
+
+    private static DateTime? AccountTime(string? time)
+        => time is not null && !time.StartsWith("0001", StringComparison.Ordinal) && DateTime.TryParse(time, out var parsed) ? parsed.ToLocalTime() : null;
+
+    private void RenderAccounts() {
+        _accountRows.Children.Clear();
+        var list = _accountList;
+        var query = _accountSearch.Text ?? "";
+        var level = _accountLevel.SelectedIndex > 0 ? PlayerAccounts.AUTH_LEVELS[_accountLevel.SelectedIndex - 1] : null;
+        var now = DateTime.Now;
+        IEnumerable<AccountSummary> shown = list.Where(a => SearchText.Matches($"{a.Username} {a.AccountId}", query)
+            && (level is null || a.AuthLevel == level)
+            && _accountLocked.SelectedIndex switch { 1 => !a.IsLocked, 2 => a.IsLocked, _ => true }
+            && InFilterRange(a.Characters, _accountCharsMin, _accountCharsMax)
+            && (AccountTime(a.LastLoginTime) is var login) && _accountLogin.SelectedIndex switch {
+                1 => login?.Date == now.Date,
+                2 => login > now.AddDays(-7),
+                3 => login > now.AddDays(-30),
+                4 => login is null || login <= now.AddDays(-30),
+                5 => login is null,
+                _ => true,
+            });
+        shown = _accountSort.SelectedIndex switch {
+            1 => shown.OrderByDescending(a => AccountTime(a.LastLoginTime) ?? DateTime.MinValue),
+            2 => shown.OrderByDescending(a => AccountTime(a.CreationTime) ?? DateTime.MinValue),
+            3 => shown.OrderByDescending(a => a.Characters),
+            4 => shown.OrderByDescending(a => Array.IndexOf(PlayerAccounts.AUTH_LEVELS, a.AuthLevel)),
+            _ => shown.OrderBy(a => a.Username, StringComparer.OrdinalIgnoreCase),
+        };
+        var rows = shown.ToList();
+        _accountsNote.Text = (rows.Count == list.Count ? $"{list.Count} account{(list.Count == 1 ? "" : "s")}." : FilterCount(rows.Count, list.Count, "accounts")) +
+            " Level changes apply the next time that player logs in. To delete an account, use .account delete in game.";
+        foreach (var account in rows) {
             _accountRows.Children.Add(AccountRow(account));
         }
     }

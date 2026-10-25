@@ -70,6 +70,18 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _questWorld = new() { Width = 150 };
     private readonly CheckBox _questMainOnly = new() { Content = "Main story only", IsChecked = true };
     private readonly TextBox _questSearch = new() { Watermark = "Search a quest's name, code, giver or zone" };
+    // Niduus, 2026-10-25: every detail of a quest to filter by, like the Gear tab's filters.
+    private static readonly string[] s_questStarts = [ANY_FILTER, "Given by an NPC", "Starts by itself", "Not known"];
+    private static readonly string[] s_questSorts = ["Story order", "Level (low first)", "Level (high first)", "Name", "Giver", "Zone"];
+    private readonly NumericUpDown _questLevelMin = FilterNumber(5);
+    private readonly NumericUpDown _questLevelMax = FilterNumber(5);
+    private readonly ComboBox _questGiver = FilterCombo([ANY_FILTER], 180);
+    private readonly ComboBox _questZone = FilterCombo([ANY_FILTER], 200);
+    private readonly ComboBox _questStarts = FilterCombo(s_questStarts, 150);
+    private readonly ComboBox _questSort = FilterCombo(s_questSorts, 150);
+    private readonly NumericUpDown _questNeedsMin = FilterNumber(1);
+    private readonly NumericUpDown _questNeedsMax = FilterNumber(1);
+    private readonly CheckBox _questTeleport = new() { Content = "Only ones I can teleport to" };
     private readonly TextBlock _questCount = Sub("");
     private readonly ListBox _questResults = new() { Background = Brushes.Transparent };
     private readonly DispatcherTimer _questTimer = new() { Interval = TimeSpan.FromSeconds(2) };
@@ -99,6 +111,8 @@ internal sealed partial class ManagerWindow {
         _questShow.SelectionChanged += (_, _) => RenderQuests();
         _questWorld.SelectionChanged += (_, _) => RenderQuests();
         _questMainOnly.IsCheckedChanged += (_, _) => RenderQuests();
+        WhenFiltersChange(RenderQuests, _questLevelMin, _questLevelMax, _questGiver, _questZone, _questStarts, _questSort,
+            _questNeedsMin, _questNeedsMax, _questTeleport);
         _questWizard.SelectionChanged += (_, _) => {
             if (!_questWizardsFilling) {
                 _questProgressWritten = default;
@@ -137,6 +151,16 @@ internal sealed partial class ManagerWindow {
                        "completes a quest you have (.quest complete). The buttons run in the game on this PC, so start the server " +
                        "and log in first."),
                     _questSearch,
+                    SearchFilters(
+                        SearchFilter("Level from", _questLevelMin),
+                        SearchFilter("Level to", _questLevelMax),
+                        SearchFilter("Given by", _questGiver),
+                        SearchFilter("Zone", _questZone),
+                        SearchFilter("How it starts", _questStarts),
+                        SearchFilter("Quests needed, from", _questNeedsMin),
+                        SearchFilter("Quests needed, to", _questNeedsMax),
+                        SearchFilter("Sort by", _questSort),
+                        SearchTick(_questTeleport)),
                     _questCount), Dock.Top),
                 WithMargin(Card(_questResults), new Thickness(0, 14, 0, 0)),
             },
@@ -189,6 +213,8 @@ internal sealed partial class ManagerWindow {
             var picked = _questWorld.SelectedItem as string;
             _questWorld.ItemsSource = new[] { ALL_WORLDS }.Concat(worlds).ToList();
             _questWorld.SelectedItem = picked is not null && worlds.Contains(picked) ? picked : ALL_WORLDS;
+            FillFilterCombo(_questGiver, quests.Select(q => q.Giver).OrderBy(g => g, StringComparer.OrdinalIgnoreCase));
+            FillFilterCombo(_questZone, quests.Select(q => q.Zone).OrderBy(z => z, StringComparer.OrdinalIgnoreCase));
 
             return true;
         }
@@ -332,6 +358,10 @@ internal sealed partial class ManagerWindow {
         var world = _questWorld.SelectedItem as string ?? ALL_WORLDS;
         var mainOnly = _questMainOnly.IsChecked == true;
         var words = SearchText.Words(_questSearch.Text);
+        var giver = FilterPick(_questGiver);
+        var zone = FilterPick(_questZone);
+        var starts = _questStarts.SelectedIndex;
+        var teleport = _questTeleport.IsChecked == true;
 
         var rows = new List<QuestRow>();
         int done = 0, now = 0, next = 0, inScope = 0;
@@ -361,8 +391,22 @@ internal sealed partial class ManagerWindow {
                 continue;
             }
 
+            if (!InFilterRange(quest.Level, _questLevelMin, _questLevelMax)
+                || (giver is not null && quest.Giver != giver) || (zone is not null && quest.Zone != zone)
+                || (teleport && quest.Zone.Length == 0)
+                || !InFilterRange(quest.Needs.Length, _questNeedsMin, _questNeedsMax)
+                || starts switch {
+                    1 => quest.ZoneFrom != "npc",
+                    2 => quest.ZoneFrom != "auto",
+                    3 => quest.ZoneFrom is "npc" or "auto",
+                    _ => false,
+                }) {
+                continue;
+            }
+
             if (words.Length > 0) {
-                var text = SearchText.Normalize($"{quest.Title} {quest.Code} {quest.Giver} {quest.Zone} {quest.World}");
+                var text = SearchText.Normalize($"{quest.Title} {quest.Code} {quest.Giver} {quest.Zone} {quest.World} " +
+                                                $"{(quest.Main ? "main story" : "side quest")} level {quest.Level} {string.Join(' ', quest.Needs)}");
                 if (!words.All(w => text.Contains(w, StringComparison.Ordinal))) {
                     continue;
                 }
@@ -371,6 +415,14 @@ internal sealed partial class ManagerWindow {
             rows.Add(new QuestRow(quest, state, missing));
         }
 
+        rows = _questSort.SelectedIndex switch {
+            1 => [.. rows.OrderBy(r => r.Quest.Level == 0).ThenBy(r => r.Quest.Level).ThenBy(r => r.Quest.Order)],
+            2 => [.. rows.OrderByDescending(r => r.Quest.Level).ThenBy(r => r.Quest.Order)],
+            3 => [.. rows.OrderBy(r => r.Quest.Title, StringComparer.OrdinalIgnoreCase)],
+            4 => [.. rows.OrderBy(r => r.Quest.Giver.Length == 0).ThenBy(r => r.Quest.Giver, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Quest.Order)],
+            5 => [.. rows.OrderBy(r => r.Quest.Zone.Length == 0).ThenBy(r => r.Quest.Zone, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Quest.Order)],
+            _ => rows,
+        };
         _questResults.ItemsSource = rows;
         var who = (_questWizard.SelectedItem as QuestWizard)?.Name;
         var scope = $"{(mainOnly ? "main story " : "")}quests{(world == ALL_WORLDS ? "" : $" in {world}")}";

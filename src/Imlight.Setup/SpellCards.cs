@@ -493,10 +493,10 @@ internal sealed partial class SpellBook {
     /// As <see cref="Search(string, int, out int)"/>; with <paramref name="hideBroken"/>, cards the server can't do are
     /// left out (and counted in <paramref name="brokenHidden"/>) unless asked for by their ID.
     /// </summary>
-    internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden) {
+    internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden, Func<SpellCard, bool>? filter = null) {
         var words = SearchText.Words(query);
         var exact = query.Trim();
-        var matches = Spells.Where(s => words.All(s.Haystack.Contains)).ToList();
+        var matches = Spells.Where(s => words.All(s.Haystack.Contains) && (filter is null || filter(s))).ToList();
         brokenHidden = 0;
         if (hideBroken) {
             var before = matches.Count;

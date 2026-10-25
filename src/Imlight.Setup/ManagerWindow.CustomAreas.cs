@@ -1558,12 +1558,10 @@ internal sealed partial class ManagerWindow {
                 foreach (var g in _areaCatalog.ObjectsIn(z).GroupBy(o => o.TemplateId).Take(60)) {
                     rows.Add((g.Key, Glyph(AreaIcon.Objects, OBJECTS, 16), $"{g.First().Name}  ·  ID {g.Key}  ·  {g.Count()} in the zone"));
                 }
-
-                if (rows.Count == 0) {
-                    results.Children.Add(Sub("Type to search. The zone's own objects show here once the game files are read (Tools tab)."));
-                }
             }
-            else if (query.Length > 0) {
+
+            // With nothing typed (and no objects of the zone), the creatures and objects are listed by name.
+            if (rows.Count == 0) {
                 if (kind != PickKind.Object && _bossCatalog is { Missing: null } bosses) {
                     foreach (var c in bosses.Search(query, bossesOnly: false, new HashSet<string>(), 12, out _)) {
                         rows.Add((ulong.Parse(c.Id, CultureInfo.InvariantCulture), CreatureIcon(ulong.Parse(c.Id, CultureInfo.InvariantCulture), 18),
@@ -1587,9 +1585,6 @@ internal sealed partial class ManagerWindow {
                         ? "Nothing matches."
                         : "Nothing matches. Start the server once so it makes its ID lists, and read the game files on the Tools tab for objects."));
                 }
-            }
-            else {
-                results.Children.Add(Sub("Type a name or an ID."));
             }
 
             foreach (var (id, icon, text) in rows) {

@@ -374,15 +374,16 @@ internal sealed class BossCatalog {
     /// <summary>
     /// Creatures that hold every word of the query, bosses and exact names first. A name typed partly or with a slip
     /// finds it too when nothing holds every word as typed (CheatSearch). Filter: only these (the filters typed in the
-    /// box: world, has cheats...); with one, an empty query lists everything it lets through. Also: another way a
-    /// creature fits the query (its world, its cheats).
+    /// box: world, has cheats...). An empty query lists everything allowed, the changed ones first (Niduus, 2026-10-25:
+    /// "have them all generate search results if left empty"). Also: another way a creature fits the query (its world,
+    /// its cheats).
     /// </summary>
     internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total,
                                    Func<BossInfo, bool>? filter = null, Func<BossInfo, string, bool>? also = null) {
         var words = SearchText.Words(query);
         var allowed = Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && (filter is null || filter(c)));
         var pool = words.Length == 0
-            ? filter is null ? Creatures.Where(c => changed.Contains(c.Id)) : allowed
+            ? allowed
             : allowed.Where(c => words.All(c.Haystack.Contains) || (also?.Invoke(c, query) ?? false));
         var matches = pool.ToList();
         if (matches.Count == 0 && words.Length > 0) {
@@ -395,6 +396,7 @@ internal sealed class BossCatalog {
         return [.. matches
             .OrderBy(c => !(c.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || c.Id == exact))
             .ThenByDescending(c => CheatSearch.NameScore(c.Name, query))
+            .ThenBy(c => !changed.Contains(c.Id))
             .ThenBy(c => !c.IsBoss)
             .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
             .ThenBy(c => c.Level)

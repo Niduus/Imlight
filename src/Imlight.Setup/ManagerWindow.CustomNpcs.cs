@@ -493,13 +493,8 @@ internal sealed partial class ManagerWindow {
         var flyout = new Flyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
         void Fill() {
             results.Children.Clear();
+            // An empty box lists them too (Niduus, 2026-10-25: "have them all generate search results if left empty").
             var query = (box.Text ?? "").Trim();
-            if (query.Length == 0) {
-                results.Children.Add(Sub("Type a name or an ID."));
-
-                return;
-            }
-
             var rows = search(query);
             if (rows.Count == 0) {
                 results.Children.Add(Sub(_lookup?.Missing ?? "Nothing matches."));

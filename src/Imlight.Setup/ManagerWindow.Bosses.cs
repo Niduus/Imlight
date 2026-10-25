@@ -46,6 +46,20 @@ internal sealed partial class ManagerWindow {
     // Niduus, 2026-10-25 ("search methods"): only creatures with cheats, and the words looked for in their cheats too.
     private readonly CheckBox _bossHasCheats = new() { Content = "Has cheats", Margin = new Thickness(10, 0, 0, 0) };
     private readonly CheckBox _bossInCheats = new() { Content = "Search their cheats", Margin = new Thickness(10, 0, 0, 0) };
+    // Niduus, 2026-10-25: every detail of a creature to filter by, like the Gear tab's filters.
+    private static readonly string[] s_bossSorts = [
+        "Best match", "Name", "Level (high first)", "Level (low first)", "Health (high first)", "Health (low first)", "Most cheats", "ID",
+    ];
+    private readonly ComboBox _bossFilterSchool = FilterCombo([ANY_FILTER], 130);
+    private readonly ComboBox _bossFilterWorld = FilterCombo([ANY_FILTER], 150);
+    private readonly NumericUpDown _bossLevelMin = FilterNumber(10);
+    private readonly NumericUpDown _bossLevelMax = FilterNumber(10);
+    private readonly NumericUpDown _bossHealthMin = FilterNumber(1000, 130);
+    private readonly NumericUpDown _bossHealthMax = FilterNumber(1000, 130);
+    private readonly ComboBox _bossSort = FilterCombo(s_bossSorts, 160);
+    private readonly CheckBox _bossChangedOnly = new() { Content = "Only ones I changed" };
+    private readonly CheckBox _bossHasStats = new() { Content = "Has extra stats from the game" };
+    private bool _bossFiltersFilled;
     private readonly TextBlock _bossCount = Sub("");
     private readonly ListBox _bossResults = new() { Background = Brushes.Transparent, MaxHeight = 260 };
     private readonly DispatcherTimer _bossDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
@@ -65,6 +79,9 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _bossDeckNote = Sub("");
     private readonly TextBox _bossSpellSearch = new() { Watermark = "Search a spell to add, such as Fire Cat, Meteor or 2062265892" };
     private readonly StackPanel _bossSpellResults = new() { Spacing = 2 };
+    private readonly ComboBox _bossSpellSchool = FilterCombo(new[] { ANY_FILTER }.Concat(BossCatalog.SCHOOLS), 120);
+    private readonly ComboBox _bossSpellKind = FilterCombo(CheatSpecs.CATEGORIES.Select(c => c.Value.Length == 0 ? ANY_FILTER : c.Label), 160);
+    private readonly ComboBox _bossSpellPips = FilterCombo(s_pipChoices.Select(c => c.Value.Length == 0 ? ANY_FILTER : c.Label), 110);
     private readonly DispatcherTimer _bossSpellDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
 
     // The editor below is shared: the Bosses tab shows it for a creature (its BossOverrides file), the Customs tab for
@@ -92,6 +109,8 @@ internal sealed partial class ManagerWindow {
         _bossesOnly.IsCheckedChanged += (_, _) => RenderBossResults();
         _bossHasCheats.IsCheckedChanged += (_, _) => RenderBossResults();
         _bossInCheats.IsCheckedChanged += (_, _) => RenderBossResults();
+        WhenFiltersChange(RenderBossResults, _bossFilterSchool, _bossFilterWorld, _bossLevelMin, _bossLevelMax, _bossHealthMin, _bossHealthMax,
+            _bossSort, _bossChangedOnly, _bossHasStats);
         _bossResults.ItemTemplate = new FuncDataTemplate<BossInfo>((boss, _) => boss is null ? new Panel() : BossRow(boss));
         _bossResults.SelectionChanged += async (_, _) => {
             if (_bossResults.SelectedItem is BossInfo boss && boss != _boss) {
@@ -106,6 +125,8 @@ internal sealed partial class ManagerWindow {
             _bossSpellDelay.Stop();
             RenderSpellResults();
         };
+        WhenFiltersChange(RenderSpellResults, _bossSpellSchool, _bossSpellKind, _bossSpellPips);
+        _bossSpellSearch.GotFocus += (_, _) => RenderSpellResults();
         _bossSpellSearch.TextChanged += (_, _) => {
             _bossSpellDelay.Stop();
             _bossSpellDelay.Start();
@@ -143,7 +164,17 @@ internal sealed partial class ManagerWindow {
                    "Turn off Bosses only to find any creature that fights. A name typed partly or with a slip finds it too. " +
                    "Search their cheats finds bosses whose cheats use those words, blocks or spells (\"remove dot\", \"cap damage\", Supernova; " +
                    "a jinx is a trap and a curse a weakness). Typed filters: world:Darkmoor, zone:DM_ (the game file's name), has:cheats, " +
-                   "uses:\"Storm Global\"."),
+                   "uses:\"Storm Global\". Leave the box empty to list them all, then narrow it with the filters."),
+                SearchFilters(
+                    SearchFilter("School", _bossFilterSchool),
+                    SearchFilter("World", _bossFilterWorld),
+                    SearchFilter("Level from", _bossLevelMin),
+                    SearchFilter("Level to", _bossLevelMax),
+                    SearchFilter("Health from", _bossHealthMin),
+                    SearchFilter("Health to", _bossHealthMax),
+                    SearchFilter("Sort by", _bossSort),
+                    SearchTick(_bossChangedOnly),
+                    SearchTick(_bossHasStats)),
                 _bossCount,
                 _bossResults),
             _bossesEditorHost);
@@ -255,6 +286,7 @@ internal sealed partial class ManagerWindow {
         var changed = BossCatalogWritten();
         try {
             _bossCatalog = await Task.Run(() => BossCatalog.Load(folder));
+            _bossFiltersFilled = false;
             _bossCatalogFrom = changed;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
@@ -284,16 +316,50 @@ internal sealed partial class ManagerWindow {
         }
 
         const int MAX = 200;
+        FillBossFilters(_bossCatalog);
         var query = _bossSearch.Text ?? "";
         var changed = ChangedBosses();
-        var results = FindCreatures(query, _bossesOnly.IsChecked == true, changed, MAX, out var total, _bossInCheats.IsChecked == true,
-            _bossHasCheats.IsChecked == true);
-        _bossResults.ItemsSource = results;
-        _bossCount.Text = query.Trim().Length == 0 && _bossHasCheats.IsChecked != true
-            ? changed.Count == 0 ? "Type a name to find a boss." : $"Bosses you changed ({total}). Type a name to find another."
-            : total == 0 ? _bossesOnly.IsChecked == true ? "No boss matches. Turn off Bosses only to search every creature." : "Nothing matches."
-            : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words to narrow it down."
+        var school = FilterPick(_bossFilterSchool);
+        var world = FilterPick(_bossFilterWorld);
+        var changedOnly = _bossChangedOnly.IsChecked == true;
+        var hasStats = _bossHasStats.IsChecked == true;
+        IEnumerable<BossInfo> found = FindCreatures(query, _bossesOnly.IsChecked == true, changed, int.MaxValue, out _, _bossInCheats.IsChecked == true,
+                _bossHasCheats.IsChecked == true)
+            .Where(c => (school is null || c.School.Equals(school, StringComparison.OrdinalIgnoreCase))
+                        && (world is null || WorldOf(c).Equals(world, StringComparison.OrdinalIgnoreCase))
+                        && InFilterRange(c.Level, _bossLevelMin, _bossLevelMax)
+                        && InFilterRange(c.Health, _bossHealthMin, _bossHealthMax)
+                        && (!changedOnly || changed.Contains(c.Id))
+                        && (!hasStats || c.Stats.Length > 0));
+        found = _bossSort.SelectedIndex switch {
+            1 => found.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase),
+            2 => found.OrderByDescending(c => c.Level),
+            3 => found.OrderBy(c => c.Level),
+            4 => found.OrderByDescending(c => c.Health),
+            5 => found.OrderBy(c => c.Health),
+            6 => found.OrderByDescending(CheatCountOf),
+            7 => found.OrderBy(c => long.TryParse(c.Id, out var n) ? n : long.MaxValue),
+            _ => found,
+        };
+        var all = found.ToList();
+        var total = all.Count;
+        _bossResults.ItemsSource = all.Take(MAX).ToList();
+        _bossCount.Text = total == 0 ? _bossesOnly.IsChecked == true ? "No boss matches. Turn off Bosses only to search every creature, or set the filters back to Any." : "Nothing matches."
+            : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words or filters to narrow it down."
             : total == 1 ? "1 match." : $"{total:N0} matches.";
+    }
+
+    /// <summary>The Bosses filters' choices: the schools and worlds of the game's creatures.</summary>
+    private void FillBossFilters(BossCatalog catalog) {
+        if (_bossFiltersFilled) {
+            return;
+        }
+
+        _bossFiltersFilled = true;
+        FillFilterCombo(_bossFilterSchool, BossCatalog.SCHOOLS.Where(s => catalog.Creatures.Any(c => c.School.Equals(s, StringComparison.OrdinalIgnoreCase)))
+            .Concat(catalog.Creatures.Select(c => c.School).OrderBy(s => s, StringComparer.OrdinalIgnoreCase)));
+        FillFilterCombo(_bossFilterWorld, catalog.Creatures.Select(WorldOf).Where(w => w.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(w => w, StringComparer.OrdinalIgnoreCase));
     }
 
     private Control BossRow(BossInfo boss) {
@@ -430,11 +496,14 @@ internal sealed partial class ManagerWindow {
 
     private void RenderSpellResults() {
         _bossSpellResults.Children.Clear();
-        if (_bossCatalog is null || (_bossSpellSearch.Text ?? "").Trim().Length == 0) {
+        if (_bossCatalog is null) {
             return;
         }
 
-        var spells = FindSpells(_bossSpellSearch.Text ?? "", "", "", "", 8, out _).Select(s => s.Spell).ToList();
+        // An empty box lists spells too, narrowed by school, kind and pip cost (Niduus, 2026-10-25).
+        var spells = FindSpells(_bossSpellSearch.Text ?? "", _bossSpellSchool.SelectedItem is string school && _bossSpellSchool.SelectedIndex > 0 ? school : "",
+            CheatSpecs.CATEGORIES[Math.Max(0, _bossSpellKind.SelectedIndex)].Value, s_pipChoices[Math.Max(0, _bossSpellPips.SelectedIndex)].Value, 8, out _)
+            .Select(s => s.Spell).ToList();
         if (spells.Count == 0) {
             _bossSpellResults.Children.Add(Sub(_bossCatalog.Spells.Count == 0
                 ? "The spell list shows up once the server has made its ID list."

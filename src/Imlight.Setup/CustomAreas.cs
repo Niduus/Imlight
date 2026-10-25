@@ -362,19 +362,17 @@ internal sealed class AreaCatalog {
 
     /// <summary>Templates that hold every word of the query (names, IDs, kinds), exact matches first.</summary>
     internal List<Template> Search(string query, int max, Func<Template, bool>? filter = null) {
+        // An empty search lists them by name (Niduus, 2026-10-25: "have them all generate search results if left empty").
         var words = SearchText.Words(query);
-        if (words.Length == 0) {
-            return [];
-        }
-
         var exact = query.Trim();
 
         return [.. Templates.Values
-            .Where(t => (filter is null || filter(t)) && words.All(t.Haystack.Contains))
+            .Where(t => (filter is null || filter(t)) && words.All(t.Haystack.Contains) && (words.Length > 0 || t.Label.Length > 0))
             .OrderBy(t => !(t.Id.ToString(CultureInfo.InvariantCulture) == exact || t.Name.Equals(exact, StringComparison.OrdinalIgnoreCase)
                             || t.Shown.Equals(exact, StringComparison.OrdinalIgnoreCase)))
             .ThenBy(t => t.Kind == "Item")
-            .ThenBy(t => t.Label.Length)
+            .ThenBy(t => words.Length == 0 ? 0 : t.Label.Length)
+            .ThenBy(t => t.Label, StringComparer.OrdinalIgnoreCase)
             .Take(max)];
     }
 

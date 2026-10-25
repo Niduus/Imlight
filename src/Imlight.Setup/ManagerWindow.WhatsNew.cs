@@ -245,6 +245,11 @@ internal sealed partial class ManagerWindow {
 
     private readonly TextBox _notesSearch = new() { Watermark = "Search the notes, such as Deckathalon, crafting, cheats or 0.10.300" };
     private readonly TextBlock _notesCount = Sub("");
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's.
+    private readonly TextBox _notesFrom = new() { Watermark = "Such as 0.10.300", Width = 150 };
+    private readonly TextBox _notesTo = new() { Watermark = "Such as 0.10.380", Width = 150 };
+    private readonly ComboBox _notesSort = FilterCombo(["Newest first", "Oldest first"], 150);
+    private readonly CheckBox _notesNewer = new() { Content = "Only versions newer than mine" };
     private readonly ToggleSwitch _whatsNewPopup = new() { OnContent = "On", OffContent = "Off" };
     private readonly DispatcherTimer _notesDelay = new() { Interval = TimeSpan.FromMilliseconds(200) };
     // Only the rows in view are drawn (a recycling, virtualizing list), however many versions there are.
@@ -280,6 +285,7 @@ internal sealed partial class ManagerWindow {
             _notesDelay.Stop();
             _notesDelay.Start();
         };
+        WhenFiltersChange(RenderNotes, _notesFrom, _notesTo, _notesSort, _notesNewer);
         _notesList.ItemTemplate = new FuncDataTemplate<NoteRow>((row, _) => NoteView(row), supportsRecycling: false);
 
         var content = new DockPanel {
@@ -297,6 +303,8 @@ internal sealed partial class ManagerWindow {
                             _notesSearch,
                         },
                     },
+                    SearchFilters(SearchFilter("From version", _notesFrom), SearchFilter("To version", _notesTo), SearchFilter("Sort by", _notesSort),
+                        SearchTick(_notesNewer)),
                     _notesCount), new Thickness(0, 14, 0, 0)), Dock.Top),
                 WithMargin(Card(_notesList), new Thickness(0, 14, 0, 0)),
             },
@@ -443,7 +451,17 @@ internal sealed partial class ManagerWindow {
         var query = (_notesSearch.Text ?? "").Trim();
         var rows = new List<NoteRow>();
         var changes = 0;
-        foreach (var release in _notes) {
+        var from = Version.TryParse((_notesFrom.Text ?? "").Trim(), out var least) ? least : null;
+        var to = Version.TryParse((_notesTo.Text ?? "").Trim(), out var most) ? most : null;
+        var newer = _notesNewer.IsChecked == true;
+        var filtered = from is not null || to is not null || newer;
+        IEnumerable<ReleaseNotes> releases = _notes.Where(r => (from is null || r.Version >= from) && (to is null || r.Version <= to)
+                                                               && (!newer || r.Version > SelfUpdate.CurrentVersion));
+        if (_notesSort.SelectedIndex == 1) {
+            releases = releases.Reverse();
+        }
+
+        foreach (var release in releases) {
             // A version's number finds all of its changes.
             var whole = query.Length > 0 && release.Version.ToString().StartsWith(query, StringComparison.Ordinal);
             var matched = query.Length == 0 || whole ? release.Changes : release.Changes.Where(c => SearchText.Matches(c, query)).ToList();
@@ -459,7 +477,7 @@ internal sealed partial class ManagerWindow {
         _notesList.ItemsSource = rows;
         var versions = rows.Count - changes;
         _notesCount.Text = _notes.Count == 0 ? _notesCount.Text
-            : query.Length == 0 ? $"{_notes.Count:N0} versions with notes, newest first."
+            : query.Length == 0 && !filtered ? $"{_notes.Count:N0} versions with notes, {(_notesSort.SelectedIndex == 1 ? "oldest" : "newest")} first."
             : changes == 0 ? "Nothing matches."
             : $"{changes:N0} change{(changes == 1 ? "" : "s")} in {versions:N0} version{(versions == 1 ? "" : "s")}.";
     }

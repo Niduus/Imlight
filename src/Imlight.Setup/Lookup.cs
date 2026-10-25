@@ -38,6 +38,24 @@ internal sealed record LookupEntry(string Kind, string Name, string Id, string D
     /// <summary>All of the text a search looks through, in lower case.</summary>
     internal string Haystack { get; } = SearchText.Normalize($"{Kind} {Name} {Id} {Detail} {Typed} {Help}");
 
+    /// <summary>The school of an item, spell or creature ("" for the rest).</summary>
+    internal string School => Kind switch {
+        "Item" or "Spell" => Detail,
+        "Creature" when Detail.StartsWith("Level ", StringComparison.Ordinal) => string.Join(' ', Detail.Split(' ').Skip(2)),
+        "Creature" => Detail,
+        _ => "",
+    };
+
+    /// <summary>A creature's level, or 0.</summary>
+    internal int Level => Kind == "Creature" && Detail.StartsWith("Level ", StringComparison.Ordinal)
+                          && int.TryParse(Detail.Split(' ')[1], out var level) ? level : 0;
+
+    /// <summary>The template ID as a number, or 0.</summary>
+    internal long Number => long.TryParse(Id, out var number) ? number : 0;
+
+    /// <summary>Who can use a command: its Detail ("Every player", "Administrator only"...), "" for the rest.</summary>
+    internal string Who => Kind == "Command" ? Detail : "";
+
 }
 
 /// <summary>
@@ -399,24 +417,48 @@ internal sealed class Lookup {
     /// <summary>
     /// Entries of a kind that hold every word of the query, best matches first.
     /// </summary>
-    internal List<LookupEntry> Search(string kind, string query, int max, out int total) {
+    internal List<LookupEntry> Search(string kind, string query, int max, out int total, Func<LookupEntry, bool>? filter = null,
+                                      string sort = SORT_BEST) {
         var words = SearchText.Words(query);
+        // An empty search lists everything of the kind (Niduus, 2026-10-25: "have them all generate search results if left
+        // empty"), commands first.
         var pool = kind == EVERYTHING ? _entries : _entries.Where(e => e.Kind == kind);
-        if (words.Length == 0 && kind == EVERYTHING) {
-            pool = COMMANDS;
-        }
-
-        var matches = pool.Where(e => words.All(e.Haystack.Contains)).ToList();
+        var matches = pool.Where(e => words.All(e.Haystack.Contains) && (filter is null || filter(e))).ToList();
         total = matches.Count;
         var exact = query.Trim();
 
-        return [.. matches
-            .OrderBy(e => !(e.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || e.Id == exact))
-            .ThenBy(e => !e.Name.StartsWith(exact, StringComparison.OrdinalIgnoreCase))
-            .ThenBy(e => Array.IndexOf(KINDS, e.Kind))
-            .ThenBy(e => words.Length == 0 ? 0 : e.Name.Length)
-            .Take(max)];
+        IEnumerable<LookupEntry> sorted = sort switch {
+            SORT_NAME => matches.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase),
+            SORT_NAME_DOWN => matches.OrderByDescending(e => e.Name, StringComparer.OrdinalIgnoreCase),
+            SORT_ID => matches.OrderBy(e => e.Number == 0).ThenBy(e => e.Number),
+            SORT_ID_DOWN => matches.OrderByDescending(e => e.Number),
+            SORT_LEVEL => matches.OrderByDescending(e => e.Level).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase),
+            SORT_LEVEL_UP => matches.OrderBy(e => e.Level == 0).ThenBy(e => e.Level).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase),
+            SORT_KIND => matches.OrderBy(e => Array.IndexOf(KINDS, e.Kind)).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase),
+            _ => matches
+                .OrderBy(e => !(e.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || e.Id == exact))
+                .ThenBy(e => !e.Name.StartsWith(exact, StringComparison.OrdinalIgnoreCase))
+                .ThenBy(e => Array.IndexOf(KINDS, e.Kind))
+                .ThenBy(e => words.Length == 0 ? 0 : e.Name.Length),
+        };
+
+        return [.. sorted.Take(max)];
     }
+
+    internal const string SORT_BEST = "Best match";
+    internal const string SORT_NAME = "Name (A to Z)";
+    internal const string SORT_NAME_DOWN = "Name (Z to A)";
+    internal const string SORT_ID = "ID (low first)";
+    internal const string SORT_ID_DOWN = "ID (high first)";
+    internal const string SORT_LEVEL = "Level (high first)";
+    internal const string SORT_LEVEL_UP = "Level (low first)";
+    internal const string SORT_KIND = "Kind";
+
+    /// <summary>The ways the Lookup tab can sort its list.</summary>
+    internal static readonly string[] SORTS = [SORT_BEST, SORT_NAME, SORT_NAME_DOWN, SORT_KIND, SORT_ID, SORT_ID_DOWN, SORT_LEVEL, SORT_LEVEL_UP];
+
+    /// <summary>Every entry, for the filters' choices.</summary>
+    internal IReadOnlyList<LookupEntry> Entries => _entries;
 
     // Commands added for this build (Niduus's), shown under Custom in the Commands tab.
     private static LookupEntry Command(string name, string typed, string who, string help)

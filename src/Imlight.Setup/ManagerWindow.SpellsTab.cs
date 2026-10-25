@@ -71,6 +71,22 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _spellsKind = new() { ItemsSource = s_spellKinds, SelectedIndex = 0, MinWidth = 190 };
     private readonly ComboBox _spellsSort = new() { ItemsSource = s_spellSorts, SelectedIndex = 0, MinWidth = 180 };
     private readonly CheckBox _spellsHidden = new() { Content = "Hidden and cheat spells" };
+    // Niduus, 2026-10-25 ("Cover every single detail possible to search for"): more of a card's details to filter by.
+    private readonly NumericUpDown _spellsAccuracyMin = FilterNumber(5);
+    private readonly NumericUpDown _spellsAccuracyMax = FilterNumber(5);
+    private readonly NumericUpDown _spellsLevelMin = FilterNumber(10);
+    private readonly NumericUpDown _spellsLevelMax = FilterNumber(10);
+    private readonly ComboBox _spellsCategory = FilterCombo([ANY_FILTER], 150);
+    private readonly ComboBox _spellsSource = FilterCombo([ANY_FILTER], 130);
+    private readonly ComboBox _spellsWorks = FilterCombo([ANY_FILTER, "Works on this server", "Partly works", "Doesn't work yet"], 170);
+    private readonly ComboBox _spellsMode = FilterCombo([ANY_FILTER, "PvP and PvE", "PvP only", "PvE (monsters) only"], 160);
+    private readonly ComboBox _spellsEffect = FilterCombo([ANY_FILTER], 170);
+    private readonly ComboBox _spellsTarget = FilterCombo([ANY_FILTER], 170);
+    private readonly CheckBox _spellsShadow = new() { Content = "Uses shadow pips" };
+    private readonly CheckBox _spellsSchoolPips = new() { Content = "Needs school pips" };
+    private readonly CheckBox _spellsNoEnchant = new() { Content = "Can't be enchanted" };
+    private readonly CheckBox _spellsNoDiscard = new() { Content = "Can't be discarded" };
+    private readonly CheckBox _spellsCloaked = new() { Content = "Cloaked" };
     private readonly TextBlock _spellsCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ItemsControl _spellsGrid = new();
     private readonly ScrollViewer _spellsScroll = new() { HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
@@ -115,6 +131,8 @@ internal sealed partial class ManagerWindow {
         }
 
         _spellsHidden.IsCheckedChanged += (_, _) => RenderSpellsTab();
+        WhenFiltersChange(RenderSpellsTab, _spellsAccuracyMin, _spellsAccuracyMax, _spellsLevelMin, _spellsLevelMax, _spellsCategory, _spellsSource,
+            _spellsWorks, _spellsMode, _spellsEffect, _spellsTarget, _spellsShadow, _spellsSchoolPips, _spellsNoEnchant, _spellsNoDiscard, _spellsCloaked);
         var hideBroken = HideBrokenBox(RenderSpellsTab);
         _spellsGrid.ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel());
         _spellsGrid.ItemTemplate = new FuncDataTemplate<SpellCard[]>((row, _) => row is null ? new Panel() : SpellsRow(row));
@@ -138,9 +156,24 @@ internal sealed partial class ManagerWindow {
                 Labelled("Pip cost", _spellsPips),
                 Labelled("Type", _spellsType),
                 Labelled("Cards", _spellsKind),
+                Labelled("Kind", _spellsCategory),
+                Labelled("Does", _spellsEffect),
+                Labelled("Hits", _spellsTarget),
+                Labelled("Accuracy from", _spellsAccuracyMin),
+                Labelled("Accuracy to", _spellsAccuracyMax),
+                Labelled("Level from", _spellsLevelMin),
+                Labelled("Level to", _spellsLevelMax),
+                Labelled("Comes from", _spellsSource),
+                Labelled("Works here", _spellsWorks),
+                Labelled("PvP or PvE", _spellsMode),
                 Labelled("Sort by", _spellsSort),
                 WithMargin(_spellsHidden, new Thickness(4, 18, 0, 6)),
                 WithMargin(hideBroken, new Thickness(14, 18, 0, 6)),
+                SearchTick(_spellsShadow),
+                SearchTick(_spellsSchoolPips),
+                SearchTick(_spellsNoEnchant),
+                SearchTick(_spellsNoDiscard),
+                SearchTick(_spellsCloaked),
             },
         };
         var details = new ScrollViewer {
@@ -230,7 +263,14 @@ internal sealed partial class ManagerWindow {
             .OrderBy(t => t, StringComparer.OrdinalIgnoreCase).Select(t => t.Replace('_', ' '));
         _spellsType.ItemsSource = new[] { ALL_TYPES }.Concat(types).ToList();
         _spellsType.SelectedIndex = 0;
+        FillFilterCombo(_spellsCategory, book.Spells.Select(s => s.Category).OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_spellsSource, book.Spells.Select(s => s.Source).OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_spellsEffect, book.Spells.SelectMany(s => s.Effects).Select(e => EffectWords(e.Kind)).OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_spellsTarget, book.Spells.SelectMany(s => s.Effects).Select(e => EffectWords(e.Target)).OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
     }
+
+    /// <summary>A spell effect's kind or target from the game files as words: "ModifyIncomingDamage" becomes "Modify Incoming Damage".</summary>
+    private static string EffectWords(string code) => SearchText.SplitCamel(code.Replace('_', ' ')).Trim();
 
     private void RenderSpellsTab() {
         if (_spellBook is not { } book) {
@@ -249,6 +289,15 @@ internal sealed partial class ManagerWindow {
         var type = (_spellsType.SelectedItem as string ?? ALL_TYPES).Replace(' ', '_');
         var kind = _spellsKind.SelectedIndex;
         var hidden = _spellsHidden.IsChecked == true;
+        var category = FilterPick(_spellsCategory);
+        var source = FilterPick(_spellsSource);
+        var effect = FilterPick(_spellsEffect);
+        var target = FilterPick(_spellsTarget);
+        var shadow = _spellsShadow.IsChecked == true;
+        var schoolPips = _spellsSchoolPips.IsChecked == true;
+        var noEnchant = _spellsNoEnchant.IsChecked == true;
+        var noDiscard = _spellsNoDiscard.IsChecked == true;
+        var cloaked = _spellsCloaked.IsChecked == true;
         var id = uint.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var number) ? number : (uint?) null;
 
         var matched = book.Spells.Where(s =>
@@ -265,7 +314,20 @@ internal sealed partial class ManagerWindow {
                 3 => s.Item,
                 4 => s.Source == "Pet",
                 _ => true,
-            }).ToList();
+            }
+            && InFilterRange(s.Accuracy, _spellsAccuracyMin, _spellsAccuracyMax)
+            && InFilterRange(s.Level, _spellsLevelMin, _spellsLevelMax)
+            && (category is null || s.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
+            && (source is null || s.Source.Equals(source, StringComparison.OrdinalIgnoreCase))
+            && (effect is null || s.Effects.Any(e => EffectWords(e.Kind).Equals(effect, StringComparison.OrdinalIgnoreCase)))
+            && (target is null || s.Effects.Any(e => EffectWords(e.Target).Equals(target, StringComparison.OrdinalIgnoreCase)))
+            && _spellsWorks.SelectedIndex switch { 1 => !s.Broken && !s.Partly, 2 => s.Partly, 3 => s.Broken, _ => true }
+            && _spellsMode.SelectedIndex switch { 1 => s.PvP && s.PvE, 2 => s.PvP && !s.PvE, 3 => s.PvE && !s.PvP, _ => true }
+            && (!shadow || s.ShadowPips > 0)
+            && (!schoolPips || s.SchoolPips.Count > 0)
+            && (!noEnchant || s.NoPvEEnchant || s.NoPvPEnchant)
+            && (!noDiscard || s.NoDiscard)
+            && (!cloaked || s.Cloaked)).ToList();
 
         // Broken cards are left out unless asked for by their ID; how many is said in the count.
         var brokenHidden = 0;

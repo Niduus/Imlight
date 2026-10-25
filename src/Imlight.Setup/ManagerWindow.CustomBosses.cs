@@ -91,6 +91,8 @@ internal sealed partial class ManagerWindow {
                     WithMargin(_bossDeckRows, new Thickness(0, 8, 0, 0)),
                     WithMargin(new TextBlock { Text = "Add a spell", FontSize = 15, FontWeight = FontWeight.SemiBold }, new Thickness(0, 14, 0, 4)),
                     _bossSpellSearch,
+                    WithMargin(SearchFilters(SearchFilter("School", _bossSpellSchool), SearchFilter("Kind", _bossSpellKind),
+                        SearchFilter("Pip cost", _bossSpellPips)), new Thickness(0, 6, 0, 0)),
                     WithMargin(_bossSpellResults, new Thickness(0, 6, 0, 0)),
                 },
             });
@@ -136,6 +138,7 @@ internal sealed partial class ManagerWindow {
             _customDropDelay.Stop();
             RenderDropResults();
         };
+        _customDropSearch.GotFocus += (_, _) => RenderDropResults();
         _customDropSearch.TextChanged += (_, _) => {
             _customDropDelay.Stop();
             _customDropDelay.Start();
@@ -363,13 +366,9 @@ internal sealed partial class ManagerWindow {
 
     private void RenderDropResults() {
         _customDropResults.Children.Clear();
-        var words = (_customDropSearch.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (words.Length == 0) {
-            return;
-        }
-
-        var found = DropTables().Where(t => words.All(w => t.Name.Contains(w, StringComparison.OrdinalIgnoreCase)
-                                                        || t.Description.Contains(w, StringComparison.OrdinalIgnoreCase))).Take(8).ToList();
+        // An empty box lists the tables too (Niduus, 2026-10-25: "have them all generate search results if left empty").
+        var query = _customDropSearch.Text ?? "";
+        var found = DropTables().Where(t => SearchText.Matches($"{t.Name} {t.Description}", query)).Take(8).ToList();
         if (found.Count == 0) {
             _customDropResults.Children.Add(Sub(DropTables().Count == 0 ? "The server's drop tables were not found." : "No drop table matches."));
         }

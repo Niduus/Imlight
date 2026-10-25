@@ -705,10 +705,10 @@ internal sealed class CheatLines {
 
     /// <summary>Game lines holding all the words, for the line picker.</summary>
     internal List<(int Number, string Text)> Search(string words, int max) {
-        var parts = words.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        return parts.Length == 0 ? []
-            : [.. _phrases.Where(p => parts.All(w => p.Text.Contains(w, StringComparison.OrdinalIgnoreCase))).Take(max).Select(p => (p.Number, p.Text))];
+        // An empty search lists the lines too (Niduus, 2026-10-25: "have them all generate search results if left empty"),
+        // and words match as every search box reads them (SearchText).
+        return [.. _phrases.Where(p => SearchText.Matches(p.Text, words) || p.Number.ToString(System.Globalization.CultureInfo.InvariantCulture) == words.Trim())
+            .Take(max).Select(p => (p.Number, p.Text))];
     }
 
 }

@@ -68,6 +68,17 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _gearSort = new() { ItemsSource = s_gearSorts, SelectedIndex = 0, MinWidth = 160 };
     private readonly CheckBox _gearCrowns = new() { Content = "Crowns only" };
     private readonly CheckBox _gearUnnamed = new() { Content = "Unnamed and test items" };
+    // Niduus, 2026-10-25 ("Cover every single detail possible to search for"): more of an item's details to filter by.
+    private readonly ComboBox _gearRarity = FilterCombo([ANY_FILTER], 120);
+    private readonly ComboBox _gearMark = FilterCombo([ANY_FILTER], 160);
+    private readonly ComboBox _gearCardSchool = FilterCombo([ANY_FILTER], 130);
+    private readonly NumericUpDown _gearSocketsMin = FilterNumber(1);
+    private readonly NumericUpDown _gearSocketsMax = FilterNumber(1);
+    private readonly NumericUpDown _gearGoldMin = FilterNumber(100, 130);
+    private readonly NumericUpDown _gearGoldMax = FilterNumber(100, 130);
+    private readonly CheckBox _gearHasCards = new() { Content = "Gives item cards" };
+    private readonly CheckBox _gearInSet = new() { Content = "Part of a gear set" };
+    private readonly CheckBox _gearRental = new() { Content = "Rentals only" };
     private readonly TextBlock _gearCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _gearList = new() { Background = Brushes.Transparent };
     private readonly Border _gearTooltipHost = new() { HorizontalAlignment = HorizontalAlignment.Center };
@@ -113,6 +124,8 @@ internal sealed partial class ManagerWindow {
 
         _gearCrowns.IsCheckedChanged += (_, _) => RenderGearTab();
         _gearUnnamed.IsCheckedChanged += (_, _) => RenderGearTab();
+        WhenFiltersChange(RenderGearTab, _gearRarity, _gearMark, _gearCardSchool, _gearSocketsMin, _gearSocketsMax, _gearGoldMin, _gearGoldMax,
+            _gearHasCards, _gearInSet, _gearRental);
         _gearList.ItemTemplate = new FuncDataTemplate<GearItem>((item, _) => item is null ? new Panel() : GearRow(item));
         _gearList.SelectionChanged += (_, e) => {
             if (e.Source == _gearList && _gearList.SelectedItem is GearItem item && item != _gearPicked) {
@@ -134,6 +147,16 @@ internal sealed partial class ManagerWindow {
                 Labelled("Sort by", _gearSort),
                 WithMargin(_gearCrowns, new Thickness(4, 18, 0, 6)),
                 WithMargin(_gearUnnamed, new Thickness(14, 18, 0, 6)),
+                Labelled("Rarity", _gearRarity),
+                Labelled("Mark", _gearMark),
+                Labelled("School of its item cards", _gearCardSchool),
+                Labelled("Sockets from", _gearSocketsMin),
+                Labelled("Sockets to", _gearSocketsMax),
+                Labelled("Gold cost from", _gearGoldMin),
+                Labelled("Gold cost to", _gearGoldMax),
+                SearchTick(_gearHasCards),
+                SearchTick(_gearInSet),
+                SearchTick(_gearRental),
             },
         };
         var details = new ScrollViewer {
@@ -230,6 +253,9 @@ internal sealed partial class ManagerWindow {
             .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
         _gearSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(schools).Append(NO_SCHOOL).ToList();
         _gearSchool.SelectedIndex = 0;
+        FillFilterCombo(_gearRarity, gear.Items.Select(i => i.Rarity).OrderBy(r => r, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_gearMark, gear.Items.SelectMany(i => i.Flags).OrderBy(f => f, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_gearCardSchool, gear.Items.SelectMany(i => i.Spells).Select(c => gear.Spell(c.Code)?.School ?? "").OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
         FillGearStatFilters(gear);
     }
 
@@ -252,6 +278,12 @@ internal sealed partial class ManagerWindow {
         var crowns = _gearCrowns.IsChecked == true;
         var unnamed = _gearUnnamed.IsChecked == true;
         var stats = GearStatFilter();
+        var rarity = FilterPick(_gearRarity);
+        var mark = FilterPick(_gearMark);
+        var cardSchool = FilterPick(_gearCardSchool);
+        var hasCards = _gearHasCards.IsChecked == true;
+        var inSet = _gearInSet.IsChecked == true;
+        var rental = _gearRental.IsChecked == true;
 
         var found = gear.Items.Where(i =>
             (id is not null ? i.Id == id || words.All(i.Haystack.Contains) : words.All(i.Haystack.Contains))
@@ -262,7 +294,15 @@ internal sealed partial class ManagerWindow {
             && (min is null || i.Level >= min)
             && (max is null || i.Level <= max)
             && (!crowns || i.CrownsOnly)
-            && (stats is null || stats(i)));
+            && (stats is null || stats(i))
+            && (rarity is null || i.Rarity.Equals(rarity, StringComparison.OrdinalIgnoreCase))
+            && (mark is null || i.Flags.Contains(mark, StringComparer.OrdinalIgnoreCase))
+            && (cardSchool is null || i.Spells.Any(c => gear.Spell(c.Code)?.School.Equals(cardSchool, StringComparison.OrdinalIgnoreCase) == true))
+            && InFilterRange(i.Sockets.Count, _gearSocketsMin, _gearSocketsMax)
+            && InFilterRange(i.GoldCost, _gearGoldMin, _gearGoldMax)
+            && (!hasCards || i.Spells.Count > 0)
+            && (!inSet || i.SetId != 0)
+            && (!rental || i.Rental.Length > 0));
 
         List<GearItem> shown = _gearSort.SelectedIndex switch {
             1 => [.. found.OrderByDescending(i => i.Level).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],

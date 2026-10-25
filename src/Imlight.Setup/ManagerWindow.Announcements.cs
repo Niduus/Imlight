@@ -47,6 +47,12 @@ internal sealed partial class ManagerWindow {
     private readonly List<AnnouncementRow> _announcementRows = [];
     private readonly TextBox _announcementSearch = new() { Watermark = "Search the announcements, such as event, raid or Majid" };
     private readonly DispatcherTimer _announcementSave = new() { Interval = TimeSpan.FromMilliseconds(700) };
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's.
+    private readonly ComboBox _announcementGroup = FilterCombo(new[] { ANY_FILTER }.Concat(AnnouncementCatalog.All.Select(l => l.Group).Distinct()), 170);
+    private readonly ComboBox _announcementState = FilterCombo([ANY_FILTER, "On", "Off"], 100);
+    private readonly ComboBox _announcementWords = FilterCombo([ANY_FILTER, "Changed from the first words", "Still the first words"], 220);
+    private readonly CheckBox _announcementFields = new() { Content = "Has words the server fills in, such as {event}" };
+    private readonly TextBlock _announcementCount = Sub("");
     private readonly List<(string Group, Section Card, List<AnnouncementRow> Rows)> _announcementGroups = [];
     private bool _showingAnnouncements;
 
@@ -70,6 +76,7 @@ internal sealed partial class ManagerWindow {
             await Guard(SaveAnnouncementsAsync);
         };
         _announcementSearch.TextChanged += (_, _) => FilterAnnouncements();
+        WhenFiltersChange(FilterAnnouncements, _announcementGroup, _announcementState, _announcementWords, _announcementFields);
 
         var resetAll = Action(Plain("Reset all to the game's words"), async () => {
             if (!await ConfirmAsync("Put every announcement back to its first words and turn them all on?")) {
@@ -95,6 +102,9 @@ internal sealed partial class ManagerWindow {
                     + "becoming Fire Deckathalon; the list under each box says what each one becomes. Leave them in, move them, "
                     + "or take out the ones you do not want. Turn a line Off to stop it being sent at all. Reset puts back the first words. "
                     + "Changes save by themselves a moment after you stop typing."),
+                SearchFilters(SearchFilter("Group", _announcementGroup), SearchFilter("On or off", _announcementState),
+                    SearchFilter("Words", _announcementWords), SearchTick(_announcementFields)),
+                _announcementCount,
                 Row(resetAll)),
             AnnouncementCard(),
         };
@@ -105,6 +115,8 @@ internal sealed partial class ManagerWindow {
                 + "show a banner or announce to the battle). Player cheats are on the Player Cheats tab (Create). "
                 + "The \"Announcement\" heading and chat start that announce to the battle puts around its words are the two "
                 + "lines under Your announcements above.")));
+
+        FilterAnnouncements();
 
         return Page([.. cards]);
     }
@@ -180,17 +192,32 @@ internal sealed partial class ManagerWindow {
 
     private void FilterAnnouncements() {
         var query = (_announcementSearch.Text ?? "").Trim();
+        var pickedGroup = FilterPick(_announcementGroup);
+        var state = _announcementState.SelectedIndex;
+        var words = _announcementWords.SelectedIndex;
+        var fields = _announcementFields.IsChecked == true;
+        int total = 0, all = 0;
         foreach (var (group, card, rows) in _announcementGroups) {
             var shown = 0;
             foreach (var row in rows) {
-                var match = query.Length == 0
-                    || SearchText.Matches($"{group} {row.Line.Name} {row.Line.When} {row.Line.Default} {row.Words.Text}", query);
+                var changed = (row.Words.Text ?? "") != row.Line.Default;
+                var match = (pickedGroup is null || group == pickedGroup)
+                    && state switch { 1 => row.On.IsChecked == true, 2 => row.On.IsChecked != true, _ => true }
+                    && words switch { 1 => changed, 2 => !changed, _ => true }
+                    && (!fields || row.Line.Fields.Length > 0)
+                    && (query.Length == 0
+                        || SearchText.Matches($"{group} {row.Line.Name} {row.Line.When} {row.Line.Default} {row.Words.Text} " +
+                                              string.Join(' ', row.Line.Fields.Select(f => $"{f.Field} {f.Means}")), query));
                 row.View.IsVisible = match;
                 shown += match ? 1 : 0;
+                all++;
             }
 
+            total += shown;
             card.IsVisible = shown > 0;
         }
+
+        _announcementCount.Text = FilterCount(total, all, "announcements");
     }
 
     private void QueueAnnouncementSave() {

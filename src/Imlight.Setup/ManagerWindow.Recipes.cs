@@ -50,6 +50,25 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _recipeSchool = new() { MinWidth = 140 };
     private readonly CheckBox _recipeNoStation = new() { Content = "Recipes of no crafting station" };
     private readonly CheckBox _recipeChangedOnly = new() { Content = "Only recipes I changed" };
+    // Niduus, 2026-10-25: every detail of a recipe to filter by, like the Gear tab's filters.
+    private static readonly string[] s_recipeMakes = [ANY_FILTER, "Treasure card", "Gear", "Other item", "Nothing"];
+    private static readonly string[] s_recipeSorts = [
+        "Best match", "Name", "Cooldown (short first)", "Cooldown (long first)", "Gold cost (low first)", "Gold cost (high first)",
+        "Fewest ingredients", "Most ingredients", "Template ID",
+    ];
+    private readonly ComboBox _recipeCategory = FilterCombo([ANY_FILTER], 160);
+    private readonly ComboBox _recipeMakes = FilterCombo(s_recipeMakes, 140);
+    private readonly ComboBox _recipeMakesSlot = FilterCombo([ANY_FILTER], 130);
+    private readonly ComboBox _recipeNeedsKind = FilterCombo([ANY_FILTER], 150);
+    private readonly TextBox _recipeNeedsName = new() { Watermark = "Such as Amber", Width = 160 };
+    private readonly NumericUpDown _recipeIngredientsMin = FilterNumber(1);
+    private readonly NumericUpDown _recipeIngredientsMax = FilterNumber(1);
+    private readonly NumericUpDown _recipeCooldownMin = FilterNumber(5, 120);
+    private readonly NumericUpDown _recipeCooldownMax = FilterNumber(5, 120);
+    private readonly NumericUpDown _recipeGoldMin = FilterNumber(100, 130);
+    private readonly NumericUpDown _recipeGoldMax = FilterNumber(100, 130);
+    private readonly CheckBox _recipeCrowns = new() { Content = "Costs Crowns" };
+    private readonly ComboBox _recipeSort = FilterCombo(s_recipeSorts, 170);
     private HashSet<uint> _recipeChanged = [];
     private readonly TextBlock _recipeCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _recipeList = new() { Background = Brushes.Transparent };
@@ -94,11 +113,27 @@ internal sealed partial class ManagerWindow {
             Children = { new TextBlock { Text = label, Foreground = MUTED, FontSize = 12 }, box },
         };
 
+        WhenFiltersChange(RenderRecipesTab, _recipeCategory, _recipeMakes, _recipeMakesSlot, _recipeNeedsKind, _recipeNeedsName,
+            _recipeIngredientsMin, _recipeIngredientsMax, _recipeCooldownMin, _recipeCooldownMax, _recipeGoldMin, _recipeGoldMax,
+            _recipeCrowns, _recipeSort);
         var filters = new WrapPanel {
             Children = {
                 Labelled("Crafting station", _recipeStation),
                 Labelled("School", _recipeSchool),
-                WithMargin(_recipeNoStation, new Thickness(4, 18, 0, 6)),
+                Labelled("Category", _recipeCategory),
+                Labelled("Makes", _recipeMakes),
+                Labelled("Gear slot it makes", _recipeMakesSlot),
+                Labelled("Needs an ingredient", _recipeNeedsName),
+                Labelled("Needs a kind of ingredient", _recipeNeedsKind),
+                Labelled("Ingredients from", _recipeIngredientsMin),
+                Labelled("Ingredients to", _recipeIngredientsMax),
+                Labelled("Cooldown from (minutes)", _recipeCooldownMin),
+                Labelled("Cooldown to (minutes)", _recipeCooldownMax),
+                Labelled("Gold cost from", _recipeGoldMin),
+                Labelled("Gold cost to", _recipeGoldMax),
+                Labelled("Sort by", _recipeSort),
+                WithMargin(_recipeCrowns, new Thickness(4, 18, 0, 6)),
+                WithMargin(_recipeNoStation, new Thickness(14, 18, 0, 6)),
                 WithMargin(_recipeChangedOnly, new Thickness(14, 18, 0, 6)),
             },
         };
@@ -203,7 +238,16 @@ internal sealed partial class ManagerWindow {
             .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
         _recipeSchool.ItemsSource = new[] { ANY_RECIPE_SCHOOL }.Concat(schools).ToList();
         _recipeSchool.SelectedIndex = 0;
+        FillFilterCombo(_recipeCategory, book.Recipes.Select(r => r.Category).OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_recipeNeedsKind, book.Recipes.SelectMany(r => r.Ingredients).Select(i => i.Kind).OrderBy(k => k, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_recipeMakesSlot, GearBook.SLOTS);
     }
+
+    /// <summary>What a recipe makes, as the Makes filter names it.</summary>
+    private string RecipeMakes(Recipe recipe)
+        => recipe.MakesSpell.Length > 0 ? "Treasure card"
+            : recipe.MakesId == 0 ? "Nothing"
+            : _gearBook?.Item(recipe.MakesId) is not null ? "Gear" : "Other item";
 
     private void RenderRecipesTab() {
         if (_recipeBook is not { } book) {
@@ -221,6 +265,12 @@ internal sealed partial class ManagerWindow {
         var school = _recipeSchool.SelectedItem as string ?? ANY_RECIPE_SCHOOL;
         var noStation = _recipeNoStation.IsChecked == true;
         var changedOnly = _recipeChangedOnly.IsChecked == true;
+        var category = FilterPick(_recipeCategory);
+        var makes = FilterPick(_recipeMakes);
+        var slot = FilterPick(_recipeMakesSlot);
+        var needsKind = FilterPick(_recipeNeedsKind);
+        var needsName = SearchText.Words(_recipeNeedsName.Text);
+        var crowns = _recipeCrowns.IsChecked == true;
         _recipeChanged = [.. SafeRecipeChanges().Select(c => c.Id)];
 
         _recipesShown = [.. book.Recipes.Where(r =>
@@ -230,9 +280,29 @@ internal sealed partial class ManagerWindow {
                 && (noStation || changedOnly || words.Length > 0 || r.Stations.Count > 0 || r.Id == id)
                 && (!changedOnly || _recipeChanged.Contains(r.Id))
                 && (station == ALL_STATIONS || r.Stations.Contains(station))
-                && (school == ANY_RECIPE_SCHOOL || r.School.Equals(school, StringComparison.OrdinalIgnoreCase)))
-            .OrderBy(r => !(r.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || r.Id == id))
-            .ThenBy(r => query.Length > 0 && !r.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+                && (school == ANY_RECIPE_SCHOOL || r.School.Equals(school, StringComparison.OrdinalIgnoreCase))
+                && (category is null || r.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
+                && (makes is null || RecipeMakes(r) == makes)
+                && (slot is null || (_gearBook?.Item(r.MakesId) is { } made && made.Slot == slot))
+                && (needsKind is null || r.Ingredients.Any(i => i.Kind == needsKind))
+                && (needsName.Length == 0 || r.Ingredients.Any(i => needsName.All(SearchText.Normalize(i.Name).Contains)))
+                && InFilterRange(r.Ingredients.Count, _recipeIngredientsMin, _recipeIngredientsMax)
+                && (_recipeCooldownMin.Value is not { } least || r.Cooldown >= least * 60)
+                && (_recipeCooldownMax.Value is not { } most || r.Cooldown <= most * 60)
+                && InFilterRange(r.GoldCost, _recipeGoldMin, _recipeGoldMax)
+                && (!crowns || r.CrownsCost > 0))
+            .OrderBy(r => _recipeSort.SelectedIndex switch {
+                2 => r.Cooldown,
+                3 => -r.Cooldown,
+                4 => r.GoldCost,
+                5 => -r.GoldCost,
+                6 => r.Ingredients.Count,
+                7 => -r.Ingredients.Count,
+                8 => r.Id,
+                _ => 0L,
+            })
+            .ThenBy(r => _recipeSort.SelectedIndex == 0 && !(r.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || r.Id == id))
+            .ThenBy(r => _recipeSort.SelectedIndex == 0 && query.Length > 0 && !r.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
             .ThenBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Id)];
 
         _recipeList.ItemsSource = _recipesShown;

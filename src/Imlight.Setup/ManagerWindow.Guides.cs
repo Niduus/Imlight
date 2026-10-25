@@ -528,6 +528,14 @@ internal sealed partial class ManagerWindow {
     /// <summary>The Customs tab's New custom… button: the Guides tab, with the Make a custom wizard open and in view.</summary>
     private void ShowNewCustom() {
         SelectTab("Guides");
+        // The creatures to start from show before anything is typed.
+        _ = Guard(async () => {
+            if (_bossCatalog is null) {
+                await LoadBossCatalogAsync();
+            }
+
+            RenderCustomBaseResults();
+        });
         if (_newCustomSection is { } section) {
             section.SetOpen(true);
             Dispatcher.UIThread.Post(() => {

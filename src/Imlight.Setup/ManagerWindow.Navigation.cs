@@ -66,6 +66,12 @@ internal sealed partial class ManagerWindow {
         Watermark = "Search everything: pages, settings, commands, items, spells, creatures, zones and quests",
     };
     private readonly StackPanel _homeResults = new() { Spacing = 6 };
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's, and results when the box is empty.
+    private const string HOME_PAGES = "Pages";
+    private const string HOME_SETTINGS = "Settings";
+    private static readonly string[] s_homeLookIn = [Lookup.EVERYTHING, HOME_PAGES, HOME_SETTINGS, .. Lookup.KINDS.Skip(1)];
+    private readonly ComboBox _homeLookIn = FilterCombo(s_homeLookIn, 150);
+    private readonly ComboBox _homeHowMany = FilterCombo(["6", "25", "100"], 90);
     private readonly DispatcherTimer _homeSearchDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private int _homeSearchVersion;
     private readonly Button _homePlay = Primary("Play Wizard101");
@@ -167,6 +173,9 @@ internal sealed partial class ManagerWindow {
         _homeSearch.FontSize = 15;
         _homeSearch.MinHeight = 42;
         _homeResults.Children.Add(HomeSearchTip());
+        WhenFiltersChange(() => _ = Guard(RenderHomeSearchAsync), _homeLookIn, _homeHowMany);
+        // The empty search lists the pages (and with Look in, everything of that kind) from the start.
+        Dispatcher.UIThread.Post(() => _ = Guard(RenderHomeSearchAsync), DispatcherPriority.Background);
 
         var hero = new Border {
             Background = ManagerTheme.Gradient(70), BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 90), BorderThickness = new Thickness(1),
@@ -203,7 +212,9 @@ internal sealed partial class ManagerWindow {
             hero,
             Fold("search", HOME, "Search everything",
                 "Every page, setting, command, item, spell, creature, zone and quest at once.",
-                _homeSearch, _homeResults),
+                _homeSearch,
+                SearchFilters(SearchFilter("Look in", _homeLookIn), SearchFilter("How many of each", _homeHowMany)),
+                _homeResults),
         };
         foreach (var group in s_groups) {
             var tiles = new WrapPanel();
@@ -244,92 +255,117 @@ internal sealed partial class ManagerWindow {
     private static TextBlock HomeSearchTip() => Sub("Type a name, an ID or a few words, such as Fire Cat, Malistaire, unlimited mana or 1317127. " +
                                                     "Ctrl+K jumps to this box from anywhere; Ctrl+F searches the tab you are on.");
 
-    /// <summary>Home's results: matching tabs, settings and Lookup entries, and a quick search of each tab that has one.</summary>
+    /// <summary>
+    /// Home's results: matching tabs, settings and Lookup entries (a group for each kind), and a quick search of each tab
+    /// that has one. Look in keeps it to one kind; an empty search lists them all.
+    /// </summary>
     private async Task RenderHomeSearchAsync() {
         var version = ++_homeSearchVersion;
         var query = (_homeSearch.Text ?? "").Trim();
-        if (query.Length == 0) {
-            _homeResults.Children.Clear();
-            _homeResults.Children.Add(HomeSearchTip());
-
-            return;
-        }
+        var lookIn = _homeLookIn.SelectedItem as string ?? Lookup.EVERYTHING;
+        var most = int.TryParse(_homeHowMany.SelectedItem as string, out var n) ? n : 6;
+        bool Wanted(string kind) => lookIn == Lookup.EVERYTHING || lookIn == kind;
 
         // The ID lists load once, the first time anything is searched.
-        await LoadLookupAsync();
+        if (query.Length > 0 || (lookIn != Lookup.EVERYTHING && lookIn != HOME_PAGES)) {
+            await LoadLookupAsync();
+        }
+
         if (version != _homeSearchVersion) {
             return;
         }
 
         var rows = new List<Control>();
+        if (query.Length == 0) {
+            rows.Add(HomeSearchTip());
+        }
 
         // Tabs.
-        var tabRows = new List<Control>();
-        foreach (var group in s_groups) {
-            foreach (var name in group.Tabs) {
-                var (icon, line) = s_tabs[name];
-                if (SearchText.Matches($"{name} {group.Name} {line}", query)) {
-                    var tab = name;
-                    tabRows.Add(ResultRow(icon, name, name, $"{group.Name} page. {line}", () => SelectTab(tab)));
+        if (Wanted(HOME_PAGES)) {
+            var tabRows = new List<Control>();
+            foreach (var group in s_groups) {
+                foreach (var name in group.Tabs) {
+                    var (icon, line) = s_tabs[name];
+                    if (SearchText.Matches($"{name} {group.Name} {line}", query)) {
+                        var tab = name;
+                        tabRows.Add(ResultRow(icon, name, name, $"{group.Name} page. {line}", () => SelectTab(tab)));
+                    }
                 }
             }
-        }
 
-        if (SearchText.Matches($"{WHATS_NEW} patch notes update changes version", query)) {
-            tabRows.Add(ResultRow("sparkle", WHATS_NEW, WHATS_NEW, "Every version's changes, with a search.", () => SelectTab(WHATS_NEW)));
-        }
-
-        AddGroup(rows, "Pages", tabRows);
-
-        // Settings.
-        try {
-            if (_settings.Count == 0) {
-                LoadSettings();
-            }
-        }
-        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or PanelException) {
-            // No settings file yet (the server was never built); the other results still show.
-        }
-
-        var settings = _settings.SelectMany(g => g.Settings)
-            .Where(s => SearchText.Matches($"{s.Section} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query))
-            .ToList();
-        AddGroup(rows, settings.Count > 6 ? $"Settings ({settings.Count}, showing 6)" : "Settings", [.. settings.Take(6).Select(s => ResultRow("gear", "Settings",
-            $"{s.Section}: {SearchText.SplitCamel(s.Key)}", s.Help, () => {
-                SelectTab("Settings");
-                _settingSearch.Text = s.Key;
-            }))]);
-
-        // Commands, items, spells, creatures, zones and quests (the Lookup tab's lists).
-        if (_lookup is not null) {
-            const int MAX = 8;
-            var found = _lookup.Search(Lookup.EVERYTHING, query, MAX, out var total);
-            var lookupRows = found.Select(entry => ResultRow(KindIcon(entry.Kind), "Lookup", entry.Name,
-                string.Join(" · ", new[] { entry.Kind, entry.Id.Length > 0 ? $"ID {entry.Id}" : "", entry.Typed ?? "", entry.Detail }.Where(t => t.Length > 0)),
-                () => {
-                    SelectTab("Lookup");
-                    _lookupSearch.Text = query;
-                }, entry.Typed ?? (entry.Id.Length > 0 ? entry.Id : null))).ToList();
-            if (total > MAX) {
-                lookupRows.Add(ResultRow("search", "Lookup", $"See all {total:N0} in Lookup", "Opens the Lookup tab with this search.", () => {
-                    SelectTab("Lookup");
-                    _lookupSearch.Text = query;
-                }));
+            if (SearchText.Matches($"{WHATS_NEW} patch notes update changes version", query)) {
+                tabRows.Add(ResultRow("sparkle", WHATS_NEW, WHATS_NEW, "Every version's changes, with a search.", () => SelectTab(WHATS_NEW)));
             }
 
-            AddGroup(rows, "Commands and IDs", lookupRows);
+            AddGroup(rows, HOME_PAGES, tabRows);
+        }
+
+        // Settings: with an empty search only when asked for by Look in, as there are hundreds.
+        if (lookIn == HOME_SETTINGS || (lookIn == Lookup.EVERYTHING && query.Length > 0)) {
+            try {
+                if (_settings.Count == 0) {
+                    LoadSettings();
+                }
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or PanelException) {
+                // No settings file yet (the server was never built); the other results still show.
+            }
+
+            var settings = _settings.SelectMany(g => g.Settings)
+                .Where(s => SearchText.Matches($"{s.Section} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query))
+                .ToList();
+            AddGroup(rows, settings.Count > most ? $"Settings ({settings.Count:N0}, showing {most})" : "Settings", [.. settings.Take(most).Select(s => ResultRow("gear", "Settings",
+                $"{s.Section}: {SearchText.SplitCamel(s.Key)}", s.Help, () => {
+                    SelectTab("Settings");
+                    _settingSearch.Text = s.Key;
+                }))]);
+        }
+
+        // Commands, items, spells, creatures, zones and quests (the Lookup tab's lists), a group for each kind.
+        if (_lookup is not null && (query.Length > 0 || Lookup.KINDS.Contains(lookIn)) && lookIn is not (HOME_PAGES or HOME_SETTINGS)) {
+            foreach (var kind in Lookup.KINDS.Skip(1).Where(Wanted)) {
+                var found = _lookup.Search(kind, query, most, out var total);
+                var kindRows = found.Select(entry => ResultRow(KindIcon(entry.Kind), "Lookup", entry.Name,
+                    string.Join(" · ", new[] { entry.Kind, entry.Id.Length > 0 ? $"ID {entry.Id}" : "", entry.Typed ?? "", entry.Detail }.Where(t => t.Length > 0)),
+                    () => OpenInLookup(kind, query), entry.Typed ?? (entry.Id.Length > 0 ? entry.Id : null))).ToList();
+                if (total > most) {
+                    kindRows.Add(ResultRow("search", "Lookup", $"See all {total:N0} in Lookup", "Opens the Lookup tab with this search.",
+                        () => OpenInLookup(kind, query)));
+                }
+
+                AddGroup(rows, total > most ? $"{KindPlural(kind)} ({total:N0})" : KindPlural(kind), kindRows);
+            }
         }
 
         // Each tab's own search, with this query typed in.
-        AddGroup(rows, "Search a tab", [.. SearchableTabs().Select(t => ResultRow(s_tabs[t.Tab].Icon, t.Tab, $"Search {t.Tab} for \"{query}\"",
-            $"Opens the {t.Tab} tab with this search.", () => {
-                SelectTab(t.Tab);
-                t.Box.Text = query;
-            }))]);
+        if (query.Length > 0 && lookIn == Lookup.EVERYTHING) {
+            AddGroup(rows, "Search a tab", [.. SearchableTabs().Select(t => ResultRow(s_tabs[t.Tab].Icon, t.Tab, $"Search {t.Tab} for \"{query}\"",
+                $"Opens the {t.Tab} tab with this search.", () => {
+                    SelectTab(t.Tab);
+                    t.Box.Text = query;
+                }))]);
+        }
+
+        if (query.Length > 0 && rows.Count == 0) {
+            rows.Add(Sub("Nothing matches. Try fewer words, or set Look in back to Everything."));
+        }
 
         _homeResults.Children.Clear();
         _homeResults.Children.AddRange(rows);
     }
+
+    /// <summary>Opens the Lookup tab on one kind with this search typed in.</summary>
+    private void OpenInLookup(string kind, string query) {
+        SelectTab("Lookup");
+        _lookupKind.SelectedItem = kind;
+        _lookupSearch.Text = query;
+    }
+
+    private static string KindPlural(string kind) => kind switch {
+        "NPC" => "NPCs",
+        "Command" => "Commands",
+        _ => kind + "s",
+    };
 
     private static void AddGroup(List<Control> rows, string title, List<Control> found) {
         if (found.Count == 0) {
@@ -347,6 +383,8 @@ internal sealed partial class ManagerWindow {
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
         ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
+        ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
+        ("Logs", _logSearch),
     ];
 
     private static string KindIcon(string kind) => kind switch {

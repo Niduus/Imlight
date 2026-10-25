@@ -232,16 +232,14 @@ internal sealed partial class ManagerWindow {
         void RenderResults() {
             results.Children.Clear();
             var query = (search.Text ?? "").Trim();
-            if (query.Length == 0) {
-                return;
-            }
-
+            // An empty box lists items too (Niduus, 2026-10-25: "have them all generate search results if left empty").
             var words = SearchText.Words(query);
             var catalog = DropCatalog().Where(i => i.Kind == "Item").ToList();
-            var found = query.All(char.IsDigit)
+            var found = query.Length > 0 && query.All(char.IsDigit)
                 ? catalog.Where(i => i.Id == query).ToList()
                 : catalog.Where(i => words.All(i.Haystack.Contains))
-                    .OrderBy(i => !i.Name.Equals(query, StringComparison.OrdinalIgnoreCase)).ThenBy(i => i.Name.Length).Take(8).ToList();
+                    .OrderBy(i => !i.Name.Equals(query, StringComparison.OrdinalIgnoreCase)).ThenBy(i => words.Length == 0 ? 0 : i.Name.Length)
+                    .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).Take(8).ToList();
             if (found.Count == 0) {
                 results.Children.Add(Sub(catalog.Count == 0
                     ? "The item list shows up once the server has made its ID list. You can still type an item's ID."
@@ -275,6 +273,7 @@ internal sealed partial class ManagerWindow {
             delay.Stop();
             RenderResults();
         };
+        search.GotFocus += (_, _) => RenderResults();
         search.TextChanged += (_, _) => {
             delay.Stop();
             delay.Start();

@@ -50,6 +50,17 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _phraseCount = Sub("");
     private readonly ListBox _phraseList = new() { Background = Brushes.Transparent };
     private readonly DispatcherTimer _phraseDelay = new() { Interval = TimeSpan.FromMilliseconds(200) };
+    // Niduus, 2026-10-25: every detail of a line to filter by, like the Gear tab's filters.
+    private static readonly string[] s_phraseLengths = [ANY_FILTER, "Short (up to 40 letters)", "Medium (41 to 120)", "Long (over 120)"];
+    private static readonly string[] s_phraseSorts = ["Number", "Number (high first)", "Words (A to Z)", "Shortest first", "Longest first", "Key"];
+    private readonly NumericUpDown _phraseFrom = FilterNumber(100, 130);
+    private readonly NumericUpDown _phraseTo = FilterNumber(100, 130);
+    private readonly ComboBox _phraseLength = FilterCombo(s_phraseLengths, 190);
+    private readonly ComboBox _phraseSort = FilterCombo(s_phraseSorts, 170);
+    private readonly TextBox _phraseKey = new() { Watermark = "Such as Malistaire", Width = 180 };
+    private readonly CheckBox _phraseExact = new() { Content = "Words in this exact order" };
+    private readonly CheckBox _phraseFilled = new() { Content = "Has words the game fills in (such as %s)" };
+    private readonly CheckBox _phraseLines = new() { Content = "More than one line" };
 
     private Control PhrasesTab() {
         _phraseDelay.Tick += (_, _) => {
@@ -65,6 +76,7 @@ internal sealed partial class ManagerWindow {
                 RenderPhrases();
             }
         };
+        WhenFiltersChange(RenderPhrases, _phraseFrom, _phraseTo, _phraseLength, _phraseSort, _phraseKey, _phraseExact, _phraseFilled, _phraseLines);
         // Short rows: a ListBoxItem's own padding and height would make each row twice as tall.
         _phraseList.Styles.Add(new Style(x => x.OfType<ListBoxItem>()) {
             Setters = {
@@ -94,7 +106,17 @@ internal sealed partial class ManagerWindow {
                         Children = { WithDock(WithMargin(_phraseGroup, new Thickness(8, 0, 0, 0)), Dock.Right), _phraseSearch },
                     }, "Every line of the game's text, by number. Type words from a line, its number or its key (such as " +
                        "CombatMessages) to find it, or pick a group on the right. Battle lines are in the CombatMessages group. " +
-                       "In battle, .ca and its number shows the line over you like a boss's cheat line."),
+                       "In battle, .ca and its number shows the line over you like a boss's cheat line. The filters narrow it by number, " +
+                       "key, length, and lines with words the game fills in (a name or number)."),
+                    SearchFilters(
+                        SearchFilter("Number from", _phraseFrom),
+                        SearchFilter("Number to", _phraseTo),
+                        SearchFilter("Key has", _phraseKey),
+                        SearchFilter("Length", _phraseLength),
+                        SearchFilter("Sort by", _phraseSort),
+                        SearchTick(_phraseExact),
+                        SearchTick(_phraseFilled),
+                        SearchTick(_phraseLines)),
                     _phraseCount), Dock.Top),
                 WithMargin(Card(_phraseList), new Thickness(0, 14, 0, 0)),
             },
@@ -169,8 +191,33 @@ internal sealed partial class ManagerWindow {
         var number = int.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var n) ? n : (int?) null;
         var picked = _phraseGroup.SelectedItem as string ?? ALL_PHRASES;
         var group = picked == ALL_PHRASES ? null : picked[..picked.LastIndexOf(" (", StringComparison.Ordinal)];
-        List<PhraseRow> shown = [.. phrases.Where(p => (group is null || p.Group == group)
-                                                       && (p.Number == number || words.All(p.Haystack.Contains)))];
+        var inOrder = _phraseExact.IsChecked == true && words.Length > 1 ? string.Join(' ', words) : null;
+        var key = SearchText.Words(_phraseKey.Text);
+        var length = _phraseLength.SelectedIndex;
+        var filled = _phraseFilled.IsChecked == true;
+        var lines = _phraseLines.IsChecked == true;
+        IEnumerable<PhraseRow> matched = phrases.Where(p => (group is null || p.Group == group)
+                                                            && (p.Number == number || (inOrder is null ? words.All(p.Haystack.Contains)
+                                                                : string.Join(' ', SearchText.Words(p.Text)).Contains(inOrder, StringComparison.Ordinal)))
+                                                            && InFilterRange(p.Number, _phraseFrom, _phraseTo)
+                                                            && (key.Length == 0 || key.All(SearchText.Normalize(p.Key).Contains))
+                                                            && length switch {
+                                                                1 => p.Text.Length <= 40,
+                                                                2 => p.Text.Length is > 40 and <= 120,
+                                                                3 => p.Text.Length > 120,
+                                                                _ => true,
+                                                            }
+                                                            && (!filled || p.Text.Contains('%') || p.Text.Contains('{') || p.Text.Contains('<'))
+                                                            && (!lines || p.Text.Contains('\n')));
+        matched = _phraseSort.SelectedIndex switch {
+            1 => matched.OrderByDescending(p => p.Number),
+            2 => matched.OrderBy(p => p.Text, StringComparer.OrdinalIgnoreCase),
+            3 => matched.OrderBy(p => p.Text.Length),
+            4 => matched.OrderByDescending(p => p.Text.Length),
+            5 => matched.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase),
+            _ => matched,
+        };
+        List<PhraseRow> shown = [.. matched];
         // The line of that very number first.
         if (number is not null && shown.FindIndex(p => p.Number == number) is > 0 and var at) {
             var exact = shown[at];

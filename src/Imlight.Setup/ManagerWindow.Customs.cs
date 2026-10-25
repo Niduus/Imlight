@@ -47,6 +47,15 @@ internal sealed partial class ManagerWindow {
     private readonly TextBox _customBaseSearch = new() { Watermark = "Search the creature it is based on, such as Malistaire or 1336035" };
     private readonly StackPanel _customBaseResults = new() { Spacing = 2 };
     private readonly DispatcherTimer _customBaseDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
+    // Niduus, 2026-10-25: every search with filters like the Gear tab's, and a list when the box is empty.
+    private readonly ComboBox _customBaseSchool = FilterCombo(new[] { ANY_FILTER }.Concat(BossCatalog.SCHOOLS), 120);
+    private readonly NumericUpDown _customBaseLevelMin = FilterNumber(10);
+    private readonly NumericUpDown _customBaseLevelMax = FilterNumber(10);
+    private readonly CheckBox _customBaseBosses = new() { Content = "Bosses only" };
+    private readonly TextBox _customListSearch = new() { Watermark = "Search your customs by name, number, .joinme or the creature it is based on" };
+    private readonly ComboBox _customListSchool = FilterCombo(new[] { ANY_FILTER }.Concat(BossCatalog.SCHOOLS), 120);
+    private readonly ComboBox _customListSort = FilterCombo(["Number", "Name", "Based on"], 130);
+    private readonly CheckBox _customListBoss = new() { Content = "Boss of one of my areas" };
     private readonly TextBlock _customNewBaseText = new() { Text = "No creature picked yet.", Foreground = MUTED };
     private readonly TextBox _customNewName = new() { Watermark = "Its name in battle, such as Malistaire the Unbroken", Width = 360 };
     private readonly Border _customHeaderCard = new();
@@ -70,6 +79,8 @@ internal sealed partial class ManagerWindow {
             _customBaseDelay.Stop();
             _customBaseDelay.Start();
         };
+        WhenFiltersChange(RenderCustomBaseResults, _customBaseSchool, _customBaseLevelMin, _customBaseLevelMax, _customBaseBosses);
+        WhenFiltersChange(RenderCustoms, _customListSearch, _customListSchool, _customListSort, _customListBoss);
         _customName.TextChanged += (_, _) => {
             if (_editCustom is { } custom) {
                 var name = (_customName.Text ?? "").Trim();
@@ -96,6 +107,9 @@ internal sealed partial class ManagerWindow {
                         WithCenter(_customCount),
                     },
                 },
+                _customListSearch,
+                SearchFilters(SearchFilter("School of the creature it is based on", _customListSchool), SearchFilter("Sort by", _customListSort),
+                    SearchTick(_customListBoss)),
                 _customRows),
             CustomNpcsCard(),
             CustomTeleportersCard(),
@@ -111,6 +125,7 @@ internal sealed partial class ManagerWindow {
         // The editor may have moved to the Bosses tab since.
         _customHeaderCard.IsVisible = _bossEditor.Parent == _customsEditorHost && _editCustom is not null;
         RenderCustoms();
+        RenderCustomBaseResults();
         RenderNpcs();
         RenderHubs();
         LoadBattleCustoms();
@@ -121,9 +136,22 @@ internal sealed partial class ManagerWindow {
     private void RenderCustoms() {
         _customRows.Children.Clear();
         UpdateCustomWizard();
-        var customs = CustomMob.All(_manager.CustomsFolder);
+        var all = CustomMob.All(_manager.CustomsFolder);
         var rooms = SafeRooms();
-        _customCount.Text = customs.Count == 0 ? "No customs yet. Press New custom… to make one." : customs.Count == 1 ? "1 custom." : $"{customs.Count} customs.";
+        var school = FilterPick(_customListSchool);
+        var bossOnly = _customListBoss.IsChecked == true;
+        var query = _customListSearch.Text ?? "";
+        string SchoolOf(CustomMob c) => _bossCatalog?.Creatures.FirstOrDefault(b => b.Id == c.BaseId)?.School ?? "";
+        IEnumerable<CustomMob> matched = all.Where(c => SearchText.Matches($"{c.Id} {c.Shown} {c.JoinMe} {c.BaseId} {CreatureName(c.BaseId)}", query)
+                                                        && (school is null || SchoolOf(c).Equals(school, StringComparison.OrdinalIgnoreCase))
+                                                        && (!bossOnly || rooms.Any(r => r.Value.Values.Contains(c.Id))));
+        matched = _customListSort.SelectedIndex switch {
+            1 => matched.OrderBy(c => c.Shown, StringComparer.OrdinalIgnoreCase),
+            2 => matched.OrderBy(c => CreatureName(c.BaseId), StringComparer.OrdinalIgnoreCase).ThenBy(c => c.Id),
+            _ => matched,
+        };
+        var customs = matched.ToList();
+        _customCount.Text = all.Count == 0 ? "No customs yet. Press New custom… to make one." : FilterCount(customs.Count, all.Count, "customs");
         foreach (var custom in customs) {
             var usedIn = rooms.Where(r => r.Value.Values.Contains(custom.Id)).Select(r => r.Key).ToList();
             var details = new[] {
@@ -199,7 +227,10 @@ internal sealed partial class ManagerWindow {
             Children = {
                 WizardStep(0, "Pick the creature it starts from",
                     "Search a game creature by name or ID and press Use. Your custom starts as a copy of it: same look, stats and spells.",
-                    _customBaseSearch, _customBaseResults, picked),
+                    _customBaseSearch,
+                    SearchFilters(SearchFilter("School", _customBaseSchool), SearchFilter("Level from", _customBaseLevelMin),
+                        SearchFilter("Level to", _customBaseLevelMax), SearchTick(_customBaseBosses)),
+                    _customBaseResults, picked),
                 WizardStep(1, "Give it a name",
                     "The name players see in battle. Keep the creature's own name or type a new one, such as Malistaire the Unbroken.",
                     _customNewName),
@@ -288,7 +319,7 @@ internal sealed partial class ManagerWindow {
     private void RenderCustomBaseResults() {
         _customBaseResults.Children.Clear();
         var query = (_customBaseSearch.Text ?? "").Trim();
-        if (_bossCatalog is null || query.Length == 0) {
+        if (_bossCatalog is null) {
             return;
         }
 
@@ -298,7 +329,12 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var found = _bossCatalog.Search(query, bossesOnly: false, new HashSet<string>(), 8, out var total);
+        var school = FilterPick(_customBaseSchool);
+        var all = _bossCatalog.Search(query, _customBaseBosses.IsChecked == true, new HashSet<string>(), int.MaxValue, out _)
+            .Where(c => (school is null || c.School.Equals(school, StringComparison.OrdinalIgnoreCase))
+                        && InFilterRange(c.Level, _customBaseLevelMin, _customBaseLevelMax)).ToList();
+        var total = all.Count;
+        var found = all.Take(8).ToList();
         if (found.Count == 0) {
             _customBaseResults.Children.Add(Sub("No creature matches."));
         }
