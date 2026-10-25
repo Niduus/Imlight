@@ -29,6 +29,12 @@ public static partial class QuestTextKeys {
             Resolve(quests);
         } catch (Exception ex) {
             Logger.Warning("Quest text could not be matched to the game's lines: {0}", Logger.Args(ex.Message));
+        }
+
+        try {
+            DropLinesTheGameLacks(quests);
+        } catch (Exception ex) {
+            Logger.Warning("Quest lines the game no longer has could not be left out: {0}", Logger.Args(ex.Message));
         } finally {
             Locale.ReleaseQuestTables();
         }
@@ -141,6 +147,45 @@ public static partial class QuestTextKeys {
             Logger.Args(matched, ours.Count, kept));
     }
 
+
+    /// <summary>
+    /// The captured quests still hold pages the game has since taken out (Lady Oriel's "Who could it be now?" has
+    /// three: a line of hers and the two mount lessons of Gamma's that the free one-day broom went with). The game
+    /// has no text for them, so their page showed an empty bar between Back and More (Niduus 2026-10-25). Such a page
+    /// is left out, unless it sets something off (a dialog event or action) or it is all the dialog has.
+    /// </summary>
+    private static void DropLinesTheGameLacks(IReadOnlyList<QuestTemplate> quests) {
+        int dropped = 0;
+        void Trim(ActorDialogListBase list) {
+            foreach (var dialog in (list as ActorDialogList)?.m_dialogs ?? []) {
+                if (dialog?.m_dialogEntries is not { Count: > 1 } entries) {
+                    continue;
+                }
+
+                var gone = entries.Where(e => e is NPCDialogEntry npc
+                    && string.IsNullOrEmpty(npc.m_dialogEvent) && string.IsNullOrEmpty(npc.m_action)
+                    && Locale.HasQuestLine(npc.m_dialog) == false).ToList();
+                if (gone.Count == 0 || gone.Count == entries.Count) {
+                    continue;
+                }
+
+                foreach (var entry in gone) {
+                    entries.Remove(entry);
+                }
+
+                dropped += gone.Count;
+            }
+        }
+
+        foreach (var quest in quests.Where(q => q is not null)) {
+            Trim(quest.m_dialogList);
+            foreach (var goal in quest.m_goals ?? []) {
+                Trim(goal?.m_dialogList);
+            }
+        }
+
+        Logger.Information("Quest text: left out {0} dialog pages the game no longer has a line for.", Logger.Args(dropped));
+    }
 
     private const string PLACE_TABLE = "ZoneLocName";
 

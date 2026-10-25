@@ -308,6 +308,24 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         return found;
     }
 
+    /// <summary>
+    /// Whether the game has the quest dialogue line <paramref name="key"/> (WizQst1625CE_00000009): null when the key
+    /// is no quest line or its table is not loaded, so nothing is known of it.
+    /// </summary>
+    public static bool? HasQuestLine(string key) {
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        var bar = key?.LastIndexOf('_') ?? -1;
+        if (bar <= 0 || !key.StartsWith(s_qustFilePrefix, StringComparison.Ordinal)
+            || !s_questTables.TryGetValue(key[..bar], out var lines)) {
+            return null;
+        }
+
+        return lines.ContainsKey(key[(bar + 1)..]);
+    }
+
     /// <summary>The quest dialogue tables are only needed once; this lets them go.</summary>
     public static void ReleaseQuestTables()
         => s_questTables = [];
