@@ -127,7 +127,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             // A client back on a retry or reattach still lists the quests it had: take each off before it is resent,
             // or the quest helper shows it twice.
             if (message.ClientKeptState) {
-                SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = qInstance.ID });
+                SendRemoveQuest(qInstance.ID);
             }
 
             var qTemplate = QuestTemplateCollection.GetQuestByName(qInstance.QuestName);
@@ -800,7 +800,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 return;
             }
 
-            SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = questId });
+            SendRemoveQuest(questId);
         }
 
         var cleared = wizard.QuestBehavior.RemoveAllQuestRegistryEntries(registryName);
@@ -850,7 +850,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var active = wizard.QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q is not null && q.QuestName.Equals(questName, StringComparison.OrdinalIgnoreCase));
         if (active is not null && wizard.RemoveQuest(active.QuestName)) {
-            SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = active.ID });
+            SendRemoveQuest(active.ID);
         }
         wizard.QuestBehavior.RemoveAllQuestRegistryEntries(questName);
         WizardCollection.UpdateCharacterQuestBehavior(wizard);
@@ -965,7 +965,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 var active = wizard.QuestBehavior.CurrentQuestInstances
                     .FirstOrDefault(q => q is not null && q.QuestName.Equals(earlierName, StringComparison.OrdinalIgnoreCase));
                 if (active is not null && wizard.RemoveQuest(active.QuestName)) {
-                    SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = active.ID });
+                    SendRemoveQuest(active.ID);
                 }
 
                 wizard.SetQuestRegistryValue(earlierName, string.IsNullOrEmpty(needed.m_entryName) ? QUEST_COMPLETED_ENTRY : needed.m_entryName, 1);
@@ -1274,9 +1274,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             QuestLevel = qTemplate.m_questLevel,
             QuestTitle = qTemplate.m_questTitle,
             QuestInfo = "", // ?
-            // The game's quest arrow only learns a quest from a SENDQUEST marked new; with 0 it never knew any
-            // quest after a login or zone change, so there was no arrow and a quest book pick blanked the goal.
-            New = 1,
+            // The game's quest helper only learns a quest from a SENDQUEST marked new, and keeps it across zone
+            // changes; marked new it also shows a "New Quest" popup, so only a quest the helper lacks is marked
+            // (every zone change showed one per quest, Niduus 2026-10-25).
+            New = HelperKnowsQuest(qInstance.ID) ? (byte) 0 : (byte) 1,
             QuestMadlibs = madLibData,
             GoalData = "",
             Rewards = serializedRewards,
@@ -1310,15 +1311,62 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     private static Dictionary<string, ulong> ClientQuestIdsOf(ulong charId)
         => s_clientQuestIds.GetOrAdd(charId, _ => new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase));
 
+    // The quests each character's game quest helper was told of (a SENDQUEST marked new) since the character was
+    // picked at character select, less those taken off. A login starts a new quest helper; a zone change keeps it.
+    private static readonly ConcurrentDictionary<ulong, HashSet<ulong>> s_helperQuestIds = new();
+
+    private static HashSet<ulong> HelperQuestIdsOf(ulong charId)
+        => s_helperQuestIds.GetOrAdd(charId, _ => []);
+
+    /// <summary>The character was picked at character select: its game starts a quest helper that knows no quest.</summary>
+    public static void ForgetQuestHelper(ulong charId) => s_helperQuestIds.TryRemove(charId, out _);
+
+    /// <summary>Notes that the character's game took a quest off its list (and its quest helper).</summary>
+    public static void ForgetHelperQuest(ulong charId, ulong questId) {
+        if (s_helperQuestIds.TryGetValue(charId, out var known)) {
+            lock (known) {
+                known.Remove(questId);
+            }
+        }
+    }
+
+    private bool HelperKnowsQuest(ulong questId) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return false;
+        }
+
+        var known = HelperQuestIdsOf(wizard.CharId);
+        lock (known) {
+            return known.Contains(questId);
+        }
+    }
+
+    private void SendRemoveQuest(ulong questId) {
+        var wizard = GetActiveWizard();
+        if (wizard is not null) {
+            ForgetHelperQuest(wizard.CharId, questId);
+        }
+
+        SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = questId });
+    }
+
     private void SendQuestToClient(QUEST_MESSAGES_52_PROTOCOL.MSG_SENDQUEST message, string questName) {
         var wizard = GetActiveWizard();
+        if (wizard is not null && message.New != 0) {
+            var known = HelperQuestIdsOf(wizard.CharId);
+            lock (known) {
+                known.Add(message.QuestID);
+            }
+        }
+
         if (wizard is not null) {
             var sent = ClientQuestIdsOf(wizard.CharId);
             lock (sent) {
                 if (sent.TryGetValue(questName, out var previousId) && previousId != message.QuestID) {
                     Logger.Debug("Quest '{0}' of {1} goes to the client as {2}; its earlier copy {3} is taken off first.",
                         Logger.Args(questName, wizard.CharId, message.QuestID, previousId));
-                    SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = previousId });
+                    SendRemoveQuest(previousId);
                 }
 
                 sent[questName] = message.QuestID;
@@ -1345,7 +1393,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 }
 
                 sent.Remove(questName);
-                SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST { QuestID = questId });
+                SendRemoveQuest(questId);
             }
         }
     }
@@ -1788,12 +1836,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var qCompleteMsg = new QUEST_MESSAGES_52_PROTOCOL.MSG_COMPLETEQUEST {
             QuestID = questId,
         };
-        var qRemoveMsg = new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST {
-            QuestID = questId,
-        };
 
         SendToSocket(qCompleteMsg);
-        SendToSocket(qRemoveMsg);
+        SendRemoveQuest(questId);
     }
 
     private void ProcessCombatGoal(Wizard wizard,
@@ -2289,9 +2334,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         foreach (var questId in questIds) {
-            SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST {
-                QuestID = questId,
-            });
+            SendRemoveQuest(questId);
         }
 
         return true;

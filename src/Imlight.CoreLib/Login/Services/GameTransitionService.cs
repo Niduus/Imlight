@@ -87,6 +87,11 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
 
         // If the given character does not exist on this account, send the client an error.
         var character = account.GetCharacter(message.CharID);
+        if (character is not null) {
+            // The game comes back from character select with a new quest helper that knows no quest yet.
+            Game.Services.QuestService.ForgetQuestHelper(character.CharId);
+        }
+
         if (character is null) {
             Logger.Warning("SessionActor {SessionId} account {Id} attempted to get character {CharId} it didn't have.",
                 Logger.Args(SessionActor.SessionID, account.AccountId, message.CharID));

@@ -268,6 +268,7 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
         wizard.RemoveQuest(questName);
 
         if (questId != 0) {
+            QuestService.ForgetHelperQuest(wizard.CharId, questId);
             SendToSocket(new QUEST_MESSAGES_52_PROTOCOL.MSG_REMOVEQUEST {
                 QuestID = questId,
             });
