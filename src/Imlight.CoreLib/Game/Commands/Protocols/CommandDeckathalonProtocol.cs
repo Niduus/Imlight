@@ -33,6 +33,7 @@ internal class CommandDeckathalonProtocol : CommandProtocol {
                 case "best":
                 case "scores":
                 case "leaderboard":
+                    OpenLeaderboard(words.Skip(1).FirstOrDefault());
                     InformSenderClient(TopList(words.Skip(1).FirstOrDefault()));
 
                     return;
@@ -63,6 +64,21 @@ internal class CommandDeckathalonProtocol : CommandProtocol {
         catch (Exception ex) {
             Logger.Error("Deckathalon | .deckathalon {0} failed: {1}", Logger.Args(text, ex));
             InformSenderClient("The Deckathalon command did not work. The server log has the details.");
+        }
+    }
+
+    /// <summary>`.leaderboard`: the game's leaderboard window of the Deckathalon that is on, and the top list in chat.</summary>
+    [Command("leaderboard")]
+    [Alias("leaderboards", "lb")]
+    private void LeaderboardCommand([Remainder] string text = "") {
+        try {
+            var school = (text ?? "").Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            OpenLeaderboard(school);
+            InformSenderClient(TopList(school));
+        }
+        catch (Exception ex) {
+            Logger.Error("Deckathalon | .leaderboard {0} failed: {1}", Logger.Args(text, ex));
+            InformSenderClient("The leaderboard did not open. The server log has the details.");
         }
     }
 
@@ -106,6 +122,24 @@ internal class CommandDeckathalonProtocol : CommandProtocol {
         catch (Exception ex) {
             Logger.Error("Deckathalon | .credits {0} failed: {1}", Logger.Args(text, ex));
             InformSenderClient("The credits command did not work. The server log has the details.");
+        }
+    }
+
+    /// <summary>
+    /// Opens the game's own leaderboard window (ClassProjectsLeaderboard.gui) for the Deckathalon that is on. The game's
+    /// Deckathalon templates have m_leaderboardSize 0, so the event window shows no Leaderboard button (0x1403d8160); the
+    /// client opens the window whenever MSG_CLASSPROJECTREQUESTLEADERBOARD arrives (0x1403dfc00), so the server sends it
+    /// (Niduus, 2026-10-25: "Where do I see the leaderboards though").
+    /// </summary>
+    private void OpenLeaderboard(string school) {
+        var current = Deckathalon.CurrentEvent;
+        if (current is null || (Deckathalon.SchoolName(school) is { } picked && picked != current.School)) {
+            return;
+        }
+
+        var projectId = EventButton.ProjectId(current);
+        if (projectId != 0) {
+            Context.SessionActor.Tell(EventButton.LeaderboardMessage(projectId), Akka.Actor.ActorRefs.NoSender);
         }
     }
 
