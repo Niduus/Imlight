@@ -134,6 +134,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "LateJoinersJoinImmediately", "A wizard who joins a battle late plays the current round (off: waits for the next one)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "MobsJoinLate", "Monsters can join a battle late", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "ResetTimerWhenMobJoins", "Card timer starts over when a monster joins the battle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FastAnimationTiming", "Shorter waits between turns, using animation times measured in the game (extra seconds under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FullPipConserve", "100% pip conserve (a half-used power pip always comes back)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "FullPipConversion", "100% pip conversion (with Pip Conversion gear, a spell's school always turns a normal pip into a power pip)", new() { OnContent = "On", OffContent = "Off" }),

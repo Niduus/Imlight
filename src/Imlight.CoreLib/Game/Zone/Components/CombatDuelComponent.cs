@@ -374,6 +374,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                 SendCombatStats();
                 SendCombatPips();
                 SendCombatHealth();
+                RestartPlanningTimerForLateMob();
             }
 
             // Its move is taken even if everyone else has moved already (the round then ends a second later).
@@ -387,6 +388,23 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
             return false;
         }
+    }
+
+    // [Battle] ResetTimerWhenMobJoins (Niduus, 2026-10-25: "when enemies join the battle, reset the timer"): a monster
+    // that joins mid-planning starts the countdown over for everyone. Read on each join, so the switch works live.
+    private static bool s_resetTimerWhenMobJoins => ConfigurationManager.GetValue("Battle.ResetTimerWhenMobJoins", true);
+
+    private void RestartPlanningTimerForLateMob() {
+        if (!s_resetTimerWhenMobJoins || _tutorialDirector.IsActive) {
+            return;
+        }
+
+        _planningStartedAt = DateTime.UtcNow;
+        HumanBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SETPLANNINGPHASETIMER {
+            DuelID = SigilId,
+            Time = PlanningSeconds,
+        });
+        Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(PlanningSeconds));
     }
 
     private const string MONSTER_KILLED_EVENT = "Monster_Killed";
