@@ -184,6 +184,13 @@ internal static class TieredSpells {
         return !string.IsNullOrEmpty(spellName) && s_groupOfSpell.TryGetValue(spellName, out var group) ? group : -1;
     }
 
+    /// <summary>
+    /// The spell group of a spell template, or -1: what the game's spellbook list (SpellIDTracker
+    /// m_tieredSpellGroupIndex) needs to know which upgrade tiers a wizard has unlocked.
+    /// </summary>
+    internal static int GroupOfTemplate(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is TieredSpellTemplate template ? GroupOf(template.m_name) : -1;
+
     /// <summary>The spell template with this template ID or name hash (the game uses both), or null.</summary>
     internal static SpellTemplate ResolveTemplate(uint id, out uint templateId) {
         templateId = 0;

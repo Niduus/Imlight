@@ -193,6 +193,7 @@ public class ServerWizSpellbookBehavior : ServerSpellbookBehavior {
             spellIdList.Add(new SpellIDTracker {
                 m_isRetired = false,
                 m_spellID = templateId,
+                m_tieredSpellGroupIndex = TieredSpells.GroupOfTemplate(templateId),
             });
         }
 

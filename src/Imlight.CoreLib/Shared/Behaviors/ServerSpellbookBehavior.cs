@@ -125,7 +125,8 @@ public class ServerSpellbookBehavior : IClientBehaviorProvider<ClientSpellbookBe
         var spellIdList = new List<SpellIDTracker>();
         foreach (var spellTemplateId in LearnedSpellTemplateIds) {
             spellIdList.Add(new SpellIDTracker {
-                m_spellID = spellTemplateId
+                m_spellID = spellTemplateId,
+                m_tieredSpellGroupIndex = Imlight.CoreLib.Game.Spells.TieredSpells.GroupOfTemplate(spellTemplateId),
             });
         }
 
