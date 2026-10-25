@@ -35,6 +35,8 @@ using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Loyalty;
+using Imlight.CoreLib.Game.Packs;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.WizardData.Models.World;
 
@@ -129,9 +131,15 @@ internal class LoyaltyStoreService(SessionActor sessionActor) : MessageService(s
                 return;
             }
 
-            var result = new DropTableResult { Items = [new DropItemResult { ItemId = ware.TemplateId.ToString(), ItemName = ware.Name, Quantity = 1 }] };
-            var granted = LootGranter.Grant(SessionActor.ActorRef, wizard, result);
-            if (granted.Items.Count == 0 && granted.TreasureCards.Count == 0) {
+            // A pack opens right away, as from the Crown Shop (Niduus 2026-10-25: "should open the pack").
+            var isPack = CoreObjectFactory.GetCoreTemplate(ware.TemplateId) is Imcodec.ObjectProperty.TypeCache.BoosterPackTemplate;
+            if (isPack) {
+                PackManager.OpenPack(SessionActor.ActorRef, wizard, ware.TemplateId);
+            }
+
+            var granted = isPack ? null : LootGranter.Grant(SessionActor.ActorRef, wizard,
+                new DropTableResult { Items = [new DropItemResult { ItemId = ware.TemplateId.ToString(), ItemName = ware.Name, Quantity = 1 }] });
+            if (granted is not null && granted.Items.Count == 0 && granted.TreasureCards.Count == 0) {
                 LoyaltyStore.Change(wizard.AccountId, account => {
                     account.Tokens += ware.Price;
                     account.Bought[ware.TemplateId] = Math.Max(0, account.Bought.GetValueOrDefault(ware.TemplateId) - 1);

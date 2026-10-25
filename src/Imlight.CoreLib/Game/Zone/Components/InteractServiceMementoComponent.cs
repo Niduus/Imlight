@@ -235,16 +235,31 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
-        var wizard = message.PlayerActor
-            .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD())
-            .Result
-            .Wizard;
+        if (AskWizard(message.PlayerActor) is not { } wizard) {
+            return;
+        }
         foreach (var trainer in Entity.GetComponentsOfType<InteractTrainerComponent>()) {
             trainer.ResetSpellOptions(wizard);
         }
 
         SendLeaveServiceRange(message.PlayerActor);
         SendActorServiceOptions(message.PlayerActor);
+    }
+
+    // The player's wizard, or null when their session does not answer in time. Every component of an entity runs on
+    // its one actor, so waiting on a session that closed (the game shut while next to the NPC) froze the whole NPC:
+    // no one who came into the zone afterwards was sent it (Niduus 2026-10-25, Majid: "he gone").
+    private Wizard AskWizard(IActorRef playerActor) {
+        try {
+            return playerActor.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD(),
+                WizBangQueryTimeout).Result?.Wizard;
+        }
+        catch (Exception ex) {
+            Logger.Warning("{0} did not answer for {1}'s options: {2}",
+                Logger.Args(playerActor?.Path.Name, Entity.ActiveGameObject?.m_debugName, ex.GetBaseException().Message));
+
+            return null;
+        }
     }
 
     internal void ShowServiceOptions(IActorRef playerActor, int reinteract = 0) {
@@ -304,11 +319,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     }
 
     private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false) {
-        var queryCharacterMsg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
-        var wizard = playerActor
-            .Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(queryCharacterMsg)
-            .Result
-            .Wizard;
+        if (AskWizard(playerActor) is not { } wizard) {
+            return;
+        }
 
         // Each time a player walks up to a test trainer with a long list, it shows the next section of it.
         if (nextSection) {
