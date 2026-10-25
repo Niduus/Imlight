@@ -93,10 +93,9 @@ internal static class Deckathalon {
     private static readonly bool s_noGearStats = ConfigurationManager.GetValue("Deckathalon.NoGearStats", true);
     private static readonly bool s_alwaysOpen = ConfigurationManager.GetValue("Deckathalon.AlwaysOpen", false);
     private static readonly bool s_starterPack = ConfigurationManager.GetValue("Deckathalon.StarterPack", true);
-    private static readonly double s_nextFloorSeconds = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.NextFloorSeconds", 0.0), 0.0, 60.0);
-    // 0 (the default): only the floor's portal takes a wizard on, as in the game (Niduus, 2026-10-25: "wrongfully TP'd
-    // to the 4th floor whilst trying to interact with the NPC").
-    private static bool TimedMove => s_nextFloorSeconds > 0;
+    // Only the floor's portal takes a wizard on, as in the game: there is no timed move up, whatever an older
+    // NextFloorSeconds setting says (Niduus, 2026-10-25: "ME WALKING TO THE TRIGGER IS WHAT SHOAULD TELEPORT ME AND
+    // ONLY THEN").
     private static readonly int s_floors = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
 
     // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
@@ -166,8 +165,6 @@ internal static class Deckathalon {
         internal int Points;
         internal int CardsUsed;
         internal bool Won;
-        // The floor the wizard was last sent to, so the timed move up does not follow the portal's.
-        internal int SentTo;
     }
 
     private static readonly ConcurrentDictionary<ulong, Run> s_runs = new();
@@ -419,7 +416,7 @@ internal static class Deckathalon {
 
         lines.Add("Step into the battle circle to fight. Win to go up a floor. Type .deckathalon leave to leave.");
         reply = string.Join("<br>", lines);
-        GoToFloor(session, run, 0);
+        GoToFloor(session, run);
 
         return true;
     }
@@ -436,6 +433,10 @@ internal static class Deckathalon {
 
         return Math.Clamp(ScoreOf(current.Key, wizard.CharId, null).Checkpoint, 0, Math.Min(MAX_CHECKPOINT, (s_floors - 1) / CHECKPOINT_FLOORS));
     }
+
+    /// <summary>Whether the school's tower is the one of the Deckathalon that is on.</summary>
+    internal static bool IsEventTower(string school)
+        => Enabled && CurrentEvent is { } current && TowerOf(school) is { } tower && current.School == tower.School;
 
     /// <summary>Remembers that the tower portal's window was opened for a wizard, so its Use button starts the climb.</summary>
     internal static void OfferPortal(ulong charId, string school) => s_portalOffers[charId] = school;
@@ -516,8 +517,8 @@ internal static class Deckathalon {
         });
 
     /// <summary>
-    /// A won battle: when it was the wizard's floor, the floor counts (points, best floor, rewards) and, after a few
-    /// seconds, the wizard goes up to the next floor, or out of the tower after the top one.
+    /// A won battle: when it was the wizard's floor, the floor counts (points, best floor, rewards) and its portal
+    /// opens; walking into it goes up to the next floor (or out of the tower after the top one).
     /// </summary>
     internal static void OnWin(IActorRef session, Wizard wizard, IEnumerable<ulong> mobTemplateIds, int rounds) {
         if (!Enabled || wizard is null || RunOf(wizard.CharId) is not { Won: false } run) {
@@ -562,26 +563,17 @@ internal static class Deckathalon {
                 lines.Insert(0, floor >= TOP_FLOOR
                     ? $"You beat {run.Tower.Professor} and conquered the {run.Tower.School} Deckathalon with {run.Points} points!"
                     : $"You reached the top of the {run.Tower.School} Deckathalon (floor {floor}) with {run.Points} points!");
-                lines.Add(TimedMove
-                    ? $"Walk into the portal to go back to the arena, or you leave by yourself in {s_nextFloorSeconds:0} seconds."
-                    : "Walk into the portal to go back to the arena.");
+                lines.Add("Walk into the portal to go back to the arena.");
                 Tell(session, lines);
-                if (TimedMove) {
-                    Later(session, ExitTransfer(), () => IsFloorZone(wizard.Zone));
-                }
 
                 return;
             }
 
             run.Floor = floor + 1;
             var next = CreatureOf(run.Tower, run.Floor);
-            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor}"
-                + (TimedMove ? $" (or you go up by yourself in {s_nextFloorSeconds:0} seconds)" : "") + ": "
+            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor}: "
                 + (run.Floor == TOP_FLOOR ? $"{run.Tower.Professor} waits there." : $"{ShownName(next)}."));
             Tell(session, lines);
-            if (TimedMove) {
-                GoToFloor(session, run, s_nextFloorSeconds);
-            }
         }
         catch (Exception ex) {
             Logger.Error("Deckathalon | the win on floor {0} of {1} failed: {2}", Logger.Args(run.Floor, run.Name, ex));
@@ -676,34 +668,14 @@ internal static class Deckathalon {
             .Sum(s => Math.Max(1, (int) s.m_quantity));
     }
 
-    private static void GoToFloor(IActorRef session, Run run, double delaySeconds) {
-        var floor = run.Floor;
-        var transfer = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-            DestinationZone = FloorZone(run.Tower, floor),
-            DestinationLocation = "Start",
-            SendToClient = true,
-            IsPrivate = true,
-            OwnerCharId = run.CharId,
-            ResetInstance = true,
-        };
-        if (delaySeconds <= 0) {
-            run.SentTo = floor;
-            session.Tell(transfer);
-
-            return;
-        }
-
-        // The timed move up, unless the floor's portal already took the wizard there (or the climb ended).
-        Later(session, transfer, () => {
-            if (RunOf(run.CharId) != run || run.Floor != floor || run.SentTo == floor) {
-                return false;
-            }
-
-            run.SentTo = floor;
-
-            return true;
-        }, delaySeconds);
-    }
+    private static void GoToFloor(IActorRef session, Run run) => session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+        DestinationZone = FloorZone(run.Tower, run.Floor),
+        DestinationLocation = "Start",
+        SendToClient = true,
+        IsPrivate = true,
+        OwnerCharId = run.CharId,
+        ResetInstance = true,
+    });
 
     /// <summary>
     /// A teleport of a tower floor, which names no destination: the next-floor portal (open once the floor is won) goes
@@ -718,7 +690,7 @@ internal static class Deckathalon {
         if (string.Equals(triggerName, NEXT_FLOOR_TRIGGER, StringComparison.OrdinalIgnoreCase)
             && RunOf(charId) is { Won: false } run
             && !string.Equals(zone, FloorZone(run.Tower, run.Floor), StringComparison.OrdinalIgnoreCase)) {
-            GoToFloor(session, run, 0);
+            GoToFloor(session, run);
 
             return true;
         }
@@ -740,15 +712,6 @@ internal static class Deckathalon {
         SendToClient = true,
     };
 
-    // Sends a transfer after a while, when the check (if any) still says so then.
-    private static void Later(IActorRef session, ZONE_102_PROTOCOL.MSG_ZONETRANSFER transfer, Func<bool> stillDue = null, double seconds = -1) {
-        var wait = TimeSpan.FromSeconds(seconds < 0 ? s_nextFloorSeconds : seconds);
-        _ = Task.Delay(wait).ContinueWith(_ => {
-            if (stillDue?.Invoke() != false) {
-                session.Tell(transfer);
-            }
-        });
-    }
 
     private static void Tell(IActorRef session, IEnumerable<string> lines) {
         foreach (var line in lines) {

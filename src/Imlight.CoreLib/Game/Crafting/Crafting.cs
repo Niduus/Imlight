@@ -545,7 +545,10 @@ internal static class Crafting {
             m_noCategories = station.NoCategories,
         };
 
-        var serializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None);
+        // The client reads this list as a versionable object (ClientAlchemyStationWindow: its serializer is made with
+        // versionable set), so a plain one came out empty and the window listed every recipe the wizard knows
+        // (Niduus, 2026-10-25: "Still being used as a universal crafting station instead of deckathalon").
+        var serializer = new ObjectSerializer(Versionable: true, Behaviors: SerializerFlags.None);
         if (!serializer.Serialize(allowed, 4, out var data)) {
             Logger.Error("Crafting: could not write the recipes of station {0}.", Logger.Args(station.Name));
 

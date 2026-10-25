@@ -108,9 +108,12 @@ internal sealed class InteractDeckathalonPortalComponent(ZoneEntity entity)
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         try {
             if (TowerSchool is { } school) {
-                // With a saved checkpoint, the game's portal window asks where to start (Niduus, 2026-10-25: "While I
-                // have a save point, IIRS I should get a UI asking where I want to start from previous check points").
-                if (Deckathalon.CheckpointOf(playerCharacter, school) is > 0 and var checkpoint && !playerCharacter.IsInDuel) {
+                // During the event, the game's portal window comes first, as in the live game (Niduus, 2026-10-25:
+                // "Going into Deckathalon tower doesn't give me proper UI but instead makes me just enter"); with a
+                // saved checkpoint it also asks where to start ("I should get a UI asking where I want to start from
+                // previous check points"). Practice climbs (no event on) start right away.
+                if (Deckathalon.IsEventTower(school) && !playerCharacter.IsInDuel) {
+                    var checkpoint = Deckathalon.CheckpointOf(playerCharacter, school);
                     Deckathalon.OfferPortal(playerCharacter.CharId, school);
                     playerActor.Tell(EventButton.InfoMessage(playerCharacter, 0));
                     playerActor.Tell(EventButton.PortalMessage(playerCharacter, checkpoint));
