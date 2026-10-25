@@ -441,14 +441,22 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     /// server shows it only to players whose quest calls for it, through a dynamod that shows it, a zone script, or as
     /// the NPC of the player's quest step or of a quest it offers them. An object with spawn requirements is decided by
     /// those instead. Only characters (NPC behavior) are held back: teleporters and doors placed the same way are opened
-    /// on live by quest data we do not have, and hiding them would cut players off. Niduus 2026-10-25: quest objects
-    /// stood in the world for everyone.
+    /// on live by quest data we do not have, and hiding them would cut players off. A character with a service of its
+    /// own (a shop, a trainer, the stitcher Eloise Merryweather) is placed the same way yet always stands there, so it is
+    /// never held back. Niduus 2026-10-25: quest objects stood in the world for everyone; then "Where did the stitcher go?".
     /// </summary>
     private bool IsQuestOnly
         => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
            && info.GetType() == typeof(CoreObjectInfo)
            && Entity.ActiveGameObject is not WizClientPet
-           && Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate);
+           && Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate)
+           && !Entity.Template.m_behaviors.Any(b => b is WizShoppingBehaviorTemplate)
+           && Entity.GetComponentsOfType<IServiceComponent>().All(IsQuestService);
+
+    // The services a quest character offers; any other (a shop, a trainer, a bank) means the character always stands there.
+    private static bool IsQuestService(IServiceComponent service)
+        => service is InteractPersonaGoalComponent or InteractQuestOfferComponent or InteractQuestUnderwayComponent
+           or InteractQuestSelectComponent;
 
     private bool? _isQuestOnly;
 
