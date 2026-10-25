@@ -123,8 +123,11 @@ internal static class CombatEffectApplicator {
 
         switch (effect.m_effectType) {
             case kSpellEffects.kDamage:
-            case kSpellEffects.kDamagePerTotalPipPower:
                 cinematicTime += ApplyFlatDamageEffect(effect, charms, caster, targets, critMultiplier);
+                break;
+            // Damage for each pip the target has (Mana Burn, Steal Pips, Mighty Judgement - Shadow - MOB).
+            case kSpellEffects.kDamagePerTotalPipPower:
+                cinematicTime += ApplyDamagePerPipEffect(effect, charms, caster, targets, critMultiplier);
                 break;
             // No critical (Dark Pact, Voodoo and the like).
             case kSpellEffects.kDamageNoCrit:
@@ -292,6 +295,44 @@ internal static class CombatEffectApplicator {
         }
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// kDamagePerTotalPipPower: the game files leave m_effectParam at -1 and put the damage for each pip in m_numRounds
+    /// ("100 damage per target pip" is m_numRounds 100). The game works the hit out from the target's pips, power pips
+    /// counting 2, and draws it from that; with the -1 taken as the damage, the server hit for 0 while the game showed
+    /// the creature killed, so it vanished from its circle and the battle went on (Niduus 2026-10-25, "PHANTOM DEATH").
+    /// </summary>
+    private static float ApplyDamagePerPipEffect(SpellEffect effect,
+                                                 SpellEffect[] charms,
+                                                 CombatDuelSubCircle caster,
+                                                 CombatDuelSubCircle[] targets,
+                                                 float critMultiplier) {
+        var perPip = effect.m_numRounds > 0 ? effect.m_numRounds : Math.Max(0, effect.m_effectParam);
+        var cinematicTime = 0f;
+        var first = true;
+        foreach (var target in targets.Where(t => t is not null)) {
+            var pips = PipPower(target);
+            Logger.Debug("Damage per pip to slot {0}: {1} for each of its {2} pip power.", Logger.Args(target.SlotIndex, perPip, pips));
+            var hit = effect with { m_effectType = kSpellEffects.kDamage, m_effectParam = perPip * pips, m_numRounds = 0 };
+            var time = ApplyFlatDamageEffect(hit, charms, caster, [target], critMultiplier);
+            if (first) {
+                cinematicTime = time;
+                first = false;
+            }
+        }
+
+        return cinematicTime;
+    }
+
+    // A participant's pips as the game counts them for a pip-power spell: a pip is 1, a power or school pip 2.
+    private static int PipPower(CombatDuelSubCircle who) {
+        if (who?.CombatParticipant?.m_pipCount is not { } pips) {
+            return 0;
+        }
+
+        return pips.m_genericPips + (pips.m_powerPips + pips.m_balancePips + pips.m_deathPips + pips.m_firePips
+                                     + pips.m_icePips + pips.m_lifePips + pips.m_mythPips + pips.m_stormPips) * 2;
     }
 
     private static float ApplyFlatDamageEffect(SpellEffect effect,
