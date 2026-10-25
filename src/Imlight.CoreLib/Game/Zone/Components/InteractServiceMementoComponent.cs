@@ -82,6 +82,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     // Guild_Pedestal_GuildTome on the guild grounds (Housing_Guild/GuildStarter_Ext).
     private const uint GUILD_TOME_TEMPLATE_ID = 1529133;
     private const string DEFAULT_TEXT_KEY = "GUI_NPCInteractText";
+
+    /// <summary>"Press X or click to Interact", for things that are not people.</summary>
+    private const string OBJECT_TEXT_KEY = "GUI_ObjectInteract";
     private const string WIZBANG_UPDATE_TIMER_KEY = "WIZBANG_UPDATE_TIMER";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
     private static readonly TimeSpan WizBangQueryTimeout = TimeSpan.FromSeconds(3);
@@ -403,8 +406,10 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var npcNameKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcNameKey)
             ? DEFAULT_NAME_KEY
             : highestPriority.NpcNameKey;
+        // Only a person is talked to: a lever, chest or portal with no text of its own says "to Interact", as live.
+        var isPerson = gameObjTemplate?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any() ?? true;
         var npcTextKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcTextKey)
-            ? DEFAULT_TEXT_KEY
+            ? (isPerson ? DEFAULT_TEXT_KEY : OBJECT_TEXT_KEY)
             : highestPriority.NpcTextKey;
 
         _serviceMemento = new ServiceMementoBase {

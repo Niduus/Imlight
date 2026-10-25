@@ -58,9 +58,26 @@ internal sealed class InteractDeckathalonPortalComponent(ZoneEntity entity)
     private const string TOWER_PORTAL_PREFIX = "HO-TreasureTower_01_";
 
     public string ServiceName => "Interact";
-    public string NpcIcon => (Entity.Template as GameObjectTemplate)?.m_sIcon;
-    public string NpcNameKey => (Entity.Template as GameObjectTemplate)?.m_displayName;
-    public string NpcTextKey => null;
+    // Both portals have a blank name in the game's text and the Library one has no picture, so the "Press X" box
+    // was empty: the Library one says "To The Arena", a tower one "<School> Deckathalon Event", and the Library one
+    // borrows the tower portals' picture.
+    private const string PORTAL_ICON = "GUI/QuestButtons/Use_Portal_ClassProjects.dds";
+    private const string LIBRARY_PORTAL_NAME_KEY = "WizardGameObjects_00000955";
+    private static readonly Dictionary<string, string> s_towerNameKeys = new(StringComparer.OrdinalIgnoreCase) {
+        ["Fire"] = "ClassProjects_00000023",
+        ["Ice"] = "ClassProjects_00000025",
+        ["Death"] = "ClassProjects_00000031",
+        ["Balance"] = "ClassProjects_00000055",
+        ["Life"] = "ClassProjects_00000056",
+        ["Myth"] = "ClassProjects_00000057",
+        ["Storm"] = "ClassProjects_00000058",
+    };
+
+    public string NpcIcon => (Entity.Template as GameObjectTemplate)?.m_sIcon.ToString() is { Length: > 0 } icon ? icon : PORTAL_ICON;
+    public string NpcNameKey => TowerSchool is { } school
+        ? s_towerNameKeys.GetValueOrDefault(school, LIBRARY_PORTAL_NAME_KEY)
+        : LIBRARY_PORTAL_NAME_KEY;
+    public string NpcTextKey => "GUI_EnterDoor";
     public WizBangs WizBang => WizBangs.None;
     public string StateName => null;
     public string InteractWizBang => null;
