@@ -20,12 +20,11 @@
  * ========================================================================
  *
  * PURPOSE:
- * Gives Mr. Lincoln a "reset training points" option (the game's RespecOption) beside his spell list (only him,
- * Niduus 2026-10-24). Picking it opens the game's reset window; TrainService takes its answer and TrainingReset does the reset.
+ * Gives Mr. Lincoln a "reset training points" option (the game's RespecOption), and only him (Niduus 2026-10-24). Picking it opens the game's reset window; TrainService takes its answer and TrainingReset does the reset.
  *
  * NOTE:
- * Only Mr. Lincoln, while [Trainers] RespecAtTrainers is on, and only for a wizard who has points to
- * get back. While it is offered the trainer shows one "Spell List" choice first (as it does beside a quest).
+ * Only Mr. Lincoln, while [Trainers] RespecAtTrainers is on. He is no trainer any more (Niduus 2026-10-25: his spell
+ * list showed empty), so the reset is his only choice.
  */
 
 using System.Collections.Generic;
@@ -52,37 +51,42 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
     public string InteractWizBang => "Registrar";
     public string DisplayKey      => s_displayKey.Value;
 
-    // The game's own line for the option, if it has one; else the words themselves.
+    // The game's own keys its other menu options follow (GUI_DyeShop, GUI_PotionShop...), then lines with the words.
+    private static readonly string[] s_displayKeys = [
+        "GUI_Respec", "GUI_RespecService", "GUI_RespecCrowns", "GUI_RespecOption", "GUI_ResetTrainingPoints",
+        "GUI_TrainingPointReset", "GUI_TrainingReset",
+    ];
+
+    // The game's own line for the option. The client shows a blank button for a key it does not have (Niduus
+    // 2026-10-25), so this always ends on a line the game has.
     private static readonly System.Lazy<string> s_displayKey = new(() => {
-        foreach (var text in new[] { "Reset Training Points", "Training Point Reset", "Reset Training Points?", "Respec" }) {
-            if (Locale.KeyOf(text) is { } key) {
-                Logger.Information("Respec | The trainers' reset option shows {0} ({1}).", Logger.Args(key, text));
+        var gui = Locale.Table("GUI");
+        var respecKeys = gui is null ? [] : gui.Keys.Where(k => k.Contains("Respec", System.StringComparison.OrdinalIgnoreCase))
+            .Select(k => $"GUI_{k} = {gui[k]}").ToList();
+        Logger.Information("Respec | GUI lines named Respec: {0}", Logger.Args(respecKeys.Count > 0 ? string.Join(" | ", respecKeys) : "none"));
 
-                return key;
-            }
-        }
+        var key = s_displayKeys.FirstOrDefault(k => Locale.GetEnglishName(k).Length > 0)
+            ?? new[] { "Reset Training Points", "Training Point Reset", "Reset Training", "Respec" }.Select(Locale.KeyOf).FirstOrDefault(k => k is not null)
+            ?? Locale.Search("reset training", 20).Where(l => l.Text.Length <= 40).Select(l => l.Key).FirstOrDefault()
+            ?? Locale.KeyOf("Reset")
+            ?? "GUI_00000979";
+        Logger.Information("Respec | Mr. Lincoln's reset option shows {0} (\"{1}\").", Logger.Args(key, Locale.GetEnglishName(key)));
 
-        Logger.Information("Respec | The game has no line for the reset option; lines that came close: {0}",
-            Logger.Args(string.Join(" | ", Locale.Search("training points", 8).Select(l => $"{l.Key} = {l.Text}"))));
-
-        return "Reset Training Points";
+        return key;
     });
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => TrainingReset.AtTrainers
         && template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
-        && InteractTrainerComponent.TestTrainerKindOf(goTemplate) == InteractTrainerComponent.TestTrainerKind.Enchantments;
+        && InteractTrainerComponent.IsLincoln(goTemplate);
 
-    /// <summary>Whether this NPC offers a wizard the reset right now.</summary>
+    /// <summary>Whether this NPC offers a wizard the reset right now: Mr. Lincoln always does.</summary>
     internal static bool Offers(ZoneEntity entity, Wizard wizard)
-        => wizard is not null
-        && entity.GetComponentOfType<InteractRespecComponent>() is not null
-        && TrainingReset.PointsBack(wizard) > 0;
+        => wizard is not null && entity.GetComponentOfType<InteractRespecComponent>() is not null;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
-        // Shown with the spell list, never in place of it.
-        if (!Offers(Entity, wizard) || InteractTrainerComponent.IsShowingSpellOptions(Entity, wizard)) {
+        if (!Offers(Entity, wizard)) {
             return [];
         }
 
@@ -95,6 +99,12 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         if (playerCharacter is null) {
+            return;
+        }
+
+        if (TrainingReset.PointsBack(playerCharacter) <= 0) {
+            TrainingReset.Tell(playerActor, "You have no training points to get back. Spells of your own school, free spells and spells from quests stay.");
+
             return;
         }
 

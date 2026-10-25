@@ -363,7 +363,7 @@ internal static class CustomNpcPresets {
 
     private static IEnumerable<Preset> TestTrainers() {
         var lists = new (InteractTrainerComponent.TestTrainerKind Kind, string Name, string Help)[] {
-            (InteractTrainerComponent.TestTrainerKind.Enchantments, "Enchantments", "Every enchantment card, as Mr. Lincoln teaches."),
+            (InteractTrainerComponent.TestTrainerKind.Enchantments, "Enchantments", "Every enchantment card."),
             (InteractTrainerComponent.TestTrainerKind.Extracts, "Extract Spells", "Every Extract spell, as Monstrologist Burke teaches."),
             (InteractTrainerComponent.TestTrainerKind.Shadow, "Shadow Spells", "The Shadow spells, as Mellori teaches."),
             (InteractTrainerComponent.TestTrainerKind.Boss, "Monster and Boss Spells", "Spells only monsters and bosses cast, as Merle Ambrose teaches."),
