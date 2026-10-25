@@ -137,8 +137,26 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
         => Enter(message.ProjectID, message.Level);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS))]
-    private void ReceiveUseCrowns(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS message)
-        => Enter(message.ProjectID, message.Level);
+    private void ReceiveUseCrowns(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS message) {
+        // The portal window's Claim Credits button sends this too (0x1403c3190) and closes the window; while a claim
+        // is due it claims the credits and opens the window again with them.
+        try {
+            var wizard = GetActiveWizard();
+            if (Deckathalon.Claim(wizard) is { } claimed) {
+                SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = claimed, Modal = 0 });
+                if (Deckathalon.PortalOfferOf(wizard.CharId) is { } school) {
+                    SendToSocket(EventButton.PortalMessage(wizard, Deckathalon.CheckpointOf(wizard, school)));
+                }
+
+                return;
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Event button: claiming Deckathalon credits failed: {0}", Logger.Args(e));
+        }
+
+        Enter(message.ProjectID, message.Level);
+    }
 
     // The tower portal window's Use button (InteractDeckathalonPortalComponent opened it): starts the climb from the
     // checkpoint picked (its Level: 0 is floor 1, 1 floor 4, ...). Without that window, it is the Go button.

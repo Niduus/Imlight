@@ -206,15 +206,17 @@ internal static class EventButton {
     /// The tower portal's window (the client's ClassProjectPortalWindow) for a wizard with a saved checkpoint: its Use
     /// button sends MSG_CLASSPROJECTUSETOKEN with the checkpoint picked, and its checkpoint button opens the game's floor
     /// picker (ClasProjectsFloorSelectWindow), one button for each checkpoint up to Level. The client shows the Use
-    /// button only with a token, and the picker only when TeleporterCheckPoint is 0; entry is free here, so one token
-    /// is always shown, and ClaimedDailyCredits hides the game's credit button.
+    /// button only with a token, and the picker only when TeleporterCheckPoint is 0. Tokens are the climbs the wizard's
+    /// credits pay for, and ClaimedDailyCredits 0 shows the game's Claim Credits button while a claim is due.
     /// </summary>
     internal static WIZARD2_53_PROTOCOL.MSG_OPENCLASSPROJECTPORTAL PortalMessage(Wizard wizard, int checkpoint)
         => new() {
             ProjectID = ProjectId(GameEvents.Current),
-            Tokens = 1,
+            // The Use button needs a token: a credit to spend (or always one when climbs are free).
+            Tokens = (uint) (Deckathalon.EntryCredits == 0 ? 1 : Math.Max(0, Deckathalon.CreditsOf(wizard) / Deckathalon.EntryCredits)),
             Level = (uint) Math.Max(0, checkpoint),
-            ClaimedDailyCredits = 1,
+            // 0 shows the game's Claim Credits button, which sends MSG_CLASSPROJECTUSECROWNS (0x1403c3190).
+            ClaimedDailyCredits = (sbyte) (Deckathalon.CanClaim(wizard) ? 0 : 1),
             TeleporterCheckPoint = 0,
             GlobalID = wizard.GameObjectID,
             WebFailure = 0,

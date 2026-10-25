@@ -660,7 +660,7 @@ internal static class Crafting {
 
         ExpireSlots(session, wizard);
         // The Crafting Bonus member benefit takes the cooldowns away.
-        var cooldown = station.NoCooldown || Tools.MemberBenefits.IsOn(Tools.MemberBenefits.CRAFTING) ? 0 : (long) Math.Round(Math.Max(0, (int) recipe.m_cookTime) * s_timerMultiplier);
+        var cooldown = station.NoCooldown || Tools.MemberBenefits.IsOn(Tools.MemberBenefits.CRAFTING) ? 0 : (long) Math.Round(Math.Max(0, RecipeChanges.CooldownOf(id, recipe.m_cookTime)) * s_timerMultiplier);
         quantity = Math.Clamp(quantity, 1, s_maxQuantity);
         // Niduus (2026-10-24): "you can make as much as you want, it's just each craft takes a crafting slot for
         // cooldown". As in the game, a recipe cooling down can be crafted again in another free slot; each item made
@@ -676,7 +676,7 @@ internal static class Crafting {
             quantity = Math.Min(quantity, free);
         }
 
-        var needs = NeedsOf(recipe, quantity);
+        var needs = NeedsOf(id, recipe, quantity);
         var missing = needs.Where(need => Has(wizard, need) < need.Count).ToList();
         if (missing.Count > 0) {
             var list = string.Join(", ", missing.Select(need => $"{need.Count - Has(wizard, need)} more {need.Name}"));
@@ -721,14 +721,17 @@ internal static class Crafting {
          : time.TotalMinutes >= 1 ? $"{(int) time.TotalMinutes} min {time.Seconds} s"
          : $"{time.Seconds} s";
 
-    private static List<Need> NeedsOf(RecipeTemplate recipe, int quantity) {
+    private static List<Need> NeedsOf(uint recipeId, RecipeTemplate recipe, int quantity) {
         var needs = new List<Need>();
-        foreach (var ingredient in recipe.m_ingredients ?? []) {
+        var ingredients = recipe.m_ingredients ?? [];
+        for (var index = 0; index < ingredients.Count; index++) {
+            var ingredient = ingredients[index];
             if (ingredient is null || ingredient.m_quantity <= 0) {
                 continue;
             }
 
-            var count = ingredient.m_quantity * quantity;
+            // The Manager's Recipes tab can change how many it takes (RecipeChanges).
+            var count = RecipeChanges.AmountOf(recipeId, index, ingredient.m_quantity) * quantity;
             switch (ingredient.m_ingredientType) {
                 case INGREDIENT_TYPE.INGREDIENT_TREASURE: {
                     string spellName = ingredient.m_spellTemplate;
