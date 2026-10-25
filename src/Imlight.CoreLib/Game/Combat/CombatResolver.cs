@@ -731,6 +731,22 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     }
 
     /// <summary>
+    /// Puts the spells of the actions from <paramref name="before"/> on (a cheat's cast, as the game is sent it) into the
+    /// caster's hand for the game, which skips a wizard's spell it can't find there.
+    /// </summary>
+    private void PutCastsInHand(CombatDuelSubCircle owner, CombatActionListObj combatActionList, int before) {
+        if (!PetCastCards.TryGetValue(owner, out var cards)) {
+            PetCastCards[owner] = cards = [];
+        }
+
+        for (var i = before; i < combatActionList.m_actionList.Count; i++) {
+            if (combatActionList.m_actionList[i].m_spell is { } spell && !cards.Any(c => ReferenceEquals(c, spell))) {
+                cards.Add(spell);
+            }
+        }
+    }
+
+    /// <summary>
     /// Puts a free cast (pet May Cast, .c1/.c2) into its caster's hand for the game, which skips spells it can't find
     /// there ("does not spell in hand"), and takes its pip cost off the copy the game plays. The rank comes off after
     /// resolving, because the server also reads m_regularAdjust as a damage/heal bonus.

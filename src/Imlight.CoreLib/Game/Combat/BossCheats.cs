@@ -107,7 +107,10 @@
  *       Tower Shield, Weakness or Spirit Armor for all schools) and its effect is then given this size on the server.
  *       "Spell"/"SpellID": cast that spell instead, and the effect keeps its id (two of one spell count once on a hit,
  *       as real ones do). The game shows the real spell's own size; the server deals with this one. DoT and HoT are
- *       not drawn.
+ *       not drawn. "Look": the cast animation, Sun, Shadow, Moon, Star or one of the seven schools ("" = normal). The
+ *       game plays the casting of the cast spell's own school, so a real spell of that school and kind is cast
+ *       (Sun: Sun Blade Sun on itself, else Dragonblade TC-01; Shadow: Shadowblade, Shadow Trap, Shadow Shield...). A
+ *       kind and look the game has no spell for (a Sun trap) is cast normally. With "Spell", that spell's school decides.
  *     { "Do": "IfCleared", "Count" (1), "Amount" (1), "Each" }   the next Count steps only if the removal steps before
  *       it (RemoveEffects, RemoveCharms, RemoveWards, RemoveAuras) took off at least Amount effects; with Each, once for
  *       each one taken off. "Clear DoT for +55% Storm blade": RemoveEffects Kind DoT Count 1 Target Receiver, then
@@ -432,6 +435,8 @@ internal static class BossCheats {
         public bool Each { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
+        // For AddCharm: the cast animation of the spell cast for it ("" normal, Sun, Shadow, Moon, Star, or a school).
+        public string Look { get; set; } = "";
         // For FirstTurn: Us (the cheat's own side acts first) or Them (the other side).
         public string Side { get; set; } = "";
         // The enchantments picked for an enchanted FreeCast, put on in this order (none: the best one that fits).

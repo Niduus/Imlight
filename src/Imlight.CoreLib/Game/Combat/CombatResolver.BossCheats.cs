@@ -1181,7 +1181,7 @@ public partial class CombatResolver {
             "removeeffects" => $"remove {(step.Kind.Length > 0 ? step.Kind : "all")} effects x{(step.Count > 0 ? step.Count : "all")}{on}",
             "addcharm" => step.Kind.ToLowerInvariant() is "dot" or "hot"
                 ? $"add a {step.Amount} {SchoolText(step.School)}{step.Kind} over {Math.Max(1, step.Rounds)} rounds{on}"
-                : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}",
+                : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
             "ifcleared" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect cleared"
                 : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were cleared",
             "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
@@ -1271,6 +1271,13 @@ public partial class CombatResolver {
             }
 
             ShowFree(spell, template, combatActionList, before);
+            // A wizard's cheat cast is in no hand, and the game skips a wizard's spell it can't find there ("does not
+            // spell in hand"), so the cast never played: Niduus's AddCharm Shadow blade (0.10.338) showed no cast and no
+            // blade, only the round's wait. It goes into the hand the game is sent before the round, as a pet's May Cast.
+            if (boss.IsHumanPlayer) {
+                PutCastsInHand(boss, combatActionList, before);
+            }
+
             // Silent: the game is told not to show the cast, like .c1s, so the wait is shorter too.
             if (step.Silent) {
                 for (var i = before; i < combatActionList.m_actionList.Count; i++) {

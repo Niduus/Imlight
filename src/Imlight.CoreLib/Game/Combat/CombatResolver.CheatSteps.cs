@@ -481,6 +481,55 @@ public partial class CombatResolver {
         };
     }
 
+    // AddCharm's "cast animation" (Look). The game picks the casting sign and sound of a cast (FX_CastingSign_<School>,
+    // FX_CastingSound_<School>) from the school of the cast spell's own template, which it looks up by the template id
+    // (ClientCastEffectCinematicAction::Perform, "could not find Magic School for spellTemplateID"); nothing in the cast
+    // message changes it. So a Sun or Shadow casting is a real Sun or Shadow spell of that kind being cast as the
+    // lookalike. These are the game's own charms and wards of those schools (one effect each). SelfOnly ones put their
+    // effect on the caster whatever the aim, so they are used only for an effect that goes on the caster.
+    private static readonly Dictionary<(string Kind, string Look), (string Spell, bool SelfOnly)[]> s_castLooks = new() {
+        [("blade", "sun")] = [("Sun Blade Sun", true), ("Dragonblade TC-01", false)],
+        [("blade", "shadow")] = [("Shadowblade", false)],
+        [("blade", "moon")] = [("Moon Blade - Moon", true)],
+        [("blade", "star")] = [("Star Blade - Star", true)],
+        [("trap", "shadow")] = [("Shadow Trap", false)],
+        [("shield", "sun")] = [("Tower Shield-01", false)],
+        [("shield", "shadow")] = [("Shadow Shield", false)],
+        [("shield", "star")] = [("Balance Immune MOB ONLY Star", false)],
+        [("weakness", "shadow")] = [("Weakness - 75 Protected Shadow", false)],
+        [("absorb", "sun")] = [("Fire Armor - Amulet Protected", true)],
+        [("absorb", "shadow")] = [("Tung Ak Armor - Protected", true)],
+        [("absorb", "star")] = [("Frozen Armor-01-phase1", false)],
+        [("absorb", "fire")] = [("Fire Armor", true), ("Spirit Armor", false)],
+        [("absorb", "myth")] = [("Myth Armor", true), ("Spirit Armor", false)],
+    };
+
+    private static readonly HashSet<string> s_castLookSchools = ["fire", "ice", "storm", "myth", "life", "death", "balance"];
+
+    /// <summary>
+    /// The lookalike for AddCharm with a cast animation picked: a spell of that kind whose school's casting the game
+    /// plays (Sun, Shadow, Moon, Star, or one of the seven schools). Null when the game has none for that kind and look.
+    /// </summary>
+    private static string LookalikeWithCast(string kind, string school, string look, bool onCaster) {
+        var k = (kind ?? "").Trim().ToLowerInvariant();
+        k = k.Length == 0 ? "blade" : k;
+        var l = (look ?? "").Trim().ToLowerInvariant();
+        if (l is "" or "normal") {
+            return LookalikeFor(kind, school);
+        }
+
+        if (s_castLooks.TryGetValue((k, l), out var picks)) {
+            foreach (var (spell, selfOnly) in picks) {
+                if (!selfOnly || onCaster) {
+                    return spell;
+                }
+            }
+        }
+
+        // One of the seven schools: that school's plain blade, trap or shield (Spirit Armor, Life, for any absorb).
+        return s_castLookSchools.Contains(l) && k is "blade" or "trap" or "shield" or "absorb" ? LookalikeFor(k, l) : null;
+    }
+
     /// <summary>The Dos of this file. False when the step is none of them.</summary>
     private bool TryMoreCheatSteps(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step,
                                    CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, List<string> lines,
@@ -572,7 +621,14 @@ public partial class CombatResolver {
                     };
                     var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
                     var named = step.Spell.Length > 0 || step.SpellID != 0;
-                    var lookName = named ? step.Spell : LookalikeFor(step.Kind, step.School);
+                    var aim = step.Target.Length > 0 ? step.Target : fallback;
+                    var lookName = named ? step.Spell : LookalikeWithCast(step.Kind, step.School, step.Look, aim.Equals("Self", StringComparison.OrdinalIgnoreCase));
+                    if (lookName is null) {
+                        Logger.Information("Duel {0} | Slot {1} | {2}: the game has no {3} {4} to cast with that animation; the normal one is cast.",
+                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, step.Look, step.Kind));
+                        lookName = LookalikeFor(step.Kind, step.School);
+                    }
+
                     var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
 
                     // The game draws a charm or ward on a circle only from a spell it is shown being cast (it works out
@@ -587,7 +643,7 @@ public partial class CombatResolver {
                             .ToDictionary(c => c, c => c._hangingEffects.ToHashSet(ReferenceEqualityComparer.Instance));
                         var cast = step with {
                             Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId,
-                            Target = step.Target.Length > 0 ? step.Target : fallback,
+                            Target = aim,
                         };
                         cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
                         var resized = 0;
@@ -605,6 +661,8 @@ public partial class CombatResolver {
                                     m_sDamageType = effect.m_sDamageType,
                                     m_disposition = effect.m_disposition,
                                     m_spellTemplateID = named ? lookId : 0,
+                                    // A lookalike that can't be removed (Weakness - 75 Protected Shadow...) does not make yours so.
+                                    m_protected = false,
                                 };
                                 resized++;
                             }
