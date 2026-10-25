@@ -254,8 +254,9 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             SendRemoveEffects(removedEffects);
         }
 
-        // If this is a pet, spawn it as a zone entity so it appears in the world.
-        if (message.SlotName == "Pet") {
+        // If this is a pet, spawn it as a zone entity so it appears in the world. A named pet put on while riding
+        // would come out frozen, so it gets the re-wear with the mount off (ReceiveReWearNamedPet).
+        if (message.SlotName == "Pet" && !(IsMounted() && ReWearIfNamed(item))) {
             SpawnPetEntity(item);
         }
     }
@@ -353,9 +354,6 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
         if (s_hidePetWhileMounted && (EquipmentSlotType) slot == EquipmentSlotType.Mount) {
             SpawnPetEntity();
-        }
-        else if (slotObj?.SlotType == EquipmentSlotType.Mount) {
-            RespawnNamedPetUnmounted();
         }
 
         if (isPet) {
@@ -503,10 +501,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
         // The generic "PetObject" template (ID 2) is used for all pet zone entities.
         // The specific breed appearance comes from behaviors on the template.
-        // A pet with a .name pet name summoned while the wizard rides can't find its Idle and Run in the game, even with
-        // the mount briefly off in the player's game (Niduus, 2026-10-25; unnamed pets are fine). So on a mount it comes
-        // out under its normal name, and gets its own name back when the mount comes off (RespawnNamedPetUnmounted).
-        var coreObj = PetFactory.CreatePetGameObject(petItem, playerObj.m_globalID, showNameOverride: !IsMounted());
+        var coreObj = PetFactory.CreatePetGameObject(petItem, playerObj.m_globalID);
         if (coreObj is null) {
             return;
         }
@@ -579,6 +574,13 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 return;
             }
 
+            // A pet with a .name pet name that comes out while the wizard rides can't find its Idle and Run in the game
+            // (Niduus, 2026-10-25: unnamed pets are fine, off and on unmounted works; summoning it under its normal name
+            // worked too, but the name has to stay). So the mount really comes off for the put-on, stowed like a
+            // no-mounts zone does, and MSG_ENFORCEINTERIORMOUNT gives it back once the pet is out. A zone change in
+            // between gives it back on entry the same way.
+            StowMountForPet();
+
             // The game is told the pet came off, and a moment later that it went back on, like the player's own two
             // clicks. The server keeps the pet worn throughout, so a zone change in between loses nothing.
             var slot = equipment.GetSlotOfItem(message.PetItemId);
@@ -601,7 +603,17 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     private void ReceivePutNamedPetBackOn(PutNamedPetBackOn message) {
         try {
             var equipment = GetActiveWizard()?.EquipmentBehavior;
-            if (equipment is null || equipment.GetEquippedPetId() != message.PetItemId || GetActiveGameObject() is null) {
+            if (equipment is null || GetActiveGameObject() is null) {
+                return;
+            }
+
+            // A mount stowed for the put-on comes back a moment after the game has the pet out.
+            if (GetActiveWizard().InteriorStowedMountId != 0) {
+                Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, SessionActor.ActorRef,
+                    new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT(), Self);
+            }
+
+            if (equipment.GetEquippedPetId() != message.PetItemId) {
                 return;
             }
 
@@ -616,14 +628,24 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }
     }
 
-    /// <summary>
-    /// After the mount comes off, a pet that came out under its normal name while the wizard rode (SpawnPetEntity) is
-    /// taken off and put back on, so it shows its .name pet name again.
-    /// </summary>
-    private void RespawnNamedPetUnmounted() {
-        if (_summonedPetId != 0 && !IsMounted()) {
-            ReWearIfNamed(null);
+    private void StowMountForPet() {
+        var wizard = GetActiveWizard();
+        var mount = wizard.EquipmentBehavior.GetItemInSlot(EquipmentSlotType.Mount);
+        if (mount is null) {
+            return;
         }
+
+        var slot = wizard.EquipmentBehavior.GetSlotOfItem(mount.m_globalID);
+        if (!wizard.EquipmentToInventoryTransfer(mount.m_globalID, out var removedEffects)) {
+            Logger.Warning("Could not take mount {0} off for the named pet.", Logger.Args(mount.m_globalID.Full));
+
+            return;
+        }
+
+        wizard.InteriorStowedMountId = mount.m_globalID;
+        WizardCollection.UpdateCharacterInteriorStowedMount(wizard);
+        SendUnequipItem("Mount", slot, mount.m_globalID);
+        SendRemoveEffects(removedEffects);
     }
 
     private bool IsMounted()
@@ -716,9 +738,6 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 SendRemoveEffects(removedEffects);                // drops the mount speed effect
                 if (s_hidePetWhileMounted) {
                     SpawnPetEntity();
-                }
-                else {
-                    RespawnNamedPetUnmounted();
                 }
             }
             else if (wizard.InteriorStowedMountId != 0) {
