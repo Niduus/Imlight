@@ -2204,12 +2204,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         Logger.Debug("Duel {0} | Round {1} | {2}", Logger.Args(Duel.m_duelID.Full, Duel.m_roundNum, string.Join("; ", slots)));
     }
 
-    private void SendCombatMoveSelection(CombatTeam team, ulong participantId, byte moveType, Spell spell, byte targetIndex) {
+    private void SendCombatMoveSelection(CombatTeam team, ulong participantId, byte moveType, Spell spell, uint targetIndex,
+        uint? targetBits = null) {
         byte isItemCard = (byte) (spell?.m_itemCard ?? false ? 1 : 0);
         byte isTreasureCard = (byte) (spell?.m_treasureCard ?? false ? 1 : 0);
         byte isBattleCard = (byte) (spell?.m_battleCard ?? false ? 1 : 0);
 
-        var actualIndex = (byte) Math.Pow(2, targetIndex);
+        // One bit per targeted circle (bit n = circle n), the way the client sends it; a player's own pick is echoed
+        // as the client sent it (targetBits).
+        var actualIndex = targetBits ?? (targetIndex < 32 ? 1u << (int) targetIndex : targetIndex);
 
         var msg = new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVESELECTION {
             DuelID = SigilId,
@@ -2221,7 +2224,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             IsItemCard = isItemCard,
             IsTreasureCard = isTreasureCard,
             IsBattleCard = isBattleCard,
-            //ShadowPactTarget = -1,
+            // 0 would name circle 0 as a shadow pact target: the client then drew the shadow icon next to every
+            // picked card instead of the target circle's symbol (Niduus, 2026-10-25).
+            ShadowPactTarget = -1,
         };
         // The chosen card is for the side of the caster only; the other side sees it when it is cast.
         TeamBroadcast(team, msg);
@@ -2584,7 +2589,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // Minions are AI-driven; their telegraph comes from ResendMinionMoveSelections, not an echo.
         if (!caster.IsSummonedMinion && !caster.IsAiCreature) {
-            SendCombatMoveSelection(caster.OccupiedTeam, caster.ParticipantObject.m_globalID, (byte) CombatMoveType.Attack, spell, (byte) spellTarget);
+            SendCombatMoveSelection(caster.OccupiedTeam, caster.ParticipantObject.m_globalID, (byte) CombatMoveType.Attack, spell, spellTarget,
+                rawSpellTarget);
         }
     }
 
@@ -3720,7 +3726,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
 
             SendCombatMoveSelection(circle.OccupiedTeam, circle.ParticipantObject.m_globalID, (byte) CombatMoveType.Attack,
-                action.Spell, (byte) action.SelectedTarget.SlotIndex);
+                action.Spell, (uint) action.SelectedTarget.SlotIndex);
         });
         var delay = TimeSpan.FromSeconds(PlanningSeconds);
         Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), delay);
