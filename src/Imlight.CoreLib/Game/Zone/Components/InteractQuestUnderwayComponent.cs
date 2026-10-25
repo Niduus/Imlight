@@ -117,7 +117,8 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
             yield break;
         }
 
-        var state = GetOrUpdatePlayerState(wizard);
+        // Always fresh: a quest that finished a moment ago must not keep its option (it took the next quest's place).
+        var state = GetOrUpdatePlayerState(wizard, forceUpdate: true);
 
         // The memento wizbang tick reads this property; refresh it from live state.
         WizBang = state.HasUnderwayQuest ? WizBangs.UnfinishedQuest : WizBangs.None;
@@ -141,7 +142,8 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
             .ToList();
 
         foreach (var questTemplate in questTemplates) {
-            if (questTemplate.m_dialogList is not ActorDialogList) {
+            // With no "Underway" lines there is nothing to show: the option would open an empty dialog.
+            if (questTemplate.m_dialogList is not ActorDialogList dialogs || UnderwayDialog(dialogs) is null) {
                 continue;
             }
 
@@ -186,7 +188,7 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        var state = GetOrUpdatePlayerState(playerCharacter);
+        var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasUnderwayQuest && state.UnderwayQuest != null) {
             ShowQuestUnderwayDialog(playerActor, state.UnderwayQuest);
         }
@@ -224,8 +226,7 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
     }
 
     private void ShowQuestUnderwayDialog(IActorRef playerActor, QuestTemplate quest) {
-        var dialogList = quest.m_dialogList as ActorDialogList;
-        var underwayDialogList = dialogList?.m_dialogs.FirstOrDefault(de => de.m_dialogTag == "Underway");
+        var underwayDialogList = UnderwayDialog(quest.m_dialogList as ActorDialogList);
 
         if (underwayDialogList == null) {
             Logger.Error("Quest {0} has no 'Underway' dialog entry.",
@@ -236,6 +237,9 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
 
         SendActorDialog(playerActor, underwayDialogList, "QuestInfo");
     }
+
+    private static ActorDialog UnderwayDialog(ActorDialogList dialogList)
+        => dialogList?.m_dialogs?.FirstOrDefault(de => de is not null && de.m_dialogTag == "Underway");
 
     private void SendActorDialog(IActorRef playerActor, ActorDialog dialogEntry, string completionType, ulong questId = 0, ulong goalId = 0) {
         QuestMadlibs.NameDialogSpeakers(dialogEntry);

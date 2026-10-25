@@ -213,7 +213,23 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // Route to the component that owns this option index.
         // Using FirstOrDefault by ServiceName is unsafe when multiple components share
         // the same service name (e.g. InteractQuestSelectComponent shadowing WoodenChestComponent).
-        if (!_optionIndexToComponent.TryGetValue((int) serviceIndex, out var serviceComponent)) {
+        _optionIndexToComponent.TryGetValue((int) serviceIndex, out var serviceComponent);
+
+        // The list the game clicked can be older than ours (a quest just finished and its "underway" option took
+        // the offer's place): the click went to a service that showed nothing, and the dialog hung on an empty
+        // Back/More bar (Niduus 2026-10-25, Lady Oriel). Build the list again for this player, and if the index
+        // still names another service, go by the service name the game sent.
+        if (!NameMatches(serviceComponent, serviceName) && playerCharacter is not null) {
+            RefreshServiceMomento(playerCharacter);
+            _optionIndexToComponent.TryGetValue((int) serviceIndex, out serviceComponent);
+            if (!NameMatches(serviceComponent, serviceName)
+                && _componentFirstOption.Keys.FirstOrDefault(c => NameMatches(c, serviceName)) is { } named) {
+                serviceComponent = named;
+                serviceIndex = (uint) _componentFirstOption[named];
+            }
+        }
+
+        if (serviceComponent is null) {
             Logger.Warning("No component owns service index {0} for NPC {1} with service name {2}",
                 Logger.Args(serviceIndex, Entity.ActiveGameObject.m_debugName, serviceName));
 
@@ -226,6 +242,12 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             : serviceIndex;
         serviceComponent.OnServiceInteraction(playerActor, playerCharacter, playerObject, localIndex);
     }
+
+    // A click without a service name (or a component without one) is taken as meant for that component.
+    private static bool NameMatches(IServiceComponent component, string serviceName)
+        => component is not null
+           && (string.IsNullOrEmpty(serviceName) || string.IsNullOrEmpty(component.ServiceName)
+               || string.Equals(component.ServiceName, serviceName, StringComparison.OrdinalIgnoreCase));
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REFRESHSERVICEOPTIONS))]
     private void RefreshServiceOptions(ZONE_102_PROTOCOL.MSG_REFRESHSERVICEOPTIONS message) {
