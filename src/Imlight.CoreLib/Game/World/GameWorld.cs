@@ -202,6 +202,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
 
             Logger.Error("Failed to load zone {ZoneName} within the timeout",
                 Logger.Args(message.ZonePath));
+            ForgetZoneRequest(message.ZonePath);
         }
 
         // Reply to any zone transfer requests with failure.
@@ -235,6 +236,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             }
 
             RemoveZoneLoader(message.ZonePath);
+            ForgetZoneRequest(message.ZonePath);
 
             return;
         }
@@ -460,6 +462,17 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
                 Context.Stop(loaderRef);
             }
         }
+    }
+
+    private void ForgetZoneRequest(string zonePath) {
+        // A load that failed (a preload that ran before the game files could be read) left these behind, so the next
+        // load of the zone was taken for a preload.
+        if (zonePath is null) {
+            return;
+        }
+
+        _preloading.Remove(zonePath);
+        _instanceCreationCalledByMap.Remove(zonePath);
     }
 
     private void ProcessTransfersForPublicZone(string zonePath) {

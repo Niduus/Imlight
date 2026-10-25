@@ -67,12 +67,15 @@ public class GameServer : Server {
     private readonly ListQueue<SessionActor> _playerQueue;
     private readonly ConcurrentDictionary<string, FallbackEntry> _fallbackEntries = [];
 
+    // The login keys outlive a restart of this game server, so a game that lost its connection can still come back.
+    private static readonly ConcurrentDictionary<string, Cache<ByteString, ulong>> s_sessionKeysByServer = new();
+
     public GameServer(string serverName, ushort serverPort, string realmName = null)
         : base(serverName, serverPort, GameServiceFactory.Props(),
               ConfigurationManager.Settings["Game Server.GameServerIP"].AsString(), deferListening: true) {
         RealmName = realmName ?? serverName;
         this._playerQueue = new ListQueue<SessionActor>();
-        this._sessionKeys = new Cache<ByteString, ulong>();
+        this._sessionKeys = s_sessionKeysByServer.GetOrAdd(serverName, _ => new Cache<ByteString, ulong>());
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
         Tools.MemberBenefits.Start(Context.System);
