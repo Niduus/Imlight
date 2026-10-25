@@ -419,6 +419,7 @@ internal sealed partial class ManagerWindow : Window {
                 break;
             case "Settings" when _settings.Count == 0: LoadSettings(); break;
             case "Accounts": await LoadAccountsAsync(); break;
+            case WHATS_NEW: await LoadNotesAsync(); break;
         }
 
         // The position card only reads its file while the Play tab is showing, and the game log only while Logs is.
@@ -1128,7 +1129,11 @@ internal sealed partial class ManagerWindow : Window {
         return Page(
             Fold("download", "Settings", "Updates",
                 $"{Edition.NAME} {SelfUpdate.CurrentVersion}.",
-                Row(Action(_updateButton, UpdateAsync), Action(Plain("What's new"), () => ShowWhatsNewAsync(null))),
+                Row(Action(_updateButton, UpdateAsync), Action(Plain("What's new"), () => {
+                    SelectTab(WHATS_NEW);
+
+                    return Task.CompletedTask;
+                })),
                 AutoUpdateBox(),
                 AutoInstallSwitch()),
             ServerSourceCard(),

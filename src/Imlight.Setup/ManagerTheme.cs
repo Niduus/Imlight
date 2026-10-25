@@ -107,6 +107,7 @@ internal static class ManagerTheme {
     private static readonly Dictionary<string, Color> s_accents = new() {
         // The side bar's pages.
         ["Home"] = Color.FromRgb(118, 100, 245),
+        ["What's New"] = Color.FromRgb(70, 170, 245),
         ["Database"] = Color.FromRgb(58, 143, 217),
         ["Create"] = Color.FromRgb(217, 101, 59),
         // Tabs.

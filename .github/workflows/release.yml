@@ -64,6 +64,26 @@ jobs:
           New-Item -ItemType Directory -Force release | Out-Null
           Compress-Archive -Path installer/publish/launcher/* -DestinationPath release/ImlightLauncher-win-x64.zip
 
+      - name: Write the patch notes built into the app
+        # Every version's changes up to this one, from the tags and the merged changes between them, for the app's
+        # What's New page (so versions from before release notes listed changes have notes too, even offline).
+        shell: pwsh
+        run: |
+          $tags = @(git tag --list 'v*' | Where-Object { $_ -match '^v\d+\.\d+\.\d+$' } | Sort-Object { [version]$_.TrimStart('v') })
+          $tag = "${{ steps.version.outputs.tag }}"
+          $all = [System.Collections.Generic.List[object]]::new()
+          $previous = $null
+          foreach ($t in $tags + @($tag | Where-Object { $tags -notcontains $_ })) {
+            if ($previous) {
+              $end = if ($t -eq $tag) { "HEAD" } else { $t }
+              $lines = @(git log --first-parent --pretty=format:"%s" "$previous..$end" | Where-Object { $_ -and $_ -notmatch '^Merge ' } | ForEach-Object { $_ -replace '\s*\(#\d+\)\s*$', '' })
+              if ($lines.Count -gt 0) { $all.Add([pscustomobject]@{ Version = $t.TrimStart('v'); Changes = $lines }) }
+            }
+            $previous = $t
+          }
+          ConvertTo-Json -InputObject @($all) -Depth 3 | Set-Content src/Imlight.Setup/Assets/patch-notes.json -Encoding utf8
+          Write-Host "Patch notes for $($all.Count) versions."
+
       - name: Build ImlightManager.exe
         # Builds this fork on the player's own PC from their own game files, so it needs no secret.
         # The Game Files tab decodes game data with the type dump Imcodec ships for its tests.

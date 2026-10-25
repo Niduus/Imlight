@@ -75,7 +75,10 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The side bar: Home, then a page for each group with its tabs along the top.</summary>
     private TabControl Navigation(Dictionary<string, TabItem> tabs) {
-        var items = new List<TabItem> { NavItem(HOME, "home", "Start here, search it all", HomePage()) };
+        var items = new List<TabItem> {
+            NavItem(HOME, "home", "Start here, search it all", HomePage()),
+            NavItem(WHATS_NEW, "sparkle", "Every version's changes", WhatsNewPage()),
+        };
         foreach (var group in s_groups) {
             var inner = new TabControl {
                 Classes = { "subnav" }, Padding = new Thickness(0), TabStripPlacement = Dock.Top,
@@ -124,7 +127,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var groupName = name == HOME ? HOME : s_groups.FirstOrDefault(g => g.Tabs.Contains(name)).Name;
+        var groupName = name is HOME or WHATS_NEW ? name : s_groups.FirstOrDefault(g => g.Tabs.Contains(name)).Name;
         if (groupName is null) {
             return;
         }
@@ -187,7 +190,7 @@ internal sealed partial class ManagerWindow {
                                 Margin = new Thickness(0, 6, 0, 0),
                                 Children = {
                                     Spaced(_homePlay), Spaced(_homeStart), Spaced(_homeStop),
-                                    Spaced(Action(Plain("What's new"), () => ShowWhatsNewAsync(null))),
+                                    Spaced(Action(Plain("What's new"), () => { SelectTab(WHATS_NEW); return Task.CompletedTask; })),
                                 },
                             },
                         },
@@ -270,6 +273,10 @@ internal sealed partial class ManagerWindow {
                     tabRows.Add(ResultRow(icon, name, name, $"{group.Name} page. {line}", () => SelectTab(tab)));
                 }
             }
+        }
+
+        if (SearchText.Matches($"{WHATS_NEW} patch notes update changes version", query)) {
+            tabRows.Add(ResultRow("sparkle", WHATS_NEW, WHATS_NEW, "Every version's changes, with a search.", () => SelectTab(WHATS_NEW)));
         }
 
         AddGroup(rows, "Pages", tabRows);
@@ -491,6 +498,10 @@ internal sealed partial class ManagerWindow {
 
         if (name == HOME) {
             return _homeSearch;
+        }
+
+        if (name == WHATS_NEW) {
+            return _notesSearch;
         }
 
         var content = _groupTabs.TryGetValue(name, out var inner) ? (inner.SelectedItem as TabItem)?.Content as ILogical : null;
