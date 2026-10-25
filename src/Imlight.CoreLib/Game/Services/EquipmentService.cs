@@ -614,14 +614,39 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 return;
             }
 
-            var pet = equipment.GetItem(petItemId);
+            // The game is told the pet came off, and a moment later that it went back on, like the player's own two
+            // clicks. Both messages back to back still left it frozen after zoning on a mount (Niduus, 2026-10-25, the
+            // log shows that re-wear ran). The server keeps the pet worn throughout, so a zone change in between loses
+            // nothing.
             var slot = equipment.GetSlotOfItem(petItemId);
             SendUnequipItem("Pet", slot, petItemId);
             DismissPetEntity();
-            equipment.MoveSlotToEnd(petItemId);
+            Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, Self, new PutNamedPetBackOn(petItemId), Self);
+            Logger.Information("Took named pet {0} off; it goes back on in a moment so the game animates it.", Logger.Args(petItemId));
+        }
+        catch (Exception ex) {
+            Logger.Error("Error while taking the named pet off: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
+        }
+    }
+
+    /// <summary>Puts a named pet that <see cref="ReWearNow"/> took off back on.</summary>
+    internal sealed record PutNamedPetBackOn(ulong PetItemId);
+
+    private static readonly TimeSpan PutBackOnDelay = TimeSpan.FromSeconds(1);
+
+    [InternalMessageHandler(typeof(PutNamedPetBackOn))]
+    private void ReceivePutNamedPetBackOn(PutNamedPetBackOn message) {
+        try {
+            var equipment = GetActiveWizard()?.EquipmentBehavior;
+            if (equipment is null || equipment.GetEquippedPetId() != message.PetItemId || GetActiveGameObject() is null) {
+                return;
+            }
+
+            var pet = equipment.GetItem(message.PetItemId);
+            equipment.MoveSlotToEnd(message.PetItemId);
             SendEquipItem(pet, "Pet");
             SpawnPetEntity(pet);
-            Logger.Information("Took named pet {0} off and put it back on so the game animates it.", Logger.Args(petItemId));
+            Logger.Information("Put named pet {0} back on.", Logger.Args(message.PetItemId));
         }
         catch (Exception ex) {
             Logger.Error("Error while putting the named pet back on: {0} {1}", Logger.Args(ex.Message, ex.StackTrace));
