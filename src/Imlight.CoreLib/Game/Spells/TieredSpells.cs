@@ -399,22 +399,22 @@ internal static class TieredSpells {
                 Logger.Args(wizard.PlayerNameBehavior?.GetWizardName()));
         }
 
+        // The tiers to unlock: the game's multiple paths window can pick a tier further along a path (tier 5 when
+        // tier 3 is the last one known), and then pays for every tier up to it at once (Mortality T4 + T5 = 350).
+        var chain = new List<string> { targetName };
         if (from is null || !LeadsTo(from, targetName)) {
-            var other = KnownTieredSpells(wizard).FirstOrDefault(k => k.Group == group && LeadsTo(k.Template, targetName));
-            if (other.Template is not null) {
-                fromTemplateId = other.TemplateId;
-                from = other.Template;
-            }
-            else {
-                from = null;
-                fromTemplateId = 0;
-            }
+            chain = ChainFromKnown(wizard, targetName, out var startName);
+            from = startName is null ? null : CoreObjectFactory.GetCoreTemplate(TemplateIdOf(startName)) as TieredSpellTemplate;
+            fromTemplateId = from is null ? 0 : TemplateIdOf(startName);
+            chain ??= [targetName];
         }
 
-        var cost = CostOf(target);
+        var chainIds = chain.Select(TemplateIdOf).ToList();
+        var chainTemplates = chainIds.Select(id => CoreObjectFactory.GetCoreTemplate(id) as TieredSpellTemplate).ToList();
+        var cost = chainTemplates.Sum(t => t is null ? 0 : CostOf(t));
         var isTierOne = string.Equals((string) Groups[group].m_tierOneSpell, targetName, StringComparison.OrdinalIgnoreCase);
-        if (from is null && !(isTierOne && cost > 0)) {
-            message = $"You need the spell before {targetName} first.";
+        if (chainIds.Any(id => id == 0) || chainTemplates.Any(t => t is null) || (from is null && !(isTierOne && cost > 0))) {
+            message = $"You need the spell before {chain[0]} first.";
 
             return false;
         }
@@ -433,26 +433,38 @@ internal static class TieredSpells {
             return false;
         }
 
-        var newSpell = SpellFactory.GetSpell(toTemplateId);
-        if (newSpell is null || !wizard.LearnSpell(newSpell)) {
-            // Give back what was paid.
-            LootGranter.GrantReagent(playerActor, wizard, shard, cost);
-            message = $"{targetName} could not be learned.";
+        var learned = new List<uint>();
+        foreach (var id in chainIds) {
+            var spell = SpellFactory.GetSpell(id);
+            if (spell is null || !wizard.LearnSpell(spell)) {
+                // Give back what was paid for the tiers that could not be learned, and keep the ones that were.
+                var unpaid = chainTemplates.Skip(learned.Count).Sum(CostOf);
+                LootGranter.GrantReagent(playerActor, wizard, shard, unpaid);
+                foreach (var done in learned) {
+                    playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) done });
+                }
 
-            return false;
+                message = $"{(string) chainTemplates[learned.Count].m_name} could not be learned.";
+
+                return false;
+            }
+
+            learned.Add(id);
         }
 
         if (!s_keepEveryTier && from is not null && wizard.UnlearnSpell(fromTemplateId)) {
             playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMBOOK { SpellID = (int) fromTemplateId });
         }
 
-        playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) toTemplateId });
+        foreach (var id in learned) {
+            playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+        }
 
         var swapped = from is null ? 0 : SwapInDecks(playerActor, wizard, fromTemplateId, toTemplateId);
 
         message = from is null
             ? $"You learned {targetName} for {cost} Spellements."
-            : $"{(string) from.m_name} {(s_keepEveryTier ? "unlocked" : "became")} {targetName} for {cost} Spellements" + (swapped > 0 ? $"; {swapped} card(s) in your decks changed too." : ".");
+            : $"{(string) from.m_name} {(s_keepEveryTier ? "unlocked" : "became")} {string.Join(", ", chain)} for {cost} Spellements" + (swapped > 0 ? $"; {swapped} card(s) in your decks changed too." : ".");
         Logger.Information("Spell upgrades | {0}: {1}", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), message));
 
         return true;
@@ -540,6 +552,45 @@ internal static class TieredSpells {
         Logger.Information("Spell upgrades | {0}: {1}", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), message));
 
         return true;
+    }
+
+    /// <summary>
+    /// The unknown tiers leading to <paramref name="targetName"/>, nearest first and ending with it, from the closest
+    /// spell the wizard knows (<paramref name="startName"/>), or null when no known spell leads there.
+    /// </summary>
+    private static List<string> ChainFromKnown(Wizard wizard, string targetName, out string startName) {
+        startName = null;
+        var towardTarget = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { [targetName] = null };
+        var queue = new Queue<string>([targetName]);
+        while (queue.Count > 0) {
+            var name = queue.Dequeue();
+            if (!s_previous.TryGetValue(name, out var earlier)) {
+                continue;
+            }
+
+            foreach (var previous in earlier) {
+                var id = TemplateIdOf(previous);
+                if (id != 0 && wizard.SpellbookBehavior.HasSpell(id)) {
+                    startName = previous;
+                    var chain = new List<string>();
+                    for (var step = name; step is not null; step = towardTarget[step]) {
+                        chain.Add(step);
+                    }
+
+                    return chain;
+                }
+
+                if (id == 0 || towardTarget.ContainsKey(previous)
+                    || CoreObjectFactory.GetCoreTemplate(id) is TieredSpellTemplate { m_retired: true }) {
+                    continue;
+                }
+
+                towardTarget[previous] = name;
+                queue.Enqueue(previous);
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
