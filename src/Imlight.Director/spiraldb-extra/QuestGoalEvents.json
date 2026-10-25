@@ -67,37 +67,37 @@
   { "quest": "ZF-DRUM-C04-003", "goal": "3_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["ZF-DRUM-C04-003_Goal02"] },
   // Arcanum-Interiors-AR_Dunes: spawns renegade djinni for the next step
   { "quest": "AR-PreMR-MAIN-002", "goal": "6_WizardQuestGoals00000253", "when": "complete", "events": ["Event_Djin_Spawn"] },
-  // Azteca-AZ_Z12_Xibalba: spawns morganthe for the next step
+  // Azteca-AZ_Z12_Xibalba: spawns grim calaca, xipe flayed one, youala night drinker for the next step
   { "quest": "AZ-ZOCA-C15-002", "goal": "2_WizardQuestGoalsExploreZone", "when": "complete", "events": ["SpawnMalMinions"] },
   // Azteca-Interiors-AZ_Z02_House02: spawns moon skull zombie for the next step
   { "quest": "AZ-ZOCA-C17-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["CallTheZombies"] },
-  // Azteca-Interiors-AZ_Z11_Cave03: spawns razan bitter blood for the next step
+  // Azteca-Interiors-AZ_Z11_Cave03: spawns pachakutiq who shakes the earth, razan bitter blood for the next step
   { "quest": "AZ-TWIN-C02-001", "goal": "6_WizardQuestGoalsUseItem", "when": "complete", "events": ["Twin_CageOpen"] },
-  // Azteca-Interiors-AZ_Z11_PyramidFallingStar_Room03: spawns huracan vicious sky
+  // Azteca-Interiors-AZ_Z11_PyramidFallingStar_Room03: spawns goliath mauler, huracan vicious sky
   { "quest": "AZ-TWIN-C05-001", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["AZ-Pyramid_CinematicEnd"] },
   // Empyrea-Interiors-EM_Z02_Palace: spawns killer krok for the next step
   { "quest": "EM-ZANA-MAIN-010", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["Event_PalaceKrokHide"] },
-  // Empyrea-Interiors-EM_Z02_ShadowHouse: spawns shadow trickster for the next step
+  // Empyrea-Interiors-EM_Z02_ShadowHouse: spawns trickster tom for the next step
   { "quest": "EM-ZANA-SIDE-012", "goal": "1_WizardQuestGoals00000411", "when": "complete", "events": ["Event_RevealTricksterTom"] },
-  // Empyrea-Interiors-EM_Z05_InkSack: spawns dynt for the next step
+  // Empyrea-Interiors-EM_Z05_InkSack: spawns dynt, gamma globulin for the next step
   { "quest": "EM-SEPI-MAIN-005", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnEvilDynt"] },
   // Empyrea-Interiors-EM_Z07_AudienceChambers: spawns dark cloud leader for the next step
   { "quest": "EM-NIMB-MAIN-002", "goal": "3_WizardQuestGoalsExplore", "when": "complete", "events": ["Spawn_Leader_Mob"] },
-  // Empyrea-Interiors-EM_Z07_ControlRoom: spawns the admiral for the next step
+  // Empyrea-Interiors-EM_Z07_ControlRoom: spawns admiral dynt for the next step
   { "quest": "EM-NIMB-MAIN-006", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT-PlayCinematic"] },
   // Empyrea-Interiors-EM_Z07_PrivateWing: spawns vanitus for the next step
   { "quest": "EM-NIMB-MAIN-005", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnVanitrus"] },
   // Empyrea-Interiors-EM_Z07_RearCourtyard: spawns praetor drusilla for the next step
   { "quest": "EM-NIMB-MAIN-004", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnDrusilla"] },
-  // Empyrea-Interiors-EM_Z16_I04_StormTitan: spawns the storm titan
+  // Empyrea-Interiors-EM_Z16_I04_StormTitan: spawns titan's trident
   { "quest": "EM-HUSK-MAIN-004", "goal": "1_WizardQuestGoals00000312", "when": "start", "events": ["SwitchMobA"] },
-  // Grizzleheim-GH_HFjord-Interiors-GH_Sud_Cave02: spawns wizardmobs_00000854 for the next step
+  // Grizzleheim-GH_HFjord-Interiors-GH_Sud_Cave02: spawns darkwing hewer, ketil blackheart for the next step
   { "quest": "GH-FJORD-C05-003", "goal": "Goal", "when": "complete", "events": ["GH-FJORD-C05-003-GiveBird"] },
-  // Grizzleheim-Interiors-GH_Hero_T1: spawns wizardmobs_00000554 for the next step
+  // Grizzleheim-Interiors-GH_Hero_T1: spawns troubled warrior, yngvar sharptooth for the next step
   { "quest": "GH-HERO-C01-002", "goal": "Goal", "when": "complete", "events": ["GH-HERO-C01-002-HideBear"] },
-  // Karamelle-Interiors-KM_Z09_HotHouse: spawns hangry gobbler for the next step
+  // Karamelle-Interiors-KM_Z09_HotHouse: spawns augustus, charlie, mikey for the next step
   { "quest": "KM-FARM-MAIN-003", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["SetUpGobblers"] },
-  // Khrysalis-Interiors-KR_Z000_Tymen_WhiteFlame: spawns tymen whiteflame for the next step
+  // Khrysalis-Interiors-KR_Z000_Tymen_WhiteFlame: spawns leaf shield, tymen whiteflame for the next step
   { "quest": "KR-BAST-C04-001", "goal": "1_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["FightOn"] },
   // Khrysalis-Interiors-KR_Z02_I09_ThroneRoom: spawns broodmother for the next step
   { "quest": "KR-MOON-C08-001", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT-SpawnBroodMother"] },
@@ -109,13 +109,13 @@
   { "quest": "KR-SARD-C06-003", "goal": "2_WizardQuestGoals00000007", "when": "complete", "events": ["HideDzorak"] },
   // Khrysalis-Interiors-KR_Z09_I16_ZoraksHouseLG: spawns balor's behemoth for the next step
   { "quest": "KR-SARD-C06-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["Dzorakspawns", "TurnOnBadguys"] },
-  // Khrysalis-Interiors-KR_Z09_I19_TroikaPalaceDungeon: spawns zelda and nadezha
+  // Khrysalis-Interiors-KR_Z09_I19_TroikaPalaceDungeon: spawns balor the broken fang, balor's behemoth
   { "quest": "KR-SARD-C07-004", "goal": "1_WizardQuestGoals00000026", "when": "start", "events": ["SpawnBalor"] },
   // Khrysalis-Interiors-KR_Z09_I22_GarrisonArmory: spawns diobolica garrison guard for the next step
   { "quest": "KR-SARD-C18-001", "goal": "2_WizardQuestGoals00000058", "when": "complete", "events": ["SpawnBaddies"] },
   // Khrysalis-Interiors-KR_Z09_I25_ZharelliaHouseLG: spawns zharellia the runningone for the next step
   { "quest": "KR-SARD-C21-001", "goal": "1_WizardQuestGoals00000007", "when": "complete", "events": ["SpawnBoss"] },
-  // Khrysalis-Interiors-KR_Z10_I16_SolarArcChambShadow: spawns shadow arc
+  // Khrysalis-Interiors-KR_Z10_I16_SolarArcChambShadow: spawns blackback mistwitch, santa muerte
   { "quest": "KR-KOND-C10-008", "goal": "1_WizardQuestGoals00000274", "when": "start", "events": ["SpawnBaddies"] },
   // Khrysalis-Interiors-KR_Z11_I20_InteroRoom: spawns inquisitor ximenez for the next step
   { "quest": "KR-HIVE-C02-002", "goal": "1_WizardQuestGoals00000411", "when": "complete", "events": ["KR-HIVE-C02-002_MakeMob"] },
@@ -123,30 +123,30 @@
   { "quest": "KR-HIVE-C13-001", "goal": "2_WizardQuestGoalsKill", "when": "complete", "events": ["FightAgain"] },
   // Khrysalis-Interiors-KR_Z12_I01_SpiritPlane: spawns tree root for the next step
   { "quest": "KR-PALA-C01-001", "goal": "2_WizardQuestGoalsExploreZone", "when": "complete", "events": ["SpawnNymphs"] },
-  // Lemuria-Interiors-LM_Z05_I06_Cavern: spawns wizardmobs_00003919 for the next step
+  // Lemuria-Interiors-LM_Z05_I06_Cavern: spawns moth-amon for the next step
   { "quest": "LM-W404-1477398860", "goal": "3_WizardQuestGoals00000022", "when": "complete", "events": ["LabSpawnMothAmon"] },
-  // Lemuria-Interiors-LM_Z05_I08_AncientTemple: spawns wizardmobs_00003907 for the next step
+  // Lemuria-Interiors-LM_Z05_I08_AncientTemple: spawns shrine guardian for the next step
   { "quest": "LM-W404-1477398668", "goal": "2_WizardQuestGoals00000015", "when": "complete", "events": ["SpawnGaurdians"] },
-  // Lemuria-Interiors-LM_Z06_GuardComplex: spawns wizardmobs_00003927 for the next step
+  // Lemuria-Interiors-LM_Z06_GuardComplex: spawns cyber beast for the next step
   { "quest": "LM-W404-949616256", "goal": "5_WizardQuestGoals00000026", "when": "complete", "events": ["Event_HideMorg"] },
-  // Mirage-Interiors-MR_Z01_OverlordsOssuary: spawns overlord xerxes for the next step
+  // Mirage-Interiors-MR_Z01_OverlordsOssuary: spawns ossuary conscript, overlord xerxes for the next step
   { "quest": "MR-ALKA-MAIN-008", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["SpawnXerxesMob_Ossuary"] },
-  // Mirage-Interiors-MR_Z02_FourPoints: spawns the truce talks
+  // Mirage-Interiors-MR_Z02_FourPoints: spawns fangs assaulter, loother ray
   { "quest": "MR-AGGR-MAIN-011", "goal": "1_WizardQuestGoals00000531", "when": "start", "events": ["MortalCombat"] },
   // Mirage-Interiors-MR_Z02_Warehouse01: spawns feral scarab for the next step
   { "quest": "MR-AGGR-MAIN-004", "goal": "3_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT_FeralsToScarabs"] },
-  // Mirage-Interiors-MR_Z04_BaronsAudienceChamber: spawns advisor francy fries for the next step
+  // Mirage-Interiors-MR_Z04_BaronsAudienceChamber: spawns advisor francy fries, house calixco guard for the next step
   { "quest": "MR-RUBA-MAIN-002", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["FriesBeGone"] },
   // Mirage-Interiors-MR_Z10_NorthTimeDunes: spawns grandfather spider
   { "quest": "MR-CHRO-MAIN-004", "goal": "1_WizardQuestGoals00000175", "when": "start", "events": ["SpawnSpiderNorthSands"] },
-  // Polaris-Interiors-PL_Z00_Palace_04: spawns the imperial palace
+  // Polaris-Interiors-PL_Z00_Palace_04: spawns captain winters, field specialist frost, lieutenant snow
   { "quest": "PL-WALR-MAIN-012", "goal": "1_Assault", "when": "start", "events": ["HideCaptain"] },
-  // Polaris-Interiors-PL_Z05_MineDocks: spawns rasputin
+  // Polaris-Interiors-PL_Z05_MineDocks: spawns ivan
   { "quest": "PL-FRIG-MAIN-006", "goal": "1_Stop", "when": "start", "events": ["FinishedBoatSequence", "EVENT-SpawnIvan"] },
-  // Polaris-Interiors-PL_Z07_PL_Horizon_Hold: spawns rasputin
+  // Polaris-Interiors-PL_Z07_PL_Horizon_Hold: spawns the rat
   { "quest": "PL-BORE-MAIN-002", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["ChangeRasputin"] },
-  // Zafaria-Interiors-ZF_Z10_I02_Didos_Mausoleum: spawns prince tziri for the next step
+  // Zafaria-Interiors-ZF_Z10_I02_Didos_Mausoleum: spawns shadow-web haunt for the next step
   { "quest": "ZF-GRAVE-C01-008", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["HideEvilDoers"] },
-  // Zafaria-ZF_Z13_Mirror_Lake_Drained: spawns morganthe
+  // Zafaria-ZF_Z13_Mirror_Lake_Drained: spawns starburst spider
   { "quest": "ZF-BAOB-C18-002", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["CreateMOBSpiders"] },
 ]
