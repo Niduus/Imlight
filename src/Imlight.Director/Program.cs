@@ -131,6 +131,14 @@ internal static class Program {
         // =============================================================
         // AKKA.NET CONFIGURATION
         // =============================================================
+        // Akka.NET reports an actor that crashed through Serilog's shared logger, which wrote nowhere: a game server that
+        // crashed and restarted left no trace in the log (Niduus's drop at the Unicorn Way gate, 2026-10-25). Its
+        // warnings and errors now go to the server log.
+        Serilog.Log.Logger = new Serilog.LoggerConfiguration()
+            .MinimumLevel.Warning()
+            .WriteTo.Logger(Logger.Log)
+            .CreateLogger();
+
         Logger.Information("Getting Akka.NET configuration..");
         if (!AkkaConfiguration.CreateActorSystem(ActorSystemName, out var system)) {
             Logger.Fatal($"Could not find Akka.NET config file!");

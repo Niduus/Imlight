@@ -162,6 +162,21 @@ internal sealed partial class ManagerWindow {
 
                 var recipes = await Task.Run(() => RecipeBook.Load(book));
                 _recipeBook ??= recipes;
+                RenderRecipesTab();
+
+                // The gear, for what a recipe makes as the game's item tooltip (the Gear tab's).
+                if (_gearBook is null) {
+                    try {
+                        _gearBook ??= await Task.Run(() => GearBook.Load(book));
+                    }
+                    catch (Exception) {
+                        // The recipe shows without the tooltip.
+                    }
+                }
+
+                if (_recipePicked is { } picked) {
+                    ShowRecipe(picked);
+                }
             }
             catch (Exception ex) {
                 _recipeProblem ??= ex is PanelException ? ex.Message : $"The recipes could not be read from the game files: {ex.Message}";
@@ -220,7 +235,10 @@ internal sealed partial class ManagerWindow {
             .ThenBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Id)];
 
         _recipeList.ItemsSource = _recipesShown;
-        _recipeCount.Text = _recipesShown.Count == 0
+        _recipeCount.Text = book.Recipes.Count == 0
+            ? $"No recipes could be read from your game files ({book.FileCount:N0} recipe files of {book.TemplateCount:N0} templates). " +
+              (book.Problems.Length > 0 ? $"What went wrong: {book.Problems}. " : "") + "Send Claude a screenshot of this."
+            : _recipesShown.Count == 0
             ? "Nothing matches. Clear the search or pick \"All\" in the filters."
             : $"{_recipesShown.Count:N0} of {book.Recipes.Count:N0} recipes. Click one to see it on the right.";
         if (_recipePicked is not null && _recipesShown.Contains(_recipePicked)) {
@@ -306,6 +324,16 @@ internal sealed partial class ManagerWindow {
                 },
             },
         });
+
+        // What it makes as the game shows it: the item's tooltip (as on the Gear tab) or the card (as on the Spells tab).
+        if (recipe.MakesId > 0 && _gearBook?.Item(recipe.MakesId) is { } made && _spellBook is { } spells) {
+            var tooltip = GearTooltip(_gearBook, spells, made);
+            tooltip.HorizontalAlignment = HorizontalAlignment.Center;
+            _recipeDetails.Children.Add(tooltip);
+        }
+        else if (_recipeBook.Spell(recipe.MakesSpell) is { } card) {
+            _recipeDetails.Children.Add(CardRow([card], 118));
+        }
 
         var id = recipe.Id.ToString(CultureInfo.InvariantCulture);
         _recipeDetails.Children.Add(new DockPanel {

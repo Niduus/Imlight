@@ -133,9 +133,9 @@ internal static class AnnouncementCatalog {
             [("{wizard}", "who ended it"), ("{guild}", "the guild's name")]),
 
         // Your own announcements (Play tab, Announcement card)
-        new("manager.box", "Your announcements", "Box on screen", "Everyone online, when you send an announcement from the Play tab with Box on screen.",
+        new("manager.box", "Your announcements", "Box on screen", "Everyone online, when you send an announcement with Box on screen. A cheat's \"announce\" block in a box uses it too.",
             "<center>Announcement</center>\n{text}", [("{text}", "what you typed")]),
-        new("manager.chat", "Your announcements", "Chat line", "Everyone online, when you send an announcement with Chat line.",
+        new("manager.chat", "Your announcements", "Chat line", "Everyone online, when you send an announcement with Chat line. A cheat's \"announce\" block as a chat line uses it too.",
             "Announcement: {text}", [("{text}", "what you typed")]),
 
         // Server notices

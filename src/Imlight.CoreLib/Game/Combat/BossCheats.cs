@@ -111,6 +111,14 @@
  *       game plays the casting of the cast spell's own school, so a real spell of that school and kind is cast
  *       (Sun: Sun Blade Sun on itself, else Dragonblade TC-01; Shadow: Shadowblade, Shadow Trap, Shadow Shield...). A
  *       kind and look the game has no spell for (a Sun trap) is cast normally. With "Spell", that spell's school decides.
+ *       Kind Global (more damage of School, "" = all), HealGlobal (more healing) or GloomGlobal (less healing, as Doom
+ *       and Gloom): a battlefield bubble of Amount percent that takes the current one's place, as a real one does. Its
+ *       school's real bubble (Wyldfire, Balefrost, Darkwind, Blood Moon, Circle of Thorns, Deadzone, Balance of Power,
+ *       ShadowGlobal; Power Play for all; Sanctuary; Doom and Gloom) is cast so the game draws it, then given this size
+ *       and school on the server. The lookalikes are listed in CheatLookalikes.cs.
+ *     { "Do": "Announce", "Text", "Style": Box/Chat/Both (Box), "Who": ""/Players }   a server announcement (as the
+ *       Manager's Announcement card sends) to the wizards in this battle only. {boss}, {player} and {round} in Text are
+ *       filled in. Unlike Say (a game line over the boss, or chat with its name in front), it reads as from the server.
  *     { "Do": "IfCleared", "Count" (1), "Amount" (1), "Each" }   the next Count steps only if the removal steps before
  *       it (RemoveEffects, RemoveCharms, RemoveWards, RemoveAuras) took off at least Amount effects; with Each, once for
  *       each one taken off. "Clear DoT for +55% Storm blade": RemoveEffects Kind DoT Count 1 Target Receiver, then
@@ -435,6 +443,9 @@ internal static class BossCheats {
         public bool Each { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
+        // For Announce: Box (default), Chat or Both; and who gets it ("" every wizard in the battle, Players).
+        public string Style { get; set; } = "";
+        public string Who { get; set; } = "";
         // For AddCharm: the cast animation of the spell cast for it ("" normal, Sun, Shadow, Moon, Star, or a school).
         public string Look { get; set; } = "";
         // For FirstTurn: Us (the cheat's own side acts first) or Them (the other side).

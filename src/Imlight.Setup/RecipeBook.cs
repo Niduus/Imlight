@@ -117,6 +117,16 @@ internal sealed class RecipeBook {
 
     internal IReadOnlyList<Recipe> Recipes { get; private set; } = [];
 
+    /// <summary>How many templates of the game's list have Recipe in their file, and how many templates it lists.</summary>
+    internal int FileCount { get; private set; }
+
+    internal int TemplateCount { get; private set; }
+
+    private readonly ConcurrentDictionary<string, string> _problems = new();
+
+    /// <summary>What went wrong reading recipe files, each with one file it happened to, for the tab's note.</summary>
+    internal string Problems => string.Join("; ", _problems.Take(3).Select(p => $"{p.Value} {p.Key}"));
+
     /// <summary>Reads every recipe. Takes a few seconds, so run it in the background.</summary>
     internal static RecipeBook Load(SpellBook book) {
         var recipes = new RecipeBook(book);
@@ -129,17 +139,28 @@ internal sealed class RecipeBook {
             .ToDictionary(g => g.Key, g => g.OrderBy(s => s.Hidden).First(), StringComparer.OrdinalIgnoreCase);
         var files = all.Where(t => t.File.Contains("Recipe", StringComparison.OrdinalIgnoreCase)).ToList();
         var read = new ConcurrentBag<Recipe>();
+        var other = 0;
         System.Threading.Tasks.Parallel.ForEach(files, file => {
             try {
-                if (book.DecodeFile(file.File) is RecipeTemplate template && recipes.Read(file.Id, file.File, template) is { } recipe) {
-                    read.Add(recipe);
+                var decoded = book.DecodeFile(file.File);
+                if (decoded is RecipeTemplate template) {
+                    if (recipes.Read(file.Id, file.File, template) is { } recipe) {
+                        read.Add(recipe);
+                    }
+                }
+                else {
+                    System.Threading.Interlocked.Increment(ref other);
+                    recipes._problems.TryAdd(decoded is null ? "could not be read" : $"is a {decoded.GetType().Name}", file.File);
                 }
             }
-            catch (Exception) {
-                // A template the reader can't make sense of is left out.
+            catch (Exception e) {
+                // A template the reader can't make sense of is left out, and counted for the tab's note.
+                recipes._problems.TryAdd(e.Message, file.File);
             }
         });
         recipes.Recipes = [.. read.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Id)];
+        recipes.FileCount = files.Count;
+        recipes.TemplateCount = all.Count;
 
         return recipes;
     }

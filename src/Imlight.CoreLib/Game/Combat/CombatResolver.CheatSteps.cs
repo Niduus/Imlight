@@ -17,7 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -458,76 +461,97 @@ public partial class CombatResolver {
         m_paramPerRound = type == kSpellEffects.kAbsorbDamage ? amount : 0,
     };
 
-    // The real spell a custom charm or ward of this kind and school is shown as (AddCharm with no "shown as"): the plain
-    // blade, trap or shield of that school, or the all-school one (Balanceblade, Hex, Tower Shield, Weakness, Spirit Armor).
-    private static string LookalikeFor(string kind, string school) {
-        var s = (school ?? "").Trim().ToLowerInvariant();
-        return (kind ?? "").Trim().ToLowerInvariant() switch {
-            "blade" or "" => s switch {
-                "fire" => "Fireblade", "ice" => "Iceblade", "storm" => "Stormblade", "myth" => "Mythblade", "life" => "Lifeblade",
-                "death" => "Deathblade", "shadow" => "Shadowblade", _ => "Balanceblade",
-            },
-            "trap" => s switch {
-                "fire" => "Fire Trap", "ice" => "Ice Trap", "storm" => "Storm Trap", "myth" => "Myth Trap", "life" => "Life Trap",
-                "death" => "Death Trap", "shadow" => "Shadow Trap", _ => "Hex",
-            },
-            "shield" => s switch {
-                "fire" => "Fire Shield", "ice" => "Snow Shield", "storm" => "Storm Shield", "myth" => "Myth Shield", "life" => "Life Shield",
-                "death" => "Death Shield", "shadow" => "Shadow Shield", _ => "Tower Shield",
-            },
-            "weakness" => "Weakness",
-            "absorb" => "Spirit Armor",
-            _ => "",
-        };
+    // An Announce step's words with {boss} (the cheat's owner: the boss, or the wizard of a player cheat), {player} (the
+    // wizard who set it off, else the owner if a wizard, else the first wizard in the battle) and {round} filled in.
+    private string AnnounceText(string text, CombatDuelSubCircle owner, CombatDuelSubCircle trigger) {
+        text = (text ?? "").Trim();
+        if (text.Length == 0 || !text.Contains('{')) {
+            return text;
+        }
+
+        string NameOf(CombatDuelSubCircle c) => c is null ? ""
+            : c.IsHumanPlayer ? c._wizard?.PlayerNameBehavior?.GetWizardName() ?? ""
+            : Customs.NameOf(c.ParticipantObject?.m_globalID.Full ?? 0) ?? CheaterName(c);
+        var player = trigger is { IsHumanPlayer: true } ? trigger
+            : owner.IsHumanPlayer ? owner
+            : _subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.IsHumanPlayer);
+
+        return text.Replace("{boss}", NameOf(owner), StringComparison.OrdinalIgnoreCase)
+            .Replace("{player}", NameOf(player), StringComparison.OrdinalIgnoreCase)
+            .Replace("{round}", _duel.m_roundNum.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
-    // AddCharm's "cast animation" (Look). The game picks the casting sign and sound of a cast (FX_CastingSign_<School>,
-    // FX_CastingSound_<School>) from the school of the cast spell's own template, which it looks up by the template id
-    // (ClientCastEffectCinematicAction::Perform, "could not find Magic School for spellTemplateID"); nothing in the cast
-    // message changes it. So a Sun or Shadow casting is a real Sun or Shadow spell of that kind being cast as the
-    // lookalike. These are the game's own charms and wards of those schools (one effect each). SelfOnly ones put their
-    // effect on the caster whatever the aim, so they are used only for an effect that goes on the caster.
-    private static readonly Dictionary<(string Kind, string Look), (string Spell, bool SelfOnly)[]> s_castLooks = new() {
-        [("blade", "sun")] = [("Sun Blade Sun", true), ("Dragonblade TC-01", false)],
-        [("blade", "shadow")] = [("Shadowblade", false)],
-        [("blade", "moon")] = [("Moon Blade - Moon", true)],
-        [("blade", "star")] = [("Star Blade - Star", true)],
-        [("trap", "shadow")] = [("Shadow Trap", false)],
-        [("shield", "sun")] = [("Tower Shield-01", false)],
-        [("shield", "shadow")] = [("Shadow Shield", false)],
-        [("shield", "star")] = [("Balance Immune MOB ONLY Star", false)],
-        [("weakness", "shadow")] = [("Weakness - 75 Protected Shadow", false)],
-        [("absorb", "sun")] = [("Fire Armor - Amulet Protected", true)],
-        [("absorb", "shadow")] = [("Tung Ak Armor - Protected", true)],
-        [("absorb", "star")] = [("Frozen Armor-01-phase1", false)],
-        [("absorb", "fire")] = [("Fire Armor", true), ("Spirit Armor", false)],
-        [("absorb", "myth")] = [("Myth Armor", true), ("Spirit Armor", false)],
-    };
+    // The lookalike AddCharm casts (CheatLookalikes.cs): the one for its cast animation, else the plain one of its kind.
+    private string LookalikeName(BossCheats.CheatAction step, bool onCaster, CombatDuelSubCircle boss, string bossName) {
+        if (CheatLookalikes.WithCast(step.Kind, step.School, step.Look, onCaster) is { } look) {
+            return look.Spell;
+        }
 
-    private static readonly HashSet<string> s_castLookSchools = ["fire", "ice", "storm", "myth", "life", "death", "balance"];
+        Logger.Information("Duel {0} | Slot {1} | {2}: the game has no {3} {4} to cast with that animation; the normal one is cast.",
+            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, step.Look, CheatLookalikes.KindWord(step.Kind)));
+
+        return CheatLookalikes.Plain(step.Kind, step.School)?.Spell ?? "";
+    }
 
     /// <summary>
-    /// The lookalike for AddCharm with a cast animation picked: a spell of that kind whose school's casting the game
-    /// plays (Sun, Shadow, Moon, Star, or one of the seven schools). Null when the game has none for that kind and look.
+    /// AddCharm Global, HealGlobal or GloomGlobal: a battlefield bubble of Amount percent (more damage of School; more
+    /// healing; less healing). As a real one, it takes the current bubble's place. A real bubble of that school (or the
+    /// one for the cast animation, or "shown as") is cast so the game draws it, and the bubble it puts up is then given
+    /// this size and school on the server.
     /// </summary>
-    private static string LookalikeWithCast(string kind, string school, string look, bool onCaster) {
-        var k = (kind ?? "").Trim().ToLowerInvariant();
-        k = k.Length == 0 ? "blade" : k;
-        var l = (look ?? "").Trim().ToLowerInvariant();
-        if (l is "" or "normal") {
-            return LookalikeFor(kind, school);
-        }
-
-        if (s_castLooks.TryGetValue((k, l), out var picks)) {
-            foreach (var (spell, selfOnly) in picks) {
-                if (!selfOnly || onCaster) {
-                    return spell;
+    private float AddCustomGlobal(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
+                                  CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
+                                  float cinematicTimeSoFar, bool custom) {
+        var kind = (step.Kind ?? "").Trim().ToLowerInvariant();
+        var amount = Math.Abs(step.Amount);
+        var type = kind == "global" ? kSpellEffects.kModifyOutgoingDamage : kSpellEffects.kModifyOutgoingHeal;
+        var param = kind == "gloomglobal" ? -amount : amount;
+        var named = step.Spell.Length > 0 || step.SpellID != 0;
+        var lookName = named ? step.Spell : LookalikeName(step, onCaster: true, boss, bossName);
+        var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
+        var bubbles = _duel.m_duelModifier.m_battlefieldEffects;
+        var cinematicTime = 0f;
+        var resized = 0;
+        if (look.Template is not null) {
+            var lookId = look.Spell.m_templateID;
+            var had = bubbles.ToHashSet(ReferenceEqualityComparer.Instance);
+            // A global aims at no one; the cast goes on the caster's own circle.
+            var cast = step with { Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId, Target = "Self" };
+            cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+            for (var i = 0; i < bubbles.Count; i++) {
+                var e = bubbles[i];
+                if (e is null || had.Contains(e) || e.m_spellTemplateID != lookId) {
+                    continue;
                 }
+
+                // Its own size and school; it keeps the lookalike's id, so the next global takes its place as in the game.
+                bubbles[i] = e with {
+                    m_effectType = type,
+                    m_effectParam = param,
+                    m_sDamageType = kind == "global" ? (string.IsNullOrWhiteSpace(step.School) ? "All" : step.School.Trim())
+                        : string.IsNullOrWhiteSpace(step.School) ? e.m_sDamageType : step.School.Trim(),
+                    m_disposition = kHangingDisposition.kBoth,
+                };
+                resized++;
             }
+
+            Logger.Information("Duel {0} | Slot {1} | {2}: {3} cast so the game shows it; {4} of its bubble effects made {5}% {6}{7}.",
+                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, (string) look.Template.m_name, resized, param,
+                    SchoolText(step.School), CheatLookalikes.KindWord(step.Kind)));
         }
 
-        // One of the seven schools: that school's plain blade, trap or shield (Spirit Armor, Life, for any absorb).
-        return s_castLookSchools.Contains(l) && k is "blade" or "trap" or "shield" or "absorb" ? LookalikeFor(k, l) : null;
+        if (resized == 0) {
+            // Nothing drawn (no lookalike, or it was dispelled): the bubble goes up on the server only, in the old one's place.
+            Logger.Information("Duel {0} | Slot {1} | {2}: no bubble was cast for it; the global goes on unseen.",
+                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
+            bubbles.Clear();
+            bubbles.Add(CheatEffect(type, param, kind == "global" ? step.School : step.School is { Length: > 0 } s ? s : "Life", 0, good: true) with {
+                m_effectTarget = kEffectTarget.kGlobal, m_disposition = kHangingDisposition.kBoth,
+                m_spellTemplateID = look.Spell?.m_templateID ?? 0,
+            });
+        }
+
+        return cinematicTime;
     }
 
     /// <summary>The Dos of this file. False when the step is none of them.</summary>
@@ -602,6 +626,42 @@ public partial class CombatResolver {
                     }
 
                     return true;
+                case "announce": {
+                    // A server announcement to the wizards in this battle only, as the Manager's Announcement card sends
+                    // it to everyone: a message box (Style Box, the default), a chat line (Chat), or both. Who: "" every
+                    // wizard in the battle, Players only those in the players' circles. {boss}, {player}, {round}.
+                    var text = AnnounceText(step.Text, boss, trigger);
+                    if (text.Length == 0) {
+                        return true;
+                    }
+
+                    var style = (step.Style ?? "").Trim().ToLowerInvariant();
+                    var box = style is "" or "box" or "both";
+                    var chat = style is "chat" or "both";
+                    var sent = 0;
+                    foreach (var wizard in _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null
+                                                                  && (!step.Who.Equals("Players", StringComparison.OrdinalIgnoreCase)
+                                                                      || c.SlotType == CombatSlotType.Player))) {
+                        if (box) {
+                            wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = ManagerCommands.AnnouncementBox(text), Modal = 1 });
+                        }
+
+                        if (chat) {
+                            wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = ManagerCommands.AnnouncementChat(text), Modal = 0 });
+                        }
+
+                        sent++;
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2} announces to {3} wizard(s) in the battle ({4}): {5}",
+                        Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, sent, box && chat ? "box and chat" : box ? "box" : "chat", text));
+
+                    return true;
+                }
+                case "addcharm" when CheatLookalikes.IsGlobal(step.Kind):
+                    cinematicTime = AddCustomGlobal(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+
+                    return true;
                 case "addcharm": {
                     // Blade, Weakness, Shield, Trap or Absorb of Amount (percent; hit points for Absorb), used up as one;
                     // or a DoT or HoT of Amount in all over Rounds rounds (3 if 0). With a Spell, the effect carries that
@@ -622,12 +682,7 @@ public partial class CombatResolver {
                     var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
                     var named = step.Spell.Length > 0 || step.SpellID != 0;
                     var aim = step.Target.Length > 0 ? step.Target : fallback;
-                    var lookName = named ? step.Spell : LookalikeWithCast(step.Kind, step.School, step.Look, aim.Equals("Self", StringComparison.OrdinalIgnoreCase));
-                    if (lookName is null) {
-                        Logger.Information("Duel {0} | Slot {1} | {2}: the game has no {3} {4} to cast with that animation; the normal one is cast.",
-                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, step.Look, step.Kind));
-                        lookName = LookalikeFor(step.Kind, step.School);
-                    }
+                    var lookName = named ? step.Spell : LookalikeName(step, aim.Equals("Self", StringComparison.OrdinalIgnoreCase), boss, bossName);
 
                     var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
 

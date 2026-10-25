@@ -104,6 +104,11 @@ internal sealed class BlockView : BlockShape {
 
     private readonly WrapPanel _parts = new() { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
     private readonly StackPanel _tools = new() { Orientation = Orientation.Horizontal, Spacing = 2, VerticalAlignment = VerticalAlignment.Center };
+    // A warning under the sentence (hidden while empty); it never stops a save.
+    private readonly TextBlock _noteText = new() {
+        Foreground = new SolidColorBrush(Color.FromRgb(255, 214, 120)), FontSize = 12, TextWrapping = TextWrapping.Wrap,
+    };
+    private readonly Border _note;
     private bool _on = true;
     private Button? _toggle;
 
@@ -159,7 +164,11 @@ internal sealed class BlockView : BlockShape {
         DockPanel.SetDock(_tools, Dock.Right);
         dock.Children.Add(_tools);
         dock.Children.Add(_parts);
-        Child = dock;
+        _note = new Border {
+            Background = new SolidColorBrush(Color.FromArgb(90, 0, 0, 0)), CornerRadius = new CornerRadius(6), Padding = new Thickness(8, 4),
+            Margin = new Thickness(26, 2, 6, 0), Child = _noteText, IsVisible = false,
+        };
+        Child = new StackPanel { Children = { dock, _note } };
         if (help.Length > 0) {
             ToolTip.SetTip(iconBox, help);
         }
@@ -177,6 +186,12 @@ internal sealed class BlockView : BlockShape {
         if (notify) {
             Toggled?.Invoke(on);
         }
+    }
+
+    /// <summary>A warning shown under the block's sentence; null or empty hides it.</summary>
+    internal void Note(string? text) {
+        _noteText.Text = text ?? "";
+        _note.IsVisible = !string.IsNullOrEmpty(text);
     }
 
     /// <summary>Words of the block's sentence.</summary>

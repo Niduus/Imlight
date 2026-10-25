@@ -174,24 +174,59 @@ public abstract class Server : ReceiveProtocolDispatcher {
         Sender.Tell(msg);
     }
 
-    protected override SupervisorStrategy SupervisorStrategy() =>
-        // There is no attempting to stabilize the connection server side. The client will attempt to
-        // reconnect on any given failure. This is a good thing, as it allows us to simply stop the session actor
-        // and let the client handle the rest.
-        new OneForOneStrategy(
-            maxNrOfRetries: 1,
-            withinTimeRange: TimeSpan.FromSeconds(30),
-            localOnlyDecider: ex => {
+    protected override SupervisorStrategy SupervisorStrategy() => new ServerSupervisorStrategy(Name);
+
+    /// <summary>
+    /// Decides what happens to a child of the server that failed.
+    /// </summary>
+    private sealed class ServerSupervisorStrategy : OneForOneStrategy {
+
+        private readonly string _serverName;
+
+        public ServerSupervisorStrategy(string serverName)
+            : base(maxNrOfRetries: 1, withinTimeRange: TimeSpan.FromSeconds(30), localOnlyDecider: _ => Directive.Stop) {
+            _serverName = serverName;
+
+            // Handle logs each failure itself.
+            LoggingEnabled = false;
+        }
+
+        protected override Directive Handle(IActorRef child, Exception exception) {
+            // There is no attempting to stabilize the connection server side. The client will attempt to
+            // reconnect on any given failure. This is a good thing, as it allows us to simply stop the session actor
+            // and let the client handle the rest.
+            if (child.Path.Name.StartsWith("SessionActor", StringComparison.Ordinal)) {
                 // Client regularly shuts down the socket. No need to log it.
-                if (ex.Message.ToLower().Contains("shutdown")) {
-                    return Directive.Stop;
+                if (exception.Message?.Contains("shutdown", StringComparison.OrdinalIgnoreCase) != true) {
+                    Logger.Error("{Child} has failed with exception {Exception}", Logger.Args(child.Path.Name, exception));
                 }
 
-                Logger.Error("SessionActor {Source} has failed with exception {Exception}",
-                    Logger.Args(ex.InnerException.Source, ex));
                 return Directive.Stop;
             }
-        );
+
+            switch (exception) {
+                case ActorKilledException or DeathPactException:
+                    return Directive.Stop;
+                case ActorInitializationException:
+                    // There is nothing to keep from a child that could not even start.
+                    Logger.Error("{Server}: {Child} could not start and starts again: {Exception}",
+                        Logger.Args(_serverName, child.Path.Name, exception));
+
+                    return Directive.Restart;
+            }
+
+            // The game world, the command dispatcher and the listener hold every player's zone and connection. This
+            // used to read ex.InnerException.Source, which threw for an error without an inner one: the whole game
+            // server then crashed and restarted, dropped everyone and forgot their login keys, so the game could not
+            // reconnect (Niduus at the Unicorn Way gate, 2026-10-25). Now the one message that failed is skipped and
+            // the rest keeps running.
+            Logger.Error("{Server}: {Child} failed and skipped the message it was on: {Exception}",
+                Logger.Args(_serverName, child.Path.Name, exception));
+
+            return Directive.Resume;
+        }
+
+    }
 
     protected virtual ushort GetNewUniqueId() {
         ushort newId = 0;
