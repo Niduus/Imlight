@@ -284,6 +284,8 @@ public static class HouseCollection {
         to.BonusSlots = from.BonusSlots;
         to.NextItemId = from.NextItemId;
         to.Items = [.. from.Items];
+        to.Garden = [.. from.Garden ?? []];
+        to.GardenRevision = from.GardenRevision;
     }
 
 }
