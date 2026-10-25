@@ -245,6 +245,9 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 PlayerGID = wizard.GameObjectID
             }, false);
         }
+        else if (equippedSlot == EquipmentSlotType.PIITeleportEffect) {
+            BroadcastTeleportEffect(wizard);
+        }
 
         // If removedEffects is not null, the Wizard replaced an item with another item that has different effects.
         // We need to remove the old effects from the client.
@@ -365,6 +368,25 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 PlayerGID = wizard.GameObjectID
             }, false);
         }
+
+        // Taking the teleport effect off brings the normal sparkle back.
+        if (slotObj?.SlotType == EquipmentSlotType.PIITeleportEffect) {
+            BroadcastTeleportEffect(wizard);
+        }
+    }
+
+    /// <summary>
+    /// Tells everyone in the zone, the wizard included, which teleport effect the wizard's teleports play: the worn
+    /// one's template id, or 0 for the normal sparkle. The game keeps it on the wizard's magic school behavior (and on
+    /// its own stats for the local player) and plays it from there (client MSG_UpdateTeleportEffect 0x1421f0a00).
+    /// </summary>
+    private void BroadcastTeleportEffect(Wizard wizard) {
+        var effect = wizard.WearTeleportEffect();
+        Logger.Information("{0} now teleports with effect {1} (0 = the normal sparkle).", Logger.Args(wizard.CharId, effect));
+        ZoneBroadcast(new WIZARD2_53_PROTOCOL.MSG_UPDATETELEPORTEFFECT {
+            TeleportEffect = effect,
+            PlayerGID = wizard.GameObjectID
+        }, false);
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_EXPIRERENTAL))]

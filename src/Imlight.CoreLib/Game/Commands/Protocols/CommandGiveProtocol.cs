@@ -18,6 +18,7 @@
 
 using System.Linq;
 using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -42,15 +43,19 @@ internal class CommandGiveProtocol : CommandProtocol {
     [Command("tpstyle")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void EquipTeleportEffectCommand(string number) {
+        // The game takes the teleport effect item's template id, such as 1457191 (Shadowstride).
         if (!uint.TryParse(number, out var effect)) {
-            InformSenderClient("Type a number, such as .tpstyle 1 (0 is the normal effect).");
+            InformSenderClient("Type a teleport effect item's id, such as .tpstyle 1457191 for Shadowstride (0 is the normal sparkle).");
 
             return;
         }
 
         Context.Character.EquipTeleportEffect(effect);
 
-        InformSenderClient($"Teleport effect set to {effect} (0 is the normal one). Relog, then teleport to see it.");
+        // The same request the game makes, so everyone in the zone is told right away.
+        Context.SessionActor.Tell(new WIZARD2_53_PROTOCOL.MSG_UPDATETELEPORTEFFECT(), ActorRefs.NoSender);
+
+        InformSenderClient($"Teleport effect set to {effect} (0 is the normal sparkle). Teleport to see it.");
     }
 
     [Command("overdose")]

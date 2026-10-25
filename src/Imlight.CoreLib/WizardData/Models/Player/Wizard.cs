@@ -487,12 +487,36 @@ public class Wizard {
         WizardCollection.UpdateCharacterOverdose(this);
     }
 
+    /// <summary>
+    /// Sets the teleport effect the game plays when this wizard teleports. The game reads it from the magic school
+    /// behavior as an item template id (a CE_Teleport custom emote, such as 1457191 Shadowstride) and plays that item's
+    /// animations; 0 plays the normal sparkle (client 0x14133e2e0, read 2026-10-25).
+    /// </summary>
     public void EquipTeleportEffect(uint effect) {
         GameStats.m_equippedTeleportEffect = effect;
         MagicSchoolBehavior.EquippedTeleportEffect = effect;
 
+        if (HasInitializedGameObject && CoreObjectFactory.FindBehaviorInstance<ClientMagicSchoolBehavior>(GameObject, out var schoolBehavior)) {
+            schoolBehavior.m_equippedTeleportEffect = effect;
+        }
+
         // Persistent save.
         WizardCollection.UpdateCharacterTeleportEffect(this);
+    }
+
+    /// <summary>
+    /// Makes the worn teleport effect (the item in the PIITeleportEffect slot) the one the game plays, or the normal
+    /// sparkle when none is worn.
+    /// </summary>
+    /// <returns>The template id now in use, 0 for the normal sparkle.</returns>
+    public uint WearTeleportEffect() {
+        var worn = EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.PIITeleportEffect);
+        var templateId = worn is null ? 0u : (uint) worn.m_templateID;
+        if (templateId != MagicSchoolBehavior.EquippedTeleportEffect || templateId != GameStats.m_equippedTeleportEffect) {
+            EquipTeleportEffect(templateId);
+        }
+
+        return templateId;
     }
 
     /// <summary>
@@ -885,6 +909,9 @@ public class Wizard {
         }
         if (slot.SlotType == EquipmentSlotType.PIIVictoryDance) {
             PickVictoryDance();
+        }
+        if (slot.SlotType == EquipmentSlotType.PIITeleportEffect) {
+            WearTeleportEffect();
         }
 
         // Persistent save.
@@ -2031,6 +2058,9 @@ public class Wizard {
         }
         if (slotType == EquipmentSlotType.PIIVictoryDance) {
             PickVictoryDance();
+        }
+        if (slotType == EquipmentSlotType.PIITeleportEffect) {
+            WearTeleportEffect();
         }
 
         var removedEffects = CharacterEffectHelper.RemoveEffectsFromWizard(this, template);

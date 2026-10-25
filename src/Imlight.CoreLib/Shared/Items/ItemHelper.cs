@@ -174,6 +174,15 @@ internal static class ItemHelper {
             }
         }
 
+        // Teleport effects (CE_Teleport) are worn in the backpack's Teleport Effects tab, slot PIITeleportEffect; like
+        // the dances, the raw templates carry no adjective for it.
+        if (itemTemplate.m_behaviors?.OfType<CustomEmoteBehaviorTemplate>()
+                .Any(b => b.m_emoteType == CustomEmoteType.CE_Teleport) == true) {
+            return new EquipmentSlot {
+                SlotType = EquipmentSlotType.PIITeleportEffect,
+            };
+        }
+
         // The client dynamically adds "PIIVictoryDance" to m_adjectiveList in CustomEmoteBehaviorTemplate::OnPostLoad
         // for emotes, so it is not present in the raw Root.wad template data. Dances are Victory Dances too: in a packet
         // capture of the real game (2026-10-22) Bee Dance (1633019, CE_Dance) was worn and played as one.

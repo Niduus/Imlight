@@ -169,6 +169,24 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     /// <summary>
+    /// When the wizard's own teleport sparkle ends (the RecallHome effect, EndRecallEffect), the game asks for its
+    /// teleport effect (client 0x1413c5b9d sends this with no player). The answer tells everyone in the zone which one
+    /// the wizard uses, the same way the Victory Dance request is answered.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UPDATETELEPORTEFFECT))]
+    private void ReceiveUpdateTeleportEffect(WIZARD2_53_PROTOCOL.MSG_UPDATETELEPORTEFFECT message) {
+        // Only the game's request; the server's own answers carry a player.
+        if (message.PlayerGID != 0 || GetActiveWizard() is not { } wizard) {
+            return;
+        }
+
+        ZoneBroadcast(new WIZARD2_53_PROTOCOL.MSG_UPDATETELEPORTEFFECT {
+            TeleportEffect = wizard.MagicSchoolBehavior.EquippedTeleportEffect,
+            PlayerGID = wizard.GameObjectID,
+        }, false);
+    }
+
+    /// <summary>
     /// With [Emotes] ServerVictoryDance on, a won battle plays one of the wizard's worn Victory Dances (picked at
     /// random) from the server: the dance is an emote item (CustomEmoteBehaviorTemplate, CE_Emote) whose animation is
     /// played like a radial menu emote, for everyone in the zone.
