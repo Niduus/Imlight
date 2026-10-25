@@ -60,6 +60,9 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
     // Live opens the full list with an empty mod at index 1, then numbers the mods after it.
     private const int SENTINEL_INDEX = 1;
 
+    // The state RenderComponent reads as "show this object to the player".
+    private const string SHOW_STATE_NAME = "On";
+
     private int _addIndex = 1;
 
     protected static Props Props(SessionActor parentActor)
@@ -115,6 +118,11 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
         var zoneName = message.DynaMod.m_zoneName;
         var dynaModClientTag = message.DynaMod.m_dynaModClientTag;
         var dynaModState = message.DynaMod.m_dynaModState;
+        // A mod that shows its object (m_bShowsObject) and names no state brings a quest-only object out; with no state
+        // it would read as a hide (Niduus 2026-10-25: quest objects shown at the wrong times).
+        if (string.IsNullOrEmpty(dynaModState) && message.DynaMod.m_bShowsObject) {
+            dynaModState = SHOW_STATE_NAME;
+        }
 
         wizard.AddDynamod(zoneName, dynaModClientTag, dynaModState);
 

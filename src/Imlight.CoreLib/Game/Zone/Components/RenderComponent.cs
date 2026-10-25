@@ -86,6 +86,11 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private readonly HashSet<IActorRef> _joinedPlayers = [];
     // A creature in a battle: it stays sent to everyone in it however far they are (MSG_SHOWDUELPARTICIPANT).
     private bool _heldByDuel;
+    // Players a quest-only object is kept from until their quest (or the zone's script) calls for it, and when each was
+    // last checked again.
+    private readonly Dictionary<IActorRef, Wizard> _hiddenUntilQuest = [];
+    private readonly Dictionary<IActorRef, System.DateTime> _questCheckedAt = [];
+    private static readonly System.TimeSpan QUEST_CHECK_INTERVAL = System.TimeSpan.FromSeconds(2);
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
@@ -114,11 +119,21 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Trigger requirements on an object's state ("Snake obelisk is Idle_On") start from the state it is placed in.
         Entity.Zone.ScriptState.SeedObjectDefault(Entity.Info?.m_zoneTag, Entity.Info?.m_startState);
 
-        CreateObjectForAllPlayers();
+        // Players already in the zone are sorted out on their first move (see OnPlayerMove).
+        if (!IsQuestOnly) {
+            CreateObjectForAllPlayers();
+        }
     }
 
     public override void OnEnabled() {
-        CreateObjectForAllPlayers();
+        if (IsQuestOnly) {
+            foreach (var player in _playersWithRequirementsMet.Values.Where(p => !_playerIgnoreBecauseDynamod.ContainsKey(p))) {
+                CreateObjectForPlayer(player);
+            }
+        }
+        else {
+            CreateObjectForAllPlayers();
+        }
 
         // Everyone tracked as able to see the object was just sent it, so the next move can cull or restore them.
         foreach (var player in _playersWithRequirementsMet.Values) {
@@ -160,6 +175,14 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             if (!mod.ModState.Equals(SPAWN_STATE_NAME, System.StringComparison.OrdinalIgnoreCase)) {
                 persistedState = mod.ModState;
             }
+        }
+
+        // A quest-only object stays away until a mod shows it or the player's quest calls for it.
+        if (IsQuestOnly && relevantDynaMods.Count == 0 && !QuestCallsFor(wizard)) {
+            _hiddenUntilQuest[suspect] = wizard;
+            _questCheckedAt[suspect] = System.DateTime.UtcNow;
+
+            return;
         }
 
         // Determine if this player meets the requirements to see the object.
@@ -220,8 +243,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // Remove the player from the list of players in range.
         _playersInRange.Remove(suspect);
+        _questCheckedAt.Remove(suspect);
 
-        if (_playerIgnoreBecauseDynamod.Remove(suspect)) {
+        if (_playerIgnoreBecauseDynamod.Remove(suspect) | _hiddenUntilQuest.Remove(suspect)) {
             return;
         }
 
@@ -230,8 +254,21 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (playerWizard is not null && Entity.Info?.m_spawnRequirements is null && _joinedPlayers.Add(playerActor)) {
-            _playersWithRequirementsMet[playerWizard] = playerActor;
-            _playersInRange.Add(playerActor);
+            if (IsQuestOnly) {
+                // This player was in the zone before the object was made, so OnStart did not send it to them.
+                _hiddenUntilQuest[playerActor] = playerWizard;
+                _questCheckedAt[playerActor] = System.DateTime.MinValue;
+            }
+            else {
+                _playersWithRequirementsMet[playerWizard] = playerActor;
+                _playersInRange.Add(playerActor);
+            }
+        }
+
+        if (_hiddenUntilQuest.ContainsKey(playerActor)) {
+            ShowIfQuestCallsFor(playerActor, playerWizard);
+
+            return;
         }
 
         if (!_doesDistanceCheck || _heldByDuel) {
@@ -303,8 +340,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
 
         // Neither a dynamod nor the spawn requirements hide a creature the wizard is fighting.
-        if (_playerIgnoreBecauseDynamod.Remove(player, out var hiddenWizard) && hiddenWizard is not null) {
-            _playersWithRequirementsMet[hiddenWizard] = player;
+        if ((_playerIgnoreBecauseDynamod.Remove(player, out var hiddenWizard) | _hiddenUntilQuest.Remove(player, out var questWizard))
+            && (hiddenWizard ?? questWizard) is { } fighter) {
+            _playersWithRequirementsMet[fighter] = player;
         }
 
         CreateObjectForPlayer(player);
@@ -327,6 +365,13 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             if (!msg.ExclusiveToSender && msg.Sender is null) {
                 Entity.ChangeState(msg.StateName);
 
+                // The zone's script brought a quest-only object out: everyone in the zone gets it now.
+                if (IsQuestOnly && !isDespawn) {
+                    foreach (var (hiddenPlayer, hiddenWizard) in _hiddenUntilQuest.ToList()) {
+                        Reveal(hiddenPlayer, hiddenWizard);
+                    }
+                }
+
                 return;
             }
 
@@ -345,6 +390,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
             if (isDespawn) {
                 var wizard = _playersWithRequirementsMet.FirstOrDefault(x => x.Value == player).Key;
+                if (_hiddenUntilQuest.Remove(player, out var questWizard)) {
+                    wizard ??= questWizard;
+                }
+
                 DespawnObjectForPlayer(player);
                 _playerIgnoreBecauseDynamod[player] = wizard;
             }
@@ -358,7 +407,12 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                     wizard = hiddenWizard;
                 }
 
+                if (wizard is null && _hiddenUntilQuest.TryGetValue(player, out var questWizard)) {
+                    wizard = questWizard;
+                }
+
                 _playerIgnoreBecauseDynamod.Remove(player);
+                _hiddenUntilQuest.Remove(player);
 
                 // Mirror the join-time spawn requirements check.
                 var requirementsMet = true;
@@ -380,6 +434,71 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 CreateObjectForPlayer(player);
             }
         }
+    }
+
+    /// <summary>
+    /// An object the game placed as undetectable (m_bUndetectable, such as the Commons' Primal Magic Book): the live
+    /// server shows it only to players whose quest calls for it, through a dynamod that shows it, a zone script, or as
+    /// the NPC of the player's quest step or of a quest it offers them. An object with spawn requirements is decided by
+    /// those instead. Only characters (NPC behavior) are held back: teleporters and doors placed the same way are opened
+    /// on live by quest data we do not have, and hiding them would cut players off. Niduus 2026-10-25: quest objects
+    /// stood in the world for everyone.
+    /// </summary>
+    private bool IsQuestOnly
+        => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
+           && info.GetType() == typeof(CoreObjectInfo)
+           && Entity.ActiveGameObject is not WizClientPet
+           && Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate);
+
+    private bool? _isQuestOnly;
+
+    private bool QuestCallsFor(Wizard wizard) {
+        // A zone script put the object in another state than it was placed in (shown it).
+        var state = Entity.Zone.ScriptState.GetObjectState(Entity.Info?.m_zoneTag);
+        if (!string.IsNullOrEmpty(state) && !IsDespawnState(state)
+            && !string.Equals(state, Entity.Info?.m_startState, System.StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        if (wizard is null) {
+            return false;
+        }
+
+        // A dynamod of the player's shows it (only the ones that do not hide it reach here).
+        var tag = Entity.Info?.m_zoneTag;
+        if (wizard.DynamodSet?.Dynamods?.Any(d => !IsDespawnState(d.ModState)
+                && string.Equals(d.ClientTag, tag, System.StringComparison.OrdinalIgnoreCase)) == true) {
+            return true;
+        }
+
+        return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
+            || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true;
+    }
+
+    // Looked at again every few seconds while the player moves, so a quest step that starts brings its NPC out.
+    private void ShowIfQuestCallsFor(IActorRef player, Wizard wizard) {
+        var now = System.DateTime.UtcNow;
+        if (_questCheckedAt.TryGetValue(player, out var last) && now - last < QUEST_CHECK_INTERVAL) {
+            return;
+        }
+
+        _questCheckedAt[player] = now;
+        wizard ??= _hiddenUntilQuest[player];
+        if (QuestCallsFor(wizard)) {
+            Reveal(player, wizard);
+        }
+    }
+
+    private void Reveal(IActorRef player, Wizard wizard) {
+        _hiddenUntilQuest.Remove(player);
+        _questCheckedAt.Remove(player);
+        _joinedPlayers.Add(player);
+        if (wizard is not null) {
+            _playersWithRequirementsMet[wizard] = player;
+        }
+
+        CreateObjectForPlayer(player);
+        _playersInRange.Add(player);
     }
 
     private static bool IsDespawnState(string stateName) {
