@@ -296,22 +296,20 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     // Picking another quest to follow in the quest book: the client switches the star itself and tells us, but the
-    // quest text at the bottom of the screen only follows the goals it is sent, so it kept the quest the zone loaded
-    // with (Niduus, 2026-10-25). The picked quest's active goals go again, as at the start of a zone.
+    // quest text at the bottom of the screen only follows a quest it is sent, so it kept the quest the zone loaded
+    // with (Niduus, 2026-10-25). Sending only the goals again took the text and arrow away; the picked quest goes
+    // again whole, as when a zone loads.
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_SWITCHACTIVEQUEST))]
     private void ReceiveSwitchActiveQuest(WIZARD2_53_PROTOCOL.MSG_SWITCHACTIVEQUEST message) {
-        var qInstance = GetActiveWizard()?.QuestBehavior.CurrentQuestInstances
+        var wizard = GetActiveWizard();
+        var qInstance = wizard?.QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q is not null && q.ID == message.ActiveQuestGID);
         var qTemplate = qInstance is null ? null : GetQuestTemplate(qInstance.QuestName);
-        if (qTemplate?.m_goals is null) {
+        if (qTemplate?.m_goals is null || !IsShownInQuestBook(qTemplate, wizard)) {
             return;
         }
 
-        var goals = ActiveGoals(qInstance, qTemplate).ToList();
-        var picked = goals.Where(g => qInstance.GoalProgress.Any(p => p.ID == message.ActiveGoalGID && p.GoalName == g.m_goalName)).ToList();
-        foreach (var gTemplate in picked.Count > 0 ? picked : goals) {
-            SendGoalMessage(gTemplate, qInstance, forceSendDestZone: true);
-        }
+        SendQuestResumeMessage(qTemplate, qInstance);
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_COMPLETEDIALOG))]
