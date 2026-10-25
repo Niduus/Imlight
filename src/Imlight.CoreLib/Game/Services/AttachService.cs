@@ -232,6 +232,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         _wizard.SetZone(zoneName, zoneDetails.ZoneDisplayName);
         _wizard.SetPersistentLocation(zoneDetails.Location);
         _wizard.SetPersistentOrientation(zoneDetails.Orientation);
+        _wizard.SetZoneIsInstance(zoneDetails.IsInstance);
 
         // The services that answer MSG_PRELOGIN read the lot, and the client's owner check reads it from the deed.
         _wizard.AttachedLotGid = house?.LotGid ?? 0;

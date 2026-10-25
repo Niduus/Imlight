@@ -828,6 +828,7 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public uint ErrorCode;
         public string ErrorMessage;
         public List<GID> CriticalObjects;
+        public bool IsInstance;
 
     }
 

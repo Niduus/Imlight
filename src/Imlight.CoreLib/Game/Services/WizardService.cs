@@ -274,6 +274,7 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
         // Direction is a byte: 250 steps make a full turn, as the server packs it for MSG_SERVERTELEPORT.
         var radians = message.Direction / DIRECTION_STEPS * (2 * System.MathF.PI);
         _activeWizard.Orientation = new Vector3(0, 0, radians);
+        _activeWizard.NoteWalkedTo(position, radians);
 
         // Saved every few seconds as well as at logout, so a crash or a stopped server still puts the wizard back
         // where they stood and facing the same way (Niduus, 2026-10-23).

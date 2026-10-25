@@ -67,6 +67,12 @@ public class Wizard {
     public string Zone { get; set; }
     public string ZoneDisplayName { get; set; }
     public string PreviousZone { get; set; }
+    // Whether Zone is an instance (a dungeon, a tower, a house, an arena). A login never goes back into one: it
+    // starts at SafeZone, the last place outside any instance, like live does (Niduus, 2026-10-25).
+    public bool ZoneIsInstance { get; set; }
+    public string SafeZone { get; set; }
+    public string SafeZoneDisplayName { get; set; }
+    public string SafeLocation { get; set; }
 
     public ulong InteriorStowedMountId { get; set; }
     // `.rename`: when the wizard asked for the game's rename window. Character select offers it for a while after
@@ -296,6 +302,64 @@ public class Wizard {
 
         // Persistent save.
         WizardCollection.UpdateCharacterLocation(this, Location, Orientation.Z);
+    }
+
+    // The path walked lately, so leaving a zone can step a little back out of the sigil or door that was used.
+    private readonly List<(Imcodec.Math.Vector3 Location, float Yaw)> _recentPath = [];
+    private const int RecentPathSize = 64;
+    private const float RecentPathSpacing = 20f;
+
+    public void NoteWalkedTo(Imcodec.Math.Vector3 location, float yaw) {
+        lock (_recentPath) {
+            if (_recentPath.Count > 0 && Distance2D(_recentPath[^1].Location, location) < RecentPathSpacing) {
+                return;
+            }
+
+            if (_recentPath.Count == RecentPathSize) {
+                _recentPath.RemoveAt(0);
+            }
+
+            _recentPath.Add((location, yaw));
+        }
+    }
+
+    /// <summary>
+    /// The newest spot on the path walked lately that is at least <paramref name="distance"/> away from where the
+    /// wizard stands now, or the current spot when the wizard did not walk that far.
+    /// </summary>
+    public (Imcodec.Math.Vector3 Location, float Yaw) GetSpotStepsBack(float distance) {
+        lock (_recentPath) {
+            for (var i = _recentPath.Count - 1; i >= 0; i--) {
+                if (Distance2D(_recentPath[i].Location, Location) >= distance) {
+                    return _recentPath[i];
+                }
+            }
+        }
+
+        return (Location, Orientation.Z);
+    }
+
+    private static float Distance2D(Imcodec.Math.Vector3 a, Imcodec.Math.Vector3 b)
+        => MathF.Sqrt(((a.X - b.X) * (a.X - b.X)) + ((a.Y - b.Y) * (a.Y - b.Y)));
+
+    public void SetZoneIsInstance(bool isInstance) {
+        if (ZoneIsInstance == isInstance) {
+            return;
+        }
+
+        ZoneIsInstance = isInstance;
+        WizardCollection.UpdateCharacter(CharId, existing => existing.ZoneIsInstance = isInstance);
+    }
+
+    public void SetSafeSpot(string zone, string zoneDisplayName, string location) {
+        SafeZone = zone;
+        SafeZoneDisplayName = zoneDisplayName;
+        SafeLocation = location;
+        WizardCollection.UpdateCharacter(CharId, existing => {
+            existing.SafeZone = zone;
+            existing.SafeZoneDisplayName = zoneDisplayName;
+            existing.SafeLocation = location;
+        });
     }
 
     public void SetZone(string zone, string zoneDisplayName) {

@@ -87,6 +87,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         = ConfigurationManager.Settings["April Fools.RandomBackFlips"].AsBool();
     private readonly ZoneTransferGate _transferGate = new();
     private uint _currentDynamicZoneId;
+    private bool _currentZoneIsInstance;
+
+    // How far back along the path walked the login spot is put, so it is not on the sigil or in the door used.
+    private const float SAFE_SPOT_STEP_BACK = 200f;
     private HouseEntry _pendingHouseEntry;
 
     private const string SIGIL_ENTER_TIMER_KEY = "sigilenter";
@@ -262,6 +266,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             // for MSG_ATTACH. In which case, the client is already prepared for the zone transfer.
             SetZone(zoneDetails.ZoneActorRef);
             _currentDynamicZoneId = zoneDetails.DynamicZoneId;
+            _currentZoneIsInstance = zoneDetails.IsInstance;
         }
 
         Sender.Tell(zoneDetails);
@@ -1124,6 +1129,23 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(rsp);
     }
 
+    // Leaving a zone outside any instance remembers where the wizard stood, a few steps back from the way out. A login
+    // after logging out inside an instance starts there instead of inside it (GameTransitionService).
+    private void RememberSafeSpot(Wizard character) {
+        if (_currentZoneIsInstance || string.IsNullOrEmpty(character.Zone) || character.AttachedLotGid != 0
+            || HouseZoneIndex.IsHouseZone(character.Zone)) {
+            return;
+        }
+
+        try {
+            var (spot, yaw) = character.GetSpotStepsBack(SAFE_SPOT_STEP_BACK);
+            character.SetSafeSpot(character.Zone, character.ZoneDisplayName, Imlight.CoreLib.Shared.Resources.Util.GetCompactStringFromVector(spot, new Imcodec.Math.Vector3(0, 0, yaw)));
+        }
+        catch (Exception ex) {
+            Logger.Error("Session {SessionId} could not remember the safe spot: {Message}", Logger.Args(SessionActor.SessionID, ex.Message));
+        }
+    }
+
     private void SetZone(IActorRef actorRef) {
         ZoneActor = actorRef;
     }
@@ -1370,6 +1392,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         // Wizard record reflects where the player should return if the new attach fails.
         WizardCollection.UpdateCharacterZone(character, character.Zone, character.ZoneDisplayName);
         WizardCollection.UpdateCharacterLocation(character, character.Location, character.Orientation.Z);
+        RememberSafeSpot(character);
 
         var transferIp = ClientAddress.For(SessionActor, character.GameServerIp);
         // A failed transfer out of a house falls back into it, and the house is named by its lot.

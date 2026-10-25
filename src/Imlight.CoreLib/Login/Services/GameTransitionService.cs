@@ -177,7 +177,20 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
         SendToSocket(msg);
     }
 
+    // Live never logs a wizard back into an instance (a dungeon, a tower, a house, an arena): the login starts at the
+    // last spot outside any instance, a few steps back from the sigil or door (Niduus, 2026-10-25).
+    private static bool StartsAtSafeSpot(Wizard wizard)
+        => wizard.ZoneIsInstance && !string.IsNullOrEmpty(wizard.SafeZone) && !IsUnreachableOnLogin(wizard.SafeZone)
+           && !string.IsNullOrEmpty(wizard.SafeLocation);
+
     private string DetermineZone(Wizard wizard) {
+        if (StartsAtSafeSpot(wizard)) {
+            Logger.Information("Character {CharId} logged out inside instance {Zone}; logging in at {SafeZone} instead.",
+                Logger.Args(wizard.CharId, wizard.Zone, wizard.SafeZone));
+
+            return wizard.SafeZone;
+        }
+
         // The player may have logged out in a zone we can't put them back into.
         if (!IsUnreachableOnLogin(wizard.Zone)) {
             return wizard.Zone;
@@ -198,6 +211,10 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
     }
 
     private string DetermineLocation(Wizard wizard) {
+        if (StartsAtSafeSpot(wizard)) {
+            return wizard.SafeLocation;
+        }
+
         if (wizard.Location == Vector3.Zero) {
             return "Start";
         }

@@ -89,7 +89,7 @@ public static class WizardCollection {
         }
     }
 
-    private static bool UpdateCharacter(ulong charId, Action<Wizard> update)
+    internal static bool UpdateCharacter(ulong charId, Action<Wizard> update)
         => UpdateCharacterWithSession(charId, (_, existingCharacter) => {
             update(existingCharacter);
             return true;

@@ -641,7 +641,8 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
             ErrorCode = 0,
             MobileId = GenerateObjectIdentifier(),
             ZoneDisplayName = ZoneName,
-            CriticalObjects = [.. _criticalObjectIds]
+            CriticalObjects = [.. _criticalObjectIds],
+            IsInstance = IsInstance
         };
 
         var actualLocation = GetLocationFromString(message.DestinationLocation);
