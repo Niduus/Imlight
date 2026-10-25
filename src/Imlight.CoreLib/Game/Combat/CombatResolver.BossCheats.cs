@@ -959,6 +959,7 @@ public partial class CombatResolver {
         var lines = new List<string>();
         var defeat = false;
         _lastStepTargets = [];
+        _clearedCount = 0;
         for (var s = 0; s < steps.Count; s++) {
             var step = steps[s];
             if (!boss.IsAlive && !step.Is("Say")) {
@@ -978,6 +979,27 @@ public partial class CombatResolver {
                 }
 
                 break;
+            }
+
+            // IfCleared: the next Count steps (1 if 0) only if the removals before it took off at least Amount (1 if 0)
+            // effects; with Each, once for each one taken off ("Clear a DoT for a +55% Storm blade", Reap the Whirlwind).
+            if (step.Is("IfCleared")) {
+                var next = steps.Skip(s + 1).Take(Math.Max(1, step.Count)).ToList();
+                var cleared = _clearedCount;
+                var times = step.Each ? cleared : cleared >= Math.Max(1, step.Amount) ? 1 : 0;
+                Logger.Information("Duel {0} | Slot {1} | {2}: {3} effects were cleared, so the next {4} steps go {5} times.",
+                    Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, cleared, next.Count, times));
+                if (times != 1) {
+                    for (var t = 0; t < times && boss.IsAlive; t++) {
+                        cinematicTime += RunCheatStepsInOrder(boss, cheat, next, trigger, receiver, bossName, custom, combatActionList,
+                            cinematicTimeSoFar + cinematicTime);
+                    }
+
+                    _clearedCount = cleared;
+                    s += next.Count;
+                }
+
+                continue;
             }
 
             switch (step.Do.ToLowerInvariant()) {
@@ -1065,7 +1087,7 @@ public partial class CombatResolver {
                     break;
                 case "removecharms" or "removewards":
                     foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
-                        RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count, step.Spell);
+                        _clearedCount += RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count, step.Spell);
                     }
 
                     break;
@@ -1157,7 +1179,11 @@ public partial class CombatResolver {
             "stealpips" => $"steal {step.Amount} {step.Kind} pips{on}",
             "removeauras" => $"remove auras{on}",
             "removeeffects" => $"remove {(step.Kind.Length > 0 ? step.Kind : "all")} effects x{(step.Count > 0 ? step.Count : "all")}{on}",
-            "addcharm" => $"add a {step.Amount}% {SchoolText(step.School)}{step.Kind}{on}",
+            "addcharm" => step.Kind.ToLowerInvariant() is "dot" or "hot"
+                ? $"add a {step.Amount} {SchoolText(step.School)}{step.Kind} over {Math.Max(1, step.Rounds)} rounds{on}"
+                : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}",
+            "ifcleared" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect cleared"
+                : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were cleared",
             "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
             "immune" => $"immune to {SchoolText(step.School)}damage for {RoundsText(step.Rounds)}{on}",
             "stun" => $"stun for {Math.Max(1, step.Rounds)} rounds{on}",
@@ -1383,9 +1409,10 @@ public partial class CombatResolver {
 
     // RemoveCharms / RemoveWards: Kind Good, Bad or All (empty), newest first, Count of them (0 = all); with a Spell, only
     // those that came from a spell of that name (any version).
-    private void RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count, string fromSpell = "") {
+    // Returns how many came off (for IfCleared).
+    private int RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count, string fromSpell = "") {
         if (target?._hangingEffects is not { } hanging) {
-            return;
+            return 0;
         }
 
         var good = kind.Equals("Good", StringComparison.OrdinalIgnoreCase);
@@ -1398,6 +1425,8 @@ public partial class CombatResolver {
         hanging.RemoveAll(gone.Contains);
         Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} of its charms or wards.",
             Logger.Args(_duel.m_duelID.Full, target.SlotIndex, gone.Count));
+
+        return gone.Count;
     }
 
     private void HealFromCheat(CombatDuelSubCircle target, int amount) {

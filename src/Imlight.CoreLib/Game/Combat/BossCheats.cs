@@ -101,7 +101,13 @@
  *     { "Do": "StealPips", "Amount", "Kind", "Target" (Caster if left out) }   taken from them, given to the boss.
  *     { "Do": "RemoveAuras", "Target" (AllEnemies) }
  *     { "Do": "AddCharm", "Kind": Blade/Weakness/Shield/Trap/Absorb, "Amount" (percent; hit points for Absorb),
- *       "School" ("" = all), "Target" (Self, or Caster for a weakness or trap) }   used up as a real one.
+ *       "School" ("" = all), "Target" (Self, or Caster for a weakness or trap) }   used up as a real one. Kind DoT or
+ *       HoT: Amount in all, over Rounds rounds (3 if 0). "Spell"/"SpellID": shown in the game as that spell (its id);
+ *       two effects with the same spell id count once on a hit, as real ones of one spell do.
+ *     { "Do": "IfCleared", "Count" (1), "Amount" (1), "Each" }   the next Count steps only if the removal steps before
+ *       it (RemoveEffects, RemoveCharms, RemoveWards, RemoveAuras) took off at least Amount effects; with Each, once for
+ *       each one taken off. "Clear DoT for +55% Storm blade": RemoveEffects Kind DoT Count 1 Target Receiver, then
+ *       IfCleared, then AddCharm Blade 55 Storm Target Self.
  *     { "Do": "Boost", "Kind": Damage/Resist/Heal/Accuracy, "Amount" (percent, below 0 lowers), "School", "Rounds"
  *       (0 = the rest of the battle), "Target" (Self) }   an aura-like effect that is never used up (enrage: Boost
  *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do.
@@ -418,6 +424,8 @@ internal static class BossCheats {
         public string Weights { get; set; } = "";
         // Player cheats' FreeCast: how many times, when (First, Last, Before, After, Now), and with an enchantment.
         public int Times { get; set; }
+        // For IfCleared: once for each effect taken off, not just once.
+        public bool Each { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
         // For FirstTurn: Us (the cheat's own side acts first) or Them (the other side).

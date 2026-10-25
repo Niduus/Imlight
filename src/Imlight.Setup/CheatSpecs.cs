@@ -87,7 +87,8 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_pipsOf = [("", "it"), ("Enemy", "a player")];
     private static readonly (string, string)[] s_pipsKind = [("", "pips"), ("Shadow", "shadow pips")];
     private static readonly (string, string)[] s_creatureWho = [("", "the one the When is about"), ("Receiver", "whoever the spell was aimed at")];
-    private static readonly (string, string)[] s_addKinds = [("Blade", "blade"), ("Weakness", "weakness"), ("Shield", "shield"), ("Trap", "trap"), ("Absorb", "absorb")];
+    private static readonly (string, string)[] s_addKinds = [("Blade", "blade"), ("Weakness", "weakness"), ("Shield", "shield"), ("Trap", "trap"), ("Absorb", "absorb"),
+        ("DoT", "damage over time"), ("HoT", "heal over time")];
     private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy")];
     private static readonly (string, string)[] s_timings = [
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
@@ -358,9 +359,15 @@ internal static class CheatSpecs {
         new("D.AddEffects", BlockKind.Do, "shield", "add a spell's charms", "The charms and wards of a spell (Tower Shield, Fire Blade, Feint...) go on at once, with no casting.",
             "Put the charms and wards of {Spell} on {Target}", [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target, "Self")],
             b => $"put the effects of {SpellName(b)}{Target(b)}"),
-        new("D.AddCharm", BlockKind.Do, "shield", "add a charm or ward", "A blade, weakness, shield, trap or absorb of your own size goes on at once, and is used up like a real one. The amount is a percent (hit points for an absorb).",
-            "Put a {Amount} {School} {Kind} on {Target}", [F("Amount", CheatFieldType.Percent, 50, max: 100_000), F("School", CheatFieldType.Choice, "", s_anySchool), F("Kind", CheatFieldType.Choice, "Blade", s_addKinds), F("Target", CheatFieldType.Target, "Self")],
-            b => $"put a {b.Number("Amount")}{(b.Text("Kind") == "Absorb" ? "" : "%")} {SchoolWord(b)}{LabelOf(s_addKinds, b.Text("Kind"))}{Target(b)}"),
+        new("D.AddCharm", BlockKind.Do, "shield", "add an effect of your own size", "A blade, weakness, shield, trap or absorb of your own size goes on at once, and is used up like a real one: the amount is a percent (hit points for an absorb), so \"55, Storm, blade\" is a +55% Storm blade. A damage or heal over time is the amount in all, spread over the rounds (3 if 0); pick its school. \"Shown as\" (optional) names a real spell the game shows it as (its icon and name), at your size; two of the same spell count once on a hit, as real ones do. After \"remove effects\" and \"only if something came off\" it is a reward: \"Clear DoT on the target for +55% Storm blade on me\".",
+            "Put a {Amount} {School} {Kind} on {Target} for {Rounds} rounds, shown as {Spell}", [F("Amount", CheatFieldType.Percent, 50, max: 100_000), F("School", CheatFieldType.Choice, "", s_anySchool), F("Kind", CheatFieldType.Choice, "Blade", s_addKinds), F("Target", CheatFieldType.Target, "Self"), F("Rounds", CheatFieldType.Number, 0, max: 99), F("Spell", CheatFieldType.Words, "")],
+            b => b.Text("Kind") is "DoT" or "HoT"
+                ? $"put a {N(b.Number("Amount"))} {SchoolWord(b)}{LabelOf(s_addKinds, b.Text("Kind"))} over {Math.Max(1, b.Number("Rounds") > 0 ? b.Number("Rounds") : 3)} rounds{Target(b)}{(b.Text("Spell").Length > 0 ? $" (shown as {b.Text("Spell")})" : "")}"
+                : $"put a {b.Number("Amount")}{(b.Text("Kind") == "Absorb" ? "" : "%")} {SchoolWord(b)}{LabelOf(s_addKinds, b.Text("Kind"))}{Target(b)}{(b.Text("Spell").Length > 0 ? $" (shown as {b.Text("Spell")})" : "")}"),
+        new("D.IfCleared", BlockKind.Do, "broom", "only if something came off", "Put it after \"remove effects\" (or remove charms, wards or auras): the next blocks (how many) go off only if at least this many effects came off. With \"once for each\" they go off once for each effect that came off. Example, Reap the Whirlwind's \"Clear DoT for +55% Storm blade\": remove 1 damage over time from whoever the spell was aimed at, then this block (next 1 block), then put a 55% Storm blade on itself.",
+            "Do the next {Count} blocks only if at least {Amount} effects came off {Each}", [new("Count", CheatFieldType.Number, 1, Max: 20, Min: 1), new("Amount", CheatFieldType.Number, 1, Max: 99, Min: 1), new("Each", CheatFieldType.Toggle, false, Label: "once for each")],
+            b => b.Flag("Each") ? $"(the next {Math.Max(1, b.Number("Count"))} once for each effect that came off)"
+                : $"(the next {Math.Max(1, b.Number("Count"))} only if {Math.Max(1, b.Number("Amount"))} or more came off)"),
         new("D.Boost", BlockKind.Do, "bolt", "boost or enrage", "Raises (or with a minus number, lowers) its damage, resist, healing or accuracy for some rounds; 0 rounds is the rest of the battle. It is never used up and stacks: on a \"from round … on\" cheat it is an enrage.",
             "Change the {Kind} of {Target} by {Amount} for {School} spells for {Rounds} rounds", [F("Kind", CheatFieldType.Choice, "Damage", s_boostKinds), F("Target", CheatFieldType.Target, "Self"), new("Amount", CheatFieldType.Number, 10, Max: 1000, Min: -100), F("School", CheatFieldType.Choice, "", s_anySchool), F("Rounds", CheatFieldType.Number, 0, max: 99)],
             b => $"{LabelOf(s_boostKinds, b.Text("Kind"))} {(b.Number("Amount") >= 0 ? "+" : "")}{b.Number("Amount")}%{(b.Text("School").Length > 0 ? $" ({b.Text("School")})" : "")}{Target(b)} for {RoundsFor(b)}"),

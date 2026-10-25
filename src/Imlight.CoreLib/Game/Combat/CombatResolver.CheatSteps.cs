@@ -277,6 +277,9 @@ public partial class CombatResolver {
 
     // The targets of the step before (the target "Last"), and the mark the running step means ("Marked").
     private List<CombatDuelSubCircle> _lastStepTargets = [];
+
+    // How many effects the removal steps of the cheat now going off took off so far (for IfCleared).
+    private int _clearedCount;
     private string _stepMark = "";
 
     // The marks on each participant, by its global id (Mark, Unmark, the If "marked"; Niduus, 2026-10-24: Shadowbones's
@@ -511,6 +514,7 @@ public partial class CombatResolver {
                                                                      && FromSpell(e, step.Spell))
                             .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                         target._hangingEffects.RemoveAll(gone.Contains);
+                        _clearedCount += gone.Count;
                         Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} of its {3} effects.",
                             Logger.Args(_duel.m_duelID.Full, target.SlotIndex, gone.Count, kinds.Length == 0 ? "hanging" : string.Join("/", kinds)));
                     }
@@ -520,21 +524,33 @@ public partial class CombatResolver {
                 case "removeauras":
                     foreach (var target in On("AllEnemies").Where(t => t?._hangingEffects is not null)) {
                         var gone = target._hangingEffects.Count(e => CombatRequirements.IsAura(e) && !e.m_protected);
+                        _clearedCount += gone;
                         target._hangingEffects.RemoveAll(e => CombatRequirements.IsAura(e) && !e.m_protected);
                         Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} auras.", Logger.Args(_duel.m_duelID.Full, target.SlotIndex, gone));
                     }
 
                     return true;
                 case "addcharm": {
-                    // Blade, Weakness, Shield, Trap or Absorb of Amount (percent; hit points for Absorb), used up as one.
+                    // Blade, Weakness, Shield, Trap or Absorb of Amount (percent; hit points for Absorb), used up as one;
+                    // or a DoT or HoT of Amount in all over Rounds rounds (3 if 0). With a Spell, the effect carries that
+                    // spell's id, so the game shows it as that spell (its icon and name); the size is still Amount.
                     var amount = Math.Abs(step.Amount);
+                    var overRounds = step.Rounds > 0 ? step.Rounds : 3;
+                    // As a real one: m_effectParam the whole amount, m_paramPerRound each round's share.
+                    var perRound = amount / overRounds;
                     var effect = (step.Kind ?? "").ToLowerInvariant() switch {
+                        "dot" => CheatEffect(kSpellEffects.kDamageOverTime, amount, step.School, overRounds, good: false) with { m_paramPerRound = perRound },
+                        "hot" => CheatEffect(kSpellEffects.kHealOverTime, amount, step.School, overRounds, good: true) with { m_paramPerRound = perRound },
                         "weakness" => CheatEffect(kSpellEffects.kModifyOutgoingDamage, -amount, step.School, 0, good: false),
                         "shield" => CheatEffect(kSpellEffects.kModifyIncomingDamage, -amount, step.School, 0, good: true),
                         "trap" => CheatEffect(kSpellEffects.kModifyIncomingDamage, amount, step.School, 0, good: false),
                         "absorb" => CheatEffect(kSpellEffects.kAbsorbDamage, amount, step.School, 0, good: true),
                         _ => CheatEffect(kSpellEffects.kModifyOutgoingDamage, amount, step.School, 0, good: true),
                     };
+                    if ((step.Spell.Length > 0 || step.SpellID != 0) && FindSpell(step.Spell, step.SpellID) is { Template: not null } shownAs) {
+                        effect = effect with { m_spellTemplateID = shownAs.Spell.m_templateID };
+                    }
+
                     var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
                     foreach (var target in On(fallback).Where(t => t?._hangingEffects is not null && t.IsAlive)) {
                         target._hangingEffects.Add(effect with { });
