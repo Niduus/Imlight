@@ -27,6 +27,7 @@
  * Version: KALI 1.0
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -37,6 +38,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Events;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -58,8 +60,12 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     public string InteractWizBang => "Registrar";
     public string DisplayKey      => "GUI_TreasureShop";
 
-    private List<TreasureCardEntry> _inventory;
+    private List<TreasureCardEntry> _inventory = [];
     private string _title = "Treasure Cards";
+
+    // The Deckathalon's cards (DeckathalonShopCards): Harold adds them to his own, a Deckathalon TC NPC sells only them.
+    private enum EventCards { None, Added, Only }
+    private EventCards _eventCards;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has a treasure card inventory in SpiralDB, or is one of the
@@ -120,11 +126,20 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     public override void OnStart() {
         // A vendor of the Customs tab sells its own treasure cards at its own prices, under its own name.
         if (CustomNpcs.For(Entity.Info?.m_zoneTag) is { } custom) {
+            if (string.Equals(custom.Window, DeckathalonShopCards.WINDOW, StringComparison.OrdinalIgnoreCase)) {
+                _eventCards = EventCards.Only;
+            }
+
             _inventory = [.. CustomNpcs.TreasureCardsOf(custom).Select(card => new TreasureCardEntry { SpellName = card.Name, Price = card.Price })];
             _title = CustomNpcs.TitleFor(custom) is { Length: > 0 } title ? title : _title;
             Logger.Information("Custom vendor {0} ({1}): {2} treasure cards, title {3}.", Logger.Args(custom.Id, custom.Name, _inventory.Count, _title));
 
             return;
+        }
+
+        // The window's name bar shows a game text, so a shop keeper's shop is named after the shop keeper.
+        if (Entity.Template is GameObjectTemplate keeper && !keeper.m_displayName.IsEmpty) {
+            _title = keeper.m_displayName;
         }
 
         if (Entity.Template is GameObjectTemplate template && TestShopFor(template) is not TestShop.None) {
@@ -141,10 +156,20 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
         }
 
         _inventory = inventory.TreasureCards;
+        if (Entity.ActiveGameObject.m_templateID.MParts.TemplateId == DeckathalonShopCards.HAROLD_TEMPLATE_ID) {
+            _eventCards = EventCards.Added;
+        }
     }
 
+    // What the shop sells now: its own cards, and the Deckathalon's while one is on.
+    private List<TreasureCardEntry> Stock => _eventCards switch {
+        EventCards.Only => DeckathalonShopCards.Current(),
+        EventCards.Added => [.. _inventory.Concat(DeckathalonShopCards.Current()).DistinctBy(card => card.SpellName)],
+        _ => _inventory,
+    };
+
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => [
+        => _eventCards == EventCards.Only && Stock.Count == 0 ? [] : [
             new TreasureShopOption {
                 m_displayKey = DisplayKey,
                 m_iconKey = "TreasureShop",
@@ -159,23 +184,23 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     }
 
     public bool HasSpell(string spellName)
-        => _inventory.Any(x => x.SpellName == spellName);
+        => Stock.Any(x => x.SpellName == spellName);
 
     /// <summary>
     /// Checks if the vendor carries a spell with the given hash.
     /// The hash is computed from the spell name via StringHash.Compute.
     /// </summary>
     public bool HasSpell(uint spellHash)
-        => _inventory.Any(x => StringHash.Compute(x.SpellName) == spellHash);
+        => Stock.Any(x => StringHash.Compute(x.SpellName) == spellHash);
 
     /// <summary>
     /// Gets the spell name for a given spell hash, or null if not found.
     /// </summary>
     public string GetSpellName(uint spellHash)
-        => _inventory.Find(x => StringHash.Compute(x.SpellName) == spellHash)?.SpellName;
+        => Stock.Find(x => StringHash.Compute(x.SpellName) == spellHash)?.SpellName;
 
     public int GetSpellPrice(string spellName) {
-        var entry = _inventory.Find(x => x.SpellName == spellName);
+        var entry = Stock.Find(x => x.SpellName == spellName);
         return entry?.Price ?? 0;
     }
 
@@ -190,7 +215,7 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
     private void SendTreasureShopOfferings(IActorRef playerActor) {
         var shopOffering = new TreasureShopOffering() {
             m_treasureShopTitle = _title,
-            m_treasureSpellNames = _inventory.Select(x => (ByteString)x.SpellName).ToList(),
+            m_treasureSpellNames = Stock.Select(x => (ByteString)x.SpellName).ToList(),
             m_crownShop = false,
             m_pvpCurrencyShop = false,
             m_pvpTourneyCurrencyShop = false,

@@ -342,7 +342,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
 
         // A custom vendor of treasure cards only has the treasure card shop (InteractTreasureVendorComponent).
-        if (_custom is not null && _inventory.Count == 0 && _custom.TreasureCards.Count > 0) {
+        if (_custom is not null && _inventory.Count == 0 && (_custom.TreasureCards.Count > 0
+            || string.Equals(_custom.Window, Events.DeckathalonShopCards.WINDOW, StringComparison.OrdinalIgnoreCase))) {
             return [];
         }
 

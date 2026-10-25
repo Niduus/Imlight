@@ -295,6 +295,7 @@ internal sealed class CustomNpc {
     internal const string VENDOR = "Vendor";
     internal const string TRAINER = "Trainer";
     internal const string AUTOMATIC = "Automatic";
+    internal const string DECKATHALON = "Deckathalon";
 
     /// <summary>Elmer Meadowgrass, a Wizard City shopkeeper (the house sellers' look).</summary>
     internal const ulong DEFAULT_LOOK = 136831;
@@ -313,6 +314,7 @@ internal sealed class CustomNpc {
         ("Jewel", "Jewel shop (jewels and pins)"),
         ("Recipe", "Recipe shop"),
         ("Combined", "Combined shop (a mix of everything)"),
+        (DECKATHALON, "Deckathalon treasure cards (only the cards of the Deckathalon that is on)"),
     ];
 
     [System.Text.Json.Serialization.JsonIgnore]
@@ -360,7 +362,9 @@ internal sealed class CustomNpcPreset {
 
     /// <summary>How the preset shows in the list: its kind, name and how many it has.</summary>
     [System.Text.Json.Serialization.JsonIgnore]
-    internal string Label => IsTrainer ? $"Trainer: {Name} ({Spells.Count} spells)" : $"Vendor: {Name} ({Items.Count} items)";
+    internal string Label => IsTrainer ? $"Trainer: {Name} ({Spells.Count} spells)"
+        : string.Equals(Window, CustomNpc.DECKATHALON, StringComparison.OrdinalIgnoreCase) ? $"Vendor: {Name} (the Deckathalon's treasure cards)"
+        : $"Vendor: {Name} ({Items.Count} items)";
 
     private static readonly JsonSerializerOptions s_read = new() { PropertyNameCaseInsensitive = true, AllowTrailingCommas = true };
 

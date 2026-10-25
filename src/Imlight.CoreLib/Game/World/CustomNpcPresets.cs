@@ -79,6 +79,10 @@ internal static class CustomNpcPresets {
         Add("the school trainers", SchoolTrainers);
         Add("the test trainers", TestTrainers);
         Add("the vanilla trainers", VanillaTrainers);
+        // Its cards are the Deckathalon's that is on, so it has no list of its own (DeckathalonShopCards).
+        presets.Add(new Preset("Deckathalon TC NPC", "Vendor", Events.DeckathalonShopCards.WINDOW,
+            "Sells only the sought-after treasure cards of the Deckathalon that is on, and nothing while none is. The cards of each " +
+            "school are in Settings, Deckathalon (FireShopCards and so on).", [], []));
 
         try {
             Directory.CreateDirectory(folder);

@@ -341,7 +341,9 @@ public class ZoneEntity(
         if (customNpc is not null) {
             AddComponent(customNpc.IsTrainer ? typeof(InteractTrainerComponent) : typeof(InteractVendorComponent));
             // Its treasure cards are sold in the game's treasure card shop, a service of its own.
-            if (!customNpc.IsTrainer && customNpc.TreasureCards.Count > 0) {
+            // A Deckathalon TC NPC sells the Deckathalon's cards there (DeckathalonShopCards).
+            if (!customNpc.IsTrainer && (customNpc.TreasureCards.Count > 0
+                || string.Equals(customNpc.Window, Imlight.CoreLib.Game.Events.DeckathalonShopCards.WINDOW, StringComparison.OrdinalIgnoreCase))) {
                 AddComponent(typeof(InteractTreasureVendorComponent));
             }
             Logger.Information("Custom NPC {0} ({1}, {2}) spawned in {3} at {4}, {5}, {6} with look {7}{8}.",
