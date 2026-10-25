@@ -57,8 +57,12 @@ internal sealed class InteractCraftingStationComponent(ZoneEntity entity) : Zone
     public string NpcIcon         => (Entity.Template as GameObjectTemplate)?.m_sIcon;
     public string NpcNameKey      => Service?.m_interactTitleOverride is { Length: > 0 } title ? title : null;
     public string NpcTextKey      => Service?.m_interactTextOverride is { Length: > 0 } text ? text : null;
-    public WizBangs WizBang        => WizBangs.None;
+    // A person who trades by crafting (Madam Magda's Fortune Coin Trading) gets the vendor's bag over her head; a
+    // station or anvil gets none.
+    public WizBangs WizBang        => Crafting.Crafting.Enabled && IsPerson ? WizBangs.Shopping : WizBangs.None;
     public string StateName       => null;
+
+    private bool IsPerson => (Entity.Template as GameObjectTemplate)?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any() == true;
     public string InteractWizBang => null;
     public string DisplayKey      => "GUI_Crafting";
 
