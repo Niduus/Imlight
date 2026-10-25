@@ -264,7 +264,8 @@ internal static class QuestMadlibs {
                 if (!string.IsNullOrEmpty(entry.m_picture)
                     && PersonaOfPicture(entry.m_picture) is { } pictured
                     && pictured != (string) entry.m_personaName
-                    && (templateId == 0 || (string) (CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_sIcon != (string) entry.m_picture)) {
+                    && (templateId == 0 || (CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_sIcon is { IsEmpty: false } icon
+                        && (string) icon != (string) entry.m_picture)) {
                     entry.m_personaName = pictured;
                     templateId = TemplateOfPersona(pictured);
                 }
@@ -317,7 +318,7 @@ internal static class QuestMadlibs {
     private static Dictionary<string, string> s_picturePersonas;
 
     /// <summary>
-    /// The persona whose lines show this picture most often across all quests (Art_Portrait_Gamma is
+    /// The persona whose lines show this picture most of the time across all quests (Art_Portrait_Gamma is
     /// WC-HUB-NPC07_Persona), or null when no line with a persona shows it.
     /// </summary>
     private static string PersonaOfPicture(string picture) {
@@ -345,7 +346,12 @@ internal static class QuestMadlibs {
                 }
             }
 
-            return counts.ToDictionary(p => p.Key, p => p.Value.MaxBy(c => c.Value).Key, StringComparer.OrdinalIgnoreCase);
+            // A picture several NPCs share (a plain townsperson's) belongs to none of them: only one persona showing it
+            // at least two times in three counts.
+            return counts
+                .Select(p => (Picture: p.Key, Top: p.Value.MaxBy(c => c.Value), Total: p.Value.Values.Sum()))
+                .Where(p => p.Top.Value * 3 >= p.Total * 2)
+                .ToDictionary(p => p.Picture, p => p.Top.Key, StringComparer.OrdinalIgnoreCase);
         });
 
         return map.GetValueOrDefault(picture);
