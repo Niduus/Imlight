@@ -149,10 +149,12 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         // Check if the player is now in range of the object.
+        // A player only counts as in range once a battle was asked for: one who walked in while still in a
+        // battle or its grace is pulled in on the next check (every 250 ms), even standing still (Niduus, 2026-10-25).
         if (IsInRadius(playerObj, Proximity) && !_playersInRange.Contains(playerActor)) {
-            // If the player is in range, trigger the enter events.
-            OnProximityEnter(playerObj, playerActor, playerWizard);
-            _playersInRange.Add(playerActor);
+            if (OnProximityEnter(playerObj, playerActor, playerWizard)) {
+                _playersInRange.Add(playerActor);
+            }
         } 
         else if (!IsInRadius(playerObj, Proximity) && _playersInRange.Contains(playerActor)) {
             _playersInRange.Remove(playerActor);
@@ -167,15 +169,19 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         m_wsNameOverride = NameOverride,
     };
 
-    private void OnProximityEnter(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+    private bool OnProximityEnter(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         // Bug fix: There is an off chance the player spawns in the middle of our proximity radius,
         // before the wizard even has time to load themselves into the world.
         if (playerWizard is null) {
-            return;
+            return false;
         }
 
-        if (!IsMonster || playerWizard.IsInCombatGrace || playerWizard.IsInDuel) {
-            return;
+        if (!IsMonster) {
+            return true;
+        }
+
+        if (playerWizard.IsInCombatGrace || playerWizard.IsInDuel) {
+            return false;
         }
 
         // Hey! I'm a dueling creature and a player just entered my proximity.
@@ -190,6 +196,7 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
 
         // We do nothing further here. This message will be sent to the ZoneSigilSupervisor
         // to locate the closest sigil to the player and the creature.
+        return true;
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_QUERYCREATURESTATS))]
