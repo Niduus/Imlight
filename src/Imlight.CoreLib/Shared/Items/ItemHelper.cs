@@ -62,7 +62,7 @@ internal static class ItemHelper {
     internal const int LockBit = unchecked((int) 0x80000000);
 
     /// <summary>
-    /// Whether the player locked the item. A locked item may not be sold, deleted, sold to the bazaar or stitched.
+    /// Whether the player locked the item. A locked item may not be sold, deleted or sold to the bazaar.
     /// </summary>
     /// <param name="item">The item in question, or null.</param>
     /// <returns>True when bit 31 of the pattern is set.</returns>

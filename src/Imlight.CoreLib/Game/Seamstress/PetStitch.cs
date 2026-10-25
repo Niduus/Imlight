@@ -40,7 +40,7 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
         stats.m_displayID = ItemHelper.GetDisplayTemplateId(look);
         stats.m_primaryColor = look.m_primaryColor;
         stats.m_secondaryColor = look.m_secondaryColor;
-        stats.m_pattern = look.m_pattern;
+        stats.m_pattern = (look.m_pattern & ~ItemHelper.LockBit) | StitchRules.LockOf(look, stats);
         if (!wizard.InventoryBehavior.RemoveItem(look)) {
             (stats.m_displayID, stats.m_primaryColor, stats.m_secondaryColor, stats.m_pattern) = before;
             failure = $"pet {look.m_globalID.Full} is not in the backpack";
@@ -91,7 +91,7 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
         pet.m_displayID = 0;
         pet.m_primaryColor = color1;
         pet.m_secondaryColor = color2;
-        pet.m_pattern = 0;
+        pet.m_pattern = StitchRules.LockOf(pet);
         if (!ItemSync.TrySerialize(look, out _) || !wizard.InventoryBehavior.AddItem(look)) {
             (pet.m_displayID, pet.m_primaryColor, pet.m_secondaryColor, pet.m_pattern) = before;
             failure = "the look pet could not be added";

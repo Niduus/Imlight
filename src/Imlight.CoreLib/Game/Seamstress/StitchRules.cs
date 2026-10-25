@@ -28,7 +28,8 @@
  *
  * NOTE:
  * The result has the stats item's template, the display item's look (m_displayID) and the display item's dyes.
- * A stitched item's dyes belong to its appearance template. Bit 31 of m_pattern is the client's item lock.
+ * A stitched item's dyes belong to its appearance template. Bit 31 of m_pattern is the client's item lock: the
+ * results of a stitch or an unstitch are locked when an item they came from was.
  *
  * TODO:
  *
@@ -149,7 +150,7 @@ internal static class StitchRules {
             DisplayTemplateId: ItemHelper.GetDisplayTemplateId(display),
             PrimaryColor: display.m_primaryColor,
             SecondaryColor: display.m_secondaryColor,
-            Pattern: display.m_pattern & PATTERN_WITHOUT_LOCK,
+            Pattern: (display.m_pattern & PATTERN_WITHOUT_LOCK) | LockOf(display, stats),
             Slot: displaySlot);
         reason = string.Empty;
 
@@ -195,14 +196,20 @@ internal static class StitchRules {
         }
 
         plan = new UnstitchPlan(
-            Stats: new UnstitchedItem((uint) item.m_templateID, statItemColor1, statItemColor2, 0),
+            Stats: new UnstitchedItem((uint) item.m_templateID, statItemColor1, statItemColor2, LockOf(item)),
             Appearance: new UnstitchedItem(displayTemplateId, item.m_primaryColor, item.m_secondaryColor,
-                item.m_pattern & PATTERN_WITHOUT_LOCK));
+                (item.m_pattern & PATTERN_WITHOUT_LOCK) | LockOf(item)));
         reason = string.Empty;
 
         return true;
     }
 
     private static bool IsDye(int color) => color is >= 0 and <= MAX_DYE;
+
+    /// <summary>
+    /// The item lock bit when any of the items is locked, else 0. A result keeps the lock of the items it came from.
+    /// </summary>
+    internal static int LockOf(params WizClientObjectItem[] items)
+        => items.Any(ItemHelper.IsLocked) ? ItemHelper.LockBit : 0;
 
 }
