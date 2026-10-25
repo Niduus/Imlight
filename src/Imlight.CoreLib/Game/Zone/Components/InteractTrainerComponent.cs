@@ -78,8 +78,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
     /// <summary>
     /// A test trainer teaches a whole kind of spell for free, at any level. In Ravenwood: Mr. Lincoln every
-    /// enchantment, Monstrologist Burke every Extract spell, Mellori the Shadow spells and Merle Ambrose the spells only
-    /// monsters and bosses cast.
+    /// enchantment, Monstrologist Burke every Extract spell and Mellori the Shadow spells. The monster and boss spells
+    /// (TestTrainerKind.Boss) are taught by the house set trainers and the Customs tab's preset; the Ravenwood Merle Ambrose
+    /// who taught them is a quest copy that stays hidden until a quest calls for him (Niduus 2026-10-25).
     /// </summary>
     public bool IsTestTrainer { get; private set; }
 
@@ -112,8 +113,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall, Fishing, Tome }
 
     /// <summary>
-    /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13), Mellori
-    /// (WC-RAV-NPC12) or Merle Ambrose (WC-RAV-NPC14). (Abner in the Commons only shows one kind of service, so he
+    /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13) or Mellori
+    /// (WC-RAV-NPC12). (Abner in the Commons only shows one kind of service, so he
     /// keeps the treasure card shop.)
     /// </summary>
     /// <returns>The kind of spells the NPC teaches, or null for any other NPC.</returns>
@@ -124,8 +125,6 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
                 return TestTrainerKind.Extracts;
             case "WC-RAV-NPC12":
                 return TestTrainerKind.Shadow;
-            case "WC-RAV-NPC14":
-                return TestTrainerKind.Boss;
             case "WC-HUB-NPC15_A":
             case "WC-HUB-NPC15_B":
                 // The Deckathalon Tome, the trainer hall's trainer (only as a house trainer: elsewhere it reads its
