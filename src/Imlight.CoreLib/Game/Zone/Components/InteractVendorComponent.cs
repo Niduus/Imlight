@@ -52,6 +52,7 @@ using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -193,7 +194,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         var ownList = Entity.Template is GameObjectTemplate shopKeeper ? OwnShopList(shopKeeper) : null;
         NPCInventory inventory = null;
         if (ownList is not null && !SpiralDB.IsExtraNpcInventory(templateId)) {
-            _inventory = ShopOrder.Alphabetical(ownList.Select(id => new GID(id)));
+            _inventory = ShopOrder.Alphabetical(KnownItems(ownList.Select(id => new GID(id))));
         }
         else if (!SpiralDB.IsExtraNpcInventory(templateId) && LiveShopLists.For(templateId) is { Count: > 0 } liveShops) {
             StartLiveShops(templateId, liveShops);
@@ -201,7 +202,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             return;
         }
         else if (NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out inventory)) {
-            _inventory = ShopOrder.Alphabetical(inventory.Inventory);
+            _inventory = ShopOrder.Alphabetical(KnownItems(inventory.Inventory));
         }
         else {
             // A shop keeper with nothing known to sell shows no shop, rather than an empty one.
@@ -229,6 +230,19 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
     }
 
+    // Only ids the game files have an item for: SpiralDB lists a few shops with spell ids instead (Harold Argleston,
+    // whose treasure cards are his treasure card shop), and an equipment shop of those opened empty.
+    private List<GID> KnownItems(IEnumerable<GID> items) {
+        var all = items.ToList();
+        var known = all.Where(item => CoreObjectFactory.HasTemplate(item.MParts.TemplateId)).ToList();
+        if (known.Count < all.Count) {
+            Logger.Warning("Vendor {0} ({1}): left out {2} of {3} ids the game files have no item for.",
+                Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.ActiveGameObject.m_debugName, all.Count - known.Count, all.Count));
+        }
+
+        return known;
+    }
+
     // A shop keeper whose shop list in the game files is empty sells what it sells live (LiveShopLists), in one menu
     // option and window per shop.
     private void StartLiveShops(uint templateId, IReadOnlyList<LiveShop> shops) {
@@ -243,7 +257,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                 recipes = [.. found.Select(r => (ByteString) r.Name)];
             }
             else {
-                inventory = ShopOrder.Alphabetical(shop.Items.Select(id => new GID((ulong) id)));
+                inventory = ShopOrder.Alphabetical(KnownItems(shop.Items.Select(id => new GID((ulong) id))));
             }
 
             if (inventory.Count > 0) {

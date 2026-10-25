@@ -202,6 +202,9 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
         return RootArchiveLoader.GetFile<CoreTemplate>(fileName);
     }
 
+    /// <summary>Whether the game files have a template with this id.</summary>
+    public static bool HasTemplate(ulong id) => TemplateLocations().ContainsKey(id);
+
     private static Dictionary<ulong, TemplateLocation> TemplateLocations()
         => LazyInitializer.EnsureInitialized(ref s_templateLocations, IndexTemplateLocations);
 
