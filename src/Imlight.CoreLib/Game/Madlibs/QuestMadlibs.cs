@@ -211,6 +211,26 @@ internal static class QuestMadlibs {
     private static readonly ConcurrentDictionary<string, uint> s_personaTemplates = new(StringComparer.Ordinal);
 
     /// <summary>
+    /// The NPC who says a dialog line: its persona's NPC, or the line's actor template ID when it names no persona.
+    /// The two can differ: Pesky Pirates' offer is Olivia Dawnwillow's persona with Ceren Nightchant's template.
+    /// </summary>
+    public static ulong SpeakerTemplateOf(string personaName, ulong actorTemplateId) {
+        ulong personaTemplate = TemplateOfPersona(personaName);
+        return personaTemplate != 0 ? personaTemplate : actorTemplateId;
+    }
+
+    /// <summary>The NPC who offers a quest: the speaker of its first "Prep" line, or 0.</summary>
+    public static ulong GiverTemplateOf(QuestTemplate quest) {
+        var entry = (quest?.m_dialogList as ActorDialogList)?.m_dialogs?
+            .FirstOrDefault(d => d.m_dialogTag == "Prep")?.m_dialogEntries?.FirstOrDefault();
+        return entry switch {
+            null => 0,
+            NPCDialogEntry npcEntry => SpeakerTemplateOf(npcEntry.m_personaName, npcEntry.m_actorTemplateID),
+            _ => entry.m_actorTemplateID,
+        };
+    }
+
+    /// <summary>
     /// The template of the NPC a persona goal names: its object name, or the object name plus "_Persona"
     /// (GH-HERO-NPC01_Persona is ObjectData/GH/GH-HERO-NPC01.xml). 0 when no template has that name.
     /// </summary>
@@ -258,8 +278,7 @@ internal static class QuestMadlibs {
             foreach (var entry in dialog.m_dialogEntries.OfType<NPCDialogEntry>().Where(e => e.m_nameSTKey.IsEmpty)) {
                 // The persona says who speaks; the actor template ID can be another NPC's ("pesky Skeletal Pirates" is
                 // Olivia Dawnwillow's persona with Ceren Nightchant's template; Niduus, 2026-10-25).
-                ulong personaTemplate = TemplateOfPersona(entry.m_personaName);
-                ulong templateId = personaTemplate != 0 ? personaTemplate : entry.m_actorTemplateID;
+                ulong templateId = SpeakerTemplateOf(entry.m_personaName, entry.m_actorTemplateID);
 
                 // A line whose picture is another NPC's is that NPC's: "Quests marked with a star..." shows Gamma but
                 // names Ceren Nightchant's persona (Niduus, 2026-10-25). The picture's own persona speaks it instead.

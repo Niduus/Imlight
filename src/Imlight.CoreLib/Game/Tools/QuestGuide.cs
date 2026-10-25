@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Madlibs;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
@@ -198,8 +199,7 @@ internal static class QuestGuide {
     }
 
     private static (string Giver, string Zone, string From) GiverOf(QuestTemplate quest, Dictionary<string, string> personaZones) {
-        var templateId = (quest.m_dialogList as ActorDialogList)?.m_dialogs?
-            .FirstOrDefault(d => d.m_dialogTag == "Prep")?.m_dialogEntries?.FirstOrDefault()?.m_actorTemplateID ?? 0;
+        var templateId = QuestMadlibs.GiverTemplateOf(quest);
         var npc = templateId == 0 ? null : CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate;
 
         var giver = "";

@@ -100,9 +100,8 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
             .GetAllQuests()
             .Where(x => x?.m_dialogList is ActorDialogList)
             .Any(quest => {
-                var dialogList = quest.m_dialogList as ActorDialogList;
-                var prepDialogEntry = dialogList.m_dialogs.FirstOrDefault(de => de.m_dialogTag == "Prep");
-                var templateId = prepDialogEntry?.m_dialogEntries?.FirstOrDefault()?.m_actorTemplateID;
+                // The giver is the Prep line's persona's NPC, not its actor template ID (Pesky Pirates).
+                var templateId = QuestMadlibs.GiverTemplateOf(quest);
 
                 return templateId == goTemplate.m_templateID;
             });
@@ -142,12 +141,11 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
             .ToList();
 
         foreach (var questTemplate in questTemplates) {
-            if (questTemplate.m_dialogList is not ActorDialogList dialogList) {
+            if (questTemplate.m_dialogList is not ActorDialogList) {
                 continue;
             }
 
-            var prepDialogEntry = dialogList.m_dialogs.FirstOrDefault(de => de.m_dialogTag == "Prep");
-            var templateId = prepDialogEntry?.m_dialogEntries?.FirstOrDefault()?.m_actorTemplateID;
+            var templateId = QuestMadlibs.GiverTemplateOf(questTemplate);
 
             if (templateId == entity.ActiveGameObject.m_templateID) {
                 _givesQuests.Add(questTemplate);
