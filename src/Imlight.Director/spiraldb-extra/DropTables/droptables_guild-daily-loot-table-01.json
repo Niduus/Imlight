@@ -1,0 +1,45 @@
+{
+  "Name": "Guild_Daily_Loot_Table_01",
+  "Description": "Guild grounds daily reward (Beta, Sparr, Theena, Flip). The game files name this table but leave it empty; this is a stand-in: the guild Azoth reagents the Guild Traders use, plus some gold.",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 300,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1552307",
+      "ItemName": "Elemental Azoth",
+      "Notes": "",
+      "Requirements": null,
+      "Chance": 1.0,
+      "MinCount": 1,
+      "MaxCount": 2,
+      "Guaranteed": true
+    },
+    {
+      "ItemId": "1552308",
+      "ItemName": "Spiritual Azoth",
+      "Notes": "",
+      "Requirements": null,
+      "Chance": 1.0,
+      "MinCount": 1,
+      "MaxCount": 2,
+      "Guaranteed": true
+    },
+    {
+      "ItemId": "1552309",
+      "ItemName": "Harmonic Azoth",
+      "Notes": "",
+      "Requirements": null,
+      "Chance": 1.0,
+      "MinCount": 1,
+      "MaxCount": 2,
+      "Guaranteed": true
+    }
+  ]
+}
