@@ -202,6 +202,40 @@ internal class CombatDeck {
     }
 
     /// <summary>
+    /// Puts the unplayed cards of the current hand back into the deck, so the next draw is a whole new hand.
+    /// Cards that never came from the deck (.draw, treasure cards) are dropped.
+    /// </summary>
+    internal void ReturnHandToDeck() {
+        foreach (var spell in LastGivenHand) {
+            if (_extraCards.Contains(spell) || spell.m_treasureCard || _cardsDiscardedThisTurn.Contains(spell)) {
+                continue;
+            }
+
+            var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+            if (spellData is not null) {
+                spellData.Quantity++;
+                continue;
+            }
+
+            // Only cards of the deck go back: one added straight to the hand has no deck entry.
+            var original = _spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+            if (original is not null) {
+                _usedUpSpellData.Add(new CombatDeckSpellData() {
+                    TemplateId = original.TemplateId,
+                    Quantity = 1,
+                    IsBattleCard = original.IsBattleCard,
+                    IsItemCard = original.IsItemCard,
+                    IsTreasureCard = false
+                });
+            }
+        }
+
+        LastGivenHand.Clear();
+        _extraCards.Clear();
+        TreasureCardsInHand = 0;
+    }
+
+    /// <summary>
     /// Adds a spell directly to the current hand without drawing from the deck.
     /// </summary>
     internal void AddCardToHand(Spell spell) {

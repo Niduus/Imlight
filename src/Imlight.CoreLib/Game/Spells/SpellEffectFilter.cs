@@ -38,6 +38,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Shared.Resources;
 
@@ -163,6 +164,13 @@ internal static class SpellEffectFilter {
         return filteredSpells;
     }
 
+    /// <summary>
+    /// Whether any of the spell's effects lands on the other side.
+    /// </summary>
+    internal static bool TargetsEnemy(Spell spell)
+        => CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate { m_effects: { } effects }
+        && effects.Any(e => e is not null && IsEnemyTarget(e));
+
     private static bool IsEnemyTarget(SpellEffect effect)
         => effect.m_effectTarget is kEffectTarget.kAtLeastOneEnemy
                  or kEffectTarget.kEnemyTeam
@@ -173,7 +181,8 @@ internal static class SpellEffectFilter {
                  or kEffectTarget.kPreselectedEnemySingle;
 
     private static bool IsFriendlyTarget(SpellEffect effect)
-        => effect.m_effectTarget is kEffectTarget.kFriendlyMinion
+        => effect.m_effectTarget is kEffectTarget.kSelf
+                 or kEffectTarget.kFriendlyMinion
                  or kEffectTarget.kFriendlyTeam
                  or kEffectTarget.kFriendlyTeamAllAtOnce
                  or kEffectTarget.kFriendlySingle

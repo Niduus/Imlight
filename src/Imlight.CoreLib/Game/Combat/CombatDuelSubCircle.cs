@@ -208,6 +208,16 @@ public class CombatDuelSubCircle {
         return newHand;
     }
 
+    /// <summary>
+    /// A monster's hand for the round: the cards it did not play go back into its deck first, so it gets a whole
+    /// new hand. Kept cards piled up into a hand of blades and traps it never played, and it passed every round.
+    /// </summary>
+    internal Hand DrawFreshHand() {
+        _combatDeck.ReturnHandToDeck();
+
+        return DrawHand();
+    }
+
     internal Hand GetCurrentHand() {
         // As-is, no draw or refill: a discard frees a slot this turn and the client must see it open.
         return new() { m_spellList = _combatDeck.LastGivenHand ?? [] };

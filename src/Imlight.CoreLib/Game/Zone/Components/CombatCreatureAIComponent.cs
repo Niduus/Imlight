@@ -49,6 +49,7 @@ using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
@@ -61,9 +62,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
     public ITimerScheduler Timers { get; set; }
 
-    private readonly float _healingThreshold     = ConfigurationManager.Settings["Combat.HealingThreshold"].AsFloat();
+    // Imlight.ini long spelled it "HealingThreshhold", so a creature never counted anyone as hurt and never healed.
+    private float _healingThreshold => ConfigurationManager.GetValue("Combat.HealingThreshold",
+        ConfigurationManager.GetValue("Combat.HealingThreshhold", 0.75f));
     private float _healingPercentChance => ConfigurationManager.Settings["Combat.HealingPercentChance"].AsFloat();
-    private readonly float _preparePassChance    = ConfigurationManager.Settings["Combat.PreparePassChance"].AsFloat();
+    private float _preparePassChance => ConfigurationManager.Settings["Combat.PreparePassChance"].AsFloat();
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();
     private readonly int _provokeAggroIncrease   = ConfigurationManager.Settings["Combat.ProvokeAggroIncrease"].AsInt();
@@ -93,7 +96,10 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     private CombatDuelSubCircle[] _friendlySubcircles
         => [.. _currentDuelComponent.ActiveSubCircles.Where(x => x.OccupiedTeam == _currentSubCircle.OccupiedTeam)];
     private bool _isHealingViable
-        => _friendlySubcircles.Any(x => x.ParticipantGameStats.m_currentHitpoints / x.ParticipantGameStats.m_baseHitpoints < _healingThreshold);
+        => _friendlySubcircles.Any(x => HealthFraction(x) < _healingThreshold);
+    // Whole numbers divided gave 0 or 1, never the fraction in between.
+    private static float HealthFraction(CombatDuelSubCircle circle)
+        => (float) circle.ParticipantGameStats.m_currentHitpoints / Math.Max(1, circle.ParticipantGameStats.m_baseHitpoints);
     private bool _sentFinalKill;
     private bool _isInDuel;
     // Read by a sigil's battle (another actor) to see whether this monster may still join one late.
@@ -197,7 +203,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             return;
         }
 
-        _roundHand = _currentSubCircle.DrawHand();
+        _roundHand = _currentSubCircle.DrawFreshHand();
 
         DetermineAttitude();
         var action = DetermineTurnAction();
@@ -382,16 +388,6 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             SpellTarget = 0,
         };
 
-        // There's a very low chance that we just pass on a prepare turn.
-        if (_random.NextDouble() < _preparePassChance) {
-            Logger.Debug("Duel {0} | Slot {1} | Preparing, but passing.",
-                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex));
-
-            msg.MoveType = (byte) CombatMoveType.Pass;
-            
-            return msg;
-        }
-
         // Healing is the highest priority defensive action.
         if (_isHealingViable && _random.NextDouble() < _healingPercentChance) {
             var healingSpells = GetCastableHealingSpells(_roundHand.m_spellList);
@@ -407,7 +403,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         // If we have nothing to prepare with, fall back to attacking.
         // Otherwise damage-only creatures pass every time the aggressiveness RNG fails.
         if (buffSpells.Count == 0 && debuffSpells.Count == 0) {
-            return DetermineAggressiveBehavior();
+            return GetCastableDamageSpells(_roundHand.m_spellList).Count > 0
+                ? DetermineAggressiveBehavior()
+                : DetermineAnyCastableBehavior();
         }
 
         // We have buffs or debuffs available. There's a small chance we pass anyway.
@@ -450,6 +448,40 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         return msg;
     }
 
+    // Nothing to attack, buff or debuff with: cast any other card it can pay for (a shield, a stun, a spell the
+    // filters do not know) before passing. A monster only passes when it cannot pay for anything.
+    private COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE DetermineAnyCastableBehavior() {
+        var msg = new COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE {
+            Actor = Entity.SelfRef,
+            MoveType = (byte) CombatMoveType.Pass,
+            SpellSelection = 0,
+            SpellTarget = 0,
+        };
+
+        // Heals wait for someone hurt (the healing roll above).
+        var heals = GetCastableHealingSpells(_roundHand.m_spellList);
+        var castable = GetCastableSpells(_roundHand.m_spellList)
+            .Where(x => !heals.Contains(x) && CoreObjectFactory.GetCoreTemplate(x.m_templateID) is SpellTemplate)
+            .ToList();
+        if (castable.Count == 0) {
+            var pips = _currentSubCircle.CombatParticipant.m_pipCount;
+            Logger.Debug("Duel {0} | Slot {1} | Nothing castable in a hand of {2} with {3} pips + {4} power. Passing.",
+                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex,
+                    _roundHand.m_spellList.Count, pips.m_genericPips, pips.m_powerPips));
+
+            return msg;
+        }
+
+        var selectedSpell = castable[_random.Next(castable.Count)];
+        msg.MoveType = (byte) CombatMoveType.Attack;
+        msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(selectedSpell);
+        msg.SpellTarget = SpellEffectFilter.TargetsEnemy(selectedSpell)
+            ? (byte) GetMostHatedTarget()
+            : (uint) _currentSubCircle.SlotIndex;
+
+        return msg;
+    }
+
     private COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE DetermineHealingBehavior() {
         // We've determined that we want to heal. Either us or a teammate.
         var castableHealingSpells = GetCastableHealingSpells(_roundHand.m_spellList);
@@ -478,14 +510,14 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         // If we're below the healing threshold, and selfish enough, heal ourselves.
         // The battle's stats: a boss changed in the app's Bosses tab fights with a copy of the creature's own.
         var self = _currentSubCircle.ParticipantGameStats ?? _stats.Stats;
-        var selfThresholdMatched = self.m_currentHitpoints / self.m_baseHitpoints < _healingThreshold;
+        var selfThresholdMatched = (float) self.m_currentHitpoints / Math.Max(1, self.m_baseHitpoints) < _healingThreshold;
         if (selfThresholdMatched && _determinedSelfishThisTurn) {
             msg.SpellTarget = (uint) _currentSubCircle.SlotIndex;
         }
         else {
             // Otherwise, heal the teammate with the lowest health percentage.
             var lowestHealthTeammate = _friendlySubcircles
-                .OrderBy(x => x.ParticipantGameStats.m_currentHitpoints / x.ParticipantGameStats.m_baseHitpoints)
+                .OrderBy(HealthFraction)
                 .First();
 
             msg.SpellTarget = (byte) (lowestHealthTeammate.SlotIndex + 1);
