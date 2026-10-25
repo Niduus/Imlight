@@ -47,14 +47,21 @@ public static class QuestGoalEvents {
                     continue;
                 }
 
-                var goal = quest.m_goals?.FirstOrDefault(g => string.Equals(g.m_goalName, entry.Goal, StringComparison.OrdinalIgnoreCase));
-                if (goal is null) {
-                    Logger.Warning("Quest step events: quest '{0}' has no step '{1}'.", Logger.Args(entry.Quest, entry.Goal));
-                    continue;
+                var onStart = string.Equals(entry.When, "start", StringComparison.OrdinalIgnoreCase);
+                ResultList results;
+                if (string.IsNullOrEmpty(entry.Goal)) {
+                    // No step named: the event goes with the quest itself.
+                    results = onStart ? quest.m_startResults ??= new ResultList() : quest.m_endResults ??= new ResultList();
+                } else {
+                    var goal = quest.m_goals?.FirstOrDefault(g => string.Equals(g.m_goalName, entry.Goal, StringComparison.OrdinalIgnoreCase));
+                    if (goal is null) {
+                        Logger.Warning("Quest step events: quest '{0}' has no step '{1}'.", Logger.Args(entry.Quest, entry.Goal));
+                        continue;
+                    }
+
+                    results = onStart ? goal.m_activateResults ??= new ResultList() : goal.m_completeResults ??= new ResultList();
                 }
 
-                var onStart = string.Equals(entry.When, "start", StringComparison.OrdinalIgnoreCase);
-                var results = onStart ? goal.m_activateResults ??= new ResultList() : goal.m_completeResults ??= new ResultList();
                 results.m_results ??= [];
                 foreach (var name in entry.Events.Where(e => !string.IsNullOrWhiteSpace(e))) {
                     if (results.m_results.OfType<ResPostEvent>().Any(r => r.m_eventName == name)) {

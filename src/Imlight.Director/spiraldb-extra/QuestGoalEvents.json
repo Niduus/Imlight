@@ -1,6 +1,152 @@
 // Zone events the real game's server sends when a quest step starts ("when": "start") or is done ("when": "complete").
 // The zone scripts in the game files wait for these to spawn a boss, open a door or play a scene.
+// No "goal": the event goes with the quest itself (quest start or quest end).
+// Found by matching zone scripts (triggers.xml) that nothing else sends to quest steps in the same place (2026-10-25).
 [
   // Rematch: reaching the obelisk in the Jade Palace makes the palace script spawn the Jade Oni (trigger CheckObelisk).
-  { "quest": "MS-MAIN-C07-001", "goal": "Goal", "when": "complete", "events": [ "GoSpawnOni" ] }
+  { "quest": "MS-MAIN-C07-001", "goal": "Goal", "when": "complete", "events": [ "GoSpawnOni" ] },
+  // flower bridge (Wizard404 start results)
+  { "quest": "AZ-CLOUD-C06-002", "when": "start", "events": ["AZ-FlowerBridgeColl"] },
+  // fire stairs in Twin Giants (Wizard404 start results)
+  { "quest": "AZ-TWIN-C08-002", "when": "start", "events": ["AZ-FireStairs"] },
+  // Quetzal reveal in Halley's Tower (Wizard404 start results)
+  { "quest": "WC-PreAZ-C02-001", "when": "start", "events": ["AZ-QuetzalReveal"] },
+  // class picture (Wizard404 start results)
+  { "quest": "WC-PreZF-C02-001", "when": "start", "events": ["ShowClassPicture00"] },
+  // class picture (Wizard404 start results)
+  { "quest": "ZF-SAVA-C07-002", "when": "start", "events": ["ShowClassPicture04"] },
+  // Arcanum-AR_Z01_Hub: ResRemoveDynaMod
+  { "quest": "AR-PreLM-MAIN-001", "goal": "1_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["AR-PreLM-MAIN-001_Goal00"] },
+  // Empyrea-EM_Z14_ChaosJungle: ResAddDynaMod
+  { "quest": "EM-SAMS-MAIN-016", "goal": "1_WizardQuestGoals00000058", "when": "complete", "events": ["EM-SAMS-MAIN-016_Goal00"] },
+  // Empyrea-Interiors-EM_Z01_CaveScorax: ResSpawn
+  { "quest": "EM-AERI-J-MAIN-011", "goal": "2_WizardQuestGoals00000036", "when": "complete", "events": ["EM-AERI-J-MAIN-011_Goal01"] },
+  // Empyrea-Interiors-EM_Z14_FeralClearing: 
+  { "quest": "EM-SAMS-MAIN-016", "goal": "3_WizardQuestGoals00000006", "when": "complete", "events": ["EM-SAMS-MAIN-016_Goal02"] },
+  // Grizzleheim-GH_HFjord-GH_HFjord: ResAddDynaMod,ResModifyTriggerObject,ResWait
+  { "quest": "GH-FJORD-C04-004", "goal": "Goal 2", "when": "complete", "events": ["GH-FJORD-C04-004-Goal02-HideMother"] },
+  // Karamelle-Interiors-KM_Z09_FactoryFarm: ResRemoveDynaMod
+  { "quest": "KM-FARM-MAIN-004", "goal": "6_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["KM-FARM-MAIN-004_Goal05"] },
+  // Karamelle-Interiors-KM_Z09_FarmersHouse: ResRemoveDynaMod
+  { "quest": "KM-FARM-MAIN-005", "goal": "3_WizardQuestGoals00000672", "when": "complete", "events": ["KM-FARM-MAIN-005_Goal02"] },
+  // Karamelle-KM_Z00_HUB: ResRemoveDynaMod,ResToggleAccompanyNPC
+  { "quest": "KM-KCITY-MAIN-005", "goal": "2_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["KM-KCITY-MAIN-005_Goal01"] },
+  // Karamelle-KM_Z00_HUB: ResRemoveDynaMod,ResWait
+  { "quest": "KM-KCITY-SIDE-002", "goal": "2_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["KM-KCITY-SIDE-002_Goal01"] },
+  // Karamelle-KM_Z09_CandyCornFarm: ResRemoveDynaMod
+  { "quest": "KM-FARM-MAIN-003", "goal": "1_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["KM-FARM-MAIN-003_Goal00"] },
+  // Khrysalis-Interiors-KR_Z11_I21_MutationChamb01: ResAddDynaMod
+  { "quest": "KR-HIVE-C03-001", "goal": "3_WizardQuestGoalsKill", "when": "complete", "events": ["KR-HIVE-C03-001_Goal02"] },
+  // Khrysalis-KR_Z00_Hub: ResAddDynaMod
+  { "quest": "KR-RACH-C09-001", "goal": "2_WizardQuestGoalsTalkNPC", "when": "start", "events": ["KR-RACH-C09-001_Goal01_Appear"] },
+  // Khrysalis-KR_Z00_Hub: ResRemoveDynaMod
+  { "quest": "KR-RACH-C09-001", "goal": "2_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["KR-RACH-C09-001_Goal01_Disappear"] },
+  // Mirage-Interiors-MR_Z01_ImportantCave: ResAddDynaMod
+  { "quest": "AR-PreLM-MAIN-001", "goal": "11_WizardQuestGoals00000008", "when": "complete", "events": ["AR-PreLM-MAIN-001_Goal10"] },
+  // Mirage-Interiors-MR_Z07_AliChamber: ; Mirage-Interiors-MR_Z07_AliChamber: ResModifyTriggerObject,ResPlaySound,ResTeleport,ResWait
+  { "quest": "MR-THIE-MAIN-001", "goal": "2_Dance", "when": "complete", "events": ["MR-THIE-MAIN-001_Goal01-C", "MR-THIE-MAIN-001_Goal01"] },
+  // Mirage-MR_Z00_Hub: ResRemoveDynaMod,ResWait
+  { "quest": "AR-PreLM-MAIN-001", "goal": "3_WizardQuestGoals00000506", "when": "complete", "events": ["AR-PreLM-MAIN-001_Goal02"] },
+  // Mirage-MR_Z01_AlkaliBarrows: ResRemoveDynaMod
+  { "quest": "AR-PreLM-MAIN-001", "goal": "10_WizardQuestGoals00000165", "when": "complete", "events": ["AR-PreLM-MAIN-001_Goal09"] },
+  // Mirage-MR_Z07_ThievesDen: ResRemoveDynaMod
+  { "quest": "AR-PreLM-MAIN-001", "goal": "13_WizardQuestGoals00000253", "when": "complete", "events": ["AR-PreLM-MAIN-001_Goal12"] },
+  // MooShu-MS_Death-MS_Death_Hub_RuinedTemple: ResCinematic,ResTeleport,ResWait
+  { "quest": "MS-DTHHub-C01-003", "goal": "Goal", "when": "complete", "events": ["MS-DTHHub-C01-003_Goal00"] },
+  // MooShu-MS_Plague-Interiors-MS_Plague2_T1: ResSpawn
+  { "quest": "MS-PLAG2-C02-002", "goal": "Goal", "when": "complete", "events": ["MS-PLAG2-C02-002_Goal00"] },
+  // MooShu-MS_Plague-Interiors-MS_Plague2_T2_Part2: ResSpawn
+  { "quest": "MS-PLAG2-C03-001", "goal": "Goal 2", "when": "complete", "events": ["MS-PLAG2-C03-001_Goal00"] },
+  // MooShu-MS_Plague-Interiors-MS_Plague2_T5: ResSpawn
+  { "quest": "MS-PLAG2-C04-005", "goal": "Goal 3", "when": "complete", "events": ["MS-PLAG2-C04-005_Goal02"] },
+  // Polaris-PL_Z07_BorealisPeaks: ResRemoveDynaMod,ResWait
+  { "quest": "PL-BORE-SIDE-001", "goal": "2_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["PL-BORE-SIDE-001_Goal01"] },
+  // Zafaria-ZF_Z09_Drum_Jungle: ResAddDynaMod,ResRemoveDynaMod
+  { "quest": "ZF-SPELL-C04-001", "goal": "3_WizardQuestGoalsExplore", "when": "complete", "events": ["ZF-SPELL-C04-001Goal2"] },
+  // Zafaria-ZF_Z09_Drum_Jungle: ResShowGUI,ResWait
+  { "quest": "ZF-DRUM-C04-003", "goal": "3_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["ZF-DRUM-C04-003_Goal02"] },
+  // Arcanum-Interiors-AR_Dunes: spawns renegade djinni for the next step
+  { "quest": "AR-PreMR-MAIN-002", "goal": "6_WizardQuestGoals00000253", "when": "complete", "events": ["Event_Djin_Spawn"] },
+  // Azteca-AZ_Z12_Xibalba: spawns morganthe for the next step
+  { "quest": "AZ-ZOCA-C15-002", "goal": "2_WizardQuestGoalsExploreZone", "when": "complete", "events": ["SpawnMalMinions"] },
+  // Azteca-Interiors-AZ_Z02_House02: spawns moon skull zombie for the next step
+  { "quest": "AZ-ZOCA-C17-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["CallTheZombies"] },
+  // Azteca-Interiors-AZ_Z11_Cave03: spawns razan bitter blood for the next step
+  { "quest": "AZ-TWIN-C02-001", "goal": "6_WizardQuestGoalsUseItem", "when": "complete", "events": ["Twin_CageOpen"] },
+  // Azteca-Interiors-AZ_Z11_PyramidFallingStar_Room03: spawns huracan vicious sky
+  { "quest": "AZ-TWIN-C05-001", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["AZ-Pyramid_CinematicEnd"] },
+  // Empyrea-Interiors-EM_Z02_Palace: spawns killer krok for the next step
+  { "quest": "EM-ZANA-MAIN-010", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["Event_PalaceKrokHide"] },
+  // Empyrea-Interiors-EM_Z02_ShadowHouse: spawns shadow trickster for the next step
+  { "quest": "EM-ZANA-SIDE-012", "goal": "1_WizardQuestGoals00000411", "when": "complete", "events": ["Event_RevealTricksterTom"] },
+  // Empyrea-Interiors-EM_Z05_InkSack: spawns dynt for the next step
+  { "quest": "EM-SEPI-MAIN-005", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnEvilDynt"] },
+  // Empyrea-Interiors-EM_Z07_AudienceChambers: spawns dark cloud leader for the next step
+  { "quest": "EM-NIMB-MAIN-002", "goal": "3_WizardQuestGoalsExplore", "when": "complete", "events": ["Spawn_Leader_Mob"] },
+  // Empyrea-Interiors-EM_Z07_ControlRoom: spawns the admiral for the next step
+  { "quest": "EM-NIMB-MAIN-006", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT-PlayCinematic"] },
+  // Empyrea-Interiors-EM_Z07_PrivateWing: spawns vanitus for the next step
+  { "quest": "EM-NIMB-MAIN-005", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnVanitrus"] },
+  // Empyrea-Interiors-EM_Z07_RearCourtyard: spawns praetor drusilla for the next step
+  { "quest": "EM-NIMB-MAIN-004", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["SpawnDrusilla"] },
+  // Empyrea-Interiors-EM_Z16_I04_StormTitan: spawns the storm titan
+  { "quest": "EM-HUSK-MAIN-004", "goal": "1_WizardQuestGoals00000312", "when": "start", "events": ["SwitchMobA"] },
+  // Grizzleheim-GH_HFjord-Interiors-GH_Sud_Cave02: spawns wizardmobs_00000854 for the next step
+  { "quest": "GH-FJORD-C05-003", "goal": "Goal", "when": "complete", "events": ["GH-FJORD-C05-003-GiveBird"] },
+  // Grizzleheim-Interiors-GH_Hero_T1: spawns wizardmobs_00000554 for the next step
+  { "quest": "GH-HERO-C01-002", "goal": "Goal", "when": "complete", "events": ["GH-HERO-C01-002-HideBear"] },
+  // Karamelle-Interiors-KM_Z09_HotHouse: spawns hangry gobbler for the next step
+  { "quest": "KM-FARM-MAIN-003", "goal": "2_WizardQuestGoalsExplore", "when": "complete", "events": ["SetUpGobblers"] },
+  // Khrysalis-Interiors-KR_Z000_Tymen_WhiteFlame: spawns tymen whiteflame for the next step
+  { "quest": "KR-BAST-C04-001", "goal": "1_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["FightOn"] },
+  // Khrysalis-Interiors-KR_Z02_I09_ThroneRoom: spawns broodmother for the next step
+  { "quest": "KR-MOON-C08-001", "goal": "1_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT-SpawnBroodMother"] },
+  // Khrysalis-Interiors-KR_Z08_I08_Dreamroom3: spawns spider adept for the next step
+  { "quest": "KR-RADI-C02-003", "goal": "2_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["EVENT-SpawnAgroBoss"] },
+  // Khrysalis-Interiors-KR_Z09_I02_NadezhaHouseLG: spawns balor's behemoth for the next step
+  { "quest": "KR-SARD-C06-001", "goal": "1_WizardQuestGoals00000007", "when": "complete", "events": ["SpawnersOn"] },
+  // Khrysalis-Interiors-KR_Z09_I14_TroikaPalacePatronGate: spawns last prayer for the next step
+  { "quest": "KR-SARD-C06-003", "goal": "2_WizardQuestGoals00000007", "when": "complete", "events": ["HideDzorak"] },
+  // Khrysalis-Interiors-KR_Z09_I16_ZoraksHouseLG: spawns balor's behemoth for the next step
+  { "quest": "KR-SARD-C06-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["Dzorakspawns", "TurnOnBadguys"] },
+  // Khrysalis-Interiors-KR_Z09_I19_TroikaPalaceDungeon: spawns zelda and nadezha
+  { "quest": "KR-SARD-C07-004", "goal": "1_WizardQuestGoals00000026", "when": "start", "events": ["SpawnBalor"] },
+  // Khrysalis-Interiors-KR_Z09_I22_GarrisonArmory: spawns diobolica garrison guard for the next step
+  { "quest": "KR-SARD-C18-001", "goal": "2_WizardQuestGoals00000058", "when": "complete", "events": ["SpawnBaddies"] },
+  // Khrysalis-Interiors-KR_Z09_I25_ZharelliaHouseLG: spawns zharellia the runningone for the next step
+  { "quest": "KR-SARD-C21-001", "goal": "1_WizardQuestGoals00000007", "when": "complete", "events": ["SpawnBoss"] },
+  // Khrysalis-Interiors-KR_Z10_I16_SolarArcChambShadow: spawns shadow arc
+  { "quest": "KR-KOND-C10-008", "goal": "1_WizardQuestGoals00000274", "when": "start", "events": ["SpawnBaddies"] },
+  // Khrysalis-Interiors-KR_Z11_I20_InteroRoom: spawns inquisitor ximenez for the next step
+  { "quest": "KR-HIVE-C02-002", "goal": "1_WizardQuestGoals00000411", "when": "complete", "events": ["KR-HIVE-C02-002_MakeMob"] },
+  // Khrysalis-Interiors-KR_Z11_I23_TransformChamb: spawns undrek blightclaw for the next step
+  { "quest": "KR-HIVE-C13-001", "goal": "2_WizardQuestGoalsKill", "when": "complete", "events": ["FightAgain"] },
+  // Khrysalis-Interiors-KR_Z12_I01_SpiritPlane: spawns tree root for the next step
+  { "quest": "KR-PALA-C01-001", "goal": "2_WizardQuestGoalsExploreZone", "when": "complete", "events": ["SpawnNymphs"] },
+  // Lemuria-Interiors-LM_Z05_I06_Cavern: spawns wizardmobs_00003919 for the next step
+  { "quest": "LM-W404-1477398860", "goal": "3_WizardQuestGoals00000022", "when": "complete", "events": ["LabSpawnMothAmon"] },
+  // Lemuria-Interiors-LM_Z05_I08_AncientTemple: spawns wizardmobs_00003907 for the next step
+  { "quest": "LM-W404-1477398668", "goal": "2_WizardQuestGoals00000015", "when": "complete", "events": ["SpawnGaurdians"] },
+  // Lemuria-Interiors-LM_Z06_GuardComplex: spawns wizardmobs_00003927 for the next step
+  { "quest": "LM-W404-949616256", "goal": "5_WizardQuestGoals00000026", "when": "complete", "events": ["Event_HideMorg"] },
+  // Mirage-Interiors-MR_Z01_OverlordsOssuary: spawns overlord xerxes for the next step
+  { "quest": "MR-ALKA-MAIN-008", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["SpawnXerxesMob_Ossuary"] },
+  // Mirage-Interiors-MR_Z02_FourPoints: spawns the truce talks
+  { "quest": "MR-AGGR-MAIN-011", "goal": "1_WizardQuestGoals00000531", "when": "start", "events": ["MortalCombat"] },
+  // Mirage-Interiors-MR_Z02_Warehouse01: spawns feral scarab for the next step
+  { "quest": "MR-AGGR-MAIN-004", "goal": "3_WizardQuestGoalsExplore", "when": "complete", "events": ["EVENT_FeralsToScarabs"] },
+  // Mirage-Interiors-MR_Z04_BaronsAudienceChamber: spawns advisor francy fries for the next step
+  { "quest": "MR-RUBA-MAIN-002", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["FriesBeGone"] },
+  // Mirage-Interiors-MR_Z10_NorthTimeDunes: spawns grandfather spider
+  { "quest": "MR-CHRO-MAIN-004", "goal": "1_WizardQuestGoals00000175", "when": "start", "events": ["SpawnSpiderNorthSands"] },
+  // Polaris-Interiors-PL_Z00_Palace_04: spawns the imperial palace
+  { "quest": "PL-WALR-MAIN-012", "goal": "1_Assault", "when": "start", "events": ["HideCaptain"] },
+  // Polaris-Interiors-PL_Z05_MineDocks: spawns rasputin
+  { "quest": "PL-FRIG-MAIN-006", "goal": "1_Stop", "when": "start", "events": ["FinishedBoatSequence", "EVENT-SpawnIvan"] },
+  // Polaris-Interiors-PL_Z07_PL_Horizon_Hold: spawns rasputin
+  { "quest": "PL-BORE-MAIN-002", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["ChangeRasputin"] },
+  // Zafaria-Interiors-ZF_Z10_I02_Didos_Mausoleum: spawns prince tziri for the next step
+  { "quest": "ZF-GRAVE-C01-008", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["HideEvilDoers"] },
+  // Zafaria-ZF_Z13_Mirror_Lake_Drained: spawns morganthe
+  { "quest": "ZF-BAOB-C18-002", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["CreateMOBSpiders"] },
 ]
