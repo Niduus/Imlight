@@ -92,6 +92,60 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
     public static Props Props(GameServer server)
         => Akka.Actor.Props.Create(() => new GameWorld(server));
 
+    // The first zone load after a start builds many shared lists (shops, trainers, components) and took 2.6 s on top
+    // of the login (Niduus's log of 2026-10-25). The zones players will log into are loaded in the background
+    // shortly after the start instead ([Game Server] PreloadZones).
+    private const int MAX_PRELOADED_ZONES = 8;
+    private static readonly TimeSpan s_preloadDelay = TimeSpan.FromSeconds(3);
+    private readonly HashSet<string> _preloading = new(StringComparer.OrdinalIgnoreCase);
+
+    private sealed class PreloadZones : IServerMessage {
+
+        public byte MessageOrder { get; } = 1;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    protected override void PreStart() {
+        base.PreStart();
+
+        // Only the first realm: an empty server pool sends every login there (GameServerPool).
+        if (ConfigurationManager.GetValue("Game Server.PreloadZones", true)
+            && _server.Port == ConfigurationManager.Settings["Game Server.GameServerPort"].AsInt()) {
+            Timers.StartSingleTimer("preload-zones", new PreloadZones(), s_preloadDelay);
+        }
+    }
+
+    [MessageHandler(typeof(PreloadZones))]
+    private void ReceivePreloadZones(PreloadZones _) {
+        try {
+            var zones = WizardCollection.GetLoginZones()
+                .Prepend(ConfigurationManager.GetValue("Character.StartingZone", ""))
+                .Where(zone => !string.IsNullOrEmpty(zone) && !HouseZoneIndex.IsHouseZone(zone)
+                               && !zone.StartsWith("Minigame", StringComparison.OrdinalIgnoreCase)
+                               && !IsPrivateZone(zone) && AccessPassManager.DoesZoneExist(zone))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(MAX_PRELOADED_ZONES)
+                .ToList();
+
+            foreach (var zone in zones) {
+                if (_publicZones.ContainsKey(zone) || _zoneLoaderActors.ContainsKey(zone)) {
+                    continue;
+                }
+
+                _preloading.Add(zone);
+                CreateZoneLoader(zone, "");
+                _instanceCreationCalledByMap.AddOrSet(zone, (0UL, false));
+            }
+
+            Logger.Information("Game world preloads {Count} zone(s) players log into: {Zones}",
+                Logger.Args(zones.Count, string.Join(", ", zones)));
+        }
+        catch (Exception ex) {
+            Logger.Error("Game world could not preload zones: {Message}", Logger.Args(ex.Message));
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONETRANSFER))]
     private void ReceiveZoneTransfer(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
         // First, make sure this zone is valid by checking the AccessPassManager.
@@ -193,6 +247,8 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         // Search for the user who called for the creation of this zone.
         var (ownerId, wasPrivateRequest) = _instanceCreationCalledByMap[zonePath];
         _instanceCreationCalledByMap.Remove(zonePath);
+        var preloaded = _preloading.Remove(zonePath);
+        var anyoneWaiting = _awaitingTransfers.Keys.Any(t => t.DestinationZone == zonePath);
 
         // Determine if this zone is instanced. It is instanced when ANY of:
         //   - the triggering transfer explicitly asked for a PRIVATE instance (a sigil dungeon / solo
@@ -201,6 +257,14 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         //   - its hard limit is small enough to be an instance (normal dungeons).
         var isInstancedZone = wasPrivateRequest
                            || message.ZoneData.m_nHardLimit <= HARD_LIMIT_INSTANCE_THRESHHOLD;
+
+        // A preloaded zone that turns out to be an instance has no owner yet; the player's own copy is made on entry.
+        if (preloaded && isInstancedZone && !anyoneWaiting) {
+            RemoveZoneLoader(zonePath);
+
+            return;
+        }
+
         if (isInstancedZone) {
             // Create a new instance container for this zone, if one does not already exist.
             if (!_instanceContainers.TryGetValue(ownerId, out var instanceContainer)) {
@@ -218,7 +282,9 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             _publicZones[zonePath] = CreateZone(zonePath);
             _publicZones[zonePath].Tell(message);
 
-            ProcessTransfersForPublicZone(zonePath);
+            if (!preloaded || anyoneWaiting) {
+                ProcessTransfersForPublicZone(zonePath);
+            }
         }
 
         RemoveZoneLoader(zonePath);

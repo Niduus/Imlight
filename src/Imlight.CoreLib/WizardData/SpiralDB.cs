@@ -167,6 +167,7 @@ public static class SpiralDB {
             var npcSeamstresses = new ConcurrentDictionary<ulong, NpcSeamstress>();
 
             var filesLoaded = 0;
+            var loadStart = Stopwatch.GetTimestamp();
 
             Parallel.Invoke(
                 () => Interlocked.Add(ref filesLoaded, LoadCreatureSpellbooks(basePath, spellbooks)),
@@ -182,23 +183,31 @@ public static class SpiralDB {
                 () => Interlocked.Add(ref filesLoaded, LoadBadgeDefinitions(basePath, badgeDefinitions))
             );
 
+            var baseElapsed = Stopwatch.GetElapsedTime(loadStart);
             var extraPath = Path.GetFullPath(s_extraPath);
             var extraFiles = 0;
             var extraNpcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
             if (Directory.Exists(extraPath)) {
-                extraFiles += LoadCreatureSpellbooks(extraPath, spellbooks);
-                extraFiles += LoadDropTables(extraPath, dropTables);
-                extraFiles += LoadNpcInventories(extraPath, extraNpcInventories);
+                // Each kind goes to its own container, so the kinds load side by side like SpiralDB's own above;
+                // one after the other they took most of the 15 s start (Niduus's log of 2026-10-25).
+                var extraStart = Stopwatch.GetTimestamp();
+                Parallel.Invoke(
+                    () => Interlocked.Add(ref extraFiles, LoadCreatureSpellbooks(extraPath, spellbooks)),
+                    () => Interlocked.Add(ref extraFiles, LoadDropTables(extraPath, dropTables)),
+                    () => Interlocked.Add(ref extraFiles, LoadNpcInventories(extraPath, extraNpcInventories)),
+                    () => Interlocked.Add(ref extraFiles, LoadNpcSpellInventories(extraPath, npcSpellInventories)),
+                    () => Interlocked.Add(ref extraFiles, LoadNpcDropTables(extraPath, npcDropTables)),
+                    () => Interlocked.Add(ref extraFiles, LoadTreasureCardInventories(extraPath, treasureCardInventories)),
+                    () => Interlocked.Add(ref extraFiles, LoadQuestTemplates(extraPath, questTemplatesBag, questTemplatesByName)),
+                    () => Interlocked.Add(ref extraFiles, LoadZoneData(extraPath, zoneData))
+                );
                 foreach (var (npcId, inventory) in extraNpcInventories) {
                     npcInventories[npcId] = inventory;
                 }
-                extraFiles += LoadNpcSpellInventories(extraPath, npcSpellInventories);
-                extraFiles += LoadNpcDropTables(extraPath, npcDropTables);
-                extraFiles += LoadTreasureCardInventories(extraPath, treasureCardInventories);
-                extraFiles += LoadQuestTemplates(extraPath, questTemplatesBag, questTemplatesByName);
-                extraFiles += LoadZoneData(extraPath, zoneData);
                 filesLoaded += extraFiles;
-                Logger.Information("Loaded {0} extra SpiralDB files from {1}.", Logger.Args(extraFiles, extraPath));
+                Logger.Information("Loaded {0} extra SpiralDB files from {1} in {2} ms (SpiralDB's own files took {3} ms).",
+                    Logger.Args(extraFiles, extraPath, (int) Stopwatch.GetElapsedTime(extraStart).TotalMilliseconds,
+                                (int) baseElapsed.TotalMilliseconds));
             }
 
             // An extra quest replaces SpiralDB's quest of the same name.

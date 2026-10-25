@@ -165,8 +165,11 @@ internal class GameServerPool : ReceiveProtocolDispatcher {
             return;
         }
 
-        // Sort the servers by player count in descending order
-        Array.Sort(gameServerInfos, (s1, s2) => s2.PlayerCount.CompareTo(s1.PlayerCount));
+        // Sort the servers by player count in descending order. Equal counts go to the lowest port, the first realm,
+        // whose game world preloads the zones players log into (GameWorld PreloadZones).
+        Array.Sort(gameServerInfos, (s1, s2) => s2.PlayerCount != s1.PlayerCount
+            ? s2.PlayerCount.CompareTo(s1.PlayerCount)
+            : s1.Port.CompareTo(s2.Port));
 
         // Find the first non-full server or choose a random one if all servers are full
         var chosenServer = gameServerInfos

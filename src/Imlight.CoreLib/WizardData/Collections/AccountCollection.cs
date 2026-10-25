@@ -112,11 +112,12 @@ public static class AccountCollection {
         return UpdateAccount(accountId.Value, update);
     }
 
-    private static Account LoadAccountDetails(IDocumentSession session, Account account, bool characterListOnly = false) {
+    private static Account LoadAccountDetails(IDocumentSession session, Account account, bool characterListOnly = false,
+                                              ulong playedCharId = 0) {
         if (characterListOnly) {
             WizardCollection.LoadWizardsForCharacterList(account.AccountId, ref account);
         } else {
-            WizardCollection.LoadWizardsOntoAccount(account.AccountId, ref account);
+            WizardCollection.LoadWizardsOntoAccount(account.AccountId, ref account, playedCharId);
         }
 
         var infractions = session.Query<Infraction>(collectionName: InfractionCollection.CollectionName)
@@ -269,6 +270,21 @@ public static class AccountCollection {
         return account is null
             ? null
             : LoadAccountDetails(session, account);
+    }
+
+    /// <summary>
+    /// Gets an account from the database by its ID for a character that is about to be played: that character
+    /// is loaded in full, the other characters of the account only as far as their character document.
+    /// </summary>
+    public static Account GetAccountForPlay(ulong id, ulong playedCharId) {
+        using var session = s_store.OpenSession();
+
+        var account = session.Query<Account>(collectionName: CollectionName)
+            .FirstOrDefault(a => a.AccountId == id);
+
+        return account is null
+            ? null
+            : LoadAccountDetails(session, account, playedCharId: playedCharId);
     }
 
     /// <summary>

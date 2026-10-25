@@ -160,7 +160,9 @@ public class GameServer : Server {
 
             // Get the account associated with this key.
             var accountId = cachedKey.Value;
-            var account = AccountCollection.GetAccount(accountId);
+            var account = message.CharID != 0
+                ? AccountCollection.GetAccountForPlay(accountId, message.CharID)
+                : AccountCollection.GetAccount(accountId);
 
             // Inform the client that the session key is valid. We'll also send the account associated with it.
             Sender.Tell(new SERVER_100_PROTOCOL.MSG_VALIDATESESSIONKEYRSP() {

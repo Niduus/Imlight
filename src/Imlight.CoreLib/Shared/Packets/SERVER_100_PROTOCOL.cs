@@ -146,6 +146,8 @@ public sealed class SERVER_100_PROTOCOL : IServerProtocol {
         public ByteString Key;
         public ulong UserID;
         public SessionActor SessionActor;
+        // The character the session attaches with; only it is loaded in full.
+        public ulong CharID;
         
     }
 

@@ -62,14 +62,19 @@ internal sealed partial class ServerManager(string installFolder) {
     // Server
     // ---------------------------------------------------------------------
 
+    // A running server keeps listening until it stops, so the login port is tried only until it answers once. Trying
+    // it every refresh put four lines in the server log every two seconds (Niduus's log of 2026-10-25).
+    private bool _sawListening;
+
     internal ServerStatus Status() {
         var running = InstalledCommands.IsServerRunning(InstallFolder);
         var randomizer = IniFile.Get(ConfigFile, "Randomizer", "Enabled");
         var dieDelete = IniFile.Get(ConfigFile, "Die Delete", "Enabled");
+        _sawListening = running && (_sawListening || IsListening(LoginPort));
 
         return new ServerStatus(
             running,
-            running && IsListening(LoginPort),
+            _sawListening,
             randomizer is null ? null : randomizer.Equals("true", StringComparison.OrdinalIgnoreCase),
             dieDelete is null ? null : dieDelete.Equals("true", StringComparison.OrdinalIgnoreCase),
             GameClient.ClientExe(InstallFolder) is not null);

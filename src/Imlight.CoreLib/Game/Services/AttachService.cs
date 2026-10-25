@@ -479,7 +479,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     }
 
     private void ValidateAttach(GAME_5_PROTOCOL.MSG_ATTACH message) {
-        if (!ValidateLoginKey(message.LoginKey, message.UserID, out var account)) {
+        if (!ValidateLoginKey(message.LoginKey, message.UserID, message.CharID, out var account)) {
             SendToSocket(new GAME_5_PROTOCOL.MSG_ATTACHFAILED() {
                 Error = 1,
                 Rejected = 1,
@@ -505,12 +505,13 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         SetCharacterInternally(wizard);
     }
 
-    private bool ValidateLoginKey(ByteString key, ulong userId, out Account account) {
+    private bool ValidateLoginKey(ByteString key, ulong userId, ulong charId, out Account account) {
         account = null;
 
         var msg = new SERVER_100_PROTOCOL.MSG_VALIDATESESSIONKEY() {
             Key = key,
             UserID = userId,
+            CharID = charId,
             SessionActor = SessionActor
         };
         var rsp = AskServer<SERVER_100_PROTOCOL.MSG_VALIDATESESSIONKEYRSP>(msg);

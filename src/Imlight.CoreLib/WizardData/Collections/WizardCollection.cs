@@ -213,7 +213,10 @@ public static class WizardCollection {
     /// <param name="account">The account associated with the character. Characters will be added
     /// to the account.</param>
     /// <returns>The character with the specified account ID, or null if not found.</returns>
-    public static Wizard[] LoadWizardsOntoAccount(ulong accountId, ref Account account) {
+    /// <param name="playedCharId">When not 0, only this character is loaded in full; the others keep just their
+    /// character document (level, name, zone), which is all a played session reads of them. Loading every
+    /// character on every zone change cost 0.3 s warm and 2 s cold (Niduus's log of 2026-10-25).</param>
+    public static Wizard[] LoadWizardsOntoAccount(ulong accountId, ref Account account, ulong playedCharId = 0) {
         var stopwatch = Stopwatch.StartNew();
         using var session = s_store.OpenSession();
 
@@ -229,13 +232,31 @@ public static class WizardCollection {
         // `Wizard` initialization may require the account to be in full; aka, we need
         // all the characters to be on the account ahead of time.
         for (var i = 0; i < characters.Count; i++) {
-            characters[i] = LoadWizard(characters[i]);
+            if (playedCharId == 0 || characters[i].CharId == playedCharId) {
+                characters[i] = LoadWizard(characters[i]);
+            }
         }
 
-        Logger.Debug("Loaded {Count} characters of account {AccountId} in {Elapsed} ms.",
-            Logger.Args(characters.Count, accountId, stopwatch.ElapsedMilliseconds));
+        Logger.Debug("Loaded {Count} characters of account {AccountId} ({Played}) in {Elapsed} ms.",
+            Logger.Args(characters.Count, accountId, playedCharId == 0 ? "all in full" : "one in full",
+                        stopwatch.ElapsedMilliseconds));
 
         return [.. characters];
+    }
+
+    /// <summary>
+    /// The zones the characters log into next: their saved zone, or the spot outside when they logged out inside an
+    /// instance. The most recently played characters come first. GameWorld loads these ahead of the first login.
+    /// </summary>
+    public static List<string> GetLoginZones() {
+        using var session = s_store.OpenSession();
+
+        return [.. session.Query<Wizard>(collectionName: CollectionName)
+            .OrderByDescending(w => w.LastLoginTime)
+            .Take(50)
+            .ToList()
+            .Select(w => w.ZoneIsInstance && !string.IsNullOrEmpty(w.SafeZone) ? w.SafeZone : w.Zone)
+            .Where(zone => !string.IsNullOrEmpty(zone))];
     }
 
     /// <summary>
