@@ -55,6 +55,20 @@ internal static class EventButton {
     internal static uint ProjectId(GameEvents.RunningEvent running)
         => ProjectName(running) is { } name ? StringHash.Compute(name) : 0;
 
+    /// <summary>Whether a game event template (TreasureTower_01_Fire, ...) is the one on now.</summary>
+    internal static bool IsActive(string projectName)
+        => !string.IsNullOrEmpty(projectName)
+           && string.Equals(ProjectName(GameEvents.Current), projectName, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The game registry value of an event entry: the game's zones show an event's objects while the entry named after
+    /// its template is 1 (the Duel Arena's tower portals ask for TreasureTower_01_&lt;School&gt; = 1). Null for any other entry.
+    /// </summary>
+    internal static float? RegistryValue(string entry)
+        => entry is not null && Deckathalon.Towers.Any(t => string.Equals(entry, $"TreasureTower_01_{t.School}", StringComparison.OrdinalIgnoreCase))
+            ? IsActive(entry) ? 1 : 0
+            : null;
+
     /// <summary>The school of a Deckathalon event id, or null.</summary>
     internal static string SchoolOf(uint projectId)
         => Deckathalon.Towers.Select(t => t.School).FirstOrDefault(s => StringHash.Compute($"TreasureTower_01_{s}") == projectId);

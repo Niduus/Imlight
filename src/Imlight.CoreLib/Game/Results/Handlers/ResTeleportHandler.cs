@@ -46,6 +46,12 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                 return RaidResult.MoveTo(context, padTarget);
             }
 
+            // The Deckathalon's tower floors name none either: their portals go up a floor or back to the arena.
+            if (Events.Deckathalon.FloorTeleport(context.GetPlayerRef(), playerObj.m_characterId, context.GetZonePath(),
+                    (context as GenericResultContext)?.TriggerName)) {
+                return true;
+            }
+
             // The exits of a house zone name no destination, so the player leaves to the hub of the house's world.
             if (!HouseExits.TryResolve(context.GetZonePath(), out destinationZone, out destinationLocation)) {
                 Logger.Warning("A teleport in {0} names no destination zone; the player stays where they are.",

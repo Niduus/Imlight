@@ -37,6 +37,11 @@ public static class GlobalRegistryCollection {
     /// Gets a registry entry from the global registry.
     /// </summary>
     public static float GetRegistryEntry(string entry) {
+        // The game's event entries (TreasureTower_01_Fire, ...) follow the event the Manager's Events card has on.
+        if (Imlight.CoreLib.Game.Events.EventButton.RegistryValue(entry) is { } eventValue) {
+            return eventValue;
+        }
+
         var model = SpiralDB.GlobalRegistry;
 
         if (model is null) {

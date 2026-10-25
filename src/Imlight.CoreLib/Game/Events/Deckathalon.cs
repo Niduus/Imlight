@@ -35,12 +35,13 @@
  *   CE_TreasureTower_Floor_01_Fire to CE_TreasureTower_Floor_30_Fire and the same for every school, read from the
  *   game files' creature list on 2026-10-24. Their health and stats are made for a wizard without gear (Fire Hornet
  *   on floor 1 has 195 health, Dalia Falmea on floor 30 has 4,670).
- * - The game's tower room is not in the game folder any more (the Wizard101 folder has no Treasure Tower zone; the live
- *   game downloads event zones while an event is on), so the floors are Briskbreeze Tower's battle rooms (Room02 to
- *   Room10), each a private copy loaded with a ZoneObjects variant (Deckathalon-<School>-<Floor>) made here: the room's
- *   own creatures and duel circle are left out, and a battle circle with the floor's creature stands where the room's
- *   circle was. The rooms go round (floor 10 is Room02 again) and floor 30 is always Room10. The room's doors lead out
- *   to the Commons.
+ * - The way in is the live game's: the event window's Go button sends the wizard to the Library, where the game's
+ *   portal to the Duel Arena shows only while a Deckathalon is on (WC-Teleport-LibToArena, its spawn requirements ask
+ *   for an active TreasureTower_01_<School>). In the arena, the portal of the school that is on (HO-TreasureTower_01_
+ *   <School>, spawned while the game registry entry TreasureTower_01_<School> is 1) starts the climb.
+ * - The floors are the game's own tower zones, WizardCity/TreasureTower/WC_TT01_<School>_L01 to _L30, each a private
+ *   copy as they are: the floor's creature on its circle, walking up to it starts the battle, and winning opens the
+ *   portal to the next floor (Trigger Teleport). The zone's exit and the end of the climb lead back to the arena.
  * - Scores (best floor and points, per event) and the rewards a wizard already had are kept in deckathalon.json next
  *   to the server.
  * - Points: 100 for each floor number cleared, 10 for each treasure card used, and up to 125 more for a quick win.
@@ -90,15 +91,16 @@ internal static class Deckathalon {
     private static readonly bool s_noGearStats = ConfigurationManager.GetValue("Deckathalon.NoGearStats", true);
     private static readonly bool s_alwaysOpen = ConfigurationManager.GetValue("Deckathalon.AlwaysOpen", false);
     private static readonly bool s_starterPack = ConfigurationManager.GetValue("Deckathalon.StarterPack", true);
-    private static readonly double s_nextFloorSeconds = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.NextFloorSeconds", 6.0), 1.0, 60.0);
+    private static readonly double s_nextFloorSeconds = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.NextFloorSeconds", 30.0), 1.0, 60.0);
     private static readonly int s_floors = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
 
-    // Where a wizard goes when they leave the tower, and where its doors lead.
-    private const string EXIT_ZONE = "WizardCity/WC_Hub";
-    private const string EXIT_LOCATION = "Start";
+    // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
+    internal const string ARENA_ZONE = "WizardCity/WC_Duel_Arena";
+    internal const string ARENA_LOCATION = "From TT01";
 
-    private const ulong BATTLE_CIRCLE_TEMPLATE = 512231;
-    private const ulong ROOM_DUEL_CIRCLE_TEMPLATE = 560;
+    // The game's tower zones (WizardCity/TreasureTower/WC_TT01_<School>_L<Floor>), and the triggers of their portals.
+    private const string FLOOR_ZONE_PREFIX = "WizardCity/TreasureTower/WC_TT01_";
+    private const string NEXT_FLOOR_TRIGGER = "Trigger Teleport";
 
     /// <summary>A school's tower: its creatures by floor (1 to 30), its professor, its Tower Pack and its trophies.</summary>
     internal sealed record Tower(string School, MagicSchool Magic, uint[] Floors, string Professor, uint TowerPack,
@@ -144,24 +146,6 @@ internal static class Deckathalon {
         ], "Alhazred", 1441963, 1448539, 1448540, 1448541),
     ];
 
-    /// <summary>A floor's room: a Briskbreeze Tower battle room and where its duel circle stands.</summary>
-    private sealed record Room(string Zone, float X, float Y, float Z);
-
-    private static readonly Room[] s_rooms = [
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room02", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room03", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room04", 16.04494f, 114.4375f, -167.4351f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room05", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room06", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room07", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room08", -1.459076f, 142.6258f, -167.0424f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room09", 3.470825f, -43.25f, 1.577637f),
-        new("WizardCity/Gauntlets/WC_Gauntlet_01/Room10", 3.470825f, -43.25f, 1.577637f),
-    ];
-
-    // Briskbreeze Tower's own creatures (its spawns, from the game files' spawn list), left out of a floor.
-    private static readonly ulong[] s_roomCreatures = [164774, 164775, 164776, 191087, 191088, 191089, 191090, 191091, 191093];
-
     /// <summary>A climb of the tower: whose, which school, the floor they are on and the points so far.</summary>
     internal sealed class Run {
         internal ulong CharId;
@@ -172,6 +156,8 @@ internal static class Deckathalon {
         internal int Points;
         internal int CardsUsed;
         internal bool Won;
+        // The floor the wizard was last sent to, so the timed move up does not follow the portal's.
+        internal int SentTo;
     }
 
     private static readonly ConcurrentDictionary<ulong, Run> s_runs = new();
@@ -298,11 +284,14 @@ internal static class Deckathalon {
     internal static GameEvents.RunningEvent CurrentEvent
         => GameEvents.Current is { IsDeckathalon: true } running && TowerOf(running.School) is not null ? running : null;
 
-    // Floors 1 to 9 climb Room02 to Room10, then the rooms go round again; floor 30 is always the top room.
-    private static Room RoomOf(int floor)
-        => floor >= TOP_FLOOR ? s_rooms[^1] : s_rooms[(Math.Max(1, floor) - 1) % s_rooms.Length];
+    /// <summary>The game's zone of a tower floor, such as WizardCity/TreasureTower/WC_TT01_Fire_L01.</summary>
+    internal static string FloorZone(Tower tower, int floor) => $"{FLOOR_ZONE_PREFIX}{tower.School}_L{Math.Clamp(floor, 1, TOP_FLOOR):00}";
 
-    private static string VariantOf(Tower tower, int floor) => $"{VARIANT_PREFIX}{tower.School}-{floor}";
+    /// <summary>Whether a zone is one of the game's tower floors.</summary>
+    internal static bool IsFloorZone(string zone) => zone?.StartsWith(FLOOR_ZONE_PREFIX, StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool OnFloor(Wizard wizard, Run run, int floor)
+        => string.Equals(wizard.Zone, FloorZone(run.Tower, floor), StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The creature of a floor.</summary>
     internal static uint CreatureOf(Tower tower, int floor) => tower.Floors[Math.Clamp(floor, 1, TOP_FLOOR) - 1];
@@ -315,51 +304,6 @@ internal static class Deckathalon {
         return string.IsNullOrWhiteSpace(name) ? templateId.ToString() : name;
     }
 
-    /// <summary>
-    /// The ZoneObjects files of every floor of every tower, which ZoneObjects reads with its own: each floor's room,
-    /// without its own creatures and duel circle, with a battle circle and the floor's creature on it, and the room's
-    /// doors leading out to the Commons.
-    /// </summary>
-    internal static List<ZoneObjects.ZoneObjectFile> ZoneFiles() {
-        if (!Enabled) {
-            return [];
-        }
-
-        var files = new List<ZoneObjects.ZoneObjectFile>();
-        foreach (var tower in Towers) {
-            for (var floor = 1; floor <= TOP_FLOOR; floor++) {
-                var room = RoomOf(floor);
-                var boss = floor == TOP_FLOOR;
-                files.Add(new ZoneObjects.ZoneObjectFile {
-                    Zone = room.Zone,
-                    Variant = VariantOf(tower, floor),
-                    Notes = $"Deckathalon (Deckathalon.cs): the {tower.School} tower's floor {floor}.",
-                    Objects = [
-                        new ZoneObjects.ZoneObject {
-                            Name = "Deckathalon_Circle",
-                            TemplateID = BATTLE_CIRCLE_TEMPLATE,
-                            X = room.X, Y = room.Y, Z = room.Z,
-                            CombatSigil = new ZoneObjects.ZoneCombatSigil {
-                                SigilType = boss ? "CombatSigil_1EnemySlot" : "CombatSigil_4EnemySlots",
-                            },
-                        },
-                    ],
-                    Creatures = [
-                        new ZoneObjects.ZoneObject {
-                            Name = "Deckathalon_Floor",
-                            TemplateID = CreatureOf(tower, floor),
-                            X = room.X, Y = room.Y, Z = room.Z,
-                        },
-                    ],
-                    Remove = [ROOM_DUEL_CIRCLE_TEMPLATE, .. s_roomCreatures],
-                    Exit = new ZoneObjects.ZoneExit { Zone = EXIT_ZONE, Loc = EXIT_LOCATION, Triggers = [], Doors = [] },
-                });
-            }
-        }
-
-        return files;
-    }
-
     #endregion
 
     #region Runs
@@ -370,7 +314,7 @@ internal static class Deckathalon {
     /// <summary>Whether a wizard's battle is in the tower: the wizard is climbing and stands in their floor's room.</summary>
     internal static bool FightsHere(Wizard wizard)
         => Enabled && wizard is not null && RunOf(wizard.CharId) is { Won: false } run
-           && string.Equals(wizard.Zone, RoomOf(run.Floor).Zone, StringComparison.OrdinalIgnoreCase);
+           && OnFloor(wizard, run, run.Floor);
 
     /// <summary>
     /// Starts a climb from floor 1: the school's tower when its Deckathalon is on, or (for the server's testers, or with
@@ -459,7 +403,7 @@ internal static class Deckathalon {
             return "You are not climbing the Deckathalon.";
         }
 
-        var inTower = string.Equals(wizard.Zone, RoomOf(run.Floor).Zone, StringComparison.OrdinalIgnoreCase);
+        var inTower = IsFloorZone(wizard.Zone);
         if (inTower) {
             session.Tell(ExitTransfer());
         }
@@ -468,11 +412,43 @@ internal static class Deckathalon {
     }
 
     /// <summary>A treasure card used in battle in the tower: 10 points.</summary>
-    internal static void CardUsed(Wizard wizard) {
-        if (FightsHere(wizard) && RunOf(wizard.CharId) is { } run) {
+    /// <summary>
+    /// A treasure card used in battle: 10 points of the climb in the tower, and while a Deckathalon is on, a point of the
+    /// event anywhere (Niduus, 2026-10-25: "not getting the +1 to event notification for using a treasure card"), which
+    /// the game shows as its "+1" event toast (MSG_UPDATECLASSPROJECTSTATUS, ClientClassProjectComponent).
+    /// </summary>
+    internal static void CardUsed(Wizard wizard, IActorRef client) {
+        if (!Enabled || wizard is null) {
+            return;
+        }
+
+        var inTower = FightsHere(wizard) && RunOf(wizard.CharId) is not null;
+        if (inTower && RunOf(wizard.CharId) is { } run) {
             run.CardsUsed++;
             run.Points += 10;
         }
+
+        if (CurrentEvent is not { } current || client is null) {
+            return;
+        }
+
+        var score = ScoreOf(current.Key, wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName() ?? wizard.CharId.ToString());
+        if (!inTower) {
+            // In the tower the climb's points count when its floor is won; elsewhere the card counts straight away.
+            lock (s_scoreLock) {
+                score.Points += 10;
+            }
+
+            SaveScores();
+        }
+
+        client.Tell(new Imcodec.MessageLayer.Generated.WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTSTATUS {
+            Status = 1,
+            ProjectID = EventButton.ProjectId(current),
+            Count = (uint) Math.Max(0, score.Points / 10),
+            Points = 1,
+            HasUnclaimedReward = 0,
+        });
     }
 
     /// <summary>
@@ -484,10 +460,8 @@ internal static class Deckathalon {
             return;
         }
 
-        var creature = CreatureOf(run.Tower, run.Floor);
-        var mobs = (mobTemplateIds ?? []).Select(Combat.Customs.BaseOf).ToList();
-        if (!mobs.Contains(creature)
-            || !string.Equals(wizard.Zone, RoomOf(run.Floor).Zone, StringComparison.OrdinalIgnoreCase)) {
+        // The floor's zone has only its own creature, so a battle won there is the floor's.
+        if (!OnFloor(wizard, run, run.Floor)) {
             return;
         }
 
@@ -514,16 +488,16 @@ internal static class Deckathalon {
                 lines.Insert(0, floor >= TOP_FLOOR
                     ? $"You beat {run.Tower.Professor} and conquered the {run.Tower.School} Deckathalon with {run.Points} points!"
                     : $"You reached the top of the {run.Tower.School} Deckathalon (floor {floor}) with {run.Points} points!");
-                lines.Add($"Leaving the tower in {s_nextFloorSeconds:0} seconds.");
+                lines.Add($"Walk into the portal to go back to the arena, or you leave by yourself in {s_nextFloorSeconds:0} seconds.");
                 Tell(session, lines);
-                Later(session, ExitTransfer());
+                Later(session, ExitTransfer(), () => IsFloorZone(wizard.Zone));
 
                 return;
             }
 
             run.Floor = floor + 1;
             var next = CreatureOf(run.Tower, run.Floor);
-            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Up to floor {run.Floor} in {s_nextFloorSeconds:0} seconds: "
+            lines.Insert(0, $"Floor {floor} cleared ({run.Points} points). Walk into the portal to go up to floor {run.Floor} (or you go up by yourself in {s_nextFloorSeconds:0} seconds): "
                 + (run.Floor == TOP_FLOOR ? $"{run.Tower.Professor} waits there." : $"{ShownName(next)}."));
             Tell(session, lines);
             GoToFloor(session, run, s_nextFloorSeconds);
@@ -536,7 +510,7 @@ internal static class Deckathalon {
     /// <summary>A lost (or fled) battle on the wizard's floor ends the climb.</summary>
     internal static void OnDefeat(IActorRef session, Wizard wizard) {
         if (!Enabled || wizard is null || RunOf(wizard.CharId) is not { } run
-            || !string.Equals(wizard.Zone, RoomOf(run.Floor).Zone, StringComparison.OrdinalIgnoreCase)) {
+            || !OnFloor(wizard, run, run.Floor)) {
             return;
         }
 
@@ -622,32 +596,77 @@ internal static class Deckathalon {
     }
 
     private static void GoToFloor(IActorRef session, Run run, double delaySeconds) {
+        var floor = run.Floor;
         var transfer = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-            DestinationZone = RoomOf(run.Floor).Zone,
+            DestinationZone = FloorZone(run.Tower, floor),
             DestinationLocation = "Start",
             SendToClient = true,
             IsPrivate = true,
             OwnerCharId = run.CharId,
             ResetInstance = true,
-            Variant = VariantOf(run.Tower, run.Floor),
         };
         if (delaySeconds <= 0) {
+            run.SentTo = floor;
             session.Tell(transfer);
+
+            return;
         }
-        else {
-            Later(session, transfer, delaySeconds);
+
+        // The timed move up, unless the floor's portal already took the wizard there (or the climb ended).
+        Later(session, transfer, () => {
+            if (RunOf(run.CharId) != run || run.Floor != floor || run.SentTo == floor) {
+                return false;
+            }
+
+            run.SentTo = floor;
+
+            return true;
+        }, delaySeconds);
+    }
+
+    /// <summary>
+    /// A teleport of a tower floor, which names no destination: the next-floor portal (open once the floor is won) goes
+    /// up a floor, and every other one (the zone's exit, the top floor's portal) back to the arena. Returns false when
+    /// the zone is not a tower floor.
+    /// </summary>
+    internal static bool FloorTeleport(IActorRef session, ulong charId, string zone, string triggerName) {
+        if (!IsFloorZone(zone)) {
+            return false;
         }
+
+        if (string.Equals(triggerName, NEXT_FLOOR_TRIGGER, StringComparison.OrdinalIgnoreCase)
+            && RunOf(charId) is { Won: false } run
+            && !string.Equals(zone, FloorZone(run.Tower, run.Floor), StringComparison.OrdinalIgnoreCase)) {
+            GoToFloor(session, run, 0);
+
+            return true;
+        }
+
+        if (RunOf(charId) is { } leaving) {
+            // Walking out of the tower ends the climb, as .deckathalon leave does.
+            s_runs.TryRemove(charId, out _);
+            Tell(session, [$"You left the {leaving.Tower.School} Deckathalon on floor {leaving.Floor} with {leaving.Points} points."]);
+        }
+
+        session.Tell(ExitTransfer());
+
+        return true;
     }
 
     private static ZONE_102_PROTOCOL.MSG_ZONETRANSFER ExitTransfer() => new() {
-        DestinationZone = EXIT_ZONE,
-        DestinationLocation = EXIT_LOCATION,
+        DestinationZone = ARENA_ZONE,
+        DestinationLocation = ARENA_LOCATION,
         SendToClient = true,
     };
 
-    private static void Later(IActorRef session, ZONE_102_PROTOCOL.MSG_ZONETRANSFER transfer, double seconds = -1) {
+    // Sends a transfer after a while, when the check (if any) still says so then.
+    private static void Later(IActorRef session, ZONE_102_PROTOCOL.MSG_ZONETRANSFER transfer, Func<bool> stillDue = null, double seconds = -1) {
         var wait = TimeSpan.FromSeconds(seconds < 0 ? s_nextFloorSeconds : seconds);
-        _ = Task.Delay(wait).ContinueWith(_ => session.Tell(transfer));
+        _ = Task.Delay(wait).ContinueWith(_ => {
+            if (stillDue?.Invoke() != false) {
+                session.Tell(transfer);
+            }
+        });
     }
 
     private static void Tell(IActorRef session, IEnumerable<string> lines) {

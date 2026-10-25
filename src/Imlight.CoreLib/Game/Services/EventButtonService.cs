@@ -28,12 +28,16 @@ namespace Imlight.CoreLib.Game.Services;
 
 /// <summary>
 /// The game's event button for one session (Game/Events/EventButton.cs): shown on arrival while an event is on, its
-/// window's info and leaderboard, and its Go button, which climbs the Deckathalon.
+/// window's info and leaderboard, and its Go button, which goes to the Library on the way to the Deckathalon.
 /// </summary>
 internal class EventButtonService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new EventButtonService(parentActor));
+
+    // Where the event window's Go button sends a wizard, as the game's event template says.
+    private const string LIBRARY_ZONE = "WizardCity/Interiors/WC_Library";
+    private const string LIBRARY_LOCATION = "Start";
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
@@ -81,17 +85,33 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
     private void ReceiveUseCrowns(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSECROWNS message)
         => Climb(message.ProjectID);
 
-    // The window's Go button: the climb of the Deckathalon that is on, as .deckathalon start.
+    // The window's Go button: as in the game, it takes the wizard to the Library (the event's m_eventTeleportZone), where
+    // the event's portal to the Duel Arena stands while it is on; the arena's tower portal starts the climb.
     private void Climb(uint projectId) {
         try {
             var wizard = GetActiveWizard();
             var school = EventButton.SchoolOf(projectId) ?? Deckathalon.CurrentEvent?.School ?? "";
-            Deckathalon.TryStart(SessionActor.ActorRef, wizard, school, false, out var reply);
-            Logger.Information("Event button: {0} asked to climb event {1} ({2}): {3}", Logger.Args(wizard.CharId, projectId, school, reply));
-            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = reply, Modal = 0 });
+            if (Deckathalon.CurrentEvent is null || wizard.IsInDuel) {
+                var why = wizard.IsInDuel ? "Finish your battle first." : "No Deckathalon is on right now. The Events card of the Imlight app starts one.";
+                SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = why, Modal = 0 });
+
+                return;
+            }
+
+            Logger.Information("Event button: {0} goes to the Library for event {1} ({2}).", Logger.Args(wizard.CharId, projectId, school));
+            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = LIBRARY_ZONE,
+                DestinationLocation = LIBRARY_LOCATION,
+                SendToClient = true,
+                OwnerCharId = wizard.CharId,
+            });
+            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                Message = $"The {Deckathalon.CurrentEvent.School} Deckathalon: take the portal in the Library to the Duel Arena, then the tower portal there.",
+                Modal = 0,
+            });
         }
         catch (Exception e) {
-            Logger.Error("Event button: climb failed: {0}", Logger.Args(e));
+            Logger.Error("Event button: Go failed: {0}", Logger.Args(e));
         }
     }
 

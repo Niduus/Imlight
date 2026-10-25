@@ -1485,7 +1485,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// </summary>
     internal static void UseUpCard(CombatDuelSubCircle caster, Spell spell) {
         if (spell.m_treasureCard) {
-            Imlight.CoreLib.Game.Events.Deckathalon.CardUsed(caster._wizard);
+            if (!caster.IsSandboxed) {
+                Imlight.CoreLib.Game.Events.Deckathalon.CardUsed(caster._wizard, caster.ParticipantActor);
+            }
             var consumedTemplateId = caster.ConsumeFromVault(spell);
             if (consumedTemplateId != 0 && caster._wizard != null && !caster.IsSandboxed) {
                 // Persist the removal from the player's treasure card book.
