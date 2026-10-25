@@ -91,6 +91,26 @@ public static class SpiralDB {
     public static IReadOnlyDictionary<ulong, NPCSpellInventory> NpcSpellInventories => s_npcSpellInventories;
     public static IReadOnlyDictionary<ulong, NpcDropTable> NpcDropTables => s_npcDropTables;
     public static IReadOnlyList<QuestTemplate> QuestTemplates => s_questTemplates;
+
+    // The quests as the files have them, before the Manager's quest changes (Game/Quests/QuestOptions.cs).
+    private static List<QuestTemplate> s_originalQuestTemplates = [];
+
+    /// <summary>The quests as SpiralDB and spiraldb-extra have them, with none of the Manager's quest changes.</summary>
+    public static IReadOnlyList<QuestTemplate> OriginalQuestTemplates => s_originalQuestTemplates;
+
+    /// <summary>
+    /// Puts the quests with the Manager's changes in use (QuestOptions): every later look-up by name, and every list of
+    /// all quests, sees them.
+    /// </summary>
+    internal static void UseQuestTemplates(List<QuestTemplate> quests) {
+        var byName = new ConcurrentDictionary<string, QuestTemplate>(StringComparer.OrdinalIgnoreCase);
+        foreach (var quest in quests) {
+            byName[quest.m_questName] = quest;
+        }
+
+        s_questTemplatesByName = byName;
+        s_questTemplates = quests;
+    }
     public static IReadOnlyDictionary<string, WizardZoneData> ZoneData => s_zoneData;
     public static IReadOnlyDictionary<ulong, NpcTreasureCardInventory> TreasureCardInventories => s_treasureCardInventories;
     public static IReadOnlyDictionary<uint, BadgeDefinition> BadgeDefinitions => s_badgeDefinitions;
@@ -175,6 +195,10 @@ public static class SpiralDB {
 
             // Zone signals the real game's server sends when a quest step starts or ends (a boss spawning, a door opening).
             QuestGoalEvents.ApplyAll(questTemplates, extraPath);
+
+            // The Manager's quest changes (Create page, Quest Editor) go on copies; the files' own quests stay as they are.
+            s_originalQuestTemplates = questTemplates;
+            Imlight.CoreLib.Game.Quests.QuestOptions.Apply();
 
             Logger.Information(
                 "SpiralDB loaded {0} files: {1} spellbooks, {2} drop tables, {3} NPC inventories, " +

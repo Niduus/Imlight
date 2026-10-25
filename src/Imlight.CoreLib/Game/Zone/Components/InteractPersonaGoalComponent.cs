@@ -102,16 +102,19 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         }
 
         var npcName = goTemplate.m_objectName;
+
+        // Check if this NPC is referenced as a persona goal target in any quest (or the Manager's Quest Editor made it one).
+        var personas = PersonaNames();
+        if (!string.IsNullOrEmpty(npcName) && (personas.Contains(npcName) || personas.Contains(npcName + PERSONA_SUFFIX))
+            || IsRegistrarTemplate(npcName) && personas.Any(IsRegistrarTemplate)
+            || Imlight.CoreLib.Game.Quests.QuestOptions.NamesNpc(goTemplate.m_templateID)) {
+            return true;
+        }
+
         var questTemplates = QuestTemplateCollection
             .GetAllQuests()
             .Where(x => x is not null)
             .ToArray();
-
-        // Check if this NPC is referenced as a persona goal target in any quest.
-        if (questTemplates.SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
-                .Any(goal => PersonaNamesMayMatch(goal.m_personaName, npcName))) {
-            return true;
-        }
 
         // Some Ravenwood zone copies use a localized NPC template name rather than the quest's
         // suffixed object name. Attach the service to Lincoln copies so OnStart can resolve the
@@ -121,6 +124,27 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             && questTemplates.SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
                 .Any(goal => IsRegistrarTemplate(goal.m_personaName)
                     && goal.m_destinationZone.ToString().Contains("Ravenwood", StringComparison.OrdinalIgnoreCase));
+    }
+
+    // A class, not a value tuple: zones read it on threads of their own, so it must never be half written.
+    private static Tuple<int, HashSet<string>> s_personaNames = Tuple.Create(-1, new HashSet<string>());
+
+    // The persona of every "talk to" step, worked out once for each set of quest changes (it was once for every NPC).
+    private static HashSet<string> PersonaNames() {
+        var known = s_personaNames;
+        if (known.Item1 == Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            return known.Item2;
+        }
+
+        var names = QuestTemplateCollection.GetAllQuests()
+            .Where(quest => quest?.m_goals is not null)
+            .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
+            .Select(goal => (string) goal.m_personaName)
+            .Where(name => !string.IsNullOrEmpty(name))
+            .ToHashSet(StringComparer.Ordinal);
+        s_personaNames = Tuple.Create(Imlight.CoreLib.Game.Quests.QuestOptions.Version, names);
+
+        return names;
     }
 
     /// <summary>
@@ -175,7 +199,18 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             npcDisplayName = Locale.GetEnglishName(goTemplate.m_displayName.ToString());
         }
 
-        // Cache all persona goals that reference this NPC.
+        _npcDisplayName = npcDisplayName;
+        CachePersonaGoals();
+    }
+
+    private string _npcDisplayName = string.Empty;
+    private int _goalsVersion = -1;
+
+    // The persona goals that reference this NPC, cached at start and again after the Manager changed quests.
+    private void CachePersonaGoals() {
+        _goalsVersion = Imlight.CoreLib.Game.Quests.QuestOptions.Version;
+        _personaGoalsByQuest.Clear();
+        _cachedPlayerStates.Clear();
         var questTemplates = QuestTemplateCollection
             .GetAllQuests()
             .Where(x => x is not null)
@@ -183,7 +218,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
 
         foreach (var questTemplate in questTemplates) {
             foreach (var goal in questTemplate.m_goals.OfType<PersonaGoalTemplate>()) {
-                if (!PersonaNamesMatch(goal.m_personaName, _npcName, npcDisplayName, Entity.Zone?.ZoneData?.m_zoneName)) {
+                if (!PersonaNamesMatch(goal.m_personaName, _npcName, _npcDisplayName, Entity.Zone?.ZoneData?.m_zoneName)) {
                     continue;
                 }
 
@@ -227,6 +262,10 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         => name is "WC-HUB-NPC08" or "WC-HUB-NPC08-B" or "WC-HUB-NPC08-B_Persona";
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (_goalsVersion != Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            CachePersonaGoals();
+        }
+
         if (_personaGoalsByQuest.Count <= 0) {
             WizBang = WizBangs.None;
 
@@ -238,6 +277,10 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (_goalsVersion != Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            CachePersonaGoals();
+        }
+
         if (playerWizard is null || _personaGoalsByQuest.Count <= 0) {
             return;
         }
@@ -264,6 +307,10 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
     }
 
     private PlayerPersonaGoalState GetOrUpdatePlayerState(Wizard wizard, bool forceUpdate = false) {
+        if (_goalsVersion != Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            CachePersonaGoals();
+        }
+
         var playerId = wizard.CharId;
         var now = DateTime.UtcNow;
 

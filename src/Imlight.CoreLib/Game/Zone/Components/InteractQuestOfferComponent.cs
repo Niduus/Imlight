@@ -47,6 +47,7 @@ using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Madlibs;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Services;
@@ -99,15 +100,31 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
             return false;
         }
 
-        // Check if this NPC gives any quests by looking for "Prep" dialogs.
-        return QuestTemplateCollection
-            .GetAllQuests()
+        // An NPC who gives a quest (the Prep line's persona's NPC, not its actor template ID: Pesky Pirates). Every NPC
+        // a quest step talks to gets the service too, so the Manager's Quest Editor can make any of them a giver live.
+        return GiverTemplates().Contains(goTemplate.m_templateID)
+            || InteractPersonaGoalComponent.ShouldAttachToEntity(template)
+            || QuestOptions.NamesNpc(goTemplate.m_templateID);
+    }
+
+    // A class, not a value tuple: zones read it on threads of their own, so it must never be half written.
+    private static Tuple<int, HashSet<ulong>> s_givers = Tuple.Create(-1, new HashSet<ulong>());
+
+    // The giver of every quest, worked out once for each set of quest changes (it was once for every NPC of every zone).
+    private static HashSet<ulong> GiverTemplates() {
+        var known = s_givers;
+        if (known.Item1 == QuestOptions.Version) {
+            return known.Item2;
+        }
+
+        var givers = QuestTemplateCollection.GetAllQuests()
             .Where(x => x?.m_dialogList is ActorDialogList)
-            .Any(quest => {
-                // The giver is the Prep line's persona's NPC, not its actor template ID (Pesky Pirates).
-                var templateId = QuestMadlibs.GiverTemplateOf(quest);
-                return templateId == goTemplate.m_templateID;
-            });
+            .Select(QuestMadlibs.GiverTemplateOf)
+            .Where(id => id != 0)
+            .ToHashSet();
+        s_givers = Tuple.Create(QuestOptions.Version, givers);
+
+        return givers;
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
@@ -136,15 +153,16 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         };
     }
 
-    public override void OnStart() {
-        // Cache the quests this NPC can give during startup.
-        var questTemplates = QuestTemplateCollection
-            .GetAllQuests()
-            .Where(x => x is not null)
-            .ToList();
+    public override void OnStart() => CacheGivenQuests();
 
-        foreach (var questTemplate in questTemplates) {
-            if (questTemplate.m_dialogList is not ActorDialogList) {
+    private int _givesVersion = -1;
+
+    // The quests this NPC gives, cached at start and again after the Manager changed quests.
+    private void CacheGivenQuests() {
+        _givesVersion = QuestOptions.Version;
+        _givesQuests.Clear();
+        foreach (var questTemplate in QuestTemplateCollection.GetAllQuests()) {
+            if (questTemplate?.m_dialogList is not ActorDialogList && QuestOptions.GiverOf(questTemplate?.m_questName) == 0) {
                 continue;
             }
 
@@ -156,9 +174,14 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         }
 
         _givesQuests.Sort((a, b) => string.Compare(a.m_questTitle, b.m_questTitle, StringComparison.Ordinal));
+        _cachedPlayerStates.Clear();
     }
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (_givesVersion != QuestOptions.Version) {
+            CacheGivenQuests();
+        }
+
         if (_givesQuests.Count <= 0) {
             WizBang = WizBangs.None;
 
@@ -170,6 +193,10 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (_givesVersion != QuestOptions.Version) {
+            CacheGivenQuests();
+        }
+
         if (playerWizard is null || _givesQuests.Count <= 0) {
             return;
         }
@@ -196,6 +223,10 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     }
 
     private PlayerQuestOfferState GetOrUpdatePlayerState(Wizard wizard, bool forceUpdate = false) {
+        if (_givesVersion != QuestOptions.Version) {
+            CacheGivenQuests();
+        }
+
         var playerId = wizard.CharId;
         var now = DateTime.UtcNow;
 
@@ -214,8 +245,13 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
                 continue;
             }
 
+            // Turned off or skipped in the Manager's Quest Editor.
+            if (QuestOptions.IsOff(quest.m_questName)) {
+                continue;
+            }
+
             var hasQuest = wizard.HasQuest(quest.m_questName);
-            var hasCompleted = wizard.HasCompletedQuest(quest.m_questName);
+            var hasCompleted = wizard.HasCompletedQuest(quest.m_questName) && !QuestOptions.IsRepeatable(quest.m_questName);
 
             // Only show quest offer if player doesn't have it and hasn't completed it.
             if (hasQuest || hasCompleted) {

@@ -221,6 +221,20 @@ internal static class QuestMadlibs {
 
     /// <summary>The NPC who offers a quest: the speaker of its first "Prep" line, or 0.</summary>
     public static ulong GiverTemplateOf(QuestTemplate quest) {
+        // The Manager's Quest Editor can name another giver, or none (the quest starts by itself).
+        if (Imlight.CoreLib.Game.Quests.QuestOptions.StartsByItself(quest?.m_questName)) {
+            return 0;
+        }
+
+        if (Imlight.CoreLib.Game.Quests.QuestOptions.GiverOf(quest?.m_questName) is > 0 and var giver) {
+            return giver;
+        }
+
+        return PrepSpeakerOf(quest);
+    }
+
+    /// <summary>The speaker of a quest's first "Prep" line, or 0: the giver as the quest's own data has it.</summary>
+    public static ulong PrepSpeakerOf(QuestTemplate quest) {
         var entry = (quest?.m_dialogList as ActorDialogList)?.m_dialogs?
             .FirstOrDefault(d => d.m_dialogTag == "Prep")?.m_dialogEntries?.FirstOrDefault();
         return entry switch {

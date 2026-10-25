@@ -319,6 +319,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Customs", CustomsTab),
+            Tab("Quest Editor", QuestEditorTab),
             Tab("Guides", GuidesTab),
             Tab("Server", ServerTab),
             Tab("Announcements", AnnouncementsTab),
@@ -443,6 +444,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Customs": await LoadCustomsAsync(); break;
+            case "Quest Editor": LoadQuestEditor(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
             case "Guides":
                 await LoadBossesAsync();
@@ -2527,6 +2529,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
+        ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         ["Server"] = ("server", "Start and stop the server, and switch its modes."),
         ["Announcements"] = ("chat", "Change the words of everything the server announces, and send your own."),

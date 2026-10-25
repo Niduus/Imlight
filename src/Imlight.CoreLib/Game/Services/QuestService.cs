@@ -45,6 +45,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Madlibs;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Results;
@@ -88,7 +89,31 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     private static readonly TimeSpan PERSONA_TRANSITION_DELAY = TimeSpan.FromMilliseconds(100);
 
     private readonly List<QuestTemplate> _cachedQuestOffers = [];
-    private readonly List<QuestTemplate> _cachedQuestTemplates = [];
+    private readonly List<QuestTemplate> _questTemplateCache = [];
+    private int _questTemplateVersion = QuestOptions.Version;
+
+    // The quests this session has used. After the Manager changed quests (QuestOptions), each is swapped for the one now in use.
+    private List<QuestTemplate> CachedQuestTemplates {
+        get {
+            if (_questTemplateVersion != QuestOptions.Version) {
+                _questTemplateVersion = QuestOptions.Version;
+                for (var i = 0; i < _questTemplateCache.Count; i++) {
+                    if (QuestTemplateCollection.GetQuestByName(_questTemplateCache[i].m_questName) is { } now) {
+                        _questTemplateCache[i] = now;
+                    }
+                }
+
+                // An offer made before the change is taken as it is now.
+                for (var i = 0; i < _cachedQuestOffers.Count; i++) {
+                    if (QuestTemplateCollection.GetQuestByName(_cachedQuestOffers[i].m_questName) is { } now) {
+                        _cachedQuestOffers[i] = now;
+                    }
+                }
+            }
+
+            return _questTemplateCache;
+        }
+    }
     private readonly ObjectSerializer _goalSerializer = new(false);
 
     /// <summary>
@@ -139,8 +164,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             }
 
             // Cache the quest template so we can reference it later if needed.
-            if (!_cachedQuestTemplates.Contains(qTemplate)) {
-                _cachedQuestTemplates.Add(qTemplate);
+            if (!CachedQuestTemplates.Contains(qTemplate)) {
+                CachedQuestTemplates.Add(qTemplate);
             }
 
             if (!IsShownInQuestBook(qTemplate, wizard)) {
@@ -221,7 +246,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         // Get the goal template for this goal.
-        var qTemplate = _cachedQuestTemplates
+        var qTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_questName == qInstance.QuestName);
         if (qTemplate == null) {
             Logger.Error("Failed to find quest template for quest '{0}' when completing goal ID '{1}'",
@@ -384,7 +409,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        var gTemplate = _cachedQuestTemplates
+        var gTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_questName == qInstance.QuestName)?.m_goals
             .FirstOrDefault(g => g.m_goalName == gInstance.GoalName);
         if (gTemplate == null) {
@@ -448,7 +473,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         // Get the goal template for this goal.
-        var qTemplate = _cachedQuestTemplates
+        var qTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_questName == qInstance.QuestName);
         if (qTemplate == null) {
             Logger.Error("Failed to find quest template for quest '{0}' when completing goal ID '{1}'",
@@ -511,7 +536,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         // Get the goal template for this goal.
-        var qTemplate = _cachedQuestTemplates
+        var qTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_questName == qInstance.QuestName);
         if (qTemplate == null) {
             Logger.Error("Failed to find quest template for quest '{0}' when completing proximity goal ID '{1}'",
@@ -548,7 +573,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         var wizard = GetActiveWizard();
         foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
-            var qTemplate = _cachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
+            var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
             if (qTemplate?.m_goals is null) {
                 continue;
             }
@@ -573,7 +598,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         var qInstance = GetActiveWizard().QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q.QuestName == message.QuestName);
-        var gTemplate = _cachedQuestTemplates
+        var gTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_questName == message.QuestName)?.m_goals?
             .FirstOrDefault(g => g.m_goalName == message.GoalName);
         if (qInstance is null || gTemplate is null || !qInstance.IsGoalActive(gTemplate.m_goalName)) {
@@ -674,10 +699,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         => SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
 
     private QuestTemplate GetQuestTemplate(string questName) {
-        var template = _cachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName)
+        var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName)
             ?? QuestTemplateCollection.GetQuestByName(questName);
-        if (template is not null && !_cachedQuestTemplates.Contains(template)) {
-            _cachedQuestTemplates.Add(template);
+        if (template is not null && !CachedQuestTemplates.Contains(template)) {
+            CachedQuestTemplates.Add(template);
         }
 
         return template;
@@ -1074,13 +1099,18 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        // A quest the Manager's Quest Editor made repeatable starts fresh: the steps of the last run are forgotten.
+        if (QuestOptions.IsRepeatable(quest.m_questName) && wizard.HasCompletedQuest(quest.m_questName)) {
+            wizard.QuestBehavior.RemoveAllQuestRegistryEntries(quest.m_questName, keepComplete: true);
+        }
+
         var questInstance = new QuestInstance(quest, wizard.CharId);
         if (!wizard.AddQuest(questInstance)) {
             return;
         }
 
-        if (!_cachedQuestTemplates.Contains(quest)) {
-            _cachedQuestTemplates.Add(quest);
+        if (!CachedQuestTemplates.Contains(quest)) {
+            CachedQuestTemplates.Add(quest);
         }
 
         SendQuestStartingMessage(quest, questInstance);
@@ -1098,7 +1128,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             && GroupRegistry.AreGrouped(wizard.CharId, allyCharId)) == true;
 
         foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
-            var qTemplate = _cachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
+            var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
             if (qTemplate == null) {
                 Logger.Error("Failed to find quest template for quest '{0}' when processing combat victory.",
                     Logger.Args(qInstance.QuestName));
@@ -1401,7 +1431,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     private void CheckForWaypointGoalZoneEntry(Wizard wizard) {
         var currentZone = wizard.Zone;
 
-        foreach (var quest in _cachedQuestTemplates) {
+        foreach (var quest in CachedQuestTemplates) {
             // Check to see if the quest has any waypoint goals that trigger on zone entry.
             var waypointGoals = quest.m_goals
                 .Where(gTemplate => gTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_WAYPOINT)
@@ -1442,7 +1472,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     private void CheckForWaypointGoalZoneExit(Wizard wizard) {
         var previousZone = wizard.PreviousZone;
 
-        foreach (var quest in _cachedQuestTemplates) {
+        foreach (var quest in CachedQuestTemplates) {
             // Check to see if the quest has any waypoint goals that trigger on zone exit.
             var waypointGoals = quest.m_goals
                 .Where(gTemplate => gTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_WAYPOINT)
@@ -1529,6 +1559,16 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var goalId = questInstance.GoalProgress.First(g => g.GoalName == goalTemplate.m_goalName).ID;
         ShowGoalStartDialogue(goalTemplate, questInstance.ID, goalId);
 
+        // A step the Manager's Quest Editor skips is done as soon as it starts.
+        if (QuestOptions.SkipsGoal(questInstance.QuestName, goalTemplate.m_goalName)
+            && questInstance.IsGoalActive(goalTemplate.m_goalName)) {
+            Logger.Information("Quest goal skipped (Quest Editor): {0} quest '{1}' goal '{2}'.",
+                Logger.Args(wizard.CharId, questInstance.QuestName, goalTemplate.m_goalName));
+            CompleteGoal(questInstance, goalTemplate, showCompletionDialogue: false);
+
+            return;
+        }
+
         // A zone-entry goal that starts while the player is already in its zone would otherwise wait for
         // the next zone attach. Complete it now, after the start message, as the attach path does.
         TryCompleteZoneEntryGoal(questInstance, goalTemplate, wizard);
@@ -1595,7 +1635,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             }
         }
 
-        var qTemplate = _cachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
+        var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
         if (qTemplate == null) {
             Logger.Error("Failed to find quest template for quest '{0}' when completing goal '{1}'",
                 Logger.Args(questInstance.QuestName, goalTemplate.m_goalName));
@@ -1654,7 +1694,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         SendCompleteQuest(questInstance.ID);
 
-        var qTemplate = _cachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
+        var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
         if (qTemplate == null) {
             Logger.Error("Failed to find quest template for quest '{0}' when completing quest",
                 Logger.Args(questInstance.QuestName));
@@ -1700,16 +1740,23 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     // Our own quests that have no NPC to offer them (Wizard404 named none) carry this tag and start by themselves as
     // soon as the quest before them is done (Niduus, 2026-10-24).
     private const string AUTO_START_TAG = "ImlightAutoStart";
-    private static List<QuestTemplate> s_autoStartQuests;
+    // A class, not a value tuple: every session reads it on a thread of its own.
+    private static Tuple<int, List<QuestTemplate>> s_autoStartQuests = Tuple.Create(-1, (List<QuestTemplate>) null);
 
     private void TryAutoStartQuests(Wizard wizard) {
-        s_autoStartQuests ??= QuestTemplateCollection.GetAllQuests()
-            .Where(q => q?.m_requirements is not null && q.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true)
-            .ToList();
+        // Listed again after the Manager's Quest Editor changed quests (one may now start by itself).
+        var autoStart = s_autoStartQuests;
+        if (autoStart.Item1 != QuestOptions.Version || autoStart.Item2 is null) {
+            s_autoStartQuests = autoStart = Tuple.Create(QuestOptions.Version, QuestTemplateCollection.GetAllQuests()
+                .Where(q => q?.m_requirements is not null && q.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true)
+                .ToList());
+        }
 
-        foreach (var template in s_autoStartQuests) {
+        foreach (var template in autoStart.Item2) {
             if (wizard.HasQuest(template.m_questName)
-                || wizard.HasQuestRegistryValue(template.m_questName, QUEST_COMPLETED_ENTRY)) {
+                || QuestOptions.IsOff(template.m_questName)
+                || (wizard.HasQuestRegistryValue(template.m_questName, QUEST_COMPLETED_ENTRY)
+                    && !QuestOptions.IsRepeatable(template.m_questName))) {
                 continue;
             }
 
@@ -1849,14 +1896,17 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var shouldIncrement = goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTY;
         var goalMobAdjectives = goalTemplate.m_npcAdjectives ?? [];
 
+        // The Manager's Quest Editor can let any won battle count for the step, once a battle.
+        var anyCreature = QuestOptions.AnyCreatureCounts(qInstance.QuestName, goalTemplate.m_goalName);
+
         // Check to see if the defeated mob matches the goal's NPC adjectives.
-        if (!defeatedMobAdjectives.Any(adjective => goalMobAdjectives.Contains(adjective))) {
+        if (!anyCreature && !defeatedMobAdjectives.Any(adjective => goalMobAdjectives.Contains(adjective))) {
             return;
         }
 
         // If there were, determine how many of the adjectives matched.
         // We'll increment by that amount.
-        var matchCount = defeatedMobAdjectives.Count(adjective => goalMobAdjectives.Contains(adjective));
+        var matchCount = anyCreature ? 1 : defeatedMobAdjectives.Count(adjective => goalMobAdjectives.Contains(adjective));
 
         if (goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT) {
             var chance = goalTemplate.m_tallyCounter?.m_percentChance ?? DEFAULT_KILL_COLLECT_CHANCE;
@@ -1894,7 +1944,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     }
 
     private string GetPatronIconFromGoal(GoalTemplate gTemplate) {
-        var qTemplate = _cachedQuestTemplates
+        var qTemplate = CachedQuestTemplates
             .FirstOrDefault(q => q.m_goals.Contains(gTemplate));
         if (qTemplate == null) {
             return "";
@@ -2228,7 +2278,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var progress = QueryInstanceProgress();
         var inInstance = progress?.IsInstance == true;
         var instanceZones = inInstance ? progress.Zones : null;
-        var templates = DungeonQuestIndex.GetQuestsForZones(instanceZones ?? [wizard.Zone]);
+        // The quests as they are now, with the Manager's Quest Editor changes.
+        var templates = DungeonQuestIndex.GetQuestsForZones(instanceZones ?? [wizard.Zone])
+            .Select(t => QuestTemplateCollection.GetQuestByName(t.m_questName) ?? t)
+            .ToList();
         if (templates.Count == 0) {
             return;
         }
@@ -2237,6 +2290,10 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var zoneQuestNames = templates.Select(t => (string)t.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         bool Eligible(QuestTemplate template) {
+            if (QuestOptions.IsOff(template.m_questName)) {
+                return false;
+            }
+
             // An instance runs each quest once, whatever the player completed in earlier runs.
             var done = inInstance
                 ? completedQuests.Contains(template.m_questName)
@@ -2291,8 +2348,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 continue;
             }
 
-            if (!_cachedQuestTemplates.Contains(template)) {
-                _cachedQuestTemplates.Add(template);
+            if (!CachedQuestTemplates.Contains(template)) {
+                CachedQuestTemplates.Add(template);
             }
 
             SendQuestStartingMessage(template, questInstance);

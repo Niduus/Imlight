@@ -44,6 +44,11 @@ public static class DropTableFiles {
 
     /// <summary>A drop table by its name: the extra folder's file as it is now, else SpiralDB's.</summary>
     public static DropTable Get(string name) {
+        // A quest's own rewards from the Manager's Quest Editor.
+        if (Imlight.CoreLib.Game.Quests.QuestOptions.RewardTable(name) is { } questRewards) {
+            return questRewards;
+        }
+
         Rescan();
 
         return s_byName.TryGetValue(name, out var table) ? table : SpiralDB.GetDropTable(name);

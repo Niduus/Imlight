@@ -444,6 +444,8 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>Whether the server writes the quest list and each wizard's quests for the Quests tab.</summary>
     internal bool HasQuestGuide => ServerKnows("quest-guide.txt");
 
+    internal bool HasQuestEditor => ServerKnows("quest-details.json");
+
     /// <summary>Whether the server writes the ID lists (id-lookup) that Lookup, Bosses and Customs search.</summary>
     internal bool HasIdLookup => ServerKnows("ID Lookup.OutputPath");
 

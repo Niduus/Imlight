@@ -62,11 +62,13 @@ internal static class QuestGuide {
     /// crafting check) and its activity (Crafting, Fishing, Gardening, Pet, Spell or none).
     /// </summary>
     internal static void WriteList(string folder) {
+        s_folder = folder;
         try {
             // Loads the zone list the teleport command uses, if nothing has yet.
             _ = AccessPassManager.Zones;
+            // A quest turned off or skipped in the Manager's Quest Editor is left out: nobody gets it.
             var quests = QuestTemplateCollection.GetAllQuests()
-                .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName))
+                .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName) && !Quests.QuestOptions.IsOff(q.m_questName))
                 .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
                 .Select(g => g.First())
                 .ToList();
@@ -97,6 +99,11 @@ internal static class QuestGuide {
             File.WriteAllText(temp, text.ToString());
             File.Move(temp, path, overwrite: true);
             Logger.Information("Quest guide: {0} quests listed for the Manager's Quests tab.", Logger.Args(quests.Count));
+
+            if (!s_detailsWritten) {
+                s_detailsWritten = true;
+                WriteDetails(folder, personaZones);
+            }
         }
         catch (Exception ex) {
             Logger.Warning("Could not write the quest list for the Manager. {Exception}", Logger.Args(ex));
@@ -157,6 +164,156 @@ internal static class QuestGuide {
             or GOAL_TYPE.GOAL_TYPE_SOCIAGIVEITEM or GOAL_TYPE.GOAL_TYPE_SOCIAGETITEM => "Other",
         _ => "",
     };
+
+    private static string s_folder;
+    private static bool s_detailsWritten;
+
+    /// <summary>Writes the quest list again (after the Manager's Quest Editor changed quests), when it was written before.</summary>
+    internal static void WriteListAgain() {
+        if (s_folder is { } folder) {
+            WriteList(folder);
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Every quest's details, for the Quest Editor
+    // ---------------------------------------------------------------------
+
+    internal const string DETAILS_NAME = "quest-details.json";
+
+    private sealed record GoalDetails(string Name, string Kind, string Text, int Count, ulong Npc, string NpcName, string Place);
+
+    private sealed record RewardDetails(int Xp, int GoldMin, int GoldMax, int TrainingPoints, List<string> Items);
+
+    private sealed record QuestDetails(string Code, string Title, int Level, bool Main, ulong Giver, string GiverName,
+        bool StartsByItself, List<string> Needs, List<GoalDetails> Goals, RewardDetails Rewards);
+
+    private sealed record NpcDetails(ulong Id, string Name, string Code, string Zone);
+
+    private sealed record DetailsFile(List<QuestDetails> Quests, List<NpcDetails> Npcs);
+
+    /// <summary>
+    /// Writes quest-details.json beside the quest list: each game quest as its files have it (before any Quest Editor
+    /// change), with its steps, rewards, giver and the quests it needs, and every NPC that gives a quest or that a step
+    /// talks to. The Manager's Quest Editor shows these next to the changes.
+    /// </summary>
+    private static void WriteDetails(string folder, Dictionary<string, string> personaZones) {
+        try {
+            var npcs = new Dictionary<ulong, NpcDetails>();
+            NpcDetails Npc(ulong id) {
+                if (id == 0) {
+                    return null;
+                }
+
+                if (npcs.TryGetValue(id, out var known)) {
+                    return known;
+                }
+
+                if (CoreObjectFactory.GetCoreTemplate(id) is not GameObjectTemplate npc) {
+                    return npcs[id] = null;
+                }
+
+                string objectName = npc.m_objectName;
+                return npcs[id] = new NpcDetails(id, NameOf(npc), objectName ?? "",
+                    personaZones.GetValueOrDefault(PersonaKey(objectName)) ?? "");
+            }
+
+            var quests = new List<QuestDetails>();
+            foreach (var quest in WizardData.SpiralDB.OriginalQuestTemplates
+                         .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName))
+                         .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
+                         .Select(g => g.First())) {
+                var giver = Npc(QuestMadlibs.PrepSpeakerOf(quest));
+                var goals = (quest.m_goals ?? []).Where(g => g is not null).Select(goal => {
+                    var npc = goal is PersonaGoalTemplate persona ? Npc(QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0)) : null;
+                    var (kind, text) = DescribeGoal(goal, npc);
+                    return new GoalDetails(goal.m_goalName, kind, text, GoalCount(goal), npc?.Id ?? 0, npc?.Name ?? "",
+                        English(goal.m_locationName));
+                }).ToList();
+
+                quests.Add(new QuestDetails(quest.m_questName, TitleOf(quest), quest.m_questLevel, quest.m_mainline || IsMain(quest.m_questName),
+                    giver?.Id ?? 0, giver?.Name ?? "", quest.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true,
+                    [.. NeededQuests(quest.m_requirements).Distinct(StringComparer.OrdinalIgnoreCase)], goals, RewardsOf(quest)));
+            }
+
+            var file = new DetailsFile(quests, [.. npcs.Values.Where(n => n is not null).OrderBy(n => n.Name, StringComparer.OrdinalIgnoreCase)]);
+            Directory.CreateDirectory(folder);
+            var path = Path.Combine(folder, DETAILS_NAME);
+            File.WriteAllText(path + ".tmp", System.Text.Json.JsonSerializer.Serialize(file));
+            File.Move(path + ".tmp", path, overwrite: true);
+            Logger.Information("Quest guide: {0} quests and {1} NPCs written for the Manager's Quest Editor.",
+                Logger.Args(quests.Count, file.Npcs.Count));
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not write the quest details for the Manager. {Exception}", Logger.Args(ex));
+        }
+    }
+
+    private static string NameOf(GameObjectTemplate npc) {
+        string displayKey = npc.m_displayName;
+        var name = string.IsNullOrEmpty(displayKey) ? "" : Locale.GetEnglishName(displayKey);
+
+        return string.IsNullOrEmpty(name) ? (string) npc.m_objectName ?? "" : name;
+    }
+
+    // A lang key's English words, or the text itself when it is no key (our own quests are written in English).
+    private static string English(string keyOrText) {
+        if (string.IsNullOrEmpty(keyOrText)) {
+            return "";
+        }
+
+        var english = keyOrText.Contains(' ') ? null : Locale.GetEnglishName(keyOrText);
+        var text = string.IsNullOrEmpty(english) ? keyOrText : english;
+
+        return text.Replace('|', ',').Trim();
+    }
+
+    private static int GoalCount(GoalTemplate goal) => goal switch {
+        BountyGoalTemplate { m_bountyTotal: > 0 } bounty => bounty.m_bountyTotal,
+        ScavengeGoalTemplate { m_itemTotal: > 0 } scavenge => scavenge.m_itemTotal,
+        _ => goal.m_tallyCounter?.m_count ?? 0,
+    };
+
+    private static (string Kind, string Text) DescribeGoal(GoalTemplate goal, NpcDetails npc) {
+        var count = GoalCount(goal);
+        var what = English(goal.m_tallyCounter?.m_descriptor);
+        return goal switch {
+            PersonaGoalTemplate persona => ("Talk", $"Talk to {(npc is null ? (string) persona.m_personaName : npc.Name)}"),
+            BountyGoalTemplate => ("Defeat", $"Defeat {Math.Max(count, 1)} {(what.Length > 0 ? what : "creatures")}"),
+            ScavengeGoalTemplate => ("Collect", $"Collect {Math.Max(count, 1)} {(what.Length > 0 ? what : "items")}"),
+            WaypointGoalTemplate waypoint => ("Go", $"Go to {(English(goal.m_locationName) is { Length: > 0 } place ? place : (string) waypoint.m_zoneTag)}"),
+            _ when goal.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT => ("Collect", $"Collect {Math.Max(count, 1)} {(what.Length > 0 ? what : "items")} from battles"),
+            _ when goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE => ("Use", $"Use {(what.Length > 0 ? what : "an object")}{(count > 1 ? $" {count} times" : "")}"),
+            _ => ("Other", English(goal.m_goalTitle) is { Length: > 0 } title ? title : goal.m_goalType.ToString()),
+        };
+    }
+
+    private static RewardDetails RewardsOf(QuestTemplate quest) {
+        int xp = 0, goldMin = 0, goldMax = 0, tp = 0;
+        var items = new List<string>();
+        foreach (var name in (quest.m_endResults?.m_results ?? []).OfType<ResDropTable>().Select(r => (string) r.m_tableName)) {
+            if (string.IsNullOrEmpty(name) || DropTables.DropTableFiles.Get(name) is not { } table) {
+                continue;
+            }
+
+            xp += table.ExperienceAmount;
+            goldMin += table.MinGold;
+            goldMax += table.MaxGold;
+            tp += table.TrainingPoints;
+            foreach (var item in table.Items ?? []) {
+                if (ulong.TryParse(item.ItemId, out var id) && CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate template) {
+                    string key = template.m_displayName;
+                    var itemName = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+                    items.Add(string.IsNullOrEmpty(itemName) ? (string) template.m_objectName ?? item.ItemId : itemName);
+                }
+                else if (!string.IsNullOrEmpty(item.ItemName)) {
+                    items.Add(item.ItemName);
+                }
+            }
+        }
+
+        return new RewardDetails(xp, goldMin, goldMax, tp, [.. items.Distinct()]);
+    }
 
     private static string Clean(string text) => (text ?? "").Replace('\t', ' ').Replace('\n', ' ').Replace('\r', ' ').Trim();
 

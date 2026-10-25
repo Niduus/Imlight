@@ -40,6 +40,13 @@ internal sealed class ReqHasEntryHandler : BaseRequirementHandler<ReqHasEntry> {
             return false;
         }
 
+        // A quest the Manager's Quest Editor skips counts as done for everything that waits for it.
+        if (Requirement.m_isQuestRegistry
+            && string.Equals(entryName, "Complete", StringComparison.OrdinalIgnoreCase)
+            && Imlight.CoreLib.Game.Quests.QuestOptions.IsSkipped(questName)) {
+            return true;
+        }
+
         if (Requirement.m_isQuestRegistry
             && string.Equals(entryName, "Complete", StringComparison.OrdinalIgnoreCase)
             && context is IZoneStateContext { InstanceQuestCompleted: { } instanceCompleted }
