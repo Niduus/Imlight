@@ -147,7 +147,7 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
         => [
             new TreasureShopOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
+                m_iconKey = "TreasureShop",
                 m_serviceName = ServiceName,
             }
         ];

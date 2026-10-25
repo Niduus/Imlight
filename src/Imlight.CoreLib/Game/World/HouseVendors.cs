@@ -209,6 +209,24 @@ internal static class HouseVendors {
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<uint, List<(string Name, uint Id)>> s_recipes = new();
 
+    /// <summary>The template id of the recipe of this name (its file name), or null (logged for the shop's NPC).</summary>
+    internal static uint? RecipeIdOf(string name, uint npcTemplateId) {
+        try {
+            var file = "/" + name + ".xml";
+            if (CoreObjectFactory.TryGetCoreTemplateID(location => location is not null && ((string) location.m_filename)?.EndsWith(file, StringComparison.OrdinalIgnoreCase) == true, out var id)
+                && CoreObjectFactory.GetCoreTemplate(id) is RecipeTemplate) {
+                return id;
+            }
+
+            Logger.Warning("Recipe shop {0}: no recipe template named {1}.", Logger.Args(npcTemplateId, name));
+        }
+        catch (Exception e) {
+            Logger.Warning("Recipe shop {0}: could not load recipe {1}: {2}", Logger.Args(npcTemplateId, name, e.Message));
+        }
+
+        return null;
+    }
+
     private static List<(string Name, uint Id)> FindRecipes(uint npcTemplateId) {
         var names = ((CoreObjectFactory.GetCoreTemplate(npcTemplateId) as GameObjectTemplate)?.m_behaviors ?? [])
             .OfType<WizShoppingBehaviorTemplate>().FirstOrDefault()?.m_recipeList ?? [];
@@ -219,18 +237,8 @@ internal static class HouseVendors {
                 continue;
             }
 
-            try {
-                var file = "/" + name + ".xml";
-                if (CoreObjectFactory.TryGetCoreTemplateID(location => location is not null && ((string) location.m_filename)?.EndsWith(file, StringComparison.OrdinalIgnoreCase) == true, out var id)
-                    && CoreObjectFactory.GetCoreTemplate(id) is RecipeTemplate) {
-                    recipes.Add((name, id));
-                }
-                else {
-                    Logger.Warning("Recipe shop {0}: no recipe template named {1}.", Logger.Args(npcTemplateId, name));
-                }
-            }
-            catch (Exception e) {
-                Logger.Warning("Recipe shop {0}: could not load recipe {1}: {2}", Logger.Args(npcTemplateId, name, e.Message));
+            if (RecipeIdOf(name, npcTemplateId) is { } id) {
+                recipes.Add((name, id));
             }
         }
 

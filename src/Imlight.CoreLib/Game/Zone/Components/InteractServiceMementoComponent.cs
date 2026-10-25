@@ -84,7 +84,6 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     private const string DEFAULT_TEXT_KEY = "GUI_NPCInteractText";
     private const string WIZBANG_UPDATE_TIMER_KEY = "WIZBANG_UPDATE_TIMER";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
-    private const float DEFAULT_RENDER_DISTANCE = 5000.0f; // Default wizbang render distance.
 
     private readonly float _interactionRadius = 300.0f;
     private readonly Dictionary<ulong, IActorRef> _playersInInteractionRange = [];
@@ -94,7 +93,6 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     private readonly Dictionary<IServiceComponent, int> _componentFirstOption = [];
     private ServiceMementoBase _serviceMemento;
     private MadlibBlock _madlibBlock;
-    private float _renderDistance;
 
     public ITimerScheduler Timers { get; set; }
 
@@ -102,9 +100,6 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         => true;
 
     public override void OnStart() {
-        // Set render distance - use zone far clip if available, otherwise default.
-        _renderDistance = Entity.Zone?.ZoneData?.m_farClip ?? DEFAULT_RENDER_DISTANCE;
-        
         RefreshServiceMomento(null);
 
         // The component set is fixed once loaded, so an entity without services never has a wizbang.
@@ -154,15 +149,18 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             SendLeaveServiceRange(playerActor);
         }
 
-        // Handle render range (for wizbangs).
-        if (IsInRadius(playerObj, _renderDistance)) {
-            if (!_playersInRenderRange.ContainsKey(playerId)) {
-                _playersInRenderRange.Add(playerId, playerActor);
-            }
+        // Wizbangs go to every player in the zone, near or far (Niduus, 2026-10-25: vendors and trainers lost the
+        // symbol over their heads at times). The zone's far clip is no sure measure of what the client draws, and a
+        // player who has not moved yet since arriving was never counted.
+        _playersInRenderRange.TryAdd(playerId, playerActor);
+    }
+
+    public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        if (_serviceComponents.Count <= 0 || playerObj is null) {
+            return;
         }
-        else if (_playersInRenderRange.ContainsKey(playerId)) {
-            _playersInRenderRange.Remove(playerId);
-        }
+
+        _playersInRenderRange.TryAdd(playerObj.m_globalID.Full, playerActor);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEINTERACTION))]

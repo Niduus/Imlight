@@ -52,8 +52,10 @@ using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.WizardData.Models.World;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
@@ -61,6 +63,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
 
     public string ServiceName     => "WizShoppingService";
     public string NpcIcon         => null;
+    // The game's icon of a shop's menu option (the loot bag), as its own shop keepers show.
+    private const string OPTION_ICON = "Shopping";
     public string NpcNameKey      => null;
     public string NpcTextKey      => null;
     public WizBangs WizBang       => WizBangs.Shopping;
@@ -95,16 +99,29 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     // A recipe shop's recipes by name (WizShoppingBehavior.m_recipeList): the recipe window lists these, not m_shopList.
     private List<ByteString> _recipeList = [];
 
+    // A shop keeper's other shops, each its own menu option and window after the first (LiveShopLists: Guillermel has
+    // an equipment, a housing and a reagent shop).
+    private sealed record ShopSection(List<GID> Inventory, List<ByteString> Recipes, string Title, int ShopType, int Kind, HouseVendors.ShopWindow Window);
+    private readonly List<ShopSection> _moreShops = [];
+
     public static bool ShouldAttachToEntity(CoreTemplate template)
         // Attach if the template is an NPC and has an inventory in Dragon database,
         // or if the template is a vendor as per game client data.
         => template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && (NpcInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
+        || OwnShopList(goTemplate) is { Count: > 0 }
+        || LiveShopLists.For(goTemplate.m_templateID) is not null
         || WorldVendorLocations.IsVendor(goTemplate.m_templateID)
         || InteractTreasureVendorComponent.IsAbner(goTemplate)
         || HouseVendors.IsSellerNpc(goTemplate.m_templateID)
         || IsRecipeShop(goTemplate));
+
+    /// <summary>
+    /// What an NPC sells in the live game: the shop list of its own shop (WizShoppingBehavior m_shopList), or null.
+    /// </summary>
+    internal static List<ulong> OwnShopList(GameObjectTemplate template)
+        => template.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault()?.m_shopList is { Count: > 0 } list ? list : null;
 
     /// <summary>
     /// Whether an NPC's own shop is a recipe shop (WizShoppingBehavior m_furnitureShop 3 with an m_recipeList).
@@ -169,14 +186,31 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             return;
         }
 
-        if (!NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out var inventory)) {
-            Logger.Error("Failed to get vendor inventory for NPC {0}",
-                Logger.Args(Entity.ActiveGameObject.m_templateID));
+        // The live game's list is the NPC's own shop list in the game files. SpiralDB's copy is older (some shops
+        // there lack items or still sell retired ones), so it is only used for a shop with no list of its own; a list
+        // of our own (spiraldb-extra, such as the garden vendors' seeds) still comes first.
+        var templateId = Entity.ActiveGameObject.m_templateID.MParts.TemplateId;
+        var ownList = Entity.Template is GameObjectTemplate shopKeeper ? OwnShopList(shopKeeper) : null;
+        NPCInventory inventory = null;
+        if (ownList is not null && !SpiralDB.IsExtraNpcInventory(templateId)) {
+            _inventory = ShopOrder.Alphabetical(ownList.Select(id => new GID(id)));
+        }
+        else if (!SpiralDB.IsExtraNpcInventory(templateId) && LiveShopLists.For(templateId) is { Count: > 0 } liveShops) {
+            StartLiveShops(templateId, liveShops);
 
             return;
         }
+        else if (NpcInventoryCollection.TryGetNpcInventory(Entity.ActiveGameObject.m_templateID, out inventory)) {
+            _inventory = ShopOrder.Alphabetical(inventory.Inventory);
+        }
+        else {
+            // A shop keeper with nothing known to sell shows no shop, rather than an empty one.
+            Logger.Warning("Vendor {0} ({1}) has no shop list in the game files or SpiralDB; no shop shown.",
+                Logger.Args(templateId, Entity.ActiveGameObject.m_debugName));
+            _inventory = [];
 
-        _inventory = ShopOrder.Alphabetical(inventory.Inventory);
+            return;
+        }
 
         var shoppingBehavior = Entity.Template?.m_behaviors?.OfType<WizShoppingBehaviorTemplate>().FirstOrDefault();
         if (shoppingBehavior != null) {
@@ -190,9 +224,49 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _window = HouseVendors.WindowOf(_furnitureShop) is var window and not HouseVendors.ShopWindow.Recipe ? window : _window;
         }
 
-        if (!string.IsNullOrWhiteSpace(inventory.ShopTitle)) {
+        if (!string.IsNullOrWhiteSpace(inventory?.ShopTitle)) {
             _shopTitle = inventory.ShopTitle;
         }
+    }
+
+    // A shop keeper whose shop list in the game files is empty sells what it sells live (LiveShopLists), in one menu
+    // option and window per shop.
+    private void StartLiveShops(uint templateId, IReadOnlyList<LiveShop> shops) {
+        var sections = new List<ShopSection>();
+        foreach (var shop in shops) {
+            var window = HouseVendors.WindowOf(shop.Kind);
+            List<GID> inventory;
+            List<ByteString> recipes = [];
+            if (window == HouseVendors.ShopWindow.Recipe) {
+                var found = shop.Recipes.Select(name => (Name: name, Id: HouseVendors.RecipeIdOf(name, templateId))).Where(r => r.Id is not null).ToList();
+                inventory = [.. found.Select(r => new GID((ulong) r.Id.Value))];
+                recipes = [.. found.Select(r => (ByteString) r.Name)];
+            }
+            else {
+                inventory = ShopOrder.Alphabetical(shop.Items.Select(id => new GID((ulong) id)));
+            }
+
+            if (inventory.Count > 0) {
+                sections.Add(new ShopSection(inventory, recipes, shop.Title, shop.ShopType, shop.Kind, window));
+            }
+        }
+
+        if (sections.Count == 0) {
+            _inventory = [];
+
+            return;
+        }
+
+        var first = sections[0];
+        _inventory = first.Inventory;
+        _recipeList = first.Recipes;
+        _shopTitle = string.IsNullOrWhiteSpace(first.Title) ? _shopTitle : first.Title;
+        _shopType = first.ShopType;
+        _furnitureShop = first.Kind;
+        _window = first.Window;
+        _moreShops.AddRange(sections.Skip(1));
+        Logger.Information("Shop keeper {0} ({1}): {2} live shops ({3}).", Logger.Args(templateId, Entity.ActiveGameObject.m_debugName,
+            sections.Count, string.Join(", ", sections.Select(section => $"{section.Window} with {section.Inventory.Count}"))));
     }
 
     private void StartRecipeShop(GameObjectTemplate template) {
@@ -258,7 +332,16 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             return [];
         }
 
-        ServiceOptionBase option = _window switch {
+        // Nothing to sell: no shop option (and so no loot bag over the NPC's head).
+        if (_custom is null && (_inventory?.Count ?? 0) == 0 && _recipeList.Count == 0) {
+            return [];
+        }
+
+        return [OptionFor(_window), .. _moreShops.Select(shop => OptionFor(shop.Window))];
+    }
+
+    private ServiceOptionBase OptionFor(HouseVendors.ShopWindow window) {
+        ServiceOptionBase option = window switch {
             HouseVendors.ShopWindow.Snack => new PetSnackShopOption(),
             HouseVendors.ShopWindow.Reagent => new ReagentShopOption(),
             HouseVendors.ShopWindow.Jewel => new JewelShopOption(),
@@ -267,11 +350,11 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             HouseVendors.ShopWindow.Mount => new MountShopOption(),
             _ => new EquipmentShopOption(),
         };
-        option.m_displayKey = OptionKeyOf(_window);
-        option.m_iconKey = NpcIcon;
+        option.m_displayKey = OptionKeyOf(window);
+        option.m_iconKey = OPTION_ICON;
         option.m_serviceName = ServiceName;
 
-        return [option];
+        return option;
     }
 
     // The words of the shop's menu option, the game's own (GUI.lang: "Housing Shop", "Reagent Shop"...). Every shop
@@ -299,7 +382,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
             _ => new EquipmentShopOption(),
         };
         result.m_displayKey = option == "housing" ? "GUI_ShopOptionHousing" : DisplayKey;
-        result.m_iconKey = NpcIcon;
+        result.m_iconKey = OPTION_ICON;
         result.m_serviceName = ServiceName;
 
         return result;
@@ -312,26 +395,31 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
                     string.Join(", ", _custom.Items.Select(e => $"{e.ID} for {e.Price} gold")), _window, TestShopType ?? _furnitureShop));
         }
 
-        SendShopOfferings(playerActor);
+        // The first option is the NPC's main shop; any after it are its other shops.
+        var shop = TestOption is null && serviceOptionIndex > 0 && serviceOptionIndex <= _moreShops.Count
+            ? _moreShops[(int) serviceOptionIndex - 1]
+            : new ShopSection(_inventory, _recipeList, _shopTitle, _shopType, _furnitureShop, _window);
+        SendShopOfferings(playerActor, shop);
         SendPlayerIntoWizbang(playerObject.m_globalID);
         SendPlayerIntoState(playerObject.m_globalID);
     }
 
     public bool HasItem(GID itemGID)
-        => _inventory is not null && _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId);
+        => (_inventory is not null && _inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId))
+        || _moreShops.Any(shop => shop.Inventory.Any(x => x.MParts.TemplateId == itemGID.MParts.TemplateId));
 
-    private void SendShopOfferings(IActorRef playerActor) {
+    private void SendShopOfferings(IActorRef playerActor, ShopSection shop) {
         var shopOffering = new WizShopOffering() {
             m_sellModifier = 0.05f,
             // A shop with no title of its own is called after its kind ("Jewel Shop"), not "Robe Shop" (KrocNPC_00000013).
-            m_shopTitle = string.IsNullOrWhiteSpace(_shopTitle) || _shopTitle == "Unknown Shop" ? OptionKeyOf(_window) : _shopTitle,
-            m_shopList = _inventory,
-            m_recipeList = _recipeList,
+            m_shopTitle = string.IsNullOrWhiteSpace(shop.Title) || shop.Title == "Unknown Shop" ? OptionKeyOf(shop.Window) : shop.Title,
+            m_shopList = shop.Inventory,
+            m_recipeList = shop.Recipes,
             // Changes the type of currency that is used
             // 0 - Gold
             // 1 - PvP tickets
-            m_shopType = _shopType,
-            m_furnitureShop = TestShopType ?? _furnitureShop,
+            m_shopType = shop.ShopType,
+            m_furnitureShop = TestShopType ?? shop.Kind,
             // todo: figure this out for QA
             m_CSRTestShop = _csrTestShop,
         };

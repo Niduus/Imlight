@@ -65,6 +65,8 @@ public static class SpiralDB {
         = new(StringComparer.OrdinalIgnoreCase);
     private static GlobalRegistryModel s_globalRegistry = new();
     private static ConcurrentDictionary<ulong, NPCInventory> s_npcInventories = new();
+    // The NPCs whose shop list is one of our own (spiraldb-extra/NpcInventory), not SpiralDB's copy of an old one.
+    private static HashSet<ulong> s_extraNpcInventoryIds = [];
     private static ConcurrentDictionary<ulong, NPCSpellInventory> s_npcSpellInventories = new();
     private static ConcurrentDictionary<ulong, NpcDropTable> s_npcDropTables = new();
     private static List<QuestTemplate> s_questTemplates = [];
@@ -182,10 +184,14 @@ public static class SpiralDB {
 
             var extraPath = Path.GetFullPath(s_extraPath);
             var extraFiles = 0;
+            var extraNpcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
             if (Directory.Exists(extraPath)) {
                 extraFiles += LoadCreatureSpellbooks(extraPath, spellbooks);
                 extraFiles += LoadDropTables(extraPath, dropTables);
-                extraFiles += LoadNpcInventories(extraPath, npcInventories);
+                extraFiles += LoadNpcInventories(extraPath, extraNpcInventories);
+                foreach (var (npcId, inventory) in extraNpcInventories) {
+                    npcInventories[npcId] = inventory;
+                }
                 extraFiles += LoadNpcSpellInventories(extraPath, npcSpellInventories);
                 extraFiles += LoadNpcDropTables(extraPath, npcDropTables);
                 extraFiles += LoadTreasureCardInventories(extraPath, treasureCardInventories);
@@ -205,6 +211,7 @@ public static class SpiralDB {
             s_dropTables = dropTables;
             s_globalRegistry = globalRegistry;
             s_npcInventories = npcInventories;
+            s_extraNpcInventoryIds = [.. extraNpcInventories.Keys];
             s_npcSpellInventories = npcSpellInventories;
             s_npcDropTables = npcDropTables;
             s_questTemplates = questTemplates;
@@ -401,6 +408,10 @@ public static class SpiralDB {
 
     public static bool TryGetNpcInventory(ulong templateID, out NPCInventory npcInventory)
         => s_npcInventories.TryGetValue(templateID, out npcInventory);
+
+    /// <summary>Whether an NPC's shop list is one of our own (spiraldb-extra/NpcInventory).</summary>
+    public static bool IsExtraNpcInventory(ulong templateID)
+        => s_extraNpcInventoryIds.Contains(templateID);
 
     public static bool TryGetNpcSpellInventory(ulong templateID, out NPCSpellInventory npcSpellInventory)
         => s_npcSpellInventories.TryGetValue(templateID, out npcSpellInventory);

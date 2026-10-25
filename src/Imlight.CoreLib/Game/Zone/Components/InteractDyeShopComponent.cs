@@ -69,7 +69,7 @@ internal sealed class InteractDyeShopComponent(ZoneEntity entity) : ZoneEntityCo
         => [
             new DyeShopOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
+                m_iconKey = "DyeShop",
                 m_serviceName = ServiceName,
             }
         ];

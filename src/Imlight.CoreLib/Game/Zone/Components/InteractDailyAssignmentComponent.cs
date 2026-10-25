@@ -87,7 +87,7 @@ internal sealed class InteractDailyAssignmentComponent(ZoneEntity entity) : Zone
         return [
             new DailyQuestOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = "Quest",
+                m_iconKey = "DailyQuest",
                 m_serviceName = ServiceName,
             }
         ];

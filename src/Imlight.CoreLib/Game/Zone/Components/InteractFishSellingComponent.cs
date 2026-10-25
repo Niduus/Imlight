@@ -70,7 +70,7 @@ internal sealed class InteractFishSellingComponent(ZoneEntity entity) : ZoneEnti
 
         return [new FishSellingOption {
             m_displayKey = DisplayKey,
-            m_iconKey = NpcIcon,
+            m_iconKey = "SellFish",
             m_serviceName = ServiceName,
         }];
     }

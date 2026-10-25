@@ -1,0 +1,3380 @@
+{
+ "100364": {
+  "Name": "Free Pet Vendor",
+  "ObjectName": "WC-SHOP2-TESTPET",
+  "Shops": [
+   {
+    "Title": "WizardNPC_00000728",
+    "ShopType": 0,
+    "Kind": 6,
+    "Items": [
+     100430,
+     100329,
+     88054,
+     88047,
+     88051,
+     88052,
+     88053,
+     88055,
+     88056,
+     160127,
+     470480,
+     642049,
+     225659
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardNPC_00000727",
+    "ShopType": 0,
+    "Kind": 4,
+    "Items": [
+     470358,
+     733142,
+     470351,
+     191154,
+     191221,
+     191225,
+     1317278,
+     470238,
+     470174,
+     470175,
+     470176,
+     470177,
+     470178,
+     470179,
+     470127,
+     589219,
+     1317298,
+     1317299,
+     470536,
+     1350230,
+     1350228,
+     1317274,
+     470141,
+     470084,
+     470085,
+     470086,
+     470093,
+     470094,
+     470095,
+     1317277,
+     1317273,
+     276451,
+     1317241,
+     1317239,
+     1317243,
+     470139,
+     191222,
+     191232,
+     191233,
+     191659,
+     425083,
+     425085,
+     425087,
+     1317808,
+     1317807,
+     276461,
+     276458,
+     276446,
+     1317279,
+     470143,
+     470355,
+     470105,
+     1317806,
+     470107,
+     440148,
+     440149,
+     440150,
+     470346,
+     1317275,
+     1317276,
+     1317672,
+     276449,
+     276454,
+     284074,
+     1317754,
+     1359374,
+     470361,
+     733144,
+     276464,
+     1317297,
+     470393,
+     470394,
+     225478,
+     225480,
+     225482,
+     1317676,
+     470075
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardNPC_00000726",
+    "ShopType": 0,
+    "Kind": 4,
+    "Items": [
+     470359,
+     733143,
+     470353,
+     191226,
+     191227,
+     191228,
+     1302096,
+     470239,
+     470180,
+     470181,
+     470182,
+     470183,
+     470184,
+     470185,
+     191443,
+     191444,
+     191445,
+     470128,
+     470535,
+     1350229,
+     1350227,
+     1204279,
+     470140,
+     191271,
+     191272,
+     191273,
+     470089,
+     470091,
+     470092,
+     1204282,
+     1257142,
+     276450,
+     1302097,
+     1317240,
+     1317238,
+     1317242,
+     470138,
+     191234,
+     191235,
+     191236,
+     191660,
+     425082,
+     425084,
+     425086,
+     276460,
+     276457,
+     276445,
+     798089,
+     470142,
+     470356,
+     470104,
+     470106,
+     1260119,
+     1260120,
+     440151,
+     440152,
+     440153,
+     470345,
+     798088,
+     798087,
+     1317671,
+     276448,
+     276453,
+     284073,
+     1317753,
+     1359373,
+     470362,
+     733145,
+     276463,
+     470391,
+     470392,
+     225479,
+     225484,
+     225483,
+     1317675,
+     470076
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardNPC_00000729",
+    "ShopType": 0,
+    "Kind": 4,
+    "Items": [
+     789181,
+     470403,
+     1204444,
+     1204445,
+     470481,
+     470158,
+     470123,
+     1317070,
+     713344,
+     470400,
+     713345,
+     789150,
+     733158,
+     470418,
+     470357,
+     733074,
+     1302103,
+     470350,
+     1317710,
+     1204291,
+     1204285,
+     1204295,
+     470081,
+     191229,
+     191230,
+     191231,
+     1257608,
+     470237,
+     470165,
+     470166,
+     470167,
+     470168,
+     470169,
+     470170,
+     440143,
+     1317709,
+     191446,
+     191447,
+     191448,
+     470126,
+     470534,
+     1350160,
+     1350161,
+     470160,
+     789439,
+     1257306,
+     470132,
+     191274,
+     191275,
+     191276,
+     470074,
+     470096,
+     470083,
+     470087,
+     470088,
+     1317768,
+     733076,
+     789437,
+     789407,
+     789408,
+     1204448,
+     284071,
+     1257609,
+     1257819,
+     1257820,
+     1302095,
+     1317235,
+     1317237,
+     1317236,
+     470124,
+     470137,
+     191237,
+     191238,
+     191239,
+     191661,
+     191662,
+     225660,
+     225661,
+     225662,
+     1350064,
+     713343,
+     713291,
+     470171,
+     470172,
+     470173,
+     276459,
+     276456,
+     276444,
+     789073,
+     1257141,
+     470131,
+     1359191,
+     470354,
+     789208,
+     1350220,
+     470098,
+     470125,
+     713342,
+     470103,
+     470406,
+     470404,
+     440145,
+     440146,
+     440147,
+     1350159,
+     470159,
+     470348,
+     470467,
+     789071,
+     789072,
+     1317670,
+     276447,
+     276452,
+     284072,
+     1317713,
+     733229,
+     789096,
+     1359189,
+     1317137,
+     470360,
+     789438,
+     733075,
+     276462,
+     225825,
+     1302092,
+     789205,
+     470389,
+     470390,
+     789409,
+     789410,
+     220071,
+     220073,
+     221004,
+     1350036,
+     1350192,
+     470116,
+     470117,
+     470118,
+     470119,
+     470120,
+     1317674,
+     733157,
+     191686
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "136767": {
+  "Name": "Wul'yahm",
+  "ObjectName": "KT-Shop-Recipe-NPC01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_WC_book_shelved_02",
+     "Recipe-HOUSE_WC_decor_jar_full_tooth_02",
+     "Recipe-HOUSE_WC_lot_fence_stone_03",
+     "Recipe-HOUSE_WC_lot_fence_stone_04",
+     "Recipe-HOUSE_WC_lot_lamppost_metal_01a",
+     "Recipe-HOUSE_WC_lot_pedestal_stone_med_03",
+     "Recipe-HOUSE_WC_lot_pedestal_stone_med_05",
+     "Recipe-HOUSE_WC_prop_banner_02",
+     "Recipe-HOUSE_MB_Fence",
+     "Recipe-HOUSE_MB_light_brazier_01",
+     "Recipe-HOUSE_MB_painting_13",
+     "Recipe-HOUSE_MS_decor_stars_03",
+     "Recipe-HOUSE_MS_lot_stepping_stones_02",
+     "Recipe-HOUSE_MS_Obelisk_Birdw",
+     "Recipe-HOUSE_KT_Teleport_TapestrytoOasis",
+     "Recipe-HOUSE_MS_Obelisk_Insect",
+     "Recipe-HOUSE_MS_Obelisk_Snake",
+     "Recipe-HOUSE_MS_Obelisk_Storm",
+     "Recipe-HOUSE_MS_Tablet_Fire",
+     "Recipe-HOUSE_MS_Tablet_Storm",
+     "Recipe-HOUSE_MS_Tablet_Sun",
+     "Recipe-HOUSE_DS_EndTable_01",
+     "Recipe-Athame-Craft-T2-001",
+     "Recipe-Athame-Craft-T2-002",
+     "Recipe-Athame-Craft-T2-003",
+     "Recipe-Athame-Craft-T2-004",
+     "Recipe-Athame-Craft-T2-005",
+     "Recipe-Ring-Craft-T2-001",
+     "Recipe-Ring-Craft-T2-002",
+     "Recipe-Ring-Craft-T2-004",
+     "Recipe-Ring-Craft-T2-003",
+     "Recipe-Ring-Craft-T2-005",
+     "Recipe-Nightshade-01",
+     "Recipe-Bone-01",
+     "Recipe-Parchment-01",
+     "Recipe-AncientScroll-01",
+     "Recipe-HOUSE_KT_Teleport_SchoolBal",
+     "RECIPE_JWL_15_Death",
+     "RECIPE_JWL_15_Fire",
+     "RECIPE_JWL_15_Ice",
+     "RECIPE_JWL_15_Life",
+     "RECIPE_JWL_15_Myth",
+     "RECIPE_JWL_15_Storm",
+     "RECIPE_JWL_15_Balance"
+    ]
+   }
+  ]
+ },
+ "136796": {
+  "Name": "Toth Amuun",
+  "ObjectName": "KT-Shop-Recipe-Balance01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Hat-Craft-T2-001",
+     "Recipe-Hat-Craft-T2-002",
+     "Recipe-Hat-Craft-T2-003",
+     "Recipe-Hat-Craft-T2-004",
+     "Recipe-Hat-Craft-T2-005",
+     "Recipe-Hat-Craft-T2-006",
+     "Recipe-Robe-Craft-T2-001",
+     "Recipe-Robe-Craft-T2-002",
+     "Recipe-Robe-Craft-T2-003",
+     "Recipe-Robe-Craft-T2-004",
+     "Recipe-Robe-Craft-T2-005",
+     "Recipe-Robe-Craft-T2-006",
+     "Recipe-Shoe-Craft-T2-001",
+     "Recipe-Shoe-Craft-T2-002",
+     "Recipe-Shoe-Craft-T2-003",
+     "Recipe-Shoe-Craft-T2-004",
+     "Recipe-Shoe-Craft-T2-005",
+     "Recipe-Shoe-Craft-T2-006"
+    ]
+   }
+  ]
+ },
+ "175492": {
+  "Name": "Lowe Springfield",
+  "ObjectName": "WC-PARK-NPC02",
+  "Shops": [
+   {
+    "Title": "Jewel Shop",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1360495,
+     1360496,
+     1360497,
+     1360498,
+     1360499,
+     1360627,
+     1360640,
+     1360631,
+     1360639,
+     1360635,
+     1360638,
+     1360629,
+     1360633,
+     1360636
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe_PetJWL_Derby_01",
+     "Recipe_PetJWL_Derby_02",
+     "Recipe_PetJWL_Derby_03",
+     "Recipe_PetJWL_Derby_04",
+     "Recipe_PetJWL_Derby_05",
+     "Recipe_PetJWL_Storm",
+     "Recipe_PetJWL_Fire",
+     "Recipe_PetJWL_Ice",
+     "Recipe_PetJWL_Life",
+     "Recipe_PetJWL_Myth",
+     "Recipe_PetJWL_Stats_01",
+     "Recipe_PetJWL_Stats_02",
+     "Recipe_PetJWL_Stats_03",
+     "Recipe_PetJWL_Death",
+     "Recipe_PetJWL_Balance"
+    ]
+   }
+  ]
+ },
+ "175529": {
+  "Name": "Sir Nigel Higgenbottom",
+  "ObjectName": "WC-PARK-NPC06",
+  "Shops": [
+   {
+    "Title": "WizardInteractionTitle_00000291",
+    "ShopType": 4,
+    "Kind": 0,
+    "Items": [
+     212291,
+     225443,
+     225418,
+     212293,
+     212292,
+     789393,
+     789394,
+     789395,
+     789396,
+     789397,
+     789398,
+     789399
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "264086": {
+  "Name": "Quentin Chamberlain",
+  "ObjectName": "CL-LAND-SHOP-RECIPE-DECKS-WANDS",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000116",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Deck-Craft-T6-010",
+     "Recipe-Deck-Craft-T6-011",
+     "Recipe-Deck-Craft-T6-012",
+     "Recipe-Deck-Craft-T6-013",
+     "Recipe-Deck-Craft-T6-014",
+     "Recipe-Deck-Craft-T6-015",
+     "Recipe-Deck-Craft-T6-016",
+     "Recipe-Wand-Craft-T6-002",
+     "Recipe-Wand-Craft-T6-005",
+     "Recipe-Wand-Craft-T6-008",
+     "Recipe-Wand-Craft-T6-011",
+     "Recipe-Wand-Craft-T6-014",
+     "Recipe-Wand-Craft-T6-017",
+     "Recipe-Wand-Craft-T6-020"
+    ]
+   }
+  ]
+ },
+ "264092": {
+  "Name": "Aegeus",
+  "ObjectName": "CL-SUNTEMP-SHOP-RECIPE-AMULETS-ATHAMES-RINGS",
+  "Shops": [
+   {
+    "Title": "Jewel Shop",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1352803,
+     1352796,
+     1352761,
+     1352768,
+     1352789,
+     1352782,
+     1352775,
+     1357023,
+     1357010,
+     1352945,
+     1352958,
+     1352997,
+     1352984,
+     1352971,
+     1352901,
+     1352888,
+     1352823,
+     1352836,
+     1352875,
+     1352862,
+     1352849
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000090",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Amulet-Craft-T6-002",
+     "Recipe-Amulet-Craft-T6-004",
+     "Recipe-Amulet-Craft-T6-006",
+     "Recipe-Amulet-Craft-T6-008",
+     "Recipe-Amulet-Craft-T6-014",
+     "Recipe-Athame-Craft-T6-007",
+     "Recipe-Ring-Craft-T6-007",
+     "Recipe-Ring-Craft-T6-010",
+     "RECIPE_JWL_55_Storm",
+     "RECIPE_JWL_55_Balance",
+     "RECIPE_JWL_55_Death",
+     "RECIPE_JWL_55_Fire",
+     "RECIPE_JWL_55_Ice",
+     "RECIPE_JWL_55_Life",
+     "RECIPE_JWL_55_Myth"
+    ]
+   }
+  ]
+ },
+ "465443": {
+  "Name": "Marwa Jadetusk",
+  "ObjectName": "ZF-MARKET-NPC03",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000181",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "RECIPE_JWL_65_Balance",
+     "RECIPE_JWL_65_Death",
+     "RECIPE_JWL_65_Fire",
+     "RECIPE_JWL_65_Ice",
+     "RECIPE_JWL_65_Life",
+     "RECIPE_JWL_65_Myth",
+     "RECIPE_JWL_65_Storm"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000144",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     527070,
+     540071,
+     540072,
+     540073,
+     540074,
+     540075,
+     540076,
+     540077,
+     540078,
+     540079,
+     540080,
+     540081,
+     540182,
+     540183,
+     540184,
+     540185,
+     540186,
+     540187,
+     540188
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1206001": {
+  "Name": "Khalkos Coppersmith",
+  "ObjectName": "AQ-HUB-NPC05",
+  "Shops": [
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1696116,
+     1696117,
+     1696118,
+     1696109
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Temp-Shopkeeper_00000044",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Boots-Craft-AQ-Senator-L30-001",
+     "Recipe-Boots-Craft-AQ-Senator-L30-002",
+     "Recipe-Boots-Craft-AQ-Senator-L30-003",
+     "Recipe-Boots-Craft-AQ-Senator-L30-004",
+     "Recipe-Boots-Craft-AQ-Senator-L30-005",
+     "Recipe-Boots-Craft-AQ-Senator-L30-006",
+     "Recipe-Boots-Craft-AQ-Senator-L30-007",
+     "Recipe-Boots-Craft-AQ-Senator-L70-001",
+     "Recipe-Boots-Craft-AQ-Senator-L70-002",
+     "Recipe-Boots-Craft-AQ-Senator-L70-003",
+     "Recipe-Boots-Craft-AQ-Senator-L70-004",
+     "Recipe-Boots-Craft-AQ-Senator-L70-005",
+     "Recipe-Boots-Craft-AQ-Senator-L70-006",
+     "Recipe-Boots-Craft-AQ-Senator-L70-007",
+     "Recipe-Boots-Craft-AQ-Senator-L90-001",
+     "Recipe-Boots-Craft-AQ-Senator-L90-002",
+     "Recipe-Boots-Craft-AQ-Senator-L90-003",
+     "Recipe-Boots-Craft-AQ-Senator-L90-004",
+     "Recipe-Boots-Craft-AQ-Senator-L90-005",
+     "Recipe-Boots-Craft-AQ-Senator-L90-006",
+     "Recipe-Boots-Craft-AQ-Senator-L90-007",
+     "Recipe-Hat-Craft-AQ-Senator-L30-001",
+     "Recipe-Hat-Craft-AQ-Senator-L30-002",
+     "Recipe-Hat-Craft-AQ-Senator-L30-003",
+     "Recipe-Hat-Craft-AQ-Senator-L30-004",
+     "Recipe-Hat-Craft-AQ-Senator-L30-005",
+     "Recipe-Hat-Craft-AQ-Senator-L30-006",
+     "Recipe-Hat-Craft-AQ-Senator-L30-007",
+     "Recipe-Hat-Craft-AQ-Senator-L70-001",
+     "Recipe-Hat-Craft-AQ-Senator-L70-002",
+     "Recipe-Hat-Craft-AQ-Senator-L70-003",
+     "Recipe-Hat-Craft-AQ-Senator-L70-004",
+     "Recipe-Hat-Craft-AQ-Senator-L70-005",
+     "Recipe-Hat-Craft-AQ-Senator-L70-006",
+     "Recipe-Hat-Craft-AQ-Senator-L70-007",
+     "Recipe-Hat-Craft-AQ-Senator-L90-001",
+     "Recipe-Hat-Craft-AQ-Senator-L90-002",
+     "Recipe-Hat-Craft-AQ-Senator-L90-003",
+     "Recipe-Hat-Craft-AQ-Senator-L90-004",
+     "Recipe-Hat-Craft-AQ-Senator-L90-005",
+     "Recipe-Hat-Craft-AQ-Senator-L90-006",
+     "Recipe-Hat-Craft-AQ-Senator-L90-007",
+     "Recipe-Robe-Craft-AQ-Senator-L30-001",
+     "Recipe-Robe-Craft-AQ-Senator-L30-002",
+     "Recipe-Robe-Craft-AQ-Senator-L30-003",
+     "Recipe-Robe-Craft-AQ-Senator-L30-004",
+     "Recipe-Robe-Craft-AQ-Senator-L30-005",
+     "Recipe-Robe-Craft-AQ-Senator-L30-006",
+     "Recipe-Robe-Craft-AQ-Senator-L30-007",
+     "Recipe-Robe-Craft-AQ-Senator-L70-001",
+     "Recipe-Robe-Craft-AQ-Senator-L70-002",
+     "Recipe-Robe-Craft-AQ-Senator-L70-003",
+     "Recipe-Robe-Craft-AQ-Senator-L70-004",
+     "Recipe-Robe-Craft-AQ-Senator-L70-005",
+     "Recipe-Robe-Craft-AQ-Senator-L70-006",
+     "Recipe-Robe-Craft-AQ-Senator-L70-007",
+     "Recipe-Robe-Craft-AQ-Senator-L90-001",
+     "Recipe-Robe-Craft-AQ-Senator-L90-002",
+     "Recipe-Robe-Craft-AQ-Senator-L90-003",
+     "Recipe-Robe-Craft-AQ-Senator-L90-004",
+     "Recipe-Robe-Craft-AQ-Senator-L90-005",
+     "Recipe-Robe-Craft-AQ-Senator-L90-006",
+     "Recipe-Robe-Craft-AQ-Senator-L90-007",
+     "Recipe-Wand-AQ-Craft-L90-007",
+     "Recipe-Wand-AQ-Craft-L30-001",
+     "Recipe-Wand-AQ-Craft-L30-002",
+     "Recipe-Wand-AQ-Craft-L30-003",
+     "Recipe-Wand-AQ-Craft-L30-004",
+     "Recipe-Wand-AQ-Craft-L30-005",
+     "Recipe-Wand-AQ-Craft-L30-006",
+     "Recipe-Wand-AQ-Craft-L30-007",
+     "Recipe-Wand-AQ-Craft-L70-001",
+     "Recipe-Wand-AQ-Craft-L70-002",
+     "Recipe-Wand-AQ-Craft-L70-003",
+     "Recipe-Wand-AQ-Craft-L70-004",
+     "Recipe-Wand-AQ-Craft-L70-005",
+     "Recipe-Wand-AQ-Craft-L70-006",
+     "Recipe-Wand-AQ-Craft-L70-007",
+     "Recipe-Wand-AQ-Craft-L90-001",
+     "Recipe-Wand-AQ-Craft-L90-002",
+     "Recipe-Wand-AQ-Craft-L90-003",
+     "Recipe-Wand-AQ-Craft-L90-004",
+     "Recipe-Wand-AQ-Craft-L90-005",
+     "Recipe-Wand-AQ-Craft-L90-006",
+     "Recipe-MOUNT_Balance",
+     "Recipe-MOUNT_Death",
+     "Recipe-MOUNT_Fire",
+     "Recipe-MOUNT_Ice",
+     "Recipe-MOUNT_Life",
+     "Recipe-MOUNT_Myth",
+     "Recipe-MOUNT_Storm"
+    ]
+   }
+  ]
+ },
+ "1206823": {
+  "Name": "Lloyd FallingWater",
+  "ObjectName": "WC_ShopArea_CastleBlocks",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe_HOUSE_Balustrade_Long",
+     "Recipe_HOUSE_Balustrade_Short",
+     "Recipe_HOUSE_Blocks_Ceiling_16x16",
+     "Recipe_HOUSE_Blocks_Ceiling_16x16_Variant",
+     "Recipe_HOUSE_Blocks_Ceiling_1x2",
+     "Recipe_HOUSE_Blocks_Ceiling_1x2_Variant",
+     "Recipe_HOUSE_Blocks_Ceiling_1x4",
+     "Recipe_HOUSE_Blocks_Ceiling_1x4_Variant",
+     "Recipe_HOUSE_Blocks_Ceiling_2x2",
+     "Recipe_HOUSE_Blocks_Ceiling_2x2_Variant",
+     "Recipe_HOUSE_Blocks_Ceiling_4x4",
+     "Recipe_HOUSE_Blocks_Ceiling_4x4_Variant",
+     "Recipe_HOUSE_Blocks_Crenulation",
+     "Recipe_HOUSE_Blocks_CubeWall",
+     "Recipe_HOUSE_Blocks_Floor_16x16",
+     "Recipe_HOUSE_Blocks_Floor_16x16_Variant",
+     "Recipe_HOUSE_Blocks_Floor_1x2",
+     "Recipe_HOUSE_Blocks_Floor_1x2_Variant",
+     "Recipe_HOUSE_Blocks_Floor_1x4",
+     "Recipe_HOUSE_Blocks_Floor_1x4_Variant",
+     "Recipe_HOUSE_Blocks_Floor_2x2",
+     "Recipe_HOUSE_Blocks_Floor_2x2_Variant",
+     "Recipe_HOUSE_Blocks_Floor_4x4",
+     "Recipe_HOUSE_Blocks_Floor_4x4_Variant",
+     "Recipe_HOUSE_Blocks_Gobblergoyle",
+     "Recipe_HOUSE_Blocks_Large_Wall",
+     "Recipe_HOUSE_Blocks_Roof_4x4",
+     "Recipe_HOUSE_Blocks_Stained_Glass_Window",
+     "Recipe_HOUSE_Blocks_Stairs",
+     "Recipe_HOUSE_Blocks_Stairs_Narrow",
+     "Recipe_HOUSE_Blocks_Tower_Corner",
+     "Recipe_HOUSE_Blocks_Tower_Round_Door",
+     "Recipe_HOUSE_Blocks_Tower_Round_Roof",
+     "Recipe_HOUSE_Blocks_Tower_Round_Windows",
+     "Recipe_HOUSE_Blocks_TowerCorner",
+     "Recipe_HOUSE_Blocks_TowerDoor",
+     "Recipe_HOUSE_Blocks_Wall_1x5",
+     "Recipe_HOUSE_Blocks_Wall_1x5_Half",
+     "Recipe_HOUSE_Blocks_Wall_2x5",
+     "Recipe_HOUSE_Blocks_Wall_2x5_Half",
+     "Recipe_HOUSE_Blocks_Wall_2x5_HalfA",
+     "Recipe_HOUSE_Blocks_Wall_4x5",
+     "Recipe_HOUSE_Blocks_Wall_4x5_Arch",
+     "Recipe_HOUSE_Blocks_Wall_4x5_Door",
+     "Recipe_HOUSE_Blocks_Wall_4x5_Secret",
+     "Recipe_HOUSE_Blocks_Wall_Corner",
+     "Recipe_HOUSE_Blocks_Window_Open",
+     "Recipe_HOUSE_Ceiling_Block",
+     "Recipe_HOUSE_Ceiling_TwoStory",
+     "Recipe_HOUSE_Ceiling_TwoStory_Variant",
+     "Recipe_HOUSE_Door_Single_Ext_",
+     "Recipe_HOUSE_Normal_Double_Door",
+     "Recipe_HOUSE_Normal_Single_Door",
+     "Recipe_HOUSE_Pyramid_Roof",
+     "Recipe_HOUSE_Roof_Corner",
+     "Recipe_HOUSE_Roof_Corner_Inside",
+     "Recipe_HOUSE_Roof_Peak",
+     "Recipe_HOUSE_Blocks_Narrow_Stairs_ceiling_Int",
+     "Recipe_HOUSE_Blocks_Wide_Stairs_ceiling_Int",
+     "Recipe_HOUSE_Ext_Wall_4x5_02",
+     "Recipe_HOUSE_Blocks_Roof_InsideCorner",
+     "Recipe_HOUSE_Blocks_Roof_Floor_B",
+     "Recipe-HOUSE_SP_SinbadRuins",
+     "Recipe-MarvelousClay-01",
+     "Recipe-MagnificentClay-01",
+     "Recipe-HOUSE_SP_ProfessorPyramid",
+     "Recipe-ParallelTimeLimes-01",
+     "Recipe-AlternateTimeLime-01",
+     "Recipe-HOUSE_SP_TrainStation",
+     "Recipe-CoachTicket-01",
+     "Recipe-FirstClassTicket-01",
+     "Recipe-HOUSE_LM_Standee_01",
+     "Recipe-FortifiedPeat-01",
+     "Recipe-EnrichedPeat-01",
+     "Recipe-HOUSE_SP_HighlandRuins",
+     "Recipe-BayouMoss-01",
+     "Recipe-MarshMoss-01",
+     "Recipe-HOUSE_SP_SwampGauntlet",
+     "Recipe-HOUSE_SP_LibraryGauntlet",
+     "Recipe-LibraryPamphlet-01",
+     "Recipe-LibraryBook-01",
+     "Recipe-HOUSE_SP_RPGGauntlet",
+     "Recipe-LnL-Gauntlet-02",
+     "Recipe-LnL-Gauntlet-03",
+     "Recipe-SIT-Gauntlet-02",
+     "Recipe-SIT-Gauntlet-03",
+     "Recipe-HOUSE_SP_SITGauntlet"
+    ]
+   }
+  ]
+ },
+ "1206897": {
+  "Name": "Petunia Floribund",
+  "ObjectName": "PA-SHOP-NPC07",
+  "Shops": [
+   {
+    "Title": "WizardFurniture_00002868",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1480003,
+     1359225,
+     1359226,
+     1359227,
+     1359228,
+     1359229,
+     1359230,
+     1359231,
+     1359218,
+     1359219,
+     1359220,
+     1359221,
+     1359222,
+     1359223,
+     1359224,
+     1350763,
+     1350754,
+     1350753,
+     1350751,
+     1350762,
+     1350756,
+     1350759,
+     1350755,
+     1350760,
+     1350758,
+     1317847,
+     1317849,
+     1317859,
+     1317850,
+     1317851,
+     1317852,
+     1317853,
+     1317854,
+     1317855,
+     1317856,
+     1317857,
+     1317858,
+     1317861,
+     1317874,
+     1317860,
+     1317848,
+     1350299,
+     1350298
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_PA_Teleport_TapestrytoPigswick"
+    ]
+   }
+  ]
+ },
+ "1223144": {
+  "Name": "Grenda Tableflipper",
+  "ObjectName": "KR-Bastion-NPC11",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000044",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1374367,
+     1374370,
+     1374371,
+     1374372,
+     1374373,
+     1374374,
+     1374375,
+     1374376,
+     1374377,
+     1374378,
+     1374379,
+     1374380,
+     1374381,
+     1374382,
+     1374369,
+     1374368,
+     1374383,
+     1374384
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1233878": {
+  "Name": "Katherine RockHammer",
+  "ObjectName": "WC-SHOP-Jeweler",
+  "Shops": [
+   {
+    "Title": "NPCs_01748438",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1358845,
+     1358846,
+     1352577,
+     1352601,
+     1352649,
+     1352673,
+     1352625,
+     1352697,
+     1352721,
+     1358844,
+     1358843,
+     1358838,
+     1358839,
+     1358842,
+     1358841,
+     1358840,
+     1587401,
+     1587402
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1317694": {
+  "Name": "Pembaa",
+  "ObjectName": "G14-SB-NPC-Recipe-01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_SP_Tapestry_G14_SB_Hub"
+    ]
+   }
+  ]
+ },
+ "1317695": {
+  "Name": "Captain Dartmouth",
+  "ObjectName": "G14-BP-NPC-Recipe-01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_SP_Tapestry_G14_BP_Hub"
+    ]
+   },
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1739728,
+     1739888,
+     1739889,
+     1739890
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1317696": {
+  "Name": "Kamal Sarhan",
+  "ObjectName": "G14-HS-NPC-Recipe-01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_SP_Tapestry_G14_HS_Hub"
+    ]
+   }
+  ]
+ },
+ "1353028": {
+  "Name": "Yuri Smokesnare",
+  "ObjectName": "DS-Fishing-NPC01",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DS_AquariumLgSmlFry",
+     "Recipe-HOUSE_DS_AquariumLgWhopper",
+     "Recipe-HOUSE_DS_AquariumRegKeeper",
+     "Recipe-HOUSE_DS_AquariumRegSmlFry",
+     "Recipe-HOUSE_DS_AquariumRegWhopper",
+     "Recipe-HOUSE_DS_AquariumTallKeeper",
+     "Recipe-HOUSE_DS_AquariumTallSmlFry",
+     "Recipe-HOUSE_DS_AquariumTallWhopper"
+    ]
+   }
+  ]
+ },
+ "1365078": {
+  "Name": "Prefect Josapat",
+  "ObjectName": "MR-YAKH-NPC06-D",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000201",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392089,
+     1405809,
+     1405810,
+     1405811,
+     1405821
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000202",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392119,
+     1392121,
+     1392212,
+     1254070,
+     1392237
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1371072": {
+  "Name": "Jules",
+  "ObjectName": "PL-WAL-NPC33",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000185",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1357547,
+     1357502,
+     1357277,
+     1357322,
+     1357457,
+     1357412,
+     1357367,
+     1369820,
+     1369819,
+     1369814,
+     1369815,
+     1369818,
+     1369817,
+     1369816,
+     1369821,
+     1369822
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000185",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "RECIPE_JWL_105_Balance",
+     "RECIPE_JWL_105_Death",
+     "RECIPE_JWL_105_Fire",
+     "RECIPE_JWL_105_Ice",
+     "RECIPE_JWL_105_Life",
+     "RECIPE_JWL_105_Myth",
+     "RECIPE_JWL_105_Storm",
+     "Recipe-Palladium-01",
+     "Recipe-Tapestry_PL_Walruskberg"
+    ]
+   }
+  ]
+ },
+ "1371077": {
+  "Name": "Jordo Mistborn",
+  "ObjectName": "WC-ARENA-JEWEL",
+  "Shops": [
+   {
+    "Title": "WC-NPCs_00002652",
+    "ShopType": 4,
+    "Kind": 0,
+    "Items": [
+     1557053,
+     1528186,
+     1557046,
+     1557054,
+     1528185,
+     1557047,
+     1557055,
+     1528180,
+     1557048,
+     1557056,
+     1528181,
+     1557049,
+     1528184,
+     1528183,
+     1557050,
+     1557058,
+     1557057,
+     1557051,
+     1557059,
+     1528182,
+     1557052,
+     1374065,
+     1374066,
+     1374067,
+     1374068,
+     1374070,
+     1374071,
+     1374069,
+     1374072,
+     1374073
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WC-NPCs_00002467",
+    "ShopType": 4,
+    "Kind": 7,
+    "Items": [
+     1369636,
+     1369627,
+     1369628,
+     1369629,
+     1369630,
+     1369631,
+     1369632,
+     1369633,
+     1369634,
+     1369635,
+     1369626,
+     1369617,
+     1369618,
+     1369619,
+     1369620,
+     1369621,
+     1369622,
+     1369623,
+     1369624,
+     1369625,
+     1369645,
+     1369646,
+     1369637,
+     1369647,
+     1369638,
+     1369639,
+     1369648,
+     1369640,
+     1369641,
+     1369649,
+     1369642,
+     1369643,
+     1369650,
+     1369644,
+     1369660,
+     1369651,
+     1369652,
+     1369653,
+     1369654,
+     1369655,
+     1369656,
+     1369657,
+     1369658,
+     1369659,
+     1407050,
+     1407052,
+     1407053,
+     1407051,
+     1535686,
+     1535688,
+     1535691,
+     1535684,
+     1535687,
+     1535689,
+     1535690,
+     1663568,
+     1663569,
+     1663570,
+     1663571,
+     1663573,
+     1663574,
+     1663572,
+     1663575,
+     1663576,
+     1663577,
+     1663578,
+     1663579,
+     1663580,
+     1663581
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1381118": {
+  "Name": "Guillermel",
+  "ObjectName": "MR-CARA-NPC02-B",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000198",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1392207
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000199",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392092,
+     1402948,
+     1405044,
+     1405140,
+     1402980,
+     1405076,
+     1405172,
+     1405012,
+     1405108,
+     1405204,
+     1402956,
+     1405052,
+     1405148,
+     1402964,
+     1405060,
+     1405156,
+     1402972,
+     1405068,
+     1405164,
+     1405020,
+     1405116,
+     1405212,
+     1405028,
+     1405124,
+     1405220,
+     1405036,
+     1405132,
+     1405228,
+     1402988,
+     1405084,
+     1405180,
+     1402996,
+     1405092,
+     1405188,
+     1405004,
+     1405100,
+     1405196,
+     1405803,
+     1405804,
+     1405805,
+     1405819
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000200",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392131,
+     1392134,
+     1392215,
+     1254068,
+     1392229,
+     1392302,
+     1392303,
+     1392304
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1381308": {
+  "Name": "Captain Kettay",
+  "ObjectName": "MR-CATE-NPC02",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000194",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392111,
+     1392114,
+     1392210,
+     1254072,
+     1392239
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000195",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392087,
+     1405815,
+     1405816,
+     1405817,
+     1405823
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1391116": {
+  "Name": "Destro-uctor",
+  "ObjectName": "MR-ISTA-NPC10",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000193",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392123,
+     1392125,
+     1392127,
+     1392213,
+     1254071,
+     1392238
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000192",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392090,
+     1405822,
+     1405813,
+     1405814,
+     1405812
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000191",
+    "ShopType": 0,
+    "Kind": 6,
+    "Items": [
+     1392224,
+     1392223,
+     1392218,
+     1392219,
+     1392222,
+     1392221,
+     1392220,
+     1392488,
+     1392489
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1391117": {
+  "Name": "Advisor Francy Fries",
+  "ObjectName": "MR-RUBAL-NPC04-B",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000203",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392117,
+     1392118,
+     1392211,
+     1254061,
+     1392235
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000204",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392088,
+     1405800,
+     1405801,
+     1405802,
+     1405818,
+     1392226
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1397214": {
+  "Name": "Robin",
+  "ObjectName": "MR-AGGR-NPC02-C",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000196",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392129,
+     1392214,
+     1254069,
+     1392236
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000197",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392091,
+     1405806,
+     1405807,
+     1405808,
+     1405820
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1419122": {
+  "Name": "QA Housing NPC 2",
+  "ObjectName": "QA_HOUSING_NPC2",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DD_DS01_MusicPlayer",
+     "Recipe-TT-CE-Blank-Wand-T2-All-01",
+     "Recipe-TT-CE-Blank-Wand-T3-Balance",
+     "Recipe-TT-CE-Blank-Wand-T3-Elemental-01",
+     "Recipe-TT-CE-Blank-Wand-T3-Spirit-01",
+     "Recipe-TT-CE-Blank-Wand-T4-Balance",
+     "Recipe-TT-CE-Blank-Wand-T4-Death-01",
+     "Recipe-TT-CE-Blank-Wand-T4-Fire-01",
+     "Recipe-TT-CE-Blank-Wand-T4-Ice",
+     "Recipe-TT-CE-Blank-Wand-T4-Life-01",
+     "Recipe-TT-CE-Blank-Wand-T4-Myth-01",
+     "Recipe-TT-CE-Blank-Wand-T4-Storm-01",
+     "Recipe-TT-CE-Blank-Wand-T5-All-01",
+     "Recipe-HOUSE_SP_ProfessorPyramid"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1217729
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Reagent Shop",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1441119,
+     1441398,
+     1472089,
+     1441824,
+     1441825,
+     1441826,
+     1479199,
+     1479206,
+     1441821,
+     1441822,
+     1441823,
+     1479204,
+     1479197,
+     1479217,
+     1479218,
+     1479219,
+     1479220,
+     1479221,
+     1479222,
+     1479223,
+     1479224,
+     1479225,
+     1479226,
+     1479227,
+     1441808,
+     1441809,
+     1441810,
+     1479201,
+     1479196,
+     1472087,
+     1472088,
+     1472090,
+     1441812,
+     1441813,
+     1441814,
+     1479200,
+     1441818,
+     1441819,
+     1441820,
+     1479203,
+     1441827,
+     1441828,
+     1441829,
+     1479205,
+     1479207,
+     1479208,
+     1479209,
+     1479210,
+     1479211,
+     1479212,
+     1479213,
+     1479214,
+     1479215,
+     1479216,
+     1441831,
+     1479198,
+     1441830,
+     1441815,
+     1441816,
+     1441817,
+     1479202,
+     1441832,
+     1479416,
+     1479418,
+     1479419,
+     1479460,
+     1479458,
+     1479459,
+     1479713,
+     1479714,
+     1479715,
+     1522139,
+     1507855,
+     1507854,
+     1507853,
+     1592259,
+     1592260,
+     1592261,
+     1592262,
+     1592263,
+     1592264,
+     1626277
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1489414,
+     1489413,
+     1489412,
+     1489407,
+     1489408,
+     1489411,
+     1489410,
+     1489409,
+     1489406,
+     1489405,
+     1489404,
+     1489399,
+     1489400,
+     1489403,
+     1489402,
+     1489401,
+     1489335,
+     1489334,
+     1489333,
+     1489328,
+     1489329,
+     1489332,
+     1489331,
+     1489330,
+     1489422,
+     1489421,
+     1489420,
+     1489415,
+     1489416,
+     1489419,
+     1489418,
+     1489417,
+     1489343,
+     1489342,
+     1489341,
+     1489336,
+     1489337,
+     1489340,
+     1489339,
+     1489338,
+     1489351,
+     1489350,
+     1489349,
+     1489344,
+     1489345,
+     1489348,
+     1489347,
+     1489346,
+     1489462,
+     1489461,
+     1489460,
+     1489455,
+     1489456,
+     1489459,
+     1489458,
+     1489457
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1421864": {
+  "Name": "Gemeral",
+  "ObjectName": "MR-CARA-NPC24",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000212",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "RECIPE_JWL_115_Balance",
+     "RECIPE_JWL_115_Death",
+     "RECIPE_JWL_115_Fire",
+     "RECIPE_JWL_115_Ice",
+     "RECIPE_JWL_115_Life",
+     "RECIPE_JWL_115_Myth",
+     "RECIPE_JWL_115_Storm",
+     "Recipe-Iridium-01"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000211",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1430067,
+     1430068,
+     1430069,
+     1430070,
+     1430071,
+     1430072,
+     1430073,
+     1430074,
+     1430075,
+     1357281,
+     1357326,
+     1357371,
+     1357416,
+     1357461,
+     1357506,
+     1357551
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1421980": {
+  "Name": "Loligo",
+  "ObjectName": "EM-AERI-NPC20",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000213",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_EM_Aeriel_Small_Shroom",
+     "Recipe-HOUSE_EM_Barrel_With_Cork",
+     "Recipe-HOUSE_EM_Beastman_Chair_A",
+     "Recipe-HOUSE_EM_Beastman_Chair_B",
+     "Recipe-HOUSE_EM_Chain_Reel",
+     "Recipe-HOUSE_EM_Dwarf_Box_Fire",
+     "Recipe-HOUSE_EM_Dwarf_Box_Ice",
+     "Recipe-HOUSE_EM_Raider_Banner",
+     "Recipe-HOUSE_EM_Raider_Table",
+     "Recipe-HOUSE_EM_Raider_Throne",
+     "Recipie-Hat-Craft-Khan-L125-01",
+     "Recipie-Hat-Craft-Khan-L125-02",
+     "Recipie-Hat-Craft-Khan-L125-03",
+     "Recipie-Hat-Craft-Khan-L125-04",
+     "Recipie-Hat-Craft-Khan-L125-05",
+     "Recipie-Hat-Craft-Khan-L125-06",
+     "Recipie-Hat-Craft-Khan-L125-07",
+     "Recipie-Hat-Craft-Khan-L125-08",
+     "Recipie-Robe-Craft-Khan-L125-01",
+     "Recipie-Robe-Craft-Khan-L125-02",
+     "Recipie-Robe-Craft-Khan-L125-03",
+     "Recipie-Robe-Craft-Khan-L125-04",
+     "Recipie-Robe-Craft-Khan-L125-05",
+     "Recipie-Robe-Craft-Khan-L125-06",
+     "Recipie-Robe-Craft-Khan-L125-07",
+     "Recipie-Robe-Craft-Khan-L125-08",
+     "Recipie-Shoe-Craft-Khan-L125-01",
+     "Recipie-Shoe-Craft-Khan-L125-02",
+     "Recipie-Shoe-Craft-Khan-L125-03",
+     "Recipie-Shoe-Craft-Khan-L125-04",
+     "Recipie-Shoe-Craft-Khan-L125-05",
+     "Recipie-Shoe-Craft-Khan-L125-06",
+     "Recipie-Shoe-Craft-Khan-L125-07",
+     "Recipie-Shoe-Craft-Khan-L125-08",
+     "Recipe-AethyrOre-01",
+     "Recipe-Platinum-01",
+     "Recipe-Tapestry_EM_AerialShores"
+    ]
+   }
+  ]
+ },
+ "1435077": {
+  "Name": "Derrick Blaze",
+  "ObjectName": "WC-ST02-NPC05-MAW",
+  "Shops": [
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1431040,
+     1488068
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000214",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1430782,
+     1441042,
+     1430781,
+     1441053,
+     1430783
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1441423": {
+  "Name": "Romar",
+  "ObjectName": "EM-NIMB-Shop-01",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000219",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipie-Amulet-Craft-Titan-L130-1",
+     "Recipie-Amulet-Craft-Titan-L130-2",
+     "Recipie-Amulet-Craft-Titan-L130-3",
+     "Recipie-Amulet-Craft-Titan-L130-4",
+     "Recipie-Amulet-Craft-Titan-L130-5",
+     "Recipie-Amulet-Craft-Titan-L130-6",
+     "Recipie-Amulet-Craft-Titan-L130-7",
+     "Recipie-Amulet-Craft-Titan-L130-8",
+     "Recipie-Athame-Craft-Titan-L130-1",
+     "Recipie-Athame-Craft-Titan-L130-2",
+     "Recipie-Athame-Craft-Titan-L130-3",
+     "Recipie-Athame-Craft-Titan-L130-4",
+     "Recipie-Athame-Craft-Titan-L130-5",
+     "Recipie-Athame-Craft-Titan-L130-6",
+     "Recipie-Athame-Craft-Titan-L130-7",
+     "Recipie-Athame-Craft-Titan-L130-8",
+     "Recipie-Hat-Craft-Titan-L130-1",
+     "Recipie-Hat-Craft-Titan-L130-2",
+     "Recipie-Hat-Craft-Titan-L130-3",
+     "Recipie-Hat-Craft-Titan-L130-4",
+     "Recipie-Hat-Craft-Titan-L130-5",
+     "Recipie-Hat-Craft-Titan-L130-6",
+     "Recipie-Hat-Craft-Titan-L130-7",
+     "Recipie-Hat-Craft-Titan-L130-8",
+     "Recipie-Ring-Craft-Titan-L130-1",
+     "Recipie-Ring-Craft-Titan-L130-2",
+     "Recipie-Ring-Craft-Titan-L130-3",
+     "Recipie-Ring-Craft-Titan-L130-4",
+     "Recipie-Ring-Craft-Titan-L130-5",
+     "Recipie-Ring-Craft-Titan-L130-6",
+     "Recipie-Ring-Craft-Titan-L130-7",
+     "Recipie-Ring-Craft-Titan-L130-8",
+     "Recipie-Robe-Craft-Titan-L130-1",
+     "Recipie-Robe-Craft-Titan-L130-2",
+     "Recipie-Robe-Craft-Titan-L130-3",
+     "Recipie-Robe-Craft-Titan-L130-4",
+     "Recipie-Robe-Craft-Titan-L130-5",
+     "Recipie-Robe-Craft-Titan-L130-6",
+     "Recipie-Robe-Craft-Titan-L130-7",
+     "Recipie-Robe-Craft-Titan-L130-8",
+     "Recipie-Shoe-Craft-Titan-L130-1",
+     "Recipie-Shoe-Craft-Titan-L130-2",
+     "Recipie-Shoe-Craft-Titan-L130-3",
+     "Recipie-Shoe-Craft-Titan-L130-4",
+     "Recipie-Shoe-Craft-Titan-L130-5",
+     "Recipie-Shoe-Craft-Titan-L130-6",
+     "Recipie-Shoe-Craft-Titan-L130-7",
+     "Recipie-Shoe-Craft-Titan-L130-8",
+     "Recipie-Wand-Craft-Titan-L130-1",
+     "Recipie-Wand-Craft-Titan-L130-2",
+     "Recipie-Wand-Craft-Titan-L130-3",
+     "Recipie-Wand-Craft-Titan-L130-4",
+     "Recipie-Wand-Craft-Titan-L130-5",
+     "Recipie-Wand-Craft-Titan-L130-6",
+     "Recipie-Wand-Craft-Titan-L130-7",
+     "Recipie-Wand-Craft-Titan-L130-8",
+     "Recipe-Deck-EM-L130-All-02-S",
+     "Recipe-Deck-EM-L130-All-02-TE",
+     "Recipe-Deck-EM-L130-Balance-02-S",
+     "Recipe-Deck-EM-L130-Balance-02-TE",
+     "Recipe-Deck-EM-L130-Death-02-S",
+     "Recipe-Deck-EM-L130-Death-02-TE",
+     "Recipe-Deck-EM-L130-Fire-02-S",
+     "Recipe-Deck-EM-L130-Fire-02-TE",
+     "Recipe-Deck-EM-L130-Ice-02-S",
+     "Recipe-Deck-EM-L130-Ice-02-TE",
+     "Recipe-Deck-EM-L130-Life-02-S",
+     "Recipe-Deck-EM-L130-Life-02-TE",
+     "Recipe-Deck-EM-L130-Myth-02-S",
+     "Recipe-Deck-EM-L130-Myth-02-TE",
+     "Recipe-Deck-EM-L130-Storm-02-S",
+     "Recipe-Deck-EM-L130-Storm-02-TE"
+    ]
+   }
+  ]
+ },
+ "1441424": {
+  "Name": "Verrin",
+  "ObjectName": "EM-NIMB-Shop-02",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000217",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1462187
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000219",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE-EM-AeroDwarf-Bookshelf-BS",
+     "Recipe-HOUSE-EM-AeroDwarf-Trunk",
+     "Recipe-HOUSE-EM-AeroDwarf-Worktable",
+     "Recipe-HOUSE-EM-Kalamar-Bed-A01",
+     "Recipe-HOUSE-EM-Kalamar-Bookshelf-A01",
+     "Recipe-HOUSE-EM-Kalamar-Chest-A01",
+     "Recipe-HOUSE-EM-Nimbari-Bed-A01",
+     "Recipe-HOUSE-EM-Nimbari-BookShelf-A01",
+     "Recipe-HOUSE-EM-Nimbari-Sofa-A01",
+     "Recipe-AethyrOre-01",
+     "Recipe-Platinum-01",
+     "Recipe-HousingGameDance"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000222",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1514578,
+     1514577,
+     1514572,
+     1514573,
+     1514576,
+     1514575,
+     1514574,
+     1514579,
+     1514580
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1441425": {
+  "Name": "Syvar",
+  "ObjectName": "EM-NIMB-Shop-03",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000217",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     258590,
+     258591,
+     1317938,
+     258592,
+     258593,
+     1350075,
+     258594,
+     258595,
+     258596
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipie-Deck-Craft-Titan-L130-1",
+     "Recipie-Deck-Craft-Titan-L130-2",
+     "Recipie-Deck-Craft-Titan-L130-3",
+     "Recipie-Deck-Craft-Titan-L130-4",
+     "Recipie-Deck-Craft-Titan-L130-5",
+     "Recipie-Deck-Craft-Titan-L130-6",
+     "Recipie-Deck-Craft-Titan-L130-7",
+     "Recipie-Deck-Craft-Titan-L130-8"
+    ]
+   }
+  ]
+ },
+ "1441595": {
+  "Name": "FOR TEST ONLY",
+  "ObjectName": "EM-NIMB-Shop-04",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000220",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1441398
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1447333": {
+  "Name": "Coach Landri",
+  "ObjectName": "EM-AERO-NPC09",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000218",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1480003,
+     1441540,
+     1441538,
+     1441539,
+     1441567,
+     1441618,
+     1441620,
+     1441621,
+     1441679,
+     1441689,
+     1441690
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000218",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1464003,
+     1464002,
+     1464001
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1479256": {
+  "Name": "Actaeon",
+  "ObjectName": "BG-Vendor-001",
+  "Shops": [
+   {
+    "Title": "WC-NPCs_00002569",
+    "ShopType": 2,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-BG-Blank-Robe-Balance-001",
+     "Recipe-BG-Blank-Robe-Balance-002",
+     "Recipe-BG-Blank-Robe-Balance-003",
+     "Recipe-BG-Blank-Robe-Balance-004",
+     "Recipe-BG-Blank-Robe-Death-001",
+     "Recipe-BG-Blank-Robe-Death-002",
+     "Recipe-BG-Blank-Robe-Death-003",
+     "Recipe-BG-Blank-Robe-Death-004",
+     "Recipe-BG-Blank-Robe-Fire-001",
+     "Recipe-BG-Blank-Robe-Fire-002",
+     "Recipe-BG-Blank-Robe-Fire-003",
+     "Recipe-BG-Blank-Robe-Fire-004",
+     "Recipe-BG-Blank-Robe-Ice-001",
+     "Recipe-BG-Blank-Robe-Ice-002",
+     "Recipe-BG-Blank-Robe-Ice-003",
+     "Recipe-BG-Blank-Robe-Ice-004",
+     "Recipe-BG-Blank-Robe-Life-001",
+     "Recipe-BG-Blank-Robe-Life-002",
+     "Recipe-BG-Blank-Robe-Life-003",
+     "Recipe-BG-Blank-Robe-Life-004",
+     "Recipe-BG-Blank-Robe-Myth-001",
+     "Recipe-BG-Blank-Robe-Myth-002",
+     "Recipe-BG-Blank-Robe-Myth-003",
+     "Recipe-BG-Blank-Robe-Myth-004",
+     "Recipe-BG-Blank-Robe-Storm-001",
+     "Recipe-BG-Blank-Robe-Storm-002",
+     "Recipe-BG-Blank-Robe-Storm-003",
+     "Recipe-BG-Blank-Robe-Storm-004",
+     "Recipe_BG_BalanceMoon_Seed",
+     "Recipe_BG_BattleMoon_Seed",
+     "Recipe_BG_DeathMoon_Seed",
+     "Recipe_BG_ElementMoon_Seed",
+     "Recipe_BG_FireMoon_Seed",
+     "Recipe_BG_IceMoon_Seed",
+     "Recipe_BG_LifeMoon_Seed",
+     "Recipe_BG_MythMoon_Seed",
+     "Recipe_BG_Poly_Reagent02_Element_01",
+     "Recipe_BG_Poly_Reagent02_Spirit_01",
+     "Recipe_BG_SpiritMoon_Seed",
+     "Recipe_BG_StormMoon_Seed",
+     "Recipe-BG-Blank-Hat-Balance-001",
+     "Recipe-BG-Blank-Hat-Balance-002",
+     "Recipe-BG-Blank-Hat-Balance-003",
+     "Recipe-BG-Blank-Hat-Balance-004",
+     "Recipe-BG-Blank-Hat-Death-001",
+     "Recipe-BG-Blank-Hat-Death-002",
+     "Recipe-BG-Blank-Hat-Death-003",
+     "Recipe-BG-Blank-Hat-Death-004",
+     "Recipe-BG-Blank-Hat-Fire-001",
+     "Recipe-BG-Blank-Hat-Fire-002",
+     "Recipe-BG-Blank-Hat-Fire-003",
+     "Recipe-BG-Blank-Hat-Fire-004",
+     "Recipe-BG-Blank-Hat-Ice-001",
+     "Recipe-BG-Blank-Hat-Ice-002",
+     "Recipe-BG-Blank-Hat-Ice-003",
+     "Recipe-BG-Blank-Hat-Ice-004",
+     "Recipe-BG-Blank-Hat-Life-001",
+     "Recipe-BG-Blank-Hat-Life-002",
+     "Recipe-BG-Blank-Hat-Life-003",
+     "Recipe-BG-Blank-Hat-Life-004",
+     "Recipe-BG-Blank-Hat-Myth-001",
+     "Recipe-BG-Blank-Hat-Myth-002",
+     "Recipe-BG-Blank-Hat-Myth-003",
+     "Recipe-BG-Blank-Hat-Myth-004",
+     "Recipe-BG-Blank-Hat-Storm-001",
+     "Recipe-BG-Blank-Hat-Storm-002",
+     "Recipe-BG-Blank-Hat-Storm-003",
+     "Recipe-BG-Blank-Hat-Storm-004",
+     "Recipe-BG-Blank-Shoes-Balance-001",
+     "Recipe-BG-Blank-Shoes-Balance-002",
+     "Recipe-BG-Blank-Shoes-Balance-003",
+     "Recipe-BG-Blank-Shoes-Balance-004",
+     "Recipe-BG-Blank-Shoes-Death-001",
+     "Recipe-BG-Blank-Shoes-Death-002",
+     "Recipe-BG-Blank-Shoes-Death-003",
+     "Recipe-BG-Blank-Shoes-Death-004",
+     "Recipe-BG-Blank-Shoes-Fire-001",
+     "Recipe-BG-Blank-Shoes-Fire-002",
+     "Recipe-BG-Blank-Shoes-Fire-003",
+     "Recipe-BG-Blank-Shoes-Fire-004",
+     "Recipe-BG-Blank-Shoes-Ice-001",
+     "Recipe-BG-Blank-Shoes-Ice-002",
+     "Recipe-BG-Blank-Shoes-Ice-003",
+     "Recipe-BG-Blank-Shoes-Ice-004",
+     "Recipe-BG-Blank-Shoes-Life-001",
+     "Recipe-BG-Blank-Shoes-Life-002",
+     "Recipe-BG-Blank-Shoes-Life-003",
+     "Recipe-BG-Blank-Shoes-Life-004",
+     "Recipe-BG-Blank-Shoes-Myth-001",
+     "Recipe-BG-Blank-Shoes-Myth-002",
+     "Recipe-BG-Blank-Shoes-Myth-003",
+     "Recipe-BG-Blank-Shoes-Myth-004",
+     "Recipe-BG-Blank-Shoes-Storm-001",
+     "Recipe-BG-Blank-Shoes-Storm-002",
+     "Recipe-BG-Blank-Shoes-Storm-003",
+     "Recipe-BG-Blank-Shoes-Storm-004",
+     "Recipe-BG-Blank-Robe-Balance-E02-001",
+     "Recipe-BG-Blank-Robe-Balance-E02-002",
+     "Recipe-BG-Blank-Robe-Balance-E02-003",
+     "Recipe-BG-Blank-Robe-Death-E02-001",
+     "Recipe-BG-Blank-Robe-Death-E02-002",
+     "Recipe-BG-Blank-Robe-Death-E02-003",
+     "Recipe-BG-Blank-Robe-Fire-E02-001",
+     "Recipe-BG-Blank-Robe-Fire-E02-002",
+     "Recipe-BG-Blank-Robe-Fire-E02-003",
+     "Recipe-BG-Blank-Robe-Ice-E02-001",
+     "Recipe-BG-Blank-Robe-Ice-E02-002",
+     "Recipe-BG-Blank-Robe-Ice-E02-003",
+     "Recipe-BG-Blank-Robe-Life-E02-001",
+     "Recipe-BG-Blank-Robe-Life-E02-002",
+     "Recipe-BG-Blank-Robe-Life-E02-003",
+     "Recipe-BG-Blank-Robe-Myth-E02-001",
+     "Recipe-BG-Blank-Robe-Myth-E02-002",
+     "Recipe-BG-Blank-Robe-Myth-E02-003",
+     "Recipe-BG-Blank-Robe-Storm-E02-001",
+     "Recipe-BG-Blank-Robe-Storm-E02-002",
+     "Recipe-BG-Blank-Robe-Storm-E02-003",
+     "Recipe-BG-Blank-Robe-Ultimate-E02-001",
+     "Recipe-BG-Blank-Hat-Balance-E02-001",
+     "Recipe-BG-Blank-Hat-Balance-E02-002",
+     "Recipe-BG-Blank-Hat-Balance-E02-003",
+     "Recipe-BG-Blank-Hat-Death-E02-001",
+     "Recipe-BG-Blank-Hat-Death-E02-002",
+     "Recipe-BG-Blank-Hat-Death-E02-003",
+     "Recipe-BG-Blank-Hat-Fire-E02-001",
+     "Recipe-BG-Blank-Hat-Fire-E02-002",
+     "Recipe-BG-Blank-Hat-Fire-E02-003",
+     "Recipe-BG-Blank-Hat-Ice-E02-001",
+     "Recipe-BG-Blank-Hat-Ice-E02-002",
+     "Recipe-BG-Blank-Hat-Ice-E02-003",
+     "Recipe-BG-Blank-Hat-Life-E02-001",
+     "Recipe-BG-Blank-Hat-Life-E02-002",
+     "Recipe-BG-Blank-Hat-Life-E02-003",
+     "Recipe-BG-Blank-Hat-Myth-E02-001",
+     "Recipe-BG-Blank-Hat-Myth-E02-002",
+     "Recipe-BG-Blank-Hat-Myth-E02-003",
+     "Recipe-BG-Blank-Hat-Storm-E02-001",
+     "Recipe-BG-Blank-Hat-Storm-E02-002",
+     "Recipe-BG-Blank-Hat-Storm-E02-003",
+     "Recipe-BG-Blank-Hat-Ultimate-E02-001",
+     "Recipe-BG-Blank-Shoes-Balance-E02-001",
+     "Recipe-BG-Blank-Shoes-Balance-E02-002",
+     "Recipe-BG-Blank-Shoes-Balance-E02-003",
+     "Recipe-BG-Blank-Shoes-Death-E02-001",
+     "Recipe-BG-Blank-Shoes-Death-E02-002",
+     "Recipe-BG-Blank-Shoes-Death-E02-003",
+     "Recipe-BG-Blank-Shoes-Fire-E02-001",
+     "Recipe-BG-Blank-Shoes-Fire-E02-002",
+     "Recipe-BG-Blank-Shoes-Fire-E02-003",
+     "Recipe-BG-Blank-Shoes-Ice-E02-001",
+     "Recipe-BG-Blank-Shoes-Ice-E02-002",
+     "Recipe-BG-Blank-Shoes-Ice-E02-003",
+     "Recipe-BG-Blank-Shoes-Life-E02-001",
+     "Recipe-BG-Blank-Shoes-Life-E02-002",
+     "Recipe-BG-Blank-Shoes-Life-E02-003",
+     "Recipe-BG-Blank-Shoes-Myth-E02-001",
+     "Recipe-BG-Blank-Shoes-Myth-E02-002",
+     "Recipe-BG-Blank-Shoes-Myth-E02-003",
+     "Recipe-BG-Blank-Shoes-Storm-E02-001",
+     "Recipe-BG-Blank-Shoes-Storm-E02-002",
+     "Recipe-BG-Blank-Shoes-Storm-E02-003",
+     "Recipe-BG-Blank-Shoes-Ultimate-E02-001",
+     "Recipe-BG-Blank-Shoes-All-E03-004",
+     "Recipe-BG-Blank-Shoes-Balance-E03-001",
+     "Recipe-BG-Blank-Shoes-Balance-E03-002",
+     "Recipe-BG-Blank-Shoes-Balance-E03-003",
+     "Recipe-BG-Blank-Shoes-Death-E03-001",
+     "Recipe-BG-Blank-Shoes-Death-E03-002",
+     "Recipe-BG-Blank-Shoes-Death-E03-003",
+     "Recipe-BG-Blank-Shoes-Fire-E03-001",
+     "Recipe-BG-Blank-Shoes-Fire-E03-002",
+     "Recipe-BG-Blank-Shoes-Fire-E03-003",
+     "Recipe-BG-Blank-Shoes-Ice-E03-001",
+     "Recipe-BG-Blank-Shoes-Ice-E03-002",
+     "Recipe-BG-Blank-Shoes-Ice-E03-003",
+     "Recipe-BG-Blank-Shoes-Life-E03-001",
+     "Recipe-BG-Blank-Shoes-Life-E03-002",
+     "Recipe-BG-Blank-Shoes-Life-E03-003",
+     "Recipe-BG-Blank-Shoes-Myth-E03-001",
+     "Recipe-BG-Blank-Shoes-Myth-E03-002",
+     "Recipe-BG-Blank-Shoes-Myth-E03-003",
+     "Recipe-BG-Blank-Shoes-Storm-E03-001",
+     "Recipe-BG-Blank-Shoes-Storm-E03-002",
+     "Recipe-BG-Blank-Shoes-Storm-E03-003",
+     "Recipe-BG-Blank-Robe-All-E03-004",
+     "Recipe-BG-Blank-Robe-Balance-E03-001",
+     "Recipe-BG-Blank-Robe-Balance-E03-002",
+     "Recipe-BG-Blank-Robe-Balance-E03-003",
+     "Recipe-BG-Blank-Robe-Death-E03-001",
+     "Recipe-BG-Blank-Robe-Death-E03-002",
+     "Recipe-BG-Blank-Robe-Death-E03-003",
+     "Recipe-BG-Blank-Robe-Fire-E03-001",
+     "Recipe-BG-Blank-Robe-Fire-E03-002",
+     "Recipe-BG-Blank-Robe-Fire-E03-003",
+     "Recipe-BG-Blank-Robe-Ice-E03-001",
+     "Recipe-BG-Blank-Robe-Ice-E03-002",
+     "Recipe-BG-Blank-Robe-Ice-E03-003",
+     "Recipe-BG-Blank-Robe-Life-E03-001",
+     "Recipe-BG-Blank-Robe-Life-E03-002",
+     "Recipe-BG-Blank-Robe-Life-E03-003",
+     "Recipe-BG-Blank-Robe-Myth-E03-001",
+     "Recipe-BG-Blank-Robe-Myth-E03-002",
+     "Recipe-BG-Blank-Robe-Myth-E03-003",
+     "Recipe-BG-Blank-Robe-Storm-E03-002",
+     "Recipe-BG-Blank-Robe-Storm-E03-001",
+     "Recipe-BG-Blank-Robe-Storm-E03-003",
+     "Recipe-BG-Blank-Hat-All-E03-004",
+     "Recipe-BG-Blank-Hat-Balance-E03-001",
+     "Recipe-BG-Blank-Hat-Balance-E03-002",
+     "Recipe-BG-Blank-Hat-Balance-E03-003",
+     "Recipe-BG-Blank-Hat-Death-E03-001",
+     "Recipe-BG-Blank-Hat-Death-E03-002",
+     "Recipe-BG-Blank-Hat-Death-E03-003",
+     "Recipe-BG-Blank-Hat-Fire-E03-001",
+     "Recipe-BG-Blank-Hat-Fire-E03-002",
+     "Recipe-BG-Blank-Hat-Fire-E03-003",
+     "Recipe-BG-Blank-Hat-Ice-E03-001",
+     "Recipe-BG-Blank-Hat-Ice-E03-002",
+     "Recipe-BG-Blank-Hat-Ice-E03-003",
+     "Recipe-BG-Blank-Hat-Life-E03-001",
+     "Recipe-BG-Blank-Hat-Life-E03-002",
+     "Recipe-BG-Blank-Hat-Life-E03-003",
+     "Recipe-BG-Blank-Hat-Myth-E03-001",
+     "Recipe-BG-Blank-Hat-Myth-E03-002",
+     "Recipe-BG-Blank-Hat-Myth-E03-003",
+     "Recipe-BG-Blank-Hat-Storm-E03-001",
+     "Recipe-BG-Blank-Hat-Storm-E03-002",
+     "Recipe-BG-Blank-Hat-Storm-E03-003",
+     "Recipe-BG-Blank-Boot-Balance-E04-001",
+     "Recipe-BG-Blank-Boot-Balance-E04-002",
+     "Recipe-BG-Blank-Boot-Balance-E04-003",
+     "Recipe-BG-Blank-Boot-Death-E04-001",
+     "Recipe-BG-Blank-Boot-Death-E04-002",
+     "Recipe-BG-Blank-Boot-Death-E04-003",
+     "Recipe-BG-Blank-Boot-Fire-E04-001",
+     "Recipe-BG-Blank-Boot-Fire-E04-002",
+     "Recipe-BG-Blank-Boot-Fire-E04-003",
+     "Recipe-BG-Blank-Boot-Ice-E04-001",
+     "Recipe-BG-Blank-Boot-Ice-E04-002",
+     "Recipe-BG-Blank-Boot-Ice-E04-003",
+     "Recipe-BG-Blank-Boot-Life-E04-001",
+     "Recipe-BG-Blank-Boot-Life-E04-002",
+     "Recipe-BG-Blank-Boot-Life-E04-003",
+     "Recipe-BG-Blank-Boot-Myth-E04-001",
+     "Recipe-BG-Blank-Boot-Myth-E04-002",
+     "Recipe-BG-Blank-Boot-Myth-E04-003",
+     "Recipe-BG-Blank-Boot-Storm-E04-001",
+     "Recipe-BG-Blank-Boot-Storm-E04-002",
+     "Recipe-BG-Blank-Boot-Storm-E04-003",
+     "Recipe-BG-Blank-Boot-Ultimate-E04-001",
+     "Recipe-BG-Blank-Hat-Balance-E04-001",
+     "Recipe-BG-Blank-Hat-Balance-E04-002",
+     "Recipe-BG-Blank-Hat-Balance-E04-003",
+     "Recipe-BG-Blank-Hat-Death-E04-001",
+     "Recipe-BG-Blank-Hat-Death-E04-002",
+     "Recipe-BG-Blank-Hat-Death-E04-003",
+     "Recipe-BG-Blank-Hat-Fire-E04-001",
+     "Recipe-BG-Blank-Hat-Fire-E04-002",
+     "Recipe-BG-Blank-Hat-Fire-E04-003",
+     "Recipe-BG-Blank-Hat-Ice-E04-001",
+     "Recipe-BG-Blank-Hat-Ice-E04-002",
+     "Recipe-BG-Blank-Hat-Ice-E04-003",
+     "Recipe-BG-Blank-Hat-Life-E04-001",
+     "Recipe-BG-Blank-Hat-Life-E04-002",
+     "Recipe-BG-Blank-Hat-Life-E04-003",
+     "Recipe-BG-Blank-Hat-Myth-E04-001",
+     "Recipe-BG-Blank-Hat-Myth-E04-002",
+     "Recipe-BG-Blank-Hat-Myth-E04-003",
+     "Recipe-BG-Blank-Hat-Storm-E04-001",
+     "Recipe-BG-Blank-Hat-Storm-E04-002",
+     "Recipe-BG-Blank-Hat-Storm-E04-003",
+     "Recipe-BG-Blank-Hat-Ultimate-E04-001",
+     "Recipe-BG-Blank-Robe-Balance-E04-001",
+     "Recipe-BG-Blank-Robe-Balance-E04-002",
+     "Recipe-BG-Blank-Robe-Balance-E04-003",
+     "Recipe-BG-Blank-Robe-Death-E04-001",
+     "Recipe-BG-Blank-Robe-Death-E04-002",
+     "Recipe-BG-Blank-Robe-Death-E04-003",
+     "Recipe-BG-Blank-Robe-Fire-E04-001",
+     "Recipe-BG-Blank-Robe-Fire-E04-002",
+     "Recipe-BG-Blank-Robe-Fire-E04-003",
+     "Recipe-BG-Blank-Robe-Ice-E04-001",
+     "Recipe-BG-Blank-Robe-Ice-E04-002",
+     "Recipe-BG-Blank-Robe-Ice-E04-003",
+     "Recipe-BG-Blank-Robe-Life-E04-001",
+     "Recipe-BG-Blank-Robe-Life-E04-002",
+     "Recipe-BG-Blank-Robe-Life-E04-003",
+     "Recipe-BG-Blank-Robe-Myth-E04-001",
+     "Recipe-BG-Blank-Robe-Myth-E04-002",
+     "Recipe-BG-Blank-Robe-Myth-E04-003",
+     "Recipe-BG-Blank-Robe-Storm-E04-001",
+     "Recipe-BG-Blank-Robe-Storm-E04-002",
+     "Recipe-BG-Blank-Robe-Storm-E04-003",
+     "Recipe-BG-Blank-Robe-Ultimate-E04-001"
+    ]
+   }
+  ]
+ },
+ "1479257": {
+  "Name": "Get Your Battlegrounds Things here",
+  "ObjectName": "BG-Vendor-002",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000221",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1448396,
+     1448362,
+     1448384,
+     1448364,
+     1448372,
+     1448376,
+     1448388,
+     1448392,
+     1448368,
+     1448380
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1506852": {
+  "Name": "TEST Vendor",
+  "ObjectName": "BG-Vendor-TEST",
+  "Shops": [
+   {
+    "Title": "WC-NPCs_00002569",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-BG_TEST_PolyLevelRecipe_Poly22",
+     "Recipe-BG_TEST_PolyLevelRecipe_Poly23",
+     "Recipe-BG_TEST_PolyLevelRecipe_Poly24",
+     "Recipe-BG_TEST_PolyLevelRecipe_Poly25",
+     "Recipe-BG_TEST_PolyLevelRecipe_Poly26"
+    ]
+   }
+  ]
+ },
+ "1513279": {
+  "Name": "Johann",
+  "ObjectName": "KM-Vendor02",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000223",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Amulet-KM-L140-Balance-04",
+     "Recipe-Amulet-KM-L140-Death-04",
+     "Recipe-Amulet-KM-L140-Fire-04",
+     "Recipe-Amulet-KM-L140-Ice-04",
+     "Recipe-Amulet-KM-L140-Life-04",
+     "Recipe-Amulet-KM-L140-Myth-04",
+     "Recipe-Amulet-KM-L140-Storm-04",
+     "Recipe-Athame-KM-L140-Balance-04",
+     "Recipe-Athame-KM-L140-Death-04",
+     "Recipe-Athame-KM-L140-Fire-04",
+     "Recipe-Athame-KM-L140-Ice-04",
+     "Recipe-Athame-KM-L140-Life-04",
+     "Recipe-Athame-KM-L140-Myth-04",
+     "Recipe-Athame-KM-L140-Storm-04",
+     "Recipe-Deck-KM-L140-Balance-04-S",
+     "Recipe-Deck-KM-L140-Balance-04-T",
+     "Recipe-Deck-KM-L140-Balance-04-TE",
+     "Recipe-Deck-KM-L140-Death-04-S",
+     "Recipe-Deck-KM-L140-Death-04-T",
+     "Recipe-Deck-KM-L140-Death-04-TE",
+     "Recipe-Deck-KM-L140-Fire-04-S",
+     "Recipe-Deck-KM-L140-Fire-04-T",
+     "Recipe-Deck-KM-L140-Fire-04-TE",
+     "Recipe-Deck-KM-L140-Ice-04-S",
+     "Recipe-Deck-KM-L140-Ice-04-T",
+     "Recipe-Deck-KM-L140-Ice-04-TE",
+     "Recipe-Deck-KM-L140-Life-04-S",
+     "Recipe-Deck-KM-L140-Life-04-T",
+     "Recipe-Deck-KM-L140-Life-04-TE",
+     "Recipe-Deck-KM-L140-Myth-04-S",
+     "Recipe-Deck-KM-L140-Myth-04-T",
+     "Recipe-Deck-KM-L140-Myth-04-TE",
+     "Recipe-Deck-KM-L140-Storm-04-S",
+     "Recipe-Deck-KM-L140-Storm-04-T",
+     "Recipe-Deck-KM-L140-Storm-04-TE",
+     "Recipe-Hat-KM-L140-Balance-04",
+     "Recipe-Hat-KM-L140-Death-04",
+     "Recipe-Hat-KM-L140-Fire-04",
+     "Recipe-Hat-KM-L140-Ice-04",
+     "Recipe-Hat-KM-L140-Life-04",
+     "Recipe-Hat-KM-L140-Myth-04",
+     "Recipe-Hat-KM-L140-Storm-04",
+     "Recipe-Ring-KM-L140-Balance-04",
+     "Recipe-Ring-KM-L140-Death-04",
+     "Recipe-Ring-KM-L140-Fire-04",
+     "Recipe-Ring-KM-L140-Ice-04",
+     "Recipe-Ring-KM-L140-Life-04",
+     "Recipe-Ring-KM-L140-Myth-04",
+     "Recipe-Ring-KM-L140-Storm-04",
+     "Recipe-Robe-KM-L140-Balance-04",
+     "Recipe-Robe-KM-L140-Death-04",
+     "Recipe-Robe-KM-L140-Fire-04",
+     "Recipe-Robe-KM-L140-Ice-04",
+     "Recipe-Robe-KM-L140-Life-04",
+     "Recipe-Robe-KM-L140-Myth-04",
+     "Recipe-Robe-KM-L140-Storm-04",
+     "Recipe-Shoes-KM-L140-Balance-04",
+     "Recipe-Shoes-KM-L140-Death-04",
+     "Recipe-Shoes-KM-L140-Fire-04",
+     "Recipe-Shoes-KM-L140-Ice-04",
+     "Recipe-Shoes-KM-L140-Life-04",
+     "Recipe-Shoes-KM-L140-Myth-04",
+     "Recipe-Shoes-KM-L140-Storm-04",
+     "Recipe-Wand-KM-L140-Balance-04",
+     "Recipe-Wand-KM-L140-Death-04",
+     "Recipe-Wand-KM-L140-Fire-04",
+     "Recipe-Wand-KM-L140-Ice-04",
+     "Recipe-Wand-KM-L140-Life-04",
+     "Recipe-Wand-KM-L140-Myth-04",
+     "Recipe-Wand-KM-L140-Storm-04"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000227",
+    "ShopType": 0,
+    "Kind": 7,
+    "Items": [
+     1514587,
+     1514586,
+     1514581,
+     1514582,
+     1514585,
+     1514584,
+     1514583,
+     1514588,
+     1514589
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000229",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1515768,
+     1515771,
+     1515774,
+     1515769,
+     1515772,
+     1515775,
+     1515770,
+     1515773,
+     1515776
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1513280": {
+  "Name": "Dolph",
+  "ObjectName": "KM-Vendor03",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000225",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1507086,
+     1504153,
+     1504156,
+     1504157,
+     1504166,
+     1504168,
+     1511122,
+     1511118,
+     1511116,
+     1511140,
+     1511138,
+     1511143,
+     1511148,
+     1511150
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000228",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_KM_BenchPress",
+     "Recipe-HOUSE_KM_Column_Lollypop",
+     "Recipe-HOUSE_KM_Door_Basement",
+     "Recipe-HOUSE_KM_GummyMold",
+     "Recipe-HOUSE_KM_GymBike",
+     "Recipe-HOUSE_KM_Keg",
+     "Recipe-HOUSE_KM_MineCart",
+     "Recipe-HOUSE_KM_Scarecrow",
+     "Recipe-HOUSE_KM_Sign_IceCream",
+     "Recipe-HOUSE_KM_Sign_Sunday",
+     "Recipe-HOUSE_KM_Stall",
+     "Recipe-HOUSE_KM_Stall_CandyApple",
+     "Recipe-HOUSE_KM_Treadmill",
+     "Recipe-HOUSE_KM_Tree_LicoriceStump",
+     "Recipe-HOUSE_KM_WeightRack",
+     "Recipe-WarmPretzel-01"
+    ]
+   }
+  ]
+ },
+ "1513281": {
+  "Name": "Felda",
+  "ObjectName": "KM-Vendor01",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000224",
+    "ShopType": 0,
+    "Kind": 5,
+    "Items": [
+     1504007,
+     1504008,
+     1504017,
+     1504010,
+     1504009,
+     1504011,
+     1504016
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000226",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     100450,
+     100408,
+     100333,
+     225430,
+     69082,
+     100420,
+     100452,
+     100407,
+     100453
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1521087": {
+  "Name": "Dromel Merchant",
+  "ObjectName": "MR-CARA-NPC28",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000198",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1392207
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000199",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1392092,
+     1402948,
+     1405044,
+     1405140,
+     1402980,
+     1405076,
+     1405172,
+     1405012,
+     1405108,
+     1405204,
+     1402956,
+     1405052,
+     1405148,
+     1402964,
+     1405060,
+     1405156,
+     1402972,
+     1405068,
+     1405164,
+     1405020,
+     1405116,
+     1405212,
+     1405028,
+     1405124,
+     1405220,
+     1405036,
+     1405132,
+     1405228,
+     1402988,
+     1405084,
+     1405180,
+     1402996,
+     1405092,
+     1405188,
+     1405004,
+     1405100,
+     1405196,
+     1405803,
+     1405804,
+     1405805,
+     1405819
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000200",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1392131,
+     1392134,
+     1392215,
+     1254068,
+     1392229,
+     1392302,
+     1392303,
+     1392304
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1521366": {
+  "Name": "Louise Mayqueen",
+  "ObjectName": "LM-TELOS-NPC17",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000231",
+    "ShopType": 0,
+    "Kind": 4,
+    "Items": [
+     470361,
+     470143,
+     470355,
+     1317277
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "WizardShops_00000234",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     789097,
+     789098,
+     789099,
+     789100,
+     789105,
+     789106,
+     789107,
+     789108,
+     789101,
+     789102,
+     789103,
+     789104
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1528077": {
+  "Name": "",
+  "ObjectName": "WC_TritonAvenue_Vendor_SandorSpitfire",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000065",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     106948,
+     1350074,
+     106947,
+     106946,
+     106950,
+     106949,
+     106952,
+     106951,
+     106956,
+     106953
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1562001": {
+  "Name": "Raquel",
+  "ObjectName": "WC_BossRematch_Vendor",
+  "Shops": [
+   {
+    "Title": "Reagent Shop",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1621066,
+     1621068,
+     1621077,
+     1621076,
+     1621071,
+     1621064,
+     1621061
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1689453,
+     1689454,
+     1689455
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1588172": {
+  "Name": "Paola Neighvone",
+  "ObjectName": "NV_Vendor01_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_NV_BananaTree",
+     "Recipe-HOUSE_NV_BrassTeapotTree",
+     "Recipe-HOUSE_NV_Cannon",
+     "Recipe-HOUSE_NV_CatmanduBalloon",
+     "Recipe-HOUSE_NV_CatmanduSconce",
+     "Recipe-HOUSE_NV_FishdeLis",
+     "Recipe-HOUSE_NV_GiantBaguette",
+     "Recipe-HOUSE_NV_GiantStrawberry",
+     "Recipe-HOUSE_NV_GiantTomato",
+     "Recipe-HOUSE_NV_RopeBanner",
+     "Recipe-HOUSE_NV_SpikeBarricade",
+     "Recipe-HOUSE_NV_SpillingCoffee",
+     "Recipe-HOUSE_NV_VicorgiaLamppost"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000241",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     470216,
+     470224,
+     160535,
+     470232,
+     470192,
+     160536,
+     160761,
+     160657,
+     160668,
+     160662,
+     160729,
+     160745,
+     1374252,
+     1374277,
+     1374291,
+     1374288,
+     1374271,
+     1374279,
+     739082,
+     739223,
+     1374546,
+     1374547,
+     206096,
+     1441315,
+     1479633,
+     211126,
+     342122
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1594592": {
+  "Name": "Quibilah",
+  "ObjectName": "KT-SE-GARD-NPC19",
+  "Shops": [
+   {
+    "Title": "Reagent Shop",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     106952,
+     1317935,
+     106948,
+     1317930,
+     1317931,
+     106946,
+     1350074,
+     1350076
+    ],
+    "Recipes": []
+   },
+   {
+    "Title": "NPCs_01749548",
+    "ShopType": 0,
+    "Kind": 6,
+    "Items": [
+     1233030,
+     1233021
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1607685": {
+  "Name": "Hephaestus TEST Shop",
+  "ObjectName": "Cam-Test-NPC",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000220",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     1779067,
+     1779068,
+     1779069,
+     1779070,
+     1779071,
+     1779072,
+     1779073,
+     1784438,
+     1784439,
+     1784436,
+     1749378
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1628037": {
+  "Name": "Chilli",
+  "ObjectName": "WL_Vendor10_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_WL_Furniture_BookDisplayRack",
+     "Recipe-HOUSE_WL_Furniture_Couch_01",
+     "Recipe-HOUSE_WL_Furniture_Couch_02",
+     "Recipe-HOUSE_WL_Furniture_TableSmallRound",
+     "Recipe-HOUSE_WL_Painting_MarleyboneVista_01_stretched",
+     "Recipe-HOUSE_WL_Painting_MarleyboneVista_02",
+     "Recipe-HOUSE_WL_Painting_MrCane",
+     "Recipe-HOUSE_WL_Poster_Priscilla",
+     "Recipe-HOUSE_WL_Poster_TheGobblerKing",
+     "Recipe-HOUSE_WL_Poster_Wallaru",
+     "Recipe-HOUSE_WL_SignFloor_Toast",
+     "Recipe-HOUSE_WL_VelvetRope_Green"
+    ]
+   },
+   {
+    "Title": "WizardShops_00000252",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     537543,
+     1392462,
+     82783,
+     1421937,
+     160864,
+     160283,
+     1392461,
+     1374255
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1712191": {
+  "Name": "Toffin von Coffin",
+  "ObjectName": "DM_Vendor07_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DM_Wall_Banner_03",
+     "Recipe-HOUSE_DM_FloorBed"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     160450,
+     739094,
+     1317974,
+     82783,
+     82782,
+     82814,
+     1479437,
+     1392474,
+     160731,
+     160733,
+     160315,
+     160316,
+     160317,
+     1359103,
+     643189,
+     643188,
+     1317952,
+     1317953
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1712192": {
+  "Name": "Sister Planar",
+  "ObjectName": "DM_Vendor08_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DM_Wall_Banner_02"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1374700,
+     1374699,
+     1374698,
+     1374702,
+     160252,
+     1374703,
+     537537,
+     537538,
+     537546,
+     537612,
+     181101,
+     181030,
+     1374701,
+     739123,
+     1317945,
+     342114,
+     1317979,
+     1317980,
+     1317981
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1712193": {
+  "Name": "Urgo",
+  "ObjectName": "DM_Vendor09_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DM_Wall_Banner_04",
+     "Recipe-HOUSE_DM_TreeMed_01"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     181035,
+     1292144,
+     1374583,
+     181059,
+     739154,
+     1374251,
+     342075,
+     181040,
+     1374256,
+     160378,
+     160383,
+     160379,
+     643191,
+     160604,
+     1392486,
+     1603172,
+     1317962
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1712194": {
+  "Name": "Sergeant G'tok",
+  "ObjectName": "DM_Vendor10_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE_DM_Wall_Banner_01"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     538066,
+     538067,
+     160546,
+     160548,
+     739201,
+     160887,
+     739092,
+     160888,
+     537545,
+     739159,
+     160904,
+     82880,
+     160547,
+     82876,
+     160545,
+     82771
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1761045": {
+  "Name": "Prospector Zeke",
+  "ObjectName": "AH-BALE-NPC28",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000174",
+    "ShopType": 0,
+    "Kind": 4,
+    "Items": [
+     276449,
+     276454,
+     276458,
+     276464,
+     276461,
+     284074,
+     276446,
+     1317274
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1761046": {
+  "Name": "Eloise Merryweather",
+  "ObjectName": "AH-BALE-NPC29",
+  "Shops": [
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1768337,
+     1768338,
+     1768339,
+     1768340,
+     1768342
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768343": {
+  "Name": "Beyo Fletcher",
+  "ObjectName": "AH_Vendor01_Gear",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-Harvest-Akashic-Mark-01"
+    ]
+   }
+  ]
+ },
+ "1768347": {
+  "Name": "Reya Fletcher",
+  "ObjectName": "AH_Vendor09_Gear",
+  "Shops": [
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     1768679,
+     1768680,
+     1768681,
+     1768396
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768929": {
+  "Name": "Rel",
+  "ObjectName": "AH_Vendor10_Snacks",
+  "Shops": [
+   {
+    "Title": "Pet Snack Shop",
+    "ShopType": 0,
+    "Kind": 5,
+    "Items": [
+     641712,
+     789217,
+     220237,
+     220268,
+     220306,
+     1317096,
+     1317098,
+     1317095
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768930": {
+  "Name": "Grolla",
+  "ObjectName": "AH_Vendor11_Snacks",
+  "Shops": [
+   {
+    "Title": "Pet Snack Shop",
+    "ShopType": 0,
+    "Kind": 5,
+    "Items": [
+     789457,
+     641699,
+     537602,
+     220195,
+     1317097,
+     641697,
+     789221,
+     733120
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768931": {
+  "Name": "Ihmwo Shipwright",
+  "ObjectName": "AH_Vendor12_Housing",
+  "Shops": [
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     206089,
+     1507082,
+     1507081,
+     683120,
+     181038,
+     1433025,
+     739164,
+     739207,
+     739208,
+     1260045,
+     1260052,
+     1260055,
+     1260059,
+     82879
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768932": {
+  "Name": "Lasko",
+  "ObjectName": "AH_Vendor13_Housing",
+  "Shops": [
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     342088,
+     683109,
+     342084,
+     342081,
+     342082,
+     342083,
+     342124,
+     342123,
+     342099,
+     1374576,
+     1374571,
+     1374572,
+     1374569,
+     342118,
+     342096,
+     1504026,
+     1504024,
+     342110
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768933": {
+  "Name": "Nall",
+  "ObjectName": "AH_Vendor14_Housing",
+  "Shops": [
+   {
+    "Title": "Recipe Shop",
+    "ShopType": 0,
+    "Kind": 3,
+    "Items": [],
+    "Recipes": [
+     "Recipe-HOUSE-AH-TunaSign",
+     "Recipe-HOUSE-AH-OctopusSign",
+     "Recipe-HOUSE-AH-Banner",
+     "Recipe-HOUSE-AH-PinkUmbrella",
+     "Recipe-HOUSE-AH-BarrelOfFish",
+     "Recipe-HOUSE-AH-GreenOverhang",
+     "Recipe-HOUSE-AH-Chest",
+     "Recipe-HOUSE-AH-Cart",
+     "Recipe-HOUSE-AH-MarketStand"
+    ]
+   },
+   {
+    "Title": "Housing Shop",
+    "ShopType": 0,
+    "Kind": 1,
+    "Items": [
+     1789107
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768934": {
+  "Name": "Roote",
+  "ObjectName": "AH_Vendor15_Reagent",
+  "Shops": [
+   {
+    "Title": "WizardShops_00000110",
+    "ShopType": 0,
+    "Kind": 2,
+    "Items": [
+     258589,
+     106956,
+     106954,
+     106957,
+     106955,
+     106958,
+     106953,
+     1317930,
+     1317932,
+     1317935,
+     1317933,
+     1317936,
+     1317931,
+     1317934,
+     1350076,
+     258590,
+     258591,
+     258592,
+     258593,
+     258594,
+     258595,
+     258596,
+     1350075,
+     106948,
+     106949,
+     106952,
+     106951,
+     1350074,
+     106950,
+     106946,
+     106947
+    ],
+    "Recipes": []
+   }
+  ]
+ },
+ "1768935": {
+  "Name": "Rana Fooderman",
+  "ObjectName": "AH_Vendor16_Pet",
+  "Shops": [
+   {
+    "Title": "Gear Shop",
+    "ShopType": 0,
+    "Kind": 0,
+    "Items": [
+     175579,
+     175581,
+     589635,
+     1359786,
+     1254262
+    ],
+    "Recipes": []
+   }
+  ]
+ }
+}

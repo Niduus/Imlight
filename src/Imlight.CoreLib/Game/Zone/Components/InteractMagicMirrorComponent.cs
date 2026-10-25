@@ -78,7 +78,7 @@ internal sealed class InteractMagicMirrorComponent(ZoneEntity entity) : ZoneEnti
         => [
             new MagicMirrorShopOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
+                m_iconKey = "MagicMirrorShop",
                 m_serviceName = ServiceName,
             }
         ];

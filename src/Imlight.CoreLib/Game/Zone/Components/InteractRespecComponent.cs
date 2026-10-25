@@ -88,7 +88,7 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
 
         return [new RespecOption {
             m_displayKey = DisplayKey,
-            m_iconKey = "RespecOption",
+            m_iconKey = "RespecService",
             m_serviceName = ServiceName,
         }];
     }

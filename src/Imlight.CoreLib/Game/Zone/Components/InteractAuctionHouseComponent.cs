@@ -54,7 +54,7 @@ internal sealed class InteractAuctionHouseComponent(ZoneEntity entity)
         => [
             new AuctionHouseOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
+                m_iconKey = "Shopping",
                 m_serviceName = ServiceName,
                 m_sellModifier = 1.0f,
                 m_auctionHousePurchaseKey = 1

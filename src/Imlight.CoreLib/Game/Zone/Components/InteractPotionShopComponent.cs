@@ -76,7 +76,7 @@ internal sealed class InteractPotionShopComponent(ZoneEntity entity) : ZoneEntit
         => [
             new PotionShopOption {
                 m_displayKey = DisplayKey,
-                m_iconKey = NpcIcon,
+                m_iconKey = "PotionShop",
                 m_serviceName = ServiceName,
             }
         ];
