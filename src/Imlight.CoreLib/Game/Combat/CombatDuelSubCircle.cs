@@ -498,8 +498,9 @@ public class CombatDuelSubCircle {
             return s_pipSchools[Random.Shared.Next(s_pipSchools.Length)];
         }
 
-        // The school picked for the gauge in the deck, else the participant's own.
-        foreach (var id in new[] { ArchmasterySchool, ParticipantGameStats.m_schoolID }) {
+        // The school picked for the gauge in the deck, else the participant's own. The deck's pick counts for the
+        // [Battle] SchoolPips conversion too, when Archmastery is off.
+        foreach (var id in new[] { ArchmasterySchool, _deckArchmasterySchool, ParticipantGameStats.m_schoolID }) {
             var school = (MagicSchool) id;
             if (id != 0 && SchoolPips(CombatParticipant.m_pipCount, school) is not null) {
                 return school;
