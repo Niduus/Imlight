@@ -102,8 +102,12 @@
  *     { "Do": "RemoveAuras", "Target" (AllEnemies) }
  *     { "Do": "AddCharm", "Kind": Blade/Weakness/Shield/Trap/Absorb, "Amount" (percent; hit points for Absorb),
  *       "School" ("" = all), "Target" (Self, or Caster for a weakness or trap) }   used up as a real one. Kind DoT or
- *       HoT: Amount in all, over Rounds rounds (3 if 0). "Spell"/"SpellID": shown in the game as that spell (its id);
- *       two effects with the same spell id count once on a hit, as real ones of one spell do.
+ *       HoT: Amount in all, over Rounds rounds (3 if 0). The game draws a charm or ward only from a spell it sees
+ *       cast, so a real one of that kind and school is cast (Shadowblade for a Shadow blade; Balanceblade, Hex,
+ *       Tower Shield, Weakness or Spirit Armor for all schools) and its effect is then given this size on the server.
+ *       "Spell"/"SpellID": cast that spell instead, and the effect keeps its id (two of one spell count once on a hit,
+ *       as real ones do). The game shows the real spell's own size; the server deals with this one. DoT and HoT are
+ *       not drawn.
  *     { "Do": "IfCleared", "Count" (1), "Amount" (1), "Each" }   the next Count steps only if the removal steps before
  *       it (RemoveEffects, RemoveCharms, RemoveWards, RemoveAuras) took off at least Amount effects; with Each, once for
  *       each one taken off. "Clear DoT for +55% Storm blade": RemoveEffects Kind DoT Count 1 Target Receiver, then

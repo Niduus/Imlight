@@ -458,6 +458,29 @@ public partial class CombatResolver {
         m_paramPerRound = type == kSpellEffects.kAbsorbDamage ? amount : 0,
     };
 
+    // The real spell a custom charm or ward of this kind and school is shown as (AddCharm with no "shown as"): the plain
+    // blade, trap or shield of that school, or the all-school one (Balanceblade, Hex, Tower Shield, Weakness, Spirit Armor).
+    private static string LookalikeFor(string kind, string school) {
+        var s = (school ?? "").Trim().ToLowerInvariant();
+        return (kind ?? "").Trim().ToLowerInvariant() switch {
+            "blade" or "" => s switch {
+                "fire" => "Fireblade", "ice" => "Iceblade", "storm" => "Stormblade", "myth" => "Mythblade", "life" => "Lifeblade",
+                "death" => "Deathblade", "shadow" => "Shadowblade", _ => "Balanceblade",
+            },
+            "trap" => s switch {
+                "fire" => "Fire Trap", "ice" => "Ice Trap", "storm" => "Storm Trap", "myth" => "Myth Trap", "life" => "Life Trap",
+                "death" => "Death Trap", "shadow" => "Shadow Trap", _ => "Hex",
+            },
+            "shield" => s switch {
+                "fire" => "Fire Shield", "ice" => "Snow Shield", "storm" => "Storm Shield", "myth" => "Myth Shield", "life" => "Life Shield",
+                "death" => "Death Shield", "shadow" => "Shadow Shield", _ => "Tower Shield",
+            },
+            "weakness" => "Weakness",
+            "absorb" => "Spirit Armor",
+            _ => "",
+        };
+    }
+
     /// <summary>The Dos of this file. False when the step is none of them.</summary>
     private bool TryMoreCheatSteps(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step,
                                    CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName, List<string> lines,
@@ -547,13 +570,59 @@ public partial class CombatResolver {
                         "absorb" => CheatEffect(kSpellEffects.kAbsorbDamage, amount, step.School, 0, good: true),
                         _ => CheatEffect(kSpellEffects.kModifyOutgoingDamage, amount, step.School, 0, good: true),
                     };
-                    if ((step.Spell.Length > 0 || step.SpellID != 0) && FindSpell(step.Spell, step.SpellID) is { Template: not null } shownAs) {
-                        effect = effect with { m_spellTemplateID = shownAs.Spell.m_templateID };
+                    var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
+                    var named = step.Spell.Length > 0 || step.SpellID != 0;
+                    var lookName = named ? step.Spell : LookalikeFor(step.Kind, step.School);
+                    var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
+
+                    // The game draws a charm or ward on a circle only from a spell it is shown being cast (it works out
+                    // the round itself), so one put on by the server alone never showed (Niduus, 2026-10-25: a 666% Shadow
+                    // blade "did not activate"). So a real spell of that kind and school is cast (named in "shown as", or
+                    // picked here: Shadowblade for a Shadow blade), and the effect it puts on is then given this size and
+                    // school on the server. With no "shown as", the effect keeps no spell id, so it counts on its own
+                    // next to a real one of that spell. A DoT or HoT is not drawn (no lookalike is cast for it).
+                    if (look.Template is not null && step.Kind.ToLowerInvariant() is not ("dot" or "hot")) {
+                        var lookId = look.Spell.m_templateID;
+                        var before = _subCircles.Where(c => c?._hangingEffects is not null)
+                            .ToDictionary(c => c, c => c._hangingEffects.ToHashSet(ReferenceEqualityComparer.Instance));
+                        var cast = step with {
+                            Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId,
+                            Target = step.Target.Length > 0 ? step.Target : fallback,
+                        };
+                        cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+                        var resized = 0;
+                        foreach (var (circle, had) in before) {
+                            var hanging = circle._hangingEffects;
+                            for (var i = 0; i < hanging.Count; i++) {
+                                var e = hanging[i];
+                                if (e is null || had.Contains(e) || e.m_spellTemplateID != lookId || e.m_effectType != effect.m_effectType) {
+                                    continue;
+                                }
+
+                                hanging[i] = e with {
+                                    m_effectParam = effect.m_effectParam,
+                                    m_paramPerRound = effect.m_paramPerRound,
+                                    m_sDamageType = effect.m_sDamageType,
+                                    m_disposition = effect.m_disposition,
+                                    m_spellTemplateID = named ? lookId : 0,
+                                };
+                                resized++;
+                            }
+                        }
+
+                        Logger.Information("Duel {0} | Slot {1} | {2}: {3} cast so the game shows it; {4} of its effects made {5} {6}{7}.",
+                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, (string) look.Template.m_name, resized,
+                                effect.m_effectParam, SchoolText(step.School), step.Kind));
+                        if (resized > 0) {
+                            return true;
+                        }
+
+                        Logger.Information("Duel {0} | Slot {1} | {2}: the lookalike put nothing on (dispelled, or another kind); the effect goes on unseen.",
+                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
                     }
 
-                    var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
                     foreach (var target in On(fallback).Where(t => t?._hangingEffects is not null && t.IsAlive)) {
-                        target._hangingEffects.Add(effect with { });
+                        target._hangingEffects.Add(effect with { m_spellTemplateID = named && look.Spell is not null ? look.Spell.m_templateID : 0 });
                     }
 
                     return true;
