@@ -61,6 +61,9 @@ public class House {
     public List<PlacedItem> Items { get; set; } = [];
     public List<GardenSpot> Garden { get; set; } = [];
     public uint GardenRevision { get; set; }
+
+    /// <summary>The plant growth speeds the garden's times were set with (null: the ini's).</summary>
+    public Imlight.CoreLib.Game.Gardening.GardenSpeeds GardenTiming { get; set; }
     public DateTime CreatedUtc { get; set; }
 
     /// <summary>

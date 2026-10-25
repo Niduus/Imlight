@@ -67,7 +67,8 @@ namespace Imlight.CoreLib.Game.Services;
 internal partial class HousingService {
 
     private const string GardenTimer = "garden-grow";
-    private static readonly TimeSpan GardenInterval = TimeSpan.FromSeconds(60);
+    // How often a garden grows while someone is in the house, so a new stage shows soon at a high Plant growth speed.
+    private static readonly TimeSpan GardenInterval = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan AllCastWindow = TimeSpan.FromSeconds(8);
 
     // The garden's blob: the one MSG_PATCHGARDENING patches.
@@ -632,6 +633,23 @@ internal partial class HousingService {
                     GiveTestSeeds(wizard);
                     break;
                 }
+                case "speed":
+                    InformGameClient(SetGardenSpeed(message.Text));
+                    break;
+                case "pause":
+                case "resume": {
+                    var speeds = GardenTiming.Change(now => now with { Paused = message.Action == "pause" });
+                    GrowGardenNow();
+                    InformGameClient(speeds.Paused
+                        ? "Every garden is paused: nothing grows, no needs or pests come. Type .garden resume to go on."
+                        : $"Gardens grow again: {speeds.Describe()}.");
+                    break;
+                }
+                case "stage":
+                case "age":
+                case "times":
+                    InformGameClient(TestGarden(message.Action, message.Text));
+                    break;
                 case "spells": {
                     var taught = CheckGardenLessons(wizard, GardenLevelOf(wizard), force: true, all: true);
                     if (taught.Count == 0) {
@@ -703,6 +721,130 @@ internal partial class HousingService {
         EditGarden(house, growth => changed = growth.Hurry(readyOnly));
 
         return changed;
+    }
+
+    // `.garden speed 60`, `.garden speed young 10`, `.garden speed reset`.
+    private string SetGardenSpeed(string text) {
+        var parts = (text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) {
+            return $"Plant growth: {GardenTiming.Current.Describe()}. Type .garden speed 60 (or reset), or .garden speed young 10.";
+        }
+
+        GardenSpeeds speeds;
+        if (parts[0] is "reset" or "game" or "normal") {
+            speeds = GardenTiming.Change(_ => new GardenSpeeds());
+        }
+        else {
+            var part = parts.Length > 1 ? parts[0] : "all";
+            if (!double.TryParse(parts[^1].TrimStart('x'), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var value)
+                || value <= 0) {
+                return "Type a number above 0, such as .garden speed 60 or .garden speed 0.5.";
+            }
+
+            Func<GardenSpeeds, GardenSpeeds> change = part switch {
+                "all" or "speed" or "everything" => now => now with { Speed = value },
+                "seedling" or "seedlings" => now => now with { Seedling = value },
+                "young" => now => now with { Young = value },
+                "mature" => now => now with { Mature = value },
+                "harvest" or "harvests" => now => now with { Harvest = value },
+                "needs" or "need" or "pests" => now => now with { Needs = value },
+                _ => null,
+            };
+            if (change is null) {
+                return "Type .garden speed seedling, young, mature, harvest or needs, then a number.";
+            }
+
+            speeds = GardenTiming.Change(change);
+        }
+
+        GrowGardenNow();
+
+        return $"Plant growth: {speeds.Describe()}. The Manager's Plant growth card shows the same.";
+    }
+
+    // Grows the garden one is in now, so a speed change shows without waiting for the next check.
+    private void GrowGardenNow() {
+        if (_house is { } house) {
+            EditGarden(house, growth => growth.Tick());
+        }
+    }
+
+    // `.garden stage mature`, `.garden age 2h`, `.garden times`, in one's own house.
+    private string TestGarden(string action, string text) {
+        var house = _house;
+        if (house is null || house.OwnerCharId != GetActiveWizard().CharId) {
+            return "Go to your own house first.";
+        }
+
+        switch (action) {
+            case "stage": {
+                PlantStage? stage = (text ?? "").Trim() switch {
+                    "seedling" or "seed" => PlantStage.PS_Seedling,
+                    "young" => PlantStage.PS_Young,
+                    "mature" => PlantStage.PS_Mature,
+                    "elder" or "angel" => PlantStage.PS_Angel,
+                    "wilting" or "wilt" or "sick" => PlantStage.PS_Wilting,
+                    "dead" => PlantStage.PS_Dead,
+                    _ => null,
+                };
+                if (stage is null) {
+                    return "Type .garden stage seedling, young, mature, elder, wilting or dead.";
+                }
+
+                var changed = 0;
+                EditGarden(house, growth => changed = growth.SetStage(stage.Value));
+
+                return $"Garden: {changed} plant(s) are now {StageName(stage.Value)}, with fresh times.";
+            }
+            case "age": {
+                if (ParseSpan(text) is not { } seconds) {
+                    return "Type .garden age and a time, such as 30m, 2h or 1d.";
+                }
+
+                var plants = 0;
+                EditGarden(house, growth => plants = growth.Age(seconds));
+
+                return $"Garden: {Span(seconds)} of plant time passed for {plants} plant(s). Type .garden times to see them.";
+            }
+            default: {
+                var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var lines = house.GardenSnapshot().Garden.Where(spot => !spot.IsSoil())
+                    .Select(spot => (spot, info: GardenTemplates.Plant(spot.TemplateId)))
+                    .Where(pair => pair.info is not null)
+                    .Take(12)
+                    .Select(pair => {
+                        var (spot, info) = pair;
+                        var age = spot.StageStart > 0 && spot.StageStart <= now ? $" for {Span(now - spot.StageStart)}" : "";
+                        var next = spot.NextStage > now ? $", next stage in {Span(spot.NextStage - now)}" : "";
+                        var ready = (spot.Flags & GardenFlags.Ready) != 0 ? ", ready"
+                            : spot.HarvestAt > now && info.Stage is PlantStage.PS_Mature or PlantStage.PS_Angel ? $", harvest in {Span(spot.HarvestAt - now)}" : "";
+                        var hindered = (spot.Flags & (GardenFlags.NeedMask | GardenFlags.Pest)) != 0 ? ", waiting on a need or pest" : "";
+                        return $"{info.Name}: {StageName(info.Stage)}{age}{next}{ready}{hindered}";
+                    })
+                    .ToList();
+                foreach (var line in lines) {
+                    InformGameClient(line);
+                }
+
+                return lines.Count == 0
+                    ? $"No plants here. Plant growth: {GardenTiming.Current.Describe()}."
+                    : $"Plant growth: {GardenTiming.Current.Describe()}.";
+            }
+        }
+    }
+
+    // "30m", "2h", "1d", "90" (minutes) or "1h30m", as seconds.
+    private static long? ParseSpan(string text) {
+        var match = System.Text.RegularExpressions.Regex.Match((text ?? "").Trim().ToLowerInvariant(),
+            @"^(?:(\d+)d)?\s*(?:(\d+)h)?\s*(?:(\d+)m?)?$");
+        if (!match.Success || match.Length == 0) {
+            return null;
+        }
+
+        long Part(int group) => match.Groups[group].Success ? long.Parse(match.Groups[group].Value) : 0;
+        var seconds = Part(1) * 86400 + Part(2) * 3600 + Part(3) * 60;
+
+        return seconds > 0 ? seconds : null;
     }
 
     /// <summary>For testing: the soil and plants of the garden one is in.</summary>

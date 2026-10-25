@@ -134,6 +134,7 @@ internal sealed class HouseState {
     private List<PlacedItem> _slots;
     private uint _gidBase;
     private uint _gardenBase;
+    private long _gardenSavedAt;
     private int _liveCount;
     private int _viewers;
     private bool _retired;
@@ -544,27 +545,40 @@ internal sealed class HouseState {
     /// <returns>The change, with the revision of its first patch and the proxy's GIDID.</returns>
     internal GardenChange TryEditGarden(Action<GardenGrowth> edit) {
         lock (_lock) {
-            var growth = new GardenGrowth(_house.Garden ?? [], DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var growth = new GardenGrowth(_house.Garden ?? [], now, _house.GardenTiming);
             edit(growth);
             if (GardenCodec.SizeOf(growth.Spots) > GardenCodec.MaxSize + 900) {
                 return new GardenChange(HouseEdit.LimitReached);
             }
 
             // Nothing changed, so nothing is written.
-            if (growth.Patches.Count == 0 && growth.Spots.SequenceEqual(_house.Garden ?? [])) {
+            var sameSpeeds = growth.Speeds.SameAs(_house.GardenTiming ?? GardenTiming.IniDefault);
+            if (growth.Patches.Count == 0 && sameSpeeds && growth.Spots.SequenceEqual(_house.Garden ?? [])) {
                 return new GardenChange(HouseEdit.Done, growth, _house.GardenRevision + 1, _gardenBase);
             }
 
             var previousGarden = _house.Garden;
+            var previousTiming = _house.GardenTiming;
             var revision = _house.GardenRevision;
             _house.Garden = growth.Spots;
+            _house.GardenTiming = growth.Speeds;
             _house.GardenRevision = revision + (uint) growth.Patches.Count;
+
+            // A growth check that only moved the plants' clocks is written at most once a minute.
+            if (growth.Patches.Count == 0 && sameSpeeds && now - _gardenSavedAt < 60) {
+                return new GardenChange(HouseEdit.Done, growth, revision + 1, _gardenBase);
+            }
+
             if (!Persist(null)) {
                 _house.Garden = previousGarden;
+                _house.GardenTiming = previousTiming;
                 _house.GardenRevision = revision;
 
                 return new GardenChange(HouseEdit.SaveFailed);
             }
+
+            _gardenSavedAt = now;
 
             return new GardenChange(HouseEdit.Done, growth, revision + 1, _gardenBase);
         }

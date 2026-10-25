@@ -492,10 +492,13 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 147;
         public byte ServiceID { get; } = 103;
 
-        /// <summary>status, grow, ready, rank or spells.</summary>
+        /// <summary>status, grow, ready, rank, spells, seeds, speed, pause, resume, stage, age or times.</summary>
         public string Action;
 
         public int Value;
+
+        /// <summary>The rest of the command: speed takes "[part] number", stage a stage name, age a time.</summary>
+        public string Text;
 
     }
 

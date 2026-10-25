@@ -39,7 +39,7 @@
  *   needs are all met goes back to its young stage (patch 4 and 6), and a revived dead plant becomes its young stage.
  * - A plant with a need showing or a pest does not grow and is not ready to harvest until it is helped. A need left
  *   too long, or a pest, makes the plant wilt; a wilting plant dies when its time is up (Wizard101's own rules).
- * - [Gardening] Speed makes every gardening time that many times shorter, for testing.
+ * - The Manager's Plant growth card sets how fast every clock runs, and can pause the garden (GardenTiming).
  *
  * TODO:
  * - Good pests (pixies) never come; the client would show them with the pest picture of the plant's size.
@@ -119,16 +119,24 @@ internal sealed class GardenGrowth {
         [1257003] = GardenNeed.Music,
     };
 
-    private static readonly float s_speed = Math.Max(0.001f, ConfigurationManager.GetValue("Gardening.Speed", 1f));
-
     private readonly List<GardenSpot> _spots;
     private readonly long _now;
     private readonly List<GardenPatch> _patches = [];
+    private readonly GardenSpeeds _used;
 
-    internal GardenGrowth(IEnumerable<GardenSpot> garden, long now) {
+    /// <param name="garden">The soil and plants.</param>
+    /// <param name="now">Now, in unix seconds.</param>
+    /// <param name="used">The speeds the garden's times were set with; null for the ini's (gardens made before the
+    /// Plant growth card).</param>
+    internal GardenGrowth(IEnumerable<GardenSpot> garden, long now, GardenSpeeds used = null) {
         _spots = [.. garden ?? []];
         _now = now;
+        _used = used ?? GardenTiming.IniDefault;
+        Speeds = GardenTiming.Current;
     }
+
+    /// <summary>The speeds the garden grows with now (the Manager's Plant growth card); the house keeps them.</summary>
+    internal GardenSpeeds Speeds { get; }
 
     /// <summary>The soil and plants after the changes.</summary>
     internal List<GardenSpot> Spots => _spots;
@@ -139,9 +147,10 @@ internal sealed class GardenGrowth {
     /// <summary>The number of plants (soil left out).</summary>
     internal int PlantCount => _spots.Count(spot => !spot.IsSoil());
 
-    /// <summary>Makes a gardening time shorter by [Gardening] Speed.</summary>
-    internal static long Scale(long seconds)
-        => seconds <= 0 ? 0 : Math.Max(1, (long) Math.Round(seconds / s_speed));
+    // A game time made shorter or longer by the Plant growth speeds. Needs, pests, wilting and protections use the
+    // Needs clock; a stage's own growing time and the wait between harvests have their own.
+    private long Scale(long seconds, GardenClock clock = GardenClock.Needs, PlantStage stage = PlantStage.PS_Young)
+        => Speeds.Scale(seconds, clock, stage);
 
     // ---------------------------------------------------------------------------------------------------------------
     // Growing over time
@@ -151,6 +160,11 @@ internal sealed class GardenGrowth {
     /// Grows every plant up to now.
     /// </summary>
     internal void Tick() {
+        Retime();
+        if (Speeds.Paused) {
+            return;
+        }
+
         for (var i = 0; i < _spots.Count; i++) {
             if (_spots[i].IsSoil()) {
                 continue;
@@ -538,7 +552,7 @@ internal sealed class GardenGrowth {
             return true;
         }
 
-        var next = _now + Scale(Between(info.HarvestMin, info.HarvestMax));
+        var next = _now + Scale(Between(info.HarvestMin, info.HarvestMax), GardenClock.Harvest);
         spot = spot with { Flags = flags, HarvestCount = count, HarvestAt = next };
         _spots[index] = spot;
         _patches.Add(Patch(GardenCommand.Harvested, spot, flags, (uint) Math.Min(next, uint.MaxValue)));
@@ -596,6 +610,176 @@ internal sealed class GardenGrowth {
         return changed;
     }
 
+    /// <summary>
+    /// For testing: lets this many seconds of plant time pass for every plant, then grows them.
+    /// </summary>
+    /// <returns>The plants.</returns>
+    internal int Age(long seconds) {
+        if (seconds > 0) {
+            for (var i = 0; i < _spots.Count; i++) {
+                if (!_spots[i].IsSoil()) {
+                    _spots[i] = Shift(_spots[i], -seconds, shiftChecked: false);
+                }
+            }
+        }
+
+        Retime();
+        for (var i = 0; i < _spots.Count; i++) {
+            if (_spots[i].IsSoil()) {
+                continue;
+            }
+
+            for (var step = 0; step < 8 && i < _spots.Count && !_spots[i].IsSoil(); step++) {
+                if (!Grow(i)) {
+                    break;
+                }
+            }
+        }
+
+        return PlantCount;
+    }
+
+    /// <summary>
+    /// For testing: puts every plant in a stage (seedling, young, mature, elder, wilting or dead) with fresh times.
+    /// </summary>
+    /// <returns>The plants changed.</returns>
+    internal int SetStage(PlantStage stage) {
+        var changed = 0;
+        for (var i = 0; i < _spots.Count; i++) {
+            if (_spots[i].IsSoil() || GardenTemplates.Plant(_spots[i].TemplateId) is not { } info
+                || StageTemplate(_spots[i], info, stage) is not { } templateId) {
+                continue;
+            }
+
+            changed++;
+            if (templateId == _spots[i].TemplateId) {
+                continue;
+            }
+
+            var flags = _spots[i].Flags & (GardenFlags.Protected | GardenFlags.ProviderMask);
+            if (stage is PlantStage.PS_Angel) {
+                flags |= GardenFlags.Ready;
+            }
+
+            ChangeStage(i, templateId, flags);
+        }
+
+        return changed;
+    }
+
+    // The template of a plant's stage: the seed's chain walked from the seedling.
+    private static uint? StageTemplate(GardenSpot spot, PlantInfo info, PlantStage stage) {
+        switch (stage) {
+            case PlantStage.PS_Wilting:
+                return info.WiltTemplateId != 0 ? info.WiltTemplateId : null;
+            case PlantStage.PS_Dead:
+                return info.DeadTemplateId != 0 ? info.DeadTemplateId : null;
+        }
+
+        var seed = GardenTemplates.Plant(spot.SeedTemplateId);
+        var id = seed?.NextStageTemplateId ?? 0;
+        if (id == 0 && info.Stage is PlantStage.PS_Wilting or PlantStage.PS_Dead) {
+            id = info.YoungTemplateId;
+        }
+        else if (id == 0) {
+            id = spot.TemplateId;
+        }
+
+        for (var step = 0; step < 6 && GardenTemplates.Plant(id) is { } at; step++) {
+            if (at.Stage == stage) {
+                return id;
+            }
+
+            if (at.NextStageTemplateId == 0 || at.Stage is PlantStage.PS_Angel or PlantStage.PS_Wilting or PlantStage.PS_Dead) {
+                break;
+            }
+
+            id = at.NextStageTemplateId;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Fits the garden's times to the speeds of now: the time each plant still has left is stretched or shrunk by the
+    /// change, and the time the garden was paused is added to every clock, so nothing grew then.
+    /// </summary>
+    private void Retime() {
+        var same = _used.SameAs(Speeds);
+        if (same && !Speeds.Paused) {
+            return;
+        }
+
+        var changedAt = Math.Clamp(Speeds.ChangedAt, 0, _now);
+        for (var i = 0; i < _spots.Count; i++) {
+            var spot = _spots[i];
+            if (spot.IsSoil()) {
+                continue;
+            }
+
+            var checkedAt = spot.CheckedAt <= 0 ? _now : spot.CheckedAt;
+            // The stretch of time the plant stood paused since it was last checked.
+            long frozen = (_used.Paused, Speeds.Paused) switch {
+                (true, true) => _now - checkedAt,
+                (true, false) => Math.Max(0, (same ? _now : changedAt) - checkedAt),
+                (false, true) => _now - Math.Max(checkedAt, changedAt),
+                _ => 0,
+            };
+            if (frozen > 0) {
+                spot = Shift(spot, frozen, shiftChecked: true);
+            }
+
+            if (!same && GardenTemplates.Plant(spot.TemplateId) is { } info) {
+                double Ratio(GardenClock clock) => _used.Divisor(clock, info.Stage) / Speeds.Divisor(clock, info.Stage);
+                var stage = Ratio(GardenClock.Stage);
+                var harvest = Ratio(GardenClock.Harvest);
+                var needs = Ratio(GardenClock.Needs);
+                spot = spot with {
+                    NextStage = Stretch(spot.NextStage, stage),
+                    HarvestAt = (spot.Flags & GardenFlags.Ready) == 0 ? Stretch(spot.HarvestAt, harvest) : spot.HarvestAt,
+                    WaterAt = Stretch(spot.WaterAt, needs),
+                    SunAt = Stretch(spot.SunAt, needs),
+                    PollinationAt = Stretch(spot.PollinationAt, needs),
+                    MagicAt = Stretch(spot.MagicAt, needs),
+                    MusicAt = Stretch(spot.MusicAt, needs),
+                    WiltAt = Stretch(spot.WiltAt, needs),
+                    PestCheckAt = Stretch(spot.PestCheckAt, needs),
+                    ProtectionUntil = Stretch(spot.ProtectionUntil, needs),
+                };
+            }
+
+            if (Speeds.Paused) {
+                spot = spot with { CheckedAt = _now };
+            }
+
+            _spots[i] = spot;
+        }
+    }
+
+    // A time still to come, its wait made ratio times as long.
+    private long Stretch(long at, double ratio)
+        => at <= _now || ratio == 1 ? at : _now + Math.Max(1, (long) Math.Round((at - _now) * ratio));
+
+    // Every clock of a plant moved by seconds (a pause adds time; Age takes it away).
+    private static GardenSpot Shift(GardenSpot spot, long seconds, bool shiftChecked) {
+        static long By(long at, long seconds) => at > 0 ? Math.Max(1, at + seconds) : at;
+
+        return spot with {
+            NextStage = By(spot.NextStage, seconds),
+            HarvestAt = (spot.Flags & GardenFlags.Ready) == 0 ? By(spot.HarvestAt, seconds) : spot.HarvestAt,
+            WaterAt = By(spot.WaterAt, seconds),
+            SunAt = By(spot.SunAt, seconds),
+            PollinationAt = By(spot.PollinationAt, seconds),
+            MagicAt = By(spot.MagicAt, seconds),
+            MusicAt = By(spot.MusicAt, seconds),
+            WiltAt = By(spot.WiltAt, seconds),
+            PestCheckAt = By(spot.PestCheckAt, seconds),
+            ProtectionUntil = By(spot.ProtectionUntil, seconds),
+            StageStart = By(spot.StageStart, seconds),
+            CheckedAt = shiftChecked ? By(spot.CheckedAt, seconds) : spot.CheckedAt,
+        };
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------------------------------------------------------
@@ -624,7 +808,7 @@ internal sealed class GardenGrowth {
     private void StartStage(int index, uint templateId, uint flags) {
         var spot = _spots[index];
         var info = GardenTemplates.Plant(templateId);
-        var next = info is null || info.NextStageSeconds <= 0 || info.Stage == PlantStage.PS_Angel ? 0 : _now + Scale(info.NextStageSeconds);
+        var next = info is null || info.NextStageSeconds <= 0 || info.Stage == PlantStage.PS_Angel ? 0 : _now + Scale(info.NextStageSeconds, GardenClock.Stage, info.Stage);
         var living = info is not null && IsLiving(info.Stage);
         var pestInterval = info?.PestUpdateSeconds > 0 ? info.PestUpdateSeconds : 4 * 3600;
         spot = spot with {
@@ -635,7 +819,7 @@ internal sealed class GardenGrowth {
             CheckedAt = _now,
             WiltAt = 0,
             HarvestAt = info?.Stage switch {
-                PlantStage.PS_Mature => _now + Scale(Between(info.HarvestMin, info.HarvestMax)),
+                PlantStage.PS_Mature => _now + Scale(Between(info.HarvestMin, info.HarvestMax), GardenClock.Harvest),
                 // An elder plant is ready for its last harvest at once.
                 PlantStage.PS_Angel => _now,
                 _ => 0,

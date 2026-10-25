@@ -286,6 +286,7 @@ public static class HouseCollection {
         to.Items = [.. from.Items];
         to.Garden = [.. from.Garden ?? []];
         to.GardenRevision = from.GardenRevision;
+        to.GardenTiming = from.GardenTiming;
     }
 
 }
