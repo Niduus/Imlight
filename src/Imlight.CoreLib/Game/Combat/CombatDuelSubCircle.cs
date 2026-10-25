@@ -1633,7 +1633,7 @@ public class CombatDuelSubCircle {
             m_minionSubCircle = asMinion ? minionOwnerSubCircle : 0,
 
             m_subcircle = SlotIndex,
-            m_dynamicSymbol = (DynamicSigilSymbol) (SlotIndex + 1),
+            m_dynamicSymbol = DynamicSymbol,
             m_pvp = _duelActor.Duel.m_bPVP,
 
             m_color = _color,
@@ -1682,9 +1682,11 @@ public class CombatDuelSubCircle {
         });
     }
 
-    // The circles of the creature side show the symbols 1 to 4 and the others 13 to 16, whoever stands on them.
+    // The circles of the creature side show Dagger, Key, Gem and Spiral (1 to 4), the others Sun, Eye, Star and Moon
+    // (9 to 12), whoever stands on them. The player circles are slots 4 to 7: SlotIndex + 9 was 13 to 16, which the
+    // game has no symbol for, so a wizard's card showed the shadow icon instead of their circle's (Niduus, 2026-10-25).
     private DynamicSigilSymbol DynamicSymbol
-        => (DynamicSigilSymbol) (SlotType == CombatSlotType.Creature ? SlotIndex + 1 : SlotIndex + 9);
+        => (DynamicSigilSymbol) ((SlotType == CombatSlotType.Creature ? 1 : 9) + SlotIndex % 4);
 
     private PipCount DetermineStartingPips() {
         // .harmony on: all 7 pips as power pips and full shadow pips.
