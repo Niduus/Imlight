@@ -49,6 +49,8 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _recipeStation = new() { MinWidth = 220 };
     private readonly ComboBox _recipeSchool = new() { MinWidth = 140 };
     private readonly CheckBox _recipeNoStation = new() { Content = "Recipes of no crafting station" };
+    private readonly CheckBox _recipeChangedOnly = new() { Content = "Only recipes I changed" };
+    private HashSet<uint> _recipeChanged = [];
     private readonly TextBlock _recipeCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _recipeList = new() { Background = Brushes.Transparent };
     private readonly StackPanel _recipeDetails = new() { Spacing = 6 };
@@ -79,6 +81,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _recipeNoStation.IsCheckedChanged += (_, _) => RenderRecipesTab();
+        _recipeChangedOnly.IsCheckedChanged += (_, _) => RenderRecipesTab();
         _recipeList.ItemTemplate = new FuncDataTemplate<Recipe>((recipe, _) => recipe is null ? new Panel() : RecipeRow(recipe));
         _recipeList.SelectionChanged += (_, e) => {
             if (e.Source == _recipeList && _recipeList.SelectedItem is Recipe recipe && recipe != _recipePicked) {
@@ -96,6 +99,7 @@ internal sealed partial class ManagerWindow {
                 Labelled("Crafting station", _recipeStation),
                 Labelled("School", _recipeSchool),
                 WithMargin(_recipeNoStation, new Thickness(4, 18, 0, 6)),
+                WithMargin(_recipeChangedOnly, new Thickness(14, 18, 0, 6)),
             },
         };
         var vendor = WithHint(Row(
@@ -201,11 +205,14 @@ internal sealed partial class ManagerWindow {
         var station = _recipeStation.SelectedItem as string ?? ALL_STATIONS;
         var school = _recipeSchool.SelectedItem as string ?? ANY_RECIPE_SCHOOL;
         var noStation = _recipeNoStation.IsChecked == true;
+        var changedOnly = _recipeChangedOnly.IsChecked == true;
+        _recipeChanged = [.. SafeRecipeChanges().Select(c => c.Id)];
 
         _recipesShown = [.. book.Recipes.Where(r =>
                 (r.Id == id || words.All(r.Haystack.Contains))
                 // The game's other recipes (spellements, idols, jewel trades) are no station's; they show when asked for.
-                && (noStation || r.Stations.Count > 0 || r.Id == id)
+                && (noStation || changedOnly || r.Stations.Count > 0 || r.Id == id)
+                && (!changedOnly || _recipeChanged.Contains(r.Id))
                 && (station == ALL_STATIONS || r.Stations.Contains(station))
                 && (school == ANY_RECIPE_SCHOOL || r.School.Equals(school, StringComparison.OrdinalIgnoreCase)))
             .OrderBy(r => !(r.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || r.Id == id))
@@ -226,7 +233,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>One recipe in the list: its picture, its name, and its station, cooldown and ID underneath.</summary>
     private Control RecipeRow(Recipe recipe) {
-        var line = $"{recipe.Station}  ·  {RecipeBook.Time(recipe.Cooldown)}  ·  ID {recipe.Id}";
+        var line = $"{recipe.Station}  ·  {RecipeBook.Time(recipe.Cooldown)}  ·  ID {recipe.Id}" + (_recipeChanged.Contains(recipe.Id) ? "  ·  Changed" : "");
 
         return new DockPanel {
             Margin = new Thickness(2, 3),
@@ -326,11 +333,22 @@ internal sealed partial class ManagerWindow {
             _recipeDetails.Children.Add(Sub("Nothing."));
         }
 
+        // Niduus (2026-10-25): "add config/section for crafting recipes". Each amount, the cooldown and the price can be
+        // changed here; empty keeps the game's (RecipeChanges.json, read by the server at once).
+        var change = SafeRecipeChanges().FirstOrDefault(c => c.Id == recipe.Id) ?? new RecipeChange { Id = recipe.Id };
+        var amountBoxes = new List<(RecipeIngredient Ingredient, TextBox Box)>();
         foreach (var ingredient in recipe.Ingredients) {
+            var set = ingredient.Index < change.Amounts.Count ? change.Amounts[ingredient.Index] : null;
+            var amount = new TextBox {
+                Width = 70, Watermark = ingredient.Quantity.ToString(CultureInfo.InvariantCulture),
+                Text = set?.ToString(CultureInfo.InvariantCulture) ?? "",
+            };
+            ToolTip.SetTip(amount, $"How many one craft takes. The game's is {ingredient.Quantity}; leave it empty to keep that.");
+            amountBoxes.Add((ingredient, amount));
             _recipeDetails.Children.Add(new DockPanel {
                 Children = {
                     WithDock(WithMargin(RecipeIcon(ingredient.Id, ingredient.File, ingredient.Spell, 28), new Thickness(0, 0, 10, 0)), Dock.Left),
-                    WithDock(WithCenter(new TextBlock { Text = $"x{ingredient.Quantity}", FontWeight = FontWeight.SemiBold }), Dock.Right),
+                    WithDock(Row(WithCenter(new TextBlock { Text = "x", Foreground = MUTED }), amount), Dock.Right),
                     new StackPanel {
                         VerticalAlignment = VerticalAlignment.Center,
                         Children = {
@@ -341,6 +359,71 @@ internal sealed partial class ManagerWindow {
                 },
             });
         }
+
+        var cooldown = new TextBox {
+            Width = 90, Watermark = (recipe.Cooldown / 60.0).ToString("0.##", CultureInfo.InvariantCulture),
+            Text = change.Cooldown is { } seconds ? (seconds / 60.0).ToString("0.##", CultureInfo.InvariantCulture) : "",
+        };
+        var gold = new TextBox {
+            Width = 90, Watermark = recipe.GoldCost.ToString(CultureInfo.InvariantCulture),
+            Text = change.GoldCost?.ToString(CultureInfo.InvariantCulture) ?? "",
+        };
+        _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Cooldown (minutes)", Width = 150, Foreground = MUTED }), cooldown));
+        _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Shop price (gold)", Width = 150, Foreground = MUTED }), gold));
+        _recipeDetails.Children.Add(Sub("Type a new amount to change it; an empty box keeps the game's (shown faintly). " +
+            "The server uses the change at once. The game's crafting window still shows the old amounts and may grey out " +
+            "Create; Craft one now crafts with yours."));
+        _recipeDetails.Children.Add(new WrapPanel {
+            Children = {
+                Spaced(Action(Primary("Save changes"), () => {
+                    static int? Number(TextBox box, string what) {
+                        var text = (box.Text ?? "").Trim();
+                        if (text.Length == 0) {
+                            return null;
+                        }
+
+                        return int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n >= 0
+                            ? n : throw new PanelException($"{what} must be a whole number, or empty to keep the game's.");
+                    }
+
+                    var saved = new RecipeChange { Id = recipe.Id, Name = recipe.Name };
+                    var count = recipe.Ingredients.Count == 0 ? 0 : recipe.Ingredients.Max(i => i.Index) + 1;
+                    saved.Amounts = [.. Enumerable.Repeat<int?>(null, count)];
+                    foreach (var (ingredient, box) in amountBoxes) {
+                        saved.Amounts[ingredient.Index] = Number(box, $"The amount of {ingredient.Name}") is { } n ? Math.Max(1, n) : null;
+                    }
+
+                    var minutes = (cooldown.Text ?? "").Trim();
+                    if (minutes.Length > 0) {
+                        saved.Cooldown = double.TryParse(minutes, NumberStyles.Float, CultureInfo.InvariantCulture, out var m) && m >= 0
+                            ? (int) Math.Round(m * 60) : throw new PanelException("The cooldown must be a number of minutes, or empty to keep the game's.");
+                    }
+
+                    saved.GoldCost = Number(gold, "The shop price");
+                    RecipeChange.Set(_manager.CustomsFolder, saved);
+                    RenderRecipesTab();
+                    ShowRecipe(recipe);
+                    Say(saved.Empty ? $"{recipe.Name} is back to the game's amounts." : $"Saved {recipe.Name}'s changes. The server uses them at once.");
+
+                    return Task.CompletedTask;
+                })),
+                Spaced(Action(Plain("Use the game's amounts"), () => {
+                    RecipeChange.Set(_manager.CustomsFolder, new RecipeChange { Id = recipe.Id });
+                    RenderRecipesTab();
+                    ShowRecipe(recipe);
+                    Say($"{recipe.Name} is back to the game's amounts, cooldown and price.");
+
+                    return Task.CompletedTask;
+                })),
+                Spaced(Action(Plain("Craft one now"), () => {
+                    var command = $".recipe make {recipe.Id}";
+                    _manager.SendCommand(command);
+                    Say($"Sent {command}. The game says in chat what was made, or what is missing.");
+
+                    return Task.CompletedTask;
+                })),
+            },
+        });
 
         _recipeDetails.Children.Add(WithMargin(new Border { Height = 1, Background = LINE }, new Thickness(0, 6, 0, 6)));
 
@@ -356,7 +439,8 @@ internal sealed partial class ManagerWindow {
         }
 
         Fact("Crafted at", recipe.Station);
-        Fact("Cooldown", RecipeBook.Time(recipe.Cooldown) + (recipe.Cooldown > 0 ? " (the server's [Crafting] CooldownMultiplier changes it)" : ""));
+        Fact("Cooldown", RecipeBook.Time(change.Cooldown ?? recipe.Cooldown) + (change.Cooldown is not null ? " (changed)" : "") +
+            ((change.Cooldown ?? recipe.Cooldown) > 0 ? " before the server's [Crafting] CooldownMultiplier" : ""));
         Fact("Makes", recipe.MakesId > 0 ? $"{recipe.Makes} (ID {recipe.MakesId})" : recipe.Makes);
         Fact("School", recipe.School);
         Fact("Category", recipe.Category);
@@ -365,6 +449,15 @@ internal sealed partial class ManagerWindow {
         }.Where(p => p.Length > 0)) is { Length: > 0 } price ? price : "Free");
         Fact("Game's name", recipe.Code);
         Fact("File", recipe.File);
+    }
+
+    private List<RecipeChange> SafeRecipeChanges() {
+        try {
+            return RecipeChange.Load(_manager.CustomsFolder);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+            return [];
+        }
     }
 
     // The custom vendors (Customs tab) a recipe can be added to.

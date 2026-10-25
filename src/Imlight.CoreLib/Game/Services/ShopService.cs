@@ -650,7 +650,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        var cost = Math.Max(0, price ?? (int) recipe.m_goldCost);
+        var cost = Math.Max(0, price ?? Crafting.RecipeChanges.GoldCostOf(recipeId, recipe.m_goldCost));
         if (wizard.GameStats.m_currentGold < cost) {
             SendShopDenyMessage();
 

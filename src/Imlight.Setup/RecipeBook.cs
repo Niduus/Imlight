@@ -30,7 +30,8 @@ namespace Imlight.Setup;
 /// <param name="Id">Its template ID, or 0 for a treasure card (named by its spell).</param>
 /// <param name="File">Its template file, for its picture, or "".</param>
 /// <param name="Spell">A treasure card's spell, by the spell's game name, or "".</param>
-internal sealed record RecipeIngredient(string Name, string Kind, uint Id, string File, string Spell, int Quantity);
+/// <param name="Index">Its place in the recipe's ingredients, which RecipeChanges.json counts by.</param>
+internal sealed record RecipeIngredient(string Name, string Kind, uint Id, string File, string Spell, int Quantity, int Index);
 
 /// <summary>One of the game's recipes, read from its RecipeTemplate in Root.wad.</summary>
 internal sealed class Recipe {
@@ -154,7 +155,9 @@ internal sealed class RecipeBook {
             .Where(STATIONS.ContainsKey).Select(a => STATIONS[a]).Distinct().ToList();
 
         var ingredients = new List<RecipeIngredient>();
+        var index = -1;
         foreach (var ingredient in template.m_ingredients ?? []) {
+            index++;
             if (ingredient is null) {
                 continue;
             }
@@ -167,14 +170,14 @@ internal sealed class RecipeBook {
                 _ => "Item",
             };
             string spell = (string) ingredient.m_spellTemplate ?? "";
-            var itemId = (uint) ingredient.m_itemID;
+            var itemId = (uint) ingredient.m_itemID.MParts.TemplateId;
             var name = spell.Length > 0 ? Spell(spell)?.Name ?? spell : NameOf(itemId);
             ingredients.Add(new RecipeIngredient(name, kind, spell.Length > 0 ? 0 : itemId, _files.GetValueOrDefault(itemId, ""), spell,
-                Math.Max(1, ingredient.m_quantity)));
+                Math.Max(1, ingredient.m_quantity), index));
         }
 
         string makesSpell = (string) template.m_spellName ?? "";
-        var makesId = (uint) template.m_itemID;
+        var makesId = (uint) template.m_itemID.MParts.TemplateId;
         var makes = makesSpell.Length > 0 ? Spell(makesSpell)?.Name ?? makesSpell
             : makesId != 0 ? NameOf(makesId)
             : (string) template.m_itemLootTable is { Length: > 0 } table ? $"A drop from the loot table {table}" : "";
@@ -254,6 +257,53 @@ internal sealed class RecipeBook {
         }
 
         return string.Join(" ", parts);
+    }
+
+}
+
+/// <summary>
+/// One recipe changed on the Recipes tab (Niduus, 2026-10-25: "like in areas where a GOLD SKELETON KEY takes 400, I want
+/// to be able to lower to like 200"), an entry of spiraldb-extra/Customs/RecipeChanges.json, which the server's
+/// RecipeChanges.cs reads again whenever it changes. Amounts follow the recipe's ingredients in order; null keeps the
+/// game's.
+/// </summary>
+internal sealed class RecipeChange {
+
+    public uint Id { get; set; }
+    public string Name { get; set; } = "";
+    public List<int?> Amounts { get; set; } = [];
+    public int? Cooldown { get; set; }
+    public int? GoldCost { get; set; }
+
+    internal const string FILE = "RecipeChanges.json";
+
+    private static readonly System.Text.Json.JsonSerializerOptions s_options = new() {
+        WriteIndented = true, PropertyNameCaseInsensitive = true, AllowTrailingCommas = true,
+        ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip,
+    };
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal bool Empty => Amounts.All(a => a is null) && Cooldown is null && GoldCost is null;
+
+    internal static List<RecipeChange> Load(string customsFolder) {
+        var file = System.IO.Path.Combine(customsFolder, FILE);
+
+        return System.IO.File.Exists(file)
+            ? System.Text.Json.JsonSerializer.Deserialize<List<RecipeChange>>(System.IO.File.ReadAllText(file), s_options) ?? []
+            : [];
+    }
+
+    /// <summary>Saves one recipe's change over the one it had; an empty change takes the recipe out of the file.</summary>
+    internal static void Set(string customsFolder, RecipeChange change) {
+        var changes = Load(customsFolder).Where(c => c.Id != change.Id).ToList();
+        if (!change.Empty) {
+            changes.Add(change);
+        }
+
+        System.IO.Directory.CreateDirectory(customsFolder);
+        var file = System.IO.Path.Combine(customsFolder, FILE);
+        System.IO.File.WriteAllText(file + ".saving", System.Text.Json.JsonSerializer.Serialize(changes.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase).ToList(), s_options));
+        System.IO.File.Move(file + ".saving", file, overwrite: true);
     }
 
 }

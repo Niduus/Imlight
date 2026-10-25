@@ -101,6 +101,24 @@ internal class CommandRecipeProtocol : CommandProtocol {
             : $"You don't know the recipe {name}.");
     }
 
+    // The crafting window checks the game files' amounts before it asks the server; this crafts with the amounts the
+    // Manager's Recipes tab set (Niduus, 2026-10-25), anywhere.
+    [Command("make")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void MakeCommand([Remainder] string recipe) {
+        var quantity = 1;
+        var words = (recipe ?? "").Trim();
+        var last = words.LastIndexOf(' ');
+        if (last > 0 && int.TryParse(words[(last + 1)..], out var count) && Crafting.Crafting.TryFind(words[..last], out _, out _)) {
+            (words, quantity) = (words[..last], count);
+        }
+
+        var result = Crafting.Crafting.Craft(Context.SessionActor, Context.Character, Context.CharacterObject, words, quantity);
+        InformSenderClient(result.Error == CraftError.None
+            ? $"Crafted {words} x{result.Crafted}: {result.Made} made, in your backpack or bags."
+            : result.Message);
+    }
+
     [Command("find")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void FindCommand([Remainder] string text) {
