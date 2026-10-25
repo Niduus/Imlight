@@ -97,6 +97,8 @@ public static class PackManager {
                     continue;
                 }
 
+                itemTemplateId = PackGearLevels.ForLevel(itemTemplateId, wizard.MagicSchoolBehavior.Level);
+
                 var itemTemplate = CoreObjectFactory.GetCoreTemplate(itemTemplateId);
                 var rarity = ResolveRarity(itemTemplate, tableName);
                 var count = Math.Max(1, droppedItem.Quantity);
