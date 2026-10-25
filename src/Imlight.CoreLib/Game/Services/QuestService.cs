@@ -304,6 +304,35 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             Logger.Args(GetActiveWizard()?.CharId, message.ActiveQuestGID, message.ActiveGoalGID));
     }
 
+    // The quest book's Review Dialog button asks for a quest's dialog by the hash of its name; it plays the lines the
+    // quest was offered with (Niduus, 2026-10-25: the button did nothing).
+    [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_REQUESTQUESTDIALOG))]
+    private void ReceiveRequestQuestDialog(WIZARD_12_PROTOCOL.MSG_REQUESTQUESTDIALOG message) {
+        var wizard = GetActiveWizard();
+        var qTemplate = wizard?.QuestBehavior.CurrentQuestInstances
+            .Where(q => q is not null)
+            .Select(q => GetQuestTemplate(q.QuestName))
+            .FirstOrDefault(t => t is not null && StringHash.Compute(t.m_questName) == message.QuestNameID);
+        var dialogs = (qTemplate?.m_dialogList as ActorDialogList)?.m_dialogs;
+        var dialog = dialogs?.FirstOrDefault(d => (string) d?.m_dialogTag == "Prep" && d.m_dialogEntries is { Count: > 0 })
+            ?? dialogs?.FirstOrDefault(d => d?.m_dialogEntries is { Count: > 0 });
+        if (dialog is null) {
+            Logger.Debug("Quest book: no dialog to review for quest hash {0}.", Logger.Args(message.QuestNameID));
+
+            return;
+        }
+
+        QuestMadlibs.NameDialogSpeakers(dialog);
+        if (!new ObjectSerializer(false).Serialize(dialog, 16, out var data)) {
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_QUESTDIALOG {
+            QuestNameID = message.QuestNameID,
+            ActorDialog = data,
+        });
+    }
+
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_COMPLETEDIALOG))]
     private void ReceiveCompleteDialog(WIZARD_12_PROTOCOL.MSG_COMPLETEDIALOG message) {
         // The client sends CompletionType "ENTRY" when it reaches an entry with a dialog event, and an
