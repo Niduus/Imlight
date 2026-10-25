@@ -233,7 +233,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         // A mount equipped indoors is dismounted right away; the reconcile no-ops in the open world.
         if (Enum.TryParse<EquipmentSlotType>(message.SlotName, true, out var equippedSlot)
             && equippedSlot == EquipmentSlotType.Mount) {
-            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
+            Self.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
             if (s_hidePetWhileMounted) {
                 DismissPetEntity();
             }
@@ -607,9 +607,10 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 return;
             }
 
-            // A mount stowed for the put-on comes back a moment after the game has the pet out.
+            // A mount stowed for the put-on comes back a moment after the game has the pet out. Told to Self: the
+            // session never hands a message back to the service that sent it.
             if (GetActiveWizard().InteriorStowedMountId != 0) {
-                Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, SessionActor.ActorRef,
+                Context.System.Scheduler.ScheduleTellOnce(PutBackOnDelay, Self,
                     new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT(), Self);
             }
 
@@ -744,6 +745,11 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 var gid = wizard.InteriorStowedMountId;
                 wizard.InteriorStowedMountId = 0;
                 WizardCollection.UpdateCharacterInteriorStowedMount(wizard);
+
+                // Already riding (the player put a mount on by hand): the stowed one stays in the backpack.
+                if (equip.GetItemInSlot(EquipmentSlotType.Mount) is not null) {
+                    return;
+                }
 
                 if (!wizard.InventoryToEquipmentTransfer(gid, out var addedEffects, out _)) {
                     Logger.Warning("Outdoor remount transfer failed for mount {0}", Logger.Args(gid));
