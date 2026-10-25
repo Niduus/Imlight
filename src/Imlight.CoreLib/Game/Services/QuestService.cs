@@ -1787,7 +1787,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         var packet = new QUEST_MESSAGES_52_PROTOCOL.MSG_SENDGOAL {
             QuestID = qInstance.ID,
             GoalID = gInstance.ID,
-            GoalNameID = gTemplate.m_goalNameID,
+            GoalNameID = QuestArrowGoals.GetGoalNameId(QuestTemplateCollection.GetQuestByName(qInstance.QuestName), gTemplate),
             GoalTitle = gTemplate.m_goalTitle,
             GoalLocation = gTemplate.m_locationName,
             GoalDestinationZone = (sendType == 2) ? "" : destZone,

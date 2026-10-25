@@ -140,7 +140,7 @@ internal class CommandQuest : CommandProtocol {
                 m_goalDestinationZone = goal.m_destinationZone,
                 m_goalImage1 = goal.m_displayImage1,
                 m_goalImage2 = goal.m_displayImage2,
-                m_goalNameID = goal.m_goalNameID,
+                m_goalNameID = Services.QuestArrowGoals.GetGoalNameId(quest, goal),
                 m_goalMadlibs = QuestMadlibs.GetAppropriateMadlibBlockForGoal(goal, null)
             })]
         };
