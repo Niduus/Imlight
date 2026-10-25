@@ -231,12 +231,13 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     // Only ids the game files have an item for: SpiralDB lists a few shops with spell ids instead (Harold Argleston,
-    // whose treasure cards are his treasure card shop), and an equipment shop of those opened empty.
+    // whose treasure cards are his treasure card shop), and an equipment shop of those opened empty. A spell is a
+    // template too, so only templates in ObjectData count.
     private List<GID> KnownItems(IEnumerable<GID> items) {
         var all = items.ToList();
-        var known = all.Where(item => CoreObjectFactory.HasTemplate(item.MParts.TemplateId)).ToList();
+        var known = all.Where(item => CoreObjectFactory.HasObjectTemplate(item.MParts.TemplateId)).ToList();
         if (known.Count < all.Count) {
-            Logger.Warning("Vendor {0} ({1}): left out {2} of {3} ids the game files have no item for.",
+            Logger.Warning("Vendor {0} ({1}): left out {2} of {3} ids the game files have no item for (spells or unknown ids).",
                 Logger.Args(Entity.ActiveGameObject.m_templateID.MParts.TemplateId, Entity.ActiveGameObject.m_debugName, all.Count - known.Count, all.Count));
         }
 

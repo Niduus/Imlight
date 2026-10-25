@@ -205,6 +205,14 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
     /// <summary>Whether the game files have a template with this id.</summary>
     public static bool HasTemplate(ulong id) => TemplateLocations().ContainsKey(id);
 
+    /// <summary>
+    /// Whether the game files have an object (an item, NPC or other game object, in ObjectData) with this id. A spell
+    /// is a template too, but no item.
+    /// </summary>
+    public static bool HasObjectTemplate(ulong id)
+        => TemplateLocations().TryGetValue(id, out var location)
+        && ((string) location.m_filename)?.StartsWith("ObjectData/", StringComparison.OrdinalIgnoreCase) == true;
+
     private static Dictionary<ulong, TemplateLocation> TemplateLocations()
         => LazyInitializer.EnsureInitialized(ref s_templateLocations, IndexTemplateLocations);
 
