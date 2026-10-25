@@ -26,6 +26,7 @@ namespace Imlight.CoreLib.WizardData.Collections;
 public static class GlobalRegistryCollection {
 
     private static readonly ConcurrentDictionary<string, byte> s_missingEntries = new();
+    private const string LOYALTY_PROGRAM_ENTRY = "LoyaltyProgram";
 
     /// <summary>
     /// Gets the global registry from SpiralDB.
@@ -40,6 +41,12 @@ public static class GlobalRegistryCollection {
         // The game's event entries (TreasureTower_01_Fire, ...) follow the event the Manager's Events card has on.
         if (Imlight.CoreLib.Game.Events.EventButton.RegistryValue(entry) is { } eventValue) {
             return eventValue;
+        }
+
+        // The live game turns its loyalty program on with this entry, and Majid (the Loyalty Store) is only placed
+        // while it is 1. This server always runs it (Game/Loyalty/LoyaltyStore.cs; Niduus 2026-10-25: "he's not here").
+        if (string.Equals(entry, LOYALTY_PROGRAM_ENTRY, System.StringComparison.OrdinalIgnoreCase)) {
+            return 1;
         }
 
         var model = SpiralDB.GlobalRegistry;
