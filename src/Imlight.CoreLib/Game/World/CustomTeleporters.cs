@@ -12,14 +12,19 @@
  *   Id          its number (1, 2, 3...). It gives its stones' zone tags (CustomTeleporter_<Id>_<pad>, with _Street for
  *               a street teleporter) and so their global ids.
  *   Name        the hub's name, shown on its street teleporters' press-X box ("To <Name>").
- *   Zone, X, Y, Z, Yaw  where the hub stands: the middle of the ring, where a player coming back from a street arrives.
+ *   Zone, X, Y, Z, Yaw  where the hub stands: the middle of the ring.
+ *   Style       the world whose teleporter stones it uses (Niduus, 2026-10-25: "maybe style of the hub"): WizardCity
+ *               (Colossus Boulevard, the default), Marleybone, MooShu, Dragonspyre, Celestia or Zafaria.
+ *   CenterPiece true puts the style's middle piece (the hub base the game's own hubs stand round) in the middle.
+ *   LandX, LandY, LandZ, LandYaw  where a player coming back from a street arrives (Niduus: "TP location to avoid getting
+ *               stuck"); left out, the middle of the ring (a step towards stone 1 when there is a middle piece).
  *   Pads        the hub's stones, in order:
  *     Name        the stone's name on its press-X box, such as the street it goes to.
  *     X, Y, Z, Yaw  where the stone stands.
- *     Look        the stone's template, 0 for the Colossus Boulevard stone of its place in the ring (A, B, C, A...).
+ *     Look        the stone's template, 0 for the style's stone of its place in the ring (A, B, C, A...).
  *     Street      its street teleporter, or null when it has none yet (the stone then has nothing to press):
- *       Zone, X, Y, Z, Yaw  where the street teleporter stands, and Look as above (0: the matching "To Teleporter
- *                   Hub" stone). A player sent there arrives a step in front of it.
+ *       Zone, X, Y, Z, Yaw  where the street teleporter stands, and Look as above (0: the style's matching street
+ *                   stone). LandX, LandY, LandZ, LandYaw: where a player sent there arrives; left out, a step in front.
  *
  * The stones are added to their zone's objects by ZoneObjects.cs, which watches this file as it does its own, so a hub
  * or street teleporter that is added, moved or deleted is so at once in every running copy of its zone.
@@ -45,6 +50,12 @@ internal static class CustomTeleporters {
         public float Y { get; set; }
         public float Z { get; set; }
         public float Yaw { get; set; }
+        public string Style { get; set; } = "";
+        public bool CenterPiece { get; set; }
+        public float? LandX { get; set; }
+        public float? LandY { get; set; }
+        public float? LandZ { get; set; }
+        public float? LandYaw { get; set; }
         public List<Pad> Pads { get; set; } = [];
     }
 
@@ -65,6 +76,10 @@ internal static class CustomTeleporters {
         public float Z { get; set; }
         public float Yaw { get; set; }
         public ulong Look { get; set; }
+        public float? LandX { get; set; }
+        public float? LandY { get; set; }
+        public float? LandZ { get; set; }
+        public float? LandYaw { get; set; }
     }
 
     /// <summary>One stone in the game: a hub stone or a street teleporter, and where pressing X at it sends.</summary>
@@ -75,10 +90,24 @@ internal static class CustomTeleporters {
     private const string FOLDER = "Customs";
     private const string TAG_PREFIX = "CustomTeleporter_";
 
-    // The game's Colossus Boulevard teleporters: the hub's three (Baron Tower, Briskbreeze Tower, Hildreth Perch) and
-    // the "To Teleporter Hub" stone out on the street that goes with each.
-    private static readonly ulong[] s_hubLooks = [1488125, 1488127, 1488130];
-    private static readonly ulong[] s_streetLooks = [1488126, 1488129, 1488131];
+    /// <summary>A world's hub teleporters: the middle piece, the hub's three stones and the street stone of each.</summary>
+    internal sealed record HubStyle(ulong Center, ulong[] Hub, ulong[] Street);
+
+    // The game's own hub teleporters of each world (Root.wad ObjectData). Wizard City is Colossus Boulevard's (Baron
+    // Tower, Briskbreeze Tower, Hildreth Perch and their "To Teleporter Hub" stones, round WC_Teleporter_Hub).
+    internal static readonly Dictionary<string, HubStyle> Styles = new(StringComparer.OrdinalIgnoreCase) {
+        ["WizardCity"] = new(1488141, [1488125, 1488127, 1488130], [1488126, 1488129, 1488131]),
+        ["Marleybone"] = new(164781, [164782, 164783, 164784], [164785, 164786, 164787]),
+        ["MooShu"] = new(164793, [164794, 164795, 164796], [164801, 164802, 164803]),
+        ["Dragonspyre"] = new(191075, [191077, 191079, 191081], [191078, 191080, 191082]),
+        ["Celestia"] = new(227323, [227312, 1687018, 1687019], [227315, 1687017, 1687020]),
+        ["Zafaria"] = new(557097, [557096, 557100, 557096], [557099, 557101, 557099]),
+    };
+
+    private static HubStyle StyleOf(string name) => Styles.GetValueOrDefault(name?.Replace(" ", "") ?? "") ?? Styles["WizardCity"];
+
+    // How far from the middle piece a player coming back to a hub that has one arrives, towards stone 1.
+    private const float CENTER_CLEARANCE = 125f;
 
     // How far in front of a street teleporter a player sent to it arrives, so they do not land inside the stone.
     private const float ARRIVE_DISTANCE = 120f;
@@ -137,6 +166,23 @@ internal static class CustomTeleporters {
             }
 
             var zone = hub.Zone.Trim();
+            var style = StyleOf(hub.Style);
+            var (landX, landY) = (hub.X, hub.Y);
+            if (hub.CenterPiece && hub.Pads is [{ } first, ..]) {
+                var (dx, dy) = (first.X - hub.X, first.Y - hub.Y);
+                var length = MathF.Sqrt((dx * dx) + (dy * dy));
+                if (length > 1) {
+                    (landX, landY) = (hub.X + (dx / length * CENTER_CLEARANCE), hub.Y + (dy / length * CENTER_CLEARANCE));
+                }
+            }
+
+            (landX, landY) = (hub.LandX ?? landX, hub.LandY ?? landY);
+            var (landZ, landYaw) = (hub.LandZ ?? hub.Z, hub.LandYaw ?? hub.Yaw);
+            if (hub.CenterPiece) {
+                var centerTag = $"{TAG_PREFIX}{hub.Id}_Center";
+                byTag[centerTag] = new Stone(centerTag, "", zone, hub.X, hub.Y, hub.Z, hub.Yaw, style.Center, "", 0, 0, 0, 0);
+            }
+
             var hubName = string.IsNullOrWhiteSpace(hub.Name) ? "Teleporter Hub" : hub.Name.Trim();
             var pads = hub.Pads ?? [];
             for (var i = 0; i < pads.Count; i++) {
@@ -147,16 +193,17 @@ internal static class CustomTeleporters {
                 var street = string.IsNullOrWhiteSpace(pad.Street?.Zone) ? null : pad.Street;
                 var padName = string.IsNullOrWhiteSpace(pad.Name) ? $"Teleporter {i + 1}" : pad.Name.Trim();
                 var (arriveX, arriveY) = street is null ? (0f, 0f) : InFront(street.X, street.Y, street.Yaw);
+                (arriveX, arriveY) = (street?.LandX ?? arriveX, street?.LandY ?? arriveY);
                 var padTag = $"{TAG_PREFIX}{hub.Id}_{i + 1}";
                 byTag[padTag] = new Stone(padTag, padName, zone, pad.X, pad.Y, pad.Z, pad.Yaw,
-                    pad.Look != 0 ? pad.Look : s_hubLooks[i % s_hubLooks.Length],
-                    street?.Zone.Trim() ?? "", arriveX, arriveY, street?.Z ?? 0, street?.Yaw ?? 0);
+                    pad.Look != 0 ? pad.Look : style.Hub[i % style.Hub.Length],
+                    street?.Zone.Trim() ?? "", arriveX, arriveY, street?.LandZ ?? street?.Z ?? 0, street?.LandYaw ?? street?.Yaw ?? 0);
 
                 if (street is not null) {
                     var streetTag = padTag + "_Street";
                     byTag[streetTag] = new Stone(streetTag, $"To {hubName}", street.Zone.Trim(), street.X, street.Y, street.Z, street.Yaw,
-                        street.Look != 0 ? street.Look : s_streetLooks[i % s_streetLooks.Length],
-                        zone, hub.X, hub.Y, hub.Z, hub.Yaw);
+                        street.Look != 0 ? street.Look : style.Street[i % style.Street.Length],
+                        zone, landX, landY, landZ, landYaw);
                 }
             }
         }

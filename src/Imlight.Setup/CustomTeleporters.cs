@@ -37,7 +37,26 @@ internal sealed class TeleporterHub {
     public double Y { get; set; }
     public double Z { get; set; }
     public double Yaw { get; set; }
+    public string Style { get; set; } = "";
+    public bool CenterPiece { get; set; }
+    public double? LandX { get; set; }
+    public double? LandY { get; set; }
+    public double? LandZ { get; set; }
+    public double? LandYaw { get; set; }
     public List<TeleporterPad> Pads { get; set; } = [];
+
+    /// <summary>
+    /// The hub styles (the server's CustomTeleporters.Styles): each world's hub stones, A, B and C, and their street
+    /// stones, from the game files.
+    /// </summary>
+    internal static readonly (string Value, string Label, ulong[] Hub, ulong[] Street)[] STYLES = [
+        ("WizardCity", "Wizard City (Colossus Boulevard)", [1488125, 1488127, 1488130], [1488126, 1488129, 1488131]),
+        ("Marleybone", "Marleybone", [164782, 164783, 164784], [164785, 164786, 164787]),
+        ("MooShu", "MooShu", [164794, 164795, 164796], [164801, 164802, 164803]),
+        ("Dragonspyre", "Dragonspyre", [191077, 191079, 191081], [191078, 191080, 191082]),
+        ("Celestia", "Celestia", [227312, 1687018, 1687019], [227315, 1687017, 1687020]),
+        ("Zafaria", "Zafaria (two kinds of stone)", [557096, 557100], [557099, 557101]),
+    ];
 
     /// <summary>How many stones a new hub has, as the game's own hub on Colossus Boulevard.</summary>
     internal const int PAD_COUNT = 3;
@@ -51,6 +70,7 @@ internal sealed class TeleporterHub {
     /// <summary>Puts the hub's middle at a spot, with its stones in a ring round it (the first one in front).</summary>
     internal void PlaceAt(string zone, double x, double y, double z, double yaw) {
         (Zone, X, Y, Z, Yaw) = (zone, x, y, z, yaw);
+        (LandX, LandY, LandZ, LandYaw) = (null, null, null, null);
         while (Pads.Count < PAD_COUNT) {
             Pads.Add(new TeleporterPad { Name = $"Teleporter {Pads.Count + 1}" });
         }
@@ -101,6 +121,10 @@ internal sealed class TeleporterStreet {
     public double Z { get; set; }
     public double Yaw { get; set; }
     public ulong Look { get; set; }
+    public double? LandX { get; set; }
+    public double? LandY { get; set; }
+    public double? LandZ { get; set; }
+    public double? LandYaw { get; set; }
 
     internal TeleporterStreet Copy() => (TeleporterStreet) MemberwiseClone();
 

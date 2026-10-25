@@ -47,7 +47,7 @@ internal sealed partial class ManagerWindow {
             "stones). Walk to a street, stand where its teleporter should go, facing the way players should face when they " +
             "arrive, walk a step, and press Put street teleporter here on stone 1, 2 or 3. Players press X at a hub stone " +
             "to go to its street, and X at the street teleporter to come back to the hub. A stone with no street yet has " +
-            "nothing to press. Give the stones the names of their streets, change their X, Y, Z, turn (in degrees) or look in the boxes, and press Save changes. The arrows change the stones' order. Everything here counts at " +
+            "nothing to press. Give the stones the names of their streets, change their X, Y, Z, turn (in degrees) or look in the boxes, pick the hub's style, and press Save changes. Landing sets where players arrive, so nobody lands inside a stone or a wall: stand on the spot and press Set landing here, or empty the boxes for the automatic spot. The arrows change the stones' order. Everything here counts at " +
             "once; the server needs no restart."),
         Row(Action(Primary("Make a hub here"), MakeHubAsync)),
         _hubCount,
@@ -71,14 +71,15 @@ internal sealed partial class ManagerWindow {
         }
     }
 
-    // The stone looks to pick from: the game's Colossus Boulevard teleporters (0: by the stone's place in the hub).
+    // The stone looks to pick from: every style's stones from the game files (0: the hub style's stone of its place).
     private static readonly (ulong Id, string Label)[] HUB_LOOKS = [
-        (0, "Automatic"), (1488125, "Baron Tower stone"), (1488127, "Briskbreeze Tower stone"), (1488130, "Hildreth Perch stone"),
+        (0, "Automatic (the hub's style)"),
+        .. TeleporterHub.STYLES.SelectMany(style => style.Hub.Select((id, i) => (id, $"{style.Label} stone {(char) ('A' + i)}"))),
     ];
 
     private static readonly (ulong Id, string Label)[] STREET_LOOKS = [
-        (0, "Automatic"), (1488126, "To Teleporter Hub (Baron)"), (1488129, "To Teleporter Hub (Briskbreeze)"),
-        (1488131, "To Teleporter Hub (Hildreth)"),
+        (0, "Automatic (the hub's style)"),
+        .. TeleporterHub.STYLES.SelectMany(style => style.Street.Select((id, i) => (id, $"{style.Label} street stone {(char) ('A' + i)}"))),
     ];
 
     private Control HubRow(TeleporterHub saved) {
@@ -112,10 +113,30 @@ internal sealed partial class ManagerWindow {
             if (pad.Street is { } linked) {
                 stone.Children.Add(SpotEditor("Street", linked.X, linked.Y, linked.Z, linked.Yaw, linked.Look, STREET_LOOKS,
                     (x, y, z, yaw) => (linked.X, linked.Y, linked.Z, linked.Yaw) = (x, y, z, yaw), look => linked.Look = look));
+                stone.Children.Add(LandingEditor("Landing", "where players arrive at the street teleporter (empty: a step in front of it)",
+                    linked.LandX, linked.LandY, linked.LandZ, linked.LandYaw,
+                    (x, y, z, yaw) => (linked.LandX, linked.LandY, linked.LandZ, linked.LandYaw) = (x, y, z, yaw),
+                    () => SetStreetLandingAsync(saved, index)));
             }
 
             stones.Children.Add(stone);
         }
+
+        var style = new ComboBox { Width = 260, ItemsSource = TeleporterHub.STYLES.Select(st => st.Label).ToList() };
+        style.SelectedIndex = Math.Max(0, Array.FindIndex(TeleporterHub.STYLES, st => string.Equals(st.Value, hub.Style, StringComparison.OrdinalIgnoreCase)));
+        style.SelectionChanged += (_, _) => hub.Style = TeleporterHub.STYLES[Math.Max(0, style.SelectedIndex)].Value;
+        var center = new CheckBox { Content = "Middle piece (the hub base the game's hubs stand round)", IsChecked = hub.CenterPiece };
+        center.IsCheckedChanged += (_, _) => hub.CenterPiece = center.IsChecked == true;
+        var hubSettings = new StackPanel {
+            Spacing = 4, Margin = new Thickness(44, 6, 0, 0),
+            Children = {
+                WrapRow(WithCenter(new TextBlock { Text = "Style", Width = 60 }), style, WithCenter(center)),
+                LandingEditor("Landing", "where players coming back arrive at the hub (empty: the middle of the hub)",
+                    hub.LandX, hub.LandY, hub.LandZ, hub.LandYaw,
+                    (x, y, z, yaw) => (hub.LandX, hub.LandY, hub.LandZ, hub.LandYaw) = (x, y, z, yaw),
+                    () => SetHubLandingAsync(saved)),
+            },
+        };
 
         return ManagerTheme.Item(highlighted: false, content: new StackPanel {
             Children = {
@@ -139,9 +160,85 @@ internal sealed partial class ManagerWindow {
                         },
                     },
                 },
+                hubSettings,
                 stones,
             },
         });
+    }
+
+    // A landing spot (Niduus, 2026-10-25: "TP location to avoid getting stuck"): boxes, empty for the automatic spot,
+    // and a button that sets it where the wizard stands.
+    private Control LandingEditor(string label, string help, double? x, double? y, double? z, double? yaw,
+                                  Action<double?, double?, double?, double?> set, Func<Task> setHere) {
+        NumericUpDown Box(double? value, double step, double min = -1_000_000, double max = 1_000_000) => new() {
+            Minimum = (decimal) min, Maximum = (decimal) max, Increment = (decimal) step, FormatString = "0.##", Width = 120,
+            Value = value is { } v ? (decimal) Math.Round(v, 2) : null, Watermark = "auto",
+        };
+
+        var bx = Box(x, 10);
+        var by = Box(y, 10);
+        var bz = Box(z, 5);
+        var turn = Box(yaw is { } r ? r * 180 / Math.PI : null, 15, -360, 360);
+        void Changed(object? sender, NumericUpDownValueChangedEventArgs e) {
+            // Without an X and a Y it is the automatic spot.
+            if (bx.Value is not { } vx || by.Value is not { } vy) {
+                set(null, null, null, null);
+
+                return;
+            }
+
+            set((double) vx, (double) vy, bz.Value is { } vz ? (double) vz : null, turn.Value is { } vt ? (double) vt * Math.PI / 180 : null);
+        }
+
+        foreach (var box in new[] { bx, by, bz, turn }) {
+            box.ValueChanged += Changed;
+        }
+
+        TextBlock Label(string text) => (TextBlock) WithCenter(new TextBlock { Text = text, Foreground = MUTED });
+
+        return new StackPanel {
+            Spacing = 2,
+            Children = {
+                WrapRow(WithCenter(new TextBlock { Text = label, Width = 60 }), Label("X"), bx, Label("Y"), by, Label("Z"), bz,
+                    Label("Turn°"), turn, Action(Plain("Set landing here"), setHere)),
+                WithMargin(Sub(help), new Thickness(70, 0, 0, 0)),
+            },
+        };
+    }
+
+    private Task SetHubLandingAsync(TeleporterHub hub) {
+        var (who, zone, x, y, z, yaw) = MySpot();
+        if (!string.Equals(zone, hub.Zone, StringComparison.OrdinalIgnoreCase)) {
+            throw new PanelException($"The landing spot has to be in the hub's area ({ZoneDisplay(hub.Zone)}), and {who} is in {ZoneDisplay(zone)}.");
+        }
+
+        var landed = hub.Copy();
+        (landed.LandX, landed.LandY, landed.LandZ, landed.LandYaw) = (x, y, z, yaw);
+        TeleporterHubs.Set(_manager.CustomsFolder, hub.Id, landed);
+        RenderHubs();
+        Say($"Players coming back to {hub.Shown} now arrive where {who} stands, facing the same way.");
+
+        return Task.CompletedTask;
+    }
+
+    private Task SetStreetLandingAsync(TeleporterHub hub, int index) {
+        var (who, zone, x, y, z, yaw) = MySpot();
+        if (hub.Pads[index].Street is not { } street) {
+            return Task.CompletedTask;
+        }
+
+        if (!string.Equals(zone, street.Zone, StringComparison.OrdinalIgnoreCase)) {
+            throw new PanelException($"The landing spot has to be in the street teleporter's area ({ZoneDisplay(street.Zone)}), and {who} is in {ZoneDisplay(zone)}.");
+        }
+
+        var landed = hub.Copy();
+        var target = landed.Pads[index].Street!;
+        (target.LandX, target.LandY, target.LandZ, target.LandYaw) = (x, y, z, yaw);
+        TeleporterHubs.Set(_manager.CustomsFolder, hub.Id, landed);
+        RenderHubs();
+        Say($"Players sent to the street teleporter of stone {index + 1} now arrive where {who} stands, facing the same way.");
+
+        return Task.CompletedTask;
     }
 
     // A stone's place, turn and look, edited in boxes (Niduus, 2026-10-25: "add settings in manager to change their
@@ -255,11 +352,14 @@ internal sealed partial class ManagerWindow {
         // The names, places, turns and looks in the boxes; the hub's area and street links are kept as the file has them.
         var hub = SafeHubs().FirstOrDefault(h => h.Id == edited.Id) ?? edited;
         hub.Name = edited.Name.Trim();
+        (hub.Style, hub.CenterPiece) = (edited.Style, edited.CenterPiece);
+        (hub.LandX, hub.LandY, hub.LandZ, hub.LandYaw) = (edited.LandX, edited.LandY, edited.LandZ, edited.LandYaw);
         for (var i = 0; i < hub.Pads.Count && i < edited.Pads.Count; i++) {
             var (pad, box) = (hub.Pads[i], edited.Pads[i]);
             (pad.Name, pad.X, pad.Y, pad.Z, pad.Yaw, pad.Look) = (box.Name.Trim(), box.X, box.Y, box.Z, box.Yaw, box.Look);
             if (pad.Street is { } street && box.Street is { } streetBox) {
                 (street.X, street.Y, street.Z, street.Yaw, street.Look) = (streetBox.X, streetBox.Y, streetBox.Z, streetBox.Yaw, streetBox.Look);
+                (street.LandX, street.LandY, street.LandZ, street.LandYaw) = (streetBox.LandX, streetBox.LandY, streetBox.LandZ, streetBox.LandYaw);
             }
         }
 
