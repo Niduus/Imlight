@@ -80,7 +80,8 @@ internal static class ClassProjects {
     ];
 
     /// <summary>An event that is on: its template and when it started and ends.</summary>
-    internal sealed record Running(ClassProjectTemplate Template, DateTime Start, DateTime End, string Shown) {
+    /// <param name="Ending">The event is over and stays in the window for its rewards until End + a week: no more points.</param>
+    internal sealed record Running(ClassProjectTemplate Template, DateTime Start, DateTime End, string Shown, bool Ending = false) {
         internal string Name => Template.m_projectName.ToString();
         internal uint Id => StringHash.Compute(Name);
         internal string Key => $"{Name}@{Start:yyyy-MM-ddTHH:mm}";
@@ -209,17 +210,32 @@ internal static class ClassProjects {
         return new Running(template, start, end, "Scroll of Fortune");
     }
 
-    /// <summary>The events of the game's templates that are on now: the Scroll of Fortune and the queued event.</summary>
+    /// <summary>
+    /// The events of the game's templates in the event window: the Scroll of Fortune and the queued events that are
+    /// on, then those that ended in the last week (Ending), whose rewards can still be claimed.
+    /// </summary>
     internal static List<Running> Active() {
         var now = DateTime.UtcNow;
         var active = new List<Running>();
         if (Scroll(now) is { } scroll) {
             active.Add(scroll);
+
+            // Last season's scroll, for a week after it ended.
+            if (Scroll(now - TimeSpan.FromDays(GameEvents.ENDED_DAYS)) is { } last && last.Id != scroll.Id) {
+                active.Add(last with { Ending = true });
+            }
         }
 
-        if (GameEvents.Current is { IsDeckathalon: false } current
-            && TemplateOf(TemplateNameOf(current.Kind, current.School)) is { } template) {
-            active.Add(new Running(template, current.Start, current.End, current.Name));
+        foreach (var current in GameEvents.Running.Where(e => !e.IsDeckathalon)) {
+            if (TemplateOf(TemplateNameOf(current.Kind, current.School)) is { } template) {
+                active.Add(new Running(template, current.Start, current.End, current.Name));
+            }
+        }
+
+        foreach (var ended in GameEvents.Ended.Where(e => !e.IsDeckathalon)) {
+            if (TemplateOf(TemplateNameOf(ended.Kind, ended.School)) is { } template && !active.Any(a => a.Id == StringHash.Compute(template.m_projectName.ToString()))) {
+                active.Add(new Running(template, ended.Start, ended.End, ended.Name, Ending: true));
+            }
         }
 
         return active;
@@ -227,8 +243,10 @@ internal static class ClassProjects {
 
     internal static Running ActiveOf(uint projectId) => Active().FirstOrDefault(r => r.Id == projectId);
 
+    /// <summary>Whether an event is on now (not one that has ended and only waits for its rewards).</summary>
     internal static bool IsActive(string projectName)
-        => !string.IsNullOrEmpty(projectName) && Active().Any(r => string.Equals(r.Name, projectName, StringComparison.OrdinalIgnoreCase));
+        => !string.IsNullOrEmpty(projectName)
+           && Active().Any(r => !r.Ending && string.Equals(r.Name, projectName, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// The game registry value of a queueable event's holiday entry (m_initialHoliday, e.g. ME_Sinbad): 1 while its
@@ -240,7 +258,7 @@ internal static class ClassProjects {
             return null;
         }
 
-        return Active().Any(r => string.Equals(r.Template.m_initialHoliday.ToString(), entry, StringComparison.OrdinalIgnoreCase)) ? 1 : 0;
+        return Active().Any(r => !r.Ending && string.Equals(r.Template.m_initialHoliday.ToString(), entry, StringComparison.OrdinalIgnoreCase)) ? 1 : 0;
     }
 
     #endregion
@@ -258,7 +276,7 @@ internal static class ClassProjects {
         }
 
         try {
-            foreach (var running in Active()) {
+            foreach (var running in Active().Where(r => !r.Ending)) {
                 RecordIn(client, wizard, running, type, times, adjectives);
             }
         }

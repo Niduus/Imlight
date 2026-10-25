@@ -74,17 +74,41 @@ internal static class EventButton {
     internal static string SchoolOf(uint projectId)
         => Deckathalon.Towers.Select(t => t.School).FirstOrDefault(s => StringHash.Compute($"TreasureTower_01_{s}") == projectId);
 
-    /// <summary>The ids of every event on: the Deckathalon, the Scroll of Fortune and the other queued event.</summary>
+    /// <summary>The ids of every event in the window: the Deckathalon, the Scroll of Fortune and the other queued
+    /// events, then the ones that ended in the last week.</summary>
     internal static List<uint> ActiveIds() {
-        var ids = new List<uint>();
-        if (ProjectId(GameEvents.Current) is var id and not 0) {
-            ids.Add(id);
-        }
-
+        var ids = Deckathalons().Select(d => ProjectId(d.Event)).ToList();
         ids.AddRange(ClassProjects.Active().Select(r => r.Id).Where(i => !ids.Contains(i)));
 
         return ids;
     }
+
+    // The Deckathalon on now, and those that ended in the last week (Ending), one for each tower.
+    private static List<(GameEvents.RunningEvent Event, bool Ending)> Deckathalons() {
+        var list = new List<(GameEvents.RunningEvent, bool)>();
+        foreach (var (running, ending) in GameEvents.Running.Where(e => e.IsDeckathalon).Select(e => (e, false))
+                     .Concat(GameEvents.Ended.Where(e => e.IsDeckathalon).Select(e => (e, true)))) {
+            var id = ProjectId(running);
+            if (id != 0 && !list.Any(d => ProjectId(d.Item1) == id)) {
+                list.Add((running, ending));
+            }
+        }
+
+        return list;
+    }
+
+    // An event as the window lists it: an ended one shows as ending, until the week for its rewards is over.
+    private static ActiveClassProject ActiveOf(uint id, DateTime start, DateTime end, bool ending)
+        => new() {
+            m_projectID = id,
+            m_goalCount = 0,
+            m_endTime = (uint) Math.Max(0, new DateTimeOffset(ending ? end.AddDays(GameEvents.ENDED_DAYS) : end).ToUnixTimeSeconds()),
+            m_currentDay = (uint) Math.Max(1, (int) Math.Floor((DateTime.UtcNow - start).TotalDays) + 1),
+            m_multiplier = 1,
+            m_displayMultiplier = 1,
+            m_isEnding = ending,
+            m_parameter = "",
+        };
 
     /// <summary>The button message: the events that are on, or none (which hides the button).</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTBUTTON ButtonMessage()
@@ -92,23 +116,13 @@ internal static class EventButton {
             Buffer = Serialize(new ClassProjectUpdateList { m_activeProjectList = ActiveIds() })
         };
 
-    /// <summary>The answer to the button: the event that is on and how far the wizard got in it.</summary>
+    /// <summary>The answer to the button: the events in the window and how far the wizard got in each.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO InfoMessage(Wizard wizard, byte displayInfo) {
-        var running = GameEvents.Current;
-        var id = ProjectId(running);
         var active = new List<ActiveClassProject>();
         var progress = new List<ClassProjectPlayerProgress>();
-        if (id != 0) {
-            active.Add(new ActiveClassProject {
-                m_projectID = id,
-                m_goalCount = 0,
-                m_endTime = (uint) Math.Max(0, new DateTimeOffset(running.End).ToUnixTimeSeconds()),
-                m_currentDay = (uint) Math.Max(1, (int) Math.Floor((DateTime.UtcNow - running.Start).TotalDays) + 1),
-                m_multiplier = 1,
-                m_displayMultiplier = 1,
-                m_isEnding = false,
-                m_parameter = "",
-            });
+        foreach (var (running, ending) in Deckathalons()) {
+            var id = ProjectId(running);
+            active.Add(ActiveOf(id, running.Start, running.End, ending));
 
             var score = Deckathalon.PlaceOf(running.Key, wizard.CharId)?.Score;
             var player = new ClassProjectPlayer {
@@ -131,16 +145,7 @@ internal static class EventButton {
 
         // The game's other events on (ClassProjects.cs). With two or more, the button opens the game's list of events.
         foreach (var other in ClassProjects.Active()) {
-            active.Add(new ActiveClassProject {
-                m_projectID = other.Id,
-                m_goalCount = 0,
-                m_endTime = (uint) Math.Max(0, new DateTimeOffset(other.End).ToUnixTimeSeconds()),
-                m_currentDay = (uint) Math.Max(1, (int) Math.Floor((DateTime.UtcNow - other.Start).TotalDays) + 1),
-                m_multiplier = 1,
-                m_displayMultiplier = 1,
-                m_isEnding = false,
-                m_parameter = "",
-            });
+            active.Add(ActiveOf(other.Id, other.Start, other.End, other.Ending));
             progress.Add(new ClassProjectPlayerProgress { m_projectID = other.Id, m_classProjectPlayer = PlayerOf(wizard, other) });
         }
 
@@ -211,8 +216,8 @@ internal static class EventButton {
 
     /// <summary>The event window's leaderboard: the best wizards of the event that is on.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD LeaderboardMessage(uint projectId) {
-        var running = GameEvents.Current;
-        var points = running is not null && ProjectId(running) == projectId
+        var running = Deckathalons().Select(d => d.Event).FirstOrDefault(d => ProjectId(d) == projectId);
+        var points = running is not null
             ? Deckathalon.Top(running.Key, 100).Select(s => Math.Max(0, s.Points / 10)).ToList()
             : ClassProjects.ActiveOf(projectId) is { } other ? ClassProjects.Top(other, 100).Select(p => p.Points).ToList() : [];
         var board = Serialize(new ClassProjectLeaderboard {

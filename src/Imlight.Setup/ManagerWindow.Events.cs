@@ -52,6 +52,7 @@ internal sealed partial class ManagerWindow {
 
     private readonly List<QueuedEvent> _eventQueue = [];
     private DateTime? _eventsStartedAt;
+    private readonly Dictionary<string, DateTime> _eventLaneStarts = new(StringComparer.OrdinalIgnoreCase);
     private bool _showingEvents;
 
     private readonly ComboBox _eventKind = new() { Width = 180, ItemsSource = s_eventKinds, SelectedIndex = 0 };
@@ -95,15 +96,16 @@ internal sealed partial class ManagerWindow {
             new TextBlock { Text = "hours", VerticalAlignment = VerticalAlignment.Center });
 
         return Fold("clock", "Server", "Events",
-            "Game events, one after another. Add events to the queue, then press Start the queue: the first one starts at " +
-            "once and each next one starts by itself when the one before it ends. Everyone online is told when an event " +
-            "starts or ends. The events are the game's own: the Deckathalon, the Side Activity (fishing, pet snacks, " +
+            "Game events. Add events to the queue, then press Start the queue. Events of different kinds run side by side; " +
+            "two of the same kind never run at once, so each next one of a kind starts by itself when the one before it " +
+            "ends. An event that ends stays in the game's event window for 7 days, so players can still claim its " +
+            "rewards. Everyone online is told when an event starts or ends. The events are the game's own: the Deckathalon, the Side Activity (fishing, pet snacks, " +
             "crafting, Daily Assignments, Team Up), the Pet Activity (pet games, snacks, hatching), Castle Tours, " +
             "Wizard City Day and the six Monthly Gauntlets. The Scroll of Fortune is always on, like the live game. " +
             "In the game, the event button at the top of the screen shows them, .events lists them and " +
             ".deckathalon climbs the Deckathalon that is on.",
             _eventNow,
-            Row(Action(_eventsStart, StartEventsAsync), Action(Plain("End the current event now"), EndCurrentEventAsync),
+            Row(Action(_eventsStart, StartEventsAsync), Action(Plain("End the events on now"), EndCurrentEventAsync),
                 Action(Danger(Plain("Clear the queue")), ClearEventsAsync)),
             Heading("Queue"),
             _eventList,
@@ -115,40 +117,75 @@ internal sealed partial class ManagerWindow {
             _eventTop);
     }
 
-    // When each event of the queue starts and ends, from the start of the queue (with Repeat, the round we are in).
+    // The kind of an event for "one of each kind at a time" (the server's GameEvents.KindOf).
+    private static string KindOf(QueuedEvent queued) => string.IsNullOrWhiteSpace(queued.Kind) ? "Deckathalon" : queued.Kind.Trim();
+
+    // When each kind's line of events started: its own start where it has one, else the queue's.
+    private DateTime? LaneStart(string kind)
+        => _eventLaneStarts.TryGetValue(kind, out var start) ? start : _eventsStartedAt;
+
+    // When each event of the queue starts and ends, in queue order (Niduus, 2026-10-25: "events can run side by side but
+    // 2 events of the same type can not"): each kind is a line of its own, the lines run side by side, and with Repeat
+    // each line goes round again.
     private List<(QueuedEvent Event, DateTime Start, DateTime End)> EventTimes(DateTime now) {
-        var times = new List<(QueuedEvent, DateTime, DateTime)>();
-        if (_eventsStartedAt is not { } startedAt || _eventQueue.Count == 0) {
-            return times;
+        var times = new (QueuedEvent, DateTime, DateTime)?[_eventQueue.Count];
+        if (_eventsStartedAt is null || _eventQueue.Count == 0) {
+            return [];
         }
 
-        var start = startedAt;
-        var total = TimeSpan.FromTicks(_eventQueue.Sum(e => e.Length.Ticks));
-        if (_eventsRepeat.IsChecked == true && total > TimeSpan.Zero && now - start >= total) {
-            start += TimeSpan.FromTicks(total.Ticks * ((now - start).Ticks / total.Ticks));
+        foreach (var lane in _eventQueue.Select((e, i) => (Event: e, Index: i)).GroupBy(e => KindOf(e.Event), StringComparer.OrdinalIgnoreCase)) {
+            var start = LaneStart(lane.Key) ?? now;
+            var total = TimeSpan.FromTicks(lane.Sum(e => e.Event.Length.Ticks));
+            if (_eventsRepeat.IsChecked == true && total > TimeSpan.Zero && now - start >= total) {
+                start += TimeSpan.FromTicks(total.Ticks * ((now - start).Ticks / total.Ticks));
+            }
+
+            foreach (var (queued, index) in lane) {
+                times[index] = (queued, start, start + queued.Length);
+                start += queued.Length;
+            }
         }
 
-        foreach (var queued in _eventQueue) {
-            times.Add((queued, start, start + queued.Length));
-            start += queued.Length;
-        }
-
-        return times;
+        return [.. times.Select(t => t!.Value)];
     }
 
+    // The events on now, by their place in the queue.
+    private List<int> RunningIndexes(List<(QueuedEvent Event, DateTime Start, DateTime End)> times, DateTime now)
+        => [.. times.Select((t, i) => (t, i)).Where(x => x.t.Start <= now && now < x.t.End).Select(x => x.i)];
+
     private async Task TickEventsAsync() {
-        // Without Repeat, an event that is over leaves the queue, and the queue then starts at the next one.
+        // Without Repeat, an event that is over leaves the queue, and its line then starts at its next one.
         var now = DateTime.UtcNow;
         if (_eventsRepeat.IsChecked != true && _eventsStartedAt is not null) {
-            var over = EventTimes(now).TakeWhile(t => t.End <= now).ToList();
+            var times = EventTimes(now);
+            var over = times.Select((t, i) => (t, i)).Where(x => x.t.End <= now).ToList();
             if (over.Count > 0) {
-                _eventQueue.RemoveRange(0, over.Count);
-                _eventsStartedAt = _eventQueue.Count == 0 ? null : over[^1].End;
+                foreach (var lane in over.GroupBy(x => KindOf(x.t.Event), StringComparer.OrdinalIgnoreCase)) {
+                    _eventLaneStarts[lane.Key] = lane.Max(x => x.t.End);
+                }
+
+                foreach (var index in over.Select(x => x.i).OrderByDescending(i => i)) {
+                    _eventQueue.RemoveAt(index);
+                }
+
+                ForgetEmptyLanes();
                 await SaveEventsAsync();
             }
         }
 
         ShowEvents();
+    }
+
+    // A kind with no events left forgets its start, so one added later starts when it is added.
+    private void ForgetEmptyLanes() {
+        foreach (var kind in _eventLaneStarts.Keys.Where(k => !_eventQueue.Any(e => string.Equals(KindOf(e), k, StringComparison.OrdinalIgnoreCase))).ToList()) {
+            _eventLaneStarts.Remove(kind);
+        }
+
+        if (_eventQueue.Count == 0) {
+            _eventsStartedAt = null;
+            _eventLaneStarts.Clear();
+        }
     }
 
     private async Task AddEventAsync() {
@@ -160,13 +197,26 @@ internal sealed partial class ManagerWindow {
 
         var kind = s_eventKinds[Math.Max(0, _eventKind.SelectedIndex)];
         var choices = EventChoices(kind);
-        _eventQueue.Add(new QueuedEvent {
+        var queued = new QueuedEvent {
             Kind = kind,
             School = choices.Length > 0 ? choices[Math.Clamp(_eventSchool.SelectedIndex, 0, choices.Length - 1)] : "",
             Days = days, Hours = hours,
-        });
+        };
+
+        // While the queue runs, an event of a kind that has nothing left on starts now; one of a kind that is on waits
+        // for the one before it.
+        var now = DateTime.UtcNow;
+        var sameKind = EventTimes(now).Where(t => string.Equals(KindOf(t.Event), kind, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (_eventsStartedAt is not null && (sameKind.Count == 0 || (_eventsRepeat.IsChecked != true && sameKind.All(t => t.End <= now)))) {
+            _eventQueue.RemoveAll(e => string.Equals(KindOf(e), kind, StringComparison.OrdinalIgnoreCase) && sameKind.Any(t => t.Event == e));
+            _eventLaneStarts[kind] = now;
+        }
+
+        _eventQueue.Add(queued);
         await SaveEventsAsync();
-        Say($"Added the {_eventQueue[^1].Name} to the queue.");
+        Say(sameKind.Any(t => t.End > now)
+            ? $"Added the {queued.Name} to the queue. It starts when the {kind} before it ends: two of the same kind never run at once."
+            : $"Added the {queued.Name} to the queue.");
     }
 
     private async Task StartEventsAsync() {
@@ -179,33 +229,58 @@ internal sealed partial class ManagerWindow {
         }
 
         _eventsStartedAt = DateTime.UtcNow;
+        _eventLaneStarts.Clear();
         await SaveEventsAsync();
-        Say($"The {_eventQueue[0].Name} is on. Everyone online is told.");
+        var first = _eventQueue.GroupBy(KindOf, StringComparer.OrdinalIgnoreCase).Select(g => g.First().Name).ToList();
+        Say($"On now: {string.Join(", ", first)}. Everyone online is told.");
     }
 
+    // Ends the events on now; the next one of each kind starts now.
     private async Task EndCurrentEventAsync() {
         var now = DateTime.UtcNow;
         var times = EventTimes(now);
-        var index = times.FindIndex(t => t.Start <= now && now < t.End);
-        if (index < 0) {
+        var running = RunningIndexes(times, now);
+        if (running.Count == 0) {
             throw new PanelException("No event is on right now.");
         }
 
-        // The events before it went already; the next one starts now.
-        var name = times[index].Event.Name;
-        _eventQueue.RemoveRange(0, index + 1);
-        _eventsStartedAt = _eventQueue.Count == 0 ? null : now;
+        var names = running.Select(i => times[i].Event.Name).ToList();
+        foreach (var index in running) {
+            EndLaneAt(times, index, now);
+        }
+
+        await RemoveEndedAsync(times, running);
+        Say($"Ended: {string.Join(", ", names)}. Players can still claim their rewards for 7 days.");
+    }
+
+    // The events of a kind up to and including the one at index went already; its next one starts now.
+    private void EndLaneAt(List<(QueuedEvent Event, DateTime Start, DateTime End)> times, int index, DateTime now)
+        => _eventLaneStarts[KindOf(times[index].Event)] = now;
+
+    private async Task RemoveEndedAsync(List<(QueuedEvent Event, DateTime Start, DateTime End)> times, List<int> ended) {
+        var gone = new HashSet<QueuedEvent>();
+        foreach (var index in ended) {
+            var kind = KindOf(times[index].Event);
+            for (var i = 0; i <= index; i++) {
+                if (string.Equals(KindOf(times[i].Event), kind, StringComparison.OrdinalIgnoreCase)) {
+                    gone.Add(times[i].Event);
+                }
+            }
+        }
+
+        _eventQueue.RemoveAll(gone.Contains);
+        ForgetEmptyLanes();
         await SaveEventsAsync();
-        Say(_eventQueue.Count == 0 ? $"Ended the {name}. The queue is empty." : $"Ended the {name}; the {_eventQueue[0].Name} is on now.");
     }
 
     private async Task ClearEventsAsync() {
-        if (!await ConfirmAsync("Clear the whole queue? The event that is on ends too.")) {
+        if (!await ConfirmAsync("Clear the whole queue? The events that are on end too.")) {
             return;
         }
 
         _eventQueue.Clear();
         _eventsStartedAt = null;
+        _eventLaneStarts.Clear();
         await SaveEventsAsync();
     }
 
@@ -216,9 +291,9 @@ internal sealed partial class ManagerWindow {
         }
 
         var now = DateTime.UtcNow;
-        var running = EventTimes(now).FindIndex(t => t.Start <= now && now < t.End);
-        if (running >= 0 && (index == running || to == running)) {
-            throw new PanelException("The event that is on stays where it is. End it first, or move the others.");
+        var running = RunningIndexes(EventTimes(now), now);
+        if (running.Contains(index) || running.Contains(to)) {
+            throw new PanelException("An event that is on stays where it is. End it first, or move the others.");
         }
 
         (_eventQueue[index], _eventQueue[to]) = (_eventQueue[to], _eventQueue[index]);
@@ -233,30 +308,30 @@ internal sealed partial class ManagerWindow {
         var now = DateTime.UtcNow;
         var times = EventTimes(now);
         if (times.Count > index && times[index].Start <= now && now < times[index].End) {
-            await EndCurrentEventAsync();
+            EndLaneAt(times, index, now);
+            await RemoveEndedAsync(times, [index]);
+            Say($"Ended the {times[index].Event.Name}. Players can still claim its rewards for 7 days.");
 
             return;
         }
 
-        // An event before the one on now is over already (Repeat keeps them); one after it just goes.
-        if (times.Count > index && times[index].End <= now && _eventsStartedAt is { } started) {
-            _eventsStartedAt = started + _eventQueue[index].Length;
+        // An event before the one on now in its line is over already (Repeat keeps them); one after it just goes.
+        if (times.Count > index && times[index].End <= now && LaneStart(KindOf(_eventQueue[index])) is { } started) {
+            _eventLaneStarts[KindOf(_eventQueue[index])] = started + _eventQueue[index].Length;
         }
 
         _eventQueue.RemoveAt(index);
-        if (_eventQueue.Count == 0) {
-            _eventsStartedAt = null;
-        }
-
+        ForgetEmptyLanes();
         await SaveEventsAsync();
     }
 
     private void ShowEvents() {
         var now = DateTime.UtcNow;
         var times = EventTimes(now);
-        var on = times.FirstOrDefault(t => t.Start <= now && now < t.End);
-        _eventNow.Text = on.Event is not null
-            ? $"On now: {on.Event.Name}, {Left(on.End - now)} left."
+        var onNow = RunningIndexes(times, now).Select(i => times[i]).ToList();
+        var on = onNow.FirstOrDefault(t => t.Event.Kind == "Deckathalon");
+        _eventNow.Text = onNow.Count > 0
+            ? "On now: " + string.Join("; ", onNow.Select(t => $"{t.Event.Name}, {Left(t.End - now)} left")) + "."
             : _eventQueue.Count == 0 ? "Nothing is on. Add an event below, then press Start the queue."
             : _eventsStartedAt is null ? "Nothing is on yet. Press Start the queue to start the first event."
             : "Nothing is on.";
@@ -264,7 +339,8 @@ internal sealed partial class ManagerWindow {
 
         // The rows are only built again when the queue changed, so their buttons stay pressable.
         var shown = string.Join("|", times.Select(t => $"{t.Event.Name}{t.Event.Length}{t.Start:o}"))
-            + string.Join("|", _eventQueue.Select(e => e.Name + e.Length)) + _eventsStartedAt;
+            + string.Join("|", _eventQueue.Select(e => e.Name + e.Length)) + _eventsStartedAt
+            + string.Join("|", _eventLaneStarts.Select(l => $"{l.Key}{l.Value:o}"));
         if (shown != _eventListShown) {
             _eventListShown = shown;
             _eventList.Children.Clear();
@@ -360,6 +436,12 @@ internal sealed partial class ManagerWindow {
             _eventsStartedAt = json["StartedAt"]?.GetValue<string>() is { } started
                 && DateTime.TryParse(started, null, DateTimeStyles.RoundtripKind, out var at) ? at.ToUniversalTime() : null;
             _eventsRepeat.IsChecked = json["Repeat"]?.GetValue<bool>() == true;
+            _eventLaneStarts.Clear();
+            foreach (var (kind, value) in json["LaneStarts"] as JsonObject ?? []) {
+                if (value?.GetValue<string>() is { } text && DateTime.TryParse(text, null, DateTimeStyles.RoundtripKind, out var laneStart)) {
+                    _eventLaneStarts[kind] = laneStart.ToUniversalTime();
+                }
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException or FormatException) {
             Say($"Could not read the events: {ex.Message}", isError: true);
@@ -383,6 +465,7 @@ internal sealed partial class ManagerWindow {
         var json = new JsonObject {
             ["Queue"] = queue,
             ["StartedAt"] = _eventsStartedAt?.ToString("o"),
+            ["LaneStarts"] = new JsonObject(_eventLaneStarts.Select(l => KeyValuePair.Create(l.Key, (JsonNode?) JsonValue.Create(l.Value.ToString("o"))))),
             ["Repeat"] = _eventsRepeat.IsChecked == true,
         };
         Directory.CreateDirectory(_manager.ServerFolder);

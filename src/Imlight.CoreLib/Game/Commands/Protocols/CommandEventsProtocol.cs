@@ -38,7 +38,10 @@ internal class CommandEventsProtocol : CommandProtocol {
                 var rewards = running.Template.m_rewardList ?? [];
                 var next = rewards.FirstOrDefault(r => r is not null && r.m_goalCount > (mine?.Points ?? 0));
                 var waiting = ClassProjects.Unclaimed(running, mine).Count;
-                lines.Add($"{running.Shown} ({running.End - DateTime.UtcNow:%d}d left): {mine?.Points ?? 0} points"
+                var when = running.Ending
+                    ? $"ended, rewards can be claimed for {Math.Max(0, (running.End.AddDays(GameEvents.ENDED_DAYS) - DateTime.UtcNow).Days)}d more"
+                    : $"{(running.End - DateTime.UtcNow).Days}d left";
+                lines.Add($"{running.Shown} ({when}): {mine?.Points ?? 0} points"
                     + (next is null ? ", every reward reached" : $", next reward at {next.m_goalCount}")
                     + (waiting > 0 ? $", {waiting} reward{(waiting == 1 ? "" : "s")} to claim (.events claim)." : "."));
             }

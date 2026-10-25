@@ -107,9 +107,11 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
         try {
             var wizard = GetActiveWizard();
             var zone = running.Template.m_eventTeleportZone.ToString();
-            if (string.IsNullOrEmpty(zone) || wizard.IsInDuel) {
+            if (string.IsNullOrEmpty(zone) || wizard.IsInDuel || running.Ending) {
                 SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                    Message = wizard.IsInDuel ? "Finish your battle first." : $"The {running.Shown} has no place to go to: its points come from anywhere.",
+                    Message = wizard.IsInDuel ? "Finish your battle first."
+                        : running.Ending ? $"The {running.Shown} is over. Its rewards can still be claimed for 7 days after it ended."
+                        : $"The {running.Shown} has no place to go to: its points come from anywhere.",
                     Modal = 0,
                 });
 
