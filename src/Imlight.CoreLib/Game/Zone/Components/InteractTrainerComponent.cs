@@ -461,9 +461,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             newBase.m_trainingCost = CostFor(wizard, spellTemplate);
 
             // A garden spell needs its gardening rank and costs gold, not training points or a wizard level.
-            if (IsGardenTrainer) {
+            if (GardenRankFor(i, spellId) is { } needed) {
                 var rank = Imlight.CoreLib.Game.Gardening.GardenLessons.RankOf(wizard);
-                var needed = SpellInventory[i].Level;
                 newBase.m_requiredLevel = 0;
                 newBase.m_requirements = spellTemplate.m_purchaseRequirements;
                 newBase.m_bCanTrain = rank >= needed && wizard.GameStats.m_currentGold >= Imlight.CoreLib.Game.Gardening.GardenLessons.PriceOf(spellTemplate);
@@ -582,8 +581,22 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// How many training points a spell costs this wizard: none for their own school or with FreeTraining, else one.
     /// </summary>
     internal int CostFor(Wizard wizard, SpellTemplate spellTemplate)
-        => IsCustom ? CustomCostOf(spellTemplate)
+        => IsCustom && IsTradeSpell(spellTemplate) ? 0
+         : IsCustom ? CustomCostOf(spellTemplate)
          : IsTestTrainer || IsGardenTrainer ? 0 : TrainingCost(wizard, spellTemplate);
+
+    /// <summary>
+    /// The gardening rank the spell at an index needs when it is sold as a garden spell (for gold), else null: every
+    /// spell of a garden trainer, and the garden spells of a custom trainer (the Customs tab's "Garden Spells").
+    /// </summary>
+    internal int? GardenRankFor(int index, uint spellId)
+        => IsGardenTrainer ? SpellInventory[index].Level
+         : IsCustom ? Imlight.CoreLib.Game.Gardening.GardenLessons.Of(spellId)?.Level
+         : null;
+
+    // A garden or fishing spell never costs training points.
+    private static bool IsTradeSpell(SpellTemplate spellTemplate)
+        => spellTemplate is FishingSpellTemplate or GardenSpellTemplate;
 
     // A custom trainer's price for a spell, found by the spell's name (a spell template has no id of its own); 1 when
     // it is not in the list.

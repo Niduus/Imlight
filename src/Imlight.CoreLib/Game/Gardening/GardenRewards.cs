@@ -118,6 +118,10 @@ internal static class GardenLessons {
     internal static IEnumerable<GardenLesson> ForTrainer(uint npcTemplateId)
         => All.Where(lesson => lesson.Trainers.Contains(npcTemplateId)).OrderBy(lesson => lesson.Level).ThenBy(lesson => lesson.Order);
 
+    /// <summary>The garden spell a trainer sells with this template id, or null.</summary>
+    internal static GardenLesson Of(uint spellId)
+        => All.FirstOrDefault(lesson => lesson.SpellId == spellId && lesson.Trainers.Count > 0);
+
     /// <summary>A wizard's gardening rank (1 when never set).</summary>
     internal static int RankOf(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard)
         => Math.Max(1, (int) (wizard?.GameStats?.m_gardeningLevel ?? 1));

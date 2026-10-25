@@ -117,12 +117,13 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
 
         // A garden trainer sells for gold, from the gardening rank the spell needs.
         var gold = 0;
-        if (trainerComponent.IsGardenTrainer) {
+        var gardenRank = trainerComponent.GardenRankFor(message.TrainingIndex, spellId);
+        if (gardenRank is { } needed) {
             gold = GardenLessons.PriceOf(spellTemplate);
             var rank = GardenLessons.RankOf(wizard);
-            if (rank < spellEntry.Level || wizard.GameStats.m_currentGold < gold) {
+            if (rank < needed || wizard.GameStats.m_currentGold < gold) {
                 Logger.Warning("Wizard {0} tried to buy garden spell {1} ({2} gold, rank {3}) with {4} gold at rank {5}.",
-                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, gold, spellEntry.Level, wizard.GameStats.m_currentGold, rank));
+                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), spellId, gold, needed, wizard.GameStats.m_currentGold, rank));
                 SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "WizTraining_00000040", Success = 0 });
 
                 return;
@@ -157,7 +158,7 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         // A garden spell costs no training points, so a training point reset leaves it alone.
-        if (!trainerComponent.IsGardenTrainer) {
+        if (gardenRank is null) {
             TrainingReset.Record(wizard, spellId, spellCost);
         }
 

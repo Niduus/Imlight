@@ -363,12 +363,20 @@ internal static class CustomNpcPresets {
             (InteractTrainerComponent.TestTrainerKind.Extracts, "Extract Spells", "Every Extract spell, as Monstrologist Burke teaches."),
             (InteractTrainerComponent.TestTrainerKind.Shadow, "Shadow Spells", "The Shadow spells, as Mellori teaches."),
             (InteractTrainerComponent.TestTrainerKind.Boss, "Monster and Boss Spells", "Spells only monsters and bosses cast, as Merle Ambrose teaches."),
+            (InteractTrainerComponent.TestTrainerKind.Fishing, "Fishing Spells", "Every fishing spell, as Lucky Hookline teaches. Free, no training points."),
         };
         foreach (var (kind, name, help) in lists) {
             foreach (var part in TrainerParts(name, help, ByName(InteractTrainerComponent.TestSpellsOf(kind).Select(e => e.TemplateID)))) {
                 yield return part;
             }
         }
+
+        // Niduus (2026-10-25): "Add trainer for Gardening and Fishing spells". Every garden spell the game's garden
+        // trainers sell, by rank; a custom trainer sells them as those trainers do (gold, from the rank each needs).
+        yield return Trainer("Garden Spells", "Every garden spell, by gardening rank. Each costs its gold price and needs its rank, as at Farley.",
+            Gardening.GardenLessons.All.Where(lesson => lesson.Trainers.Count > 0)
+                .OrderBy(lesson => lesson.Level).ThenBy(lesson => lesson.Order)
+                .Select(lesson => (ulong) lesson.SpellId));
     }
 
     private sealed class VanillaFile {
