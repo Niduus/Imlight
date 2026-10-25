@@ -217,6 +217,9 @@ public static class SpiralDB {
             // Our own quests are written in English; give them the game's own lines.
             QuestTextKeys.ResolveAll(questTemplates);
 
+            // Zone signals the real game's server sends when a quest step starts or ends (a boss spawning, a door opening).
+            QuestGoalEvents.ApplyAll(questTemplates, extraPath);
+
             Logger.Information(
                 "SpiralDB loaded {0} files: {1} spellbooks, {2} drop tables, {3} NPC inventories, " +
                 "{4} NPC spell inventories, {5} NPC drop tables, {6} treasure card inventories, " +

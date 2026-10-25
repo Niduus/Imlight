@@ -1,0 +1,6 @@
+// Zone events the real game's server sends when a quest step starts ("when": "start") or is done ("when": "complete").
+// The zone scripts in the game files wait for these to spawn a boss, open a door or play a scene.
+[
+  // Rematch: reaching the obelisk in the Jade Palace makes the palace script spawn the Jade Oni (trigger CheckObelisk).
+  { "quest": "MS-MAIN-C07-001", "goal": "Goal", "when": "complete", "events": [ "GoSpawnOni" ] }
+]

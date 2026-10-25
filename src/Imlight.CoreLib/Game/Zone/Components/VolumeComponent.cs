@@ -112,9 +112,11 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         foreach (var quest in QuestTemplateCollection.GetAllQuests()) {
             foreach (var goal in quest.m_goals) {
+                // The tag is the volume's name or, as most game quests write it, its enter event ("Enter_<name>").
                 if (goal is not WaypointGoalTemplate waypointGoal
                     || string.IsNullOrEmpty(waypointGoal.m_proximityTag)
-                    || waypointGoal.m_proximityTag != volumeName) {
+                    || (waypointGoal.m_proximityTag != volumeName
+                        && _volume.m_enterEvents?.Any(e => (string) e == waypointGoal.m_proximityTag) != true)) {
                     continue;
                 }
 
