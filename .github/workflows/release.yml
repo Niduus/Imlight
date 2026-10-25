@@ -41,7 +41,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          # Pinned to the SDK the Windows runner already has: '10.0.x' picked 10.0.403 on release day, whose download
+          # failed (HTTP 409), and every release broke at this step (2026-10-25).
+          dotnet-version: '10.0.402'
 
       - name: Work out the version
         id: version
