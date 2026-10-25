@@ -47,7 +47,7 @@ internal sealed partial class ManagerWindow {
             "stones). Walk to a street, stand where its teleporter should go, facing the way players should face when they " +
             "arrive, walk a step, and press Put street teleporter here on stone 1, 2 or 3. Players press X at a hub stone " +
             "to go to its street, and X at the street teleporter to come back to the hub. A stone with no street yet has " +
-            "nothing to press. Give the stones the names of their streets and press Save names. Everything here counts at " +
+            "nothing to press. Give the stones the names of their streets, change their X, Y, Z, turn (in degrees) or look in the boxes, and press Save changes. The arrows change the stones' order. Everything here counts at " +
             "once; the server needs no restart."),
         Row(Action(Primary("Make a hub here"), MakeHubAsync)),
         _hubCount,
@@ -71,12 +71,22 @@ internal sealed partial class ManagerWindow {
         }
     }
 
+    // The stone looks to pick from: the game's Colossus Boulevard teleporters (0: by the stone's place in the hub).
+    private static readonly (ulong Id, string Label)[] HUB_LOOKS = [
+        (0, "Automatic"), (1488125, "Baron Tower stone"), (1488127, "Briskbreeze Tower stone"), (1488130, "Hildreth Perch stone"),
+    ];
+
+    private static readonly (ulong Id, string Label)[] STREET_LOOKS = [
+        (0, "Automatic"), (1488126, "To Teleporter Hub (Baron)"), (1488129, "To Teleporter Hub (Briskbreeze)"),
+        (1488131, "To Teleporter Hub (Hildreth)"),
+    ];
+
     private Control HubRow(TeleporterHub saved) {
         var hub = saved.Copy();
         var name = new TextBox { Width = 300, Text = hub.Name, Watermark = "The hub's name, such as Colossus Hub", HorizontalAlignment = HorizontalAlignment.Left };
         name.TextChanged += (_, _) => hub.Name = name.Text ?? "";
 
-        var stones = new StackPanel { Spacing = 4, Margin = new Thickness(44, 6, 0, 0) };
+        var stones = new StackPanel { Spacing = 8, Margin = new Thickness(44, 6, 0, 0) };
         for (var i = 0; i < hub.Pads.Count; i++) {
             var index = i;
             var pad = hub.Pads[i];
@@ -85,8 +95,10 @@ internal sealed partial class ManagerWindow {
             var where = pad.Street is { } street ? $"goes to {ZoneDisplay(street.Zone)}" : "no street teleporter yet";
             var buttons = new List<Control> {
                 WithCenter(new TextBlock { Text = $"Stone {index + 1}", FontWeight = FontWeight.SemiBold, Width = 60 }),
+                Action(Plain("▲"), () => MoveStoneInOrderAsync(saved, index, -1)),
+                Action(Plain("▼"), () => MoveStoneInOrderAsync(saved, index, +1)),
                 padName,
-                WithCenter(new TextBlock { Text = where, Foreground = MUTED, Width = 220, TextWrapping = TextWrapping.Wrap }),
+                WithCenter(new TextBlock { Text = where, Foreground = MUTED, Width = 200, TextWrapping = TextWrapping.Wrap }),
                 Action(Primary(pad.Street is null ? "Put street teleporter here" : "Move street teleporter here"), () => SetStreetAsync(saved, index)),
                 Action(Plain("Move stone here"), () => MoveStoneAsync(saved, index)),
             };
@@ -94,7 +106,15 @@ internal sealed partial class ManagerWindow {
                 buttons.Add(Danger(Action(Plain("Remove street"), () => RemoveStreetAsync(saved, index))));
             }
 
-            stones.Children.Add(Row([.. buttons]));
+            var stone = new StackPanel { Spacing = 4, Children = { WrapRow([.. buttons]) } };
+            stone.Children.Add(SpotEditor("Stone", pad.X, pad.Y, pad.Z, pad.Yaw, pad.Look, HUB_LOOKS,
+                (x, y, z, yaw) => (pad.X, pad.Y, pad.Z, pad.Yaw) = (x, y, z, yaw), look => pad.Look = look));
+            if (pad.Street is { } linked) {
+                stone.Children.Add(SpotEditor("Street", linked.X, linked.Y, linked.Z, linked.Yaw, linked.Look, STREET_LOOKS,
+                    (x, y, z, yaw) => (linked.X, linked.Y, linked.Z, linked.Yaw) = (x, y, z, yaw), look => linked.Look = look));
+            }
+
+            stones.Children.Add(stone);
         }
 
         return ManagerTheme.Item(highlighted: false, content: new StackPanel {
@@ -102,7 +122,7 @@ internal sealed partial class ManagerWindow {
                 new DockPanel {
                     Children = {
                         WithDock(Row(
-                            Action(Primary("Save names"), () => SaveHubNamesAsync(hub)),
+                            Action(Primary("Save changes"), () => SaveHubAsync(hub)),
                             Action(Plain("Move hub here"), () => MoveHubAsync(saved)),
                             Danger(Action(Plain("Delete"), () => DeleteHubAsync(saved)))), Dock.Right),
                         WithDock(WithMargin(WithCenter(ManagerTheme.Tile("sigil", ManagerTheme.Accent("Customs"), 32)),
@@ -122,6 +142,36 @@ internal sealed partial class ManagerWindow {
                 stones,
             },
         });
+    }
+
+    // A stone's place, turn and look, edited in boxes (Niduus, 2026-10-25: "add settings in manager to change their
+    // position, rotations"); Save changes writes them. The turn is shown in degrees and saved as the game's radians.
+    private static Control SpotEditor(string label, double x, double y, double z, double yaw, ulong look, (ulong Id, string Label)[] looks,
+                                      Action<double, double, double, double> setSpot, Action<ulong> setLook) {
+        NumericUpDown Box(double value, double step) => new() {
+            Minimum = -1_000_000, Maximum = 1_000_000, Increment = (decimal) step, FormatString = "0.##", Width = 120, Value = (decimal) Math.Round(value, 2),
+        };
+
+        var bx = Box(x, 10);
+        var by = Box(y, 10);
+        var bz = Box(z, 5);
+        var degrees = Math.Round(yaw * 180 / Math.PI, 1);
+        var turn = new NumericUpDown { Minimum = -360, Maximum = 360, Increment = 15, FormatString = "0.#", Width = 110, Value = (decimal) degrees };
+        void Changed(object? sender, NumericUpDownValueChangedEventArgs e)
+            => setSpot((double) (bx.Value ?? 0), (double) (by.Value ?? 0), (double) (bz.Value ?? 0), (double) (turn.Value ?? 0) * Math.PI / 180);
+        foreach (var box in new[] { bx, by, bz, turn }) {
+            box.ValueChanged += Changed;
+        }
+
+        var lookBox = new ComboBox { Width = 230, ItemsSource = looks.Select(l => l.Label).ToList() };
+        var at = Array.FindIndex(looks, l => l.Id == look);
+        lookBox.SelectedIndex = at >= 0 ? at : 0;
+        lookBox.SelectionChanged += (_, _) => setLook(looks[Math.Max(0, lookBox.SelectedIndex)].Id);
+
+        TextBlock Label(string text) => (TextBlock) WithCenter(new TextBlock { Text = text, Foreground = MUTED });
+
+        return WrapRow(WithCenter(new TextBlock { Text = label, Width = 60 }), Label("X"), bx, Label("Y"), by, Label("Z"), bz,
+            Label("Turn°"), turn, Label("Look"), lookBox);
     }
 
     private Task MakeHubAsync() {
@@ -190,17 +240,52 @@ internal sealed partial class ManagerWindow {
         Say($"Stone {index + 1} of {hub.Shown} has no street teleporter now.");
     }
 
-    private Task SaveHubNamesAsync(TeleporterHub edited) {
-        // Only the names: where the stones stand is kept as the file has it now.
+    // A row that wraps onto the next line when the window is narrow.
+    private static WrapPanel WrapRow(params Control[] controls) {
+        var row = new WrapPanel { Orientation = Orientation.Horizontal };
+        foreach (var control in controls) {
+            control.Margin = new Thickness(0, 2, 10, 2);
+            row.Children.Add(control);
+        }
+
+        return row;
+    }
+
+    private Task SaveHubAsync(TeleporterHub edited) {
+        // The names, places, turns and looks in the boxes; the hub's area and street links are kept as the file has them.
         var hub = SafeHubs().FirstOrDefault(h => h.Id == edited.Id) ?? edited;
         hub.Name = edited.Name.Trim();
         for (var i = 0; i < hub.Pads.Count && i < edited.Pads.Count; i++) {
-            hub.Pads[i].Name = edited.Pads[i].Name.Trim();
+            var (pad, box) = (hub.Pads[i], edited.Pads[i]);
+            (pad.Name, pad.X, pad.Y, pad.Z, pad.Yaw, pad.Look) = (box.Name.Trim(), box.X, box.Y, box.Z, box.Yaw, box.Look);
+            if (pad.Street is { } street && box.Street is { } streetBox) {
+                (street.X, street.Y, street.Z, street.Yaw, street.Look) = (streetBox.X, streetBox.Y, streetBox.Z, streetBox.Yaw, streetBox.Look);
+            }
         }
 
         TeleporterHubs.Set(_manager.CustomsFolder, hub.Id, hub);
         RenderHubs();
-        Say($"Saved the names of {hub.Shown}. The stones show them in the game now.");
+        Say($"Saved {hub.Shown}. The stones show the changes in the game now.");
+
+        return Task.CompletedTask;
+    }
+
+    // Niduus (2026-10-25): "the sort": a stone's street moves up or down the hub's list.
+    private Task MoveStoneInOrderAsync(TeleporterHub hub, int index, int by) {
+        var to = index + by;
+        if (to < 0 || to >= hub.Pads.Count) {
+            return Task.CompletedTask;
+        }
+
+        // The stones stay where they stand (and keep their looks); their names and streets change places, so the stone
+        // that went to a street now stands one place up or down the ring.
+        var sorted = hub.Copy();
+        var (a, b) = (sorted.Pads[index], sorted.Pads[to]);
+        (a.Name, b.Name) = (b.Name, a.Name);
+        (a.Street, b.Street) = (b.Street, a.Street);
+        TeleporterHubs.Set(_manager.CustomsFolder, hub.Id, sorted);
+        RenderHubs();
+        Say($"{sorted.Pads[to].Name} is now stone {to + 1} of {hub.Shown}.");
 
         return Task.CompletedTask;
     }
