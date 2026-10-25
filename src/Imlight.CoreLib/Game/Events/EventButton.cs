@@ -55,10 +55,11 @@ internal static class EventButton {
     internal static uint ProjectId(GameEvents.RunningEvent running)
         => ProjectName(running) is { } name ? StringHash.Compute(name) : 0;
 
-    /// <summary>Whether a game event template (TreasureTower_01_Fire, ...) is the one on now.</summary>
+    /// <summary>Whether a game event template (TreasureTower_01_Fire, 2026FallSOF, ...) is on now.</summary>
     internal static bool IsActive(string projectName)
         => !string.IsNullOrEmpty(projectName)
-           && string.Equals(ProjectName(GameEvents.Current), projectName, StringComparison.OrdinalIgnoreCase);
+           && (string.Equals(ProjectName(GameEvents.Current), projectName, StringComparison.OrdinalIgnoreCase)
+               || ClassProjects.IsActive(projectName));
 
     /// <summary>
     /// The game registry value of an event entry: the game's zones show an event's objects while the entry named after
@@ -67,20 +68,29 @@ internal static class EventButton {
     internal static float? RegistryValue(string entry)
         => entry is not null && Deckathalon.Towers.Any(t => string.Equals(entry, $"TreasureTower_01_{t.School}", StringComparison.OrdinalIgnoreCase))
             ? IsActive(entry) ? 1 : 0
-            : null;
+            : ClassProjects.HolidayValue(entry);
 
     /// <summary>The school of a Deckathalon event id, or null.</summary>
     internal static string SchoolOf(uint projectId)
         => Deckathalon.Towers.Select(t => t.School).FirstOrDefault(s => StringHash.Compute($"TreasureTower_01_{s}") == projectId);
 
-    /// <summary>The button message: the event that is on, or none (which hides the button).</summary>
-    internal static WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTBUTTON ButtonMessage() {
-        var id = ProjectId(GameEvents.Current);
+    /// <summary>The ids of every event on: the Deckathalon, the Scroll of Fortune and the other queued event.</summary>
+    internal static List<uint> ActiveIds() {
+        var ids = new List<uint>();
+        if (ProjectId(GameEvents.Current) is var id and not 0) {
+            ids.Add(id);
+        }
 
-        return new WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTBUTTON {
-            Buffer = Serialize(new ClassProjectUpdateList { m_activeProjectList = id == 0 ? [] : [id] })
-        };
+        ids.AddRange(ClassProjects.Active().Select(r => r.Id).Where(i => !ids.Contains(i)));
+
+        return ids;
     }
+
+    /// <summary>The button message: the events that are on, or none (which hides the button).</summary>
+    internal static WIZARD2_53_PROTOCOL.MSG_UPDATECLASSPROJECTBUTTON ButtonMessage()
+        => new() {
+            Buffer = Serialize(new ClassProjectUpdateList { m_activeProjectList = ActiveIds() })
+        };
 
     /// <summary>The answer to the button: the event that is on and how far the wizard got in it.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO InfoMessage(Wizard wizard, byte displayInfo) {
@@ -119,11 +129,65 @@ internal static class EventButton {
             progress.Add(new ClassProjectPlayerProgress { m_projectID = id, m_classProjectPlayer = player });
         }
 
+        // The game's other events on (ClassProjects.cs). With two or more, the button opens the game's list of events.
+        foreach (var other in ClassProjects.Active()) {
+            active.Add(new ActiveClassProject {
+                m_projectID = other.Id,
+                m_goalCount = 0,
+                m_endTime = (uint) Math.Max(0, new DateTimeOffset(other.End).ToUnixTimeSeconds()),
+                m_currentDay = (uint) Math.Max(1, (int) Math.Floor((DateTime.UtcNow - other.Start).TotalDays) + 1),
+                m_multiplier = 1,
+                m_displayMultiplier = 1,
+                m_isEnding = false,
+                m_parameter = "",
+            });
+            progress.Add(new ClassProjectPlayerProgress { m_projectID = other.Id, m_classProjectPlayer = PlayerOf(wizard, other) });
+        }
+
         return new WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO {
             Buffer = Serialize(new ClassProjectActiveList { m_activeProjectList = active }),
             TokenBuffer = Serialize(new ClassProjectPlayerProgressList { m_playerProgressList = progress }),
             DisplayInfo = displayInfo,
         };
+    }
+
+    // A wizard in one of the other events: points, today's count of each activity, and the rewards claimed.
+    private static ClassProjectPlayer PlayerOf(Wizard wizard, ClassProjects.Running running) {
+        var mine = ClassProjects.Find(running, wizard.CharId);
+        var player = new ClassProjectPlayer {
+            m_playerGID = new GID(wizard.GameObjectID),
+            m_totalProgress = (ushort) Math.Clamp(mine?.Points ?? 0, 0, ushort.MaxValue),
+            m_level = 0,
+            m_extendedData = [],
+        };
+
+        var today = ClassProjects.TodayOf(running, mine);
+        for (var i = 0; i < Math.Min(5, today.Count); i++) {
+            SetGoalProgress(player, i + 1, today[i]);
+        }
+
+        var claimed = ClassProjects.ClaimedBits(mine, out var flags);
+        player.m_flags = flags;
+        if (running.IsScroll && claimed.Count > 0) {
+            player.m_extendedData = claimed;
+            SetByName(player, "m_usesExtraData", true);
+        }
+
+        return player;
+    }
+
+    private static void SetByName(PropertyClass value, string name, object to) {
+        var property = value.GetType().GetProperty(name);
+        if (property?.CanWrite != true) {
+            return;
+        }
+
+        try {
+            property.SetValue(value, Convert.ChangeType(to, property.PropertyType));
+        }
+        catch (Exception e) {
+            Logger.Warning("Event button: could not set {0}: {1}", Logger.Args(name, e.Message));
+        }
     }
 
     /// <summary>
@@ -148,11 +212,13 @@ internal static class EventButton {
     /// <summary>The event window's leaderboard: the best wizards of the event that is on.</summary>
     internal static WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD LeaderboardMessage(uint projectId) {
         var running = GameEvents.Current;
-        var top = running is not null && ProjectId(running) == projectId ? Deckathalon.Top(running.Key, 100) : [];
+        var points = running is not null && ProjectId(running) == projectId
+            ? Deckathalon.Top(running.Key, 100).Select(s => Math.Max(0, s.Points / 10)).ToList()
+            : ClassProjects.ActiveOf(projectId) is { } other ? ClassProjects.Top(other, 100).Select(p => p.Points).ToList() : [];
         var board = Serialize(new ClassProjectLeaderboard {
-            m_leaderboardSize = top.Count,
+            m_leaderboardSize = points.Count,
             m_topEntry = 0,
-            m_leaderboardList = [.. top.Select(s => new ClassProjectLeaderboardPlayer { m_points = (uint) Math.Max(0, s.Points / 10) })],
+            m_leaderboardList = [.. points.Select(p => new ClassProjectLeaderboardPlayer { m_points = (uint) p })],
         });
 
         return new WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTLEADERBOARD { ProjectID = projectId, TopBuffer = board, Buffer = board };

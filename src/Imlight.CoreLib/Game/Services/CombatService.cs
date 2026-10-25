@@ -196,6 +196,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         TeachSpellAfterBattle();
         Imlight.CoreLib.Game.Events.Deckathalon.OnWin(SessionActor.ActorRef, GetActiveWizard(), message.MobLootKeys ?? message.MobTemplateIds,
             message.CountedRounds);
+        // The Scroll of Fortune and the other events count each creature beaten (ClassProjects.cs).
+        Imlight.CoreLib.Game.Events.ClassProjects.CreaturesBeaten(SessionActor.ActorRef, GetActiveWizard(), message.MobTemplateIds);
     }
 
     private void TeachSpellAfterBattle() {

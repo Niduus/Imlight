@@ -39,8 +39,9 @@ namespace Imlight.CoreLib.Game.Events;
 /// event is on and how long it has left.
 ///
 /// File:
-///   Queue      the events in order: Kind (Deckathalon), School (for a Deckathalon: Fire, Ice, Storm, Myth, Life,
-///              Death or Balance), Days and Hours (how long it lasts).
+///   Queue      the events in order: Kind (Deckathalon, or another game event: ClassProjects.Queueable), School (for a
+///              Deckathalon: Fire, Ice, Storm, Myth, Life, Death or Balance; for a Monthly Gauntlet: which one), Days
+///              and Hours (how long it lasts).
 ///   StartedAt  when the first event of the queue started (UTC), or null while the queue waits to be started.
 ///   Repeat     true: after the last event the queue starts again from the first.
 /// </summary>
@@ -64,7 +65,7 @@ internal static class GameEvents {
 
         internal string Name => string.Equals(Kind, DECKATHALON, StringComparison.OrdinalIgnoreCase)
             ? $"{School} Deckathalon"
-            : Kind;
+            : string.IsNullOrWhiteSpace(School) ? Kind : $"{School} {Kind}";
 
         /// <summary>The same event on the same start: what scores and rewards are kept by.</summary>
         internal string Key => $"{Kind}-{School}@{Start:yyyy-MM-ddTHH:mm}";
@@ -192,7 +193,8 @@ internal static class GameEvents {
     }
 
     private static string HowToJoin(RunningEvent running)
-        => running.IsDeckathalon ? " Type .deckathalon to climb the tower." : "";
+        => running.IsDeckathalon ? " Type .deckathalon to climb the tower."
+            : " Click the event button at the top of the screen to see it, or type .events.";
 
     private static void Broadcast(List<string> lines) {
         if (s_system is null || lines.Count == 0) {

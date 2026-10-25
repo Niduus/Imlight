@@ -57,7 +57,7 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
             // and the client opens the window only when the answer's DisplayInfo is set.
             var wizard = GetActiveWizard();
             SendToSocket(EventButton.InfoMessage(wizard, 1));
-            Logger.Information("Event button: sent the event window to {0} (event {1}).", Logger.Args(wizard.CharId, EventButton.ProjectId(GameEvents.Current)));
+            Logger.Information("Event button: sent the event window to {0} (events {1}).", Logger.Args(wizard.CharId, string.Join(", ", EventButton.ActiveIds())));
         }
         catch (Exception e) {
             Logger.Error("Event button: MSG_REQUESTCLASSPROJECTINFO failed: {0}", Logger.Args(e));
@@ -75,8 +75,60 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTTELEPORT))]
-    private void ReceiveRequestTeleport(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTTELEPORT message)
-        => Climb(message.ProjectID);
+    private void ReceiveRequestTeleport(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTREQUESTTELEPORT message) {
+        if (ClassProjects.ActiveOf(message.ProjectID) is { } other) {
+            GoTo(other);
+
+            return;
+        }
+
+        Climb(message.ProjectID);
+    }
+
+    // The window's claim button on a reward of the Scroll of Fortune or another event (ClassProjects.cs).
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTCLAIMREWARD))]
+    private void ReceiveClaimReward(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTCLAIMREWARD message) {
+        try {
+            var wizard = GetActiveWizard();
+            var reply = ClassProjects.Claim(SessionActor.ActorRef, wizard, message.ProjectID, (int) message.RewardIndex);
+            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = reply, Modal = 0 });
+
+            // The window learns what is claimed now; it stays open (DisplayInfo 0).
+            SendToSocket(EventButton.InfoMessage(wizard, 0));
+        }
+        catch (Exception e) {
+            Logger.Error("Event button: MSG_CLASSPROJECTCLAIMREWARD failed: {0}", Logger.Args(e));
+        }
+    }
+
+    // The Go button of an event other than the Deckathalon: to the place its template names (the Pet Pavilion for the
+    // Pet Activity, the Wizard City hub for the Monthly Gauntlets, ...). The Scroll of Fortune has none.
+    private void GoTo(ClassProjects.Running running) {
+        try {
+            var wizard = GetActiveWizard();
+            var zone = running.Template.m_eventTeleportZone.ToString();
+            if (string.IsNullOrEmpty(zone) || wizard.IsInDuel) {
+                SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                    Message = wizard.IsInDuel ? "Finish your battle first." : $"The {running.Shown} has no place to go to: its points come from anywhere.",
+                    Modal = 0,
+                });
+
+                return;
+            }
+
+            var location = running.Template.m_eventTeleportLocation.ToString();
+            Logger.Information("Event button: {0} goes to {1} for {2}.", Logger.Args(wizard.CharId, zone, running.Name));
+            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = zone,
+                DestinationLocation = string.IsNullOrEmpty(location) ? "Start" : location,
+                SendToClient = true,
+                OwnerCharId = wizard.CharId,
+            });
+        }
+        catch (Exception e) {
+            Logger.Error("Event button: Go failed: {0}", Logger.Args(e));
+        }
+    }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSETOKEN))]
     private void ReceiveUseToken(WIZARD2_53_PROTOCOL.MSG_CLASSPROJECTUSETOKEN message)

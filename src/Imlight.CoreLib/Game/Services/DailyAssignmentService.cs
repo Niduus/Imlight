@@ -284,6 +284,7 @@ internal class DailyAssignmentService(SessionActor sessionActor) : MessageServic
             ItemTemplateID = 0,
         });
         Reply($"Daily Assignment done! Day {streak} of your streak: {given}.");
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_DailyQuest);
     }
 
     private string GiveReward(Wizard wizard, DailyQuestReward reward, int circle) {

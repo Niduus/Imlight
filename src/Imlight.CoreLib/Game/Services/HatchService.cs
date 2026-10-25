@@ -1362,6 +1362,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         Logger.Information("Hatching zone: the egg of {0} was {1}.", Logger.Args(_morph.CharId, message.Success ? "made" : "not made"));
         if (message.Success) {
             InformGameClient("Your egg is in your backpack. Back to the hatchery in a moment.");
+            Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, GetActiveWizard(), Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_HatchPet);
             ScheduleMorphReturn("the egg is made", MORPH_RETURN_DELAY);
             TellMorphPartnerEggMade();
 

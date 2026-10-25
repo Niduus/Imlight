@@ -236,6 +236,8 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
             FeedStack = message.FeedStack,
             Happiness = PetProgress.GetBehavior(pet)?.m_happiness ?? message.Happiness,
         });
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_FeedPetHappiness, count);
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_FeedPetSnack, count);
         InformGameClient(PetCare.Summary(pet, growth));
         ResummonAfterLevelUp(pet, growth);
     }
@@ -341,6 +343,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
                 growth.StatChanges.AddRange(fed.StatChanges);
                 var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
                 SendHeldThenFeedResult(held, gameName, fed.XpGained, WithActualChanges(snackMods, fed));
+                Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_FeedPetSnack);
             }
             else {
                 if (snackData is not null) {

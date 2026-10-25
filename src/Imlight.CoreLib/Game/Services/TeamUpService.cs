@@ -121,6 +121,11 @@ internal class TeamUpService(SessionActor sessionActor) : MessageService(session
                     SendHelp(message.WorldID != 0 ? message.WorldID : _tab, wizard);
                 }
             }
+            else {
+                // Helping a team through the Team Help window counts for the events (CPT_HelpTeam).
+                Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, GetActiveWizard(),
+                    Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_HelpTeam);
+            }
         }
         catch (Exception ex) {
             Logger.Error("Team Up: joining a team failed. {0}", Logger.Args(ex.Message));

@@ -27,6 +27,17 @@ internal sealed partial class ManagerWindow {
 
     private static readonly string[] s_eventSchools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
 
+    // The game's events the queue can run (the server's ClassProjects.Queueable): the kind, and the choices of the second
+    // box (a Deckathalon's school, a Monthly Gauntlet's gauntlet). The Scroll of Fortune needs no queue: it is always on.
+    private static readonly string[] s_eventKinds = ["Deckathalon", "Side Activity", "Pet Activity", "Castle Tours", "Wizard City Day", "Monthly Gauntlet"];
+    private static readonly string[] s_monthlyGauntlets = ["Sinbad", "Spiral Cup", "Great Clock", "Grand Tourney", "Fantastic Voyage", "Accursed Play"];
+
+    private static string[] EventChoices(string kind) => kind switch {
+        "Deckathalon" => s_eventSchools,
+        "Monthly Gauntlet" => s_monthlyGauntlets,
+        _ => [],
+    };
+
     private sealed class QueuedEvent {
         internal string Kind = "Deckathalon";
         internal string School = "Fire";
@@ -35,14 +46,16 @@ internal sealed partial class ManagerWindow {
 
         internal TimeSpan Length => TimeSpan.FromDays(Math.Max(0, Days)) + TimeSpan.FromHours(Math.Max(0, Hours));
 
-        internal string Name => Kind == "Deckathalon" ? $"{School} Deckathalon" : Kind;
+        internal string Name => Kind == "Deckathalon" ? $"{School} Deckathalon"
+            : string.IsNullOrWhiteSpace(School) ? Kind : $"{School} {Kind}";
     }
 
     private readonly List<QueuedEvent> _eventQueue = [];
     private DateTime? _eventsStartedAt;
     private bool _showingEvents;
 
-    private readonly ComboBox _eventSchool = new() { Width = 160, ItemsSource = s_eventSchools, SelectedIndex = 0 };
+    private readonly ComboBox _eventKind = new() { Width = 180, ItemsSource = s_eventKinds, SelectedIndex = 0 };
+    private readonly ComboBox _eventSchool = new() { Width = 170, ItemsSource = s_eventSchools, SelectedIndex = 0 };
     private readonly NumericUpDown _eventDays = new() { Minimum = 0, Maximum = 365, Increment = 1, FormatString = "0", Width = 110, Value = 7 };
     private readonly NumericUpDown _eventHours = new() { Minimum = 0, Maximum = 23, Increment = 1, FormatString = "0", Width = 110, Value = 0 };
     private readonly ToggleSwitch _eventsRepeat = new() { OnContent = "On", OffContent = "Off" };
@@ -68,7 +81,15 @@ internal sealed partial class ManagerWindow {
         ticker.Start();
         ShowEvents();
 
-        var add = Row(new TextBlock { Text = "Deckathalon", VerticalAlignment = VerticalAlignment.Center }, _eventSchool,
+        // The second box is the Deckathalon's school or the Monthly Gauntlet's gauntlet; the other events have none.
+        _eventKind.SelectionChanged += (_, _) => {
+            var choices = EventChoices(s_eventKinds[Math.Max(0, _eventKind.SelectedIndex)]);
+            _eventSchool.ItemsSource = choices;
+            _eventSchool.SelectedIndex = choices.Length > 0 ? 0 : -1;
+            _eventSchool.IsVisible = choices.Length > 0;
+        };
+
+        var add = Row(_eventKind, _eventSchool,
             new TextBlock { Text = "for", VerticalAlignment = VerticalAlignment.Center }, _eventDays,
             new TextBlock { Text = "days", VerticalAlignment = VerticalAlignment.Center }, _eventHours,
             new TextBlock { Text = "hours", VerticalAlignment = VerticalAlignment.Center });
@@ -76,7 +97,11 @@ internal sealed partial class ManagerWindow {
         return Fold("clock", "Server", "Events",
             "Game events, one after another. Add events to the queue, then press Start the queue: the first one starts at " +
             "once and each next one starts by itself when the one before it ends. Everyone online is told when an event " +
-            "starts or ends. In the game, .deckathalon climbs the Deckathalon that is on.",
+            "starts or ends. The events are the game's own: the Deckathalon, the Side Activity (fishing, pet snacks, " +
+            "crafting, Daily Assignments, Team Up), the Pet Activity (pet games, snacks, hatching), Castle Tours, " +
+            "Wizard City Day and the six Monthly Gauntlets. The Scroll of Fortune is always on, like the live game. " +
+            "In the game, the event button at the top of the screen shows them, .events lists them and " +
+            ".deckathalon climbs the Deckathalon that is on.",
             _eventNow,
             Row(Action(_eventsStart, StartEventsAsync), Action(Plain("End the current event now"), EndCurrentEventAsync),
                 Action(Danger(Plain("Clear the queue")), ClearEventsAsync)),
@@ -133,8 +158,12 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("Give the event a length: at least 1 hour.");
         }
 
+        var kind = s_eventKinds[Math.Max(0, _eventKind.SelectedIndex)];
+        var choices = EventChoices(kind);
         _eventQueue.Add(new QueuedEvent {
-            School = s_eventSchools[Math.Max(0, _eventSchool.SelectedIndex)], Days = days, Hours = hours,
+            Kind = kind,
+            School = choices.Length > 0 ? choices[Math.Clamp(_eventSchool.SelectedIndex, 0, choices.Length - 1)] : "",
+            Days = days, Hours = hours,
         });
         await SaveEventsAsync();
         Say($"Added the {_eventQueue[^1].Name} to the queue.");
@@ -316,9 +345,10 @@ internal sealed partial class ManagerWindow {
             }
 
             foreach (var item in (json["Queue"] as JsonArray ?? []).OfType<JsonObject>()) {
+                var kind = item["Kind"]?.GetValue<string>() ?? "Deckathalon";
                 var queued = new QueuedEvent {
-                    Kind = item["Kind"]?.GetValue<string>() ?? "Deckathalon",
-                    School = item["School"]?.GetValue<string>() ?? "Fire",
+                    Kind = kind,
+                    School = item["School"]?.GetValue<string>() ?? (kind == "Deckathalon" ? "Fire" : ""),
                     Days = item["Days"]?.GetValue<int>() ?? 0,
                     Hours = item["Hours"]?.GetValue<int>() ?? 0,
                 };

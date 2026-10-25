@@ -407,6 +407,7 @@ internal partial class HousingService {
 
         var loot = GardenHarvests.Roll(harvested, seedTemplateId, elder: harvested.Stage == PlantStage.PS_Angel);
         LootGranter.GrantAndDisplay(SessionActor.ActorRef, wizard, loot);
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_HarvestPlant);
         var levelBefore = GardenLevelOf(wizard);
         var level = GiveGardenXp(wizard, Math.Max(1, harvested.HarvestXp));
         if (level > levelBefore) {

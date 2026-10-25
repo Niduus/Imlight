@@ -559,6 +559,9 @@ internal partial class PetService {
 
         _skipAwaitingFeed = pet.m_globalID.Full;
         PetCare.Finish(wizard, pet, growth, SendToSocket);
+        if (score > 0f) {
+            Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_WinPetGame);
+        }
         InformGameClient(PetCare.Summary(pet, growth));
         ResummonAfterLevelUp(pet, growth);
     }

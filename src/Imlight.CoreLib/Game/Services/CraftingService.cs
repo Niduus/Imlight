@@ -118,6 +118,8 @@ internal class CraftingService(SessionActor sessionActor) : MessageService(sessi
             InformGameClient($"Made {result.Crafted} of the {quantity} asked for: each one fills a crafting slot, and only {result.Crafted} were free.");
         }
 
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, GetActiveWizard(), Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_CraftItem, Math.Max(1, result.Crafted));
+
         if (result.Slot is not null) {
             ScheduleNextSlot();
         }

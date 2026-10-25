@@ -258,6 +258,7 @@ internal class CastleToursService(SessionActor sessionActor) : MessageService(se
         Remember(house);
         if (house.OwnerCharId != wizard.CharId) {
             CastleTourBoard.CountVisit(house.OwnerCharId, house.TemplateId);
+            Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_VisitCastleToursHouse);
         }
     }
 
@@ -355,6 +356,8 @@ internal class CastleToursService(SessionActor sessionActor) : MessageService(se
         Logger.Information("Castle Tours | {0} rated house {1} of {2}: {3} stars (badge credit today {4}/{5}{6}).",
             Logger.Args(wizard.CharId, _visit.TemplateId, _visit.OwnerCharId, message.Rating, creditToday, settings.DailyBadgeCredit,
                 earned.Count == 0 ? "" : $", earned {string.Join(", ", earned)}"));
+
+        Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_RateCastleToursHouse);
 
         // The buttons show the new rating (Re-Rate).
         _visit.WelcomeShown = true;

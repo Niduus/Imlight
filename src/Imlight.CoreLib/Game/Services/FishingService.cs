@@ -357,6 +357,10 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         if (!info.IsChest) {
             GiveXp(wizard, (int) Math.Round(info.Xp * FishingSettings.XpMultiplier));
         }
+
+        if (!info.IsChest) {
+            Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_CatchFish);
+        }
     }
 
     [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_MISSFISH))]
