@@ -66,6 +66,17 @@ internal class CommandLoyaltyProtocol : CommandProtocol {
                         : $"You claimed {claimed.Tokens} Loyalty Tokens; you have {claimed.Balance}.");
 
                     return;
+                case "resetclaim":
+                    if (!tester) {
+                        InformSenderClient("Only the server's testers can reset the Loyalty Token claim.");
+
+                        return;
+                    }
+
+                    LoyaltyStore.Change(me.AccountId, account => account.ClaimedKey = "");
+                    InformSenderClient("You can claim this rotation's Loyalty Tokens again. Talk to Majid and press Claim.");
+
+                    return;
                 case "tokens":
                 case "token":
                     if (!tester) {
@@ -86,7 +97,7 @@ internal class CommandLoyaltyProtocol : CommandProtocol {
                     return;
             }
 
-            InformSenderClient("Use .loyalty, .loyalty go, .loyalty claim" + (tester ? " or .loyalty tokens <number>." : "."));
+            InformSenderClient("Use .loyalty, .loyalty go, .loyalty claim" + (tester ? ", .loyalty tokens <number> or .loyalty resetclaim." : "."));
         }
         catch (Exception ex) {
             Logger.Error("Loyalty Store | .loyalty {0} failed: {1}", Logger.Args(text, ex));
@@ -107,7 +118,7 @@ internal class CommandLoyaltyProtocol : CommandProtocol {
         lines.AddRange(now.Rotation.Items.Select(i => $"- {i.Name}: {i.Price} token{(i.Price == 1 ? "" : "s")}, up to {i.Limit}"));
         lines.Add($"You have {tokens} Loyalty Tokens." + (claim > 0 ? $" {claim} more can be claimed: .loyalty claim or Claim in his window." : ""));
         if (tester) {
-            lines.Add("Testers: .loyalty tokens <number> sets your tokens.");
+            lines.Add("Testers: .loyalty tokens <number> sets your tokens; .loyalty resetclaim lets you claim again.");
         }
 
         return string.Join("<br>", lines);
