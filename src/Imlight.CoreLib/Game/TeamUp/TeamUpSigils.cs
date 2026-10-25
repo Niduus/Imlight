@@ -100,6 +100,23 @@ internal static class TeamUpSigils {
     internal static string DisplayKeyOf(string zone)
         => !string.IsNullOrEmpty(zone) && s_displayKeys.TryGetValue(zone, out var key) ? key ?? "" : "";
 
+    /// <summary>
+    /// The locale key of a dungeon's name, read now when it is not known yet (the sigil prompt names the dungeon the
+    /// moment a player walks onto it). Empty when the zone has none.
+    /// </summary>
+    internal static string DisplayKeyNow(string zone) {
+        if (string.IsNullOrEmpty(zone)) {
+            return "";
+        }
+
+        if (!s_displayKeys.TryGetValue(zone, out var key) || string.IsNullOrEmpty(key)) {
+            ReadDisplayKey(zone);
+            s_displayKeys.TryGetValue(zone, out key);
+        }
+
+        return key ?? "";
+    }
+
     private static void ReadDisplayKey(string zone) {
         try {
             if (!ResourceManager.TryLoadFile(zone, "gamedata.bin", out var stream) || stream is null) {
