@@ -435,24 +435,30 @@ internal sealed partial class ManagerWindow {
         // Niduus (2026-10-25): "add config/section for crafting recipes". Each amount, the cooldown and the price can be
         // changed here; empty keeps the game's (RecipeChanges.json, read by the server at once).
         var change = SafeRecipeChanges().FirstOrDefault(c => c.Id == recipe.Id) ?? new RecipeChange { Id = recipe.Id };
-        var amountBoxes = new List<(RecipeIngredient Ingredient, TextBox Box)>();
+        var amountBoxes = new List<(RecipeIngredient Ingredient, TextBox Box, TextBox Swap)>();
         foreach (var ingredient in recipe.Ingredients) {
             var set = ingredient.Index < change.Amounts.Count ? change.Amounts[ingredient.Index] : null;
             var amount = new TextBox {
                 Width = 70, Watermark = ingredient.Quantity.ToString(CultureInfo.InvariantCulture),
                 Text = set?.ToString(CultureInfo.InvariantCulture) ?? "",
             };
-            ToolTip.SetTip(amount, $"How many one craft takes. The game's is {ingredient.Quantity}; leave it empty to keep that.");
-            amountBoxes.Add((ingredient, amount));
+            ToolTip.SetTip(amount, $"How many one craft takes. The game's is {ingredient.Quantity}; leave it empty to keep that, 0 takes it out.");
+            var swapped = ingredient.Index < change.Swaps.Count ? change.Swaps[ingredient.Index] : null;
+            var swap = IdBox("same", swapped);
+            ToolTip.SetTip(swap, "Another item, reagent, snack or treasure card (its ID) to take in this one's place. Empty keeps this one.");
+            amountBoxes.Add((ingredient, amount, swap));
             _recipeDetails.Children.Add(new DockPanel {
                 Children = {
                     WithDock(WithMargin(RecipeIcon(ingredient.Id, ingredient.File, ingredient.Spell, 28), new Thickness(0, 0, 10, 0)), Dock.Left),
-                    WithDock(Row(WithCenter(new TextBlock { Text = "x", Foreground = MUTED }), amount), Dock.Right),
+                    WithDock(Row(WithCenter(new TextBlock { Text = "or", Foreground = MUTED }), swap, FindIdButton(swap),
+                        WithCenter(new TextBlock { Text = "x", Foreground = MUTED }), amount), Dock.Right),
                     new StackPanel {
                         VerticalAlignment = VerticalAlignment.Center,
                         Children = {
                             new SelectableTextBlock { Text = ingredient.Name, TextWrapping = TextWrapping.Wrap },
-                            new TextBlock { Text = ingredient.Id > 0 ? $"{ingredient.Kind}  ·  ID {ingredient.Id}" : ingredient.Kind, FontSize = 12, Foreground = MUTED },
+                            new TextBlock { Text = (ingredient.Id > 0 ? $"{ingredient.Kind}  ·  ID {ingredient.Id}" : ingredient.Kind)
+                                + (swapped is { } other ? $"  ·  now {_recipeBook?.NameOf(other) ?? other.ToString(CultureInfo.InvariantCulture)}" : ""), FontSize = 12, Foreground = MUTED,
+                                TextWrapping = TextWrapping.Wrap },
                         },
                     },
                 },
@@ -469,12 +475,65 @@ internal sealed partial class ManagerWindow {
         };
         _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Cooldown (minutes)", Width = 150, Foreground = MUTED }), cooldown));
         _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Shop price (gold)", Width = 150, Foreground = MUTED }), gold));
-        _recipeDetails.Children.Add(Sub("Type a new amount to change it; an empty box keeps the game's (shown faintly). " +
-            "The server uses the change at once. The game's crafting window still shows the old amounts and may grey out " +
-            "Create; Craft one now crafts with yours."));
+
+        // Ingredients the game's recipe does not have.
+        var extraRows = new StackPanel { Spacing = 4 };
+        var extras = new List<(TextBox Id, TextBox Amount, Control Row)>();
+        void AddExtra(RecipeChangeExtra? extra) {
+            var idBox = IdBox("item or card ID", extra?.Id);
+            var amountBox = new TextBox { Width = 70, Watermark = "1", Text = extra?.Amount.ToString(CultureInfo.InvariantCulture) ?? "" };
+            var label = new TextBlock { Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = 140,
+                Text = extra is null ? "" : _recipeBook?.NameOf(extra.Id) ?? "" };
+            Control row = null!;
+            row = Row(idBox, FindIdButton(idBox), WithCenter(new TextBlock { Text = "x", Foreground = MUTED }), amountBox, label,
+                Danger(Action(Plain("Remove"), () => {
+                    extraRows.Children.Remove(row);
+                    extras.RemoveAll(e => e.Row == row);
+
+                    return Task.CompletedTask;
+                })));
+            extras.Add((idBox, amountBox, row));
+            extraRows.Children.Add(row);
+        }
+
+        foreach (var extra in change.Extras) {
+            AddExtra(extra);
+        }
+
+        _recipeDetails.Children.Add(new TextBlock { Text = "Added ingredients", Foreground = MUTED });
+        _recipeDetails.Children.Add(extraRows);
+        _recipeDetails.Children.Add(Action(Plain("Add an ingredient"), () => {
+            AddExtra(null);
+
+            return Task.CompletedTask;
+        }));
+
+        var makesId = IdBox(recipe.MakesId > 0 ? recipe.MakesId.ToString(CultureInfo.InvariantCulture) : "the game's", change.MakesId);
+        var makesCount = new TextBox { Width = 90, Watermark = "1", Text = change.MakesCount?.ToString(CultureInfo.InvariantCulture) ?? "" };
+        var level = new TextBox { Width = 90, Watermark = "any", Text = change.LevelNeeded?.ToString(CultureInfo.InvariantCulture) ?? "" };
+        var disabled = new CheckBox { Content = "Turned off: nobody can craft or buy it", IsChecked = change.Disabled };
+        _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Makes instead (ID)", Width = 150, Foreground = MUTED }), makesId, FindIdButton(makesId),
+            WithCenter(new TextBlock { Text = change.MakesId is { } makesNow ? _recipeBook?.NameOf(makesNow) ?? "" : "", Foreground = MUTED })));
+        _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "How many per craft", Width = 150, Foreground = MUTED }), makesCount));
+        _recipeDetails.Children.Add(Row(WithCenter(new TextBlock { Text = "Level needed", Width = 150, Foreground = MUTED }), level));
+        _recipeDetails.Children.Add(disabled);
+        _recipeDetails.Children.Add(Sub("Type a new value to change it; an empty box keeps the game's (shown faintly). An amount of 0 takes " +
+            "an ingredient out, and an ID in its \"or\" box takes another item or card in its place. Find looks an ID up by name. " +
+            "The server uses every change at once. The game's crafting window still shows the game's own recipe and may grey out " +
+            "Create; Craft one now (or .recipe make in chat) crafts with yours."));
         _recipeDetails.Children.Add(new WrapPanel {
             Children = {
                 Spaced(Action(Primary("Save changes"), () => {
+                    static uint? Id(TextBox box, string what) {
+                        var text = (box.Text ?? "").Trim();
+                        if (text.Length == 0) {
+                            return null;
+                        }
+
+                        return uint.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out var n) && n > 0
+                            ? n : throw new PanelException($"{what} must be a template ID (a number, the Lookup tab finds it), or empty.");
+                    }
+
                     static int? Number(TextBox box, string what) {
                         var text = (box.Text ?? "").Trim();
                         if (text.Length == 0) {
@@ -488,9 +547,26 @@ internal sealed partial class ManagerWindow {
                     var saved = new RecipeChange { Id = recipe.Id, Name = recipe.Name };
                     var count = recipe.Ingredients.Count == 0 ? 0 : recipe.Ingredients.Max(i => i.Index) + 1;
                     saved.Amounts = [.. Enumerable.Repeat<int?>(null, count)];
-                    foreach (var (ingredient, box) in amountBoxes) {
-                        saved.Amounts[ingredient.Index] = Number(box, $"The amount of {ingredient.Name}") is { } n ? Math.Max(1, n) : null;
+                    saved.Swaps = [.. Enumerable.Repeat<uint?>(null, count)];
+                    foreach (var (ingredient, box, swapBox) in amountBoxes) {
+                        saved.Amounts[ingredient.Index] = Number(box, $"The amount of {ingredient.Name}");
+                        saved.Swaps[ingredient.Index] = Id(swapBox, $"The ID in place of {ingredient.Name}");
                     }
+
+                    if (saved.Swaps.All(x => x is null)) {
+                        saved.Swaps = [];
+                    }
+
+                    foreach (var (idBox, amountBox, _) in extras) {
+                        if (Id(idBox, "An added ingredient's ID") is { } extraId) {
+                            saved.Extras.Add(new RecipeChangeExtra { Id = extraId, Amount = Math.Max(1, Number(amountBox, "An added ingredient's amount") ?? 1) });
+                        }
+                    }
+
+                    saved.MakesId = Id(makesId, "Makes instead");
+                    saved.MakesCount = Number(makesCount, "How many per craft") is { } per ? Math.Max(1, per) : null;
+                    saved.LevelNeeded = Number(level, "Level needed");
+                    saved.Disabled = disabled.IsChecked == true;
 
                     var minutes = (cooldown.Text ?? "").Trim();
                     if (minutes.Length > 0) {
@@ -548,6 +624,26 @@ internal sealed partial class ManagerWindow {
         }.Where(p => p.Length > 0)) is { Length: > 0 } price ? price : "Free");
         Fact("Game's name", recipe.Code);
         Fact("File", recipe.File);
+    }
+
+    private static TextBox IdBox(string watermark, uint? id)
+        => new() { Width = 100, Watermark = watermark, Text = id?.ToString(CultureInfo.InvariantCulture) ?? "" };
+
+    // A button that finds an item, reagent, snack or card by name and puts its ID in the box (the Lookup tab's lists).
+    private Button FindIdButton(TextBox box) {
+        if (_lookup is null && !_npcListsLoading) {
+            _npcListsLoading = true;
+            _ = Guard(async () => {
+                await LoadLookupAsync();
+                _npcListsLoading = false;
+            });
+        }
+
+        return new Button {
+            Content = "Find",
+            Flyout = SearchFlyout("Search items and cards by name or ID", q => [.. LookupResults("Item", q), .. LookupResults("Spell", q).Take(10)],
+                picked => box.Text = picked.ToString(CultureInfo.InvariantCulture)),
+        };
     }
 
     private List<RecipeChange> SafeRecipeChanges() {

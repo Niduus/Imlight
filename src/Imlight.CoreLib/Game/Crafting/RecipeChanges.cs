@@ -54,9 +54,23 @@ internal static class RecipeChanges {
     internal sealed class Change {
         public uint Id { get; set; }
         public string Name { get; set; } = "";
+        // Per ingredient, in the recipe's order: how many (0 takes it out), and another item or card in its place.
         public List<int?> Amounts { get; set; } = [];
+        public List<uint?> Swaps { get; set; } = [];
+        // Ingredients the game's recipe does not have.
+        public List<Extra> Extras { get; set; } = [];
         public int? Cooldown { get; set; }
         public int? GoldCost { get; set; }
+        // Niduus (2026-10-25): "add custom options for crafting recipes (In detail)".
+        public uint? MakesId { get; set; }
+        public int? MakesCount { get; set; }
+        public int? LevelNeeded { get; set; }
+        public bool Disabled { get; set; }
+    }
+
+    internal sealed class Extra {
+        public uint Id { get; set; }
+        public int Amount { get; set; } = 1;
     }
 
     internal const string FILE = "RecipeChanges.json";
@@ -106,16 +120,31 @@ internal static class RecipeChanges {
     }
 
     /// <summary>
-    /// How many of a recipe's ingredient one craft takes: the amount set for it, else the game's times
-    /// [Crafting] IngredientMultiplier (at least 1).
+    /// How many of a recipe's ingredient one craft takes: the amount set for it (0 takes it out), else the game's
+    /// times [Crafting] IngredientMultiplier (at least 1).
     /// </summary>
     internal static int AmountOf(uint recipeId, int index, int gameAmount) {
         if (Of(recipeId) is { } change && index < change.Amounts.Count && change.Amounts[index] is { } set) {
-            return Math.Max(1, set);
+            return Math.Max(0, set);
         }
 
         return s_multiplier == 1f ? gameAmount : Math.Max(1, (int) Math.Round(gameAmount * s_multiplier));
     }
+
+    /// <summary>The item or card that takes an ingredient's place, or null for the game's.</summary>
+    internal static uint? SwapOf(uint recipeId, int index)
+        => Of(recipeId) is { } change && index < change.Swaps.Count && change.Swaps[index] is { } swap and > 0 ? swap : null;
+
+    /// <summary>The ingredients added to a recipe.</summary>
+    internal static IReadOnlyList<Extra> ExtrasOf(uint recipeId)
+        => Of(recipeId)?.Extras?.Where(e => e is not null && e.Id != 0 && e.Amount > 0).ToList() ?? [];
+
+    /// <summary>Why a wizard can't craft or buy a recipe (turned off, level too low), or null when they can.</summary>
+    internal static string RefusalOf(uint recipeId, string name, int wizardLevel) => Of(recipeId) switch {
+        { Disabled: true } => $"{name} is turned off on this server.",
+        { LevelNeeded: { } level } when wizardLevel < level => $"{name} needs level {level}; you are level {wizardLevel}.",
+        _ => null,
+    };
 
     /// <summary>A recipe's cooldown in seconds before the cooldown multiplier: the one set for it, else the game's.</summary>
     internal static int CooldownOf(uint recipeId, int gameCooldown)

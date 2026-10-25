@@ -653,6 +653,10 @@ internal static class Crafting {
             return new(CraftError.NotKnown, $"You don't know the recipe {name} yet. Buy it at a recipe shop first.");
         }
 
+        if (RecipeChanges.RefusalOf(id, name, wizard.MagicSchoolBehavior?.Level ?? 1) is { } refused) {
+            return new(CraftError.Disabled, refused);
+        }
+
         if (!station.Makes(name, recipe)) {
             Logger.Warning("Crafting: {0} crafts {1} at station {2}, which does not list it (types {3}); allowed anyway.",
                 Logger.Args(wizard.CharId, name, station.Name, string.Join(", ", station.Types)));
@@ -687,7 +691,7 @@ internal static class Crafting {
             Take(session, wizard, need);
         }
 
-        var (madeId, made) = Give(session, wizard, characterObject, recipe, quantity);
+        var (madeId, made) = Give(session, wizard, characterObject, id, recipe, quantity);
         if (made == 0) {
             Logger.Error("Crafting: recipe {0} ({1}) made nothing for {2}; its ingredients were used up.",
                 Logger.Args(id, name, wizard.CharId));
@@ -730,8 +734,17 @@ internal static class Crafting {
                 continue;
             }
 
-            // The Manager's Recipes tab can change how many it takes (RecipeChanges).
+            // The Manager's Recipes tab can change how many it takes, take it out, or put another in its place (RecipeChanges).
             var count = RecipeChanges.AmountOf(recipeId, index, ingredient.m_quantity) * quantity;
+            if (count <= 0) {
+                continue;
+            }
+
+            if (RecipeChanges.SwapOf(recipeId, index) is { } swap) {
+                needs.Add(NeedOf(swap, count));
+                continue;
+            }
+
             switch (ingredient.m_ingredientType) {
                 case INGREDIENT_TYPE.INGREDIENT_TREASURE: {
                     string spellName = ingredient.m_spellTemplate;
@@ -748,7 +761,29 @@ internal static class Crafting {
             }
         }
 
+        foreach (var extra in RecipeChanges.ExtrasOf(recipeId)) {
+            needs.Add(NeedOf(extra.Id, extra.Amount * quantity));
+        }
+
         return needs;
+    }
+
+    // An ingredient the Manager put in: its kind from its template (a card, reagent, snack or backpack item).
+    private static Need NeedOf(uint templateId, int count) {
+        CoreTemplate template = null;
+        try {
+            template = CoreObjectFactory.GetCoreTemplate(templateId);
+        }
+        catch (Exception) {
+            // Counted as a backpack item.
+        }
+
+        return template switch {
+            SpellTemplate spell => new(null, INGREDIENT_TYPE.INGREDIENT_TREASURE, templateId, count, (string) spell.m_name ?? templateId.ToString()),
+            ReagentItemTemplate => new(null, INGREDIENT_TYPE.INGREDIENT_REAGENT, templateId, count, DisplayOf(templateId)),
+            PetSnackItemTemplate => new(null, INGREDIENT_TYPE.INGREDIENT_PET_SNACK, templateId, count, DisplayOf(templateId)),
+            _ => new(null, INGREDIENT_TYPE.INGREDIENT_ITEM, templateId, count, DisplayOf(templateId)),
+        };
     }
 
     private static string DisplayOf(uint templateId) {
@@ -839,11 +874,31 @@ internal static class Crafting {
     }
 
     // Gives what a recipe makes: an item, a treasure card or a roll of its loot table.
-    private static (ulong MadeId, int Made) Give(IActorRef session, Wizard wizard, CoreObject characterObject, RecipeTemplate recipe, int quantity) {
+    private static (ulong MadeId, int Made) Give(IActorRef session, Wizard wizard, CoreObject characterObject, uint recipeId, RecipeTemplate recipe, int quantity) {
         var results = new DropTableResult { DropTableId = "Crafting" };
         var itemId = recipe.m_itemID.MParts.TemplateId;
         string spellName = recipe.m_spellName;
         string lootTable = recipe.m_itemLootTable;
+        // The Manager's Recipes tab can make it give something else, and more than one per craft (RecipeChanges).
+        var change = RecipeChanges.Of(recipeId);
+        quantity *= Math.Max(1, change?.MakesCount ?? 1);
+        if (change?.MakesId is { } makes and > 0) {
+            CoreTemplate makesTemplate = null;
+            try {
+                makesTemplate = CoreObjectFactory.GetCoreTemplate(makes);
+            }
+            catch (Exception) {
+                // Given as an item; a wrong ID is logged as "made nothing" below.
+            }
+
+            if (makesTemplate is SpellTemplate madeCard) {
+                (itemId, spellName, lootTable) = (0, (string) madeCard.m_name, null);
+            }
+            else {
+                (itemId, spellName, lootTable) = (makes, null, null);
+            }
+        }
+
         if (itemId != 0) {
             // A reagent or snack goes into its bag as one stack; any other item is one backpack item per copy.
             var stacks = CoreObjectFactory.GetCoreTemplate(itemId) is ReagentItemTemplate or PetSnackItemTemplate;

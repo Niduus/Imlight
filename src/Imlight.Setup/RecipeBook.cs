@@ -295,8 +295,14 @@ internal sealed class RecipeChange {
     public uint Id { get; set; }
     public string Name { get; set; } = "";
     public List<int?> Amounts { get; set; } = [];
+    public List<uint?> Swaps { get; set; } = [];
+    public List<RecipeChangeExtra> Extras { get; set; } = [];
     public int? Cooldown { get; set; }
     public int? GoldCost { get; set; }
+    public uint? MakesId { get; set; }
+    public int? MakesCount { get; set; }
+    public int? LevelNeeded { get; set; }
+    public bool Disabled { get; set; }
 
     internal const string FILE = "RecipeChanges.json";
 
@@ -306,7 +312,8 @@ internal sealed class RecipeChange {
     };
 
     [System.Text.Json.Serialization.JsonIgnore]
-    internal bool Empty => Amounts.All(a => a is null) && Cooldown is null && GoldCost is null;
+    internal bool Empty => Amounts.All(a => a is null) && Swaps.All(s => s is null) && Extras.Count == 0 && Cooldown is null
+                           && GoldCost is null && MakesId is null && MakesCount is null && LevelNeeded is null && !Disabled;
 
     internal static List<RecipeChange> Load(string customsFolder) {
         var file = System.IO.Path.Combine(customsFolder, FILE);
@@ -328,5 +335,13 @@ internal sealed class RecipeChange {
         System.IO.File.WriteAllText(file + ".saving", System.Text.Json.JsonSerializer.Serialize(changes.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase).ToList(), s_options));
         System.IO.File.Move(file + ".saving", file, overwrite: true);
     }
+
+}
+
+/// <summary>An ingredient added to a recipe on the Recipes tab: a reagent, item, snack or treasure card by template ID.</summary>
+internal sealed class RecipeChangeExtra {
+
+    public uint Id { get; set; }
+    public int Amount { get; set; } = 1;
 
 }

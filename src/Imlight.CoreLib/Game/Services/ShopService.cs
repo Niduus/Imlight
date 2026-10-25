@@ -643,6 +643,13 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        if (Crafting.RecipeChanges.RefusalOf(recipeId, name, wizard.MagicSchoolBehavior?.Level ?? 1) is { } refused) {
+            InformGameClient(refused);
+            SendShopDenyMessage();
+
+            return;
+        }
+
         if (BadgeGate.Blocks(recipe.m_purchaseRequirements, recipeId, SessionActor.ActorRef, GetActiveGameObject(), wizard, SessionActor.GetZoneActor())) {
             Logger.Warning("{0} tried to buy recipe {1} without the badge it requires.", Logger.Args(wizard.CharId, recipeId));
             SendShopDenyMessage();
