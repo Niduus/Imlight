@@ -18,6 +18,10 @@ internal class CommandLoyaltyProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
+    private const string MAJID_ZONE = "WizardCity/WC_Shop_Area";
+    // Teleport_to_WC-Shop-NPC-Loyalty as "X,Y,Z,Yaw", facing Majid (-3947.9, -3052.3).
+    private const string MAJID_SPOT = "-4079.562,-3188.625,-29.36362,0.8";
+
     [Command("loyalty")]
     [Alias("majid", "loyaltystore")]
     private void LoyaltyCommand([Remainder] string text = "") {
@@ -37,12 +41,21 @@ internal class CommandLoyaltyProtocol : CommandProtocol {
                 case "goto":
                 case "visit":
                     // The game's own spot next to Majid in the Shopping District (Zone places: Teleport_to_WC-Shop-NPC-Loyalty).
-                    Context.SessionActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-                        DestinationZone = "WizardCity/WC_Shop_Area",
-                        DestinationLocation = "Teleport_to_WC-Shop-NPC-Loyalty",
-                        SendToClient = true,
-                        OwnerCharId = me.CharId,
-                    });
+                    // The game ignores a zone transfer to the zone it is already in, so there the wizard is moved instead.
+                    if (string.Equals(me.Zone, MAJID_ZONE, StringComparison.OrdinalIgnoreCase)) {
+                        Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS());
+                        Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_MOVEINZONE { Location = MAJID_SPOT });
+                    }
+                    else {
+                        Context.SessionActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                            DestinationZone = MAJID_ZONE,
+                            DestinationLocation = "Teleport_to_WC-Shop-NPC-Loyalty",
+                            SendToClient = true,
+                            OwnerCharId = me.CharId,
+                        });
+                    }
+
+                    Logger.Information("Loyalty Store | {0} goes to Majid from {1}.", Logger.Args(me.CharId, me.Zone));
                     InformSenderClient("Taking you to Majid in the Shopping District.");
 
                     return;

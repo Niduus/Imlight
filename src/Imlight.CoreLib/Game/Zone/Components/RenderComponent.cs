@@ -168,6 +168,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             // If the player has a dynamod that disables this object, do not spawn it for them.
             if (IsDespawnState(mod.ModState)) {
                 _playerIgnoreBecauseDynamod[suspect] = wizard;
+                LogMajid($"hidden by dynamod {mod.ModState} from", suspect);
 
                 return;
             }
@@ -181,6 +182,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         if (IsQuestOnly && relevantDynaMods.Count == 0 && !QuestCallsFor(wizard)) {
             _hiddenUntilQuest[suspect] = wizard;
             _questCheckedAt[suspect] = System.DateTime.UtcNow;
+            LogMajid("held back as quest-only from", suspect);
 
             return;
         }
@@ -222,6 +224,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
 
         // If the player doesn't meet spawn requirements, nothing to do.
+        LogMajid("hidden by spawn requirements from", suspect);
         if (!_doesDistanceCheck) {
             return;
         }
@@ -460,6 +463,13 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     private bool? _isQuestOnly;
 
+    // Niduus 2026-10-25, "Loyalty NPC is not here": the log says whether Majid reached the player's game.
+    private void LogMajid(string what, IActorRef player) {
+        if (Loyalty.LoyaltyStore.IsMajid(Entity.Template)) {
+            Logger.Information("Loyalty Store | Majid {0} {1} (at {2}).", Logger.Args(what, player?.Path.Name, Entity.ActiveGameObject?.m_location));
+        }
+    }
+
     private bool QuestCallsFor(Wizard wizard) {
         // A zone script put the object in another state than it was placed in (shown it).
         var state = Entity.Zone.ScriptState.GetObjectState(Entity.Info?.m_zoneTag);
@@ -529,6 +539,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             Data = serializedData
         };
         player.Tell(newObjectMsg);
+        LogMajid("sent to", player);
 
         foreach (var stateMsg in CreateCurrentStateMessages()) {
             player.Tell(stateMsg);
