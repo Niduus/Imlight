@@ -227,6 +227,79 @@ internal static class QuestMadlibs {
         });
     }
 
+    private static readonly object s_speakerLock = new();
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ActorDialog, object> s_namedDialogs = [];
+
+    /// <summary>
+    /// Gives the speakers of a Prep or Completion dialog that names nobody (our built quests, and game quests copied
+    /// without it) what the game's own dialogs carry: the NPC's name format, its portrait, and an NPC madlib block per
+    /// persona, keyed by the persona name's hash. Without them the dialog showed no name and some other NPC's picture
+    /// (Llewella Corey in "About the Astrals"; Niduus, 2026-10-25). Underway and Hyperlink lines stay nameless, like the game's.
+    /// </summary>
+    internal static void NameDialogSpeakers(ActorDialog dialog) {
+        if (dialog?.m_dialogEntries is null || s_namedDialogs.TryGetValue(dialog, out _)) {
+            return;
+        }
+
+        lock (s_speakerLock) {
+            if (!s_namedDialogs.TryAdd(dialog, null)) {
+                return;
+            }
+
+            string tag = dialog.m_dialogTag;
+            if (tag is "Underway" or "Hyperlink" || dialog.m_madlibs is { Count: > 0 }) {
+                return;
+            }
+
+            var madlibs = new System.Collections.Generic.List<ActorMadlib>();
+
+            foreach (var entry in dialog.m_dialogEntries.OfType<NPCDialogEntry>().Where(e => e.m_nameSTKey.IsEmpty)) {
+                ulong templateId = entry.m_actorTemplateID != 0 ? entry.m_actorTemplateID : TemplateOfPersona(entry.m_personaName);
+                var (first, last) = NameKeysOfTemplate(templateId);
+                if (string.IsNullOrEmpty(first)) {
+                    continue;
+                }
+
+                string format = string.IsNullOrEmpty(last) ? "NPCFormats_First_Only" : "NPCFormats_First_Last";
+                entry.m_nameSTKey = format;
+
+                if (string.IsNullOrEmpty(entry.m_picture)
+                    && CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate npc
+                    && !string.IsNullOrEmpty(npc.m_sIcon)) {
+                    entry.m_picture = npc.m_sIcon;
+                }
+
+                string persona = entry.m_personaName;
+                if (string.IsNullOrEmpty(persona)) {
+                    continue;
+                }
+
+                uint index = Imcodec.Cryptography.StringHash.Compute(persona);
+                if (madlibs.Any(m => m?.m_index == index)) {
+                    continue;
+                }
+
+                madlibs.Add(new ActorMadlib {
+                    m_index = index,
+                    m_madlibBlock = new MadlibBlock {
+                        m_madlibs = [
+                            new MadlibArgT_ByteString { m_madlibToken = "FIRSTNAME", m_madlibArgument = first },
+                            new MadlibArgT_ByteString { m_madlibToken = "LASTNAME", m_madlibArgument = last },
+                            new MadlibArgT_ByteString { m_madlibToken = "TITLE", m_madlibArgument = string.Empty },
+                            new MadlibArgT_ByteString { m_madlibToken = "NICKNAME", m_madlibArgument = string.Empty },
+                            new MadlibArgT_ByteString { m_madlibToken = "FULLNAME", m_madlibArgument = format },
+                        ],
+                        m_blockToken = "NPC"
+                    }
+                });
+            }
+
+            if (madlibs.Count > 0) {
+                dialog.m_madlibs = madlibs;
+            }
+        }
+    }
+
     private static MadlibArgT_ByteString[] GetTallyArguments(GoalTemplate gTemplate)
         => gTemplate.m_tallyCounter is null ? [] : [
             new MadlibArgT_ByteString {

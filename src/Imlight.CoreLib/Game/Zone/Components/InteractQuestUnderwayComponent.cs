@@ -44,6 +44,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Madlibs;
 using Imlight.Common;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -238,6 +239,7 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
     }
 
     private void SendActorDialog(IActorRef playerActor, ActorDialog dialogEntry, string completionType, ulong questId = 0, ulong goalId = 0) {
+        QuestMadlibs.NameDialogSpeakers(dialogEntry);
         var serializer = new ObjectSerializer(Versionable: false);
         if (!serializer.Serialize(dialogEntry, 16, out var serializedData)) {
             Logger.Error("Failed to serialize '{0}' dialog.",

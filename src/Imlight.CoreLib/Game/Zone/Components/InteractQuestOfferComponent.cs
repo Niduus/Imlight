@@ -262,6 +262,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     }
 
     private void SendActorDialog(IActorRef playerActor, ActorDialog dialogEntry, string completionType, ulong questId = 0, ulong goalId = 0) {
+        QuestMadlibs.NameDialogSpeakers(dialogEntry);
         var serializer = new ObjectSerializer(Versionable: false);
         if (!serializer.Serialize(dialogEntry, 16, out var serializedData)) {
             Logger.Error("Failed to serialize '{0}' dialog.",

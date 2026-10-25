@@ -19,6 +19,7 @@
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Madlibs;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Results.Handlers;
@@ -31,6 +32,7 @@ internal sealed class ResActorDialogHandler : BaseResultHandler<ResActorDialog> 
         }
 
         var dialog = Result.m_dialog;
+        QuestMadlibs.NameDialogSpeakers(dialog);
 
         // Serialize the actor dialog into network format.
         var serializer = new ObjectSerializer(Versionable: false);

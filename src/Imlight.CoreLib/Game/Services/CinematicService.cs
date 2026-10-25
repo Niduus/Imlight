@@ -56,6 +56,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Madlibs;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Cinematics;
 using Imlight.CoreLib.Game.States;
@@ -351,6 +352,7 @@ internal class CinematicService(SessionActor sessionActor) : MessageService(sess
     }
 
     private void SendDialog(ActorDialog dialog) {
+        QuestMadlibs.NameDialogSpeakers(dialog);
         if (!_dialogSerializer.Serialize(dialog, 16, out var dialogData)) {
             Logger.Error("Failed to serialize cinematic dialog {Tag}.", Logger.Args(dialog.m_dialogTag));
 

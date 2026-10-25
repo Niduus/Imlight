@@ -68,7 +68,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
 
     private const string COMPLETE_NPC_ICON = "Complete";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
-    private const float QUEST_COMPLETION_TRANSITION_DELAY_MS = 1500f;
+    private const float QUEST_COMPLETION_TRANSITION_DELAY_MS = 150f;
 
     public string ServiceName => "QuestPersonaGoalService";
     public string NpcIcon => "";
