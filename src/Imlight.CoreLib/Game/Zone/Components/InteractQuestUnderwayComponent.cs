@@ -64,7 +64,8 @@ internal class PlayerQuestUnderwayState {
 internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
     : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
 
-    private const string PREP_NPC_ICON = "Prep";
+    // The menu icon of a quest in progress: the grey ? (the client's "Unfinished" key), like the one over the head.
+    private const string PREP_NPC_ICON = "Unfinished";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
 
     public string ServiceName => "QuestUnderwayService";

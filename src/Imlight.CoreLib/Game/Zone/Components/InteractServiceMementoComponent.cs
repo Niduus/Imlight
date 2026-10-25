@@ -84,6 +84,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     private const string DEFAULT_TEXT_KEY = "GUI_NPCInteractText";
     private const string WIZBANG_UPDATE_TIMER_KEY = "WIZBANG_UPDATE_TIMER";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
+    private static readonly TimeSpan WizBangQueryTimeout = TimeSpan.FromSeconds(3);
+    private bool _wizBangQueryPending;
 
     private readonly float _interactionRadius = 300.0f;
     private readonly Dictionary<ulong, IActorRef> _playersInInteractionRange = [];
@@ -152,7 +154,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // Wizbangs go to every player in the zone, near or far (Niduus, 2026-10-25: vendors and trainers lost the
         // symbol over their heads at times). The zone's far clip is no sure measure of what the client draws, and a
         // player who has not moved yet since arriving was never counted.
-        _playersInRenderRange.TryAdd(playerId, playerActor);
+        // The newest session of a wizard replaces an old one (a relog or a trip back into the zone keeps the same
+        // object id): the old session no longer answers, and asking it held up this NPC's symbol for everyone.
+        _playersInRenderRange[playerId] = playerActor;
     }
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
@@ -160,7 +164,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
-        _playersInRenderRange.TryAdd(playerObj.m_globalID.Full, playerActor);
+        _playersInRenderRange[playerObj.m_globalID.Full] = playerActor;
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEINTERACTION))]
@@ -247,17 +251,19 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL))]
     private void HandleWizBangUpdateInterval(ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL message) {
-        if (_serviceComponents.Count <= 0 || _playersInRenderRange.Count == 0) {
+        if (_serviceComponents.Count <= 0 || _playersInRenderRange.Count == 0 || _wizBangQueryPending) {
             return;
         }
 
         // Query every nearby player's wizard concurrently instead of
-        // blocking on each one sequentially.
+        // blocking on each one sequentially. A player who does not answer in time (a session that is gone) is
+        // dropped, so it cannot hold up the symbol for the others.
+        _wizBangQueryPending = true;
         var playerActors = _playersInRenderRange.Values.ToArray();
         var queryTasks = playerActors.Select(async playerActor => {
             try {
                 var msg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
-                var rsp = await playerActor.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(msg);
+                var rsp = await playerActor.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(msg, WizBangQueryTimeout);
                 return rsp.Wizard;
             }
             catch {
@@ -278,10 +284,18 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_WIZBANG_UPDATE_RESULT))]
     private void HandleWizBangUpdateResult(ZONE_102_PROTOCOL.MSG_WIZBANG_UPDATE_RESULT result) {
+        _wizBangQueryPending = false;
         for (int i = 0; i < result.PlayerActors.Length; i++) {
             var wizard = result.Wizards[i];
             if (wizard != null) {
                 SendWizBang(result.PlayerActors[i], wizard);
+
+                continue;
+            }
+
+            var gone = _playersInRenderRange.Where(x => x.Value.Equals(result.PlayerActors[i])).Select(x => x.Key).ToList();
+            foreach (var playerId in gone) {
+                _playersInRenderRange.Remove(playerId);
             }
         }
     }

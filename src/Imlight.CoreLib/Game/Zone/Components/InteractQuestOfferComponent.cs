@@ -67,7 +67,8 @@ internal class PlayerQuestOfferState {
 internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
 
-    private const string PREP_NPC_ICON = "Prep";
+    // The menu icon of a quest to start: the yellow ! (the client's "Start" key, GUI/QuestButtons/Art_Quest_Start.dds).
+    private const string PREP_NPC_ICON = "Start";
     private const double WIZBANG_UPDATE_INTERVAL_SECONDS = 1.0;
 
     public string ServiceName => "QuestOfferService";
