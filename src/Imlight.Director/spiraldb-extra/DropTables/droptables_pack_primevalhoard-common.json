@@ -1,0 +1,284 @@
+{
+  "Name": "PrimevalHoard-Common",
+  "Description": "Primeval Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100408",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220214",
+      "ItemName": "Flaming Pineapple",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220323",
+      "ItemName": "Bag of Jelly Beans",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "225455",
+      "ItemName": "Blue Banshee",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733122",
+      "ItemName": "Chili Peppers",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "739076",
+      "ItemName": "Codex Stand",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739082",
+      "ItemName": "Gold Bars",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739123",
+      "ItemName": "Ritual Codex",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739124",
+      "ItemName": "Earth Codex",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739125",
+      "ItemName": "Obscure Codex",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739129",
+      "ItemName": "Crystal Scepter",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739130",
+      "ItemName": "Crystal Skull",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739131",
+      "ItemName": "Ornate Vase",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739132",
+      "ItemName": "Ornate Spears",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739152",
+      "ItemName": "Tomato Basket",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739153",
+      "ItemName": "Orange Basket",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739154",
+      "ItemName": "Fish Basket",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739158",
+      "ItemName": "Green Crystal",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739159",
+      "ItemName": "Green Stone",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739188",
+      "ItemName": "Azteca Fire Jug",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739189",
+      "ItemName": "Azteca Ritual Bowl",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739190",
+      "ItemName": "Azteca Pot",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739191",
+      "ItemName": "Azteca Ornate Jug",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739192",
+      "ItemName": "Azteca Water Jug",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "739193",
+      "ItemName": "Azteca Tall Pot",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1257600",
+      "ItemName": "Desparagus Salad",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317939",
+      "ItemName": "Hematite",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350074",
+      "ItemName": "Opal",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1507024",
+      "ItemName": "Trompy Bronto (1 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1507025",
+      "ItemName": "Stompy Bronto (1 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1507026",
+      "ItemName": "Chompy Bronto (1 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1618777232",
+      "ItemName": "Berserk",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "584222094",
+      "ItemName": "Enfeeble",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "2021587332",
+      "ItemName": "Accurate",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

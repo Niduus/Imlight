@@ -1,0 +1,170 @@
+{
+  "Name": "2016YuletidePackLT-Rare",
+  "Description": "Winter Wonder Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1392217",
+      "ItemName": "Snowhoppers",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392732",
+      "ItemName": "Snowhopper Sleigh (7 Day)",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392733",
+      "ItemName": "Snowhopper Sleigh (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392734",
+      "ItemName": "The Winter Antlers",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392740",
+      "ItemName": "The Snow Crown",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392741",
+      "ItemName": "The Frosted Tips",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392743",
+      "ItemName": "Sparkle Globe",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392744",
+      "ItemName": "Skating Rink",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392750",
+      "ItemName": "Green garland with lights",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392751",
+      "ItemName": "Potted Poinsettia",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392753",
+      "ItemName": "Yule Presents",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392754",
+      "ItemName": "Red Candy Canes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392755",
+      "ItemName": "Blue Candy Canes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392756",
+      "ItemName": "Krampus Wallpaper",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407209",
+      "ItemName": "Snowdrifter's Staff",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407222",
+      "ItemName": "Snowdrifter's Stave",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407235",
+      "ItemName": "Snowdrifter's Scepter",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407365",
+      "ItemName": "Snowdrifter's Hat",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407378",
+      "ItemName": "Snowdrifter's Raiment",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407391",
+      "ItemName": "Snowdrifter's Boots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407404",
+      "ItemName": "Snowdrifter's Conical",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407417",
+      "ItemName": "Snowdrifter's Outfit",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407430",
+      "ItemName": "Snowdrifter's Shoes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407443",
+      "ItemName": "Snowdrifter's Mantle",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407456",
+      "ItemName": "Snowdrifter's Vestment",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407469",
+      "ItemName": "Snowdrifter's Trekkers",
+      "Notes": "",
+      "Chance": 5.5556
+    }
+  ]
+}

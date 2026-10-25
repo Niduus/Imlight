@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower01-Heal",
+  "Description": "Deckathalon Ice Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "617308812",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1267213724",
+      "ItemName": "Helping Hands",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1473990396",
+      "ItemName": "Link",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "73527153",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "779947345",
+      "ItemName": "Fairy",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1889148781",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "84793606",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1088567023",
+      "ItemName": "Minor Blessing",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "74835973",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 33.3333
+    }
+  ]
+}

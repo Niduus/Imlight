@@ -1,0 +1,56 @@
+{
+  "Name": "TreasureTower06-Attack",
+  "Description": "Deckathalon Myth Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "115706896",
+      "ItemName": "Catalan",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1568839551",
+      "ItemName": "Tempest",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1390585275",
+      "ItemName": "Soulsapper",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1737184053",
+      "ItemName": "Kraken",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1148438838",
+      "ItemName": "Jolted Snowman",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1185943347",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "2062203684",
+      "ItemName": "Thunder Snake",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

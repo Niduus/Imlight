@@ -1,0 +1,218 @@
+{
+  "Name": "SinbadHoardLT-Common",
+  "Description": "Sinbad Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "537600",
+      "ItemName": "Bunch of Figs",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "789217",
+      "ItemName": "Salty Fish",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479416",
+      "ItemName": "Magical Clay",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479431",
+      "ItemName": "Fence Segment",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479432",
+      "ItemName": "Fence Post",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479442",
+      "ItemName": "Red Vase",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479443",
+      "ItemName": "Blue Vase",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1479446",
+      "ItemName": "Qhat Shield",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1167402845",
+      "ItemName": "Death Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "903204776",
+      "ItemName": "Fire Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "162442301",
+      "ItemName": "Ice Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "903192494",
+      "ItemName": "Life Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "903042477",
+      "ItemName": "Myth Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1170611562",
+      "ItemName": "Storm Prism",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "73527153",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1171503055",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1568839551",
+      "ItemName": "Tempest",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "819802901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 7.1429
+    }
+  ]
+}

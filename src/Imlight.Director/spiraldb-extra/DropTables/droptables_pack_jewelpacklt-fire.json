@@ -1,0 +1,596 @@
+{
+  "Name": "JewelPackLT-Fire",
+  "Description": "Fire Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352577",
+      "ItemName": "Cracked Damage Ruby +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352578",
+      "ItemName": "Cracked Damage Ruby +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352579",
+      "ItemName": "Cracked Damage Ruby +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352580",
+      "ItemName": "Cracked Damage Ruby +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352581",
+      "ItemName": "Cracked Damage Ruby +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352582",
+      "ItemName": "Cracked Damage Ruby +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352583",
+      "ItemName": "Chipped Damage Ruby +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352584",
+      "ItemName": "Chipped Damage Ruby +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352585",
+      "ItemName": "Flawed Damage Ruby +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352586",
+      "ItemName": "Flawed Damage Ruby +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352587",
+      "ItemName": "Blemished Damage Ruby +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352588",
+      "ItemName": "Blemished Damage Ruby +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352589",
+      "ItemName": "Dull Damage Ruby +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352590",
+      "ItemName": "Dull Damage Ruby +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352591",
+      "ItemName": "Plain Damage Ruby +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352592",
+      "ItemName": "Plain Damage Ruby +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352593",
+      "ItemName": "Opaque Damage Ruby +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352594",
+      "ItemName": "Opaque Damage Ruby +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352595",
+      "ItemName": "Clear Damage Ruby +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352596",
+      "ItemName": "Clear Damage Ruby +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352597",
+      "ItemName": "Polished Damage Ruby +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352598",
+      "ItemName": "Polished Damage Ruby +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352599",
+      "ItemName": "Lustrous Damage Ruby +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352600",
+      "ItemName": "Lustrous Damage Ruby +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352761",
+      "ItemName": "Dull Piercing Ruby +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352762",
+      "ItemName": "Dull Piercing Ruby +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352763",
+      "ItemName": "Plain Piercing Ruby +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352764",
+      "ItemName": "Opaque Piercing Ruby +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352765",
+      "ItemName": "Clear Piercing Ruby +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352823",
+      "ItemName": "Dull Critical Ruby +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352824",
+      "ItemName": "Dull Critical Ruby +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352825",
+      "ItemName": "Dull Critical Ruby +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352826",
+      "ItemName": "Plain Critical Ruby +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352827",
+      "ItemName": "Plain Critical Ruby +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352828",
+      "ItemName": "Opaque Critical Ruby +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352829",
+      "ItemName": "Opaque Critical Ruby +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352830",
+      "ItemName": "Clear Critical Ruby +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352831",
+      "ItemName": "Clear Critical Ruby +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352832",
+      "ItemName": "Polished Critical Ruby +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352833",
+      "ItemName": "Polished Critical Ruby +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352834",
+      "ItemName": "Lustrous Critical Ruby +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352835",
+      "ItemName": "Lustrous Critical Ruby +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357056",
+      "ItemName": "Chipped Accurate Ruby +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357057",
+      "ItemName": "Flawed Accurate Ruby +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357058",
+      "ItemName": "Blemished Accurate Ruby +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357059",
+      "ItemName": "Dull Accurate Ruby +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357060",
+      "ItemName": "Plain Accurate Ruby +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357061",
+      "ItemName": "Opaque Accurate Ruby +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357062",
+      "ItemName": "Clear Accurate Ruby +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357063",
+      "ItemName": "Polished Accurate Ruby +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357064",
+      "ItemName": "Lustrous Accurate Ruby +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357136",
+      "ItemName": "Cracked Accurate Ruby +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357137",
+      "ItemName": "Cracked Accurate Ruby +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357203",
+      "ItemName": "Fire Cat Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357204",
+      "ItemName": "Fire Elf Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357205",
+      "ItemName": "Glacial Shield Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358590",
+      "ItemName": "Sunbird Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358591",
+      "ItemName": "Wyldfire Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358604",
+      "ItemName": "Meteor Strike Ruby",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358605",
+      "ItemName": "Phoenix Ruby",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358606",
+      "ItemName": "Helephant Ruby",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358626",
+      "ItemName": "Quench Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358627",
+      "ItemName": "Mass Fire Prism Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358628",
+      "ItemName": "Fire Dragon Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358629",
+      "ItemName": "Power Link Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358630",
+      "ItemName": "Fire Trap Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358631",
+      "ItemName": "Detonate Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358926",
+      "ItemName": "Take Power Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358927",
+      "ItemName": "Fire Elemental Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358928",
+      "ItemName": "Sir Lamorak Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358973",
+      "ItemName": "Fireblade Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360142",
+      "ItemName": "Wrath of Ares Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374099",
+      "ItemName": "Fire Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376142",
+      "ItemName": "Dual Fireblade Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376295",
+      "ItemName": "Morganthe's Venom Ruby",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376302",
+      "ItemName": "Erratic Eruption Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384428",
+      "ItemName": "Fire Brandon Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405715",
+      "ItemName": "Shiny Damage Ruby +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405716",
+      "ItemName": "Shiny Damage Ruby +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405732",
+      "ItemName": "Shiny Critical Ruby +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405733",
+      "ItemName": "Shiny Critical Ruby +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405768",
+      "ItemName": "Firespear Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405787",
+      "ItemName": "Shiny Accurate Ruby +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430044",
+      "ItemName": "Sparkling Damage Ruby +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430052",
+      "ItemName": "Sparkling Critical Ruby +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462430",
+      "ItemName": "Sparkling Damage Ruby +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462439",
+      "ItemName": "Sparkling Critical Ruby +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462482",
+      "ItemName": "Sparkling Accurate Ruby +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466983",
+      "ItemName": "Brimstone Revenant Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514441",
+      "ItemName": "Dazzling Damage Ruby +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514442",
+      "ItemName": "Dazzling Damage Ruby +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514459",
+      "ItemName": "Dazzling Critical Ruby +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514460",
+      "ItemName": "Dazzling Critical Ruby +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514480",
+      "ItemName": "Dazzling Accurate Ruby +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514489",
+      "ItemName": "Krampus Revenant Ruby",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

@@ -1,0 +1,602 @@
+{
+  "Name": "KirinsHoardLT-Wildcard-02",
+  "Description": "Kirin's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "470171",
+      "ItemName": "Silver Kirin (PERM)",
+      "Notes": "",
+      "Chance": 0.3289
+    },
+    {
+      "ItemId": "470172",
+      "ItemName": "Blue Kirin (PERM)",
+      "Notes": "",
+      "Chance": 0.3289
+    },
+    {
+      "ItemId": "470173",
+      "ItemName": "Gold Kirin (PERM)",
+      "Notes": "",
+      "Chance": 0.339
+    },
+    {
+      "ItemId": "126987",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "160130",
+      "ItemName": "Dream Ghoul",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "225414",
+      "ItemName": "Plague Ninja",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "225438",
+      "ItemName": "Life Ghoul",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532601",
+      "ItemName": "Kozane Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532609",
+      "ItemName": "Kozane Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532617",
+      "ItemName": "Kozane Armor",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532625",
+      "ItemName": "Oyoroi Helmet",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532633",
+      "ItemName": "Oyoroi Sandals",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532641",
+      "ItemName": "Oyoroi Breastplate",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532649",
+      "ItemName": "Rokugo Helmet",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532657",
+      "ItemName": "Rokugo Footwear",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532665",
+      "ItemName": "Rokugo Armor",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532704",
+      "ItemName": "Ringed Broadsword",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532712",
+      "ItemName": "Chiming Blade",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532720",
+      "ItemName": "Four Bells Ringing",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "537632",
+      "ItemName": "Goat Monk Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537633",
+      "ItemName": "Oni Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537634",
+      "ItemName": "Ninja Pig Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537635",
+      "ItemName": "Treant Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589071",
+      "ItemName": "Fiendish Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589072",
+      "ItemName": "Elemental Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589073",
+      "ItemName": "Imperial Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589074",
+      "ItemName": "Guardian Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589075",
+      "ItemName": "Lavender Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589076",
+      "ItemName": "Sunfire Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589098",
+      "ItemName": "MooShu Tofu",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589099",
+      "ItemName": "Sweet and Sour Chow",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589100",
+      "ItemName": "Jade Palace Tempura",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589101",
+      "ItemName": "Hot and Sour Bits",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589102",
+      "ItemName": "Hot Ginger Snaps",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589103",
+      "ItemName": "Fido's Fortune Puffs",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589104",
+      "ItemName": "Basil Poodle Noodles",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589105",
+      "ItemName": "Zen Poppers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589106",
+      "ItemName": "Chow Chow Chow",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589107",
+      "ItemName": "Kapow Pug Poppers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "100329",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100433",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220308",
+      "ItemName": "Golden Pizza",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220332",
+      "ItemName": "Jar of Jelly Beans",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "225435",
+      "ItemName": "Stone Colossus",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "240102",
+      "ItemName": "Killer Tomato",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "512099",
+      "ItemName": "MooShu Combat Theme",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589095",
+      "ItemName": "MooShu Cheddar",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "358907420",
+      "ItemName": "Ninja Pigs",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1156966404",
+      "ItemName": "Tamauji",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "885960248",
+      "ItemName": "Yochimo",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "2113077343",
+      "ItemName": "Aiuchi",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1602644438",
+      "ItemName": "Do-Daga",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1927336522",
+      "ItemName": "Kakeda Painbringer",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1474039101",
+      "ItemName": "Koto",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1361212212",
+      "ItemName": "Otomo Fury",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100328",
+      "ItemName": "Brown Spider",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100330",
+      "ItemName": "Ninja Pig",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160467",
+      "ItemName": "Iron Tea Pot",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160485",
+      "ItemName": "Tatami Floor Mat",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160514",
+      "ItemName": "Low Purple Vase",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160527",
+      "ItemName": "Small Wooden Table",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160538",
+      "ItemName": "Wooden Memorial",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160543",
+      "ItemName": "Bamboo Barrier",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160579",
+      "ItemName": "Moodha Bust",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160587",
+      "ItemName": "Crossed Naginata Spears",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160591",
+      "ItemName": "Green Sword Display",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160601",
+      "ItemName": "Pearl Orchid",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220199",
+      "ItemName": "MooShu Broccoli",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

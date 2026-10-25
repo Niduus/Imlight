@@ -1,0 +1,194 @@
+{
+  "Name": "BoosterPack-Set-03-Commons-Uncommons",
+  "Description": "Marvelous Minions Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1530909093",
+      "ItemName": "Buff Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977488755",
+      "ItemName": "Draw Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1530852266",
+      "ItemName": "Mend Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "68210593",
+      "ItemName": "Shield Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "2108934057",
+      "ItemName": "Siphon Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "607475001",
+      "ItemName": "Steal Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "494306015",
+      "ItemName": "Purloin Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1171444879",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1361848376",
+      "ItemName": "Draw Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "605111790",
+      "ItemName": "Drain Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977040643",
+      "ItemName": "Take Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1280381748",
+      "ItemName": "Purloin Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "430638620",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "283916106",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1571597547",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "72783713",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1714710144",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "79972357",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "451385876",
+      "ItemName": "Nature's Wrath",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1777586445",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "693550098",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1554023954",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "978857178",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1161913825",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1469006636",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "144134106",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1722687341",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "655778757",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "73012274",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1924140837",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

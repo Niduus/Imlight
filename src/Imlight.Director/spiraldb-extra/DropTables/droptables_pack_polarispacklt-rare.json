@@ -1,0 +1,266 @@
+{
+  "Name": "PolarisPackLT-Rare",
+  "Description": "Witch's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473444",
+      "ItemName": "Arctic Ninja Pig",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "589159",
+      "ItemName": "Goose Tree",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "653098",
+      "ItemName": "Snow Beast",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1359793",
+      "ItemName": "Wildwood Yeti",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1359953",
+      "ItemName": "Ice Floe Siren",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374154",
+      "ItemName": "Pingouin Patriôte",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374155",
+      "ItemName": "Jubilant Pingouin Craftsman",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374156",
+      "ItemName": "Pingouin Newsie",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374158",
+      "ItemName": "Flag-Waving Pingouin",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374159",
+      "ItemName": "Liberated Pingouin",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374160",
+      "ItemName": "Elated Pingouin Seamstress",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374161",
+      "ItemName": "Ecstatic Pingouin Dancer",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374164",
+      "ItemName": "Joyous Pingouin Dockworker",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1374168",
+      "ItemName": "Dancing Pingouin Laundress",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376001",
+      "ItemName": "Seal Team Demolitions Fins",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376013",
+      "ItemName": "Seal Team Demolitions Suit",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376037",
+      "ItemName": "Seal Team Assault Fins",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376049",
+      "ItemName": "Seal Team Assault Suit",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376073",
+      "ItemName": "Seal Team Recon Fins",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376085",
+      "ItemName": "Seal Team Recon Suit",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376097",
+      "ItemName": "Seal Team Demolitions Helmet",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376109",
+      "ItemName": "Seal Team Assault Helmet",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376121",
+      "ItemName": "Seal Team Recon Helmet",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1376195",
+      "ItemName": "Seal Team Demolitions Hammer",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376207",
+      "ItemName": "Seal Team Assault Hammer",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "1376219",
+      "ItemName": "Seal Team Recon Hammer",
+      "Notes": "",
+      "Chance": 1.0753
+    },
+    {
+      "ItemId": "937367301",
+      "ItemName": "Nested Fury",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "825624505",
+      "ItemName": "Raging Bull",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1869206605",
+      "ItemName": "Rusalka's Wrath",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "75670967",
+      "ItemName": "Snowball Barrage",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "206678686",
+      "ItemName": "Winged Sorrow",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1760781860",
+      "ItemName": "Wings of Fate",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "478277680",
+      "ItemName": "Witch's House Call",
+      "Notes": "",
+      "Chance": 4.1667
+    }
+  ]
+}

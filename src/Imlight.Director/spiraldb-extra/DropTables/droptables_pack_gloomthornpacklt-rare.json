@@ -1,0 +1,290 @@
+{
+  "Name": "GloomthornPackLT-Rare",
+  "Description": "Gloomthorn Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "126985",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "212171",
+      "ItemName": "Dark Imp",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "589075",
+      "ItemName": "Lavender Foo Dog",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "589173",
+      "ItemName": "Bamboo Shoots",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "690108",
+      "ItemName": "Gargoyle",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1292983",
+      "ItemName": "Gloomthorn Wardrobe",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1292984",
+      "ItemName": "Gloomthorn Coffee Table",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383149",
+      "ItemName": "Red Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383157",
+      "ItemName": "Purple Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383159",
+      "ItemName": "Green Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383160",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383161",
+      "ItemName": "Blue Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383162",
+      "ItemName": "Pale Maiden",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383164",
+      "ItemName": "Orange Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383165",
+      "ItemName": "Blue Banshee",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383167",
+      "ItemName": "Red Banshee",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383169",
+      "ItemName": "Shackled Banshee",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383172",
+      "ItemName": "Scarecrow",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383174",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383175",
+      "ItemName": "Red Ghoul",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383176",
+      "ItemName": "Gravedigger",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383180",
+      "ItemName": "Wraith",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383286",
+      "ItemName": "Gloomthorn Candy Bed",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383287",
+      "ItemName": "Gloomthorn Nightstand",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383288",
+      "ItemName": "Gloomthorn Bookshelf",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383289",
+      "ItemName": "Gloomthorn Dining Chair",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383290",
+      "ItemName": "Gloomthorn Feasting Table",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383340",
+      "ItemName": "Gloomthorn Couch",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383353",
+      "ItemName": "Gloomthorn Vine (7 Day)",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383354",
+      "ItemName": "Gloomthorn Vine (1 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383356",
+      "ItemName": "Bat Swarm (7 Day)",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1383357",
+      "ItemName": "Bat Swarm (1 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384538",
+      "ItemName": "Grey Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384551",
+      "ItemName": "Grey Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1384564",
+      "ItemName": "Grey Werewolf Leggings",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384577",
+      "ItemName": "Black Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384590",
+      "ItemName": "Black Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1384603",
+      "ItemName": "Black Werewolf Leggings",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384616",
+      "ItemName": "Brown Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384629",
+      "ItemName": "Brown Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1384642",
+      "ItemName": "Brown Werewolf Leggings",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1384656",
+      "ItemName": "Blue Moon Staff",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1384669",
+      "ItemName": "Blood Moon Staff",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1384682",
+      "ItemName": "Hunter's Moon Staff",
+      "Notes": "",
+      "Chance": 0.9901
+    },
+    {
+      "ItemId": "1392007",
+      "ItemName": "Jack O Lantern",
+      "Notes": "",
+      "Chance": 0.9901
+    }
+  ]
+}

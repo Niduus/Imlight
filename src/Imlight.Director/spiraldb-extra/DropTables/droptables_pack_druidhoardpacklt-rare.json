@@ -1,0 +1,200 @@
+{
+  "Name": "DruidHoardPackLT-Rare",
+  "Description": "Druid's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "713147",
+      "ItemName": "Sour Fickle Pickle",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470623",
+      "ItemName": "Combat Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470624",
+      "ItemName": "Combat Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470626",
+      "ItemName": "Attack Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470627",
+      "ItemName": "Attack Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470628",
+      "ItemName": "Battle Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470629",
+      "ItemName": "Battle Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470635",
+      "ItemName": "Summer Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470636",
+      "ItemName": "Winter Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470637",
+      "ItemName": "Spring Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479629",
+      "ItemName": "Amber Orb",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479630",
+      "ItemName": "Druid Burial Chambers",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479631",
+      "ItemName": "Druid Symbol Wall Hanging",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479632",
+      "ItemName": "Druid Symbol Floor",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479633",
+      "ItemName": "Fountain of Valencia",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479634",
+      "ItemName": "Ruined Castle Painting",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479649",
+      "ItemName": "King Casimir",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1479656",
+      "ItemName": "Queen Margherita",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494247",
+      "ItemName": "Ancient Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494261",
+      "ItemName": "Ancient Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494275",
+      "ItemName": "Ancient Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494289",
+      "ItemName": "Spellwright's Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494303",
+      "ItemName": "Spellwright's Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494317",
+      "ItemName": "Spellwright's Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494331",
+      "ItemName": "Treeminder's Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494345",
+      "ItemName": "Treeminder's Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494359",
+      "ItemName": "Treeminder's Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494499",
+      "ItemName": "Ancient Druid Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494513",
+      "ItemName": "Spellwright's Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494527",
+      "ItemName": "Treeminder's Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    }
+  ]
+}

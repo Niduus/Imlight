@@ -1,0 +1,80 @@
+{
+  "Name": "TreasureTower04-Utility",
+  "Description": "Deckathalon Life Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1911013456",
+      "ItemName": "Pierce",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "286699852",
+      "ItemName": "Steal Ward",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "432322239",
+      "ItemName": "Ether Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "782323483",
+      "ItemName": "Death Trap",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "658134547",
+      "ItemName": "Life Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

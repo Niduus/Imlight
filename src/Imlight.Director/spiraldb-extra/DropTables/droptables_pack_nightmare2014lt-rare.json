@@ -1,0 +1,188 @@
+{
+  "Name": "Nightmare2014LT-Rare",
+  "Description": "Harrowing Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1201214",
+      "ItemName": "Jack Hallow's Blues",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201225",
+      "ItemName": "Jack Hallow's Wailer",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201236",
+      "ItemName": "Jack Hallow's Gourdtar",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201247",
+      "ItemName": "Jack Hallow's Guitar",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201258",
+      "ItemName": "Nighttide Torment Top Hat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201269",
+      "ItemName": "Boots of Nighttide Torment",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201280",
+      "ItemName": "Nighttide Torment Guise",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201291",
+      "ItemName": "Midnight Torment Top Hat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201302",
+      "ItemName": "Boots of Midnight Torment",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201313",
+      "ItemName": "Midnight Torment Guise",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201324",
+      "ItemName": "Nightfall Torment Top Hat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201335",
+      "ItemName": "Boots of Nightfall Torment",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1201346",
+      "ItemName": "Nightfall Torment Guise",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201357",
+      "ItemName": "Tormentor's Shredder",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201368",
+      "ItemName": "Tormentor's Bonerattler",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1201379",
+      "ItemName": "Tormentor's Skullsplitter",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1317183",
+      "ItemName": "Harrowed Bones",
+      "Notes": "",
+      "Chance": 1.4286
+    },
+    {
+      "ItemId": "1317238",
+      "ItemName": "False Dawn Harrowings (7 Day)",
+      "Notes": "",
+      "Chance": 1.4286
+    },
+    {
+      "ItemId": "1317239",
+      "ItemName": "False Dawn Harrowings (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317240",
+      "ItemName": "Midnight Harrowings (7 Day)",
+      "Notes": "",
+      "Chance": 1.4286
+    },
+    {
+      "ItemId": "1317241",
+      "ItemName": "Midnight Harrowings (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317242",
+      "ItemName": "Nightfall Harrowings (7 Day)",
+      "Notes": "",
+      "Chance": 1.4286
+    },
+    {
+      "ItemId": "1317243",
+      "ItemName": "Nightfall Harrowings (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1359632",
+      "ItemName": "Winged Catastrophe",
+      "Notes": "",
+      "Chance": 1.4286
+    },
+    {
+      "ItemId": "1359662",
+      "ItemName": "The Goat Horns",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1359664",
+      "ItemName": "The Halo",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1359665",
+      "ItemName": "The Cat Ears",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1359782",
+      "ItemName": "Midnight Owl (7 Day)",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1359783",
+      "ItemName": "Midnight Owl (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

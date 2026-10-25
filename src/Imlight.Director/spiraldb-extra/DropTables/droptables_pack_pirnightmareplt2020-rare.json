@@ -1,0 +1,314 @@
+{
+  "Name": "PirNightmarePLT2020-Rare",
+  "Description": "Pirate Nightmare Pack (2020) (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100433",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "100454",
+      "ItemName": "Krokotillian",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "191226",
+      "ItemName": "Enchanted Broom (7 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "225478",
+      "ItemName": "Seraph Wings (1 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "225479",
+      "ItemName": "Seraph Wings (7 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "225484",
+      "ItemName": "Bat Wings (7 Day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383169",
+      "ItemName": "Shackled Banshee",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1383172",
+      "ItemName": "Scarecrow",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1383176",
+      "ItemName": "Gravedigger",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1383180",
+      "ItemName": "Wraith",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1392007",
+      "ItemName": "Jack O Lantern",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1451780",
+      "ItemName": "Flying Dutchman (7 day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1451781",
+      "ItemName": "Flying Dutchman (1 day)",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1451788",
+      "ItemName": "Ghoulish Macawbre",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1451789",
+      "ItemName": "Spooky Macawbre",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1451790",
+      "ItemName": "Morbid Macawbre",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481460",
+      "ItemName": "Blighted Captain's Tricorne",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481474",
+      "ItemName": "Blighted Captain's Coat",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481488",
+      "ItemName": "Blighted Captain's Boots",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481502",
+      "ItemName": "Cursed Captain's Tricorne",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481516",
+      "ItemName": "Cursed Captain's Coat",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481530",
+      "ItemName": "Cursed Captain's Boots",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481544",
+      "ItemName": "Haunted Captain's Tricorne",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481558",
+      "ItemName": "Haunted Captain's Coat",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481572",
+      "ItemName": "Haunted Captain's Boots",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481586",
+      "ItemName": "Blighted Captain's Steel",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481600",
+      "ItemName": "Cursed Captain's Steel",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1481614",
+      "ItemName": "Haunted Captain's Steel",
+      "Notes": "",
+      "Chance": 1.2195
+    },
+    {
+      "ItemId": "1505410",
+      "ItemName": "Spirit Tracker Hat",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505424",
+      "ItemName": "Spirit Tracker Vestment",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505438",
+      "ItemName": "Spirit Tracker Boots",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505452",
+      "ItemName": "Ghost Hunter Hat",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505466",
+      "ItemName": "Ghost Hunter Vestment",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505480",
+      "ItemName": "Ghost Hunter Boots",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505494",
+      "ItemName": "Phantom Catcher Hat",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505508",
+      "ItemName": "Phantom Catcher Vestment",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505522",
+      "ItemName": "Phantom Catcher Boots",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505536",
+      "ItemName": "Spirit Tracker Geistbox",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505550",
+      "ItemName": "Ghost Hunter Geistbox",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1505564",
+      "ItemName": "Phantom Chaser Geistbox",
+      "Notes": "",
+      "Chance": 1.1236
+    },
+    {
+      "ItemId": "1507059",
+      "ItemName": "Spirited Away (7 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    },
+    {
+      "ItemId": "1507060",
+      "ItemName": "Spirited Away (1 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    },
+    {
+      "ItemId": "1507169",
+      "ItemName": "Ghost Host (7 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    },
+    {
+      "ItemId": "1507170",
+      "ItemName": "Ghost Host (1 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    },
+    {
+      "ItemId": "1507171",
+      "ItemName": "Spirit Lifter (7 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    },
+    {
+      "ItemId": "1507172",
+      "ItemName": "Spirit Lifter (1 Day)",
+      "Notes": "",
+      "Chance": 3.3333
+    }
+  ]
+}

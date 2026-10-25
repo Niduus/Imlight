@@ -1,0 +1,50 @@
+{
+  "Name": "Hand_of_DoomLT3",
+  "Description": "Hand of Doom Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1606421581",
+      "ItemName": "Malistaire",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1839031171",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1643594777",
+      "ItemName": "Kol Shadowsong",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "662882501",
+      "ItemName": "Meowiarty",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "298612797",
+      "ItemName": "Krokopatra",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "742774343",
+      "ItemName": "Lord Nightshade",
+      "Notes": "",
+      "Chance": 7.6923
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "BoosterPack-Set-08-Common-Sun",
+  "Description": "Moolinda's Green Thumb Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "616898867",
+      "ItemName": "Supreme Sunburst",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower07-UtilityB",
+  "Description": "Deckathalon Balance Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1911013456",
+      "ItemName": "Pierce",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1161914504",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "878423377",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "501190227",
+      "ItemName": "Snow Drift",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "45884029",
+      "ItemName": "Infection",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "131220406",
+      "ItemName": "Mass Infection",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

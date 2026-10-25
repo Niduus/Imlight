@@ -1,0 +1,116 @@
+{
+  "Name": "BoosterPack-Set-02-Commons",
+  "Description": "Faithful Companion Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1595132074",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "74446689",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "2085329280",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "921147923",
+      "ItemName": "Nature's Wrath",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1860161805",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1722369010",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1567327762",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "999501018",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "157044698",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1161915321",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1469002220",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1635917677",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "655899589",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "73626674",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1588596516",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1205031701",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "83699717",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 12.5
+    }
+  ]
+}

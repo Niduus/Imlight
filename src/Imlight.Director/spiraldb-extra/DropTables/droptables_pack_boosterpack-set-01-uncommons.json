@@ -1,0 +1,260 @@
+{
+  "Name": "BoosterPack-Set-01-Uncommons",
+  "Description": "Eye of Bartleby Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1897065731",
+      "ItemName": "Balefrost",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "741139539",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1595773349",
+      "ItemName": "Buff Minion",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "2041359529",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "780222043",
+      "ItemName": "Death Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1062079122",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1604762130",
+      "ItemName": "Drain Health",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1427007544",
+      "ItemName": "Draw Health",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1979647859",
+      "ItemName": "Draw Power",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1106236198",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "109932400",
+      "ItemName": "Fire Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "2003321660",
+      "ItemName": "Freeze",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1211394363",
+      "ItemName": "Ice Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "458816822",
+      "ItemName": "Ice Wyvern",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "460803647",
+      "ItemName": "Keen Eyes",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1621054263",
+      "ItemName": "Kraken",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "109920102",
+      "ItemName": "Life Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "186579964",
+      "ItemName": "Locust Swarm",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1595716522",
+      "ItemName": "Mend Minion",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "109835621",
+      "ItemName": "Myth Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "988256261",
+      "ItemName": "Nature's Wrath",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "791201790",
+      "ItemName": "Power Play",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "203304560",
+      "ItemName": "Precision",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "30283751",
+      "ItemName": "Sanctuary",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "492277983",
+      "ItemName": "Purloin Health",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1280318372",
+      "ItemName": "Purloin Power",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1841962447",
+      "ItemName": "Seraph",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1928278095",
+      "ItemName": "Shield Minion",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "189544519",
+      "ItemName": "Siphon Health",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "2005802863",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1602398919",
+      "ItemName": "Steal Health",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "268548931",
+      "ItemName": "Storm Shark",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "785515628",
+      "ItemName": "Storm Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1465410629",
+      "ItemName": "Stun",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1110730434",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1979067651",
+      "ItemName": "Take Power",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1850689939",
+      "ItemName": "Time of Legend",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "345668801",
+      "ItemName": "Tough",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "37578823",
+      "ItemName": "Vampire",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1187623223",
+      "ItemName": "Wyldfire",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1205750315",
+      "ItemName": "Darkwind",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

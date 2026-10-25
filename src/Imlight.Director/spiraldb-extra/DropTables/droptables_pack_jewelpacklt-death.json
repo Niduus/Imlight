@@ -1,0 +1,602 @@
+{
+  "Name": "JewelPackLT-Death",
+  "Description": "Death Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352697",
+      "ItemName": "Cracked Damage Onyx +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352698",
+      "ItemName": "Cracked Damage Onyx +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352699",
+      "ItemName": "Cracked Damage Onyx +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352700",
+      "ItemName": "Cracked Damage Onyx +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352701",
+      "ItemName": "Cracked Damage Onyx +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352702",
+      "ItemName": "Cracked Damage Onyx +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352703",
+      "ItemName": "Chipped Damage Onyx +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352704",
+      "ItemName": "Chipped Damage Onyx +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352705",
+      "ItemName": "Flawed Damage Onyx +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352706",
+      "ItemName": "Flawed Damage Onyx +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352707",
+      "ItemName": "Blemished Damage Onyx +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352708",
+      "ItemName": "Blemished Damage Onyx +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352709",
+      "ItemName": "Dull Damage Onyx +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352710",
+      "ItemName": "Dull Damage Onyx +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352711",
+      "ItemName": "Plain Damage Onyx +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352712",
+      "ItemName": "Plain Damage Onyx +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352713",
+      "ItemName": "Opaque Damage Onyx +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352714",
+      "ItemName": "Opaque Damage Onyx +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352715",
+      "ItemName": "Clear Damage Onyx +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352716",
+      "ItemName": "Clear Damage Onyx +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352717",
+      "ItemName": "Polished Damage Onyx +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352718",
+      "ItemName": "Polished Damage Onyx +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352719",
+      "ItemName": "Lustrous Damage Onyx +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352720",
+      "ItemName": "Lustrous Damage Onyx +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352796",
+      "ItemName": "Dull Piercing Onyx +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352797",
+      "ItemName": "Dull Piercing Onyx +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352798",
+      "ItemName": "Plain Piercing Onyx +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352799",
+      "ItemName": "Opaque Piercing Onyx +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352800",
+      "ItemName": "Clear Piercing Onyx +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352888",
+      "ItemName": "Dull Critical Onyx +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352889",
+      "ItemName": "Dull Critical Onyx +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352890",
+      "ItemName": "Dull Critical Onyx +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352891",
+      "ItemName": "Plain Critical Onyx +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352892",
+      "ItemName": "Plain Critical Onyx +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352893",
+      "ItemName": "Opaque Critical Onyx +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352894",
+      "ItemName": "Opaque Critical Onyx +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352895",
+      "ItemName": "Clear Critical Onyx +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352896",
+      "ItemName": "Clear Critical Onyx +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352897",
+      "ItemName": "Polished Critical Onyx +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352898",
+      "ItemName": "Polished Critical Onyx +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352899",
+      "ItemName": "Lustrous Critical Onyx +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352900",
+      "ItemName": "Lustrous Critical Onyx +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357101",
+      "ItemName": "Chipped Accurate Onyx +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357102",
+      "ItemName": "Flawed Accurate Onyx +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357103",
+      "ItemName": "Blemished Accurate Onyx +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357104",
+      "ItemName": "Dull Accurate Onyx +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357105",
+      "ItemName": "Plain Accurate Onyx +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357106",
+      "ItemName": "Opaque Accurate Onyx +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357107",
+      "ItemName": "Clear Accurate Onyx +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357108",
+      "ItemName": "Polished Accurate Onyx +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357109",
+      "ItemName": "Lustrous Accurate Onyx +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357146",
+      "ItemName": "Cracked Accurate Onyx +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357147",
+      "ItemName": "Cracked Accurate Onyx +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357218",
+      "ItemName": "Dark Sprite Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357219",
+      "ItemName": "Ghoul Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357220",
+      "ItemName": "Dream Shield Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358600",
+      "ItemName": "Banshee Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358601",
+      "ItemName": "Deer Knight Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358619",
+      "ItemName": "Skeletal Pirate Onyx",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358620",
+      "ItemName": "Doom and Gloom Onyx",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358621",
+      "ItemName": "Wraith Onyx",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358676",
+      "ItemName": "Strangle Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358677",
+      "ItemName": "Mass Death Prism Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358678",
+      "ItemName": "Scarecrow Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358679",
+      "ItemName": "Virulent Plague Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358680",
+      "ItemName": "Death Trap Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358681",
+      "ItemName": "Mass Infection Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358682",
+      "ItemName": "Steal Health Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358683",
+      "ItemName": "Animate Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358684",
+      "ItemName": "Malduit Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358978",
+      "ItemName": "Deathblade Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360046",
+      "ItemName": "Metalops Onyx",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1360147",
+      "ItemName": "Wrath of Hades Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374098",
+      "ItemName": "Death Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376147",
+      "ItemName": "Dual Deathblade Onyx",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376300",
+      "ItemName": "Morganthe's Requiem Onyx",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376307",
+      "ItemName": "Erratic Acrimony Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384433",
+      "ItemName": "Death Brandon Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405725",
+      "ItemName": "Shiny Damage Onyx +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405726",
+      "ItemName": "Shiny Damage Onyx +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405742",
+      "ItemName": "Shiny Critical Onyx +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405743",
+      "ItemName": "Shiny Critical Onyx +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405773",
+      "ItemName": "Deathspear Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405792",
+      "ItemName": "Shiny Accurate Onyx +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430049",
+      "ItemName": "Sparkling Damage Onyx +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430057",
+      "ItemName": "Sparkling Critical Onyx +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462435",
+      "ItemName": "Sparkling Damage Onyx +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462444",
+      "ItemName": "Sparkling Critical Onyx +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462487",
+      "ItemName": "Sparkling Accurate Onyx +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466988",
+      "ItemName": "Headless Horseman Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514451",
+      "ItemName": "Dazzling Damage Onyx +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514452",
+      "ItemName": "Dazzling Damage Onyx +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514469",
+      "ItemName": "Dazzling Critical Onyx +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514470",
+      "ItemName": "Dazzling Critical Onyx +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514485",
+      "ItemName": "Dazzling Accurate Onyx +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514494",
+      "ItemName": "Lord of Night Onyx",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "Name": "NimbariHoardPackLT-Rare",
+  "Description": "Nimbari Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "225445",
+      "ItemName": "Storm Bird",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441346",
+      "ItemName": "Hurricanine",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441347",
+      "ItemName": "Nimbari Chariot (7 Day)",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441348",
+      "ItemName": "Nimbari Chariot (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441475",
+      "ItemName": "Nimbari Weapon Rack",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441482",
+      "ItemName": "Kalamar Sofa",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441600",
+      "ItemName": "Kalamar Fireplace",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441601",
+      "ItemName": "Nimbari Fireplace",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441624",
+      "ItemName": "Port Aero Super Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441625",
+      "ItemName": "Yelling Port Aero Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441628",
+      "ItemName": "Velo City Super Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441629",
+      "ItemName": "Yelling Velo City Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441632",
+      "ItemName": "Wheatsville Super Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441633",
+      "ItemName": "Yelling Wheatsville Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441687",
+      "ItemName": "Sitting Port Aero Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441688",
+      "ItemName": "Hollerin' Port Aero Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441695",
+      "ItemName": "Sitting Velo City Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441696",
+      "ItemName": "Sitting Wheatsville Fan",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1441697",
+      "ItemName": "Hollerin' Velo City Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441698",
+      "ItemName": "Hollerin' Wheatsville Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466023",
+      "ItemName": "Nimbari Justicar Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466037",
+      "ItemName": "Nimbari Justicar Armor",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1466051",
+      "ItemName": "Nimbari Justicar Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466065",
+      "ItemName": "Nimbari Praetor Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466079",
+      "ItemName": "Nimbari Praetor Armor",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1466093",
+      "ItemName": "Nimbari Praetor Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466107",
+      "ItemName": "Nimbari Centurion Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466121",
+      "ItemName": "Nimbari Centurion Armor",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1466135",
+      "ItemName": "Nimbari Centurion Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466150",
+      "ItemName": "Nimbari Justicar Scimitar",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1466164",
+      "ItemName": "Nimbari Praetor Scimitar",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1466178",
+      "ItemName": "Nimbari Centurion Scimitar",
+      "Notes": "",
+      "Chance": 1.4085
+    }
+  ]
+}

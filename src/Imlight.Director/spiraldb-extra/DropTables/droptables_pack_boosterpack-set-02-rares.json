@@ -1,0 +1,116 @@
+{
+  "Name": "BoosterPack-Set-02-Rares",
+  "Description": "Faithful Companion Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1508670801",
+      "ItemName": "Dragonblade",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "1458876908",
+      "ItemName": "Leperchaun",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "1389801865",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "386898264",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "1170444676",
+      "ItemName": "Storm Hound",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "708783314",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "828387151",
+      "ItemName": "Krokotillian",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "818677262",
+      "ItemName": "Animate",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1294187833",
+      "ItemName": "Ice Guardian",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "639006344",
+      "ItemName": "Fire Elemental",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "638908120",
+      "ItemName": "Sprite Guardian",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1761947262",
+      "ItemName": "Mander Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1152250819",
+      "ItemName": "Water Elemental",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1649709209",
+      "ItemName": "Golem Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1649709273",
+      "ItemName": "Troll Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1649709081",
+      "ItemName": "Cyclops Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1649709145",
+      "ItemName": "Minotaur Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

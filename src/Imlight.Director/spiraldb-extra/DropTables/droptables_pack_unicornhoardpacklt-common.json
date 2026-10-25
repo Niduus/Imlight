@@ -1,0 +1,248 @@
+{
+  "Name": "UnicornHoardPackLT-Common",
+  "Description": "Unicorn Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160249",
+      "ItemName": "Small Lunar Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "160258",
+      "ItemName": "Small Blue Trim Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "160259",
+      "ItemName": "Small Orange Symbol Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "160260",
+      "ItemName": "Spotted Half Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "160261",
+      "ItemName": "Small Purple Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220193",
+      "ItemName": "Blonde Strawberry",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220198",
+      "ItemName": "Bubblegum",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220245",
+      "ItemName": "Cherry Pie",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220247",
+      "ItemName": "Popsicle",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220288",
+      "ItemName": "Jelly Beans",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "220320",
+      "ItemName": "Golden Taffy",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "473152",
+      "ItemName": "Yellow Bell Pepper",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "473166",
+      "ItemName": "Purple Grapes of Wrath",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "473173",
+      "ItemName": "Red Grapes of Wrath",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "512087",
+      "ItemName": "Wizard City Main Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "512093",
+      "ItemName": "Wysteria Main Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1212009",
+      "ItemName": "Doodle Doug Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1335015",
+      "ItemName": "Dragonspyre Dance Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1335055",
+      "ItemName": "Valencia Skyway Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1374597",
+      "ItemName": "Toy Tower",
+      "Notes": "",
+      "Chance": 5.8824
+    }
+  ]
+}

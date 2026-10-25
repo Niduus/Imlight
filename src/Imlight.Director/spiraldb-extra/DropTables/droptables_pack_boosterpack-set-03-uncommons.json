@@ -1,0 +1,92 @@
+{
+  "Name": "BoosterPack-Set-03-Uncommons",
+  "Description": "Marvelous Minions Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1530909093",
+      "ItemName": "Buff Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977488755",
+      "ItemName": "Draw Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1530852266",
+      "ItemName": "Mend Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "68210593",
+      "ItemName": "Shield Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "2108934057",
+      "ItemName": "Siphon Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "607475001",
+      "ItemName": "Steal Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1280381748",
+      "ItemName": "Purloin Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "430638620",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977040643",
+      "ItemName": "Take Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "494306015",
+      "ItemName": "Purloin Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "605111790",
+      "ItemName": "Drain Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1361848376",
+      "ItemName": "Draw Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1171444879",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

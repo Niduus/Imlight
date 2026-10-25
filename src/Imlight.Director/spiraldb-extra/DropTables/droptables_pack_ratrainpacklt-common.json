@@ -1,0 +1,188 @@
+{
+  "Name": "RATrainPackLT-Common",
+  "Description": "Great Sky Train Robbery Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220231",
+      "ItemName": "Potato Chips",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220243",
+      "ItemName": "Funnel Cake",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220299",
+      "ItemName": "Large Pretzel",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522002",
+      "ItemName": "Bottle Collection",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522004",
+      "ItemName": "Fish Drying Stand",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522005",
+      "ItemName": "Horse Shoes",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522006",
+      "ItemName": "Tribal Woven Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522008",
+      "ItemName": "Grand Steamer Trunk",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522009",
+      "ItemName": "Rugged Bunk",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522011",
+      "ItemName": "Cloth Covered Country Table",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522015",
+      "ItemName": "Ranch Fence",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522018",
+      "ItemName": "Cactus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522019",
+      "ItemName": "Hanging Keyring",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1522022",
+      "ItemName": "Steerage Ticket",
+      "Notes": "",
+      "Chance": 7.6923
+    }
+  ]
+}

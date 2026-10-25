@@ -1,0 +1,50 @@
+{
+  "Name": "BoosterPack-Set-07-Cake",
+  "Description": "Birthday Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220243",
+      "ItemName": "Funnel Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "220277",
+      "ItemName": "Chocolate Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "220314",
+      "ItemName": "Fairy Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "240101",
+      "ItemName": "Birthday Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "641601",
+      "ItemName": "Weirwood Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1248065",
+      "ItemName": "Tuti-Fruiti Cake",
+      "Notes": "",
+      "Chance": 16.6667
+    }
+  ]
+}

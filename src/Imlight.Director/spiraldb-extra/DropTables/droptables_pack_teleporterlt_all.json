@@ -1,0 +1,62 @@
+{
+  "Name": "TeleporterLT_All",
+  "Description": "6 Pack of 'Porters (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "469781",
+      "ItemName": "Blue Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469782",
+      "ItemName": "Cyan Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469783",
+      "ItemName": "Green Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469784",
+      "ItemName": "Orange Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469785",
+      "ItemName": "Purple Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469786",
+      "ItemName": "Red Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

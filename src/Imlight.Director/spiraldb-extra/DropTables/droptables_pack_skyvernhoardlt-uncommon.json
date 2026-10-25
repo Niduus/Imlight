@@ -1,0 +1,170 @@
+{
+  "Name": "SkyvernHoardLT-UnCommon",
+  "Description": "Skyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "733114",
+      "ItemName": "Maize",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733115",
+      "ItemName": "Apatotatoes",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733118",
+      "ItemName": "Avocado Milkshake",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733126",
+      "ItemName": "Allocados",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733135",
+      "ItemName": "Saursa",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733136",
+      "ItemName": "Tortilla Chips",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733138",
+      "ItemName": "Bronto Burger",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1133363322",
+      "ItemName": "Arcticzilla",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "432480597",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "525828736",
+      "ItemName": "Dream Shield",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1357224390",
+      "ItemName": "Elemental Defuse",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "514176703",
+      "ItemName": "Ether Shield",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1277897054",
+      "ItemName": "Fire Shark",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2032956233",
+      "ItemName": "Firezilla",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "142523647",
+      "ItemName": "Flamesnake",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "157601445",
+      "ItemName": "Fire Beetle",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "199755502",
+      "ItemName": "Humongofrog",
+      "Notes": "",
+      "Chance": 5.0
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "Name": "GrizzleheimLorePackLT-Uncommon",
+  "Description": "Grizzleheim Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1317840",
+      "ItemName": "Wampyrnickel Bread",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1374582",
+      "ItemName": "Ravenscar Throne",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1374589",
+      "ItemName": "Grizzleheim Stone Oven",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1374590",
+      "ItemName": "Grizzleheim Furnace",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1623983249",
+      "ItemName": "Blademaster",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "2005205555",
+      "ItemName": "Bladestorm",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1506692433",
+      "ItemName": "Dragonblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1039424196",
+      "ItemName": "Sharpened Blade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1893708917",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "881759932",
+      "ItemName": "Elemental Blade",
+      "Notes": "",
+      "Chance": 3.4483
+    }
+  ]
+}

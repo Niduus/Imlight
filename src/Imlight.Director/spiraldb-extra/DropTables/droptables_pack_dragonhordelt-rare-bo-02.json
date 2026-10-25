@@ -1,0 +1,236 @@
+{
+  "Name": "DragonHordeLT-Rare-BO-02",
+  "Description": "Decius Test Pack 1 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "87115",
+      "ItemName": "Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160838",
+      "ItemName": "Dragonskull Obelisk",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160908",
+      "ItemName": "Dragon Wall Bust",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160909",
+      "ItemName": "Dragonwing Bust",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "175580",
+      "ItemName": "Sea Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "220312",
+      "ItemName": "Mystic Dragon Fruit",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "240083",
+      "ItemName": "Dragonhorned Melon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468374",
+      "ItemName": "Dragonrider's Vigilant Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468381",
+      "ItemName": "Dragonrider's Vigilant Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468388",
+      "ItemName": "Dragonrider's Vigilant Boots",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468395",
+      "ItemName": "Dragonrider's Utility Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468402",
+      "ItemName": "Dragonrider's Utility Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468409",
+      "ItemName": "Dragonrider's Utility Boots",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468416",
+      "ItemName": "Dragonrider's Assailing Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468423",
+      "ItemName": "Dragonrider's Assailing Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468430",
+      "ItemName": "Dragonrider's Assailing Shoes",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468437",
+      "ItemName": "Dragonrider's Storm Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468438",
+      "ItemName": "Dragonrider's Fire Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468439",
+      "ItemName": "Dragonrider's Ice Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468440",
+      "ItemName": "Dragonrider's Life Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468441",
+      "ItemName": "Dragonrider's Myth Blade",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468442",
+      "ItemName": "Dragonrider's Death Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468443",
+      "ItemName": "Dragonrider's Balance Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470084",
+      "ItemName": "Faithful Dragoness (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470085",
+      "ItemName": "Blue Dragon (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470086",
+      "ItemName": "Dark Redwing (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470096",
+      "ItemName": "Dragon Wings (PERM)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473118",
+      "ItemName": "Vigilant Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "473119",
+      "ItemName": "Utility Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "473120",
+      "ItemName": "Assailing Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "667650",
+      "ItemName": "Dragonrider's Balance Blade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1175482709",
+      "ItemName": "Skeletal Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1985085383",
+      "ItemName": "Polymorph Dracon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "77371933",
+      "ItemName": "Hydra",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1505707344",
+      "ItemName": "Dragonflies",
+      "Notes": "",
+      "Chance": 4.1667
+    }
+  ]
+}

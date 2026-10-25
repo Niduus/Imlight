@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower07-Attack",
+  "Description": "Deckathalon Balance Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1449431038",
+      "ItemName": "Plague Ninja Pig",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "2084798352",
+      "ItemName": "Sandstorm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1828308602",
+      "ItemName": "Loremaster",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "522772815",
+      "ItemName": "Ninja Piglets",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "891694927",
+      "ItemName": "Krokotillian",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1965294596",
+      "ItemName": "Locust Swarm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "819802901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "2143801613",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1470281264",
+      "ItemName": "Scorpion",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

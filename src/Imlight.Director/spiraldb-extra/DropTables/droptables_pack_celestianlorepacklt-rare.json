@@ -1,0 +1,182 @@
+{
+  "Name": "CelestianLorePackLT-Rare",
+  "Description": "Celestian Spellemental Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100332",
+      "ItemName": "Lightningbat",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789137",
+      "ItemName": "Betta Fish",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1374446",
+      "ItemName": "Spectre of the Brocken",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504030",
+      "ItemName": "Galactic Water Spout",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504031",
+      "ItemName": "Celestian Device",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504032",
+      "ItemName": "Orrery",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504033",
+      "ItemName": "Galvanic Tower",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504034",
+      "ItemName": "Celestian Cube Sculpture",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1505010",
+      "ItemName": "Celestian Photon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505024",
+      "ItemName": "Celestian Photon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505038",
+      "ItemName": "Celestian Photon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505052",
+      "ItemName": "Celestian Xenon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505066",
+      "ItemName": "Celestian Xenon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505080",
+      "ItemName": "Celestian Xenon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505094",
+      "ItemName": "Celestian Neon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505108",
+      "ItemName": "Celestian Neon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505122",
+      "ItemName": "Celestian Neon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505178",
+      "ItemName": "Celestian Photon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505192",
+      "ItemName": "Celestian Xenon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505206",
+      "ItemName": "Celestian Neon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1507004",
+      "ItemName": "Feral Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507005",
+      "ItemName": "Ravenous Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507006",
+      "ItemName": "Vicious Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1555912465",
+      "ItemName": "Nautilus Unleashed",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1905314371",
+      "ItemName": "Celestial Intervention",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "152960551",
+      "ItemName": "Ship of Fools",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1554712516",
+      "ItemName": "Spiritual Tribunal",
+      "Notes": "",
+      "Chance": 3.4483
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "Name": "TreasureTower02-Deck-Wildcard",
+  "Description": "Deckathalon Fire Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1789291684",
+      "ItemName": "Frost Dragon",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "801574444",
+      "ItemName": "Frostbite",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1136052346",
+      "ItemName": "Arcticzilla",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "117878678",
+      "ItemName": "Blizzard",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "360379249",
+      "ItemName": "Snow Bird",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "441796696",
+      "ItemName": "Ice Elf",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "2136236348",
+      "ItemName": "Ice Bats",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1496155666",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "219828186",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "617308812",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1008863650",
+      "ItemName": "Healing Current",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1267213724",
+      "ItemName": "Helping Hands",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "73527153",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "779947345",
+      "ItemName": "Fairy",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1889148781",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "84793606",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1088567023",
+      "ItemName": "Minor Blessing",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "74835973",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "152469527",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1337340474",
+      "ItemName": "Frozen Armor",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1907258156",
+      "ItemName": "Triage",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1848606682",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1627265116",
+      "ItemName": "Disarm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "146715614",
+      "ItemName": "Ice Armor",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "113647540",
+      "ItemName": "Elemental Shield",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "406085927",
+      "ItemName": "Ice Trap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1048477158",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "658114073",
+      "ItemName": "Fire Shield",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

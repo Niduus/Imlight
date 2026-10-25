@@ -1,0 +1,158 @@
+{
+  "Name": "JewelPackLT-Gems",
+  "Description": "Rockhammer's Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258595",
+      "ItemName": "Perfect Ruby",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1317930",
+      "ItemName": "Flawless Amethyst",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317931",
+      "ItemName": "Flawless Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317932",
+      "ItemName": "Flawless Citrine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317933",
+      "ItemName": "Flawless Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317934",
+      "ItemName": "Flawless Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317935",
+      "ItemName": "Flawless Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317936",
+      "ItemName": "Flawless Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350074",
+      "ItemName": "Opal",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350075",
+      "ItemName": "Perfect Opal",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350076",
+      "ItemName": "Flawless Opal",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

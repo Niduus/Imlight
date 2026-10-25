@@ -1,0 +1,260 @@
+{
+  "Name": "BoosterPack-Set-47-GSeedsEpicRare",
+  "Description": "Farley's Gardening Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473194",
+      "ItemName": "Maltese Tiger Lily",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "589152",
+      "ItemName": "Fortune Cookie Tree",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "589173",
+      "ItemName": "Bamboo Shoots",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713126",
+      "ItemName": "Clockwork Flower",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713133",
+      "ItemName": "Dead Beets",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1350059",
+      "ItemName": "Ultra Alligator Pear Tree",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350083",
+      "ItemName": "Ultra King Parsley",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350093",
+      "ItemName": "Ultra Boom Shroom",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350103",
+      "ItemName": "Ultra Dandelion",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350111",
+      "ItemName": "Ultra Huckleberries",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350119",
+      "ItemName": "Ultra Trumpet Vine",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350124",
+      "ItemName": "Ultra Helephant Ears",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350131",
+      "ItemName": "Ultra Snap Dragon",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350138",
+      "ItemName": "Ultra Ninja Fig",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350146",
+      "ItemName": "Ultra Tiger Lily",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1350155",
+      "ItemName": "Ultra Fly Trap",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1383076",
+      "ItemName": "Jewel Star Blossom",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1383093",
+      "ItemName": "Jewel Circle Blossom",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1383094",
+      "ItemName": "Jewel Square Blossom",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1383095",
+      "ItemName": "Jewel Tear Blossom",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1383096",
+      "ItemName": "Jewel Triangle Blossom",
+      "Notes": "",
+      "Chance": 1.4085
+    }
+  ]
+}

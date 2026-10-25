@@ -1,0 +1,164 @@
+{
+  "Name": "PhoenixHoardLT-Rare",
+  "Description": "Phoenix Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "126987",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "212075",
+      "ItemName": "Ianthine Spectre",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "225410",
+      "ItemName": "Pale Maiden",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "470475",
+      "ItemName": "Milos Bookwyrm Bobblehead",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "470476",
+      "ItemName": "Sylvia Drake Bobblehead",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "470477",
+      "ItemName": "Zarathax Bobblehead",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667370",
+      "ItemName": "Glinting Dragon Lance",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "667379",
+      "ItemName": "Sinister Dragon Pike",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "667388",
+      "ItemName": "Flashing Dragon Spear",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "667453",
+      "ItemName": "Avenging Helm of Glory",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667462",
+      "ItemName": "Marvelous Avenging Boots",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667471",
+      "ItemName": "Glorious Avenger's Armor",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "667480",
+      "ItemName": "Helmet of Royal Retribution",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667489",
+      "ItemName": "Boots of Walking Retribution",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667498",
+      "ItemName": "Royal Armor of Retribution",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "667507",
+      "ItemName": "Smoldering Vengeance Helm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667516",
+      "ItemName": "Smoldering Vengeance Boots",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "667525",
+      "ItemName": "Smoldering Vengeance Armor",
+      "Notes": "",
+      "Chance": 0.3745
+    },
+    {
+      "ItemId": "690108",
+      "ItemName": "Gargoyle",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "713126",
+      "ItemName": "Clockwork Flower",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

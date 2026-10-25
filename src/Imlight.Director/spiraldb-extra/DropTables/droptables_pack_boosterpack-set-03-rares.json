@@ -1,0 +1,116 @@
+{
+  "Name": "BoosterPack-Set-03-Rares",
+  "Description": "Marvelous Minions Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "716438002",
+      "ItemName": "Animate",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1294192633",
+      "ItemName": "Ice Guardian",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "639118984",
+      "ItemName": "Fire Elemental",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1157967483",
+      "ItemName": "Mander Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1164374979",
+      "ItemName": "Water Elemental",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "639282904",
+      "ItemName": "Sprite Guardian",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "497774466",
+      "ItemName": "Golem Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "497774530",
+      "ItemName": "Troll Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "497774338",
+      "ItemName": "Cyclops Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "497774402",
+      "ItemName": "Minotaur Minion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1507992913",
+      "ItemName": "Dragonblade",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "1458881324",
+      "ItemName": "Leperchaun",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "2127999376",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "381983064",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "708783944",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "816525135",
+      "ItemName": "Krokotillian",
+      "Notes": "",
+      "Chance": 0.7143
+    },
+    {
+      "ItemId": "1171114372",
+      "ItemName": "Storm Hound",
+      "Notes": "",
+      "Chance": 0.7143
+    }
+  ]
+}

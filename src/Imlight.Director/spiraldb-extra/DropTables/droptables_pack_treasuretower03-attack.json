@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower03-Attack",
+  "Description": "Deckathalon Death Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "233025017",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1569220793",
+      "ItemName": "Gnomes!",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "490418664",
+      "ItemName": "Potboiler",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "2084717327",
+      "ItemName": "Leafstorm",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "314985285",
+      "ItemName": "Life Banshee",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "2138860149",
+      "ItemName": "Brown Spider",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "786930178",
+      "ItemName": "Nature's Wrath",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1468932204",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1161906569",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

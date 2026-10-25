@@ -1,0 +1,314 @@
+{
+  "Name": "DecadeHoardPackLT-Rare",
+  "Description": "Decaversary Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "87115",
+      "ItemName": "Dragon",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1317673",
+      "ItemName": "Ninja Piggle",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374561",
+      "ItemName": "Wolfminster Rostrum",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374576",
+      "ItemName": "Grand Celestial Fountain",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374584",
+      "ItemName": "Grizzleheim Bellows",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374585",
+      "ItemName": "Nordrilund Geyser",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374633",
+      "ItemName": "Lounging Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374634",
+      "ItemName": "Reading Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374635",
+      "ItemName": "Studying Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374636",
+      "ItemName": "Perusing Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374637",
+      "ItemName": "Circling Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374639",
+      "ItemName": "Cycling Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374640",
+      "ItemName": "Rotating Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374641",
+      "ItemName": "Spinning Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374643",
+      "ItemName": "Talented Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374644",
+      "ItemName": "Skilled Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374645",
+      "ItemName": "Capable Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374646",
+      "ItemName": "Adept Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441333",
+      "ItemName": "Decaversary Cake",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441334",
+      "ItemName": "Birthday Pheasant",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441335",
+      "ItemName": "Decaversaraddish",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1446993",
+      "ItemName": "Celebration Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447011",
+      "ItemName": "Death Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447012",
+      "ItemName": "Death Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447045",
+      "ItemName": "Decade Dragon",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447236",
+      "ItemName": "Storm Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447237",
+      "ItemName": "Myth Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447238",
+      "ItemName": "Fire Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447239",
+      "ItemName": "Balance Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447240",
+      "ItemName": "Life Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447241",
+      "ItemName": "Ice Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447242",
+      "ItemName": "Storm Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447243",
+      "ItemName": "Myth Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447244",
+      "ItemName": "Fire Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447245",
+      "ItemName": "Balance Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447246",
+      "ItemName": "Life Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447247",
+      "ItemName": "Ice Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456007",
+      "ItemName": "Celebration Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456021",
+      "ItemName": "Celebration Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456035",
+      "ItemName": "Jubilation Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456049",
+      "ItemName": "Jubilation Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456063",
+      "ItemName": "Jubilation Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456077",
+      "ItemName": "Commemoration Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456091",
+      "ItemName": "Commemoration Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456105",
+      "ItemName": "Commemoration Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456120",
+      "ItemName": "Celebration Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456134",
+      "ItemName": "Jubilation Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456148",
+      "ItemName": "Commemoration Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "Name": "EmperorsTowerPackLT-Common",
+  "Description": "Emperor's Attic Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160446",
+      "ItemName": "Red Stone Column",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160448",
+      "ItemName": "Stone Temple Column",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160467",
+      "ItemName": "Iron Tea Pot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160478",
+      "ItemName": "Lunar Obelisk",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160492",
+      "ItemName": "Crane Tablet",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160495",
+      "ItemName": "Mantis Tablet",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160501",
+      "ItemName": "Serpent Tablet",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160517",
+      "ItemName": "Tall Blue Vase",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160522",
+      "ItemName": "Weapon Rack",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160539",
+      "ItemName": "Wooden Headstone",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160551",
+      "ItemName": "Reed Fence",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160566",
+      "ItemName": "Mossy Bamboo Obelisk",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160568",
+      "ItemName": "Haunted Imperial Shrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160569",
+      "ItemName": "Haunted Monk Shrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160570",
+      "ItemName": "Haunted Samoorai Shrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160578",
+      "ItemName": "Monk Bust",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160579",
+      "ItemName": "Moodha Bust",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160594",
+      "ItemName": "Hexagonal Stone Plaque",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160595",
+      "ItemName": "Diseased Mushrooms",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160596",
+      "ItemName": "Tea Plant",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160601",
+      "ItemName": "Pearl Orchid",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160606",
+      "ItemName": "Fall Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "164290",
+      "ItemName": "Lavender Wallpaper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "404097",
+      "ItemName": "Wavy Grass Floor",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470192",
+      "ItemName": "Fancy Bench",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470204",
+      "ItemName": "Hooked Lantern",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470205",
+      "ItemName": "Long Lantern",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470206",
+      "ItemName": "Fancy Lantern",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470215",
+      "ItemName": "Branch Painting",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470222",
+      "ItemName": "Soji Screen Art",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "470230",
+      "ItemName": "Stone Marker",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "512101",
+      "ItemName": "MooShu Plague Theme",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "512102",
+      "ItemName": "MooShu War Theme",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "537780",
+      "ItemName": "Dojo Screen Wallpaper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "537781",
+      "ItemName": "Dragon Stone Wallpaper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "537783",
+      "ItemName": "Bamboo Wallpaper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "537784",
+      "ItemName": "Spirit Sky Wallpaper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1430801",
+      "ItemName": "MooShu Mystical Theme",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1430802",
+      "ItemName": "MooShu Battle Theme",
+      "Notes": "",
+      "Chance": 8.3333
+    }
+  ]
+}

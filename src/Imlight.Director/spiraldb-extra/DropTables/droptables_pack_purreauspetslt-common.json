@@ -1,0 +1,206 @@
+{
+  "Name": "PurreausPetsLT-Common",
+  "Description": "Purreau's Plentiful Pet Provisions (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160623",
+      "ItemName": "Buried Bone",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "160627",
+      "ItemName": "Can of Tuna",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "181041",
+      "ItemName": "Fish Bones",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220191",
+      "ItemName": "Carrot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220193",
+      "ItemName": "Blonde Strawberry",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220198",
+      "ItemName": "Bubblegum",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220199",
+      "ItemName": "MooShu Broccoli",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220200",
+      "ItemName": "Flaming Carrot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220202",
+      "ItemName": "Wild Strawberry",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220230",
+      "ItemName": "Tiny Pretzel",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220232",
+      "ItemName": "Yogurt",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220233",
+      "ItemName": "Pudding",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220239",
+      "ItemName": "Pizza",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220247",
+      "ItemName": "Popsicle",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220249",
+      "ItemName": "Taffy",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220250",
+      "ItemName": "Truffle",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "Radioactive Pizza",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220274",
+      "ItemName": "Star Fruit",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220288",
+      "ItemName": "Jelly Beans",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "225465",
+      "ItemName": "Evil Carrot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "342124",
+      "ItemName": "Cephalopod Obelisk",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "342160",
+      "ItemName": "Dog House",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "342161",
+      "ItemName": "Dog Biscuits",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "512187",
+      "ItemName": "Wizard City Pet Derby Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "512191",
+      "ItemName": "Dragonspyre Pet Derby Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

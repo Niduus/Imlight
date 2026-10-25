@@ -1,0 +1,206 @@
+{
+  "Name": "EmperorsTowerPackLT-Rare",
+  "Description": "Emperor's Attic Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160466",
+      "ItemName": "Ceremonial Tea Pot",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "160574",
+      "ItemName": "Demon Pig Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470197",
+      "ItemName": "Round Stone Stanchion",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470199",
+      "ItemName": "Decorative Cannon",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470200",
+      "ItemName": "Dresser with Flowers",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470201",
+      "ItemName": "Gold Dog Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470202",
+      "ItemName": "Stone Dog Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470207",
+      "ItemName": "Silver Lantern",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470208",
+      "ItemName": "Indoor Shrine",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470209",
+      "ItemName": "Koi Pond",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470210",
+      "ItemName": "Lion Cauldron",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470216",
+      "ItemName": "Bonsai Plant",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470218",
+      "ItemName": "Green Samoorai Armor",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470219",
+      "ItemName": "Red Samoorai Armor",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470220",
+      "ItemName": "Tan Samoorai Armor",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470224",
+      "ItemName": "Cloud Stage Set",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470225",
+      "ItemName": "House Stage Set",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470226",
+      "ItemName": "Tree Stage Set",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470227",
+      "ItemName": "Frog Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470233",
+      "ItemName": "Gold Tori Gates",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470236",
+      "ItemName": "Wing Chun Dummy",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "473194",
+      "ItemName": "Maltese Tiger Lily",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537630",
+      "ItemName": "Great Moodha Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537641",
+      "ItemName": "Ambrose Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537642",
+      "ItemName": "Death Oni Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537643",
+      "ItemName": "Jade Oni Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537644",
+      "ItemName": "Moolinda Wu Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589152",
+      "ItemName": "Fortune Cookie Tree",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589159",
+      "ItemName": "Goose Tree",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589173",
+      "ItemName": "Bamboo Shoots",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

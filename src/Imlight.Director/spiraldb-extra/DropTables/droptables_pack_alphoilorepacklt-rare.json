@@ -1,0 +1,170 @@
+{
+  "Name": "AlphoiLorePackLT-Rare",
+  "Description": "Alphoi Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1421913",
+      "ItemName": "Light Blades (1 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1421914",
+      "ItemName": "Light Blades (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1421923",
+      "ItemName": "Mini Sani-Bot",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1421930",
+      "ItemName": "Velvet Rope",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1421947",
+      "ItemName": "The Throne",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430189",
+      "ItemName": "Leisure Dome Cap",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430203",
+      "ItemName": "Leisure Dome Suit",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1430217",
+      "ItemName": "Leisure Dome Dancing Shoes",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430231",
+      "ItemName": "Comfort Zone Hat",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430245",
+      "ItemName": "Comfort Zone Leisure Suit",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1430259",
+      "ItemName": "Comfort Zone Stompers",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430273",
+      "ItemName": "Leisure Dome Topper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430287",
+      "ItemName": "Leisure Dome Costume",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1430301",
+      "ItemName": "Leisure Dome Steppers",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1430597",
+      "ItemName": "Mirrorsphere Relic",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1430611",
+      "ItemName": "Zanadu Mirror Relic",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1430625",
+      "ItemName": "Alphoi Reflector Relic",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1441006",
+      "ItemName": "Cake Eater",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441008",
+      "ItemName": "Ice Cream Eater",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1441010",
+      "ItemName": "Snacking Alphoi",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441014",
+      "ItemName": "Castaway Khan",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441016",
+      "ItemName": "Disco Khan",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1441017",
+      "ItemName": "King Khan",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1441018",
+      "ItemName": "Beastwoman",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1441020",
+      "ItemName": "Wezlee",
+      "Notes": "",
+      "Chance": 6.25
+    }
+  ]
+}

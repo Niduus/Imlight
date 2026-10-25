@@ -1,0 +1,1106 @@
+{
+  "Name": "2017GloomthornPackLT-Wildcard",
+  "Description": "Gloomthorn Nightmare Pack (2017) (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1254285",
+      "ItemName": "All Souls Pegasus (PERM)",
+      "Notes": "",
+      "Chance": 0.4975
+    },
+    {
+      "ItemId": "1383338",
+      "ItemName": "Gloomthorn Vine (PERM)",
+      "Notes": "",
+      "Chance": 0.4975
+    },
+    {
+      "ItemId": "1383339",
+      "ItemName": "Bat Swarm (PERM)",
+      "Notes": "",
+      "Chance": 0.4975
+    },
+    {
+      "ItemId": "82705",
+      "ItemName": "Axe",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82755",
+      "ItemName": "Tall Pumpkin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82784",
+      "ItemName": "Fire Mummy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82832",
+      "ItemName": "Worn Shovel",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82866",
+      "ItemName": "Obsidian Chest",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82911",
+      "ItemName": "Pilloried Skeleton",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160221",
+      "ItemName": "Carved Skull",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160225",
+      "ItemName": "Bone Hand",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160227",
+      "ItemName": "Rattlebones' Feet",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160230",
+      "ItemName": "Pumpkin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160235",
+      "ItemName": "Brain Jar",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160245",
+      "ItemName": "Large Candle Holder",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160281",
+      "ItemName": "Death Desk",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160297",
+      "ItemName": "Crate of Pumpkins",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160315",
+      "ItemName": "Slanted Grave",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160336",
+      "ItemName": "Obsidian Firecat Statue",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160361",
+      "ItemName": "Dark Stone Tower",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160381",
+      "ItemName": "Dead Tree",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160408",
+      "ItemName": "Death Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160420",
+      "ItemName": "Death Banner",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160444",
+      "ItemName": "Bubbling Cauldron",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160570",
+      "ItemName": "Haunted Samoorai Shrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160622",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160623",
+      "ItemName": "Buried Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160630",
+      "ItemName": "Jaques' Saw",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160640",
+      "ItemName": "Krokotopian Mummy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160701",
+      "ItemName": "Lit Furnace",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160708",
+      "ItemName": "Altar with Candles",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160731",
+      "ItemName": "Angled Gravemarker",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160800",
+      "ItemName": "Smoldering Tree",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "164419",
+      "ItemName": "Theater Masks",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181052",
+      "ItemName": "Broom",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181084",
+      "ItemName": "Foul Cauldron",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181129",
+      "ItemName": "Pot-bellied Stove",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "209079",
+      "ItemName": "Jar of Bat Wings",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473521",
+      "ItemName": "Rotten Candy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473523",
+      "ItemName": "Misfortune Cookie",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1374387",
+      "ItemName": "Dutiful Bloodbat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1636649225",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "78390166",
+      "ItemName": "Curse",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1161911728",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "524571311",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "708782356",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1326696584",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1037342621",
+      "ItemName": "Death Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1722163734",
+      "ItemName": "Life Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "257185626",
+      "ItemName": "Ash Bats",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "829725506",
+      "ItemName": "Dark Tribute",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1148566039",
+      "ItemName": "Ghost Touch",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1161919665",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1987622005",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "305830442",
+      "ItemName": "Spirit Trap",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "126985",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "212171",
+      "ItemName": "Dark Imp",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "589075",
+      "ItemName": "Lavender Foo Dog",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "589173",
+      "ItemName": "Bamboo Shoots",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "690108",
+      "ItemName": "Gargoyle",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1254236",
+      "ItemName": "Frankenbunny Bride",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1254284",
+      "ItemName": "All Souls Pegasus (7 Day)",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1254286",
+      "ItemName": "All Souls Pegasus (1 Day)",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1292983",
+      "ItemName": "Gloomthorn Wardrobe",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1292984",
+      "ItemName": "Gloomthorn Coffee Table",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383149",
+      "ItemName": "Red Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383157",
+      "ItemName": "Purple Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383159",
+      "ItemName": "Green Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383160",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383161",
+      "ItemName": "Blue Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383162",
+      "ItemName": "Pale Maiden",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383164",
+      "ItemName": "Orange Ghost",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383165",
+      "ItemName": "Blue Banshee",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383167",
+      "ItemName": "Red Banshee",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383169",
+      "ItemName": "Shackled Banshee",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383172",
+      "ItemName": "Scarecrow",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383174",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383175",
+      "ItemName": "Red Ghoul",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383176",
+      "ItemName": "Gravedigger",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383180",
+      "ItemName": "Wraith",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383286",
+      "ItemName": "Gloomthorn Candy Bed",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383287",
+      "ItemName": "Gloomthorn Nightstand",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383288",
+      "ItemName": "Gloomthorn Bookshelf",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383289",
+      "ItemName": "Gloomthorn Dining Chair",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383290",
+      "ItemName": "Gloomthorn Feasting Table",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383340",
+      "ItemName": "Gloomthorn Couch",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383353",
+      "ItemName": "Gloomthorn Vine (7 Day)",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383354",
+      "ItemName": "Gloomthorn Vine (1 Day)",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383356",
+      "ItemName": "Bat Swarm (7 Day)",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1383357",
+      "ItemName": "Bat Swarm (1 Day)",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384538",
+      "ItemName": "Grey Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384551",
+      "ItemName": "Grey Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1384564",
+      "ItemName": "Grey Werewolf Leggings",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384577",
+      "ItemName": "Black Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384590",
+      "ItemName": "Black Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1384603",
+      "ItemName": "Black Werewolf Leggings",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384616",
+      "ItemName": "Brown Werewolf Skullcap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384629",
+      "ItemName": "Brown Werewolf Fur Sleeves",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1384642",
+      "ItemName": "Brown Werewolf Leggings",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1384656",
+      "ItemName": "Blue Moon Staff",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1384669",
+      "ItemName": "Blood Moon Staff",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1384682",
+      "ItemName": "Hunter's Moon Staff",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1392007",
+      "ItemName": "Jack O Lantern",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418556",
+      "ItemName": "All Souls Hat",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418570",
+      "ItemName": "All Souls Regalia",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418584",
+      "ItemName": "All Souls Boots",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418598",
+      "ItemName": "All Souls Skullcap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418612",
+      "ItemName": "All Souls Finery",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418626",
+      "ItemName": "All Souls Walkers",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418640",
+      "ItemName": "All Souls Headwrap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418654",
+      "ItemName": "All Souls Splendor",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418668",
+      "ItemName": "All Souls Moccasins",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1418682",
+      "ItemName": "All Souls Calavera Wand",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418696",
+      "ItemName": "All Souls Skull Scepter",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1418710",
+      "ItemName": "All Souls Cranium Wand",
+      "Notes": "",
+      "Chance": 0.7576
+    },
+    {
+      "ItemId": "1421675",
+      "ItemName": "The Unicorn's Mane",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1421676",
+      "ItemName": "The Coiffed Giraffe",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191154",
+      "ItemName": "Enchanted Broom (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191221",
+      "ItemName": "Purple Glider (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191225",
+      "ItemName": "Horned Sweeper (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191233",
+      "ItemName": "Black Stallion (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220283",
+      "ItemName": "Nutty Candy bar",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "225480",
+      "ItemName": "Bat Wings (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473522",
+      "ItemName": "Peanutbutter Cup",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473524",
+      "ItemName": "Cry Babies",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359718",
+      "ItemName": "Cobweb Rug",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359719",
+      "ItemName": "Jack-O-Rug",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359720",
+      "ItemName": "Halloween Mat",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359721",
+      "ItemName": "Creepy Corner Cobweb",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359722",
+      "ItemName": "Spooky Spider Web",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1359724",
+      "ItemName": "Spider Web Wallpaper",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1852739859",
+      "ItemName": "Time of Legend",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "71259186",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2019785547",
+      "ItemName": "Harvest Lord",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "257188178",
+      "ItemName": "Ice Bats",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "22668926",
+      "ItemName": "Lady Blackhope",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "625995991",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1839389300",
+      "ItemName": "Fire Bats",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1339630873",
+      "ItemName": "Frozen Bats",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2109436048",
+      "ItemName": "Poison",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1658002416",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1887102378",
+      "ItemName": "Red Banshee",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "313215557",
+      "ItemName": "Myth Banshee",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "186748716",
+      "ItemName": "Krokomummy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1389258375",
+      "ItemName": "Lord Nightshade",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1879854297",
+      "ItemName": "Black Widow",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2138991221",
+      "ItemName": "Brown Spider",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2111122029",
+      "ItemName": "Spirit Armor",
+      "Notes": "",
+      "Chance": 5.5556
+    }
+  ]
+}

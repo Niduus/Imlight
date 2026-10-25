@@ -1,0 +1,20 @@
+{
+  "Name": "AZFurniture_Bookshelf",
+  "Description": "Azteca Furniture Set 3 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "683262",
+      "ItemName": "Aztecan Bookshelf",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

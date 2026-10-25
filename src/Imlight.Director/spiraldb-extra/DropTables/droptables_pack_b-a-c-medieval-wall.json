@@ -1,0 +1,44 @@
+{
+  "Name": "B-A-C-Medieval-Wall",
+  "Description": "Build-A-Castle Medieval Set (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1233263",
+      "ItemName": "Wall Md Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233267",
+      "ItemName": "Wall Corner Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233277",
+      "ItemName": "Wall/Post Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233286",
+      "ItemName": "Stairs Narrow Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233311",
+      "ItemName": "Wall Lg Castle Block B",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

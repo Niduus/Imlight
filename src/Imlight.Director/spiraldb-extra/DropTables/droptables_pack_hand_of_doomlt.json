@@ -1,0 +1,56 @@
+{
+  "Name": "Hand_of_DoomLT",
+  "Description": "Hand of Doom Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1649729184",
+      "ItemName": "Minotaur Minion",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "586811016",
+      "ItemName": "Fire Elemental",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1292164793",
+      "ItemName": "Ice Guardian",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "651955261",
+      "ItemName": "Water Elemental",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "586712792",
+      "ItemName": "Sprite Guardian",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1359293452",
+      "ItemName": "Mander Minion",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "137623996",
+      "ItemName": "Animate",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

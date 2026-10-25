@@ -1,0 +1,56 @@
+{
+  "Name": "KIL-Snack-Pack-All",
+  "Description": "KI Live Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1522412",
+      "ItemName": "Tea Time",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522413",
+      "ItemName": "Drama Popcorn",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522414",
+      "ItemName": "Cheese Day Cheese",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522415",
+      "ItemName": "Social Ice Cream",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522416",
+      "ItemName": "Coo-KI-e",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522417",
+      "ItemName": "Pretzels and Cheese",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1522418",
+      "ItemName": "Everything Nachos",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

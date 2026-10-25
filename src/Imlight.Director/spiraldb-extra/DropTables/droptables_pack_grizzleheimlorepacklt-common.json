@@ -1,0 +1,410 @@
+{
+  "Name": "GrizzleheimLorePackLT-Common",
+  "Description": "Grizzleheim Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181067",
+      "ItemName": "Wild Fern",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181068",
+      "ItemName": "Fire Pit and Kettle",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181076",
+      "ItemName": "Wild Mushrooms",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181120",
+      "ItemName": "Tall Wooden Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181121",
+      "ItemName": "Rough Wooden Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181122",
+      "ItemName": "Barbaric Wood Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "184173",
+      "ItemName": "Kitchen Ware Rack",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "184174",
+      "ItemName": "Kitchen Ware Pots",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "512091",
+      "ItemName": "Grizzleheim Main Theme",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "512149",
+      "ItemName": "Grizzleheim Theme 1",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "512150",
+      "ItemName": "Grizzleheim Combat Theme",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537584",
+      "ItemName": "Caramel Corn",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "537587",
+      "ItemName": "Sunflower Hearts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641605",
+      "ItemName": "Bog Witch Beetroot",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "641688",
+      "ItemName": "Cantajackalope",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "641689",
+      "ItemName": "Kiwi Fruit",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "713175",
+      "ItemName": "Golden Couch Potatoes",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733130",
+      "ItemName": "Caramel Apple",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "733181",
+      "ItemName": "Cheese Cake",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "789225",
+      "ItemName": "Tower Shield Tarts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257586",
+      "ItemName": "King Parsley Soup",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1374586",
+      "ItemName": "Grizzleheim Game Trap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374591",
+      "ItemName": "Grizzleheim Breadboard",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374592",
+      "ItemName": "Hrundle Fjord Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374593",
+      "ItemName": "Northguard Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374594",
+      "ItemName": "Austrilund Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383143",
+      "ItemName": "Hero Sandwich",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392777",
+      "ItemName": "Fortified Bread",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1441354",
+      "ItemName": "Fortified Cheese",
+      "Notes": "",
+      "Chance": 3.8462
+    }
+  ]
+}

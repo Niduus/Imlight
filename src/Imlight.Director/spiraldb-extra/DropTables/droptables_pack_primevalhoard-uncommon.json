@@ -1,0 +1,260 @@
+{
+  "Name": "PrimevalHoard-Uncommon",
+  "Description": "Primeval Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100430",
+      "ItemName": "Spider Golem",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100435",
+      "ItemName": "Grumpy Snowman",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100463",
+      "ItemName": "Fire Salamander",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160130",
+      "ItemName": "Dream Ghoul",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "225432",
+      "ItemName": "Firebat",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "240103",
+      "ItemName": "Dastardly Radish",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "733180",
+      "ItemName": "Candy-Caned Yams",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "789454",
+      "ItemName": "Lava Guava",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "789459",
+      "ItemName": "Wiki Peas",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "789460",
+      "ItemName": "Winged Bean",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1257596",
+      "ItemName": "Wrath's Grape Juice",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1317840",
+      "ItemName": "Wampyrnickel Bread",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1359608",
+      "ItemName": "Tasty Rainbow",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1507021",
+      "ItemName": "Stompy Bronto (7 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1507022",
+      "ItemName": "Chompy Bronto (7 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1507023",
+      "ItemName": "Trompy Bronto (7 Day)",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1893708917",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "881759932",
+      "ItemName": "Elemental Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2058361962",
+      "ItemName": "Blade Golem",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1623983249",
+      "ItemName": "Blademaster",
+      "Notes": "",
+      "Chance": 5.0
+    }
+  ]
+}

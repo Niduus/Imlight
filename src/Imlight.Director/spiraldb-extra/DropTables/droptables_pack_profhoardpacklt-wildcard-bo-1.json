@@ -1,0 +1,962 @@
+{
+  "Name": "ProfHoardPackLT-Wildcard-BO-1",
+  "Description": "Super Professor's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1254210",
+      "ItemName": "Cast Symbol Fire (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254211",
+      "ItemName": "Cast Symbol Ice (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254212",
+      "ItemName": "Cast Symbol Life (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254213",
+      "ItemName": "Cast Symbol Death (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254214",
+      "ItemName": "Cast Symbol Myth (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254215",
+      "ItemName": "Cast Symbol Storm (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1254216",
+      "ItemName": "Cast Symbol Balance (PERM)",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "160291",
+      "ItemName": "Crate of Chickens",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191154",
+      "ItemName": "Enchanted Broom (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191221",
+      "ItemName": "Purple Glider (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191225",
+      "ItemName": "Horned Sweeper (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191233",
+      "ItemName": "Black Stallion (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "225478",
+      "ItemName": "Seraph Wings (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473521",
+      "ItemName": "Rotten Candy",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473523",
+      "ItemName": "Misfortune Cookie",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1362632333",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "823693170",
+      "ItemName": "Poison",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "289138693",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1080588910",
+      "ItemName": "Rain Beetle",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "530828052",
+      "ItemName": "Samoorai",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "272881926",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1021436465",
+      "ItemName": "Seraph",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "805217289",
+      "ItemName": "Skeletal Pirate",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1486204966",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "648405137",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1085415812",
+      "ItemName": "Storm Hound",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1733007657",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1084126480",
+      "ItemName": "Death Troll",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "160208",
+      "ItemName": "Stack of 3 Books",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160229",
+      "ItemName": "Pie",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160293",
+      "ItemName": "Crate of Ice Cream",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160395",
+      "ItemName": "Professor Falmea",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160399",
+      "ItemName": "Professor Balestrom",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160982",
+      "ItemName": "Professor Ambrose",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "160983",
+      "ItemName": "Portrait of Lydia Greyrose",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "164419",
+      "ItemName": "Theater Masks",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254217",
+      "ItemName": "Cast Symbol Fire (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254218",
+      "ItemName": "Cast Symbol Fire (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254219",
+      "ItemName": "Cast Symbol Ice (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254220",
+      "ItemName": "Cast Symbol Ice (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254221",
+      "ItemName": "Cast Symbol Life (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254222",
+      "ItemName": "Cast Symbol Life (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254223",
+      "ItemName": "Cast Symbol Death (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254224",
+      "ItemName": "Cast Symbol Death (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254225",
+      "ItemName": "Cast Symbol Myth (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254226",
+      "ItemName": "Cast Symbol Myth (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254227",
+      "ItemName": "Cast Symbol Storm (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1254228",
+      "ItemName": "Cast Symbol Storm (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254229",
+      "ItemName": "Cast Symbol Balance (7 Day)",
+      "Notes": "",
+      "Chance": 1.0204
+    },
+    {
+      "ItemId": "1254230",
+      "ItemName": "Cast Symbol Balance (1 Day)",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1374487",
+      "ItemName": "Fishy Bird Cage",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1374549",
+      "ItemName": "Ravenwood Librarian's Desk",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1414367",
+      "ItemName": "Dalia's Smoldering Hairdo",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414381",
+      "ItemName": "Dalia's Blazing Suit",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414395",
+      "ItemName": "Dalia's Sweltering Shoes",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414409",
+      "ItemName": "Lydia's Frigid Hat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414423",
+      "ItemName": "Greyrose Glacial Jerkin",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414437",
+      "ItemName": "Lydia's Frozen Footwraps",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414451",
+      "ItemName": "Halston's Eureka Hat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414465",
+      "ItemName": "Balestrom's Blast Jacket",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414479",
+      "ItemName": "Halston's Stormy Slippers",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414493",
+      "ItemName": "Cyrus's Secret Skullcap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414507",
+      "ItemName": "Drake's Reflection Robe",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414521",
+      "ItemName": "Cyrus's Scholarly Striders",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414535",
+      "ItemName": "Moolinda's Hardy Headwrap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414549",
+      "ItemName": "Wu's Wild Kimono",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414563",
+      "ItemName": "Moolinda's Spirit Sandals",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414577",
+      "ItemName": "Dworgyn's Havoc Hood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414591",
+      "ItemName": "Dworgyn's Sinister Smock",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414605",
+      "ItemName": "Dworgyn's Dire Boots",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414619",
+      "ItemName": "Alhazred's Karmic Fez",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414633",
+      "ItemName": "Alhazred's Resolute Raiment",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414647",
+      "ItemName": "Alhazred's Consistent Clogs",
+      "Notes": "",
+      "Chance": 0.8547
+    },
+    {
+      "ItemId": "1414661",
+      "ItemName": "Headmaster's Glowing Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414675",
+      "ItemName": "Headmaster's Crystal Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414689",
+      "ItemName": "Headmaster's Sky Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414703",
+      "ItemName": "Headmaster's Dream Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414717",
+      "ItemName": "Headmaster's Zeal Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414731",
+      "ItemName": "Headmaster's Doom Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414745",
+      "ItemName": "Headmaster's Law Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160200",
+      "ItemName": "Open Book",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160207",
+      "ItemName": "Stack of 2 Books",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160209",
+      "ItemName": "Stack of 4 Books",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160210",
+      "ItemName": "Stack of 5 Books",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160233",
+      "ItemName": "Globe",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160292",
+      "ItemName": "Crate of Hot Dogs",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160294",
+      "ItemName": "Crate of Jellybeans",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160295",
+      "ItemName": "Crate of Pies",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160296",
+      "ItemName": "Crate of Pudding",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160297",
+      "ItemName": "Crate of Pumpkins",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160372",
+      "ItemName": "Brown Blooms",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160373",
+      "ItemName": "Purple Posies",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160374",
+      "ItemName": "Fire Flowers",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160396",
+      "ItemName": "Professor Greyrose",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160397",
+      "ItemName": "Professor Wu",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160398",
+      "ItemName": "Professor Drake",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160980",
+      "ItemName": "Bluebonnets",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "181129",
+      "ItemName": "Pot-bellied Stove",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220191",
+      "ItemName": "Carrot",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "537593",
+      "ItemName": "Beetle Cream Soda",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "537599",
+      "ItemName": "Sweet Mango",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "733124",
+      "ItemName": "Papaya",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374539",
+      "ItemName": "Storm Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374540",
+      "ItemName": "Death Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374541",
+      "ItemName": "Fire Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374542",
+      "ItemName": "Ice Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374543",
+      "ItemName": "Life Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374544",
+      "ItemName": "Myth Sconce",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1374560",
+      "ItemName": "Ginormous Apple",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "117876017",
+      "ItemName": "Blizzard",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1058259531",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "2076289216",
+      "ItemName": "Clockwork",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "476302871",
+      "ItemName": "Colossus",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "288801686",
+      "ItemName": "Curse",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1557353282",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "288354161",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "863423206",
+      "ItemName": "Earthquake",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1252608386",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "111757585",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "211974638",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "296072242",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1173957583",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "576014349",
+      "ItemName": "Ice Elf",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1162091017",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "819750901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 4.1667
+    }
+  ]
+}

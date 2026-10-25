@@ -1,0 +1,506 @@
+{
+  "Name": "DragonHordeLT-Wildcard-BO-2",
+  "Description": "Ultra Dragon's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "470081",
+      "ItemName": "Bone Dragon (PERM)",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "160219",
+      "ItemName": "Dragon Skull",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160516",
+      "ItemName": "Tall Dragon Vase",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160799",
+      "ItemName": "Dragon Pedestal",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160804",
+      "ItemName": "Dragonfire Brazier",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160810",
+      "ItemName": "Dragon Bust",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160825",
+      "ItemName": "Dragon Claw",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160855",
+      "ItemName": "Great Dragon Bust",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160914",
+      "ItemName": "Dragonmoon Plaque",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "160920",
+      "ItemName": "Dragon Shield",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "220336",
+      "ItemName": "Frosted Drakes Cereal",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "1992604577",
+      "ItemName": "Fire Dragon",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "1508339025",
+      "ItemName": "Dragonblade",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "460965238",
+      "ItemName": "Ice Wyvern",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "1866000101",
+      "ItemName": "Fire Wyvern",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "260156497",
+      "ItemName": "Squall Wyvern",
+      "Notes": "",
+      "Chance": 2.0408
+    },
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160811",
+      "ItemName": "Broken Dragon Bust",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160824",
+      "ItemName": "Dragonhorn Trophy",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160837",
+      "ItemName": "Dragonmoon Obelisk",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160843",
+      "ItemName": "Dragonclaw Pedestal",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160865",
+      "ItemName": "Dragonmoon Marker",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160866",
+      "ItemName": "Dragonskull Marker",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160871",
+      "ItemName": "Dragonflame Torch",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160915",
+      "ItemName": "Dragonskull Plaque",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160972",
+      "ItemName": "Singed Dragon Handbook",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160977",
+      "ItemName": "Snapdragon Flowerbed",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258595",
+      "ItemName": "Perfect Ruby",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "87115",
+      "ItemName": "Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160838",
+      "ItemName": "Dragonskull Obelisk",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160908",
+      "ItemName": "Dragon Wall Bust",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "160909",
+      "ItemName": "Dragonwing Bust",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "175580",
+      "ItemName": "Sea Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "220312",
+      "ItemName": "Mystic Dragon Fruit",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "240083",
+      "ItemName": "Dragonhorned Melon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468374",
+      "ItemName": "Dragonrider's Vigilant Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468381",
+      "ItemName": "Dragonrider's Vigilant Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468388",
+      "ItemName": "Dragonrider's Vigilant Boots",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468395",
+      "ItemName": "Dragonrider's Utility Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468402",
+      "ItemName": "Dragonrider's Utility Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468409",
+      "ItemName": "Dragonrider's Utility Boots",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468416",
+      "ItemName": "Dragonrider's Assailing Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468423",
+      "ItemName": "Dragonrider's Assailing Robe",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468430",
+      "ItemName": "Dragonrider's Assailing Shoes",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "468437",
+      "ItemName": "Dragonrider's Storm Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "468438",
+      "ItemName": "Dragonrider's Fire Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "468439",
+      "ItemName": "Dragonrider's Ice Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "468440",
+      "ItemName": "Dragonrider's Life Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "468441",
+      "ItemName": "Dragonrider's Myth Blade",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "468442",
+      "ItemName": "Dragonrider's Death Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "468443",
+      "ItemName": "Dragonrider's Balance Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "470084",
+      "ItemName": "Faithful Dragoness (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470085",
+      "ItemName": "Blue Dragon (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470086",
+      "ItemName": "Dark Redwing (1 Day)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470096",
+      "ItemName": "Dragon Wings (PERM)",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473118",
+      "ItemName": "Vigilant Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "473119",
+      "ItemName": "Utility Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "473120",
+      "ItemName": "Assailing Dragon",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "667650",
+      "ItemName": "Dragonrider's Balance Blade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1175482709",
+      "ItemName": "Skeletal Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1985085383",
+      "ItemName": "Polymorph Dracon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "77371933",
+      "ItemName": "Hydra",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1505707344",
+      "ItemName": "Dragonflies",
+      "Notes": "",
+      "Chance": 4.1667
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "Name": "HoardOfHydraLT-Rare",
+  "Description": "Hoard of the Hydra Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100434",
+      "ItemName": "Red Ghost",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470413",
+      "ItemName": "King Artorius Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470414",
+      "ItemName": "Bog Witch Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470416",
+      "ItemName": "Lady of the Lake Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "470417",
+      "ItemName": "Sir Pike Del Lago Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635920",
+      "ItemName": "Mask of the Faerie Court",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635929",
+      "ItemName": "Faerie Court Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635938",
+      "ItemName": "Faerie Court Steel Leaf",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "635947",
+      "ItemName": "Pixie's Mask of Encanta",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635956",
+      "ItemName": "Pixie's Enchanted Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635965",
+      "ItemName": "Pixie's Armor of Encanta",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "635974",
+      "ItemName": "World's Fool Mask",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635983",
+      "ItemName": "World's Fool Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "635992",
+      "ItemName": "World's Fool Armor",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "636034",
+      "ItemName": "Misty Mountain Mandolin",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "636043",
+      "ItemName": "Levee Breaking Lute",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "636052",
+      "ItemName": "Mandolin of Evermore",
+      "Notes": "",
+      "Chance": 0.2304
+    },
+    {
+      "ItemId": "641547",
+      "ItemName": "Ceara Ashbury Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641594",
+      "ItemName": "High Road Haggis",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641595",
+      "ItemName": "Toad in the Hole",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641597",
+      "ItemName": "Bearberry",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641598",
+      "ItemName": "Pomegranite",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641602",
+      "ItemName": "Lemon Harts",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641603",
+      "ItemName": "Deepwater Toffee",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641605",
+      "ItemName": "Bog Witch Beetroot",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641606",
+      "ItemName": "Muscle Sprouts",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641610",
+      "ItemName": "Crab Knight Cakes",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "641611",
+      "ItemName": "Ogre Meanies",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "653096",
+      "ItemName": "Blaze Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653097",
+      "ItemName": "Mythic Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653098",
+      "ItemName": "Snow Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653099",
+      "ItemName": "Forest Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653100",
+      "ItemName": "Desert Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653101",
+      "ItemName": "Shadow Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "653102",
+      "ItemName": "Spark Beast",
+      "Notes": "",
+      "Chance": 1.9231
+    }
+  ]
+}

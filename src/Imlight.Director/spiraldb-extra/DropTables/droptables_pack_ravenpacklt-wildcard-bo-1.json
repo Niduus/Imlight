@@ -1,0 +1,1016 @@
+{
+  "Name": "RavenPackLT-Wildcard-BO-1",
+  "Description": "Super Raven's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "470158",
+      "ItemName": "Blood Raven (PERM)",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "470159",
+      "ItemName": "Raven (PERM)",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "100457",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "100458",
+      "ItemName": "Sun Bird",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181097",
+      "ItemName": "Yardbird",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "206090",
+      "ItemName": "Birdcage",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "206091",
+      "ItemName": "Chicken Coop",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "206095",
+      "ItemName": "Birdbath",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "206102",
+      "ItemName": "Cuckoo Clock",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "225418",
+      "ItemName": "Dark Crow",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "225445",
+      "ItemName": "Storm Bird",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "225453",
+      "ItemName": "Ice Bird",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "473444",
+      "ItemName": "Arctic Ninja Pig",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532402",
+      "ItemName": "Raven Helm of Unkindness",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532410",
+      "ItemName": "Unkind Winter Boots",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532418",
+      "ItemName": "Armor of Many Winters",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532426",
+      "ItemName": "Steel Raven Helmet",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532434",
+      "ItemName": "Boots of Steel Wings",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532442",
+      "ItemName": "Everwinter Plate",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532450",
+      "ItemName": "Thought and Memory Helm",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532458",
+      "ItemName": "Boots of Whispered Flight",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "532466",
+      "ItemName": "Ravenking's Battle Story Armor",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532478",
+      "ItemName": "Unkind Axe of Winter",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532486",
+      "ItemName": "Raven's Claw of Unkindness",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532494",
+      "ItemName": "Trickster's Lying Bow",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532502",
+      "ItemName": "Great Axe of the Storyteller",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532510",
+      "ItemName": "Raven's Storied Razor",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532518",
+      "ItemName": "Dark Wing Bow",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532526",
+      "ItemName": "Winter's Whispering Axe",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532534",
+      "ItemName": "Nevermore Talon",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "532542",
+      "ItemName": "Raven's Bow of Unkind Winter",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537555",
+      "ItemName": "Sword Tree",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537556",
+      "ItemName": "Broken Viking Statue",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537557",
+      "ItemName": "Viking Sword Statue",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537558",
+      "ItemName": "Viking Axe Statue",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537584",
+      "ItemName": "Caramel Corn",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537585",
+      "ItemName": "Peppercorn",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537587",
+      "ItemName": "Sunflower Hearts",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537588",
+      "ItemName": "Simple Sugar Pop",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537589",
+      "ItemName": "Frosty Sugar Cubes",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537591",
+      "ItemName": "Pollen Bombs",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537592",
+      "ItemName": "Pickled Garlic Grubs",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537594",
+      "ItemName": "Lime Peel Rickey",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537596",
+      "ItemName": "Fuzzy Peach Fizz",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537598",
+      "ItemName": "Fruit & Nut Bar",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537601",
+      "ItemName": "Bad Honeyed Dates",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "537602",
+      "ItemName": "Fried Worms",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537603",
+      "ItemName": "Frozen Snails",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "2111174242",
+      "ItemName": "Ra",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "400359846",
+      "ItemName": "Snow Angel",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "410547506",
+      "ItemName": "Woolly Mammoth",
+      "Notes": "",
+      "Chance": 0.9346
+    },
+    {
+      "ItemId": "1013171411",
+      "ItemName": "Colossus",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "2080332446",
+      "ItemName": "Frost Giant",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "475199575",
+      "ItemName": "Icezilla",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "82756",
+      "ItemName": "Krok Bird Obelisk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82764",
+      "ItemName": "Krok Bird Pressure Plate",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100409",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100419",
+      "ItemName": "Arctic Serpent",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100435",
+      "ItemName": "Grumpy Snowman",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100442",
+      "ItemName": "Firewing",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100464",
+      "ItemName": "Ice Salamander",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160291",
+      "ItemName": "Crate of Chickens",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160474",
+      "ItemName": "Crane Obelisk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164205",
+      "ItemName": "Winged Plaque",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164206",
+      "ItemName": "Winged Cup Trophy",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "206092",
+      "ItemName": "Breakfast Pan",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "206099",
+      "ItemName": "Egg Basket",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "211109",
+      "ItemName": "Stuffed Owl",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537536",
+      "ItemName": "Craggy Apple Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537549",
+      "ItemName": "Mjolnir Hammer",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537551",
+      "ItemName": "Snow Basin",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537590",
+      "ItemName": "Hard Boiled Beetle Eggs",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537593",
+      "ItemName": "Beetle Cream Soda",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537595",
+      "ItemName": "Cranberry Frog",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537597",
+      "ItemName": "Lemon Daisy",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537599",
+      "ItemName": "Sweet Mango",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537600",
+      "ItemName": "Bunch of Figs",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "523641501",
+      "ItemName": "Thunderbird",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "1882726107",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1262244448",
+      "ItemName": "Blue Phoenix",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1942726358",
+      "ItemName": "Crow",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1756644154",
+      "ItemName": "Freeze",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "460914934",
+      "ItemName": "Ice Wyvern",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "654749685",
+      "ItemName": "Blizzard",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "801571408",
+      "ItemName": "Frostbite",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1928885251",
+      "ItemName": "Deep Freeze",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82754",
+      "ItemName": "Turkey Platter",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82777",
+      "ItemName": "Krok Bird Plaque",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82842",
+      "ItemName": "Krok Bird Tablet",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160425",
+      "ItemName": "Ravenwood Banner",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160495",
+      "ItemName": "Mantis Tablet",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160552",
+      "ItemName": "Stone Fountain",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160708",
+      "ItemName": "Altar with Candles",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160765",
+      "ItemName": "Marleybonian Pilot Painting",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160776",
+      "ItemName": "Cat Wanted Poster",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160801",
+      "ItemName": "Phoenix Plaque",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160826",
+      "ItemName": "Drake Egg",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160861",
+      "ItemName": "Phoenix Marker",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164123",
+      "ItemName": "Stormwracked Wallpaper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164130",
+      "ItemName": "Forester's Wallpaper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164133",
+      "ItemName": "Grassy Flooring",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164143",
+      "ItemName": "Clouded Wall Screen",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "164313",
+      "ItemName": "Leafy Floor",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181032",
+      "ItemName": "Barrel Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181034",
+      "ItemName": "Winter Bed",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181039",
+      "ItemName": "Horn-leg Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181045",
+      "ItemName": "Bundle of Rope",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181063",
+      "ItemName": "Small Evergreen Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181066",
+      "ItemName": "Small Fir Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181067",
+      "ItemName": "Wild Fern",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181078",
+      "ItemName": "Bear-paw Oar",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181080",
+      "ItemName": "Dinner Plate",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181088",
+      "ItemName": "Stoppered Jar",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181093",
+      "ItemName": "Wooden Shelf",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181104",
+      "ItemName": "Small Heavy Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181108",
+      "ItemName": "Lounge Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181112",
+      "ItemName": "Medium Pine Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181113",
+      "ItemName": "Coniferous Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "181120",
+      "ItemName": "Tall Wooden Shelf",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "404096",
+      "ItemName": "Claw-marked Floor",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "404097",
+      "ItemName": "Wavy Grass Floor",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "404103",
+      "ItemName": "Grizzleheim Doodle Wallpaper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537537",
+      "ItemName": "Fallen Spiral Runestone",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537538",
+      "ItemName": "Flat Braided Runestone",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537539",
+      "ItemName": "Frozen Poised Bear",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537540",
+      "ItemName": "Frozen Attacking Bear",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537541",
+      "ItemName": "Frozen Charging Bear",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537542",
+      "ItemName": "Frozen Wolf Warrior",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537543",
+      "ItemName": "Frozen Attacking Wolf",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537544",
+      "ItemName": "Frozen Throwing Wolf",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537545",
+      "ItemName": "Glacier Rocks",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537546",
+      "ItemName": "Tribal Totem Runestone",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537547",
+      "ItemName": "Large Snowy Maple Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537548",
+      "ItemName": "Small Snowy Maple Tree",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537552",
+      "ItemName": "Snow Pile",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537553",
+      "ItemName": "Large Snowy Evergreen",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537554",
+      "ItemName": "Small Snowy Evergreen",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537559",
+      "ItemName": "Raven Claw Totem",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537612",
+      "ItemName": "Swirl Runestone",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537614",
+      "ItemName": "Hanging Feathers",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2029419339",
+      "ItemName": "Harvest Lord",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "360382229",
+      "ItemName": "Snow Bird",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1359910287",
+      "ItemName": "Storm Bird",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1179359615",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "509744185",
+      "ItemName": "Icebird",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1595901458",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "187191258",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1294147641",
+      "ItemName": "Ice Guardian",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "971451610",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

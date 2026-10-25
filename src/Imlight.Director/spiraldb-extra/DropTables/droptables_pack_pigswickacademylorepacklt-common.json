@@ -1,0 +1,452 @@
+{
+  "Name": "PigswickAcademyLorePackLT-Common",
+  "Description": "Wysteria Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "220264",
+      "ItemName": "Fancy Pudding",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "220317",
+      "ItemName": "Star Cookie",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "473721",
+      "ItemName": "Pigeon Pie",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "512093",
+      "ItemName": "Wysteria Main Theme",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "512151",
+      "ItemName": "Wysteria Theme 1",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "512152",
+      "ItemName": "Wysteria Theme 2",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "512153",
+      "ItemName": "Wysteria Combat Theme",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "683117",
+      "ItemName": "Spiral Tree",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "683118",
+      "ItemName": "Proud Pegasus Statue",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "683119",
+      "ItemName": "Estate Painting",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "683120",
+      "ItemName": "Dragonship Painting",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "683121",
+      "ItemName": "Small Wooden Clock",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "713175",
+      "ItemName": "Golden Couch Potatoes",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "733112",
+      "ItemName": "Yucca",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "733118",
+      "ItemName": "Avocado Milkshake",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "733124",
+      "ItemName": "Papaya",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "789460",
+      "ItemName": "Winged Bean",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248060",
+      "ItemName": "Honeycrisp Apples",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257594",
+      "ItemName": "Cornbread Fruit",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257596",
+      "ItemName": "Wrath's Grape Juice",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257598",
+      "ItemName": "Rye Bread Fruit",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1317197",
+      "ItemName": "Pigswick Player",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350751",
+      "ItemName": "Filigreed Wysterian Chair",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350752",
+      "ItemName": "Pigswick Student's Seat",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350753",
+      "ItemName": "Wysterian Artist's Easel",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350754",
+      "ItemName": "Elephantine Ottoman",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350755",
+      "ItemName": "Splendid Wysterian Fountain",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350756",
+      "ItemName": "Stately Wysterian Wooden Desk",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350758",
+      "ItemName": "Tall Wysterian Potted Fern",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350760",
+      "ItemName": "Short Wysterian Potted Fern",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350762",
+      "ItemName": "Cornflower Wysterian Settee",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350763",
+      "ItemName": "Golden Blossom Rug",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1359101",
+      "ItemName": "Pigswick Student's Desk",
+      "Notes": "",
+      "Chance": 2.3256
+    }
+  ]
+}

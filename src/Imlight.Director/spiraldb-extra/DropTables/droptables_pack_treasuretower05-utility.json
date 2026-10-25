@@ -1,0 +1,74 @@
+{
+  "Name": "TreasureTower05-Utility",
+  "Description": "Deckathalon Storm Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1698635320",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "109770479",
+      "ItemName": "Myth Trap",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "406792873",
+      "ItemName": "Storm Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

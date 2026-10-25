@@ -1,0 +1,74 @@
+{
+  "Name": "TreasureTower05-UtilityB",
+  "Description": "Deckathalon Storm Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1698635320",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "109770479",
+      "ItemName": "Myth Trap",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "45884029",
+      "ItemName": "Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "131220406",
+      "ItemName": "Mass Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "726534295",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

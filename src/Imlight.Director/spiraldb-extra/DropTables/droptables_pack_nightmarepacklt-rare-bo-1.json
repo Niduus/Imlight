@@ -1,0 +1,584 @@
+{
+  "Name": "NightmarePackLT-Rare-BO-1",
+  "Description": "Super Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100332",
+      "ItemName": "Lightningbat",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "100434",
+      "ItemName": "Red Ghost",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "126395",
+      "ItemName": "Hallowe'en Hat",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "126398",
+      "ItemName": "Hallowe'en Shoes",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "126399",
+      "ItemName": "Hallowe'en Robe",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "126404",
+      "ItemName": "Kitty Pumpkin Mask",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "126409",
+      "ItemName": "Mean Pumpkin Staff",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "126410",
+      "ItemName": "Witch's Broom",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "126411",
+      "ItemName": "Lollipop Wand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "126412",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "126415",
+      "ItemName": "Scary Pumpkin Mask",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "160130",
+      "ItemName": "Dream Ghoul",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "164422",
+      "ItemName": "Death Scarab",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "191229",
+      "ItemName": "Enchanted Broom (PERM)",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "191230",
+      "ItemName": "Purple Glider (PERM)",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "191231",
+      "ItemName": "Horned Sweeper (PERM)",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "191239",
+      "ItemName": "Black Stallion (PERM)",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "212075",
+      "ItemName": "Ianthine Spectre",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "212171",
+      "ItemName": "Dark Imp",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "220073",
+      "ItemName": "Bat Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "220223",
+      "ItemName": "Yellow Corn",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "225403",
+      "ItemName": "Death Treant",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "225410",
+      "ItemName": "Pale Maiden",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "225427",
+      "ItemName": "Golden Armored Skeleton",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "225431",
+      "ItemName": "Myth Banshee",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "225438",
+      "ItemName": "Life Ghoul",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "225495",
+      "ItemName": "Grim Scarab",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "225497",
+      "ItemName": "Ghost Hound",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "240081",
+      "ItemName": "Crab Apples",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "346189",
+      "ItemName": "Ghost Dragon",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "346193",
+      "ItemName": "Nightmare",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470046",
+      "ItemName": "Tapestry to Nightside",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470049",
+      "ItemName": "Apple Tub",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470050",
+      "ItemName": "Halloween Cauldron",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470051",
+      "ItemName": "Ghost Doodle Stand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470052",
+      "ItemName": "Ghoul Doodle Stand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470053",
+      "ItemName": "Scarecrow Doodle Stand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470054",
+      "ItemName": "Vampire Doodle Stand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470055",
+      "ItemName": "Witch Doodle Stand",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470056",
+      "ItemName": "Pirate Jack-O-Lantern",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470057",
+      "ItemName": "Scary Jack-O-Lantern",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "470058",
+      "ItemName": "Silly Jack-O-Lantern",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "473442",
+      "ItemName": "Skeletal Knight",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "473517",
+      "ItemName": "Pixie Stix",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "473518",
+      "ItemName": "Gobbler Stoppers",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "473525",
+      "ItemName": "Jolly Rancher",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "473535",
+      "ItemName": "Gob-O-Lantern",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "512079",
+      "ItemName": "Customizable Grizzleheim Sign",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "512080",
+      "ItemName": "Customizable Gravestone Sign",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526528",
+      "ItemName": "Darkwraith's Compelling Cowl",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526535",
+      "ItemName": "Darkwraith's Compelling Shroud",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "526542",
+      "ItemName": "Darkwraith's Compelling Boots",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526549",
+      "ItemName": "Darkwraith's Umbral Cowl",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526556",
+      "ItemName": "Darkwraith's Umbral Shroud",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "526563",
+      "ItemName": "Darkwraith's Umbral Boots",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526570",
+      "ItemName": "Darkwraith's Cowl of Penance",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526577",
+      "ItemName": "Darkwraith's Shroud of Penance",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "526584",
+      "ItemName": "Darkwraith's Boots of Penance",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "526591",
+      "ItemName": "Darkwraith's Compelling Scythe",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "526598",
+      "ItemName": "Darkwraith's Umbral Scythe",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "526605",
+      "ItemName": "Darkwraith's Scythe of Penance",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "713133",
+      "ItemName": "Dead Beets",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "713294",
+      "ItemName": "Penumbra Drake",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "713306",
+      "ItemName": "Darkwraith's Atonement Cowl",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "713315",
+      "ItemName": "Darkwraith's Atonement Boots",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "713324",
+      "ItemName": "Darkwraith's Atonement Robe",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "713333",
+      "ItemName": "Darkwraith's Atonement Scythe",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "1204304",
+      "ItemName": "Vampire",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "1204311",
+      "ItemName": "Dragontooth Helm",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204321",
+      "ItemName": "Dragontooth Boots",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204331",
+      "ItemName": "Dragontooth Armor",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "1204341",
+      "ItemName": "Dragon's Eye Guard",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204351",
+      "ItemName": "Dragon's Eye Striders",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204361",
+      "ItemName": "Dragon's Eye Plate",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "1204371",
+      "ItemName": "Dragonbone Mantle",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204381",
+      "ItemName": "Dragonbone Footgear",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1204391",
+      "ItemName": "Dragonbone Raiment",
+      "Notes": "",
+      "Chance": 0.6897
+    },
+    {
+      "ItemId": "1292808787",
+      "ItemName": "Miniature Bloodbats",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "350767941",
+      "ItemName": "Life Banshee",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "2047583326",
+      "ItemName": "Green Widow",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "346763741",
+      "ItemName": "Giant Spider",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1112279666",
+      "ItemName": "Gold Skeleton",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "2121575888",
+      "ItemName": "Clockwork Spider",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "585149257",
+      "ItemName": "The Bonekeeper",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "138582012",
+      "ItemName": "Vampire",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "805237288",
+      "ItemName": "Skeletal Pirate",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "296075031",
+      "ItemName": "Spirit Defuse",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1943512790",
+      "ItemName": "Crow",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "321410403",
+      "ItemName": "Scarecrow",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "1175482578",
+      "ItemName": "Skeletal Dragon",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "80479757",
+      "ItemName": "Animate",
+      "Notes": "",
+      "Chance": 1.4493
+    },
+    {
+      "ItemId": "743017031",
+      "ItemName": "Lord Nightshade",
+      "Notes": "",
+      "Chance": 0.6897
+    }
+  ]
+}

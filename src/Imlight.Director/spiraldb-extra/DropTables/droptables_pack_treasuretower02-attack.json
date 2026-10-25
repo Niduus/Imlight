@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower02-Attack",
+  "Description": "Deckathalon Fire Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1789291684",
+      "ItemName": "Frost Dragon",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "801574444",
+      "ItemName": "Frostbite",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1136052346",
+      "ItemName": "Arcticzilla",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "117878678",
+      "ItemName": "Blizzard",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "360379249",
+      "ItemName": "Snow Bird",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "441796696",
+      "ItemName": "Ice Elf",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "2136236348",
+      "ItemName": "Ice Bats",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1496155666",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "219828186",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

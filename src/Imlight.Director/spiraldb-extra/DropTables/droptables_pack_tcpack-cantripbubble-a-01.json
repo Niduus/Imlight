@@ -1,0 +1,98 @@
+{
+  "Name": "TCPack-CantripBubble-A-01",
+  "Description": "Radiance Cantrip Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "84532933",
+      "ItemName": "Healing IV",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1819050019",
+      "ItemName": "Fishing Luck IV",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1920712078",
+      "ItemName": "Heal and Mana IV",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "84516549",
+      "ItemName": "Healing III",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1482625856",
+      "ItemName": "Mana III",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1819050023",
+      "ItemName": "Fishing Luck III",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1920581006",
+      "ItemName": "Heal and Mana III",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "84500165",
+      "ItemName": "Healing II",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "664857793",
+      "ItemName": "Mana II",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1819050027",
+      "ItemName": "Fishing Luck II",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1920974222",
+      "ItemName": "Heal and Mana II",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "120178409",
+      "ItemName": "Fishing Luck I",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "786528212",
+      "ItemName": "Heal and Mana I",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1365604465",
+      "ItemName": "Healing I",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

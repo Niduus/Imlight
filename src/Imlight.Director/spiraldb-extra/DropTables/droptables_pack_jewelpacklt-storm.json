@@ -1,0 +1,596 @@
+{
+  "Name": "JewelPackLT-Storm",
+  "Description": "Storm Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352625",
+      "ItemName": "Cracked Damage Amethyst +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352626",
+      "ItemName": "Cracked Damage Amethyst +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352627",
+      "ItemName": "Cracked Damage Amethyst +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352628",
+      "ItemName": "Cracked Damage Amethyst +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352629",
+      "ItemName": "Cracked Damage Amethyst +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352630",
+      "ItemName": "Cracked Damage Amethyst +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352631",
+      "ItemName": "Chipped Damage Amethyst +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352632",
+      "ItemName": "Chipped Damage Amethyst +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352633",
+      "ItemName": "Flawed Damage Amethyst +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352634",
+      "ItemName": "Flawed Damage Amethyst +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352635",
+      "ItemName": "Blemished Damage Amethyst +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352636",
+      "ItemName": "Blemished Damage Amethyst +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352637",
+      "ItemName": "Dull Damage Amethyst +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352638",
+      "ItemName": "Dull Damage Amethyst +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352639",
+      "ItemName": "Plain Damage Amethyst +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352640",
+      "ItemName": "Plain Damage Amethyst +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352641",
+      "ItemName": "Opaque Damage Amethyst +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352642",
+      "ItemName": "Opaque Damage Amethyst +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352643",
+      "ItemName": "Clear Damage Amethyst +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352644",
+      "ItemName": "Clear Damage Amethyst +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352645",
+      "ItemName": "Polished Damage Amethyst +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352646",
+      "ItemName": "Polished Damage Amethyst +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352647",
+      "ItemName": "Lustrous Damage Amethyst +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352648",
+      "ItemName": "Lustrous Damage Amethyst +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352775",
+      "ItemName": "Dull Piercing Amethyst +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352776",
+      "ItemName": "Dull Piercing Amethyst +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352777",
+      "ItemName": "Plain Piercing Amethyst +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352778",
+      "ItemName": "Opaque Piercing Amethyst +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352779",
+      "ItemName": "Clear Piercing Amethyst +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352849",
+      "ItemName": "Dull Critical Amethyst +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352850",
+      "ItemName": "Dull Critical Amethyst +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352851",
+      "ItemName": "Dull Critical Amethyst +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352852",
+      "ItemName": "Plain Critical Amethyst +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352853",
+      "ItemName": "Plain Critical Amethyst +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352854",
+      "ItemName": "Opaque Critical Amethyst +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352855",
+      "ItemName": "Opaque Critical Amethyst +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352856",
+      "ItemName": "Clear Critical Amethyst +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352857",
+      "ItemName": "Clear Critical Amethyst +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352858",
+      "ItemName": "Polished Critical Amethyst +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352859",
+      "ItemName": "Polished Critical Amethyst +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352860",
+      "ItemName": "Lustrous Critical Amethyst +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352861",
+      "ItemName": "Lustrous Critical Amethyst +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357074",
+      "ItemName": "Chipped Accurate Amethyst +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357075",
+      "ItemName": "Flawed Accurate Amethyst +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357076",
+      "ItemName": "Blemished Accurate Amethyst +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357077",
+      "ItemName": "Dull Accurate Amethyst +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357078",
+      "ItemName": "Plain Accurate Amethyst +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357079",
+      "ItemName": "Opaque Accurate Amethyst +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357080",
+      "ItemName": "Clear Accurate Amethyst +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357081",
+      "ItemName": "Polished Accurate Amethyst +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357082",
+      "ItemName": "Lustrous Accurate Amethyst +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357140",
+      "ItemName": "Cracked Accurate Amethyst +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357141",
+      "ItemName": "Cracked Accurate Amethyst +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357209",
+      "ItemName": "Thunder Snake Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357210",
+      "ItemName": "Lightning Bats Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357211",
+      "ItemName": "Thermic Shield Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358594",
+      "ItemName": "Storm Shark Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358595",
+      "ItemName": "Windstorm Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358610",
+      "ItemName": "Kraken Amethyst",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358611",
+      "ItemName": "Darkwind Amethyst",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358612",
+      "ItemName": "Stormzilla Amethyst",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358644",
+      "ItemName": "Dissipate Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358645",
+      "ItemName": "Mass Storm Prism Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358646",
+      "ItemName": "Storm Lord Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358647",
+      "ItemName": "Insane Bolt Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358648",
+      "ItemName": "Storm Trap Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358649",
+      "ItemName": "Enfeeble Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358650",
+      "ItemName": "Purloin Power Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358651",
+      "ItemName": "Water Elemental Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358652",
+      "ItemName": "Mokompo Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358975",
+      "ItemName": "Stormblade Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360144",
+      "ItemName": "Wrath of Zeus Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374103",
+      "ItemName": "Storm Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376144",
+      "ItemName": "Dual Stormblade Amethyst",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376297",
+      "ItemName": "Morganthe's Angst Amethyst",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376304",
+      "ItemName": "Erratic Outpouring Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384430",
+      "ItemName": "Storm Brandon Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405719",
+      "ItemName": "Shiny Damage Amethyst +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405720",
+      "ItemName": "Shiny Damage Amethyst +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405736",
+      "ItemName": "Shiny Critical Amethyst +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405737",
+      "ItemName": "Shiny Critical Amethyst +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405770",
+      "ItemName": "Stormspear Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405789",
+      "ItemName": "Shiny Accurate Amethyst +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430046",
+      "ItemName": "Sparkling Damage Amethyst +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430054",
+      "ItemName": "Sparkling Critical Amethyst +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462432",
+      "ItemName": "Sparkling Damage Amethyst +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462441",
+      "ItemName": "Sparkling Critical Amethyst +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462484",
+      "ItemName": "Sparkling Accurate Amethyst +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466985",
+      "ItemName": "Queen Calypso Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514445",
+      "ItemName": "Dazzling Damage Amethyst +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514446",
+      "ItemName": "Dazzling Damage Amethyst +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514463",
+      "ItemName": "Dazzling Critical Amethyst +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514464",
+      "ItemName": "Dazzling Critical Amethyst +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514482",
+      "ItemName": "Dazzling Accurate Amethyst +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514491",
+      "ItemName": "Catalan Amethyst",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

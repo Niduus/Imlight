@@ -1,0 +1,56 @@
+{
+  "Name": "TCPack-CantripSigil-C-01",
+  "Description": "Sigil Cantrip Pack 3 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "80058386",
+      "ItemName": "Legion Shield 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "814640349",
+      "ItemName": "Restoring Rain 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1453337377",
+      "ItemName": "Virulent Plague 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1526144020",
+      "ItemName": "Dual Strike 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1822888468",
+      "ItemName": "Horn of Plenty 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1822888980",
+      "ItemName": "Sprite Swarm 3",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1848067092",
+      "ItemName": "Fiery Explosion 3",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "Name": "GrizzleheimLorePackLT-Rare",
+  "Description": "Grizzleheim Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "473448",
+      "ItemName": "Night Hawk",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537556",
+      "ItemName": "Broken Viking Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537557",
+      "ItemName": "Viking Sword Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537558",
+      "ItemName": "Viking Axe Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589089",
+      "ItemName": "Raven",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1350297",
+      "ItemName": "Grizzleheim Carved Wallpaper",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470348",
+      "ItemName": "Fenris",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470349",
+      "ItemName": "Fenrir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470350",
+      "ItemName": "Fenric",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475438",
+      "ItemName": "Wotan's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475452",
+      "ItemName": "Wotan's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475466",
+      "ItemName": "Wotan's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475480",
+      "ItemName": "Allfather's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475494",
+      "ItemName": "Allfather's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475508",
+      "ItemName": "Allfather's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475522",
+      "ItemName": "Odin's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475536",
+      "ItemName": "Odin's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475550",
+      "ItemName": "Odin's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475564",
+      "ItemName": "Wotan's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475578",
+      "ItemName": "Allfather's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475592",
+      "ItemName": "Odin's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479030",
+      "ItemName": "Ravenscar Anvil",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479031",
+      "ItemName": "Cooking Fire",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479032",
+      "ItemName": "Redclaw Tent",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "525399363",
+      "ItemName": "Ratatoskr's Spin",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1927333076",
+      "ItemName": "Grendel's Amends",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1954896080",
+      "ItemName": "Hammer of Thor",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

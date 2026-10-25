@@ -1,0 +1,194 @@
+{
+  "Name": "DoomKrockPackLT-Common",
+  "Description": "Doomsday Krok Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82767",
+      "ItemName": "Krok Sun Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82768",
+      "ItemName": "Krok Tree Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82769",
+      "ItemName": "Krok Storm Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82770",
+      "ItemName": "Krok Snake Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82772",
+      "ItemName": "Krok Skull Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82773",
+      "ItemName": "Krok Moon Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82774",
+      "ItemName": "Krok Ice Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82775",
+      "ItemName": "Krok Fire Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82776",
+      "ItemName": "Krok Insect Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82777",
+      "ItemName": "Krok Bird Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82778",
+      "ItemName": "Krok Balance Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220274",
+      "ItemName": "Star Fruit",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1479713",
+      "ItemName": "Time Lime",
+      "Notes": "",
+      "Chance": 33.3333
+    }
+  ]
+}

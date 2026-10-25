@@ -1,0 +1,266 @@
+{
+  "Name": "2018YuletidePackLT-Rare",
+  "Description": "Gingerbread Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1392734",
+      "ItemName": "The Winter Antlers",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392740",
+      "ItemName": "The Snow Crown",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392741",
+      "ItemName": "The Frosted Tips",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392743",
+      "ItemName": "Sparkle Globe",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1392744",
+      "ItemName": "Skating Rink",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1392750",
+      "ItemName": "Green garland with lights",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392751",
+      "ItemName": "Potted Poinsettia",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392753",
+      "ItemName": "Yule Presents",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392754",
+      "ItemName": "Red Candy Canes",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392755",
+      "ItemName": "Blue Candy Canes",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392756",
+      "ItemName": "Krampus Wallpaper",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407209",
+      "ItemName": "Snowdrifter's Staff",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407222",
+      "ItemName": "Snowdrifter's Stave",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407235",
+      "ItemName": "Snowdrifter's Scepter",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407365",
+      "ItemName": "Snowdrifter's Hat",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407378",
+      "ItemName": "Snowdrifter's Raiment",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407391",
+      "ItemName": "Snowdrifter's Boots",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407404",
+      "ItemName": "Snowdrifter's Conical",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407417",
+      "ItemName": "Snowdrifter's Outfit",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407430",
+      "ItemName": "Snowdrifter's Shoes",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407443",
+      "ItemName": "Snowdrifter's Mantle",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1407456",
+      "ItemName": "Snowdrifter's Vestment",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1407469",
+      "ItemName": "Snowdrifter's Trekkers",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1421915",
+      "ItemName": "Wolf of the Winter (7 Day)",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1421916",
+      "ItemName": "Wolf of the Winter (1 Day)",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1441337",
+      "ItemName": "Crumbles Gingerhorse (7-Day)",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1441338",
+      "ItemName": "Crumbles Gingerhorse (1-Day)",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1447042",
+      "ItemName": "Spicy Gingerbreadman",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1447043",
+      "ItemName": "Feisty Gingerbreadman",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1447044",
+      "ItemName": "Salty Gingerbreadman",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456162",
+      "ItemName": "Peppermintalist's Helm",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456176",
+      "ItemName": "Peppermintalist's Armor",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456190",
+      "ItemName": "Peppermintalist's Boots",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456204",
+      "ItemName": "Helm of Minty Freshness",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456218",
+      "ItemName": "Armor of Minty Freshness",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456232",
+      "ItemName": "Boots of Minty Freshness",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456246",
+      "ItemName": "Karamelle Knight Helm",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456260",
+      "ItemName": "Karamelle Knight Armor",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456274",
+      "ItemName": "Karamelle Knight Boots",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1456289",
+      "ItemName": "Peppermintalist's Sword",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456303",
+      "ItemName": "Sword of Minty Freshness",
+      "Notes": "",
+      "Chance": 1.1765
+    },
+    {
+      "ItemId": "1456317",
+      "ItemName": "Karamelle Knight Sword",
+      "Notes": "",
+      "Chance": 1.1765
+    }
+  ]
+}

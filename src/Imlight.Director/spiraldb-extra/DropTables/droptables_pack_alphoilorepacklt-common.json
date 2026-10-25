@@ -1,0 +1,242 @@
+{
+  "Name": "AlphoiLorePackLT-Common",
+  "Description": "Alphoi Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220199",
+      "ItemName": "MooShu Broccoli",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1248008",
+      "ItemName": "Sword Fern",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1421936",
+      "ItemName": "Fire Dwarf Sofa",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1421937",
+      "ItemName": "Ice Dwarf Sofa",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1421945",
+      "ItemName": "Dwarven Scroll Case",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1421951",
+      "ItemName": "Beastman Hut",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1421952",
+      "ItemName": "Big Shroom",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1433025",
+      "ItemName": "Sail Fern",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1439000",
+      "ItemName": "Empyrea Aeriel Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1439001",
+      "ItemName": "Empyrea Athanor Combat Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1439002",
+      "ItemName": "Empyrea Inner Athanor Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1439003",
+      "ItemName": "Empyrea Outer Athanor Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1439004",
+      "ItemName": "Empyrea Finale Combat Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    }
+  ]
+}

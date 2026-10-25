@@ -1,0 +1,80 @@
+{
+  "Name": "TreasureTower02-Utility",
+  "Description": "Deckathalon Fire Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1627265116",
+      "ItemName": "Disarm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "146715614",
+      "ItemName": "Ice Armor",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "113647540",
+      "ItemName": "Elemental Shield",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "406085927",
+      "ItemName": "Ice Trap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1907258156",
+      "ItemName": "Triage",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1048477158",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "658114073",
+      "ItemName": "Fire Shield",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "Name": "JewelPackLT-Metals",
+  "Description": "Rockhammer's Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium",
+      "Notes": "",
+      "Chance": 0.7519
+    }
+  ]
+}

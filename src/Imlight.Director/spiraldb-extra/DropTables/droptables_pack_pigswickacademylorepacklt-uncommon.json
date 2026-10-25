@@ -1,0 +1,332 @@
+{
+  "Name": "PigswickAcademyLorePackLT-Uncommon",
+  "Description": "Wysteria Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "469718",
+      "ItemName": "Red Brick Floor Tile",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469719",
+      "ItemName": "Cross Section Floor Tile",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469720",
+      "ItemName": "Marble Diner Floor Tile",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469721",
+      "ItemName": "Cobblestone Flooring",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469722",
+      "ItemName": "Blue Vine Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469723",
+      "ItemName": "Stone Block Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469724",
+      "ItemName": "Yellow Flowers Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469725",
+      "ItemName": "Marble Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469726",
+      "ItemName": "Wavy Stalk Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "469727",
+      "ItemName": "Stucco Wallpaper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "789460",
+      "ItemName": "Winged Bean",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1421677",
+      "ItemName": "Pegasus Patties",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1421678",
+      "ItemName": "Fizzing Fertilizer",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1421679",
+      "ItemName": "Teachers Lunch",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1421680",
+      "ItemName": "Wysterberries",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "587216065",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "725630735",
+      "ItemName": "Beguile",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1675018794",
+      "ItemName": "Blaze Beetle",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "907593661",
+      "ItemName": "Celestial Calendar",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1731351634",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "93422106",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1199688693",
+      "ItemName": "Distract",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "196994753",
+      "ItemName": "Firespear",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "801539596",
+      "ItemName": "Frostbite",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "910652484",
+      "ItemName": "Insane Bolt",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "484773190",
+      "ItemName": "Scald",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1298561362",
+      "ItemName": "Shift",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1847491546",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1213333776",
+      "ItemName": "Supernova",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "395069033",
+      "ItemName": "Vaporize",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1871467111",
+      "ItemName": "Angry Snowpig",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "522772815",
+      "ItemName": "Ninja Piglets",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1900496976",
+      "ItemName": "Pigsie",
+      "Notes": "",
+      "Chance": 2.5
+    }
+  ]
+}

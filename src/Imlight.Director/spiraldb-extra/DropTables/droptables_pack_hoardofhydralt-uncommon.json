@@ -1,0 +1,158 @@
+{
+  "Name": "HoardOfHydraLT-UnCommon",
+  "Description": "Hoard of the Hydra Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100410",
+      "ItemName": "Blue Ghost",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100429",
+      "ItemName": "Black Spider",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641596",
+      "ItemName": "Shepherd's Crook Pie",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641599",
+      "ItemName": "Wyrmy Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641600",
+      "ItemName": "Crystal Custard",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641601",
+      "ItemName": "Weirwood Cake",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "Chocolate Comet",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641607",
+      "ItemName": "Pixie Parsnips",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641608",
+      "ItemName": "Asparagus Spears",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641609",
+      "ItemName": "Seraph Food Cake",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641612",
+      "ItemName": "Black Cap Crisps",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "641613",
+      "ItemName": "Caliburnt Toast",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1181697568",
+      "ItemName": "Basilisk",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1863059152",
+      "ItemName": "Chimera",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "655164357",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "79548273",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1401691579",
+      "ItemName": "Efreet",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1994036129",
+      "ItemName": "Fire Dragon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1521042251",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "2079965854",
+      "ItemName": "Frost Giant",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

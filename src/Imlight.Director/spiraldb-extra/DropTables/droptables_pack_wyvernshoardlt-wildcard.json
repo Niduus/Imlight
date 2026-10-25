@@ -1,0 +1,854 @@
+{
+  "Name": "WyvernsHoardLT-Wildcard",
+  "Description": "Wyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "470116",
+      "ItemName": "Night Wyvern (PERM)",
+      "Notes": "",
+      "Chance": 0.1
+    },
+    {
+      "ItemId": "470117",
+      "ItemName": "Jade Wyvern (PERM)",
+      "Notes": "",
+      "Chance": 0.1499
+    },
+    {
+      "ItemId": "470118",
+      "ItemName": "Fire Wyvern (PERM)",
+      "Notes": "",
+      "Chance": 0.1499
+    },
+    {
+      "ItemId": "470119",
+      "ItemName": "Cloud Wyvern (PERM)",
+      "Notes": "",
+      "Chance": 0.1
+    },
+    {
+      "ItemId": "470120",
+      "ItemName": "Gold Wyvern (PERM)",
+      "Notes": "",
+      "Chance": 0.5
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "342095",
+      "ItemName": "Fish Fountain",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "356160",
+      "ItemName": "Stinkweed",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469718",
+      "ItemName": "Red Brick Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469719",
+      "ItemName": "Cross Section Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469720",
+      "ItemName": "Marble Diner Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469721",
+      "ItemName": "Cobblestone Flooring",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469722",
+      "ItemName": "Blue Vine Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469723",
+      "ItemName": "Stone Block Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469724",
+      "ItemName": "Yellow Flowers Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469725",
+      "ItemName": "Marble Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469726",
+      "ItemName": "Wavy Stalk Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469727",
+      "ItemName": "Stucco Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1682317165",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1469017516",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82726",
+      "ItemName": "Bowl of Tomatoes",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "82755",
+      "ItemName": "Tall Pumpkin",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "82897",
+      "ItemName": "Bushy Palm Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "82898",
+      "ItemName": "Tall Palm Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160369",
+      "ItemName": "Small Bush",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160370",
+      "ItemName": "Fire Bush",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160375",
+      "ItemName": "Hedge Row",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160376",
+      "ItemName": "Square Hedge",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160378",
+      "ItemName": "Elm Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160379",
+      "ItemName": "Large Cypress Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160380",
+      "ItemName": "Small Cypress Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160383",
+      "ItemName": "Maple Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160384",
+      "ItemName": "Small Maple Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160542",
+      "ItemName": "Bamboo Grove",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160586",
+      "ItemName": "Wooden Well",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160605",
+      "ItemName": "Summer Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160608",
+      "ItemName": "Red Leaf Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160617",
+      "ItemName": "Sunflower",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "160696",
+      "ItemName": "Green Foodcart",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181061",
+      "ItemName": "Large Evergreen Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181062",
+      "ItemName": "Medium Evergreen Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181063",
+      "ItemName": "Small Evergreen Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181064",
+      "ItemName": "Large Fir Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181066",
+      "ItemName": "Small Fir Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181106",
+      "ItemName": "Broken Stump",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181111",
+      "ItemName": "Great Pine Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181112",
+      "ItemName": "Medium Pine Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "181113",
+      "ItemName": "Coniferous Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "240100",
+      "ItemName": "Wheel of Cheese",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342146",
+      "ItemName": "Celestian Tree Sapling",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342147",
+      "ItemName": "Flowering Celestian Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342148",
+      "ItemName": "Celestian Tree Sprig",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342149",
+      "ItemName": "Large Willow Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342150",
+      "ItemName": "Leaning Palm Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "342151",
+      "ItemName": "Broken Palm Tree",
+      "Notes": "",
+      "Chance": 1.3514
+    },
+    {
+      "ItemId": "100333",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100444",
+      "ItemName": "Pixie Queen",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "126985",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "206090",
+      "ItemName": "Birdcage",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206091",
+      "ItemName": "Chicken Coop",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206094",
+      "ItemName": "Bamboo Fountain",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206095",
+      "ItemName": "Birdbath",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206102",
+      "ItemName": "Cuckoo Clock",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "211108",
+      "ItemName": "Aquarium",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "225438",
+      "ItemName": "Life Ghoul",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469781",
+      "ItemName": "Blue Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469782",
+      "ItemName": "Cyan Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469783",
+      "ItemName": "Green Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469784",
+      "ItemName": "Orange Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469785",
+      "ItemName": "Purple Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469786",
+      "ItemName": "Red Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "470083",
+      "ItemName": "Blue Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470087",
+      "ItemName": "Orange Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470088",
+      "ItemName": "Purple Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470093",
+      "ItemName": "Blue Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "470094",
+      "ItemName": "Orange Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "470095",
+      "ItemName": "Purple Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473282",
+      "ItemName": "Greenwarden's Energetic Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473289",
+      "ItemName": "Greenwarden's Energetic Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473296",
+      "ItemName": "Greenwarden's Energetic Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473303",
+      "ItemName": "Greenwarden's Peaceful Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473310",
+      "ItemName": "Greenwarden's Peaceful Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473317",
+      "ItemName": "Greenwarden's Peaceful Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473324",
+      "ItemName": "Greenwarden's Brilliant Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473331",
+      "ItemName": "Greenwarden's Brilliant Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473338",
+      "ItemName": "Greenwarden's Brilliant Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473353",
+      "ItemName": "Greenwarden's Energetic Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473360",
+      "ItemName": "Greenwarden's Peaceful Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473367",
+      "ItemName": "Greenwarden's Brilliant Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "737048",
+      "ItemName": "Greenwarden's Peaceful Greaves",
+      "Notes": "",
+      "Chance": 0.1
+    },
+    {
+      "ItemId": "617102995",
+      "ItemName": "Supreme Sunburst",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "79713459",
+      "ItemName": "Flood",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "304827462",
+      "ItemName": "Zounds...Bees!",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "554454336",
+      "ItemName": "Flute Symphony",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1806999015",
+      "ItemName": "Uncanny Magic",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1967263301",
+      "ItemName": "Pest Zapper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "113950025",
+      "ItemName": "Pungent Bug Spray",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1505746256",
+      "ItemName": "Dragonflies",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1701999404",
+      "ItemName": "Triage",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "617230156",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "95107334",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "914478210",
+      "ItemName": "Rebirth",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "531784977",
+      "ItemName": "Putrid Bug Spray",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "1430879895",
+      "ItemName": "Massive Pest Zapper",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "1439085139",
+      "ItemName": "Miniature Bloodbats",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "6023375",
+      "ItemName": "Baby Sunbird",
+      "Notes": "",
+      "Chance": 0.9091
+    }
+  ]
+}

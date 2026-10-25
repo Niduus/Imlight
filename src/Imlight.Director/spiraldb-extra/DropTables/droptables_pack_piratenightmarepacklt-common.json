@@ -1,0 +1,272 @@
+{
+  "Name": "PirateNightmarePackLT-Common",
+  "Description": "Pirate Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191154",
+      "ItemName": "Enchanted Broom (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191221",
+      "ItemName": "Purple Glider (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191225",
+      "ItemName": "Horned Sweeper (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191233",
+      "ItemName": "Black Stallion (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220283",
+      "ItemName": "Nutty Candy bar",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "225480",
+      "ItemName": "Bat Wings (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473522",
+      "ItemName": "Peanutbutter Cup",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473524",
+      "ItemName": "Cry Babies",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359718",
+      "ItemName": "Cobweb Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359719",
+      "ItemName": "Jack-O-Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359720",
+      "ItemName": "Halloween Mat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359721",
+      "ItemName": "Creepy Corner Cobweb",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359722",
+      "ItemName": "Spooky Spider Web",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359724",
+      "ItemName": "Spider Web Wallpaper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1627670793",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "79496086",
+      "ItemName": "Curse",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1161910776",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "241455791",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "708782082",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "552351600",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "433362847",
+      "ItemName": "Death Bat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2005279254",
+      "ItemName": "Life Bat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1621862574",
+      "ItemName": "Ash Bats",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "829725264",
+      "ItemName": "Dark Tribute",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1148318231",
+      "ItemName": "Ghost Touch",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1161918713",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1995551861",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "306106922",
+      "ItemName": "Spirit Trap",
+      "Notes": "",
+      "Chance": 7.6923
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "Name": "NimbariHoardPackLT-Common",
+  "Description": "Nimbari Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641698",
+      "ItemName": "Chocolate Crickets",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641701",
+      "ItemName": "Crystal Bites",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641705",
+      "ItemName": "Fiddleheads",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "733134",
+      "ItemName": "Rex Tea",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "733184",
+      "ItemName": "Sourpuss Stovies",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "789447",
+      "ItemName": "Huli-Hula Chicken",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350198",
+      "ItemName": "Rotten Beets",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1441467",
+      "ItemName": "Red Kalamar Basket",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441468",
+      "ItemName": "Kalamar Brazier",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441471",
+      "ItemName": "Wide Kalamar Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441473",
+      "ItemName": "Nimbari Bolt Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441518",
+      "ItemName": "Empyrea Aero Plains Combat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441521",
+      "ItemName": "Empyrea Husk Storm Combat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441524",
+      "ItemName": "Empyrea Husk Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441527",
+      "ItemName": "Empyrea Nexus Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441529",
+      "ItemName": "Empyrea Nimbus Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441535",
+      "ItemName": "Aero Dwarf Brown Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

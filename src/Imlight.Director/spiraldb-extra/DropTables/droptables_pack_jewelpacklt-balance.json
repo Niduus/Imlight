@@ -1,0 +1,608 @@
+{
+  "Name": "JewelPackLT-Balance",
+  "Description": "Balance Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1317663",
+      "ItemName": "Balance Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352721",
+      "ItemName": "Cracked Damage Citrine +1",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352722",
+      "ItemName": "Cracked Damage Citrine +2",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352723",
+      "ItemName": "Cracked Damage Citrine +3",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352724",
+      "ItemName": "Cracked Damage Citrine +4",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352725",
+      "ItemName": "Cracked Damage Citrine +5",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352726",
+      "ItemName": "Cracked Damage Citrine +6",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352727",
+      "ItemName": "Chipped Damage Citrine +7",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352728",
+      "ItemName": "Chipped Damage Citrine +8",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352729",
+      "ItemName": "Flawed Damage Citrine +9",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352730",
+      "ItemName": "Flawed Damage Citrine +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352731",
+      "ItemName": "Blemished Damage Citrine +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352732",
+      "ItemName": "Blemished Damage Citrine +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352733",
+      "ItemName": "Dull Damage Citrine +13",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352734",
+      "ItemName": "Dull Damage Citrine +14",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352735",
+      "ItemName": "Plain Damage Citrine +15",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352736",
+      "ItemName": "Plain Damage Citrine +16",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352737",
+      "ItemName": "Opaque Damage Citrine +17",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352738",
+      "ItemName": "Opaque Damage Citrine +18",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352739",
+      "ItemName": "Clear Damage Citrine +19",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352740",
+      "ItemName": "Clear Damage Citrine +20",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352741",
+      "ItemName": "Polished Damage Citrine +21",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352742",
+      "ItemName": "Polished Damage Citrine +22",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352743",
+      "ItemName": "Lustrous Damage Citrine +23",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352744",
+      "ItemName": "Lustrous Damage Citrine +24",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352803",
+      "ItemName": "Dull Piercing Citrine +1%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352804",
+      "ItemName": "Dull Piercing Citrine +2%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352805",
+      "ItemName": "Plain Piercing Citrine +3%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352806",
+      "ItemName": "Opaque Piercing Citrine +4%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352807",
+      "ItemName": "Clear Piercing Citrine +5%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352901",
+      "ItemName": "Dull Critical Citrine +2",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352902",
+      "ItemName": "Dull Critical Citrine +3",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352903",
+      "ItemName": "Dull Critical Citrine +4",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352904",
+      "ItemName": "Plain Critical Citrine +5",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352905",
+      "ItemName": "Plain Critical Citrine +6",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352906",
+      "ItemName": "Opaque Critical Citrine +7",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352907",
+      "ItemName": "Opaque Critical Citrine +8",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352908",
+      "ItemName": "Clear Critical Citrine +9",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352909",
+      "ItemName": "Clear Critical Citrine +10",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352910",
+      "ItemName": "Polished Critical Citrine +11",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352911",
+      "ItemName": "Polished Critical Citrine +12",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352912",
+      "ItemName": "Lustrous Critical Citrine +13",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1352913",
+      "ItemName": "Lustrous Critical Citrine +14",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357110",
+      "ItemName": "Chipped Accurate Citrine +3%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357111",
+      "ItemName": "Flawed Accurate Citrine +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357112",
+      "ItemName": "Blemished Accurate Citrine +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357113",
+      "ItemName": "Dull Accurate Citrine +6%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357114",
+      "ItemName": "Plain Accurate Citrine +7%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357115",
+      "ItemName": "Opaque Accurate Citrine +8%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357116",
+      "ItemName": "Clear Accurate Citrine +9%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357117",
+      "ItemName": "Polished Accurate Citrine +10%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357118",
+      "ItemName": "Lustrous Accurate Citrine +11%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357148",
+      "ItemName": "Cracked Accurate Citrine +1%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357149",
+      "ItemName": "Cracked Accurate Citrine +2%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1357221",
+      "ItemName": "Scarab Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357222",
+      "ItemName": "Scorpion Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357223",
+      "ItemName": "Weakness Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358602",
+      "ItemName": "Locust Swarm Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358603",
+      "ItemName": "Spectral Blast Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358622",
+      "ItemName": "Power Play Citrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358623",
+      "ItemName": "Donate Power Citrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358624",
+      "ItemName": "Hydra Citrine",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358685",
+      "ItemName": "Unbalance Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358686",
+      "ItemName": "Reshuffle Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358687",
+      "ItemName": "Power Nova Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358688",
+      "ItemName": "Availing Hands Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358689",
+      "ItemName": "Elemental Trap Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358690",
+      "ItemName": "Spirit Trap Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358691",
+      "ItemName": "Purloin Health Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358692",
+      "ItemName": "Mander Minion Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358693",
+      "ItemName": "Spectral Minion Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358694",
+      "ItemName": "Nerys Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1358979",
+      "ItemName": "Balanceblade Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1360148",
+      "ItemName": "Wrath of Aquila Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376148",
+      "ItemName": "Dual Balanceblade Citrine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376301",
+      "ItemName": "Morganthe's Will Citrine",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376308",
+      "ItemName": "Erratic Recompense Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384434",
+      "ItemName": "Balance Brandon Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405727",
+      "ItemName": "Shiny Damage Citrine +25",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405728",
+      "ItemName": "Shiny Damage Citrine +26",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405744",
+      "ItemName": "Shiny Critical Citrine +15",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405745",
+      "ItemName": "Shiny Critical Citrine +16",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405774",
+      "ItemName": "Elemental Spear Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405775",
+      "ItemName": "Spirit Spear Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1405793",
+      "ItemName": "Shiny Accurate Citrine +12%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1430050",
+      "ItemName": "Sparkling Damage Citrine +27",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1430058",
+      "ItemName": "Sparkling Critical Citrine +17",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1462436",
+      "ItemName": "Sparkling Damage Citrine +28",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1462445",
+      "ItemName": "Sparkling Critical Citrine +18",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1462488",
+      "ItemName": "Sparkling Accurate Citrine +13%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1466989",
+      "ItemName": "Ninja Piglets Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514453",
+      "ItemName": "Dazzling Damage Citrine +29",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514454",
+      "ItemName": "Dazzling Damage Citrine +30",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514471",
+      "ItemName": "Dazzling Critical Citrine +19",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514472",
+      "ItemName": "Dazzling Critical Citrine +20",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514486",
+      "ItemName": "Dazzling Accurate Citrine +14%",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1514495",
+      "ItemName": "Savage Paw Citrine",
+      "Notes": "",
+      "Chance": 0.8929
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "Name": "SkyvernHoardLT-Rare",
+  "Description": "Skyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100333",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100434",
+      "ItemName": "Red Ghost",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100457",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "225414",
+      "ItemName": "Plague Ninja",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "225453",
+      "ItemName": "Ice Bird",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469785",
+      "ItemName": "Purple Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469786",
+      "ItemName": "Red Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "470682",
+      "ItemName": "Tezcat Threestar Bobblehead",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470683",
+      "ItemName": "Zaylin Reedwalker Bobblehead",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470684",
+      "ItemName": "King Axaya Bobblehead",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470685",
+      "ItemName": "King Acampi Bobblehead",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "470686",
+      "ItemName": "Queen Chasca Bobblehead",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "713257",
+      "ItemName": "Velociraptor",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730563",
+      "ItemName": "Turquoise Eagle's Mantle",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730573",
+      "ItemName": "Turquoise Eagle's Sky Tracks",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730583",
+      "ItemName": "Turquoise Eagle's Raiment",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730593",
+      "ItemName": "Black Star Eagle's Helm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730603",
+      "ItemName": "Black Star Eagle's Claws",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730613",
+      "ItemName": "Cloak of the Black Star Eagle",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730623",
+      "ItemName": "Mask of the Sun Eagle",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730633",
+      "ItemName": "Sun Eagle Striders",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "730643",
+      "ItemName": "Vestment of the Sun Eagle",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730790",
+      "ItemName": "Hungry Caiman's Staff",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730800",
+      "ItemName": "Staff of the Storm Caiman",
+      "Notes": "",
+      "Chance": 1.9608
+    },
+    {
+      "ItemId": "730810",
+      "ItemName": "Emerald Caiman's Scepter",
+      "Notes": "",
+      "Chance": 1.9608
+    }
+  ]
+}

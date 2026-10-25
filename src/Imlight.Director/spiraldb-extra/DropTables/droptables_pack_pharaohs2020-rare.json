@@ -1,0 +1,272 @@
+{
+  "Name": "Pharaohs2020-Rare",
+  "Description": "Spellemental Pharaoh's Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82709",
+      "ItemName": "Red Urn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82710",
+      "ItemName": "Blue Urn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82711",
+      "ItemName": "Purple Urn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82784",
+      "ItemName": "Fire Mummy",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82785",
+      "ItemName": "Ice Mummy",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82811",
+      "ItemName": "Storm Mummy",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82838",
+      "ItemName": "Hieroglyphic Fire Tablet",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82859",
+      "ItemName": "Krokotopian Hammock",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82878",
+      "ItemName": "Krokotopia Grand Tent",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82881",
+      "ItemName": "Prince Meti Karanahn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82882",
+      "ItemName": "Prince Suten Sokkwi",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82884",
+      "ItemName": "Prince Biti Nirini",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82886",
+      "ItemName": "Prince Aka Karanahn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82887",
+      "ItemName": "Khai Amahte Statue",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82888",
+      "ItemName": "Prince Manu Nirini Statue",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82907",
+      "ItemName": "Hieroglyphic Ice Tablet",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "82908",
+      "ItemName": "Hieroglyphic Storm Tablet",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "100454",
+      "ItemName": "Krokotillian",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "160987",
+      "ItemName": "Lunar-Emblem Bed",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "164422",
+      "ItemName": "Death Scarab",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220329",
+      "ItemName": "Sun Fruit",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "225450",
+      "ItemName": "Life Scarab",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "537591",
+      "ItemName": "Pollen Bombs",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "537601",
+      "ItemName": "Bad Honeyed Dates",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "641598",
+      "ItemName": "Pomegranite",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "789138",
+      "ItemName": "Mummy Cat",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789252",
+      "ItemName": "Nirini Helm of Scorching",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789262",
+      "ItemName": "Singed Nirini Walkers",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789272",
+      "ItemName": "Charred Nirini Robe",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789282",
+      "ItemName": "Sokkwi Mantle of Blizzards",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789292",
+      "ItemName": "Frosted Sokkwi Footwraps",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789302",
+      "ItemName": "Sokkwi Frostbitten Armor",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789312",
+      "ItemName": "Thunderous Karanahn Veil",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789322",
+      "ItemName": "Karanahn's Charged Greaves",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789332",
+      "ItemName": "Vestment of Ominous Skies",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789342",
+      "ItemName": "Solar Pikestaff of Anubis",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789352",
+      "ItemName": "Lunar Scepter of Anubis",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "789362",
+      "ItemName": "Anubis' Astral Staff",
+      "Notes": "",
+      "Chance": 3.2258
+    }
+  ]
+}

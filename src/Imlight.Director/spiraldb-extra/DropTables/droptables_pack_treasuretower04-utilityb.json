@@ -1,0 +1,74 @@
+{
+  "Name": "TreasureTower04-UtilityB",
+  "Description": "Deckathalon Life Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "152469527",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "258955559",
+      "ItemName": "Shatter",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1527370315",
+      "ItemName": "Virulent Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "782323483",
+      "ItemName": "Death Trap",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "449686454",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "45884029",
+      "ItemName": "Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "131220406",
+      "ItemName": "Mass Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "726534295",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

@@ -1,0 +1,872 @@
+{
+  "Name": "CelestianLorePackLT-Wildcard",
+  "Description": "Celestian Spellemental Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1505297",
+      "ItemName": "Celestial Intervention",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1505298",
+      "ItemName": "Nautilus Unleashed",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1505299",
+      "ItemName": "Ship of Fools",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1505300",
+      "ItemName": "Spiritual Tribunal",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220191",
+      "ItemName": "Carrot",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220192",
+      "ItemName": "Green Jalapeno",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220243",
+      "ItemName": "Funnel Cake",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220244",
+      "ItemName": "Ice Cream",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220245",
+      "ItemName": "Cherry Pie",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220288",
+      "ItemName": "Jelly Beans",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "342074",
+      "ItemName": "Celestian Bookshelf",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "342098",
+      "ItemName": "Celestian Lamp",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "342117",
+      "ItemName": "Star Chalice",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "342141",
+      "ItemName": "Lantern",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "342143",
+      "ItemName": "Wheelbarrow",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "512090",
+      "ItemName": "Celestia Main Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512134",
+      "ItemName": "Celestia Combat Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512135",
+      "ItemName": "Celestia Finale Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1350206",
+      "ItemName": "Vampire Carrots",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1374567",
+      "ItemName": "Water Mole Supplies",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374569",
+      "ItemName": "Zoa Coral",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374571",
+      "ItemName": "Branching Coral",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374572",
+      "ItemName": "Fan Coral",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374573",
+      "ItemName": "Pink Coral",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374577",
+      "ItemName": "Celestian Hut",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374578",
+      "ItemName": "Island Gazebo",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374712",
+      "ItemName": "Naval Supply Crate",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "220255",
+      "ItemName": "Arrow Root",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "356160",
+      "ItemName": "Stinkweed",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "537593",
+      "ItemName": "Beetle Cream Soda",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "733120",
+      "ItemName": "Fern Jelly",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1504018",
+      "ItemName": "Warden Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504019",
+      "ItemName": "Stag Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504020",
+      "ItemName": "Serpent Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504021",
+      "ItemName": "Phoenix Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504022",
+      "ItemName": "Messenger Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504023",
+      "ItemName": "Loom Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504024",
+      "ItemName": "Kraken Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504025",
+      "ItemName": "Hound Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504026",
+      "ItemName": "Galleon Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504027",
+      "ItemName": "Fountain Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504028",
+      "ItemName": "Crab Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1504029",
+      "ItemName": "Chariot Painting",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "449686454",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1048477158",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "119326653",
+      "ItemName": "Celestial Calendar",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1235775452",
+      "ItemName": "Cycle of Life",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "406225536",
+      "ItemName": "Dream Shield",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1039920830",
+      "ItemName": "Gaze of Fate",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1034368915",
+      "ItemName": "Guiding Light",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1161914504",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "2039726156",
+      "ItemName": "Immolate",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1473990396",
+      "ItemName": "Link",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1474088827",
+      "ItemName": "Mend",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1911013456",
+      "ItemName": "Pierce",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1974779768",
+      "ItemName": "Strangle",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1887191866",
+      "ItemName": "Freeze",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1730824457",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "100332",
+      "ItemName": "Lightningbat",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789137",
+      "ItemName": "Betta Fish",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1374446",
+      "ItemName": "Spectre of the Brocken",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504030",
+      "ItemName": "Galactic Water Spout",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504031",
+      "ItemName": "Celestian Device",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504032",
+      "ItemName": "Orrery",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504033",
+      "ItemName": "Galvanic Tower",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1504034",
+      "ItemName": "Celestian Cube Sculpture",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1505010",
+      "ItemName": "Celestian Photon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505024",
+      "ItemName": "Celestian Photon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505038",
+      "ItemName": "Celestian Photon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505052",
+      "ItemName": "Celestian Xenon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505066",
+      "ItemName": "Celestian Xenon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505080",
+      "ItemName": "Celestian Xenon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505094",
+      "ItemName": "Celestian Neon Mask",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505108",
+      "ItemName": "Celestian Neon Cape",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505122",
+      "ItemName": "Celestian Neon Striders",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505178",
+      "ItemName": "Celestian Photon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505192",
+      "ItemName": "Celestian Xenon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1505206",
+      "ItemName": "Celestian Neon Axe",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1507004",
+      "ItemName": "Feral Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507005",
+      "ItemName": "Ravenous Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507006",
+      "ItemName": "Vicious Zorphie",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1555912465",
+      "ItemName": "Nautilus Unleashed",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1905314371",
+      "ItemName": "Celestial Intervention",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "152960551",
+      "ItemName": "Ship of Fools",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1554712516",
+      "ItemName": "Spiritual Tribunal",
+      "Notes": "",
+      "Chance": 3.4483
+    }
+  ]
+}

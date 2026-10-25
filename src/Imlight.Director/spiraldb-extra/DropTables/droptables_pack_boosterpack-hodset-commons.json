@@ -1,0 +1,116 @@
+{
+  "Name": "BoosterPack-HoDSet-Commons",
+  "Description": "Hand of Doom Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1089224334",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "400439137",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1152673486",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "250058853",
+      "ItemName": "Nature's Wrath",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "417845519",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "2035725782",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1058699758",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1508037414",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1798156326",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1162184649",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1470648940",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "398073711",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "603212741",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "399684658",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1722813782",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "390916101",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "2133634213",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

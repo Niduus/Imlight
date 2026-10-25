@@ -1,0 +1,74 @@
+{
+  "Name": "TreasureTower06-UtilityB",
+  "Description": "Deckathalon Myth Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1527370315",
+      "ItemName": "Virulent Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1464615780",
+      "ItemName": "Conviction",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "658283538",
+      "ItemName": "Myth Shield",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1164343600",
+      "ItemName": "Shift",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

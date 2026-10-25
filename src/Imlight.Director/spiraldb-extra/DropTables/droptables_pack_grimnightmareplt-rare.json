@@ -1,0 +1,236 @@
+{
+  "Name": "GrimNightmarePLT-Rare",
+  "Description": "Grim Ferryman Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100332",
+      "ItemName": "Lightningbat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "100433",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "191226",
+      "ItemName": "Enchanted Broom (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "225478",
+      "ItemName": "Seraph Wings (1 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "225479",
+      "ItemName": "Seraph Wings (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "225484",
+      "ItemName": "Bat Wings (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1359957",
+      "ItemName": "Ygor's Grimoire",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1383172",
+      "ItemName": "Scarecrow",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1383174",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1383176",
+      "ItemName": "Gravedigger",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1383180",
+      "ItemName": "Wraith",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1392007",
+      "ItemName": "Jack O Lantern",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1522121",
+      "ItemName": "Charon's Fire Pit",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1522124",
+      "ItemName": "Grim Bat Balloon",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1522125",
+      "ItemName": "Grim Spider Balloon",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1523684",
+      "ItemName": "Stygian Countenance",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523699",
+      "ItemName": "Stygian Mantle",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523714",
+      "ItemName": "Stygian Waders",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523729",
+      "ItemName": "Charon's Countenance",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523744",
+      "ItemName": "Charon's Mantle",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523759",
+      "ItemName": "Charon's Waders",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523774",
+      "ItemName": "Haros' Countenance",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523789",
+      "ItemName": "Haros' Mantle",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1523804",
+      "ItemName": "Haros' Waders",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1524582",
+      "ItemName": "Grim Goatling",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1524583",
+      "ItemName": "Glum Goatling",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1524584",
+      "ItemName": "Gloomy Goatling",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1524587",
+      "ItemName": "Haros' Ferry (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1524588",
+      "ItemName": "Haros' Ferry (1 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1524590",
+      "ItemName": "Charon's Ferry (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1524591",
+      "ItemName": "Charon's Ferry (1 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1524592",
+      "ItemName": "Stygian Ferry (1 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1524593",
+      "ItemName": "Stygian Ferry (7 Day)",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1530116",
+      "ItemName": "Stygian Scythe",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1530131",
+      "ItemName": "Charon's Scythe",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1530146",
+      "ItemName": "Haros' Scythe",
+      "Notes": "",
+      "Chance": 2.7027
+    }
+  ]
+}

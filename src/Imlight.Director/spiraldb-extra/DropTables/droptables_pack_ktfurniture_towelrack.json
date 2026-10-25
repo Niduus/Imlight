@@ -1,0 +1,20 @@
+{
+  "Name": "KTFurniture_TowelRack",
+  "Description": "Krokotopia Furniture Set 1 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "689356",
+      "ItemName": "Krokotopian Towel Rack",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "DeathFurniture_DiningChair",
+  "Description": "Death Furniture Set 1 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1359649",
+      "ItemName": "Dworgyn's Uneasy Chair",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

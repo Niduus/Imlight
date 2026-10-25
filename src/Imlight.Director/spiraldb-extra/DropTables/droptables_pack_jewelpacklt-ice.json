@@ -1,0 +1,596 @@
+{
+  "Name": "JewelPackLT-Ice",
+  "Description": "Ice Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352601",
+      "ItemName": "Cracked Damage Sapphire +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352602",
+      "ItemName": "Cracked Damage Sapphire +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352603",
+      "ItemName": "Cracked Damage Sapphire +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352604",
+      "ItemName": "Cracked Damage Sapphire +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352605",
+      "ItemName": "Cracked Damage Sapphire +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352606",
+      "ItemName": "Cracked Damage Sapphire +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352607",
+      "ItemName": "Chipped Damage Sapphire +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352608",
+      "ItemName": "Chipped Damage Sapphire +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352609",
+      "ItemName": "Flawed Damage Sapphire +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352610",
+      "ItemName": "Flawed Damage Sapphire +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352611",
+      "ItemName": "Blemished Damage Sapphire +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352612",
+      "ItemName": "Blemished Damage Sapphire +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352613",
+      "ItemName": "Dull Damage Sapphire +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352614",
+      "ItemName": "Dull Damage Sapphire +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352615",
+      "ItemName": "Plain Damage Sapphire +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352616",
+      "ItemName": "Plain Damage Sapphire +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352617",
+      "ItemName": "Opaque Damage Sapphire +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352618",
+      "ItemName": "Opaque Damage Sapphire +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352619",
+      "ItemName": "Clear Damage Sapphire +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352620",
+      "ItemName": "Clear Damage Sapphire +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352621",
+      "ItemName": "Polished Damage Sapphire +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352622",
+      "ItemName": "Polished Damage Sapphire +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352623",
+      "ItemName": "Lustrous Damage Sapphire +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352624",
+      "ItemName": "Lustrous Damage Sapphire +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352768",
+      "ItemName": "Dull Piercing Sapphire +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352769",
+      "ItemName": "Dull Piercing Sapphire +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352770",
+      "ItemName": "Plain Piercing Sapphire +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352771",
+      "ItemName": "Opaque Piercing Sapphire +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352772",
+      "ItemName": "Clear Piercing Sapphire +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352773",
+      "ItemName": "Polished Piercing Sapphire +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352836",
+      "ItemName": "Dull Critical Sapphire +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352837",
+      "ItemName": "Dull Critical Sapphire +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352838",
+      "ItemName": "Dull Critical Sapphire +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352839",
+      "ItemName": "Plain Critical Sapphire +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352840",
+      "ItemName": "Plain Critical Sapphire +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352841",
+      "ItemName": "Opaque Critical Sapphire +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352842",
+      "ItemName": "Opaque Critical Sapphire +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352843",
+      "ItemName": "Clear Critical Sapphire +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352844",
+      "ItemName": "Clear Critical Sapphire +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352845",
+      "ItemName": "Polished Critical Sapphire +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352846",
+      "ItemName": "Polished Critical Sapphire +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352847",
+      "ItemName": "Lustrous Critical Sapphire +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352848",
+      "ItemName": "Lustrous Critical Sapphire +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357065",
+      "ItemName": "Chipped Accurate Sapphire +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357066",
+      "ItemName": "Flawed Accurate Sapphire +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357067",
+      "ItemName": "Blemished Accurate Sapphire +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357068",
+      "ItemName": "Dull Accurate Sapphire +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357069",
+      "ItemName": "Plain Accurate Sapphire +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357070",
+      "ItemName": "Opaque Accurate Sapphire +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357071",
+      "ItemName": "Clear Accurate Sapphire +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357072",
+      "ItemName": "Polished Accurate Sapphire +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357073",
+      "ItemName": "Lustrous Accurate Sapphire +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357138",
+      "ItemName": "Cracked Accurate Sapphire +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357139",
+      "ItemName": "Cracked Accurate Sapphire +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357206",
+      "ItemName": "Frost Beetle Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357207",
+      "ItemName": "Snow Serpent Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1357208",
+      "ItemName": "Volcanic Shield Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358592",
+      "ItemName": "Evil Snowman Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358593",
+      "ItemName": "Blizzard Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1358607",
+      "ItemName": "Ice Wyvern Sapphire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358608",
+      "ItemName": "Balefrost Sapphire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358609",
+      "ItemName": "Colossus Sapphire",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358635",
+      "ItemName": "Melt Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358636",
+      "ItemName": "Mass Ice Prism Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358637",
+      "ItemName": "Frost Giant Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358638",
+      "ItemName": "Frozen Armor Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358639",
+      "ItemName": "Ice Trap Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358640",
+      "ItemName": "Snow Drift Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358641",
+      "ItemName": "Draw Health Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358642",
+      "ItemName": "Ice Guardian Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358643",
+      "ItemName": "Freddo Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358974",
+      "ItemName": "Iceblade Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360143",
+      "ItemName": "Wrath of Poseidon Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374100",
+      "ItemName": "Ice Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376143",
+      "ItemName": "Dual Iceblade Sapphire",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376296",
+      "ItemName": "Morganthe's Gaze Sapphire",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376303",
+      "ItemName": "Erratic Icewind opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384429",
+      "ItemName": "Ice Brandon Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405717",
+      "ItemName": "Shiny Damage Sapphire +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405718",
+      "ItemName": "Shiny Damage Sapphire +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405734",
+      "ItemName": "Shiny Critical Sapphire +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405735",
+      "ItemName": "Shiny Critical Sapphire +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405769",
+      "ItemName": "Icespear Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405788",
+      "ItemName": "Shiny Accurate Sapphire +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430045",
+      "ItemName": "Sparkling Damage Sapphire +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430053",
+      "ItemName": "Sparkling Critical Sapphire +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462431",
+      "ItemName": "Sparkling Damage Sapphire +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462440",
+      "ItemName": "Sparkling Critical Sapphire +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462483",
+      "ItemName": "Sparkling Accurate Sapphire +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466984",
+      "ItemName": "Angry Snowpig Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514443",
+      "ItemName": "Dazzling Damage Sapphire +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514444",
+      "ItemName": "Dazzling Damage Sapphire +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514461",
+      "ItemName": "Dazzling Critical Sapphire +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514462",
+      "ItemName": "Dazzling Critical Sapphire +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514481",
+      "ItemName": "Dazzling Accurate Sapphire +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514490",
+      "ItemName": "Handsome Fomori Sapphire",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

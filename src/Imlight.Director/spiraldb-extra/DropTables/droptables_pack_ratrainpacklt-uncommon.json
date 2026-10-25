@@ -1,0 +1,206 @@
+{
+  "Name": "RATrainPackLT-Uncommon",
+  "Description": "Great Sky Train Robbery Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220255",
+      "ItemName": "Arrow Root",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "Cow Pie",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "220309",
+      "ItemName": "7 Layer Taco",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "537597",
+      "ItemName": "Lemon Daisy",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "733122",
+      "ItemName": "Chili Peppers",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1257585",
+      "ItemName": "Stuffed Bell Pepper",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1359629",
+      "ItemName": "Breakfast Tacos",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1522003",
+      "ItemName": "Stack of Barrels",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1522012",
+      "ItemName": "Church Pew",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1522013",
+      "ItemName": "Pilgrim's Campfire",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1522016",
+      "ItemName": "Post",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1522020",
+      "ItemName": "Crypt Wall Torch",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "622900417",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1623983249",
+      "ItemName": "Blademaster",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "584222094",
+      "ItemName": "Enfeeble",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "400441911",
+      "ItemName": "Darkwind",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "861689574",
+      "ItemName": "Earthquake",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1473831282",
+      "ItemName": "Fuel",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1036904809",
+      "ItemName": "Furnace",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1161914504",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "819802901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1432868878",
+      "ItemName": "Magma Man",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "73862470",
+      "ItemName": "Scald",
+      "Notes": "",
+      "Chance": 7.1429
+    }
+  ]
+}

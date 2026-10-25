@@ -1,0 +1,182 @@
+{
+  "Name": "UnicornHoardPackLT-Rare",
+  "Description": "Unicorn Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100333",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "160339",
+      "ItemName": "Unicorn Statue",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "191657",
+      "ItemName": "Fog Unicorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "212287",
+      "ItemName": "Grove Unicorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "346193",
+      "ItemName": "Nightmare",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1374536",
+      "ItemName": "Model Castle",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1421675",
+      "ItemName": "The Unicorn's Mane",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446190",
+      "ItemName": "Unicorn Paladin Helmet",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446204",
+      "ItemName": "Unicorn Paladin Plate",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1446218",
+      "ItemName": "Unicorn Paladin Sabatons",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446232",
+      "ItemName": "Unicorn Knight Helmet",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446246",
+      "ItemName": "Unicorn Knight Plate",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1446260",
+      "ItemName": "Unicorn Knight Sabatons",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446274",
+      "ItemName": "Unicorn Champion Helmet",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446288",
+      "ItemName": "Unicorn Champion Plate",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1446302",
+      "ItemName": "Unicorn Champion Sabatons",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1446318",
+      "ItemName": "Unicorn Paladin's Rain-Bow",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1446332",
+      "ItemName": "Unicorn Knight's Rain-Bow",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1446346",
+      "ItemName": "Unicorn Champion's Rain-Bow",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447021",
+      "ItemName": "Majestic Unicorn (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447022",
+      "ItemName": "Majestic Unicorn (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1447024",
+      "ItemName": "Mystic Unicorn (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447025",
+      "ItemName": "Mystic Unicorn (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1447027",
+      "ItemName": "Fantastic Unicorn (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447028",
+      "ItemName": "Fantastic Unicorn (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1447029",
+      "ItemName": "Mystic Plushie",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447030",
+      "ItemName": "Fantastic Plushie",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1447031",
+      "ItemName": "Majestic Plushie",
+      "Notes": "",
+      "Chance": 1.8868
+    }
+  ]
+}

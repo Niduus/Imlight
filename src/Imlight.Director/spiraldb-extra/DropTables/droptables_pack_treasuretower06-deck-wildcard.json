@@ -1,0 +1,212 @@
+{
+  "Name": "TreasureTower06-Deck-Wildcard",
+  "Description": "Deckathalon Myth Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "115706896",
+      "ItemName": "Catalan",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1568839551",
+      "ItemName": "Tempest",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1390585275",
+      "ItemName": "Soulsapper",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1737184053",
+      "ItemName": "Kraken",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1148438838",
+      "ItemName": "Jolted Snowman",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1185943347",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "2062203684",
+      "ItemName": "Thunder Snake",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "617308812",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1008863650",
+      "ItemName": "Healing Current",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1267213724",
+      "ItemName": "Helping Hands",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "73527153",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "779947345",
+      "ItemName": "Fairy",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "84793606",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1088567023",
+      "ItemName": "Minor Blessing",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1889148781",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1527370315",
+      "ItemName": "Virulent Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1464615780",
+      "ItemName": "Conviction",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "658283538",
+      "ItemName": "Myth Shield",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1164343600",
+      "ItemName": "Shift",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "152469527",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "286699852",
+      "ItemName": "Steal Ward",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "337647600",
+      "ItemName": "Legend Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "787641644",
+      "ItemName": "Storm Trap",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1848606682",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

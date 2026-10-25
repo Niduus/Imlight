@@ -1,0 +1,290 @@
+{
+  "Name": "EvilTwinPackLT-Common",
+  "Description": "Elven Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191154",
+      "ItemName": "Enchanted Broom (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191221",
+      "ItemName": "Purple Glider (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191225",
+      "ItemName": "Horned Sweeper (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "191233",
+      "ItemName": "Black Stallion (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220283",
+      "ItemName": "Nutty Candy bar",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "225480",
+      "ItemName": "Bat Wings (1 Day)",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473522",
+      "ItemName": "Peanutbutter Cup",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473524",
+      "ItemName": "Cry Babies",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359718",
+      "ItemName": "Cobweb Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359719",
+      "ItemName": "Jack-O-Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359720",
+      "ItemName": "Halloween Mat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359721",
+      "ItemName": "Creepy Corner Cobweb",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359722",
+      "ItemName": "Spooky Spider Web",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1359724",
+      "ItemName": "Spider Web Wallpaper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1852739987",
+      "ItemName": "Time of Legend",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "71242802",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2019654475",
+      "ItemName": "Harvest Lord",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "794059090",
+      "ItemName": "Ice Bats",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "156886654",
+      "ItemName": "Lady Blackhope",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "760213719",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1840437876",
+      "ItemName": "Fire Bats",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1339663641",
+      "ItemName": "Frozen Bats",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2108911760",
+      "ItemName": "Poison",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1674779632",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1887106474",
+      "ItemName": "Red Banshee",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "313084485",
+      "ItemName": "Myth Banshee",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "186748844",
+      "ItemName": "Krokomummy",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1389258376",
+      "ItemName": "Lord Nightshade",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1879887065",
+      "ItemName": "Black Widow",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2138860149",
+      "ItemName": "Brown Spider",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "2111253101",
+      "ItemName": "Spirit Armor",
+      "Notes": "",
+      "Chance": 7.6923
+    }
+  ]
+}

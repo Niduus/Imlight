@@ -1,0 +1,680 @@
+{
+  "Name": "JewelPackLT-Wildcard",
+  "Description": "Rockhammer's Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "258595",
+      "ItemName": "Perfect Ruby",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1317930",
+      "ItemName": "Flawless Amethyst",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317931",
+      "ItemName": "Flawless Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317932",
+      "ItemName": "Flawless Citrine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317933",
+      "ItemName": "Flawless Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317934",
+      "ItemName": "Flawless Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317935",
+      "ItemName": "Flawless Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317936",
+      "ItemName": "Flawless Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350074",
+      "ItemName": "Opal",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350075",
+      "ItemName": "Perfect Opal",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350076",
+      "ItemName": "Flawless Opal",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1470281264",
+      "ItemName": "Scorpion",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "827530221",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1252606757",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "219828186",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1468932204",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "82261857",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "270649859",
+      "ItemName": "Storm Shark",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "406082332",
+      "ItemName": "Elemental Trap",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "406225536",
+      "ItemName": "Dream Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1698635320",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1446852032",
+      "ItemName": "Volcanic Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "337647600",
+      "ItemName": "Legend Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "432322239",
+      "ItemName": "Ether Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "405079011",
+      "ItemName": "Reshuffle",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1250455896",
+      "ItemName": "Thermic Shield",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "252281618",
+      "ItemName": "Spectral Blast",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "805237041",
+      "ItemName": "Skeletal Pirate",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1598790014",
+      "ItemName": "Sunbird",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1070935258",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1792941517",
+      "ItemName": "Seraph",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1691570967",
+      "ItemName": "Cyclops",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1848606682",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1737184053",
+      "ItemName": "Kraken",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1893708917",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "460737973",
+      "ItemName": "Keen Eyes",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "789100222",
+      "ItemName": "Power Play",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "726534295",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "382318891",
+      "ItemName": "Wyldfire",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1897131657",
+      "ItemName": "Balefrost",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "30348397",
+      "ItemName": "Sanctuary",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1852782803",
+      "ItemName": "Time of Legend",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "400441911",
+      "ItemName": "Darkwind",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "228491667",
+      "ItemName": "Elemental Spear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "2002710598",
+      "ItemName": "Deathspear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "196898529",
+      "ItemName": "Firespear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "811458871",
+      "ItemName": "Icespear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "196886251",
+      "ItemName": "Lifespear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "196801772",
+      "ItemName": "Mythspear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "2068523261",
+      "ItemName": "Spirit Spear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1997392499",
+      "ItemName": "Stormspear",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "494395807",
+      "ItemName": "Purloin Health",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "565728569",
+      "ItemName": "Steal Health",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1976982595",
+      "ItemName": "Take Power",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1358970936",
+      "ItemName": "Draw Health",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "563889646",
+      "ItemName": "Drain Health",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1528019365",
+      "ItemName": "Buff Minion",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1527946154",
+      "ItemName": "Mend Minion",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1280383022",
+      "ItemName": "Purloin Power",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1602678957",
+      "ItemName": "Sniper",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1163661757",
+      "ItemName": "Mass Death Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1313042323",
+      "ItemName": "Mass Fire Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "2017171798",
+      "ItemName": "Mass Ice Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1514368819",
+      "ItemName": "Mass Life Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1480811175",
+      "ItemName": "Mass Myth Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1882775670",
+      "ItemName": "Monstrous",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "727496649",
+      "ItemName": "Mass Storm Prism",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "397526782",
+      "ItemName": "Unbalance",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1974779768",
+      "ItemName": "Strangle",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1810482127",
+      "ItemName": "Quench",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1473562491",
+      "ItemName": "Melt",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "1974772770",
+      "ItemName": "Entangle",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "395069992",
+      "ItemName": "Vaporize",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "152469527",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 0.7519
+    },
+    {
+      "ItemId": "169311564",
+      "ItemName": "Dissipate",
+      "Notes": "",
+      "Chance": 0.7519
+    }
+  ]
+}

@@ -1,0 +1,266 @@
+{
+  "Name": "ShamansLorePackLT-UnCommon",
+  "Description": "Shaman's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1867798342",
+      "ItemName": "Ash Bats",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "820318008",
+      "ItemName": "Blinding Light",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "861769382",
+      "ItemName": "Aftershock",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "92933523",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "109863464",
+      "ItemName": "Fire Trap",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "708782752",
+      "ItemName": "Shadow Cat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "734466396",
+      "ItemName": "Frost Cat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1222062650",
+      "ItemName": "Frozen Armor",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1100720688",
+      "ItemName": "Errant Gobbler",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "45886655",
+      "ItemName": "Infection",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1917125636",
+      "ItemName": "Locust Swarm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1829327088",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1157689966",
+      "ItemName": "Rain Beetle",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

@@ -1,0 +1,842 @@
+{
+  "Name": "2016YuletidePackLT-Wildcard-BO-1",
+  "Description": "Super Winter Wonder Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1392731",
+      "ItemName": "Snowhopper Sleigh (PERM)",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1392217",
+      "ItemName": "Snowhoppers",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392732",
+      "ItemName": "Snowhopper Sleigh (7 Day)",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392733",
+      "ItemName": "Snowhopper Sleigh (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392734",
+      "ItemName": "The Winter Antlers",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392740",
+      "ItemName": "The Snow Crown",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392741",
+      "ItemName": "The Frosted Tips",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392743",
+      "ItemName": "Sparkle Globe",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392744",
+      "ItemName": "Skating Rink",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1392750",
+      "ItemName": "Green garland with lights",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392751",
+      "ItemName": "Potted Poinsettia",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392753",
+      "ItemName": "Yule Presents",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392754",
+      "ItemName": "Red Candy Canes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392755",
+      "ItemName": "Blue Candy Canes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1392756",
+      "ItemName": "Krampus Wallpaper",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407209",
+      "ItemName": "Snowdrifter's Staff",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407222",
+      "ItemName": "Snowdrifter's Stave",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407235",
+      "ItemName": "Snowdrifter's Scepter",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407365",
+      "ItemName": "Snowdrifter's Hat",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407378",
+      "ItemName": "Snowdrifter's Raiment",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407391",
+      "ItemName": "Snowdrifter's Boots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407404",
+      "ItemName": "Snowdrifter's Conical",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407417",
+      "ItemName": "Snowdrifter's Outfit",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407430",
+      "ItemName": "Snowdrifter's Shoes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407443",
+      "ItemName": "Snowdrifter's Mantle",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1407456",
+      "ItemName": "Snowdrifter's Vestment",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1407469",
+      "ItemName": "Snowdrifter's Trekkers",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "100449",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "106953",
+      "ItemName": "Black Coal",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "160245",
+      "ItemName": "Large Candle Holder",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "160246",
+      "ItemName": "Candle and Holder",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "160247",
+      "ItemName": "Small Candle",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "160385",
+      "ItemName": "Snowy Pine",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "160386",
+      "ItemName": "Small Snowy Pine",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "164283",
+      "ItemName": "Winterblue Wallpaper",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "181034",
+      "ItemName": "Winter Bed",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "181064",
+      "ItemName": "Large Fir Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "181066",
+      "ItemName": "Small Fir Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220283",
+      "ItemName": "Nutty Candy bar",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220332",
+      "ItemName": "Jar of Jelly Beans",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537487",
+      "ItemName": "Big Holiday Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537488",
+      "ItemName": "Tree Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537489",
+      "ItemName": "Star Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537490",
+      "ItemName": "Snowman Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537491",
+      "ItemName": "Polka Dot Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537492",
+      "ItemName": "Polka Dot Wrapped Long Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537493",
+      "ItemName": "Snowflake Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537496",
+      "ItemName": "Large Snowflake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537497",
+      "ItemName": "Small Snowflake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537498",
+      "ItemName": "Snowman",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537533",
+      "ItemName": "Holiday Striped Wallpaper",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537534",
+      "ItemName": "Night Snow Wallpaper",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537547",
+      "ItemName": "Large Snowy Maple Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537548",
+      "ItemName": "Small Snowy Maple Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537552",
+      "ItemName": "Snow Pile",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537553",
+      "ItemName": "Large Snowy Evergreen",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537554",
+      "ItemName": "Small Snowy Evergreen",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537611",
+      "ItemName": "Holiday Wreath",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "641698",
+      "ItemName": "Chocolate Crickets",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "641701",
+      "ItemName": "Crystal Bites",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "643093",
+      "ItemName": "Tallow Candles",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "724292",
+      "ItemName": "Yellow Holiday Ornament",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "724293",
+      "ItemName": "Red Holiday Ornament",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "724294",
+      "ItemName": "Green Holiday Ornament",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "724295",
+      "ItemName": "Blue Holiday Ornament",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "724298",
+      "ItemName": "Spiral Wrapped Gift",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733176",
+      "ItemName": "Snow Apple Cider",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733177",
+      "ItemName": "Gingerbread Wizard",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733178",
+      "ItemName": "Egg Nog",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733179",
+      "ItemName": "Ninja Figgy Pudding",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733180",
+      "ItemName": "Candy-Caned Yams",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733181",
+      "ItemName": "Cheese Cake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "733184",
+      "ItemName": "Sourpuss Stovies",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1248061",
+      "ItemName": "Chili Peppermint",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1248062",
+      "ItemName": "Choco-Latkes",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1248063",
+      "ItemName": "Assaulted Caramels",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1248064",
+      "ItemName": "Gingerbread House",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1248065",
+      "ItemName": "Tuti-Fruiti Cake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317726",
+      "ItemName": "Snowbound Yuletide Decor",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317728",
+      "ItemName": "Gingerbread Wall Icing",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317733",
+      "ItemName": "Festive Yuletree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317735",
+      "ItemName": "Dancing Reindeer Rug",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317736",
+      "ItemName": "Galloping Reindeer Rug",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317738",
+      "ItemName": "Snowflake Rug",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317746",
+      "ItemName": "Yuletide Candy Canes",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317747",
+      "ItemName": "Holiday Cranberry Sauce",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317748",
+      "ItemName": "Cream of Chicken Soup",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1317749",
+      "ItemName": "Yuletide Peppermints",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1070935258",
+      "ItemName": "Evil Snowman",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1148438838",
+      "ItemName": "Jolted Snowman",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1432868878",
+      "ItemName": "Magma Man",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126814",
+      "ItemName": "Nutcracker Wand",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126815",
+      "ItemName": "Gingerbread Wand",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126816",
+      "ItemName": "Candy Wand",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126817",
+      "ItemName": "Candle Wand",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126818",
+      "ItemName": "Star Staff",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126819",
+      "ItemName": "Ornamental Paper Staff",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126820",
+      "ItemName": "Mint Staff",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "126821",
+      "ItemName": "Sweet Staff",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470174",
+      "ItemName": "Red Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470175",
+      "ItemName": "Blue Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470176",
+      "ItemName": "Green Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470177",
+      "ItemName": "Mixed Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470178",
+      "ItemName": "Pink Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "470179",
+      "ItemName": "Yellow Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473522",
+      "ItemName": "Peanutbutter Cup",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473524",
+      "ItemName": "Cry Babies",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "537551",
+      "ItemName": "Snow Basin",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "537588",
+      "ItemName": "Simple Sugar Pop",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "Chocolate Comet",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641702",
+      "ItemName": "Crystalweb Candy",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641704",
+      "ItemName": "Hickory Chicory",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "724297",
+      "ItemName": "Holiday Fireplace",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "724299",
+      "ItemName": "Fresh Powder Floor",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733131",
+      "ItemName": "Bedrock Bonbons",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733185",
+      "ItemName": "Mince Pie",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1864620671",
+      "ItemName": "Krampus",
+      "Notes": "",
+      "Chance": 6.6667
+    }
+  ]
+}

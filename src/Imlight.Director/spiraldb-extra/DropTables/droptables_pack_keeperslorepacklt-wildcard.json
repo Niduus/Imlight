@@ -1,0 +1,776 @@
+{
+  "Name": "KeepersLorePackLT-Wildcard",
+  "Description": "Keeper's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82914",
+      "ItemName": "Clawed Wall Sconce",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106953",
+      "ItemName": "Black Coal",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "106957",
+      "ItemName": "Glass Vial",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "160813",
+      "ItemName": "Dragonspyre Sarcophagus",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "160819",
+      "ItemName": "Plundered Crystal Rack",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "160871",
+      "ItemName": "Dragonflame Torch",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "160886",
+      "ItemName": "Claw Fence Segment",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "160901",
+      "ItemName": "Dragonspyre Gate",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "191271",
+      "ItemName": "Faithful Dragoness (7 Day)",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "191272",
+      "ItemName": "Blue Dragon (7 Day)",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220276",
+      "ItemName": "Strawberry Cupcake",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "Submarine Sandwich",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "Pearl",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "",
+      "Chance": 1.7857
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "258589",
+      "ItemName": "Pristine Vial",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "258595",
+      "ItemName": "Perfect Ruby",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "470471",
+      "ItemName": "Boris Blackrock Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470472",
+      "ItemName": "Crystal Guide Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470473",
+      "ItemName": "Draconian Knight Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470474",
+      "ItemName": "Malistaire Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "512189",
+      "ItemName": "Marleybone Pet Derby Theme",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "512190",
+      "ItemName": "MooShu Pet Derby Theme",
+      "Notes": "",
+      "Chance": 1.0
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "667426",
+      "ItemName": "Silver Order of the Spiral",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667435",
+      "ItemName": "Golden Dragon Fear Banner",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667444",
+      "ItemName": "Order of High Glory Banner",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667534",
+      "ItemName": "Jade Hood of Mystery",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667543",
+      "ItemName": "Mysterious Jade Boots",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667552",
+      "ItemName": "Jade Robe of Mystery",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667561",
+      "ItemName": "Golden Hood of Serenity",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667570",
+      "ItemName": "Golden Boots of Serenity",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667579",
+      "ItemName": "Golden Robes of Serenity",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667588",
+      "ItemName": "Violet Hood of Bitter Truth",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667597",
+      "ItemName": "Violet Boots of Bitter Truth",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667606",
+      "ItemName": "Violet Robes of Bitter Truth",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "690100",
+      "ItemName": "Emberstone Tiger",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "270921514",
+      "ItemName": "Keeper of the Flame",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1627174122",
+      "ItemName": "Luminous Weaver",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "606072868",
+      "ItemName": "Brimstone Revenant",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "430139829",
+      "ItemName": "Dragonspear",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1899503323",
+      "ItemName": "Blazing Phoenix",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1955522725",
+      "ItemName": "Blight Hound",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "621685565",
+      "ItemName": "Sparking Stormzilla",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "78114673",
+      "ItemName": "Flowering Dryad",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "940821525",
+      "ItemName": "Frenzied Minotaur",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "805237289",
+      "ItemName": "Skeletal Buccaneer",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "2084795376",
+      "ItemName": "Stinging Sandstorm",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "197920269",
+      "ItemName": "Animate",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "637912712",
+      "ItemName": "Fire Elemental",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1325060491",
+      "ItemName": "Mander Minion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1294147769",
+      "ItemName": "Ice Guardian",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "638011096",
+      "ItemName": "Sprite Guardian",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1649709412",
+      "ItemName": "Minotaur Minion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1188819907",
+      "ItemName": "Water Elemental",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1778290536",
+      "ItemName": "Nekhbet",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2047562846",
+      "ItemName": "Green Widow",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2055314538",
+      "ItemName": "Blade Golem",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "910124180",
+      "ItemName": "Centaur",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "378689972",
+      "ItemName": "Clanker",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "794531456",
+      "ItemName": "Cloud Demon",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1208882854",
+      "ItemName": "Sand Stalker",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "17225717",
+      "ItemName": "Death Soldier",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1901910339",
+      "ItemName": "Ember Everburn",
+      "Notes": "",
+      "Chance": 5.0
+    }
+  ]
+}

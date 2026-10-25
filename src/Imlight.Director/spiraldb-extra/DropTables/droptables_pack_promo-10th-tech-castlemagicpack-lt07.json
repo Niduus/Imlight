@@ -1,0 +1,134 @@
+{
+  "Name": "Promo-10th-Tech-CastleMagicPack-LT07",
+  "Description": "Castle Magic Starter (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1363227186",
+      "ItemName": "Banshee Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "30260913",
+      "ItemName": "Basilisk Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1343781867",
+      "ItemName": "Black Cat Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "303756731",
+      "ItemName": "Summon Blizzard",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1343815927",
+      "ItemName": "Blood Bat Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "322010098",
+      "ItemName": "Centaur Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "33746441",
+      "ItemName": "Summon Dryad",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "377333029",
+      "ItemName": "Efreet Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "781815926",
+      "ItemName": "Fire Cat Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "752132214",
+      "ItemName": "Fire Elf Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "915269420",
+      "ItemName": "Forest Lord Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1765314764",
+      "ItemName": "Frost Beetle Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "2033613109",
+      "ItemName": "Ghoul Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1857425636",
+      "ItemName": "Hydra Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "656036427",
+      "ItemName": "Leprechaun Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1608319570",
+      "ItemName": "Lightning Bat Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "577245449",
+      "ItemName": "Medusa Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1656108571",
+      "ItemName": "Summon Pixie",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1298890947",
+      "ItemName": "Scarab Attack",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1192619481",
+      "ItemName": "Storm Shark Attack",
+      "Notes": "",
+      "Chance": 5.0
+    }
+  ]
+}

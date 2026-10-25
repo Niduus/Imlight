@@ -1,0 +1,860 @@
+{
+  "Name": "DarkmoorLT-Wildcard-BO-2",
+  "Description": "Ultra Terror's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473517",
+      "ItemName": "Pixie Stix",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "589101",
+      "ItemName": "Hot and Sour Bits",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "589104",
+      "ItemName": "Basil Poodle Noodles",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "589105",
+      "ItemName": "Zen Poppers",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "641595",
+      "ItemName": "Toad in the Hole",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "641597",
+      "ItemName": "Bearberry",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "641612",
+      "ItemName": "Black Cap Crisps",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641699",
+      "ItemName": "Butter Worms",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641702",
+      "ItemName": "Crystalweb Candy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "733115",
+      "ItemName": "Apatotatoes",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "733138",
+      "ItemName": "Bronto Burger",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "789214",
+      "ItemName": "Manderdrake fruit",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "789217",
+      "ItemName": "Salty Fish",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "789218",
+      "ItemName": "Krokodill Pickles",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "789458",
+      "ItemName": "Poi Pudding",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "789459",
+      "ItemName": "Wiki Peas",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317768",
+      "ItemName": "Terror Dog (PERM)",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1317837",
+      "ItemName": "Pitch Black Licorice",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317838",
+      "ItemName": "Fetid Legumes",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317839",
+      "ItemName": "Skeletal Treebark",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317840",
+      "ItemName": "Wampyrnickel Bread",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317841",
+      "ItemName": "Wolfbane Tea",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317842",
+      "ItemName": "Kan Davasi Delight",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317843",
+      "ItemName": "Poached Roach",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317844",
+      "ItemName": "Boiled Spider Legs",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317845",
+      "ItemName": "Hors d'oeuvre of Flies",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317846",
+      "ItemName": "Grasshopper Canap??",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317928",
+      "ItemName": "Castle Darkmoor Wallpaper",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317929",
+      "ItemName": "Castle Darkmoor Flooring",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317941",
+      "ItemName": "Darkmoor Magical Tomes",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317942",
+      "ItemName": "Darkmoor Urns",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317943",
+      "ItemName": "Grand Darkmoor Candelabrum",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317944",
+      "ItemName": "Darkmoor Hall Rug",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317945",
+      "ItemName": "Darkmoor Entrance Rug",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317946",
+      "ItemName": "Darkmoor Lounge Cushion",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317948",
+      "ItemName": "Darkmoor Beacon",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317949",
+      "ItemName": "Imposing Darkmoor Arch",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317952",
+      "ItemName": "Lich Knight's Tombstone",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317953",
+      "ItemName": "Von Shane Sepulcher",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317954",
+      "ItemName": "Darkmoor Deathstone",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317959",
+      "ItemName": "Darkmoor Castle Bed",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317960",
+      "ItemName": "Darkmoor Parlor Chair",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317961",
+      "ItemName": "Darkmoor Parlor Sofa",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317962",
+      "ItemName": "Darkmoor Thornflowers",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317963",
+      "ItemName": "Darkmoor Skeletal Tree",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317964",
+      "ItemName": "Broad Darkmoor Plinth",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317965",
+      "ItemName": "Darkmoor Ceremonial Table",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317966",
+      "ItemName": "Darkmoor Dining Table",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317967",
+      "ItemName": "Darkmoor Side Table",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317968",
+      "ItemName": "Castle Darkmoor Armoire",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317969",
+      "ItemName": "Darkmoor Brazier",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317970",
+      "ItemName": "Towering Darkmoor Column",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317971",
+      "ItemName": "Darkmoor Torch Pillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317973",
+      "ItemName": "Grandiose Gargoyle Pillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317974",
+      "ItemName": "Von Shane Sarcophagus",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317975",
+      "ItemName": "Darkmoor Orb Lamp",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317976",
+      "ItemName": "Darkmoor Dragon Banner",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317977",
+      "ItemName": "Weathered Darkmoor Banner",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317978",
+      "ItemName": "Castle Darkmoor Frieze",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317979",
+      "ItemName": "Depths of Darkmoor  Sconce",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317980",
+      "ItemName": "Darkmoor Dungeon Torch",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317981",
+      "ItemName": "Castle Darkmoor Flambeau",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317982",
+      "ItemName": "Ancient Darkmoor Tapestry",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317983",
+      "ItemName": "Arms of Castle Darkmoor",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317984",
+      "ItemName": "Darkmoor Cobwebs",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317985",
+      "ItemName": "Darkmoor Battle Schematics",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1317986",
+      "ItemName": "Howling Chaney Portrait",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317987",
+      "ItemName": "Carpathes Plaza Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317988",
+      "ItemName": "Carpathes Village Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317989",
+      "ItemName": "Carpathes & Castle Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317990",
+      "ItemName": "Dragon of Darkmoor Portrait",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317991",
+      "ItemName": "Castle Observatory Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317992",
+      "ItemName": "Painting of Castle Darkmoor",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317993",
+      "ItemName": "Portrait of Vlad von Shane",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317994",
+      "ItemName": "Portrait of Tatyana",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317995",
+      "ItemName": "Moon Over Castle Darkmoor",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317996",
+      "ItemName": "Portrait of the Bone Dragon",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317997",
+      "ItemName": "Standing Portrait of Tatyana",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317998",
+      "ItemName": "Darkmoor Mausoleum Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1338733",
+      "ItemName": "Masque of the Soothsayer",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338744",
+      "ItemName": "Soothsayer's Boots",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338755",
+      "ItemName": "Soothsayer's Finery",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1338766",
+      "ItemName": "Fortune Teller's Mask",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338777",
+      "ItemName": "Fortune Teller's Striders",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338787",
+      "ItemName": "Garb of the Fortune Teller",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1338798",
+      "ItemName": "Fortune Teller's Veil",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338809",
+      "ItemName": "Shoes of the Fortuneteller",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338820",
+      "ItemName": "Fortune Teller's Ensemble",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1338833",
+      "ItemName": "Eye of the Soothsayer",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1338844",
+      "ItemName": "Fortune Teller's Eternal Gaze",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1338855",
+      "ItemName": "Fortune Teller's Peerless Eye",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1340031",
+      "ItemName": "Mote of Beauty",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1340032",
+      "ItemName": "Mote of Severity",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1340033",
+      "ItemName": "Mote of Eternity",
+      "Notes": "",
+      "Chance": 0.3175
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350020",
+      "ItemName": "Speared Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350021",
+      "ItemName": "Impaled Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350022",
+      "ItemName": "Blinded Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350023",
+      "ItemName": "One-Armed Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350052",
+      "ItemName": "Brainy Assistant",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352333",
+      "ItemName": "Cracked Health Opal +7",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352433",
+      "ItemName": "Cracked Mana Opal +5",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352750",
+      "ItemName": "Cracked Damage Opal +2",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "879779635",
+      "ItemName": "Double Strangle",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "848000484",
+      "ItemName": "Double Dissipate",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "879772773",
+      "ItemName": "Double Entangle",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "433099623",
+      "ItemName": "Double Melt",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "2058990327",
+      "ItemName": "Double Quench",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "791531094",
+      "ItemName": "Double Unbalance",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1447602797",
+      "ItemName": "Double Vaporize",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "947908286",
+      "ItemName": "Gaze of Fate",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "239991804",
+      "ItemName": "Call of Khrulhu",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1611266108",
+      "ItemName": "Glowbug Squall",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "559384134",
+      "ItemName": "Abominable Weaver",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "2126311973",
+      "ItemName": "Mystic Colossus",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1803680979",
+      "ItemName": "Hungry Caterpillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "638345920",
+      "ItemName": "Fire from Above",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1848516314",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "451786750",
+      "ItemName": "Cooldown",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "848340699",
+      "ItemName": "Shatter",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "286773324",
+      "ItemName": "Steal Ward",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "2047623746",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "994969729",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1172979050",
+      "ItemName": "Storm Prism",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

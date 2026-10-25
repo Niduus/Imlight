@@ -1,0 +1,158 @@
+{
+  "Name": "MBMotorHoardPackLT-Rare",
+  "Description": "Marleybone Motorist Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160766",
+      "ItemName": "Dogs Playing Cards Painting",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350290",
+      "ItemName": "Marleybone Wood Panels",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350291",
+      "ItemName": "Marleybone Parquet Floor",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507409",
+      "ItemName": "Mini Trolley (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507410",
+      "ItemName": "Mini Trolley (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507411",
+      "ItemName": "Mini Tram (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507412",
+      "ItemName": "Mini Tram (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507413",
+      "ItemName": "Mini Streetcar (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507414",
+      "ItemName": "Mini Streetcar (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507487",
+      "ItemName": "Blimp Buddy",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507488",
+      "ItemName": "Blimp Companion",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507490",
+      "ItemName": "Blimp Pal",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523097",
+      "ItemName": "Motorist's Goggles",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523112",
+      "ItemName": "Motorist's Overcoat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523127",
+      "ItemName": "Motorist's Shoes",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523142",
+      "ItemName": "Autoist's Goggles",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523157",
+      "ItemName": "Autoist's Overcoat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523172",
+      "ItemName": "Autoist's Shoes",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523187",
+      "ItemName": "Traveler's Goggles",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523202",
+      "ItemName": "Traveler's Overcoat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523217",
+      "ItemName": "Traveler's Shoes",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523232",
+      "ItemName": "Motorist's Wrench",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523247",
+      "ItemName": "Autoist's Wrench",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523262",
+      "ItemName": "Traveler's Wrench",
+      "Notes": "",
+      "Chance": 4.5455
+    }
+  ]
+}

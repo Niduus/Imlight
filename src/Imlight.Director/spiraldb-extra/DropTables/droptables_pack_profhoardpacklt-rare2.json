@@ -1,0 +1,182 @@
+{
+  "Name": "ProfHoardPackLT-Rare2",
+  "Description": "Professor's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1414367",
+      "ItemName": "Dalia's Smoldering Hairdo",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414381",
+      "ItemName": "Dalia's Blazing Suit",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414395",
+      "ItemName": "Dalia's Sweltering Shoes",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414409",
+      "ItemName": "Lydia's Frigid Hat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414423",
+      "ItemName": "Greyrose Glacial Jerkin",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414437",
+      "ItemName": "Lydia's Frozen Footwraps",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414451",
+      "ItemName": "Halston's Eureka Hat",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414465",
+      "ItemName": "Balestrom's Blast Jacket",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414479",
+      "ItemName": "Halston's Stormy Slippers",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414493",
+      "ItemName": "Cyrus's Secret Skullcap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414507",
+      "ItemName": "Drake's Reflection Robe",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414521",
+      "ItemName": "Cyrus's Scholarly Striders",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414535",
+      "ItemName": "Moolinda's Hardy Headwrap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414549",
+      "ItemName": "Wu's Wild Kimono",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414563",
+      "ItemName": "Moolinda's Spirit Sandals",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414577",
+      "ItemName": "Dworgyn's Havoc Hood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414591",
+      "ItemName": "Dworgyn's Sinister Smock",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414605",
+      "ItemName": "Dworgyn's Dire Boots",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414619",
+      "ItemName": "Alhazred's Karmic Fez",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414633",
+      "ItemName": "Alhazred's Resolute Raiment",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414647",
+      "ItemName": "Alhazred's Consistent Clogs",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1414661",
+      "ItemName": "Headmaster's Glowing Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414675",
+      "ItemName": "Headmaster's Crystal Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414689",
+      "ItemName": "Headmaster's Sky Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414703",
+      "ItemName": "Headmaster's Dream Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414717",
+      "ItemName": "Headmaster's Zeal Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414731",
+      "ItemName": "Headmaster's Doom Staff",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1414745",
+      "ItemName": "Headmaster's Law Staff",
+      "Notes": "",
+      "Chance": 2.439
+    }
+  ]
+}

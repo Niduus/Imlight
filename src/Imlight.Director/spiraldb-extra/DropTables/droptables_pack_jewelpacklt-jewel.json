@@ -1,0 +1,7130 @@
+{
+  "Name": "JewelPackLT-Jewel",
+  "Description": "Rockhammer's Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352332",
+      "ItemName": "Cracked Health Opal +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352333",
+      "ItemName": "Cracked Health Opal +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352334",
+      "ItemName": "Cracked Health Opal +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352335",
+      "ItemName": "Cracked Health Opal +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352336",
+      "ItemName": "Cracked Health Opal +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352337",
+      "ItemName": "Cracked Health Opal +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352338",
+      "ItemName": "Cracked Health Opal +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352339",
+      "ItemName": "Cracked Health Opal +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352343",
+      "ItemName": "Chipped Health Opal +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352344",
+      "ItemName": "Chipped Health Opal +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352345",
+      "ItemName": "Chipped Health Opal +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352346",
+      "ItemName": "Chipped Health Opal +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352347",
+      "ItemName": "Chipped Health Opal +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352348",
+      "ItemName": "Chipped Health Opal +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352349",
+      "ItemName": "Chipped Health Opal +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352353",
+      "ItemName": "Flawed Health Opal +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352354",
+      "ItemName": "Flawed Health Opal +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352355",
+      "ItemName": "Flawed Health Opal +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352356",
+      "ItemName": "Flawed Health Opal +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352357",
+      "ItemName": "Flawed Health Opal +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352358",
+      "ItemName": "Flawed Health Opal +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352359",
+      "ItemName": "Flawed Health Opal +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352363",
+      "ItemName": "Blemished Health Opal +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352364",
+      "ItemName": "Blemished Health Opal +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352365",
+      "ItemName": "Blemished Health Opal +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352366",
+      "ItemName": "Blemished Health Opal +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352367",
+      "ItemName": "Blemished Health Opal +41",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352368",
+      "ItemName": "Blemished Health Opal +42",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352369",
+      "ItemName": "Blemished Health Opal +43",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352373",
+      "ItemName": "Dull Health Opal +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352374",
+      "ItemName": "Dull Health Opal +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352375",
+      "ItemName": "Dull Health Opal +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352376",
+      "ItemName": "Dull Health Opal +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352377",
+      "ItemName": "Dull Health Opal +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352378",
+      "ItemName": "Dull Health Opal +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352379",
+      "ItemName": "Dull Health Opal +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352383",
+      "ItemName": "Plain Health Opal +57",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352384",
+      "ItemName": "Plain Health Opal +58",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352385",
+      "ItemName": "Plain Health Opal +59",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352386",
+      "ItemName": "Plain Health Opal +60",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352387",
+      "ItemName": "Plain Health Opal +61",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352388",
+      "ItemName": "Plain Health Opal +62",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352389",
+      "ItemName": "Plain Health Opal +63",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352393",
+      "ItemName": "Opaque Health Opal +67",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352394",
+      "ItemName": "Opaque Health Opal +68",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352395",
+      "ItemName": "Opaque Health Opal +69",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352396",
+      "ItemName": "Opaque Health Opal +70",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352397",
+      "ItemName": "Opaque Health Opal +71",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352398",
+      "ItemName": "Opaque Health Opal +72",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352399",
+      "ItemName": "Opaque Health Opal +73",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352403",
+      "ItemName": "Clear Health Opal +77",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352404",
+      "ItemName": "Clear Health Opal +78",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352405",
+      "ItemName": "Clear Health Opal +79",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352406",
+      "ItemName": "Clear Health Opal +80",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352407",
+      "ItemName": "Clear Health Opal +81",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352408",
+      "ItemName": "Clear Health Opal +82",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352409",
+      "ItemName": "Clear Health Opal +83",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352413",
+      "ItemName": "Polished Health Opal +87",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352414",
+      "ItemName": "Polished Health Opal +88",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352415",
+      "ItemName": "Polished Health Opal +89",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352416",
+      "ItemName": "Polished Health Opal +90",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352417",
+      "ItemName": "Polished Health Opal +91",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352418",
+      "ItemName": "Polished Health Opal +92",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352419",
+      "ItemName": "Polished Health Opal +93",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352423",
+      "ItemName": "Lustrous Health Opal +97",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352424",
+      "ItemName": "Lustrous Health Opal +98",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352425",
+      "ItemName": "Lustrous Health Opal +99",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352426",
+      "ItemName": "Lustrous Health Opal +100",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352427",
+      "ItemName": "Lustrous Health Opal +101",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352428",
+      "ItemName": "Lustrous Health Opal +102",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352432",
+      "ItemName": "Cracked Mana Opal +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352433",
+      "ItemName": "Cracked Mana Opal +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352434",
+      "ItemName": "Cracked Mana Opal +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352436",
+      "ItemName": "Cracked Mana Opal +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352437",
+      "ItemName": "Chipped Mana Opal +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352438",
+      "ItemName": "Chipped Mana Opal +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352440",
+      "ItemName": "Chipped Mana Opal +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352441",
+      "ItemName": "Flawed Mana Opal +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352442",
+      "ItemName": "Flawed Mana Opal +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352444",
+      "ItemName": "Flawed Mana Opal +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352445",
+      "ItemName": "Blemished Mana Opal +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352446",
+      "ItemName": "Blemished Mana Opal +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352448",
+      "ItemName": "Blemished Mana Opal +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352449",
+      "ItemName": "Dull Mana Opal +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352450",
+      "ItemName": "Dull Mana Opal +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352452",
+      "ItemName": "Dull Mana Opal +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352453",
+      "ItemName": "Plain Mana Opal +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352454",
+      "ItemName": "Plain Mana Opal +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352456",
+      "ItemName": "Plain Mana Opal +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352457",
+      "ItemName": "Opaque Mana Opal +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352458",
+      "ItemName": "Opaque Mana Opal +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352460",
+      "ItemName": "Opaque Mana Opal +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352461",
+      "ItemName": "Clear Mana Opal +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352462",
+      "ItemName": "Clear Mana Opal +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352464",
+      "ItemName": "Clear Mana Opal +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352465",
+      "ItemName": "Polished Mana Opal +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352466",
+      "ItemName": "Polished Mana Opal +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352469",
+      "ItemName": "Lustrous Mana Opal +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352470",
+      "ItemName": "Lustrous Mana Opal +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352473",
+      "ItemName": "Cracked Energy Opal +1",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352474",
+      "ItemName": "Cracked Energy Opal +2",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352475",
+      "ItemName": "Cracked Energy Opal +3",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352476",
+      "ItemName": "Cracked Energy Opal +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352478",
+      "ItemName": "Cracked Fishing Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352479",
+      "ItemName": "Cracked Fishing Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352480",
+      "ItemName": "Cracked Fishing Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352578",
+      "ItemName": "Cracked Damage Ruby +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352579",
+      "ItemName": "Cracked Damage Ruby +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352580",
+      "ItemName": "Cracked Damage Ruby +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352581",
+      "ItemName": "Cracked Damage Ruby +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352582",
+      "ItemName": "Cracked Damage Ruby +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352583",
+      "ItemName": "Chipped Damage Ruby +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352584",
+      "ItemName": "Chipped Damage Ruby +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352585",
+      "ItemName": "Flawed Damage Ruby +9",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352586",
+      "ItemName": "Flawed Damage Ruby +10",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1352587",
+      "ItemName": "Blemished Damage Ruby +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352588",
+      "ItemName": "Blemished Damage Ruby +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352589",
+      "ItemName": "Dull Damage Ruby +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352590",
+      "ItemName": "Dull Damage Ruby +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352591",
+      "ItemName": "Plain Damage Ruby +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352592",
+      "ItemName": "Plain Damage Ruby +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352593",
+      "ItemName": "Opaque Damage Ruby +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352594",
+      "ItemName": "Opaque Damage Ruby +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352595",
+      "ItemName": "Clear Damage Ruby +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352596",
+      "ItemName": "Clear Damage Ruby +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352597",
+      "ItemName": "Polished Damage Ruby +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352598",
+      "ItemName": "Polished Damage Ruby +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352599",
+      "ItemName": "Lustrous Damage Ruby +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352600",
+      "ItemName": "Lustrous Damage Ruby +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352602",
+      "ItemName": "Cracked Damage Sapphire +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352603",
+      "ItemName": "Cracked Damage Sapphire +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352604",
+      "ItemName": "Cracked Damage Sapphire +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352605",
+      "ItemName": "Cracked Damage Sapphire +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352606",
+      "ItemName": "Cracked Damage Sapphire +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352607",
+      "ItemName": "Chipped Damage Sapphire +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352608",
+      "ItemName": "Chipped Damage Sapphire +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352609",
+      "ItemName": "Flawed Damage Sapphire +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352610",
+      "ItemName": "Flawed Damage Sapphire +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352611",
+      "ItemName": "Blemished Damage Sapphire +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352612",
+      "ItemName": "Blemished Damage Sapphire +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352613",
+      "ItemName": "Dull Damage Sapphire +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352614",
+      "ItemName": "Dull Damage Sapphire +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352615",
+      "ItemName": "Plain Damage Sapphire +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352616",
+      "ItemName": "Plain Damage Sapphire +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352617",
+      "ItemName": "Opaque Damage Sapphire +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352618",
+      "ItemName": "Opaque Damage Sapphire +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352619",
+      "ItemName": "Clear Damage Sapphire +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352620",
+      "ItemName": "Clear Damage Sapphire +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352621",
+      "ItemName": "Polished Damage Sapphire +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352622",
+      "ItemName": "Polished Damage Sapphire +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352623",
+      "ItemName": "Lustrous Damage Sapphire +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352624",
+      "ItemName": "Lustrous Damage Sapphire +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352626",
+      "ItemName": "Cracked Damage Amethyst +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352627",
+      "ItemName": "Cracked Damage Amethyst +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352628",
+      "ItemName": "Cracked Damage Amethyst +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352629",
+      "ItemName": "Cracked Damage Amethyst +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352630",
+      "ItemName": "Cracked Damage Amethyst +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352631",
+      "ItemName": "Chipped Damage Amethyst +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352632",
+      "ItemName": "Chipped Damage Amethyst +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352633",
+      "ItemName": "Flawed Damage Amethyst +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352634",
+      "ItemName": "Flawed Damage Amethyst +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352635",
+      "ItemName": "Blemished Damage Amethyst +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352636",
+      "ItemName": "Blemished Damage Amethyst +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352637",
+      "ItemName": "Dull Damage Amethyst +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352638",
+      "ItemName": "Dull Damage Amethyst +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352639",
+      "ItemName": "Plain Damage Amethyst +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352640",
+      "ItemName": "Plain Damage Amethyst +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352641",
+      "ItemName": "Opaque Damage Amethyst +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352642",
+      "ItemName": "Opaque Damage Amethyst +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352643",
+      "ItemName": "Clear Damage Amethyst +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352644",
+      "ItemName": "Clear Damage Amethyst +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352645",
+      "ItemName": "Polished Damage Amethyst +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352646",
+      "ItemName": "Polished Damage Amethyst +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352647",
+      "ItemName": "Lustrous Damage Amethyst +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352648",
+      "ItemName": "Lustrous Damage Amethyst +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352650",
+      "ItemName": "Cracked Damage Peridot +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352651",
+      "ItemName": "Cracked Damage Peridot +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352652",
+      "ItemName": "Cracked Damage Peridot +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352653",
+      "ItemName": "Cracked Damage Peridot +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352654",
+      "ItemName": "Cracked Damage Peridot +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352655",
+      "ItemName": "Chipped Damage Peridot +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352656",
+      "ItemName": "Chipped Damage Peridot +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352657",
+      "ItemName": "Flawed Damage Peridot +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352658",
+      "ItemName": "Flawed Damage Peridot +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352659",
+      "ItemName": "Blemished Damage Peridot +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352660",
+      "ItemName": "Blemished Damage Peridot +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352661",
+      "ItemName": "Dull Damage Peridot +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352662",
+      "ItemName": "Dull Damage Peridot +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352663",
+      "ItemName": "Plain Damage Peridot +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352664",
+      "ItemName": "Plain Damage Peridot +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352665",
+      "ItemName": "Opaque Damage Peridot +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352666",
+      "ItemName": "Opaque Damage Peridot +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352667",
+      "ItemName": "Clear Damage Peridot +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352668",
+      "ItemName": "Clear Damage Peridot +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352669",
+      "ItemName": "Polished Damage Peridot +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352670",
+      "ItemName": "Polished Damage Peridot +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352671",
+      "ItemName": "Lustrous Damage Peridot +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352672",
+      "ItemName": "Lustrous Damage Peridot +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352674",
+      "ItemName": "Cracked Damage Jade +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352675",
+      "ItemName": "Cracked Damage Jade +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352676",
+      "ItemName": "Cracked Damage Jade +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352677",
+      "ItemName": "Cracked Damage Jade +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352678",
+      "ItemName": "Cracked Damage Jade +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352679",
+      "ItemName": "Chipped Damage Jade +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352680",
+      "ItemName": "Chipped Damage Jade +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352681",
+      "ItemName": "Flawed Damage Jade +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352682",
+      "ItemName": "Flawed Damage Jade +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352683",
+      "ItemName": "Blemished Damage Jade +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352684",
+      "ItemName": "Blemished Damage Jade +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352685",
+      "ItemName": "Dull Damage Jade +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352686",
+      "ItemName": "Dull Damage Jade +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352687",
+      "ItemName": "Plain Damage Jade +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352688",
+      "ItemName": "Plain Damage Jade +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352689",
+      "ItemName": "Opaque Damage Jade +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352690",
+      "ItemName": "Opaque Damage Jade +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352691",
+      "ItemName": "Clear Damage Jade +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352692",
+      "ItemName": "Clear Damage Jade +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352693",
+      "ItemName": "Polished Damage Jade +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352694",
+      "ItemName": "Polished Damage Jade +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352695",
+      "ItemName": "Lustrous Damage Jade +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352696",
+      "ItemName": "Lustrous Damage Jade +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352698",
+      "ItemName": "Cracked Damage Onyx +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352699",
+      "ItemName": "Cracked Damage Onyx +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352700",
+      "ItemName": "Cracked Damage Onyx +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352701",
+      "ItemName": "Cracked Damage Onyx +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352702",
+      "ItemName": "Cracked Damage Onyx +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352703",
+      "ItemName": "Chipped Damage Onyx +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352704",
+      "ItemName": "Chipped Damage Onyx +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352705",
+      "ItemName": "Flawed Damage Onyx +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352706",
+      "ItemName": "Flawed Damage Onyx +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352707",
+      "ItemName": "Blemished Damage Onyx +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352708",
+      "ItemName": "Blemished Damage Onyx +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352709",
+      "ItemName": "Dull Damage Onyx +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352710",
+      "ItemName": "Dull Damage Onyx +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352711",
+      "ItemName": "Plain Damage Onyx +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352712",
+      "ItemName": "Plain Damage Onyx +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352713",
+      "ItemName": "Opaque Damage Onyx +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352714",
+      "ItemName": "Opaque Damage Onyx +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352715",
+      "ItemName": "Clear Damage Onyx +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352716",
+      "ItemName": "Clear Damage Onyx +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352717",
+      "ItemName": "Polished Damage Onyx +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352718",
+      "ItemName": "Polished Damage Onyx +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352719",
+      "ItemName": "Lustrous Damage Onyx +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352720",
+      "ItemName": "Lustrous Damage Onyx +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352722",
+      "ItemName": "Cracked Damage Citrine +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352723",
+      "ItemName": "Cracked Damage Citrine +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352724",
+      "ItemName": "Cracked Damage Citrine +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352725",
+      "ItemName": "Cracked Damage Citrine +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352726",
+      "ItemName": "Cracked Damage Citrine +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352727",
+      "ItemName": "Chipped Damage Citrine +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352728",
+      "ItemName": "Chipped Damage Citrine +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352729",
+      "ItemName": "Flawed Damage Citrine +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352730",
+      "ItemName": "Flawed Damage Citrine +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352731",
+      "ItemName": "Blemished Damage Citrine +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352732",
+      "ItemName": "Blemished Damage Citrine +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352733",
+      "ItemName": "Dull Damage Citrine +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352734",
+      "ItemName": "Dull Damage Citrine +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352735",
+      "ItemName": "Plain Damage Citrine +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352736",
+      "ItemName": "Plain Damage Citrine +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352737",
+      "ItemName": "Opaque Damage Citrine +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352738",
+      "ItemName": "Opaque Damage Citrine +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352739",
+      "ItemName": "Clear Damage Citrine +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352740",
+      "ItemName": "Clear Damage Citrine +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352741",
+      "ItemName": "Polished Damage Citrine +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352742",
+      "ItemName": "Polished Damage Citrine +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352743",
+      "ItemName": "Lustrous Damage Citrine +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352744",
+      "ItemName": "Lustrous Damage Citrine +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352750",
+      "ItemName": "Cracked Damage Opal +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352751",
+      "ItemName": "Cracked Damage Opal +3",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1352753",
+      "ItemName": "Flawed Damage Opal +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352754",
+      "ItemName": "Blemished Damage Opal +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352755",
+      "ItemName": "Dull Damage Opal +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352756",
+      "ItemName": "Plain Damage Opal +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352757",
+      "ItemName": "Opaque Damage Opal +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352758",
+      "ItemName": "Clear Damage Opal +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352759",
+      "ItemName": "Polished Damage Opal +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352760",
+      "ItemName": "Lustrous Damage Opal +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352761",
+      "ItemName": "Dull Piercing Ruby +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352762",
+      "ItemName": "Dull Piercing Ruby +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352763",
+      "ItemName": "Plain Piercing Ruby +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352764",
+      "ItemName": "Opaque Piercing Ruby +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352765",
+      "ItemName": "Clear Piercing Ruby +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352768",
+      "ItemName": "Dull Piercing Sapphire +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352769",
+      "ItemName": "Dull Piercing Sapphire +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352770",
+      "ItemName": "Plain Piercing Sapphire +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352771",
+      "ItemName": "Opaque Piercing Sapphire +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352772",
+      "ItemName": "Clear Piercing Sapphire +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352773",
+      "ItemName": "Polished Piercing Sapphire +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352775",
+      "ItemName": "Dull Piercing Amethyst +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352776",
+      "ItemName": "Dull Piercing Amethyst +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352777",
+      "ItemName": "Plain Piercing Amethyst +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352778",
+      "ItemName": "Opaque Piercing Amethyst +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352779",
+      "ItemName": "Clear Piercing Amethyst +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352782",
+      "ItemName": "Dull Piercing Peridot +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352783",
+      "ItemName": "Dull Piercing Peridot +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352784",
+      "ItemName": "Plain Piercing Peridot +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352785",
+      "ItemName": "Opaque Piercing Peridot +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352786",
+      "ItemName": "Clear Piercing Peridot +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352789",
+      "ItemName": "Dull Piercing Jade +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352790",
+      "ItemName": "Dull Piercing Jade +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352791",
+      "ItemName": "Plain Piercing Jade +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352792",
+      "ItemName": "Opaque Piercing Jade +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352793",
+      "ItemName": "Clear Piercing Jade +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352794",
+      "ItemName": "Polished Piercing Jade +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352796",
+      "ItemName": "Dull Piercing Onyx +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352797",
+      "ItemName": "Dull Piercing Onyx +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352798",
+      "ItemName": "Plain Piercing Onyx +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352799",
+      "ItemName": "Opaque Piercing Onyx +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352800",
+      "ItemName": "Clear Piercing Onyx +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352803",
+      "ItemName": "Dull Piercing Citrine +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352804",
+      "ItemName": "Dull Piercing Citrine +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352805",
+      "ItemName": "Plain Piercing Citrine +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352806",
+      "ItemName": "Opaque Piercing Citrine +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352807",
+      "ItemName": "Clear Piercing Citrine +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352813",
+      "ItemName": "Dull Piercing Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352817",
+      "ItemName": "Cracked Mending Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352818",
+      "ItemName": "Flawed Mending Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352819",
+      "ItemName": "Dull Mending Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352820",
+      "ItemName": "Opaque Mending Opal +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352821",
+      "ItemName": "Polished Mending Opal +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352823",
+      "ItemName": "Dull Critical Ruby +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352824",
+      "ItemName": "Dull Critical Ruby +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352825",
+      "ItemName": "Dull Critical Ruby +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352826",
+      "ItemName": "Plain Critical Ruby +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352827",
+      "ItemName": "Plain Critical Ruby +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352828",
+      "ItemName": "Opaque Critical Ruby +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352829",
+      "ItemName": "Opaque Critical Ruby +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352830",
+      "ItemName": "Clear Critical Ruby +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352832",
+      "ItemName": "Polished Critical Ruby +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352833",
+      "ItemName": "Polished Critical Ruby +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352834",
+      "ItemName": "Lustrous Critical Ruby +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352835",
+      "ItemName": "Lustrous Critical Ruby +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352836",
+      "ItemName": "Dull Critical Sapphire +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352837",
+      "ItemName": "Dull Critical Sapphire +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352838",
+      "ItemName": "Dull Critical Sapphire +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352839",
+      "ItemName": "Plain Critical Sapphire +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352840",
+      "ItemName": "Plain Critical Sapphire +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352841",
+      "ItemName": "Opaque Critical Sapphire +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352842",
+      "ItemName": "Opaque Critical Sapphire +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352843",
+      "ItemName": "Clear Critical Sapphire +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352845",
+      "ItemName": "Polished Critical Sapphire +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352846",
+      "ItemName": "Polished Critical Sapphire +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352847",
+      "ItemName": "Lustrous Critical Sapphire +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352848",
+      "ItemName": "Lustrous Critical Sapphire +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352849",
+      "ItemName": "Dull Critical Amethyst +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352850",
+      "ItemName": "Dull Critical Amethyst +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352851",
+      "ItemName": "Dull Critical Amethyst +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352852",
+      "ItemName": "Plain Critical Amethyst +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352853",
+      "ItemName": "Plain Critical Amethyst +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352854",
+      "ItemName": "Opaque Critical Amethyst +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352855",
+      "ItemName": "Opaque Critical Amethyst +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352856",
+      "ItemName": "Clear Critical Amethyst +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352858",
+      "ItemName": "Polished Critical Amethyst +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352859",
+      "ItemName": "Polished Critical Amethyst +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352860",
+      "ItemName": "Lustrous Critical Amethyst +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352861",
+      "ItemName": "Lustrous Critical Amethyst +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352862",
+      "ItemName": "Dull Critical Peridot +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352863",
+      "ItemName": "Dull Critical Peridot +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352864",
+      "ItemName": "Dull Critical Peridot +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352865",
+      "ItemName": "Plain Critical Peridot +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352866",
+      "ItemName": "Plain Critical Peridot +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352867",
+      "ItemName": "Opaque Critical Peridot +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352868",
+      "ItemName": "Opaque Critical Peridot +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352869",
+      "ItemName": "Clear Critical Peridot +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352871",
+      "ItemName": "Polished Critical Peridot +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352872",
+      "ItemName": "Polished Critical Peridot +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352873",
+      "ItemName": "Lustrous Critical Peridot +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352874",
+      "ItemName": "Lustrous Critical Peridot +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352875",
+      "ItemName": "Dull Critical Jade +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352876",
+      "ItemName": "Dull Critical Jade +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352877",
+      "ItemName": "Dull Critical Jade +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352878",
+      "ItemName": "Plain Critical Jade +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352879",
+      "ItemName": "Plain Critical Jade +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352880",
+      "ItemName": "Opaque Critical Jade +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352881",
+      "ItemName": "Opaque Critical Jade +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352882",
+      "ItemName": "Clear Critical Jade +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352884",
+      "ItemName": "Polished Critical Jade +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352885",
+      "ItemName": "Polished Critical Jade +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352886",
+      "ItemName": "Lustrous Critical Jade +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352887",
+      "ItemName": "Lustrous Critical Jade +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352888",
+      "ItemName": "Dull Critical Onyx +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352889",
+      "ItemName": "Dull Critical Onyx +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352890",
+      "ItemName": "Dull Critical Onyx +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352891",
+      "ItemName": "Plain Critical Onyx +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352892",
+      "ItemName": "Plain Critical Onyx +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352893",
+      "ItemName": "Opaque Critical Onyx +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352894",
+      "ItemName": "Opaque Critical Onyx +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352895",
+      "ItemName": "Clear Critical Onyx +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352897",
+      "ItemName": "Polished Critical Onyx +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352898",
+      "ItemName": "Polished Critical Onyx +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352899",
+      "ItemName": "Lustrous Critical Onyx +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352900",
+      "ItemName": "Lustrous Critical Onyx +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352901",
+      "ItemName": "Dull Critical Citrine +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352902",
+      "ItemName": "Dull Critical Citrine +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352903",
+      "ItemName": "Dull Critical Citrine +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352904",
+      "ItemName": "Plain Critical Citrine +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352905",
+      "ItemName": "Plain Critical Citrine +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352906",
+      "ItemName": "Opaque Critical Citrine +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352907",
+      "ItemName": "Opaque Critical Citrine +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352908",
+      "ItemName": "Clear Critical Citrine +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352910",
+      "ItemName": "Polished Critical Citrine +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352911",
+      "ItemName": "Polished Critical Citrine +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352912",
+      "ItemName": "Lustrous Critical Citrine +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352913",
+      "ItemName": "Lustrous Critical Citrine +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352927",
+      "ItemName": "Dull Critical Opal +1",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352928",
+      "ItemName": "Dull Critical Opal +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352936",
+      "ItemName": "Dull Resilient Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352937",
+      "ItemName": "Opaque Resilient Opal +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352939",
+      "ItemName": "Cracked Healing Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352941",
+      "ItemName": "Dull Healing Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352942",
+      "ItemName": "Opaque Healing Opal +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352943",
+      "ItemName": "Polished Healing Opal +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352945",
+      "ItemName": "Dull Blocking Ruby +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352946",
+      "ItemName": "Dull Blocking Ruby +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352947",
+      "ItemName": "Dull Blocking Ruby +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352948",
+      "ItemName": "Plain Blocking Ruby +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352949",
+      "ItemName": "Plain Blocking Ruby +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352950",
+      "ItemName": "Opaque Blocking Ruby +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352951",
+      "ItemName": "Opaque Blocking Ruby +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352952",
+      "ItemName": "Clear Blocking Ruby +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352953",
+      "ItemName": "Clear Blocking Ruby +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352954",
+      "ItemName": "Polished Blocking Ruby +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352955",
+      "ItemName": "Polished Blocking Ruby +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352957",
+      "ItemName": "Lustrous Blocking Ruby +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352958",
+      "ItemName": "Dull Blocking Sapphire +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352959",
+      "ItemName": "Dull Blocking Sapphire +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352960",
+      "ItemName": "Dull Blocking Sapphire +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352961",
+      "ItemName": "Plain Blocking Sapphire +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352962",
+      "ItemName": "Plain Blocking Sapphire +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352963",
+      "ItemName": "Opaque Blocking Sapphire +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352964",
+      "ItemName": "Opaque Blocking Sapphire +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352965",
+      "ItemName": "Clear Blocking Sapphire +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352966",
+      "ItemName": "Clear Blocking Sapphire +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352967",
+      "ItemName": "Polished Blocking Sapphire +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352968",
+      "ItemName": "Polished Blocking Sapphire +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352970",
+      "ItemName": "Lustrous Blocking Sapphire +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352971",
+      "ItemName": "Dull Blocking Amethyst +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352972",
+      "ItemName": "Dull Blocking Amethyst +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352973",
+      "ItemName": "Dull Blocking Amethyst +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352974",
+      "ItemName": "Plain Blocking Amethyst +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352975",
+      "ItemName": "Plain Blocking Amethyst +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352976",
+      "ItemName": "Opaque Blocking Amethyst +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352977",
+      "ItemName": "Opaque Blocking Amethyst +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352978",
+      "ItemName": "Clear Blocking Amethyst +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352979",
+      "ItemName": "Clear Blocking Amethyst +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352980",
+      "ItemName": "Polished Blocking Amethyst +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352981",
+      "ItemName": "Polished Blocking Amethyst +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352983",
+      "ItemName": "Lustrous Blocking Amethyst +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352984",
+      "ItemName": "Dull Blocking Peridot +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352985",
+      "ItemName": "Dull Blocking Peridot +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352986",
+      "ItemName": "Dull Blocking Peridot +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352987",
+      "ItemName": "Plain Blocking Peridot +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352988",
+      "ItemName": "Plain Blocking Peridot +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352989",
+      "ItemName": "Opaque Blocking Peridot +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352990",
+      "ItemName": "Opaque Blocking Peridot +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352991",
+      "ItemName": "Clear Blocking Peridot +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352992",
+      "ItemName": "Clear Blocking Peridot +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352993",
+      "ItemName": "Polished Blocking Peridot +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352994",
+      "ItemName": "Polished Blocking Peridot +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352996",
+      "ItemName": "Lustrous Blocking Peridot +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352997",
+      "ItemName": "Dull Blocking Jade +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352998",
+      "ItemName": "Dull Blocking Jade +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1352999",
+      "ItemName": "Dull Blocking Jade +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357000",
+      "ItemName": "Plain Blocking Jade +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357001",
+      "ItemName": "Plain Blocking Jade +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357002",
+      "ItemName": "Opaque Blocking Jade +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357003",
+      "ItemName": "Opaque Blocking Jade +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357004",
+      "ItemName": "Clear Blocking Jade +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357005",
+      "ItemName": "Clear Blocking Jade +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357006",
+      "ItemName": "Polished Blocking Jade +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357007",
+      "ItemName": "Polished Blocking Jade +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357009",
+      "ItemName": "Lustrous Blocking Jade +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357010",
+      "ItemName": "Dull Blocking Onyx +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357011",
+      "ItemName": "Dull Blocking Onyx +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357012",
+      "ItemName": "Dull Blocking Onyx +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357013",
+      "ItemName": "Plain Blocking Onyx +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357014",
+      "ItemName": "Plain Blocking Onyx +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357015",
+      "ItemName": "Opaque Blocking Onyx +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357016",
+      "ItemName": "Opaque Blocking Onyx +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357017",
+      "ItemName": "Clear Blocking Onyx +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357018",
+      "ItemName": "Clear Blocking Onyx +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357019",
+      "ItemName": "Polished Blocking Onyx +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357020",
+      "ItemName": "Polished Blocking Onyx +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357022",
+      "ItemName": "Lustrous Blocking Onyx +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357023",
+      "ItemName": "Dull Blocking Citrine +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357024",
+      "ItemName": "Dull Blocking Citrine +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357025",
+      "ItemName": "Dull Blocking Citrine +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357026",
+      "ItemName": "Plain Blocking Citrine +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357027",
+      "ItemName": "Plain Blocking Citrine +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357028",
+      "ItemName": "Opaque Blocking Citrine +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357029",
+      "ItemName": "Opaque Blocking Citrine +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357030",
+      "ItemName": "Clear Blocking Citrine +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357031",
+      "ItemName": "Clear Blocking Citrine +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357032",
+      "ItemName": "Polished Blocking Citrine +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357033",
+      "ItemName": "Polished Blocking Citrine +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357035",
+      "ItemName": "Lustrous Blocking Citrine +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357049",
+      "ItemName": "Dull Blocking Opal +1",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357050",
+      "ItemName": "Dull Blocking Opal +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357056",
+      "ItemName": "Chipped Accurate Ruby +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357057",
+      "ItemName": "Flawed Accurate Ruby +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357058",
+      "ItemName": "Blemished Accurate Ruby +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357059",
+      "ItemName": "Dull Accurate Ruby +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357060",
+      "ItemName": "Plain Accurate Ruby +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357062",
+      "ItemName": "Clear Accurate Ruby +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357063",
+      "ItemName": "Polished Accurate Ruby +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357064",
+      "ItemName": "Lustrous Accurate Ruby +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357065",
+      "ItemName": "Chipped Accurate Sapphire +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357066",
+      "ItemName": "Flawed Accurate Sapphire +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357067",
+      "ItemName": "Blemished Accurate Sapphire +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357068",
+      "ItemName": "Dull Accurate Sapphire +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357069",
+      "ItemName": "Plain Accurate Sapphire +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357071",
+      "ItemName": "Clear Accurate Sapphire +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357072",
+      "ItemName": "Polished Accurate Sapphire +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357073",
+      "ItemName": "Lustrous Accurate Sapphire +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357074",
+      "ItemName": "Chipped Accurate Amethyst +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357075",
+      "ItemName": "Flawed Accurate Amethyst +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357076",
+      "ItemName": "Blemished Accurate Amethyst +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357077",
+      "ItemName": "Dull Accurate Amethyst +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357078",
+      "ItemName": "Plain Accurate Amethyst +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357080",
+      "ItemName": "Clear Accurate Amethyst +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357081",
+      "ItemName": "Polished Accurate Amethyst +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357082",
+      "ItemName": "Lustrous Accurate Amethyst +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357083",
+      "ItemName": "Chipped Accurate Peridot +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357084",
+      "ItemName": "Flawed Accurate Peridot +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357085",
+      "ItemName": "Blemished Accurate Peridot +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357086",
+      "ItemName": "Dull Accurate Peridot +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357087",
+      "ItemName": "Plain Accurate Peridot +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357089",
+      "ItemName": "Clear Accurate Peridot +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357090",
+      "ItemName": "Polished Accurate Peridot +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357091",
+      "ItemName": "Lustrous Accurate Peridot +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357092",
+      "ItemName": "Chipped Accurate Jade +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357093",
+      "ItemName": "Flawed Accurate Jade +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357094",
+      "ItemName": "Blemished Accurate Jade +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357095",
+      "ItemName": "Dull Accurate Jade +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357096",
+      "ItemName": "Plain Accurate Jade +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357098",
+      "ItemName": "Clear Accurate Jade +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357099",
+      "ItemName": "Polished Accurate Jade +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357100",
+      "ItemName": "Lustrous Accurate Jade +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357101",
+      "ItemName": "Chipped Accurate Onyx +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357102",
+      "ItemName": "Flawed Accurate Onyx +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357103",
+      "ItemName": "Blemished Accurate Onyx +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357104",
+      "ItemName": "Dull Accurate Onyx +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357105",
+      "ItemName": "Plain Accurate Onyx +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357107",
+      "ItemName": "Clear Accurate Onyx +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357108",
+      "ItemName": "Polished Accurate Onyx +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357109",
+      "ItemName": "Lustrous Accurate Onyx +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357110",
+      "ItemName": "Chipped Accurate Citrine +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357111",
+      "ItemName": "Flawed Accurate Citrine +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357112",
+      "ItemName": "Blemished Accurate Citrine +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357113",
+      "ItemName": "Dull Accurate Citrine +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357114",
+      "ItemName": "Plain Accurate Citrine +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357116",
+      "ItemName": "Clear Accurate Citrine +9%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357117",
+      "ItemName": "Polished Accurate Citrine +10%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357118",
+      "ItemName": "Lustrous Accurate Citrine +11%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357120",
+      "ItemName": "Flawed Accurate Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357122",
+      "ItemName": "Opaque Accurate Opal +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357125",
+      "ItemName": "Chipped PIP Opal +1%",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357126",
+      "ItemName": "Chipped PIP Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357127",
+      "ItemName": "Flawed PIP Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357128",
+      "ItemName": "Blemished PIP Opal +4%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357129",
+      "ItemName": "Dull PIP Opal +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357130",
+      "ItemName": "Plain PIP Opal +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357131",
+      "ItemName": "Opaque PIP Opal +7%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357132",
+      "ItemName": "Clear PIP Opal +8%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357136",
+      "ItemName": "Cracked Accurate Ruby +1%",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357137",
+      "ItemName": "Cracked Accurate Ruby +2%",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357138",
+      "ItemName": "Cracked Accurate Sapphire +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357139",
+      "ItemName": "Cracked Accurate Sapphire +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357140",
+      "ItemName": "Cracked Accurate Amethyst +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357141",
+      "ItemName": "Cracked Accurate Amethyst +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357142",
+      "ItemName": "Cracked Accurate Peridot +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357143",
+      "ItemName": "Cracked Accurate Peridot +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357144",
+      "ItemName": "Cracked Accurate Jade +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357145",
+      "ItemName": "Cracked Accurate Jade +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357146",
+      "ItemName": "Cracked Accurate Onyx +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357147",
+      "ItemName": "Cracked Accurate Onyx +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357148",
+      "ItemName": "Cracked Accurate Citrine +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357149",
+      "ItemName": "Cracked Accurate Citrine +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357150",
+      "ItemName": "Cracked Accurate Opal +1%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357152",
+      "ItemName": "Opaque Piercing Opal +2%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357153",
+      "ItemName": "Polished Piercing Opal +3%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357203",
+      "ItemName": "Fire Cat Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357204",
+      "ItemName": "Fire Elf Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357205",
+      "ItemName": "Glacial Shield Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357206",
+      "ItemName": "Frost Beetle Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357207",
+      "ItemName": "Snow Serpent Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357208",
+      "ItemName": "Volcanic Shield Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357209",
+      "ItemName": "Thunder Snake Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357210",
+      "ItemName": "Lightning Bats Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357211",
+      "ItemName": "Thermic Shield Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357212",
+      "ItemName": "Blood Bat Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357213",
+      "ItemName": "Troll Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357214",
+      "ItemName": "Myth Trap Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357215",
+      "ItemName": "Imp Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357216",
+      "ItemName": "Leprechaun Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357217",
+      "ItemName": "Legend Shield Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357218",
+      "ItemName": "Dark Sprite Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357219",
+      "ItemName": "Ghoul Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357220",
+      "ItemName": "Dream Shield Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357221",
+      "ItemName": "Scarab Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357222",
+      "ItemName": "Scorpion Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357223",
+      "ItemName": "Weakness Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357240",
+      "ItemName": "Cracked Defense Ruby +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357241",
+      "ItemName": "Cracked Defense Ruby +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357242",
+      "ItemName": "Cracked Defense Ruby +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357243",
+      "ItemName": "Cracked Defense Ruby +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357244",
+      "ItemName": "Cracked Defense Ruby +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357245",
+      "ItemName": "Cracked Defense Ruby +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357246",
+      "ItemName": "Cracked Defense Ruby +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357247",
+      "ItemName": "Cracked Defense Ruby +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357248",
+      "ItemName": "Cracked Defense Ruby +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357249",
+      "ItemName": "Chipped Defense Ruby +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357250",
+      "ItemName": "Chipped Defense Ruby +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357251",
+      "ItemName": "Chipped Defense Ruby +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357252",
+      "ItemName": "Chipped Defense Ruby +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357253",
+      "ItemName": "Flawed Defense Ruby +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357254",
+      "ItemName": "Flawed Defense Ruby +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357255",
+      "ItemName": "Flawed Defense Ruby +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357256",
+      "ItemName": "Flawed Defense Ruby +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357257",
+      "ItemName": "Blemished Defense Ruby +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357258",
+      "ItemName": "Blemished Defense Ruby +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357259",
+      "ItemName": "Blemished Defense Ruby +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357260",
+      "ItemName": "Blemished Defense Ruby +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357261",
+      "ItemName": "Dull Defense Ruby +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357262",
+      "ItemName": "Dull Defense Ruby +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357263",
+      "ItemName": "Dull Defense Ruby +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357264",
+      "ItemName": "Dull Defense Ruby +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357265",
+      "ItemName": "Plain Defense Ruby +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357266",
+      "ItemName": "Plain Defense Ruby +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357267",
+      "ItemName": "Plain Defense Ruby +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357268",
+      "ItemName": "Plain Defense Ruby +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357269",
+      "ItemName": "Opaque Defense Ruby +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357270",
+      "ItemName": "Opaque Defense Ruby +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357271",
+      "ItemName": "Opaque Defense Ruby +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357272",
+      "ItemName": "Opaque Defense Ruby +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357273",
+      "ItemName": "Clear Defense Ruby +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357274",
+      "ItemName": "Clear Defense Ruby +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357275",
+      "ItemName": "Clear Defense Ruby +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357276",
+      "ItemName": "Clear Defense Ruby +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357277",
+      "ItemName": "Polished Defense Ruby +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357278",
+      "ItemName": "Polished Defense Ruby +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357279",
+      "ItemName": "Polished Defense Ruby +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357282",
+      "ItemName": "Lustrous Defense Ruby +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357283",
+      "ItemName": "Lustrous Defense Ruby +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357284",
+      "ItemName": "Lustrous Defense Ruby +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357285",
+      "ItemName": "Cracked Defense Sapphire +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357286",
+      "ItemName": "Cracked Defense Sapphire +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357287",
+      "ItemName": "Cracked Defense Sapphire +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357288",
+      "ItemName": "Cracked Defense Sapphire +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357289",
+      "ItemName": "Cracked Defense Sapphire +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357290",
+      "ItemName": "Cracked Defense Sapphire +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357291",
+      "ItemName": "Cracked Defense Sapphire +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357292",
+      "ItemName": "Cracked Defense Sapphire +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357293",
+      "ItemName": "Cracked Defense Sapphire +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357294",
+      "ItemName": "Chipped Defense Sapphire +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357295",
+      "ItemName": "Chipped Defense Sapphire +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357296",
+      "ItemName": "Chipped Defense Sapphire +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357297",
+      "ItemName": "Chipped Defense Sapphire +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357298",
+      "ItemName": "Flawed Defense Sapphire +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357299",
+      "ItemName": "Flawed Defense Sapphire +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357300",
+      "ItemName": "Flawed Defense Sapphire +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357301",
+      "ItemName": "Flawed Defense Sapphire +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357302",
+      "ItemName": "Blemished Defense Sapphire +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357303",
+      "ItemName": "Blemished Defense Sapphire +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357304",
+      "ItemName": "Blemished Defense Sapphire +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357305",
+      "ItemName": "Blemished Defense Sapphire +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357306",
+      "ItemName": "Dull Defense Sapphire +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357307",
+      "ItemName": "Dull Defense Sapphire +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357308",
+      "ItemName": "Dull Defense Sapphire +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357309",
+      "ItemName": "Dull Defense Sapphire +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357310",
+      "ItemName": "Plain Defense Sapphire +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357311",
+      "ItemName": "Plain Defense Sapphire +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357312",
+      "ItemName": "Plain Defense Sapphire +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357313",
+      "ItemName": "Plain Defense Sapphire +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357314",
+      "ItemName": "Opaque Defense Sapphire +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357315",
+      "ItemName": "Opaque Defense Sapphire +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357316",
+      "ItemName": "Opaque Defense Sapphire +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357317",
+      "ItemName": "Opaque Defense Sapphire +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357318",
+      "ItemName": "Clear Defense Sapphire +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357319",
+      "ItemName": "Clear Defense Sapphire +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357320",
+      "ItemName": "Clear Defense Sapphire +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357321",
+      "ItemName": "Clear Defense Sapphire +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357322",
+      "ItemName": "Polished Defense Sapphire +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357323",
+      "ItemName": "Polished Defense Sapphire +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357324",
+      "ItemName": "Polished Defense Sapphire +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357327",
+      "ItemName": "Lustrous Defense Sapphire +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357328",
+      "ItemName": "Lustrous Defense Sapphire +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357329",
+      "ItemName": "Lustrous Defense Sapphire +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357330",
+      "ItemName": "Cracked Defense Amethyst +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357331",
+      "ItemName": "Cracked Defense Amethyst +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357332",
+      "ItemName": "Cracked Defense Amethyst +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357333",
+      "ItemName": "Cracked Defense Amethyst +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357334",
+      "ItemName": "Cracked Defense Amethyst +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357335",
+      "ItemName": "Cracked Defense Amethyst +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357336",
+      "ItemName": "Cracked Defense Amethyst +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357337",
+      "ItemName": "Cracked Defense Amethyst +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357338",
+      "ItemName": "Cracked Defense Amethyst +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357339",
+      "ItemName": "Chipped Defense Amethyst +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357340",
+      "ItemName": "Chipped Defense Amethyst +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357341",
+      "ItemName": "Chipped Defense Amethyst +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357342",
+      "ItemName": "Chipped Defense Amethyst +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357343",
+      "ItemName": "Flawed Defense Amethyst +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357344",
+      "ItemName": "Flawed Defense Amethyst +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357345",
+      "ItemName": "Flawed Defense Amethyst +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357346",
+      "ItemName": "Flawed Defense Amethyst +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357347",
+      "ItemName": "Blemished Defense Amethyst +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357348",
+      "ItemName": "Blemished Defense Amethyst +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357349",
+      "ItemName": "Blemished Defense Amethyst +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357350",
+      "ItemName": "Blemished Defense Amethyst +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357351",
+      "ItemName": "Dull Defense Amethyst +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357352",
+      "ItemName": "Dull Defense Amethyst +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357353",
+      "ItemName": "Dull Defense Amethyst +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357354",
+      "ItemName": "Dull Defense Amethyst +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357355",
+      "ItemName": "Plain Defense Amethyst +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357356",
+      "ItemName": "Plain Defense Amethyst +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357357",
+      "ItemName": "Plain Defense Amethyst +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357358",
+      "ItemName": "Plain Defense Amethyst +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357359",
+      "ItemName": "Opaque Defense Amethyst +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357360",
+      "ItemName": "Opaque Defense Amethyst +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357361",
+      "ItemName": "Opaque Defense Amethyst +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357362",
+      "ItemName": "Opaque Defense Amethyst +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357363",
+      "ItemName": "Clear Defense Amethyst +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357364",
+      "ItemName": "Clear Defense Amethyst +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357365",
+      "ItemName": "Clear Defense Amethyst +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357366",
+      "ItemName": "Clear Defense Amethyst +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357367",
+      "ItemName": "Polished Defense Amethyst +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357368",
+      "ItemName": "Polished Defense Amethyst +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357369",
+      "ItemName": "Polished Defense Amethyst +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357372",
+      "ItemName": "Lustrous Defense Amethyst +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357373",
+      "ItemName": "Lustrous Defense Amethyst +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357374",
+      "ItemName": "Lustrous Defense Amethyst +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357375",
+      "ItemName": "Cracked Defense Peridot +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357376",
+      "ItemName": "Cracked Defense Peridot +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357377",
+      "ItemName": "Cracked Defense Peridot +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357378",
+      "ItemName": "Cracked Defense Peridot +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357379",
+      "ItemName": "Cracked Defense Peridot +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357380",
+      "ItemName": "Cracked Defense Peridot +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357381",
+      "ItemName": "Cracked Defense Peridot +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357382",
+      "ItemName": "Cracked Defense Peridot +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357383",
+      "ItemName": "Cracked Defense Peridot +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357384",
+      "ItemName": "Chipped Defense Peridot +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357385",
+      "ItemName": "Chipped Defense Peridot +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357386",
+      "ItemName": "Chipped Defense Peridot +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357387",
+      "ItemName": "Chipped Defense Peridot +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357388",
+      "ItemName": "Flawed Defense Peridot +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357389",
+      "ItemName": "Flawed Defense Peridot +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357390",
+      "ItemName": "Flawed Defense Peridot +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357391",
+      "ItemName": "Flawed Defense Peridot +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357392",
+      "ItemName": "Blemished Defense Peridot +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357393",
+      "ItemName": "Blemished Defense Peridot +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357394",
+      "ItemName": "Blemished Defense Peridot +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357395",
+      "ItemName": "Blemished Defense Peridot +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357396",
+      "ItemName": "Dull Defense Peridot +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357397",
+      "ItemName": "Dull Defense Peridot +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357398",
+      "ItemName": "Dull Defense Peridot +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357399",
+      "ItemName": "Dull Defense Peridot +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357400",
+      "ItemName": "Plain Defense Peridot +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357401",
+      "ItemName": "Plain Defense Peridot +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357402",
+      "ItemName": "Plain Defense Peridot +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357403",
+      "ItemName": "Plain Defense Peridot +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357404",
+      "ItemName": "Opaque Defense Peridot +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357405",
+      "ItemName": "Opaque Defense Peridot +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357406",
+      "ItemName": "Opaque Defense Peridot +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357407",
+      "ItemName": "Opaque Defense Peridot +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357408",
+      "ItemName": "Clear Defense Peridot +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357409",
+      "ItemName": "Clear Defense Peridot +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357410",
+      "ItemName": "Clear Defense Peridot +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357411",
+      "ItemName": "Clear Defense Peridot +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357412",
+      "ItemName": "Polished Defense Peridot +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357413",
+      "ItemName": "Polished Defense Peridot +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357414",
+      "ItemName": "Polished Defense Peridot +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357417",
+      "ItemName": "Lustrous Defense Peridot +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357418",
+      "ItemName": "Lustrous Defense Peridot +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357419",
+      "ItemName": "Lustrous Defense Peridot +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357420",
+      "ItemName": "Cracked Defense Jade +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357421",
+      "ItemName": "Cracked Defense Jade +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357422",
+      "ItemName": "Cracked Defense Jade +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357423",
+      "ItemName": "Cracked Defense Jade +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357424",
+      "ItemName": "Cracked Defense Jade +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357425",
+      "ItemName": "Cracked Defense Jade +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357426",
+      "ItemName": "Cracked Defense Jade +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357427",
+      "ItemName": "Cracked Defense Jade +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357428",
+      "ItemName": "Cracked Defense Jade +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357429",
+      "ItemName": "Chipped Defense Jade +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357430",
+      "ItemName": "Chipped Defense Jade +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357431",
+      "ItemName": "Chipped Defense Jade +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357432",
+      "ItemName": "Chipped Defense Jade +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357433",
+      "ItemName": "Flawed Defense Jade +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357434",
+      "ItemName": "Flawed Defense Jade +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357435",
+      "ItemName": "Flawed Defense Jade +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357436",
+      "ItemName": "Flawed Defense Jade +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357437",
+      "ItemName": "Blemished Defense Jade +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357438",
+      "ItemName": "Blemished Defense Jade +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357439",
+      "ItemName": "Blemished Defense Jade +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357440",
+      "ItemName": "Blemished Defense Jade +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357441",
+      "ItemName": "Dull Defense Jade +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357442",
+      "ItemName": "Dull Defense Jade +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357443",
+      "ItemName": "Dull Defense Jade +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357444",
+      "ItemName": "Dull Defense Jade +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357445",
+      "ItemName": "Plain Defense Jade +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357446",
+      "ItemName": "Plain Defense Jade +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357447",
+      "ItemName": "Plain Defense Jade +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357448",
+      "ItemName": "Plain Defense Jade +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357449",
+      "ItemName": "Opaque Defense Jade +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357450",
+      "ItemName": "Opaque Defense Jade +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357451",
+      "ItemName": "Opaque Defense Jade +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357452",
+      "ItemName": "Opaque Defense Jade +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357453",
+      "ItemName": "Clear Defense Jade +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357454",
+      "ItemName": "Clear Defense Jade +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357455",
+      "ItemName": "Clear Defense Jade +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357456",
+      "ItemName": "Clear Defense Jade +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357457",
+      "ItemName": "Polished Defense Jade +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357458",
+      "ItemName": "Polished Defense Jade +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357459",
+      "ItemName": "Polished Defense Jade +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357462",
+      "ItemName": "Lustrous Defense Jade +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357463",
+      "ItemName": "Lustrous Defense Jade +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357464",
+      "ItemName": "Lustrous Defense Jade +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357465",
+      "ItemName": "Cracked Defense Onyx +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357466",
+      "ItemName": "Cracked Defense Onyx +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357467",
+      "ItemName": "Cracked Defense Onyx +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357468",
+      "ItemName": "Cracked Defense Onyx +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357469",
+      "ItemName": "Cracked Defense Onyx +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357470",
+      "ItemName": "Cracked Defense Onyx +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357471",
+      "ItemName": "Cracked Defense Onyx +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357472",
+      "ItemName": "Cracked Defense Onyx +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357473",
+      "ItemName": "Cracked Defense Onyx +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357474",
+      "ItemName": "Chipped Defense Onyx +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357475",
+      "ItemName": "Chipped Defense Onyx +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357476",
+      "ItemName": "Chipped Defense Onyx +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357477",
+      "ItemName": "Chipped Defense Onyx +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357478",
+      "ItemName": "Flawed Defense Onyx +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357479",
+      "ItemName": "Flawed Defense Onyx +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357480",
+      "ItemName": "Flawed Defense Onyx +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357481",
+      "ItemName": "Flawed Defense Onyx +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357482",
+      "ItemName": "Blemished Defense Onyx +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357483",
+      "ItemName": "Blemished Defense Onyx +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357484",
+      "ItemName": "Blemished Defense Onyx +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357485",
+      "ItemName": "Blemished Defense Onyx +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357486",
+      "ItemName": "Dull Defense Onyx +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357487",
+      "ItemName": "Dull Defense Onyx +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357488",
+      "ItemName": "Dull Defense Onyx +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357489",
+      "ItemName": "Dull Defense Onyx +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357490",
+      "ItemName": "Plain Defense Onyx +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357491",
+      "ItemName": "Plain Defense Onyx +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357492",
+      "ItemName": "Plain Defense Onyx +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357493",
+      "ItemName": "Plain Defense Onyx +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357494",
+      "ItemName": "Opaque Defense Onyx +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357495",
+      "ItemName": "Opaque Defense Onyx +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357496",
+      "ItemName": "Opaque Defense Onyx +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357497",
+      "ItemName": "Opaque Defense Onyx +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357498",
+      "ItemName": "Clear Defense Onyx +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357499",
+      "ItemName": "Clear Defense Onyx +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357500",
+      "ItemName": "Clear Defense Onyx +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357501",
+      "ItemName": "Clear Defense Onyx +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357502",
+      "ItemName": "Polished Defense Onyx +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357503",
+      "ItemName": "Polished Defense Onyx +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357504",
+      "ItemName": "Polished Defense Onyx +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357507",
+      "ItemName": "Lustrous Defense Onyx +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357508",
+      "ItemName": "Lustrous Defense Onyx +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357509",
+      "ItemName": "Lustrous Defense Onyx +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357510",
+      "ItemName": "Cracked Defense Citrine +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357511",
+      "ItemName": "Cracked Defense Citrine +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357512",
+      "ItemName": "Cracked Defense Citrine +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357513",
+      "ItemName": "Cracked Defense Citrine +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357514",
+      "ItemName": "Cracked Defense Citrine +8",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357515",
+      "ItemName": "Cracked Defense Citrine +9",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357516",
+      "ItemName": "Cracked Defense Citrine +10",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357517",
+      "ItemName": "Cracked Defense Citrine +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357518",
+      "ItemName": "Cracked Defense Citrine +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357519",
+      "ItemName": "Chipped Defense Citrine +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357520",
+      "ItemName": "Chipped Defense Citrine +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357521",
+      "ItemName": "Chipped Defense Citrine +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357522",
+      "ItemName": "Chipped Defense Citrine +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357523",
+      "ItemName": "Flawed Defense Citrine +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357524",
+      "ItemName": "Flawed Defense Citrine +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357525",
+      "ItemName": "Flawed Defense Citrine +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357526",
+      "ItemName": "Flawed Defense Citrine +20",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357527",
+      "ItemName": "Blemished Defense Citrine +21",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1357528",
+      "ItemName": "Blemished Defense Citrine +22",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1357529",
+      "ItemName": "Blemished Defense Citrine +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357530",
+      "ItemName": "Blemished Defense Citrine +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357531",
+      "ItemName": "Dull Defense Citrine +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357532",
+      "ItemName": "Dull Defense Citrine +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357533",
+      "ItemName": "Dull Defense Citrine +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357534",
+      "ItemName": "Dull Defense Citrine +28",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357535",
+      "ItemName": "Plain Defense Citrine +29",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357536",
+      "ItemName": "Plain Defense Citrine +30",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357537",
+      "ItemName": "Plain Defense Citrine +31",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357538",
+      "ItemName": "Plain Defense Citrine +32",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357539",
+      "ItemName": "Opaque Defense Citrine +33",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357540",
+      "ItemName": "Opaque Defense Citrine +34",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357541",
+      "ItemName": "Opaque Defense Citrine +35",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357542",
+      "ItemName": "Opaque Defense Citrine +36",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357543",
+      "ItemName": "Clear Defense Citrine +37",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357544",
+      "ItemName": "Clear Defense Citrine +38",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357545",
+      "ItemName": "Clear Defense Citrine +39",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357546",
+      "ItemName": "Clear Defense Citrine +40",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357547",
+      "ItemName": "Polished Defense Citrine +41",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357548",
+      "ItemName": "Polished Defense Citrine +42",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357549",
+      "ItemName": "Polished Defense Citrine +43",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357552",
+      "ItemName": "Lustrous Defense Citrine +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357553",
+      "ItemName": "Lustrous Defense Citrine +47",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1357554",
+      "ItemName": "Lustrous Defense Citrine +48",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358567",
+      "ItemName": "Cracked Defense Opal +2",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358568",
+      "ItemName": "Cracked Defense Opal +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358569",
+      "ItemName": "Cracked Defense Opal +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358570",
+      "ItemName": "Cracked Defense Opal +5",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358571",
+      "ItemName": "Cracked Defense Opal +6",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358572",
+      "ItemName": "Chipped Defense Opal +7",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358573",
+      "ItemName": "Chipped Defense Opal +8",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1358574",
+      "ItemName": "Flawed Defense Opal +9",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1358575",
+      "ItemName": "Flawed Defense Opal +10",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1358576",
+      "ItemName": "Blemished Defense Opal +11",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358577",
+      "ItemName": "Blemished Defense Opal +12",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358578",
+      "ItemName": "Dull Defense Opal +13",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358579",
+      "ItemName": "Dull Defense Opal +14",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358580",
+      "ItemName": "Plain Defense Opal +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358581",
+      "ItemName": "Plain Defense Opal +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358582",
+      "ItemName": "Opaque Defense Opal +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358583",
+      "ItemName": "Opaque Defense Opal +18",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358584",
+      "ItemName": "Clear Defense Opal +19",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358585",
+      "ItemName": "Clear Defense Opal +20",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358586",
+      "ItemName": "Polished Defense Opal +21",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358587",
+      "ItemName": "Polished Defense Opal +22",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358588",
+      "ItemName": "Lustrous Defense Opal +23",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358589",
+      "ItemName": "Lustrous Defense Opal +24",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358590",
+      "ItemName": "Sunbird Ruby",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1358591",
+      "ItemName": "Wyldfire Ruby",
+      "Notes": "",
+      "Chance": 0.7407
+    },
+    {
+      "ItemId": "1358592",
+      "ItemName": "Evil Snowman Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358593",
+      "ItemName": "Blizzard Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358594",
+      "ItemName": "Storm Shark Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358595",
+      "ItemName": "Windstorm Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358596",
+      "ItemName": "Cyclops Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358597",
+      "ItemName": "Time of Legend Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358598",
+      "ItemName": "Sprite Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358599",
+      "ItemName": "Satyr Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358600",
+      "ItemName": "Banshee Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358601",
+      "ItemName": "Deer Knight Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358602",
+      "ItemName": "Locust Swarm Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358603",
+      "ItemName": "Spectral Blast Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358604",
+      "ItemName": "Meteor Strike Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358605",
+      "ItemName": "Phoenix Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358606",
+      "ItemName": "Helephant Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358607",
+      "ItemName": "Ice Wyvern Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358608",
+      "ItemName": "Balefrost Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358609",
+      "ItemName": "Colossus Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358610",
+      "ItemName": "Kraken Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358611",
+      "ItemName": "Darkwind Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358612",
+      "ItemName": "Stormzilla Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358613",
+      "ItemName": "Humongofrog Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358614",
+      "ItemName": "Minotaur Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358615",
+      "ItemName": "Earthquake Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358616",
+      "ItemName": "Seraph Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358617",
+      "ItemName": "Centaur Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358618",
+      "ItemName": "Sanctuary Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358619",
+      "ItemName": "Skeletal Pirate Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358620",
+      "ItemName": "Doom and Gloom Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358621",
+      "ItemName": "Wraith Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358622",
+      "ItemName": "Power Play Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358623",
+      "ItemName": "Donate Power Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358624",
+      "ItemName": "Hydra Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358626",
+      "ItemName": "Quench Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358627",
+      "ItemName": "Mass Fire Prism Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358628",
+      "ItemName": "Fire Dragon Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358629",
+      "ItemName": "Power Link Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358630",
+      "ItemName": "Fire Trap Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358631",
+      "ItemName": "Detonate Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358635",
+      "ItemName": "Melt Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358636",
+      "ItemName": "Mass Ice Prism Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358637",
+      "ItemName": "Frost Giant Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358638",
+      "ItemName": "Frozen Armor Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358639",
+      "ItemName": "Ice Trap Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358640",
+      "ItemName": "Snow Drift Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358641",
+      "ItemName": "Draw Health Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358642",
+      "ItemName": "Ice Guardian Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358643",
+      "ItemName": "Freddo Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358644",
+      "ItemName": "Dissipate Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358645",
+      "ItemName": "Mass Storm Prism Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358646",
+      "ItemName": "Storm Lord Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358647",
+      "ItemName": "Insane Bolt Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358648",
+      "ItemName": "Storm Trap Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358649",
+      "ItemName": "Enfeeble Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358650",
+      "ItemName": "Purloin Power Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358651",
+      "ItemName": "Water Elemental Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358652",
+      "ItemName": "Mokompo Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358653",
+      "ItemName": "Vaporize Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358654",
+      "ItemName": "Mass Myth Prism Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358656",
+      "ItemName": "Talos Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358657",
+      "ItemName": "Shift Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358658",
+      "ItemName": "Dimension Shift Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358659",
+      "ItemName": "Shield Minion Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358662",
+      "ItemName": "Golem Minion Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358663",
+      "ItemName": "Troll Minion Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358664",
+      "ItemName": "Cyclops Minion Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358665",
+      "ItemName": "Minotaur Minion Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358666",
+      "ItemName": "Vassanji Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358667",
+      "ItemName": "Entangle Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358668",
+      "ItemName": "Mass Life Prism Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358669",
+      "ItemName": "Rebirth Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358670",
+      "ItemName": "Brilliant Light Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358671",
+      "ItemName": "Life Trap Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358672",
+      "ItemName": "Mass Triage Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358673",
+      "ItemName": "Drain Health Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358674",
+      "ItemName": "Sprite Guardian Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358675",
+      "ItemName": "Sir Bedevere Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358676",
+      "ItemName": "Strangle Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358677",
+      "ItemName": "Mass Death Prism Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358678",
+      "ItemName": "Scarecrow Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358679",
+      "ItemName": "Virulent Plague Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358680",
+      "ItemName": "Death Trap Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358681",
+      "ItemName": "Mass Infection Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358682",
+      "ItemName": "Steal Health Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358683",
+      "ItemName": "Animate Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358684",
+      "ItemName": "Malduit Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358685",
+      "ItemName": "Unbalance Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358686",
+      "ItemName": "Reshuffle Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358687",
+      "ItemName": "Power Nova Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358688",
+      "ItemName": "Availing Hands Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358689",
+      "ItemName": "Elemental Trap Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358690",
+      "ItemName": "Spirit Trap Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358691",
+      "ItemName": "Purloin Health Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358692",
+      "ItemName": "Mander Minion Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358693",
+      "ItemName": "Spectral Minion Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358694",
+      "ItemName": "Nerys Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358712",
+      "ItemName": "Orthrus Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358832",
+      "ItemName": "Plain Blocking Opal +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358833",
+      "ItemName": "Opaque Blocking Opal +4",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358837",
+      "ItemName": "Shiny Mending Opal +6%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358926",
+      "ItemName": "Take Power Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358927",
+      "ItemName": "Fire Elemental Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358928",
+      "ItemName": "Sir Lamorak Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358973",
+      "ItemName": "Fireblade Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358974",
+      "ItemName": "Iceblade Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358975",
+      "ItemName": "Stormblade Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358976",
+      "ItemName": "Mythblade Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358977",
+      "ItemName": "Lifeblade Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358978",
+      "ItemName": "Deathblade Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358979",
+      "ItemName": "Balanceblade Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1358980",
+      "ItemName": "Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1360035",
+      "ItemName": "Plain Critical Opal +3",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1360042",
+      "ItemName": "Chipped Damage Opal +4",
+      "Notes": "",
+      "Chance": 0.4149
+    },
+    {
+      "ItemId": "1360043",
+      "ItemName": "Polished Accurate Opal +5%",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405664",
+      "ItemName": "Shiny Defense Ruby +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405665",
+      "ItemName": "Shiny Defense Ruby +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405666",
+      "ItemName": "Shiny Defense Ruby +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405667",
+      "ItemName": "Shiny Defense Ruby +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405668",
+      "ItemName": "Shiny Defense Sapphire +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405669",
+      "ItemName": "Shiny Defense Sapphire +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405670",
+      "ItemName": "Shiny Defense Sapphire +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405671",
+      "ItemName": "Shiny Defense Sapphire +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405672",
+      "ItemName": "Shiny Defense Amethyst +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405673",
+      "ItemName": "Shiny Defense Amethyst +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405674",
+      "ItemName": "Shiny Defense Amethyst +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405675",
+      "ItemName": "Shiny Defense Amethyst +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405676",
+      "ItemName": "Shiny Defense Peridot +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405677",
+      "ItemName": "Shiny Defense Peridot +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405678",
+      "ItemName": "Shiny Defense Peridot +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405679",
+      "ItemName": "Shiny Defense Peridot +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405680",
+      "ItemName": "Shiny Defense Jade +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405681",
+      "ItemName": "Shiny Defense Jade +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405682",
+      "ItemName": "Shiny Defense Jade +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405683",
+      "ItemName": "Shiny Defense Jade +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405684",
+      "ItemName": "Shiny Defense Onyx +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405685",
+      "ItemName": "Shiny Defense Onyx +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405686",
+      "ItemName": "Shiny Defense Onyx +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405687",
+      "ItemName": "Shiny Defense Onyx +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405688",
+      "ItemName": "Shiny Defense Citrine +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405689",
+      "ItemName": "Shiny Defense Citrine +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405690",
+      "ItemName": "Shiny Defense Citrine +51",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405691",
+      "ItemName": "Shiny Defense Citrine +52",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405696",
+      "ItemName": "Shiny Defense Opal +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405697",
+      "ItemName": "Shiny Defense Opal +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405698",
+      "ItemName": "Shiny Blocking Ruby +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405699",
+      "ItemName": "Shiny Blocking Ruby +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405700",
+      "ItemName": "Shiny Blocking Sapphire +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405701",
+      "ItemName": "Shiny Blocking Sapphire +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405702",
+      "ItemName": "Shiny Blocking Amethyst +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405703",
+      "ItemName": "Shiny Blocking Amethyst +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405704",
+      "ItemName": "Shiny Blocking Peridot +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405705",
+      "ItemName": "Shiny Blocking Peridot +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405706",
+      "ItemName": "Shiny Blocking Jade +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405707",
+      "ItemName": "Shiny Blocking Jade +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405708",
+      "ItemName": "Shiny Blocking Onyx +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405709",
+      "ItemName": "Shiny Blocking Onyx +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405710",
+      "ItemName": "Shiny Blocking Citrine +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405711",
+      "ItemName": "Shiny Blocking Citrine +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405715",
+      "ItemName": "Shiny Damage Ruby +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405716",
+      "ItemName": "Shiny Damage Ruby +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405717",
+      "ItemName": "Shiny Damage Sapphire +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405718",
+      "ItemName": "Shiny Damage Sapphire +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405719",
+      "ItemName": "Shiny Damage Amethyst +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405720",
+      "ItemName": "Shiny Damage Amethyst +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405721",
+      "ItemName": "Shiny Damage Peridot +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405722",
+      "ItemName": "Shiny Damage Peridot +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405723",
+      "ItemName": "Shiny Damage Jade +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405724",
+      "ItemName": "Shiny Damage Jade +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405725",
+      "ItemName": "Shiny Damage Onyx +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405726",
+      "ItemName": "Shiny Damage Onyx +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405727",
+      "ItemName": "Shiny Damage Citrine +25",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405728",
+      "ItemName": "Shiny Damage Citrine +26",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405732",
+      "ItemName": "Shiny Critical Ruby +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405733",
+      "ItemName": "Shiny Critical Ruby +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405734",
+      "ItemName": "Shiny Critical Sapphire +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405735",
+      "ItemName": "Shiny Critical Sapphire +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405736",
+      "ItemName": "Shiny Critical Amethyst +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405737",
+      "ItemName": "Shiny Critical Amethyst +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405738",
+      "ItemName": "Shiny Critical Peridot +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405739",
+      "ItemName": "Shiny Critical Peridot +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405740",
+      "ItemName": "Shiny Critical Jade +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405741",
+      "ItemName": "Shiny Critical Jade +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405742",
+      "ItemName": "Shiny Critical Onyx +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405743",
+      "ItemName": "Shiny Critical Onyx +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405744",
+      "ItemName": "Shiny Critical Citrine +15",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405745",
+      "ItemName": "Shiny Critical Citrine +16",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405768",
+      "ItemName": "Firespear Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405769",
+      "ItemName": "Icespear Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405770",
+      "ItemName": "Stormspear Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405771",
+      "ItemName": "Mythspear Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405772",
+      "ItemName": "Lifespear Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405773",
+      "ItemName": "Deathspear Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405774",
+      "ItemName": "Elemental Spear Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405775",
+      "ItemName": "Spirit Spear Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405777",
+      "ItemName": "Shiny Health Opal +107",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405778",
+      "ItemName": "Shiny Health Opal +108",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405779",
+      "ItemName": "Shiny Health Opal +109",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405780",
+      "ItemName": "Shiny Health Opal +110",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405781",
+      "ItemName": "Shiny Health Opal +111",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405782",
+      "ItemName": "Shiny Health Opal +112",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405783",
+      "ItemName": "Shiny Health Opal +113",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1405784",
+      "ItemName": "Shiny Health Opal +114",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1407046",
+      "ItemName": "Shiny Mana Opal +45",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1407047",
+      "ItemName": "Shiny Mana Opal +46",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430019",
+      "ItemName": "Sparkling Defense Ruby +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430021",
+      "ItemName": "Sparkling Defense Sapphire +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430023",
+      "ItemName": "Sparkling Defense Amethyst +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430025",
+      "ItemName": "Sparkling Defense Peridot +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430027",
+      "ItemName": "Sparkling Defense Jade +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430029",
+      "ItemName": "Sparkling Defense Onyx +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430031",
+      "ItemName": "Sparkling Defense Citrine +53",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430035",
+      "ItemName": "Sparkling Defense Opal +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430036",
+      "ItemName": "Sparkling Blocking Ruby +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430037",
+      "ItemName": "Sparkling Blocking Sapphire +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430038",
+      "ItemName": "Sparkling Blocking Amethyst +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430039",
+      "ItemName": "Sparkling Blocking Peridot +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430040",
+      "ItemName": "Sparkling Blocking Jade +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430041",
+      "ItemName": "Sparkling Blocking Onyx +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430042",
+      "ItemName": "Sparkling Blocking Citrine +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430044",
+      "ItemName": "Sparkling Damage Ruby +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430045",
+      "ItemName": "Sparkling Damage Sapphire +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430046",
+      "ItemName": "Sparkling Damage Amethyst +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430047",
+      "ItemName": "Sparkling Damage Peridot +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430048",
+      "ItemName": "Sparkling Damage Jade +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430049",
+      "ItemName": "Sparkling Damage Onyx +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430050",
+      "ItemName": "Sparkling Damage Citrine +27",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430052",
+      "ItemName": "Sparkling Critical Ruby +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430053",
+      "ItemName": "Sparkling Critical Sapphire +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430054",
+      "ItemName": "Sparkling Critical Amethyst +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430055",
+      "ItemName": "Sparkling Critical Peridot +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430056",
+      "ItemName": "Sparkling Critical Jade +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430057",
+      "ItemName": "Sparkling Critical Onyx +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430058",
+      "ItemName": "Sparkling Critical Citrine +17",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430061",
+      "ItemName": "Sparkling Health Opal +117",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430062",
+      "ItemName": "Sparkling Health Opal +118",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430063",
+      "ItemName": "Sparkling Health Opal +119",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430064",
+      "ItemName": "Sparkling Health Opal +120",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430065",
+      "ItemName": "Sparkling Mana Opal +49",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1430066",
+      "ItemName": "Sparkling Mana Opal +50",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1462474",
+      "ItemName": "Sparkling Health Opal +121",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1462475",
+      "ItemName": "Sparkling Health Opal +122",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1462476",
+      "ItemName": "Sparkling Health Opal +123",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1462477",
+      "ItemName": "Sparkling Health Opal +124",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466983",
+      "ItemName": "Brimstone Revenant Ruby",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466984",
+      "ItemName": "Angry Snowpig Sapphire",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466985",
+      "ItemName": "Queen Calypso Amethyst",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466986",
+      "ItemName": "Keeper of the Flame Peridot",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466987",
+      "ItemName": "Luminous Weaver Jade",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466988",
+      "ItemName": "Headless Horseman Onyx",
+      "Notes": "",
+      "Chance": 1.9231
+    },
+    {
+      "ItemId": "1466989",
+      "ItemName": "Ninja Piglets Citrine",
+      "Notes": "",
+      "Chance": 1.9231
+    }
+  ]
+}

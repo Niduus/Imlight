@@ -1,0 +1,230 @@
+{
+  "Name": "BoosterPack-Set-01-Commons",
+  "Description": "Eye of Bartleby Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1863565554",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1465484021",
+      "ItemName": "Calm",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "590619589",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1100681053",
+      "ItemName": "Death Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1716973408",
+      "ItemName": "Death Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "169246402",
+      "ItemName": "Dissipate",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1453935530",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "447302457",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "905297640",
+      "ItemName": "Fire Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "590622233",
+      "ItemName": "Fire Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "655849966",
+      "ItemName": "Frost Beetle",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "349377586",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "84359043",
+      "ItemName": "Guiding Light",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "162508727",
+      "ItemName": "Ice Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1162168225",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1471041836",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "905309934",
+      "ItemName": "Life Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "590642707",
+      "ItemName": "Life Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1387269430",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1465188987",
+      "ItemName": "Melt",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "905127149",
+      "ItemName": "Myth Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "590525458",
+      "ItemName": "Myth Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1320048974",
+      "ItemName": "Pacify",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "340609029",
+      "ItemName": "Pixie",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1828570061",
+      "ItemName": "Quench",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "2027147535",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "128106028",
+      "ItemName": "Scorpion",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1931522086",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "591223532",
+      "ItemName": "Snow Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "345216198",
+      "ItemName": "Soothe",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1103639914",
+      "ItemName": "Storm Prism",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1711658327",
+      "ItemName": "Storm Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "2006507471",
+      "ItemName": "Subdue",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "358546689",
+      "ItemName": "Taunt",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1112193844",
+      "ItemName": "Thunder Snake",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "350197601",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 10.0
+    }
+  ]
+}

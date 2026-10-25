@@ -1,0 +1,290 @@
+{
+  "Name": "DarkmoorLT-UnCommon",
+  "Description": "Terror's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "641612",
+      "ItemName": "Black Cap Crisps",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641699",
+      "ItemName": "Butter Worms",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641702",
+      "ItemName": "Crystalweb Candy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "733115",
+      "ItemName": "Apatotatoes",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "789214",
+      "ItemName": "Manderdrake fruit",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317842",
+      "ItemName": "Kan Davasi Delight",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317843",
+      "ItemName": "Poached Roach",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317844",
+      "ItemName": "Boiled Spider Legs",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317928",
+      "ItemName": "Castle Darkmoor Wallpaper",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317929",
+      "ItemName": "Castle Darkmoor Flooring",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317945",
+      "ItemName": "Darkmoor Entrance Rug",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317962",
+      "ItemName": "Darkmoor Thornflowers",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317965",
+      "ItemName": "Darkmoor Ceremonial Table",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317970",
+      "ItemName": "Towering Darkmoor Column",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317986",
+      "ItemName": "Howling Chaney Portrait",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317987",
+      "ItemName": "Carpathes Plaza Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317988",
+      "ItemName": "Carpathes Village Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317989",
+      "ItemName": "Carpathes & Castle Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317990",
+      "ItemName": "Dragon of Darkmoor Portrait",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317991",
+      "ItemName": "Castle Observatory Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317992",
+      "ItemName": "Painting of Castle Darkmoor",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317993",
+      "ItemName": "Portrait of Vlad von Shane",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317994",
+      "ItemName": "Portrait of Tatyana",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317995",
+      "ItemName": "Moon Over Castle Darkmoor",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317996",
+      "ItemName": "Portrait of the Bone Dragon",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317997",
+      "ItemName": "Standing Portrait of Tatyana",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1317998",
+      "ItemName": "Darkmoor Mausoleum Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350020",
+      "ItemName": "Speared Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350021",
+      "ItemName": "Impaled Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350022",
+      "ItemName": "Blinded Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350023",
+      "ItemName": "One-Armed Bear Melee Dummy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352333",
+      "ItemName": "Cracked Health Opal +7",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352433",
+      "ItemName": "Cracked Mana Opal +5",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352750",
+      "ItemName": "Cracked Damage Opal +2",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1848516314",
+      "ItemName": "Stun Block",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "451786750",
+      "ItemName": "Cooldown",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "848340699",
+      "ItemName": "Shatter",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "286773324",
+      "ItemName": "Steal Ward",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "2047623746",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "994969729",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1172979050",
+      "ItemName": "Storm Prism",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

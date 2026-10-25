@@ -1,0 +1,182 @@
+{
+  "Name": "PandaHoardPackLT-Rare",
+  "Description": "Pandamonium Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "126987",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1204306",
+      "ItemName": "Bumble Bee",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1317673",
+      "ItemName": "Ninja Piggle",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1374447",
+      "ItemName": "Spectre Lord",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441744",
+      "ItemName": "Panda Cub Statue",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441745",
+      "ItemName": "Bamboo Chimes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441750",
+      "ItemName": "The Pandarian",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466412",
+      "ItemName": "Crimson Pandamonium Jian",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466426",
+      "ItemName": "Ebony Pandamonium Jian",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466440",
+      "ItemName": "White Pandamonium Jian",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466454",
+      "ItemName": "Crimson Pandamonium Warhelm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466468",
+      "ItemName": "Crimson Padamonium Lamellar",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466482",
+      "ItemName": "Crimson Pandamonium Boots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466496",
+      "ItemName": "Ebony Pandamonium Warhelm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466510",
+      "ItemName": "Ebony Padamonium Lamellar",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466524",
+      "ItemName": "Ebony Pandamonium Boots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466538",
+      "ItemName": "White Pandamonium Warhelm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466552",
+      "ItemName": "White Padamonium Lamellar",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1466566",
+      "ItemName": "White Pandamonium Boots",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1468348",
+      "ItemName": "Giant Panda (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1468349",
+      "ItemName": "Giant Panda (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1470000",
+      "ItemName": "Playful Panda Cubs",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1470046",
+      "ItemName": "Great Panda (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1470047",
+      "ItemName": "Great Panda (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1470048",
+      "ItemName": "Precocious Panda Cubs",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1470049",
+      "ItemName": "Precious Panda Cubs",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1470051",
+      "ItemName": "Grand Panda (7 Day)",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1470052",
+      "ItemName": "Grand Panda (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    }
+  ]
+}

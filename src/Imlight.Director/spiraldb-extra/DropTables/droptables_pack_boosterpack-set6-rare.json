@@ -1,0 +1,26 @@
+{
+  "Name": "BoosterPack-Set6-Rare",
+  "Description": "Mega-Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220221",
+      "ItemName": "Cherry Tomato",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "220267",
+      "ItemName": "Golden Wheat Bread",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

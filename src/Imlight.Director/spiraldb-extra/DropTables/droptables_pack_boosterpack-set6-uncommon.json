@@ -1,0 +1,38 @@
+{
+  "Name": "BoosterPack-Set6-Uncommon",
+  "Description": "Mega-Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220190",
+      "ItemName": "Cubby Broccoli",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "220203",
+      "ItemName": "Flowering Pineapple",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "220223",
+      "ItemName": "Yellow Corn",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "220290",
+      "ItemName": "Green Tomato",
+      "Notes": "",
+      "Chance": 33.3333
+    }
+  ]
+}

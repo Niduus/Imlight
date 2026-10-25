@@ -1,0 +1,26 @@
+{
+  "Name": "BoosterPack-Set6-Epic",
+  "Description": "Mega-Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220263",
+      "ItemName": "Fancy Yogurt",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "240079",
+      "ItemName": "Hambrosia",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

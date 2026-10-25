@@ -1,0 +1,326 @@
+{
+  "Name": "MirageHoardLT-Uncommon",
+  "Description": "Ghulture's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1352333",
+      "ItemName": "Cracked Health Opal +7",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1352433",
+      "ItemName": "Cracked Mana Opal +5",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1352750",
+      "ItemName": "Cracked Damage Opal +2",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392441",
+      "ItemName": "Cactus Pods",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392442",
+      "ItemName": "Red Basket",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392445",
+      "ItemName": "Astral Book",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392449",
+      "ItemName": "Lined Cabinet",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392450",
+      "ItemName": "Dusty Rug",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392451",
+      "ItemName": "Wicker Chair",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392454",
+      "ItemName": "Dusty Red Couch",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392455",
+      "ItemName": "Yellow Cushion",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392456",
+      "ItemName": "Patterned Cushion",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392457",
+      "ItemName": "Blue Cushion",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392459",
+      "ItemName": "Sewer Grate",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392463",
+      "ItemName": "Hanging Lamps",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392465",
+      "ItemName": "Mosaic Chair",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392466",
+      "ItemName": "Mosaic Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392467",
+      "ItemName": "Glowing Mushrooms",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392468",
+      "ItemName": "Oil Painting",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392469",
+      "ItemName": "Tree Painting",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392473",
+      "ItemName": "Vase with Vines",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392475",
+      "ItemName": "Cushioned Seat with Pillow",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392476",
+      "ItemName": "Cushioned Seat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392477",
+      "ItemName": "Dusty Settee",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392478",
+      "ItemName": "Wicker Side Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392480",
+      "ItemName": "Small Stage",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392481",
+      "ItemName": "Crossed Swords",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392482",
+      "ItemName": "Swords and Shield",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392484",
+      "ItemName": "Star Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392486",
+      "ItemName": "Wispy Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1392487",
+      "ItemName": "Hanging Lantern",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "55328786",
+      "ItemName": "Lycian Chimera",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1530076611",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "201550652",
+      "ItemName": "Berserk",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1043180451",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1755742746",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1481542458",
+      "ItemName": "Sandstone Colossus",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1530860932",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "154978775",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "388212179",
+      "ItemName": "Vengeance",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1467345019",
+      "ItemName": "Mend",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1262909116",
+      "ItemName": "Empowerment",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "298800178",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 4.3478
+    }
+  ]
+}

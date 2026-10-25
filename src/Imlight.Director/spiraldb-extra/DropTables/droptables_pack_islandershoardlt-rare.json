@@ -1,0 +1,302 @@
+{
+  "Name": "IslandersHoardLT-Rare",
+  "Description": "Islander's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100458",
+      "ItemName": "Sun Bird",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "181070",
+      "ItemName": "Fish Drying Rack",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220203",
+      "ItemName": "Flowering Pineapple",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "240081",
+      "ItemName": "Crab Apples",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "276444",
+      "ItemName": "Manta Ray (PERM)",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "276459",
+      "ItemName": "Ancient Koi (PERM)",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "342077",
+      "ItemName": "Coconut Drink",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342084",
+      "ItemName": "Clam Chair",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342085",
+      "ItemName": "Crab Chimney",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342087",
+      "ItemName": "Crab Lean-To",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342090",
+      "ItemName": "Diving Helmet",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342103",
+      "ItemName": "Outrigger Paddles",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342108",
+      "ItemName": "Water-Mole Plate",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342109",
+      "ItemName": "Water-Mole Torch",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342118",
+      "ItemName": "Wall Starfish",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342120",
+      "ItemName": "Crab Claw Statue",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342131",
+      "ItemName": "Water-Mole Table",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342132",
+      "ItemName": "Tall Tiki Statue",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "342136",
+      "ItemName": "Skinny Tiki Totem",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "470137",
+      "ItemName": "Hippogriff (PERM)",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "641610",
+      "ItemName": "Crab Knight Cakes",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "683107",
+      "ItemName": "Water-Mole Tribal Shield",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "683108",
+      "ItemName": "Coral Crab Lamp",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "683109",
+      "ItemName": "Spiral Crab Table",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "789432",
+      "ItemName": "Tiki Kahuna",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "789446",
+      "ItemName": "Kalua Kebab",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "789450",
+      "ItemName": "Kahuna Tuna",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204026",
+      "ItemName": "Frosty Stare Tiki Torch",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1204036",
+      "ItemName": "Shocking Truth Tiki Torch",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1204046",
+      "ItemName": "Dying Embers Tiki Torch",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1204158",
+      "ItemName": "Tiki Crown of Sacred Songs",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204168",
+      "ItemName": "Tiki Boots of Sacred Songs",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204178",
+      "ItemName": "Tiki Armor of Sacred Songs",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1204188",
+      "ItemName": "Tiki Crown of Purity",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204198",
+      "ItemName": "Tiki Boots of Purity",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204208",
+      "ItemName": "Tiki Armor of Purity",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1204218",
+      "ItemName": "Tiki Crown of Riptides",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204228",
+      "ItemName": "Tiki Boots of Riptides",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1204238",
+      "ItemName": "Tiki Armor of Riptides",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1939618785",
+      "ItemName": "Colossal",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "118801684",
+      "ItemName": "Extraordinary",
+      "Notes": "",
+      "Chance": 1.4085
+    },
+    {
+      "ItemId": "1304819208",
+      "ItemName": "Gargantuan",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "437269076",
+      "ItemName": "Unstoppable",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "70554806",
+      "ItemName": "Cloak",
+      "Notes": "",
+      "Chance": 2.8571
+    }
+  ]
+}

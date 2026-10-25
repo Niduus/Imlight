@@ -1,0 +1,632 @@
+{
+  "Name": "JewelPackLT-Myth",
+  "Description": "Myth Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352649",
+      "ItemName": "Cracked Damage Peridot +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352650",
+      "ItemName": "Cracked Damage Peridot +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352651",
+      "ItemName": "Cracked Damage Peridot +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352652",
+      "ItemName": "Cracked Damage Peridot +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352653",
+      "ItemName": "Cracked Damage Peridot +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352654",
+      "ItemName": "Cracked Damage Peridot +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352655",
+      "ItemName": "Chipped Damage Peridot +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352656",
+      "ItemName": "Chipped Damage Peridot +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352657",
+      "ItemName": "Flawed Damage Peridot +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352658",
+      "ItemName": "Flawed Damage Peridot +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352659",
+      "ItemName": "Blemished Damage Peridot +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352660",
+      "ItemName": "Blemished Damage Peridot +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352661",
+      "ItemName": "Dull Damage Peridot +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352662",
+      "ItemName": "Dull Damage Peridot +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352663",
+      "ItemName": "Plain Damage Peridot +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352664",
+      "ItemName": "Plain Damage Peridot +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352665",
+      "ItemName": "Opaque Damage Peridot +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352666",
+      "ItemName": "Opaque Damage Peridot +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352667",
+      "ItemName": "Clear Damage Peridot +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352668",
+      "ItemName": "Clear Damage Peridot +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352669",
+      "ItemName": "Polished Damage Peridot +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352670",
+      "ItemName": "Polished Damage Peridot +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352671",
+      "ItemName": "Lustrous Damage Peridot +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352672",
+      "ItemName": "Lustrous Damage Peridot +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352782",
+      "ItemName": "Dull Piercing Peridot +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352783",
+      "ItemName": "Dull Piercing Peridot +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352784",
+      "ItemName": "Plain Piercing Peridot +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352785",
+      "ItemName": "Opaque Piercing Peridot +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352786",
+      "ItemName": "Clear Piercing Peridot +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352862",
+      "ItemName": "Dull Critical Peridot +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352863",
+      "ItemName": "Dull Critical Peridot +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352864",
+      "ItemName": "Dull Critical Peridot +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352865",
+      "ItemName": "Plain Critical Peridot +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352866",
+      "ItemName": "Plain Critical Peridot +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352867",
+      "ItemName": "Opaque Critical Peridot +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352868",
+      "ItemName": "Opaque Critical Peridot +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352869",
+      "ItemName": "Clear Critical Peridot +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352870",
+      "ItemName": "Clear Critical Peridot +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352871",
+      "ItemName": "Polished Critical Peridot +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352872",
+      "ItemName": "Polished Critical Peridot +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352873",
+      "ItemName": "Lustrous Critical Peridot +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352874",
+      "ItemName": "Lustrous Critical Peridot +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357083",
+      "ItemName": "Chipped Accurate Peridot +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357084",
+      "ItemName": "Flawed Accurate Peridot +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357085",
+      "ItemName": "Blemished Accurate Peridot +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357086",
+      "ItemName": "Dull Accurate Peridot +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357087",
+      "ItemName": "Plain Accurate Peridot +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357088",
+      "ItemName": "Opaque Accurate Peridot +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357089",
+      "ItemName": "Clear Accurate Peridot +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357090",
+      "ItemName": "Polished Accurate Peridot +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357091",
+      "ItemName": "Lustrous Accurate Peridot +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357142",
+      "ItemName": "Cracked Accurate Peridot +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357143",
+      "ItemName": "Cracked Accurate Peridot +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357212",
+      "ItemName": "Blood Bat Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357213",
+      "ItemName": "Troll Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357214",
+      "ItemName": "Myth Trap Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358596",
+      "ItemName": "Cyclops Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358597",
+      "ItemName": "Time of Legend Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358613",
+      "ItemName": "Humongofrog Peridot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358614",
+      "ItemName": "Minotaur Peridot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358615",
+      "ItemName": "Earthquake Peridot",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358653",
+      "ItemName": "Vaporize Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358654",
+      "ItemName": "Mass Myth Prism Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358656",
+      "ItemName": "Talos Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358657",
+      "ItemName": "Shift Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358658",
+      "ItemName": "Dimension Shift Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358659",
+      "ItemName": "Shield Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358660",
+      "ItemName": "Buff Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358661",
+      "ItemName": "Mend Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358662",
+      "ItemName": "Golem Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358663",
+      "ItemName": "Troll Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358664",
+      "ItemName": "Cyclops Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358665",
+      "ItemName": "Minotaur Minion Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358666",
+      "ItemName": "Vassanji Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358712",
+      "ItemName": "Orthrus Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358976",
+      "ItemName": "Mythblade Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360044",
+      "ItemName": "Punklops Peridot",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1360145",
+      "ItemName": "Wrath of Cronus Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374102",
+      "ItemName": "Myth Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376145",
+      "ItemName": "Dual Mythblade Peridot",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376298",
+      "ItemName": "Morganthe's Deceit Peridot",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376305",
+      "ItemName": "Erratic Apologue Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384431",
+      "ItemName": "Myth Brandon Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405721",
+      "ItemName": "Shiny Damage Peridot +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405722",
+      "ItemName": "Shiny Damage Peridot +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405738",
+      "ItemName": "Shiny Critical Peridot +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405739",
+      "ItemName": "Shiny Critical Peridot +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405771",
+      "ItemName": "Mythspear Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405790",
+      "ItemName": "Shiny Accurate Peridot +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430047",
+      "ItemName": "Sparkling Damage Peridot +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430055",
+      "ItemName": "Sparkling Critical Peridot +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462433",
+      "ItemName": "Sparkling Damage Peridot +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462442",
+      "ItemName": "Sparkling Critical Peridot +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462485",
+      "ItemName": "Sparkling Accurate Peridot +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466986",
+      "ItemName": "Keeper of the Flame Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514447",
+      "ItemName": "Dazzling Damage Peridot +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514448",
+      "ItemName": "Dazzling Damage Peridot +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514465",
+      "ItemName": "Dazzling Critical Peridot +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514466",
+      "ItemName": "Dazzling Critical Peridot +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514483",
+      "ItemName": "Dazzling Accurate Peridot +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514492",
+      "ItemName": "Ninja Pigs Peridot",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

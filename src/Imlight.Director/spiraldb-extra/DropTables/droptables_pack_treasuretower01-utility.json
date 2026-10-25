@@ -1,0 +1,74 @@
+{
+  "Name": "TreasureTower01-Utility",
+  "Description": "Deckathalon Ice Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "286699852",
+      "ItemName": "Steal Ward",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "1911013456",
+      "ItemName": "Pierce",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "113647540",
+      "ItemName": "Elemental Shield",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "109866214",
+      "ItemName": "Fire Trap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1907258156",
+      "ItemName": "Triage",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1048477158",
+      "ItemName": "Cleanse Ward",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "657683180",
+      "ItemName": "Snow Shield",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

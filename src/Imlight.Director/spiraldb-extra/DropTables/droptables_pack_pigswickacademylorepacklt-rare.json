@@ -1,0 +1,176 @@
+{
+  "Name": "PigswickAcademyLorePackLT-Rare",
+  "Description": "Wysteria Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "690108",
+      "ItemName": "Gargoyle",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1204306",
+      "ItemName": "Bumble Bee",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1254254",
+      "ItemName": "Greenman Sapling",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1257611",
+      "ItemName": "Pegasus Pony",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1317673",
+      "ItemName": "Ninja Piggle",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317847",
+      "ItemName": "Wysteria Throw Rug",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317848",
+      "ItemName": "Wysteria Cupboard",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317849",
+      "ItemName": "Wysteria Towel Rack",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1350298",
+      "ItemName": "Pigswick Wall Stucco",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1350299",
+      "ItemName": "Pigswick Floor Tiles",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418363",
+      "ItemName": "Wysteria Warrior's Armet",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418377",
+      "ItemName": "Wysteria Warrior's Plate",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1418391",
+      "ItemName": "Wysteria Warrior's Boots",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418405",
+      "ItemName": "Wysteria Warrior's Helmet",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418419",
+      "ItemName": "Wysteria Warrior's Cuirass",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1418433",
+      "ItemName": "Wysteria Warrior's Sabatons",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418447",
+      "ItemName": "Wysteria Warrior's Warhelm",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418461",
+      "ItemName": "Wysteria Warrior's Armor",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1418475",
+      "ItemName": "Wysteria Warrior's Sollerets",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1418489",
+      "ItemName": "Wysteria Warrior's Claymore",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1418503",
+      "ItemName": "Wysteria Warrior's Broadsword",
+      "Notes": "",
+      "Chance": 1.8182
+    },
+    {
+      "ItemId": "1418517",
+      "ItemName": "Wysteria Warrior's Longsword",
+      "Notes": "",
+      "Chance": 1.8182
+    }
+  ]
+}

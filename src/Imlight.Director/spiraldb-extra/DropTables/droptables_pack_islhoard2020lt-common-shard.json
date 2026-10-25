@@ -1,0 +1,350 @@
+{
+  "Name": "IslHoard2020LT-Common-Shard",
+  "Description": "Islander's Spellemental Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1494697",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1494699",
+      "ItemName": "Thunder Snake",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "82890",
+      "ItemName": "Pile of Sand",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82895",
+      "ItemName": "Palm Shrub",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82896",
+      "ItemName": "Potted Palm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82897",
+      "ItemName": "Bushy Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82898",
+      "ItemName": "Tall Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "126988",
+      "ItemName": "Lava Spider",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "160632",
+      "ItemName": "Fishbones",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "175581",
+      "ItemName": "Starfish",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "181037",
+      "ItemName": "Fish Pot",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342082",
+      "ItemName": "Spread Tube Coral",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342086",
+      "ItemName": "Giant Crab",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342088",
+      "ItemName": "Crab Table",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342113",
+      "ItemName": "Water-Mole Spear",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342124",
+      "ItemName": "Cephalopod Obelisk",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342134",
+      "ItemName": "Lesser Totem",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342139",
+      "ItemName": "Shovel",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342150",
+      "ItemName": "Leaning Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342151",
+      "ItemName": "Broken Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "342154",
+      "ItemName": "Water-Mole Bowl",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "469371",
+      "ItemName": "Diving Gear Rack",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "733123",
+      "ItemName": "Guava",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "733124",
+      "ItemName": "Papaya",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739087",
+      "ItemName": "Azteca Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739148",
+      "ItemName": "Lava Bulb",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739154",
+      "ItemName": "Fish Basket",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739164",
+      "ItemName": "Large Shell",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739173",
+      "ItemName": "Curving Palm Tree",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "739208",
+      "ItemName": "Shell Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789217",
+      "ItemName": "Salty Fish",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789451",
+      "ItemName": "Tiki Tea",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789452",
+      "ItemName": "Candlenut",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789453",
+      "ItemName": "Pineapple Spears",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789454",
+      "ItemName": "Lava Guava",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789455",
+      "ItemName": "Loco Nut",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789456",
+      "ItemName": "Big Papa Paya",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789458",
+      "ItemName": "Poi Pudding",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789459",
+      "ItemName": "Wiki Peas",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "789460",
+      "ItemName": "Winged Bean",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1052828116",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "700631252",
+      "ItemName": "Volcanic Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "293047996",
+      "ItemName": "Thermic Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1325393936",
+      "ItemName": "Legend Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "485340863",
+      "ItemName": "Ether Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "488604288",
+      "ItemName": "Dream Shield",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1637687277",
+      "ItemName": "Strong",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "96676882",
+      "ItemName": "Giant",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "460736487",
+      "ItemName": "Keen Eyes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "394331694",
+      "ItemName": "Accurate",
+      "Notes": "",
+      "Chance": 5.5556
+    }
+  ]
+}

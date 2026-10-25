@@ -1,0 +1,62 @@
+{
+  "Name": "TreasureTower01-Deck-Reagents01",
+  "Description": "Deckathalon Ice Tower Pack. (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1441808",
+      "ItemName": "Fire Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441810",
+      "ItemName": "Superior Fire Rune",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441812",
+      "ItemName": "Ice Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441814",
+      "ItemName": "Superior Ice Rune",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441815",
+      "ItemName": "Storm Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441817",
+      "ItemName": "Superior Storm Rune",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1441824",
+      "ItemName": "Balance Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441826",
+      "ItemName": "Superior Balance Rune",
+      "Notes": "",
+      "Chance": 6.25
+    }
+  ]
+}

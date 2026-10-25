@@ -1,0 +1,422 @@
+{
+  "Name": "BoosterPack-Set-47-GFurniture",
+  "Description": "Farley's Gardening Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82847",
+      "ItemName": "Painted Chameleon Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160219",
+      "ItemName": "Dragon Skull",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160444",
+      "ItemName": "Bubbling Cauldron",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160452",
+      "ItemName": "Gong of the Oni",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160480",
+      "ItemName": "Serpent Obelisk",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160522",
+      "ItemName": "Weapon Rack",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160553",
+      "ItemName": "Garden Lot",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160557",
+      "ItemName": "Brick-walled Pond",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160592",
+      "ItemName": "Ninja Sword Rack",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160599",
+      "ItemName": "Lotus Flower",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160613",
+      "ItemName": "Potted Cattail",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160647",
+      "ItemName": "Wood Saw",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160666",
+      "ItemName": "Litter",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160670",
+      "ItemName": "Ball of Blue Yarn",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160836",
+      "ItemName": "Snowflake Obelisk",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160859",
+      "ItemName": "Oni Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "160905",
+      "ItemName": "Tree Stump",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "181098",
+      "ItemName": "Wooden Rake",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "181106",
+      "ItemName": "Broken Stump",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "206094",
+      "ItemName": "Bamboo Fountain",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "206099",
+      "ItemName": "Egg Basket",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "206109",
+      "ItemName": "Sandwich Station",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "211112",
+      "ItemName": "Toy Train Set",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "211127",
+      "ItemName": "Decorative Gong",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342093",
+      "ItemName": "Djembe Drum",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342095",
+      "ItemName": "Fish Fountain",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342101",
+      "ItemName": "Celestian Power Orb",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342117",
+      "ItemName": "Star Chalice",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342120",
+      "ItemName": "Crab Claw Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342125",
+      "ItemName": "Water-Mole Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342159",
+      "ItemName": "Pet Cannon",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "342164",
+      "ItemName": "Medium Enchanted Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342181",
+      "ItemName": "Medium Enchanted Krok Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342182",
+      "ItemName": "Medium Krok Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342183",
+      "ItemName": "Small Enchanted Krok Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342184",
+      "ItemName": "Small Krok Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342185",
+      "ItemName": "Medium Enchanted MooShu Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342186",
+      "ItemName": "Medium MooShu Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342187",
+      "ItemName": "Small Enchanted MooShu Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342188",
+      "ItemName": "Small MooShu Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342189",
+      "ItemName": "Medium Enchanted Celestia Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342190",
+      "ItemName": "Medium Celestia Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342191",
+      "ItemName": "Small Enchanted Celestia Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342192",
+      "ItemName": "Small Celestia Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342193",
+      "ItemName": "Medium Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342194",
+      "ItemName": "Small Enchanted Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342195",
+      "ItemName": "Small Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "342196",
+      "ItemName": "Tropical Garden Gnome",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "537555",
+      "ItemName": "Sword Tree",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "538029",
+      "ItemName": "Giant Crystal",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "641582",
+      "ItemName": "Avalon King Statue",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "643140",
+      "ItemName": "Elephant Queen Painting",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "1317954",
+      "ItemName": "Darkmoor Deathstone",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "1317962",
+      "ItemName": "Darkmoor Thornflowers",
+      "Notes": "",
+      "Chance": 2.381
+    },
+    {
+      "ItemId": "1350217",
+      "ItemName": "Small Normal Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1350218",
+      "ItemName": "Medium Normal Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1350221",
+      "ItemName": "Small Enchanted Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1350244",
+      "ItemName": "Medium Enchanted Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1383341",
+      "ItemName": "Small Bejeweled Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1383343",
+      "ItemName": "Medium Bejeweled Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1383344",
+      "ItemName": "Medium Enchanted Bejeweled Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1383345",
+      "ItemName": "Small Enchanted Bejeweled Pot",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1383346",
+      "ItemName": "Small Bejeweled Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1383347",
+      "ItemName": "Sm. Enchanted Bejeweled Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1383348",
+      "ItemName": "Med. Enchanted Bejeweled Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    },
+    {
+      "ItemId": "1383349",
+      "ItemName": "Medium Bejeweled Planter",
+      "Notes": "",
+      "Chance": 0.7463
+    }
+  ]
+}

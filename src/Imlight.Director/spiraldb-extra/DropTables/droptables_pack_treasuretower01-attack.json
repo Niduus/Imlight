@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower01-Attack",
+  "Description": "Deckathalon Ice Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "273866308",
+      "ItemName": "Fire Wyvern",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1995283361",
+      "ItemName": "Fire Dragon",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "2032958859",
+      "ItemName": "Firezilla",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "730015727",
+      "ItemName": "Meteor Strike",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "186656492",
+      "ItemName": "Krokomummy",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "73862470",
+      "ItemName": "Scald",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "2136233780",
+      "ItemName": "Ash Bats",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1252606757",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "111756214",
+      "ItemName": "Fire Cat",
+      "Notes": "",
+      "Chance": 33.3333
+    }
+  ]
+}

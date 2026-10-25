@@ -1,0 +1,740 @@
+{
+  "Name": "NimbariHoardPackLT-Wildcard-BO-2",
+  "Description": "Ultra Nimbari Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1441345",
+      "ItemName": "Nimbari Chariot (PERM)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641698",
+      "ItemName": "Chocolate Crickets",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641701",
+      "ItemName": "Crystal Bites",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641705",
+      "ItemName": "Fiddleheads",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "733134",
+      "ItemName": "Rex Tea",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "733184",
+      "ItemName": "Sourpuss Stovies",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "789447",
+      "ItemName": "Huli-Hula Chicken",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350198",
+      "ItemName": "Rotten Beets",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1441467",
+      "ItemName": "Red Kalamar Basket",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441468",
+      "ItemName": "Kalamar Brazier",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441471",
+      "ItemName": "Wide Kalamar Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441473",
+      "ItemName": "Nimbari Bolt Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441518",
+      "ItemName": "Empyrea Aero Plains Combat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441521",
+      "ItemName": "Empyrea Husk Storm Combat",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441524",
+      "ItemName": "Empyrea Husk Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441527",
+      "ItemName": "Empyrea Nexus Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441529",
+      "ItemName": "Empyrea Nimbus Theme",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1441535",
+      "ItemName": "Aero Dwarf Brown Vase",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "100329",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1254235",
+      "ItemName": "Fairyfly",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1359609",
+      "ItemName": "Sugar Skulls Cereal",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1359611",
+      "ItemName": "Polly Crackers",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1359614",
+      "ItemName": "Kraken Jacks",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1359627",
+      "ItemName": "Fortune Cookies",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1359629",
+      "ItemName": "Breakfast Tacos",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1374455",
+      "ItemName": "Toy Golem",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1374460",
+      "ItemName": "Furious Krokomummy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441476",
+      "ItemName": "Nimbari Chest",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441480",
+      "ItemName": "Kalamar Dining Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441486",
+      "ItemName": "Nimbari Dining Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441487",
+      "ItemName": "Nimbari Side Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441519",
+      "ItemName": "Empyrea Aero Plains Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441523",
+      "ItemName": "Empyrea Husk Aethyr Combat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441525",
+      "ItemName": "Empyrea Mandalla Combat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441530",
+      "ItemName": "Empyrea Reverie Combat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441533",
+      "ItemName": "Aero Dwarf Potted Tree",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441544",
+      "ItemName": "Aero Dwarf Wood Chair",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441545",
+      "ItemName": "Aero Dwarf End Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441546",
+      "ItemName": "Aero Dwarf Round Table",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441622",
+      "ItemName": "Cheering Port Aero Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441623",
+      "ItemName": "Riled Up Port Aero Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441626",
+      "ItemName": "Cheering Velo City Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441627",
+      "ItemName": "Riled Up Velo City Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441630",
+      "ItemName": "Cheering Wheatsville Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441631",
+      "ItemName": "Riled Up Wheatsville Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441685",
+      "ItemName": "Spirited Port Aero Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441686",
+      "ItemName": "Excited Port Aero Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441691",
+      "ItemName": "Spirited Velo City Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441692",
+      "ItemName": "Spirited Wheatsville Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441693",
+      "ItemName": "Excited Velo City Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1441694",
+      "ItemName": "Excited Wheatsville Fan",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "710352118",
+      "ItemName": "Storm Owl",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1899034443",
+      "ItemName": "Lord of Winter",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1241816386",
+      "ItemName": "Sun Serpent",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1967461985",
+      "ItemName": "Avenging Fossil",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "343771069",
+      "ItemName": "Celestial Calendar",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "219748991",
+      "ItemName": "Spinysaur",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1192867642",
+      "ItemName": "Sabertooth",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1394811221",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1413597648",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1211389892",
+      "ItemName": "Elemental Trap",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "225445",
+      "ItemName": "Storm Bird",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441346",
+      "ItemName": "Hurricanine",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441347",
+      "ItemName": "Nimbari Chariot (7 Day)",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441348",
+      "ItemName": "Nimbari Chariot (1 Day)",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441475",
+      "ItemName": "Nimbari Weapon Rack",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441482",
+      "ItemName": "Kalamar Sofa",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441600",
+      "ItemName": "Kalamar Fireplace",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441601",
+      "ItemName": "Nimbari Fireplace",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441624",
+      "ItemName": "Port Aero Super Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441625",
+      "ItemName": "Yelling Port Aero Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441628",
+      "ItemName": "Velo City Super Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441629",
+      "ItemName": "Yelling Velo City Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441632",
+      "ItemName": "Wheatsville Super Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441633",
+      "ItemName": "Yelling Wheatsville Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441687",
+      "ItemName": "Sitting Port Aero Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441688",
+      "ItemName": "Hollerin' Port Aero Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441695",
+      "ItemName": "Sitting Velo City Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441696",
+      "ItemName": "Sitting Wheatsville Fan",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1441697",
+      "ItemName": "Hollerin' Velo City Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1441698",
+      "ItemName": "Hollerin' Wheatsville Fan",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466023",
+      "ItemName": "Nimbari Justicar Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466037",
+      "ItemName": "Nimbari Justicar Armor",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1466051",
+      "ItemName": "Nimbari Justicar Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466065",
+      "ItemName": "Nimbari Praetor Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466079",
+      "ItemName": "Nimbari Praetor Armor",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1466093",
+      "ItemName": "Nimbari Praetor Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466107",
+      "ItemName": "Nimbari Centurion Helm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466121",
+      "ItemName": "Nimbari Centurion Armor",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1466135",
+      "ItemName": "Nimbari Centurion Greaves",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1466150",
+      "ItemName": "Nimbari Justicar Scimitar",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1466164",
+      "ItemName": "Nimbari Praetor Scimitar",
+      "Notes": "",
+      "Chance": 1.3889
+    },
+    {
+      "ItemId": "1466178",
+      "ItemName": "Nimbari Centurion Scimitar",
+      "Notes": "",
+      "Chance": 1.3889
+    }
+  ]
+}

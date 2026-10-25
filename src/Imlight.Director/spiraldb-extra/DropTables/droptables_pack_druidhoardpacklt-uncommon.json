@@ -1,0 +1,266 @@
+{
+  "Name": "DruidHoardPackLT-Uncommon",
+  "Description": "Druid's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100329",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100463",
+      "ItemName": "Fire Salamander",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220277",
+      "ItemName": "Chocolate Cake",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "225420",
+      "ItemName": "Deathbat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1317838",
+      "ItemName": "Fetid Legumes",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350240",
+      "ItemName": "Iridium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479635",
+      "ItemName": "Broken Chair",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479636",
+      "ItemName": "Orange Crystals",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479637",
+      "ItemName": "Slimy Purple Crystal",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479638",
+      "ItemName": "Strange Green and Orange Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479639",
+      "ItemName": "Strange Blue and Purple Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479642",
+      "ItemName": "Ruined River Painting",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479643",
+      "ItemName": "Not Quite Repaired Rug",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479647",
+      "ItemName": "General Greyflame",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479655",
+      "ItemName": "The Boss",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480048",
+      "ItemName": "WC Catacombs Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480049",
+      "ItemName": "WC Catacombs Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480050",
+      "ItemName": "WC Drains Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480051",
+      "ItemName": "WC Drains Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480052",
+      "ItemName": "WC Elsewhere Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1171503055",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "70785565",
+      "ItemName": "Hydra",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1161906569",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "819802901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1486543476",
+      "ItemName": "Fire Bats",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1496018147",
+      "ItemName": "Deadly Minotaur",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2143801613",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2074242982",
+      "ItemName": "Sleet Storm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82261857",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1787596956",
+      "ItemName": "Wild Bolt",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

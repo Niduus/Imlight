@@ -1,0 +1,20 @@
+{
+  "Name": "MBFurniture_Fireplace",
+  "Description": "Marleybone Furniture Set 3 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1359136",
+      "ItemName": "Regent's Inglenook",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

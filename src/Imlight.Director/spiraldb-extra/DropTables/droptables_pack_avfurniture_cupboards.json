@@ -1,0 +1,20 @@
+{
+  "Name": "AVFurniture_Cupboards",
+  "Description": "Avalon Furniture Set 2 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "683285",
+      "ItemName": "Avalonian Cupboards",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

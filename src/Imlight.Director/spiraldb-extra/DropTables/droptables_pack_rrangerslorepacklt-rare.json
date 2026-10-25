@@ -1,0 +1,176 @@
+{
+  "Name": "RRangersLorePackLT-Rare",
+  "Description": "Ravenwood Rangers Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100332",
+      "ItemName": "Lightningbat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "690105",
+      "ItemName": "Ladybug",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1359955",
+      "ItemName": "Beastmaster's Eagle",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1457168",
+      "ItemName": "Wizard City Shop Theme 2",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1457169",
+      "ItemName": "Wizard City Carousel Theme 1",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1457170",
+      "ItemName": "Wizard City Carousel Theme 2",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1457171",
+      "ItemName": "Wizard City Ravenwood Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1522013",
+      "ItemName": "Pilgrim's Campfire",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1523886",
+      "ItemName": "Adventurous Ranger's Wayfinder",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523901",
+      "ItemName": "Intrepid Ranger's Wayfinder",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523916",
+      "ItemName": "Able Ranger's Wayfinder",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523931",
+      "ItemName": "Adventurous Ranger's Hat",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523946",
+      "ItemName": "Adventurous Ranger's Uniform",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523961",
+      "ItemName": "Adventurous Ranger's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523976",
+      "ItemName": "Intrepid Ranger's Hat",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1523991",
+      "ItemName": "Intrepid Ranger's Uniform",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1524570",
+      "ItemName": "Adventurous Racoon",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1524571",
+      "ItemName": "Intrepid Racoon",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1524572",
+      "ItemName": "Able Racoon",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1530006",
+      "ItemName": "Intrepid Ranger's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1530021",
+      "ItemName": "Able Ranger's Hat",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1530036",
+      "ItemName": "Able Ranger's Uniform",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1530051",
+      "ItemName": "Able Ranger's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1164991014",
+      "ItemName": "Camp Bandit",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "799474519",
+      "ItemName": "Beary Surprise",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "171386709",
+      "ItemName": "Splashsquatch",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

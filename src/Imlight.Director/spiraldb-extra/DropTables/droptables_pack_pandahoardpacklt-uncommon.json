@@ -1,0 +1,248 @@
+{
+  "Name": "PandaHoardPackLT-Uncommon",
+  "Description": "Pandamonium Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "87150",
+      "ItemName": "Mander",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "100436",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "100464",
+      "ItemName": "Ice Salamander",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "175579",
+      "ItemName": "Jellyfish",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "589095",
+      "ItemName": "MooShu Cheddar",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1359616",
+      "ItemName": "Samoorye",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1359617",
+      "ItemName": "Glam Chowder",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1374359",
+      "ItemName": "Spellwrit Ronin",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1441743",
+      "ItemName": "Bamboo Vase",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1441747",
+      "ItemName": "Panda Portrait",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "292598963",
+      "ItemName": "Flood",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1024216970",
+      "ItemName": "Flute Symphony",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1206682952",
+      "ItemName": "Plant All",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "616752867",
+      "ItemName": "Supreme Sunburst",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "296186423",
+      "ItemName": "Strawman",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "265230316",
+      "ItemName": "Donate Power",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1940396961",
+      "ItemName": "Fire Dragon",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1783908069",
+      "ItemName": "Fire Wyvern",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1402011056",
+      "ItemName": "Monk of Mourning",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1954933308",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "458399862",
+      "ItemName": "Ice Wyvern",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1839019995",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1359549940",
+      "ItemName": "Otomo Fury",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1123963834",
+      "ItemName": "Squall Wyvern",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "112284062",
+      "ItemName": "Yochimo",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "355376535",
+      "ItemName": "Zounds...Bees!",
+      "Notes": "",
+      "Chance": 5.8824
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "Name": "BoosterPack-Set05-Uncommons",
+  "Description": "Snack Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220209",
+      "ItemName": "Diamond Carrot",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220210",
+      "ItemName": "Flaming Jalapeno",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220213",
+      "ItemName": "Chocolate Strawberry",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220219",
+      "ItemName": "Heavenly Bubblegum",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220238",
+      "ItemName": "PBJ Sandwich",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220243",
+      "ItemName": "Funnel Cake",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220244",
+      "ItemName": "Ice Cream",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220245",
+      "ItemName": "Cherry Pie",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220255",
+      "ItemName": "Arrow Root",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220260",
+      "ItemName": "Tasty Biscuit",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220270",
+      "ItemName": "Grilled Cheese",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "Tiki Banana",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "Cow Pie",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "220298",
+      "ItemName": "Golden Biscuit",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "220314",
+      "ItemName": "Fairy Cake",
+      "Notes": "",
+      "Chance": 12.5
+    }
+  ]
+}

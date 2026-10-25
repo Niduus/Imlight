@@ -1,0 +1,188 @@
+{
+  "Name": "2019YuletidePackLT-Rare",
+  "Description": "Yule Logger Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1392734",
+      "ItemName": "The Winter Antlers",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392740",
+      "ItemName": "The Snow Crown",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392741",
+      "ItemName": "The Frosted Tips",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392743",
+      "ItemName": "Sparkle Globe",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392744",
+      "ItemName": "Skating Rink",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392754",
+      "ItemName": "Red Candy Canes",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392755",
+      "ItemName": "Blue Candy Canes",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1447042",
+      "ItemName": "Spicy Gingerbreadman",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1447043",
+      "ItemName": "Feisty Gingerbreadman",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1447044",
+      "ItemName": "Salty Gingerbreadman",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1448470",
+      "ItemName": "Lobster",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1448471",
+      "ItemName": "Roasted Veggies",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1448472",
+      "ItemName": "Festive Ham",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1448476",
+      "ItemName": "Gravy Boat",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1470738",
+      "ItemName": "Toboggan (7 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1470739",
+      "ItemName": "Toboggan (1 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479600",
+      "ItemName": "Festive Holiday Moose",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1494373",
+      "ItemName": "Woodland Hunter Tuke",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494387",
+      "ItemName": "Woodland Hunter Flannel",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494401",
+      "ItemName": "Woodland Hunter Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494415",
+      "ItemName": "Alpine Hunter Tuke",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494429",
+      "ItemName": "Alpine Hunter Flannel",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494443",
+      "ItemName": "Alpine Hunter Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494457",
+      "ItemName": "Tundra Hunter Tuke",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494471",
+      "ItemName": "Tundra Hunter Flannel",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494485",
+      "ItemName": "Tundra Hunter Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494541",
+      "ItemName": "Woodland Hunter Axe",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494555",
+      "ItemName": "Alpine Hunter Axe",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1494569",
+      "ItemName": "Tundra Hunter Axe",
+      "Notes": "",
+      "Chance": 4.5455
+    }
+  ]
+}

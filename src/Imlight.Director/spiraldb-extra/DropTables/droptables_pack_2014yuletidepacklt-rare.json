@@ -1,0 +1,146 @@
+{
+  "Name": "2014YuletidePackLT-Rare",
+  "Description": "Winterland Pack. (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1317712",
+      "ItemName": "Maple Moose",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1317751",
+      "ItemName": "Yuletide Present Giver's Bed",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317753",
+      "ItemName": "WinterGlide Skates (7 Day)",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1317754",
+      "ItemName": "WinterGlide Skates (1 Day)",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317758",
+      "ItemName": "Yuletide Tall Whopper Aquarium",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317759",
+      "ItemName": "Yuletide Lg. Whopper Aquarium",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1317767",
+      "ItemName": "Grand Winter Globe",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1335011",
+      "ItemName": "Jingle Bells Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1335012",
+      "ItemName": "Deck the Halls Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1335013",
+      "ItemName": "Carol of the Bells Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338570",
+      "ItemName": "Winter Solstice Cowl",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338581",
+      "ItemName": "Winter Solstice Snowboots",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338592",
+      "ItemName": "Winter Solstice Vesture",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1338603",
+      "ItemName": "Hood of the Arund Vale",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338614",
+      "ItemName": "Arund Vale Snowshoes",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338625",
+      "ItemName": "Arund Vale Winter Raiment",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1338636",
+      "ItemName": "Shroud of Icewind Glade",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338647",
+      "ItemName": "Icewind Glade Trekkers",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1338658",
+      "ItemName": "Icewind Glade Winterwraps",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1338669",
+      "ItemName": "Winter Solstice Augury",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1338680",
+      "ItemName": "Beacon of the Arund Vale",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1338691",
+      "ItemName": "Auspice of Icewind Glade",
+      "Notes": "",
+      "Chance": 2.7027
+    }
+  ]
+}

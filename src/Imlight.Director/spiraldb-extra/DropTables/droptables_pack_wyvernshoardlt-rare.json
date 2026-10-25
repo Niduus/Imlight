@@ -1,0 +1,392 @@
+{
+  "Name": "WyvernsHoardLT-Rare",
+  "Description": "Wyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100333",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "100444",
+      "ItemName": "Pixie Queen",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "126985",
+      "ItemName": "Earth Walker",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "206090",
+      "ItemName": "Birdcage",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206091",
+      "ItemName": "Chicken Coop",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206094",
+      "ItemName": "Bamboo Fountain",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206095",
+      "ItemName": "Birdbath",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206102",
+      "ItemName": "Cuckoo Clock",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "211108",
+      "ItemName": "Aquarium",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "225438",
+      "ItemName": "Life Ghoul",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469781",
+      "ItemName": "Blue Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469782",
+      "ItemName": "Cyan Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469783",
+      "ItemName": "Green Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469784",
+      "ItemName": "Orange Teleporter",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "469785",
+      "ItemName": "Purple Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469786",
+      "ItemName": "Red Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "470083",
+      "ItemName": "Blue Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470087",
+      "ItemName": "Orange Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470088",
+      "ItemName": "Purple Fairy Wings (PERM)",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "470093",
+      "ItemName": "Blue Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "470094",
+      "ItemName": "Orange Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "470095",
+      "ItemName": "Purple Fairy Wings (1 Day)",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473282",
+      "ItemName": "Greenwarden's Energetic Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473289",
+      "ItemName": "Greenwarden's Energetic Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473296",
+      "ItemName": "Greenwarden's Energetic Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473303",
+      "ItemName": "Greenwarden's Peaceful Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473310",
+      "ItemName": "Greenwarden's Peaceful Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473317",
+      "ItemName": "Greenwarden's Peaceful Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473324",
+      "ItemName": "Greenwarden's Brilliant Mask",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473331",
+      "ItemName": "Greenwarden's Brilliant Shroud",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473338",
+      "ItemName": "Greenwarden's Brilliant Boots",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473353",
+      "ItemName": "Greenwarden's Energetic Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473360",
+      "ItemName": "Greenwarden's Peaceful Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "473367",
+      "ItemName": "Greenwarden's Brilliant Staff",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "737048",
+      "ItemName": "Greenwarden's Peaceful Greaves",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "617102995",
+      "ItemName": "Supreme Sunburst",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "79713459",
+      "ItemName": "Flood",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "304827462",
+      "ItemName": "Zounds...Bees!",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "554454336",
+      "ItemName": "Flute Symphony",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1806999015",
+      "ItemName": "Uncanny Magic",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1967263301",
+      "ItemName": "Pest Zapper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "113950025",
+      "ItemName": "Pungent Bug Spray",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1505746256",
+      "ItemName": "Dragonflies",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1701999404",
+      "ItemName": "Triage",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "617230156",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "95107334",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "914478210",
+      "ItemName": "Rebirth",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "531784977",
+      "ItemName": "Putrid Bug Spray",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "1430879895",
+      "ItemName": "Massive Pest Zapper",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "1439085139",
+      "ItemName": "Miniature Bloodbats",
+      "Notes": "",
+      "Chance": 0.9091
+    },
+    {
+      "ItemId": "6023375",
+      "ItemName": "Baby Sunbird",
+      "Notes": "",
+      "Chance": 0.9091
+    }
+  ]
+}

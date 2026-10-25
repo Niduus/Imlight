@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower07-Utility",
+  "Description": "Deckathalon Balance Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "829724172",
+      "ItemName": "Dark Tribute",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1161914504",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "113647540",
+      "ItemName": "Elemental Shield",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "449686454",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "Name": "KirinsHoardLT-Common-Shard",
+  "Description": "Spellemental Kirin's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1494689",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "1494691",
+      "ItemName": "Scorpion",
+      "Notes": "",
+      "Chance": 14.2857
+    },
+    {
+      "ItemId": "100328",
+      "ItemName": "Brown Spider",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100330",
+      "ItemName": "Ninja Pig",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160467",
+      "ItemName": "Iron Tea Pot",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160485",
+      "ItemName": "Tatami Floor Mat",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160514",
+      "ItemName": "Low Purple Vase",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160527",
+      "ItemName": "Small Wooden Table",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160538",
+      "ItemName": "Wooden Memorial",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160543",
+      "ItemName": "Bamboo Barrier",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160579",
+      "ItemName": "Moodha Bust",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160587",
+      "ItemName": "Crossed Naginata Spears",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160591",
+      "ItemName": "Green Sword Display",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160601",
+      "ItemName": "Pearl Orchid",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220194",
+      "ItemName": "Sweet Pineapple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220199",
+      "ItemName": "MooShu Broccoli",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

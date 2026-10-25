@@ -1,0 +1,158 @@
+{
+  "Name": "AstrologerHoardPackLT-Rare",
+  "Description": "Astrologer's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "342109",
+      "ItemName": "Water-Mole Torch",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "689360",
+      "ItemName": "Celestian Diamond Floor",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "689364",
+      "ItemName": "Celestian Ornate Wallpaper",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506925",
+      "ItemName": "Cosmographer's Rocket (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506926",
+      "ItemName": "Cosmographer's Rocket (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506928",
+      "ItemName": "Astromancer's Rocket (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506929",
+      "ItemName": "Astromancer's Rocket (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506931",
+      "ItemName": "Stargazer's Rocket (7 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1506932",
+      "ItemName": "Stargazer's Rocket (1 Day)",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507352",
+      "ItemName": "Astromancer's Rat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507353",
+      "ItemName": "Cosmographer's Rat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1507354",
+      "ItemName": "Stargazer's Rat",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519388",
+      "ItemName": "Cosmographer's Cowl",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519403",
+      "ItemName": "Cosmographer's Tunic",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519418",
+      "ItemName": "Cosmographer's Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519433",
+      "ItemName": "Astromancer's Cowl",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519448",
+      "ItemName": "Astromancer's Tunic",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519463",
+      "ItemName": "Astromancer's Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519478",
+      "ItemName": "Stargazer's Cowl",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519493",
+      "ItemName": "Stargazer's Tunic",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519508",
+      "ItemName": "Stargazer's Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519523",
+      "ItemName": "Cosmographer's Orrery Staff",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519538",
+      "ItemName": "Astromancer's Orrery Staff",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1519553",
+      "ItemName": "Stargazer's Orrery Staff",
+      "Notes": "",
+      "Chance": 4.5455
+    }
+  ]
+}

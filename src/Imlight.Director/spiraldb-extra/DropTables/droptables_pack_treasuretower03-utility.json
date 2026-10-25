@@ -1,0 +1,86 @@
+{
+  "Name": "TreasureTower03-Utility",
+  "Description": "Deckathalon Death Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1911013456",
+      "ItemName": "Pierce",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "829724172",
+      "ItemName": "Dark Tribute",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1142291661",
+      "ItemName": "Mana Burn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "109853936",
+      "ItemName": "Life Trap",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "878423377",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "449686454",
+      "ItemName": "Cleanse Charm",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "337647600",
+      "ItemName": "Legend Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "Name": "EmperorsTowerPackLT-UnCommon",
+  "Description": "Emperor's Attic Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470189",
+      "ItemName": "Banking Table",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470190",
+      "ItemName": "Bright Red Banner",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470191",
+      "ItemName": "Torn Red Banner",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470193",
+      "ItemName": "Round Gold Chest",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470194",
+      "ItemName": "Yellow and Blue Chest",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470195",
+      "ItemName": "Table Chest",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470196",
+      "ItemName": "Red Clan Banner",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470198",
+      "ItemName": "Curved Bookcase",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470203",
+      "ItemName": "Hanging Flags",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470211",
+      "ItemName": "Landscape Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470212",
+      "ItemName": "Tree Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470213",
+      "ItemName": "Sky Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470214",
+      "ItemName": "Night Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470217",
+      "ItemName": "Potted Bamboo Plant",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470221",
+      "ItemName": "Single Bed",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470223",
+      "ItemName": "Soji Screen Rice Paper",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470228",
+      "ItemName": "Stone Base",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470229",
+      "ItemName": "Stone Case",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470231",
+      "ItemName": "Gold Dragon Throne",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470232",
+      "ItemName": "Dark Tori Gates",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470234",
+      "ItemName": "Vase Case",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "470235",
+      "ItemName": "Curved Vase Case",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "Name": "TreasureTower04-Attack",
+  "Description": "Deckathalon Life Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1493529223",
+      "ItemName": "Death Helephant",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "2067225304",
+      "ItemName": "Lord of Night",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "110499290",
+      "ItemName": "Headless Horseman",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1754179174",
+      "ItemName": "Deer Knight",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "462880680",
+      "ItemName": "Metalops",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "524457977",
+      "ItemName": "Vampire",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1730637968",
+      "ItemName": "Poison",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "82555954",
+      "ItemName": "Ghoul",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "658115525",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 5.8824
+    }
+  ]
+}

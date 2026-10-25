@@ -1,0 +1,290 @@
+{
+  "Name": "KnightsLorePackLT-UnCommon",
+  "Description": "Knight's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473719",
+      "ItemName": "Deviled Eggs",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "473720",
+      "ItemName": "Roasted Chickpeas",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "388168287",
+      "ItemName": "Vengeance",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1312310972",
+      "ItemName": "Empowerment",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "284988563",
+      "ItemName": "Berserk",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1473916539",
+      "ItemName": "Mend",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1857888237",
+      "ItemName": "Strong",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "96087058",
+      "ItemName": "Giant",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1204609644",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1203825197",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "152516695",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "460734583",
+      "ItemName": "Keen Eyes",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1753151982",
+      "ItemName": "Accurate",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1141043373",
+      "ItemName": "Sniper",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "437154388",
+      "ItemName": "Unstoppable",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "188339085",
+      "ItemName": "Availing Hands",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1104354288",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 4.1667
+    },
+    {
+      "ItemId": "1640712457",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 4.1667
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "Name": "KirinsHoardLT-UnCommon",
+  "Description": "Kirin's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100329",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100433",
+      "ItemName": "Yellow Ghost",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220308",
+      "ItemName": "Golden Pizza",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220332",
+      "ItemName": "Jar of Jelly Beans",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "225435",
+      "ItemName": "Stone Colossus",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "240102",
+      "ItemName": "Killer Tomato",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "512099",
+      "ItemName": "MooShu Combat Theme",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589095",
+      "ItemName": "MooShu Cheddar",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "358907420",
+      "ItemName": "Ninja Pigs",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1156966404",
+      "ItemName": "Tamauji",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "885960248",
+      "ItemName": "Yochimo",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "2113077343",
+      "ItemName": "Aiuchi",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1602644438",
+      "ItemName": "Do-Daga",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1927336522",
+      "ItemName": "Kakeda Painbringer",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1474039101",
+      "ItemName": "Koto",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1361212212",
+      "ItemName": "Otomo Fury",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

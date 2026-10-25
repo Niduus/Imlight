@@ -1,0 +1,314 @@
+{
+  "Name": "RRangersLorePackLT-Uncommon",
+  "Description": "Ravenwood Rangers Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82877",
+      "ItemName": "Krokotopia Camping Tent",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "538029",
+      "ItemName": "Giant Crystal",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "733120",
+      "ItemName": "Fern Jelly",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1359769",
+      "ItemName": "Flax",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1421951",
+      "ItemName": "Beastman Hut",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457159",
+      "ItemName": "New Wizard City Main Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457160",
+      "ItemName": "New Wizard101 Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457161",
+      "ItemName": "New Golem Tower Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457162",
+      "ItemName": "New Wizard City Haunted Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457163",
+      "ItemName": "New Wizard City Theme 1",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457164",
+      "ItemName": "New Wizard City Theme 2",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457165",
+      "ItemName": "New Wizard City Theme 3",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1457166",
+      "ItemName": "New Wizard City Combat Theme",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479459",
+      "ItemName": "Alchemical Salts",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1698635320",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1446852032",
+      "ItemName": "Volcanic Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "406225536",
+      "ItemName": "Dream Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "337647600",
+      "ItemName": "Legend Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "432322239",
+      "ItemName": "Ether Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1250455896",
+      "ItemName": "Thermic Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "878423377",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 3.0303
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "Name": "NinjaLorePackLT-Rare",
+  "Description": "Ninja's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "276461",
+      "ItemName": "Ancient Koi (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "276464",
+      "ItemName": "Sea Turtle (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532728",
+      "ItemName": "Blazing Naginata",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532736",
+      "ItemName": "Sweeping Longspear",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532744",
+      "ItemName": "Thunder Chasing Spear",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532820",
+      "ItemName": "Imperial Court Helm",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532828",
+      "ItemName": "Imperial Court Slippers",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532836",
+      "ItemName": "Imperial Court Tunic",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532844",
+      "ItemName": "Chrysanthemum Cowl",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532852",
+      "ItemName": "Chrysanthemum Boots",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532860",
+      "ItemName": "Chrysanthemum Coat",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532868",
+      "ItemName": "August Sage Cap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532876",
+      "ItemName": "August Sage Shoes",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "532884",
+      "ItemName": "August Sage Coat",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "537636",
+      "ItemName": "Falmea Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537637",
+      "ItemName": "Greyrose Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537638",
+      "ItemName": "Samoorai Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537639",
+      "ItemName": "Plague Oni Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537640",
+      "ItemName": "War Oni Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "589079",
+      "ItemName": "Onyx Shenlong Dragon",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589080",
+      "ItemName": "Jade Shenlong Dragon",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589081",
+      "ItemName": "Ruby Shenlong Dragon",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589082",
+      "ItemName": "Ivory Shenlong Dragon",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589083",
+      "ItemName": "Amber Shenlong Dragon",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589219",
+      "ItemName": "Bengal Tiger (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "358907420",
+      "ItemName": "Ninja Pigs",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1348222489",
+      "ItemName": "Samoorai",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "1954853134",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "1856576003",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "55042340",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "621735421",
+      "ItemName": "Stormzilla",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "77429277",
+      "ItemName": "Hydra",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

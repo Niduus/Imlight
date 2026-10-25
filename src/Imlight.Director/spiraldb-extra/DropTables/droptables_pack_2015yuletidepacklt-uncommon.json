@@ -1,0 +1,296 @@
+{
+  "Name": "2015YuletidePackLT-UnCommon",
+  "Description": "Winterland Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126814",
+      "ItemName": "Nutcracker Wand",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126815",
+      "ItemName": "Gingerbread Wand",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126816",
+      "ItemName": "Candy Wand",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126817",
+      "ItemName": "Candle Wand",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126818",
+      "ItemName": "Star Staff",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126819",
+      "ItemName": "Ornamental Paper Staff",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126820",
+      "ItemName": "Mint Staff",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "126821",
+      "ItemName": "Sweet Staff",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470174",
+      "ItemName": "Red Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470175",
+      "ItemName": "Blue Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470176",
+      "ItemName": "Green Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470177",
+      "ItemName": "Mixed Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470178",
+      "ItemName": "Pink Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470179",
+      "ItemName": "Yellow Candy-cane (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473522",
+      "ItemName": "Peanutbutter Cup",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473524",
+      "ItemName": "Cry Babies",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537551",
+      "ItemName": "Snow Basin",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "537588",
+      "ItemName": "Simple Sugar Pop",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641604",
+      "ItemName": "Chocolate Comet",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641702",
+      "ItemName": "Crystalweb Candy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641704",
+      "ItemName": "Hickory Chicory",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "724297",
+      "ItemName": "Holiday Fireplace",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "724299",
+      "ItemName": "Fresh Powder Floor",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "733131",
+      "ItemName": "Bedrock Bonbons",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "733185",
+      "ItemName": "Mince Pie",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359612",
+      "ItemName": "Polaris Fries",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1359626",
+      "ItemName": "Penne Dreadful",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374106",
+      "ItemName": "Spiral Light Tree",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374126",
+      "ItemName": "Majestic Reindeer Decoration",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374127",
+      "ItemName": "Lively Reindeer Decoration",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374135",
+      "ItemName": "Polarian Shipwreck Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374136",
+      "ItemName": "Witch's Hut Painting",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374137",
+      "ItemName": "Portrait of Frozen Tears",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1864620671",
+      "ItemName": "Krampus",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "Name": "WyvernsHoardLT-UnCommon",
+  "Description": "Wyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "342095",
+      "ItemName": "Fish Fountain",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "356160",
+      "ItemName": "Stinkweed",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469718",
+      "ItemName": "Red Brick Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469719",
+      "ItemName": "Cross Section Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469720",
+      "ItemName": "Marble Diner Floor Tile",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469721",
+      "ItemName": "Cobblestone Flooring",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469722",
+      "ItemName": "Blue Vine Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469723",
+      "ItemName": "Stone Block Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469724",
+      "ItemName": "Yellow Flowers Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469725",
+      "ItemName": "Marble Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469726",
+      "ItemName": "Wavy Stalk Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "469727",
+      "ItemName": "Stucco Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1682317165",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1469017516",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 6.25
+    }
+  ]
+}

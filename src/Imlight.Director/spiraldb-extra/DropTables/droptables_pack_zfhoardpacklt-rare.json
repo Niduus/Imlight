@@ -1,0 +1,200 @@
+{
+  "Name": "ZFHoardPackLT-Rare",
+  "Description": "Zafaria Safari Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689322",
+      "ItemName": "Zafarian Bath Tub",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689325",
+      "ItemName": "Zafarian Bookshelf",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689329",
+      "ItemName": "Zafarian Couch",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689331",
+      "ItemName": "Zafarian Dining Chair",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689332",
+      "ItemName": "Zafarian Dining Table",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "689333",
+      "ItemName": "Zafarian Fireplace",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1383076",
+      "ItemName": "Jewel Star Blossom",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1470764",
+      "ItemName": "Feisty Lion Cubs",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1470765",
+      "ItemName": "Fearless Lion Cubs",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1470766",
+      "ItemName": "Spirited Lion Cubs",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479677",
+      "ItemName": "Desert Warthog (7 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479678",
+      "ItemName": "Jungle Warthog (7 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479679",
+      "ItemName": "Plains Warthog (7 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479680",
+      "ItemName": "Desert Warthog (1 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479681",
+      "ItemName": "Jungle Warthog (1 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1479682",
+      "ItemName": "Plains Warthog (1 Day)",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1494700",
+      "ItemName": "Savannah Tribal Helm",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494714",
+      "ItemName": "Savannah Tribal Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494728",
+      "ItemName": "Savannah Tribal Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494742",
+      "ItemName": "Drum Jungle Tribal Helm",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494756",
+      "ItemName": "Drum Jungle Tribal Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494770",
+      "ItemName": "Drum Jungle Tribal Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494784",
+      "ItemName": "Zamunda Tribal Helm",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494798",
+      "ItemName": "Zamunda Tribal Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494812",
+      "ItemName": "Zamunda Tribal Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494826",
+      "ItemName": "Savannah Spear and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494840",
+      "ItemName": "Drum Jungle Spear and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494854",
+      "ItemName": "Zamunda Spear and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1499102",
+      "ItemName": "Giraffe Librarian",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1499106",
+      "ItemName": "Zebra Merchant",
+      "Notes": "",
+      "Chance": 4.0
+    }
+  ]
+}

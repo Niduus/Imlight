@@ -1,0 +1,218 @@
+{
+  "Name": "HoardOfHydraLT-Common",
+  "Description": "Hoard of the Hydra Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100414",
+      "ItemName": "Leprechaun",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100448",
+      "ItemName": "Dark Sprite",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160199",
+      "ItemName": "Stained Armoire",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160201",
+      "ItemName": "Open Burned Book",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160202",
+      "ItemName": "Lectern",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160214",
+      "ItemName": "Floor Brazier",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160218",
+      "ItemName": "Crystal Ball",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160252",
+      "ItemName": "Great Spiral Glyph",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160985",
+      "ItemName": "Spiral Shield",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "206087",
+      "ItemName": "Grandfather Clock",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "206090",
+      "ItemName": "Birdcage",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "212076",
+      "ItemName": "Crabling",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220255",
+      "ItemName": "Arrow Root",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220270",
+      "ItemName": "Grilled Cheese",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "Cow Pie",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "225473",
+      "ItemName": "Seraph",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "342149",
+      "ItemName": "Large Willow Tree",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

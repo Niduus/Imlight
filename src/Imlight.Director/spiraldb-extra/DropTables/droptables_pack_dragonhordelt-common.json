@@ -1,0 +1,176 @@
+{
+  "Name": "DragonHordeLT-Common",
+  "Description": "Dragon's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160811",
+      "ItemName": "Broken Dragon Bust",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160824",
+      "ItemName": "Dragonhorn Trophy",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160837",
+      "ItemName": "Dragonmoon Obelisk",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160843",
+      "ItemName": "Dragonclaw Pedestal",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160865",
+      "ItemName": "Dragonmoon Marker",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160866",
+      "ItemName": "Dragonskull Marker",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160871",
+      "ItemName": "Dragonflame Torch",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160915",
+      "ItemName": "Dragonskull Plaque",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160972",
+      "ItemName": "Singed Dragon Handbook",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160977",
+      "ItemName": "Snapdragon Flowerbed",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258594",
+      "ItemName": "Perfect Peridot",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258595",
+      "ItemName": "Perfect Ruby",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "258596",
+      "ItemName": "Perfect Sapphire",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

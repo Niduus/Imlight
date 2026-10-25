@@ -1,0 +1,44 @@
+{
+  "Name": "B-A-C-Medieval-Door",
+  "Description": "Build-A-Castle Medieval Set (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1212034",
+      "ItemName": "Door Double Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1212043",
+      "ItemName": "Door Single Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233265",
+      "ItemName": "Archway Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233266",
+      "ItemName": "Door Double Magic Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1233340",
+      "ItemName": "Door Single Magic Castle Block",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

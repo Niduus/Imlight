@@ -1,0 +1,266 @@
+{
+  "Name": "PolarisPackLT-UnCommon",
+  "Description": "Witch's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "100419",
+      "ItemName": "Arctic Serpent",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "100464",
+      "ItemName": "Ice Salamander",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359194",
+      "ItemName": "Wood Arch Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359196",
+      "ItemName": "Wood Post Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359198",
+      "ItemName": "Wood Corner Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359200",
+      "ItemName": "Lg Wood Wall Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359202",
+      "ItemName": "Md Wood Wall Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359204",
+      "ItemName": "Wood Window Block",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359612",
+      "ItemName": "Polaris Fries",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359626",
+      "ItemName": "Penne Dreadful",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1359628",
+      "ItemName": "Chilly Con Queso",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374135",
+      "ItemName": "Polarian Shipwreck Painting",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374136",
+      "ItemName": "Witch's Hut Painting",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374137",
+      "ItemName": "Portrait of Frozen Tears",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374250",
+      "ItemName": "Icy Polarian Shrub",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374251",
+      "ItemName": "Extra Large Fish Cart",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374254",
+      "ItemName": "Ice Patch",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374256",
+      "ItemName": "Polarian Birch Tree",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374264",
+      "ItemName": "Grand Walruskberg Lamp Post",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374277",
+      "ItemName": "Walruskberg Palace Painting",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374280",
+      "ItemName": "Walruskberg Guard Booth",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374282",
+      "ItemName": "Walruskberg Window",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374288",
+      "ItemName": "Walrusk Empress Caricature",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1374291",
+      "ItemName": "Walrusk Vanity",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "992118729",
+      "ItemName": "Age of Reckoning",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "536837522",
+      "ItemName": "Astraphobia",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1991238308",
+      "ItemName": "Combustion",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1973987249",
+      "ItemName": "Counterforce",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1635828928",
+      "ItemName": "Katabatic Wind",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1231689652",
+      "ItemName": "Namaste",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1262240198",
+      "ItemName": "Saga of Heroes",
+      "Notes": "",
+      "Chance": 3.125
+    }
+  ]
+}

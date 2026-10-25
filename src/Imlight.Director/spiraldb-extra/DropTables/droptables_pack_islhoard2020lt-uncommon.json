@@ -1,0 +1,266 @@
+{
+  "Name": "IslHoard2020LT-UnCommon",
+  "Description": "Islander's Spellemental Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160129",
+      "ItemName": "Magma Spider",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "160377",
+      "ItemName": "Small Fern",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "175579",
+      "ItemName": "Jellyfish",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "Tiki Banana",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "276445",
+      "ItemName": "Manta Ray (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "276460",
+      "ItemName": "Ancient Koi (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342073",
+      "ItemName": "Shark Hut",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342075",
+      "ItemName": "Campfire with Fish",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342081",
+      "ItemName": "Brain Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342083",
+      "ItemName": "Tube Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342091",
+      "ItemName": "Diving Tanks",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342099",
+      "ItemName": "Crab Lamp",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342102",
+      "ItemName": "Outrigger Canoe",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342105",
+      "ItemName": "Palm Fronds",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342112",
+      "ItemName": "Water-Mole Shield",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342123",
+      "ItemName": "Cephalopod Statue",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342125",
+      "ItemName": "Water-Mole Statue",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342133",
+      "ItemName": "Tiki Torch",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342135",
+      "ItemName": "Tall Tiki Totem",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342156",
+      "ItemName": "Water Pump",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342157",
+      "ItemName": "Water-Mole Weapon Rack",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "342158",
+      "ItemName": "Water-Mole Mask Rack",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "470138",
+      "ItemName": "Hippogriff (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "473447",
+      "ItemName": "Pink Jellyfish",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "641608",
+      "ItemName": "Asparagus Spears",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "789447",
+      "ItemName": "Huli-Hula Chicken",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "789448",
+      "ItemName": "Foamy Lomi Salmon",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "789449",
+      "ItemName": "Luau Pizza",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "789457",
+      "ItemName": "Iced Crab Claws",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "38265124",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "485345744",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "922577027",
+      "ItemName": "Tempest",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "617228492",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1342245979",
+      "ItemName": "Skeletal Pirate",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1475097562",
+      "ItemName": "Minotaur",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2084795842",
+      "ItemName": "Sandstorm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1882778148",
+      "ItemName": "Monstrous",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1260581037",
+      "ItemName": "Sniper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "228494273",
+      "ItemName": "Elemental Spear",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2120362237",
+      "ItemName": "Spirit Spear",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

@@ -1,0 +1,674 @@
+{
+  "Name": "DruidHoardPackLT-Wildcard",
+  "Description": "Druid's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1470622",
+      "ItemName": "Combat Badger (PERM)",
+      "Notes": "",
+      "Chance": 0.3333
+    },
+    {
+      "ItemId": "1470625",
+      "ItemName": "Attack Badger (PERM)",
+      "Notes": "",
+      "Chance": 0.3333
+    },
+    {
+      "ItemId": "1470630",
+      "ItemName": "Battle Badger (PERM)",
+      "Notes": "",
+      "Chance": 0.3333
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "713147",
+      "ItemName": "Sour Fickle Pickle",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470623",
+      "ItemName": "Combat Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470624",
+      "ItemName": "Combat Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470626",
+      "ItemName": "Attack Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470627",
+      "ItemName": "Attack Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470628",
+      "ItemName": "Battle Badger (1 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470629",
+      "ItemName": "Battle Badger (7 Day)",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470635",
+      "ItemName": "Summer Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470636",
+      "ItemName": "Winter Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1470637",
+      "ItemName": "Spring Sproutling",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479629",
+      "ItemName": "Amber Orb",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479630",
+      "ItemName": "Druid Burial Chambers",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479631",
+      "ItemName": "Druid Symbol Wall Hanging",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479632",
+      "ItemName": "Druid Symbol Floor",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479633",
+      "ItemName": "Fountain of Valencia",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479634",
+      "ItemName": "Ruined Castle Painting",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "1479649",
+      "ItemName": "King Casimir",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1479656",
+      "ItemName": "Queen Margherita",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494247",
+      "ItemName": "Ancient Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494261",
+      "ItemName": "Ancient Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494275",
+      "ItemName": "Ancient Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494289",
+      "ItemName": "Spellwright's Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494303",
+      "ItemName": "Spellwright's Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494317",
+      "ItemName": "Spellwright's Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494331",
+      "ItemName": "Treeminder's Druidic Cowl",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494345",
+      "ItemName": "Treeminder's Druidic Robe",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494359",
+      "ItemName": "Treeminder's Druidic Boots",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494499",
+      "ItemName": "Ancient Druid Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494513",
+      "ItemName": "Spellwright's Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "1494527",
+      "ItemName": "Treeminder's Sickle and Shield",
+      "Notes": "",
+      "Chance": 4.0
+    },
+    {
+      "ItemId": "100329",
+      "ItemName": "Goat Monk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100463",
+      "ItemName": "Fire Salamander",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220277",
+      "ItemName": "Chocolate Cake",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "225420",
+      "ItemName": "Deathbat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1317838",
+      "ItemName": "Fetid Legumes",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350240",
+      "ItemName": "Iridium",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479635",
+      "ItemName": "Broken Chair",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479636",
+      "ItemName": "Orange Crystals",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479637",
+      "ItemName": "Slimy Purple Crystal",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479638",
+      "ItemName": "Strange Green and Orange Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479639",
+      "ItemName": "Strange Blue and Purple Coral",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479642",
+      "ItemName": "Ruined River Painting",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479643",
+      "ItemName": "Not Quite Repaired Rug",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479647",
+      "ItemName": "General Greyflame",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1479655",
+      "ItemName": "The Boss",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480048",
+      "ItemName": "WC Catacombs Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480049",
+      "ItemName": "WC Catacombs Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480050",
+      "ItemName": "WC Drains Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480051",
+      "ItemName": "WC Drains Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1480052",
+      "ItemName": "WC Elsewhere Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1171503055",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "70785565",
+      "ItemName": "Hydra",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1161906569",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "819802901",
+      "ItemName": "Judgement",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1486543476",
+      "ItemName": "Fire Bats",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1496018147",
+      "ItemName": "Deadly Minotaur",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2143801613",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "2074242982",
+      "ItemName": "Sleet Storm",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "82261857",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1787596956",
+      "ItemName": "Wild Bolt",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "100325",
+      "ItemName": "Frog",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100416",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "175468",
+      "ItemName": "Grizzley Boar",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220229",
+      "ItemName": "Wafer Biscuit",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220232",
+      "ItemName": "Yogurt",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220250",
+      "ItemName": "Truffle",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "Radioactive Pizza",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479623",
+      "ItemName": "Broken Vase with Flower",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479624",
+      "ItemName": "Drains Sconce",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479625",
+      "ItemName": "Notebook",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479626",
+      "ItemName": "Rolled Up Rug",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479627",
+      "ItemName": "Ruined Forest Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479628",
+      "ItemName": "Trash Pile",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479644",
+      "ItemName": "Ghost Warden",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1492247",
+      "ItemName": "Daybreaker",
+      "Notes": "",
+      "Chance": 0.3333
+    },
+    {
+      "ItemId": "1492249",
+      "ItemName": "Nightbringer",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

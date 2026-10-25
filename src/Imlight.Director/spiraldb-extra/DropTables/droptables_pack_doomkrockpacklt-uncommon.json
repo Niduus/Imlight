@@ -1,0 +1,224 @@
+{
+  "Name": "DoomKrockPackLT-Uncommon",
+  "Description": "Doomsday Krok Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82739",
+      "ItemName": "Krok Scarab Pillar",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82746",
+      "ItemName": "Krokotopia Map",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82780",
+      "ItemName": "Sand Celebration Rug",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82826",
+      "ItemName": "Fire Sarcophagus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82869",
+      "ItemName": "Large Archway",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "164144",
+      "ItemName": "Hieroglyph Wall Decor",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "164279",
+      "ItemName": "Solar Pattern Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220339",
+      "ItemName": "Raising Bran Cereal",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789215",
+      "ItemName": "Gator Tots",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789455",
+      "ItemName": "Loco Nut",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1257590",
+      "ItemName": "Prickly Bear Punch",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1965294596",
+      "ItemName": "Locust Swarm",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1185943347",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1603071315",
+      "ItemName": "Mander",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "36395063",
+      "ItemName": "Mega Taunt",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "903042477",
+      "ItemName": "Myth Prism",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "317331425",
+      "ItemName": "Namaste",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1912508261",
+      "ItemName": "Nekhbet",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1765285594",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "2143801613",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1361231014",
+      "ItemName": "Wormguts",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1913080634",
+      "ItemName": "Sandstone Colossus",
+      "Notes": "",
+      "Chance": 6.25
+    }
+  ]
+}

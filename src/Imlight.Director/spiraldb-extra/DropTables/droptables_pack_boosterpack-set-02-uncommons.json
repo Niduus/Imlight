@@ -1,0 +1,92 @@
+{
+  "Name": "BoosterPack-Set-02-Uncommons",
+  "Description": "Faithful Companion Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1529973157",
+      "ItemName": "Buff Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977509811",
+      "ItemName": "Draw Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1529916330",
+      "ItemName": "Mend Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1030803361",
+      "ItemName": "Shield Minion",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1154729897",
+      "ItemName": "Siphon Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "637424953",
+      "ItemName": "Steal Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "494333983",
+      "ItemName": "Purloin Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1171433039",
+      "ItemName": "Heck Hound",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1361211448",
+      "ItemName": "Draw Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1977044419",
+      "ItemName": "Take Power",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "635061742",
+      "ItemName": "Drain Health",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "64289252",
+      "ItemName": "Unicorn",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1280381090",
+      "ItemName": "Purloin Power",
+      "Notes": "",
+      "Chance": 11.1111
+    }
+  ]
+}

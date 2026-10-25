@@ -1,0 +1,434 @@
+{
+  "Name": "EvilTwinPackLT-UnCommon",
+  "Description": "Elven Nightmare Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82705",
+      "ItemName": "Axe",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82755",
+      "ItemName": "Tall Pumpkin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82784",
+      "ItemName": "Fire Mummy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82832",
+      "ItemName": "Worn Shovel",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82866",
+      "ItemName": "Obsidian Chest",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "82911",
+      "ItemName": "Pilloried Skeleton",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160221",
+      "ItemName": "Carved Skull",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160225",
+      "ItemName": "Bone Hand",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160227",
+      "ItemName": "Rattlebones' Feet",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160230",
+      "ItemName": "Pumpkin",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160235",
+      "ItemName": "Brain Jar",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160245",
+      "ItemName": "Large Candle Holder",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160281",
+      "ItemName": "Death Desk",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160297",
+      "ItemName": "Crate of Pumpkins",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160315",
+      "ItemName": "Slanted Grave",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160336",
+      "ItemName": "Obsidian Firecat Statue",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160361",
+      "ItemName": "Dark Stone Tower",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160381",
+      "ItemName": "Dead Tree",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160408",
+      "ItemName": "Death Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160420",
+      "ItemName": "Death Banner",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160444",
+      "ItemName": "Bubbling Cauldron",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160570",
+      "ItemName": "Haunted Samoorai Shrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160622",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160623",
+      "ItemName": "Buried Bone",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160630",
+      "ItemName": "Jaques' Saw",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160640",
+      "ItemName": "Krokotopian Mummy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160701",
+      "ItemName": "Lit Furnace",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160708",
+      "ItemName": "Altar with Candles",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160731",
+      "ItemName": "Angled Gravemarker",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "160800",
+      "ItemName": "Smoldering Tree",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "164419",
+      "ItemName": "Theater Masks",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181052",
+      "ItemName": "Broom",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181084",
+      "ItemName": "Foul Cauldron",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "181129",
+      "ItemName": "Pot-bellied Stove",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "209079",
+      "ItemName": "Jar of Bat Wings",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473521",
+      "ItemName": "Rotten Candy",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473523",
+      "ItemName": "Misfortune Cookie",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1374387",
+      "ItemName": "Dutiful Bloodbat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1636780297",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "78406550",
+      "ItemName": "Curse",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1161911712",
+      "ItemName": "Hex",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "520377007",
+      "ItemName": "Spirit Shield",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "708782360",
+      "ItemName": "Black Cat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1863567496",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "903124893",
+      "ItemName": "Death Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1726358038",
+      "ItemName": "Life Bat",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "794056538",
+      "ItemName": "Ash Bats",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "829725510",
+      "ItemName": "Dark Tribute",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1148561943",
+      "ItemName": "Ghost Touch",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1161919649",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "1987753077",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 3.0303
+    },
+    {
+      "ItemId": "305826346",
+      "ItemName": "Spirit Trap",
+      "Notes": "",
+      "Chance": 3.0303
+    }
+  ]
+}

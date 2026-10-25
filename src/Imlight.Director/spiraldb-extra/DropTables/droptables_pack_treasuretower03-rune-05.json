@@ -1,0 +1,38 @@
+{
+  "Name": "TreasureTower03-Rune-05",
+  "Description": "Deckathalon Death Rune Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1441818",
+      "ItemName": "Life Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441821",
+      "ItemName": "Death Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441824",
+      "ItemName": "Balance Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441827",
+      "ItemName": "Myth Rune",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

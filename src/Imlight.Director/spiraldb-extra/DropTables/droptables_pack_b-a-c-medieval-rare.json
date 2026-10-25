@@ -1,0 +1,170 @@
+{
+  "Name": "B-A-C-Medieval-Rare",
+  "Description": "Build-A-Castle Medieval Set (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1233261",
+      "ItemName": "Stairs Wide Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233262",
+      "ItemName": "Tower Corner Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233278",
+      "ItemName": "Secret Passage Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233283",
+      "ItemName": "Tower Corner Top Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233284",
+      "ItemName": "Wall Short Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233285",
+      "ItemName": "Wall/Window Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233287",
+      "ItemName": "Wall/Post Short Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233288",
+      "ItemName": "Wall Short Md Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233293",
+      "ItemName": "Roof Peak Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233294",
+      "ItemName": "Roof Corner Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233315",
+      "ItemName": "Floor/Ceiling XL Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233317",
+      "ItemName": "Floor XL Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233321",
+      "ItemName": "Stairs/Ceiling Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233331",
+      "ItemName": "Tower Door Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233343",
+      "ItemName": "Roof Inside Corner Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233344",
+      "ItemName": "Balustrade Lg Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233345",
+      "ItemName": "Balustrade Sm Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233389",
+      "ItemName": "Floor/Ceiling XL Wood Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233521",
+      "ItemName": "Stained Glass Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233552",
+      "ItemName": "Floor Md 2 Story Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233553",
+      "ItemName": "Floor Med 2 Story Wood Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233554",
+      "ItemName": "Pyramid Roof Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233563",
+      "ItemName": "Wall XL Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233564",
+      "ItemName": "Crenellation Castle Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1233565",
+      "ItemName": "Gobblergoyle Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1233573",
+      "ItemName": "4 Wall Cube Castle Block",
+      "Notes": "",
+      "Chance": 5.5556
+    }
+  ]
+}

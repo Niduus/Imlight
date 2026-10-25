@@ -1,0 +1,788 @@
+{
+  "Name": "DoomKrockPackLT-Wildcard",
+  "Description": "Doomsday Krok Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1479715",
+      "ItemName": "Parallel Time Limes",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1499139",
+      "ItemName": "Setesh's Krokosphinx (PERM)",
+      "Notes": "",
+      "Chance": 0.6667
+    },
+    {
+      "ItemId": "1499140",
+      "ItemName": "Sokar's Krokosphinx (PERM)",
+      "Notes": "",
+      "Chance": 0.6667
+    },
+    {
+      "ItemId": "1499141",
+      "ItemName": "Apophis' Krokosphinx (PERM)",
+      "Notes": "",
+      "Chance": 0.6667
+    },
+    {
+      "ItemId": "1479429",
+      "ItemName": "The Boat",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479433",
+      "ItemName": "Desert Forge",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479435",
+      "ItemName": "Glass of Hours",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479436",
+      "ItemName": "Sand Device",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479439",
+      "ItemName": "Double Scroll Case",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479441",
+      "ItemName": "Istanboa Platform",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1479714",
+      "ItemName": "Alternate Time Lime",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1499142",
+      "ItemName": "Sokar's Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499143",
+      "ItemName": "Sokar's Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499144",
+      "ItemName": "Setesh's Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499145",
+      "ItemName": "Setesh's Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499146",
+      "ItemName": "Apophis' Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499147",
+      "ItemName": "Apophis' Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499175",
+      "ItemName": "Sokar's Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499176",
+      "ItemName": "Setesh's Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499177",
+      "ItemName": "Apophis' Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499186",
+      "ItemName": "Mini Pyramid",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499187",
+      "ItemName": "Doohickey",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499188",
+      "ItemName": "Krokotopian Pillar",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499189",
+      "ItemName": "Krokotopian Bridge",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499190",
+      "ItemName": "Krokotopian Obelisk",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499191",
+      "ItemName": "Krok Statue Flex",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499192",
+      "ItemName": "Krok Statue Thumbs Up",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1502223",
+      "ItemName": "Sokar's Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502237",
+      "ItemName": "Sokar's Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502251",
+      "ItemName": "Sokar's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502265",
+      "ItemName": "Setesh's Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502279",
+      "ItemName": "Setesh's Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502293",
+      "ItemName": "Setesh's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502307",
+      "ItemName": "Apophis' Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502321",
+      "ItemName": "Apophis' Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502335",
+      "ItemName": "Apophis' Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502349",
+      "ItemName": "Sokar's Javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502363",
+      "ItemName": "Setesh's javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502377",
+      "ItemName": "Apophis' Javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "82739",
+      "ItemName": "Krok Scarab Pillar",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82746",
+      "ItemName": "Krokotopia Map",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82780",
+      "ItemName": "Sand Celebration Rug",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82826",
+      "ItemName": "Fire Sarcophagus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82869",
+      "ItemName": "Large Archway",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "164144",
+      "ItemName": "Hieroglyph Wall Decor",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "164279",
+      "ItemName": "Solar Pattern Wallpaper",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220339",
+      "ItemName": "Raising Bran Cereal",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473528",
+      "ItemName": "Sandy Corn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789215",
+      "ItemName": "Gator Tots",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "789455",
+      "ItemName": "Loco Nut",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1257590",
+      "ItemName": "Prickly Bear Punch",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1965294596",
+      "ItemName": "Locust Swarm",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1185943347",
+      "ItemName": "Lightning Bats",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1603071315",
+      "ItemName": "Mander",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "36395063",
+      "ItemName": "Mega Taunt",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "903042477",
+      "ItemName": "Myth Prism",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "317331425",
+      "ItemName": "Namaste",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1912508261",
+      "ItemName": "Nekhbet",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1765285594",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "2143801613",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1361231014",
+      "ItemName": "Wormguts",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "1913080634",
+      "ItemName": "Sandstone Colossus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "82767",
+      "ItemName": "Krok Sun Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82768",
+      "ItemName": "Krok Tree Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82769",
+      "ItemName": "Krok Storm Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82770",
+      "ItemName": "Krok Snake Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82772",
+      "ItemName": "Krok Skull Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82773",
+      "ItemName": "Krok Moon Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82774",
+      "ItemName": "Krok Ice Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82775",
+      "ItemName": "Krok Fire Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82776",
+      "ItemName": "Krok Insect Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82777",
+      "ItemName": "Krok Bird Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "82778",
+      "ItemName": "Krok Balance Plaque",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "220274",
+      "ItemName": "Star Fruit",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1479713",
+      "ItemName": "Time Lime",
+      "Notes": "",
+      "Chance": 33.3333
+    },
+    {
+      "ItemId": "1494694",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "175468",
+      "ItemName": "Grizzley Boar",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "537600",
+      "ItemName": "Bunch of Figs",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "589628",
+      "ItemName": "Void Basilisk",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643101",
+      "ItemName": "Red Top Drum",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643135",
+      "ItemName": "Primitive Snake Mask",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643176",
+      "ItemName": "Desert Table",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643181",
+      "ItemName": "Stone Throne",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643189",
+      "ItemName": "Elephant GraveStone",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "733127",
+      "ItemName": "Tricera-pops",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "733139",
+      "ItemName": "Zocalo Wings",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248061",
+      "ItemName": "Chili Peppermint",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1260024",
+      "ItemName": "Lion's Paw Print Floor",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1317097",
+      "ItemName": "Surfin' Turf",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374427",
+      "ItemName": "Mythdactyl",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1499101",
+      "ItemName": "Zebra Warrior",
+      "Notes": "",
+      "Chance": 2.7027
+    }
+  ]
+}

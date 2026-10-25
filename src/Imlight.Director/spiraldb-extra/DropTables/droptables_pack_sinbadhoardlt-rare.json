@@ -1,0 +1,170 @@
+{
+  "Name": "SinbadHoardLT-Rare",
+  "Description": "Sinbad Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1470042",
+      "ItemName": "Roc (7 Day)",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1470043",
+      "ItemName": "Roc (1 Day)",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1470044",
+      "ItemName": "Scrappy Gryphon",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1479418",
+      "ItemName": "Marvelous Clay",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479420",
+      "ItemName": "Plucky Gryphon",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1479421",
+      "ItemName": "Snappy Gryphon",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1479429",
+      "ItemName": "The Boat",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479433",
+      "ItemName": "Desert Forge",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479435",
+      "ItemName": "Glass of Hours",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479436",
+      "ItemName": "Sand Device",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479439",
+      "ItemName": "Double Scroll Case",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1479441",
+      "ItemName": "Istanboa Platform",
+      "Notes": "",
+      "Chance": 5.8824
+    },
+    {
+      "ItemId": "1489471",
+      "ItemName": "Fleet Kapudan's Turban",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489485",
+      "ItemName": "Fleet Kapudan's Armor",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489499",
+      "ItemName": "Fleet Kapudan's Boots",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489513",
+      "ItemName": "Grand Admiral's Turban",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489527",
+      "ItemName": "Grand Admiral's Armor",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489541",
+      "ItemName": "Grand Admiral's Boots",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489555",
+      "ItemName": "Sky Captain's Turban",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489569",
+      "ItemName": "Sky Captain's Armor",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489583",
+      "ItemName": "Sky Captain's Boots",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489611",
+      "ItemName": "Admiral's Boarding Hook",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489625",
+      "ItemName": "Sky Captain's Boarding Hook",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1489885",
+      "ItemName": "Kapudan's Grappling Hook",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "553652778",
+      "ItemName": "Sinbad",
+      "Notes": "",
+      "Chance": 2.9412
+    }
+  ]
+}

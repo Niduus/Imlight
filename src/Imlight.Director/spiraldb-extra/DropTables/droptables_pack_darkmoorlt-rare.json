@@ -1,0 +1,314 @@
+{
+  "Name": "DarkmoorLT-Rare",
+  "Description": "Terror's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "473517",
+      "ItemName": "Pixie Stix",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "589104",
+      "ItemName": "Basil Poodle Noodles",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "589105",
+      "ItemName": "Zen Poppers",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "641595",
+      "ItemName": "Toad in the Hole",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "641597",
+      "ItemName": "Bearberry",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "733138",
+      "ItemName": "Bronto Burger",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317837",
+      "ItemName": "Pitch Black Licorice",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317839",
+      "ItemName": "Skeletal Treebark",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317841",
+      "ItemName": "Wolfbane Tea",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317846",
+      "ItemName": "Grasshopper Canap??",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317946",
+      "ItemName": "Darkmoor Lounge Cushion",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317949",
+      "ItemName": "Imposing Darkmoor Arch",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317959",
+      "ItemName": "Darkmoor Castle Bed",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317960",
+      "ItemName": "Darkmoor Parlor Chair",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317961",
+      "ItemName": "Darkmoor Parlor Sofa",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317963",
+      "ItemName": "Darkmoor Skeletal Tree",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317968",
+      "ItemName": "Castle Darkmoor Armoire",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317971",
+      "ItemName": "Darkmoor Torch Pillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317973",
+      "ItemName": "Grandiose Gargoyle Pillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1317974",
+      "ItemName": "Von Shane Sarcophagus",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338733",
+      "ItemName": "Masque of the Soothsayer",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338744",
+      "ItemName": "Soothsayer's Boots",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338755",
+      "ItemName": "Soothsayer's Finery",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1338766",
+      "ItemName": "Fortune Teller's Mask",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338777",
+      "ItemName": "Fortune Teller's Striders",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338787",
+      "ItemName": "Garb of the Fortune Teller",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1338798",
+      "ItemName": "Fortune Teller's Veil",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338809",
+      "ItemName": "Shoes of the Fortuneteller",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1338820",
+      "ItemName": "Fortune Teller's Ensemble",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1338833",
+      "ItemName": "Eye of the Soothsayer",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1338844",
+      "ItemName": "Fortune Teller's Eternal Gaze",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1338855",
+      "ItemName": "Fortune Teller's Peerless Eye",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1340031",
+      "ItemName": "Mote of Beauty",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1340032",
+      "ItemName": "Mote of Severity",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "1350052",
+      "ItemName": "Brainy Assistant",
+      "Notes": "",
+      "Chance": 2.3256
+    },
+    {
+      "ItemId": "879779635",
+      "ItemName": "Double Strangle",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "848000484",
+      "ItemName": "Double Dissipate",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "879772773",
+      "ItemName": "Double Entangle",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "433099623",
+      "ItemName": "Double Melt",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "2058990327",
+      "ItemName": "Double Quench",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "791531094",
+      "ItemName": "Double Unbalance",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1447602797",
+      "ItemName": "Double Vaporize",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "947908286",
+      "ItemName": "Gaze of Fate",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "239991804",
+      "ItemName": "Call of Khrulhu",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1611266108",
+      "ItemName": "Glowbug Squall",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "559384134",
+      "ItemName": "Abominable Weaver",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "2126311973",
+      "ItemName": "Mystic Colossus",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "1803680979",
+      "ItemName": "Hungry Caterpillar",
+      "Notes": "",
+      "Chance": 2.2222
+    },
+    {
+      "ItemId": "638345920",
+      "ItemName": "Fire from Above",
+      "Notes": "",
+      "Chance": 2.2222
+    }
+  ]
+}

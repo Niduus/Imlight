@@ -1,0 +1,326 @@
+{
+  "Name": "PurreausPetsLT-UnCommon",
+  "Description": "Purreau's Plentiful Pet Provisions (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220252",
+      "ItemName": "Big Squash",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220255",
+      "ItemName": "Arrow Root",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220260",
+      "ItemName": "Tasty Biscuit",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220262",
+      "ItemName": "Spicy Chips",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "Meat Soup",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220269",
+      "ItemName": "Chili Cheese Fries",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220270",
+      "ItemName": "Grilled Cheese",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "Tiki Banana",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220277",
+      "ItemName": "Chocolate Cake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220278",
+      "ItemName": "Large Ice Cream",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "Cow Pie",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220281",
+      "ItemName": "Chocolate Donut",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220283",
+      "ItemName": "Nutty Candy bar",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220295",
+      "ItemName": "Spicy Popcorn",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220298",
+      "ItemName": "Golden Biscuit",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220300",
+      "ItemName": "Poncherello Chips",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220307",
+      "ItemName": "Dagwood Sandwich",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220309",
+      "ItemName": "7 Layer Taco",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220314",
+      "ItemName": "Fairy Cake",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220315",
+      "ItemName": "Huge Ice Cream",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220327",
+      "ItemName": "French Fries",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220330",
+      "ItemName": "Double Donut",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy",
+      "Notes": "",
+      "Chance": 4.3478
+    }
+  ]
+}

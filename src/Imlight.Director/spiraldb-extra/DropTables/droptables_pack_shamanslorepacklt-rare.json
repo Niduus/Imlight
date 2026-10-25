@@ -1,0 +1,218 @@
+{
+  "Name": "ShamansLorePackLT-Rare",
+  "Description": "Shaman's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "469781",
+      "ItemName": "Blue Teleporter",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "469782",
+      "ItemName": "Cyan Teleporter",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "469783",
+      "ItemName": "Green Teleporter",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "469784",
+      "ItemName": "Orange Teleporter",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "470687",
+      "ItemName": "El Marrow Bobblehead",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "470688",
+      "ItemName": "Onyx Rain Sun Bobblehead",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "470689",
+      "ItemName": "Zenzen Seven Star Bobblehead",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "470690",
+      "ItemName": "Cipactli Bobblehead",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "470691",
+      "ItemName": "Huracan Vicious Sky Bobblehead",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "730653",
+      "ItemName": "Proud Jaguar's Mask",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730663",
+      "ItemName": "Pads of the Proud Jaguar",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730673",
+      "ItemName": "Armor of the Proud Jaguar",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "730683",
+      "ItemName": "Crown of the Night Jaguar",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730693",
+      "ItemName": "Night Jaguar's Stalkers",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730703",
+      "ItemName": "Night Jaguar's Cloak",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "730713",
+      "ItemName": "Dawn Jaguar's Helm",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730723",
+      "ItemName": "Dawn Jaguar's Silent Boots",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "730733",
+      "ItemName": "Dawn Jaguar Hunting Garb",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "730820",
+      "ItemName": "Teeth of the Lords of Night",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "730830",
+      "ItemName": "Fire Serpent's Obsidian Fang",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "730840",
+      "ItemName": "Prismatic Volcanic Axe",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "733072",
+      "ItemName": "Leaf Foot",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "1537562415",
+      "ItemName": "Savage Paw",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "1760077096",
+      "ItemName": "Lord of Night",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "512649414",
+      "ItemName": "Winter Moon",
+      "Notes": "",
+      "Chance": 1.5873
+    },
+    {
+      "ItemId": "332216349",
+      "ItemName": "Forest Lord Cub",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1248809568",
+      "ItemName": "Blue Phoenix",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1885633997",
+      "ItemName": "Crystal Spider",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1623842252",
+      "ItemName": "Thunderbird",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "2035661340",
+      "ItemName": "Diseased Spirit",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "264629200",
+      "ItemName": "Eldritch Banshee",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1147277570",
+      "ItemName": "Frost Demon",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1117416876",
+      "ItemName": "Sea Krait",
+      "Notes": "",
+      "Chance": 4.5455
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "Name": "WyvernsHoardLT-Common",
+  "Description": "Wyvern's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82726",
+      "ItemName": "Bowl of Tomatoes",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "82755",
+      "ItemName": "Tall Pumpkin",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "82897",
+      "ItemName": "Bushy Palm Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "82898",
+      "ItemName": "Tall Palm Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160369",
+      "ItemName": "Small Bush",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160370",
+      "ItemName": "Fire Bush",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160375",
+      "ItemName": "Hedge Row",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160376",
+      "ItemName": "Square Hedge",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160378",
+      "ItemName": "Elm Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160379",
+      "ItemName": "Large Cypress Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160380",
+      "ItemName": "Small Cypress Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160383",
+      "ItemName": "Maple Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160384",
+      "ItemName": "Small Maple Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160542",
+      "ItemName": "Bamboo Grove",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160586",
+      "ItemName": "Wooden Well",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "160605",
+      "ItemName": "Summer Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160608",
+      "ItemName": "Red Leaf Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160617",
+      "ItemName": "Sunflower",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "160696",
+      "ItemName": "Green Foodcart",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181061",
+      "ItemName": "Large Evergreen Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181062",
+      "ItemName": "Medium Evergreen Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181063",
+      "ItemName": "Small Evergreen Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181064",
+      "ItemName": "Large Fir Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181066",
+      "ItemName": "Small Fir Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181106",
+      "ItemName": "Broken Stump",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181111",
+      "ItemName": "Great Pine Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181112",
+      "ItemName": "Medium Pine Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "181113",
+      "ItemName": "Coniferous Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "240100",
+      "ItemName": "Wheel of Cheese",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342146",
+      "ItemName": "Celestian Tree Sapling",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342147",
+      "ItemName": "Flowering Celestian Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342148",
+      "ItemName": "Celestian Tree Sprig",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342149",
+      "ItemName": "Large Willow Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342150",
+      "ItemName": "Leaning Palm Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "342151",
+      "ItemName": "Broken Palm Tree",
+      "Notes": "",
+      "Chance": 8.3333
+    }
+  ]
+}

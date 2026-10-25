@@ -1,0 +1,260 @@
+{
+  "Name": "PrimevalHoard-Rare",
+  "Description": "Primeval Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "537585",
+      "ItemName": "Peppercorn",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "641712",
+      "ItemName": "Fish Egg Pancakes",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683258",
+      "ItemName": "Aztecan Bath Sink",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683259",
+      "ItemName": "Aztecan Bath Tub",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683260",
+      "ItemName": "Aztecan Bed",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683261",
+      "ItemName": "Aztecan Bed Table",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683262",
+      "ItemName": "Aztecan Bookshelf",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683263",
+      "ItemName": "Aztecan Cabinet",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683264",
+      "ItemName": "Aztecan Settee",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683265",
+      "ItemName": "Aztecan Coffee Table",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683266",
+      "ItemName": "Aztecan Couch",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683267",
+      "ItemName": "Aztecan Cupboards",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683268",
+      "ItemName": "Aztecan Dining Chair",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683269",
+      "ItemName": "Aztecan Dining Table",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683270",
+      "ItemName": "Aztecan Fireplace",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683271",
+      "ItemName": "Aztecan Rug",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683272",
+      "ItemName": "Aztecan Sink",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683273",
+      "ItemName": "Aztecan Towel Rack",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683300",
+      "ItemName": "Aztecan Cracked Tile",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "683301",
+      "ItemName": "Aztecan Brick Wall",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "713133",
+      "ItemName": "Dead Beets",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1248055",
+      "ItemName": "Honeycombs",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1248061",
+      "ItemName": "Chili Peppermint",
+      "Notes": "",
+      "Chance": 2.1277
+    },
+    {
+      "ItemId": "1502884",
+      "ItemName": "Fossil Avenger's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502898",
+      "ItemName": "Fossil Avenger's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502912",
+      "ItemName": "Fossil Avenger's Stalkers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502926",
+      "ItemName": "Fossil Warrior's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502940",
+      "ItemName": "Fossil Warrior's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502954",
+      "ItemName": "Fossil Warrior's Stalkers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502968",
+      "ItemName": "Fossil Hunter's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502982",
+      "ItemName": "Fossil Hunter's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1502996",
+      "ItemName": "Fossil Hunter's Stalkers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1505136",
+      "ItemName": "Fossil Avenger's Skullcrusher",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1505150",
+      "ItemName": "Fossil Warrior's Skullcrusher",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1505164",
+      "ItemName": "Fossil Hunter's Skullcrusher",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507001",
+      "ItemName": "Scratchy Frillasaur",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507002",
+      "ItemName": "Scaly Frillasaur",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1507003",
+      "ItemName": "Snappy Frillasaur",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "Name": "KirinsHoardLT-Rare",
+  "Description": "Kirin's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "126987",
+      "ItemName": "Jade Oni",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "160130",
+      "ItemName": "Dream Ghoul",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "225414",
+      "ItemName": "Plague Ninja",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "225438",
+      "ItemName": "Life Ghoul",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532601",
+      "ItemName": "Kozane Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532609",
+      "ItemName": "Kozane Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532617",
+      "ItemName": "Kozane Armor",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532625",
+      "ItemName": "Oyoroi Helmet",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532633",
+      "ItemName": "Oyoroi Sandals",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532641",
+      "ItemName": "Oyoroi Breastplate",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532649",
+      "ItemName": "Rokugo Helmet",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532657",
+      "ItemName": "Rokugo Footwear",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "532665",
+      "ItemName": "Rokugo Armor",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532704",
+      "ItemName": "Ringed Broadsword",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532712",
+      "ItemName": "Chiming Blade",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "532720",
+      "ItemName": "Four Bells Ringing",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "537632",
+      "ItemName": "Goat Monk Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537633",
+      "ItemName": "Oni Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537634",
+      "ItemName": "Ninja Pig Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537635",
+      "ItemName": "Treant Bobblehead",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589071",
+      "ItemName": "Fiendish Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589072",
+      "ItemName": "Elemental Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589073",
+      "ItemName": "Imperial Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589074",
+      "ItemName": "Guardian Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589075",
+      "ItemName": "Lavender Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589076",
+      "ItemName": "Sunfire Foo Dog",
+      "Notes": "",
+      "Chance": 1.6129
+    },
+    {
+      "ItemId": "589098",
+      "ItemName": "MooShu Tofu",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589099",
+      "ItemName": "Sweet and Sour Chow",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589100",
+      "ItemName": "Jade Palace Tempura",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589101",
+      "ItemName": "Hot and Sour Bits",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589102",
+      "ItemName": "Hot Ginger Snaps",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589103",
+      "ItemName": "Fido's Fortune Puffs",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589104",
+      "ItemName": "Basil Poodle Noodles",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589105",
+      "ItemName": "Zen Poppers",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589106",
+      "ItemName": "Chow Chow Chow",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589107",
+      "ItemName": "Kapow Pug Poppers",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

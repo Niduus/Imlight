@@ -1,0 +1,482 @@
+{
+  "Name": "Pharaohs2020-Uncommon",
+  "Description": "Spellemental Pharaoh's Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82706",
+      "ItemName": "Row of Scrolls",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82707",
+      "ItemName": "Stack of Scrolls",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82708",
+      "ItemName": "Pair of Scrolls",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82718",
+      "ItemName": "Red Facetted Column",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82719",
+      "ItemName": "Blue Facetted Column",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82721",
+      "ItemName": "Purple Facetted Column",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82730",
+      "ItemName": "Krok Hourglass Pillar",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82733",
+      "ItemName": "Wide Red Pedestal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82734",
+      "ItemName": "Wide Blue Pedestal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82739",
+      "ItemName": "Krok Scarab Pillar",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82745",
+      "ItemName": "Tomb Map",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82746",
+      "ItemName": "Krokotopia Map",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82757",
+      "ItemName": "Wide Purple Pedestal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82759",
+      "ItemName": "Krok Sun Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82760",
+      "ItemName": "Krok Snake Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82761",
+      "ItemName": "Krok Skull Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82762",
+      "ItemName": "Krok Moon Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82763",
+      "ItemName": "Krok Insect Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82764",
+      "ItemName": "Krok Bird Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82779",
+      "ItemName": "Krok Tree Pressure Plate",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82780",
+      "ItemName": "Sand Celebration Rug",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82782",
+      "ItemName": "Open Fire Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82783",
+      "ItemName": "Open Ice Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82814",
+      "ItemName": "Open Storm Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82823",
+      "ItemName": "Raised Fire Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82825",
+      "ItemName": "Ice Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82826",
+      "ItemName": "Fire Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82834",
+      "ItemName": "Storm Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82835",
+      "ItemName": "Raised Storm Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82836",
+      "ItemName": "Raised Ice Sarcophagus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82849",
+      "ItemName": "Krok Brazier",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82850",
+      "ItemName": "Painted Wardrobe",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82856",
+      "ItemName": "Krokotopian Counter",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82869",
+      "ItemName": "Large Archway",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82877",
+      "ItemName": "Krokotopia Camping Tent",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82879",
+      "ItemName": "Boat Tent",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82891",
+      "ItemName": "Red Ancient Statue",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82892",
+      "ItemName": "Purple Ancient Statue",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82893",
+      "ItemName": "Blue Ancient Statue",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82899",
+      "ItemName": "Red Krok Bust",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82902",
+      "ItemName": "Blue Krok Bust",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "82903",
+      "ItemName": "Purple Krok Bust",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "87150",
+      "ItemName": "Mander",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "100437",
+      "ItemName": "Krokomummy",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "100463",
+      "ItemName": "Fire Salamander",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "100464",
+      "ItemName": "Ice Salamander",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "100465",
+      "ItemName": "Storm Salamander",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "164144",
+      "ItemName": "Hieroglyph Wall Decor",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "164279",
+      "ItemName": "Solar Pattern Wallpaper",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "470140",
+      "ItemName": "Crokagator (7 Day)",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "789216",
+      "ItemName": "Ancient Date",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "789217",
+      "ItemName": "Salty Fish",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "789218",
+      "ItemName": "Krokodill Pickles",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "789219",
+      "ItemName": "Neti Krokker Cookies",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "789220",
+      "ItemName": "Kountry-Krok Butter",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1456396459",
+      "ItemName": "Akori Nirini",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1921239878",
+      "ItemName": "Suten Sokkwi",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1897977286",
+      "ItemName": "Aka Karanahn",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "462823765",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "881761500",
+      "ItemName": "Elemental Blade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1978643573",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "406082377",
+      "ItemName": "Elemental Trap",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "304489002",
+      "ItemName": "Spirit Trap",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "228494323",
+      "ItemName": "Elemental Spear",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "2122000637",
+      "ItemName": "Spirit Spear",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "36309342",
+      "ItemName": "Ra",
+      "Notes": "",
+      "Chance": 2.9412
+    }
+  ]
+}

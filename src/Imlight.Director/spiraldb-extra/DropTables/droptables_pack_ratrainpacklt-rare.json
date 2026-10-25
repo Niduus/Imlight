@@ -1,0 +1,206 @@
+{
+  "Name": "RATrainPackLT-Rare",
+  "Description": "Great Sky Train Robbery Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1507361",
+      "ItemName": "Moseyin' Armadillo (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1507362",
+      "ItemName": "Moseyin' Armadillo (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1507364",
+      "ItemName": "Trusty Armadillo (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1507365",
+      "ItemName": "Trusty Armadillo (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1507367",
+      "ItemName": "Ramblin' Armadillo (7 Day)",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1507368",
+      "ItemName": "Ramblin' Armadillo (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1507401",
+      "ItemName": "Rambler's Runner",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1507402",
+      "ItemName": "Wrangler's Runner",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1507403",
+      "ItemName": "Rancher's Runner",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1519889",
+      "ItemName": "Cool Rancher's Hat",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519904",
+      "ItemName": "Cool Rancher's Duster",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519919",
+      "ItemName": "Cool Rancher's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519934",
+      "ItemName": "Prairie Rambler's Hat",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519949",
+      "ItemName": "Prairie Rambler's Duster",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519964",
+      "ItemName": "Prairie Rambler's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519979",
+      "ItemName": "Desert Wrangler's Hat",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1519994",
+      "ItemName": "Desert Wrangler's Duster",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1522007",
+      "ItemName": "Red Brick Fireplace",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1522010",
+      "ItemName": "Card Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1522014",
+      "ItemName": "Ranch Gate",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1522017",
+      "ItemName": "Wooden Outhouse",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1522021",
+      "ItemName": "Decorative Skull",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1522023",
+      "ItemName": "Coach Ticket",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1523009",
+      "ItemName": "Desert Wrangler's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1523025",
+      "ItemName": "Rancher's Frontier Knife",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1523040",
+      "ItemName": "Rambler's Frontier Knife",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1523055",
+      "ItemName": "Wrangler's Frontier Knife",
+      "Notes": "",
+      "Chance": 2.7778
+    }
+  ]
+}

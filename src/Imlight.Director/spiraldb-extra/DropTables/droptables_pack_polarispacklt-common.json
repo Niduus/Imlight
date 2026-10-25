@@ -1,0 +1,386 @@
+{
+  "Name": "PolarisPackLT-Common",
+  "Description": "Witch's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "191668",
+      "ItemName": "Ice Elf",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "191672",
+      "ItemName": "Ice Cat",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220247",
+      "ItemName": "Popsicle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220278",
+      "ItemName": "Large Ice Cream",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220282",
+      "ItemName": "Double Popsicle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "220315",
+      "ItemName": "Huge Ice Cream",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "473152",
+      "ItemName": "Yellow Bell Pepper",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "537603",
+      "ItemName": "Frozen Snails",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "733118",
+      "ItemName": "Avocado Milkshake",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "733127",
+      "ItemName": "Tricera-pops",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "789457",
+      "ItemName": "Iced Crab Claws",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1257595",
+      "ItemName": "Cold Snap Peas",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335126",
+      "ItemName": "Arcanum Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335127",
+      "ItemName": "Polaris Baba Yaga Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335128",
+      "ItemName": "Polaris Frozen Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335129",
+      "ItemName": "Polaris Gulag Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335130",
+      "ItemName": "Polaris Gulag Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335131",
+      "ItemName": "Polaris Ice Block Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335132",
+      "ItemName": "Polaris Mine Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335133",
+      "ItemName": "Polaris Mine Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335134",
+      "ItemName": "Polaris Rasputin Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335135",
+      "ItemName": "Walruskberg Combat Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335136",
+      "ItemName": "Walruskberg Liberated Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335137",
+      "ItemName": "Walruskberg Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335138",
+      "ItemName": "Polaris Frozen Forest Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1335144",
+      "ItemName": "Polarian Music Player",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1359631",
+      "ItemName": "Troggy Taffy",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374252",
+      "ItemName": "Stacked Ice Blocks",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374253",
+      "ItemName": "Frozen Fish Block",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374255",
+      "ItemName": "Tip of the Polarian Iceberg",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374261",
+      "ItemName": "Walrusk Feasting Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374262",
+      "ItemName": "Walrusk Round Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374265",
+      "ItemName": "Walrusk Rug",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374267",
+      "ItemName": "Walrusk Potted Plant",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374271",
+      "ItemName": "Walrusk End Table",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374272",
+      "ItemName": "Small Walrusk Chair",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374273",
+      "ItemName": "Walrusk Travel Trunk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374274",
+      "ItemName": "Walrusk Wooden Settee",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374275",
+      "ItemName": "Walrusk Officer's Desk",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374276",
+      "ItemName": "Simple Walruskberg Lamp Post",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374278",
+      "ItemName": "Walruskberg Portrait",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374279",
+      "ItemName": "Snowy Walruskberg Guard Booth",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1374287",
+      "ItemName": "Patriôte Graffiti",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1430798",
+      "ItemName": "Polaris Opera Theme",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "614732506",
+      "ItemName": "Bronze Helephant",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1233939883",
+      "ItemName": "Death Helephant",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1361821430",
+      "ItemName": "War Helephant",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "73995406",
+      "ItemName": "Metalops",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1197513917",
+      "ItemName": "Punklops",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "937265375",
+      "ItemName": "Rocklops",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1784122260",
+      "ItemName": "Frostfang",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "877321028",
+      "ItemName": "Ashen Bones",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "1090014480",
+      "ItemName": "Death Troll",
+      "Notes": "",
+      "Chance": 5.2632
+    },
+    {
+      "ItemId": "924454662",
+      "ItemName": "Yellow Troll",
+      "Notes": "",
+      "Chance": 5.2632
+    }
+  ]
+}

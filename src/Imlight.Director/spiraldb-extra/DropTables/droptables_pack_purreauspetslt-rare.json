@@ -1,0 +1,236 @@
+{
+  "Name": "PurreausPetsLT-Rare",
+  "Description": "Purreau's Plentiful Pet Provisions (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "212308",
+      "ItemName": "Beastmaster's Jerkin",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "212309",
+      "ItemName": "Beastmaster's Hood",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "212311",
+      "ItemName": "Beastmaster's Footwraps",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "532625",
+      "ItemName": "Oyoroi Helmet",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "532633",
+      "ItemName": "Oyoroi Sandals",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "532641",
+      "ItemName": "Oyoroi Breastplate",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "641679",
+      "ItemName": "Bubble and Squeak",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641680",
+      "ItemName": "Queasy Quiche",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641681",
+      "ItemName": "Street Pizza",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641682",
+      "ItemName": "Snake Bite Sliders",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641683",
+      "ItemName": "Dressed Herring",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641685",
+      "ItemName": "Dragon Scale Nachos",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641686",
+      "ItemName": "Lava Soup",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641687",
+      "ItemName": "Killer Kumquat",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641688",
+      "ItemName": "Cantajackalope",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641689",
+      "ItemName": "Kiwi Fruit",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641690",
+      "ItemName": "Rhubarbed Wire",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641691",
+      "ItemName": "Dragon Berries",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641705",
+      "ItemName": "Fiddleheads",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641707",
+      "ItemName": "Draconionions",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641708",
+      "ItemName": "Dragon Head Cheese",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641709",
+      "ItemName": "Villainous Vegemite",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "690097",
+      "ItemName": "Toaddle",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690098",
+      "ItemName": "Tailstorm Pantera",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "690099",
+      "ItemName": "Wildfire Treant",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690102",
+      "ItemName": "Smith",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690103",
+      "ItemName": "Meow Wing",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690104",
+      "ItemName": "Ram Warrior",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690105",
+      "ItemName": "Ladybug",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "690106",
+      "ItemName": "Burlap Boy",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "690109",
+      "ItemName": "Chameleon",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "690110",
+      "ItemName": "Scorpion",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "713147",
+      "ItemName": "Sour Fickle Pickle",
+      "Notes": "",
+      "Chance": 3.125
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples",
+      "Notes": "",
+      "Chance": 3.125
+    }
+  ]
+}

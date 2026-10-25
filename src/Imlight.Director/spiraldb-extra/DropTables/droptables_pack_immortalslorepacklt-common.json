@@ -1,0 +1,566 @@
+{
+  "Name": "ImmortalsLorePackLT-Common",
+  "Description": "Immortal's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "160239",
+      "ItemName": "Carved Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160240",
+      "ItemName": "Stone Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160241",
+      "ItemName": "Square Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160242",
+      "ItemName": "Snapped Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160252",
+      "ItemName": "Great Spiral Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160255",
+      "ItemName": "Ringed Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160256",
+      "ItemName": "Stitched Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160261",
+      "ItemName": "Small Purple Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160629",
+      "ItemName": "Round Stone Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "160884",
+      "ItemName": "Short Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "206106",
+      "ItemName": "Apple Basket",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "206117",
+      "ItemName": "Large Clay Jar",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220264",
+      "ItemName": "Fancy Pudding",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220301",
+      "ItemName": "Gourmet Yogurt",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220317",
+      "ItemName": "Star Cookie",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473152",
+      "ItemName": "Yellow Bell Pepper",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473166",
+      "ItemName": "Purple Grapes of Wrath",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473173",
+      "ItemName": "Red Grapes of Wrath",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "473721",
+      "ItemName": "Pigeon Pie",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "643087",
+      "ItemName": "Short Woven Basket",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "643088",
+      "ItemName": "Tall Woven Basket",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "643097",
+      "ItemName": "Gold Top Column",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "724071",
+      "ItemName": "Gallant Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "724072",
+      "ItemName": "Shielded Rose Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "724077",
+      "ItemName": "Vine Spiral Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "733112",
+      "ItemName": "Yucca",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "733118",
+      "ItemName": "Avocado Milkshake",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "733124",
+      "ItemName": "Papaya",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "739109",
+      "ItemName": "Basket of Spears",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "739215",
+      "ItemName": "Yarn Basket",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "789217",
+      "ItemName": "Salty Fish",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "789460",
+      "ItemName": "Winged Bean",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1212000",
+      "ItemName": "Aquila Atlantea Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1212001",
+      "ItemName": "Aquila Olympus Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1212002",
+      "ItemName": "Aquila Tartarus Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1212003",
+      "ItemName": "Aquila Combat Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1212004",
+      "ItemName": "Aquila Boss Combat Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1212005",
+      "ItemName": "Aquila Epic Combat Theme",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1248060",
+      "ItemName": "Honeycrisp Apples",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1257594",
+      "ItemName": "Cornbread Fruit",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1257596",
+      "ItemName": "Wrath's Grape Juice",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1257598",
+      "ItemName": "Rye Bread Fruit",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1317270",
+      "ItemName": "Tapestry to Aquila Gardens",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350763",
+      "ItemName": "Golden Blossom Rug",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1374698",
+      "ItemName": "Enigmatic Floor Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1374699",
+      "ItemName": "Obscure Floor Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1374700",
+      "ItemName": "Arcane Floor Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1374702",
+      "ItemName": "Ancient Floor Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    },
+    {
+      "ItemId": "1374703",
+      "ItemName": "Mysterious Floor Glyph",
+      "Notes": "",
+      "Chance": 1.3333
+    }
+  ]
+}

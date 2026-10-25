@@ -1,0 +1,224 @@
+{
+  "Name": "DoomKrockPackLT-Rare",
+  "Description": "Doomsday Krok Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1479429",
+      "ItemName": "The Boat",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479433",
+      "ItemName": "Desert Forge",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479435",
+      "ItemName": "Glass of Hours",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479436",
+      "ItemName": "Sand Device",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479439",
+      "ItemName": "Double Scroll Case",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479441",
+      "ItemName": "Istanboa Platform",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1479714",
+      "ItemName": "Alternate Time Lime",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1499142",
+      "ItemName": "Sokar's Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499143",
+      "ItemName": "Sokar's Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499144",
+      "ItemName": "Setesh's Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499145",
+      "ItemName": "Setesh's Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499146",
+      "ItemName": "Apophis' Krokosphinx (7 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499147",
+      "ItemName": "Apophis' Krokosphinx (1 Day)",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1499175",
+      "ItemName": "Sokar's Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499176",
+      "ItemName": "Setesh's Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499177",
+      "ItemName": "Apophis' Scarab",
+      "Notes": "",
+      "Chance": 1.4925
+    },
+    {
+      "ItemId": "1499186",
+      "ItemName": "Mini Pyramid",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499187",
+      "ItemName": "Doohickey",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499188",
+      "ItemName": "Krokotopian Pillar",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499189",
+      "ItemName": "Krokotopian Bridge",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499190",
+      "ItemName": "Krokotopian Obelisk",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499191",
+      "ItemName": "Krok Statue Flex",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1499192",
+      "ItemName": "Krok Statue Thumbs Up",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1502223",
+      "ItemName": "Sokar's Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502237",
+      "ItemName": "Sokar's Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502251",
+      "ItemName": "Sokar's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502265",
+      "ItemName": "Setesh's Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502279",
+      "ItemName": "Setesh's Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502293",
+      "ItemName": "Setesh's Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502307",
+      "ItemName": "Apophis' Khepresh",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502321",
+      "ItemName": "Apophis' Raiment",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502335",
+      "ItemName": "Apophis' Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502349",
+      "ItemName": "Sokar's Javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502363",
+      "ItemName": "Setesh's javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1502377",
+      "ItemName": "Apophis' Javelin",
+      "Notes": "",
+      "Chance": 2.7778
+    }
+  ]
+}

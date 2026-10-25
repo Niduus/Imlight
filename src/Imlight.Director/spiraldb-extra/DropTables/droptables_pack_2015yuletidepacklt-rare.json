@@ -1,0 +1,1340 @@
+{
+  "Name": "2015YuletidePackLT-Rare",
+  "Description": "Winterland Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1257301",
+      "ItemName": "Golden Goose",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1317712",
+      "ItemName": "Maple Moose",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1317751",
+      "ItemName": "Yuletide Present Giver's Bed",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1317753",
+      "ItemName": "WinterGlide Skates (7 Day)",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1317754",
+      "ItemName": "WinterGlide Skates (1 Day)",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1317758",
+      "ItemName": "Yuletide Tall Whopper Aquarium",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1317759",
+      "ItemName": "Yuletide Lg. Whopper Aquarium",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1317767",
+      "ItemName": "Grand Winter Globe",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1335011",
+      "ItemName": "Jingle Bells Theme",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1335012",
+      "ItemName": "Deck the Halls Theme",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1335013",
+      "ItemName": "Carol of the Bells Theme",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1335014",
+      "ItemName": "Yuletide Jingle",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338570",
+      "ItemName": "Winter Solstice Cowl",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338581",
+      "ItemName": "Winter Solstice Snowboots",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338592",
+      "ItemName": "Winter Solstice Vesture",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1338603",
+      "ItemName": "Hood of the Arund Vale",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338614",
+      "ItemName": "Arund Vale Snowshoes",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338625",
+      "ItemName": "Arund Vale Winter Raiment",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1338636",
+      "ItemName": "Shroud of Icewind Glade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338647",
+      "ItemName": "Icewind Glade Trekkers",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1338658",
+      "ItemName": "Icewind Glade Winterwraps",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1338669",
+      "ItemName": "Winter Solstice Augury",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1338680",
+      "ItemName": "Beacon of the Arund Vale",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1338691",
+      "ItemName": "Auspice of Icewind Glade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352336",
+      "ItemName": "Cracked Health Opal +10",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352342",
+      "ItemName": "Chipped Health Opal +16",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352352",
+      "ItemName": "Flawed Health Opal +26",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352362",
+      "ItemName": "Blemished Health Opal +36",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352372",
+      "ItemName": "Dull Health Opal +46",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352382",
+      "ItemName": "Plain Health Opal +56",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352422",
+      "ItemName": "Lustrous Health Opal +96",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352438",
+      "ItemName": "Chipped Mana Opal +10",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352441",
+      "ItemName": "Flawed Mana Opal +13",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352445",
+      "ItemName": "Blemished Mana Opal +17",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352449",
+      "ItemName": "Dull Mana Opal +21",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352453",
+      "ItemName": "Plain Mana Opal +25",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352469",
+      "ItemName": "Lustrous Mana Opal +41",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352478",
+      "ItemName": "Cracked Fishing Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352583",
+      "ItemName": "Chipped Damage Ruby +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352607",
+      "ItemName": "Chipped Damage Sapphire +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352728",
+      "ItemName": "Chipped Damage Citrine +8",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352749",
+      "ItemName": "Cracked Damage Opal +1",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352753",
+      "ItemName": "Flawed Damage Opal +5",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352754",
+      "ItemName": "Blemished Damage Opal +6",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352755",
+      "ItemName": "Dull Damage Opal +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352756",
+      "ItemName": "Plain Damage Opal +8",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352757",
+      "ItemName": "Opaque Damage Opal +9",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352758",
+      "ItemName": "Clear Damage Opal +10",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352759",
+      "ItemName": "Polished Damage Opal +11",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352760",
+      "ItemName": "Lustrous Damage Opal +12",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352813",
+      "ItemName": "Dull Piercing Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352817",
+      "ItemName": "Cracked Mending Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352818",
+      "ItemName": "Flawed Mending Opal +2%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352819",
+      "ItemName": "Dull Mending Opal +3%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352820",
+      "ItemName": "Opaque Mending Opal +4%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352821",
+      "ItemName": "Polished Mending Opal +5%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352927",
+      "ItemName": "Dull Critical Opal +1",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352936",
+      "ItemName": "Dull Resilient Opal +3%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352937",
+      "ItemName": "Opaque Resilient Opal +4%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352938",
+      "ItemName": "Polished Resilient Opal +5%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352939",
+      "ItemName": "Cracked Healing Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1352941",
+      "ItemName": "Dull Healing Opal +3%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352942",
+      "ItemName": "Opaque Healing Opal +4%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1352943",
+      "ItemName": "Polished Healing Opal +5%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357049",
+      "ItemName": "Dull Blocking Opal +1",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357120",
+      "ItemName": "Flawed Accurate Opal +2%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1357121",
+      "ItemName": "Dull Accurate Opal +3%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357122",
+      "ItemName": "Opaque Accurate Opal +4%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357125",
+      "ItemName": "Chipped PIP Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357127",
+      "ItemName": "Flawed PIP Opal +3%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1357128",
+      "ItemName": "Blemished PIP Opal +4%",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1357129",
+      "ItemName": "Dull PIP Opal +5%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357130",
+      "ItemName": "Plain PIP Opal +6%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357131",
+      "ItemName": "Opaque PIP Opal +7%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357132",
+      "ItemName": "Clear PIP Opal +8%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357133",
+      "ItemName": "Polished PIP Opal +9%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357134",
+      "ItemName": "Lustrous PIP Opal +10%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357150",
+      "ItemName": "Cracked Accurate Opal +1%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357152",
+      "ItemName": "Opaque Piercing Opal +2%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1357153",
+      "ItemName": "Polished Piercing Opal +3%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358567",
+      "ItemName": "Cracked Defense Opal +2",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358572",
+      "ItemName": "Chipped Defense Opal +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358573",
+      "ItemName": "Chipped Defense Opal +8",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358574",
+      "ItemName": "Flawed Defense Opal +9",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358576",
+      "ItemName": "Blemished Defense Opal +11",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358578",
+      "ItemName": "Dull Defense Opal +13",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358580",
+      "ItemName": "Plain Defense Opal +15",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358582",
+      "ItemName": "Opaque Defense Opal +17",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358584",
+      "ItemName": "Clear Defense Opal +19",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358586",
+      "ItemName": "Polished Defense Opal +21",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358590",
+      "ItemName": "Sunbird Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358591",
+      "ItemName": "Wyldfire Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358592",
+      "ItemName": "Evil Snowman Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358593",
+      "ItemName": "Blizzard Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358596",
+      "ItemName": "Cyclops Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358598",
+      "ItemName": "Sprite Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358599",
+      "ItemName": "Satyr Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358600",
+      "ItemName": "Banshee Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358601",
+      "ItemName": "Deer Knight Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358602",
+      "ItemName": "Locust Swarm Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358603",
+      "ItemName": "Spectral Blast Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358604",
+      "ItemName": "Meteor Strike Ruby",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358605",
+      "ItemName": "Phoenix Ruby",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358606",
+      "ItemName": "Helephant Ruby",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358607",
+      "ItemName": "Ice Wyvern Sapphire",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358608",
+      "ItemName": "Balefrost Sapphire",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358609",
+      "ItemName": "Colossus Sapphire",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358610",
+      "ItemName": "Kraken Amethyst",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358611",
+      "ItemName": "Darkwind Amethyst",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358612",
+      "ItemName": "Stormzilla Amethyst",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358613",
+      "ItemName": "Humongofrog Peridot",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358614",
+      "ItemName": "Minotaur Peridot",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358615",
+      "ItemName": "Earthquake Peridot",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358616",
+      "ItemName": "Seraph Jade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358617",
+      "ItemName": "Centaur Jade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358618",
+      "ItemName": "Sanctuary Jade",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358619",
+      "ItemName": "Skeletal Pirate Onyx",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358620",
+      "ItemName": "Doom and Gloom Onyx",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358621",
+      "ItemName": "Wraith Onyx",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358622",
+      "ItemName": "Power Play Citrine",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358623",
+      "ItemName": "Donate Power Citrine",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358624",
+      "ItemName": "Hydra Citrine",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1358626",
+      "ItemName": "Quench Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358627",
+      "ItemName": "Mass Fire Prism Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358628",
+      "ItemName": "Fire Dragon Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358629",
+      "ItemName": "Power Link Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358635",
+      "ItemName": "Melt Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358636",
+      "ItemName": "Mass Ice Prism Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358637",
+      "ItemName": "Frost Giant Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358638",
+      "ItemName": "Frozen Armor Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358641",
+      "ItemName": "Draw Health Sapphire",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358644",
+      "ItemName": "Dissipate Amethyst",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358645",
+      "ItemName": "Mass Storm Prism Amethyst",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358646",
+      "ItemName": "Storm Lord Amethyst",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358647",
+      "ItemName": "Insane Bolt Amethyst",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358650",
+      "ItemName": "Purloin Power Amethyst",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358653",
+      "ItemName": "Vaporize Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358654",
+      "ItemName": "Mass Myth Prism Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358656",
+      "ItemName": "Talos Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358659",
+      "ItemName": "Shield Minion Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358660",
+      "ItemName": "Buff Minion Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358661",
+      "ItemName": "Mend Minion Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358667",
+      "ItemName": "Entangle Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358668",
+      "ItemName": "Mass Life Prism Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358669",
+      "ItemName": "Rebirth Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358670",
+      "ItemName": "Brilliant Light Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358673",
+      "ItemName": "Drain Health Jade",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358676",
+      "ItemName": "Strangle Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358677",
+      "ItemName": "Mass Death Prism Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358678",
+      "ItemName": "Scarecrow Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358679",
+      "ItemName": "Virulent Plague Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358683",
+      "ItemName": "Animate Onyx",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358685",
+      "ItemName": "Unbalance Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358686",
+      "ItemName": "Reshuffle Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358687",
+      "ItemName": "Power Nova Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358688",
+      "ItemName": "Availing Hands Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358691",
+      "ItemName": "Purloin Health Citrine",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358712",
+      "ItemName": "Orthrus Peridot",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358832",
+      "ItemName": "Plain Blocking Opal +3",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358833",
+      "ItemName": "Opaque Blocking Opal +4",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358834",
+      "ItemName": "Clear Blocking Opal +5",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358835",
+      "ItemName": "Polished Blocking Opal +6",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358836",
+      "ItemName": "Lustrous Blocking Opal +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358845",
+      "ItemName": "Cracked Health Opal +5",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358926",
+      "ItemName": "Take Power Ruby",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358972",
+      "ItemName": "Polished PIP Hematite +1",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358981",
+      "ItemName": "Strong Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358982",
+      "ItemName": "Keen Eyes Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358983",
+      "ItemName": "Giant Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358984",
+      "ItemName": "Accurate Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358985",
+      "ItemName": "Monstrous Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358986",
+      "ItemName": "Sniper Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358987",
+      "ItemName": "Gargantuan Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358988",
+      "ItemName": "Unstoppable Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358989",
+      "ItemName": "Colossal Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358990",
+      "ItemName": "Extraordinary Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358991",
+      "ItemName": "Fortify Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358992",
+      "ItemName": "Amplify Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358993",
+      "ItemName": "Infallible Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358994",
+      "ItemName": "Vengeance Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358995",
+      "ItemName": "Empowerment Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358996",
+      "ItemName": "Berserk Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358997",
+      "ItemName": "Mend Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358998",
+      "ItemName": "Galvanic Field Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1358999",
+      "ItemName": "Furnace Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1359914",
+      "ItemName": "Yuletide Stag (7 Day)",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1359915",
+      "ItemName": "Yuletide Stag (1 Day)",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1360000",
+      "ItemName": "Sleet Storm Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360001",
+      "ItemName": "Cycle of Life Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360002",
+      "ItemName": "Virulence Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360003",
+      "ItemName": "Reliquary Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360004",
+      "ItemName": "Chastisement Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360005",
+      "ItemName": "Punishment Opal",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360035",
+      "ItemName": "Plain Critical Opal +3",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360036",
+      "ItemName": "Opaque Critical Opal +4",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360037",
+      "ItemName": "Clear Critical Opal +5",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360038",
+      "ItemName": "Polished Critical Opal +6",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360039",
+      "ItemName": "Lustrous Critical Opal +7",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360042",
+      "ItemName": "Chipped Damage Opal +4",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1360043",
+      "ItemName": "Polished Accurate Opal +5%",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1374075",
+      "ItemName": "The Winterland Earmuffs",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1374076",
+      "ItemName": "The Snowfall Earmuffs",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1374077",
+      "ItemName": "The Halfpipe",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1374078",
+      "ItemName": "The Fakie Ollie",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1374133",
+      "ItemName": "Tall Yuletide Tree",
+      "Notes": "",
+      "Chance": 1.6949
+    },
+    {
+      "ItemId": "1405714",
+      "ItemName": "Shiny Blocking Opal +8",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1405731",
+      "ItemName": "Shiny Damage Opal +13",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1405748",
+      "ItemName": "Shiny Critical Opal +8",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1405776",
+      "ItemName": "Shiny Health Opal +106",
+      "Notes": "",
+      "Chance": 1.3699
+    },
+    {
+      "ItemId": "1407046",
+      "ItemName": "Shiny Mana Opal +45",
+      "Notes": "",
+      "Chance": 1.3699
+    }
+  ]
+}

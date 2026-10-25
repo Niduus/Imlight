@@ -1,0 +1,284 @@
+{
+  "Name": "RoadWarrior2020-Rare",
+  "Description": "Spellemental Road Warrior's Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160574",
+      "ItemName": "Demon Pig Statue",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160630",
+      "ItemName": "Jaques' Saw",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160637",
+      "ItemName": "Crusher's Milk Bottle",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160645",
+      "ItemName": "Smogger's Auto Radiator",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160659",
+      "ItemName": "Well-traveled Suitcase",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160702",
+      "ItemName": "Electrified Meter Box",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160721",
+      "ItemName": "Model MB Automobile",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160748",
+      "ItemName": "Metal Water Tower",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "160779",
+      "ItemName": "Wooden Propellor",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "164422",
+      "ItemName": "Death Scarab",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "225495",
+      "ItemName": "Grim Scarab",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "641590",
+      "ItemName": "Avalon Weapons Rack",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "690098",
+      "ItemName": "Tailstorm Pantera",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1302295",
+      "ItemName": "Rude Goblin",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1374417",
+      "ItemName": "Chopping Sand Crawler",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374418",
+      "ItemName": "Scouring Sand Crawler",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374419",
+      "ItemName": "Scrubbing Hundred Legger",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374420",
+      "ItemName": "Honing Hundred Legger",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374660",
+      "ItemName": "Sifting Spike Horn",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374666",
+      "ItemName": "Panning Spike Horn",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374667",
+      "ItemName": "Mining Spike Horn",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374668",
+      "ItemName": "Prospecting Spike Horn",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374669",
+      "ItemName": "Doomsayer",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374672",
+      "ItemName": "Hammering Winged Tooth",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374707",
+      "ItemName": "Marleybone Soda Bar",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374709",
+      "ItemName": "Hanging Tesla Coil",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374711",
+      "ItemName": "Water Tower",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1374795",
+      "ItemName": "Road Hog",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1374959",
+      "ItemName": "Road Warrior's Chopper (7 Day)",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376602",
+      "ItemName": "Deathmetal Skull",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376614",
+      "ItemName": "Road Legend Skull",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376626",
+      "ItemName": "Rapturerider's Skull",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376644",
+      "ItemName": "Apocalypse Helmet",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376656",
+      "ItemName": "Road Fury Jacket",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376668",
+      "ItemName": "Ragerider's Boots",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376680",
+      "ItemName": "Road Legend Helm",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376692",
+      "ItemName": "Cool Rider's Gear",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376704",
+      "ItemName": "Cold Fury Kickers",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376716",
+      "ItemName": "Stormrider's Skullcap",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376728",
+      "ItemName": "Thunder Road Leathers",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376740",
+      "ItemName": "Survivor's Stompers",
+      "Notes": "",
+      "Chance": 2.9412
+    }
+  ]
+}

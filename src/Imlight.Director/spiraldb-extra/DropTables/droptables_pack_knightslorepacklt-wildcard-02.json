@@ -1,0 +1,794 @@
+{
+  "Name": "KnightsLorePackLT-Wildcard-02",
+  "Description": "Knight's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "276451",
+      "ItemName": "Swift Gryphon (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "440150",
+      "ItemName": "Bruin Ram (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470361",
+      "ItemName": "White Stag (1 Day)",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470407",
+      "ItemName": "Gamma Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "470415",
+      "ItemName": "Gwendolyn Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635829",
+      "ItemName": "Glorious Chivalric Crown",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635838",
+      "ItemName": "Glorious Chivalric Boots",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635847",
+      "ItemName": "Glorious Chivalric Plate",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "635856",
+      "ItemName": "Night King's Crown",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635865",
+      "ItemName": "Night King's Sabatons",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635874",
+      "ItemName": "Night King's Plate",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "635883",
+      "ItemName": "Summer Palace Helmet",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635892",
+      "ItemName": "Summer Palace Sabatons",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "635901",
+      "ItemName": "Summer Palace Plate",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "636007",
+      "ItemName": "Mercy's Trueflight Bow",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "636016",
+      "ItemName": "Darkfire Longbow",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "636025",
+      "ItemName": "Longbow of Grave Justice",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "641548",
+      "ItemName": "Old Green Beard Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641549",
+      "ItemName": "Sir Brennan Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "641550",
+      "ItemName": "Sir Drustan Bobblehead",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "653160",
+      "ItemName": "Mischievous Minstrel",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "653161",
+      "ItemName": "Wayward Minstrel",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "653162",
+      "ItemName": "Charming Minstrel",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "653163",
+      "ItemName": "Weasel Minstrel",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "1996495965",
+      "ItemName": "Handsome Fomori",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "1986366483",
+      "ItemName": "Catalan",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "1756999270",
+      "ItemName": "Deer Knight",
+      "Notes": "",
+      "Chance": 1.7241
+    },
+    {
+      "ItemId": "419269624",
+      "ItemName": "Death Seraph",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1579569725",
+      "ItemName": "Wildfire Treant",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1882779060",
+      "ItemName": "Monstrous",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1304757256",
+      "ItemName": "Gargantuan",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "207864867",
+      "ItemName": "Colossal",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473719",
+      "ItemName": "Deviled Eggs",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "473720",
+      "ItemName": "Roasted Chickpeas",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "388168287",
+      "ItemName": "Vengeance",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1312310972",
+      "ItemName": "Empowerment",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "284988563",
+      "ItemName": "Berserk",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1473916539",
+      "ItemName": "Mend",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1857888237",
+      "ItemName": "Strong",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "96087058",
+      "ItemName": "Giant",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1204609644",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1203825197",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "152516695",
+      "ItemName": "Infallible",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "460734583",
+      "ItemName": "Keen Eyes",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1753151982",
+      "ItemName": "Accurate",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1141043373",
+      "ItemName": "Sniper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "437154388",
+      "ItemName": "Unstoppable",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "188339085",
+      "ItemName": "Availing Hands",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1104354288",
+      "ItemName": "Banshee",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1640712457",
+      "ItemName": "Black Mantle",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106953",
+      "ItemName": "Black Coal",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106957",
+      "ItemName": "Glass Vial",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160199",
+      "ItemName": "Stained Armoire",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160300",
+      "ItemName": "Royal Sofa",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160317",
+      "ItemName": "Pointed Grave",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160336",
+      "ItemName": "Obsidian Firecat Statue",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160339",
+      "ItemName": "Unicorn Statue",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160375",
+      "ItemName": "Hedge Row",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160405",
+      "ItemName": "Wand Rack",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160982",
+      "ItemName": "Professor Ambrose",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "160985",
+      "ItemName": "Spiral Shield",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "206114",
+      "ItemName": "Tea Set",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220264",
+      "ItemName": "Fancy Pudding",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220282",
+      "ItemName": "Double Popsicle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "Uni-corn",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220321",
+      "ItemName": "Fancy Truffle",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "220325",
+      "ItemName": "Shiny Tomato",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "Pearl",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258590",
+      "ItemName": "Perfect Amethyst",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258591",
+      "ItemName": "Perfect Citrine",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258592",
+      "ItemName": "Perfect Jade",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "258593",
+      "ItemName": "Perfect Onyx",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473221",
+      "ItemName": "Flapjacks",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "512162",
+      "ItemName": "Avalon Abbey Road Theme",
+      "Notes": "",
+      "Chance": 6.25
+    },
+    {
+      "ItemId": "512163",
+      "ItemName": "Avalon Combat Theme",
+      "Notes": "",
+      "Chance": 4.7619
+    }
+  ]
+}

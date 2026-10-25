@@ -1,0 +1,200 @@
+{
+  "Name": "KeepersLorePackLT-Rare",
+  "Description": "Keeper's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "191271",
+      "ItemName": "Faithful Dragoness (7 Day)",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "191272",
+      "ItemName": "Blue Dragon (7 Day)",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470471",
+      "ItemName": "Boris Blackrock Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470472",
+      "ItemName": "Crystal Guide Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470473",
+      "ItemName": "Draconian Knight Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "470474",
+      "ItemName": "Malistaire Bobblehead",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "667426",
+      "ItemName": "Silver Order of the Spiral",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667435",
+      "ItemName": "Golden Dragon Fear Banner",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667444",
+      "ItemName": "Order of High Glory Banner",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667534",
+      "ItemName": "Jade Hood of Mystery",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667543",
+      "ItemName": "Mysterious Jade Boots",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667552",
+      "ItemName": "Jade Robe of Mystery",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667561",
+      "ItemName": "Golden Hood of Serenity",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667570",
+      "ItemName": "Golden Boots of Serenity",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667579",
+      "ItemName": "Golden Robes of Serenity",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "667588",
+      "ItemName": "Violet Hood of Bitter Truth",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667597",
+      "ItemName": "Violet Boots of Bitter Truth",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "667606",
+      "ItemName": "Violet Robes of Bitter Truth",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "690100",
+      "ItemName": "Emberstone Tiger",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "270921514",
+      "ItemName": "Keeper of the Flame",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "1627174122",
+      "ItemName": "Luminous Weaver",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "606072868",
+      "ItemName": "Brimstone Revenant",
+      "Notes": "",
+      "Chance": 2.1739
+    },
+    {
+      "ItemId": "430139829",
+      "ItemName": "Dragonspear",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1899503323",
+      "ItemName": "Blazing Phoenix",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1955522725",
+      "ItemName": "Blight Hound",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "621685565",
+      "ItemName": "Sparking Stormzilla",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "78114673",
+      "ItemName": "Flowering Dryad",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "940821525",
+      "ItemName": "Frenzied Minotaur",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "805237289",
+      "ItemName": "Skeletal Buccaneer",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "2084795376",
+      "ItemName": "Stinging Sandstorm",
+      "Notes": "",
+      "Chance": 4.3478
+    }
+  ]
+}

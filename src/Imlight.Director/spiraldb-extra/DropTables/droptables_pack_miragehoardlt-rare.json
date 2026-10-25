@@ -1,0 +1,290 @@
+{
+  "Name": "MirageHoardLT-Rare",
+  "Description": "Ghulture's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1392143",
+      "ItemName": "House Purrzian Assailant",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392144",
+      "ItemName": "Chronomancer Captain",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392145",
+      "ItemName": "Chronomancer Consult",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392146",
+      "ItemName": "Qhat Commoner",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392147",
+      "ItemName": "Qhat Broker",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392148",
+      "ItemName": "Binny Jezzerit",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392149",
+      "ItemName": "Bumbai Swordsman",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392150",
+      "ItemName": "Bumbai Warrior",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392151",
+      "ItemName": "Silent Saber",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392152",
+      "ItemName": "Qhat Socialite",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392154",
+      "ItemName": "Qhat Chef",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392156",
+      "ItemName": "Baboon Thug",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392158",
+      "ItemName": "Lesser Djinn",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392160",
+      "ItemName": "Crypt Conscript",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392162",
+      "ItemName": "Gobbler Guard",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392196",
+      "ItemName": "Sand Worm Larva",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1392197",
+      "ItemName": "Dark Worm Larva",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1392225",
+      "ItemName": "Ancient Qhat Warrior",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392448",
+      "ItemName": "Enchanted Broom",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392452",
+      "ItemName": "Colonnade",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392453",
+      "ItemName": "Dromel Head Column",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392460",
+      "ItemName": "Covered Wagon",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392461",
+      "ItemName": "Ice Hoist",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392462",
+      "ItemName": "Ice Pallet",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392470",
+      "ItemName": "Parrot on a Barrel",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392474",
+      "ItemName": "Dromel Sarcophagus",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392479",
+      "ItemName": "Mounted Snake Head",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1392485",
+      "ItemName": "Dromel Tent",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407008",
+      "ItemName": "Grandmaster Socket Wrench",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407170",
+      "ItemName": "Ancient Purrzian Scimitar",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407183",
+      "ItemName": "Honed Purrzian Scimitar",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407196",
+      "ItemName": "Golden Purrzian Scimitar",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407248",
+      "ItemName": "Ancient Purrzian Combat Mask",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407261",
+      "ItemName": "Ancient Purrzian Armour",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407274",
+      "ItemName": "Ancient Purrzian Boots",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407287",
+      "ItemName": "Ancient Purrzian Battle Helm",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407300",
+      "ItemName": "Ancient Purrzian Plate",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407313",
+      "ItemName": "Ancient Purrzian Givehs",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407326",
+      "ItemName": "Ancient Purrzian War Mantle",
+      "Notes": "",
+      "Chance": 2.7778
+    },
+    {
+      "ItemId": "1407339",
+      "ItemName": "Ancient Purrzian Raiment",
+      "Notes": "",
+      "Chance": 2.5
+    },
+    {
+      "ItemId": "1407352",
+      "ItemName": "Ancient Purrzian Galesh",
+      "Notes": "",
+      "Chance": 2.7778
+    }
+  ]
+}

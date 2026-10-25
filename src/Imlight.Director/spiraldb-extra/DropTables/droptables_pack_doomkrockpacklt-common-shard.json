@@ -1,0 +1,218 @@
+{
+  "Name": "DoomKrockPackLT-Common-Shard",
+  "Description": "Doomsday Krok Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1494694",
+      "ItemName": "Snow Serpent",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 16.6667
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "175468",
+      "ItemName": "Grizzley Boar",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "537600",
+      "ItemName": "Bunch of Figs",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "589628",
+      "ItemName": "Void Basilisk",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643101",
+      "ItemName": "Red Top Drum",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643135",
+      "ItemName": "Primitive Snake Mask",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643176",
+      "ItemName": "Desert Table",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643181",
+      "ItemName": "Stone Throne",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "643189",
+      "ItemName": "Elephant GraveStone",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "733127",
+      "ItemName": "Tricera-pops",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "733139",
+      "ItemName": "Zocalo Wings",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248061",
+      "ItemName": "Chili Peppermint",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1260024",
+      "ItemName": "Lion's Paw Print Floor",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1317097",
+      "ItemName": "Surfin' Turf",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1374427",
+      "ItemName": "Mythdactyl",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1499101",
+      "ItemName": "Zebra Warrior",
+      "Notes": "",
+      "Chance": 2.7027
+    }
+  ]
+}

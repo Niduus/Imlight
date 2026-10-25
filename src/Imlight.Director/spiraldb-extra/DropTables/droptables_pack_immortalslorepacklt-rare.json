@@ -1,0 +1,230 @@
+{
+  "Name": "ImmortalsLorePackLT-Rare",
+  "Description": "Immortal's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "191657",
+      "ItemName": "Fog Unicorn",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "212287",
+      "ItemName": "Grove Unicorn",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "473448",
+      "ItemName": "Night Hawk",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789125",
+      "ItemName": "Firestorm Quetzal",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789433",
+      "ItemName": "Li'l Siren",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "789434",
+      "ItemName": "Golden Ram",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1202013",
+      "ItemName": "Atlantea Grand Monument",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1202020",
+      "ItemName": "Grand Statue of Zeus",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1204451",
+      "ItemName": "Bronze Golem",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1257611",
+      "ItemName": "Pegasus Pony",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1317620",
+      "ItemName": "Royal Ibis",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383271",
+      "ItemName": "Aquilan Gladiator",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383273",
+      "ItemName": "Aquilan Centurion",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383275",
+      "ItemName": "Oracle of Olympus",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383277",
+      "ItemName": "Oracle of Hesperides",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383278",
+      "ItemName": "Oracle of Atlantea",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383279",
+      "ItemName": "Oracle of Tartarus",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383282",
+      "ItemName": "Studious Aquilan Oracle",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383283",
+      "ItemName": "Contemplative Aquilan Oracle",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1383285",
+      "ItemName": "Mechanical Owl",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384103",
+      "ItemName": "Aquilan Charioteer Kalkris",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384115",
+      "ItemName": "Aquilan Charioteer Hamata",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384127",
+      "ItemName": "Aquilan Charioteer Greaves",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384139",
+      "ItemName": "Aquilan Secutor Kalkris",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384151",
+      "ItemName": "Aquilan Secutor Hamata",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384163",
+      "ItemName": "Aquilan Secutor Greaves",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384175",
+      "ItemName": "Aquilan Velite Kalkris",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384187",
+      "ItemName": "Aquilan Velite Hamata",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384199",
+      "ItemName": "Aquilan Velite Greaves",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1384211",
+      "ItemName": "Aquilan Charioteer Lance",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384223",
+      "ItemName": "Aquilan Secutor Lance",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1384235",
+      "ItemName": "Aquilan Velite Lance",
+      "Notes": "",
+      "Chance": 1.8519
+    },
+    {
+      "ItemId": "1847077257",
+      "ItemName": "Hephaestus",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1446433116",
+      "ItemName": "Athena Battle Sight",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "408744917",
+      "ItemName": "Queen Calypso",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}

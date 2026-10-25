@@ -175,7 +175,7 @@ public static class DropTableRoller {
 
         // Keep rolling until we find an item that meets requirements or run out of items.
         while (availableItems.Count > 0) {
-            // Randomly select an item from the remaining pool (by weight when Tamed Drops scales them).
+            // Randomly select an item from the remaining pool (by weight when the items have a Chance or Tamed Drops scales them).
             var randomIndex = PickIndex(availableItems, random, chanceScale);
             var selectedItem = availableItems[randomIndex];
 
@@ -210,12 +210,14 @@ public static class DropTableRoller {
         return results;
     }
 
+    // A pick-one table whose items carry a Chance (the real pack lists from Wizard404) picks by it as a weight.
     private static int PickIndex(List<DropItem> items, Random random, Func<DropItem, double> chanceScale) {
-        if (chanceScale is null) {
+        var weighted = items.Any(item => item.Chance is > 0);
+        if (chanceScale is null && !weighted) {
             return random.Next(items.Count);
         }
 
-        var weights = items.Select(item => Math.Max(0, chanceScale(item))).ToList();
+        var weights = items.Select(item => Math.Max(0, (chanceScale?.Invoke(item) ?? 1) * (weighted ? item.Chance ?? 0 : 1))).ToList();
         var total = weights.Sum();
         if (total <= 0) {
             return random.Next(items.Count);

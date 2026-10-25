@@ -1,0 +1,728 @@
+{
+  "Name": "PurreausPetsLT-Jewels",
+  "Description": "Purreau's Plentiful Pet Provisions (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1360472",
+      "ItemName": "Balance-Eye Citrine",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360473",
+      "ItemName": "Death-Eye Onyx",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360474",
+      "ItemName": "Fire-Eye Ruby",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360475",
+      "ItemName": "Ice-Eye Sapphire",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360476",
+      "ItemName": "Life-Eye Jade",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360477",
+      "ItemName": "Myth-Eye Peridot",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360478",
+      "ItemName": "Storm-Eye Amethyst",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360479",
+      "ItemName": "Balance-Boon Citrine",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360480",
+      "ItemName": "Death-Boon Onyx",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360481",
+      "ItemName": "Fire-Boon Ruby",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360482",
+      "ItemName": "Ice-Boon Sapphire",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360483",
+      "ItemName": "Life-Boon Jade",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360484",
+      "ItemName": "Myth-Boon Peridot",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360485",
+      "ItemName": "Storm-Boon Amethyst",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360486",
+      "ItemName": "Add Health Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360487",
+      "ItemName": "Extra Mana Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360488",
+      "ItemName": "Balance-Off Citrine",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360489",
+      "ItemName": "Death-Away Onyx",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360490",
+      "ItemName": "Fire-Away Ruby",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360491",
+      "ItemName": "Ice-Away Sapphire",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360492",
+      "ItemName": "Life-Away Jade",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360493",
+      "ItemName": "Myth-Away Peridot",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360494",
+      "ItemName": "Storm-Away Amethyst",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360495",
+      "ItemName": "Dogged Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360496",
+      "ItemName": "Calculating Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360497",
+      "ItemName": "Cheeky Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360498",
+      "ItemName": "Hearty Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360499",
+      "ItemName": "Wise Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360500",
+      "ItemName": "Balance-It Citrine",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360501",
+      "ItemName": "Death-Shot Onyx",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360502",
+      "ItemName": "Fire-Shot Ruby",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360503",
+      "ItemName": "Ice-Shot Sapphire",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360504",
+      "ItemName": "Life-Shot Jade",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360505",
+      "ItemName": "Myth-Shot Peridot",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360506",
+      "ItemName": "Storm-Shot Amethyst",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360507",
+      "ItemName": "Balance-Giver Citrine",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360508",
+      "ItemName": "Death-Giver Onyx",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360509",
+      "ItemName": "Fire-Giver Ruby",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360510",
+      "ItemName": "Ice-Giver Sapphire",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360511",
+      "ItemName": "Life-Giver Jade",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360512",
+      "ItemName": "Myth-Giver Peridot",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360513",
+      "ItemName": "Storm-Giver Amethyst",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360514",
+      "ItemName": "Health Boost Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360515",
+      "ItemName": "Mana Boost Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360516",
+      "ItemName": "Unbalancer Citrine",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360517",
+      "ItemName": "Death-Proof Onyx",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360518",
+      "ItemName": "Fire-Proof Ruby",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360519",
+      "ItemName": "Ice-Proof Sapphire",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360520",
+      "ItemName": "Life-Proof Jade",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360521",
+      "ItemName": "Myth-Proof Peridot",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360522",
+      "ItemName": "Storm-Proof Amethyst",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360523",
+      "ItemName": "Steadfast Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360524",
+      "ItemName": "Sharp Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360525",
+      "ItemName": "Eager Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360526",
+      "ItemName": "Rugged Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360527",
+      "ItemName": "Canny Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360528",
+      "ItemName": "Effective Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360529",
+      "ItemName": "Intrepid Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360530",
+      "ItemName": "Determined Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360531",
+      "ItemName": "Sturdy Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360532",
+      "ItemName": "Quick-Witted Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360533",
+      "ItemName": "Attentive Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360534",
+      "ItemName": "Adroit Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360535",
+      "ItemName": "Effervescent Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360536",
+      "ItemName": "Dependable Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360537",
+      "ItemName": "Forceful Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360624",
+      "ItemName": "Banana Peel Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360625",
+      "ItemName": "Bomber Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360626",
+      "ItemName": "Scoot Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360627",
+      "ItemName": "Drain Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360628",
+      "ItemName": "Slow Motion Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360629",
+      "ItemName": "Stall Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360630",
+      "ItemName": "Move It! Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360631",
+      "ItemName": "Siphon Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360632",
+      "ItemName": "Dawdle Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360633",
+      "ItemName": "Overtake Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360634",
+      "ItemName": "Downer Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360635",
+      "ItemName": "Exhaust Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360636",
+      "ItemName": "Check Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360637",
+      "ItemName": "Big Downer Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360638",
+      "ItemName": "Charge Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360639",
+      "ItemName": "Recovery Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360640",
+      "ItemName": "Restore Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360641",
+      "ItemName": "Boost Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360642",
+      "ItemName": "Clear Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360647",
+      "ItemName": "Dead End Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360648",
+      "ItemName": "Oil Slick Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360649",
+      "ItemName": "Big Drain Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360650",
+      "ItemName": "Freeze Frame Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360651",
+      "ItemName": "Super-Stall Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360652",
+      "ItemName": "Distract Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360653",
+      "ItemName": "Mute Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360654",
+      "ItemName": "Perplex Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360655",
+      "ItemName": "Siphonizer Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360656",
+      "ItemName": "Slowpoke Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360657",
+      "ItemName": "Super-Pass Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360658",
+      "ItemName": "Befuddle Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360659",
+      "ItemName": "Silence Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360660",
+      "ItemName": "Stumble Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360661",
+      "ItemName": "Leech Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360662",
+      "ItemName": "Clear Path Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360663",
+      "ItemName": "Big Exhaust Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360664",
+      "ItemName": "Big-Check Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360665",
+      "ItemName": "Slow Leader Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360666",
+      "ItemName": "Clay Post Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360667",
+      "ItemName": "Dirt Post Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360668",
+      "ItemName": "Grass Post Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360669",
+      "ItemName": "Rally Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360670",
+      "ItemName": "Charge Up Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360671",
+      "ItemName": "Big Boost Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360672",
+      "ItemName": "Hurry Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    },
+    {
+      "ItemId": "1360777",
+      "ItemName": "Energy Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360778",
+      "ItemName": "Big Energy Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360779",
+      "ItemName": "Huge Energy Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360780",
+      "ItemName": "Ultra Energy Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360781",
+      "ItemName": "Gold Miner Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360825",
+      "ItemName": "Wisp Bonus Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1360826",
+      "ItemName": "Pip o'Plenty Opal",
+      "Notes": "",
+      "Chance": 1.6393
+    },
+    {
+      "ItemId": "1363078",
+      "ItemName": "Quick Learner Opal",
+      "Notes": "",
+      "Chance": 0.4608
+    }
+  ]
+}

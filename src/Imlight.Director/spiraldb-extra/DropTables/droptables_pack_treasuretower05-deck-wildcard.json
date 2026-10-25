@@ -1,0 +1,200 @@
+{
+  "Name": "TreasureTower05-Deck-Wildcard",
+  "Description": "Deckathalon Storm Tower Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1557335834",
+      "ItemName": "Legendary Treant",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "564522794",
+      "ItemName": "Keeper of the Flame",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "198381294",
+      "ItemName": "Humongofrog",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "249845203",
+      "ItemName": "Gobbler",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "940821624",
+      "ItemName": "Minotaur",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1685775834",
+      "ItemName": "General Akilles",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1058261230",
+      "ItemName": "Blood Bat",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "82261857",
+      "ItemName": "Troll",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "617308812",
+      "ItemName": "Regenerate",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1008863650",
+      "ItemName": "Healing Current",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1267213724",
+      "ItemName": "Helping Hands",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "73527153",
+      "ItemName": "Dryad",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "779947345",
+      "ItemName": "Fairy",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "84793606",
+      "ItemName": "Satyr",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1088567023",
+      "ItemName": "Minor Blessing",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1889148781",
+      "ItemName": "Sprite",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "927001136",
+      "ItemName": "Fortify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "927785577",
+      "ItemName": "Amplify",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "2048942658",
+      "ItemName": "Steal Charm",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1888309488",
+      "ItemName": "Plague",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1698635320",
+      "ItemName": "Glacial Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "109770479",
+      "ItemName": "Myth Trap",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1697441930",
+      "ItemName": "Bad Juju",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "45884029",
+      "ItemName": "Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "131220406",
+      "ItemName": "Mass Infection",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "726534295",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "90582419",
+      "ItemName": "Feint",
+      "Notes": "",
+      "Chance": 2.6316
+    },
+    {
+      "ItemId": "432327120",
+      "ItemName": "Tower Shield",
+      "Notes": "",
+      "Chance": 10.0
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "406792873",
+      "ItemName": "Storm Shield",
+      "Notes": "",
+      "Chance": 20.0
+    },
+    {
+      "ItemId": "1313738267",
+      "ItemName": "Weakness",
+      "Notes": "",
+      "Chance": 20.0
+    }
+  ]
+}

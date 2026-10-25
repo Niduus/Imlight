@@ -1,0 +1,218 @@
+{
+  "Name": "DruidHoardPackLT-Common-Shard",
+  "Description": "Druid's Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1492247",
+      "ItemName": "Daybreaker",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "1492249",
+      "ItemName": "Nightbringer",
+      "Notes": "",
+      "Chance": 11.1111
+    },
+    {
+      "ItemId": "100325",
+      "ItemName": "Frog",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "100416",
+      "ItemName": "Scarab",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "175468",
+      "ItemName": "Grizzley Boar",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220229",
+      "ItemName": "Wafer Biscuit",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220232",
+      "ItemName": "Yogurt",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220250",
+      "ItemName": "Truffle",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "Radioactive Pizza",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479623",
+      "ItemName": "Broken Vase with Flower",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479624",
+      "ItemName": "Drains Sconce",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479625",
+      "ItemName": "Notebook",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479626",
+      "ItemName": "Rolled Up Rug",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479627",
+      "ItemName": "Ruined Forest Painting",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479628",
+      "ItemName": "Trash Pile",
+      "Notes": "",
+      "Chance": 9.0909
+    },
+    {
+      "ItemId": "1479644",
+      "ItemName": "Ghost Warden",
+      "Notes": "",
+      "Chance": 9.0909
+    }
+  ]
+}

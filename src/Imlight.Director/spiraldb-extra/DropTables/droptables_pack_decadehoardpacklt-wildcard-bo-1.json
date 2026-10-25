@@ -1,0 +1,944 @@
+{
+  "Name": "DecadeHoardPackLT-Wildcard-BO-1",
+  "Description": "Super Decaversary Hoard Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1447010",
+      "ItemName": "Death Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "1447230",
+      "ItemName": "Balance Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "1447231",
+      "ItemName": "Fire Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1447232",
+      "ItemName": "Ice Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "1447233",
+      "ItemName": "Life Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "1447234",
+      "ItemName": "Myth Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "1447235",
+      "ItemName": "Storm Decade Vortex (PERM)",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "100331",
+      "ItemName": "Greater Imp",
+      "Notes": "",
+      "Chance": 0.1664
+    },
+    {
+      "ItemId": "100408",
+      "ItemName": "Fire Elf",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "106946",
+      "ItemName": "Ruby",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106947",
+      "ItemName": "Sapphire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106948",
+      "ItemName": "Amethyst",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106949",
+      "ItemName": "Citrine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106950",
+      "ItemName": "Peridot",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106951",
+      "ItemName": "Onyx",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106952",
+      "ItemName": "Jade",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106954",
+      "ItemName": "Shadow Oil",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106955",
+      "ItemName": "Ghost Fire",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "106958",
+      "ItemName": "Crystal Vial",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "160369",
+      "ItemName": "Small Bush",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "160372",
+      "ItemName": "Brown Blooms",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "160373",
+      "ItemName": "Purple Posies",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "160374",
+      "ItemName": "Fire Flowers",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "160980",
+      "ItemName": "Bluebonnets",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "220208",
+      "ItemName": "Cheese Broccoli",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "220320",
+      "ItemName": "Golden Taffy",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473173",
+      "ItemName": "Red Grapes of Wrath",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "512087",
+      "ItemName": "Wizard City Main Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512113",
+      "ItemName": "Wizard101 Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512114",
+      "ItemName": "Golem Tower Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512115",
+      "ItemName": "Wizard City Haunted Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512116",
+      "ItemName": "Wizard City Theme 1",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512117",
+      "ItemName": "Wizard City Theme 2",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512118",
+      "ItemName": "Wizard City Theme 3",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "512119",
+      "ItemName": "Wizard City Combat Theme",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641598",
+      "ItemName": "Pomegranite",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641611",
+      "ItemName": "Ogre Meanies",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641693",
+      "ItemName": "Drake Berry Cobbler",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733116",
+      "ItemName": "Cacao Beans",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733134",
+      "ItemName": "Rex Tea",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733138",
+      "ItemName": "Bronto Burger",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733140",
+      "ItemName": "Tamales",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "789226",
+      "ItemName": "Sea Dragon Salad",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317095",
+      "ItemName": "Roly Poly Fishheads",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1350198",
+      "ItemName": "Rotten Beets",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1374624",
+      "ItemName": "Diligent Pigswick Student",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1374626",
+      "ItemName": "Bookish Pigswick Student",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1374627",
+      "ItemName": "Well-Read Pigswick Student",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "1374628",
+      "ItemName": "Studious Pigswick Student",
+      "Notes": "",
+      "Chance": 4.5455
+    },
+    {
+      "ItemId": "220308",
+      "ItemName": "Golden Pizza",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 7.6923
+    },
+    {
+      "ItemId": "589095",
+      "ItemName": "MooShu Cheddar",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1359609",
+      "ItemName": "Sugar Skulls Cereal",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1359620",
+      "ItemName": "Valencian Orange",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1359626",
+      "ItemName": "Penne Dreadful",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1359629",
+      "ItemName": "Breakfast Tacos",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1374629",
+      "ItemName": "Levitating Pigswick Student",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1374630",
+      "ItemName": "Hovering Pigswick Student",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1374631",
+      "ItemName": "Floating Pigswick Student",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1374632",
+      "ItemName": "Reclining Pigswick Student",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1421680",
+      "ItemName": "Wysterberries",
+      "Notes": "",
+      "Chance": 7.1429
+    },
+    {
+      "ItemId": "1457159",
+      "ItemName": "New Wizard City Main Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457160",
+      "ItemName": "New Wizard101 Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457161",
+      "ItemName": "New Golem Tower Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457162",
+      "ItemName": "New Wizard City Haunted Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457163",
+      "ItemName": "New Wizard City Theme 1",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457164",
+      "ItemName": "New Wizard City Theme 2",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457165",
+      "ItemName": "New Wizard City Theme 3",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457166",
+      "ItemName": "New Wizard City Combat Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1457171",
+      "ItemName": "Wizard City Ravenwood Theme",
+      "Notes": "",
+      "Chance": 4.3478
+    },
+    {
+      "ItemId": "1817536661",
+      "ItemName": "Chastisement",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1208495002",
+      "ItemName": "Cycle of Life",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "994900065",
+      "ItemName": "Furnace",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "263246529",
+      "ItemName": "Galvanic Field",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "2006679017",
+      "ItemName": "Punishment",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "98450680",
+      "ItemName": "Reliquary",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1797392309",
+      "ItemName": "Sleet Storm",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "469739015",
+      "ItemName": "Virulence",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "39480939",
+      "ItemName": "Primordial",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "524714199",
+      "ItemName": "Doom and Gloom",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1217260082",
+      "ItemName": "Donate Power",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "399381128",
+      "ItemName": "Minotaur",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "683570591",
+      "ItemName": "Centaur",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1968688787",
+      "ItemName": "Balefrost",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "1874399186",
+      "ItemName": "Phoenix",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "939760841",
+      "ItemName": "Darkwind",
+      "Notes": "",
+      "Chance": 3.5714
+    },
+    {
+      "ItemId": "87115",
+      "ItemName": "Dragon",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1317673",
+      "ItemName": "Ninja Piggle",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374561",
+      "ItemName": "Wolfminster Rostrum",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374576",
+      "ItemName": "Grand Celestial Fountain",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374584",
+      "ItemName": "Grizzleheim Bellows",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374585",
+      "ItemName": "Nordrilund Geyser",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374633",
+      "ItemName": "Lounging Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374634",
+      "ItemName": "Reading Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374635",
+      "ItemName": "Studying Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374636",
+      "ItemName": "Perusing Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374637",
+      "ItemName": "Circling Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374639",
+      "ItemName": "Cycling Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374640",
+      "ItemName": "Rotating Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374641",
+      "ItemName": "Spinning Pigswick Student",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1374643",
+      "ItemName": "Talented Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374644",
+      "ItemName": "Skilled Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374645",
+      "ItemName": "Capable Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1374646",
+      "ItemName": "Adept Pigswick Student",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441333",
+      "ItemName": "Decaversary Cake",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441334",
+      "ItemName": "Birthday Pheasant",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1441335",
+      "ItemName": "Decaversaraddish",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1446993",
+      "ItemName": "Celebration Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447011",
+      "ItemName": "Death Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447012",
+      "ItemName": "Death Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447045",
+      "ItemName": "Decade Dragon",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447236",
+      "ItemName": "Storm Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447237",
+      "ItemName": "Myth Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447238",
+      "ItemName": "Fire Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447239",
+      "ItemName": "Balance Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447240",
+      "ItemName": "Life Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447241",
+      "ItemName": "Ice Decade Vortex (7 Day)",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1447242",
+      "ItemName": "Storm Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447243",
+      "ItemName": "Myth Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447244",
+      "ItemName": "Fire Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447245",
+      "ItemName": "Balance Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447246",
+      "ItemName": "Life Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1447247",
+      "ItemName": "Ice Decade Vortex (1 Day)",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456007",
+      "ItemName": "Celebration Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456021",
+      "ItemName": "Celebration Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456035",
+      "ItemName": "Jubilation Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456049",
+      "ItemName": "Jubilation Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456063",
+      "ItemName": "Jubilation Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456077",
+      "ItemName": "Commemoration Hat",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456091",
+      "ItemName": "Commemoration Robe",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456105",
+      "ItemName": "Commemoration Boots",
+      "Notes": "",
+      "Chance": 3.4483
+    },
+    {
+      "ItemId": "1456120",
+      "ItemName": "Celebration Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456134",
+      "ItemName": "Jubilation Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    },
+    {
+      "ItemId": "1456148",
+      "ItemName": "Commemoration Staff",
+      "Notes": "",
+      "Chance": 0.9434
+    }
+  ]
+}

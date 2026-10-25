@@ -1,0 +1,326 @@
+{
+  "Name": "RRangersLorePackLT-Common",
+  "Description": "Ravenwood Rangers Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "181060",
+      "ItemName": "Drinking Horn",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "220196",
+      "ItemName": "Sliced Watermelon",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220230",
+      "ItemName": "Tiny Pretzel",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220231",
+      "ItemName": "Potato Chips",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220232",
+      "ItemName": "Yogurt",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220233",
+      "ItemName": "Pudding",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220249",
+      "ItemName": "Taffy",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220288",
+      "ItemName": "Jelly Beans",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220299",
+      "ItemName": "Large Pretzel",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "220323",
+      "ItemName": "Bag of Jelly Beans",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "342102",
+      "ItemName": "Outrigger Canoe",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "512087",
+      "ItemName": "Wizard City Main Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512113",
+      "ItemName": "Wizard101 Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512114",
+      "ItemName": "Golem Tower Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512115",
+      "ItemName": "Wizard City Haunted Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512116",
+      "ItemName": "Wizard City Theme 1",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512117",
+      "ItemName": "Wizard City Theme 2",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512118",
+      "ItemName": "Wizard City Theme 3",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "512119",
+      "ItemName": "Wizard City Combat Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "643179",
+      "ItemName": "Talking Drum",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1202018",
+      "ItemName": "Olympian Herb",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1248008",
+      "ItemName": "Sword Fern",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "1317939",
+      "ItemName": "Hematite",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1335143",
+      "ItemName": "Graduation Theme",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1350074",
+      "ItemName": "Opal",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1374255",
+      "ItemName": "Tip of the Polarian Iceberg",
+      "Notes": "",
+      "Chance": 2.7027
+    },
+    {
+      "ItemId": "1392777",
+      "ItemName": "Fortified Bread",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1457167",
+      "ItemName": "Wizard City Shop Theme 1",
+      "Notes": "",
+      "Chance": 2.7027
+    }
+  ]
+}

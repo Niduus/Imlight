@@ -1,0 +1,596 @@
+{
+  "Name": "JewelPackLT-Life",
+  "Description": "Life Jewel Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1352673",
+      "ItemName": "Cracked Damage Jade +1",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352674",
+      "ItemName": "Cracked Damage Jade +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352675",
+      "ItemName": "Cracked Damage Jade +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352676",
+      "ItemName": "Cracked Damage Jade +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352677",
+      "ItemName": "Cracked Damage Jade +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352678",
+      "ItemName": "Cracked Damage Jade +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352679",
+      "ItemName": "Chipped Damage Jade +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352680",
+      "ItemName": "Chipped Damage Jade +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352681",
+      "ItemName": "Flawed Damage Jade +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352682",
+      "ItemName": "Flawed Damage Jade +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352683",
+      "ItemName": "Blemished Damage Jade +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352684",
+      "ItemName": "Blemished Damage Jade +12",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1352685",
+      "ItemName": "Dull Damage Jade +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352686",
+      "ItemName": "Dull Damage Jade +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352687",
+      "ItemName": "Plain Damage Jade +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352688",
+      "ItemName": "Plain Damage Jade +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352689",
+      "ItemName": "Opaque Damage Jade +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352690",
+      "ItemName": "Opaque Damage Jade +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352691",
+      "ItemName": "Clear Damage Jade +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352692",
+      "ItemName": "Clear Damage Jade +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352693",
+      "ItemName": "Polished Damage Jade +21",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352694",
+      "ItemName": "Polished Damage Jade +22",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352695",
+      "ItemName": "Lustrous Damage Jade +23",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352696",
+      "ItemName": "Lustrous Damage Jade +24",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352789",
+      "ItemName": "Dull Piercing Jade +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352790",
+      "ItemName": "Dull Piercing Jade +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352791",
+      "ItemName": "Plain Piercing Jade +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352792",
+      "ItemName": "Opaque Piercing Jade +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352793",
+      "ItemName": "Clear Piercing Jade +5%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352794",
+      "ItemName": "Polished Piercing Jade +6%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352875",
+      "ItemName": "Dull Critical Jade +2",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352876",
+      "ItemName": "Dull Critical Jade +3",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352877",
+      "ItemName": "Dull Critical Jade +4",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352878",
+      "ItemName": "Plain Critical Jade +5",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352879",
+      "ItemName": "Plain Critical Jade +6",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352880",
+      "ItemName": "Opaque Critical Jade +7",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352881",
+      "ItemName": "Opaque Critical Jade +8",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352882",
+      "ItemName": "Clear Critical Jade +9",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352883",
+      "ItemName": "Clear Critical Jade +10",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352884",
+      "ItemName": "Polished Critical Jade +11",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352885",
+      "ItemName": "Polished Critical Jade +12",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352886",
+      "ItemName": "Lustrous Critical Jade +13",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1352887",
+      "ItemName": "Lustrous Critical Jade +14",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357092",
+      "ItemName": "Chipped Accurate Jade +3%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357093",
+      "ItemName": "Flawed Accurate Jade +4%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357094",
+      "ItemName": "Blemished Accurate Jade +5%",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1357096",
+      "ItemName": "Plain Accurate Jade +7%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357097",
+      "ItemName": "Opaque Accurate Jade +8%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357098",
+      "ItemName": "Clear Accurate Jade +9%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357099",
+      "ItemName": "Polished Accurate Jade +10%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357100",
+      "ItemName": "Lustrous Accurate Jade +11%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357144",
+      "ItemName": "Cracked Accurate Jade +1%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357145",
+      "ItemName": "Cracked Accurate Jade +2%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1357215",
+      "ItemName": "Imp Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357216",
+      "ItemName": "Leprechaun Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1357217",
+      "ItemName": "Legend Shield Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358598",
+      "ItemName": "Sprite Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358599",
+      "ItemName": "Satyr Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1358616",
+      "ItemName": "Seraph Jade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358617",
+      "ItemName": "Centaur Jade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358618",
+      "ItemName": "Sanctuary Jade",
+      "Notes": "",
+      "Chance": 8.3333
+    },
+    {
+      "ItemId": "1358667",
+      "ItemName": "Entangle Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358668",
+      "ItemName": "Mass Life Prism Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358669",
+      "ItemName": "Rebirth Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358670",
+      "ItemName": "Brilliant Light Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358671",
+      "ItemName": "Life Trap Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358672",
+      "ItemName": "Mass Triage Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358673",
+      "ItemName": "Drain Health Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358674",
+      "ItemName": "Sprite Guardian Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358675",
+      "ItemName": "Sir Bedevere Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1358977",
+      "ItemName": "Lifeblade Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1360045",
+      "ItemName": "Rocklops Jade",
+      "Notes": "",
+      "Chance": 4.7619
+    },
+    {
+      "ItemId": "1360146",
+      "ItemName": "Wrath of Apollo Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1374101",
+      "ItemName": "Life Brume (PERM)",
+      "Notes": "",
+      "Chance": 0.8929
+    },
+    {
+      "ItemId": "1376146",
+      "ItemName": "Dual Lifeblade Jade",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1376149",
+      "ItemName": "Dual Shadowblade Hematite",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1376299",
+      "ItemName": "Morganthe's Ardor Jade",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1376306",
+      "ItemName": "Erratic Intensify Opal",
+      "Notes": "",
+      "Chance": 2.9412
+    },
+    {
+      "ItemId": "1384432",
+      "ItemName": "Life Brandon Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405723",
+      "ItemName": "Shiny Damage Jade +25",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405724",
+      "ItemName": "Shiny Damage Jade +26",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405740",
+      "ItemName": "Shiny Critical Jade +15",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405741",
+      "ItemName": "Shiny Critical Jade +16",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405772",
+      "ItemName": "Lifespear Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1405791",
+      "ItemName": "Shiny Accurate Jade +12%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430048",
+      "ItemName": "Sparkling Damage Jade +27",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1430056",
+      "ItemName": "Sparkling Critical Jade +17",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462434",
+      "ItemName": "Sparkling Damage Jade +28",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462443",
+      "ItemName": "Sparkling Critical Jade +18",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1462486",
+      "ItemName": "Sparkling Accurate Jade +13%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1466987",
+      "ItemName": "Luminous Weaver Jade",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514449",
+      "ItemName": "Dazzling Damage Jade +29",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514450",
+      "ItemName": "Dazzling Damage Jade +30",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514467",
+      "ItemName": "Dazzling Critical Jade +19",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514468",
+      "ItemName": "Dazzling Critical Jade +20",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514484",
+      "ItemName": "Dazzling Accurate Jade +14%",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1514493",
+      "ItemName": "Goat Monk Jade",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

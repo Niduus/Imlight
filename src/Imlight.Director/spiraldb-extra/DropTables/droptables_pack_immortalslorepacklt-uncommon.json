@@ -1,0 +1,416 @@
+{
+  "Name": "ImmortalsLorePackLT-Uncommon",
+  "Description": "Immortal's Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82719",
+      "ItemName": "Blue Facetted Column",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "82721",
+      "ItemName": "Purple Facetted Column",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "160377",
+      "ItemName": "Small Fern",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "164279",
+      "ItemName": "Solar Pattern Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "206099",
+      "ItemName": "Egg Basket",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "211109",
+      "ItemName": "Stuffed Owl",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "469718",
+      "ItemName": "Red Brick Floor Tile",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469719",
+      "ItemName": "Cross Section Floor Tile",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469720",
+      "ItemName": "Marble Diner Floor Tile",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469722",
+      "ItemName": "Blue Vine Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469724",
+      "ItemName": "Yellow Flowers Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469725",
+      "ItemName": "Marble Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469726",
+      "ItemName": "Wavy Stalk Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "469727",
+      "ItemName": "Stucco Wallpaper",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "470228",
+      "ItemName": "Stone Base",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "537536",
+      "ItemName": "Craggy Apple Tree",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "537777",
+      "ItemName": "Gritty Stone Floor Tile",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "643118",
+      "ItemName": "Widemouth Clay Jar",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "643119",
+      "ItemName": "Slender Clay Jar",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "643143",
+      "ItemName": "Clay Pot Collection",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "643180",
+      "ItemName": "Clay Teapot",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202010",
+      "ItemName": "Banner of Apollo",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202011",
+      "ItemName": "Nine Fathoms Pedestal",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202012",
+      "ItemName": "Atlantean Arch",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202014",
+      "ItemName": "Ember Stone of Tartarus",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202016",
+      "ItemName": "Underworld Brazier",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202017",
+      "ItemName": "Hades the Unseen Mural",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1202018",
+      "ItemName": "Olympian Herb",
+      "Notes": "",
+      "Chance": 2.439
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 5.0
+    },
+    {
+      "ItemId": "1383139",
+      "ItemName": "Frojan Mousse",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1383140",
+      "ItemName": "Manticoreos",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1383141",
+      "ItemName": "Minotarts",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1383142",
+      "ItemName": "Stymphalian Birdseed",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1383143",
+      "ItemName": "Hero Sandwich",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392078",
+      "ItemName": "Hespermint",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1392079",
+      "ItemName": "Krakamari",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1218925152",
+      "ItemName": "Blue Phoenix",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1733858619",
+      "ItemName": "Big Bad Hound",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "277801131",
+      "ItemName": "Blight Hound",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "399623117",
+      "ItemName": "Bronze Armor",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1112006948",
+      "ItemName": "Blazing Phoenix",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "576799235",
+      "ItemName": "Shield Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1197901162",
+      "ItemName": "Stone Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "166785574",
+      "ItemName": "Silencing Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "510435584",
+      "ItemName": "Fire Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "2095137281",
+      "ItemName": "Glacial Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "516727035",
+      "ItemName": "Energy Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1092837225",
+      "ItemName": "Reflective Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1434388713",
+      "ItemName": "Cloud Wall",
+      "Notes": "",
+      "Chance": 3.2258
+    },
+    {
+      "ItemId": "1363836215",
+      "ItemName": "Brulee Sucre",
+      "Notes": "",
+      "Chance": 3.2258
+    }
+  ]
+}

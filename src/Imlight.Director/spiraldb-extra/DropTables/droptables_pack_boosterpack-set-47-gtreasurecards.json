@@ -1,0 +1,110 @@
+{
+  "Name": "BoosterPack-Set-47-GTreasureCards",
+  "Description": "Farley's Gardening Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "810277838",
+      "ItemName": "Ant Lion",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1134228414",
+      "ItemName": "Flute Ensemble",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1308557981",
+      "ItemName": "Itsy Bitsy Spider",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "294416311",
+      "ItemName": "Strawman",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1453739502",
+      "ItemName": "Solar Flares",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1078001989",
+      "ItemName": "Summon Pixie",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "121761288",
+      "ItemName": "Wind Chimes",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "669814671",
+      "ItemName": "Plant All",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "27977935",
+      "ItemName": "Baby Sunbird",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1879809779",
+      "ItemName": "Bee Hive",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "83784883",
+      "ItemName": "Flood",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1403540653",
+      "ItemName": "Fly Swatter",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1787097753",
+      "ItemName": "Pest Bomb",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "617095555",
+      "ItemName": "Supreme Sunburst",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1314870253",
+      "ItemName": "Second Spring",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "580925327",
+      "ItemName": "Plow All",
+      "Notes": "",
+      "Chance": 12.5
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "Name": "Bundle-SkeletonKey-By-Level-LT",
+  "Description": "Skeleton Key by Level (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

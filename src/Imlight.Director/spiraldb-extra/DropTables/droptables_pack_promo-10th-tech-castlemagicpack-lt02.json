@@ -1,0 +1,20 @@
+{
+  "Name": "Promo-10th-Tech-CastleMagicPack-LT02",
+  "Description": "Castle Magic Starter (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1335168",
+      "ItemName": "Magic Timer",
+      "Notes": "",
+      "Chance": 100.0
+    }
+  ]
+}

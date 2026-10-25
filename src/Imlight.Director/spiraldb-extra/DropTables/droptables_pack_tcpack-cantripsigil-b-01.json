@@ -1,0 +1,50 @@
+{
+  "Name": "TCPack-CantripSigil-B-01",
+  "Description": "Sigil Cantrip Pack 2 (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "80058898",
+      "ItemName": "Legion Shield 2",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "814116061",
+      "ItemName": "Restoring Rain 2",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1402418920",
+      "ItemName": "Donate Power 2",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1453861665",
+      "ItemName": "Virulent Plague 2",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1526160404",
+      "ItemName": "Dual Strike 2",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1848050708",
+      "ItemName": "Fiery Explosion 2",
+      "Notes": "",
+      "Chance": 50.0
+    }
+  ]
+}

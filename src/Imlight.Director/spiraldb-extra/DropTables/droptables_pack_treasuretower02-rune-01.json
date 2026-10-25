@@ -1,0 +1,62 @@
+{
+  "Name": "TreasureTower02-Rune-01",
+  "Description": "Deckathalon Fire Rune Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1441808",
+      "ItemName": "Fire Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441809",
+      "ItemName": "Enhanced Fire Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441812",
+      "ItemName": "Ice Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441813",
+      "ItemName": "Enhanced Ice Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441815",
+      "ItemName": "Storm Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441816",
+      "ItemName": "Enhanced Storm Rune",
+      "Notes": "",
+      "Chance": 25.0
+    },
+    {
+      "ItemId": "1441824",
+      "ItemName": "Balance Rune",
+      "Notes": "",
+      "Chance": 50.0
+    },
+    {
+      "ItemId": "1441825",
+      "ItemName": "Enhanced Balance Rune",
+      "Notes": "",
+      "Chance": 25.0
+    }
+  ]
+}

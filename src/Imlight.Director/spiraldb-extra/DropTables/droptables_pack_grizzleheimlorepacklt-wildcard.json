@@ -1,0 +1,854 @@
+{
+  "Name": "GrizzleheimLorePackLT-Wildcard",
+  "Description": "Grizzleheim Lore Pack (from Wizard404)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1507373",
+      "ItemName": "Grendel's Amends",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1507378",
+      "ItemName": "Ratatoskr's Spin",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "1507399",
+      "ItemName": "Hammer of Thor",
+      "Notes": "",
+      "Chance": 5.5556
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181067",
+      "ItemName": "Wild Fern",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181068",
+      "ItemName": "Fire Pit and Kettle",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181076",
+      "ItemName": "Wild Mushrooms",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181120",
+      "ItemName": "Tall Wooden Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181121",
+      "ItemName": "Rough Wooden Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "181122",
+      "ItemName": "Barbaric Wood Shelf",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "184173",
+      "ItemName": "Kitchen Ware Rack",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "184174",
+      "ItemName": "Kitchen Ware Pots",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "512091",
+      "ItemName": "Grizzleheim Main Theme",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "512149",
+      "ItemName": "Grizzleheim Theme 1",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "512150",
+      "ItemName": "Grizzleheim Combat Theme",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "537584",
+      "ItemName": "Caramel Corn",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "537587",
+      "ItemName": "Sunflower Hearts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "641605",
+      "ItemName": "Bog Witch Beetroot",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "641688",
+      "ItemName": "Cantajackalope",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "641689",
+      "ItemName": "Kiwi Fruit",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "713175",
+      "ItemName": "Golden Couch Potatoes",
+      "Notes": "",
+      "Chance": 6.6667
+    },
+    {
+      "ItemId": "733130",
+      "ItemName": "Caramel Apple",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "733181",
+      "ItemName": "Cheese Cake",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "789225",
+      "ItemName": "Tower Shield Tarts",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257586",
+      "ItemName": "King Parsley Soup",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron",
+      "Notes": "",
+      "Chance": 2.2727
+    },
+    {
+      "ItemId": "1374586",
+      "ItemName": "Grizzleheim Game Trap",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374591",
+      "ItemName": "Grizzleheim Breadboard",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374592",
+      "ItemName": "Hrundle Fjord Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374593",
+      "ItemName": "Northguard Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1374594",
+      "ItemName": "Austrilund Shield",
+      "Notes": "",
+      "Chance": 2.5641
+    },
+    {
+      "ItemId": "1383143",
+      "ItemName": "Hero Sandwich",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1392777",
+      "ItemName": "Fortified Bread",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "1441354",
+      "ItemName": "Fortified Cheese",
+      "Notes": "",
+      "Chance": 3.8462
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "356099",
+      "ItemName": "Pink Laugh-o-Dil",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1317840",
+      "ItemName": "Wampyrnickel Bread",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze",
+      "Notes": "",
+      "Chance": 2.8571
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington",
+      "Notes": "",
+      "Chance": 1.8868
+    },
+    {
+      "ItemId": "1374582",
+      "ItemName": "Ravenscar Throne",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1374589",
+      "ItemName": "Grizzleheim Stone Oven",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "1374590",
+      "ItemName": "Grizzleheim Furnace",
+      "Notes": "",
+      "Chance": 12.5
+    },
+    {
+      "ItemId": "514203989",
+      "ItemName": "Balanceblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1623983249",
+      "ItemName": "Blademaster",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "2005205555",
+      "ItemName": "Bladestorm",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1432098147",
+      "ItemName": "Deathblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1506692433",
+      "ItemName": "Dragonblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "850164170",
+      "ItemName": "Fireblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "2039832976",
+      "ItemName": "Iceblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "850143684",
+      "ItemName": "Lifeblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "850060227",
+      "ItemName": "Mythblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1039424196",
+      "ItemName": "Sharpened Blade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1893708917",
+      "ItemName": "Spirit Blade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "1427058518",
+      "ItemName": "Stormblade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "881759932",
+      "ItemName": "Elemental Blade",
+      "Notes": "",
+      "Chance": 2.0
+    },
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "473448",
+      "ItemName": "Night Hawk",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537556",
+      "ItemName": "Broken Viking Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537557",
+      "ItemName": "Viking Sword Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "537558",
+      "ItemName": "Viking Axe Statue",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "589089",
+      "ItemName": "Raven",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1350297",
+      "ItemName": "Grizzleheim Carved Wallpaper",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470348",
+      "ItemName": "Fenris",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470349",
+      "ItemName": "Fenrir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1470350",
+      "ItemName": "Fenric",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475438",
+      "ItemName": "Wotan's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475452",
+      "ItemName": "Wotan's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475466",
+      "ItemName": "Wotan's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475480",
+      "ItemName": "Allfather's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475494",
+      "ItemName": "Allfather's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475508",
+      "ItemName": "Allfather's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475522",
+      "ItemName": "Odin's Helm",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475536",
+      "ItemName": "Odin's Raiment",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475550",
+      "ItemName": "Odin's Boots",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475564",
+      "ItemName": "Wotan's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475578",
+      "ItemName": "Allfather's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1475592",
+      "ItemName": "Odin's Gungnir",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479030",
+      "ItemName": "Ravenscar Anvil",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479031",
+      "ItemName": "Cooking Fire",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1479032",
+      "ItemName": "Redclaw Tent",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "525399363",
+      "ItemName": "Ratatoskr's Spin",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1927333076",
+      "ItemName": "Grendel's Amends",
+      "Notes": "",
+      "Chance": 3.7037
+    },
+    {
+      "ItemId": "1954896080",
+      "ItemName": "Hammer of Thor",
+      "Notes": "",
+      "Chance": 3.7037
+    }
+  ]
+}
