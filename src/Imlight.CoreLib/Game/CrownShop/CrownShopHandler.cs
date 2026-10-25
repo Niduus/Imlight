@@ -38,6 +38,7 @@ using Imcodec.IO;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,6 +91,10 @@ public static class CrownShopHandler {
     private static CrownShopLayout s_layout = new() { m_tabs = [], m_categories = [] };
     private static readonly Dictionary<int, ByteString> s_dataByVersions = [];
     private static List<int> s_versionLevels = [];
+    private static int s_settingsVersion = -1;
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, CrownShopItem> s_madeForSettings = new();
+    // The Featured tab's category (CrownShopSWF_CategoryFeatured).
+    private const int FEATURED_CATEGORY = 0;
 
     public static void Load() {
         if (!s_enabled) {
@@ -276,7 +281,14 @@ public static class CrownShopHandler {
     public static ByteString GetCrownShopData(int level) {
         // Two levels pick the same versions when no version starts between them.
         var key = s_versionLevels.LastOrDefault(start => start <= level, -1);
+        var settings = CrownShopConfig.Version;
         lock (s_reloadLock) {
+            // The Manager's featured items and sales changed: every list is built again.
+            if (settings != s_settingsVersion) {
+                s_settingsVersion = settings;
+                s_dataByVersions.Clear();
+            }
+
             if (s_dataByVersions.TryGetValue(key, out var cached)) {
                 return cached;
             }
@@ -287,12 +299,16 @@ public static class CrownShopHandler {
                 .Concat(s_versioned.Select(group => s_items[group.ForLevel(level).TemplateId]))
                 .ToList();
 
+            var featured = FeaturedFor(level, [.. spiral, .. extras]);
+            spiral = [.. featured, .. spiral.Select(Effective)];
+            extras = [.. extras.Select(Effective)];
+
             // A list too big for the game is cut down, the game file items last in first out, until it fits.
             var take = extras.Count;
-            var data = Serialize([.. spiral, .. extras]);
+            var data = Serialize(Merge(spiral, extras));
             while (data is { } packed && packed.Length > s_maxListBytes && take > 0) {
                 take = take * 3 / 4;
-                data = Serialize([.. spiral, .. extras.Take(take)]);
+                data = Serialize(Merge(spiral, extras.Take(take)));
             }
 
             if (take < extras.Count) {
@@ -353,7 +369,97 @@ public static class CrownShopHandler {
     };
 
     public static List<CrownShopItem> GetCrownShopItems() => s_items.Values.ToList();
-    public static bool TryGetCrownShopItem(ulong id, out CrownShopItem item)
-        => s_items.TryGetValue(id, out item);
+
+    /// <summary>An item the shop sells, at its sale price when the Manager put it on sale.</summary>
+    public static bool TryGetCrownShopItem(ulong id, out CrownShopItem item) {
+        item = Find(id) is { } found ? Effective(found) : null;
+
+        return item is not null;
+    }
+
+    // A shop item, or for an item the Manager features or puts on sale that the shop doesn't list, one made from its
+    // template's own crowns and gold price.
+    private static CrownShopItem Find(ulong id) {
+        if (s_items.TryGetValue(id, out var item)) {
+            return item;
+        }
+
+        if ((CrownShopConfig.Featured.Contains(id) || CrownShopConfig.SaleOn(id) is not null)
+            && CoreObjectFactory.GetCoreTemplate(id) is ItemTemplate template) {
+            return s_madeForSettings.GetOrAdd(id, _ => ToShopItem(new CrownShopGameItems.Entry {
+                TemplateId = id,
+                Category = 19,
+                CrownsCost = (int) template.m_creditsCost,
+                GoldCost = (int) template.m_baseCost
+            }));
+        }
+
+        return null;
+    }
+
+    // The item at its sale price: the sale's crowns and gold, the normal price crossed out and the SALE sticker.
+    private static CrownShopItem Effective(CrownShopItem item) {
+        if (CrownShopConfig.SaleOn(item.m_itemTemplateId) is not { } sale) {
+            return item;
+        }
+
+        var copy = Copy(item);
+        if (sale.Crowns > 0) {
+            copy.m_strikethruCrowns = item.m_crownsCost;
+            copy.m_crownsCost = sale.Crowns;
+        }
+        if (sale.Gold > 0) {
+            copy.m_strikethruGold = item.m_goldCost;
+            copy.m_goldCost = sale.Gold;
+        }
+        copy.m_itemFlags |= (int) CrownShopItemFlagsBits.Sale;
+
+        return copy;
+    }
+
+    // The Manager's featured items, in its order, each also on the Featured tab; a gear or bundle with level
+    // versions shows the version for this level.
+    private static List<CrownShopItem> FeaturedFor(int level, List<CrownShopItem> shown) {
+        var result = new List<CrownShopItem>();
+        var index = 0;
+        foreach (var id in CrownShopConfig.Featured) {
+            var group = s_versioned.FirstOrDefault(g => g.Versions.Any(v => v.TemplateId == id));
+            var chosen = group is null ? id : group.ForLevel(level).TemplateId;
+            if (Find(chosen) is not { } item || result.Any(r => r.m_itemTemplateId == chosen)) {
+                continue;
+            }
+
+            var copy = Copy(Effective(item));
+            copy.m_displayPriority = string.IsNullOrEmpty(copy.m_displayPriority)
+                ? $"{FEATURED_CATEGORY}:{index}" : $"{copy.m_displayPriority},{FEATURED_CATEGORY}:{index}";
+            copy.m_itemFlags |= (int) CrownShopItemFlagsBits.Featured;
+            result.Add(copy);
+            index++;
+        }
+
+        return result;
+    }
+
+    // The list with each item once: a featured copy replaces the plain one.
+    private static List<CrownShopItem> Merge(List<CrownShopItem> first, IEnumerable<CrownShopItem> rest)
+        => [.. first.Concat(rest).DistinctBy(item => item.m_itemTemplateId)];
+
+    private static CrownShopItem Copy(CrownShopItem item) => new() {
+        m_itemTemplateId = item.m_itemTemplateId,
+        m_itemFlags = item.m_itemFlags,
+        m_goldCost = item.m_goldCost,
+        m_strikethruGold = item.m_strikethruGold,
+        m_crownsCost = item.m_crownsCost,
+        m_strikethruCrowns = item.m_strikethruCrowns,
+        m_ticketCost = item.m_ticketCost,
+        m_displayPriority = item.m_displayPriority,
+        m_combatOnly = item.m_combatOnly,
+        m_noGift = item.m_noGift,
+        m_recommendIfOwned = item.m_recommendIfOwned,
+        m_saleID = item.m_saleID,
+        m_description = item.m_description,
+        m_segReqsPoolsStatements = item.m_segReqsPoolsStatements,
+        m_segReqsStatement = item.m_segReqsStatement,
+    };
 
 }

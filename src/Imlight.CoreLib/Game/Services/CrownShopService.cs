@@ -147,7 +147,64 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
 
         // Sync the CrownShop Crown-Balance so it does not display 0.
         SyncCrownBalance(wizard);
+
+        // Once per login, a wizard opening the shop during Crowns Rewards is told where they stand.
+        if (!_toldCrownsRewards && CrownShopConfig.ActiveRewards is { } rewards) {
+            _toldCrownsRewards = true;
+            TellCrownsRewards(wizard, rewards);
+        }
     }
+
+    private bool _toldCrownsRewards;
+
+    /// <summary>
+    /// Crowns Rewards (the Manager's Crown Shop card): crowns spent count toward the event's tiers, and each tier
+    /// reached gives its reward, as if bought.
+    /// </summary>
+    private void GiveCrownsRewards(Wizard wizard, int crowns) {
+        if (CrownShopConfig.ActiveRewards is not { } rewards) {
+            return;
+        }
+
+        foreach (var tier in CrownShopConfig.AddSpent(wizard.Account.AccountId, crowns)) {
+            var error = TryGrantPurchasedItem(wizard, new WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_REQUEST {
+                Item = tier.TemplateId,
+                Count = Math.Max(1, tier.Count)
+            });
+            var name = ItemName(tier.TemplateId);
+            Logger.Information("Crowns Rewards: {0} reached the {1} crowns tier and got {2} ({3}), result {4}.",
+                Logger.Args(wizard.Account.AccountId, tier.Crowns, name, tier.TemplateId, error));
+            ServerMessage(error == 0
+                ? $"{rewards.Name}: you spent {tier.Crowns} crowns and got {name}{(tier.Count > 1 ? $" x{tier.Count}" : "")}!"
+                : $"{rewards.Name}: you reached the {tier.Crowns} crowns reward ({name}), but there was no room for it.");
+        }
+
+        TellCrownsRewards(wizard, rewards);
+    }
+
+    private void TellCrownsRewards(Wizard wizard, CrownShopConfig.Rewards rewards) {
+        var (spent, next) = CrownShopConfig.Standing(wizard.Account.AccountId);
+        var ends = rewards.Until is { } until ? $" Ends in {Left(until - DateTime.UtcNow)}." : "";
+        ServerMessage(next is null
+            ? $"{rewards.Name}: you spent {spent} crowns and got every reward.{ends}"
+            : $"{rewards.Name}: you spent {spent} crowns. Spend {next.Crowns - spent} more for {ItemName(next.TemplateId)}.{ends}");
+    }
+
+    private static string Left(TimeSpan left)
+        => left.TotalDays >= 1 ? $"{(int) left.TotalDays}d {left.Hours}h"
+            : left.TotalHours >= 1 ? $"{left.Hours}h {left.Minutes}m"
+            : $"{Math.Max(1, (int) Math.Ceiling(left.TotalMinutes))}m";
+
+    private static string ItemName(ulong templateId) {
+        var template = CoreObjectFactory.GetCoreTemplate(templateId);
+        string key = template is ItemTemplate item ? (string) item.m_displayName : null;
+        var shown = string.IsNullOrEmpty(key) ? null : Locale.GetEnglishName(key);
+
+        return string.IsNullOrWhiteSpace(shown) ? $"item {templateId}" : shown;
+    }
+
+    private void ServerMessage(string text)
+        => SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PCS_LIST_REQUEST))]
     private void ReceiveCrownShopListRequest(WIZARD_12_PROTOCOL.MSG_PCS_LIST_REQUEST message) {
@@ -282,6 +339,10 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
             Gifted = isGift ? (byte) 1 : (byte) 0,
             Type = message.Type
         });
+
+        if (message.Type == 1) {
+            GiveCrownsRewards(wizard, amountToPay);
+        }
 
         if (!isGift && WishlistData.TryRemoveItem(wizard.CrownShopWishlist, (uint) message.Item, out var updatedWishlist)) {
             ApplyLocalWishlistUpdate(wizard, updatedWishlist, message.Item.ToString(), sendToSelf: true);
