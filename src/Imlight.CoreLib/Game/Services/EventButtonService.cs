@@ -48,7 +48,11 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO))]
     private void ReceiveRequestInfo(WIZARD2_53_PROTOCOL.MSG_REQUESTCLASSPROJECTINFO message) {
         try {
-            SendToSocket(EventButton.InfoMessage(GetActiveWizard(), message.DisplayInfo));
+            // The button's request carries no DisplayInfo of its own (OnOpenClassProjectWindow sends the message empty),
+            // and the client opens the window only when the answer's DisplayInfo is set.
+            var wizard = GetActiveWizard();
+            SendToSocket(EventButton.InfoMessage(wizard, 1));
+            Logger.Information("Event button: sent the event window to {0} (event {1}).", Logger.Args(wizard.CharId, EventButton.ProjectId(GameEvents.Current)));
         }
         catch (Exception e) {
             Logger.Error("Event button: MSG_REQUESTCLASSPROJECTINFO failed: {0}", Logger.Args(e));
