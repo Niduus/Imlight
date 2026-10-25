@@ -123,11 +123,11 @@ internal static class ManagerCommands {
                 foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
                     var actor = s_system.ActorSelection(player.ActorPath);
                     if (box) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? $"<center>Announcement</center>\n{text}" : text, Modal = 1 });
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? AnnouncementBox(text) : text, Modal = 1 });
                     }
 
                     if (chat) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = $"Announcement: {text}", Modal = 0 });
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = AnnouncementChat(text), Modal = 0 });
                     }
                 }
             }
@@ -139,6 +139,15 @@ internal static class ManagerCommands {
             Logger.Error("Could not send the Imlight app's announcement: {0}", Logger.Args(ex.Message));
         }
     }
+
+    /// <summary>
+    /// An announcement as the game's message box shows it (Modal 1), with the header the app's Announcement card puts
+    /// on. The cheats' "announce to the battle" uses the same wording, so both look alike.
+    /// </summary>
+    internal static string AnnouncementBox(string text) => $"<center>Announcement</center>\n{text}";
+
+    /// <summary>An announcement as a chat line (Modal 0).</summary>
+    internal static string AnnouncementChat(string text) => $"Announcement: {text}";
 
     private static (bool Box, bool Chat, string Text, bool FromCard) Split(string line) {
         var bar = line.IndexOf('|');

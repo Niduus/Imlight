@@ -90,6 +90,8 @@ internal static class CheatSpecs {
     // AddCharm's cast animation: the game plays the casting of the cast spell's school, so these cast a spell of that school.
     private static readonly (string, string)[] s_castLooks = [("", "normal"), ("Sun", "Sun"), ("Shadow", "Shadow"), ("Moon", "Moon"), ("Star", "Star"),
         ("Fire", "Fire"), ("Ice", "Ice"), ("Storm", "Storm"), ("Myth", "Myth"), ("Life", "Life"), ("Death", "Death"), ("Balance", "Balance")];
+    private static readonly (string, string)[] s_announceStyles = [("Box", "as a box"), ("Chat", "in chat"), ("Both", "as a box and in chat")];
+    private static readonly (string, string)[] s_announceWho = [("", "everyone in the battle"), ("Players", "only the players' side")];
     private static readonly (string, string)[] s_addKinds = [("Blade", "blade"), ("Weakness", "weakness"), ("Shield", "shield"), ("Trap", "trap"), ("Absorb", "absorb"),
         ("DoT", "damage over time"), ("HoT", "heal over time"), ("Global", "global (more damage)"), ("HealGlobal", "global (more healing)"),
         ("GloomGlobal", "global (less healing)")];
@@ -406,6 +408,9 @@ internal static class CheatSpecs {
             "Say {Line}", [F("Line", CheatFieldType.Line)], b => $"say \"{b.Text("Line")}\""),
         new("D.Chat", BlockKind.Do, "chat", "chat message", "Any words you like, sent to every player's chat window (in a player cheat, to your own).",
             "Tell every player in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell everyone \"{b.Text("Text")}\""),
+        new("D.Announce", BlockKind.Do, "chat", "announce to the battle", "A server announcement, as the Announcement card sends it, but only to the wizards in this battle: a message box with \"Announcement\" on top, an \"Announcement:\" chat line, or both. {boss} in the words is the boss (or you, in a player cheat), {player} the wizard who set it off, {round} the round. Example: a Round 3 cheat that does this with \"The ground trembles...\" as a box. Unlike \"say a line\" (a game line over the boss) and \"chat message\" (chat with the boss's name in front), it reads as from the server.",
+            "Announce {Text} to {Who} {Style}", [F("Text", CheatFieldType.Words, ""), F("Who", CheatFieldType.Choice, "", s_announceWho), F("Style", CheatFieldType.Choice, "Box", s_announceStyles)],
+            b => $"announce \"{b.Text("Text")}\" to {LabelOf(s_announceWho, b.Text("Who"))} {LabelOf(s_announceStyles, b.Text("Style").Length > 0 ? b.Text("Style") : "Box")}"),
         new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away.",
             "{Amount} {Kind} pips, for {Target}", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Self")],
             b => $"{(b.Number("Amount") < 0 ? "take" : "give")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips{Target(b).Replace(" on ", b.Number("Amount") < 0 ? " from " : " to ")}"),

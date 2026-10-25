@@ -17,7 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -458,6 +461,26 @@ public partial class CombatResolver {
         m_paramPerRound = type == kSpellEffects.kAbsorbDamage ? amount : 0,
     };
 
+    // An Announce step's words with {boss} (the cheat's owner: the boss, or the wizard of a player cheat), {player} (the
+    // wizard who set it off, else the owner if a wizard, else the first wizard in the battle) and {round} filled in.
+    private string AnnounceText(string text, CombatDuelSubCircle owner, CombatDuelSubCircle trigger) {
+        text = (text ?? "").Trim();
+        if (text.Length == 0 || !text.Contains('{')) {
+            return text;
+        }
+
+        string NameOf(CombatDuelSubCircle c) => c is null ? ""
+            : c.IsHumanPlayer ? c._wizard?.PlayerNameBehavior?.GetWizardName() ?? ""
+            : Customs.NameOf(c.ParticipantObject?.m_globalID.Full ?? 0) ?? CheaterName(c);
+        var player = trigger is { IsHumanPlayer: true } ? trigger
+            : owner.IsHumanPlayer ? owner
+            : _subCircles.FirstOrDefault(c => c is not null && c.Occupied && c.IsHumanPlayer);
+
+        return text.Replace("{boss}", NameOf(owner), StringComparison.OrdinalIgnoreCase)
+            .Replace("{player}", NameOf(player), StringComparison.OrdinalIgnoreCase)
+            .Replace("{round}", _duel.m_roundNum.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
     // The lookalike AddCharm casts (CheatLookalikes.cs): the one for its cast animation, else the plain one of its kind.
     private string LookalikeName(BossCheats.CheatAction step, bool onCaster, CombatDuelSubCircle boss, string bossName) {
         if (CheatLookalikes.WithCast(step.Kind, step.School, step.Look, onCaster) is { } look) {
@@ -603,6 +626,38 @@ public partial class CombatResolver {
                     }
 
                     return true;
+                case "announce": {
+                    // A server announcement to the wizards in this battle only, as the Manager's Announcement card sends
+                    // it to everyone: a message box (Style Box, the default), a chat line (Chat), or both. Who: "" every
+                    // wizard in the battle, Players only those in the players' circles. {boss}, {player}, {round}.
+                    var text = AnnounceText(step.Text, boss, trigger);
+                    if (text.Length == 0) {
+                        return true;
+                    }
+
+                    var style = (step.Style ?? "").Trim().ToLowerInvariant();
+                    var box = style is "" or "box" or "both";
+                    var chat = style is "chat" or "both";
+                    var sent = 0;
+                    foreach (var wizard in _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null
+                                                                  && (!step.Who.Equals("Players", StringComparison.OrdinalIgnoreCase)
+                                                                      || c.SlotType == CombatSlotType.Player))) {
+                        if (box) {
+                            wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = ManagerCommands.AnnouncementBox(text), Modal = 1 });
+                        }
+
+                        if (chat) {
+                            wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = ManagerCommands.AnnouncementChat(text), Modal = 0 });
+                        }
+
+                        sent++;
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2} announces to {3} wizard(s) in the battle ({4}): {5}",
+                        Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, sent, box && chat ? "box and chat" : box ? "box" : "chat", text));
+
+                    return true;
+                }
                 case "addcharm" when CheatLookalikes.IsGlobal(step.Kind):
                     cinematicTime = AddCustomGlobal(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
 
