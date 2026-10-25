@@ -88,7 +88,11 @@ internal class MoveService : MessageService {
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceivePostAttach(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
-        var wizard = GetActiveWizard();
+        SendMarkedLocation(GetActiveWizard());
+    }
+
+    /// Tells the client where the wizard's marker is (Result 2), so it shows and can recall to it.
+    private void SendMarkedLocation(Wizard wizard) {
         var zoneMap = WorldHubZones.GetHubForZone(wizard.Zone);
 
         var rsp = new GAME_5_PROTOCOL.MSG_MARK_LOCATION_RESPONSE {
@@ -99,7 +103,7 @@ internal class MoveService : MessageService {
             LocationX = wizard.MarkedLocation.X,
             LocationY = wizard.MarkedLocation.Y,
             LocationZ = wizard.MarkedLocation.Z,
-            Direction = wizard.Orientation.Z,
+            Direction = wizard.MarkedOrientation.Z,
             MarkType = "",
             InstanceId = new GID(1),
             CommonsZoneId = zoneMap?.m_hubZoneDisplayName ?? "0",
@@ -253,6 +257,10 @@ internal class MoveService : MessageService {
             TellOtherServices(broadcastMsg);
 
             SendToSocket(recallRsp);
+
+            // Like the live game, the marker stays after recalling to it. Re-send it so the client keeps it too;
+            // a zone change gets it back from ReceivePostAttach instead.
+            SendMarkedLocation(wizard);
         }
         else {
             var ml = wizard.MarkedLocation;
@@ -269,8 +277,6 @@ internal class MoveService : MessageService {
             };
             SendToSocket(recallRsp);
         }
-
-        wizard.SetMarkedLocation(Vector3.Zero, Vector3.Zero, "", "");
     }
 
     private void BroadcastClientMove(GAME_5_PROTOCOL.MSG_CLIENTMOVE message) {
