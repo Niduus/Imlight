@@ -49,8 +49,9 @@ namespace Imlight.CoreLib.Game.Combat;
 
 internal static class Archmastery {
 
-    // [Archmastery] Enabled: the Power Orb turns power pips into school pips.
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("Archmastery.Enabled", true);
+    // Archmastery is part of the game, so it is always on: the Power Orb turns power pips into school pips. An old
+    // "Enabled = false" left in Imlight.ini is ignored.
+    internal static readonly bool Enabled = true;
     // Gives wizards under level 50 the level 50 Archmastery, so they get school pips too.
     internal static readonly bool AllLevels = ConfigurationManager.GetValue("Archmastery.AllLevels", false);
     // Extra Archmastery for every wizard (on top of gear and jewels).
