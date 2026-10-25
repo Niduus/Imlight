@@ -37,7 +37,31 @@ namespace Imlight.Setup;
 /// <param name="School">The school it is for, or "" for every school.</param>
 /// <param name="After">Words after the icons, such as RATING.</param>
 /// <param name="Words">What it is, in plain words, for pointing at it.</param>
-internal sealed record GearStat(string Value, string[] Icons, string School, string After, string Words);
+internal sealed record GearStat(string Value, string[] Icons, string School, string After, string Words) {
+
+    /// <summary>Which stat it is, such as Damage, ReduceDamage or MaxHealth, for the stat filters.</summary>
+    internal string Kind { get; init; } = "";
+
+    /// <summary>The number without its sign or %, so stats can be compared and added up.</summary>
+    internal int Amount { get; init; }
+
+    internal bool Percent { get; init; }
+
+}
+
+/// <summary>One step of a set bonus: what wearing this many pieces of the set adds.</summary>
+internal sealed record GearSetTier(int Pieces, string Description, IReadOnlyList<GearStat> Stats, IReadOnlyList<GearSpell> Spells);
+
+/// <summary>
+/// A set bonus (ItemSetBonusTemplate in ObjectData/ItemSetBonus), such as Krokotopian Ice Set: extra stats for wearing
+/// several of its pieces. Its pieces name it by template ID.
+/// </summary>
+internal sealed record GearSetBonus(uint Id, string Name, string Code, IReadOnlyList<GearSetTier> Tiers) {
+
+    /// <summary>Everything the set adds once all its steps are reached.</summary>
+    internal IEnumerable<GearStat> AllStats => Tiers.SelectMany(t => t.Stats);
+
+}
 
 /// <summary>A jewel socket: its shape (Square, Circle, Triangle, Tear, Star, Power, Shield, Sword) and whether it starts locked.</summary>
 internal sealed record GearSocket(string Shape, bool Locked);
@@ -104,6 +128,12 @@ internal sealed class GearItem {
     /// <summary>A bundle's items by template ID (what it gives, free items included), or empty for anything else.</summary>
     internal IReadOnlyList<uint> BundleItems { get; init; } = [];
 
+    /// <summary>The set bonus template it belongs to, or 0.</summary>
+    internal uint SetId { get; init; }
+
+    /// <summary>Its set bonus, when it is part of a set the game files have.</summary>
+    internal GearSetBonus? Set { get; set; }
+
     internal bool CrownsOnly => Flags.Contains("CrownsOnly");
 
     internal bool Retired => Flags.Contains("Retired");
@@ -155,16 +185,25 @@ internal sealed partial class GearBook {
 
     internal IReadOnlyList<GearItem> Items { get; private set; } = [];
 
+    /// <summary>Every set bonus, by name.</summary>
+    internal IReadOnlyList<GearSetBonus> Sets { get; private set; } = [];
+
     /// <summary>Reads every piece of gear. Takes a few seconds, so run it in the background.</summary>
     internal static GearBook Load(SpellBook book) {
         var gear = new GearBook(book);
         gear.ReadStatTables();
         var files = book.TemplatesUnder("ObjectData/").Where(t => !s_skipped.Any(s => t.File.StartsWith(s, StringComparison.OrdinalIgnoreCase))).ToList();
         var items = new ConcurrentBag<GearItem>();
+        var sets = new ConcurrentBag<GearSetBonus>();
         System.Threading.Tasks.Parallel.ForEach(files, file => {
             try {
-                if (book.DecodeFile(file.File) is WizItemTemplate template && gear.Read(file.Id, file.File, template) is { } item) {
-                    items.Add(item);
+                switch (book.DecodeFile(file.File)) {
+                    case WizItemTemplate template when gear.Read(file.Id, file.File, template) is { } item:
+                        items.Add(item);
+                        break;
+                    case ItemSetBonusTemplate set:
+                        sets.Add(gear.ReadSet(file.Id, set));
+                        break;
                 }
             }
             catch (Exception) {
@@ -172,6 +211,15 @@ internal sealed partial class GearBook {
             }
         });
         gear.Items = [.. items.OrderBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ThenBy(i => i.Level).ThenBy(i => i.Id)];
+        gear.Sets = [.. sets.OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase)];
+        // Pieces of a set can be found by the set's name (Niduus, 2026-10-25: "also to search for set bonuses").
+        var setsById = sets.GroupBy(s => s.Id).ToDictionary(g => g.Key, g => g.First());
+        foreach (var item in gear.Items) {
+            if (item.SetId != 0 && setsById.TryGetValue(item.SetId, out var set)) {
+                item.Set = set;
+                item.Haystack += $" {set.Name} {set.Code}".ToLowerInvariant();
+            }
+        }
 
         return gear;
     }
@@ -249,25 +297,7 @@ internal sealed partial class GearBook {
         var (level, schoolNeeded) = Requirements(template.m_equipRequirements);
         var stats = new List<GearStat>();
         var spells = new List<GearSpell>();
-        foreach (var effect in template.m_equipEffects ?? []) {
-            switch (effect) {
-                case StatisticEffectInfo stat when Stat(stat) is { } line:
-                    stats.Add(line);
-                    break;
-                case SpeedEffectInfo speed when speed.m_speedMultiplier != 0:
-                    stats.Add(new GearStat($"{Signed(speed.m_speedMultiplier)}%", ["speed"], "", "", "Speed: how much faster you move on it"));
-                    break;
-                case StartingPipEffectInfo pips:
-                    AddPips(stats, pips.m_pipsGiven, pips.m_powerPipsGiven);
-                    break;
-                case TempStartingPipEffectInfo pips:
-                    AddPips(stats, pips.m_pipsGiven, pips.m_powerPipsGiven);
-                    break;
-                case ProvideSpellEffectInfo spell when (string) spell.m_spellName is { Length: > 0 } spellCode:
-                    spells.Add(new GearSpell(spellCode, Math.Max(1, spell.m_numSpells)));
-                    break;
-            }
-        }
+        ReadEffects(template.m_equipEffects, stats, spells);
 
         var sockets = behaviors.OfType<JewelSocketBehaviorTemplate>().SelectMany(b => b.m_jewelSockets ?? [])
             .Where(s => s is not null).Select(s => new GearSocket(SocketShape(s.m_socketType.ToString()), s.m_bLockable)).ToList();
@@ -301,6 +331,7 @@ internal sealed partial class GearBook {
             Deck = deck,
             GoldCost = (int) Math.Max(0, template.m_baseCost),
             CrownsCost = (int) Math.Max(0, template.m_creditsCost),
+            SetId = template.m_itemSetBonusTemplateID,
             BundleItems = bundle is null ? [] : [.. (bundle.m_bundleItems ?? []).Concat(bundle.m_bundleFreeItems ?? []).Select(g => (uint) (ulong) g).Distinct()],
         };
         item.Haystack = $"{item.Name} {item.Code} {item.Id} {item.Slot} {item.SchoolNeeded} {item.School} {string.Join(' ', item.Flags)}".ToLowerInvariant();
@@ -360,14 +391,57 @@ internal sealed partial class GearBook {
         return (level, school);
     }
 
+    /// <summary>The stat lines and item cards a list of equip effects gives.</summary>
+    private void ReadEffects(IEnumerable<GameEffectInfo>? effects, List<GearStat> stats, List<GearSpell> spells) {
+        foreach (var effect in effects ?? []) {
+            switch (effect) {
+                case StatisticEffectInfo stat when Stat(stat) is { } line:
+                    stats.Add(line);
+                    break;
+                case SpeedEffectInfo speed when speed.m_speedMultiplier != 0:
+                    stats.Add(new GearStat($"{Signed(speed.m_speedMultiplier)}%", ["speed"], "", "", "Speed: how much faster you move on it") {
+                        Kind = "Speed", Amount = speed.m_speedMultiplier, Percent = true,
+                    });
+                    break;
+                case StartingPipEffectInfo pips:
+                    AddPips(stats, pips.m_pipsGiven, pips.m_powerPipsGiven);
+                    break;
+                case TempStartingPipEffectInfo pips:
+                    AddPips(stats, pips.m_pipsGiven, pips.m_powerPipsGiven);
+                    break;
+                case ProvideSpellEffectInfo spell when (string) spell.m_spellName is { Length: > 0 } spellCode:
+                    spells.Add(new GearSpell(spellCode, Math.Max(1, spell.m_numSpells)));
+                    break;
+            }
+        }
+    }
+
+    private GearSetBonus ReadSet(uint id, ItemSetBonusTemplate template) {
+        var tiers = new List<GearSetTier>();
+        foreach (var data in (template.m_itemSetBonusDataList ?? []).Where(d => d is not null).OrderBy(d => d.m_numItemsToEquip)) {
+            var stats = new List<GearStat>();
+            var spells = new List<GearSpell>();
+            ReadEffects(data.m_equipEffectsGranted, stats, spells);
+            string description = data.m_description;
+            tiers.Add(new GearSetTier(data.m_numItemsToEquip, _book.Text(description ?? "")?.Trim() ?? "", stats, spells));
+        }
+
+        string displayName = template.m_displayName;
+        string code = (string) template.m_objectName ?? "";
+
+        return new GearSetBonus(id, _book.Text(displayName ?? "") is { Length: > 0 } shown ? shown.Trim() : code, code, tiers);
+    }
+
     private static void AddPips(List<GearStat> stats, int pips, int powerPips) {
         if (pips != 0) {
-            stats.Add(new GearStat(Signed(pips), ["pip"], "", "", $"Starts each battle with {pips} more pip{(pips == 1 ? "" : "s")}"));
+            stats.Add(new GearStat(Signed(pips), ["pip"], "", "", $"Starts each battle with {pips} more pip{(pips == 1 ? "" : "s")}") {
+                Kind = "StartingPips", Amount = pips,
+            });
         }
 
         if (powerPips != 0) {
             stats.Add(new GearStat(Signed(powerPips), ["powerpip"], "", "",
-                $"Starts each battle with {powerPips} more power pip{(powerPips == 1 ? "" : "s")}"));
+                $"Starts each battle with {powerPips} more power pip{(powerPips == 1 ? "" : "s")}") { Kind = "StartingPowerPips", Amount = powerPips });
         }
     }
 
@@ -462,7 +536,7 @@ internal sealed partial class GearBook {
         var value = Signed(amount) + (percent ? "%" : "");
         var forSchool = school.Length > 0 ? $" ({school} spells)" : "";
 
-        return kind switch {
+        return (kind switch {
             "MaxHealth" => new GearStat($"{value} MAX", ["health"], "", "", "Max Health"),
             "MaxMana" => new GearStat($"{value} MAX", ["mana"], "", "", "Max Mana"),
             "MaxEnergy" => new GearStat($"{value} MAX", ["energy"], "", "", "Max Energy"),
@@ -497,8 +571,37 @@ internal sealed partial class GearBook {
             "WispBonus" => new GearStat(value, [], "", "WISPS", "Wisp Bonus: health and mana wisps give more"),
             "MaxManaPercentReduce" => new GearStat(value, ["mana"], "", "", "Mana: spells cost less mana"),
             _ => new GearStat(value, [], school, Spaced(kind).ToUpperInvariant(), Spaced(kind)),
-        };
+        }) with { Kind = kind, Amount = amount, Percent = percent };
     }
+
+    /// <summary>A stat's name for the stat filters, such as "Resist" for ReduceDamage.</summary>
+    internal static string StatName(string kind) => kind switch {
+        "Damage" => "Damage",
+        "FlatDamage" => "Flat Damage",
+        "ReduceDamage" => "Resist",
+        "FlatReduceDamage" => "Flat Resist",
+        "Accuracy" => "Accuracy",
+        "ArmorPiercing" => "Armor Piercing",
+        "CriticalHit" => "Critical Rating",
+        "Block" => "Block Rating",
+        "MaxHealth" => "Max Health",
+        "MaxMana" => "Max Mana",
+        "MaxEnergy" => "Max Energy",
+        "PowerPips" => "Power Pip Chance",
+        "Healing" => "Outgoing Healing",
+        "IncHealing" => "Incoming Healing",
+        "ShadowPipRating" => "Shadow Pip Rating",
+        "ShadowPips" => "Shadow Pip Chance",
+        "PipConversion" => "Pip Conversion Rating",
+        "Archmastery" => "Archmastery Rating",
+        "StunResistance" => "Stun Resist",
+        "StartingPips" => "Starting Pips",
+        "StartingPowerPips" => "Starting Power Pips",
+        "XPPercent" => "Bonus XP",
+        "GoldPercent" => "Bonus Gold",
+        "MaxManaPercentReduce" => "Mana Cost",
+        var other => Spaced(other),
+    };
 
     private static string Signed(int value) => value >= 0 ? $"+{value.ToString(CultureInfo.InvariantCulture)}" : value.ToString(CultureInfo.InvariantCulture);
 

@@ -55,7 +55,7 @@ internal sealed partial class ManagerWindow {
     private const uint TIP_ORANGE = 0xFFFFA126;
     private const uint TIP_WHITE = 0xFFFFFFFF;
 
-    private static readonly string[] s_gearSorts = ["Name", "Level (high first)", "Level (low first)", "Template ID"];
+    private static readonly string[] s_gearSorts = ["Name", "Level (high first)", "Level (low first)", "Template ID", "Picked stat (high first)"];
 
     // The game's names for a pet's ages, 1 to 7, when its text files don't say.
     private static readonly string[] s_petAges = ["Baby", "Teen", "Adult", "Ancient", "Epic", "Mega", "Ultra"];
@@ -150,14 +150,14 @@ internal sealed partial class ManagerWindow {
             Children = {
                 WithDock(details, Dock.Right),
                 WithDock(Fold("shield", "Gear", "Find gear",
-                    "Search or filter, then click an item to see it as the game shows it.",
+                    "Search or filter by slot, school, level, stats or set bonus, then click an item to see it as the game shows it.",
                     MissingNote("the give-gear commands (.hat, .robe, .pet and the rest) are " + ServerSource.DefaultName +
                         "'s. [Give to my wizard] sends .mod additem instead.", () => !_manager.HasGearCommands),
                     WithHint(_gearSearch, "Search by name or template ID, or narrow the list with the filters. Click an item to see its " +
                         "tooltip as the game draws it, with its stats, item cards, sockets, the level it needs and its marks. Point at a " +
                         "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
                         "which players never see."),
-                    filters, _gearCount, GearGuide()), Dock.Top),
+                    filters, GearStatFilters(), _gearCount, GearGuide()), Dock.Top),
                 WithMargin(_gearList, new Thickness(0, 14, 0, 0)),
             },
         };
@@ -230,6 +230,7 @@ internal sealed partial class ManagerWindow {
             .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
         _gearSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(schools).Append(NO_SCHOOL).ToList();
         _gearSchool.SelectedIndex = 0;
+        FillGearStatFilters(gear);
     }
 
     private void RenderGearTab() {
@@ -250,6 +251,7 @@ internal sealed partial class ManagerWindow {
         var max = (int?) _gearLevelMax.Value;
         var crowns = _gearCrowns.IsChecked == true;
         var unnamed = _gearUnnamed.IsChecked == true;
+        var stats = GearStatFilter();
 
         var found = gear.Items.Where(i =>
             (id is not null ? i.Id == id || words.All(i.Haystack.Contains) : words.All(i.Haystack.Contains))
@@ -259,12 +261,15 @@ internal sealed partial class ManagerWindow {
             && (school == ALL_SCHOOLS || (school == NO_SCHOOL ? i.SchoolNeeded.Length == 0 : i.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase)))
             && (min is null || i.Level >= min)
             && (max is null || i.Level <= max)
-            && (!crowns || i.CrownsOnly));
+            && (!crowns || i.CrownsOnly)
+            && (stats is null || stats(i)));
 
         List<GearItem> shown = _gearSort.SelectedIndex switch {
             1 => [.. found.OrderByDescending(i => i.Level).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],
             2 => [.. found.OrderBy(i => i.Level).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],
             3 => [.. found.OrderBy(i => i.Id)],
+            4 => [.. found.Select(i => (Item: i, Key: GearStatSortKey(i))).OrderByDescending(p => p.Key)
+                .ThenBy(p => p.Item.Name, StringComparer.OrdinalIgnoreCase).Select(p => p.Item)],
             // The exact name (or ID) first, then names that start with what was typed.
             _ => [.. found.OrderBy(i => !(i.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || i.Id == id))
                 .ThenBy(i => query.Length > 0 && !i.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
@@ -289,6 +294,9 @@ internal sealed partial class ManagerWindow {
         var level = item.Level > 0 || item.BundleItems.Count == 0 || _gearBook is not { } gear ? item.Level
             : item.BundleItems.Select(gear.Item).Max(i => i?.Level ?? 0);
         var line = $"{item.Slot}" + (level > 0 ? $"  ·  Level {level}+" : "") + $"  ·  ID {item.Id}";
+        if (GearStatSummary(item) is { Length: > 0 } picked) {
+            line += $"  ·  {picked}";
+        }
         var marks = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
         if (item.CrownsOnly) {
             marks.Children.Add(GearMark("CrownsOnly", 18));
@@ -403,6 +411,7 @@ internal sealed partial class ManagerWindow {
         Fact("Marks", marks.Count > 0 ? string.Join(", ", marks) : "None: it can be sold, traded and auctioned");
         Fact("Game's name", item.Code);
         Fact("File", item.File);
+        ShowGearSet(gear, item);
     }
 
     // A row of spell cards, centered, wrapping when they don't fit.
