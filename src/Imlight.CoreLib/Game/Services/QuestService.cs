@@ -295,21 +295,13 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         FinishPendingGoalCompletion(pending);
     }
 
-    // Picking another quest to follow in the quest book: the client switches the star itself and tells us, but the
-    // quest text at the bottom of the screen only follows a quest it is sent, so it kept the quest the zone loaded
-    // with (Niduus, 2026-10-25). Sending only the goals again took the text and arrow away; the picked quest goes
-    // again whole, as when a zone loads.
+    // Picking a quest to follow in the quest book: the client moves the star, the goal text and the arrow itself and
+    // only tells us. Anything sent back (its goals in v0.10.284, the whole quest in v0.10.292) made the client drop
+    // the goal text and arrow, even when the quest picked was the one already followed (Niduus, 2026-10-25).
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_SWITCHACTIVEQUEST))]
     private void ReceiveSwitchActiveQuest(WIZARD2_53_PROTOCOL.MSG_SWITCHACTIVEQUEST message) {
-        var wizard = GetActiveWizard();
-        var qInstance = wizard?.QuestBehavior.CurrentQuestInstances
-            .FirstOrDefault(q => q is not null && q.ID == message.ActiveQuestGID);
-        var qTemplate = qInstance is null ? null : GetQuestTemplate(qInstance.QuestName);
-        if (qTemplate?.m_goals is null || !IsShownInQuestBook(qTemplate, wizard)) {
-            return;
-        }
-
-        SendQuestResumeMessage(qTemplate, qInstance);
+        Logger.Debug("Quest book: {0} follows quest {1}, goal {2}.",
+            Logger.Args(GetActiveWizard()?.CharId, message.ActiveQuestGID, message.ActiveGoalGID));
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_COMPLETEDIALOG))]
