@@ -32,6 +32,7 @@ using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -182,22 +183,23 @@ internal class MonstrologyService(SessionActor sessionActor) : MessageService(se
                 return $"{monster.Name} cannot be a house guest";
             }
 
-            if (!wizard.AddItemToInventory(monster.Magic.m_houseGuestTemplateID, out var item)) {
-                return "no room in the backpack";
+            // A full backpack sends the house guest to the bank, as the game does.
+            if (!wizard.TryCreateItem(monster.Magic.m_houseGuestTemplateID, out var item)) {
+                return "the house guest could not be made";
             }
 
-            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, item)) {
-                wizard.RemoveItemFromInventory(item.m_globalID);
-                WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID);
-
-                return "the house guest could not be sent to the game";
+            var placement = ItemPlacement.Give(SessionActor.ActorRef, wizard, item);
+            if (placement == Placement.Lost) {
+                return "no room in the backpack or bank";
             }
 
-            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-                ItemGlobalID = item.m_globalID,
-                ItemTemplateID = monster.Magic.m_houseGuestTemplateID,
-                ItemLocation = 1,
-            });
+            if (placement == Placement.Backpack) {
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+                    ItemGlobalID = item.m_globalID,
+                    ItemTemplateID = monster.Magic.m_houseGuestTemplateID,
+                    ItemLocation = 1,
+                });
+            }
             made = $"house guest {monster.Magic.m_houseGuestTemplateID}";
         }
         else {

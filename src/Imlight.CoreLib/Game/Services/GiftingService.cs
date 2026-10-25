@@ -54,6 +54,7 @@ using Imcodec.Types;
 using System;
 using System.Linq;
 using System.Text;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -193,31 +194,17 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                     }
                 }
 
-                // todo: serialize the item only once
-                var coSerializer = new CoreObjectSerializer(
-                    behaviors: Imcodec.ObjectProperty.SerializerFlags.None
-                );
-
+                // A full backpack sends the gift to the bank, as the game does.
                 for (uint i = 0; i < giftRedemption.m_itemCount; i++) {
-                    if (!wizard.AddItemToInventory(giftRedemption.m_itemId, out WizClientObjectItem itemCoreObject)) {
-                        Logger.Warning("Could not add item to inventory.");
+                    if (!wizard.TryCreateItem(giftRedemption.m_itemId, out var itemCoreObject)
+                        || ItemPlacement.Give(SessionActor.ActorRef, wizard, itemCoreObject) == Placement.Lost) {
+                        Logger.Warning("Could not add gift item {0} to the backpack or bank.", Logger.Args(giftRedemption.m_itemId));
                         SendToSocket(new GAME_5_PROTOCOL.MSG_REDEEM_MAIL_GIFT_RESPONSE {
                             ErrorCode = 1,
                             MailId = message.MailId,
                         });
                         return;
                     }
-
-                    if (!coSerializer.Serialize(itemCoreObject, 24, out var serializedItem)) {
-                        Logger.Warning("Failed to serialize core object.");
-                        return;
-                    }
-
-                    SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-                        GlobalID = wizard.GameObjectID,
-                        SerializedItem = serializedItem
-                    });
-                    PetTome.Announce(SessionActor.ActorRef, wizard, itemCoreObject as WizClientObjectItem);
                 }
                 break;
         }
@@ -407,13 +394,13 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
                 return;
         }
 
-        if (!wizard.AddItemToInventory(templateId, out WizClientObjectItem item)) {
-            Logger.Warning("Claim gifts: could not add {0} to the inventory of {1}.", Logger.Args(templateId, wizard.CharId));
+        // A full backpack sends the gift to the bank, as the game does.
+        if (!wizard.TryCreateItem(templateId, out var item) || ItemPlacement.Give(SessionActor.ActorRef, wizard, item) == Placement.Lost) {
+            Logger.Warning("Claim gifts: could not add {0} to the backpack or bank of {1}.", Logger.Args(templateId, wizard.CharId));
 
             return;
         }
 
-        ItemSync.SendAdded(SessionActor.ActorRef, wizard, item);
         lastItem = item.m_globalID.Full;
         count++;
     }

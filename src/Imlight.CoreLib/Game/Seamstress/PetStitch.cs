@@ -116,11 +116,12 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
         return true;
     }
 
-    // Worn pets come off first: the client is told about the changed pet as a new backpack item.
+    // Worn pets come off first: the client is told about the changed pet as a new backpack item. A worn pet already
+    // takes a backpack slot, so only the new pets need room.
     private bool TryPrepare(IReadOnlyList<WizClientObjectItem> pets, int newPets, int crowns, out string failure) {
         var worn = pets.Where(pet => wizard.EquipmentBehavior.HasItemEquipped(pet.m_globalID)).ToList();
-        if (wizard.InventoryBehavior.FreeSlots < worn.Count + newPets) {
-            failure = $"{worn.Count + newPets} free backpack slots are needed";
+        if (wizard.BackpackFreeSlots < newPets) {
+            failure = $"{newPets} free backpack slots are needed";
 
             return false;
         }

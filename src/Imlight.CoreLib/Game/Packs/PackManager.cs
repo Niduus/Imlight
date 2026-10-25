@@ -43,6 +43,7 @@ using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.World;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Packs;
 
@@ -298,21 +299,17 @@ public static class PackManager {
     }
 
     private static void GrantInventoryItem(IActorRef sessionActorRef, Wizard wizard, uint itemTemplateId) {
-        if (!wizard.AddItemToInventory(itemTemplateId, out var itemCoreObject)) {
-            Logger.Warning("Could not add item {0} to inventory.", Logger.Args(itemTemplateId));
+        // A full backpack sends the item to the bank, as the game does.
+        if (!wizard.TryCreateItem(itemTemplateId, out var itemCoreObject)) {
+            Logger.Warning("Could not create item {0}.", Logger.Args(itemTemplateId));
             return;
         }
 
-        if (!s_coreObjectSerializer.Serialize(itemCoreObject, PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit, out var serializedItem)) {
-            Logger.Warning("Failed to serialize inventory item {0} for booster pack grant.", Logger.Args(itemTemplateId));
+        var placement = ItemPlacement.Place(wizard, itemCoreObject);
+        ItemPlacement.Announce(sessionActorRef, wizard, itemCoreObject, placement);
+        if (placement != Placement.Backpack) {
             return;
         }
-
-        sessionActorRef.Tell(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-            GlobalID = wizard.GameObjectID,
-            SerializedItem = serializedItem
-        });
-        PetTome.Announce(sessionActorRef, wizard, itemCoreObject as WizClientObjectItem);
 
         sessionActorRef.Tell(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
             ItemGlobalID = itemCoreObject.m_globalID,

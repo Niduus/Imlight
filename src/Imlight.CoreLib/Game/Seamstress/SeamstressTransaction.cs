@@ -73,10 +73,10 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
         var account = wizard.Account;
         var equippedInputs = inputs.Where(input => wizard.EquipmentBehavior.HasItemEquipped(input.m_globalID)).ToList();
 
-        // An equipped input takes a backpack slot when it comes off, and the results are added before the inputs go.
-        var slotsNeeded = results.Count + equippedInputs.Count;
-        if (wizard.InventoryBehavior.FreeSlots < slotsNeeded) {
-            failure = $"{slotsNeeded} free inventory slots are needed and {wizard.InventoryBehavior.FreeSlots} are free";
+        // The results are added before the inputs go. An equipped input already takes a backpack slot while worn.
+        var slotsNeeded = results.Count;
+        if (wizard.BackpackFreeSlots < slotsNeeded) {
+            failure = $"{slotsNeeded} free inventory slots are needed and {wizard.BackpackFreeSlots} are free";
 
             return false;
         }

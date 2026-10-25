@@ -20,22 +20,23 @@
  * ========================================================================
  *
  * PURPOSE:
- * Finds a place for a new item a player is given (a reward, an admin command): the backpack, and when that
- * is full the bank, and for a jewel the shared bank. An item with no room is lost. It also tells the client
- * where the item went.
+ * Finds a place for a new item a player is given (a drop, a reward, a purchase, a gift, an admin command): the
+ * backpack, and when that is full the bank, and for a jewel the shared bank. An item with no room is lost. It
+ * also tells the client where the item went.
  *
  * USAGE EXAMPLE:
  * var placement = ItemPlacement.Place(wizard, item);
  * ItemPlacement.Announce(session, wizard, item, placement);
  *
  * NOTE:
- * A jewel goes to the backpack until the wizard holds [Character] MaxJewelsAllowed of them, then to the shared
- * bank while it is under its jewel cap, then to the bank. The bank is only used while it is on, see
+ * The backpack is full when its items and the worn ones fill its limit, as the client counts it (Wizard.
+ * BackpackFreeSlots). A jewel takes no backpack slot: it goes to the backpack until the wizard holds [Character]
+ * MaxJewelsAllowed of them, then to the shared bank while it is under its jewel cap, then to the bank. The bank is only used while it is on, see
  * BankConfig.IsEnabled. A rental never goes into the bank. The client hears about an overflow item before the
  * loot popup, which shows it with the bank wording.
  *
  * TODO:
- * The server has no separate jewel pouch, jewels share the backpack slots. Is a full pouch the jewel count alone?
+ * Is a full jewel pouch the jewel count alone, or do worn (socketed) jewels count too?
  *
  * Created by: Jay
  * Version: KALI 1.0
@@ -69,8 +70,12 @@ internal static class ItemPlacement {
             return wizard.AddToBag(item.m_templateID, out _) ? Placement.Backpack : Placement.Lost;
         }
 
+        // A new pet keeps its genes and stats from the first save, wherever it goes.
+        PetProgression.EnsureInitialized(item);
+
         var isJewel = BankRules.IsJewel(item);
-        if (!(isJewel && IsJewelPouchFull(wizard)) && wizard.InventoryBehavior.FreeSlots >= 1 && wizard.AddInitializedItemToInventory(item)) {
+        var fits = isJewel ? !IsJewelPouchFull(wizard) : !BankRules.TakesBackpackSlot(item) || wizard.BackpackFreeSlots >= 1;
+        if (fits && wizard.AddInitializedItemToInventory(item)) {
             return Placement.Backpack;
         }
 
@@ -89,6 +94,23 @@ internal static class ItemPlacement {
         }
 
         return Placement.Lost;
+    }
+
+    /// <summary>
+    /// Stores a new item where there is room for it and tells the client where it went, see Place and Announce. An
+    /// item that fits nowhere is not announced, so a purchase can refuse it instead.
+    /// </summary>
+    /// <param name="session">The SessionActor reference of the wizard's session.</param>
+    /// <param name="wizard">The wizard that is given the item.</param>
+    /// <param name="item">The new item, with its behaviors initialized. It is stored nowhere yet.</param>
+    /// <returns>Where the item is now. Lost means it was stored nowhere.</returns>
+    internal static Placement Give(IActorRef session, Wizard wizard, WizClientObjectItem item) {
+        var placement = Place(wizard, item);
+        if (placement != Placement.Lost) {
+            Announce(session, wizard, item, placement);
+        }
+
+        return placement;
     }
 
     /// <summary>

@@ -492,7 +492,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             var itemTemplateId = placedItem is null ? 0 : HouseCastleBlocks.ItemTemplate(placedItem.TemplateId);
             if (placedItem is null
                 || CoreObjectFactory.GetCoreTemplate(itemTemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
+                || wizard.BackpackFreeSlots <= scrolls.Count
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, itemTemplateId))) {
                 if (scrolls.Count > 0) {
                     InformGameClient("Make room in your backpack for the music player and its musical scrolls.");
@@ -947,7 +947,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         HouseChange change;
         lock (HouseDeeds.BackpackLock(wizard)) {
             if (CoreObjectFactory.GetCoreTemplate(scrollTemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= 0
+                || wizard.BackpackFreeSlots <= 0
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, scrollTemplateId))) {
                 InformGameClient("Your backpack cannot hold that musical scroll.");
 

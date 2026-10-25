@@ -31,6 +31,7 @@ using Imlight.CoreLib.Game.Packs;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Events;
 
@@ -554,13 +555,13 @@ internal static class ClassProjects {
                 return;
         }
 
-        if (!wizard.AddItemToInventory(id, out WizClientObjectItem item)) {
-            Logger.Warning("Events | could not add {0} to the backpack of {1}.", Logger.Args(id, wizard.CharId));
+        // A full backpack sends the reward to the bank, as the game does.
+        if (!wizard.TryCreateItem(id, out var item) || ItemPlacement.Give(session, wizard, item) == Placement.Lost) {
+            Logger.Warning("Events | could not add {0} to the backpack or bank of {1}.", Logger.Args(id, wizard.CharId));
 
             return;
         }
 
-        ItemSync.SendAdded(session, wizard, item);
         given.Add(NameOf(template, id));
     }
 

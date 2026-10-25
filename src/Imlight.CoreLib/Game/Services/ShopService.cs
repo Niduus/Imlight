@@ -56,6 +56,7 @@ using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Rentals;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Game.WizBang;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -741,21 +742,16 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
     private bool ProcessSuccessfulPurchase(Wizard playerWizard, WizClientObjectItem item, uint itemTemplateID, int goldCost,
                                            bool isPet, bool confirm = true) {
-        var added = isPet ? playerWizard.AddPetToInventory(item) : playerWizard.AddItemToInventory(item);
-        if (!added) {
-            Logger.Warning("Could not add purchased item {0} to the inventory of {1}.",
-                Logger.Args(itemTemplateID, playerWizard.CharId));
-            if (confirm) {
-                SendShopDenyMessage();
-            }
-
-            return false;
+        // A pet comes from the pet factory with its behaviors set; anything else is a bare template copy.
+        if (!isPet && item is not null) {
+            CoreObjectFactory.InitializeCoreObjectBehaviors(item, item.m_templateID);
         }
 
-        // Inform the game client that a new item has been added to the player's inventory.
-        if (!ItemSync.SendAdded(SessionActor.ActorRef, playerWizard, item)) {
-            playerWizard.RemoveItemFromInventory(item.m_globalID);
-            WizardItemCollection.RemoveItem(playerWizard.CharId, item.m_globalID);
+        // A full backpack sends the purchase to the bank, as the game does.
+        var placement = item is null ? Placement.Lost : ItemPlacement.Give(SessionActor.ActorRef, playerWizard, item);
+        if (placement == Placement.Lost) {
+            Logger.Warning("Could not add purchased item {0} to the backpack or bank of {1}.",
+                Logger.Args(itemTemplateID, playerWizard.CharId));
             if (confirm) {
                 SendShopDenyMessage();
             }
@@ -766,12 +762,13 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         playerWizard.RemoveGold(goldCost);
 
         // Inform the game client that the player has acquired a new item.
-        var itemAcqMsg = new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
-            ItemGlobalID = item.m_globalID,
-            ItemTemplateID = itemTemplateID,
-            ItemLocation = 1,
-        };
-        SendToSocket(itemAcqMsg);
+        if (placement == Placement.Backpack) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
+                ItemGlobalID = item.m_globalID,
+                ItemTemplateID = itemTemplateID,
+                ItemLocation = 1,
+            });
+        }
 
         // Inform the game client that the player's gold has been updated.
         var goldUpdateMsg = new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {

@@ -328,7 +328,7 @@ internal static class HouseDeeds {
             }
 
             var missing = wanted.Where(template => FindItem(wizard, template.TemplateId) is null).ToList();
-            if (missing.Count > wizard.InventoryBehavior.FreeSlots) {
+            if (missing.Count > wizard.BackpackFreeSlots) {
                 return new HouseGrant(HouseGrantFailure.BackpackFull, []);
             }
 

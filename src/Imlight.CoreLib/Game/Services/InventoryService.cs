@@ -354,7 +354,6 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
     #region Jewels
 
-    private static readonly CoreObjectSerializer s_itemSerializer = new(behaviors: SerializerFlags.None);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELREQUEST))]
     private void ReceiveEquipJewelRequest(WIZARD2_53_PROTOCOL.MSG_EQUIPJEWELREQUEST message) {
@@ -465,11 +464,10 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             Logger.Information("Jewel {0} taken out of item {1}, socket {2}: {3}.", Logger.Args(jewelTemplateId, item.m_templateID,
                 message.SocketNumber, noShatter ? "No Shatter, back to the backpack" : KeepShatteredJewels ? "kept (KeepShatteredJewels)" : "shattered"));
             if (noShatter || KeepShatteredJewels) {
-                if (wizard.AddItemToInventory(jewelTemplateId, out var jewel)) {
-                    SendInventoryAdd(wizard, jewel);
-                }
-                else {
-                    InformGameClient("Your backpack is full, so the jewel could not come back.");
+                // A full jewel pouch sends the jewel to the shared bank or the bank, as the game does.
+                if (!wizard.TryCreateItem(jewelTemplateId, out var jewel)
+                    || ItemPlacement.Give(SessionActor.ActorRef, wizard, jewel) == Placement.Lost) {
+                    InformGameClient("Your backpack and bank are full, so the jewel could not come back.");
                 }
             }
 
@@ -525,19 +523,6 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
     private static WizClientObjectItem FindOwnedItem(Wizard wizard, ulong globalId)
         => wizard.InventoryBehavior.GetItem(globalId)
             ?? wizard.EquipmentBehavior?.EquippedItems?.FirstOrDefault(i => i.m_globalID == globalId);
-
-    private void SendInventoryAdd(Wizard wizard, WizClientObjectItem item) {
-        if (!s_itemSerializer.Serialize(item, (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit), out var data)) {
-            Logger.Error("Could not serialize item {0} for the backpack.", Logger.Args(item.m_globalID));
-
-            return;
-        }
-
-        SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-            GlobalID = wizard.GameObjectID,
-            SerializedItem = data,
-        });
-    }
 
     #endregion
 

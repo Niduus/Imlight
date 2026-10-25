@@ -29,7 +29,7 @@
  * NOTE:
  * The counts follow the client's: the bank does not count reagents, pet snacks and emotes, the shared bank
  * does not count jewels either and holds them against SharedJewelCap. The backpack check is the server's own
- * (ServerWizInventoryBehavior.FreeSlots), the client also counts equipped items. The caller unequips an
+ * (Wizard.BackpackFreeSlots), which counts worn items like the client does. The caller unequips an
  * equipped item before it asks about it. A rental never goes into the bank or the shared bank, because the
  * rental expiry only looks at the backpack and what is worn.
  *
@@ -93,6 +93,15 @@ internal static class BankRules {
 
         return !HasAdjective(GetTemplate(item), EmoteAdjective);
     }
+
+    /// <summary>
+    /// Whether an item takes a backpack slot as the client counts them, worn or not.
+    /// </summary>
+    /// <param name="item">The item in question.</param>
+    /// <returns>False for what the bank does not count and for jewels, which have their own pouch
+    /// ([Character] MaxJewelsAllowed).</returns>
+    internal static bool TakesBackpackSlot(WizClientObjectItem item)
+        => CountsTowardBank(item) && !IsJewel(item);
 
     /// <summary>
     /// Whether an item takes a slot of the regular part of the shared bank.
@@ -280,7 +289,7 @@ internal static class BankRules {
             return (held ?? 0) + quantity <= ServerPetSnackBehavior.MaxStack;
         }
 
-        return wizard.InventoryBehavior.FreeSlots >= 1;
+        return wizard.BackpackFreeSlots >= 1;
     }
 
     private static BankDenial SharedRoomDenial(WizClientObjectItem item, BankItemKind kind, int quantity, Account account) {

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Bank;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Shared.Resources;
 
@@ -54,11 +55,18 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     [JsonIgnore] public List<WizClientObjectItem> Items { get; set; }
 
     /// <summary>
+    /// The number of backpack items that take a slot: jewels go in the jewel pouch, and reagents, pet snacks and
+    /// emotes are not counted either, see <see cref="BankRules.TakesBackpackSlot"/>.
+    /// </summary>
+    [JsonIgnore] public int UsedSlots
+        => Items.Count(BankRules.TakesBackpackSlot);
+
+    /// <summary>
     /// The number of items that still fit in the inventory. Equipped items are not counted, as in
-    /// <see cref="AddItem"/>.
+    /// <see cref="AddItem"/>; a new item is checked against Wizard.BackpackFreeSlots, which counts them.
     /// </summary>
     [JsonIgnore] public int FreeSlots
-        => Math.Max(0, Limit - Items.Count);
+        => Math.Max(0, Limit - UsedSlots);
 
     /// <summary>
     /// Adds an item to the player's inventory.
@@ -74,7 +82,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
             s_maxItemsAllowed = s_maxItemsAllowedFallback;
         }
 
-        if (Items.Count >= Limit) {
+        if (BankRules.TakesBackpackSlot(item) && UsedSlots >= Limit) {
             Logger.Debug("Player inventory is full. Cannot add item with global id {0}.", Logger.Args(item.m_globalID));
 
             return false;

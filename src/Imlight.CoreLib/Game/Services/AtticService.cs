@@ -240,7 +240,7 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
             // A music player gives back the scrolls it holds, so the backpack needs room for them as well.
             var scrolls = HouseMusic.Scrolls(stored.TemplateId, stored.Custom);
             if (CoreObjectFactory.GetCoreTemplate(stored.TemplateId) is not WizItemTemplate template
-                || wizard.InventoryBehavior.FreeSlots <= scrolls.Count
+                || wizard.BackpackFreeSlots <= scrolls.Count
                 || HousingItems.TemplateCopyLimitReached(template, HousingItems.CountInBackpack(wizard, stored.TemplateId))) {
                 InformGameClient(scrolls.Count > 0
                     ? "Make room in your backpack for the music player and its musical scrolls."

@@ -508,7 +508,7 @@ internal sealed class BankRequests(Wizard wizard, IActorRef session, Func<bool> 
         }
 
         // The worn item takes a backpack slot when it comes off.
-        if (wizard.InventoryBehavior.FreeSlots < 1) {
+        if (wizard.BackpackFreeSlots < 1) {
             Deny(request, itemId, $"{BankDenial.BackpackFull}: a worn item needs a free backpack slot to be taken off");
 
             return false;

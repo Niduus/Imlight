@@ -63,6 +63,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -645,21 +646,24 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
     }
 
     private bool TryAddItemToInventory(Wizard wizard, ulong itemTemplateId, int texture, int decal) {
-        if (!wizard.AddItemToInventory(itemTemplateId, texture, decal, out var itemCoreObject)) {
-            Logger.Warning("Could not add item {0} to inventory.", Logger.Args(itemTemplateId));
+        if (!wizard.TryCreateItem(itemTemplateId, out var itemCoreObject)) {
+            Logger.Warning("Could not create item {0}.", Logger.Args(itemTemplateId));
             return false;
         }
 
-        if (!s_coreObjectSerializer.Serialize(itemCoreObject, 24, out var serializedItem)) {
-            Logger.Warning("Failed to serialize core object {0}.", Logger.Args(itemTemplateId));
+        itemCoreObject.m_primaryColor = texture;
+        itemCoreObject.m_secondaryColor = decal;
+
+        // A full backpack sends the purchase to the bank, as the game does.
+        var placement = ItemPlacement.Give(SessionActor.ActorRef, wizard, itemCoreObject);
+        if (placement == Placement.Lost) {
+            Logger.Warning("Could not add item {0} to the backpack or bank.", Logger.Args(itemTemplateId));
             return false;
         }
 
-        SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_ADDITEM {
-            GlobalID = wizard.GameObjectID,
-            SerializedItem = serializedItem
-        });
-        PetTome.Announce(SessionActor.ActorRef, wizard, itemCoreObject as WizClientObjectItem);
+        if (placement != Placement.Backpack) {
+            return true;
+        }
 
         // Adds the item to 'REVIEW MY ORDER'
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
@@ -679,18 +683,17 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                 PetFactory.TrySetPetName(pet, message.PetName);
             }
 
-            if (pet is null || !wizard.AddPetToInventory(pet)) {
-                Logger.Warning("Could not add crown shop pet {0} to the inventory of {1}.",
+            // A full backpack sends the pet to the bank, as the game does.
+            var placement = pet is null ? Placement.Lost : ItemPlacement.Give(SessionActor.ActorRef, wizard, pet);
+            if (placement == Placement.Lost) {
+                Logger.Warning("Could not add crown shop pet {0} to the backpack or bank of {1}.",
                     Logger.Args(templateId, wizard.CharId));
 
                 return s_errorInvFull;
             }
 
-            if (!ItemSync.SendAdded(SessionActor.ActorRef, wizard, pet)) {
-                wizard.RemoveItemFromInventory(pet.m_globalID);
-                WizardItemCollection.RemoveItem(wizard.CharId, pet.m_globalID);
-
-                return s_errorInvFull;
+            if (placement != Placement.Backpack) {
+                continue;
             }
 
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {

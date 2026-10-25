@@ -655,6 +655,15 @@ public class Wizard {
         WizardCollection.UpdateCharacterTrainingPoints(this);
     }
 
+    /// <summary>
+    /// How many more items fit in the backpack, counted as the client counts them: worn items take a slot too
+    /// (Niduus, 2026-10-25: "backpack limit is not being respected"). A new item that does not fit goes to the bank,
+    /// see ItemPlacement.
+    /// </summary>
+    [JsonIgnore] public int BackpackFreeSlots
+        => Math.Max(0, InventoryBehavior.FreeSlots
+            - (EquipmentBehavior?.EquippedItems?.Count(Imlight.CoreLib.Game.Bank.BankRules.TakesBackpackSlot) ?? 0));
+
     public bool AddItemToInventory(ulong itemId, out WizClientObjectItem item)
         => TryCreateItem(itemId, out item) && AddInitializedItemToInventory(item);
 
@@ -1072,7 +1081,7 @@ public class Wizard {
             return false;
         }
 
-        if (InventoryBehavior.FreeSlots < 1) {
+        if (BackpackFreeSlots < 1) {
             Logger.Debug("The inventory of character {CharId} is full. Cannot take item {ItemId} from the bank.", Logger.Args(CharId, itemId));
 
             return false;

@@ -56,6 +56,7 @@ using Imcodec.IO;
 using Imcodec.Cryptography;
 using Imlight.Common;
 using Imcodec.Types;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -350,8 +351,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
         var goldCost = entry.m_buyPrice;
 
-        // A full backpack denies the buy before the stock or the gold is touched.
-        if (wizard.InventoryBehavior.FreeSlots < 1 || !wizard.AddItemToInventory(item)) {
+        // A full backpack denies the buy before the stock or the gold is touched. A jewel goes in the jewel pouch.
+        if ((BankRules.TakesBackpackSlot(item) && wizard.BackpackFreeSlots < 1) || !wizard.AddItemToInventory(item)) {
             Logger.Warning("Could not add bazaar item {0} to the inventory of {1}, so the purchase is denied.",
                 Logger.Args(templateId, wizard.CharId));
             SendBuyConfirm(failed: true);

@@ -283,7 +283,7 @@ internal partial class HousingService {
             return;
         }
 
-        if (wizard.InventoryBehavior.FreeSlots < entries.Count) {
+        if (wizard.BackpackFreeSlots < entries.Count) {
             InformGameClient("Your backpack is full.");
 
             return;
