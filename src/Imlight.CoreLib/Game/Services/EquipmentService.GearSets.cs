@@ -56,18 +56,13 @@ internal partial class EquipmentService {
             // Saving under a name that is taken updates that set, so a set can be changed without deleting it.
             if (existing >= 0) {
                 behavior.GearSets[existing].Items = items;
-                behavior.GearSets[existing].AppearanceBase64 = GearSets.SnapshotAppearance(behavior, items);
                 WizardCollection.UpdateCharacterItems(wizard);
                 SendGearSetList();
 
                 return;
             }
 
-            var newSet = new GearSet {
-                Name = message.SetName,
-                Items = items,
-                AppearanceBase64 = GearSets.SnapshotAppearance(behavior, items),
-            };
+            var newSet = new GearSet { Name = message.SetName, Items = items };
             behavior.GearSets.Add(newSet);
             WizardCollection.UpdateCharacterItems(wizard);
 
@@ -104,6 +99,7 @@ internal partial class EquipmentService {
 
             var set = behavior.GearSets[index];
             var missing = 0;
+            var putOn = 0;
             foreach (var item in set.Items.ToList()) {
                 if (behavior.HasItemEquipped(item.ItemId)) {
                     continue;
@@ -121,16 +117,25 @@ internal partial class EquipmentService {
                         ItemID = item.ItemId,
                         SlotName = item.SlotType.ToString(),
                     });
+                    putOn++;
                 }
                 catch (Exception e) {
                     Logger.Error("Gear sets: putting on item {0} of set {1} failed: {2}", Logger.Args(item.ItemId, set.Name, e));
                 }
             }
 
+            Logger.Information("Gear sets: set {0} has {1} items: {2} put on, {3} already worn, {4} not in the backpack.",
+                Logger.Args(set.Name, set.Items.Count, putOn, set.Items.Count - putOn - missing, missing));
+
             if (missing > 0) {
                 InformGameClient(missing == 1
                     ? "1 item of this set is not in your backpack anymore, so it was left out."
                     : $"{missing} items of this set are not in your backpack anymore, so they were left out.");
+            }
+
+            // The game marks the set it is sent back as the worn one (ClientWizEquipmentBehavior::MSG_EquipSet).
+            if (GearSets.TrySerialize(GearSets.ToClient(set, behavior), out var worn)) {
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_EQUIPSET { Set = worn, GlobalID = wizard.GameObjectID });
             }
 
             SendGearSetList();

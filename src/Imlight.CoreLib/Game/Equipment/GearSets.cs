@@ -34,7 +34,7 @@ namespace Imlight.CoreLib.Game.Equipment;
 /// The backpack's Equipment Sets ("gear sets"): a set remembers the worn hat, robe, boots, wand, athame, amulet, ring,
 /// deck and pet (mounts are left out, as in the real game) and puts them all on again with one click.
 /// The client's EquipmentSet carries the set name (picked from the game's name list), whether it is worn, and an
-/// m_serializedItems blob the window draws its wizard picture from; GearSetItemsLayout in [Character] picks what goes in it.
+/// m_serializedItems list of item ids the window draws its wizard picture from.
 /// The server keeps its own item list, so equipping never depends on that blob.
 /// </summary>
 internal static class GearSets {
@@ -49,8 +49,6 @@ internal static class GearSets {
 
     internal static int MaxSets => Math.Max(1, ConfigurationManager.Settings["Character.MaxGearSets"].AsInt(30));
 
-    private static string ItemsFormat
-        => (ConfigurationManager.Settings["Character.GearSetItemsLayout"].AsString("appearance") ?? "appearance").Trim().ToLowerInvariant();
 
     /// <summary>What is worn now in the slots a set saves.</summary>
     internal static List<GearSetItem> Snapshot(ServerWizEquipmentBehavior behavior) {
@@ -61,31 +59,16 @@ internal static class GearSets {
             }
         }
 
-        return items;
+        // In slot order, like the game's own list of the worn gear, so an unchanged outfit shows as already saved.
+        return items.OrderBy(item => Array.IndexOf(SavedSlots, item.SlotType)).ToList();
     }
 
     /// <summary>True when every item of the set is worn.</summary>
     internal static bool IsWorn(GearSet set, ServerWizEquipmentBehavior behavior)
         => set.Items.Count > 0 && set.Items.All(item => behavior.HasItemEquipped(item.ItemId));
 
-    /// <summary>
-    /// The looks of the worn items in a set, the same EquippedItemInfoList the character list draws wizards from.
-    /// Called while the items are worn, since only worn items are at hand when the client list is built.
-    /// </summary>
-    internal static string SnapshotAppearance(ServerWizEquipmentBehavior behavior, IEnumerable<GearSetItem> items) {
-        var list = new EquippedItemInfoList { m_infoList = [] };
-        foreach (var item in items) {
-            var worn = behavior.GetItem(item.ItemId);
-            if (worn is not null) {
-                list.m_infoList.Add(ItemHelper.GetPublicItem(worn));
-            }
-        }
-
-        return TrySerialize(list, out var data) ? Convert.ToBase64String(data) : null;
-    }
-
     internal static EquipmentSet ToClient(GearSet set, ServerWizEquipmentBehavior behavior) => new() {
-        m_serializedItems = ItemsBlob(set, behavior),
+        m_serializedItems = ItemsBlob(set),
         m_equipmentSetName = set.Name,
         m_isEquipped = IsWorn(set, behavior),
     };
@@ -189,29 +172,16 @@ internal static class GearSets {
         return false;
     }
 
-    private static ByteString ItemsBlob(GearSet set, ServerWizEquipmentBehavior behavior) {
-        // "appearance" (default): the items' looks. "gids": each item's 8-byte id. "slots": each item's id and the
-        // 4-byte hash of its slot name. "none": empty. With gids the window drew a plain wizard (Niduus, 2026-10-24).
-        var format = ItemsFormat;
-        if (format == "none") {
-            return Array.Empty<byte>();
-        }
-
-        if (format != "gids" && format != "slots") {
-            set.AppearanceBase64 ??= SnapshotAppearance(behavior, set.Items);
-            return string.IsNullOrEmpty(set.AppearanceBase64)
-                ? Array.Empty<byte>()
-                : Convert.FromBase64String(set.AppearanceBase64);
-        }
-
-        var withSlots = format == "slots";
-        var size = withSlots ? 12 : 8;
-        var bytes = new byte[set.Items.Count * size];
+    /// <summary>
+    /// The set's items as the game writes them for the worn gear (EquipmentManagerWindow 0x140873290): a 2-byte count,
+    /// then each item's 8-byte global id. The window draws its picture from these ids and compares them with the worn
+    /// gear to say a set is already saved.
+    /// </summary>
+    private static ByteString ItemsBlob(GearSet set) {
+        var bytes = new byte[2 + set.Items.Count * 8];
+        BitConverter.TryWriteBytes(bytes.AsSpan(0), (ushort) set.Items.Count);
         for (var i = 0; i < set.Items.Count; i++) {
-            BitConverter.TryWriteBytes(bytes.AsSpan(i * size), set.Items[i].ItemId);
-            if (withSlots) {
-                BitConverter.TryWriteBytes(bytes.AsSpan(i * size + 8), StringHash.Compute(set.Items[i].SlotType.ToString()));
-            }
+            BitConverter.TryWriteBytes(bytes.AsSpan(2 + i * 8), set.Items[i].ItemId);
         }
 
         return bytes;
