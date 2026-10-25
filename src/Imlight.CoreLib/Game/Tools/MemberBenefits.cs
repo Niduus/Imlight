@@ -25,7 +25,9 @@ using System.Text.Json;
 using System.Threading;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 
 namespace Imlight.CoreLib.Game.Tools;
@@ -50,7 +52,7 @@ internal static class MemberBenefits {
         ("MonsterMagic", "Monster Magic", 16),
         ("DailyPvPBonus", "Daily PvP Bonus", 32),
         ("FishingBonus", "Fishing Bonus", 64),
-        ("CraftingBonus", "Crafting Bonus", 128),
+        ("CraftingBonus", "Double Reagents (Crafting Bonus)", 128),
         ("SecondChanceChestBonus", "Second Chance Chest", 256),
         ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", 512),
         ("FasterEnergyRegeneration", "Faster Energy Regeneration", 1024),
@@ -110,6 +112,14 @@ internal static class MemberBenefits {
     /// </summary>
     internal static int EnergyTickSeconds(int gameSeconds)
         => IsOn(FASTER_ENERGY) ? Math.Max(1, (int) Math.Round(gameSeconds / s_energyFactor)) : gameSeconds;
+
+    /// <summary>
+    /// How many times over a reagent from a drop, a harvest, a reagent spot or a minigame is given: 2 while Crafting
+    /// Bonus is on (the game shows it as Double Reagents), except for reagents the game marks DontDoubleReagent.
+    /// </summary>
+    internal static int ReagentFactor(ulong templateId)
+        => IsOn(CRAFTING) && !((CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_adjectiveList ?? [])
+            .Any(a => string.Equals(a.ToString().Trim(), "DontDoubleReagent", StringComparison.OrdinalIgnoreCase)) ? 2 : 1;
 
     internal const string GARDENING = "GardeningBonus";
     internal const string DOUBLE_PET_XP = "DoublePetXP";

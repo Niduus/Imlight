@@ -119,7 +119,8 @@ internal static class MinigameRewardGranter {
 
                 return new ItemLootInfo { m_lootType = LOOT_TYPE.LOOT_TYPE_ITEM, m_itemID = outcome.TemplateId, m_numItems = 1 };
             case MinigameOutcomeKind.Reagent:
-                var reagentCount = LootGranter.GrantReagent(playerActor, wizard, outcome.TemplateId, outcome.Quantity);
+                var reagentCount = LootGranter.GrantReagent(playerActor, wizard, outcome.TemplateId,
+                    outcome.Quantity * Tools.MemberBenefits.ReagentFactor(outcome.TemplateId));
                 if (reagentCount == 0) {
                     Logger.Information("Minigame reagent reward {Reagent} dropped, the stack of {Wizard} is full",
                         Logger.Args(outcome.TemplateId, wizard.PlayerNameBehavior.GetWizardName()));

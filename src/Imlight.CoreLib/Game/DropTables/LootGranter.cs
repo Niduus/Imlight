@@ -260,7 +260,7 @@ public static class LootGranter {
             // A drop table entry may name an item, a spell or something else; resolve it first.
             switch (CoreObjectFactory.GetCoreTemplate(itemGuid)) {
                 case ReagentItemTemplate:
-                    var grantedQuantity = GrantReagent(playerActor, wizard, itemGuid, item.Quantity);
+                    var grantedQuantity = GrantReagent(playerActor, wizard, itemGuid, item.Quantity * Tools.MemberBenefits.ReagentFactor(itemGuid));
                     if (grantedQuantity > 0) {
                         item.Quantity = grantedQuantity;
                         grantedItems.Add(item);

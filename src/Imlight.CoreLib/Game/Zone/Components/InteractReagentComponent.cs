@@ -125,6 +125,10 @@ internal sealed class InteractReagentComponent(ZoneEntity entity)
             return;
         }
 
+        // Double Reagents (the Crafting Bonus member benefit) doubles what a reagent spot gives.
+        quantity *= Tools.MemberBenefits.ReagentFactor(reagent.m_templateID);
+        reagent.m_quantity = quantity;
+
         // Determine if the reagent is rare and get the rare reagent if it is.
         var isRare = IsRareReagent();
         var rareReagent = isRare ? GetRareReagent(playerCharacter.CharId) : null;

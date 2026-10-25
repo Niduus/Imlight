@@ -30,7 +30,7 @@ internal sealed partial class ManagerWindow {
         ("MonsterMagic", "Monster Magic", "Monstrology extracts give double Animus."),
         ("DailyPvPBonus", "Daily PvP Bonus", "Not on this server yet: it has no daily PvP assignments."),
         ("FishingBonus", "Fishing Bonus", "Fishing costs no energy."),
-        ("CraftingBonus", "Crafting Bonus", "No crafting cooldowns."),
+        ("CraftingBonus", "Double Reagents (Crafting Bonus)", "Double reagents from creature drops, reagent spots, garden harvests and minigames, and no crafting cooldowns. The game shows it as Double Reagents."),
         ("SecondChanceChestBonus", "Second Chance Chest", "Not on this server yet: it has no second chance chests."),
         ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", "Scroll of Fortune points count double."),
         ("FasterEnergyRegeneration", "Faster Energy Regeneration", "Energy comes back twice as fast."),
