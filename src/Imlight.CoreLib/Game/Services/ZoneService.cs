@@ -931,6 +931,21 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         ReceiveZoneTransferRequest(transfer);
     }
 
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_RAIDREWARD))]
+    private void ReceiveRaidReward(CHARACTER_103_PROTOCOL.MSG_RAIDREWARD message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || !string.Equals(wizard.Zone, message.Zone, StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
+
+        try {
+            Raids.RaidRewards.Grant(SessionActor.ActorRef, wizard, message.Zone);
+        }
+        catch (Exception ex) {
+            Logger.Error("Raids | Giving {0} the drops of {1} failed: {2}", Logger.Args(wizard.CharId, message.Zone, ex));
+        }
+    }
+
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS))]
     private void ReceiveTeleportEffects(CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS message) {
         SendTeleportEffects();

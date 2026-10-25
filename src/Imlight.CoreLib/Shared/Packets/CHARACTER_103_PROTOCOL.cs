@@ -802,4 +802,16 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Gives the player the drops of the raid they won (Game/Raids/RaidRewards): every wizard in the raid gets them.
+    /// </summary>
+    public sealed class MSG_RAIDREWARD : IServerMessage {
+
+        public byte MessageOrder { get; } = 150;
+        public byte ServiceID { get; } = 103;
+
+        public string Zone;
+
+    }
+
 }

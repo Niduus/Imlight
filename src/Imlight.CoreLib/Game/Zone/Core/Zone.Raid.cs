@@ -62,6 +62,11 @@ public partial class Zone {
                     _raidWon = true;
                     Logger.Information("Raids | {0}: the raid is won.", Logger.Args(ZonePath));
                     TellRaid("The raid is won! Well done.");
+                    if (Raids.RaidRewards.Has(ZonePath)) {
+                        foreach (var player in _players) {
+                            player.Tell(new CHARACTER_103_PROTOCOL.MSG_RAIDREWARD { Zone = ZonePath });
+                        }
+                    }
                 }
                 break;
             case RaidControlKind.End:

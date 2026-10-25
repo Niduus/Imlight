@@ -20,7 +20,7 @@ internal class CommandRaidProtocol : CommandProtocol {
 
     private const string HELP = ".raid shows the raid you are in. .raid leave takes you back to the guild grounds. "
         + "Testing: .raid go void (straight into The Voracious Void, fresh), .raid end, .raid timer 30, "
-        + ".raid event EventName, .raid counter CounterName 4.";
+        + ".raid event EventName, .raid counter CounterName 4, .raid loot (The Voracious Void's drops, once more).";
 
     [Command("raid")]
     [Alias("raids")]
@@ -75,6 +75,12 @@ internal class CommandRaidProtocol : CommandProtocol {
             switch (first) {
                 case "go":
                     Go(string.Join(' ', words.Skip(1)));
+
+                    return;
+                case "loot":
+                case "drops":
+                    Raids.RaidRewards.Grant(Context.SessionActor, me,
+                        inRaid && Raids.RaidRewards.Has(me.Zone) ? me.Zone : Raids.Raids.All[0].Zone);
 
                     return;
                 case "end":
