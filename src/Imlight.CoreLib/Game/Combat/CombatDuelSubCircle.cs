@@ -802,8 +802,8 @@ public class CombatDuelSubCircle {
         // The game only builds the Power Orb (and its school picker ring) when the battle stats show Archmastery,
         // (1 + percent) * base + bonus above 0.01. The server's own rating goes in whole so the two always agree.
         stats.m_archmasteryBase = ArchmasteryRating;
-        stats.m_archmasteryBonus = 0;
-        stats.m_archmasteryBonusPercent = 0;
+        stats.m_archmasteryBonusFlat = 0;
+        stats.m_archmasteryBonusPercentage = 0;
 
         // .mastery and .allknowing: the game decides which cards a wizard can afford from these, so they are sent too.
         foreach (var school in IsAllKnowing ? _cheatMasteries.Concat(Commands.Protocols.CommandPipProtocol.Schools.Select(s => (uint) s)) : _cheatMasteries) {

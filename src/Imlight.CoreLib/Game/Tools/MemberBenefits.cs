@@ -117,6 +117,7 @@ internal static class MemberBenefits {
     internal const string FISHING = "FishingBonus";
     internal const string CRAFTING = "CraftingBonus";
     internal const string FASTER_ENERGY = "FasterEnergyRegeneration";
+    internal const string DOUBLE_SOF = "DoubleScrollOfFortunePoints";
 
     /// <summary>
     /// The login server calls this when an account logs in; its next arrival in the world tells it the benefits.

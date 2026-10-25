@@ -279,6 +279,9 @@ internal static class ClassProjects {
     private static void RecordIn(IActorRef client, Wizard wizard, Running running, ClassProjectActivityType type, int times,
         IReadOnlyCollection<string> adjectives) {
         var activities = running.Template.m_activityList ?? [];
+        // The Double Scroll of Fortune Points member benefit doubles the points of the Scroll of Fortune.
+        var factor = running.Template.m_projectName.ToString().EndsWith("SOF", StringComparison.OrdinalIgnoreCase)
+            && Tools.MemberBenefits.IsOn(Tools.MemberBenefits.DOUBLE_SOF) ? 2 : 1;
         var gained = 0;
         Progress progress = null;
         for (var i = 0; i < activities.Count; i++) {
@@ -300,7 +303,7 @@ internal static class ClassProjects {
                 }
 
                 progress.Today[i] += count;
-                var points = count * Math.Max(1, activity.m_activityValue);
+                var points = count * Math.Max(1, activity.m_activityValue) * factor;
                 progress.Points += points;
                 gained += points;
             }

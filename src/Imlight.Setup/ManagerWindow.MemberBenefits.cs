@@ -32,7 +32,7 @@ internal sealed partial class ManagerWindow {
         ("FishingBonus", "Fishing Bonus", "Fishing costs no energy."),
         ("CraftingBonus", "Crafting Bonus", "No crafting cooldowns."),
         ("SecondChanceChestBonus", "Second Chance Chest", "Not on this server yet: it has no second chance chests."),
-        ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", "Not on this server yet: it has no Scroll of Fortune."),
+        ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", "Scroll of Fortune points count double."),
         ("FasterEnergyRegeneration", "Faster Energy Regeneration", "Energy comes back twice as fast."),
     ];
 
