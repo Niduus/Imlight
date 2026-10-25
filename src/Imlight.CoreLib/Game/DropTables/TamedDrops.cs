@@ -51,7 +51,7 @@ namespace Imlight.CoreLib.Game.DropTables;
 /// </remarks>
 internal static class TamedDrops {
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("TamedDrops.Enabled", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("TamedDrops.Enabled", true);
 
     private static readonly EquipmentSlotType[] s_gearSlots = [
         EquipmentSlotType.Hat, EquipmentSlotType.Robe, EquipmentSlotType.Shoes, EquipmentSlotType.Weapon,

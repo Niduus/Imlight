@@ -138,11 +138,11 @@ internal static class HouseGauntlets {
     private const string PadSigilType = "MinigameSemiCircleSigil4Actor";
 
     // Turns every pad around its gauntlet, in degrees, and scales every front distance (a correction without a rebuild).
-    private static readonly float s_angle = ConfigurationManager.GetValue("Housing.GauntletSigilAngle", 0f);
-    private static readonly float s_distanceScale = ConfigurationManager.GetValue("Housing.GauntletSigilDistanceScale", 1f);
+    private static float s_angle => ConfigurationManager.GetValue("Housing.GauntletSigilAngle", 0f);
+    private static float s_distanceScale => ConfigurationManager.GetValue("Housing.GauntletSigilDistanceScale", 1f);
     // 0: the pad's own reach (InteractDungeonSigilComponent, 370), which covers its circles 270 from its centre.
-    private static readonly float s_padRadius = ConfigurationManager.GetValue("Housing.GauntletSigilRadius", 0f);
-    private static readonly float s_padScale = ConfigurationManager.GetValue("Housing.GauntletSigilScale", 1f);
+    private static float s_padRadius => ConfigurationManager.GetValue("Housing.GauntletSigilRadius", 0f);
+    private static float s_padScale => ConfigurationManager.GetValue("Housing.GauntletSigilScale", 1f);
 
     // How far the front of each gauntlet model is from where it stands (about half its depth), by the model's file name
     // (a part of it). The pad's centre goes Housing.GauntletSigilMargin (default 60) beyond it, so the centre, where the
@@ -156,7 +156,7 @@ internal static class HouseGauntlets {
         ("AV_CombatArena_Gauntlet", 200f), ("VA_ClockTower", 220f), ("TrainStation", 250f), ("MS_Pagoda_Gauntlet", 250f),
         ("lot_structure_tower", 250f), ("CL_ExplorersGauntlet", 300f), ("GH_LongHouse_Gauntlet", 350f),
     ];
-    private static readonly float s_margin = ConfigurationManager.GetValue("Housing.GauntletSigilMargin", 60f);
+    private static float s_margin => ConfigurationManager.GetValue("Housing.GauntletSigilMargin", 60f);
 
     // The gauntlets tuned from the game's own pictures (Niduus, 2026-10-24: "Gauntlet images for sigil placements"): the
     // whole distance from the gauntlet to the pad's centre, how high the pad stands over the gauntlet's floor (a deck,
@@ -205,7 +205,7 @@ internal static class HouseGauntlets {
     private const float DefaultFront = 150f;
     private static readonly ConcurrentDictionary<uint, float> s_frontOf = new();
 
-    private static readonly TimeSpan s_runLifetime = TimeSpan.FromHours(ConfigurationManager.GetValue("Housing.GauntletRunHours", 4.0));
+    private static TimeSpan s_runLifetime => TimeSpan.FromHours(ConfigurationManager.GetValue("Housing.GauntletRunHours", 4.0));
     private static readonly TimeSpan s_zoneLifetime = TimeSpan.FromHours(12);
 
     // Template id to its sigil behavior, or null for a template that is not a gauntlet.

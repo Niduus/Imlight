@@ -280,19 +280,19 @@ internal sealed record CraftResult(CraftError Error, string Message, ulong MadeI
 internal static class Crafting {
 
     // [Crafting] Enabled: false sends no recipes or crafting slots to the game and stations do nothing.
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("Crafting.Enabled", true);
+    private static bool s_enabled => ConfigurationManager.GetValue("Crafting.Enabled", true);
 
     // [Crafting] Slots: how many crafting slots every wizard has (the game gives them with the crafting quests).
-    private static readonly int s_slots = Math.Clamp(ConfigurationManager.GetValue("Crafting.Slots", 30), 1, 200);
+    private static int s_slots => Math.Clamp(ConfigurationManager.GetValue("Crafting.Slots", 30), 1, 200);
 
     // [Crafting] CooldownMultiplier: multiplies every recipe's cooldown. 0.5 is the member speed, 0 has no cooldowns.
-    private static readonly float s_timerMultiplier = Math.Clamp(ConfigurationManager.GetValue("Crafting.CooldownMultiplier", 0.5f), 0f, 10f);
+    private static float s_timerMultiplier => Math.Clamp(ConfigurationManager.GetValue("Crafting.CooldownMultiplier", 0.5f), 0f, 10f);
 
     // [Crafting] RecipeShopGivesItem: true makes buying a recipe give what it makes, as before crafting existed.
-    private static readonly bool s_shopGivesItem = ConfigurationManager.GetValue("Crafting.RecipeShopGivesItem", false);
+    private static bool s_shopGivesItem => ConfigurationManager.GetValue("Crafting.RecipeShopGivesItem", false);
 
     // [Crafting] MaxQuantity: the most items one craft makes.
-    private static readonly int s_maxQuantity = Math.Clamp(ConfigurationManager.GetValue("Crafting.MaxQuantity", 99), 1, 999);
+    private static int s_maxQuantity => Math.Clamp(ConfigurationManager.GetValue("Crafting.MaxQuantity", 99), 1, 999);
 
     private const uint SERIALIZATION_FLAGS = 27;
     private static readonly CoreObjectSerializer s_serializer = new(behaviors: SerializerFlags.None);
@@ -305,7 +305,7 @@ internal static class Crafting {
     private static readonly ConcurrentDictionary<string, uint> s_searched = new(StringComparer.OrdinalIgnoreCase);
 
     // [Crafting] AnswerFailedCrafts: also answer a failed craft in the crafting window (a blank Info box).
-    private static readonly bool s_answerFailed = ConfigurationManager.GetValue("Crafting.AnswerFailedCrafts", false);
+    private static bool s_answerFailed => ConfigurationManager.GetValue("Crafting.AnswerFailedCrafts", false);
 
     internal static bool AnswerFailedCrafts => s_answerFailed;
 

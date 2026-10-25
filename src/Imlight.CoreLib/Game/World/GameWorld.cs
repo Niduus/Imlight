@@ -241,10 +241,11 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         Context.Stop(instanceContainer);
     }
 
-    private static readonly HashSet<string> s_privateZones = new(
+    private static HashSet<string> s_privateZones => s_privateZonesLive.Value;
+    private static readonly LiveValue<HashSet<string>> s_privateZonesLive = new(() => new(
         ConfigurationManager.GetValue("Instance.PrivateZones", "WizardCity/WC_Golem_Tower")
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-        StringComparer.OrdinalIgnoreCase);
+        StringComparer.OrdinalIgnoreCase));
 
     private static bool IsPrivateZone(string zonePath) => zonePath is not null && s_privateZones.Contains(zonePath);
 

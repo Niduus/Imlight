@@ -194,14 +194,12 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     // 2026-10-19). The list is written with a 16-bit byte length, so 20-byte entries top out at MAX_ONE_LIST. Whatever
     // does not fit goes as stock updates, which the game did not add to the list.
     private const int MAX_ONE_LIST = (ushort.MaxValue - 8) / 20;
-    private static readonly int s_oneList
-        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
+    private static int s_oneList => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
 
     // [Bazaar] SendEverything: every tab of a window gets everything that window sells, because the game keeps one
     // list per window and each answer replaced the last, so only the tab that answer was for showed anything (Niduus,
     // 2026-10-19). Off sends each tab only its own items.
-    private static readonly bool s_sendEverything
-        = Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
+    private static bool s_sendEverything => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
 
     // Lazy: s_jewelShapes is set further down, after this field would be.
     private static readonly Lazy<HashSet<uint>> s_jewelTabs = new(() => [.. s_jewelShapes.Select(StringHash.Compute)]);
@@ -807,8 +805,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     // [Bazaar] TabItems: how many reagents, jewels or pins one tab lists. Square jewels showed only the first 120
     // (Niduus, 2026-10-19), so every one is sent now.
-    private static readonly int s_catalogLimit
-        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
+    private static int s_catalogLimit => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TabItems", MAX_ENTRIES), 1, MAX_ENTRIES);
 
 
     private sealed record BazaarCatalog(Dictionary<ulong, AuctionHouseEntry> ById, Dictionary<uint, List<AuctionHouseEntry>> ByCategory, HashSet<ulong> NoAuction);
@@ -1036,8 +1033,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     // About 20 bytes an entry. 5218 entries in one answer made the game drop the connection.
     private const int MAX_ENTRIES = 1000;
     // [Bazaar] TreasureCards: how many cards a tab lists (0 turns Elik's treasure cards off).
-    private static readonly int s_treasureCardLimit
-        = Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, MAX_ENTRIES);
+    private static int s_treasureCardLimit => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, MAX_ENTRIES);
 
     // The order cards are shown in: one from each school in turn, cheapest first, so a short list still
     // has every school.

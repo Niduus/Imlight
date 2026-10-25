@@ -32,11 +32,11 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     [JsonIgnore] public bool NoTransfer { get; set; } = false;
 
     private static int s_maxItemsAllowed = ConfigurationManager.Settings["Character.MaxInventoryItems"].AsInt();
-    private static readonly int s_maxJewelsAllowed = ConfigurationManager.Settings["Character.MaxJewelsAllowed"].AsInt();
+    private static int s_maxJewelsAllowed => ConfigurationManager.Settings["Character.MaxJewelsAllowed"].AsInt();
     private static readonly int s_maxItemsAllowedFallback = 20;
 
-    private static readonly int s_numEmotesAllowed = ConfigurationManager.Settings["Character.MaxEmotesAllowed"].AsInt();
-    private static readonly int s_numTeleportsAllowed = ConfigurationManager.Settings["Character.MaxTeleportsAllowed"].AsInt();
+    private static int s_numEmotesAllowed => ConfigurationManager.Settings["Character.MaxEmotesAllowed"].AsInt();
+    private static int s_numTeleportsAllowed => ConfigurationManager.Settings["Character.MaxTeleportsAllowed"].AsInt();
 
     public List<ulong> InventoryItemIds { get; set; }
 

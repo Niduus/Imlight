@@ -33,8 +33,7 @@ namespace Imlight.CoreLib.Shared.Behaviors;
 
 [Serializable]
 public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquipmentBehavior> {
-    private static readonly int s_maxActiveElixirs
-        = ConfigurationManager.Settings["Character.MaxActiveElixirs"].AsInt();
+    private static int s_maxActiveElixirs => ConfigurationManager.Settings["Character.MaxActiveElixirs"].AsInt();
 
     [JsonIgnore] public bool NoTransfer { get; set; } = false;
 

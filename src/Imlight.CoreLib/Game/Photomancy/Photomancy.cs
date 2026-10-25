@@ -25,10 +25,10 @@ internal static class Photomancy {
     internal const string TOME_OBJECT_NAME = "PhotomancyTome";
 
     // [Photomancy] AllFilters: every photo filter is open to every wizard (each bit is one filter).
-    private static readonly bool s_allFilters = ConfigurationManager.GetValue("Photomancy.AllFilters", true);
+    private static bool s_allFilters => ConfigurationManager.GetValue("Photomancy.AllFilters", true);
 
     // [Photomancy] Command: anyone can open the tome anywhere with .photo.
-    internal static readonly bool CommandOn = ConfigurationManager.GetValue("Photomancy.Command", true);
+    internal static bool CommandOn => ConfigurationManager.GetValue("Photomancy.Command", true);
 
     /// <summary>The filters to send, from the wizard's own saved ones.</summary>
     internal static uint Filters(uint stored)

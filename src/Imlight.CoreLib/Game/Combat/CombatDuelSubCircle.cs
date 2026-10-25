@@ -82,7 +82,7 @@ public class CombatDuelSubCircle {
     private const float AGGRO_TIME_IN_SECONDS = 0.75f;
     internal const byte MAX_PIP_COUNT = 7;
 
-    private static readonly bool s_schoolPips = ConfigurationManager.GetValue("Battle.SchoolPips", true);
+    private static bool s_schoolPips => ConfigurationManager.GetValue("Battle.SchoolPips", true);
     private const byte PLAYER_HAND_SIZE = 7;
 
     internal string SlotName { get; set; }
@@ -480,13 +480,12 @@ public class CombatDuelSubCircle {
     }
 
     // [Battle] GainSchoolPips: a wizard's new pip can come as a school pip (SchoolPipChance %), no stats needed.
-    private static readonly bool s_gainSchoolPips = ConfigurationManager.GetValue("Battle.GainSchoolPips", false);
-    private static readonly int s_schoolPipChance
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.SchoolPipChance", 25), 0, 100);
+    private static bool s_gainSchoolPips => ConfigurationManager.GetValue("Battle.GainSchoolPips", false);
+    private static int s_schoolPipChance => Math.Clamp(ConfigurationManager.GetValue("Battle.SchoolPipChance", 25), 0, 100);
     // [Battle] RandomSchoolPips: school pips come in a random school instead of the participant's own.
-    private static readonly bool s_randomSchoolPips = ConfigurationManager.GetValue("Battle.RandomSchoolPips", false);
+    private static bool s_randomSchoolPips => ConfigurationManager.GetValue("Battle.RandomSchoolPips", false);
     // [Battle] NaturalShadowPips: wizards get shadow pips without the shadow pip rating stat.
-    private static readonly bool s_naturalShadowPips = ConfigurationManager.GetValue("Battle.NaturalShadowPips", false);
+    private static bool s_naturalShadowPips => ConfigurationManager.GetValue("Battle.NaturalShadowPips", false);
     private const int NATURAL_SHADOW_PIP_CHANCE = 25;
 
     /// <summary>
@@ -511,28 +510,22 @@ public class CombatDuelSubCircle {
     }
 
     // [Battle] ShadowPips: shadow pips, which shadow spells cost, kept in their own slots.
-    private static readonly bool s_shadowPips = ConfigurationManager.GetValue("Battle.ShadowPips", true);
+    private static bool s_shadowPips => ConfigurationManager.GetValue("Battle.ShadowPips", true);
     // 0 means no limit (up to NO_SHADOW_LIMIT, which keeps the count inside a byte).
     private const int NO_SHADOW_LIMIT = 50;
-    private static readonly int s_playerMaxShadowPips
-        = ShadowLimit(ConfigurationManager.GetValue("Battle.PlayerShadowPipLimit", 0));
-    private static readonly int s_creatureMaxShadowPips
-        = ShadowLimit(ConfigurationManager.GetValue("Battle.CreatureShadowPipLimit", 0));
+    private static int s_playerMaxShadowPips => ShadowLimit(ConfigurationManager.GetValue("Battle.PlayerShadowPipLimit", 0));
+    private static int s_creatureMaxShadowPips => ShadowLimit(ConfigurationManager.GetValue("Battle.CreatureShadowPipLimit", 0));
 
     // [Battle] PlayerShadowPipMin: the fewest shadow pips a wizard holds; they top back up each round.
-    private static readonly int s_playerMinShadowPips
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.PlayerShadowPipMin", 0), 0, NO_SHADOW_LIMIT);
+    private static int s_playerMinShadowPips => Math.Clamp(ConfigurationManager.GetValue("Battle.PlayerShadowPipMin", 0), 0, NO_SHADOW_LIMIT);
     // [Battle] CreatureShadowPips: creatures can get shadow pips at all.
-    private static readonly bool s_creatureShadowPips = ConfigurationManager.GetValue("Battle.CreatureShadowPips", true);
+    private static bool s_creatureShadowPips => ConfigurationManager.GetValue("Battle.CreatureShadowPips", true);
     // [Battle] RandomCreatureShadowPips: each creature, each battle, has CreatureShadowMagicChance % to get shadow magic.
-    private static readonly bool s_randomCreatureShadowPips
-        = ConfigurationManager.GetValue("Battle.RandomCreatureShadowPips", false);
-    private static readonly int s_creatureShadowMagicChance
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.CreatureShadowMagicChance", 50), 0, 100);
+    private static bool s_randomCreatureShadowPips => ConfigurationManager.GetValue("Battle.RandomCreatureShadowPips", false);
+    private static int s_creatureShadowMagicChance => Math.Clamp(ConfigurationManager.GetValue("Battle.CreatureShadowMagicChance", 50), 0, 100);
     // [Randomizer] RandomizeShadowPips: each wizard's shadow pip limit is rolled (1 to 5) from the seed, and
     // each creature gets shadow magic at random.
-    private static readonly bool s_randomizeShadowPips
-        = Randomization.Randomizer.Enabled && !Randomization.Randomizer.Tame && ConfigurationManager.GetValue("Randomizer.RandomizeShadowPips", false);
+    private static bool s_randomizeShadowPips => Randomization.Randomizer.Enabled && !Randomization.Randomizer.Tame && ConfigurationManager.GetValue("Randomizer.RandomizeShadowPips", false);
     private const int RANDOM_SHADOW_LIMIT_MAX = 5;
     private bool? _creatureRolledShadowMagic;
 
@@ -586,8 +579,7 @@ public class CombatDuelSubCircle {
     }
 
     private static int ShadowLimit(int value) => value <= 0 ? NO_SHADOW_LIMIT : Math.Min(value, NO_SHADOW_LIMIT);
-    private static readonly int s_shadowPipChance
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.ShadowPipChance", 0), 0, 100);
+    private static int s_shadowPipChance => Math.Clamp(ConfigurationManager.GetValue("Battle.ShadowPipChance", 0), 0, 100);
 
     /// <summary>
     /// Each round, maybe gives a shadow pip. The chance is ShadowPipChance if set, else the participant's own
@@ -955,7 +947,7 @@ public class CombatDuelSubCircle {
            && (spell.m_pipCost is null || CombatParticipant.m_pipCount.m_shadowPips >= spell.m_pipCost.m_shadowPips);
 
     // [Battle] AnySchoolPips: a school pip of any school pays for any school's pip cost.
-    private static readonly bool s_anySchoolPips = ConfigurationManager.GetValue("Battle.AnySchoolPips", false);
+    private static bool s_anySchoolPips => ConfigurationManager.GetValue("Battle.AnySchoolPips", false);
 
     /// <summary>
     /// Spends the school pips a spell costs.
@@ -1265,7 +1257,7 @@ public class CombatDuelSubCircle {
     }
 
     // [Battle] UnlimitedMana: spells cost no mana, and mana refills in the Commons.
-    internal static readonly bool UnlimitedMana = ConfigurationManager.GetValue("Battle.UnlimitedMana", false);
+    internal static bool UnlimitedMana => ConfigurationManager.GetValue("Battle.UnlimitedMana", false);
 
     internal void DeductMana(int mana) {
         // If the participant is a player, update their mana.
@@ -1300,7 +1292,7 @@ public class CombatDuelSubCircle {
     // [Battle] FullPipConversion (on by default, Niduus 2026-10-23): a wizard with any Pip Conversion for a spell's
     // school always gets the conversion. Off, the chance is the rating times the game's first-tier scalar (0.00205,
     // WizStatisticEffectConfig), with no diminishing returns: 100 rating is about 20%, 500 or more is 100%.
-    private static readonly bool s_fullPipConversion = ConfigurationManager.GetValue("Battle.FullPipConversion", true);
+    private static bool s_fullPipConversion => ConfigurationManager.GetValue("Battle.FullPipConversion", true);
     private const float DEFAULT_PIP_CONVERSION_SCALAR = 0.00205f;
 
     /// <summary>

@@ -88,15 +88,15 @@ internal static class Deckathalon {
     internal const int TOP_FLOOR = 30;
     private const string SCORES_FILE = "deckathalon.json";
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("Deckathalon.Enabled", true);
-    internal static readonly bool TreasureCardsOnly = ConfigurationManager.GetValue("Deckathalon.TreasureCardsOnly", true);
-    private static readonly bool s_noGearStats = ConfigurationManager.GetValue("Deckathalon.NoGearStats", true);
-    private static readonly bool s_alwaysOpen = ConfigurationManager.GetValue("Deckathalon.AlwaysOpen", false);
-    private static readonly bool s_starterPack = ConfigurationManager.GetValue("Deckathalon.StarterPack", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("Deckathalon.Enabled", true);
+    internal static bool TreasureCardsOnly => ConfigurationManager.GetValue("Deckathalon.TreasureCardsOnly", true);
+    private static bool s_noGearStats => ConfigurationManager.GetValue("Deckathalon.NoGearStats", true);
+    private static bool s_alwaysOpen => ConfigurationManager.GetValue("Deckathalon.AlwaysOpen", false);
+    private static bool s_starterPack => ConfigurationManager.GetValue("Deckathalon.StarterPack", true);
     // Only the floor's portal takes a wizard on, as in the game: there is no timed move up, whatever an older
     // NextFloorSeconds setting says (Niduus, 2026-10-25: "ME WALKING TO THE TRIGGER IS WHAT SHOAULD TELEPORT ME AND
     // ONLY THEN").
-    private static readonly int s_floors = Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
+    private static int s_floors => Math.Clamp(ConfigurationManager.GetValue("Deckathalon.Floors", TOP_FLOOR), 1, TOP_FLOOR);
 
     // Where a wizard goes when they leave the tower: the tower portals of the Duel Arena, as in the game.
     internal const string ARENA_ZONE = "WizardCity/WC_Duel_Arena";

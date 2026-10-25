@@ -344,8 +344,31 @@ internal sealed partial class ServerManager(string installFolder) {
         return sections;
     }
 
+    // Read only when the server starts: ports, addresses, paths, logging, the locale and the database.
+    private static readonly HashSet<string> s_startupSections = new(StringComparer.OrdinalIgnoreCase) {
+        "Logging", "Locale", "Patch Server", "ID Lookup", "Database", "Advanced", "Agent Bridge"
+    };
+
+    private static readonly HashSet<string> s_startupKeys = new(StringComparer.OrdinalIgnoreCase) {
+        "Global Settings.GameRevision", "Login Server.LoginServerName", "Login Server.LoginServerPort",
+        "Game Server.GameServerName", "Game Server.GameServerPort", "Game Server.GameServerIP", "Game Server.GameServerCount",
+        "Game Server.MaxGameServersAllowed", "Game Server.RealmNames", "Game Server.SessionKeyValidityTime"
+    };
+
     /// <summary>
-    /// Saves changed values of keys already in Imlight.ini. True when the server is running and needs a restart.
+    /// Whether the server reads Imlight.ini again by itself when it is saved (LiveSettings), found by its own words.
+    /// </summary>
+    internal bool ReloadsSettingsLive => ServerKnows("Imlight.ini changed; the new settings are in use now.");
+
+    /// <summary>
+    /// Whether a setting is only read when the server starts, so a change waits for a restart.
+    /// </summary>
+    internal static bool NeedsRestart(string section, string key)
+        => s_startupSections.Contains(section) || s_startupKeys.Contains($"{section}.{key}");
+
+    /// <summary>
+    /// Saves changed values of keys already in Imlight.ini. True when the server is running and needs a restart: the
+    /// server reads the file again by itself, so only startup settings (NeedsRestart) or an older server need one.
     /// </summary>
     internal bool SaveSettings(IReadOnlyCollection<Setting> changes) {
         var lines = File.ReadAllLines(ConfigFile).ToList();
@@ -360,7 +383,8 @@ internal sealed partial class ServerManager(string installFolder) {
 
         File.WriteAllLines(ConfigFile, lines);
 
-        return InstalledCommands.IsServerRunning(InstallFolder);
+        return InstalledCommands.IsServerRunning(InstallFolder)
+            && (!ReloadsSettingsLive || changes.Any(change => NeedsRestart(change.Section, change.Key)));
     }
 
     // ---------------------------------------------------------------------

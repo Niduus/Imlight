@@ -108,12 +108,12 @@ internal static class GuildMuseum {
     private const string FOLDER = "GuildMuseum";
     private const string GALLERIES_FILE = "Galleries.json";
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("GuildMuseum.Enabled", true);
-    internal static readonly bool CommandOn = ConfigurationManager.GetValue("GuildMuseum.Command", true);
-    internal static readonly bool ChatOn = ConfigurationManager.GetValue("GuildMuseum.ChatLines", true);
-    private static readonly int s_perKill = Math.Max(0, ConfigurationManager.GetValue("GuildMuseum.EssencePerKill", 10));
-    private static readonly bool s_sharedByGuild = ConfigurationManager.GetValue("GuildMuseum.SharedByGuild", true);
-    private static readonly int s_perWorldKill = Math.Max(0, ConfigurationManager.GetValue("GuildMuseum.EssencePerWorldKill", 2));
+    internal static bool Enabled => ConfigurationManager.GetValue("GuildMuseum.Enabled", true);
+    internal static bool CommandOn => ConfigurationManager.GetValue("GuildMuseum.Command", true);
+    internal static bool ChatOn => ConfigurationManager.GetValue("GuildMuseum.ChatLines", true);
+    private static int s_perKill => Math.Max(0, ConfigurationManager.GetValue("GuildMuseum.EssencePerKill", 10));
+    private static bool s_sharedByGuild => ConfigurationManager.GetValue("GuildMuseum.SharedByGuild", true);
+    private static int s_perWorldKill => Math.Max(0, ConfigurationManager.GetValue("GuildMuseum.EssencePerWorldKill", 2));
 
     private static IdStyle s_idStyle = Enum.TryParse<IdStyle>(ConfigurationManager.GetValue("GuildMuseum.IdStyle", "Hash"), true, out var style)
         ? style

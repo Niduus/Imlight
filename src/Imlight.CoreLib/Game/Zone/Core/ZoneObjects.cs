@@ -279,7 +279,7 @@ internal static class ZoneObjects {
     // A battle circle's join radius when its file gives none.
     private const float DEFAULT_COMBAT_SIGIL_RADIUS = 600.0f;
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("ZoneObjects.Enabled", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("ZoneObjects.Enabled", true);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,

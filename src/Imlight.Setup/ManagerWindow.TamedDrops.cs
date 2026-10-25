@@ -14,7 +14,7 @@ namespace Imlight.Setup;
 
 /// <summary>
 /// The Tamed Drops card on the Server tab (Niduus, 2026-10-23: "make this a toggle and customizeable via manager"): the
-/// on/off switch ([TamedDrops] Enabled, needs a restart) and every number and choice of it, saved to tamed-drops.json
+/// on/off switch ([TamedDrops] Enabled) and every number and choice of it, saved to tamed-drops.json
 /// next to the server. The server reads that file again whenever it changes, so those apply from the next boss. The
 /// defaults are what the server's TamedDropsSettings has with no file. It also shows and resets the accounts' pity meters.
 /// </summary>
@@ -135,7 +135,7 @@ internal sealed partial class ManagerWindow {
             "Boss loot depends on how many rounds the battle took: the faster the win, the higher the tier (5 is best). " +
             "Longer battles make junk rarer and other drops likelier. Each tier has a pity meter per boss, shared by all " +
             "the wizards of an account. Changes below are saved at once and apply from the next boss, no restart needed.",
-            SwitchRow("Tamed Drops", _tamedOn, "Turns the whole feature on or off. This one needs a server restart (the app offers it)."),
+            SwitchRow("Tamed Drops", _tamedOn, "Turns the whole feature on or off, from the next boss."),
             Row(Action(Plain("Reset to defaults"), ResetTamedDropsAsync)),
             Heading("Tiers"),
             tiers,

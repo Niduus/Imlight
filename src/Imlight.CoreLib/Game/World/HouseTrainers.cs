@@ -36,11 +36,11 @@ internal static class HouseTrainers {
 
     private const string TAG_PREFIX = "HouseTrainer_";
 
-    private static readonly uint s_itemTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerItemId", 1292128u);
-    private static readonly uint s_trainerTemplateId = ConfigurationManager.GetValue("TrainerHall.TrainerTemplateId", 1452184u);
+    private static uint s_itemTemplateId => ConfigurationManager.GetValue("TrainerHall.TrainerItemId", 1292128u);
+    private static uint s_trainerTemplateId => ConfigurationManager.GetValue("TrainerHall.TrainerTemplateId", 1452184u);
 
     // [TrainerHall] TrainerName: the name shown over the trainer's head; empty keeps the game's own name.
-    private static readonly string s_trainerName = ConfigurationManager.GetValue("TrainerHall.TrainerName", "")?.Trim() ?? "";
+    private static string s_trainerName => ConfigurationManager.GetValue("TrainerHall.TrainerName", "")?.Trim() ?? "";
 
     /// <summary>
     /// The overhead name for an object with this zone tag: its set trainer part ("Fire Trainer 2"), else the

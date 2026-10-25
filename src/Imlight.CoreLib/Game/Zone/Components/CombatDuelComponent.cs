@@ -276,7 +276,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // [Battle] MobsJoinLate (Niduus, 2026-10-22: "Can we add the 'late' feature to mobs? Have it on by default"):
     // as on live, a monster that walks (or spawns) into a running battle's circle joins it on a free enemy circle,
     // within the usual creature cap, and fights from the next round. Off: monsters walk past running battles.
-    private static readonly bool s_mobsJoinLate = ConfigurationManager.GetValue("Battle.MobsJoinLate", true);
+    private static bool s_mobsJoinLate => ConfigurationManager.GetValue("Battle.MobsJoinLate", true);
 
     private void JoinLateMob(CoreObject creature, IActorRef suspect, ZoneEntity entity) {
         if (!s_mobsJoinLate || creature is null || suspect is null || entity is null || entity.IsCombatOnlyMinion) {
@@ -800,8 +800,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     // [Battle] AnimationExtraSeconds: seconds added to every round's wait for its animations (0 to 10).
-    private static readonly float s_animationExtraSeconds
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.AnimationExtraSeconds", 1f), 0f, 10f);
+    private static float s_animationExtraSeconds => Math.Clamp(ConfigurationManager.GetValue("Battle.AnimationExtraSeconds", 1f), 0f, 10f);
 
     // The round whose animations are playing: its estimate, what the duel waits, and when the actions went out.
     private (int Round, float Estimate, float Wait, DateTime Sent)? _roundWait;
@@ -2813,8 +2812,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     // [Battle] LateJoinersJoinImmediately (Niduus, 2026-10-22: "joining late should immediately put that wizard in"):
     // a wizard who steps in after the round began plays this round, not the next one.
-    private static readonly bool s_lateJoinersJoinImmediately
-        = ConfigurationManager.GetValue("Battle.LateJoinersJoinImmediately", true);
+    private static bool s_lateJoinersJoinImmediately => ConfigurationManager.GetValue("Battle.LateJoinersJoinImmediately", true);
     // The least planning time a wizard who joins mid-planning gets; the countdown is made longer for everyone if less is left.
     private const double LATE_JOIN_MIN_PLANNING_SECONDS = 15;
 
@@ -3242,8 +3240,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // [Battle] VictorySceneDelay: how long a won battle's victory scene lasts before the battle ends for the game
     // (0: at once). Off by default: in 0.10.150 (as VictorySceneSeconds = 0.8) Niduus was stuck in place after a won
     // battle (2026-10-22), so it is a test switch until that is understood.
-    private static readonly double s_victorySceneSeconds
-        = Math.Clamp(ConfigurationManager.GetValue("Battle.VictorySceneDelay", 0.0), 0, 5);
+    private static double s_victorySceneSeconds => Math.Clamp(ConfigurationManager.GetValue("Battle.VictorySceneDelay", 0.0), 0, 5);
 
     private const string VICTORY_SCENE_KEY = "VictoryScene";
     private const uint VICTORY_STATE = 523160964;     // the state the real server puts a winner in during the scene
@@ -3672,7 +3669,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         circle.ParticipantActor.Tell(stateMsg);
     });
 
-    private static readonly bool s_dieDelete = ConfigurationManager.GetValue("Die Delete.Enabled", false);
+    private static bool s_dieDelete => ConfigurationManager.GetValue("Die Delete.Enabled", false);
     // The health a wizard defeated in a won battle gets up with.
     private const int REVIVE_AFTER_WIN_HEALTH = 1;
 

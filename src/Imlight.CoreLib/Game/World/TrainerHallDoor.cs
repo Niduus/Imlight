@@ -33,19 +33,19 @@ namespace Imlight.CoreLib.Game.World;
 /// </summary>
 internal static class TrainerHallDoor {
 
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("TrainerHall.Enabled", true);
-    private static readonly string s_doorZone = ConfigurationManager.GetValue("TrainerHall.DoorArea", "WizardCity/WC_Hub");
-    private static readonly float s_doorX = ConfigurationManager.GetValue("TrainerHall.DoorX", 560f);
-    private static readonly float s_doorY = ConfigurationManager.GetValue("TrainerHall.DoorY", 548f);
-    private static readonly float s_doorZ = ConfigurationManager.GetValue("TrainerHall.DoorZ", 0f);
-    private static readonly float s_radius = ConfigurationManager.GetValue("TrainerHall.Radius", 60f);
-    private static readonly uint s_houseTemplateId = ConfigurationManager.GetValue("TrainerHall.HallHouseId", 1520349u);
+    private static bool s_enabled => ConfigurationManager.GetValue("TrainerHall.Enabled", true);
+    private static string s_doorZone => ConfigurationManager.GetValue("TrainerHall.DoorArea", "WizardCity/WC_Hub");
+    private static float s_doorX => ConfigurationManager.GetValue("TrainerHall.DoorX", 560f);
+    private static float s_doorY => ConfigurationManager.GetValue("TrainerHall.DoorY", 548f);
+    private static float s_doorZ => ConfigurationManager.GetValue("TrainerHall.DoorZ", 0f);
+    private static float s_radius => ConfigurationManager.GetValue("TrainerHall.Radius", 60f);
+    private static uint s_houseTemplateId => ConfigurationManager.GetValue("TrainerHall.HallHouseId", 1520349u);
 
     // A spot inside the hall that sends the wizard to the QA test area (GM island).
-    private static readonly string s_qaArea = ConfigurationManager.GetValue("TrainerHall.QaArea", "WizardCity/QA_SpawnRate");
-    private static readonly float s_qaX = ConfigurationManager.GetValue("TrainerHall.QaSpotX", -2808f);
-    private static readonly float s_qaY = ConfigurationManager.GetValue("TrainerHall.QaSpotY", -4244f);
-    private static readonly float s_qaZ = ConfigurationManager.GetValue("TrainerHall.QaSpotZ", 0f);
+    private static string s_qaArea => ConfigurationManager.GetValue("TrainerHall.QaArea", "WizardCity/QA_SpawnRate");
+    private static float s_qaX => ConfigurationManager.GetValue("TrainerHall.QaSpotX", -2808f);
+    private static float s_qaY => ConfigurationManager.GetValue("TrainerHall.QaSpotY", -4244f);
+    private static float s_qaZ => ConfigurationManager.GetValue("TrainerHall.QaSpotZ", 0f);
 
     /// <summary>Whether the trainer hall is turned on.</summary>
     internal static bool Enabled => s_enabled;

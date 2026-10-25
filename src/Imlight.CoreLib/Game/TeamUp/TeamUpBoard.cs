@@ -73,16 +73,13 @@ internal static class TeamUpBoard {
     private const uint CLIENT_PROPERTY_MASK = 4;
 
     // [TeamUp] Enabled: Team Up and the Join a Team window are on.
-    internal static readonly bool IsEnabled
-        = ConfigurationManager.GetValue("TeamUp.Enabled", true);
+    internal static bool IsEnabled => ConfigurationManager.GetValue("TeamUp.Enabled", true);
 
     // [TeamUp] SigilButton: dungeon sigils for two or more players show the Team Up! button.
-    internal static readonly bool SigilButton
-        = ConfigurationManager.GetValue("TeamUp.SigilButton", true);
+    internal static bool SigilButton => ConfigurationManager.GetValue("TeamUp.SigilButton", true);
 
     // [TeamUp] WaitSeconds: how long a team waits for players before it goes (with two or more) or ends.
-    internal static readonly int WaitSeconds
-        = Math.Clamp(ConfigurationManager.GetValue("TeamUp.WaitSeconds", 300), 30, 3600);
+    internal static int WaitSeconds => Math.Clamp(ConfigurationManager.GetValue("TeamUp.WaitSeconds", 300), 30, 3600);
 
     // A full team goes this long after the last player joined, so everyone sees the team first.
     private static readonly TimeSpan FULL_DELAY = TimeSpan.FromSeconds(3);

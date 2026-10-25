@@ -24,7 +24,7 @@ namespace Imlight.CoreLib.Game.Seamstress;
 internal static class PetStitchProxies {
 
     // Wand of the Novice: a plain level 1 wand the window lists under the wand tab.
-    private static readonly uint s_wandTemplateId = (uint) ConfigurationManager.GetValue("Seamstress.PetStandInTemplate", 126925);
+    private static uint s_wandTemplateId => (uint) ConfigurationManager.GetValue("Seamstress.PetStandInTemplate", 126925);
 
     private static readonly ConcurrentDictionary<ulong, Dictionary<ulong, ulong>> s_proxies = new();
 

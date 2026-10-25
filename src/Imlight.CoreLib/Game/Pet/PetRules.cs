@@ -54,12 +54,12 @@ internal static class PetRules {
     /// <summary>
     /// The happiness a pet starts with.
     /// </summary>
-    internal static int StartingHappiness { get; } = Math.Max(0, ConfigurationManager.GetValue("Pets.StartingHappiness", DefaultStartingHappiness));
+    internal static int StartingHappiness => Math.Max(0, ConfigurationManager.GetValue("Pets.StartingHappiness", DefaultStartingHappiness));
 
     /// <summary>
     /// The most happiness a pet can have.
     /// </summary>
-    internal static int MaximumHappiness { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MaxHappiness", DefaultMaximumHappiness));
+    internal static int MaximumHappiness => Math.Max(1, ConfigurationManager.GetValue("Pets.MaxHappiness", DefaultMaximumHappiness));
 
     private const int DefaultMaxStat = 260;
 
@@ -77,52 +77,52 @@ internal static class PetRules {
     /// 2026-10-22): a new pet gets its kind's own maximum, or its parents' from hatching, and starts at its kind's
     /// starting stats; games and snacks train the stats up from there.
     /// </summary>
-    internal static bool StartAtMaxStats { get; } = ConfigurationManager.GetValue("Pets.StartAtMaxStats", false);
+    internal static bool StartAtMaxStats => ConfigurationManager.GetValue("Pets.StartAtMaxStats", false);
 
     /// <summary>
     /// The factor members get on the XP their pets earn.
     /// </summary>
-    internal static int MemberXpMultiplier { get; } = Math.Max(1, ConfigurationManager.GetValue("Pets.MemberXpMultiplier", DefaultMemberXpMultiplier));
+    internal static int MemberXpMultiplier => Math.Max(1, ConfigurationManager.GetValue("Pets.MemberXpMultiplier", DefaultMemberXpMultiplier));
 
     /// <summary>
     /// When true (the real game), experience past a new age counts toward the next age (244/250 + 110 is the new age
     /// at 104). When false, the extra is lost and the pet starts the new age at 0. Replaces XpCarriesOver, whose old
     /// false in Niduus's ini would otherwise stick (Niduus, 2026-10-19).
     /// </summary>
-    internal static bool KeepExtraXp { get; } = ConfigurationManager.GetValue("Pets.KeepExtraXp", true);
+    internal static bool KeepExtraXp => ConfigurationManager.GetValue("Pets.KeepExtraXp", true);
 
     /// <summary>
     /// When true, a pet's XP is a running total that is not reset at a new age, so the 125 XP that made it a Teen
     /// counts toward the 250 for Adult. Off by default; the real game starts each age over (Niduus, 2026-10-19).
     /// </summary>
-    internal static bool RunningTotalXp { get; } = ConfigurationManager.GetValue("Pets.RunningTotalXp", false);
+    internal static bool RunningTotalXp => ConfigurationManager.GetValue("Pets.RunningTotalXp", false);
 
     /// <summary>
     /// Double XP &amp; Rewards also doubles the stats a snack gives (+15 becomes +30).
     /// </summary>
-    internal static bool DoubleSnackStats { get; } = ConfigurationManager.GetValue("Pets.DoubleSnackStats", true);
+    internal static bool DoubleSnackStats => ConfigurationManager.GetValue("Pets.DoubleSnackStats", true);
 
     /// <summary>
     /// After a pet game is skipped, show the end of game window so a snack can be fed from it.
     /// </summary>
-    internal static bool SkipShowsFeedWindow { get; } = ConfigurationManager.GetValue("Pets.SkipShowsFeedWindow", true);
+    internal static bool SkipShowsFeedWindow => ConfigurationManager.GetValue("Pets.SkipShowsFeedWindow", true);
 
     /// <summary>
     /// When true, a skipped pet game gives its XP and the stats of a track like a win. Off by default (Niduus,
     /// 2026-10-19): only the snack fed after the skip counts.
     /// </summary>
-    internal static bool SkipGameRewards { get; } = ConfigurationManager.GetValue("Pets.SkipGameRewards", false);
+    internal static bool SkipGameRewards => ConfigurationManager.GetValue("Pets.SkipGameRewards", false);
 
     /// <summary>
     /// When true, feeding an item to a pet costs pet energy for the tiers PetFeedingRewardConfig.xml marks as costing
     /// energy (none do in the game files today). False makes every item feed free.
     /// </summary>
-    internal static bool ItemFeedCostsEnergy { get; } = ConfigurationManager.GetValue("Pets.ItemFeedCostsEnergy", true);
+    internal static bool ItemFeedCostsEnergy => ConfigurationManager.GetValue("Pets.ItemFeedCostsEnergy", true);
 
     /// <summary>
     /// The pet energy one item feed costs when it costs energy. The game files do not give a number, so 1 is a guess.
     /// </summary>
-    internal static int ItemFeedEnergyCost { get; } = Math.Max(0, ConfigurationManager.GetValue("Pets.ItemFeedEnergyCost", 1));
+    internal static int ItemFeedEnergyCost => Math.Max(0, ConfigurationManager.GetValue("Pets.ItemFeedEnergyCost", 1));
 
     /// <summary>
     /// Gets the factor applied to XP from a source, for a wizard who counts as a member.

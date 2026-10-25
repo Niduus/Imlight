@@ -53,13 +53,13 @@ internal static class Archmastery {
     // "Enabled = false" left in Imlight.ini is ignored.
     internal static readonly bool Enabled = true;
     // Gives wizards under level 50 the level 50 Archmastery, so they get school pips too.
-    internal static readonly bool AllLevels = ConfigurationManager.GetValue("Archmastery.AllLevels", false);
+    internal static bool AllLevels => ConfigurationManager.GetValue("Archmastery.AllLevels", false);
     // Extra Archmastery for every wizard (on top of gear and jewels).
-    internal static readonly float BonusRating = Math.Max(0f, ConfigurationManager.GetValue("Archmastery.BonusRating", 0f));
+    internal static float BonusRating => Math.Max(0f, ConfigurationManager.GetValue("Archmastery.BonusRating", 0f));
     // How much the fastest orb fills in a round (1 = a school pip every round). 0 uses the game's own number.
-    internal static readonly float FillOverride = Math.Clamp(ConfigurationManager.GetValue("Archmastery.FillPerRound", 0f), 0f, 1f);
+    internal static float FillOverride => Math.Clamp(ConfigurationManager.GetValue("Archmastery.FillPerRound", 0f), 0f, 1f);
     // Creatures with Archmastery in their stats fill their own orb (and set the pace), like the game.
-    internal static readonly bool Creatures = ConfigurationManager.GetValue("Archmastery.Creatures", true);
+    internal static bool Creatures => ConfigurationManager.GetValue("Archmastery.Creatures", true);
 
     internal const int LEVEL = 50;
     internal const float MAX_POWER = 7f;

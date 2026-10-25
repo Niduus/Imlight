@@ -29,7 +29,7 @@ internal class CommandTrainingProtocol : CommandProtocol {
 
     private const int MAX_PER_USE = 100;
 
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("Trainers.PlayersCanGainTrainingPoints", true);
+    private static bool s_enabled => ConfigurationManager.GetValue("Trainers.PlayersCanGainTrainingPoints", true);
 
     internal override string Group { get; set; } = "";
 

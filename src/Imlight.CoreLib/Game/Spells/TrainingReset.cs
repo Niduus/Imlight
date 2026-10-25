@@ -51,7 +51,7 @@ internal static class TrainingReset {
 
     internal const string FILE = "trained-spells.json";
 
-    internal static readonly bool AtTrainers = ConfigurationManager.GetValue("Trainers.RespecAtTrainers", true);
+    internal static bool AtTrainers => ConfigurationManager.GetValue("Trainers.RespecAtTrainers", true);
 
     private static readonly JsonSerializerOptions s_options = new() { WriteIndented = true };
     private static readonly object s_lock = new();

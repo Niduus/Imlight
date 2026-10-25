@@ -59,20 +59,21 @@ internal static class DailyAssignmentData {
 
     internal const byte FLAG_DONE_TODAY = 1;
 
-    internal static readonly bool IsEnabled = ConfigurationManager.GetValue("DailyAssignments.Enabled", true);
-    internal static readonly int MinLevel = ConfigurationManager.GetValue("DailyAssignments.MinLevel", 1);
-    internal static readonly bool RequireIntro = ConfigurationManager.GetValue("DailyAssignments.RequireIntroQuest", false);
-    internal static readonly bool DefeatAnywhere = ConfigurationManager.GetValue("DailyAssignments.DefeatAnywhere", true);
-    internal static readonly int ChestFallbackGold = ConfigurationManager.GetValue("DailyAssignments.ChestFallbackGold", 500);
-    internal static readonly int ResetHour = Math.Clamp(ConfigurationManager.GetValue("DailyAssignments.ResetHour", 0), 0, 23);
-    internal static readonly string NpcObjectNames = ConfigurationManager.GetValue("DailyAssignments.NpcObjectNames", "WC-RAV-NPC11");
+    internal static bool IsEnabled => ConfigurationManager.GetValue("DailyAssignments.Enabled", true);
+    internal static int MinLevel => ConfigurationManager.GetValue("DailyAssignments.MinLevel", 1);
+    internal static bool RequireIntro => ConfigurationManager.GetValue("DailyAssignments.RequireIntroQuest", false);
+    internal static bool DefeatAnywhere => ConfigurationManager.GetValue("DailyAssignments.DefeatAnywhere", true);
+    internal static int ChestFallbackGold => ConfigurationManager.GetValue("DailyAssignments.ChestFallbackGold", 500);
+    internal static int ResetHour => Math.Clamp(ConfigurationManager.GetValue("DailyAssignments.ResetHour", 0), 0, 23);
+    internal static string NpcObjectNames => ConfigurationManager.GetValue("DailyAssignments.NpcObjectNames", "WC-RAV-NPC11");
 
     internal const string INTRO_QUEST = "WC-GRAV-INTRO-001";
 
     // The level that opens circles 2 to 8 when the wizard has no AccessTo... registry entry: about the level the next
     // world starts at (MooShu, Celestia, Avalon, Khrysalis, Mirage, Karamelle, Lemuria).
-    private static readonly int[] s_circleLevels = ParseLevels(
-        ConfigurationManager.GetValue("DailyAssignments.CircleLevels", "20,50,65,80,110,130,140"));
+    private static int[] s_circleLevels => s_circleLevelsLive.Value;
+    private static readonly LiveValue<int[]> s_circleLevelsLive = new(() => ParseLevels(
+        ConfigurationManager.GetValue("DailyAssignments.CircleLevels", "20,50,65,80,110,130,140")));
 
     private static readonly object s_lock = new();
     private static List<DailyQuestInfo> s_assignments;

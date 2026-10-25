@@ -77,11 +77,11 @@ internal static class TieredSpells {
     private const PropertyFlags VISIBILITY_MASK = PropertyFlags.Prop_Save | PropertyFlags.Prop_Public;
 
     // [SpellUpgrades]
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("SpellUpgrades.Enabled", true);
-    private static readonly bool s_oldCosts = ConfigurationManager.GetValue("SpellUpgrades.UseOldCosts", false);
-    private static readonly int s_costPercent = ConfigurationManager.GetValue("SpellUpgrades.CostPercent", 100);
-    private static readonly bool s_showAll = ConfigurationManager.GetValue("SpellUpgrades.ShowAllGroups", false);
-    private static readonly bool s_keepEveryTier = ConfigurationManager.GetValue("SpellUpgrades.KeepEveryTier", true);
+    private static bool s_enabled => ConfigurationManager.GetValue("SpellUpgrades.Enabled", true);
+    private static bool s_oldCosts => ConfigurationManager.GetValue("SpellUpgrades.UseOldCosts", false);
+    private static int s_costPercent => ConfigurationManager.GetValue("SpellUpgrades.CostPercent", 100);
+    private static bool s_showAll => ConfigurationManager.GetValue("SpellUpgrades.ShowAllGroups", false);
+    private static bool s_keepEveryTier => ConfigurationManager.GetValue("SpellUpgrades.KeepEveryTier", true);
 
     private static readonly object s_lock = new();
     private static bool s_loaded;

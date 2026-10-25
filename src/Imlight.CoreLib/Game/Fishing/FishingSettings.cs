@@ -24,24 +24,24 @@ namespace Imlight.CoreLib.Game.Fishing;
 /// <summary>The [Fishing] section of Imlight.ini.</summary>
 internal static class FishingSettings {
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("Fishing.Enabled", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("Fishing.Enabled", true);
 
     /// <summary>How many fish the basket holds.</summary>
-    internal static readonly int BasketSize = Math.Clamp(ConfigurationManager.GetValue("Fishing.BasketSize", 100), 1, 1000);
+    internal static int BasketSize => Math.Clamp(ConfigurationManager.GetValue("Fishing.BasketSize", 100), 1, 1000);
 
     /// <summary>Teach every wizard the Lesser lure of each school and Reveal Fish when they log in without them.</summary>
-    internal static readonly bool StarterSpells = ConfigurationManager.GetValue("Fishing.StarterSpells", true);
+    internal static bool StarterSpells => ConfigurationManager.GetValue("Fishing.StarterSpells", true);
 
     /// <summary>The fewest seconds before a new fish swims in for one that was caught.</summary>
-    internal static readonly int MinRespawnSeconds = Math.Clamp(ConfigurationManager.GetValue("Fishing.MinRespawnSeconds", 30), 1, 3600);
+    internal static int MinRespawnSeconds => Math.Clamp(ConfigurationManager.GetValue("Fishing.MinRespawnSeconds", 30), 1, 3600);
 
     /// <summary>Fishing XP is multiplied by this.</summary>
-    internal static readonly double XpMultiplier = Math.Clamp(ConfigurationManager.GetValue("Fishing.XpMultiplier", 1.0), 0, 100);
+    internal static double XpMultiplier => Math.Clamp(ConfigurationManager.GetValue("Fishing.XpMultiplier", 1.0), 0, 100);
 
     /// <summary>Casting a fishing spell uses its energy.</summary>
-    internal static readonly bool UseEnergy = ConfigurationManager.GetValue("Fishing.UseEnergy", true);
+    internal static bool UseEnergy => ConfigurationManager.GetValue("Fishing.UseEnergy", true);
 
     /// <summary>Every shop vendor also offers "Sell Fish". Off: only Lucky Hookline buys fish (Niduus 2026-10-25).</summary>
-    internal static readonly bool SellAtShops = ConfigurationManager.GetValue("Fishing.SellFishAtAllShops", false);
+    internal static bool SellAtShops => ConfigurationManager.GetValue("Fishing.SellFishAtAllShops", false);
 
 }

@@ -82,8 +82,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         versionable: false,
         behaviors: SerializerFlags.None
     );
-    private static readonly bool s_hidePetWhileMounted
-        = ConfigurationManager.Settings["Character.HidePetWhileMounted"].AsBool();
+    private static bool s_hidePetWhileMounted => ConfigurationManager.Settings["Character.HidePetWhileMounted"].AsBool();
     private const long EXPIRED_RENTAL_GRACE_SECONDS = 60;
 
     private readonly Dictionary<ulong, long> _expiredRentals = [];

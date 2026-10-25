@@ -44,11 +44,10 @@ namespace Imlight.CoreLib.Game.Zone.Supervisors;
 /// text, etc.</remarks>
 internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervisor(zone) {
 
-    private static readonly bool s_randomizeGateways 
-        = ConfigurationManager.Settings["April Fools.RandomizeGateways"].AsBool();
+    private static bool s_randomizeGateways => ConfigurationManager.Settings["April Fools.RandomizeGateways"].AsBool();
 
     // [World] OpenAllDoors: doors and other teleports work without their quest, level or event requirements.
-    private static readonly bool s_openAllDoors = ConfigurationManager.GetValue("World.OpenAllDoors", false);
+    private static bool s_openAllDoors => ConfigurationManager.GetValue("World.OpenAllDoors", false);
 
     // A trigger's own object is hidden with this state when the trigger is deactivated.
     private const string DEACTIVATED_OBJECT_STATE = "Off";

@@ -140,7 +140,7 @@ internal sealed class SocketSender : ReceiveActor, IDisposable {
     // Imcodec writes only the message body there, but the short form counts every byte after the length field (flags,
     // message header, body and the trailing null), so the game read the frame 9 bytes short and dropped the connection
     // on any big bazaar list (Niduus, 2026-10-19). This writes the long length the way the short form counts.
-    private static readonly bool s_longFrameFix = ConfigurationManager.GetValue("Advanced.LongFrameFix", true);
+    private static bool s_longFrameFix => ConfigurationManager.GetValue("Advanced.LongFrameFix", true);
     private const int LONG_FRAME_HEADER = 8;
 
     private static byte[] FixLongFrameLength(byte[] data) {

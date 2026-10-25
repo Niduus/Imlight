@@ -447,7 +447,7 @@ internal static class BossCheats {
         internal bool IsCast => Is("Cast") || Is("Polymorph");
     }
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("BossCheats.Enabled", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("BossCheats.Enabled", true);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,

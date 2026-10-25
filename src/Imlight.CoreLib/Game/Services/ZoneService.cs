@@ -83,8 +83,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     public IActorRef ZoneActor;
 
     private readonly TimeSpan _zoneRemovalWaitTime = TimeSpan.FromSeconds(ZONE_REMOVAL_WAIT_TIME_IN_SECONDS);
-    private readonly bool _randomBackflips
-        = ConfigurationManager.Settings["April Fools.RandomBackFlips"].AsBool();
+    private bool _randomBackflips
+        => ConfigurationManager.Settings["April Fools.RandomBackFlips"].AsBool();
     private readonly ZoneTransferGate _transferGate = new();
     private uint _currentDynamicZoneId;
     private bool _currentZoneIsInstance;

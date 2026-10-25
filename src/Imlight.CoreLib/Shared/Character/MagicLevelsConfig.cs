@@ -56,7 +56,7 @@ internal class MagicLevelsConfig : RootSingleResourceSingleton<MagicLevelsConfig
 
     public static int MaxLevel { get; private set; }
 
-    private static readonly int s_imlightMaxLevel = ConfigurationManager.Settings["Character.MaxLevel"].AsInt();
+    private static int s_imlightMaxLevel => ConfigurationManager.Settings["Character.MaxLevel"].AsInt();
     private static Dictionary<int, int> s_mobLevelConfig;
     private static Dictionary<string, List<MagicLevelInfo>> s_playerLevelConfig;
 

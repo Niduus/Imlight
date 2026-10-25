@@ -74,10 +74,10 @@ internal enum UserAuthenResult {
 /// </remarks>
 internal static class UserAuthenticator {
 
-    private static readonly bool s_enforceRevision 
-        = ConfigurationManager.Settings["Global Settings.EnforceRevision"].AsBool();
-    private static readonly string s_serverRevision 
-        = ConfigurationManager.Settings["Global Settings.GameRevision"].AsString();
+    private static bool s_enforceRevision
+        => ConfigurationManager.Settings["Global Settings.EnforceRevision"].AsBool();
+    private static string s_serverRevision
+        => ConfigurationManager.Settings["Global Settings.GameRevision"].AsString();
     private static readonly TimeSpan s_deadline = TimeSpan.FromSeconds(10);
 
     internal class AuthenticationDetails {

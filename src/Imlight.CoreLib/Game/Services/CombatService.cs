@@ -68,7 +68,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
     /// <summary>
     /// Die = Delete mode: a character that is still dead when its battle ends is deleted.
     /// </summary>
-    private static readonly bool s_dieDelete = ConfigurationManager.GetValue("Die Delete.Enabled", false);
+    private static bool s_dieDelete => ConfigurationManager.GetValue("Die Delete.Enabled", false);
 
     private readonly CoreObjectSerializer _effectSerializer = new(
         behaviors: SerializerFlags.None

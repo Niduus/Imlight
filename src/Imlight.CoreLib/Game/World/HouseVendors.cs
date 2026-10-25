@@ -83,23 +83,23 @@ internal static class HouseVendors {
     private const int MIN_SNACK_RANK = 8;
 
     /// <summary>What everything the sellers sell costs.</summary>
-    internal static readonly int Price = ConfigurationManager.GetValue("HallVendors.Price", 1);
+    internal static int Price => ConfigurationManager.GetValue("HallVendors.Price", 1);
 
     // [HallVendors] SpecialShopWindows: the snack, reagent and jewel shop windows; false uses the equipment shop window.
-    private static readonly bool s_specialWindows = ConfigurationManager.GetValue("HallVendors.SpecialShopWindows", true);
+    private static bool s_specialWindows => ConfigurationManager.GetValue("HallVendors.SpecialShopWindows", true);
 
-    private static readonly uint s_snackVendorId = ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
+    private static uint s_snackVendorId => ConfigurationManager.GetValue("HallVendors.SnackVendorId", 641800u);
     // Doctor Purreau (WC-PARK-NPC05, "Purreau's Potions and More"). The game's own shop for him is a recipe shop
     // (WizShoppingBehavior m_furnitureShop 3, the ShoppingRecipeWindow) listing his m_recipeList: the Next Hatch Free,
     // Purreau's Potion #9 and Hatching Elixir recipes, the Hatchmaking Kiosk, the Hatchery tapestry and pet snacks
     // (Niduus, 2026-10-23: "Purreau's shop isn't using the right UI"). A bought recipe goes into the recipe book
     // for crafting ([Crafting] RecipeShopGivesItem gives what it makes instead).
-    private static readonly uint s_petElixirVendorId = ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
-    private static readonly uint s_reagentNpcId = ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
-    private static readonly uint s_jewelNpcId = ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
+    private static uint s_petElixirVendorId => ConfigurationManager.GetValue("HallVendors.PetElixirVendorId", 175495u);
+    private static uint s_reagentNpcId => ConfigurationManager.GetValue("HallVendors.ReagentSellerNpc", 136831u);
+    private static uint s_jewelNpcId => ConfigurationManager.GetValue("HallVendors.JewelSellerNpc", 1233878u);
     // A real snack shop (Sa'eed). The game picks a shop's window from its shop type, so each seller borrows the
     // shop type and title of a real shop of its kind (Niduus: Hao opened as an empty robe shop).
-    private static readonly uint s_snackShopNpcId = ConfigurationManager.GetValue("HallVendors.SnackShopNpc", 227094u);
+    private static uint s_snackShopNpcId => ConfigurationManager.GetValue("HallVendors.SnackShopNpc", 227094u);
 
     private static readonly Lazy<List<uint>> s_snacks = new(() => [.. TemplatesIn<PetSnackItemTemplate>(SNACK_FOLDER)
         .Where(snack => snack.Template.m_rank >= MIN_SNACK_RANK)

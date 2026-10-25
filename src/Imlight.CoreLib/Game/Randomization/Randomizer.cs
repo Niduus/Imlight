@@ -80,54 +80,35 @@ public static class Randomizer {
         ObjectType.OT_EQUIP_EAR, ObjectType.OT_PET, ObjectType.OT_HORSE,
     ];
 
-    internal static readonly bool Enabled
-        = ConfigurationManager.GetValue("Randomizer.Enabled", false);
+    internal static bool Enabled => ConfigurationManager.GetValue("Randomizer.Enabled", false);
     // Tame mode keeps everything that battles and quests depend on: creatures, their decks and pips stay as they
     // are, so every "defeat" quest can be done and fights are as hard as normal. Schools, spells and drops still shuffle.
-    internal static readonly bool Tame
-        = Enabled && ConfigurationManager.GetValue("Randomizer.Tame", false);
-    internal static readonly bool RandomizeSchool
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeSchool", true);
-    internal static readonly bool RandomizeSpells
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeSpells", true);
-    internal static readonly bool RandomizeDrops
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeDrops", true);
-    internal static readonly bool RandomizeCreatures
-        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatures", false);
-    private static readonly bool s_creaturesEverySpawn
-        = ConfigurationManager.GetValue("Randomizer.CreaturesChangeEverySpawn", true);
-    internal static readonly bool RandomizeCreatureDecks
-        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatureDecks", true);
-    internal static readonly bool RandomizeItemCards
-        = Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeItemCards", true);
-    internal static readonly bool RandomizePips
-        = Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizePips", true);
+    internal static bool Tame => Enabled && ConfigurationManager.GetValue("Randomizer.Tame", false);
+    internal static bool RandomizeSchool => Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeSchool", true);
+    internal static bool RandomizeSpells => Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeSpells", true);
+    internal static bool RandomizeDrops => Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeDrops", true);
+    internal static bool RandomizeCreatures => Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatures", false);
+    private static bool s_creaturesEverySpawn => ConfigurationManager.GetValue("Randomizer.CreaturesChangeEverySpawn", true);
+    internal static bool RandomizeCreatureDecks => Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizeCreatureDecks", true);
+    internal static bool RandomizeItemCards => Enabled && ConfigurationManager.GetValue("Randomizer.RandomizeItemCards", true);
+    internal static bool RandomizePips => Enabled && !Tame && ConfigurationManager.GetValue("Randomizer.RandomizePips", true);
     // The [Trainers] switches work with or without randomizer mode.
-    internal static readonly bool RandomizeSpellRequirements
-        = ConfigurationManager.GetValue("Trainers.RandomizeSpellRequirements", false);
-    internal static readonly bool NoSpellRequirements
-        = ConfigurationManager.GetValue("Trainers.NoSpellRequirements", false);
-    internal static readonly bool NoLevelRequirements
-        = ConfigurationManager.GetValue("Trainers.NoLevelRequirements", false);
-    internal static readonly bool FreeTraining
-        = ConfigurationManager.GetValue("Trainers.FreeTraining", false);
-    private static readonly int s_startingSpells
-        = Enabled ? Math.Clamp(ConfigurationManager.GetValue("Randomizer.StartingSpells", 6), 0, 50) : 0;
+    internal static bool RandomizeSpellRequirements => ConfigurationManager.GetValue("Trainers.RandomizeSpellRequirements", false);
+    internal static bool NoSpellRequirements => ConfigurationManager.GetValue("Trainers.NoSpellRequirements", false);
+    internal static bool NoLevelRequirements => ConfigurationManager.GetValue("Trainers.NoLevelRequirements", false);
+    internal static bool FreeTraining => ConfigurationManager.GetValue("Trainers.FreeTraining", false);
+    private static int s_startingSpells => Enabled ? Math.Clamp(ConfigurationManager.GetValue("Randomizer.StartingSpells", 6), 0, 50) : 0;
     private const int STARTER_MAX_PIPS = 3;
-    private static readonly int s_spellAfterBattleChance
-        = Enabled ? Math.Clamp(ConfigurationManager.GetValue("Randomizer.SpellAfterBattleChance", 100), 0, 100) : 0;
+    private static int s_spellAfterBattleChance => Enabled ? Math.Clamp(ConfigurationManager.GetValue("Randomizer.SpellAfterBattleChance", 100), 0, 100) : 0;
 
     // Schools whose spells can be cast in battle. Gardening, fishing, cantrips and the like are left out.
     private static readonly HashSet<string> s_combatSchools = new(StringComparer.OrdinalIgnoreCase) {
         "Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow",
     };
 
-    private static readonly bool s_sameForEveryone
-        = ConfigurationManager.GetValue("Randomizer.SameForEveryone", false);
-    private static readonly ulong s_seed
-        = SeededShuffle.Fnv1a(ConfigurationManager.GetValue("Randomizer.Seed", ""));
-    private static readonly int s_levelRange
-        = Math.Max(1, ConfigurationManager.GetValue("Randomizer.LevelRange", 10));
+    private static bool s_sameForEveryone => ConfigurationManager.GetValue("Randomizer.SameForEveryone", false);
+    private static ulong s_seed => SeededShuffle.Fnv1a(ConfigurationManager.GetValue("Randomizer.Seed", ""));
+    private static int s_levelRange => Math.Max(1, ConfigurationManager.GetValue("Randomizer.LevelRange", 10));
 
     private static readonly Lazy<SeededShuffle> s_spells = new(BuildSpellPool, LazyThreadSafetyMode.ExecutionAndPublication);
     private static readonly Lazy<SeededShuffle> s_drops = new(BuildDropPool, LazyThreadSafetyMode.ExecutionAndPublication);

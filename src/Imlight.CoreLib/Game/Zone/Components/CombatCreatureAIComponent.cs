@@ -62,7 +62,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     public ITimerScheduler Timers { get; set; }
 
     private readonly float _healingThreshold     = ConfigurationManager.Settings["Combat.HealingThreshold"].AsFloat();
-    private readonly float _healingPercentChance = ConfigurationManager.Settings["Combat.HealingPercentChance"].AsFloat();
+    private float _healingPercentChance => ConfigurationManager.Settings["Combat.HealingPercentChance"].AsFloat();
     private readonly float _preparePassChance    = ConfigurationManager.Settings["Combat.PreparePassChance"].AsFloat();
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();

@@ -429,7 +429,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
     }
 
     // [Jewels] KeepShatteredJewels: a jewel taken out goes back to the backpack instead of shattering.
-    private static readonly bool KeepShatteredJewels = ConfigurationManager.GetValue("Jewels.KeepShatteredJewels", false);
+    private static bool KeepShatteredJewels => ConfigurationManager.GetValue("Jewels.KeepShatteredJewels", false);
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST))]
     private void ReceiveUnsocketJewelRequest(WIZARD2_53_PROTOCOL.MSG_UNSOCKETJEWELREQUEST message) {

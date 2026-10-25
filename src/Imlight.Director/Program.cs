@@ -122,6 +122,9 @@ internal static class Program {
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini")
         );
         Logger.Information("Imlight configuration loaded.");
+
+        // Saving Imlight.ini (by hand or from the Manager) applies at once.
+        Imlight.CoreLib.Shared.Resources.LiveSettings.Start();
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             Logger.Fatal("The server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
 

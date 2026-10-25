@@ -33,7 +33,7 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </summary>
 internal static class BattleDrops {
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("Battle.BattleWisps", true);
+    internal static bool Enabled => ConfigurationManager.GetValue("Battle.BattleWisps", true);
 
     // Marks a dropped wisp (as its zone tag) so it can expire if nobody picks it up.
     internal const string DROP_TAG = "BattleDrop";

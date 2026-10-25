@@ -58,8 +58,7 @@ public static class WizardCollection {
     private static int? s_heldWriteLane;
     internal static bool HoldsWriteLane => s_heldWriteLane.HasValue;
 
-    private static readonly TimeSpan s_nonStaleWaitTimeout
-        = TimeSpan.FromSeconds(ConfigurationManager.Settings["Database.DatabaseWaitForNonStaleResultsTimeout"].AsByte(5));
+    private static TimeSpan s_nonStaleWaitTimeout => TimeSpan.FromSeconds(ConfigurationManager.Settings["Database.DatabaseWaitForNonStaleResultsTimeout"].AsByte(5));
 
     private static readonly TimeSpan s_loginNonStaleWaitTimeout
         = s_nonStaleWaitTimeout < TimeSpan.FromSeconds(1) ? s_nonStaleWaitTimeout : TimeSpan.FromSeconds(1);

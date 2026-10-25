@@ -44,6 +44,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Imlight.Common;
 
@@ -52,10 +53,29 @@ namespace Imlight.Common;
 /// </summary>
 public static class ConfigurationManager {
 
-    private static readonly Dictionary<string, string> s_settings = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly Dictionary<string, Dictionary<string, string>> s_sections = new(StringComparer.OrdinalIgnoreCase);
+    // Replaced whole on every load, never changed in place, so a read during a reload sees the old or the new file.
+    private static volatile Dictionary<string, string> s_settings = new(StringComparer.OrdinalIgnoreCase);
+    private static volatile Dictionary<string, Dictionary<string, string>> s_sections = new(StringComparer.OrdinalIgnoreCase);
     private static bool s_isInitialized = false;
     private static string s_configFilePath = "";
+    private static FileSystemWatcher? s_watcher;
+    private static Timer? s_reloadTimer;
+    private static readonly TimeSpan s_reloadDelay = TimeSpan.FromMilliseconds(500);
+
+    /// <summary>
+    /// Goes up by one every time the file is read again. <see cref="LiveValue{T}"/> rebuilds its value when it changes.
+    /// </summary>
+    public static int Version { get; private set; }
+
+    /// <summary>
+    /// Raised after the file was read again because it changed (<see cref="WatchForChanges"/>).
+    /// </summary>
+    public static event Action? Reloaded;
+
+    /// <summary>
+    /// Raised when the changed file could not be read; the settings from before stay in use.
+    /// </summary>
+    public static event Action<Exception>? ReloadFailed;
 
     /// <summary>
     /// Provides indexer access to configuration settings.
@@ -137,6 +157,54 @@ public static class ConfigurationManager {
     }
 
     /// <summary>
+    /// Reads the file again whenever it is saved, so settings apply without a restart (Niduus, 2026-10-25: "I want
+    /// ALL configs to happen dynamically"). Settings read through properties or <see cref="LiveValue{T}"/> follow it.
+    /// </summary>
+    public static void WatchForChanges() {
+        EnsureInitialized();
+        if (s_watcher is not null) {
+            return;
+        }
+
+        var fullPath = Path.GetFullPath(s_configFilePath);
+        s_reloadTimer = new Timer(_ => ReloadAfterChange(), null, Timeout.Infinite, Timeout.Infinite);
+        s_watcher = new FileSystemWatcher(Path.GetDirectoryName(fullPath)!, Path.GetFileName(fullPath)) {
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.CreationTime
+        };
+
+        // An editor saves in several writes; wait for the last one.
+        FileSystemEventHandler changed = (_, _) => s_reloadTimer.Change(s_reloadDelay, Timeout.InfiniteTimeSpan);
+        s_watcher.Changed += changed;
+        s_watcher.Created += changed;
+        s_watcher.Renamed += (_, _) => s_reloadTimer.Change(s_reloadDelay, Timeout.InfiniteTimeSpan);
+        s_watcher.EnableRaisingEvents = true;
+    }
+
+    private static void ReloadAfterChange() {
+        Exception? last = null;
+        for (var attempt = 0; attempt < 5; attempt++) {
+            try {
+                LoadConfiguration();
+                Reloaded?.Invoke();
+
+                return;
+            }
+            catch (IOException ex) {
+                // The writer may still hold the file.
+                last = ex;
+                Thread.Sleep(200);
+            }
+            catch (Exception ex) {
+                last = ex;
+
+                break;
+            }
+        }
+
+        ReloadFailed?.Invoke(last!);
+    }
+
+    /// <summary>
     /// Gets a value as a specific type
     /// </summary>
     /// <typeparam name="T">The type to convert to</typeparam>
@@ -170,8 +238,8 @@ public static class ConfigurationManager {
     }
 
     private static void LoadConfiguration() {
-        s_settings.Clear();
-        s_sections.Clear();
+        var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
         string? currentSection = null;
         Dictionary<string, string>? currentSectionSettings = null;
@@ -188,7 +256,7 @@ public static class ConfigurationManager {
             if (trimmedLine.StartsWith('[') && trimmedLine.EndsWith(']')) {
                 currentSection = trimmedLine.Substring(1, trimmedLine.Length - 2).Trim();
                 currentSectionSettings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                s_sections[currentSection] = currentSectionSettings;
+                sections[currentSection] = currentSectionSettings;
 
                 continue;
             }
@@ -206,13 +274,17 @@ public static class ConfigurationManager {
                     }
 
                     // Also store as a fully qualified key for direct access.
-                    s_settings[$"{currentSection}.{key}"] = value;
+                    settings[$"{currentSection}.{key}"] = value;
                 }
                 else {
-                    s_settings[key] = value;
+                    settings[key] = value;
                 }
             }
         }
+
+        s_settings = settings;
+        s_sections = sections;
+        Version++;
     }
 
     private static void EnsureInitialized() {

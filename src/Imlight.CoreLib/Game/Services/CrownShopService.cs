@@ -67,10 +67,8 @@ using System.Text.Json;
 namespace Imlight.CoreLib.Game.Services;
 
 internal class CrownShopService(SessionActor sessionActor) : MessageService(sessionActor) {
-    private static readonly uint s_maxEmotes
-        = ConfigurationManager.Settings["Character.MaxEmotesAllowed"].AsUInt();
-    private static readonly uint s_maxTeleportEffects
-        = ConfigurationManager.Settings["Character.MaxTeleportsAllowed"].AsUInt();
+    private static uint s_maxEmotes => ConfigurationManager.Settings["Character.MaxEmotesAllowed"].AsUInt();
+    private static uint s_maxTeleportEffects => ConfigurationManager.Settings["Character.MaxTeleportsAllowed"].AsUInt();
 
     private const uint ReagentPropertyFlags =
         (uint) (PropertyFlags.Prop_Save | PropertyFlags.Prop_Copy | PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit); // 27

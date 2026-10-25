@@ -49,18 +49,12 @@ using System.Text.Json;
 namespace Imlight.CoreLib.Game.CrownShop;
 
 public static class CrownShopHandler {
-    private static readonly bool s_enabled
-        = ConfigurationManager.Settings["CrownShop.Enabled"].AsBool();
-    private static readonly uint s_wishlistMaxSize
-        = ConfigurationManager.Settings["CrownShop.WishlistMaxSize"].AsUInt();
-    private static readonly uint s_wishlistSBExpansionSize
-    = ConfigurationManager.Settings["CrownShop.WishlistSBExpansionSize"].AsUInt();
-    private static readonly bool s_autoReloadOnChanges
-        = ConfigurationManager.Settings["CrownShop.AutoReloadOnChanges"].AsBool();
-    public static readonly uint s_maxBuyCount
-        = ConfigurationManager.Settings["CrownShop.MaxBuyCount"].AsUInt();
-    private static readonly string s_crownShopConfigPath
-        = ConfigurationManager.Settings["Database.SpiralDBLocalPath"] + "/CrownShop";
+    private static bool s_enabled => ConfigurationManager.Settings["CrownShop.Enabled"].AsBool();
+    private static uint s_wishlistMaxSize => ConfigurationManager.Settings["CrownShop.WishlistMaxSize"].AsUInt();
+    private static uint s_wishlistSBExpansionSize => ConfigurationManager.Settings["CrownShop.WishlistSBExpansionSize"].AsUInt();
+    private static bool s_autoReloadOnChanges => ConfigurationManager.Settings["CrownShop.AutoReloadOnChanges"].AsBool();
+    public static uint s_maxBuyCount => ConfigurationManager.Settings["CrownShop.MaxBuyCount"].AsUInt();
+    private static string s_crownShopConfigPath => ConfigurationManager.Settings["Database.SpiralDBLocalPath"] + "/CrownShop";
 
 
     private static readonly JsonSerializerOptions s_jsonSerializerOptions = new() {
@@ -82,8 +76,7 @@ public static class CrownShopHandler {
 
 
     // [CrownShop] ShopListBytes: the biggest the packed list may be. The game reads it with a 2 byte length.
-    private static readonly int s_maxListBytes
-        = Math.Clamp(ConfigurationManager.GetValue("CrownShop.ShopListBytes", 60000), 1000, 65000);
+    private static int s_maxListBytes => Math.Clamp(ConfigurationManager.GetValue("CrownShop.ShopListBytes", 60000), 1000, 65000);
 
     private static List<CrownShopItem> s_shownToAll = [];
     private static List<CrownShopGameItems.Versioned> s_versioned = [];

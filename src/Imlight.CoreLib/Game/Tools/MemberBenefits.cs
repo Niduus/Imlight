@@ -57,8 +57,8 @@ internal static class MemberBenefits {
     ];
 
     private static readonly uint s_allFlags = All.Aggregate(0u, (sum, b) => sum | b.Flag);
-    private static readonly bool s_iniDefault = ConfigurationManager.GetValue("Character.MemberBenefits", true);
-    private static readonly double s_energyFactor = Math.Clamp(ConfigurationManager.GetValue("Character.FasterEnergyFactor", 2.0), 1.0, 60.0);
+    private static bool s_iniDefault => ConfigurationManager.GetValue("Character.MemberBenefits", true);
+    private static double s_energyFactor => Math.Clamp(ConfigurationManager.GetValue("Character.FasterEnergyFactor", 2.0), 1.0, 60.0);
 
     private static Timer s_timer;
     private static ActorSystem s_system;

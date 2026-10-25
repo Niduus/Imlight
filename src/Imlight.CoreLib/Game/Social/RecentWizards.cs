@@ -55,8 +55,8 @@ internal static class RecentWizards {
 
     internal const string FILE = "recent-wizards.json";
 
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("RecentWizards.Enabled", true);
-    private static readonly int s_max = Math.Clamp(ConfigurationManager.GetValue("RecentWizards.MaxPerWizard", 50), 1, 200);
+    private static bool s_enabled => ConfigurationManager.GetValue("RecentWizards.Enabled", true);
+    private static int s_max => Math.Clamp(ConfigurationManager.GetValue("RecentWizards.MaxPerWizard", 50), 1, 200);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,

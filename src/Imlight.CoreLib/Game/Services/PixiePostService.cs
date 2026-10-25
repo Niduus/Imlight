@@ -56,8 +56,8 @@ namespace Imlight.CoreLib.Game.Services;
 internal class PixiePostService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     // [PixiePost] KeepDays: days a message stays in the mailbox. MaxMessages: the oldest go when the mailbox is full.
-    private static readonly int s_keepDays = Math.Max(ConfigurationManager.GetValue("PixiePost.KeepDays", 30), 1);
-    private static readonly int s_maxMessages = Math.Max(ConfigurationManager.GetValue("PixiePost.MaxMessages", 100), 1);
+    private static int s_keepDays => Math.Max(ConfigurationManager.GetValue("PixiePost.KeepDays", 30), 1);
+    private static int s_maxMessages => Math.Max(ConfigurationManager.GetValue("PixiePost.MaxMessages", 100), 1);
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new PixiePostService(parentActor));

@@ -62,8 +62,7 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
     private DateTime _lastLocationSave;
 
     // [Trainers] TrainingPointPerLevel: every level gained also gives TrainingPointsPerLevel training points.
-    private static readonly int s_trainingPointsPerLevel
-        = ConfigurationManager.GetValue("Trainers.TrainingPointPerLevel", false)
+    private static int s_trainingPointsPerLevel => ConfigurationManager.GetValue("Trainers.TrainingPointPerLevel", false)
             ? Math.Clamp(ConfigurationManager.GetValue("Trainers.TrainingPointsPerLevel", 1), 0, 100)
             : 0;
 

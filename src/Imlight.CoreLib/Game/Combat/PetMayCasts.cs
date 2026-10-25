@@ -27,21 +27,21 @@ internal static class PetMayCasts {
     /// <summary>A May Cast talent and the card it casts.</summary>
     internal sealed record MayCast(string Talent, string Key, string SpellName, uint SpellTemplateId);
 
-    internal static readonly bool Enabled = ConfigurationManager.GetValue("PetCasting.Enabled", true);
-    internal static readonly int MaxPerRound = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxPerRound", 1));
+    internal static bool Enabled => ConfigurationManager.GetValue("PetCasting.Enabled", true);
+    internal static int MaxPerRound => Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxPerRound", 1));
     // Flagged as the pet's, the game looked for the card in the owner's hand and skipped it ("does not spell in
     // hand"; Niduus's log, 2026-10-20), so casts show as the owner's unless this test switch is on.
-    internal static readonly bool ShowAsPetCast = ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
-    internal static readonly bool ForceSpell = ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
-    internal static readonly bool Chain = ConfigurationManager.GetValue("PetCasting.Chain", true);
+    internal static bool ShowAsPetCast => ConfigurationManager.GetValue("PetCasting.ShowAsPetCastTest", false);
+    internal static bool ForceSpell => ConfigurationManager.GetValue("PetCasting.ForceSpellTest", false);
+    internal static bool Chain => ConfigurationManager.GetValue("PetCasting.Chain", true);
     // The most seconds the next round waits for each May Cast's animation. The cinematic timings ran ~1 s long per
     // pet cast (Niduus's log, 2026-10-20: 16 casts, the round started 15 s after he saw them end).
-    internal static readonly float CastSeconds = Math.Max(1f, ConfigurationManager.GetValue("PetCasting.CastSeconds", 4f));
-    internal static readonly int MaxChain = Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
-    internal static readonly bool AsItemCard = ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
+    internal static float CastSeconds => Math.Max(1f, ConfigurationManager.GetValue("PetCasting.CastSeconds", 4f));
+    internal static int MaxChain => Math.Max(0, ConfigurationManager.GetValue("PetCasting.MaxChain", 10));
+    internal static bool AsItemCard => ConfigurationManager.GetValue("PetCasting.AsItemCard", false);
     // The game takes a card's pips from its template rank plus m_regularAdjust (m_pipCost is never sent), so the pet's
     // copy goes out with the rank taken off (Niduus, 2026-10-20: pets drained his pips and kept casting at 0).
-    internal static readonly bool ZeroCost = ConfigurationManager.GetValue("PetCasting.ZeroCost", true);
+    internal static bool ZeroCost => ConfigurationManager.GetValue("PetCasting.ZeroCost", true);
     /// <summary>
     /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
     /// pet-flagged casts of the pet copy: "does not spell in hand"). Null uses the [PetCasting] switches.
@@ -69,11 +69,11 @@ internal static class PetMayCasts {
         return plain != mayCast.SpellName && SpellFactory.Exists(plain) ? plain : null;
     }
 
-    private static readonly int s_onCast = ConfigurationManager.GetValue("PetCasting.OnCast", 10);
-    private static readonly int s_onDamage = ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
-    private static readonly int s_onHeal = ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
-    private static readonly int s_onPass = ConfigurationManager.GetValue("PetCasting.OnPass", 10);
-    private static readonly string s_deckathalon = ConfigurationManager.GetSetting("PetCasting.Deckathalon") ?? "";
+    private static int s_onCast => ConfigurationManager.GetValue("PetCasting.OnCast", 10);
+    private static int s_onDamage => ConfigurationManager.GetValue("PetCasting.OnDamage", 10);
+    private static int s_onHeal => ConfigurationManager.GetValue("PetCasting.OnHeal", 10);
+    private static int s_onPass => ConfigurationManager.GetValue("PetCasting.OnPass", 10);
+    private static string s_deckathalon => ConfigurationManager.GetSetting("PetCasting.Deckathalon") ?? "";
 
     // Talent name to its May Cast; null for a talent that is not one or whose card was not found.
     private static readonly ConcurrentDictionary<string, MayCast> s_byTalent = new(StringComparer.OrdinalIgnoreCase);

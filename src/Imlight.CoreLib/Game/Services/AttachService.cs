@@ -399,9 +399,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
     // [Character] StartingCrowns: crowns every wizard starts with. RefillCrowns: crowns go back up to that
     // amount every time the wizard arrives somewhere.
-    private static readonly int s_startingCrowns
-        = Math.Max(0, ConfigurationManager.GetValue("Character.StartingCrowns", 100_000_000));
-    private static readonly bool s_refillCrowns = ConfigurationManager.GetValue("Character.RefillCrowns", true);
+    private static int s_startingCrowns => Math.Max(0, ConfigurationManager.GetValue("Character.StartingCrowns", 100_000_000));
+    private static bool s_refillCrowns => ConfigurationManager.GetValue("Character.RefillCrowns", true);
 
     private void GiveCrowns() {
         // The crown shop, seamstress and packs spend the account's crowns, so that is the one balance. A wizard
@@ -427,8 +426,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
     // [Character] StartingPotions: every wizard has at least this many potion bottles. New bottles come full,
     // and potion vendors refill them.
-    private static readonly int s_startingPotions
-        = Math.Clamp(ConfigurationManager.GetValue("Character.StartingPotions", 1), 0, 20);
+    private static int s_startingPotions => Math.Clamp(ConfigurationManager.GetValue("Character.StartingPotions", 1), 0, 20);
 
     private void GiveStartingPotions() {
         var stats = _wizard.GameStats;

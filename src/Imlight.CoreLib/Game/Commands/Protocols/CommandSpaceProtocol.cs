@@ -33,8 +33,8 @@ internal class CommandSpaceProtocol : CommandProtocol {
     internal override string Group { get; set; } = "";
 
     // What ".backpack max" and ".bank max" give. Very large lists can be too big for the game to receive in one message.
-    private static readonly int s_backpackCommandMax = ConfigurationManager.GetValue("Character.BackpackCommandMax", 500);
-    private static readonly int s_bankCommandMax = ConfigurationManager.GetValue("Character.BankCommandMax", 1000);
+    private static int s_backpackCommandMax => ConfigurationManager.GetValue("Character.BackpackCommandMax", 500);
+    private static int s_bankCommandMax => ConfigurationManager.GetValue("Character.BankCommandMax", 1000);
 
     [Command("backpack")]
     [AuthRequired(AuthLevel.QualityAssurance)]

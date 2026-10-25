@@ -56,11 +56,11 @@ internal static class ClassProjects {
     internal const string PROGRESS_FILE = "classprojects.json";
     private const string TEMPLATE_FOLDER = "ClassProjects/";
 
-    internal static readonly bool ScrollOfFortuneOn = ConfigurationManager.GetValue("Events.ScrollOfFortune", true);
+    internal static bool ScrollOfFortuneOn => ConfigurationManager.GetValue("Events.ScrollOfFortune", true);
 
     // The Scroll of Fortune's paid rewards (CPRT_Purchased) need the scroll bought for crowns in the live game; on our
     // server everyone has it unless this is off.
-    internal static readonly bool PremiumForEveryone = ConfigurationManager.GetValue("Events.ScrollOfFortunePremium", true);
+    internal static bool PremiumForEveryone => ConfigurationManager.GetValue("Events.ScrollOfFortunePremium", true);
 
     /// <summary>
     /// The events the Events card can queue, by the name it saves as the Kind, and the template each one runs. A

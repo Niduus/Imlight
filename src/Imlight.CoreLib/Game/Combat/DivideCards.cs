@@ -37,7 +37,7 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </summary>
 internal static class DivideCards {
 
-    private static readonly bool s_divideAsPick = ConfigurationManager.GetValue("Battle.DivideAsPick", true);
+    private static bool s_divideAsPick => ConfigurationManager.GetValue("Battle.DivideAsPick", true);
     private static readonly Lazy<Dictionary<uint, (uint Id, SpellTemplate Template)>> s_pickVersions = new(Build);
 
     /// <summary>The pick-your-enemies card a divide card is cast as, or null.</summary>

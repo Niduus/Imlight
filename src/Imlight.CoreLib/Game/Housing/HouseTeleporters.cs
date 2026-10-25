@@ -79,8 +79,8 @@ internal sealed record HouseTeleporter(uint GidId, Vector3 Position, bool IsPet,
 
 internal static class HouseTeleporters {
 
-    private static readonly float s_radius = ConfigurationManager.GetValue("Housing.TeleporterRadius", 50f);
-    private static readonly float s_height = ConfigurationManager.GetValue("Housing.TeleporterHeight", 100f);
+    private static float s_radius => ConfigurationManager.GetValue("Housing.TeleporterRadius", 50f);
+    private static float s_height => ConfigurationManager.GetValue("Housing.TeleporterHeight", 100f);
 
     // Template id to whether it is a teleporter (null for none) and whether it is a pet teleporter.
     private static readonly ConcurrentDictionary<uint, bool?> s_templates = new();

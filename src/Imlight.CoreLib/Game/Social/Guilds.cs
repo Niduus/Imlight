@@ -61,11 +61,11 @@ internal static class Guilds {
     internal const string FILE = "guilds.json";
 
     /// <summary>The Guild House deed (SP_GuildHouse_01): the grounds; its structure is the house inside.</summary>
-    internal static readonly uint HouseTemplateId = ConfigurationManager.GetValue("Guilds.HouseTemplate", 1520393u);
+    internal static uint HouseTemplateId => ConfigurationManager.GetValue("Guilds.HouseTemplate", 1520393u);
 
-    private static readonly bool s_enabled = ConfigurationManager.GetValue("Guilds.Enabled", true);
-    private static readonly bool s_nameplate = ConfigurationManager.GetValue("Guilds.ShowOnNameplate", true);
-    private static readonly int s_maxMembers = Math.Clamp(ConfigurationManager.GetValue("Guilds.MaxMembers", 51), 2, 500);
+    private static bool s_enabled => ConfigurationManager.GetValue("Guilds.Enabled", true);
+    private static bool s_nameplate => ConfigurationManager.GetValue("Guilds.ShowOnNameplate", true);
+    private static int s_maxMembers => Math.Clamp(ConfigurationManager.GetValue("Guilds.MaxMembers", 51), 2, 500);
     private static readonly TimeSpan s_inviteLife = TimeSpan.FromMinutes(10);
 
     private static readonly JsonSerializerOptions s_options = new() {

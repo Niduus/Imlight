@@ -101,8 +101,8 @@ public sealed class ZonePath : ZoneEntity {
     private readonly Dictionary<IActorRef, ZONE_102_PROTOCOL.MSG_PLAYERMOVE> _aggroOnLoad = [];
     // Players in the zone, so a creature spawned after they joined is told about them like one that was there.
     private readonly Dictionary<IActorRef, ZONE_102_PROTOCOL.MSG_ADDPLAYER> _players = [];
-    private readonly bool _randomizeCreatures
-        = ConfigurationManager.Settings["April Fools.RandomizeCreatures"].AsBool();
+    private bool _randomizeCreatures
+        => ConfigurationManager.Settings["April Fools.RandomizeCreatures"].AsBool();
 
     // ctor
     public ZonePath(PathObjectTemplate template, List<NodeObject> nodes, List<SpawnObject> creatures, IActorRef zoneRef, Zone zone)

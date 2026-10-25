@@ -125,7 +125,7 @@ internal sealed partial class ManagerWindow : Window {
         ("FreeTraining", "Free training (no training points)", new() { OnContent = "On", OffContent = "Off" }),
         ("TrainingPointPerLevel", "Training points for every level gained", new() { OnContent = "On", OffContent = "Off" }),
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
-        ("RespecAtTrainers", "Mr. Lincoln offers to reset training points (needs a restart)", new() { OnContent = "On", OffContent = "Off" }),
+        ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
@@ -1370,7 +1370,7 @@ internal sealed partial class ManagerWindow : Window {
 
         _manager.SaveSettings([new Setting("Trainers", "TrainingPointsPerLevel", points.ToString(), "")]);
         _settings = [];
-        Say($"Each level now gives {points} training points while that switch is on. It applies the next time the server starts.");
+        Say($"Each level now gives {points} training points while that switch is on. It applies right away.");
 
         return Task.CompletedTask;
     }
@@ -2081,7 +2081,7 @@ internal sealed partial class ManagerWindow : Window {
         var restart = _manager.SaveSettings(_pending.Values.ToList());
         LoadSettings();
         Refresh();
-        Say($"Saved {count} setting{(count == 1 ? "" : "s")}.");
+        Say($"Saved {count} setting{(count == 1 ? "" : "s")}." + (restart ? " Some of them are only read when the server starts." : " They apply right away, no restart needed."));
         if (restart && await ConfirmAsync("Restart the server now to use the new settings? Everyone playing is disconnected.")) {
             Say(await _manager.RestartServerAsync());
         }
