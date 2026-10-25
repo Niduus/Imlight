@@ -206,7 +206,8 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         return true;
     }
 
-    public static WizClientPet CreatePetGameObject(WizClientObjectItem pet, GID ownerId) {
+    /// <param name="showNameOverride">False summons the pet under its normal name, leaving its .name pet name on the item.</param>
+    public static WizClientPet CreatePetGameObject(WizClientObjectItem pet, GID ownerId, bool showNameOverride = true) {
         var genericPetObject = new WizClientPet();
         CoreObjectFactory.InitializeCoreObjectBehaviors(genericPetObject, GENERIC_PET_TEMPLATE_ID);
 
@@ -225,7 +226,7 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         }
 
         // Replace the generic pet's behaviors with the pet's behaviors.
-        genericPetObject = SetPetGameObjectBehaviors(genericPetObject, pet);
+        genericPetObject = SetPetGameObjectBehaviors(genericPetObject, pet, showNameOverride);
         if (genericPetObject is null) {
             return null;
         }
@@ -250,7 +251,7 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
             ? 90f + Random.Shared.NextSingle() * 30f
             : 210f + Random.Shared.NextSingle() * 60f;
 
-    private static WizClientPet SetPetGameObjectBehaviors(WizClientPet petGameObject, WizClientObjectItem pet) {
+    private static WizClientPet SetPetGameObjectBehaviors(WizClientPet petGameObject, WizClientObjectItem pet, bool showNameOverride) {
         if (!CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(pet, out var petNameBehaviorInstanceOnPet)) {
             Logger.Error("Pet {0} should've contained behavior {1}, but it did not.",
                 Logger.Args(pet.m_globalID.Full, nameof(ClientPetNameBehavior)));
@@ -261,7 +262,7 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         // Replace the generic pet's behaviors with the pet's behaviors.
         if (CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(petGameObject, out var petNameBehaviorInstance)) {
             var idx = petGameObject.m_inactiveBehaviors.IndexOf(petNameBehaviorInstance);
-            petGameObject.m_inactiveBehaviors[idx] = CreatePetNameBehavior(pet, petNameBehaviorInstanceOnPet);
+            petGameObject.m_inactiveBehaviors[idx] = CreatePetNameBehavior(pet, petNameBehaviorInstanceOnPet, showNameOverride);
         }
         else {
             Logger.Error("Generic pet {0} should've contained behavior {1}, but it did not.",
@@ -281,7 +282,7 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         return petGameObject;
     }
 
-    private static ClientPetNameBehavior CreatePetNameBehavior(WizClientObjectItem pet, ClientPetNameBehavior itemName) {
+    private static ClientPetNameBehavior CreatePetNameBehavior(WizClientObjectItem pet, ClientPetNameBehavior itemName, bool showNameOverride) {
         CoreObjectFactory.FindBehaviorInstance<ClientPetItemBehavior>(pet, out var petItemBehavior);
         // A pet stitched at Zeke shows the race (model) of the pet whose look it took.
         var look = LookTemplateId(pet);
@@ -290,7 +291,7 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
         return new ClientPetNameBehavior {
             m_nameKeys = itemName.m_nameKeys,
             // A name given with .name pet.
-            m_wsNameOverride = itemName.m_wsNameOverride,
+            m_wsNameOverride = showNameOverride ? itemName.m_wsNameOverride : "",
             m_useRank = true,
             m_eGender = lookTemplate?.m_eGender ?? itemName.m_eGender,
             m_eRace = lookTemplate?.m_eRace ?? itemName.m_eRace,
