@@ -1,0 +1,1183 @@
+{
+  "_about": "Majid's Loyalty Store (WC-Shop-NPC-Loyalty, Wizard City Shopping District): the game's monthly rotations as Wizard404 lists them (2026-10-15 scrape). The server's LoyaltyStore.cs reads this; the Manager's Loyalty Store card shows it. Price is in Loyalty Tokens, Limit is how many one account can buy while that rotation is on.",
+  "Rotations": [
+    {
+      "Id": "2022-04",
+      "Name": "April 2022",
+      "Items": [
+        {
+          "TemplateId": 1530489,
+          "Name": "Chaos Wizard Hat",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1479727,
+          "Name": "Doomsday Krok Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441763,
+          "Name": "Skeleton Key Bundle (Gold X 3)",
+          "Price": 8,
+          "Limit": 1,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1504044,
+          "Name": "Celestian Spellemental Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507730,
+          "Name": "Buck Gordon's Jetpack (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-05",
+      "Name": "May 2022",
+      "Items": [
+        {
+          "TemplateId": 1530489,
+          "Name": "Chaos Wizard Hat",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1479727,
+          "Name": "Doomsday Krok Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441763,
+          "Name": "Skeleton Key Bundle (Gold X 3)",
+          "Price": 8,
+          "Limit": 1,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1504044,
+          "Name": "Celestian Spellemental Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507730,
+          "Name": "Buck Gordon's Jetpack (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-06",
+      "Name": "June 2022",
+      "Items": [
+        {
+          "TemplateId": 1530490,
+          "Name": "Chaos Wizard Cape",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540549,
+          "Name": "Spiral Villains Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441675,
+          "Name": "Double Animus Benefit - 2 Hour",
+          "Price": 2,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1504044,
+          "Name": "Celestian Spellemental Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507730,
+          "Name": "Buck Gordon's Jetpack (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-07",
+      "Name": "July 2022",
+      "Items": [
+        {
+          "TemplateId": 1530491,
+          "Name": "Chaos Wizard Shoes",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540549,
+          "Name": "Spiral Villains Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441676,
+          "Name": "Crafting Benefit - 2 hour",
+          "Price": 2,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522107,
+          "Name": "Ravenwood Rangers Lore Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507730,
+          "Name": "Buck Gordon's Jetpack (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-08",
+      "Name": "August 2022",
+      "Items": [
+        {
+          "TemplateId": 1507746,
+          "Name": "Hat of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540549,
+          "Name": "Spiral Villains Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441584,
+          "Name": "Fishing Benefit - 3 hours",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522553,
+          "Name": "Malistaire Saga Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507730,
+          "Name": "Buck Gordon's Jetpack (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-09",
+      "Name": "September 2022",
+      "Items": [
+        {
+          "TemplateId": 1507748,
+          "Name": "Boots of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540549,
+          "Name": "Spiral Villains Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522553,
+          "Name": "Malistaire Saga Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507838,
+          "Name": "Dire Loch Monster (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-10",
+      "Name": "October 2022",
+      "Items": [
+        {
+          "TemplateId": 1507747,
+          "Name": "Vest of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1558144,
+          "Name": "Cerberus Master Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441574,
+          "Name": "Crafting Benefit - 1 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522553,
+          "Name": "Malistaire Saga Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507838,
+          "Name": "Dire Loch Monster (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-11",
+      "Name": "November 2022",
+      "Items": [
+        {
+          "TemplateId": 1507749,
+          "Name": "Hat of the Night",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1406379,
+          "Name": "Ghulture's Hoard Pack",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441573,
+          "Name": "Fishing Benefit - 1 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522553,
+          "Name": "Malistaire Saga Spellement Pack",
+          "Price": 3,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1507838,
+          "Name": "Dire Loch Monster (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2022-12",
+      "Name": "December 2022",
+      "Items": [
+        {
+          "TemplateId": 1507751,
+          "Name": "Boots of the Night",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1558240,
+          "Name": "Yuletide Elf Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1522477,
+          "Name": "Unforgiven Dead Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1522553,
+          "Name": "Malistaire Saga Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 733158,
+          "Name": "Winter Treant (PERM)",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-01",
+      "Name": "January 2026",
+      "Items": [
+        {
+          "TemplateId": 1507750,
+          "Name": "Vest of the Night",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1638060,
+          "Name": "Aquila Chronicle Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441676,
+          "Name": "Crafting Benefit - 2 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1672994,
+          "Name": "Marleybone Motorist Hoard Pk.2",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1392749,
+          "Name": "Candy Cane Snowboard (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-02",
+      "Name": "February 2026",
+      "Items": [
+        {
+          "TemplateId": 1507751,
+          "Name": "Boots of the Night",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1694002,
+          "Name": "Fanciful Fairy Kei Hoard Pack II",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1664441,
+          "Name": "5 Tourney Tokens",
+          "Price": 2,
+          "Limit": 2,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1706097,
+          "Name": "Scholomari Scourge Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 470348,
+          "Name": "Renaissance Wings (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-03",
+      "Name": "March 2026",
+      "Items": [
+        {
+          "TemplateId": 1530489,
+          "Name": "Chaos Wizard Hat",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1694002,
+          "Name": "Fanciful Fairy Kei Hoard Pack II",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441568,
+          "Name": "Gardening Benefit - 1 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1706097,
+          "Name": "Scholomari Scourge Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 470348,
+          "Name": "Renaissance Wings (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-04",
+      "Name": "April 2026",
+      "Items": [
+        {
+          "TemplateId": 1530490,
+          "Name": "Chaos Wizard Cape",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1725008,
+          "Name": "Hidden Temple Gauntlet Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441573,
+          "Name": "Fishing Benefit - 1 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1706097,
+          "Name": "Scholomari Scourge Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 470348,
+          "Name": "Renaissance Wings (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-05",
+      "Name": "May 2026",
+      "Items": [
+        {
+          "TemplateId": 1530491,
+          "Name": "Chaos Wizard Shoes",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1725008,
+          "Name": "Hidden Temple Gauntlet Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441675,
+          "Name": "Double Animus Benefit - 2 Hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1706097,
+          "Name": "Scholomari Scourge Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1254196,
+          "Name": "Roller Blades (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-06",
+      "Name": "June 2026",
+      "Items": [
+        {
+          "TemplateId": 1507746,
+          "Name": "Hat of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1694002,
+          "Name": "Fanciful Fairy Kei Hoard Pack II",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1664441,
+          "Name": "5 Tourney Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441676,
+          "Name": "Crafting Benefit - 2 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1441224,
+          "Name": "Unicorn Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1254196,
+          "Name": "Roller Blades (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-07",
+      "Name": "July 2026",
+      "Items": [
+        {
+          "TemplateId": 1507747,
+          "Name": "Vest of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1719375,
+          "Name": "Barkingham Chronicle Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441571,
+          "Name": "Double Pet XP - 1 Hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1672994,
+          "Name": "Marleybone Motorist Hoard Pk.2",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1254196,
+          "Name": "Roller Blades (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-08",
+      "Name": "August 2026",
+      "Items": [
+        {
+          "TemplateId": 1507748,
+          "Name": "Boots of the Dawn",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1719375,
+          "Name": "Barkingham Chronicle Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1664441,
+          "Name": "5 Tourney Tokens",
+          "Price": 2,
+          "Limit": 2,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441568,
+          "Name": "Gardening Benefit - 1 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1504045,
+          "Name": "Primeval Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 713343,
+          "Name": "Nightrunner (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-09",
+      "Name": "September 2026",
+      "Items": [
+        {
+          "TemplateId": 1672945,
+          "Name": "Hat of the Stars",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1441310,
+          "Name": "Decaversary Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1540496,
+          "Name": "3 Blueprint Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441675,
+          "Name": "Double Animus Benefit - 2 Hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1406379,
+          "Name": "Ghulture's Hoard Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 713343,
+          "Name": "Nightrunner (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    },
+    {
+      "Id": "2026-10",
+      "Name": "October 2026",
+      "Items": [
+        {
+          "TemplateId": 1672944,
+          "Name": "Vest of the Stars",
+          "Price": 1,
+          "Limit": 1,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1217523,
+          "Name": "Gold Skeleton Key",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "housing"
+        },
+        {
+          "TemplateId": 1664607,
+          "Name": "Freaky Floramancer Pack (2024)",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1664441,
+          "Name": "5 Tourney Tokens",
+          "Price": 1,
+          "Limit": 2,
+          "Kind": "bundle"
+        },
+        {
+          "TemplateId": 1659097,
+          "Name": "Event Spellement Pack",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 1441676,
+          "Name": "Crafting Benefit - 2 hour",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "gear"
+        },
+        {
+          "TemplateId": 1763003,
+          "Name": "Creepy Tea Party Hoard Pack (2026)",
+          "Price": 1,
+          "Limit": 3,
+          "Kind": "pack"
+        },
+        {
+          "TemplateId": 713343,
+          "Name": "Nightrunner (PERM)",
+          "Price": 12,
+          "Limit": 1,
+          "Kind": "gear"
+        }
+      ]
+    }
+  ]
+}

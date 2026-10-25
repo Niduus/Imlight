@@ -77,6 +77,7 @@ public class GameServer : Server {
         Tools.ManagerCommands.Start(Context.System);
         Tools.MemberBenefits.Start(Context.System);
         Events.GameEvents.Start(Context.System);
+        Loyalty.LoyaltyStore.Start(Context.System);
         World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.

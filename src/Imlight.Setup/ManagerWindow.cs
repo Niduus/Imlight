@@ -656,6 +656,7 @@ internal sealed partial class ManagerWindow : Window {
             MemberBenefitsCard(),
             PlantGrowthCard(),
             EventsCard(),
+            LoyaltyStoreCard(),
             _trainersCard);
     }
 
