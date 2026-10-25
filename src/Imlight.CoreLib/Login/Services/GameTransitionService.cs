@@ -90,6 +90,7 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
         if (character is not null) {
             // The game comes back from character select with a new quest helper that knows no quest yet.
             Game.Services.QuestService.ForgetQuestHelper(character.CharId);
+            Game.Commands.Protocols.CommandArrowLogProtocol.Forget(character.CharId);
         }
 
         if (character is null) {
