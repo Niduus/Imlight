@@ -20,7 +20,7 @@
  * ========================================================================
  *
  * PURPOSE:
- * Gives Lucky Hookline, and every shop vendor while [Fishing] SellAtShops is on, the game's "Sell Fish" option
+ * Gives Lucky Hookline, and every shop vendor while [Fishing] SellFishAtAllShops is on (off by default), the game's "Sell Fish" option
  * (FishSellingOption). Picking it opens the game's fish seller window; FishingService answers the window's basket
  * request and its Sell button (MSG_SELLFISHREQUEST).
  */

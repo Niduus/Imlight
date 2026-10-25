@@ -69,7 +69,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public static bool ShouldAttachToEntity(CoreTemplate template) 
         // Attach if the template is an NPC and has a spell inventory in Dragon database.
         => template is GameObjectTemplate goTemplate 
-        && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) 
+        // The Tome of Fishing in the Commons is a book on a pedestal, not an NPC.
+        && (goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate) || TestTrainerKindOf(goTemplate) == TestTrainerKind.Tome)
         && (NpcSpellInventoryCollection.TryGetNpcInventory(goTemplate.m_templateID, out _)
             || TestTrainerKindOf(goTemplate) is not null
             || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null
@@ -97,6 +98,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// </summary>
     public bool IsGardenTrainer { get; private set; }
 
+    // The Tome of Fishing also keeps its own "read the book" choice beside "Spell List".
+    private bool IsTome => Entity.Template is GameObjectTemplate template && TestTrainerKindOf(template) == TestTrainerKind.Tome;
+
     // A fishing or gardening trainer of the real game (TradeTrainers).
     private bool _isTradeTrainer;
 
@@ -105,7 +109,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     // The last list logged for each wizard, so the once-a-second refresh does not fill the log.
     private readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, string> _customLogged = new();
 
-    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall, Fishing }
+    internal enum TestTrainerKind { Enchantments, Extracts, Shadow, Boss, Hall, Fishing, Tome }
 
     /// <summary>
     /// Finds which test trainer an NPC is: Mr. Lincoln, or in Ravenwood Monstrologist Burke (WC-RAV-NPC13), Mellori
@@ -130,6 +134,9 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             case "WC-PARTY-NPC15":
                 // Lucky Hookline, in the Commons and at the party room: every fishing spell.
                 return TestTrainerKind.Fishing;
+            case "WC_Pedestal_TobeOfFishing":
+                // The Tome of Fishing beside Lucky Hookline: every fishing and gardening spell (Niduus 2026-10-25).
+                return TestTrainerKind.Tome;
         }
 
         var names = $"{objectName} {Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(template.m_displayName.ToString())}";
@@ -288,6 +295,17 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             .OrderBy(s => (string) s.Template.m_name, System.StringComparer.OrdinalIgnoreCase)
             .Select(s => new NPCSpellEntry { TemplateID = s.Id, RequiredSpellID = 0, Level = 1 })];
         Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[TestTrainerKind.Fishing].Count, TestTrainerKind.Fishing));
+
+        // The Tome of Fishing teaches Lucky Hookline's fishing spells, then every gardening spell (GardenLessons).
+        var gardenSpells = Imlight.CoreLib.Game.Gardening.GardenLessons.All
+            .OrderBy(lesson => lesson.Level)
+            .ThenBy(lesson => lesson.Name, System.StringComparer.OrdinalIgnoreCase)
+            .Select(lesson => lesson.SpellId)
+            .Distinct()
+            .Where(id => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate)
+            .Select(id => new NPCSpellEntry { TemplateID = id, RequiredSpellID = 0, Level = 1 });
+        result[TestTrainerKind.Tome] = [.. result[TestTrainerKind.Fishing], .. gardenSpells];
+        Logger.Information("Test trainer teaches {0} {1} spells.", Logger.Args(result[TestTrainerKind.Tome].Count, TestTrainerKind.Tome));
 
         return result;
     }
@@ -565,7 +583,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         => InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) || InteractRespecComponent.Offers(Entity, wizard)
         || InteractFishSellingComponent.Offers(Entity, wizard)
         // A fishing or gardening trainer that also runs a shop (Farley's seeds) keeps the shop beside "Spell List".
-        || ((_isTradeTrainer || IsGardenTrainer) && Entity.GetComponentsOfType<IServiceComponent>()
+        || ((_isTradeTrainer || IsGardenTrainer || IsTome) && Entity.GetComponentsOfType<IServiceComponent>()
             .Any(c => c != this && (c.GetServiceOptions(wizard)?.Any() ?? false)));
 
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)

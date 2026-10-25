@@ -41,7 +41,7 @@ internal static class FishingSettings {
     /// <summary>Casting a fishing spell uses its energy.</summary>
     internal static readonly bool UseEnergy = ConfigurationManager.GetValue("Fishing.UseEnergy", true);
 
-    /// <summary>Every shop vendor also offers "Sell Fish" (Lucky Hookline always does).</summary>
-    internal static readonly bool SellAtShops = ConfigurationManager.GetValue("Fishing.SellAtShops", true);
+    /// <summary>Every shop vendor also offers "Sell Fish". Off: only Lucky Hookline buys fish (Niduus 2026-10-25).</summary>
+    internal static readonly bool SellAtShops = ConfigurationManager.GetValue("Fishing.SellFishAtAllShops", false);
 
 }
