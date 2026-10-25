@@ -565,7 +565,7 @@ internal static class CharacterEffectHelper {
     private static void LogBattleStat(string change, string effectName, WizStatisticEffect statistic) {
         if (statistic.m_damageBonusPercent != 0 || statistic.m_damageBonusFlat != 0 || statistic.m_armorPiercingBonusPercent != 0
             || statistic.m_damageReducePercent != 0) {
-            Logger.Debug("Stat {0}: {1} damage {2} flat {3} pierce {4} resist {5}.",
+            Logger.Verbose("Stat {0}: {1} damage {2} flat {3} pierce {4} resist {5}.",
                 Logger.Args(change, effectName, statistic.m_damageBonusPercent, statistic.m_damageBonusFlat,
                     statistic.m_armorPiercingBonusPercent, statistic.m_damageReducePercent));
         }

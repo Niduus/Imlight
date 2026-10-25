@@ -97,118 +97,58 @@ public static class SpiralDB {
     public static IReadOnlyDictionary<ulong, NpcSeamstress> NpcSeamstresses => s_npcSeamstresses;
 
 
+    // The files are read on a background thread started before the game's own files load (StartReading), and
+    // Load takes them over. Read one after the other, the two took most of the server's start.
+    private static Task<ReadResult> s_reading;
+
+    private sealed record ReadResult(
+        ConcurrentDictionary<string, CreatureSpellbook> Spellbooks,
+        ConcurrentDictionary<string, DropTable> DropTables,
+        GlobalRegistryModel GlobalRegistry,
+        ConcurrentDictionary<ulong, NPCInventory> NpcInventories,
+        ConcurrentDictionary<ulong, NPCInventory> ExtraNpcInventories,
+        ConcurrentDictionary<ulong, NPCSpellInventory> NpcSpellInventories,
+        ConcurrentDictionary<ulong, NpcDropTable> NpcDropTables,
+        ConcurrentBag<QuestTemplate> QuestTemplatesBag,
+        ConcurrentDictionary<string, QuestTemplate> QuestTemplatesByName,
+        ConcurrentDictionary<string, WizardZoneData> ZoneData,
+        ConcurrentDictionary<ulong, NpcTreasureCardInventory> TreasureCardInventories,
+        ConcurrentDictionary<uint, BadgeDefinition> BadgeDefinitions,
+        ConcurrentDictionary<ulong, NpcSeamstress> NpcSeamstresses,
+        int FilesLoaded,
+        string ExtraPath);
+
+    /// <summary>
+    /// Fetches SpiralDB and reads its files on a background thread. They only need the files themselves, not the game's,
+    /// so this runs while the game's files load; <see cref="Load"/> then waits for it and takes the result.
+    /// </summary>
+    public static void StartReading() => s_reading ??= Task.Run(ReadFiles);
+
     /// <summary>
     /// Fetches the spiralDB repository (if remote is enabled) and loads all JSON
     /// files into memory. Must be called once on server boot before any collection
     /// is accessed.
     /// </summary>
     public static void Load() {
-        var basePath = Path.GetFullPath(s_localPath);
-
-        if (!s_disableRemote) {
-            string[] xdgPaths = null;
-            string[] globalPaths = null;
-
-            try {
-                xdgPaths = [.. GlobalSettings.GetConfigSearchPaths(
-                    ConfigurationLevel.Xdg)];
-                globalPaths = [.. GlobalSettings.GetConfigSearchPaths(
-                    ConfigurationLevel.Global)];
-
-                GlobalSettings.SetConfigSearchPaths(ConfigurationLevel.Xdg, []);
-                GlobalSettings.SetConfigSearchPaths(ConfigurationLevel.Global, []);
-
-                SyncRepository(basePath);
-            }
-            catch (Exception ex) {
-                Logger.Error("Failed to sync SpiralDB repository: {0}", Logger.Args(ex.Message));
-                if (s_rollbackOnFailure && Directory.Exists(basePath)) {
-                    Logger.Information("Rolling back — using existing local SpiralDB data.");
-                }
-                else if (!Directory.Exists(basePath)) {
-                    Logger.Error("No local SpiralDB data available and remote sync failed. " +
-                                 "SpiralDB will be empty.");
-
-                    return;
-                }
-            }
-            finally {
-                if (xdgPaths != null) {
-                    GlobalSettings.SetConfigSearchPaths(
-                        ConfigurationLevel.Xdg, xdgPaths);
-                }
-                if (globalPaths != null) {
-                    GlobalSettings.SetConfigSearchPaths(
-                        ConfigurationLevel.Global, globalPaths);
-                }
-            }
+        ReadResult read;
+        try {
+            read = (s_reading ?? Task.Run(ReadFiles)).GetAwaiter().GetResult();
         }
+        catch (Exception ex) {
+            read = null;
+            Logger.Error("Failed to load SpiralDB: {0}", Logger.Args(ex.Message));
+        }
+        s_reading = null;
 
-        if (!Directory.Exists(basePath)) {
-            Logger.Error("SpiralDB local path does not exist: {0}", Logger.Args(basePath));
+        if (read is null) {
+            ClearUnlessRollback();
             return;
         }
 
-        Logger.Information("Loading SpiralDB from {0}...", Logger.Args(basePath));
-
         try {
-            // Build into temporary containers so a parse failure leaves old data intact.
-            var spellbooks = new ConcurrentDictionary<string, CreatureSpellbook>(StringComparer.OrdinalIgnoreCase);
-            var dropTables = new ConcurrentDictionary<string, DropTable>(StringComparer.OrdinalIgnoreCase);
-            var globalRegistry = new GlobalRegistryModel();
-            var npcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
-            var npcSpellInventories = new ConcurrentDictionary<ulong, NPCSpellInventory>();
-            var npcDropTables = new ConcurrentDictionary<ulong, NpcDropTable>();
-            var questTemplatesBag = new ConcurrentBag<QuestTemplate>();
-            var questTemplatesByName = new ConcurrentDictionary<string, QuestTemplate>(StringComparer.OrdinalIgnoreCase);
-            var zoneData = new ConcurrentDictionary<string, WizardZoneData>(StringComparer.OrdinalIgnoreCase);
-            var treasureCardInventories = new ConcurrentDictionary<ulong, NpcTreasureCardInventory>();
-            var badgeDefinitions = new ConcurrentDictionary<uint, BadgeDefinition>();
-            var npcSeamstresses = new ConcurrentDictionary<ulong, NpcSeamstress>();
-
-            var filesLoaded = 0;
-            var loadStart = Stopwatch.GetTimestamp();
-
-            Parallel.Invoke(
-                () => Interlocked.Add(ref filesLoaded, LoadCreatureSpellbooks(basePath, spellbooks)),
-                () => Interlocked.Add(ref filesLoaded, LoadDropTables(basePath, dropTables)),
-                () => Interlocked.Add(ref filesLoaded, LoadGlobalRegistry(basePath, globalRegistry)),
-                () => Interlocked.Add(ref filesLoaded, LoadNpcInventories(basePath, npcInventories)),
-                () => Interlocked.Add(ref filesLoaded, LoadNpcSpellInventories(basePath, npcSpellInventories)),
-                () => Interlocked.Add(ref filesLoaded, LoadNpcDropTables(basePath, npcDropTables)),
-                () => Interlocked.Add(ref filesLoaded, LoadTreasureCardInventories(basePath, treasureCardInventories)),
-                () => Interlocked.Add(ref filesLoaded, LoadNpcSeamstresses(basePath, npcSeamstresses)),
-                () => Interlocked.Add(ref filesLoaded, LoadQuestTemplates(basePath, questTemplatesBag, questTemplatesByName)),
-                () => Interlocked.Add(ref filesLoaded, LoadZoneData(basePath, zoneData)),
-                () => Interlocked.Add(ref filesLoaded, LoadBadgeDefinitions(basePath, badgeDefinitions))
-            );
-
-            var baseElapsed = Stopwatch.GetElapsedTime(loadStart);
-            var extraPath = Path.GetFullPath(s_extraPath);
-            var extraFiles = 0;
-            var extraNpcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
-            if (Directory.Exists(extraPath)) {
-                // Each kind goes to its own container, so the kinds load side by side like SpiralDB's own above;
-                // one after the other they took most of the 15 s start (Niduus's log of 2026-10-25).
-                var extraStart = Stopwatch.GetTimestamp();
-                Parallel.Invoke(
-                    () => Interlocked.Add(ref extraFiles, LoadCreatureSpellbooks(extraPath, spellbooks)),
-                    () => Interlocked.Add(ref extraFiles, LoadDropTables(extraPath, dropTables)),
-                    () => Interlocked.Add(ref extraFiles, LoadNpcInventories(extraPath, extraNpcInventories)),
-                    () => Interlocked.Add(ref extraFiles, LoadNpcSpellInventories(extraPath, npcSpellInventories)),
-                    () => Interlocked.Add(ref extraFiles, LoadNpcDropTables(extraPath, npcDropTables)),
-                    () => Interlocked.Add(ref extraFiles, LoadTreasureCardInventories(extraPath, treasureCardInventories)),
-                    () => Interlocked.Add(ref extraFiles, LoadQuestTemplates(extraPath, questTemplatesBag, questTemplatesByName)),
-                    () => Interlocked.Add(ref extraFiles, LoadZoneData(extraPath, zoneData))
-                );
-                foreach (var (npcId, inventory) in extraNpcInventories) {
-                    npcInventories[npcId] = inventory;
-                }
-                filesLoaded += extraFiles;
-                Logger.Information("Loaded {0} extra SpiralDB files from {1} in {2} ms (SpiralDB's own files took {3} ms).",
-                    Logger.Args(extraFiles, extraPath, (int) Stopwatch.GetElapsedTime(extraStart).TotalMilliseconds,
-                                (int) baseElapsed.TotalMilliseconds));
-            }
+            var (spellbooks, dropTables, globalRegistry, npcInventories, extraNpcInventories, npcSpellInventories,
+                 npcDropTables, questTemplatesBag, questTemplatesByName, zoneData, treasureCardInventories,
+                 badgeDefinitions, npcSeamstresses, filesLoaded, extraPath) = read;
 
             // An extra quest replaces SpiralDB's quest of the same name.
             var questTemplates = questTemplatesBag
@@ -255,23 +195,140 @@ public static class SpiralDB {
         }
         catch (Exception ex) {
             Logger.Error("Failed to load SpiralDB: {0}", Logger.Args(ex.Message));
-            if (!s_rollbackOnFailure) {
-                // Clear everything.
-                s_creatureSpellbooks.Clear();
-                s_dropTables.Clear();
-                s_globalRegistry = new();
-                s_npcInventories.Clear();
-                s_npcSpellInventories.Clear();
-                s_npcDropTables.Clear();
-                s_treasureCardInventories.Clear();
-                s_questTemplates.Clear();
-                s_questTemplatesByName.Clear();
-                s_zoneData.Clear();
-                s_badgeDefinitions.Clear();
-                s_npcSeamstresses.Clear();
-            }
-            // On rollback, the old references are still live — nothing to do.
+            ClearUnlessRollback();
         }
+    }
+
+    private static void ClearUnlessRollback() {
+        if (s_rollbackOnFailure) {
+            // On rollback, the old references are still live — nothing to do.
+            return;
+        }
+
+        s_creatureSpellbooks.Clear();
+        s_dropTables.Clear();
+        s_globalRegistry = new();
+        s_npcInventories.Clear();
+        s_npcSpellInventories.Clear();
+        s_npcDropTables.Clear();
+        s_treasureCardInventories.Clear();
+        s_questTemplates.Clear();
+        s_questTemplatesByName.Clear();
+        s_zoneData.Clear();
+        s_badgeDefinitions.Clear();
+        s_npcSeamstresses.Clear();
+    }
+
+    private static ReadResult ReadFiles() {
+        var basePath = Path.GetFullPath(s_localPath);
+
+        if (!s_disableRemote) {
+            string[] xdgPaths = null;
+            string[] globalPaths = null;
+
+            try {
+                xdgPaths = [.. GlobalSettings.GetConfigSearchPaths(
+                    ConfigurationLevel.Xdg)];
+                globalPaths = [.. GlobalSettings.GetConfigSearchPaths(
+                    ConfigurationLevel.Global)];
+
+                GlobalSettings.SetConfigSearchPaths(ConfigurationLevel.Xdg, []);
+                GlobalSettings.SetConfigSearchPaths(ConfigurationLevel.Global, []);
+
+                SyncRepository(basePath);
+            }
+            catch (Exception ex) {
+                Logger.Error("Failed to sync SpiralDB repository: {0}", Logger.Args(ex.Message));
+                if (s_rollbackOnFailure && Directory.Exists(basePath)) {
+                    Logger.Information("Rolling back — using existing local SpiralDB data.");
+                }
+                else if (!Directory.Exists(basePath)) {
+                    Logger.Error("No local SpiralDB data available and remote sync failed. " +
+                                 "SpiralDB will be empty.");
+
+                    return null;
+                }
+            }
+            finally {
+                if (xdgPaths != null) {
+                    GlobalSettings.SetConfigSearchPaths(
+                        ConfigurationLevel.Xdg, xdgPaths);
+                }
+                if (globalPaths != null) {
+                    GlobalSettings.SetConfigSearchPaths(
+                        ConfigurationLevel.Global, globalPaths);
+                }
+            }
+        }
+
+        if (!Directory.Exists(basePath)) {
+            Logger.Error("SpiralDB local path does not exist: {0}", Logger.Args(basePath));
+            return null;
+        }
+
+        Logger.Information("Loading SpiralDB from {0}...", Logger.Args(basePath));
+
+        // Build into temporary containers so a parse failure leaves old data intact.
+        var spellbooks = new ConcurrentDictionary<string, CreatureSpellbook>(StringComparer.OrdinalIgnoreCase);
+        var dropTables = new ConcurrentDictionary<string, DropTable>(StringComparer.OrdinalIgnoreCase);
+        var globalRegistry = new GlobalRegistryModel();
+        var npcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
+        var npcSpellInventories = new ConcurrentDictionary<ulong, NPCSpellInventory>();
+        var npcDropTables = new ConcurrentDictionary<ulong, NpcDropTable>();
+        var questTemplatesBag = new ConcurrentBag<QuestTemplate>();
+        var questTemplatesByName = new ConcurrentDictionary<string, QuestTemplate>(StringComparer.OrdinalIgnoreCase);
+        var zoneData = new ConcurrentDictionary<string, WizardZoneData>(StringComparer.OrdinalIgnoreCase);
+        var treasureCardInventories = new ConcurrentDictionary<ulong, NpcTreasureCardInventory>();
+        var badgeDefinitions = new ConcurrentDictionary<uint, BadgeDefinition>();
+        var npcSeamstresses = new ConcurrentDictionary<ulong, NpcSeamstress>();
+
+        var filesLoaded = 0;
+        var loadStart = Stopwatch.GetTimestamp();
+
+        Parallel.Invoke(
+            () => Interlocked.Add(ref filesLoaded, LoadCreatureSpellbooks(basePath, spellbooks)),
+            () => Interlocked.Add(ref filesLoaded, LoadDropTables(basePath, dropTables)),
+            () => Interlocked.Add(ref filesLoaded, LoadGlobalRegistry(basePath, globalRegistry)),
+            () => Interlocked.Add(ref filesLoaded, LoadNpcInventories(basePath, npcInventories)),
+            () => Interlocked.Add(ref filesLoaded, LoadNpcSpellInventories(basePath, npcSpellInventories)),
+            () => Interlocked.Add(ref filesLoaded, LoadNpcDropTables(basePath, npcDropTables)),
+            () => Interlocked.Add(ref filesLoaded, LoadTreasureCardInventories(basePath, treasureCardInventories)),
+            () => Interlocked.Add(ref filesLoaded, LoadNpcSeamstresses(basePath, npcSeamstresses)),
+            () => Interlocked.Add(ref filesLoaded, LoadQuestTemplates(basePath, questTemplatesBag, questTemplatesByName)),
+            () => Interlocked.Add(ref filesLoaded, LoadZoneData(basePath, zoneData)),
+            () => Interlocked.Add(ref filesLoaded, LoadBadgeDefinitions(basePath, badgeDefinitions))
+        );
+
+        var baseElapsed = Stopwatch.GetElapsedTime(loadStart);
+        var extraPath = Path.GetFullPath(s_extraPath);
+        var extraFiles = 0;
+        var extraNpcInventories = new ConcurrentDictionary<ulong, NPCInventory>();
+        if (Directory.Exists(extraPath)) {
+            // Each kind goes to its own container, so the kinds load side by side like SpiralDB's own above;
+            // one after the other they took most of the 15 s start (Niduus's log of 2026-10-25).
+            var extraStart = Stopwatch.GetTimestamp();
+            Parallel.Invoke(
+                () => Interlocked.Add(ref extraFiles, LoadCreatureSpellbooks(extraPath, spellbooks)),
+                () => Interlocked.Add(ref extraFiles, LoadDropTables(extraPath, dropTables)),
+                () => Interlocked.Add(ref extraFiles, LoadNpcInventories(extraPath, extraNpcInventories)),
+                () => Interlocked.Add(ref extraFiles, LoadNpcSpellInventories(extraPath, npcSpellInventories)),
+                () => Interlocked.Add(ref extraFiles, LoadNpcDropTables(extraPath, npcDropTables)),
+                () => Interlocked.Add(ref extraFiles, LoadTreasureCardInventories(extraPath, treasureCardInventories)),
+                () => Interlocked.Add(ref extraFiles, LoadQuestTemplates(extraPath, questTemplatesBag, questTemplatesByName)),
+                () => Interlocked.Add(ref extraFiles, LoadZoneData(extraPath, zoneData))
+            );
+            foreach (var (npcId, inventory) in extraNpcInventories) {
+                npcInventories[npcId] = inventory;
+            }
+            filesLoaded += extraFiles;
+            Logger.Information("Loaded {0} extra SpiralDB files from {1} in {2} ms (SpiralDB's own files took {3} ms).",
+                Logger.Args(extraFiles, extraPath, (int) Stopwatch.GetElapsedTime(extraStart).TotalMilliseconds,
+                            (int) baseElapsed.TotalMilliseconds));
+        }
+
+        return new ReadResult(spellbooks, dropTables, globalRegistry, npcInventories, extraNpcInventories,
+            npcSpellInventories, npcDropTables, questTemplatesBag, questTemplatesByName, zoneData,
+            treasureCardInventories, badgeDefinitions, npcSeamstresses, filesLoaded, extraPath);
     }
 
     private static void SyncRepository(string basePath) {

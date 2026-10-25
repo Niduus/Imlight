@@ -224,7 +224,7 @@ internal static class EquipmentExtras {
             wizard.GameEffects.Add(provide);
             wizard.AppliedCardEffects.Add(provide);
             wizard.AddedCardEffects.Add(provide);
-            Logger.Information("Item card effect {0} x{1} (slot {2}, id {3}) for {4}.",
+            Logger.Verbose("Item card effect {0} x{1} (slot {2}, id {3}) for {4}.",
                 Logger.Args(info.m_spellName, info.m_numSpells, slotHash, provide.m_internalID, wizard.CharId));
         }
     }

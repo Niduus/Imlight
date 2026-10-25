@@ -154,6 +154,19 @@ internal static class Program {
         Imlight.CoreLib.Game.Commands.AgentBridge.StartIfEnabled();
 
         // =============================================================
+        // PLAYER DATABASE
+        // =============================================================
+        // The database runs in a process of its own that takes 6 to 14 s to start (Niduus's log of 2026-10-25). It
+        // starts now and makes the admin account while the game data loads, instead of after it.
+        var database = Task.Run(() => {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            _ = PlayerDatabase.Instance.Store;
+            CreateEmbeddedDatabaseAccounts();
+            Logger.Information("The player database was ready in {0} ms, while game data loaded.",
+                Logger.Args(stopwatch.ElapsedMilliseconds));
+        });
+
+        // =============================================================
         // RESOURCES
         // =============================================================
         // The patch server must start prior to any resources. This is to ensure that any
@@ -164,6 +177,8 @@ internal static class Program {
         // Load resources. Record the time it takes to load resources.
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         Logger.Information("Director is now explicitly loading resources..");
+        // SpiralDB's files need none of the game's, so they are read side by side with them.
+        SpiralDB.StartReading();
         var resourceContainer = new ResourceContainer();
         LoadResources();
         Logger.Information("Director has called all resources to load.");
@@ -181,10 +196,9 @@ internal static class Program {
         var loginServer = StartLoginServer();
         StartGameServers(loginServer);
 
-        // Force load dragon database. Create a dud account if the database ends up using the embedded database.
+        // Wait for the database started above (and its admin account) before anyone can log in.
         try {
-            _ = PlayerDatabase.Instance.Store;
-            CreateEmbeddedDatabaseAccounts();
+            database.GetAwaiter().GetResult();
         }
         catch (Exception ex) {
             Logger.Fatal("The player database did not start, so nobody can log in. {Message}", Logger.Args(ex.GetBaseException().Message));

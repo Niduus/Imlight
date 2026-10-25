@@ -138,6 +138,8 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
         return true;
     }
 
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> s_notSentReported = new();
+
     /// <summary>
     /// An item the game cannot make (no such template, or a bundle, which is only ever claimed, never held) makes it
     /// drop the whole backpack and the connection at login (Niduus, 2026-10-21: "can't load my character"). Such items
@@ -153,8 +155,11 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
             return true;
         }
 
-        Logger.Warning("Inventory: item {0} (template {1}, {2}) is not sent to the game; it cannot show it.",
-            Logger.Args(item.m_globalID.Full, item.m_templateID, template?.GetType().Name ?? "no template"));
+        // Once per item and server run: the backpack is sent on every load and zone change.
+        if (s_notSentReported.TryAdd(item.m_globalID.Full, 0)) {
+            Logger.Warning("Inventory: item {0} (template {1}, {2}) is not sent to the game; it cannot show it.",
+                Logger.Args(item.m_globalID.Full, item.m_templateID.Full, template?.GetType().Name ?? "no template"));
+        }
 
         return false;
     }

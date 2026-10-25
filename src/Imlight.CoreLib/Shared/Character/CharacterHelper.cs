@@ -56,12 +56,16 @@ internal static class CharacterHelper {
     
     internal const float OrientationCompressionFactor = 0.708f;
 
+    // The wizards whose XP/Level mismatch is already in the log. Stats are recalculated on every load and zone change,
+    // which wrote the same warning hundreds of times a day for one wizard.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> s_mismatchReported = new();
+
     /// <summary>
     /// Recalculates the game stats for a wizard.
     /// </summary>
     /// <param name="wizard">The wizard whose game stats need to be recalculated.</param>
     internal static void RecalculateGameStats(Wizard wizard) {
-        Logger.Debug("Recalculation of game stats for {0}.", Logger.Args(wizard.PlayerNameBehavior.GetWizardName()));
+        Logger.Verbose("Recalculation of game stats for {0}.", Logger.Args(wizard.PlayerNameBehavior.GetWizardName()));
 
         // Reset the base stats to the default values.
         wizard.GameStats.SetBaseStats();
@@ -80,7 +84,7 @@ internal static class CharacterHelper {
 
             var activatedEffects = CharacterEffectHelper.AddEffectsToWizard(wizard, template);
 
-            Logger.Debug("{0} Applied {1} effects for item {2}.",
+            Logger.Verbose("{0} Applied {1} effects for item {2}.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), activatedEffects.Count, template.m_objectName));
         }
 
@@ -92,7 +96,7 @@ internal static class CharacterHelper {
         // Any mismatch will be corrected on the next XP gain.
         var xp = wizard.MagicSchoolBehavior.ExperiencePoints;
         var matchedLevel = MagicLevelsConfig.GetPlayerLevelAtExperience(xp);
-        if (matchedLevel != wizard.MagicSchoolBehavior.Level) {
+        if (matchedLevel != wizard.MagicSchoolBehavior.Level && s_mismatchReported.TryAdd(wizard.CharId, 0)) {
             Logger.Warning("Player {0} has XP/Level mismatch on login. XP: {1}, Stored Level: {2}, Calculated Level: {3}. " +
                           "This will be corrected on next XP gain.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(),
@@ -101,7 +105,7 @@ internal static class CharacterHelper {
                             matchedLevel));
         }
 
-        Logger.Debug("Game stats recalculated for {0}.", Logger.Args(wizard.PlayerNameBehavior.GetWizardName()));
+        Logger.Verbose("Game stats recalculated for {0}.", Logger.Args(wizard.PlayerNameBehavior.GetWizardName()));
     }
 
     /// <summary>
