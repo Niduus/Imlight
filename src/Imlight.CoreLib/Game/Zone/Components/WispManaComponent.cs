@@ -55,7 +55,8 @@ internal sealed class WispManaComponent : ZoneEntityComponent, IComponentFactory
     private readonly string PARTICLE_ASSET = "Character/FX_WispBlue_Dsppr.nif";
     private readonly string SOUND_ASSET = "Sound/GUI/ui_health_powerup_01.wav";
 
-    private const float INTERACTION_RADIUS = 100.0f;
+    private readonly WispPickup _pickup = new();
+    private bool _collected;
     private const float STARTING_WORLD_WISP_MANA = 0.25f;
     private const float WISP_MANA_PERCENT_INCREASE = 0.10f;
     private const int MIN_WISP_MANA = 5;
@@ -76,8 +77,10 @@ internal sealed class WispManaComponent : ZoneEntityComponent, IComponentFactory
         }
     }
 
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id) => _pickup.Forget(id);
+
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (IsInRadius(playerObj, INTERACTION_RADIUS)) {
+        if (!_collected && playerWizard is not null && _pickup.Reached(playerObj, Entity.ActiveGameObject)) {
             // Values with gear and effects.
             var baseMana = playerWizard.GameStats.m_baseMana;
             var currentMana = playerWizard.GameStats.m_currentMana;
@@ -112,6 +115,7 @@ internal sealed class WispManaComponent : ZoneEntityComponent, IComponentFactory
 
             SendPlayerStateChange(playerWizard);
 
+            _collected = true;
             SendDestroy(playerWizard.GameObjectID);
 
             playerWizard.UpdateMana(currentMana + manaUpdate);

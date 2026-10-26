@@ -54,7 +54,8 @@ internal sealed class WispHealthComponent : ZoneEntityComponent, IComponentFacto
     private readonly string PARTICLE_ASSET = "Character/FX_WispRed_Dsppr.nif";
     private readonly string SOUND_ASSET = "Sound/GUI/ui_health_powerup_01.wav";
 
-    private const float INTERACTION_RADIUS = 100.0f;
+    private readonly WispPickup _pickup = new();
+    private bool _collected;
     private const float STARTING_WORLD_WISP_HEALTH = 0.40f;
     private const float WISP_HEALTH_PERCENT_INCREASE = 0.25f;
 
@@ -74,8 +75,10 @@ internal sealed class WispHealthComponent : ZoneEntityComponent, IComponentFacto
         }
     }
 
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id) => _pickup.Forget(id);
+
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (IsInRadius(playerObj, INTERACTION_RADIUS)) {
+        if (!_collected && playerWizard is not null && _pickup.Reached(playerObj, Entity.ActiveGameObject)) {
             // Values with gear and effects.
             var baseHealth = playerWizard.GameStats.m_baseHitpoints;
             var currentHealth = playerWizard.GameStats.m_currentHitpoints;
@@ -112,6 +115,7 @@ internal sealed class WispHealthComponent : ZoneEntityComponent, IComponentFacto
             SendPlayerStateChange(playerWizard);
 
             // Despawn the wisp
+            _collected = true;
             SendDestroy(playerWizard.GameObjectID);
 
             playerWizard.UpdateHealth(healthUpdate + currentHealth);

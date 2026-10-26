@@ -31,7 +31,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// </summary>
 internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory {
 
-    private const float INTERACTION_RADIUS = 100.0f;
+    private readonly WispPickup _pickup = new();
     private bool _collected;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
@@ -39,8 +39,10 @@ internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent
         && goTemplate.m_objectName.ToString().Contains("Wisp")
         && goTemplate.m_objectName.ToString().Contains("Gold");
 
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id) => _pickup.Forget(id);
+
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (_collected || playerWizard is null || !IsInRadius(playerObj, INTERACTION_RADIUS)) {
+        if (_collected || playerWizard is null || !_pickup.Reached(playerObj, Entity.ActiveGameObject)) {
             return;
         }
 
