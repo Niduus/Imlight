@@ -63,8 +63,7 @@ internal sealed partial class ManagerWindow {
             Action(Plain("Add a trainer here"), () => AddNpcAsync(trainer: true))),
         PresetRow(),
         _npcCount,
-        _npcRows,
-        _npcEditorHost);
+        _npcRows);
 
     private List<CustomNpc> SafeNpcs() {
         try {
@@ -195,6 +194,10 @@ internal sealed partial class ManagerWindow {
             (_npcEdit.Zone, _npcEdit.X, _npcEdit.Y, _npcEdit.Z, _npcEdit.Yaw) = (zone, x, y, z, yaw);
         }
 
+        if (IsCustomPage("npc", npc.Id.ToString(CultureInfo.InvariantCulture))) {
+            _customsPageLine.Text = $"Stands in {ZoneDisplay(zone)}. Move to my spot puts it where your wizard stands.";
+        }
+
         RenderNpcs();
         Say($"{npc.Shown} now stands where {who} stands in {ZoneDisplay(zone)}.");
 
@@ -209,6 +212,10 @@ internal sealed partial class ManagerWindow {
         CustomNpcs.Set(_manager.CustomsFolder, npc.Id, null);
         if (_npcEdit?.Id == npc.Id) {
             CloseNpc();
+        }
+
+        if (IsCustomPage("npc", npc.Id.ToString(CultureInfo.InvariantCulture))) {
+            BackToCustoms();
         }
 
         RenderNpcs();
@@ -235,8 +242,11 @@ internal sealed partial class ManagerWindow {
         _npcEdit = npc.Copy();
         RenderNpcEditor();
         RenderNpcs();
-        Dispatcher.UIThread.Post(() => _npcEditorHost.BringIntoView(), DispatcherPriority.Background);
+        ShowCustomPage("npc", npc.Id.ToString(CultureInfo.InvariantCulture), npc.IsTrainer ? "school" : "bag", NpcPageTitle(npc),
+            $"Stands in {ZoneDisplay(npc.Zone)}. Move to my spot puts it where your wizard stands.", CloseNpc, _npcEditorHost);
     }
+
+    private static string NpcPageTitle(CustomNpc npc) => $"{(npc.IsTrainer ? "Trainer" : "Vendor")} {npc.Id}: {(npc.Name.Trim().Length > 0 ? npc.Name.Trim() : npc.Shown)}";
 
     private void CloseNpc() {
         _npcEdit = null;
@@ -251,7 +261,12 @@ internal sealed partial class ManagerWindow {
         }
 
         var name = new TextBox { Width = 360, Text = npc.Name, Watermark = "Its name, such as Gamma's Gear", HorizontalAlignment = HorizontalAlignment.Left };
-        name.TextChanged += (_, _) => npc.Name = name.Text ?? "";
+        name.TextChanged += (_, _) => {
+            npc.Name = name.Text ?? "";
+            if (IsCustomPage("npc", npc.Id.ToString(CultureInfo.InvariantCulture))) {
+                _customsPageTitle.Text = NpcPageTitle(npc);
+            }
+        };
 
         var kind = new ComboBox { Width = 360, ItemsSource = new[] { "Vendor: sells items for gold", "Trainer: teaches spells for training points" } };
         kind.SelectedIndex = npc.IsTrainer ? 1 : 0;
@@ -260,6 +275,10 @@ internal sealed partial class ManagerWindow {
             if (trainer != npc.IsTrainer) {
                 npc.Kind = trainer ? CustomNpc.TRAINER : CustomNpc.VENDOR;
                 RenderNpcEditor();
+                if (IsCustomPage("npc", npc.Id.ToString(CultureInfo.InvariantCulture))) {
+                    _customsPageTitle.Text = NpcPageTitle(npc);
+                    _customsPageTile.Child = ManagerTheme.Tile(trainer ? "school" : "bag", ManagerTheme.Accent("Customs"), 46);
+                }
             }
         };
 
@@ -282,8 +301,6 @@ internal sealed partial class ManagerWindow {
         var body = new StackPanel {
             Spacing = 8,
             Children = {
-                new TextBlock { Text = $"Editing {(npc.IsTrainer ? "trainer" : "vendor")} {npc.Id}", FontSize = 18, FontWeight = FontWeight.SemiBold },
-                Sub($"It stands in {ZoneDisplay(npc.Zone)}. Move to my spot puts it where your wizard stands."),
                 Field("Name", "The name over its head and in its window.", name),
                 Field("Kind", "A vendor opens a shop. A trainer opens a spell list.", kind),
                 Field("Look", "Any NPC or creature of the game. A creature only lends its look: it never starts a battle.", look),
@@ -313,9 +330,9 @@ internal sealed partial class ManagerWindow {
 
         body.Children.Add(WithMargin(Row(
             Action(Primary("Save"), SaveNpcAsync),
+            Action(Plain("Move to my spot"), () => MoveNpcAsync(SafeNpcs().FirstOrDefault(n => n.Id == npc.Id) ?? npc)),
             Action(Plain("Close without saving"), () => {
-                CloseNpc();
-                RenderNpcs();
+                BackToCustoms();
 
                 return Task.CompletedTask;
             })), new Thickness(0, 6, 0, 0)));

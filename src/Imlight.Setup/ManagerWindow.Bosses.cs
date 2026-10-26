@@ -388,7 +388,6 @@ internal sealed partial class ManagerWindow {
     }
 
     private void OpenBoss(BossInfo boss) {
-        _customHeaderCard.IsVisible = false;
         OpenBossEditor(boss, _manager.BossChangesFolder, boss.Id, null, _bossesEditorHost);
     }
 

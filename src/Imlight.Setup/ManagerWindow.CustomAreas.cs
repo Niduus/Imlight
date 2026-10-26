@@ -82,11 +82,18 @@ internal sealed partial class ManagerWindow {
 
         internal List<TextBlock> DirtyMarks { get; } = [];
 
+        /// <summary>The Unsaved changes mark on its row in the list (the others are on its page).</summary>
+        internal TextBlock? ListMark { get; set; }
+
         internal bool Dirty => Clean(Work).ToJsonString() != Saved;
 
         internal void Changed() {
             foreach (var mark in DirtyMarks) {
                 mark.IsVisible = Dirty;
+            }
+
+            if (ListMark is not null) {
+                ListMark.IsVisible = Dirty;
             }
         }
 
@@ -163,6 +170,9 @@ internal sealed partial class ManagerWindow {
         _newAreaZone.ItemsSource = _areaCatalog?.Zones;
         if (areas.Count == 0) {
             _areaRows.Children.Add(Sub("There are no custom areas yet. Make one above."));
+            if (IsCustomPage("area")) {
+                BackToCustoms();
+            }
 
             return;
         }
@@ -175,8 +185,51 @@ internal sealed partial class ManagerWindow {
                 _areaEdits[area.File] = edit;
             }
 
-            _areaRows.Children.Add(AreaView(edit));
+            _areaRows.Children.Add(AreaListRow(edit));
         }
+
+        // Its open page shows it again; a deleted area's page closes.
+        if (IsCustomPage("area")) {
+            if (_areaEdits.TryGetValue(_customsPageKey, out var open)) {
+                OpenArea(open);
+            }
+            else {
+                BackToCustoms();
+            }
+        }
+    }
+
+    /// <summary>Opens the page of an area by its file, once the list has it (after it is made or saved).</summary>
+    private void OpenAreaFile(string file) {
+        if (_areaEdits.TryGetValue(file, out var edit)) {
+            OpenArea(edit);
+        }
+    }
+
+    /// <summary>The page of one area: its name and counts, then every section of it.</summary>
+    private void OpenArea(AreaEdit edit) {
+        var (title, body) = AreaView(edit);
+        ShowCustomPage("area", edit.Area.File, "pin", ZoneDisplay(edit.Zone),
+            edit.Variant.Length > 0 ? $"{edit.Zone}  ·  private copy \"{edit.Variant}\"" : $"{edit.Zone}  ·  the zone itself, for everyone",
+            null, title, body);
+    }
+
+    // An area in the list: its name, what it has, and Open, which opens its page.
+    private Control AreaListRow(AreaEdit edit) {
+        var (title, _) = AreaView(edit, withBody: false);
+        var mark = new TextBlock { Text = "Unsaved changes", Foreground = DIRTY, FontWeight = FontWeight.Medium, IsVisible = edit.Dirty, VerticalAlignment = VerticalAlignment.Center };
+        edit.ListMark = mark;
+
+        return ManagerTheme.Item(highlighted: false, content: new DockPanel {
+            Children = {
+                WithDock(Row(WithCenter(mark), Action(Primary("Edit"), () => {
+                    OpenArea(edit);
+
+                    return Task.CompletedTask;
+                })), Dock.Right),
+                title,
+            },
+        });
     }
 
     private AreaEdit NewEdit(CustomArea area, JsonObject placements) {
@@ -221,36 +274,36 @@ internal sealed partial class ManagerWindow {
     }
 
     private void RerenderArea(AreaEdit edit) {
-        var index = _areaRows.Children.ToList().FindIndex(c => c.Tag == edit);
-        if (index < 0) {
-            RenderAreas();
+        if (IsCustomPage("area", edit.Area.File) && _areaEdits.TryGetValue(edit.Area.File, out var open) && open == edit) {
+            OpenArea(edit);
 
             return;
         }
 
-        _areaRows.Children[index] = AreaView(edit);
+        RenderAreas();
     }
 
     // ---------------------------------------------------------------------
     // One area
     // ---------------------------------------------------------------------
 
-    private Control AreaView(AreaEdit edit) {
-        edit.DirtyMarks.Clear();
-        edit.Errors.Clear();
-        var key = edit.Area.File;
+    // An area's name, what it has (a line for the list and the top of its page) and, for its page, every section of it.
+    private (Control Title, Control Body) AreaView(AreaEdit edit, bool withBody = true) {
         var work = edit.Work;
         var enabled = !(BossChanges.FindIn(work, "Enabled") is JsonValue en && en.ToJsonString() == "false");
 
+        // The page's header has the area's name already; its top line has only what the area has.
         var title = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
-        title.Children.Add(Tile(Glyph(edit.Variant.Length > 0 ? AreaIcon.Variant : AreaIcon.Zone, ZONE, 20), ZONE, 36));
-        var names = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 1 };
-        names.Children.Add(new TextBlock { Text = ZoneDisplay(edit.Zone), FontSize = 16, FontWeight = FontWeight.SemiBold });
-        names.Children.Add(new TextBlock {
-            Text = edit.Variant.Length > 0 ? $"{edit.Zone}  ·  private copy \"{edit.Variant}\"" : $"{edit.Zone}  ·  the zone itself, for everyone",
-            Foreground = MUTED, FontSize = 12,
-        });
-        title.Children.Add(names);
+        if (!withBody) {
+            title.Children.Add(Tile(Glyph(edit.Variant.Length > 0 ? AreaIcon.Variant : AreaIcon.Zone, ZONE, 20), ZONE, 36));
+            var names = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 1 };
+            names.Children.Add(new TextBlock { Text = ZoneDisplay(edit.Zone), FontSize = 16, FontWeight = FontWeight.SemiBold });
+            names.Children.Add(new TextBlock {
+                Text = edit.Variant.Length > 0 ? $"{edit.Zone}  ·  private copy \"{edit.Variant}\"" : $"{edit.Zone}  ·  the zone itself, for everyone",
+                Foreground = MUTED, FontSize = 12,
+            });
+            title.Children.Add(names);
+        }
         var counts = new List<string>();
         void CountOf(string k, string one, string many) {
             var n = Entries(work, k).Count();
@@ -277,6 +330,12 @@ internal sealed partial class ManagerWindow {
             }));
         }
 
+        if (!withBody) {
+            return (title, title);
+        }
+
+        edit.DirtyMarks.Clear();
+        edit.Errors.Clear();
         title.Children.Add(WithCenter(DirtyMark(edit)));
 
         var body = new StackPanel { Spacing = SECTION_SPACING, Margin = new Thickness(0, 4, 0, 0) };
@@ -292,10 +351,7 @@ internal sealed partial class ManagerWindow {
         body.Children.Add(AdvancedSection(edit));
         body.Children.Add(SaveBar(edit));
 
-        var view = OpenState(Section(title, body, ZONE, false), key);
-        view.Tag = edit;
-
-        return view;
+        return (title, body);
     }
 
     private TextBlock DirtyMark(AreaEdit edit) {
@@ -660,7 +716,7 @@ internal sealed partial class ManagerWindow {
             }
 
             if (File.Exists(Path.Combine(AreaFolder, AreaFiles.FileNameOf(zone, variant)))) {
-                throw new PanelException($"{AreaTitle(zone, variant)} already has its area. Open it below.");
+                throw new PanelException($"{AreaTitle(zone, variant)} already has its area. Press Edit on it in the Custom areas list.");
             }
 
             AreaFiles.Create(AreaFolder, _manager.CustomsFolder, zone, variant, null);
@@ -1131,6 +1187,12 @@ internal sealed partial class ManagerWindow {
         }
 
         _areaEdits.Remove(edit.Area.File);
+        var wasOpen = IsCustomPage("area", edit.Area.File);
+        if (wasOpen && !string.Equals(file, edit.Area.File, StringComparison.OrdinalIgnoreCase)) {
+            // Saved under a new name (its zone or variant changed): the page goes with it.
+            _customsPageKey = file;
+        }
+
         RenderAreas();
 
         var title = AreaTitle(edit.Zone, edit.Variant);
@@ -1179,7 +1241,8 @@ internal sealed partial class ManagerWindow {
         _newAreaZone.Text = "";
         _newAreaVariant.Text = "";
         RenderAreas();
-        Say($"Made the area for {AreaTitle(zone, variant)}. Open it below to add to it." +
+        OpenAreaFile(file);
+        Say($"Made the area for {AreaTitle(zone, variant)}. Add to it here and press Save area." +
             (variant.Length > 0 ? $" Teams get into it through a sigil pad whose Into variant is {variant}." : ""));
 
         return Task.CompletedTask;
@@ -1195,7 +1258,8 @@ internal sealed partial class ManagerWindow {
         var file = AreaFiles.Create(AreaFolder, _manager.CustomsFolder, edit.Zone, name, copy);
         _areaOpen[file] = true;
         RenderAreas();
-        Say($"Made the variant {name} of {edit.Zone}, a copy of this area. Teams get into it through a sigil pad whose Into variant is {name}.");
+        OpenAreaFile(file);
+        Say($"Made the variant {name} of {edit.Zone}, a copy of this area, and opened it. Teams get into it through a sigil pad whose Into variant is {name}.");
     }
 
     private async Task DeleteAreaAsync(AreaEdit edit) {

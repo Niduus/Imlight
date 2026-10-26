@@ -441,6 +441,11 @@ internal sealed partial class ManagerWindow : Window {
             case "Quest Editor": LoadQuestEditor(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
             case "Guides":
+                // The wizard may be on the Customs tab's New custom page; it comes back here.
+                if (IsCustomPage("new")) {
+                    BackToCustoms();
+                }
+
                 await LoadBossesAsync();
                 UpdateCustomWizard();
                 break;

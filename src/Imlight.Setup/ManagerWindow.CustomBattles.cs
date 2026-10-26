@@ -31,7 +31,7 @@ namespace Imlight.Setup;
 /// <summary>
 /// The Customs tab's battles and duel circles (Niduus, 2026-10-23: "Make creating a Sigil and Duel Circle as easy as
 /// Vendor/Trainers"): one press puts a battle circle with a creature on it, or a duel circle, where the wizard stands.
-/// Both go into the zone's own custom area (made when it has none), which then opens below to be changed like any
+/// Both go into the zone's own custom area (made when it has none), which then opens on its own page to be changed like any
 /// other; the server adds them at once.
 /// </summary>
 internal sealed partial class ManagerWindow {
@@ -62,7 +62,7 @@ internal sealed partial class ManagerWindow {
             "Go into the game, stand where it should be and walk a step. For a battle, pick the creature (Find searches every " +
             "creature and boss by name) or one of your Custom mobs, then press Add a battle here: the circle and the creature " +
             "appear at once. For a duel circle, choose how the two sides fight and press Add a duel circle here. Both go into " +
-            "this zone's custom area below, which opens so you can move or change them and press Save area. A defeated " +
+            "this zone's custom area, whose page opens so you can move or change them and press Save area. A defeated " +
             "creature comes back like the zone's own, except in a private copy."),
         Row(WithCenter(new TextBlock { Text = "Creature:" }), _battleCreatureName,
             new Button {
@@ -140,12 +140,12 @@ internal sealed partial class ManagerWindow {
         ["Yaw"] = Math.Round(spot.Yaw, 3),
     };
 
-    // Adds to the custom area of the zone the wizard stands in (made when it has none), saves it and opens it below.
+    // Adds to the custom area of the zone the wizard stands in (made when it has none), saves it and opens its page.
     private Task AddToMyZone(Func<JsonObject, (double X, double Y, double Z, double Yaw), Func<string, string>, (string Said, string[] Open)> add) {
         var (who, zone, x, y, z, yaw) = MySpot();
         var area = CustomArea.All(AreaFolder).FirstOrDefault(a => a.Variant.Length == 0 && a.Zone.Equals(zone, StringComparison.OrdinalIgnoreCase));
         if (area is not null && _areaEdits.TryGetValue(area.File, out var open) && open.Dirty) {
-            throw new PanelException($"The area for {ZoneDisplay(zone)} below has changes not saved yet. Press Save area or Undo on it first.");
+            throw new PanelException($"The area for {ZoneDisplay(zone)} has changes not saved yet. Open it and press Save area or Undo first.");
         }
 
         var json = area is null ? new JsonObject { ["Zone"] = zone, ["Notes"] = "Made in the Manager's Customs tab." } : (JsonObject) area.Json.DeepClone();
@@ -174,15 +174,11 @@ internal sealed partial class ManagerWindow {
         }
 
         RenderAreas();
-        var index = CustomArea.All(AreaFolder).FindIndex(a => string.Equals(a.File, file, StringComparison.OrdinalIgnoreCase));
-        if (index >= 0 && index < _areaRows.Children.Count) {
-            var view = _areaRows.Children[index];
-            Dispatcher.UIThread.Post(() => view.BringIntoView(), DispatcherPriority.Background);
-        }
+        OpenAreaFile(file);
 
         Say($"{said} where {who} stands in {ZoneDisplay(zone)}." +
             (InstalledCommands.IsServerRunning(_manager.InstallFolder) ? " It is in the game now." : " The server is off, so it is there when it starts.") +
-            $" It is in {(area is null ? "a new" : "this zone's")} custom area below; change it there and press Save area.");
+            $" It is in {(area is null ? "a new" : "this zone's")} custom area, open now; change it here and press Save area.");
 
         return Task.CompletedTask;
     }
