@@ -38,6 +38,7 @@ internal sealed class WispPickup {
 
     private readonly Dictionary<ulong, (float X, float Y, float Z)> _lastLocations = [];
     private readonly HashSet<ulong> _nearMisses = [];
+    private readonly HashSet<ulong> _inReach = [];
 
     /// <summary>
     /// True when the wizard is in reach of the wisp at <paramref name="wisp"/> now or passed through it since the last
@@ -75,15 +76,18 @@ internal sealed class WispPickup {
         var ground = MathF.Sqrt((dx * dx) + (dy * dy));
 
         // Wisps float a little above the ground, and slopes and stairs move the wizard up and down.
+        // (A health or mana wisp still stays when that wizard's health or mana is full.) Logged once per wizard.
         if (ground <= radius && Math.Abs(dz) <= radius * 1.5f) {
-            Logger.Debug("Wisp {0} picked up by {1}: {2} away on the ground, {3} in height (reach {4}).",
-                Logger.Args(wisp.m_debugName, key, (int) ground, (int) dz, (int) radius));
+            if (_inReach.Add(key)) {
+                Logger.Debug("Wisp {0} in reach of {1}: {2} away on the ground, {3} in height (reach {4}).",
+                    Logger.Args(wisp.m_debugName, key, (int) ground, (int) dz, (int) radius));
+            }
 
             return true;
         }
 
         // A wizard who came close but not close enough, once per wisp, so a missed pickup shows in the log.
-        if (ground <= radius * 2 && _nearMisses.Add(key)) {
+        if (ground <= radius * 2 && !_inReach.Contains(key) && _nearMisses.Add(key)) {
             Logger.Debug("Wisp {0} not picked up by {1}: {2} away on the ground, {3} in height (reach {4}).",
                 Logger.Args(wisp.m_debugName, key, (int) ground, (int) dz, (int) radius));
         }
