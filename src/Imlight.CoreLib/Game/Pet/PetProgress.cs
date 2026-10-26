@@ -455,7 +455,8 @@ internal static class PetProgress {
         }
 
         if (!useMax && wanted > GetStat(behavior.m_maxStats, stat.m_name)) {
-            PetMaxRaises.Set(pet.m_globalID.Full, stat.m_name, wanted);
+            // The raise is kept without the talents' part, which RecalculateMaxStats adds back on top.
+            PetMaxRaises.Set(pet.m_globalID.Full, stat.m_name, Math.Max(0, wanted - TalentMaxBonus(behavior, pet, stat.m_name)));
             RecalculateMaxStats(behavior, GetTemplate(pet));
         }
 
@@ -734,18 +735,12 @@ internal static class PetProgress {
 
         // Selfish talents raise the maximum: the pet's own and the one of a jewel in its socket (Mighty is +65
         // Strength). Taking the jewel out puts the maximum back (Niduus, 2026-10-20).
+        // A `.pet stats` raise lifts the pet's own maximum and the talents add on top of it, so Mighty on a pet raised to
+        // 260 Strength gives 325 (Niduus, 2026-10-26: it used to give the base 220 + 65 = 285).
         var pet = s_pets.TryGetValue(behavior, out var found) ? found : null;
-        var bonus = (behavior.m_expressedTalents ?? [])
-            .Select(PetData.GetTalent)
-            .Concat(pet is null ? [] : JewelSockets.GetPetJewelTalents(pet).Select(PetData.GetTalent))
-            .OfType<PetTalentTemplate>()
-            .SelectMany(t => t.m_maxStatList ?? [])
-            .Where(s => s is not null)
-            .ToList();
         var petId = pet?.m_globalID.Full ?? 0UL;
-        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
-            BaseMaxStat(template, petId, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
-            petId == 0 ? 0 : CappedRaise(petId, name))))];
+        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name,
+            Math.Max(BaseMaxStat(template, petId, name), petId == 0 ? 0 : CappedRaise(petId, name)) + TalentMaxBonus(behavior, pet, name)))];
 
         // Selfish talents raise only the maximum; the stat itself still has to be trained up (Niduus, 2026-10-20).
         // 0.10.17 added their points to the stat too, so those points are taken back once.
@@ -761,6 +756,18 @@ internal static class PetProgress {
 
     // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
     // do (Niduus, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
+    /// <summary>
+    /// What the pet's shown talents and the jewel in its socket add to the maximum of one stat (Mighty is +65 Strength).
+    /// </summary>
+    private static int TalentMaxBonus(ClientPetItemBehavior behavior, WizClientObjectItem pet, string name)
+        => (behavior.m_expressedTalents ?? [])
+            .Select(PetData.GetTalent)
+            .Concat(pet is null ? [] : JewelSockets.GetPetJewelTalents(pet).Select(PetData.GetTalent))
+            .OfType<PetTalentTemplate>()
+            .SelectMany(t => t.m_maxStatList ?? [])
+            .Where(s => s is not null && SameStat(s.m_name, name))
+            .Sum(s => s.m_value);
+
     private static int CappedRaise(ulong petId, string name) {
         var raise = PetMaxRaises.Get(petId, name);
         var most = PetRules.MaxStat(name);
