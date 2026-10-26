@@ -1180,6 +1180,17 @@ public partial class CombatResolver {
     private static string StepText(BossCheats.CheatAction step) {
         var on = step.Target.Length > 0 ? $" on {step.Target}" : "";
         var spell = step.Spell.Length > 0 ? step.Spell : step.SpellID.ToString();
+        // The game's own name too, when the id is of a spell of another name (Niduus's log: "free cast Brace" was
+        // Adv-Titan's Trident-Max Damage Aura, whose card is also called Brace).
+        try {
+            if (step.SpellID != 0 && step.Spell.Length > 0 && CoreObjectFactory.GetCoreTemplate(step.SpellID) is SpellTemplate { m_name: var gameName }
+                && !string.Equals((string) gameName, step.Spell, StringComparison.OrdinalIgnoreCase)) {
+                spell = $"{step.Spell} ({(string) gameName}, {step.SpellID})";
+            }
+        }
+        catch (Exception) {
+            // Only for the log.
+        }
 
         return step.Do.ToLowerInvariant() switch {
             "cast" => $"cast {spell}{on}{(step.Silent ? " (silent)" : "")}",

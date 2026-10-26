@@ -106,6 +106,33 @@ internal sealed class CheatBlock {
         return block;
     }
 
+    /// <summary>
+    /// A block read from a cheat file: the boxes the file leaves out take the value the server reads for them ("",
+    /// 0, false, none), not the box's first value for a new block (Niduus, 2026-10-26: "sometimes saving cheats modifies
+    /// the cheat": a Heal or Pips with no Target was saved "on itself", an Immune with no School as Fire).
+    /// </summary>
+    internal static CheatBlock FromFile(CheatSpec spec, JsonObject values) {
+        var block = New(spec, values);
+        foreach (var field in spec.Fields) {
+            foreach (var (key, first) in Defaults(field)) {
+                if (!values.Any(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase))) {
+                    block.Set(key, Unset(first));
+                }
+            }
+        }
+
+        return block;
+    }
+
+    // What the server reads for a value a file leaves out, of the same kind as the box's own.
+    internal static JsonNode? Unset(JsonNode? like) => like switch {
+        JsonArray => new JsonArray(),
+        JsonValue v when v.TryGetValue<bool>(out _) => JsonValue.Create(false),
+        JsonValue v when v.TryGetValue<string>(out _) => JsonValue.Create(""),
+        JsonValue => JsonValue.Create(0),
+        _ => null,
+    };
+
     private static IEnumerable<(string, JsonNode?)> Defaults(CheatField field) => field.Type switch {
         CheatFieldType.Rounds => [("Round", 0), ("Every", 0)],
         CheatFieldType.Health => [("Percent", 50), ("Health", 0)],
@@ -264,8 +291,17 @@ internal sealed class CheatRule {
             : CheatBlock.New(whenSpec);
         foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
                      "RemovedKind", "RemovedSpell", "RemovedFrom" }) {
-            if (whenBlock.Values.Any(p => p.Key == key) && Node(key) is { } value) {
-                whenBlock.Set(key, value);
+            var boxed = whenBlock.Values.Any(p => p.Key == key);
+            if (Node(key) is { } value) {
+                // A School or Category the When has no box for (on "boss defeated", "a player puts a charm") is kept on
+                // it as it is, so a save writes it back; the server reads it.
+                if (boxed || key is "School" or "Category" && value is JsonValue v && v.ToString().Length > 0) {
+                    whenBlock.Set(key, value);
+                }
+            }
+            else if (boxed && !(key is "Health" or "Percent")) {
+                // Left out of the file: what the server reads, not the box's first value (FromRound's Every 1).
+                whenBlock.Set(key, CheatBlock.Unset(whenBlock.Values[key]));
             }
         }
 
@@ -304,7 +340,8 @@ internal sealed class CheatRule {
             If("I.CasterSchool", new JsonObject { ["CasterSchool"] = Text("CasterSchool") });
         }
 
-        if (whenBlock.Spec == "W.RoundEnd" && Number("Pips") > 0) {
+        // Pips on a When with no box for them (a round's start too) are the "pips left" If, as on a round's end.
+        if (Number("Pips") > 0 && !whenBlock.Values.Any(p => p.Key == "Pips")) {
             If("I.Pips", new JsonObject { ["PipsOf"] = Text("PipsOf"), ["Pips"] = Number("Pips"), ["PipsKind"] = Text("PipsKind") });
         }
 
@@ -483,7 +520,9 @@ internal sealed class CheatRule {
                 spec = "D.Other";
             }
 
-            Do(spec, values, !actionOff);
+            var block = CheatBlock.FromFile(CheatSpecs.Get(spec), values);
+            block.On = !actionOff;
+            rule.Dos.Add(block);
         }
 
         if (Flag("Random")) {

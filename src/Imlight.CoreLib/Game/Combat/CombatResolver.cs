@@ -944,9 +944,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 }
 
                 try {
-                    Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3}{4}.",
+                    Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3} ({4}){5} on slot {6}.",
                         Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer",
-                            action.Spell?.m_templateID, delayed.Free ? " (command)" : ""));
+                            action.Spell?.m_templateID, (string) action.SpellTemplate?.m_name, delayed.Free ? " (command)" : "", target.SlotIndex));
                     caster._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
 
                     // The card goes out without its enchantment, or the game would play the delay a second time. Its
@@ -955,6 +955,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                         SpellCaster = action.SpellCaster,
                         SelectedTarget = target,
                         SelfOnTarget = delayed.OnTarget,
+                        ShownTemplateId = delayed.Free ? SideLookalikeOf(action, target) : 0,
                         // A command's free cast keeps the e option's enchantment: it never carries a delay.
                     Spell = delayed.Free ? action.Spell : DelayedCard(action.Spell),
                         SpellTemplate = action.SpellTemplate,
@@ -979,8 +980,14 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     cinematicTime += time;
                     // A command's free cast is in no hand, so the game skipped it when a card had been played (Niduus's
                     // log, 2026-10-20) while the next round still waited for it.
+                    // A side lookalike (SideLookalikeOf) is the card the game is told was cast, so that one goes in the hand.
                     if (delayed.Free) {
-                        ShowInHand(caster, cast.Spell, action.SpellTemplate, combatActionList, before);
+                        var shownCard = cast.ShownTemplateId == 0 ? null
+                            : combatActionList.m_actionList.Skip(before)
+                                .FirstOrDefault(a => a.m_spellCaster == caster.SlotIndex && a.m_spell?.m_templateID == cast.ShownTemplateId)?.m_spell;
+                        ShowInHand(caster, shownCard ?? cast.Spell,
+                            shownCard is null ? action.SpellTemplate : CoreObjectFactory.GetCoreTemplate(shownCard.m_templateID) as SpellTemplate,
+                            combatActionList, before);
                     }
                     // The spell going off when the delay runs out. A command's free cast had no enchanted card on the
                     // table, so the game is shown it as a normal cast; flagged, it waits for a card it never saw.
@@ -1451,6 +1458,61 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
             return [];
         }
+    }
+
+    // Every spell of the game with its template id, for SideLookalikes.
+    private static readonly Lazy<List<(SpellTemplate Spell, uint Id)>> s_allSpells = new(() => {
+        try {
+            var ids = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
+            foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+                string file = location?.m_filename;
+                if (!string.IsNullOrEmpty(file) && location.m_id <= uint.MaxValue) {
+                    ids.TryAdd(file, (uint) location.m_id);
+                }
+            }
+
+            return [.. SpellFactory.AllSpellTemplates().Where(s => ids.ContainsKey(s.Path)).Select(s => (s.Template, ids[s.Path]))];
+        }
+        catch (Exception e) {
+            Logger.Error("Spell animations: could not list the spells for the side lookalikes: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    /// <summary>
+    /// For a free cast going on someone its card cannot aim at (a self spell on another, a spell for its own side on
+    /// the other side): the game's spell to show instead, aimed that way (SideLookalikes), or 0 to show the real one.
+    /// </summary>
+    private uint SideLookalikeOf(QueuedCombatAction action, CombatDuelSubCircle target) {
+        var caster = action.SpellCaster;
+        var template = action.SpellTemplate;
+        if (target is null || caster is null || template is null) {
+            return 0;
+        }
+
+        // Without OnTarget a self spell stays on its caster, so only its other effects count.
+        var onCaster = target == caster || !action.SelfOnTarget && template.m_effects?.All(e => e?.m_effectTarget == kEffectTarget.kSelf) == true;
+        var onOwnSide = target.OccupiedTeam == caster.OccupiedTeam;
+        if (!SideLookalikes.Needed(template, onOwnSide, onCaster)) {
+            return 0;
+        }
+
+        var shown = SideLookalikes.Pick(s_allSpells.Value, template, onOwnSide, onCaster);
+        string name = template.m_name;
+        if (shown == 0) {
+            Logger.Information("Duel {0} | Slot {1} | {2} goes on slot {3}, but the game has no spell like it aimed there: the game is "
+                               + "shown it as cast, so it may draw it on the caster or not at all (the server still puts it on slot {3}).",
+                Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, name, target.SlotIndex));
+
+            return 0;
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | {2} goes on slot {3}: the game is shown {4} ({5}), which aims there; the server puts on {2}'s own effects.",
+            Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, name, target.SlotIndex,
+                (string) (CoreObjectFactory.GetCoreTemplate(shown) as SpellTemplate)?.m_name, shown));
+
+        return shown;
     }
 
     /// <summary>The spell the game is told was cast: for a wizard casting a boss copy, its player twin (same effects).</summary>

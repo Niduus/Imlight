@@ -79,9 +79,18 @@ public partial class CombatResolver {
         // names (every ally, every enemy...), as a .c1 on that circle. Everyone and EveryoneElse (both sides) cast once on
         // each one standing too, with or without OnTarget.
         var onTarget = step.OnTarget && (step.Target ?? "").Trim().Length > 0;
-        var targets = onTarget || IsEveryone(step.Target)
+        // A spell that only goes on its caster, without OnTarget, goes on the caster once (Niduus's log, 2026-10-25: Brace on
+        // EveryoneElse cast once for each of them, all four on him, and said nothing about it).
+        var selfOnly = !onTarget && (template.m_effects ?? []).Count > 0 && template.m_effects.All(e => e?.m_effectTarget == kEffectTarget.kSelf);
+        if (selfOnly && (step.Target ?? "").Trim().Length > 0 && FreeCastTarget(me, step.Target, template, trigger, receiver) != "me") {
+            Logger.Information("Duel {0} | Slot {1} | Cheat free cast {2}: it only goes on its caster, so it goes on slot {1}, not on {3} "
+                               + "(\"self spells go on the target\" puts it on them).",
+                Logger.Args(_duel.m_duelID.Full, me.SlotIndex, (string) template.m_name, step.Target));
+        }
+
+        var targets = onTarget || IsEveryone(step.Target) && !selfOnly
             ? StepTargets(me, step.Target, template, trigger, receiver).Where(c => c is not null).Select(c => CodeOf(me, c)).Where(c => c is not null).ToList()
-            : [FreeCastTarget(me, step.Target, template, trigger, receiver)];
+            : [selfOnly ? "me" : FreeCastTarget(me, step.Target, template, trigger, receiver)];
         if (targets.Count == 0) {
             Logger.Information("Duel {0} | Slot {1} | Cheat free cast {2}: no one stands where its Target \"{3}\" aims.",
                 Logger.Args(_duel.m_duelID.Full, me.SlotIndex, (string) template.m_name, step.Target));
