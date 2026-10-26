@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -204,7 +205,10 @@ internal sealed partial class ManagerWindow {
             var cards = book.Spells.Where(c => SchoolOk(c.School) && CheatSearch.CostFits(cost, c.Pips, c.XPips)
                                                && (kind.Length == 0 || SpellNameFamily.CategoryMatches(kind, KindsOf(c))
                                                    || kind.Equals(c.Type, StringComparison.OrdinalIgnoreCase)))
-                .Select(c => (Card: c, Score: words.Length == 0 ? 1 : Math.Max(CheatSearch.NameScore(c.Name, words), CheatSearch.NameScore(c.Code, words))))
+                // A template ID typed whole finds its card first (Niduus, 2026-10-26: "can't add spells to custom boss/mobs deck").
+                .Select(c => (Card: c, Score: words.Length == 0 ? 1
+                    : c.Id.ToString(CultureInfo.InvariantCulture) == words.Trim() ? int.MaxValue
+                    : Math.Max(CheatSearch.NameScore(c.Name, words), CheatSearch.NameScore(c.Code, words))))
                 .Where(m => m.Score > 0)
                 .OrderByDescending(m => m.Score).ThenBy(m => m.Card.Hidden).ThenBy(m => m.Card.Name.Length).ThenBy(m => m.Card.Name, StringComparer.OrdinalIgnoreCase)
                 .Take(max)
