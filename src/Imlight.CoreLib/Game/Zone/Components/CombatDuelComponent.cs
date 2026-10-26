@@ -315,21 +315,17 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // Any free enemy circle, up to 4 enemies, even where the usual cap of 2 plus one per wizard would say no
-        // (Niduus, 2026-10-22: walk-ins should join in Wizard City too), except on starter-street circles (below). A
-        // monster that finds no room vanishes, as before.
-        if (GetAvailableSubCircleTeamCreature() is null) {
-            Refused($"the enemy side is full ({CreatureCount} monsters)");
+        // The battle's size rule (Niduus, 2026-10-25: "1 player = 2 mobs in battle, 2 = 3 mobs, 3 and 4 players = 4
+        // mobs"; Unicorn Way, whose circles the zone data marks as starter circles, one per wizard: IsSlotAvailable). A
+        // monster that walks into a full battle vanishes ("They should despawn upon hitting the battle if it's full")
+        // and its spawner brings it back later, instead of walking through the fight. A boss fight's own group (the
+        // boss, and anyone standing in the circle with it before the first round) is not cut down by this rule.
+        var bossGroup = Duel.m_roundNum == 0 && (bossOfThisFight || HasBossInBattle());
+        if (!bossGroup && !IsSlotAvailable(CombatTeam.Monster)) {
+            Refused(IsNewbieSigil
+                ? $"starter street circle, one monster per wizard ({CreatureCount} monsters, {PlayerCount} wizards); it vanishes"
+                : $"the battle is full ({CreatureCount} monsters for {PlayerCount} wizards); it vanishes");
             suspect.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
-
-            return;
-        }
-
-        // Starter streets (Unicorn Way): the zone's own battle circle data marks the circle (IsNewbieSigil), and there
-        // the real game fights one monster per wizard, so nobody walks in on a solo wizard (Niduus, 2026-10-25: "All
-        // duels in Unicorn way are to be locked to 1 mob via vanilla"). Other streets still take walk-ins up to 4.
-        if (IsNewbieSigil && !IsSlotAvailable(CombatTeam.Monster)) {
-            Refused($"starter street circle: one monster per wizard ({CreatureCount} monsters, {PlayerCount} wizards)");
 
             return;
         }
@@ -1678,6 +1674,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         return slot;
     }
+
+    // Whether a boss (NPCBehaviorTemplate.m_bossMob) stands on the enemy side.
+    private bool HasBossInBattle() => SubCircles.Any(c => c is not null && c.Occupied && c.OccupiedTeam == CombatTeam.Monster
+        && c.ParticipantObject is { } obj
+        && (CoreObjectFactory.GetCoreTemplate(obj.m_templateID) as GameObjectTemplate)?.m_behaviors?
+            .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true);
 
     // The free enemy circle nearest to where a creature stands, or null when none is free.
     private CombatDuelSubCircle NearestFreeCreatureCircle(CoreObject creature)
