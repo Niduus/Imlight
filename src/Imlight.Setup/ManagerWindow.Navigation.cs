@@ -33,9 +33,9 @@ using Avalonia.VisualTree;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The side bar and the Home page (Niduus, 2026-10-25: "Clean this up to be more organize ... a new home tab page where
-/// these existing tabs become sub tabs"). The side bar holds a few pages; each page holds the old tabs as tabs along its
-/// top. Every tab keeps its name as its Tag, so SelectTab("Spells") still finds it. Home greets, runs the server, and
+/// The menu along the top and the Home page (Niduus, 2026-10-25: "Clean this up to be more organize ... a new home tab page where
+/// these existing tabs become sub tabs"). The menu under the header holds a few pages (Niduus, 2026-10-26, mockup L: it
+/// was a side bar); each page holds the old tabs as a second row of tabs. Every tab keeps its name as its Tag, so SelectTab("Spells") still finds it. Home greets, runs the server, and
 /// searches everything at once.
 /// </summary>
 internal sealed partial class ManagerWindow {
@@ -106,7 +106,7 @@ internal sealed partial class ManagerWindow {
             items.Add(NavItem(group.Name, group.Icon, group.Line, inner));
         }
 
-        var nav = new TabControl { Padding = new Thickness(0), TabStripPlacement = Dock.Left, ItemsSource = items };
+        var nav = new TabControl { Classes = { "topnav" }, Padding = new Thickness(0), TabStripPlacement = Dock.Top, ItemsSource = items };
         nav.SelectionChanged += (_, e) => {
             if (e.Source == nav) {
                 PageChanged();
@@ -117,12 +117,17 @@ internal sealed partial class ManagerWindow {
         return nav;
     }
 
-    private static TabItem NavItem(string name, string icon, string line, Control content) => new() {
-        Tag = name,
-        Classes = { "nav" },
-        Header = ManagerTheme.NavHeader(icon, ManagerTheme.Accent(name), name, line),
-        Content = content,
-    };
+    private static TabItem NavItem(string name, string icon, string line, Control content) {
+        var item = new TabItem {
+            Tag = name,
+            Classes = { "nav" },
+            Header = ManagerTheme.NavHeader(icon, ManagerTheme.Accent(name), name),
+            Content = content,
+        };
+        ToolTip.SetTip(item, line);
+
+        return item;
+    }
 
     /// <summary>The tab showing now (its name), or Home.</summary>
     private string? ShownPage() {
@@ -198,7 +203,7 @@ internal sealed partial class ManagerWindow {
                         Children = {
                             new TextBlock { Text = $"Welcome to {Edition.NAME}", FontSize = 28, FontWeight = FontWeight.Bold },
                             new TextBlock {
-                                Text = "Your own Wizard101 server, all in one place. Pick a page on the left, or search for anything below.",
+                                Text = "Your own Wizard101 server, all in one place. Pick a page from the menu at the top, or search for anything below.",
                                 Foreground = ManagerTheme.Brush(ManagerTheme.TEXT_SOFT), TextWrapping = TextWrapping.Wrap,
                             },
                             _homeStatus,

@@ -43,7 +43,7 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private DockPanel? _spellsDrawer;
+    private DetailsPopup? _spellsPopup;
 
     private const double SPELL_TILE_WIDTH = 132;
     private const double SPELL_TILE_GAP = 10;
@@ -175,31 +175,34 @@ internal sealed partial class ManagerWindow {
                 SearchTick(_spellsNoEnchant),
                 SearchTick(_spellsNoDiscard),
                 SearchTick(_spellsCloaked));
-        var details = new ScrollViewer {
-            Width = CardPainter.CARD_WIDTH * 2 + 72,
-            Margin = new Thickness(14, 0, 0, 0),
-            Content = Card(new StackPanel {
-                Spacing = 10,
-                Children = {
-                    new Border { HorizontalAlignment = HorizontalAlignment.Center, Child = _spellsBigCard },
-                    _spellsDetails,
-                },
-            }),
-        };
-        var root = new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+        // The card big on the left of the pop-up, everything about it on the right.
+        var details = new DockPanel {
             Children = {
-                WithDock(Fold("cards", "Spells", "Find a card",
-                    "Search or filter, then click a card to see its stats and ID.",
-                    WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
-                        "effects and ID on the right. Hidden and cheat spells are the monsters', bosses' and tests' own copies: a search always " +
-                        "finds them too; the switch shows them while browsing without a search. " +
-                        "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
-                        "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects)."),
-                    filters, _spellsCount), Dock.Top),
-                WithMargin(new DockPanel {
-                    Children = { WithDock(_spellsDrawer = DetailsDrawer("Card details", details, () => { ShowSpellsDetails(null); }), Dock.Right), _spellsScroll },
-                }, new Thickness(0, 14, 0, 0)),
+                WithDock(new Border { Margin = new Thickness(0, 0, 22, 0), VerticalAlignment = VerticalAlignment.Top, Child = _spellsBigCard }, Dock.Left),
+                new ScrollViewer { Width = 480, Content = _spellsDetails },
+            },
+        };
+        _spellsPopup = new DetailsPopup("Card details", details, () => ShowSpellsDetails(null), StepSpells);
+        var root = new Panel {
+            Children = {
+                new DockPanel {
+                    Margin = new Thickness(18, 10, 18, 14),
+                    Children = {
+                        WithDock(Card(new StackPanel {
+                            Spacing = 10,
+                            Children = {
+                                WithHint(_spellsSearch, "Search by name or template ID, or narrow the cards down with the filters. Click a card to see its stats, " +
+                                    "effects and ID. Hidden and cheat spells are the monsters', bosses' and tests' own copies: a search always " +
+                                    "finds them too; the switch shows them while browsing without a search. " +
+                                    "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
+                                    "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects)."),
+                                filters, _spellsCount,
+                            },
+                        }), Dock.Top),
+                        WithMargin(_spellsScroll, new Thickness(0, 12, 0, 0)),
+                    },
+                },
+                _spellsPopup,
             },
         };
         ShowSpellsDetails(null);
@@ -358,12 +361,9 @@ internal sealed partial class ManagerWindow {
             ? brokenHidden > 0
                 ? "No working spell card matches. Clear \"Hide broken cards\" to see the broken ones."
                 : "No spell card matches. Clear the search or pick \"All\" in the filters."
-            : $"{_spellsShown.Count:N0} of {total:N0} spell cards. Click one to see it on the right.") + BrokenHiddenNote(brokenHidden);
+            : $"{_spellsShown.Count:N0} of {total:N0} spell cards. Click one to see everything about it.") + BrokenHiddenNote(brokenHidden);
         LayOutSpells();
         _spellsScroll.Offset = new Vector(0, 0);
-        if (_spellsPicked is null && _spellsShown.Count > 0 && query.Length > 0) {
-            ShowSpellsDetails(_spellsShown[0]);
-        }
     }
 
     private int SpellsColumns() {
@@ -490,10 +490,26 @@ internal sealed partial class ManagerWindow {
         return tile;
     }
 
-    /// <summary>Shows a card big on the right with everything about it.</summary>
+    /// <summary>Previous or Next in the pop-up: the card before or after it in the list.</summary>
+    private void StepSpells(int by) {
+        var at = _spellsPicked is null ? -1 : _spellsShown.IndexOf(_spellsPicked);
+        if (at < 0 || at + by < 0 || at + by >= _spellsShown.Count) {
+            return;
+        }
+
+        if (_spellsPickedTile is not null) {
+            _spellsPickedTile.BorderBrush = Brushes.Transparent;
+            _spellsPickedTile = null;
+        }
+
+        ShowSpellsDetails(_spellsShown[at + by]);
+    }
+
+    /// <summary>Shows a card big in the pop-up with everything about it.</summary>
     private void ShowSpellsDetails(SpellCard? card) {
-        if (_spellsDrawer is not null) {
-            _spellsDrawer.IsVisible = card is not null;
+        if (_spellsPopup is not null) {
+            var at = card is null ? -1 : _spellsShown.IndexOf(card);
+            _spellsPopup.Show(card is not null, at > 0, at >= 0 && at < _spellsShown.Count - 1);
         }
 
         _spellsPicked = card;

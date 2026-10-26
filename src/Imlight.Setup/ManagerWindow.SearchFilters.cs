@@ -57,33 +57,97 @@ internal sealed partial class ManagerWindow {
         return new FilterBar(panel);
     }
 
-    /// <summary>
-    /// The details of what was clicked, on the right (mockup F): hidden until something is picked, with a title and a
-    /// close button that hides them again, so the list has the whole width the rest of the time.
-    /// </summary>
-    private static DockPanel DetailsDrawer(string title, Control details, Action close) {
-        var closeButton = new Button {
-            Classes = { "ui" }, Padding = new Thickness(9, 4), Content = ManagerTheme.TextIcon("close", 14),
-            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-        };
-        ToolTip.SetTip(closeButton, "Close the details");
-        closeButton.Click += (_, _) => close();
-        var drawer = new DockPanel {
-            IsVisible = false, Margin = details.Margin,
-            Children = {
-                WithDock(new DockPanel {
-                    Margin = new Thickness(0, 0, 0, 8),
-                    Children = {
-                        WithDock(closeButton, Dock.Right),
-                        new TextBlock { Text = title, FontWeight = Avalonia.Media.FontWeight.SemiBold, Foreground = MUTED, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center },
-                    },
-                }, Dock.Top),
-                details,
-            },
-        };
-        details.Margin = new Thickness(0);
+    /// <summary>Previous or Next in a list's pop-up: picks the row before or after the picked one, which shows it.</summary>
+    private static void StepList(ListBox list, int by) {
+        var at = list.SelectedIndex + by;
+        if (list.SelectedIndex >= 0 && at >= 0 && at < list.ItemCount) {
+            list.SelectedIndex = at;
+            list.ScrollIntoView(at);
+        }
+    }
 
-        return drawer;
+    /// <summary>
+    /// The details of what was clicked, in a pop-up over the list (Niduus, 2026-10-26, mockup L): hidden until something
+    /// is picked, with Previous and Next to step through the list, and a close button (or Esc, or a click beside it) that
+    /// hides it again, so the list always has the whole page.
+    /// </summary>
+    private sealed class DetailsPopup : Panel {
+
+        private readonly TextBlock _title = new() {
+            FontSize = 18, FontWeight = Avalonia.Media.FontWeight.Bold, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis,
+        };
+        private readonly Button _previous = new() { Classes = { "ui" }, Content = "‹ Previous" };
+        private readonly Button _next = new() { Classes = { "ui" }, Content = "Next ›" };
+
+        internal DetailsPopup(string title, Control details, Action close, Action<int> step) {
+            _title.Text = title;
+            IsVisible = false;
+            Focusable = true;
+            var shade = new Border { Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(170, 5, 6, 13)) };
+            // A click beside the panel closes it, as Esc does.
+            shade.PointerPressed += (_, _) => close();
+            var closeButton = new Button { Classes = { "ui" }, Padding = new Thickness(10, 4), Content = ManagerTheme.TextIcon("close", 14) };
+            ToolTip.SetTip(closeButton, "Close (Esc)");
+            closeButton.Click += (_, _) => close();
+            ToolTip.SetTip(_previous, "The one before it in the list (Left arrow)");
+            ToolTip.SetTip(_next, "The next one in the list (Right arrow)");
+            _previous.Click += (_, _) => step(-1);
+            _next.Click += (_, _) => step(1);
+            details.Margin = new Thickness(0);
+            var panel = new Border {
+                MaxWidth = 960, Margin = new Thickness(40, 28), Padding = new Thickness(22, 18),
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(244, 24, 26, 46)),
+                BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 110), BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(18), Effect = ManagerTheme.Glow(Avalonia.Media.Colors.Black, 60, 0.7),
+                Child = new DockPanel {
+                    Children = {
+                        WithDock(new DockPanel {
+                            Margin = new Thickness(0, 0, 0, 12),
+                            Children = {
+                                WithDock(new StackPanel {
+                                    Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 8, Margin = new Thickness(12, 0, 0, 0),
+                                    Children = { _previous, _next, closeButton },
+                                }, Avalonia.Controls.Dock.Right),
+                                _title,
+                            },
+                        }, Avalonia.Controls.Dock.Top),
+                        details,
+                    },
+                },
+            };
+            Children.Add(shade);
+            Children.Add(panel);
+            KeyDown += (_, e) => {
+                switch (e.Key) {
+                    case Avalonia.Input.Key.Escape: close(); break;
+                    case Avalonia.Input.Key.Left: step(-1); break;
+                    case Avalonia.Input.Key.Right: step(1); break;
+                    default: return;
+                }
+
+                e.Handled = true;
+            };
+        }
+
+        /// <summary>Opens it for an item of a list (closes it for none), with Previous and Next by where the item is in the list.</summary>
+        internal void ShowFor(ListBox list, object? item) {
+            var at = item is null ? -1 : list.Items.IndexOf(item);
+            Show(item is not null, at > 0, at >= 0 && at < list.ItemCount - 1);
+        }
+
+        /// <summary>Opens it (or closes it, with nothing picked), and greys out Previous or Next at either end of the list.</summary>
+        internal void Show(bool open, bool hasPrevious = true, bool hasNext = true) {
+            var opening = open && !IsVisible;
+            IsVisible = open;
+            _previous.IsEnabled = hasPrevious;
+            _next.IsEnabled = hasNext;
+            if (opening) {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => Focus(), Avalonia.Threading.DispatcherPriority.Background);
+            }
+        }
+
     }
 
     /// <summary>A drop-down of choices, the first picked.</summary>
@@ -263,7 +327,8 @@ internal sealed partial class ManagerWindow {
         }
 
         private static object? ValueOf(Control control) => control switch {
-            ComboBox box => box.SelectedIndex,
+            // A drop-down filled later (from the game's data) has nothing picked yet: that counts as its first choice (Any or All).
+            ComboBox box => Math.Max(0, box.SelectedIndex),
             NumericUpDown number => number.Value,
             CheckBox tick => tick.IsChecked,
             TextBox text => text.Text ?? "",

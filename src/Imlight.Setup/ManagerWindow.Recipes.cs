@@ -39,7 +39,7 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private DockPanel? _recipeDrawer;
+    private DetailsPopup? _recipePopup;
 
     private const string ALL_STATIONS = "All stations";
     private const string ANY_RECIPE_SCHOOL = "Any school";
@@ -147,22 +147,26 @@ internal sealed partial class ManagerWindow {
             $"Stand where the vendor should go in the game, then press Make a recipe vendor here: it sells the recipes the list " +
             $"shows (the first {RECIPE_VENDOR_SIZE}), each for its usual gold. It is a vendor of the Customs tab, so you can rename it, " +
             "move it, change prices or delete it there. Players press X near it and buy a recipe to learn it.");
-        var details = new ScrollViewer {
-            Width = 430,
-            Margin = new Thickness(14, 0, 0, 0),
-            Content = Card(_recipeDetails),
-        };
-        var root = new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+        var details = new ScrollViewer { Width = 600, Content = _recipeDetails };
+        _recipePopup = new DetailsPopup("Recipe details", details, () => { _recipeList.SelectedItem = null; ShowRecipe(null); }, by => StepList(_recipeList, by));
+        var root = new Panel {
             Children = {
-                WithDock(_recipeDrawer = DetailsDrawer("Recipe details", details, () => { _recipeList.SelectedItem = null; ShowRecipe(null); }), Dock.Right),
-                WithDock(Fold("flask", "Recipes", "Find recipes",
-                    "Search or filter, then click a recipe to see what it needs and makes.",
-                    MissingNote("the .recipe and .craft commands are " + ServerSource.DefaultName + "'s.", () => !_manager.HasRecipeCommands),
-                    WithHint(_recipeSearch, "Search by the recipe's name, what it makes, an ingredient, or its template ID. Click a recipe to see " +
-                        "its ingredients, the station it is crafted at and its cooldown. Learn on my wizard teaches it to the wizard you play here."),
-                    filters, vendor, _recipeCount), Dock.Top),
-                WithMargin(_recipeList, new Thickness(0, 14, 0, 0)),
+                new DockPanel {
+                    Margin = new Thickness(18, 10, 18, 14),
+                    Children = {
+                        WithDock(Card(new StackPanel {
+                            Spacing = 10,
+                            Children = {
+                                MissingNote("the .recipe and .craft commands are " + ServerSource.DefaultName + "'s.", () => !_manager.HasRecipeCommands),
+                                WithHint(_recipeSearch, "Search by the recipe's name, what it makes, an ingredient, or its template ID. Click a recipe to see " +
+                                    "its ingredients, the station it is crafted at and its cooldown. Learn on my wizard teaches it to the wizard you play here."),
+                                filters, vendor, _recipeCount,
+                            },
+                        }), Dock.Top),
+                        WithMargin(_recipeList, new Thickness(0, 12, 0, 0)),
+                    },
+                },
+                _recipePopup,
             },
         };
         ShowRecipe(null);
@@ -310,7 +314,7 @@ internal sealed partial class ManagerWindow {
               (book.Problems.Length > 0 ? $"What went wrong: {book.Problems}. " : "") + "Send Claude a screenshot of this."
             : _recipesShown.Count == 0
             ? "Nothing matches. Clear the search or pick \"All\" in the filters."
-            : $"{_recipesShown.Count:N0} of {book.Recipes.Count:N0} recipes. Click one to see it on the right.";
+            : $"{_recipesShown.Count:N0} of {book.Recipes.Count:N0} recipes. Click one to see what it needs and makes.";
         if (_recipePicked is not null && _recipesShown.Contains(_recipePicked)) {
             _recipeList.SelectedItem = _recipePicked;
         }
@@ -374,9 +378,7 @@ internal sealed partial class ManagerWindow {
     // ---------------------------------------------------------------------
 
     private void ShowRecipe(Recipe? recipe) {
-        if (_recipeDrawer is not null) {
-            _recipeDrawer.IsVisible = recipe is not null;
-        }
+        _recipePopup?.ShowFor(_recipeList, recipe);
 
         _recipePicked = recipe;
         _recipeDetails.Children.Clear();

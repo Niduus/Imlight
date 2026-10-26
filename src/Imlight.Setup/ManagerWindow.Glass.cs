@@ -151,24 +151,23 @@ internal sealed partial class ManagerWindow {
     /// in the middle, and the server's state on the right.
     /// </summary>
     private Control Header() {
-        var brand = ManagerTheme.GlassPanel(new StackPanel {
-            Orientation = Orientation.Horizontal, Spacing = 12,
+        // A slim bar (Niduus, 2026-10-26, mockup L), so the pages under it have the room.
+        var brand = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0),
             Children = {
-                ManagerTheme.Tile("sparkle", ManagerTheme.Gradient(), 40),
+                ManagerTheme.Tile("sparkle", ManagerTheme.Gradient(), 34),
                 new StackPanel {
-                    VerticalAlignment = VerticalAlignment.Center, Spacing = 4,
+                    VerticalAlignment = VerticalAlignment.Center, Spacing = 2,
                     Children = {
                         new TextBlock {
-                            Text = Edition.NAME, FontSize = 22, FontWeight = FontWeight.Bold, Foreground = ManagerTheme.Gradient(),
+                            Text = Edition.NAME, FontSize = 19, FontWeight = FontWeight.Bold, Foreground = ManagerTheme.Gradient(),
                             VerticalAlignment = VerticalAlignment.Center,
                         },
                         CreditChip(),
                     },
                 },
             },
-        });
-        brand.Padding = new Thickness(12, 10, 16, 10);
-        brand.Effect = ManagerTheme.Glow(ManagerTheme.ACCENT, 26, 0.35);
+        };
 
         var whatsNew = Action(Plain("What's new"), () => {
             SelectTab(WHATS_NEW);
@@ -181,11 +180,11 @@ internal sealed partial class ManagerWindow {
                     Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(14, 0, 0, 0),
                     Children = { Action(_updateButton, UpdateAsync), whatsNew },
                 }, Dock.Right),
-                WithDock(WithMargin(ManagerTheme.Tile("download", ManagerTheme.Accent("What's New"), 34), new Thickness(0, 0, 12, 0)), Dock.Left),
+                WithDock(WithMargin(ManagerTheme.Tile("download", ManagerTheme.Accent("What's New"), 28), new Thickness(0, 0, 10, 0)), Dock.Left),
                 new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 2, Children = { _updateTitle, _updateLine } },
             },
         });
-        _updatePanel.Padding = new Thickness(12, 10);
+        _updatePanel.Padding = new Thickness(10, 6);
         _updatePanel.HorizontalAlignment = HorizontalAlignment.Center;
         _updatePanel.Margin = new Thickness(16, 0);
         ToolTip.SetTip(_updatePanel, "Updates and what changed in each version. Turn automatic updates on or off on the Tools tab.");
@@ -205,8 +204,8 @@ internal sealed partial class ManagerWindow {
                 _updatePanel,
             },
         }, 18);
-        bar.Padding = new Thickness(10);
-        bar.Margin = new Thickness(12, 12, 12, 0);
+        bar.Padding = new Thickness(10, 6);
+        bar.Margin = new Thickness(12, 10, 12, 0);
 
         return bar;
     }

@@ -120,7 +120,7 @@ internal sealed partial class ManagerWindow {
 
         var list = new StackPanel { Spacing = 14 };
         if (notes is null) {
-            list.Children.Add(Sub("The notes could not be loaded. Check your internet connection, then open What's New on the left."));
+            list.Children.Add(Sub("The notes could not be loaded. Check your internet connection, then open What's New in the menu at the top."));
         }
         else if (shown.Count == 0) {
             list.Children.Add(Sub(since is null

@@ -43,7 +43,7 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private DockPanel? _gearDrawer;
+    private DetailsPopup? _gearPopup;
 
     private const string ALL_GEAR = "All gear";
     private const string NO_SCHOOL = "No school needed";
@@ -159,29 +159,37 @@ internal sealed partial class ManagerWindow {
                 SearchTick(_gearInSet),
                 SearchTick(_gearRental),
                 GearStatFilters());
+        // The item as the game draws it on the left of the pop-up, its cards and details on the right.
         var details = new ScrollViewer {
-            Width = 430,
-            Margin = new Thickness(14, 0, 0, 0),
-            Content = Card(new StackPanel {
-                Spacing = 12,
-                Children = { _gearTooltipHost, _gearCards, _gearDetails },
-            }),
+            Content = new DockPanel {
+                Children = {
+                    WithDock(new Border { Margin = new Thickness(0, 0, 22, 0), VerticalAlignment = VerticalAlignment.Top, Child = _gearTooltipHost }, Dock.Left),
+                    new StackPanel { Width = 420, Spacing = 12, Children = { _gearCards, _gearDetails } },
+                },
+            },
         };
-        // The item's side runs the full height of the tab, beside the search (Niduus, 2026-10-22: "extend the gear view up more").
-        var root = new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+        _gearPopup = new DetailsPopup("Item details", details, () => { _gearList.SelectedItem = null; ShowGear(null); }, by => StepList(_gearList, by));
+        var root = new Panel {
             Children = {
-                WithDock(_gearDrawer = DetailsDrawer("Item details", details, () => { _gearList.SelectedItem = null; ShowGear(null); }), Dock.Right),
-                WithDock(Fold("shield", "Gear", "Find gear",
-                    "Search or filter by slot, school, level, stats or set bonus, then click an item to see it as the game shows it.",
-                    MissingNote("the give-gear commands (.hat, .robe, .pet and the rest) are " + ServerSource.DefaultName +
-                        "'s. [Give to my wizard] sends .mod additem instead.", () => !_manager.HasGearCommands),
-                    WithHint(_gearSearch, "Search by name or template ID, or narrow the list with the filters. Click an item to see its " +
-                        "tooltip as the game draws it, with its stats, item cards, sockets, the level it needs and its marks. Point at a " +
-                        "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
-                        "which players never see."),
-                    filters, _gearCount, GearGuide()), Dock.Top),
-                WithMargin(_gearList, new Thickness(0, 14, 0, 0)),
+                new DockPanel {
+                    Margin = new Thickness(18, 10, 18, 14),
+                    Children = {
+                        WithDock(Card(new StackPanel {
+                            Spacing = 10,
+                            Children = {
+                                MissingNote("the give-gear commands (.hat, .robe, .pet and the rest) are " + ServerSource.DefaultName +
+                                    "'s. [Give to my wizard] sends .mod additem instead.", () => !_manager.HasGearCommands),
+                                WithHint(_gearSearch, "Search by name or template ID, or narrow the list with the filters. Click an item to see its " +
+                                    "tooltip as the game draws it, with its stats, item cards, sockets, the level it needs and its marks. Point at a " +
+                                    "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
+                                    "which players never see."),
+                                filters, _gearCount, GearGuide(),
+                            },
+                        }), Dock.Top),
+                        WithMargin(_gearList, new Thickness(0, 12, 0, 0)),
+                    },
+                },
+                _gearPopup,
             },
         };
         ShowGear(null);
@@ -319,7 +327,7 @@ internal sealed partial class ManagerWindow {
         _gearList.ItemsSource = shown;
         _gearCount.Text = shown.Count == 0
             ? "Nothing matches. Clear the search or pick \"All\" in the filters."
-            : $"{shown.Count:N0} of {gear.Items.Count:N0} items. Click one to see it on the right.";
+            : $"{shown.Count:N0} of {gear.Items.Count:N0} items. Click one to see it as the game shows it.";
         if (_gearPicked is not null && shown.Contains(_gearPicked)) {
             _gearList.SelectedItem = _gearPicked;
         }
@@ -381,9 +389,7 @@ internal sealed partial class ManagerWindow {
     // ---------------------------------------------------------------------
 
     private void ShowGear(GearItem? item) {
-        if (_gearDrawer is not null) {
-            _gearDrawer.IsVisible = item is not null;
-        }
+        _gearPopup?.ShowFor(_gearList, item);
 
         _gearPicked = item;
         _gearCards.Children.Clear();

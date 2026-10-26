@@ -159,7 +159,6 @@ internal static class ManagerTheme {
     // slowly drifting colours (ManagerWindow.Glass.cs), so the colours glow through them. Pop-ups keep solid colours.
     internal static IBrush Glass(byte alpha) => Brush(Colors.White, alpha);
 
-    internal static readonly IBrush SIDEBAR_BRUSH = Glass(9);
     internal static readonly IBrush SURFACE_BRUSH = Glass(13);
     internal static readonly IBrush SURFACE_HIGH_BRUSH = Glass(19);
     internal static readonly IBrush LINE_BRUSH = Glass(30);
@@ -186,7 +185,6 @@ internal static class ManagerTheme {
     internal const double GAP = 14;
     internal const double PAD = 18;
     internal const double CONTROL_HEIGHT = 34;
-    internal const double SIDEBAR_WIDTH = 236;
     internal const double PAGE_MAX_WIDTH = 1060;
 
     // ---------------------------------------------------------------------
@@ -451,18 +449,12 @@ internal static class ManagerTheme {
         CornerRadius = new CornerRadius(radius), Child = child,
     };
 
-    /// <summary>A page of the side bar: its icon tile, its name, and a short line of what is inside.</summary>
-    internal static Control NavHeader(string icon, IBrush accent, string title, string line) => new StackPanel {
-        Orientation = Orientation.Horizontal, Spacing = 12,
+    /// <summary>A page of the menu along the top: its icon tile and its name.</summary>
+    internal static Control NavHeader(string icon, IBrush accent, string title) => new StackPanel {
+        Orientation = Orientation.Horizontal, Spacing = 9,
         Children = {
-            Tile(icon, accent, 32),
-            new StackPanel {
-                VerticalAlignment = VerticalAlignment.Center, Spacing = 1,
-                Children = {
-                    new TextBlock { Text = title, FontSize = 15 },
-                    new TextBlock { Text = line, FontSize = 11.5, FontWeight = FontWeight.Normal, Foreground = MUTED_BRUSH, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = SIDEBAR_WIDTH - 90 },
-                },
-            },
+            Tile(icon, accent, 24),
+            new TextBlock { Text = title, VerticalAlignment = VerticalAlignment.Center },
         },
     };
 
@@ -688,17 +680,31 @@ internal static class ManagerTheme {
             };
         }
 
-        // The side bar's tabs: rounded, full width, with the icon tile in front.
+        // The menu's pages along the top (mockup L): pills with the icon tile in front, the chosen one lit in the accent.
         yield return new Style(x => x.OfType<TabItem>().Class("nav")) {
             Setters = {
-                new Setter(Layoutable.WidthProperty, SIDEBAR_WIDTH - 20),
-                new Setter(Layoutable.MarginProperty, new Thickness(10, 2)),
-                new Setter(TemplatedControl.PaddingProperty, new Thickness(14, 0, 12, 0)),
-                new Setter(Layoutable.MinHeightProperty, 54.0),
-                new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(12)),
-                new Setter(TemplatedControl.FontSizeProperty, 15.0),
+                new Setter(Layoutable.MarginProperty, new Thickness(0, 0, 6, 0)),
+                new Setter(TemplatedControl.PaddingProperty, new Thickness(10, 0, 14, 0)),
+                new Setter(Layoutable.MinHeightProperty, 40.0),
+                new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(RADIUS_PILL)),
+                new Setter(TemplatedControl.FontSizeProperty, 14.0),
                 new Setter(TemplatedControl.FontWeightProperty, FontWeight.SemiBold),
+                new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(1)),
+                new Setter(TemplatedControl.BorderBrushProperty, Brushes.Transparent),
             },
+        };
+        yield return new Style(x => x.OfType<TabItem>().Class("nav").Template().OfType<Border>().Name("PART_SelectedPipe")) {
+            Setters = { new Setter(Visual.IsVisibleProperty, false) },
+        };
+        yield return new Style(x => x.OfType<TabItem>().Class("nav").Class(":selected").Template().OfType<Border>().Name("PART_LayoutRoot")) {
+            Setters = {
+                new Setter(Border.BackgroundProperty, Brush(ACCENT, 70)),
+                new Setter(Border.BorderBrushProperty, Brush(ACCENT_LIGHT, 190)),
+            },
+        };
+        // The menu sits in a glass strip under the header, the page's own tabs in a row under it.
+        yield return new Style(x => x.OfType<TabControl>().Class("topnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
+            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(14, 10, 14, 0)) },
         };
 
         // The tabs inside a page: pills along the top, the chosen one lit in the accent.
@@ -724,7 +730,7 @@ internal static class ManagerTheme {
             },
         };
         yield return new Style(x => x.OfType<TabControl>().Class("subnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
-            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(24, 16, 24, 4)) },
+            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(18, 10, 18, 0)) },
         };
 
         // The clear button inside search boxes.

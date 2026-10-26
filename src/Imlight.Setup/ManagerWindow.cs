@@ -360,17 +360,9 @@ internal sealed partial class ManagerWindow : Window {
         _saveBar.BorderBrush = LINE;
         _saveBar.BorderThickness = new Thickness(0, 1, 0, 0);
 
-        // The pages run down a glass side bar, over the drifting colours behind everything.
-        var body = new Panel {
-            Children = {
-                new Border {
-                    Width = ManagerTheme.SIDEBAR_WIDTH, HorizontalAlignment = HorizontalAlignment.Left, Background = ManagerTheme.SIDEBAR_BRUSH,
-                    BorderBrush = ManagerTheme.Glass(30), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(18),
-                    Margin = new Thickness(12, 12, 0, 12),
-                },
-                WithMargin(nav, new Thickness(0, 22, 0, 0)),
-            },
-        };
+        // The pages run along the top as a menu under the header (Niduus, 2026-10-26, mockup L: no side bar, so every
+        // page has the whole width), over the drifting colours behind everything.
+        var body = nav;
 
         Content = new Panel {
             Children = {
@@ -2570,18 +2562,22 @@ internal sealed partial class ManagerWindow : Window {
         ["Tools"] = ("wrench", "Update Ahziael, open its folders, or remove it."),
     };
 
-    /// <summary>A tab inside one of the side bar's pages: its icon and name along the top, and a header with its one line above it.</summary>
+    /// <summary>
+    /// A tab inside one of the menu's pages: its icon and name along the top, and its one line on what it is for when
+    /// pointed at (Niduus, 2026-10-26, mockup L: no big title block over each tab, so the tab has the room).
+    /// </summary>
     private static TabItem Tab(string header, Func<Control> build) {
         var content = UiTiming.Measure($"build {header} tab", build);
         var (icon, line) = s_tabs[header];
-        var accent = ManagerTheme.Accent(header);
-
-        return new TabItem {
+        var tab = new TabItem {
             Tag = header,
             Classes = { "sub" },
-            Header = ManagerTheme.SubTabHeader(icon, accent, header),
-            Content = new DockPanel { Children = { WithDock(ManagerTheme.PageHeader(icon, accent, header, line), Dock.Top), content } },
+            Header = ManagerTheme.SubTabHeader(icon, ManagerTheme.Accent(header), header),
+            Content = content,
         };
+        ToolTip.SetTip(tab, line);
+
+        return tab;
     }
 
     private static Control Page(params Control[] cards) {

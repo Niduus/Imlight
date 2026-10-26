@@ -84,7 +84,7 @@ internal sealed partial class ManagerWindow {
             "Your own creature, copied from one in the game; the game's creature never changes.",
             [
                 new GuideSteps("Make it",
-                    "Click [Guides] in the list on the left side of the window (or press [New custom…] on the [Customs] tab).",
+                    "Click [Guides] in the menu at the top of the window (or press [New custom…] on the [Customs] tab).",
                     "Near the top is the section [Make a custom, step by step]. If it is folded shut, click its title to open it.",
                     "Step 1: click in the search box and type the name of the creature to start from, such as `Gobbler` or `Malistaire`. " +
                     "Its ID number works too.",
@@ -194,7 +194,7 @@ internal sealed partial class ManagerWindow {
             "Every custom you made is listed under Custom mobs on the Customs tab.",
             [
                 new GuideSteps("Change a custom",
-                    "Click [Customs] on the left, then open [Custom mobs].",
+                    "Click [Customs] at the top, then open [Custom mobs].",
                     "Press [Edit] beside the custom. Its editor opens below, the same as when you made it.",
                     "Change what you like and press [Save changes]. Changes you do not save are not kept."),
                 new GuideSteps("Make a copy",
@@ -277,7 +277,7 @@ internal sealed partial class ManagerWindow {
                                        "or the next team that goes in. Orange [Needs the zone to load again]: leave and go in again, " +
                                        "or restart the server for a shared place such as Ravenwood.")),
                 new GuideSteps("Make a new area",
-                    "Click [Customs] on the left and open [Custom areas], then [New custom area or variant].",
+                    "Click [Customs] at the top and open [Custom areas], then [New custom area or variant].",
                     "In [Zone], type a few letters of the place, such as `Ravenwood`, and pick it from the list.",
                     "Leave [Variant] empty to change that place for everyone, or type a name to make a private copy.",
                     "In [Start from], keep [An empty area], or pick a copy of an area you already have.",
@@ -321,7 +321,7 @@ internal sealed partial class ManagerWindow {
                     ("Customs tab", "Makes a new creature with its own number. The game's boss stays as it is; the custom fights only when " +
                                     "you bring it in with `.joinme` or make it the boss of a room.")),
                 new GuideSteps("Change a real boss",
-                    "Click [Bosses] on the left.",
+                    "Click [Bosses] at the top.",
                     "Type the boss's name in the search box, such as `Rattlebones`. Turn off [Bosses only] to find any creature.",
                     "Click the boss in the list. Its editor opens below, with [Identity], [Stats], [Deck], [Drops], [XP and gold] and [Cheats].",
                     "Change what you want and press [Save changes]. It counts from its next battle; there is no need to restart.",
@@ -335,7 +335,7 @@ internal sealed partial class ManagerWindow {
             "Every hat, robe, boots, wand, athame, amulet, ring, deck, mount and pet, shown as the game's item tooltip.",
             [
                 new GuideSteps("Find an item",
-                    "Click [Gear] on the left. The first time, it reads the gear from your game files, which takes a few seconds.",
+                    "Click [Gear] at the top. The first time, it reads the gear from your game files, which takes a few seconds.",
                     "Type a name in the search box, such as `Whalebird`, or a template ID, such as `1770010`.",
                     "Narrow the list with [Slot], [School], [Level from] and [Level to]. Tick [Crowns only] for Crown Shop items.",
                     "Click an item. On the right is its tooltip as the game draws it: the name in blue, each stat in yellow with " +
@@ -403,7 +403,7 @@ internal sealed partial class ManagerWindow {
                                             "(it has Imlight.Director.exe and a Config folder), the app runs it right where it is.")),
                 new GuideSteps("Switch to another copy",
                     "Stop the server: [Server] tab, [Stop server].",
-                    "Click [Tools] in the list on the left side of the window.",
+                    "Click [Tools] in the menu at the top of the window.",
                     "Open the section [Server source] by clicking its title.",
                     "For a copy on GitHub: pick [Another copy on GitHub]. In the first box type its owner and name as they show on " +
                     "github.com, such as `Revive101/Imlight`. In the second box type the branch, such as `quality-assurance` " +
