@@ -754,8 +754,6 @@ internal static class PetProgress {
         }
     }
 
-    // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
-    // do (Niduus, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
     /// <summary>
     /// What the pet's shown talents and the jewel in its socket add to the maximum of one stat (Mighty is +65 Strength).
     /// </summary>
@@ -768,6 +766,8 @@ internal static class PetProgress {
             .Where(s => s is not null && SameStat(s.m_name, name))
             .Sum(s => s.m_value);
 
+    // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
+    // do (Niduus, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.
     private static int CappedRaise(ulong petId, string name) {
         var raise = PetMaxRaises.Get(petId, name);
         var most = PetRules.MaxStat(name);
