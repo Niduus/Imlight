@@ -516,9 +516,10 @@ internal sealed class SetupSteps : IDisposable {
         if (existingConfig && File.Exists(defaults)) {
             var lines = File.ReadAllLines(ConfigFile).ToList();
             var added = IniFile.AddMissing(lines, File.ReadAllLines(defaults));
-            if (added > 0) {
+            var updated = IniFile.UpdateChangedDefaults(lines);
+            if (added > 0 || updated > 0) {
                 File.WriteAllLines(ConfigFile, lines);
-                SetupLog.Detail($"Added {added} new settings to Config\\Imlight.ini.");
+                SetupLog.Detail($"Added {added} new settings to Config\\Imlight.ini and moved {updated} to their new defaults.");
             }
         }
     }

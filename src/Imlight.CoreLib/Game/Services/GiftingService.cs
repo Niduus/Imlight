@@ -153,7 +153,16 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         switch (itemTemplate) {
             case BoosterPackTemplate:
                 for (uint i = 0; i < giftRedemption.m_itemCount; i++) {
-                    PackManager.OpenPack(SessionActor.ActorRef, wizard, giftRedemption.m_itemId);
+                    // A pack that would not fit in the backpack and bank stays in the mailbox.
+                    if (!PackManager.OpenPack(SessionActor.ActorRef, wizard, giftRedemption.m_itemId)) {
+                        wizard.Account.AddMail(selectedMail);
+                        SendToSocket(new GAME_5_PROTOCOL.MSG_REDEEM_MAIL_GIFT_RESPONSE {
+                            ErrorCode = 1,
+                            MailId = message.MailId,
+                        });
+                        InformGameClient("Your backpack and bank are full, so the pack stays closed.");
+                        return;
+                    }
                 }
                 break;
             case GoldAmountTemplate goldItem:
@@ -366,7 +375,12 @@ internal class GiftingService(SessionActor sessionActor) : MessageService(sessio
         switch (CoreObjectFactory.GetCoreTemplate(templateId)) {
             // A booster pack in the backpack stopped the character from loading; open it like the crown shop does.
             case BoosterPackTemplate:
-                PackManager.OpenPack(SessionActor.ActorRef, wizard, templateId);
+                if (!PackManager.OpenPack(SessionActor.ActorRef, wizard, templateId)) {
+                    InformGameClient("Your backpack and bank are full, so a pack stayed closed.");
+
+                    return;
+                }
+
                 count++;
 
                 return;

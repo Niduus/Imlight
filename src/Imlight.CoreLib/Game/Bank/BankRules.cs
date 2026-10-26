@@ -104,6 +104,23 @@ internal static class BankRules {
         => CountsTowardBank(item) && !IsJewel(item);
 
     /// <summary>
+    /// Whether an item of a template would take a backpack or bank slot, see TakesBackpackSlot. Spells (treasure
+    /// cards), reagents and pet snacks do not.
+    /// </summary>
+    /// <param name="template">The template of the item.</param>
+    internal static bool TemplateTakesSlot(CoreTemplate template)
+        => template is WizItemTemplate item and not (ReagentItemTemplate or PetSnackItemTemplate)
+            && !HasAdjective(item, EmoteAdjective) && !HasAdjective(item, JewelAdjective);
+
+    /// <summary>
+    /// How many new items the backpack and the bank can still take together.
+    /// </summary>
+    /// <param name="wizard">The wizard in question.</param>
+    internal static int RoomForNewItems(Wizard wizard)
+        => wizard.BackpackFreeSlots
+            + (BankConfig.IsEnabled ? Math.Max(0, wizard.StorageBehavior.Limit - wizard.StorageBehavior.CountRegularItems()) : 0);
+
+    /// <summary>
     /// Whether an item takes a slot of the regular part of the shared bank.
     /// </summary>
     /// <param name="item">The item in question.</param>

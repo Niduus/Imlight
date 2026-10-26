@@ -133,13 +133,12 @@ internal class LoyaltyStoreService(SessionActor sessionActor) : MessageService(s
 
             // A pack opens right away, as from the Crown Shop (Niduus 2026-10-25: "should open the pack").
             var isPack = CoreObjectFactory.GetCoreTemplate(ware.TemplateId) is Imcodec.ObjectProperty.TypeCache.BoosterPackTemplate;
-            if (isPack) {
-                PackManager.OpenPack(SessionActor.ActorRef, wizard, ware.TemplateId);
-            }
+            // A pack that would not fit in the backpack and bank stays closed, and the tokens go back like below.
+            var packRefused = isPack && !PackManager.OpenPack(SessionActor.ActorRef, wizard, ware.TemplateId);
 
             var granted = isPack ? null : LootGranter.Grant(SessionActor.ActorRef, wizard,
                 new DropTableResult { Items = [new DropItemResult { ItemId = ware.TemplateId.ToString(), ItemName = ware.Name, Quantity = 1 }] });
-            if (granted is not null && granted.Items.Count == 0 && granted.TreasureCards.Count == 0) {
+            if (packRefused || (granted is not null && granted.Items.Count == 0 && granted.TreasureCards.Count == 0)) {
                 LoyaltyStore.Change(wizard.AccountId, account => {
                     account.Tokens += ware.Price;
                     account.Bought[ware.TemplateId] = Math.Max(0, account.Bought.GetValueOrDefault(ware.TemplateId) - 1);

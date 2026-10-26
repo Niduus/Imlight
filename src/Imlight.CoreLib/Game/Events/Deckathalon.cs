@@ -758,7 +758,10 @@ internal static class Deckathalon {
 
     private static void TryOpenPack(IActorRef session, Wizard wizard, uint packTemplateId) {
         try {
-            PackManager.OpenPack(session, wizard, packTemplateId);
+            if (!PackManager.OpenPack(session, wizard, packTemplateId)) {
+                Logger.Warning("Deckathalon | pack {0} for {1} stayed closed: the backpack and bank are full.",
+                    Logger.Args(packTemplateId, wizard.CharId));
+            }
         }
         catch (Exception ex) {
             Logger.Error("Deckathalon | could not open pack {0} for {1}: {2}", Logger.Args(packTemplateId, wizard.CharId, ex));

@@ -359,8 +359,11 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
 
         switch (itemTemplate) {
             case BoosterPackTemplate:
+                // A pack that would not fit in the backpack and bank stays unbought.
                 for (var i = 0; i < message.Count; i++) {
-                    PackManager.OpenPack(SessionActor.ActorRef, wizard, message.Item);
+                    if (!PackManager.OpenPack(SessionActor.ActorRef, wizard, message.Item)) {
+                        return s_errorInvFull;
+                    }
                 }
                 return 0;
 
@@ -654,16 +657,18 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
         itemCoreObject.m_primaryColor = texture;
         itemCoreObject.m_secondaryColor = decal;
 
-        // A full backpack sends the purchase to the bank, as the game does.
-        var placement = ItemPlacement.Give(SessionActor.ActorRef, wizard, itemCoreObject);
-        if (placement == Placement.Lost) {
-            Logger.Warning("Could not add item {0} to the backpack or bank.", Logger.Args(itemTemplateId));
+        // A Crown Shop item goes in the backpack even past its limit, as in the game (Niduus, 2026-10-25: "Crown items
+        // are the only items that can exceed the MAX count"). Snacks and reagents go in their bags.
+        if (Wizard.IsBagStack(itemCoreObject)) {
+            return ItemPlacement.Give(SessionActor.ActorRef, wizard, itemCoreObject) != Placement.Lost;
+        }
+
+        if (!wizard.AddInitializedItemToInventory(itemCoreObject, ignoreLimit: true)) {
+            Logger.Warning("Could not add item {0} to the backpack.", Logger.Args(itemTemplateId));
             return false;
         }
 
-        if (placement != Placement.Backpack) {
-            return true;
-        }
+        ItemSync.SendAdded(SessionActor.ActorRef, wizard, itemCoreObject);
 
         // Adds the item to 'REVIEW MY ORDER'
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
@@ -683,18 +688,15 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                 PetFactory.TrySetPetName(pet, message.PetName);
             }
 
-            // A full backpack sends the pet to the bank, as the game does.
-            var placement = pet is null ? Placement.Lost : ItemPlacement.Give(SessionActor.ActorRef, wizard, pet);
-            if (placement == Placement.Lost) {
-                Logger.Warning("Could not add crown shop pet {0} to the backpack or bank of {1}.",
+            // A Crown Shop pet goes in the backpack even past its limit, as in the game.
+            if (pet is null || !wizard.AddPetToInventory(pet, ignoreLimit: true)) {
+                Logger.Warning("Could not add crown shop pet {0} to the backpack of {1}.",
                     Logger.Args(templateId, wizard.CharId));
 
                 return s_errorInvFull;
             }
 
-            if (placement != Placement.Backpack) {
-                continue;
-            }
+            ItemSync.SendAdded(SessionActor.ActorRef, wizard, pet);
 
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION {
                 ItemGlobalID = pet.m_globalID,

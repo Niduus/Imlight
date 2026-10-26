@@ -55,16 +55,18 @@ public static class PackManager {
     /// <summary>
     /// Opens a booster pack, grants the drops to the player, and sends the client confirmation.
     /// </summary>
-    public static void OpenPack(IActorRef sessionActorRef, Wizard wizard, ulong packTemplateId) {
+    /// <returns>False, with nothing given, when the backpack and the bank together have no room for what the pack
+    /// rolled (Niduus, 2026-10-25: "packs can't be open that would overflood the bank").</returns>
+    public static bool OpenPack(IActorRef sessionActorRef, Wizard wizard, ulong packTemplateId) {
         if (CoreObjectFactory.GetCoreTemplate(packTemplateId) is not BoosterPackTemplate boosterTemplate) {
             Logger.Warning("Template {0} is not a BoosterPackTemplate.", Logger.Args(packTemplateId));
-            return;
+            return false;
         }
 
         var lootTables = boosterTemplate.m_lootTables;
         if (lootTables is null || lootTables.Count == 0) {
             Logger.Warning("Booster pack {0} has no m_lootTables defined in TemplateManifest.", Logger.Args(packTemplateId));
-            return;
+            return false;
         }
 
         Logger.Information("Opening booster pack {0} ({1}), slots: {2}.", Logger.Args(packTemplateId,
@@ -72,6 +74,7 @@ public static class PackManager {
 
         var lootItems = new List<LootInfo>(lootTables.Count);
         var lootRarities = new List<LootRarity>(lootTables.Count);
+        var grants = new List<(uint TemplateId, CoreTemplate Template, int Count, string Name, string Id, string Table)>();
 
         foreach (var tableName in lootTables) {
             var rollTable = (string) tableName;
@@ -114,13 +117,26 @@ public static class PackManager {
                     m_odds = 0
                 });
 
-                for (var i = 0; i < count; i++) {
-                    GrantDroppedItem(sessionActorRef, wizard, itemTemplateId, itemTemplate);
-                }
-
-                Logger.Information("Granted {0} ({1}) x{2} from slot {3}",
-                    Logger.Args(droppedItem.ItemName, droppedItem.ItemId, count, tableName));
+                grants.Add((itemTemplateId, itemTemplate, count, droppedItem.ItemName, droppedItem.ItemId, tableName));
             }
+        }
+
+        // Everything is rolled first, so a pack whose items fit in neither the backpack nor the bank stays closed.
+        var slotsNeeded = grants.Where(grant => BankRules.TemplateTakesSlot(grant.Template)).Sum(grant => grant.Count);
+        var room = BankRules.RoomForNewItems(wizard);
+        if (slotsNeeded > room) {
+            Logger.Information("Booster pack {0} stays closed: it needs {1} backpack or bank slots and {2} are free.",
+                Logger.Args(packTemplateId, slotsNeeded, room));
+            return false;
+        }
+
+        foreach (var grant in grants) {
+            for (var i = 0; i < grant.Count; i++) {
+                GrantDroppedItem(sessionActorRef, wizard, grant.TemplateId, grant.Template);
+            }
+
+            Logger.Information("Granted {0} ({1}) x{2} from slot {3}",
+                Logger.Args(grant.Name, grant.Id, grant.Count, grant.Table));
         }
 
         Logger.Information("Booster pack {0} shows {1} cards for {2} slots.",
@@ -136,7 +152,7 @@ public static class PackManager {
 
         if (!s_objectSerializer.Serialize(lootInfoList, PropertyFlags.Prop_Public, out var serializedLoot)) {
             Logger.Error("Failed to serialize LootInfoList for booster pack {0}.", Logger.Args(packTemplateId));
-            return;
+            return true;
         }
 
         sessionActorRef.Tell(new WIZARD_12_PROTOCOL.MSG_CROWNSBUYCONFIRM {
@@ -146,6 +162,8 @@ public static class PackManager {
             Data = serializedLoot,
             TemplateID = packTemplateId
         });
+
+        return true;
     }
 
     /// <summary>

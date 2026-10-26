@@ -656,13 +656,30 @@ public class Wizard {
     }
 
     /// <summary>
-    /// How many more items fit in the backpack, counted as the client counts them: worn items take a slot too
-    /// (Niduus, 2026-10-25: "backpack limit is not being respected"). A new item that does not fit goes to the bank,
+    /// How many more items fit in the backpack, counted as the client counts them: worn gear takes a slot too
+    /// (Niduus, 2026-10-25: "backpack limit is not being respected"). Worn elixirs, teleport effects and victory
+    /// dances do not: counting them locked the backpack at 74/75. A new item that does not fit goes to the bank,
     /// see ItemPlacement.
     /// </summary>
     [JsonIgnore] public int BackpackFreeSlots
-        => Math.Max(0, InventoryBehavior.FreeSlots
-            - (EquipmentBehavior?.EquippedItems?.Count(Imlight.CoreLib.Game.Bank.BankRules.TakesBackpackSlot) ?? 0));
+        => Math.Max(0, InventoryBehavior.FreeSlots - CountWornGear());
+
+    private static readonly HashSet<EquipmentSlotType> s_gearSlots = [
+        EquipmentSlotType.Hat, EquipmentSlotType.Robe, EquipmentSlotType.Shoes, EquipmentSlotType.Weapon,
+        EquipmentSlotType.Athame, EquipmentSlotType.Amulet, EquipmentSlotType.Ring, EquipmentSlotType.Pet,
+        EquipmentSlotType.Mount, EquipmentSlotType.Deck,
+    ];
+
+    private int CountWornGear() {
+        var slots = EquipmentBehavior?.SlotList;
+        var items = EquipmentBehavior?.EquippedItems;
+        if (slots is null || items is null) {
+            return 0;
+        }
+
+        return items.Count(item => Imlight.CoreLib.Game.Bank.BankRules.TakesBackpackSlot(item)
+            && slots.Any(slot => slot.ItemId.Value == item.m_globalID.Value && s_gearSlots.Contains(slot.SlotType)));
+    }
 
     public bool AddItemToInventory(ulong itemId, out WizClientObjectItem item)
         => TryCreateItem(itemId, out item) && AddInitializedItemToInventory(item);
@@ -719,7 +736,8 @@ public class Wizard {
         return AddInitializedItemToInventory(item);
     }
 
-    public bool AddInitializedItemToInventory(WizClientObjectItem item) {
+    /// <param name="ignoreLimit">True for a Crown Shop item, which the game lets past a full backpack.</param>
+    public bool AddInitializedItemToInventory(WizClientObjectItem item, bool ignoreLimit = false) {
         if (item is null) {
             Logger.Warning("Cannot add item to inventory because that item does not exist.");
 
@@ -729,7 +747,7 @@ public class Wizard {
         // Ensure that the item is associated with this Wizard.
         item.m_characterId = (GID) CharId;
 
-        var success = InventoryBehavior.AddItem(item);
+        var success = InventoryBehavior.AddItem(item, ignoreLimit);
         if (!success) {
             Logger.Warning("Could not add item {0} to player {1}'s inventory.",
                 Logger.Args(item.m_globalID.Value, PlayerNameBehavior.GetWizardName()));
@@ -752,10 +770,11 @@ public class Wizard {
         return AddPetToInventory(pet);
     }
 
-    public bool AddPetToInventory(WizClientObjectItem pet) {
+    /// <param name="ignoreLimit">True for a Crown Shop pet, which the game lets past a full backpack.</param>
+    public bool AddPetToInventory(WizClientObjectItem pet, bool ignoreLimit = false) {
         // Completing the pet first lets the first save store its genes and stats.
         PetProgression.EnsureInitialized(pet);
-        if (!InventoryBehavior.AddItem(pet)) {
+        if (!InventoryBehavior.AddItem(pet, ignoreLimit)) {
             Logger.Warning("Could not add pet {0} to player {1}'s inventory.",
                 Logger.Args(pet.m_globalID, PlayerNameBehavior.GetWizardName()));
 

@@ -527,7 +527,12 @@ internal static class ClassProjects {
 
                 return;
             case BoosterPackTemplate:
-                PackManager.OpenPack(session, wizard, (uint) id);
+                if (!PackManager.OpenPack(session, wizard, (uint) id)) {
+                    Logger.Warning("Events | pack {0} for {1} stayed closed: the backpack and bank are full.", Logger.Args(id, wizard.CharId));
+
+                    return;
+                }
+
                 given.Add(NameOf(template, id));
 
                 return;

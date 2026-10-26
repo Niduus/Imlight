@@ -72,6 +72,38 @@ internal static class IniFile {
         return added;
     }
 
+    /// <summary>
+    /// Settings whose shipped default changed: a kept file that still has the old default gets the new one, and a
+    /// value the person picked stays.
+    /// </summary>
+    private static readonly (string Section, string Key, string Old, string New)[] s_changedDefaults = [
+        // Niduus, 2026-10-25: "Default should be 80 btw for cap without elixir".
+        ("Character", "MaxInventoryItems", "75", "80"),
+    ];
+
+    /// <summary>
+    /// Moves settings still at an old shipped default to the new default, see s_changedDefaults.
+    /// </summary>
+    /// <returns>How many values were changed.</returns>
+    internal static int UpdateChangedDefaults(List<string> lines) {
+        var changed = 0;
+        foreach (var (section, key, old, value) in s_changedDefaults) {
+            var at = Find(lines, section, key);
+            if (at < 0) {
+                continue;
+            }
+
+            var line = lines[at];
+            var current = line[(line.IndexOf('=') + 1)..].Trim();
+            if (current == old) {
+                Set(lines, section, key, value);
+                changed++;
+            }
+        }
+
+        return changed;
+    }
+
     private static int Find(List<string> lines, string section, string key) {
         var inSection = false;
         for (var i = 0; i < lines.Count; i++) {
