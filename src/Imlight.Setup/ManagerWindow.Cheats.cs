@@ -934,12 +934,24 @@ internal sealed partial class ManagerWindow {
     // Rounds: every round, round N, every N rounds, or round N then every M rounds.
     private static Control RoundsField(CheatBlock block, Action changed) {
         var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
-        var round = BlockFields.Number(Math.Max(1, block.Number("Round")), n => { block.Set("Round", n); changed(); }, 1, 999, 48);
-        var every = BlockFields.Number(Math.Max(2, block.Number("Every")), n => { block.Set("Every", n); changed(); }, 1, 999, 48);
-        var then = new TextBlock { Text = "then every", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
-        var rounds = new TextBlock { Text = "rounds", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
         var mode = block.Number("Round") > 0 && block.Number("Every") > 0 ? "both" : block.Number("Round") > 0 ? "round"
             : block.Number("Every") > 1 ? "every" : "each";
+        // A box writes only while its pick shows it (Niduus, 2026-10-26: "At the start of" kept changing): a hidden one
+        // must not bring its number back into the rule. Every shows the rule's own number (1 stays 1).
+        var round = BlockFields.Number(Math.Max(1, block.Number("Round")), n => {
+            if (mode is "round" or "both") {
+                block.Set("Round", n);
+                changed();
+            }
+        }, 1, 999, 48);
+        var every = BlockFields.Number(block.Number("Every") > 0 ? block.Number("Every") : 2, n => {
+            if (mode is "every" or "both") {
+                block.Set("Every", n);
+                changed();
+            }
+        }, 1, 999, 48);
+        var then = new TextBlock { Text = "then every", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
+        var rounds = new TextBlock { Text = "rounds", Foreground = BlockColors.TEXT, VerticalAlignment = VerticalAlignment.Center };
         void Show(string m) {
             round.IsVisible = m is "round" or "both";
             every.IsVisible = m is "every" or "both";
@@ -948,8 +960,9 @@ internal sealed partial class ManagerWindow {
         }
 
         var choice = BlockFields.Choice([("each", "every round"), ("round", "round …"), ("every", "every … rounds"), ("both", "round … then every …")], mode, m => {
+            mode = m;
             block.Set("Round", m is "round" or "both" ? Math.Max(1, int.TryParse(round.Text, out var r) ? r : 1) : 0);
-            block.Set("Every", m is "every" or "both" ? Math.Max(1, int.TryParse(every.Text, out var e) ? e : 2) : 0);
+            block.Set("Every", m is "every" or "both" ? Math.Max(m == "every" ? 2 : 1, int.TryParse(every.Text, out var e) ? e : 2) : 0);
             Show(m);
             changed();
         });
