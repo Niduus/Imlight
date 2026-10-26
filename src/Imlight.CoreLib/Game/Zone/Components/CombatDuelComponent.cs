@@ -2666,7 +2666,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // A pick-your-enemies card sends one bit per enemy picked (bit n = circle n), several bits for several
         // enemies; one bit is the usual single target. Several bits used to be read as one circle number, so picking
         // circles 1 and 2 (6) aimed the card at circle 6.
-        var picked = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate cardTemplate && DivideCards.IsPickCard(cardTemplate)
+        // A monster's AI sends its picks the same way (MultiPicks.cs), for a spell on several teammates too.
+        var picked = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate cardTemplate
+                     && (DivideCards.IsPickCard(cardTemplate) || (!caster.IsHumanPlayer && MultiPicks.IsPickSpell(cardTemplate)))
             ? PickedCircles(rawSpellTarget) : [];
         if (picked.Count > 1) {
             target = picked[0];

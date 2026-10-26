@@ -73,6 +73,9 @@ public class QueuedCombatAction {
     public CombatDuelSubCircle SelectedTarget;
     // The enemies a wizard clicked for a pick-your-enemies card (kMultiTargetEnemy), or null for anyone else.
     public List<CombatDuelSubCircle> PickedTargets;
+    // The picks were chosen for a "select your targets" spell (by a monster's AI or a cheat's Pick, MultiPicks.cs), so a
+    // spell on several teammates (kMultiTargetFriendly) goes on the picked ones too, not on the whole team.
+    public bool PicksChosen;
     // The card the game is told was cast when it is not the card played (a divide card cast as its pick-your-enemies
     // card, DivideCards). The card played stays in Spell, so it leaves the hand as usual.
     public uint ShownTemplateId;
@@ -372,6 +375,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             SpellTemplate = spellTemplate,
             SelectedTarget = target,
             PickedTargets = picked,
+            PicksChosen = picked is not null && !caster.IsHumanPlayer,
             ShownTemplateId = shownAs,
         };
         _queuedCombatActions.Add(queuedAction);
@@ -800,7 +804,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// <param name="enchantment">The enchantment the e option put on the spell, or null.</param>
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, out string enchantment,
                                     string target = null, bool skipCast = false, char when = 'n', bool enchant = false,
-                                    IReadOnlyList<string> enchants = null, bool onTarget = false, bool cheat = false) {
+                                    IReadOnlyList<string> enchants = null, bool onTarget = false, bool cheat = false,
+                                    List<CombatDuelSubCircle> pickedTargets = null) {
         enchantment = null;
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
@@ -846,7 +851,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             }
         }
 
-        var action = new QueuedCombatAction { SpellCaster = caster, Spell = spell, SpellTemplate = template };
+        var action = new QueuedCombatAction {
+            SpellCaster = caster, Spell = spell, SpellTemplate = template, PickedTargets = pickedTargets, PicksChosen = pickedTargets is not null,
+        };
         _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast,
                                        When: when, OnTarget: onTarget, Cheat: cheat));
 
@@ -955,6 +962,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     var cast = new QueuedCombatAction {
                         SpellCaster = action.SpellCaster,
                         SelectedTarget = target,
+                        PickedTargets = action.PickedTargets,
+                        PicksChosen = action.PicksChosen,
                         SelfOnTarget = delayed.OnTarget,
                         ShownTemplateId = delayed.Free ? SideLookalikeOf(action, target) : 0,
                         // A command's free cast keeps the e option's enchantment: it never carries a delay.

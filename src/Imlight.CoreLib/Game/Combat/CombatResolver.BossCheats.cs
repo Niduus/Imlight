@@ -1307,7 +1307,13 @@ public partial class CombatResolver {
         var lasting = Flatten(template).FirstOrDefault(e => e.m_effectType == kSpellEffects.kPolymorph);
         var aim = step.Target.Length > 0 ? step.Target : step.Is("Polymorph") && lasting is not null && cheat.Target.Length == 0 ? "Self" : cheat.Target;
         var cinematicTime = 0.0f;
-        foreach (var target in StepTargets(boss, aim, template, trigger, receiver)) {
+        // A "select your targets" spell with a Pick: one cast, on the picked ones.
+        var picks = CheatPicks(boss, step, template, trigger, receiver);
+        if (picks is { Count: 0 }) {
+            return 0;
+        }
+
+        foreach (var target in picks is not null ? [picks[0]] : StepTargets(boss, aim, template, trigger, receiver)) {
             if (!boss.IsAlive || target is null || !target.IsAlive || !target.AddedToDuel) {
                 continue;
             }
@@ -1327,7 +1333,9 @@ public partial class CombatResolver {
 
             boss._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
             var before = combatActionList.m_actionList.Count;
-            var action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+            var action = new QueuedCombatAction {
+                SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template, PickedTargets = picks, PicksChosen = picks is not null,
+            };
             float time;
             // Dispel-proof is gone (Niduus, 2026-10-23): a spell that was dispel-proof (DispelImmune, the old default)
             // retries until cast instead, as the app's "if dispelled" block shows it.
@@ -1351,7 +1359,9 @@ public partial class CombatResolver {
                         break;
                     }
 
-                    action = new QueuedCombatAction { SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+                    action = new QueuedCombatAction {
+                        SpellCaster = boss, SelectedTarget = target, Spell = spell, SpellTemplate = template, PickedTargets = picks, PicksChosen = picks is not null,
+                    };
                 }
             }
             else {
@@ -1670,6 +1680,44 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// A Cast's or FreeCast's picks for a "select your targets" spell (Niduus, 2026-10-26): whom its Pick names, Count of
+    /// them (0: all). WeakestEnemy, StrongestEnemy, WeakestAlly, StrongestAlly, MostPips and Enemy (at random) put that
+    /// many in that order ("the 2 weakest", "2 at random"); any other Target (Marked, AllEnemies, EveryoneElse, e1...)
+    /// names its own, the first Count of them. Only those on the side the spell picks from count. Null: no Pick, or not a
+    /// spell that picks (it goes as before); empty: no one to pick.
+    /// </summary>
+    private List<CombatDuelSubCircle> CheatPicks(CombatDuelSubCircle boss, BossCheats.CheatAction step, SpellTemplate template,
+                                                 CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        var pick = (step.Pick ?? "").Trim();
+        if (pick.Length == 0 || template is null || !MultiPicks.IsPickSpell(template)) {
+            return null;
+        }
+
+        var friendly = !MultiPicks.PicksEnemies(template);
+        var standing = boss._duelActor.ActiveSubCircles.Where(c => c is not null && c.IsAlive && c.AddedToDuel).ToList();
+        var enemies = standing.Where(c => c.OccupiedTeam != boss.OccupiedTeam).ToList();
+        var allies = standing.Where(c => c.OccupiedTeam == boss.OccupiedTeam).ToList();
+        var code = pick.ToLowerInvariant();
+        var found = code switch {
+            "weakestenemy" => [.. enemies.OrderBy(c => c.ParticipantGameStats.m_currentHitpoints)],
+            "strongestenemy" => [.. enemies.OrderByDescending(c => c.ParticipantGameStats.m_currentHitpoints)],
+            "weakestally" => [.. allies.OrderBy(HealthShare)],
+            "strongestally" => [.. allies.OrderByDescending(MostHealth)],
+            "mostpips" => [.. enemies.OrderByDescending(c => PipCount(c))],
+            "enemy" or "random" => [.. enemies.OrderBy(_ => Random.Shared.Next())],
+            "ally" => [.. allies.OrderBy(_ => Random.Shared.Next())],
+            _ => StepTargets(boss, pick, template, trigger, receiver),
+        };
+        var side = found.Where(c => c is not null && c.IsAlive && c.AddedToDuel && (c.OccupiedTeam == boss.OccupiedTeam) == friendly).Distinct().ToList();
+        var most = Math.Min(MultiPicks.MaxPicks(template), step.Count > 0 ? step.Count : int.MaxValue);
+        var picks = side.Take(most).ToList();
+        Logger.Information("Duel {0} | Slot {1} | Cheat {2} picks {3}: {4}.", Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, (string) template.m_name,
+            pick + (step.Count > 0 ? $" x{step.Count}" : ""), picks.Count == 0 ? "no one" : string.Join(", ", picks.Select(c => c.SlotIndex))));
+
+        return picks;
     }
 
     // Who a step works on. Empty: as the spell aims (or the player who set it off, for a spell on enemies).

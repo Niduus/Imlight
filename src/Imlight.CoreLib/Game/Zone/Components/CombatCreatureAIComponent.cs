@@ -219,7 +219,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         _roundHand = _currentSubCircle.DrawFreshHand();
 
         DetermineAttitude();
-        var action = DetermineTurnAction();
+        var action = WithPicks(DetermineTurnAction());
         _lastCastSpellId = action.MoveType == (byte) CombatMoveType.Attack
             ? _currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection)?.m_templateID ?? 0
             : 0;
@@ -626,6 +626,29 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         // minion, which sits in a player slot (4-7): +4 alone would land outside the hate table.
         var targetIdx = (_currentSubCircle.SlotIndex + 4) % _currentDuelComponent.SubCircles.Length;
         UpdateHateTable(targetIdx, 1);
+    }
+
+    /// <summary>
+    /// A "select your targets" spell (Qismah's Curse, the Fusion spells, the tier B AoEs): the monster picks whom it hits,
+    /// as a wizard clicks them (MultiPicks.ForMonster), and sends them as a wizard's game does, one bit for each circle. It
+    /// hit every enemy before (Niduus, 2026-10-26).
+    /// </summary>
+    private COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE WithPicks(COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE move) {
+        if (move.MoveType != (byte) CombatMoveType.Attack
+            || _currentSubCircle.GetSpellFromLastHand((byte) move.SpellSelection) is not { } spell
+            || CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template || !MultiPicks.IsPickSpell(template)) {
+            return move;
+        }
+
+        var picks = MultiPicks.AimMove(move, _currentDuelComponent.SubCircles, _currentSubCircle, template, _determinedSmartThisTurn, _random);
+        if (picks.Count == 0) {
+            return move;
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | Picks {2} for {3}: {4}.", Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex,
+            picks.Count, (string) template.m_name, string.Join(", ", picks.Select(p => p.SlotIndex))));
+
+        return move;
     }
 
     private int GetMostHatedTarget() {

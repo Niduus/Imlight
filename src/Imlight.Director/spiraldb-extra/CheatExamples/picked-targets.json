@@ -1,0 +1,28 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: picked targets",
+  "Notes": "An example to copy (on no creature). For spells where you select the targets: every 3 rounds it casts Qismah's Curse on the 2 weakest players only; and each player who hits it gets the mark \"cursed\", and at the end of a round when someone has it, Qismah's Curse goes on only the marked ones, and the marks come off.",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Conditions": [ { "If": "Round", "Every": 3, "Offset": 1 } ],
+      "Actions": [
+        { "Do": "Say", "Text": "The weakest of you first." },
+        { "Do": "Cast", "Spell": "Qismah's Curse", "Pick": "WeakestEnemy", "Count": 2, "DispelImmune": false }
+      ]
+    },
+    {
+      "When": "BossHit",
+      "Actions": [ { "Do": "Mark", "Mark": "cursed", "Target": "Caster" } ]
+    },
+    {
+      "When": "RoundEnd",
+      "Mark": "cursed",
+      "MarkWho": "AnyEnemy",
+      "Actions": [
+        { "Do": "Cast", "Spell": "Qismah's Curse", "Pick": "Marked", "DispelImmune": false },
+        { "Do": "Unmark", "Mark": "cursed" }
+      ]
+    }
+  ]
+}

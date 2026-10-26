@@ -584,6 +584,10 @@ internal static class BossCheats {
         public bool DeckToo { get; set; }
         public string Power { get; set; } = "";
         public bool Stats { get; set; }
+        // For Cast and FreeCast of a "select your targets" spell (Qismah's Curse, the Fusion spells, the tier B AoEs, a spell
+        // on several teammates): whom it picks, as a Target (WeakestEnemy, Marked, AllEnemies...), and Count of them (0:
+        // all it names). Empty: it hits every enemy, as before (MultiPicks.cs, CombatResolver.BossCheats.cs CheatPicks).
+        public string Pick { get; set; } = "";
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

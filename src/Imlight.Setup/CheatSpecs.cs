@@ -77,6 +77,25 @@ internal static class CheatSpecs {
         ("Death", "Death"), ("Balance", "Balance"), ("Star", "Star"), ("Sun", "Sun"), ("Moon", "Moon"), ("Shadow", "Shadow"),
     ];
 
+    // Whom a Cast or FreeCast of a "select your targets" spell picks (Niduus, 2026-10-26), for its Pick.
+    private static readonly (string Value, string Label)[] s_picks = [
+        ("", "no pick: every enemy"), ("WeakestEnemy", "the weakest players"), ("StrongestEnemy", "the strongest players"),
+        ("Enemy", "players at random"), ("MostPips", "the players with the most pips"), ("Marked", "whoever has the mark"),
+        ("Unmarked", "the players without the mark"), ("AllEnemies", "every player"), ("Caster", "the attacker"),
+        ("Matched", "the one the If found"), ("Last", "the same as the block before"), ("WeakestAlly", "its weakest allies"),
+        ("StrongestAlly", "its strongest allies"), ("Ally", "allies at random"), ("AllAllies", "its whole side"),
+        ("Everyone", "everyone (both sides)"), ("EveryoneElse", "everyone but itself"),
+        ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"),
+        ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
+    ];
+
+    private const string PICK_HELP = " For a spell where you select the targets (Qismah's Curse, the Fusion spells, the tier B AoEs): pick whom it hits"
+        + " and how many (0: all it names), such as the 2 weakest players or the marked ones. It is cast once and the game plays it on"
+        + " the picked ones (only those on the side the spell hits count); the Target is not used then. With no pick it hits every enemy.";
+
+    private static string PickWords(CheatBlock b) => b.Text("Pick").Length == 0 ? ""
+        : $" (picks {(b.Number("Count") > 0 ? $"{b.Number("Count")} of " : "")}{LabelOf(s_picks, b.Text("Pick"))})";
+
     internal static readonly (string Value, string Label)[] CATEGORIES = [
         ("", "any"), ("Damage", "damage"), ("Heal", "heal"), ("Charm", "charm (any)"), ("Ward", "ward (any)"),
         ("Charm,Ward", "charm or ward"), ("Shield", "shield"), ("Trap", "trap (jinx)"), ("Blade", "blade"), ("Weakness", "weakness (curse)"),
@@ -509,10 +528,11 @@ internal static class CheatSpecs {
             "If {If}", [F("If", CheatFieldType.Words)], b => $"if {b.Text("If")}", "alias"),
 
         // Do... (first made for bosses)
-        new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again.",
-            "Cast {Spell} on {Target} {Silent}",
-            [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
-            b => $"cast {SpellName(b)}{Target(b)}{(b.Flag("Silent") ? " (silent)" : "")}"),
+        new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again." + PICK_HELP,
+            "Cast {Spell} on {Target} {Silent} picking {Count} of {Pick}",
+            [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), new("Silent", CheatFieldType.Toggle, false, Label: "silent"),
+             F("Count", CheatFieldType.Number, 0, max: 8), F("Pick", CheatFieldType.Choice, "", s_picks)],
+            b => $"cast {SpellName(b)}{Target(b)}{(b.Flag("Silent") ? " (silent)" : "")}{PickWords(b)}"),
         new("D.Polymorph", BlockKind.Do, "swap", "polymorph", "Casts a polymorph spell. Polymorph - Dragon NA: it turns into the Black Dragon, attacks (535 Moon damage, destroys the aura) and turns back. Afterlife - Malistaire 02: it becomes Haunted Malistaire for the rest of the battle. \"Where the spell aims\" sends a lasting one on itself.",
             "Polymorph with {Spell} on {Target}", [F("Spell", CheatFieldType.Spell, "Polymorph - Dragon NA"), F("Target", CheatFieldType.Target, "")],
             b => $"polymorph with {SpellName(b)}{Target(b)}"),
@@ -613,12 +633,13 @@ internal static class CheatSpecs {
             b => $"(the next {Math.Max(1, b.Number("Count"))} only for {b.Text("School")}{Target(b).Replace(" on ", ": ")})"),
 
         // Do... (first made for the player cheats; "alias" ones are the same as a block above, kept to read old files)
-        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked. Self spells go on the target: a spell that only goes on its caster (a self blade, Shadow Shrike) goes on the target you pick instead, once on each for every ally or every player. For example, Shadow Shrike on the weakest ally, or a self blade on every ally.",
-            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants} {OnTarget}",
+        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked. Self spells go on the target: a spell that only goes on its caster (a self blade, Shadow Shrike) goes on the target you pick instead, once on each for every ally or every player. For example, Shadow Shrike on the weakest ally, or a self blade on every ally." + PICK_HELP,
+            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants} {OnTarget} picking {Count} of {Pick}",
             [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), F("Timing", CheatFieldType.Choice, "Now", s_timings),
              F("Times", CheatFieldType.Number, 1, max: 10), new("Silent", CheatFieldType.Toggle, false, Label: "silent"), new("Enchant", CheatFieldType.Toggle, false, Label: "enchanted"),
-             F("Enchants", CheatFieldType.Enchants), new("OnTarget", CheatFieldType.Toggle, false, Label: "self spells go on the target")],
-            b => $"cast {SpellName(b)}{Target(b)} {LabelOf(s_timings, b.Text("Timing"))}"
+             F("Enchants", CheatFieldType.Enchants), new("OnTarget", CheatFieldType.Toggle, false, Label: "self spells go on the target"),
+             F("Count", CheatFieldType.Number, 0, max: 8), F("Pick", CheatFieldType.Choice, "", s_picks)],
+            b => $"cast {SpellName(b)}{Target(b)} {LabelOf(s_timings, b.Text("Timing"))}{PickWords(b)}"
                  + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}{(b.Flag("OnTarget") ? " (self spells on the target)" : "")}"),
         new("D.MyPips", BlockKind.Do, "pips", "give me pips", "Gives you pips (or takes them away).",
             "{Amount} {Kind} pips for me", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds)],

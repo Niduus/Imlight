@@ -88,7 +88,14 @@ public partial class CombatResolver {
                 Logger.Args(_duel.m_duelID.Full, me.SlotIndex, (string) template.m_name, step.Target));
         }
 
-        var targets = onTarget || IsEveryone(step.Target) && !selfOnly
+        // A "select your targets" spell with a Pick: one cast, on the picked ones (CheatPicks).
+        var picks = CheatPicks(me, step, template, trigger, receiver);
+        if (picks is { Count: 0 }) {
+            return 0;
+        }
+
+        var targets = picks is not null ? [CodeOf(me, picks[0]) ?? "me"]
+            : onTarget || IsEveryone(step.Target) && !selfOnly
             ? StepTargets(me, step.Target, template, trigger, receiver).Where(c => c is not null).Select(c => CodeOf(me, c)).Where(c => c is not null).ToList()
             : [selfOnly ? "me" : FreeCastTarget(me, step.Target, template, trigger, receiver)];
         if (targets.Count == 0) {
@@ -101,7 +108,7 @@ public partial class CombatResolver {
         foreach (var target in targets) {
             for (var i = 0; i < count; i++) {
                 if (AddFreeDelayedCast(me, spell.m_templateID, atStart, out _, target, step.Silent, when, step.Enchant, step.Enchants,
-                        onTarget, cheat: true) == 0) {
+                        onTarget, cheat: true, pickedTargets: picks) == 0) {
                     return 0;
                 }
             }

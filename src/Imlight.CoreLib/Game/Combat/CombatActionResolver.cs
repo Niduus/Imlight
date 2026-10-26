@@ -60,6 +60,7 @@ internal static class CombatActionResolver {
 
     // The enemies the wizard picked for the cast being resolved (a duel resolves one cast at a time on its thread).
     [ThreadStatic] private static List<CombatDuelSubCircle> s_picked;
+    [ThreadStatic] private static bool s_picksChosen;
 
     // Where the cast's effects on its caster (kSelf) go: the cast's target for a cheat's FreeCast with OnTarget, else
     // null (the caster).
@@ -95,12 +96,14 @@ internal static class CombatActionResolver {
     internal static bool ProcessedQueuedCombatAction(QueuedCombatAction action, ref CombatAction combatAction, ref float cinematicTime,
                                                      out string notes) {
         s_picked = action.PickedTargets;
+        s_picksChosen = action.PicksChosen;
         s_selfGoesOn = action.SelfOnTarget && action.SelectedTarget is { } onTarget && onTarget != action.SpellCaster ? onTarget : null;
         try {
             return Process(action, ref combatAction, ref cinematicTime, out notes);
         }
         finally {
             s_picked = null;
+            s_picksChosen = false;
             s_selfGoesOn = null;
         }
     }
@@ -587,8 +590,8 @@ internal static class CombatActionResolver {
                 break;
             // Pick-your-enemies cards (the Fusion spells, Qismah's Curse, the tier B AoEs): the enemies the wizard clicked
             // that still stand. Before 2026-10-23 every enemy was hit, and a target-count card used the amount for every
-            // enemy standing, not for how many were picked. A creature's cast, or a pick that has all fallen, hits
-            // every enemy standing.
+            // enemy standing, not for how many were picked. A monster's AI and a cheat's Pick choose their own picks
+            // (MultiPicks.cs, 2026-10-26); a cast with none, or a pick that has all fallen, hits every enemy standing.
             case kEffectTarget.kMultiTargetEnemy: {
                 var picked = (s_picked ?? []).Where(p => p.OccupiedTeam != caster.OccupiedTeam && p.IsAlive && p.AddedToDuel)
                     .Distinct().ToArray();
@@ -598,9 +601,15 @@ internal static class CombatActionResolver {
                     : enemies;
                 break;
             }
-            case kEffectTarget.kMultiTargetFriendly:
-                targets = friends;
+            // Several teammates: the ones a monster's AI or a cheat's Pick chose (MultiPicks.cs) that still stand, else the
+            // whole team.
+            case kEffectTarget.kMultiTargetFriendly: {
+                var ownPicks = s_picksChosen
+                    ? (s_picked ?? []).Where(p => p.OccupiedTeam == caster.OccupiedTeam && p.IsAlive && p.AddedToDuel).Distinct().ToArray()
+                    : [];
+                targets = ownPicks.Length > 0 ? ownPicks : friends;
                 break;
+            }
             case kEffectTarget.kMinion:
             case kEffectTarget.kFriendlyMinion:
                 // The client drives minion selection; validate the pick belongs to the caster's team, or else use the
