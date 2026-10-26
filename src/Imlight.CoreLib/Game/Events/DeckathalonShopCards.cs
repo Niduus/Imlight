@@ -24,18 +24,21 @@
  * he sells the more sought after TC's players would want in his shop for ONLY that class"):
  *   - Harold Argleston adds them to his own treasure cards while it is on;
  *   - a custom vendor whose shop window is "Deckathalon" (the "Deckathalon TC NPC" preset) sells only them.
- * [Deckathalon] ShopCards turns it on or off, and <School>ShopCards lists each school's cards by name. Both are read
- * each time a shop opens, so a change in the app's Settings tab counts at once. Each card costs its own gold price.
+ * [Deckathalon] ShopCards turns it on or off. ShopCardsAll (Niduus, 2026-10-26: "Instead of select Fire TC's, just do all
+ * of them for the Fire Deckathalon") sells every treasure card of the school; turned off, <School>ShopCards lists each
+ * school's cards by name. All are read each time a shop opens, so a change in the app's Settings tab counts at once.
+ * Each card costs its own gold price.
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/25/2026
+ * Last Updated: 10/26/2026
  */
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.WizardData.Models.World;
@@ -82,6 +85,9 @@ internal static class DeckathalonShopCards {
 
     private static readonly ConcurrentDictionary<string, List<TreasureCardEntry>> s_lists = new();
 
+    // A plain card name like "Fire Dragon TC" (no test or developer names).
+    private static readonly Regex s_cardName = new(@"^[A-Za-z0-9' ]+ TC$", RegexOptions.Compiled);
+
     /// <summary>A treasure card's own gold price (its spell's), at least 1; 1 for a name the game does not have.</summary>
     internal static int PriceOf(string spellName)
         => spellName is not null && s_prices.Value.TryGetValue(spellName, out var price) ? price : 1;
@@ -89,14 +95,21 @@ internal static class DeckathalonShopCards {
     /// <summary>Whether the Deckathalon's cards are sold while one is on ([Deckathalon] ShopCards).</summary>
     internal static bool Enabled => ConfigurationManager.GetValue("Deckathalon.ShopCards", true);
 
+    /// <summary>Whether every treasure card of the school is sold ([Deckathalon] ShopCardsAll), not the hand-picked list.</summary>
+    internal static bool AllCards => ConfigurationManager.GetValue("Deckathalon.ShopCardsAll", true);
+
     /// <summary>The cards of the Deckathalon that is on, or none (no event, or ShopCards off).</summary>
     internal static List<TreasureCardEntry> Current()
         => Enabled && Deckathalon.CurrentEvent is { } running ? ForSchool(running.School) : [];
 
-    /// <summary>A school's cards ([Deckathalon] &lt;School&gt;ShopCards), each with its price.</summary>
+    /// <summary>A school's cards (all of them, or [Deckathalon] &lt;School&gt;ShopCards), each with its price.</summary>
     internal static List<TreasureCardEntry> ForSchool(string school) {
         if (string.IsNullOrWhiteSpace(school)) {
             return [];
+        }
+
+        if (AllCards) {
+            return s_lists.GetOrAdd($"{school}|*", _ => AllOfSchool(school));
         }
 
         var text = ConfigurationManager.GetValue($"Deckathalon.{school}ShopCards", s_defaults.GetValueOrDefault(school, "")) ?? "";
@@ -118,6 +131,25 @@ internal static class DeckathalonShopCards {
 
             return cards;
         });
+    }
+    // Every treasure card of a school a player can buy: a plain " TC" name, with a gold price, not battlegrounds only.
+    private static List<TreasureCardEntry> AllOfSchool(string school) {
+        var cards = new List<TreasureCardEntry>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (_, spell) in SpellFactory.AllSpellTemplates()) {
+            string name = spell.m_name;
+            string spellSchool = spell.m_sMagicSchoolName;
+            if (spell.m_Treasure && !spell.m_battlegroundsOnly && spell.m_baseCost > 0
+                && string.Equals(spellSchool, school, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(name) && s_cardName.IsMatch(name) && seen.Add(name)) {
+                cards.Add(new TreasureCardEntry { SpellName = name, Price = spell.m_baseCost });
+            }
+        }
+
+        cards.Sort((a, b) => string.CompareOrdinal(a.SpellName, b.SpellName));
+        Logger.Information("Deckathalon | {0} shop cards: all {1} treasure cards of the school.", Logger.Args(school, cards.Count));
+
+        return cards;
     }
 
 }
