@@ -632,10 +632,10 @@ public partial class CombatResolver {
                 case "removeeffects": {
                     // Its hanging effects of Kind (Shield, Trap, Blade, Weakness, Charm, Ward, Aura, DoT, HoT; several
                     // with commas; empty for all) come off the target (itself if none is picked), the newest first, Count
-                    // of them (0 = all); protected ones stay.
+                    // of them (0 = all); protected ones stay, unless Bypass.
                     var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {
-                        var gone = target._hangingEffects.Where(e => e is not null && !e.m_protected && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
+                        var gone = target._hangingEffects.Where(e => e is not null && (step.Bypass || !e.m_protected) && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
                                                                      && FromSpell(e, step.Spell))
                             .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                         target._hangingEffects.RemoveAll(gone.Contains);

@@ -552,6 +552,9 @@ internal static class BossCheats {
         // For FreeCast (Niduus, 2026-10-26): a spell that only goes on its caster (a self blade, Shadow Shrike) goes on
         // the step's Target instead, once on each when the Target is many (AllAllies, AllEnemies).
         public bool OnTarget { get; set; }
+        // For RemoveEffects (Niduus, 2026-10-26: "destroy THEIR blade ... Even through protections"): protected ones
+        // (Aegis, Indemnity, the game's unremovable charms) come off too.
+        public bool Bypass { get; set; }
         // For Announce: Box (default), Chat or Both; and who gets it ("" every wizard in the battle, Players).
         public string Style { get; set; } = "";
         public string Who { get; set; } = "";
