@@ -491,7 +491,7 @@ internal static class ClassProjects {
     }
 
     /// <summary>
-    /// Moves reagents and pet snacks that an earlier claim put in the backpack (before v0.10.399) to their own bags, where
+    /// Moves reagents and pet snacks that an earlier claim put in the backpack (before 2026-10-26) to their own bags, where
     /// the game shows them. Returns their names.
     /// </summary>
     internal static List<string> MoveStrayRewards(IActorRef session, Wizard wizard) {
