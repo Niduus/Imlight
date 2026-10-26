@@ -323,6 +323,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         var bossGroup = Duel.m_roundNum == 0 && (bossOfThisFight || HasBossInBattle());
         if (bossGroup ? GetAvailableSubCircleTeamCreature() is null : !IsSlotAvailable(CombatTeam.Monster)) {
             Refused(bossGroup ? $"the enemy side is full ({CreatureCount} monsters); it vanishes"
+                : s_maxMonsters is >= 1 and <= 4 ? $"the battle is full ({CreatureCount} monsters, MaxMonsters is {s_maxMonsters}); it vanishes"
                 : IsNewbieSigil
                 ? $"starter street circle, one monster per wizard ({CreatureCount} monsters, {PlayerCount} wizards); it vanishes"
                 : $"the battle is full ({CreatureCount} monsters for {PlayerCount} wizards); it vanishes");
@@ -3912,6 +3913,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // m_unknown_uint_4 = 1122, while Colossus Boulevard, Triton Avenue, Firecat Alley and the Sunken City leave both 0.
     private bool IsNewbieSigil => _combatSigilObjectInfo is { m_unknown_uint_4: not 0 };
 
+    // [Battle] MaxMonsters (Niduus, 2026-10-26, a player's suggestion: "change how many mobs can join a fight at max ...
+    // 1.. 2.. 3.. or 4"): 1 to 4 is how many monsters a battle holds, however many wizards are in it and on Unicorn Way
+    // too, in place of the size rule below. 0 (off) keeps the size rule. Like that rule, it only turns away monsters
+    // that walk in: a boss fight's own group, encounters and .joinme are not cut down.
+    private static int s_maxMonsters => ConfigurationManager.GetValue("Battle.MaxMonsters", 0);
+
     private bool IsSlotAvailable(CombatTeam team) {
         var IsNewbieZone = IsNewbieSigil;
         var IsDangerousZone = false;
@@ -3920,7 +3927,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Dangerous zones (like Sunken City) can have 3 creatures as a base.
         // Every player in the duel also allocates 1 more creature slot.
         var baseCreatureCount = IsNewbieZone ? 1 : IsDangerousZone ? 3 : 2;
-        var maxCreatures = baseCreatureCount + (PlayerCount - 1);
+        var maxCreatures = s_maxMonsters is >= 1 and <= 4 ? s_maxMonsters : baseCreatureCount + (PlayerCount - 1);
 
         var slotAvailable = (team == CombatTeam.Player)
             ? PlayerCount < 4

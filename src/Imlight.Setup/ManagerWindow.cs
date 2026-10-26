@@ -133,6 +133,10 @@ internal sealed partial class ManagerWindow : Window {
         ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
+    // [Battle] MaxMonsters: Off (0) keeps the wizards + 1 rule, 1 to 4 is the most monsters a battle holds.
+    private readonly ComboBox _maxMonsters = new() {
+        ItemsSource = new[] { "Off (normal rule)", "1", "2", "3", "4" }, SelectedIndex = 0, Width = 170,
+    };
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
@@ -302,6 +306,10 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             battleRows.Children.Add(row);
+            if (key == "MobsJoinLate") {
+                battleRows.Children.Add(SwitchRow("Most monsters in a battle", _maxMonsters,
+                    "Off: 2 for 1 wizard, 3 for 2, 4 for 3 or 4 (Unicorn Way 1 per wizard). 1 to 4: always that many at most."));
+            }
         }
 
         _battleCard = Shut(Fold("sword", "Bosses", "Battle and world",
@@ -722,6 +730,12 @@ internal sealed partial class ManagerWindow : Window {
                 }
             };
         }
+
+        _maxMonsters.SelectionChanged += async (_, _) => {
+            if (!_updatingRandomizer && _maxMonsters.SelectedIndex >= 0) {
+                await Guard(() => SetMaxMonstersAsync(_maxMonsters.SelectedIndex));
+            }
+        };
 
         _pointsPerLevel.ValueChanged += async (_, _) => {
             if (!_updatingRandomizer && _pointsPerLevel.Value is { } value) {
@@ -1322,6 +1336,9 @@ internal sealed partial class ManagerWindow : Window {
             toggle.IsEnabled = Has(section, key);
         }
 
+        _maxMonsters.IsEnabled = Has("Battle", "MaxMonsters");
+        _maxMonsters.SelectedIndex = int.TryParse(ini.GetValueOrDefault(("Battle", "MaxMonsters")), out var maxMonsters)
+            && maxMonsters is >= 1 and <= 4 ? maxMonsters : 0;
         if (!_pointsPerLevel.IsFocused) {
             _pointsPerLevel.Value = int.TryParse(ini.GetValueOrDefault(("Trainers", "TrainingPointsPerLevel")), out var points) ? points : 1;
         }
@@ -1497,6 +1514,19 @@ internal sealed partial class ManagerWindow : Window {
         _manager.SaveSettings([new Setting("Trainers", "TrainingPointsPerLevel", points.ToString(), "")]);
         _settings = [];
         Say($"Each level now gives {points} training points while that switch is on. It applies right away.");
+
+        return Task.CompletedTask;
+    }
+
+    private Task SetMaxMonstersAsync(int most) {
+        if (!_manager.HasSetting("Battle", "MaxMonsters") || _manager.GetSetting("Battle", "MaxMonsters") == most.ToString()) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("Battle", "MaxMonsters", most.ToString(), "")]);
+        _settings = [];
+        Say(most == 0 ? "Most monsters in a battle is off: the normal rule (wizards + 1, up to 4) is back. It applies right away."
+            : $"A battle now holds at most {most} monster{(most == 1 ? "" : "s")}. It applies right away.");
 
         return Task.CompletedTask;
     }
