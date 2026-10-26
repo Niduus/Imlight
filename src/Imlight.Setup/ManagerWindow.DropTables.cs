@@ -150,9 +150,9 @@ internal sealed class DropDraft {
         }
 
         Put("Items", new JsonArray([.. Items.Select(item => {
-            var line = new JsonObject { ["ItemId"] = item.ItemId, ["ItemName"] = item.ItemName };
+            // One picked at random keeps each line's Chance as how likely it is next to the others (DropTableRoller.PickIndex).
+            var line = new JsonObject { ["ItemId"] = item.ItemId, ["ItemName"] = item.ItemName, ["Chance"] = item.Chance };
             if (EachItem) {
-                line["Chance"] = item.Chance;
                 line["MinCount"] = item.Min;
                 line["MaxCount"] = item.Max;
                 line["Guaranteed"] = item.Guaranteed;
@@ -324,46 +324,147 @@ internal sealed partial class ManagerWindow {
         _dropEditorHost.Child = null;
     }
 
+    // The drop table editor, made friendlier (Niduus, 2026-10-26: "Make custom drop tables UI more friendly"): plain
+    // steps, number boxes with arrows, a picker with filters, lines that move up and down, and a preview of what a win gives.
     private Control DropEditor(DropDraft draft) {
         var name = new TextBox { Text = draft.Name, Width = 360, Watermark = "Such as Malistaire-Unbroken-Gear" };
         var description = new TextBox { Text = draft.Description, Width = 360, Watermark = "A note for you" };
-        var roll = new TextBox { Text = Num(draft.RollChance), Width = 90 };
-        var mode = new ComboBox { Width = 300, ItemsSource = new[] { "Each item by its own chance", "One item, picked at random" } };
-        mode.SelectedIndex = draft.EachItem ? 0 : 1;
-        var minGold = new TextBox { Text = draft.MinGold.ToString(CultureInfo.InvariantCulture), Width = 100 };
-        var maxGold = new TextBox { Text = draft.MaxGold.ToString(CultureInfo.InvariantCulture), Width = 100 };
-        var xp = new TextBox { Text = draft.Experience.ToString(CultureInfo.InvariantCulture), Width = 100 };
-        var tp = new TextBox { Text = draft.TrainingPoints.ToString(CultureInfo.InvariantCulture), Width = 100 };
-        var rows = new StackPanel { Spacing = 4 };
-        var search = new TextBox { Watermark = "Search an item, treasure card or spell by name or ID, such as Ghost Hat or 730267", Width = 520, HorizontalAlignment = HorizontalAlignment.Left };
-        var results = new StackPanel { Spacing = 2 };
-        var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+        var roll = DropNumber(draft.RollChance, 100, 5, "0.##", 120);
+        var minGold = DropNumber(draft.MinGold, 10_000_000, 10, "0", 130);
+        var maxGold = DropNumber(draft.MaxGold, 10_000_000, 10, "0", 130);
+        var xp = DropNumber(draft.Experience, 100_000_000, 10, "0", 130);
+        var tp = DropNumber(draft.TrainingPoints, 1000, 1, "0", 130);
+        var rows = new StackPanel { Spacing = 6 };
+        var bulk = new WrapPanel();
+        var preview = new StackPanel { Spacing = 6 };
+        var tryResult = new StackPanel { Spacing = 4 };
+        var previewDelay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+        var hints = new List<Action>();
+        var group = "drop-mode-" + Guid.NewGuid().ToString("N");
+        var eachItem = DropModeChoice(group, "Every item rolls on its own",
+            "Each line has its own chance, so a win can give several items, or none.", draft.EachItem);
+        var pickOne = DropModeChoice(group, "One item is picked",
+            "A win gives one item of the list, like the game's own tables. Lines that are more likely get picked more often.", !draft.EachItem);
+
+        void Changed() {
+            foreach (var hint in hints) {
+                hint();
+            }
+
+            previewDelay.Stop();
+            previewDelay.Start();
+        }
+
+        previewDelay.Tick += (_, _) => {
+            previewDelay.Stop();
+            RenderDropPreview(draft, preview);
+        };
 
         void RenderRows() {
             rows.Children.Clear();
+            hints.Clear();
             if (draft.Items.Count == 0) {
-                rows.Children.Add(Sub("No items yet. Search one below and press Add. A table can give only gold and XP too."));
+                rows.Children.Add(new Border {
+                    Background = ManagerTheme.Glass(8), CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 10),
+                    Child = Sub("No items yet. Find one in the list below and press Add. A table can also give only gold and XP."),
+                });
             }
 
-            foreach (var entry in draft.Items) {
-                rows.Children.Add(DropEntryRow(draft, entry, RenderRows));
+            for (var i = 0; i < draft.Items.Count; i++) {
+                rows.Children.Add(DropEntryRow(draft, draft.Items[i], i, RenderRows, Changed, hints));
             }
+
+            RenderBulk();
+            Changed();
         }
 
-        mode.SelectionChanged += (_, _) => {
-            draft.EachItem = mode.SelectedIndex == 0;
-            RenderRows();
+        void RenderBulk() {
+            bulk.Children.Clear();
+            if (draft.Items.Count == 0) {
+                return;
+            }
+
+            if (draft.EachItem) {
+                var every = DropNumber(25, 100, 5, "0.##", 120);
+                bulk.Children.Add(WithMargin(Row(WithCenter(new TextBlock { Text = "Set every chance to", Foreground = MUTED }), WithUnit(every, "%"),
+                    Action(Plain("Set"), () => {
+                        foreach (var entry in draft.Items) {
+                            entry.Chance = (double) (every.Value ?? 0);
+                        }
+
+                        RenderRows();
+
+                        return Task.CompletedTask;
+                    })), new Thickness(0, 0, 16, 6)));
+            }
+            else {
+                bulk.Children.Add(WithMargin(Action(Plain("Make them all as likely"), () => {
+                    foreach (var entry in draft.Items) {
+                        entry.Chance = 100;
+                    }
+
+                    RenderRows();
+
+                    return Task.CompletedTask;
+                }), new Thickness(0, 0, 16, 6)));
+            }
+
+            bulk.Children.Add(WithMargin(Action(Plain("Most likely first"), () => {
+                var sorted = draft.Items.OrderByDescending(e => e.Guaranteed).ThenByDescending(e => e.Chance).ToList();
+                draft.Items.Clear();
+                draft.Items.AddRange(sorted);
+                RenderRows();
+
+                return Task.CompletedTask;
+            }), new Thickness(0, 0, 10, 6)));
+            bulk.Children.Add(WithMargin(Danger(Action(Plain("Take all items off"), async () => {
+                if (await ConfirmAsync($"Take all {draft.Items.Count} items off this table? Nothing is saved until you press Save the table.")) {
+                    draft.Items.Clear();
+                    RenderRows();
+                }
+            })), new Thickness(0, 0, 10, 6)));
+        }
+
+        eachItem.IsCheckedChanged += (_, _) => {
+            if (eachItem.IsChecked == true && !draft.EachItem) {
+                draft.EachItem = true;
+                RenderRows();
+            }
         };
-        delay.Tick += (_, _) => {
-            delay.Stop();
-            RenderItemResults(draft, search, results, RenderRows);
+        pickOne.IsCheckedChanged += (_, _) => {
+            if (pickOne.IsChecked == true && draft.EachItem) {
+                draft.EachItem = false;
+                RenderRows();
+            }
         };
-        search.GotFocus += (_, _) => RenderItemResults(draft, search, results, RenderRows);
-        search.TextChanged += (_, _) => {
-            delay.Stop();
-            delay.Start();
+        roll.ValueChanged += (_, _) => {
+            draft.RollChance = (double) (roll.Value ?? 0);
+            Changed();
         };
+        minGold.ValueChanged += (_, _) => {
+            draft.MinGold = (int) (minGold.Value ?? 0);
+            if (maxGold.Value < minGold.Value) {
+                maxGold.Value = minGold.Value;
+            }
+
+            Changed();
+        };
+        maxGold.ValueChanged += (_, _) => {
+            draft.MaxGold = (int) (maxGold.Value ?? 0);
+            Changed();
+        };
+        xp.ValueChanged += (_, _) => {
+            draft.Experience = (int) (xp.Value ?? 0);
+            Changed();
+        };
+        tp.ValueChanged += (_, _) => {
+            draft.TrainingPoints = (int) (tp.Value ?? 0);
+            Changed();
+        };
+
+        var picker = DropItemPicker(draft, RenderRows);
         RenderRows();
+        RenderDropPreview(draft, preview);
 
         void Collect() {
             var newName = (name.Text ?? "").Trim();
@@ -378,15 +479,15 @@ internal sealed partial class ManagerWindow {
 
             draft.Name = newName;
             draft.Description = (description.Text ?? "").Trim();
-            draft.RollChance = Percent(roll, "Chance it drops") ?? 100;
-            draft.MinGold = WholeNumber(minGold, "Gold from", 0, 10_000_000) ?? 0;
-            draft.MaxGold = WholeNumber(maxGold, "Gold to", 0, 10_000_000) ?? draft.MinGold;
+            draft.RollChance = (double) (roll.Value ?? 100);
+            draft.MinGold = (int) (minGold.Value ?? 0);
+            draft.MaxGold = (int) (maxGold.Value ?? draft.MinGold);
             if (draft.MaxGold < draft.MinGold) {
                 throw new PanelException("The second gold number is the most it gives, so it cannot be less than the first.");
             }
 
-            draft.Experience = WholeNumber(xp, "XP", 0, 100_000_000) ?? 0;
-            draft.TrainingPoints = WholeNumber(tp, "Training points", 0, 1000) ?? 0;
+            draft.Experience = (int) (xp.Value ?? 0);
+            draft.TrainingPoints = (int) (tp.Value ?? 0);
             if (draft.Items.FirstOrDefault(i => i.Max < i.Min) is { } wrong) {
                 throw new PanelException($"{wrong.ItemName}: the most that drop cannot be less than the fewest.");
             }
@@ -417,21 +518,22 @@ internal sealed partial class ManagerWindow {
             _customDrops.Text = string.Join(", ", drops.Distinct(StringComparer.OrdinalIgnoreCase));
             RenderDropChips();
             OpenDropEditor(draft);
-            Say($"Saved the drop table {draft.Name} ({Path.GetFileName(draft.File)}). It counts from the next battle." +
+            Say($"Saved the drop table {draft.Name} ({Path.GetFileName(draft.File)}). It counts from the next battle, no restart needed." +
                 (swapped ? " Press Save changes at the bottom so this creature drops it." : ""));
             await Task.CompletedTask;
         }
 
-        var buttons = Row(
-            Action(Primary("Save the table"), () => SaveAsync(false)),
-            Action(Plain("Save and drop it here"), () => SaveAsync(true)),
-            Action(Plain("Close"), () => {
-                CloseDropEditor();
+        var buttons = new WrapPanel();
+        void AddButton(Control button) => buttons.Children.Add(WithMargin(button, new Thickness(0, 0, 10, 6)));
+        AddButton(Action(Primary("Save the table"), () => SaveAsync(false)));
+        AddButton(Action(Plain("Save and drop it here"), () => SaveAsync(true)));
+        AddButton(Action(Plain("Close"), () => {
+            CloseDropEditor();
 
-                return Task.CompletedTask;
-            }));
+            return Task.CompletedTask;
+        }));
         if (draft.File is { } file && DropTables().FirstOrDefault(t => string.Equals(t.File, file, StringComparison.OrdinalIgnoreCase)) is { AppMade: true } made) {
-            buttons.Children.Add(Danger(Action(Plain("Delete the table"), async () => {
+            AddButton(Danger(Action(Plain("Delete the table"), async () => {
                 if (!await ConfirmAsync($"Delete the drop table {made.Name}? Creatures that drop it stop dropping it.")) {
                     return;
                 }
@@ -445,51 +547,125 @@ internal sealed partial class ManagerWindow {
         }
 
         var title = draft.File is null ? (draft.CopiedFrom.Length > 0 ? $"A copy of {draft.CopiedFrom}" : "New drop table") : $"Drop table {draft.Name}";
-        var where = draft.File is null ? "It is saved to spiraldb-extra/DropTables when you press Save the table."
-            : $"Saved in spiraldb-extra/DropTables/{Path.GetFileName(draft.File)}.";
+        var where = draft.File is null ? "Nothing is kept until you press Save the table."
+            : $"Saved as spiraldb-extra/DropTables/{Path.GetFileName(draft.File)}.";
         // A Wizard404 gauntlet table takes its chance from DropOdds.json, so its own chance box only counts without one.
-        if (BossChanges.FindIn(draft.Original, "Odds") is JsonValue odds && odds.ToString() is { Length: > 0 } oddsKey) {
-            where += $" Its chance comes from spiraldb-extra/DropOdds.json ({oddsKey}); the chance here counts only if that file has no {oddsKey}.";
+        var oddsNote = BossChanges.FindIn(draft.Original, "Odds") is JsonValue odds && odds.ToString() is { Length: > 0 } oddsKey
+            ? $"This table's chance comes from spiraldb-extra/DropOdds.json ({oddsKey}); the box here counts only if that file has no {oddsKey}."
+            : null;
+
+        var tryButtons = Row(
+            Action(Plain("Try one win"), () => {
+                ShowTryOnce(draft, tryResult);
+
+                return Task.CompletedTask;
+            }),
+            Action(Plain("Try 100 wins"), () => {
+                ShowTryMany(draft, tryResult, 100);
+
+                return Task.CompletedTask;
+            }));
+
+        var about = new StackPanel {
+            Spacing = 8,
+            Children = {
+                StatRow("Name", name, "Creatures drop it by this name."),
+                StatRow("Note", description, "Only for you; the game does not show it."),
+            },
+        };
+        var everyWin = new StackPanel {
+            Spacing = 8,
+            Children = {
+                StatRow("Chance it drops", WithUnit(roll, "%"), "How often this table gives anything in a won battle. 100 = every win, 50 = half of them."),
+                StatRow("Gold", Row(WithUnit(minGold, "to"), maxGold), "A random amount between the two. 0 and 0 = no gold."),
+                StatRow("XP", xp, "Experience each wizard gets."),
+                StatRow("Training points", tp, "Usually 0."),
+            },
+        };
+        if (oddsNote is not null) {
+            everyWin.Children.Add(new TextBlock { Text = oddsNote, Foreground = WARN, TextWrapping = TextWrapping.Wrap });
         }
 
         return new Border {
             Margin = new Thickness(0, 12, 0, 0),
             Padding = new Thickness(16),
-            CornerRadius = new CornerRadius(10),
-            Background = new SolidColorBrush(Color.FromArgb(28, 201, 162, 39)),
-            BorderBrush = BlockColors.Accent("drops"),
+            CornerRadius = new CornerRadius(ManagerTheme.RADIUS),
+            Background = ManagerTheme.Glass(12),
+            BorderBrush = ManagerTheme.Brush(ManagerTheme.AccentColor("drops"), 150),
             BorderThickness = new Thickness(1),
             Child = new StackPanel {
-                Spacing = 8,
+                Spacing = 12,
                 Children = {
                     new DockPanel {
                         Children = {
-                            WithDock(new Border { Margin = new Thickness(0, 0, 12, 0), Child = BlockIcons.Tile("bag", BlockColors.Accent("drops"), 34) }, Dock.Left),
+                            WithDock(new Border { Margin = new Thickness(0, 0, 12, 0), Child = BlockIcons.Tile("bag", BlockColors.Accent("drops"), 38) }, Dock.Left),
                             new StackPanel {
+                                VerticalAlignment = VerticalAlignment.Center,
                                 Children = {
-                                    new TextBlock { Text = title, FontSize = 16, FontWeight = FontWeight.SemiBold },
-                                    Sub("A drop table is rolled once for each wizard in every battle won against a creature that drops it. " + where),
+                                    new TextBlock { Text = title, FontSize = 17, FontWeight = FontWeight.SemiBold },
+                                    Sub("Each wizard rolls this table once in every battle won against a creature that drops it. " + where),
                                 },
                             },
                         },
                     },
-                    StatRow("Name", name, "Its name. Creatures drop it by this name."),
-                    StatRow("Description", description, "A note for you; the game does not show it."),
-                    StatRow("Chance it drops", WithUnit(roll, "%"), "The chance this table gives anything in a won battle. 100 means every battle."),
-                    StatRow("Gold", Row(WithUnit(minGold, "to"), maxGold), "A random amount from the first number to the second. 0 and 0: no gold from this table."),
-                    StatRow("XP", xp, "Experience it gives each wizard."),
-                    StatRow("Training points", tp, "Training points it gives each wizard. Usually 0."),
-                    StatRow("How items drop", mode, "Each item by its own chance: every line rolls on its own. One at random: one item of the list, as the server's own tables do."),
-                    WithMargin(new TextBlock { Text = "Items, treasure cards and spells", FontSize = 15, FontWeight = FontWeight.SemiBold }, new Thickness(0, 8, 0, 0)),
-                    Sub("Treasure cards go to the treasure book; other spells are taught. Guaranteed lines always drop."),
-                    rows,
-                    search,
-                    results,
-                    WithMargin(buttons, new Thickness(0, 8, 0, 0)),
+                    DropStep("1", "Name it", null, about),
+                    DropStep("2", "What every win can give", "Gold, XP and how often the table drops at all.", everyWin),
+                    DropStep("3", "How items drop", null, new WrapPanel { Children = { eachItem, pickOne } }),
+                    DropStep("4", "Items, treasure cards and spells", "Treasure cards go to the treasure book; other spells are taught. Use the arrows to change the order.",
+                        new StackPanel { Spacing = 8, Children = { bulk, rows } }),
+                    DropStep("5", "Add items", "Search by name or ID, or leave the box empty and use the filters.", picker),
+                    DropStep("6", "What a win gives", "The real odds for each wizard, from all the numbers above. Try it to see some made-up wins.",
+                        new StackPanel { Spacing = 10, Children = { preview, tryButtons, tryResult } }),
+                    buttons,
                 },
             },
         };
     }
+
+    /// <summary>A numbered step of the drop table editor: a glass panel with its number, title and what it is for.</summary>
+    private static Control DropStep(string number, string title, string? help, Control body) {
+        var head = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 10,
+            Children = {
+                new Border {
+                    Width = 24, Height = 24, CornerRadius = new CornerRadius(12), Background = BlockColors.Accent("drops"),
+                    Child = new TextBlock {
+                        Text = number, Foreground = Brushes.White, FontWeight = FontWeight.Bold, FontSize = 12,
+                        HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+                    },
+                },
+                WithCenter(new TextBlock { Text = title, FontSize = 15, FontWeight = FontWeight.SemiBold }),
+            },
+        };
+        var stack = new StackPanel { Spacing = 8, Children = { head } };
+        if (help is not null) {
+            stack.Children.Add(Sub(help));
+        }
+
+        stack.Children.Add(body);
+        var panel = ManagerTheme.GlassPanel(stack, ManagerTheme.RADIUS_SMALL + 2);
+        panel.Padding = new Thickness(14, 12);
+
+        return panel;
+    }
+
+    /// <summary>One of the two ways a table gives items, as a big button with a line of what it means.</summary>
+    private static RadioButton DropModeChoice(string group, string title, string help, bool picked) => new() {
+        GroupName = group, IsChecked = picked, Margin = new Thickness(0, 0, 12, 6), Width = 330, VerticalContentAlignment = VerticalAlignment.Top,
+        Content = new StackPanel {
+            Spacing = 2,
+            Children = {
+                new TextBlock { Text = title, FontWeight = FontWeight.SemiBold },
+                new TextBlock { Text = help, Foreground = MUTED, FontSize = 12, TextWrapping = TextWrapping.Wrap },
+            },
+        },
+    };
+
+    /// <summary>A number box with arrows, for the drop table editor.</summary>
+    private static NumericUpDown DropNumber(double value, double max, double step, string format, double width) => new() {
+        Minimum = 0, Maximum = (decimal) max, Increment = (decimal) step, FormatString = format, Width = width,
+        Value = (decimal) Math.Clamp(value, 0, max), ClipValueToMinMax = true,
+    };
 
     private static Control WithUnit(Control box, string unit) => new StackPanel {
         Orientation = Orientation.Horizontal, Spacing = 6,
@@ -498,76 +674,152 @@ internal sealed partial class ManagerWindow {
 
     private static string Num(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
 
-    private static double? Percent(TextBox box, string label) {
-        var text = (box.Text ?? "").Trim().TrimEnd('%').Trim();
-        if (text.Length == 0) {
-            return null;
+    /// <summary>A chance (0 to 1) in plain words: a percent and about how many wins it takes.</summary>
+    private static string ChanceWords(double chance) => chance switch {
+        <= 0 => "never",
+        >= 0.9999 => "every win",
+        _ => $"{Num(chance * 100)}%, about 1 in {Math.Max(1, Math.Round(1 / chance)):N0} wins",
+    };
+
+    /// <summary>
+    /// The chance (0 to 1) that a won battle gives this line, the way the server rolls it (DropTableRoller): the table's
+    /// own chance, then the line's chance, or its share of the list when one item is picked. Item needs and Tamed Drops are left out.
+    /// </summary>
+    private static double LineChance(DropDraft draft, DropEntry entry) {
+        var table = Math.Clamp(draft.RollChance / 100, 0, 1);
+        if (draft.EachItem) {
+            return table * (entry.Guaranteed ? 1 : Math.Clamp(entry.Chance / 100, 0, 1));
         }
 
-        if (!double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) || value < 0 || value > 100) {
-            throw new PanelException($"{label} must be a percent from 0 to 100.");
-        }
-
-        return value;
+        return table * PickShare(draft, entry);
     }
 
-    /// <summary>One line of the table: its picture, name and kind, and (each by its own chance) chance, count and guaranteed.</summary>
-    private Control DropEntryRow(DropDraft draft, DropEntry entry, Action changed) {
-        var item = CatalogItem(entry.ItemId);
-        var chance = new TextBox { Text = Num(entry.Chance), Width = 72, IsEnabled = !entry.Guaranteed };
-        chance.TextChanged += (_, _) => {
-            if (double.TryParse((chance.Text ?? "").TrimEnd('%'), NumberStyles.Float, CultureInfo.InvariantCulture, out var v)) {
-                entry.Chance = Math.Clamp(v, 0, 100);
-            }
-        };
-        var min = new NumericUpDown { Minimum = 1, Maximum = 999, Increment = 1, FormatString = "0", Width = 110, Value = entry.Min };
-        var max = new NumericUpDown { Minimum = 1, Maximum = 999, Increment = 1, FormatString = "0", Width = 110, Value = entry.Max };
-        min.ValueChanged += (_, _) => {
-            entry.Min = (int) (min.Value ?? 1);
-            if (max.Value < min.Value) {
-                max.Value = min.Value;
-            }
-        };
-        max.ValueChanged += (_, _) => entry.Max = (int) (max.Value ?? 1);
-        var guaranteed = new CheckBox { Content = "Guaranteed", IsChecked = entry.Guaranteed };
-        ToolTip.SetTip(guaranteed, "It always drops, whatever its chance.");
-        guaranteed.IsCheckedChanged += (_, _) => {
-            entry.Guaranteed = guaranteed.IsChecked == true;
-            chance.IsEnabled = !entry.Guaranteed;
-        };
-        var remove = new Button { Padding = new Thickness(6, 4), Content = BlockIcons.Icon("trash", 14, new SolidColorBrush(Color.FromRgb(230, 110, 110))) };
-        ToolTip.SetTip(remove, "Take this line off the table");
-        remove.Click += (_, _) => {
-            draft.Items.Remove(entry);
-            changed();
-        };
-
-        var settings = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
-        if (draft.EachItem) {
-            settings.Children.Add(WithCenter(new TextBlock { Text = "Chance", Foreground = MUTED }));
-            settings.Children.Add(WithUnit(chance, "%"));
-            settings.Children.Add(WithCenter(new TextBlock { Text = "Count", Foreground = MUTED }));
-            settings.Children.Add(min);
-            settings.Children.Add(WithCenter(new TextBlock { Text = "to", Foreground = MUTED }));
-            settings.Children.Add(max);
-            settings.Children.Add(guaranteed);
+    /// <summary>How much of the picks a line gets when one item is picked: by its weight, or all the same when no line has one.</summary>
+    private static double PickShare(DropDraft draft, DropEntry entry) {
+        var lines = draft.Items.Where(i => i.ItemId.Length > 0).ToList();
+        if (lines.Count == 0 || !lines.Contains(entry)) {
+            return 0;
         }
 
-        settings.Children.Add(remove);
+        var total = lines.Sum(i => Math.Max(0, i.Chance));
+
+        return total <= 0 ? 1.0 / lines.Count : Math.Max(0, entry.Chance) / total;
+    }
+
+    /// <summary>One line of the table: arrows to move it, its picture, name and kind, and how it drops.</summary>
+    private Control DropEntryRow(DropDraft draft, DropEntry entry, int index, Action reorder, Action changed, List<Action> hints) {
+        var item = CatalogItem(entry.ItemId);
+        var hint = new TextBlock { Foreground = BlockColors.Accent("drops"), FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+        hints.Add(() => hint.Text = draft.EachItem && entry.Guaranteed
+            ? (draft.RollChance >= 100 ? "Drops every win" : $"Drops whenever the table does ({ChanceWords(LineChance(draft, entry))})")
+            : draft.EachItem ? $"= {ChanceWords(LineChance(draft, entry))}"
+            : $"= {Num(PickShare(draft, entry) * 100)}% of picks");
+
+        var settings = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) };
+        void Setting(Control control) => settings.Children.Add(WithMargin(WithCenter(control), new Thickness(0, 0, 10, 4)));
+        TextBlock Label(string text) => new() { Text = text, Foreground = MUTED };
+
+        if (draft.EachItem) {
+            var chance = DropNumber(entry.Chance, 100, 5, "0.##", 120);
+            chance.IsEnabled = !entry.Guaranteed;
+            chance.ValueChanged += (_, _) => {
+                entry.Chance = (double) (chance.Value ?? 0);
+                changed();
+            };
+            var min = DropNumber(entry.Min, 999, 1, "0", 100);
+            var max = DropNumber(entry.Max, 999, 1, "0", 100);
+            min.Minimum = 1;
+            max.Minimum = 1;
+            min.ValueChanged += (_, _) => {
+                entry.Min = (int) (min.Value ?? 1);
+                if (max.Value < min.Value) {
+                    max.Value = min.Value;
+                }
+
+                changed();
+            };
+            max.ValueChanged += (_, _) => {
+                entry.Max = (int) (max.Value ?? 1);
+                if (min.Value > max.Value) {
+                    min.Value = max.Value;
+                }
+
+                changed();
+            };
+            var guaranteed = new CheckBox { Content = "Always drops", IsChecked = entry.Guaranteed };
+            ToolTip.SetTip(guaranteed, "It drops every time the table drops, whatever its chance.");
+            guaranteed.IsCheckedChanged += (_, _) => {
+                entry.Guaranteed = guaranteed.IsChecked == true;
+                chance.IsEnabled = !entry.Guaranteed;
+                changed();
+            };
+            Setting(Label("Chance"));
+            Setting(WithUnit(chance, "%"));
+            Setting(guaranteed);
+            Setting(Label("How many"));
+            Setting(min);
+            Setting(Label("to"));
+            Setting(max);
+        }
+        else {
+            var weight = DropNumber(entry.Chance, 1_000_000, 10, "0.##", 130);
+            ToolTip.SetTip(weight, "Compared with the other lines: a line at 200 gets picked twice as often as one at 100.");
+            weight.ValueChanged += (_, _) => {
+                entry.Chance = (double) (weight.Value ?? 0);
+                changed();
+            };
+            Setting(Label("How likely"));
+            Setting(weight);
+        }
+
+        Setting(hint);
+
+        Button Small(string icon, string tip, bool enabled, Action click, IBrush? brush = null) {
+            var button = new Button {
+                Padding = new Thickness(6, 4), IsEnabled = enabled,
+                Content = BlockIcons.Icon(icon, 14, brush ?? ManagerTheme.TEXT_BRUSH),
+            };
+            ToolTip.SetTip(button, tip);
+            button.Click += (_, _) => click();
+
+            return button;
+        }
+
+        void Move(int by) {
+            draft.Items.RemoveAt(index);
+            draft.Items.Insert(index + by, entry);
+            reorder();
+        }
+
+        var arrows = new StackPanel {
+            Spacing = 2, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0),
+            Children = {
+                Small("up", "Move up", index > 0, () => Move(-1)),
+                Small("down", "Move down", index < draft.Items.Count - 1, () => Move(1)),
+            },
+        };
+        var remove = Small("trash", "Take this line off the table", true, () => {
+            draft.Items.Remove(entry);
+            reorder();
+        }, ManagerTheme.Brush(ManagerTheme.BAD_TEXT));
+        remove.VerticalAlignment = VerticalAlignment.Top;
 
         return new Border {
-            Padding = new Thickness(4, 4),
-            BorderBrush = LINE,
-            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(8, 8, 10, 6),
+            CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL),
+            Background = ManagerTheme.Glass(10),
+            BorderBrush = ManagerTheme.Glass(26),
+            BorderThickness = new Thickness(1),
             Child = new DockPanel {
                 Children = {
-                    WithDock(settings, Dock.Right),
-                    WithDock(new Border { Margin = new Thickness(0, 0, 10, 0), Child = DropIcon(entry.ItemId) }, Dock.Left),
+                    WithDock(arrows, Dock.Left),
+                    WithDock(new Border { Margin = new Thickness(0, 2, 10, 0), VerticalAlignment = VerticalAlignment.Top, Child = DropIcon(entry.ItemId, 40) }, Dock.Left),
+                    WithDock(remove, Dock.Right),
                     new StackPanel {
-                        VerticalAlignment = VerticalAlignment.Center,
                         Children = {
                             new TextBlock { Text = entry.ItemName.Length > 0 ? entry.ItemName : item?.Name ?? $"Item {entry.ItemId}", FontWeight = FontWeight.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis },
-                            new TextBlock { Text = $"{DropKind(item)}  ·  ID {entry.ItemId}", Foreground = MUTED, FontSize = 12 },
+                            new TextBlock { Text = $"{DropKind(item)}  ·  ID {entry.ItemId}" + (entry.Rest.Count > 0 && BossChanges.FindIn(entry.Rest, "Requirements") is not null ? "  ·  has needs" : ""), Foreground = MUTED, FontSize = 12 },
+                            settings,
                         },
                     },
                 },
@@ -575,53 +827,288 @@ internal sealed partial class ManagerWindow {
         };
     }
 
-    private void RenderItemResults(DropDraft draft, TextBox search, StackPanel results, Action changed) {
-        results.Children.Clear();
-        var query = (search.Text ?? "").Trim();
-        // An empty box lists items too (Niduus, 2026-10-25: "have them all generate search results if left empty").
-        var words = SearchText.Words(query);
-        var catalog = DropCatalog();
-        var found = query.Length > 0 && query.All(char.IsDigit)
-            ? catalog.Where(i => i.Id == query).ToList()
-            : catalog.Where(i => words.All(i.Haystack.Contains))
-                .OrderBy(i => !i.Name.Equals(query, StringComparison.OrdinalIgnoreCase)).ThenBy(i => words.Length == 0 ? 0 : i.Name.Length)
-                .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).Take(8).ToList();
-        if (found.Count == 0) {
-            results.Children.Add(Sub(catalog.Count == 0
-                ? "The item list shows up once the server has made its ID list. You can still type an item's ID."
-                : "Nothing matches."));
-        }
+    /// <summary>
+    /// The item picker under the table: a search with filters for kind and school that lists items even when empty
+    /// (the shared search helpers, ManagerWindow.SearchFilters.cs), each with its picture and an Add button.
+    /// </summary>
+    private Control DropItemPicker(DropDraft draft, Action changed) {
+        var search = new TextBox { Watermark = "Search an item, treasure card or spell, such as Ghost Hat or 730267", MinWidth = 360, MaxWidth = 560, HorizontalAlignment = HorizontalAlignment.Left };
+        var kind = FilterCombo([ANY_FILTER, "Item", "Treasure card", "Spell it teaches"]);
+        var school = FilterCombo([ANY_FILTER]);
+        var hideAdded = new CheckBox { Content = "Hide ones already in the table", IsChecked = true };
+        var count = Sub("");
+        var results = new StackPanel { Spacing = 4 };
+        const int SHOWN = 25;
+        var filling = false;
 
-        void Add(string id, string itemName) {
-            if (draft.Items.Any(i => i.ItemId == id)) {
-                throw new PanelException($"{itemName} is already in the table. Change its line instead.");
+        void Render() {
+            var catalog = DropCatalog();
+            if (filling) {
+                return;
             }
 
-            draft.Items.Add(new DropEntry { ItemId = id, ItemName = itemName, Chance = draft.EachItem ? 25 : 100 });
-            changed();
-        }
+            // Filling the school list picks a choice, which would show the list a second time from inside this one.
+            filling = true;
+            try {
+                FillFilterCombo(school, catalog.Select(i => i.School).Where(s => s.Length > 0 && s != "None").Distinct().OrderBy(s => s, StringComparer.OrdinalIgnoreCase));
+            }
+            finally {
+                filling = false;
+            }
 
-        foreach (var item in found) {
-            results.Children.Add(new DockPanel {
-                Children = {
-                    WithDock(Action(Plain("Add"), () => {
+            results.Children.Clear();
+            var query = (search.Text ?? "").Trim();
+            var words = SearchText.Words(query);
+            var pickedKind = FilterPick(kind);
+            var pickedSchool = FilterPick(school);
+            var inTable = draft.Items.Select(i => i.ItemId).ToHashSet();
+            var found = (query.Length > 0 && query.All(char.IsDigit)
+                    ? catalog.Where(i => i.Id == query)
+                    : catalog.Where(i => words.All(i.Haystack.Contains)))
+                .Where(i => pickedSchool is null || i.School.Equals(pickedSchool, StringComparison.OrdinalIgnoreCase))
+                .Where(i => pickedKind is null || (pickedKind == "Item" ? i.Kind == "Item" : i.Kind == "Spell" && DropKind(i) == pickedKind))
+                .Where(i => hideAdded.IsChecked != true || !inTable.Contains(i.Id))
+                .ToList();
+            count.Text = catalog.Count == 0
+                ? "The item list shows up once the server has made its ID list (start the server once). You can still type an item's ID."
+                : FilterCount(found.Count, catalog.Count, "items and spells", SHOWN);
+            var shown = found
+                .OrderBy(i => !i.Name.Equals(query, StringComparison.OrdinalIgnoreCase)).ThenBy(i => words.Length == 0 ? 0 : i.Name.Length)
+                .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).Take(SHOWN);
+
+            void Add(string id, string itemName) {
+                if (draft.Items.Any(i => i.ItemId == id)) {
+                    throw new PanelException($"{itemName} is already in the table. Change its line instead.");
+                }
+
+                draft.Items.Add(new DropEntry { ItemId = id, ItemName = itemName, Chance = draft.EachItem ? 25 : 100 });
+                changed();
+                Render();
+            }
+
+            foreach (var item in shown) {
+                var added = inTable.Contains(item.Id);
+                var add = added ? (Control) WithCenter(new TextBlock { Text = "In the table", Foreground = MUTED })
+                    : Action(Plain("Add"), () => {
                         Add(item.Id, item.Name);
 
                         return Task.CompletedTask;
-                    }), Dock.Right),
-                    WithDock(new Border { Margin = new Thickness(0, 0, 10, 0), Child = DropIcon(item.Id, 28) }, Dock.Left),
-                    WithCenter(new TextBlock { Text = $"{item.Name}  ·  {DropKind(item)}  ·  ID {item.Id}" }),
+                    });
+                results.Children.Add(new Border {
+                    Padding = new Thickness(6, 4), CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Background = ManagerTheme.Glass(6),
+                    Child = new DockPanel {
+                        Children = {
+                            WithDock(add, Dock.Right),
+                            WithDock(new Border { Margin = new Thickness(0, 0, 10, 0), Child = DropIcon(item.Id, 32) }, Dock.Left),
+                            new StackPanel {
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Children = {
+                                    new TextBlock { Text = item.Name, FontWeight = FontWeight.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis },
+                                    new TextBlock { Text = $"{DropKind(item)}  ·  ID {item.Id}", Foreground = MUTED, FontSize = 12 },
+                                },
+                            },
+                        },
+                    },
+                });
+            }
+
+            if (found.Count == 0 && query.All(char.IsDigit) && query.Length > 3 && !inTable.Contains(query)) {
+                results.Children.Add(Row(Action(Plain($"Add ID {query} anyway"), () => {
+                    Add(query, "");
+
+                    return Task.CompletedTask;
+                })));
+            }
+        }
+
+        search.GotFocus += (_, _) => Render();
+        WhenFiltersChange(Render, search, kind, school, hideAdded);
+
+        return new StackPanel {
+            Spacing = 6,
+            Children = {
+                search,
+                SearchFilters(SearchFilter("Kind", kind), SearchFilter("School", school), SearchTick(hideAdded)),
+                count,
+                results,
+            },
+        };
+    }
+
+    /// <summary>The preview of a table: how often it drops, its gold and XP, and each line's real chance in a won battle.</summary>
+    private void RenderDropPreview(DropDraft draft, StackPanel preview) {
+        preview.Children.Clear();
+        var table = Math.Clamp(draft.RollChance / 100, 0, 1);
+        preview.Children.Add(new TextBlock {
+            Text = table <= 0 ? "This table never drops: its chance is 0%."
+                : table >= 1 ? "This table drops in every won battle, for each wizard."
+                : $"This table drops in {ChanceWords(table)}, for each wizard.",
+            FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+        });
+
+        var gives = new WrapPanel();
+        void Give(string icon, string text) => gives.Children.Add(new Border {
+            Margin = new Thickness(0, 0, 8, 6), Padding = new Thickness(10, 4), CornerRadius = new CornerRadius(12), Background = ManagerTheme.Glass(16),
+            Child = new StackPanel {
+                Orientation = Orientation.Horizontal, Spacing = 6,
+                Children = { BlockIcons.Icon(icon, 14, BlockColors.Accent("drops")), new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center } },
+            },
+        });
+        if (draft.MinGold > 0 || draft.MaxGold > 0) {
+            Give("coin", draft.MinGold == draft.MaxGold || draft.MaxGold <= draft.MinGold ? $"{Math.Max(draft.MinGold, draft.MaxGold):N0} gold" : $"{draft.MinGold:N0} to {draft.MaxGold:N0} gold");
+        }
+
+        if (draft.Experience > 0) {
+            Give("star", $"{draft.Experience:N0} XP");
+        }
+
+        if (draft.TrainingPoints > 0) {
+            Give("school", $"{draft.TrainingPoints:N0} training points");
+        }
+
+        if (gives.Children.Count > 0) {
+            preview.Children.Add(gives);
+        }
+
+        var lines = draft.Items.Where(i => i.ItemId.Length > 0).ToList();
+        if (lines.Count == 0) {
+            preview.Children.Add(Sub(gives.Children.Count == 0 ? "It gives nothing yet. Add gold, XP or items." : "No items; only what is above."));
+
+            return;
+        }
+
+        foreach (var entry in lines) {
+            var chance = LineChance(draft, entry);
+            var amount = draft.EachItem && entry.Max > 1 ? (entry.Min == entry.Max ? $"  ·  {entry.Min} at a time" : $"  ·  {entry.Min} to {entry.Max} at a time") : "";
+            preview.Children.Add(new DockPanel {
+                Children = {
+                    WithDock(WithCenter(new TextBlock { Text = ChanceWords(chance) + amount, Foreground = chance <= 0 ? ManagerTheme.Brush(ManagerTheme.BAD_TEXT) : BlockColors.Accent("drops") }), Dock.Right),
+                    WithDock(new Border { Margin = new Thickness(0, 0, 8, 0), Child = DropIcon(entry.ItemId, 24) }, Dock.Left),
+                    WithCenter(new TextBlock { Text = DropLineName(entry), TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 0, 12, 0) }),
                 },
             });
         }
 
-        if (found.Count == 0 && query.All(char.IsDigit) && query.Length > 3) {
-            results.Children.Add(Row(Action(Plain($"Add ID {query} anyway"), () => {
-                Add(query, "");
+        var expected = draft.EachItem ? lines.Sum(e => LineChance(draft, e)) : table;
+        preview.Children.Add(Sub(draft.EachItem
+            ? $"On average a win gives {Num(expected)} item lines from this table. Item needs and Tamed Drops can change the odds in the game."
+            : $"A win gives one of these {lines.Count} items {(table >= 1 ? "every time" : $"in {Num(table * 100)}% of wins")}. Item needs and Tamed Drops can change the odds in the game."));
+    }
 
-                return Task.CompletedTask;
+    private string DropLineName(DropEntry entry)
+        => entry.ItemName.Length > 0 ? entry.ItemName : CatalogItem(entry.ItemId)?.Name ?? $"Item {entry.ItemId}";
+
+    /// <summary>One made-up win, rolled as the server rolls the table (without item needs or Tamed Drops).</summary>
+    private static (int Gold, List<(DropEntry Entry, int Count)> Items, bool Dropped) RollDraft(DropDraft draft, Random random) {
+        var items = new List<(DropEntry, int)>();
+        if (random.NextDouble() > Math.Clamp(draft.RollChance / 100, 0, 1)) {
+            return (0, items, false);
+        }
+
+        var low = Math.Max(0, draft.MinGold);
+        var gold = draft.MaxGold <= low ? Math.Max(low, draft.MaxGold) : random.Next(low, draft.MaxGold + 1);
+        var lines = draft.Items.Where(i => i.ItemId.Length > 0).ToList();
+        if (draft.EachItem) {
+            foreach (var entry in lines) {
+                if (entry.Guaranteed || random.NextDouble() * 100 < Math.Clamp(entry.Chance, 0, 100)) {
+                    var min = Math.Max(1, entry.Min);
+                    items.Add((entry, random.Next(min, Math.Max(min, entry.Max) + 1)));
+                }
+            }
+        }
+        else if (lines.Count > 0) {
+            var total = lines.Sum(e => Math.Max(0, e.Chance));
+            var pick = lines[^1];
+            if (total <= 0) {
+                pick = lines[random.Next(lines.Count)];
+            }
+            else {
+                var roll = random.NextDouble() * total;
+                foreach (var entry in lines) {
+                    roll -= Math.Max(0, entry.Chance);
+                    if (roll < 0) {
+                        pick = entry;
+                        break;
+                    }
+                }
+            }
+
+            items.Add((pick, 1));
+        }
+
+        return (gold, items, true);
+    }
+
+    private void ShowTryOnce(DropDraft draft, StackPanel result) {
+        result.Children.Clear();
+        var (gold, items, dropped) = RollDraft(draft, Random.Shared);
+        if (!dropped) {
+            result.Children.Add(Sub("This win: the table did not drop, so nothing from it."));
+
+            return;
+        }
+
+        var parts = new List<string>();
+        if (gold > 0) {
+            parts.Add($"{gold:N0} gold");
+        }
+
+        if (draft.Experience > 0) {
+            parts.Add($"{draft.Experience:N0} XP");
+        }
+
+        if (draft.TrainingPoints > 0) {
+            parts.Add($"{draft.TrainingPoints:N0} training points");
+        }
+
+        result.Children.Add(new TextBlock {
+            Text = "This win gives: " + (parts.Count > 0 ? string.Join(", ", parts) : "no gold or XP") + (items.Count == 0 ? ", and no items." : ", and:"),
+            FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+        });
+        foreach (var (entry, count) in items) {
+            result.Children.Add(Row(DropIcon(entry.ItemId, 28), WithCenter(new TextBlock { Text = count > 1 ? $"{DropLineName(entry)} x{count}" : DropLineName(entry) })));
+        }
+    }
+
+    private void ShowTryMany(DropDraft draft, StackPanel result, int wins) {
+        result.Children.Clear();
+        var random = Random.Shared;
+        var dropped = 0;
+        long gold = 0;
+        var got = new Dictionary<DropEntry, (int Times, int Count)>();
+        for (var n = 0; n < wins; n++) {
+            var roll = RollDraft(draft, random);
+            if (!roll.Dropped) {
+                continue;
+            }
+
+            dropped++;
+            gold += roll.Gold;
+            foreach (var (entry, count) in roll.Items) {
+                var had = got.GetValueOrDefault(entry);
+                got[entry] = (had.Times + 1, had.Count + count);
+            }
+        }
+
+        var totals = new List<string> { $"the table dropped {dropped} times" };
+        if (gold > 0) {
+            totals.Add($"{gold:N0} gold in all");
+        }
+
+        if (draft.Experience > 0) {
+            totals.Add($"{(long) draft.Experience * dropped:N0} XP in all");
+        }
+
+        result.Children.Add(new TextBlock { Text = $"In {wins} made-up wins, {string.Join(", ", totals)}.", FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap });
+        foreach (var entry in draft.Items.Where(i => i.ItemId.Length > 0)) {
+            var (times, count) = got.GetValueOrDefault(entry);
+            result.Children.Add(Row(DropIcon(entry.ItemId, 24), WithCenter(new TextBlock {
+                Text = times == 0 ? $"{DropLineName(entry)}: not once" : $"{DropLineName(entry)}: {times} wins" + (count > times ? $" ({count} in all)" : ""),
+                Foreground = times == 0 ? MUTED : ManagerTheme.TEXT_BRUSH,
             })));
         }
+
+        result.Children.Add(Sub("Press it again for another 100; luck changes each time."));
     }
 
 }
