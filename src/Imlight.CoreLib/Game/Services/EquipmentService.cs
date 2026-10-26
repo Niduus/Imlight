@@ -49,6 +49,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.CoreObject;
 using Imcodec.IO;
+using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -119,7 +120,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
             // Every effect goes out now, the pet's and jewels' cards included.
             EquipmentExtras.TakeCardEffectChanges(playerCharacter);
-            SendAddEffects([.. effects]);
+            // The other players get this wizard's speed with their spawn (ZoneService), right after the wizard's object.
+            SendAddEffects([.. effects], shareSpeed: false);
             ShowPetFormToZone(playerCharacter);
 
             // Spawn the equipped pet as a zone entity if one is equipped.
@@ -787,7 +789,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }, false);
     }
 
-    private void SendAddEffects(List<GameEffectBase> effects) {
+    private void SendAddEffects(List<GameEffectBase> effects, bool shareSpeed = true) {
         if (effects is null || effects.Count == 0) {
             return;
         }
@@ -818,6 +820,17 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 GameObjectID = charObjId,
                 EffectData = effectSerializedData
             });
+        }
+
+        if (shareSpeed) {
+            ShareSpeedWithZone(SharedSpeed.AddMessages(charObjId, effects));
+        }
+    }
+
+    // The other players' games are told the wizard's speed too, so they draw them moving as fast as they really do.
+    private void ShareSpeedWithZone(List<IMessage> messages) {
+        foreach (var message in messages) {
+            ZoneBroadcast(message, targets: ZoneBroadcastTarget.Players);
         }
     }
 
@@ -852,6 +865,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 InternalID = effect.m_internalID,
             });
         }
+
+        ShareSpeedWithZone(SharedSpeed.RemoveMessages(charObjId, effects));
     }
 
     private void EquipElixirFromInventory(Wizard wizard,

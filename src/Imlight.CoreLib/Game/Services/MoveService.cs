@@ -164,7 +164,7 @@ internal class MoveService : MessageService {
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_JUMP))]
     private void ReceiveClientJump(GAME_5_PROTOCOL.MSG_JUMP message) {
         var excludeOriginator = message.ExcludeOriginator == 1;
-        ZoneBroadcast(message, excludeOriginator);
+        ZoneBroadcast(message, excludeOriginator, ZoneBroadcastTarget.Players);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_MARK_LOCATION))]
@@ -291,7 +291,9 @@ internal class MoveService : MessageService {
             Direction = message.Direction,
             MobileID = _activeCoreObject.m_nMobileID,
         };
-        ZoneBroadcast(serverMoveMsg);
+        // Only players draw it. Sent to the whole zone, every move also went to each NPC, door and trigger there,
+        // which only slowed the zone down.
+        ZoneBroadcast(serverMoveMsg, targets: ZoneBroadcastTarget.Players);
     }
 
     private void BroadcastClientMoveState(GAME_5_PROTOCOL.MSG_CLIENTMOVESTATE message) {
@@ -303,7 +305,7 @@ internal class MoveService : MessageService {
             NewState = message.NewState,
             GlobalID = _activeCoreObject.m_globalID
         };
-        ZoneBroadcast(stateMsg);
+        ZoneBroadcast(stateMsg, targets: ZoneBroadcastTarget.Players);
     }
 
     private void SendZoneInteractionFishRequest() {

@@ -58,6 +58,7 @@ using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Game.Effects;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -1479,6 +1480,17 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         };
 
         ZoneActor.Tell(broadcastMsg);
+
+        // Right behind the object, so the other players' games walk this wizard at their real speed (mount, gear).
+        // The wizard's own game gets its effects from the EquipmentService.
+        foreach (var speedMsg in SharedSpeed.CurrentMessages(wizard)) {
+            ZoneActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Message = speedMsg,
+                Selfless = true,
+                Sender = SessionActor.ActorRef,
+                Targets = ZoneBroadcastTarget.Players,
+            });
+        }
     }
 
     private void SpawnMyselfFor(IActorRef actorRef) {
@@ -1498,6 +1510,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         };
 
         actorRef.Tell(addMsg);
+        foreach (var speedMsg in SharedSpeed.CurrentMessages(wizard)) {
+            actorRef.Tell(speedMsg);
+        }
     }
 
     private void SendTeleportEffects() {

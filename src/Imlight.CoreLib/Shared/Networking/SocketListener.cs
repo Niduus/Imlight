@@ -204,7 +204,7 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
             }
 
             foreach (var packet in packets) {
-                if (IsCriticalPacket(packet)) {
+                if (IsCriticalPacket(packet) || IsMovePacket(packet)) {
                     _tokenBucket.Spend();
                 } else if (packet is GAME_5_PROTOCOL.MSG_REQASKSERVER) {
                     // The game asks dozens of these at once on entering some areas (about 50 in Unicorn Way) and waits
@@ -303,6 +303,12 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
             or WIZARDHOUSING_50_PROTOCOL.MSG_REQUESTHOUSINGZONE
             or LOGIN_7_PROTOCOL.MSG_USER_VALIDATE
             or LOGIN_7_PROTOCOL.MSG_USER_AUTHEN_V3;
+
+    // Counted but never dropped: a lost move made the wizard skip ahead on the other players' screens.
+    private static bool IsMovePacket(IMessage packet)
+        => packet is GAME_5_PROTOCOL.MSG_CLIENTMOVE
+            or GAME_5_PROTOCOL.MSG_CLIENTMOVESTATE
+            or GAME_5_PROTOCOL.MSG_JUMP;
 
     private static string GetScopedMessageName(IMessage packet)
         => packet
