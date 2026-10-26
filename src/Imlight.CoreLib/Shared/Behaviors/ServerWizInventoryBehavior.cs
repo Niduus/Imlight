@@ -48,10 +48,28 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     public int ItemLimit { get; set; }
 
     /// <summary>
-    /// How many items the backpack holds.
+    /// The backpack slots Expand Backpack Elixirs added, on top of the base size. See BackpackElixirs.
+    /// </summary>
+    public int ExtraSlots { get; set; }
+
+    /// <summary>
+    /// The smallest backpack any wizard has (Niduus, 2026-10-26: "Universal backpack MINIMUM is 80"). A lower
+    /// [Character] MaxInventoryItems or .backpack size gives this.
+    /// </summary>
+    public const int MinimumLimit = s_maxItemsAllowedDefault;
+
+    /// <summary>
+    /// The backpack size before elixirs: the .backpack size, else [Character] MaxInventoryItems, never under
+    /// <see cref="MinimumLimit"/>.
+    /// </summary>
+    [JsonIgnore] public int BaseLimit
+        => Math.Max(MinimumLimit, ItemLimit > 0 ? ItemLimit : s_maxItemsAllowed);
+
+    /// <summary>
+    /// How many items the backpack holds: the base size and the elixir slots.
     /// </summary>
     [JsonIgnore] public int Limit
-        => ItemLimit > 0 ? ItemLimit : s_maxItemsAllowed <= 0 ? s_maxItemsAllowedDefault : s_maxItemsAllowed;
+        => BaseLimit + Math.Max(0, ExtraSlots);
 
     [JsonIgnore] public List<WizClientObjectItem> Items { get; set; }
 

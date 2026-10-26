@@ -61,7 +61,9 @@ internal class CommandSpaceProtocol : CommandProtocol {
             return;
         }
 
-        InformSenderClient($"Your backpack now holds {limit} items. Change area or log out and back in to see it in the backpack window.");
+        // Elixir slots come on top, and no backpack is smaller than the universal minimum.
+        BackpackElixirs.Announce(Context.SessionActor, Context.Character);
+        InformSenderClient($"Your backpack now holds {inventory.Limit} items. If the backpack window still shows the old size, change area or log out and back in.");
     }
 
     [Command("bank")]

@@ -517,6 +517,21 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
 
     private int TryGrantWizItem(Wizard wizard, WIZARD_12_PROTOCOL.MSG_PCS_PURCHASE_REQUEST message, WizItemTemplate wizItemTemplate) {
         var behaviors = wizItemTemplate.m_behaviors;
+
+        // Bought to use now, the Expand Backpack Elixir makes the backpack bigger right away; past the largest size it
+        // is not bought.
+        if (message.PurchaseElixirEquipNow > 0 && BackpackElixirs.Is(wizItemTemplate)) {
+            for (var i = 0; i < Math.Max(1, message.Count); i++) {
+                if (!BackpackElixirs.TryUse(SessionActor.ActorRef, wizard, out var failure)) {
+                    InformGameClient(failure);
+
+                    return i == 0 ? s_errorPurchase : 0;
+                }
+            }
+
+            return 0;
+        }
+
         if (behaviors is not null) {
             if (message.PurchaseElixirEquipNow > 0) {
                 var elixirBehavior = behaviors.OfType<ElixirBehaviorTemplate>().FirstOrDefault();

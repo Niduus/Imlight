@@ -66,6 +66,7 @@ using Imlight.CoreLib.WizardData.Models.Misc;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Rentals;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.Game.Bank;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -857,6 +858,29 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                                           WizClientObjectItem item,
                                           WizItemTemplate itemTemplate,
                                           ElixirBehaviorTemplate elixirTemplate) {
+        // The Expand Backpack Elixir makes the backpack bigger for good and is used up.
+        if (BackpackElixirs.Is(itemTemplate)) {
+            if (!BackpackElixirs.TryUse(SessionActor.ActorRef, wizard, out var failure)) {
+                InformGameClient(failure);
+
+                return;
+            }
+
+            if (wizard.InventoryBehavior.RemoveItem(item.m_globalID, out _)) {
+                WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID);
+                WizardCollection.UpdateCharacterItems(wizard);
+                SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
+                    GlobalID = wizard.GameObjectID,
+                    ItemID = item.m_globalID
+                });
+            }
+
+            PlaySound(elixirTemplate.m_equipSound);
+            InformGameClient($"Your backpack now holds {wizard.InventoryBehavior.Limit} items.");
+
+            return;
+        }
+
         uint durationSeconds = 0;
         if (!string.IsNullOrEmpty(elixirTemplate.m_expireTime)) {
             _ = uint.TryParse((string) elixirTemplate.m_expireTime, out durationSeconds);
