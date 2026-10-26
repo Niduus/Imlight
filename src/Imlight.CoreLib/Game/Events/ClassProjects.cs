@@ -490,9 +490,45 @@ internal static class ClassProjects {
             : $"{running.Shown}: reward {index + 1} claimed: {string.Join(", ", given)}.";
     }
 
+    /// <summary>
+    /// Moves reagents and pet snacks that an earlier claim put in the backpack (before v0.10.399) to their own bags, where
+    /// the game shows them. Returns their names.
+    /// </summary>
+    internal static List<string> MoveStrayRewards(IActorRef session, Wizard wizard) {
+        var moved = new List<string>();
+        var stray = wizard?.InventoryBehavior?.Items?
+            .Where(item => CoreObjectFactory.GetCoreTemplate((uint) item.m_templateID) is ReagentItemTemplate or PetSnackItemTemplate)
+            .ToList() ?? [];
+        foreach (var item in stray) {
+            ulong itemId = item.m_globalID;
+            var templateId = (uint) item.m_templateID;
+            if (!wizard.RemoveItemFromInventory(itemId)) {
+                continue;
+            }
+
+            session.Tell(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
+                GlobalID = wizard.GameObjectID,
+                ItemID = itemId,
+            });
+            var template = CoreObjectFactory.GetCoreTemplate(templateId);
+            PackManager.GrantDroppedItem(session, wizard, templateId, template);
+            moved.Add(NameOf(template, templateId));
+        }
+
+        if (moved.Count > 0) {
+            Logger.Information("Events | moved {0} from the backpack of {1} to their bags.", Logger.Args(string.Join(", ", moved), wizard.CharId));
+        }
+
+        return moved;
+    }
+
     /// <summary>Claims every reward a wizard has the points for, in every event on (the .events claim command).</summary>
     internal static List<string> ClaimAll(IActorRef session, Wizard wizard) {
         var lines = new List<string>();
+        if (MoveStrayRewards(session, wizard) is { Count: > 0 } moved) {
+            lines.Add($"Moved to your reagent and snack bags: {string.Join(", ", moved)}.");
+        }
+
         foreach (var running in Active().Concat(Deckathalons())) {
             foreach (var index in Unclaimed(running, wizard.CharId)) {
                 lines.Add(Claim(session, wizard, running.Id, index));
@@ -554,6 +590,13 @@ internal static class ClassProjects {
                 given.Add($"{lunari.m_lunariAmount} Lunari");
 
                 return;
+            // Treasure cards, reagents (the Spellements of the Scroll of Fortune) and pet snacks have their own bags; in
+            // the backpack the game never shows them (Niduus, 2026-10-26: "scroll of fortune drops don't work").
+            case SpellTemplate or ReagentItemTemplate or PetSnackItemTemplate:
+                PackManager.GrantDroppedItem(session, wizard, (uint) id, template);
+                given.Add(NameOf(template, id));
+
+                return;
             case null or CurrencyTemplate or TourneyTokensAmountTemplate:
                 Logger.Warning("Events | reward item {0} is not something the server can give; skipped.", Logger.Args(id));
 
@@ -571,6 +614,10 @@ internal static class ClassProjects {
     }
 
     private static string NameOf(CoreTemplate template, ulong id) {
+        if (template is SpellTemplate spell && !string.IsNullOrEmpty(spell.m_name)) {
+            return spell.m_name;
+        }
+
         var key = (template as WizItemTemplate)?.m_displayName.ToString();
         var name = string.IsNullOrEmpty(key) ? null : Locale.GetEnglishName(key);
 

@@ -214,7 +214,11 @@ public static class PackManager {
         },
     };
 
-    private static void GrantDroppedItem(
+    /// <summary>
+    /// Gives one item where the game keeps it: a treasure card to the treasure book, a reagent (Spellements too) to the
+    /// reagent bag, a pet snack to the snack bag, anything else to the backpack (the bank when it is full).
+    /// </summary>
+    internal static void GrantDroppedItem(
         IActorRef sessionActorRef,
         Wizard wizard,
         uint itemTemplateId,

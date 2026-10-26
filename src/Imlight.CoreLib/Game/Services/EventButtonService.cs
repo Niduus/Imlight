@@ -56,6 +56,8 @@ internal class EventButtonService(SessionActor sessionActor) : MessageService(se
             // The button's request carries no DisplayInfo of its own (OnOpenClassProjectWindow sends the message empty),
             // and the client opens the window only when the answer's DisplayInfo is set.
             var wizard = GetActiveWizard();
+            // Spellements and snacks an earlier claim left in the backpack go to their bags.
+            ClassProjects.MoveStrayRewards(SessionActor.ActorRef, wizard);
             SendToSocket(EventButton.InfoMessage(wizard, 1));
             Logger.Information("Event button: sent the event window to {0} (events {1}).", Logger.Args(wizard.CharId, string.Join(", ", EventButton.ActiveIds())));
         }
