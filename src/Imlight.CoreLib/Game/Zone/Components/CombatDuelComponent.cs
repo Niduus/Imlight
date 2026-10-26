@@ -855,6 +855,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         Logger.Information("Duel {0} | Round {1} | Waiting {2:0.0} s for {3} actions to play.",
             Logger.Args(SigilId, Duel.m_roundNum, waitSeconds, actions?.m_actionList?.Count ?? 0));
         _roundWait = (Duel.m_roundNum, cinematicTimeInSeconds, waitSeconds, DateTime.UtcNow);
+        _gameLogWatch = waitSeconds > 0 ? GameLogWatch.Start(Duel.m_duelID.Full, CombatResolver.SpellSeconds) : null;
+        _waitingForGameSince = null;
         var actionExecutionTime = TimeSpan.FromSeconds(waitSeconds);
         Duel.m_executionPhaseTimer = (float) actionExecutionTime.TotalSeconds;
 
@@ -887,9 +889,66 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // The round whose animations are playing: its estimate, what the duel waits, and when the actions went out.
     private (int Round, float Estimate, float Wait, DateTime Sent)? _roundWait;
 
+    // The game's log on this PC, read when the estimate runs out (GameLogWatch.cs), and since when the round has
+    // waited past the estimate for the game to finish.
+    private GameLogWatch _gameLogWatch;
+    private DateTime? _waitingForGameSince;
+
+    /// <summary>
+    /// When the estimate for the round's animations runs out while the game on this PC is still playing them (its log
+    /// shows a spell playing), the round waits on in steps of half a second, until the game is done or [Battle]
+    /// WaitForGameSeconds have passed (Niduus, 2026-10-26: "Sometimes turns just immediately rush").
+    /// </summary>
+    /// <returns>Whether the round waits on.</returns>
+    private bool KeepWaitingForGame() {
+        if (_gameLogWatch is not { } watch) {
+            return false;
+        }
+
+        try {
+            var state = watch.Check();
+            var waited = _waitingForGameSince is { } since ? (DateTime.UtcNow - since).TotalSeconds : 0;
+            if (state != GameLogWatch.State.Playing) {
+                if (_waitingForGameSince is not null) {
+                    Logger.Information("Duel {0} | Round {1} | the game finished its animations {2:0.0} s after the estimate.",
+                        Logger.Args(SigilId, Duel.m_roundNum, waited));
+                }
+
+                _gameLogWatch = null;
+
+                return false;
+            }
+
+            if (waited >= GameLogWatch.MaxExtraSeconds) {
+                Logger.Warning("Duel {0} | Round {1} | the game still plays its animations after {2:0} s more; the next round starts ([Battle] WaitForGameSeconds).",
+                    Logger.Args(SigilId, Duel.m_roundNum, waited));
+                _gameLogWatch = null;
+
+                return false;
+            }
+
+            if (_waitingForGameSince is null) {
+                _waitingForGameSince = DateTime.UtcNow;
+                Logger.Information("Duel {0} | Round {1} | the game is still playing its spells; waiting for it (up to {2:0} s more).",
+                    Logger.Args(SigilId, Duel.m_roundNum, GameLogWatch.MaxExtraSeconds));
+            }
+
+            Timers.StartSingleTimer(RESOUTION_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION(), TimeSpan.FromSeconds(0.5));
+
+            return true;
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Waiting for the game's animations failed: {1}", Logger.Args(SigilId, e));
+            _gameLogWatch = null;
+
+            return false;
+        }
+    }
+
     /// <summary>
     /// One line per round on how long its animations were given. The game sends nothing when it has played a round
-    /// (no such message in its protocol, and none in Niduus's logs), so the duel always waits the estimate.
+    /// (no such message in its protocol, and none in Niduus's logs), so the duel waits the estimate, and longer while
+    /// the game on this PC still plays the round (KeepWaitingForGame).
     /// </summary>
     private void LogRoundWaitOver() {
         try {
@@ -898,8 +957,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
 
             _roundWait = null;
-            Logger.Information("Duel {0} | Round {1} | animations done after {2:0.0} s (estimate {3:0.0} s, by timer{4}).",
+            Logger.Information("Duel {0} | Round {1} | animations done after {2:0.0} s (estimate {3:0.0} s, {4}{5}).",
                 Logger.Args(SigilId, wait.Round, (DateTime.UtcNow - wait.Sent).TotalSeconds, wait.Estimate,
+                    _waitingForGameSince is null ? "by timer" : "waited for the game",
                     s_animationExtraSeconds > 0 ? $", +{s_animationExtraSeconds:0.#} s extra" : ""));
         }
         catch (Exception e) {
@@ -965,6 +1025,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION))]
     private void ReceiveRoundResolution(COMBAT_106_PROTOCOL.MSG_ROUNDRESOLUTION message) {
         if (!_isActive) {
+            return;
+        }
+
+        if (KeepWaitingForGame()) {
             return;
         }
 

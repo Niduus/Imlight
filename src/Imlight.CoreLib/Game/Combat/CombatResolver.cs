@@ -149,6 +149,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         _queuedCombatActions = [];
 
     /// <summary>
+    /// This round's spells by name, with the seconds each was given (the last cast of a name counts). The duel reads the
+    /// game's log to see when the round's last spell started, and gives it this long (GameLogWatch.cs).
+    /// </summary>
+    internal Dictionary<string, float> SpellSeconds { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
     /// Applies queued combat actions to the duel, processing each action in order.
     /// </summary>
     /// <param name="combatActionListObj">The object that will hold the list of combat actions.</param>
@@ -158,6 +164,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             Logger.Args(_duel.m_duelID.Full, _duel.m_roundNum));
 
         combatActionListObj = new CombatActionListObj { m_actionList = [] };
+        SpellSeconds.Clear();
 
         // Some subcircles may not have queued actions. Ensure they do by adding a pass action.
         AddCasterPassActionIfNeeded();
@@ -1311,6 +1318,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         var animation = GetActionCinematicTime(action);
+        if ((string) action.SpellTemplate?.m_name is { Length: > 0 } spellName) {
+            SpellSeconds[spellName] = animation + cinematicTime;
+        }
+
         Logger.Debug("Duel {0} | Slot {1} | Spell {2} ({3}) waits {4:0.0} s: animation {5:0.0} s + effects {6:0.0} s.",
             Logger.Args(_duel.m_duelID.Full, action.SpellCaster.SlotIndex, action.Spell.m_templateID,
                 (string) action.SpellTemplate?.m_name ?? "?", animation + cinematicTime, animation, cinematicTime));
