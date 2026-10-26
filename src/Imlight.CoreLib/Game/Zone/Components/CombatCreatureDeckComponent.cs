@@ -37,6 +37,7 @@
  * Last Updated: 08/15/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.IO;
@@ -65,6 +66,8 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
             AddSpell(spellId);
         }
 
+        RemoveNaturalAttacksWhenDeckHasRegularAttack();
+
         // A creature with an empty deck (no usable client names and no SpiralDB deck) falls
         // back to the default spellbook so it can cast instead of passing every round.
         if (Spells.Count == 0) {
@@ -76,6 +79,29 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
                 AddSpell(spellId);
             }
         }
+    }
+
+    // Natural attacks are a fallback for creatures without a regular damage spell. If the creature's deck has regular
+    // attacks, remove its NA cards so random hands cannot favor them over those attacks.
+    private void RemoveNaturalAttacksWhenDeckHasRegularAttack() {
+        var hasRegularAttack = Spells
+            .Select(x => SpellFactory.GetSpell(x.m_templateID))
+            .Any(spell => spell is not null
+                          && !IsNaturalAttack(spell)
+                          && SpellEffectFilter.FilterSpellsByOutgoingDamage([spell]).Count > 0);
+        if (!hasRegularAttack) {
+            return;
+        }
+
+        Spells.RemoveAll(x => SpellFactory.GetSpell(x.m_templateID) is { } spell && IsNaturalAttack(spell));
+    }
+
+    internal static bool IsNaturalAttack(Spell spell) {
+        var name = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate template
+            ? (string) template.m_name ?? ""
+            : "";
+
+        return name.StartsWith("NA ", StringComparison.Ordinal) || name.EndsWith(" NA", StringComparison.Ordinal);
     }
 
     /// <summary>
