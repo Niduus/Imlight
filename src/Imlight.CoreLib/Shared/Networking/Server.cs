@@ -253,7 +253,8 @@ public abstract class Server : ReceiveProtocolDispatcher {
 
     private IActorRef CreateTcpListener(bool deferListening) {
         var actorName = $"{Name}.TcpListener.{Port}";
-        var tcpProps = TcpListenerActor.Props(Name, Port, Context.Self, !deferListening);
+        var tcpProps = TcpListenerActor.Props(Name, Port, Context.Self, !deferListening)
+            .WithDispatcher(SessionActor.SESSION_DISPATCHER);
         var tcpListenerRef = Context.ActorOf(tcpProps, actorName);
 
         Logger.Verbose("New actor created under {Path}: {ActorName}", Logger.Args(Context.Self.Path, actorName));

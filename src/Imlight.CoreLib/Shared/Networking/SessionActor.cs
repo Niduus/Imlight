@@ -134,7 +134,14 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
 
     // Akka.NET ctor
     public static Props Props(Socket socket, ushort sessionId, IActorRef server, IActorRef actorFactoryRef = null)
-        => Akka.Actor.Props.Create(() => new SessionActor(socket, sessionId, server, actorFactoryRef));
+        => Akka.Actor.Props.Create(() => new SessionActor(socket, sessionId, server, actorFactoryRef))
+            .WithDispatcher(SESSION_DISPATCHER);
+
+    /// <summary>
+    /// The thread pool of the players' connections and their services (Director's AkkaConfiguration defines it).
+    /// Zone loads after a start kept the default threads busy for minutes, so logins waited until the game gave up.
+    /// </summary>
+    public const string SESSION_DISPATCHER = "session-dispatcher";
 
     /// <summary>
     /// Places the session in the queue.
@@ -415,11 +422,11 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
 
     private void CreateSocketActors(Socket socket) {
         // Create the socket receiver actor.
-        var props = Akka.Actor.Props.Create(() => new SocketListener(Self, socket, SessionID));
+        var props = Akka.Actor.Props.Create(() => new SocketListener(Self, socket, SessionID)).WithDispatcher(SESSION_DISPATCHER);
         _socketListenerRef = Context.ActorOf(props, $"SocketListener-{SessionID}");
 
         // Create the socket sender actor.
-        var senderProps = Akka.Actor.Props.Create(() => new SocketSender(Self, socket, SessionID));
+        var senderProps = Akka.Actor.Props.Create(() => new SocketSender(Self, socket, SessionID)).WithDispatcher(SESSION_DISPATCHER);
         _socketSenderRef = Context.ActorOf(senderProps, $"SocketSender-{SessionID}");
     }
 
@@ -450,7 +457,7 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         // blocking identity Asks in this loop. See IHandshakeService.
         foreach (var service in services.OrderByDescending(t => typeof(IHandshakeService).IsAssignableFrom(t))) {
             var serviceName = $"{service}";
-            var props = Akka.Actor.Props.Create(service, this);
+            var props = Akka.Actor.Props.Create(service, this).WithDispatcher(SESSION_DISPATCHER);
             var childRef = Context.ActorOf(props, serviceName);
 
             Logger.Verbose("New actor created for session {Id}: {Name}",

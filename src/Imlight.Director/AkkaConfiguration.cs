@@ -57,6 +57,19 @@ internal static class AkkaConfiguration {
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
         $@"Config/{CONFIGURATION_FILE_NAME}");
 
+    // Settings the server needs whatever akka.conf a player kept: the players' connections get threads of their own,
+    // so busy zone loads (right after a start) can't hold up logins (SessionActor.SESSION_DISPATCHER).
+    private static readonly Config s_builtIn = ConfigurationFactory.ParseString(@"
+session-dispatcher {
+  type = Dispatcher
+  executor = ""fork-join-executor""
+  fork-join-executor {
+    parallelism-min = 4
+    parallelism-factor = 2.0
+    parallelism-max = 16
+  }
+}");
+
     internal static bool CreateActorSystem(string name, out ActorSystem system) {
         system = null;
 
@@ -80,7 +93,7 @@ internal static class AkkaConfiguration {
 
             var configContents = File.ReadAllText(ConfigLocation);
 
-            config = ConfigurationFactory.ParseString(configContents);
+            config = ConfigurationFactory.ParseString(configContents).WithFallback(s_builtIn);
 
             return true;
         }
