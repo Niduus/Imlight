@@ -57,17 +57,15 @@ internal static class AkkaConfiguration {
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
         $@"Config/{CONFIGURATION_FILE_NAME}");
 
-    // Settings the server needs whatever akka.conf a player kept: the players' connections get threads of their own,
-    // so busy zone loads (right after a start) can't hold up logins (SessionActor.SESSION_DISPATCHER).
+    // Settings the server needs whatever akka.conf a player kept: the players' connections get a dispatcher of their
+    // own, so busy zone loads (right after a start) can't hold up logins (SessionActor.SESSION_DISPATCHER). It runs on
+    // the .NET thread pool, which grows: a session's services wait for each other's answers on their threads (every
+    // service asks for the wizard when the game attaches), and a fixed 16 threads ran out and stalled entering the
+    // game for 20 s until the session fell over (v0.10.434 to v0.10.436).
     private static readonly Config s_builtIn = ConfigurationFactory.ParseString(@"
 session-dispatcher {
   type = Dispatcher
-  executor = ""fork-join-executor""
-  fork-join-executor {
-    parallelism-min = 4
-    parallelism-factor = 2.0
-    parallelism-max = 16
-  }
+  executor = ""thread-pool-executor""
 }");
 
     internal static bool CreateActorSystem(string name, out ActorSystem system) {
