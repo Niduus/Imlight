@@ -497,6 +497,33 @@ public partial class CombatResolver {
             .Replace("{round}", _duel.m_roundNum.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// The lookalike's casts just added (from index <paramref name="from"/>) carry the effect's own size in
+    /// Spell.m_paramOverrides ([BossCheats] ShowOwnValue), the list the game uses for a spell whose numbers differ from
+    /// its card, so the game can draw 666% for a 666% blade instead of the lookalike's own number.
+    /// </summary>
+    private static void ShowOwnValue(CombatActionListObj combatActionList, int from, uint lookId, SpellTemplate look, kSpellEffects type, int param) {
+        if (!BossCheats.ShowOwnValue) {
+            return;
+        }
+
+        var index = look.m_effects?.FindIndex(e => e is not null && e.m_effectType == type) ?? -1;
+        if (index < 0) {
+            return;
+        }
+
+        for (var i = Math.Max(0, from); i < combatActionList.m_actionList.Count; i++) {
+            var action = combatActionList.m_actionList[i];
+            if (action?.m_spell is null || action.m_spell.m_templateID != lookId) {
+                continue;
+            }
+
+            action.m_spell = action.m_spell with {
+                m_paramOverrides = [new SpellEffectParamOverride { m_effectIndex = index, m_paramValue = param }],
+            };
+        }
+    }
+
     // The lookalike AddCharm casts (CheatLookalikes.cs): the one for its cast animation, else the plain one of its kind.
     private string LookalikeName(BossCheats.CheatAction step, bool onCaster, CombatDuelSubCircle boss, string bossName) {
         if (CheatLookalikes.WithCast(step.Kind, step.School, step.Look, onCaster) is { } look) {
@@ -533,7 +560,9 @@ public partial class CombatResolver {
             var had = bubbles.ToHashSet(ReferenceEqualityComparer.Instance);
             // A global aims at no one; the cast goes on the caster's own circle.
             var cast = step with { Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId, Target = "Self" };
+            var sentBefore = combatActionList.m_actionList.Count;
             cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+            ShowOwnValue(combatActionList, sentBefore, lookId, look.Template, type, param);
             for (var i = 0; i < bubbles.Count; i++) {
                 var e = bubbles[i];
                 if (e is null || had.Contains(e) || e.m_spellTemplateID != lookId) {
@@ -731,7 +760,9 @@ public partial class CombatResolver {
                             Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId,
                             Target = aim,
                         };
+                        var sentBefore = combatActionList.m_actionList.Count;
                         cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+                        ShowOwnValue(combatActionList, sentBefore, lookId, look.Template, effect.m_effectType, effect.m_effectParam);
                         var resized = 0;
                         foreach (var (circle, had) in before) {
                             var hanging = circle._hangingEffects;
