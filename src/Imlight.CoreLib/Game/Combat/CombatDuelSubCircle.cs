@@ -77,7 +77,7 @@ internal enum CombatSlotType {
 /// spell effects. Subcircles are assigned to either the player or monster team and positioned within the duel
 /// according to the sigil template.
 /// </remarks>
-public class CombatDuelSubCircle {
+public partial class CombatDuelSubCircle {
     
     private const float AGGRO_TIME_IN_SECONDS = 0.75f;
     internal const byte MAX_PIP_COUNT = 7;
@@ -202,7 +202,10 @@ public class CombatDuelSubCircle {
     }
 
     internal Hand DrawHand() {
+        // A cheat's hand tricks wait for this hand (CombatDuelSubCircle.Cheats.cs).
+        CheatHandBeforeDraw();
         var newHand = _combatDeck.GetHand();
+        CheatHandAfterDraw();
         CombatParticipant.m_pHand = newHand;
 
         return newHand;
@@ -433,6 +436,11 @@ public class CombatDuelSubCircle {
         if (gains == 0 && TotalPips(pipCount) == 0) {
             gains = 1;
         }
+
+        // A cheat's pip gain (0: none, as it says).
+        if (CheatPipGains() is { } cheatGains) {
+            gains = cheatGains;
+        }
         // GainSchoolPips: the archmastery gauge fills by SchoolPipChance each round; once full, the next pip
         // comes as a school pip, no stats needed.
         var schoolGauge = ArchmasterySchool != 0 && !ArchmasteryActive;
@@ -452,7 +460,7 @@ public class CombatDuelSubCircle {
                 continue;
             }
 
-            var gainedPowerPip = DeterminePowerPipGain();
+            var gainedPowerPip = CheatPowerPip() ?? DeterminePowerPipGain();
             if (gainedPowerPip) {
                 pipCount.m_powerPips++;
                 PipAcquired = 2;
@@ -509,7 +517,7 @@ public class CombatDuelSubCircle {
 
         // The school picked for the gauge in the deck, else the participant's own. The deck's pick counts for the
         // [Battle] SchoolPips conversion too, when Archmastery is off.
-        foreach (var id in new[] { ArchmasterySchool, _deckArchmasterySchool, ParticipantGameStats.m_schoolID }) {
+        foreach (var id in new[] { (uint) (CheatSchoolNow ?? MagicSchool.None), ArchmasterySchool, _deckArchmasterySchool, ParticipantGameStats.m_schoolID }) {
             var school = (MagicSchool) id;
             if (id != 0 && SchoolPips(CombatParticipant.m_pipCount, school) is not null) {
                 return school;
@@ -651,11 +659,12 @@ public class CombatDuelSubCircle {
             if (_wizard is null) {
                 // A creature with Archmastery fills toward its own school (one of the seven; Shadow and the Astral
                 // schools have no school pips).
-                var own = (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
+                var own = CheatSchoolNow ?? (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
                 return ArchmasteryActive && Archmastery.Schools.Contains(own) ? (uint) own : 0;
             }
 
             return !(s_gainSchoolPips || ArchmasteryActive) ? 0
+                : CheatSchoolNow is { } cheatSchool && Archmastery.Schools.Contains(cheatSchool) ? (uint) cheatSchool
                 : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
         }
     }
@@ -1073,7 +1082,8 @@ public class CombatDuelSubCircle {
     }
 
     internal bool HasSchoolMastery(uint magicSchoolID) {
-        if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID) || IsAllKnowing) {
+        if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID) || IsAllKnowing
+            || (CheatSchoolNow is { } cheatSchool && (uint) cheatSchool == magicSchoolID)) {
             return true;
         }
 
@@ -1110,7 +1120,7 @@ public class CombatDuelSubCircle {
         // A spell school with no stat entry ("All", "None", an empty name, or a list shorter than the schools) has no
         // school stat. This threw before and took the whole round with it (a PvP duel's planning phase in Niduus's log,
         // 2026-10-21: "List must have a count equal to the max magic school index"), so no spell of that round cast.
-        if (MagicSchools.GetMagicSchool(magicSchool) is not { } school) {
+        if (MagicSchools.GetMagicSchool(StatSchool(magicSchool)) is not { } school) {
             return default;
         }
 

@@ -217,6 +217,10 @@ public partial class CombatResolver {
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossDefeatCheats(null, [], combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            // Extra turns go last in the round, as free casts (CreativeCheats).
+            if (atEnd) {
+                QueueExtraTurns();
+            }
         }
         catch (Exception e) {
             Logger.Error("Duel {0} | Boss cheats at round {1} failed: {2}",
@@ -831,7 +835,7 @@ public partial class CombatResolver {
         }
 
         if (cheat.CasterSchool is { Length: > 0 } casterSchool
-            && !casterSchool.Equals(mover?.ParticipantGameStats?.MagicSchool.ToString(), StringComparison.OrdinalIgnoreCase)) {
+            && !casterSchool.Equals(mover?.SchoolNow.ToString(), StringComparison.OrdinalIgnoreCase)) {
             return false;
         }
 
@@ -1085,7 +1089,7 @@ public partial class CombatResolver {
                     // picked) is a wizard or creature of School.
                     var who = StepTargets(boss, step.Target.Length > 0 ? step.Target : "Last", null, trigger, receiver);
                     var school = (step.School ?? "").Trim();
-                    if (!who.Any(t => school.Equals(t?.ParticipantGameStats?.MagicSchool.ToString(), StringComparison.OrdinalIgnoreCase))) {
+                    if (!who.Any(t => school.Equals(t?.SchoolNow.ToString(), StringComparison.OrdinalIgnoreCase))) {
                         s += Math.Max(1, step.Count);
                     }
 

@@ -1,0 +1,32 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: the card thief",
+  "Notes": "An example to copy (on no creature). When a player heals, it keeps heals out of that player's next 2 hands and puts a Fire Cat in its own. At the start it sets its pips to 3 a round (half of them power pips) for 3 rounds. Under half health, once: it shuffles everyone's hands back into their decks, counts as Ice for 3 rounds (its boosts and resists too), and casts again after everyone for 2 rounds.",
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Heal",
+      "Actions": [
+        { "Do": "LockCards", "Kind": "Heal", "Rounds": 2, "Target": "Caster" },
+        { "Do": "AddCard", "Spell": "Fire Cat", "Target": "Self" },
+        { "Do": "Say", "Text": "Your heals are mine now." }
+      ]
+    },
+    {
+      "When": "RoundStart",
+      "Once": true,
+      "Actions": [ { "Do": "PipGain", "Amount": 3, "Power": "50", "Rounds": 3, "Target": "Self" } ]
+    },
+    {
+      "When": "RoundStart",
+      "Once": true,
+      "Conditions": [ { "If": "Health", "Op": "<=", "Value": 50, "Percent": true } ],
+      "Actions": [
+        { "Do": "Announce", "Text": "{boss} reshuffles the battle!", "Style": "Box" },
+        { "Do": "ShuffleHand", "Target": "AllEnemies", "DeckToo": true },
+        { "Do": "ChangeSchool", "School": "Ice", "Rounds": 3, "Stats": true, "Target": "Self" },
+        { "Do": "ExtraTurn", "Rounds": 2, "Target": "Self" }
+      ]
+    }
+  ]
+}

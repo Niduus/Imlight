@@ -249,7 +249,8 @@
  * names a spell (Spells, Cast, Casts, an action's Spell, HasSpell, RemovedSpell, GlobalSpell, Enchant, a Conditions
  * entry's Spell) its template ID typed as a number ("857718733") is that very spell. Conditions (a list of Ifs with AND,
  * OR groups and NOT) and the Dos SetVar, IfVar, Repeat, MaxHealth, Clone, CopySpell, Redirect, StealEffects, RunCheat,
- * CheatOnOff and Silence are listed at the top of CombatResolver.CreativeCheats.cs; {name} in a message's Text is that
+ * CheatOnOff, Silence, AddCard, Discard, ShuffleHand, LockCards, ExtraTurn, PipGain and ChangeSchool are listed at the top of
+ * CombatResolver.CreativeCheats.cs; {name} in a message's Text is that
  * variable. Examples to copy, on no creature, are in spiraldb-extra/CheatExamples (the server never reads them).
  *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
@@ -575,6 +576,11 @@ internal static class BossCheats {
         public int Cheat { get; set; }
         // For RunCheat: its own Ifs must hold too.
         public bool Check { get; set; }
+        // For ShuffleHand: the used cards go back into the deck too. For PipGain: the percent of pips that come as power
+        // pips ("" as usual). For ChangeSchool: its school stats of the two schools trade places too.
+        public bool DeckToo { get; set; }
+        public string Power { get; set; } = "";
+        public bool Stats { get; set; }
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

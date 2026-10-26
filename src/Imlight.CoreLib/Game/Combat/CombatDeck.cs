@@ -236,6 +236,80 @@ internal class CombatDeck {
     }
 
     /// <summary>
+    /// Takes one card out of the hand and puts it back into the deck, unplayed (a cheat's Lock). A card that never came
+    /// from the deck (.draw, a treasure card) just leaves the hand.
+    /// </summary>
+    internal void ReturnCardToDeck(Spell spell) {
+        if (!LastGivenHand.Remove(spell)) {
+            return;
+        }
+
+        if (spell.m_treasureCard) {
+            LastGivenHand.Add(spell);
+            ReturnToVault(spell);
+
+            return;
+        }
+
+        if (_extraCards.Remove(spell)) {
+            return;
+        }
+
+        var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+        if (spellData is not null) {
+            spellData.Quantity++;
+        }
+        else if (_spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID) is { } original) {
+            _usedUpSpellData.Add(new CombatDeckSpellData() {
+                TemplateId = original.TemplateId, Quantity = 1, IsBattleCard = original.IsBattleCard, IsItemCard = original.IsItemCard,
+                IsTreasureCard = false,
+            });
+        }
+    }
+
+    /// <summary>
+    /// Takes a card out of the hand as used up, for a cheat's Discard: a deck card counts as played (it was taken from the
+    /// deck when drawn), a treasure card goes back to the vault and an extra card is just gone.
+    /// </summary>
+    internal void DropFromHand(Spell spell) {
+        if (spell.m_treasureCard) {
+            ReturnToVault(spell);
+
+            return;
+        }
+
+        if (LastGivenHand.Remove(spell)) {
+            _extraCards.Remove(spell);
+        }
+    }
+
+    /// <summary>
+    /// Fills the empty places of the hand from the deck with only the cards <paramref name="allowed"/> lets in (a cheat's
+    /// Lock: the hand is still a whole hand, without the locked cards).
+    /// </summary>
+    internal void FillHandFrom(Func<uint, bool> allowed) {
+        while (HandRoom > 0) {
+            var choices = _usedUpSpellData.Where(s => s.Quantity > 0 && allowed(s.TemplateId)).ToList();
+            if (choices.Count == 0) {
+                return;
+            }
+
+            var pick = Random.Shared.Next(choices.Sum(c => (int) c.Quantity));
+            var spellData = choices.First(c => (pick -= (int) c.Quantity) < 0);
+            if (SpellFactory.GetSpell(spellData.TemplateId) is not { } spell) {
+                return;
+            }
+
+            spell.m_itemCard = spellData.IsItemCard;
+            spell.m_battleCard = spellData.IsBattleCard;
+            LastGivenHand.Add(spell);
+            if (--spellData.Quantity == 0) {
+                _usedUpSpellData.Remove(spellData);
+            }
+        }
+    }
+
+    /// <summary>
     /// Adds a spell directly to the current hand without drawing from the deck.
     /// </summary>
     internal void AddCardToHand(Spell spell) {

@@ -89,6 +89,11 @@ internal static class CombatRequirements {
         => count >= min && (max < min || count <= max);
 
     internal static uint SchoolOf(CombatDuelSubCircle who) {
+        // A cheat's school change (CombatDuelSubCircle.Cheats.cs).
+        if (who?.CheatSchoolNow is { } cheatSchool) {
+            return (uint) cheatSchool;
+        }
+
         if (who?.CombatParticipant is { m_primaryMagicSchoolID: not 0 } participant) {
             return (uint) participant.m_primaryMagicSchoolID;
         }

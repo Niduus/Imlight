@@ -43,6 +43,22 @@
  *   RunCheat      the steps of its cheat number Cheat (with Check: only if that cheat's Ifs hold too).
  *   CheatOnOff    its cheat number Cheat is turned Kind Off (or On again) for the rest of the battle.
  *   Silence       Target's spells fizzle for Rounds rounds (1).
+ *
+ * Hand tricks, extra turns, pips and school (Niduus, 2026-10-26: "if possible, add it"; CombatDuelSubCircle.Cheats.cs):
+ *   AddCard       Count (1) cards of Spell / SpellID go into Target's (Self) next hand, in place of random ones when it is full.
+ *   Discard       Count (0: all that fit) cards of Spell (names or IDs, commas) and Kind (a category), or random ones, come
+ *                 out of Target's (Caster) next hand, used up as a discard.
+ *   ShuffleHand   Target's (Caster) hand goes back into the deck before the next one is drawn (DeckToo: the used cards too).
+ *   LockCards     cards of Spell / Kind are kept out of Target's (Caster) next Rounds (1) hands; they stay in the deck.
+ *                 A wizard sees each of these in the hand the game shows at the next planning phase; a creature's AI picks
+ *                 its next move from the hand as it is then.
+ *   ExtraTurn     Target (Self) casts again at the end of the round, Times (1) times, for Rounds (1) rounds: the spell it cast
+ *                 that round (at the same one), or Spell / SpellID. A free cast, drawn as one; nothing if it cast nothing.
+ *   PipGain       Target (Self) gets Amount pips a round (0: none; 1 is the usual) and Power percent of them as power pips
+ *                 ("" as usual), from the next round's pips for Rounds rounds (0: the rest of the battle). The game shows the pips.
+ *   ChangeSchool  Target (Self) counts as of School for Rounds rounds (0: the rest of the battle): the school Ifs, spell
+ *                 requirements, its school pips, mastery and archmastery; with Stats its boosts, resists, pierce and other
+ *                 school stats of its own school and School trade places. The game shows nothing of it.
  */
 
 using System;
@@ -390,7 +406,7 @@ public partial class CombatResolver {
             case "level":
                 return Measured(boss, c, trigger, receiver, w => w.ParticipantGameStats.Level, average: true);
             case "school":
-                return IsTrueOf(boss, c, trigger, receiver, w => c.School.Trim().Equals(w.ParticipantGameStats.MagicSchool.ToString(), StringComparison.OrdinalIgnoreCase));
+                return IsTrueOf(boss, c, trigger, receiver, w => c.School.Trim().Equals(w.SchoolNow.ToString(), StringComparison.OrdinalIgnoreCase));
             case "name":
                 return IsTrueOf(boss, c, trigger, receiver, w => c.Name.Trim().Length > 0 && FighterName(w).Contains(c.Name.Trim(), StringComparison.OrdinalIgnoreCase));
             case "creature":
@@ -583,8 +599,121 @@ public partial class CombatResolver {
                 }
 
                 return true;
+            case "addcard": {
+                var (card, _) = FindSpell(step.Spell, step.SpellID);
+                if (card is null) {
+                    Logger.Warning("Duel {0} | {1}: AddCard found no spell \"{2}\".", Logger.Args(duel, bossName, step.Spell.Length > 0 ? step.Spell : step.SpellID));
+
+                    return true;
+                }
+
+                foreach (var target in On("Self").Where(t => t is not null && t.IsAlive)) {
+                    target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Add", Math.Clamp(step.Count, 1, 7), "", "", card.m_templateID, false));
+                }
+
+                return true;
+            }
+            case "discard":
+                foreach (var target in On("Caster").Where(t => t is not null && t.IsAlive)) {
+                    target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Discard", Math.Max(0, step.Count), step.Spell, step.Kind, 0, false));
+                }
+
+                return true;
+            case "shufflehand":
+                foreach (var target in On("Caster").Where(t => t is not null && t.IsAlive)) {
+                    target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Shuffle", 0, "", "", 0, step.DeckToo));
+                }
+
+                return true;
+            case "lockcards":
+                if (string.IsNullOrWhiteSpace(step.Spell) && string.IsNullOrWhiteSpace(step.Kind)) {
+                    Logger.Information("Duel {0} | {1}: LockCards names no spell or kind, so it locks nothing.", Logger.Args(duel, bossName));
+
+                    return true;
+                }
+
+                foreach (var target in On("Caster").Where(t => t is not null && t.IsAlive)) {
+                    target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Lock", 0, step.Spell, step.Kind, 0, false) { Hands = Math.Max(1, step.Rounds) });
+                }
+
+                return true;
+            case "extraturn": {
+                var (chosen, _) = step.Spell.Length > 0 || step.SpellID != 0 ? FindSpell(step.Spell, step.SpellID) : default;
+                foreach (var target in On("Self").Where(t => t is not null && t.IsAlive)) {
+                    // Rounds 1 is this round's end; each one more, one more round.
+                    _extraTurns[target] = (BattleRound + Math.Max(1, step.Rounds) - 1, chosen?.m_templateID ?? 0, Math.Clamp(step.Times, 1, 3));
+                    Logger.Information("Duel {0} | Slot {1} | Cheat gives it an extra turn up to round {2}.", Logger.Args(duel, target.SlotIndex, _extraTurns[target].Until));
+                }
+
+                return true;
+            }
+            case "pipgain": {
+                var power = int.TryParse((step.Power ?? "").Trim().TrimEnd('%'), NumberStyles.Integer, CultureInfo.InvariantCulture, out var p) ? Math.Clamp(p, 0, 100) : -1;
+                foreach (var target in On("Self").Where(t => t is not null)) {
+                    target.CheatPipGain = Math.Clamp(step.Amount, 0, 14);
+                    target.CheatPowerPipChance = power;
+                    // From the next round's pips: Rounds of them (0: the rest of the battle).
+                    target.CheatPipUntil = step.Rounds <= 0 ? int.MaxValue : BattleRound + step.Rounds;
+                    Logger.Information("Duel {0} | Slot {1} | Cheat: {2} pips a round{3}, up to round {4}.", Logger.Args(duel, target.SlotIndex,
+                        target.CheatPipGain, power >= 0 ? $", {power}% power" : "", step.Rounds <= 0 ? "the end" : target.CheatPipUntil.ToString(CultureInfo.InvariantCulture)));
+                }
+
+                return true;
+            }
+            case "changeschool": {
+                if (!Enum.TryParse<Imlight.CoreLib.Shared.Behaviors.MagicSchool>((step.School ?? "").Trim(), true, out var school)
+                    || school == Imlight.CoreLib.Shared.Behaviors.MagicSchool.None) {
+                    Logger.Warning("Duel {0} | {1}: ChangeSchool has no school (\"{2}\").", Logger.Args(duel, bossName, step.School));
+
+                    return true;
+                }
+
+                foreach (var target in On("Self").Where(t => t is not null && t.IsAlive)) {
+                    target.CheatSchool = school.ToString();
+                    target.CheatSchoolStats = step.Stats;
+                    // As Silence: a change made while the round is under way counts that round as one of its rounds.
+                    target.CheatSchoolUntil = step.Rounds <= 0 ? int.MaxValue : BattleRound + step.Rounds - (_cheatAtRoundStart ? 1 : 0);
+                    Logger.Information("Duel {0} | Slot {1} | Cheat: it counts as {2}{3} up to round {4}.", Logger.Args(duel, target.SlotIndex, school,
+                        step.Stats ? " (school stats swapped)" : "", step.Rounds <= 0 ? "the end" : target.CheatSchoolUntil.ToString(CultureInfo.InvariantCulture)));
+                }
+
+                return true;
+            }
             default:
                 return false;
+        }
+    }
+
+    // Extra turns: who, up to which round, the spell (0: the one it cast this round) and how many.
+    private readonly Dictionary<CombatDuelSubCircle, (int Until, uint Spell, int Times)> _extraTurns = [];
+
+    // At the end of the round (before the round's last free casts): each one with an extra turn casts again, for free.
+    private void QueueExtraTurns() {
+        foreach (var (who, turn) in _extraTurns.ToList()) {
+            if (BattleRound > turn.Until || who is null || !who.IsAlive || !who.AddedToDuel) {
+                _extraTurns.Remove(who);
+
+                continue;
+            }
+
+            // Its own spell of this round, again at the one it went on (a spell on many goes as it aims).
+            var mine = turn.Spell == 0 ? _castLog.LastOrDefault(r => r.Round == BattleRound && r.Caster == who) : null;
+            var spell = turn.Spell != 0 ? turn.Spell : mine?.SpellId ?? 0;
+            if (spell == 0) {
+                Logger.Information("Duel {0} | Slot {1} | Extra turn: it cast nothing this round, so it has nothing to cast again.",
+                    Logger.Args(_duel.m_duelID.Full, who.SlotIndex));
+
+                continue;
+            }
+
+            var on = mine is { Targets.Count: 1 } ? _subCircles.FirstOrDefault(c => c is not null && c.SlotIndex == mine.Targets.First()) : null;
+            var code = on is { IsAlive: true } ? CodeOf(who, on) : null;
+            for (var i = 0; i < turn.Times; i++) {
+                AddFreeDelayedCast(who, spell, true, out _, code, false, 'l', cheat: true);
+            }
+
+            Logger.Information("Duel {0} | Slot {1} | Extra turn: {2} again{3}, last in the round.", Logger.Args(_duel.m_duelID.Full, who.SlotIndex,
+                spell, code is null ? "" : $" on {code}"));
         }
     }
 
