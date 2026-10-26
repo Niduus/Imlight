@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Imlight.CoreLib.Game.Combat;
 
 namespace Imlight.Setup;
 
@@ -381,6 +382,13 @@ internal sealed class BossCatalog {
     internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total,
                                    Func<BossInfo, bool>? filter = null, Func<BossInfo, string, bool>? also = null) {
         var words = SearchText.Words(query);
+        // A creature's template ID typed whole is that creature and no other (Niduus, 2026-10-26).
+        if (SpellNameFamily.IsSpellId(query, out _) && Creatures.FirstOrDefault(c => c.Id == query.Trim()) is { } byId) {
+            total = 1;
+
+            return [byId];
+        }
+
         var allowed = Creatures.Where(c => (!bossesOnly || c.IsBoss || changed.Contains(c.Id)) && (filter is null || filter(c)));
         var pool = words.Length == 0
             ? allowed
@@ -411,6 +419,11 @@ internal sealed class BossCatalog {
         }
 
         var exact = query.Trim();
+        // A template ID typed whole is that spell and no other.
+        if (SpellNameFamily.IsSpellId(exact, out var typedId) && Spells.Values.FirstOrDefault(s => s.Id == typedId) is { } byId) {
+            return [byId];
+        }
+
         var found = Spells.Values.Where(s => words.All(s.Haystack.Contains)).ToList();
         // "supnova", "lord winter": partly or with a slip, when nothing holds every word as typed.
         if (found.Count == 0) {

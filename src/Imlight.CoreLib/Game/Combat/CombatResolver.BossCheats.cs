@@ -167,6 +167,8 @@ public partial class CombatResolver {
             // A free cast "first in the round" of a cheat that goes off as the round starts is cast at once.
             _cheatAtRoundStart = !atEnd;
             if (!atEnd) {
+                // Everyone's health as the round starts, for the Ifs "lost / gained this round" (CreativeCheats).
+                NoteRoundStart();
                 cinematicTime += WaitedCheats(combatActionList, cinematicTimeSoFar);
                 cinematicTime += JoinCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             }
@@ -234,6 +236,14 @@ public partial class CombatResolver {
     // ICast (its own spell) and EnemyCasts (a spell from the other side) go off just before the spell lands, as do
     // cheats that interrupt.
     private float BossCheatsBefore(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        // A Silence step: its spells fizzle until the rounds are up (CreativeCheats).
+        if (action?.SpellCaster is { } silenced && action.Spell is not null && IsSilenced(silenced)) {
+            action.Interrupted = true;
+            Logger.Information("Duel {0} | Slot {1} | A cheat's silence makes its spell fizzle.", Logger.Args(_duel.m_duelID.Full, silenced.SlotIndex));
+
+            return 0;
+        }
+
         if (action?.SpellCaster is not { } mover || action.Spell is null || action.SelectedTarget is null
             || !mover.IsAlive || mover.CombatParticipant is null || mover.CombatParticipant.m_stunned > 0) {
             return 0;
@@ -366,6 +376,8 @@ public partial class CombatResolver {
                 };
 
             NoteAttackers(mover, landed);
+            // Every spell cast, for the Ifs "a spell was cast" and "the last spell" (CreativeCheats).
+            NoteCasts(mover, cast);
             foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
                 for (var i = 0; i < cheats.Count; i++) {
                     var cheat = cheats[i];
@@ -836,7 +848,10 @@ public partial class CombatResolver {
             string spellBase = spell.m_spellBase;
 
             // AnyVersion: "Scald" is every Scald (its treasure card, item card, a mob's copy...).
-            return SpellNameFamily.IsOneOf(cheat.Spells, cheat.AnyVersion, name, shown, cheat.AnyVersion ? spellBase : null);
+            // A spell typed as its template ID ("857718733") is that very spell (Niduus, 2026-10-26).
+            var id = SpellNameFamily.AnyIds(cheat.Spells) ? SpellFactory.TemplateIdOf(spell).ToString(System.Globalization.CultureInfo.InvariantCulture) : null;
+
+            return SpellNameFamily.IsOneOf(cheat.Spells, cheat.AnyVersion, name, shown, cheat.AnyVersion ? spellBase : null, id);
         }
 
         return true;
@@ -898,7 +913,8 @@ public partial class CombatResolver {
                                float cinematicTimeSoFar) {
         if ((cheat.Once && CheatUsed(boss, index)) || !LimitsAllow(boss, index, cheat) || !CreatureAllows(cheat, trigger, receiver)
             || !HasAllows(boss, cheat, trigger, receiver) || !MarkAllows(boss, cheat, trigger, receiver)
-            || !MoreAllows(boss, cheat, trigger, receiver)) {
+            || !MoreAllows(boss, cheat, trigger, receiver) || CheatTurnedOff(boss, index)
+            || !ConditionsAllow(boss, index, cheat, trigger, receiver)) {
             return 0;
         }
 
@@ -1039,6 +1055,22 @@ public partial class CombatResolver {
                 continue;
             }
 
+            // Repeat and IfVar: the next Count steps go Times times, or only if a variable says so (CreativeCheats).
+            if (step.Is("Repeat") || step.Is("IfVar")) {
+                var next = steps.Skip(s + 1).Take(Math.Max(1, step.Count)).ToList();
+                var times = step.Is("Repeat") ? Math.Clamp(step.Times, 0, 20) : VarHolds(boss, step) ? 1 : 0;
+                if (times != 1) {
+                    for (var t = 0; t < times && boss.IsAlive; t++) {
+                        cinematicTime += RunCheatStepsInOrder(boss, cheat, next, trigger, receiver, bossName, custom, combatActionList,
+                            cinematicTimeSoFar + cinematicTime);
+                    }
+
+                    s += next.Count;
+                }
+
+                continue;
+            }
+
             switch (step.Do.ToLowerInvariant()) {
                 case "form" or "sethealth":
                     break;
@@ -1102,12 +1134,14 @@ public partial class CombatResolver {
                     }
 
                     if (step.Text.Length > 0) {
+                        // {boss}, {player}, {round} and a cheat variable's name ({rage}) are filled in (Niduus, 2026-10-26).
+                        var said = AnnounceText(step.Text, boss, trigger);
                         // A player cheat's words go to that wizard's own chat.
                         if (boss.IsHumanPlayer) {
-                            boss.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = Tools.ServerMessages.Own(step.Text), Modal = 0 });
+                            boss.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = Tools.ServerMessages.Own(said), Modal = 0 });
                         }
                         else {
-                            TellPlayers($"{bossName}: {step.Text}");
+                            TellPlayers($"{bossName}: {said}");
                         }
                     }
 
@@ -1391,6 +1425,11 @@ public partial class CombatResolver {
     }
 
     private static (Spell Spell, SpellTemplate Template) FindSpell(string name, uint id) {
+        // A Spell typed as its template ID ("857718733") is that spell (Niduus, 2026-10-26: "Do blocks accept spell ID's?").
+        if (id == 0 && SpellNameFamily.IsSpellId(name, out var typed)) {
+            id = typed;
+        }
+
         var spell = id != 0 ? SpellFactory.GetSpell(id)
             : !string.IsNullOrWhiteSpace(name) && SpellFactory.Exists(name) ? SpellFactory.GetSpell(name)
             // A plain name ("Scald") that is no spell's own name: the plainest spell of that family.
@@ -1426,8 +1465,14 @@ public partial class CombatResolver {
         .FirstOrDefault();
 
     // The spell a hanging effect came from is in a cheat's Spell family (or is it, by name).
+    // Several spells may be named, with commas between, and each by its name or its template ID (Niduus, 2026-10-26).
     private static bool FromSpell(SpellEffect effect, string family) {
         if (string.IsNullOrWhiteSpace(family)) {
+            return true;
+        }
+
+        var wanted = family.Contains(',') ? family.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [family];
+        if (wanted.Any(w => SpellNameFamily.IsSpellId(w, out var id) && id == effect.m_spellTemplateID)) {
             return true;
         }
 
@@ -1437,8 +1482,9 @@ public partial class CombatResolver {
 
         string name = template.m_name;
         string key = template.m_displayName;
+        var shown = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
 
-        return SpellNameFamily.AnyInFamily(family, name, string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key));
+        return wanted.Any(w => SpellNameFamily.AnyInFamily(w, name, shown));
     }
 
     private static int CostOf(SpellTemplate spell) => spell.m_spellRank is { m_xPipSpell: false } rank ? rank.m_spellRank : 0;

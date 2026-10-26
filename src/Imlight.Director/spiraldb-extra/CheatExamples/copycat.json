@@ -1,0 +1,28 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: the copycat",
+  "Notes": "An example to copy (on no creature). Half the time it copies a player's blade or shield onto itself; when it takes a critical hit it splits into a copy (twice a battle at most, and never with 3 on its side); and it steals a blade from whoever has 3 or more.",
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Blade,Shield",
+      "Conditions": [ { "If": "Roll", "Value": 50 } ],
+      "Actions": [ { "Do": "CopySpell", "Target": "Self" } ]
+    },
+    {
+      "When": "PlayerCrits",
+      "OnBoss": true,
+      "MaxTimes": 2,
+      "Conditions": [ { "If": "Standing", "Op": "<", "Value": 3 } ],
+      "Actions": [
+        { "Do": "Clone", "Target": "Self", "Count": 1 },
+        { "Do": "Say", "Text": "Two of me now!" }
+      ]
+    },
+    {
+      "When": "RoundStart",
+      "Conditions": [ { "If": "Effects", "Who": "AnyEnemy", "Kind": "Blade", "Op": ">=", "Value": 3 } ],
+      "Actions": [ { "Do": "StealEffects", "Kind": "Blade", "Count": 1, "Target": "Matched" } ]
+    }
+  ]
+}

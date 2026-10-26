@@ -184,7 +184,7 @@ internal sealed partial class ManagerWindow {
                 NewCheat(board, CheatSpecs.Get(board.Player ? "W.ICast" : "W.RoundStart"));
 
                 return Task.CompletedTask;
-            }), .. listButtons,
+            }), .. listButtons, ExamplesButton(board),
         ]);
         board.ListView = new StackPanel { Spacing = 8, Children = { top, Legends(), board.Note, board.Rows, buttons } };
 
@@ -702,13 +702,13 @@ internal sealed partial class ManagerWindow {
             case CheatFieldType.Percent:
                 return Inline(BlockFields.Number(block.Number(field.Key), n => Set(field.Key, n), field.Min, field.Max, 54), "%");
             case CheatFieldType.Words:
-                return BlockFields.Words(block.Text(field.Key), t => Set(field.Key, t.Trim()), field.Key switch { "Spell" => "any spell", "Weights" => "such as 2, 1, 1", _ => "type here" });
+                return BlockFields.Words(block.Text(field.Key), t => Set(field.Key, t.Trim()), field.Key switch { "Spell" or "HasSpell" or "RemovedSpell" or "GlobalSpell" => "any spell (names or spell IDs)", "Weights" => "such as 2, 1, 1", _ => "type here" });
             case CheatFieldType.Cards: {
                 var box = BlockFields.Words(string.Join(", ", block.List(field.Key)),
                     t => Set(field.Key, new JsonArray([.. t.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                        .Select(w => (JsonNode) JsonValue.Create(w)!)])), field.Key is "Brings" or "BringsRandom" or "AlliesUp" or "AlliesDown" ? "1668859, 1668858" : "Scald, Tower Shield", 220);
+                        .Select(w => (JsonNode) JsonValue.Create(w)!)])), field.Key is "Brings" or "BringsRandom" or "AlliesUp" or "AlliesDown" ? "1668859, 1668858" : "Scald, Tower Shield or 857718733", 220);
                 var creatures = field.Key is "Brings" or "BringsRandom" or "AlliesUp" or "AlliesDown";
-                ToolTip.SetTip(box, creatures ? "Creature ids, with commas between, such as 1668859, 1668858." : "Spell names, with commas between, such as Scald, Tower Shield.");
+                ToolTip.SetTip(box, creatures ? "Creature ids, with commas between, such as 1668859, 1668858." : "Spell names or spell IDs, with commas between, such as Scald, Tower Shield, 857718733. An ID is that very spell.");
 
                 return box;
             }
@@ -839,7 +839,7 @@ internal sealed partial class ManagerWindow {
         bool SchoolOk(string s) => school.Length == 0 || school.Equals(s, StringComparison.OrdinalIgnoreCase);
 
         if (_spellBook is { } book) {
-            var found = book.Spells.Where(c => NameOk(c.Code, c.Name) && SchoolOk(c.School)
+            var found = book.Spells.Where(c => NameOk(c.Code, c.Name, c.Id.ToString(CultureInfo.InvariantCulture)) && SchoolOk(c.School)
                                                && (type.Length == 0 || type.Equals(c.Type, StringComparison.OrdinalIgnoreCase))
                                                && (cost is null || SpellNameFamily.CostMatches(c.XPips ? 0 : c.Pips, cost.Number("CostMin"), cost.Number("CostMax")))
                                                && SpellNameFamily.CategoryMatches(category, KindsOf(c)))
@@ -850,7 +850,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (_bossCatalog is { Spells.Count: > 0 } catalog) {
-            var found = catalog.Spells.Values.Where(s => NameOk(s.Name) && SchoolOk(s.School)).OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            var found = catalog.Spells.Values.Where(s => NameOk(s.Name, s.Id.ToString(CultureInfo.InvariantCulture)) && SchoolOk(s.School)).OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ToList();
 
             return (found.Count, [.. found.Take(25).Select(s => $"{s.Name}  ·  {s.School}")],
                 category.Length > 0 || cost is not null || type.Length > 0

@@ -139,6 +139,52 @@ internal static class CheatSpecs {
         ("Myth", "Myth"), ("Life", "Life"), ("Death", "Death"), ("Balance", "Balance")];
     private static readonly (string, string)[] s_circlesWho = [("", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it")];
 
+    // Niduus, 2026-10-26 ("You can legit do anything"): the conditions (each one entry of the cheat's Conditions, with NOT
+    // and OR groups) and the creative Do blocks (the server's CombatResolver.CreativeCheats.cs).
+    internal static readonly (string Value, string Label)[] COND_WHO = [
+        ("", "it"), ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Matched", "the one the If found"),
+        ("LastAttacker", "the last one who hurt it"), ("Summoner", "whoever summoned it"),
+        ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side"), ("Anyone", "anyone"),
+        ("EveryEnemy", "everyone on the other side"), ("EveryAlly", "everyone on its side"), ("Everyone", "everyone"),
+        ("EnemySide", "the other side, added up"), ("AllySide", "its side, added up"), ("BothSides", "both sides, added up"),
+        ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
+        ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"),
+    ];
+    private static readonly (string, string)[] s_ops = [(">=", "at least"), ("<=", "at most"), (">", "more than"), ("<", "less than"), ("=", "exactly"), ("!=", "anything but")];
+    private static readonly (string, string)[] s_casters = [("", "anyone"), ("Self", "it"), ("Allies", "its side"), ("OtherAllies", "its allies"),
+        ("Enemies", "the other side"), ("Caster", "the attacker"), ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"),
+        ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"), ("p1", "its side's circle 1"), ("p2", "its side's circle 2"),
+        ("p3", "its side's circle 3"), ("p4", "its side's circle 4")];
+    private static readonly (string, string)[] s_onWho = [("", "anyone"), ("Self", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"),
+        ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at")];
+    private static readonly (string, string)[] s_results = [("", "landed or not"), ("Landed", "landed"), ("Crit", "landed as a critical"), ("Fizzled", "fizzled")];
+    private static readonly (string, string)[] s_within = [("", "this battle"), ("Round", "this round"), ("LastRound", "last round")];
+    private static readonly (string, string)[] s_yesNo = [("", "either"), ("Yes", "yes"), ("No", "no")];
+    private static readonly (string, string)[] s_standSide = [("", "its side"), ("Them", "the other side"), ("All", "both sides")];
+    private static readonly (string, string)[] s_inSide = [("", "either side"), ("Us", "its side"), ("Them", "the other side")];
+    private static readonly (string, string)[] s_condPips = [("", "pips (all kinds)"), ("Normal", "normal pips"), ("Power", "power pips"), ("Shadow", "shadow pips"),
+        ("Fire", "Fire pips"), ("Ice", "Ice pips"), ("Storm", "Storm pips"), ("Myth", "Myth pips"), ("Life", "Life pips"), ("Death", "Death pips"), ("Balance", "Balance pips")];
+    private static readonly (string, string)[] s_scopes = [("", "its own"), ("Battle", "the battle's")];
+    private static readonly (string, string)[] s_varOps = [("Set", "set to"), ("Add", "add"), ("Subtract", "take away"), ("Multiply", "multiply by"), ("Random", "a random number from 0 to")];
+    private static readonly (string, string)[] s_maxOps = [("Set", "become"), ("Add", "go up by (below 0: down)")];
+    private static readonly (string, string)[] s_onOff = [("Off", "off"), ("On", "back on")];
+
+    // A condition block: the server's Conditions entry "If" is the id after "C."; every one can be turned round (NOT) and
+    // put in an OR group (the blocks of one group need only one of them to hold).
+    private static CheatSpec Cond(string id, string icon, string palette, string help, string sentence, CheatField[] fields, Func<CheatBlock, string> summary)
+        => new(id, BlockKind.If, icon, palette,
+            help + " Tick NOT to turn it round. Give blocks the same OR group (1, 2...) and only one of them needs to hold; group 0 must always hold. When it looks at someone on a side, the one it found is \"the one the If found\" for the Do blocks.",
+            sentence + " {Not} OR group {Any}", [.. fields, new("Not", CheatFieldType.Toggle, false, Label: "NOT"), F("Any", CheatFieldType.Number, 0, max: 9)],
+            b => (b.Flag("Not") ? "not: " : "") + summary(b) + (b.Number("Any") > 0 ? $" (or-group {b.Number("Any")})" : ""));
+
+    private static string Op(CheatBlock b) => LabelOf(s_ops, b.Text("Op").Length > 0 ? b.Text("Op") : ">=");
+
+    private static string Who(CheatBlock b, string key = "Who") => LabelOf(COND_WHO, b.Text(key));
+
+    private static CheatField WhoField() => F("Who", CheatFieldType.Choice, "", COND_WHO);
+
+    private static CheatField OpField() => F("Op", CheatFieldType.Choice, ">=", s_ops);
+
     private static CheatField F(string key, CheatFieldType type, JsonNode? first = null, (string, string)[]? options = null, int max = 100_000_000)
         => new(key, type, first, options, Max: max);
 
@@ -394,6 +440,74 @@ internal static class CheatSpecs {
             "Only if {CirclesWho} stands in circle {Circles}", [F("CirclesWho", CheatFieldType.Choice, "", s_circlesWho), F("Circles", CheatFieldType.Words, "2, 3, 4")],
             b => $"only if {LabelOf(s_circlesWho, b.Text("CirclesWho"))} is in circle {(b.Text("Circles").Length > 0 ? b.Text("Circles") : "(none picked)")}"),
 
+        // If... conditions (Niduus, 2026-10-26: "expand more on conditions"), with NOT and OR groups.
+        Cond("C.Health", "heart", "anyone's health", "Someone's health, in hit points or as a share of their most. \"Someone on the other side\" holds if any one of them does, \"everyone on…\" only if all do, and \"…added up\" looks at the side together (its average share). Example: the other side, added up, at most 30 % — the players are nearly done.",
+            "If {Who} has a health of {Op} {Value} {Percent}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 50), new("Percent", CheatFieldType.Toggle, true, Label: "% of the most")],
+            b => $"if {Who(b)} has {Op(b)} {N(b.Number("Value"))}{(b.Flag("Percent") ? "%" : "")} health"),
+        Cond("C.HealthLost", "hit", "lost this round", "How much health someone lost since this round started (after heals, as hit points or a share of their most). Example: it lost at least 20 % this round — answer a burst.",
+            "If {Who} lost {Op} {Value} {Percent} health this round", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 20), new("Percent", CheatFieldType.Toggle, true, Label: "% of the most")],
+            b => $"if {Who(b)} lost {Op(b)} {N(b.Number("Value"))}{(b.Flag("Percent") ? "%" : "")} health this round"),
+        Cond("C.HealthGained", "heal", "healed this round", "How much health someone gained since this round started. Example: someone on the other side healed at least 1,000 this round — punish the heal.",
+            "If {Who} gained {Op} {Value} {Percent} health this round", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most")],
+            b => $"if {Who(b)} healed {Op(b)} {N(b.Number("Value"))}{(b.Flag("Percent") ? "%" : "")} this round"),
+        Cond("C.Standing", "users", "how many stand", "How many stand on a side right now (it counts on its own side). Example: exactly 1 on its side — it is alone.",
+            "If {Op} {Value} stand on {Side}", [OpField(), F("Value", CheatFieldType.Number, 2, max: 8), F("Side", CheatFieldType.Choice, "", s_standSide)],
+            b => $"if {Op(b)} {b.Number("Value")} stand on {LabelOf(s_standSide, b.Text("Side"))}"),
+        Cond("C.Outnumbered", "users", "outnumbered", "Fewer stand on its side than on the other.",
+            "If its side is outnumbered", [], _ => "if outnumbered"),
+        Cond("C.Round", "clock", "odd / even / every Nth round", "The battle's round number, divided by Every, leaves this. Every 2 leaves 1: odd rounds; leaves 0: even rounds. Every 3 leaves 0: rounds 3, 6, 9...",
+            "If the round, divided by {Every}, leaves {Offset}", [F("Every", CheatFieldType.Number, 2, max: 99), F("Offset", CheatFieldType.Number, 1, max: 98)],
+            b => b.Number("Every") == 2 ? b.Number("Offset") % 2 == 1 ? "in odd rounds" : "in even rounds" : $"in rounds that leave {b.Number("Offset")} of {Math.Max(1, b.Number("Every"))}"),
+        Cond("C.GoesFirst", "flag", "its side goes first", "Its side moves first this round (NOT: the other side does).",
+            "If its side goes first this round", [], _ => "if its side goes first"),
+        Cond("C.Fired", "list", "a cheat went off … times", "How many times one of its cheats went off this battle. Cheat 0 is this one; 1 is the first in its list. Example: cheat 0 at most 2 times, as a limit you can turn round.",
+            "If cheat {Cheat} went off {Op} {Value} times", [F("Cheat", CheatFieldType.Number, 0, max: 200), OpField(), F("Value", CheatFieldType.Number, 3, max: 999)],
+            b => $"if {(b.Number("Cheat") > 0 ? $"cheat {b.Number("Cheat")}" : "this cheat")} went off {Op(b)} {b.Number("Value")} times"),
+        Cond("C.Casts", "sparkle", "spells cast", "Counts the spells cast this battle (or this round, or last round) by whom, on whom, of which spell (names or spell IDs, with commas), school and kind, and how they went. Example: \"nobody has cast Tower Shield this battle\": anyone, exactly 0, Tower Shield. \"It took a critical this round\": anyone, at least 1, on it, landed as a critical, this round.",
+            "If {Who} cast {Op} {Value} {School} {Kind} spells named {Spell} on {On} that {Result}, {Within}",
+            [F("Who", CheatFieldType.Choice, "", s_casters), OpField(), F("Value", CheatFieldType.Number, 1, max: 999), F("School", CheatFieldType.School), F("Kind", CheatFieldType.Category),
+             F("Spell", CheatFieldType.Words), F("On", CheatFieldType.Choice, "", s_onWho), F("Result", CheatFieldType.Choice, "", s_results), F("Within", CheatFieldType.Choice, "", s_within)],
+            b => $"if {LabelOf(s_casters, b.Text("Who"))} cast {Op(b)} {b.Number("Value")} {(b.Text("Spell").Length > 0 ? b.Text("Spell") : "spells")} {LabelOf(s_within, b.Text("Within"))}"),
+        Cond("C.LastSpell", "bolt", "the last spell", "The last spell someone (or a side, or a circle) cast: its name or spell ID, school, kind, pip cost (0 to 0: any), treasure card or not, enchanted or not, and how it went. Example: the other side's last spell was a treasure card — answer card tricks.",
+            "If the last spell {Who} cast was {Spell} of {School}, {Kind}, {CostMin} to {CostMax} pips, treasure {Treasure}, enchanted {Enchanted}, and it {Result}",
+            [F("Who", CheatFieldType.Choice, "", s_casters), F("Spell", CheatFieldType.Words), F("School", CheatFieldType.School), F("Kind", CheatFieldType.Category),
+             F("CostMin", CheatFieldType.Number, 0, max: 14), F("CostMax", CheatFieldType.Number, 0, max: 14), F("Treasure", CheatFieldType.Choice, "", s_yesNo),
+             F("Enchanted", CheatFieldType.Choice, "", s_yesNo), F("Result", CheatFieldType.Choice, "", s_results)],
+            b => $"if the last spell of {LabelOf(s_casters, b.Text("Who"))} was {(b.Text("Spell").Length > 0 ? b.Text("Spell") : $"{SchoolWord(b)}{(b.Text("Kind").Length > 0 ? LabelOf(CATEGORIES, b.Text("Kind")) + " " : "")}a spell")}"),
+        Cond("C.Effects", "layers", "effects on someone", "How many charms, wards, auras or over-times of a kind (or from a spell: names or spell IDs) someone has. Example: someone on the other side has at least 3 blades — they are about to hit hard.",
+            "If {Who} has {Op} {Value} {Kind} from {Spell}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Spell", CheatFieldType.Words)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_hasKinds, b.Text("Kind"))}{(b.Text("Spell").Length > 0 ? $" from {b.Text("Spell")}" : "")}"),
+        Cond("C.Pips", "pips", "pips of a kind", "Someone's pips of one kind: power, normal, shadow, or a school's. \"Both sides, added up\" with shadow pips counts the shadow pips in play.",
+            "If {Who} has {Op} {Value} {Kind}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 3, max: 99), F("Kind", CheatFieldType.Choice, "", s_condPips)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_condPips, b.Text("Kind"))}"),
+        Cond("C.Level", "user", "level", "Someone's level (a side added up: their average). Example: the attacker is at most level 30 — go easy on low levels.",
+            "If {Who} is level {Op} {Value}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 50, max: 200)],
+            b => $"if {Who(b)} is level {Op(b)} {b.Number("Value")}"),
+        Cond("C.School", "sparkle", "school of someone", "Someone is of this school (a wizard's school, or a creature's).",
+            "If {Who} is of {School}", [WhoField(), F("School", CheatFieldType.School, "Fire")],
+            b => $"if {Who(b)} is {(b.Text("School").Length > 0 ? b.Text("School") : "of any school")}"),
+        Cond("C.Name", "quote", "name has", "Someone's name has these words (a wizard's name, a custom's, or the creature's as the game shows it).",
+            "If {Who}'s name has {Name}", [WhoField(), F("Name", CheatFieldType.Words)],
+            b => $"if {Who(b)}'s name has \"{b.Text("Name")}\""),
+        Cond("C.Creature", "user", "is this creature", "Someone is of this creature template (pick it, or type its ID).",
+            "If {Who} is {Creature}", [WhoField(), F("Creature", CheatFieldType.Creature)],
+            b => $"if {Who(b)} is {Creature(b)}"),
+        Cond("C.Boss", "skull", "is a boss", "Someone is a boss (the game's boss creatures).",
+            "If {Who} is a boss", [WhoField()], b => $"if {Who(b)} is a boss"),
+        Cond("C.Player", "user", "is a wizard", "Someone is a wizard (not a creature).",
+            "If {Who} is a wizard", [WhoField()], b => $"if {Who(b)} is a wizard"),
+        Cond("C.InBattle", "users", "someone is in the battle", "A creature of this template, or anyone whose name has these words, stands in the battle. Example: \"Fairy\" on its side — only while a fairy still stands.",
+            "If {Creature} or someone named {Name} stands on {Side}", [F("Creature", CheatFieldType.Creature), F("Name", CheatFieldType.Words), F("Side", CheatFieldType.Choice, "", s_inSide)],
+            b => $"if {(b.Id("Creature") > 0 ? Creature(b) : $"\"{b.Text("Name")}\"")} stands on {LabelOf(s_inSide, b.Text("Side"))}"),
+        Cond("C.Roll", "dice", "chance (in a group)", "A chance that comes up this often, rolled each time: unlike \"chance\" it can be put in an OR group or turned round.",
+            "If a {Value} chance comes up", [F("Value", CheatFieldType.Percent, 50, max: 100)], b => $"{b.Number("Value")}% roll"),
+        Cond("C.Var", "list", "a variable", "A number a \"set a variable\" block keeps. Its own: each fighter has its own; the battle's: one for everyone. Example: rage at least 5.",
+            "If {Scope} variable {Var} is {Op} {Value}", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), OpField(), new("Value", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000)],
+            b => $"if {b.Text("Var")} is {Op(b)} {N(b.Number("Value"))}"),
+
+        new("C.Other", BlockKind.If, "puzzle", "another If", "An If of the cheat's Conditions this app does not know, kept as the file has it.",
+            "If {If}", [F("If", CheatFieldType.Words)], b => $"if {b.Text("If")}", "alias"),
+
         // Do... (first made for bosses)
         new("D.Cast", BlockKind.Do, "sparkle", "cast a spell", "A free spell: no pips, it never fizzles and works through stun. Silent: no casting animation. A Dispel on the boss stops it; add the \"if dispelled\" If block to cast it again.",
             "Cast {Spell} on {Target} {Silent}",
@@ -464,9 +578,9 @@ internal static class CheatSpecs {
             "Move on to phase {Phase}", [F("Phase", CheatFieldType.Number, 2, max: 99)], b => $"move on to phase {b.Number("Phase")}"),
         new("D.Say", BlockKind.Do, "quote", "say a line", "A line from the game shown over the boss in battle (over you, in a player cheat). Type a few of its words or its number (Phrases tab).",
             "Say {Line}", [F("Line", CheatFieldType.Line)], b => $"say \"{b.Text("Line")}\""),
-        new("D.Chat", BlockKind.Do, "chat", "chat message", "Any words you like, sent to every player's chat window (in a player cheat, to your own).",
+        new("D.Chat", BlockKind.Do, "chat", "chat message", "Any words you like, sent to every player's chat window (in a player cheat, to your own). {boss}, {player}, {round} and a variable's name such as {rage} are filled in.",
             "Tell every player in chat: {Text}", [F("Text", CheatFieldType.Words, "")], b => $"tell everyone \"{b.Text("Text")}\""),
-        new("D.Announce", BlockKind.Do, "chat", "announce to the battle", "A server announcement, as the Announcement card sends it, but only to the wizards in this battle: a message box with \"Announcement\" on top, an \"Announcement:\" chat line, or both. {boss} in the words is the boss (or you, in a player cheat), {player} the wizard who set it off, {round} the round. Example: a Round 3 cheat that does this with \"The ground trembles...\" as a box. Unlike \"say a line\" (a game line over the boss) and \"chat message\" (chat with the boss's name in front), it reads as from the server.",
+        new("D.Announce", BlockKind.Do, "chat", "announce to the battle", "A server announcement, as the Announcement card sends it, but only to the wizards in this battle: a message box with \"Announcement\" on top, an \"Announcement:\" chat line, or both. {boss} in the words is the boss (or you, in a player cheat), {player} the wizard who set it off, {round} the round. Example: a Round 3 cheat that does this with \"The ground trembles...\" as a box. Unlike \"say a line\" (a game line over the boss) and \"chat message\" (chat with the boss's name in front), it reads as from the server. A variable's name in braces, such as {rage}, is its number.",
             "Announce {Text} to {Who} {Style}", [F("Text", CheatFieldType.Words, ""), F("Who", CheatFieldType.Choice, "", s_announceWho), F("Style", CheatFieldType.Choice, "Box", s_announceStyles)],
             b => $"announce \"{b.Text("Text")}\" to {LabelOf(s_announceWho, b.Text("Who"))} {LabelOf(s_announceStyles, b.Text("Style").Length > 0 ? b.Text("Style") : "Box")}"),
         new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away. A school's pips too: Crash the Bandit Coot spends his two matching Fire pips (take 2 Fire school pips from itself) after his Crash Attack.",
@@ -522,6 +636,41 @@ internal static class CheatSpecs {
         new("D.PickOne", BlockKind.Do, "dice", "pick one at random", "Of the blocks under this one (how many: 0 is all of them), only one goes off, picked at random. Chances such as 2, 1, 1 make the first twice as likely as each other one.",
             "Do only one of the next {Count} choices, {Group} blocks each, with chances {Weights}", [F("Count", CheatFieldType.Number, 0, max: 20), new("Group", CheatFieldType.Number, 1, Max: 10, Min: 1), F("Weights", CheatFieldType.Words, "")],
             b => $"(one of the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "blocks")}, at random)"),
+        // Do... (Niduus, 2026-10-26: "You can legit do anything")
+        new("D.SetVar", BlockKind.Do, "list", "set a variable", "Keeps a number by a name, such as rage, for the If \"a variable\" and for messages: {rage} in a message's words shows it. Its own: each fighter has its own; the battle's: one for everyone.",
+            "Set {Scope} variable {Var}: {Op} {Amount}", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, "Add", s_varOps), new("Amount", CheatFieldType.Number, 1, Max: 1_000_000, Min: -1_000_000)],
+            b => $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {N(b.Number("Amount"))}"),
+        new("D.IfVar", BlockKind.Do, "list", "only if a variable", "The blocks under it (how many) go off only if the variable is so. Example: rage at least 5, then 3 blocks of an enrage.",
+            "Only if {Scope} variable {Var} is {Op} {Amount}, do the next {Count} blocks",
+            [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, ">=", s_ops), new("Amount", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000), F("Count", CheatFieldType.Number, 1, max: 20)],
+            b => $"(the next {Math.Max(1, b.Number("Count"))} only if {b.Text("Var")} is {Op(b)} {N(b.Number("Amount"))})"),
+        new("D.Repeat", BlockKind.Do, "layers", "repeat", "The blocks under it (how many) go off this many times in a row.",
+            "Do the next {Count} blocks {Times} times", [F("Count", CheatFieldType.Number, 1, max: 20), F("Times", CheatFieldType.Number, 3, max: 20)],
+            b => $"(the next {Math.Max(1, b.Number("Count"))} blocks {b.Number("Times")} times)"),
+        new("D.MaxHealth", BlockKind.Do, "heart", "most health", "Sets or raises (below 0: lowers) someone's most health; their health stays (never above the new most). The server counts it at once; the game's health bar keeps its old top until it is next sent.",
+            "Make the most health of {Target} {Op} {Amount} {Percent}", [F("Target", CheatFieldType.Target, "Self"), F("Op", CheatFieldType.Choice, "Add", s_maxOps), new("Amount", CheatFieldType.Number, 1000, Max: 100_000_000, Min: -100_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most now")],
+            b => $"most health{Target(b)} {LabelOf(s_maxOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set").Split(' ')[0]} {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")}"),
+        new("D.Clone", BlockKind.Do, "users", "clone someone", "A copy of a creature (or a custom) joins its side, as a minion, in a free circle: the same model, health and cheats. Not for wizards.",
+            "Bring in {Count} copies of {Target} on its side", [F("Count", CheatFieldType.Number, 1, max: 3), F("Target", CheatFieldType.Target, "Self")],
+            b => $"clone{Target(b)}{(b.Number("Count") > 1 ? $" x{b.Number("Count")}" : "")}"),
+        new("D.CopySpell", BlockKind.Do, "sparkle", "copy the spell", "It casts the spell that set this cheat off too (free), on the target or as that spell aims. Use it under a When about a spell.",
+            "Cast the spell that set this off too, on {Target}", [F("Target", CheatFieldType.Target)],
+            b => $"copy that spell{Target(b)}"),
+        new("D.Redirect", BlockKind.Do, "hit", "redirect the spell", "The attacker's spell fizzles, and the attacker casts it (free) on the target picked instead: a random player if none, or e1-e4, AllEnemies... as seen from this one. Like reflect, it goes off before the spell lands.",
+            "Stop the attacker's spell and have them cast it on {Target}", [F("Target", CheatFieldType.Target, "Enemy")],
+            b => $"redirect it{Target(b, " on a random player")}"),
+        new("D.StealEffects", BlockKind.Do, "shield", "steal effects", "Charms, wards or auras of a kind (any if empty) come off the target and go on this one (0: all of them). They work on the server; the game draws only the ones taken off, not the ones put on.",
+            "Take {Count} {Kind} off {Target} and put them on itself", [F("Count", CheatFieldType.Number, 1, max: 20), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Caster")],
+            b => $"steal {(b.Number("Count") > 0 ? b.Number("Count").ToString(CultureInfo.InvariantCulture) : "all")} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)}"),
+        new("D.RunCheat", BlockKind.Do, "puzzle", "run another cheat", "The Do blocks of another of its cheats go off now (1 is the first in its list). Ticked: only if that cheat's own Ifs hold too.",
+            "Do cheat {Cheat}'s blocks {Check}", [F("Cheat", CheatFieldType.Number, 1, max: 200), new("Check", CheatFieldType.Toggle, false, Label: "only if its Ifs hold")],
+            b => $"run cheat {b.Number("Cheat")}"),
+        new("D.CheatOnOff", BlockKind.Do, "stop", "turn a cheat off / on", "Turns one of its cheats (1 is the first in its list) off for the rest of the battle, or back on.",
+            "Turn cheat {Cheat} {Kind}", [F("Cheat", CheatFieldType.Number, 1, max: 200), F("Kind", CheatFieldType.Choice, "Off", s_onOff)],
+            b => $"turn cheat {b.Number("Cheat")} {LabelOf(s_onOff, b.Text("Kind").Length > 0 ? b.Text("Kind") : "Off")}"),
+        new("D.Silence", BlockKind.Do, "stop", "silence", "The target's spells fizzle for this many rounds (from this one when the round is under way). Shown as a fizzle.",
+            "Silence {Target} for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Caster"), F("Rounds", CheatFieldType.Number, 1, max: 99)],
+            b => $"silence{Target(b)} for {Math.Max(1, b.Number("Rounds"))} rounds"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
             "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),
     ];
@@ -529,6 +678,16 @@ internal static class CheatSpecs {
     private static readonly Dictionary<string, CheatSpec> s_byId = All.ToDictionary(s => s.Id);
 
     internal static CheatSpec Get(string id) => s_byId.TryGetValue(id, out var spec) ? spec : s_byId["D.Other"];
+
+    /// <summary>Whether an If block is one entry of the cheat's Conditions (the "C." blocks).</summary>
+    internal static bool IsCondition(string id) => id.StartsWith("C.", StringComparison.Ordinal);
+
+    /// <summary>The server's "If" of a condition block.</summary>
+    internal static string ConditionOf(CheatBlock block) => block.Spec == "C.Other" ? block.Text("If") : block.Spec[2..];
+
+    /// <summary>The block for a Conditions entry's "If", or "C.Other" for one this app does not know.</summary>
+    internal static CheatSpec ConditionSpec(string kind)
+        => All.FirstOrDefault(s => IsCondition(s.Id) && s.Id != "C.Other" && s.Id[2..].Equals((kind ?? "").Trim(), StringComparison.OrdinalIgnoreCase)) ?? s_byId["C.Other"];
 
     /// <summary>The server's Do for a Do block.</summary>
     internal static string DoOf(string id) => id switch {

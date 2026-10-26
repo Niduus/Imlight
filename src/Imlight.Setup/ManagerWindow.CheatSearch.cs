@@ -201,6 +201,18 @@ internal sealed partial class ManagerWindow {
         var cost = CheatSearch.PipRange(query.Filter("pips") is { Length: > 0 } typedPips ? typedPips : pips);
         var words = query.Words;
         bool SchoolOk(string s) => school.Length == 0 || school.Equals(s, StringComparison.OrdinalIgnoreCase);
+        // A template ID typed whole ("857718733") is that spell and no other, whatever the boxes say (Niduus, 2026-10-26:
+        // "Do blocks accept spell ID's?").
+        if (SpellNameFamily.IsSpellId(words, out var typedId)) {
+            if (_spellBook?.Spells.FirstOrDefault(c => c.Id == typedId) is { } card) {
+                return [(new BossSpell(card.Id, card.Name, card.School), $"{card.School}  ·  {card.Type}  ·  {card.Cost}  ·  ID {card.Id}")];
+            }
+
+            if (_bossCatalog?.Spells.Values.FirstOrDefault(sp => sp.Id == typedId) is { } listed) {
+                return [(listed, $"{listed.School}  ·  ID {listed.Id}")];
+            }
+        }
+
         if (_spellBook is { } book) {
             var cards = book.Spells.Where(c => SchoolOk(c.School) && CheatSearch.CostFits(cost, c.Pips, c.XPips)
                                                && (kind.Length == 0 || SpellNameFamily.CategoryMatches(kind, KindsOf(c))

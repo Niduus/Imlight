@@ -71,6 +71,18 @@ internal static class SpellNameFamily {
     /// <summary>Whether any of a spell's names (its game name, the name on its card, its base name) is in the family.</summary>
     internal static bool AnyInFamily(string? family, params string?[] names) => names.Any(n => InFamily(family, n));
 
+    /// <summary>Whether a cheat's word for a spell is its template ID ("857718733"), not a name.</summary>
+    internal static bool IsSpellId(string? word, out uint id) {
+        var w = (word ?? "").Trim();
+        id = 0;
+
+        return w.Length > 0 && w.All(char.IsAsciiDigit) && uint.TryParse(w, System.Globalization.NumberStyles.None,
+            System.Globalization.CultureInfo.InvariantCulture, out id) && id > 0;
+    }
+
+    /// <summary>Whether any of the words is a spell's template ID.</summary>
+    internal static bool AnyIds(IEnumerable<string>? wanted) => (wanted ?? []).Any(w => IsSpellId(w, out _));
+
     /// <summary>
     /// Whether a spell is one of <paramref name="wanted"/>: by exact name, or with <paramref name="anyVersion"/> by family.
     /// </summary>

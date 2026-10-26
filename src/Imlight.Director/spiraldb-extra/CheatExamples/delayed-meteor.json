@@ -1,0 +1,22 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: a meteor in 3 rounds",
+  "Notes": "An example to copy (on no creature). From round 2, every 4 rounds and only while 2 or more players stand: a warning, then 3 rounds later a meteor on everyone and three Wild Bolts (picked by spell ID) at random players.",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 2,
+      "Every": 4,
+      "Conditions": [
+        { "If": "Standing", "Side": "Them", "Op": ">=", "Value": 2 }
+      ],
+      "Actions": [
+        { "Do": "Announce", "Text": "A meteor falls in 3 rounds! (round {round})", "Style": "Both" },
+        { "Do": "Wait", "Rounds": 3 },
+        { "Do": "Cast", "Spell": "Meteor Strike", "Target": "AllEnemies", "DispelImmune": false },
+        { "Do": "Repeat", "Count": 1, "Times": 3 },
+        { "Do": "Cast", "Spell": "1630528836", "Target": "Enemy", "DispelImmune": false }
+      ]
+    }
+  ]
+}

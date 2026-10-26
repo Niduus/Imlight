@@ -1,0 +1,29 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: rage that builds",
+  "Notes": "An example to copy (on no creature). Every hit adds 1 rage; at 5 rage it enrages once: +50% damage, 25% more most health, and the rage counter turns itself off.",
+  "Cheats": [
+    {
+      "When": "BossHit",
+      "Notes": "Each hit it takes adds 1 rage, and says so.",
+      "Actions": [
+        { "Do": "SetVar", "Var": "rage", "Op": "Add", "Amount": 1 },
+        { "Do": "Say", "Text": "Rage {rage} of 5..." }
+      ]
+    },
+    {
+      "When": "RoundStart",
+      "Notes": "At 5 rage, the enrage: once a battle.",
+      "Once": true,
+      "Conditions": [
+        { "If": "Var", "Var": "rage", "Op": ">=", "Value": 5 }
+      ],
+      "Actions": [
+        { "Do": "Announce", "Text": "{boss} is ENRAGED after {rage} hits!", "Style": "Box" },
+        { "Do": "Boost", "Kind": "Damage", "Amount": 50, "Rounds": 0, "Target": "Self" },
+        { "Do": "MaxHealth", "Op": "Add", "Amount": 25, "Percent": true, "Target": "Self" },
+        { "Do": "CheatOnOff", "Cheat": 1, "Kind": "Off" }
+      ]
+    }
+  ]
+}

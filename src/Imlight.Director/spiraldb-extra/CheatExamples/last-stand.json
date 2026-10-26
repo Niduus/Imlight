@@ -1,0 +1,32 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: the last stand",
+  "Notes": "An example to copy (on no creature). Once it is alone and either under 30% health or outnumbered (an OR group), it makes its last stand once: it heals to half, strikes everyone twice, and runs its second cheat at once. If nobody on the other side has cast Tower Shield (by spell ID) this battle, it also casts its own shield.",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Once": true,
+      "Conditions": [
+        { "If": "Standing", "Op": "=", "Value": 1 },
+        { "If": "Health", "Op": "<=", "Value": 30, "Percent": true, "Any": 1 },
+        { "If": "Outnumbered", "Any": 1 }
+      ],
+      "Actions": [
+        { "Do": "Announce", "Text": "{boss} makes a last stand!", "Style": "Box" },
+        { "Do": "HealthTo", "Amount": 50, "Target": "Self" },
+        { "Do": "Repeat", "Count": 1, "Times": 2 },
+        { "Do": "Cast", "Spell": "Meteor Strike", "Target": "AllEnemies", "DispelImmune": false },
+        { "Do": "RunCheat", "Cheat": 2, "Check": true }
+      ]
+    },
+    {
+      "When": "RoundEnd",
+      "Notes": "Its own shield, if no one on the other side has shielded this battle.",
+      "Conditions": [
+        { "If": "Casts", "Who": "Enemies", "Spell": "432324968", "Op": "=" },
+        { "If": "Fired", "Cheat": 1, "Op": ">=", "Value": 1 }
+      ],
+      "Actions": [ { "Do": "Cast", "Spell": "Tower Shield", "Target": "Self", "DispelImmune": false } ]
+    }
+  ]
+}

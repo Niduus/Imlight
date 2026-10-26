@@ -1,0 +1,46 @@
+{
+  "TemplateID": 0,
+  "Name": "Example: the mirror phase",
+  "Notes": "An example to copy (on no creature). Under half health it goes into phase 2: in odd rounds it reflects damage spells, in even rounds a player's heal is turned onto it instead, and anyone who casts a treasure card is silenced for a round.",
+  "Cheats": [
+    {
+      "When": "HealthBelow",
+      "Percent": 50,
+      "Actions": [
+        { "Do": "SetPhase", "Phase": 2 },
+        { "Do": "Announce", "Text": "{boss} raises a mirror!", "Style": "Box" }
+      ]
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Damage",
+      "Phase": 2,
+      "Notes": "Odd rounds: damage comes back.",
+      "Conditions": [
+        { "If": "Round", "Every": 2, "Offset": 1 }
+      ],
+      "Actions": [ { "Do": "Reflect" } ]
+    },
+    {
+      "When": "PlayerHeals",
+      "Phase": 2,
+      "Notes": "Even rounds: the heal lands on the boss.",
+      "Conditions": [
+        { "If": "Round", "Every": 2, "Offset": 1, "Not": true }
+      ],
+      "Actions": [ { "Do": "Redirect", "Target": "Self" } ]
+    },
+    {
+      "When": "PlayerCasts",
+      "Phase": 2,
+      "Notes": "A treasure card gets its caster silenced.",
+      "Conditions": [
+        { "If": "LastSpell", "Who": "Enemies", "Treasure": "Yes" }
+      ],
+      "Actions": [
+        { "Do": "Silence", "Target": "Caster", "Rounds": 1 },
+        { "Do": "Say", "Text": "No tricks in my mirror, {player}." }
+      ]
+    }
+  ]
+}

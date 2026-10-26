@@ -206,7 +206,7 @@ internal sealed class CheatRule {
             ["RemovedKind"] = "", ["RemovedSpell"] = "", ["RemovedFrom"] = "", ["SpellDoes"] = "", ["NotSpellDoes"] = false,
             ["Enchant"] = "", ["NotEnchant"] = false, ["Global"] = "", ["GlobalSchool"] = "", ["GlobalSpell"] = "", ["SchoolPips"] = 0,
             ["SchoolPipsSchool"] = "", ["SchoolPipsWho"] = "", ["SchoolPipsMost"] = false, ["PipsMin"] = 0, ["PipsMax"] = 0, ["PipsWho"] = "",
-            ["Circles"] = "", ["CirclesWho"] = "",
+            ["Circles"] = "", ["CirclesWho"] = "", ["Conditions"] = new JsonArray(),
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
@@ -223,7 +223,24 @@ internal sealed class CheatRule {
             json["Percent"] = 0;
         }
 
-        foreach (var block in Ifs.Where(b => b.On)) {
+        // The conditions (Niduus, 2026-10-26): one entry each, with every value the block holds.
+        var conditions = new JsonArray();
+        foreach (var block in Ifs.Where(b => b.On && CheatSpecs.IsCondition(b.Spec))) {
+            var entry = new JsonObject { ["If"] = CheatSpecs.ConditionOf(block) };
+            // What the server reads for a value left out ("", 0, false) is left out, so the file stays short.
+            foreach (var (key, value) in block.Values) {
+                if (!key.Equals("If", StringComparison.OrdinalIgnoreCase)
+                    && !(value is JsonValue && JsonNode.DeepEquals(value, CheatBlock.Unset(value)))) {
+                    entry[key] = value?.DeepClone();
+                }
+            }
+
+            conditions.Add(entry);
+        }
+
+        json["Conditions"] = conditions;
+
+        foreach (var block in Ifs.Where(b => b.On && !CheatSpecs.IsCondition(b.Spec))) {
             switch (block.Spec) {
                 case "I.Once": json["Once"] = true; break;
                 case "I.NoAllies": json["NoAllies"] = true; break;
@@ -438,6 +455,24 @@ internal sealed class CheatRule {
 
         if (Text("Circles").Length > 0) {
             If("I.Circle", new JsonObject { ["CirclesWho"] = Text("CirclesWho"), ["Circles"] = Text("Circles") });
+        }
+
+        // The conditions, one block each; one this app does not know is kept as it is.
+        foreach (var entry in (Node("Conditions") as JsonArray ?? []).OfType<JsonObject>()) {
+            var kind = BossChanges.FindIn(entry, "If") is JsonValue k && k.TryGetValue<string>(out var w) ? w : "";
+            var values = new JsonObject();
+            foreach (var (key, value) in entry) {
+                if (!key.Equals("If", StringComparison.OrdinalIgnoreCase)) {
+                    values[key] = value?.DeepClone();
+                }
+            }
+
+            var spec = CheatSpecs.ConditionSpec(kind);
+            if (spec.Id == "C.Other") {
+                values["If"] = kind;
+            }
+
+            rule.Ifs.Add(CheatBlock.FromFile(spec, values));
         }
 
         // A file's School and Category on a When that has no box for them stay as If blocks would not: keep them on it.
@@ -748,6 +783,74 @@ internal sealed class CheatLines {
         // and words match as every search box reads them (SearchText).
         return [.. _phrases.Where(p => SearchText.Matches(p.Text, words) || p.Number.ToString(System.Globalization.CultureInfo.InvariantCulture) == words.Trim())
             .Take(max).Select(p => (p.Number, p.Text))];
+    }
+
+}
+
+/// <summary>An example cheat file (spiraldb-extra/CheatExamples): its name, what it shows and its cheats.</summary>
+internal sealed record CheatExample(string File, string Name, string Notes, List<JsonObject> Cheats);
+
+/// <summary>
+/// The examples to copy (Niduus, 2026-10-26: "I really want people to look at the system and be like 'WOW! You can legit
+/// do anything'"): cheat files in spiraldb-extra/CheatExamples, on no creature (the server never reads that folder), that
+/// the cheat editor copies into a boss's or the player's cheats.
+/// </summary>
+internal static class CheatExamples {
+
+    internal const string FOLDER = "CheatExamples";
+
+    private static readonly JsonDocumentOptions s_read = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
+
+    internal static List<CheatExample> Load(string extraFolder) {
+        var folder = Path.Combine(extraFolder, FOLDER);
+        if (!Directory.Exists(folder)) {
+            return [];
+        }
+
+        var examples = new List<CheatExample>();
+        foreach (var file in Directory.GetFiles(folder, "*.json").OrderBy(f => f, StringComparer.OrdinalIgnoreCase)) {
+            try {
+                if (JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) is not JsonObject json) {
+                    continue;
+                }
+
+                string Text(string key) => BossChanges.FindIn(json, key) is JsonValue v && v.TryGetValue<string>(out var s) ? s : "";
+                var cheats = (BossChanges.FindIn(json, "Cheats") as JsonArray ?? []).OfType<JsonObject>().ToList();
+                if (cheats.Count > 0) {
+                    examples.Add(new CheatExample(Path.GetFileName(file), Text("Name") is { Length: > 0 } n ? n : Path.GetFileNameWithoutExtension(file), Text("Notes"), cheats));
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+                // A file that cannot be read is left out.
+            }
+        }
+
+        return examples;
+    }
+
+    /// <summary>
+    /// An example's cheats as new cheats at the end of a list that already has <paramref name="already"/>: the cheat
+    /// numbers its blocks name (run cheat, turn a cheat off, a cheat went off) move along with them.
+    /// </summary>
+    internal static List<CheatRule> Copy(CheatExample example, int already, bool player) {
+        var rules = new List<CheatRule>();
+        foreach (var cheat in example.Cheats) {
+            var copy = (JsonObject) cheat.DeepClone();
+            var numbered = (BossChanges.FindIn(copy, "Actions") as JsonArray ?? []).OfType<JsonObject>()
+                .Where(a => BossChanges.FindIn(a, "Do") is JsonValue d && d.ToString().ToLowerInvariant() is "runcheat" or "cheatonoff")
+                .Concat((BossChanges.FindIn(copy, "Conditions") as JsonArray ?? []).OfType<JsonObject>()
+                    .Where(c => BossChanges.FindIn(c, "If") is JsonValue i && i.ToString().Equals("Fired", StringComparison.OrdinalIgnoreCase)));
+            foreach (var block in numbered) {
+                var key = block.Select(p => p.Key).FirstOrDefault(k => k.Equals("Cheat", StringComparison.OrdinalIgnoreCase));
+                if (key is not null && block[key] is JsonValue v && v.TryGetValue<int>(out var n) && n > 0) {
+                    block[key] = n + already;
+                }
+            }
+
+            rules.Add(CheatRule.FromCheat(copy, player: player));
+        }
+
+        return rules;
     }
 
 }

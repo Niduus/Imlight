@@ -166,7 +166,7 @@ public partial class CombatResolver {
             string name = enchantment.m_name;
             string key = enchantment.m_displayName;
             has = SpellNameFamily.IsOneOf(wanted.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), true,
-                name, string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key));
+                name, string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key), ((uint) _cheatCard.m_enchantment).ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
 
         return has != cheat.NotEnchant;

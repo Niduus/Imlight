@@ -245,6 +245,13 @@
  *                                           Amount damage to the target (Crash's 4,000 after his first defeat). Amount 0
  *                                           takes its caps off.
  *
+ * Anything goes (Niduus, 2026-10-26: "Do blocks accept spell ID's? ... You can legit do anything"): wherever a cheat
+ * names a spell (Spells, Cast, Casts, an action's Spell, HasSpell, RemovedSpell, GlobalSpell, Enchant, a Conditions
+ * entry's Spell) its template ID typed as a number ("857718733") is that very spell. Conditions (a list of Ifs with AND,
+ * OR groups and NOT) and the Dos SetVar, IfVar, Repeat, MaxHealth, Clone, CopySpell, Redirect, StealEffects, RunCheat,
+ * CheatOnOff and Silence are listed at the top of CombatResolver.CreativeCheats.cs; {name} in a message's Text is that
+ * variable. Examples to copy, on no creature, are in spiraldb-extra/CheatExamples (the server never reads them).
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -403,13 +410,17 @@ internal static class BossCheats {
         // CirclesWho stands in one of these circles of its side ("2, 3, 4").
         public string Circles { get; set; } = "";
         public string CirclesWho { get; set; } = "";
+        // Many more Ifs, each one entry, with AND / OR / NOT (Niduus, 2026-10-26: "You can legit do anything";
+        // CombatResolver.CreativeCheats.cs): every entry with Any 0 must hold, and of the entries of one Any group (1, 2...)
+        // at least one; Not turns an entry round.
+        public List<CheatCondition> Conditions { get; set; } = [];
 
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         internal bool Custom { get; set; }
 
         /// <summary>Whether it stops the player's spell, so it goes off before that spell.</summary>
-        internal bool Interrupts => (Actions ?? []).Any(a => a is not null && !a.Off && (a.Is("Interrupt") || a.Is("Reflect")));
+        internal bool Interrupts => (Actions ?? []).Any(a => a is not null && !a.Off && (a.Is("Interrupt") || a.Is("Reflect") || a.Is("Redirect")));
 
         /// <summary>
         /// Everything it does, in order: the old fields as actions (a second form, health, phase, line, spells, defeat),
@@ -462,6 +473,39 @@ internal static class BossCheats {
 
             return !all && Random && casts.Count > 1 ? [casts[System.Random.Shared.Next(casts.Count)]] : casts;
         }
+    }
+
+    /// <summary>
+    /// One If of a cheat's Conditions (CombatResolver.CreativeCheats.cs has what each kind looks at). Who is whose it is
+    /// (a target word, or AnyEnemy / EveryEnemy / EnemySide... for a side); Op compares (&lt;, &lt;=, &gt;, &gt;=, =, !=;
+    /// &gt;= if empty) with Value.
+    /// </summary>
+    internal sealed class CheatCondition {
+        public string If { get; set; } = "";
+        public bool Not { get; set; }
+        public int Any { get; set; }
+        public string Who { get; set; } = "";
+        public string Op { get; set; } = "";
+        public int Value { get; set; }
+        public bool Percent { get; set; }
+        public string Spell { get; set; } = "";
+        public string School { get; set; } = "";
+        public string Kind { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Var { get; set; } = "";
+        public string Scope { get; set; } = "";
+        public string On { get; set; } = "";
+        public string Within { get; set; } = "";
+        public string Result { get; set; } = "";
+        public string Treasure { get; set; } = "";
+        public string Enchanted { get; set; } = "";
+        public int Every { get; set; }
+        public int Offset { get; set; }
+        public int Cheat { get; set; }
+        public uint Creature { get; set; }
+        public string Side { get; set; } = "";
+        public int CostMin { get; set; }
+        public int CostMax { get; set; }
     }
 
     /// <summary>One spell of a cheat's Casts.</summary>
@@ -521,6 +565,16 @@ internal static class BossCheats {
         public string Mark { get; set; } = "";
         public string By { get; set; } = "";
         public int Group { get; set; }
+        // Niduus, 2026-10-26 ("You can legit do anything"; CombatResolver.CreativeCheats.cs). For SetVar and IfVar: the
+        // variable's name, what to do with it (Set, Add, Subtract, Multiply, Random; for IfVar a compare: <, <=, >, >=, =,
+        // !=) and whose it is ("" the cheat's owner, Battle one for the whole battle). For RunCheat and CheatOnOff: which
+        // of the owner's cheats (1 is the first).
+        public string Var { get; set; } = "";
+        public string Op { get; set; } = "";
+        public string Scope { get; set; } = "";
+        public int Cheat { get; set; }
+        // For RunCheat: its own Ifs must hold too.
+        public bool Check { get; set; }
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

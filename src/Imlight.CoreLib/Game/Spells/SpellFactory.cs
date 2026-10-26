@@ -120,6 +120,32 @@ internal class SpellFactory : RootDirectoryResourceSingleton<SpellFactory>, IMem
         return !string.IsNullOrEmpty(spellName) && s_spellTemplates.ContainsKey(StringHash.Compute(spellName));
     }
 
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, uint> s_idsByName = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The template ID of a spell template, found by its name (0 if none), kept once found: a cheat's spell typed as its
+    /// ID ("857718733") is matched against it (Niduus, 2026-10-26: "Do blocks accept spell ID's?").
+    /// </summary>
+    internal static uint TemplateIdOf(SpellTemplate template) {
+        // The spell as the game's cheats see it was loaded by its ID: that ID.
+        if (CoreObjectFactory.LoadedIdOf(template) is var loaded and > 0 and <= uint.MaxValue) {
+            return (uint) loaded;
+        }
+
+        string name = template?.m_name;
+        if (string.IsNullOrEmpty(name)) {
+            return 0;
+        }
+
+        return s_idsByName.GetOrAdd(name, n => {
+            if (!Exists(n) || !s_spellTemplatePaths.TryGetValue(StringHash.Compute(n), out var path)) {
+                return 0;
+            }
+
+            return CoreObjectFactory.TryGetCoreTemplateID(x => x.m_filename == path, out uint id) ? id : 0;
+        });
+    }
+
     /// <summary>
     /// Retrieves a spell by its name.
     /// </summary>

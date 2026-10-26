@@ -160,6 +160,23 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
     }
 
     /// <summary>
+    /// The ID of a template already loaded (this very object, as <see cref="GetCoreTemplate"/> gave it), or 0.
+    /// </summary>
+    public static ulong LoadedIdOf(CoreTemplate template) {
+        if (template is null) {
+            return 0;
+        }
+
+        foreach (var (id, loaded) in s_templateCache) {
+            if (ReferenceEquals(loaded, template)) {
+                return id;
+            }
+        }
+
+        return 0;
+    }
+
+    /// <summary>
     /// Gets the CoreTemplate object with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the CoreTemplate.</param>

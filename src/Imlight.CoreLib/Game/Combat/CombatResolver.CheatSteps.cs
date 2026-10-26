@@ -480,6 +480,9 @@ public partial class CombatResolver {
             return text;
         }
 
+        // A cheat variable's name in braces is its value ({rage}: SetVar; Niduus, 2026-10-26).
+        text = FillVars(text, owner);
+
         string NameOf(CombatDuelSubCircle c) => c is null ? ""
             : c.IsHumanPlayer ? c._wizard?.PlayerNameBehavior?.GetWizardName() ?? ""
             : Customs.NameOf(c.ParticipantObject?.m_globalID.Full ?? 0) ?? CheaterName(c);
@@ -830,7 +833,9 @@ public partial class CombatResolver {
                     return true;
                 }
                 default:
-                    return false;
+                    // Niduus, 2026-10-26 ("You can legit do anything"): CombatResolver.CreativeCheats.cs.
+                    return TryCreativeCheatSteps(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar,
+                        custom, out cinematicTime);
             }
         }
         catch (Exception e) {
