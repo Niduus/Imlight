@@ -507,6 +507,9 @@ internal static class BossCheats {
         public string Side { get; set; } = "";
         public int CostMin { get; set; }
         public int CostMax { get; set; }
+        // School: "" = of School, "Rival" = of School's rival (Ice -> Fire), "RivalOfIt" = of the rival of the cheat's
+        // own one's school (Niduus, 2026-10-26).
+        public string Match { get; set; } = "";
     }
 
     /// <summary>One spell of a cheat's Casts.</summary>

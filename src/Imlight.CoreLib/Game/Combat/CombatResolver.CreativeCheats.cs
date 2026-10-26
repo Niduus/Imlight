@@ -69,6 +69,7 @@ using System.Text.RegularExpressions;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -244,6 +245,15 @@ public partial class CombatResolver {
         return found is not null;
     }
 
+    // A school's rival (its opposite): Fire and Ice, Storm and Myth, Life and Death. Balance and the astral and shadow
+    // schools have none.
+    private static MagicSchool RivalOf(MagicSchool school) => school switch {
+        MagicSchool.Fire => MagicSchool.Ice, MagicSchool.Ice => MagicSchool.Fire,
+        MagicSchool.Storm => MagicSchool.Myth, MagicSchool.Myth => MagicSchool.Storm,
+        MagicSchool.Life => MagicSchool.Death, MagicSchool.Death => MagicSchool.Life,
+        _ => MagicSchool.None,
+    };
+
     private bool IsTrueOf(CombatDuelSubCircle boss, BossCheats.CheatCondition c, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver,
                           Func<CombatDuelSubCircle, bool> test) {
         var (who, mode) = ConditionWho(boss, c.Who, trigger, receiver);
@@ -405,8 +415,22 @@ public partial class CombatResolver {
                 return Measured(boss, c, trigger, receiver, w => PipsOfKind(w, c.Kind));
             case "level":
                 return Measured(boss, c, trigger, receiver, w => w.ParticipantGameStats.Level, average: true);
-            case "school":
+            case "school": {
+                var match = (c.Match ?? "").Trim();
+                if (match.Equals("RivalOfIt", StringComparison.OrdinalIgnoreCase)) {
+                    var rival = RivalOf(boss.SchoolNow);
+
+                    return rival != MagicSchool.None && IsTrueOf(boss, c, trigger, receiver, w => w.SchoolNow == rival);
+                }
+
+                if (match.Equals("Rival", StringComparison.OrdinalIgnoreCase)) {
+                    var rival = Enum.TryParse<MagicSchool>(c.School.Trim(), true, out var picked) ? RivalOf(picked) : MagicSchool.None;
+
+                    return rival != MagicSchool.None && IsTrueOf(boss, c, trigger, receiver, w => w.SchoolNow == rival);
+                }
+
                 return IsTrueOf(boss, c, trigger, receiver, w => c.School.Trim().Equals(w.SchoolNow.ToString(), StringComparison.OrdinalIgnoreCase));
+            }
             case "name":
                 return IsTrueOf(boss, c, trigger, receiver, w => c.Name.Trim().Length > 0 && FighterName(w).Contains(c.Name.Trim(), StringComparison.OrdinalIgnoreCase));
             case "creature":

@@ -136,7 +136,10 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_hasKinds = [
         ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap (jinx)"), ("Blade", "blade"), ("Weakness", "weakness (curse)"), ("Charm", "charm (any)"),
         ("Ward", "ward (any)"), ("Aura", "aura"), ("DoT", "damage over time"), ("HoT", "heal over time"),
+        ("Dispel", "dispel"),
     ];
+    // Niduus, 2026-10-26: a school, or its rival (opposite).
+    private static readonly (string, string)[] s_schoolMatch = [("", "the school"), ("Rival", "the rival of"), ("RivalOfIt", "the rival of its own school (box not used):")];
     private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side"),
         ("AllEnemies", "every player")];
     private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
@@ -502,9 +505,10 @@ internal static class CheatSpecs {
         Cond("C.Level", "user", "level", "Someone's level (a side added up: their average). Example: the attacker is at most level 30 — go easy on low levels.",
             "If {Who} is level {Op} {Value}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 50, max: 200)],
             b => $"if {Who(b)} is level {Op(b)} {b.Number("Value")}"),
-        Cond("C.School", "sparkle", "school of someone", "Someone is of this school (a wizard's school, or a creature's).",
-            "If {Who} is of {School}", [WhoField(), F("School", CheatFieldType.School, "Fire")],
-            b => $"if {Who(b)} is {(b.Text("School").Length > 0 ? b.Text("School") : "of any school")}"),
+        Cond("C.School", "sparkle", "school of someone", "Someone is of this school (a wizard's school, or a creature's). \"The rival of\" is that school's opposite: Fire and Ice, Storm and Myth, Life and Death (Balance, Sun, Moon, Star and Shadow have none). Example: \"the attacker is of the rival of Ice\" is true for a Fire wizard. \"The rival of its own school\" skips the school box and uses the school of whose cheat it is: an Ice boss then picks out Fire wizards.",
+            "If {Who} is of {Match} {School}", [WhoField(), F("Match", CheatFieldType.Choice, "", s_schoolMatch), F("School", CheatFieldType.School, "Fire")],
+            b => b.Text("Match") == "RivalOfIt" ? $"if {Who(b)} is of its rival school"
+                : $"if {Who(b)} is {(b.Text("Match") == "Rival" ? "of the rival of " : "")}{(b.Text("School").Length > 0 ? b.Text("School") : "of any school")}"),
         Cond("C.Name", "quote", "name has", "Someone's name has these words (a wizard's name, a custom's, or the creature's as the game shows it).",
             "If {Who}'s name has {Name}", [WhoField(), F("Name", CheatFieldType.Words)],
             b => $"if {Who(b)}'s name has \"{b.Text("Name")}\""),

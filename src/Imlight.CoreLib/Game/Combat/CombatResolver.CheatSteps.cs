@@ -378,7 +378,7 @@ public partial class CombatResolver {
     private CombatDuelSubCircle _cheatOwner;
 
     // Whether a hanging effect is of a kind: Shield, Trap, Blade, Weakness, Charm (any blade, weakness or other charm),
-    // Ward (any shield, trap or absorb), Aura, DoT or HoT.
+    // Ward (any shield, trap or absorb), Aura, DoT, HoT or Dispel.
     private static bool IsKind(SpellEffect e, string kind) {
         var good = CombatRequirements.IsBeneficial(e);
         var overTime = CombatRequirements.IsOverTime(e);
@@ -398,6 +398,8 @@ public partial class CombatResolver {
             "aura" => aura,
             "dot" => overTime && e.m_effectType != kSpellEffects.kHealOverTime,
             "hot" => e.m_effectType == kSpellEffects.kHealOverTime,
+            // Niduus, 2026-10-26: a Dispel (Fire Dispel...) hanging on someone.
+            "dispel" => e.m_effectType == kSpellEffects.kDispel,
             _ => false,
         };
     }
