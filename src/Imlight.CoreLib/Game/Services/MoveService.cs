@@ -40,6 +40,7 @@ using System;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imcodec.Math;
+using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
@@ -164,7 +165,7 @@ internal class MoveService : MessageService {
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_JUMP))]
     private void ReceiveClientJump(GAME_5_PROTOCOL.MSG_JUMP message) {
         var excludeOriginator = message.ExcludeOriginator == 1;
-        ZoneBroadcast(message, excludeOriginator, ZoneBroadcastTarget.Players);
+        BroadcastMove(message, excludeOriginator);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_MARK_LOCATION))]
@@ -291,9 +292,7 @@ internal class MoveService : MessageService {
             Direction = message.Direction,
             MobileID = _activeCoreObject.m_nMobileID,
         };
-        // Only players draw it. Sent to the whole zone, every move also went to each NPC, door and trigger there,
-        // which only slowed the zone down.
-        ZoneBroadcast(serverMoveMsg, targets: ZoneBroadcastTarget.Players);
+        BroadcastMove(serverMoveMsg);
     }
 
     private void BroadcastClientMoveState(GAME_5_PROTOCOL.MSG_CLIENTMOVESTATE message) {
@@ -305,7 +304,29 @@ internal class MoveService : MessageService {
             NewState = message.NewState,
             GlobalID = _activeCoreObject.m_globalID
         };
-        ZoneBroadcast(stateMsg, targets: ZoneBroadcastTarget.Players);
+        BroadcastMove(stateMsg);
+    }
+
+    // Straight to the zone, which serves it before anything else (ZonePriorityMailbox). Through the session and the
+    // ZoneService it waited behind whatever those had queued, so a move reached the other players late (Niduus,
+    // 2026-10-26: "try to tighten the sync a bit more"). Only players draw it: sent to the whole zone, every move also
+    // went to each NPC, door and trigger there.
+    private void BroadcastMove(IMessage message, bool isSelfless = true) {
+        var broadcast = new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = message,
+            Selfless = isSelfless,
+            Sender = SessionActor.ActorRef,
+            Targets = ZoneBroadcastTarget.Players,
+        };
+
+        var zoneActor = SessionActor.GetZoneActor();
+        if (zoneActor is null) {
+            ZoneBroadcast(message, isSelfless, ZoneBroadcastTarget.Players);
+
+            return;
+        }
+
+        zoneActor.Tell(broadcast, Self);
     }
 
     private void SendZoneInteractionFishRequest() {
