@@ -403,6 +403,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
             Logger.Information("Zone {ZoneName} loaded in {Time}ms.", Logger.Args(ZoneName, _zoneLoadTimer.ElapsedMilliseconds));
             _isLoading = false;
             ScheduleIdleExpiryIfEmpty();
+            Context.Parent.Tell(new World.GameWorld.ZoneReady { ZonePath = ZonePath });
 
             var startMsg = new ZONE_102_PROTOCOL.MSG_ZONESTART();
 

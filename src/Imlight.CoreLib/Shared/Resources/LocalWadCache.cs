@@ -69,6 +69,11 @@ internal static class LocalWadCache {
     private static string s_path => ConfigurationManager.Settings["Patch Server.LocalWadCachePath"];
     private static bool s_hasInitialized;
 
+    // LiteDB opens the cache file for itself alone, so two zones (or the quest guide and a recipe shop) reading at
+    // the same time failed with "being used by another process" and the zone did not load (Niduus's log of
+    // 2026-10-25). Every use of the file goes one at a time.
+    private static readonly object s_fileLock = new();
+
     static LocalWadCache() => Initialize();
 
     public static void Initialize() {
@@ -96,41 +101,50 @@ internal static class LocalWadCache {
 
     internal static Archive GetCachedWad(string wadName) {
         wadName = SanitizeWadName(wadName);
-        using var db = new LiteDatabase(s_path);
-        var fs = db.GetStorage<FileDefinition>();
-
-        var file = fs.Find(f => f.Filename == wadName)
-            .FirstOrDefault();
-
-        if (file is null) {
-            Logger.Warning("LocalCache does not contain a file definition for {FileName}!", 
-                Logger.Args(wadName));
-
-            return null;
-        }
 
         // The LiteDB stream is file IO and very slow.
         // Instead, copy the stream to a memory stream.
-        var liteDbStream = fs.OpenRead(file.Id);
         var fileStream = new MemoryStream();
-        liteDbStream.CopyTo(fileStream);
+        lock (s_fileLock) {
+            using var db = new LiteDatabase(s_path);
+            var fs = db.GetStorage<FileDefinition>();
+
+            var file = fs.Find(f => f.Filename == wadName)
+                .FirstOrDefault();
+
+            if (file is null) {
+                Logger.Warning("LocalCache does not contain a file definition for {FileName}!",
+                    Logger.Args(wadName));
+
+                return null;
+            }
+
+            using var liteDbStream = fs.OpenRead(file.Id);
+            liteDbStream.CopyTo(fileStream);
+        }
         fileStream.Seek(0, SeekOrigin.Begin);
 
-        return file is null 
-            ? null 
-            : ArchiveParser.Parse(fileStream);
+        return ArchiveParser.Parse(fileStream);
     }
 
     internal static List<FileDefinition> GetAllCachedFiles() {
-        using var db = new LiteDatabase(s_path);
-        var fs = db.GetStorage<FileDefinition>();
+        lock (s_fileLock) {
+            using var db = new LiteDatabase(s_path);
+            var fs = db.GetStorage<FileDefinition>();
 
-        var allFiles = fs.FindAll();
+            var allFiles = fs.FindAll();
 
-        return [.. allFiles.Select(file => file.Id)];
+            return [.. allFiles.Select(file => file.Id)];
+        }
     }
 
     internal static void CacheWad(string fileName, Archive wad) {
+        lock (s_fileLock) {
+            CacheWadUnlocked(fileName, wad);
+        }
+    }
+
+    private static void CacheWadUnlocked(string fileName, Archive wad) {
         fileName = SanitizeWadName(fileName);
         using var db = new LiteDatabase(s_path);
         var fs = db.GetStorage<FileDefinition>();
@@ -170,6 +184,12 @@ internal static class LocalWadCache {
     }
 
     internal static void DeleteWad(string fileName) {
+        lock (s_fileLock) {
+            DeleteWadUnlocked(fileName);
+        }
+    }
+
+    private static void DeleteWadUnlocked(string fileName) {
         fileName = SanitizeWadName(fileName);
         using var db = new LiteDatabase(s_path);
         var fs = db.GetStorage<FileDefinition>();

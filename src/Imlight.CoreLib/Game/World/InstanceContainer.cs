@@ -85,6 +85,10 @@ internal sealed class InstanceContainer(ulong instanceOwnerId, bool removeWhenEm
         _questProgress.AddZone(zoneName);
     }
 
+    // Only the game world waits on this (zone preloads); an instance has nothing to do with it.
+    [MessageHandler(typeof(GameWorld.ZoneReady))]
+    private void ReceiveZoneReady() { }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCECONTAINERHASZONE))]
     public void ReceiveInstanceContainerHasZone(ZONE_102_PROTOCOL.MSG_INSTANCECONTAINERHASZONE message) 
         => Sender.Tell(new ZONE_102_PROTOCOL.MSG_INSTANCECONTAINERHASZONERSP {
