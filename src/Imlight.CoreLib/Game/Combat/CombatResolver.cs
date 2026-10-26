@@ -937,7 +937,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 ? AllFreeTargets(caster, action.SpellTemplate)
                 : [delayed.Free ? PickFreeTarget(caster, action.SpellTemplate, delayed.Target) : action.SelectedTarget];
             foreach (var target in targets) {
-                var revive = target is not null && !target.IsAlive && IsRevive(action.SpellTemplate)
+                var revive = target is not null && !target.IsAlive && CanGoOnFallen(action.SpellTemplate)
                              && target.OccupiedTeam == caster.OccupiedTeam;
                 if (!caster.IsAlive || target is null || (!target.IsAlive && !revive) || !target.AddedToDuel) {
                     continue;
@@ -1032,8 +1032,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     /// </summary>
     private List<CombatDuelSubCircle> AllFreeTargets(CombatDuelSubCircle caster, SpellTemplate template) {
         var effects = (template.m_effects ?? []).Where(effect => effect is not null).ToList();
-        // A revive (Guardian Spirit) goes on fallen teammates too.
-        var revive = IsRevive(template);
+        // A revive (Guardian Spirit) or a heal goes on fallen teammates too.
+        var revive = CanGoOnFallen(template);
         var standing = caster._duelActor.ActiveSubCircles
             .Where(c => c.AddedToDuel && (c.IsAlive || revive && c.OccupiedTeam == caster.OccupiedTeam)).OrderBy(c => c.SlotIndex);
         if (effects.Any(effect => s_singleEnemy.Contains(effect.m_effectTarget))) {
@@ -1097,6 +1097,17 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         => template?.m_effects?.Any(e => e is not null && (e.m_effectType == kSpellEffects.kAfterlife
             || e is EffectListSpellEffect list && (list.m_effectList ?? []).Any(x => x?.m_effectType == kSpellEffects.kAfterlife))) == true;
 
+    private static readonly HashSet<kSpellEffects> s_heals = [
+        kSpellEffects.kHeal, kSpellEffects.kHealPercent, kSpellEffects.kMaxHealthHeal,
+    ];
+
+    // A spell that may go on a defeated teammate: a revive, or a heal aimed at one teammate, which brings them back as
+    // in the real game (Niduus, 2026-10-26: "Healing spells revive a downed wizard in Vanilla"). It was skipped as
+    // "target is dead".
+    internal static bool CanGoOnFallen(SpellTemplate template)
+        => IsRevive(template) || AllEffects(template).Any(e => s_heals.Contains(e.m_effectType)
+            && e.m_effectTarget is kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe);
+
     private float ProcessQueuedAction(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
         {
@@ -1122,9 +1133,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 return cinematicTime;
             }
 
-            // If our target is gone or we're stunned, pass the turn. A revive (an afterlife, such as Guardian Spirit) may
-            // go on a defeated teammate.
-            var revivesFallenAlly = !action.SelectedTarget.IsAlive && IsRevive(action.SpellTemplate)
+            // If our target is gone or we're stunned, pass the turn. A revive (an afterlife, such as Guardian Spirit) or a
+            // heal may go on a defeated teammate.
+            var revivesFallenAlly = !action.SelectedTarget.IsAlive && CanGoOnFallen(action.SpellTemplate)
                                     && action.SelectedTarget.OccupiedTeam == action.SpellCaster.OccupiedTeam;
             if (    action.SpellCaster.CombatParticipant.m_stunned > 0 
                 || (!action.SelectedTarget.IsAlive && !revivesFallenAlly)

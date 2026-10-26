@@ -258,7 +258,7 @@ public partial class CombatResolver {
                     var own = cheat.Is("ICast") && mover == boss;
                     var before = own || (cheat.Is("EnemyCasts") && IsFoe(boss, mover));
                     // A spell that won't go off (its target is gone) sets off no "before it lands" cheat.
-                    if (before ? !targetStands && !IsRevive(spell) || !Matches(cheat, spell, aimed, boss, mover)
+                    if (before ? !targetStands && !CanGoOnFallen(spell) || !Matches(cheat, spell, aimed, boss, mover)
                             : !cheat.Interrupts || !targetStands || !SetOffBy(cheat, boss, mover, spell, aimed, crit: null)) {
                         continue;
                     }

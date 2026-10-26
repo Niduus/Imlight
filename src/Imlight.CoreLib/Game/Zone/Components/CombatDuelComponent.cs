@@ -3110,7 +3110,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         var revive = circle.SlotType == caster.SlotType
                      && CoreObjectFactory.GetCoreTemplate(message.SpellTemplateId) is SpellTemplate template
-                     && Game.Combat.CombatResolver.IsRevive(template);
+                     && Game.Combat.CombatResolver.CanGoOnFallen(template);
         if (circle.Occupied && circle.AddedToDuel && (circle.IsAlive || revive)) {
             return null;
         }

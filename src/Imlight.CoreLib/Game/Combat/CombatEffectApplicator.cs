@@ -160,7 +160,8 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kHealPercent:
             case kSpellEffects.kMaxHealthHeal:
                 foreach (var target in targets.Where(t => t?.ParticipantGameStats is not null)) {
-                    DoHealToTarget(target, (int) Math.Ceiling(target.ParticipantGameStats.m_baseHitpoints * effect.m_effectParam / 100.0));
+                    DoHealToTarget(target, (int) Math.Ceiling(target.ParticipantGameStats.m_baseHitpoints * effect.m_effectParam / 100.0),
+                        RevivesWithHeal(effect, caster, target));
                 }
 
                 break;
@@ -618,7 +619,7 @@ internal static class CombatEffectApplicator {
         // Apply heal to each target
         foreach (var target in targets) {
             if (target is not null) {
-                _ = DoHealToTarget(target, healFromCaster);
+                _ = DoHealToTarget(target, healFromCaster, RevivesWithHeal(effect, caster, target));
             }
         }
 
@@ -962,10 +963,19 @@ internal static class CombatEffectApplicator {
     }
 
     /// <summary>
-    /// A heal landing on the target: its heal wards (Infection-style -heal, or +heal) change it and are used up, then
-    /// the target's incoming heal stat. Heal wards were kept but never read.
+    /// A heal aimed at one teammate who is defeated brings them back with the heal, as in the real game (Niduus,
+    /// 2026-10-26: "Healing spells revive a downed wizard in Vanilla"). A heal on a whole side only heals who stands.
     /// </summary>
-    private static int DoHealToTarget(CombatDuelSubCircle target, int heal) {
+    private static bool RevivesWithHeal(SpellEffect effect, CombatDuelSubCircle caster, CombatDuelSubCircle target)
+        => target is { IsAlive: false, Occupied: true } && caster is not null && target.OccupiedTeam == caster.OccupiedTeam
+           && effect.m_effectTarget is kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe;
+
+    /// <summary>
+    /// A heal landing on the target: its heal wards (Infection-style -heal, or +heal) change it and are used up, then
+    /// the target's incoming heal stat. Heal wards were kept but never read. With revive, a defeated target gets up
+    /// with the heal (up to its most health).
+    /// </summary>
+    private static int DoHealToTarget(CombatDuelSubCircle target, int heal, bool revive = false) {
         if (target?.ParticipantGameStats is null) {
             return 0;
         }
@@ -982,6 +992,18 @@ internal static class CombatEffectApplicator {
 
         var percentIncomingHealIncrease = GetPercentIncomingHealIncrease(target);
         heal = Math.Max(0, (int) Math.Ceiling(heal * (1 + percentIncomingHealIncrease)));
+        if (revive && !target.IsAlive) {
+            if (heal > 0) {
+                // A wizard's server health already counts gear; a creature's most health is its base and bonus.
+                var stats = target.ParticipantGameStats;
+                var most = target.IsHumanPlayer ? stats.m_baseHitpoints : stats.m_baseHitpoints + stats.m_bonusHitpoints;
+                target.SetHealthTo(most > 0 ? Math.Min(heal, most) : heal);
+                Logger.Information("Slot {0} | A heal brings them back with {1} health.", Logger.Args(target.SlotIndex, stats.m_currentHitpoints));
+            }
+
+            return heal;
+        }
+
         target.HealParticipant(heal);
 
         return heal;
