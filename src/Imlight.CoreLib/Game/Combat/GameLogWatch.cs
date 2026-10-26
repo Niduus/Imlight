@@ -17,6 +17,13 @@
  * server's estimate has run out, also when the last spell's own time has passed with the log quiet 6 s.
  * (v0.10.433 also took 3 s of quiet with the spell's time passed as the end: a natural attack's swing has such a quiet,
  * and round 6 of Niduus's Malistaire fight at 15:25:46 cut it short.)
+ * Tuning (Niduus, 2026-10-26 evening: "combat animations needs a bit of tuning"):
+ * - Most of the game's step lines also carry its own clock to the hundredth ("Showing actor ALL. at 19001.40"), while
+ *   the line's time is whole seconds. Matching the two clocks dates the end line to a tenth of a second, so the round
+ *   ends 1.5 s after it (the whole-second times waited 2 to 3 s).
+ * - After an end line only a camera cut begins a spell again. The killing blow on Malistaire (18:39:47) logged a death
+ *   animation for the already-dead caster right after its end line ("... is dead, so animation (Death_01) will not be
+ *   played"), which reopened the spell and left the round idle 7 s.
  * With [Battle] EndRoundWhenGameDone the round ends as soon as that happens; past the estimate it waits for it, at most
  * [Battle] WaitForGameSeconds more (0 turns the watch off). Without the log (a friend's PC, logging off, another
  * battle), the estimate alone counts, as before.
@@ -36,6 +43,10 @@ internal sealed class GameLogWatch {
     // Seconds the game's log stays quiet after a spell ends before the round counts as played. The game starts the next
     // spell within a second of ending one (71 spells in Niduus's log of 2026-10-26).
     private const double QUIET_SECONDS = 2.0;
+    // The same, when the end line's time is known to a tenth of a second from the game's own clock. In Niduus's log of
+    // 2026-10-26 nothing followed the round's last end line; between spells the next cut came within 0.8 s (or 2.5 s,
+    // the turn indicator moving to the other side, which only happens before the last spell).
+    private const double END_QUIET_SECONDS = 1.5;
     // Seconds of quiet that end the last spell with no end line, once its own time has passed (natural attacks).
     private const double LONG_QUIET_SECONDS = 6.0;
     // Seconds of quiet after the server's time ran out that end a round whose last listed spell never began. A big summon
@@ -107,6 +118,12 @@ internal sealed class GameLogWatch {
     private bool _lastSpellEnded;
     // A spell ended (or the round has not begun): the next "Perform - spell" line is a new spell's first.
     private bool _spellEnded = true;
+    // The game's own clock (seconds since it started) when the last spell ended, from its end line.
+    private double? _endedAtGameSeconds;
+    // The PC time at the game clock's zero, as early and as late as the lines read so far allow (a line logged at
+    // 12:00:05 with "at 100.40" puts it between 11:58:24.60 and 11:58:25.60).
+    private DateTime? _gameZeroEarliest;
+    private DateTime? _gameZeroLatest;
     // When the last spell step was logged, by the game's clock (the PC's local time, to the second).
     private DateTime _lastActivity = Clock();
 
@@ -160,8 +177,15 @@ internal sealed class GameLogWatch {
             return pastEstimate && quiet >= SKIPPED_QUIET_SECONDS + 1 ? State.Done : State.Playing;
         }
 
-        if (_spellEnded && _lastSpellEnded && quiet >= QUIET_SECONDS + 1 && (pastEstimate || !_lastSpellUnsure)) {
-            return State.Done;
+        if (_spellEnded && _lastSpellEnded && (pastEstimate || !_lastSpellUnsure)) {
+            if (EndedAt() is { } endedAt) {
+                if ((now - endedAt).TotalSeconds >= END_QUIET_SECONDS) {
+                    return State.Done;
+                }
+            }
+            else if (quiet >= QUIET_SECONDS + 1) {
+                return State.Done;
+            }
         }
 
         // No end line: the last spell's own time has passed and the log has been quiet a while (a 3 s quiet during a
@@ -170,6 +194,48 @@ internal sealed class GameLogWatch {
         return pastEstimate && quiet >= LONG_QUIET_SECONDS + 1 && (now - started).TotalSeconds >= given
             ? State.Done
             : State.Playing;
+    }
+
+    // The PC time the last spell ended, to about a tenth of a second (the latest the lines allow), when the game's
+    // clock is known.
+    private DateTime? EndedAt()
+        => _endedAtGameSeconds is { } ended && _gameZeroLatest is { } latest && _gameZeroEarliest is { } earliest
+           && (latest - earliest).TotalSeconds <= 0.5
+            ? latest.AddSeconds(ended)
+            : null;
+
+    // Narrows when the game's clock started from a line logged at a whole second that carries the game's own time.
+    private void NoteGameClock(string line, double gameSeconds) {
+        if (line.Length < 17 || !DateTime.TryParseExact(line[..17], "MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeLocal, out var at)) {
+            return;
+        }
+
+        var earliest = at.AddSeconds(-gameSeconds);
+        var latest = earliest.AddSeconds(1);
+        if (_gameZeroEarliest is { } e && _gameZeroLatest is { } l && earliest <= l && latest >= e) {
+            _gameZeroEarliest = earliest > e ? earliest : e;
+            _gameZeroLatest = latest < l ? latest : l;
+        }
+        else {
+            // The first line, or the PC's clock moved: start over from this line.
+            _gameZeroEarliest = earliest;
+            _gameZeroLatest = latest;
+        }
+    }
+
+    // "... Showing actor ALL. at 19001.40", "... Perform at 19096.807s.": the game's own time, if the line ends with it.
+    private static double? GameSecondsOf(string line) {
+        var at = line.LastIndexOf(" at ", StringComparison.Ordinal);
+        if (at < 0) {
+            return null;
+        }
+
+        var text = line[(at + 4)..].TrimEnd().TrimEnd('.').TrimEnd('s');
+        return text.Contains('.') && double.TryParse(text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
+            out var seconds)
+            ? seconds
+            : null;
     }
 
     private void ReadNewLines() {
@@ -246,12 +312,18 @@ internal sealed class GameLogWatch {
             return;
         }
 
+        var gameSeconds = GameSecondsOf(line);
+        if (gameSeconds is { } seconds) {
+            NoteGameClock(line, seconds);
+        }
+
         if (line.Contains("Showing actor ALL", StringComparison.Ordinal)
             || line.Contains("TurnIndicatorCinematicAction", StringComparison.Ordinal)) {
             // The end of a spell (the turn indicator follows it, and also comes before a spell after a pass).
             _endedSinceCut = true;
             if (!_spellEnded) {
                 _spellEnded = true;
+                _endedAtGameSeconds = gameSeconds;
                 _lastActivity = LoggedAt(line);
                 _lastSpellEnded = _lastSpellStarts >= _lastSpellListed && _lastSpellStarts > 0;
             }
@@ -263,11 +335,17 @@ internal sealed class GameLogWatch {
             return;
         }
 
-        _spellEnded = false;
-        _lastActivity = LoggedAt(line);
         // A spell starts with a camera cut naming it ("Perform - spell <name>."), after an end line or a cut naming
-        // another spell (a cheat's cast plays right after the one before, with no end line between).
+        // another spell (a cheat's cast plays right after the one before, with no end line between). After an end
+        // line, nothing but a cut begins one: a dead caster's death animation can follow the end line.
         var cut = line.IndexOf("Perform - spell ", StringComparison.Ordinal);
+        if (_spellEnded && cut < 0) {
+            return;
+        }
+
+        _spellEnded = false;
+        _endedAtGameSeconds = null;
+        _lastActivity = LoggedAt(line);
         if (cut < 0) {
             return;
         }
