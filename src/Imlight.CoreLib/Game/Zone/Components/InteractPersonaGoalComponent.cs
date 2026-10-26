@@ -48,6 +48,7 @@ using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -111,23 +112,20 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             return true;
         }
 
-        var questTemplates = QuestTemplateCollection
-            .GetAllQuests()
-            .Where(x => x is not null)
-            .ToArray();
-
         // Some Ravenwood zone copies use a localized NPC template name rather than the quest's
         // suffixed object name. Attach the service to Lincoln copies so OnStart can resolve the
         // alias with the actual zone context.
         var englishName = Locale.GetEnglishName(goTemplate.m_displayName.ToString());
         return englishName.Contains("Lincoln", StringComparison.OrdinalIgnoreCase)
-            && questTemplates.SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
+            && SpiralDB.QuestTemplates.Where(x => x?.m_goals is not null)
+                .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
                 .Any(goal => IsRegistrarTemplate(goal.m_personaName)
                     && goal.m_destinationZone.ToString().Contains("Ravenwood", StringComparison.OrdinalIgnoreCase));
     }
 
     // A class, not a value tuple: zones read it on threads of their own, so it must never be half written.
     private static Tuple<int, HashSet<string>> s_personaNames = Tuple.Create(-1, new HashSet<string>());
+    private static readonly object s_personaNamesLock = new();
 
     // The persona of every "talk to" step, worked out once for each set of quest changes (it was once for every NPC).
     private static HashSet<string> PersonaNames() {
@@ -136,15 +134,24 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             return known.Item2;
         }
 
-        var names = QuestTemplateCollection.GetAllQuests()
-            .Where(quest => quest?.m_goals is not null)
-            .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
-            .Select(goal => (string) goal.m_personaName)
-            .Where(name => !string.IsNullOrEmpty(name))
-            .ToHashSet(StringComparer.Ordinal);
-        s_personaNames = Tuple.Create(Imlight.CoreLib.Game.Quests.QuestOptions.Version, names);
+        // One thread works it out; the rest wait for that one instead of each working it out at once.
+        lock (s_personaNamesLock) {
+            known = s_personaNames;
+            var version = Imlight.CoreLib.Game.Quests.QuestOptions.Version;
+            if (known.Item1 == version) {
+                return known.Item2;
+            }
 
-        return names;
+            var names = SpiralDB.QuestTemplates
+                .Where(quest => quest?.m_goals is not null)
+                .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
+                .Select(goal => (string) goal.m_personaName)
+                .Where(name => !string.IsNullOrEmpty(name))
+                .ToHashSet(StringComparer.Ordinal);
+            s_personaNames = Tuple.Create(version, names);
+
+            return names;
+        }
     }
 
     /// <summary>

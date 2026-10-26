@@ -39,6 +39,7 @@
  * Last Updated: 09/27/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -47,6 +48,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -105,22 +107,12 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
         // Register every usage goal whose client tags name this object; the object is
         // interactable only while one of those goals is active (see GetServiceOptions).
-        foreach (var qTemplate in QuestTemplateCollection.GetAllQuests()) {
-            if (qTemplate is null) {
-                continue;
+        foreach (var (questName, goal) in UsageGoals.Of(gameObjectTemplate)) {
+            if (!_usageGoalsByQuest.TryGetValue(questName, out var goalList)) {
+                goalList = [];
+                _usageGoalsByQuest[questName] = goalList;
             }
-
-            foreach (var goal in qTemplate.m_goals) {
-                if (goal.m_goalType != GOAL_TYPE.GOAL_TYPE_USAGE || !DoesGoalMatchObject(gameObjectTemplate, qTemplate.m_questName, goal)) {
-                    continue;
-                }
-
-                if (!_usageGoalsByQuest.TryGetValue(qTemplate.m_questName, out var goalList)) {
-                    goalList = [];
-                    _usageGoalsByQuest[qTemplate.m_questName] = goalList;
-                }
-                goalList.Add(goal);
-            }
+            goalList.Add(goal);
         }
     }
 
@@ -223,26 +215,7 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         => template.m_behaviors.Any(x => x is not null && x.m_behaviorName == behaviorName);
 
     private static bool IsNamedByAnyUsageGoal(GameObjectTemplate gameObjectTemplate)
-        => QuestTemplateCollection.GetAllQuests()
-            .Where(q => q is not null)
-            .SelectMany(q => q.m_goals.Where(g => g is not null).Select(g => (q.m_questName, Goal: g)))
-            .Any(x => x.Goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE && DoesGoalMatchObject(gameObjectTemplate, x.m_questName, x.Goal));
-
-    private static bool DoesGoalMatchObject(GameObjectTemplate gameObjectTemplate, string questName, GoalTemplate goal) {
-        var clientTags = goal.m_clientTags;
-        if (clientTags is not null
-            && (clientTags.Contains(gameObjectTemplate.m_objectName) || InteractOptionGoalTags(gameObjectTemplate).Any(tag => clientTags.Contains(tag)))) {
-            return true;
-        }
-
-        if (InteractOptions(gameObjectTemplate).Any(option => RequiresGoal(option, questName, goal.m_goalName))) {
-            return true;
-        }
-
-        return goal is ScavengeGoalTemplate scavengeGoal
-            && gameObjectTemplate.m_adjectiveList is not null
-            && scavengeGoal.m_itemAdjectives?.Any(gameObjectTemplate.m_adjectiveList.Contains) == true;
-    }
+        => UsageGoals.Names(gameObjectTemplate);
 
     /// <summary>
     /// The tags a usage goal can name an interact option by: the option's goal tags, and the
@@ -269,29 +242,153 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     /// <summary>
     /// True when some usage goal names this option by one of its tags, so using the option is using that goal.
     /// </summary>
-    internal static bool IsNamedByUsageGoal(InteractOptionTemplate option) {
-        var tags = OptionTags(option).ToList();
-        var quests = QuestTemplateCollection.GetAllQuests().Where(q => q?.m_goals is not null).ToList();
-
-        return (tags.Count > 0
-                && quests.SelectMany(q => q.m_goals)
-                    .Any(g => g is not null && g.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE && g.m_clientTags?.Any(tag => tags.Contains(tag)) == true))
-            || quests.Any(q => q.m_goals.Any(g => g is not null && g.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE && RequiresGoal(option, q.m_questName, g.m_goalName)));
-    }
-
-    private static IEnumerable<string> InteractOptionGoalTags(GameObjectTemplate gameObjectTemplate)
-        => InteractOptions(gameObjectTemplate).SelectMany(OptionTags);
+    internal static bool IsNamedByUsageGoal(InteractOptionTemplate option)
+        => UsageGoals.Names(option);
 
     private static IEnumerable<InteractOptionTemplate> InteractOptions(GameObjectTemplate gameObjectTemplate)
         => gameObjectTemplate.m_behaviors
             .OfType<InteractableBehaviorTemplate>()
             .SelectMany(behavior => behavior.m_interactOptions ?? []);
 
-    // An option that needs the goal already complete follows the goal's use; it is not the use itself.
-    private static bool RequiresGoal(InteractOptionTemplate option, string questName, string goalName)
-        => option is InteractStateOptionTemplate { m_requirements.m_requirements: { } requirements }
-            && requirements.OfType<ReqHasGoal>().Any(r => r.m_questName == questName
-                                                          && r.m_goalName == goalName
-                                                          && r.m_requiredStatus != GoalStatusRequirement.Complete);
+    /// <summary>
+    /// Every usage goal of every quest, looked up by what can name an object: a client tag, the quest and goal an
+    /// option's requirement names, or a scavenge adjective. Built once for each set of quest changes; every object of
+    /// every zone used to walk all quests on its own, which flooded the server with garbage right after a start.
+    /// </summary>
+    private sealed class UsageGoals {
+
+        private static readonly object s_lock = new();
+        private static UsageGoals s_current;
+
+        private readonly int _version;
+        private readonly IReadOnlyList<QuestTemplate> _quests;
+        private readonly List<(string Quest, GoalTemplate Goal)> _all = [];
+        private readonly Dictionary<string, List<int>> _byTag = new(StringComparer.Ordinal);
+        private readonly Dictionary<(string Quest, string Goal), List<int>> _byGoal = [];
+        private readonly Dictionary<string, List<int>> _byAdjective = new(StringComparer.Ordinal);
+
+        private UsageGoals(int version, IReadOnlyList<QuestTemplate> quests) {
+            _version = version;
+            _quests = quests;
+            foreach (var quest in quests) {
+                if (quest?.m_goals is null) {
+                    continue;
+                }
+
+                foreach (var goal in quest.m_goals) {
+                    if (goal is null || goal.m_goalType != GOAL_TYPE.GOAL_TYPE_USAGE) {
+                        continue;
+                    }
+
+                    var index = _all.Count;
+                    _all.Add((quest.m_questName, goal));
+                    foreach (var tag in goal.m_clientTags ?? []) {
+                        Add(_byTag, tag, index);
+                    }
+
+                    Add(_byGoal, (quest.m_questName, goal.m_goalName), index);
+                    if (goal is ScavengeGoalTemplate scavengeGoal) {
+                        foreach (var adjective in scavengeGoal.m_itemAdjectives ?? []) {
+                            Add(_byAdjective, (string) adjective, index);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void Add<TKey>(Dictionary<TKey, List<int>> map, TKey key, int index) {
+            if (key is null) {
+                return;
+            }
+
+            if (!map.TryGetValue(key, out var list)) {
+                list = [];
+                map[key] = list;
+            }
+
+            if (list.Count == 0 || list[^1] != index) {
+                list.Add(index);
+            }
+        }
+
+        private static UsageGoals Current() {
+            var quests = SpiralDB.QuestTemplates;
+            var version = Quests.QuestOptions.Version;
+            var known = s_current;
+            if (known is not null && known._version == version && ReferenceEquals(known._quests, quests)) {
+                return known;
+            }
+
+            // One thread builds it; the rest wait for that one instead of each building their own.
+            lock (s_lock) {
+                known = s_current;
+                if (known is not null && known._version == version && ReferenceEquals(known._quests, quests)) {
+                    return known;
+                }
+
+                s_current = new UsageGoals(version, quests);
+
+                return s_current;
+            }
+        }
+
+        /// <summary>True when some usage goal names this object.</summary>
+        internal static bool Names(GameObjectTemplate template) => Matches(template).Any();
+
+        /// <summary>True when some usage goal names this option by one of its tags, or follows its use.</summary>
+        internal static bool Names(InteractOptionTemplate option) {
+            var goals = Current();
+
+            return OptionTags(option).Any(goals._byTag.ContainsKey)
+                || RequiredGoals(option).Any(goals._byGoal.ContainsKey);
+        }
+
+        /// <summary>The usage goals that name this object, in quest order.</summary>
+        internal static IEnumerable<(string Quest, GoalTemplate Goal)> Of(GameObjectTemplate template) {
+            var goals = Current();
+
+            return Matches(template).Distinct().Order().Select(index => goals._all[index]);
+        }
+
+        private static IEnumerable<int> Matches(GameObjectTemplate template) {
+            var goals = Current();
+            var options = InteractOptions(template).ToList();
+
+            var tags = options.SelectMany(OptionTags).Prepend((string) template.m_objectName);
+            foreach (var tag in tags) {
+                if (tag is not null && goals._byTag.TryGetValue(tag, out var list)) {
+                    foreach (var index in list) {
+                        yield return index;
+                    }
+                }
+            }
+
+            foreach (var key in options.SelectMany(RequiredGoals)) {
+                if (goals._byGoal.TryGetValue(key, out var list)) {
+                    foreach (var index in list) {
+                        yield return index;
+                    }
+                }
+            }
+
+            foreach (var adjective in template.m_adjectiveList ?? []) {
+                if ((string) adjective is { } name && goals._byAdjective.TryGetValue(name, out var list)) {
+                    foreach (var index in list) {
+                        yield return index;
+                    }
+                }
+            }
+        }
+
+        // The quest and goal of each requirement of an option that needs the goal not yet complete: an option that needs
+        // the goal already complete follows the goal's use; it is not the use itself.
+        private static IEnumerable<(string Quest, string Goal)> RequiredGoals(InteractOptionTemplate option)
+            => option is InteractStateOptionTemplate { m_requirements.m_requirements: { } requirements }
+                ? requirements.OfType<ReqHasGoal>()
+                    .Where(r => r.m_requiredStatus != GoalStatusRequirement.Complete)
+                    .Select(r => ((string) r.m_questName, (string) r.m_goalName))
+                : [];
+
+    }
 
 }

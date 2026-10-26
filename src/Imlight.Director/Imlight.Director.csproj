@@ -3,6 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
+    <!-- Every zone loads its objects on many threads at once after a start. The one-heap workstation clean-up stopped
+         the whole server thousands of times every few seconds then (70% of the time paused); the server one keeps a
+         heap per core and sizes itself to the load. -->
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>

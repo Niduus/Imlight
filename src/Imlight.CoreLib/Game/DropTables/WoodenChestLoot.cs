@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using Imlight.Common;
 using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Models.World;
@@ -55,6 +56,7 @@ internal static class WoodenChestLoot {
     private static Data s_data;
     private static DateTime s_written;
     private static DateTime s_checked;
+    private static long s_checkedTicks;
 
     private static bool Setting(string key, bool fallback) => ConfigurationManager.GetValue($"{SECTION}.{key}", fallback);
     private static int Setting(string key, int fallback) => ConfigurationManager.GetValue($"{SECTION}.{key}", fallback);
@@ -149,12 +151,18 @@ internal static class WoodenChestLoot {
         => result.Items.Add(new DropItemResult { ItemId = pick.Id, ItemName = pick.Name, Quantity = quantity });
 
     private static Data Load() {
+        // Every object of every zone asks this while it loads; most of the time the answer is already here.
+        if (Volatile.Read(ref s_data) is { } data && DateTime.UtcNow - new DateTime(Volatile.Read(ref s_checkedTicks), DateTimeKind.Utc) < TimeSpan.FromSeconds(3)) {
+            return data;
+        }
+
         lock (s_lock) {
             if (s_data is not null && DateTime.UtcNow - s_checked < TimeSpan.FromSeconds(3)) {
                 return s_data;
             }
 
             s_checked = DateTime.UtcNow;
+            Volatile.Write(ref s_checkedTicks, s_checked.Ticks);
             var path = FilePath;
             var written = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
             if (s_data is not null && written == s_written) {

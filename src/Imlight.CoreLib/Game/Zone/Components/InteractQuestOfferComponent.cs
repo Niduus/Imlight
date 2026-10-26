@@ -54,6 +54,7 @@ using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -109,6 +110,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
 
     // A class, not a value tuple: zones read it on threads of their own, so it must never be half written.
     private static Tuple<int, HashSet<ulong>> s_givers = Tuple.Create(-1, new HashSet<ulong>());
+    private static readonly object s_giversLock = new();
 
     // The giver of every quest, worked out once for each set of quest changes (it was once for every NPC of every zone).
     private static HashSet<ulong> GiverTemplates() {
@@ -117,14 +119,23 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
             return known.Item2;
         }
 
-        var givers = QuestTemplateCollection.GetAllQuests()
-            .Where(x => x?.m_dialogList is ActorDialogList)
-            .Select(QuestMadlibs.GiverTemplateOf)
-            .Where(id => id != 0)
-            .ToHashSet();
-        s_givers = Tuple.Create(QuestOptions.Version, givers);
+        // One thread works it out; the rest wait for that one instead of each working it out at once.
+        lock (s_giversLock) {
+            known = s_givers;
+            var version = QuestOptions.Version;
+            if (known.Item1 == version) {
+                return known.Item2;
+            }
 
-        return givers;
+            var givers = SpiralDB.QuestTemplates
+                .Where(x => x?.m_dialogList is ActorDialogList)
+                .Select(QuestMadlibs.GiverTemplateOf)
+                .Where(id => id != 0)
+                .ToHashSet();
+            s_givers = Tuple.Create(version, givers);
+
+            return givers;
+        }
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {

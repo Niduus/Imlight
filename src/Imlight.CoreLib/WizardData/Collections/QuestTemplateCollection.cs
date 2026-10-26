@@ -26,9 +26,10 @@ public static class QuestTemplateCollection {
     /// <summary>
     /// Get all quests from SpiralDB.
     /// </summary>
-    /// <returns>A list of all quest templates.</returns>
-    public static List<QuestTemplate> GetAllQuests() 
-        => [.. SpiralDB.QuestTemplates];
+    /// <returns>A list of all quest templates. It is the one in use, not a copy: many thousands of quests, asked for
+    /// by every object of every zone, so a copy each time flooded the server with garbage.</returns>
+    public static IReadOnlyList<QuestTemplate> GetAllQuests()
+        => SpiralDB.QuestTemplates;
 
     /// <summary>
     /// Get a quest by its name.
