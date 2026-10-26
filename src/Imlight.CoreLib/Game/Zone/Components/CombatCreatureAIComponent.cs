@@ -73,6 +73,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     // [Combat] SaveUpChance: how often a creature that can only pay for its natural attack keeps its pips for the
     // bigger attack spell in its hand instead.
     private static float s_saveUpChance => ConfigurationManager.GetValue("Combat.SaveUpChance", 0.35f);
+    // [Combat] AvoidRepeatChance: how often a creature leaves out the spell it cast last round when it has another
+    // card it can cast, so it does not chain the same attack round after round.
+    private static float s_avoidRepeatChance => ConfigurationManager.GetValue("Combat.AvoidRepeatChance", 0.75f);
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();
     private readonly int _provokeAggroIncrease   = ConfigurationManager.Settings["Combat.ProvokeAggroIncrease"].AsInt();
@@ -97,6 +100,10 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     // The chance that when a creature is preparing, it will buff itself rather than a teammate.
     private float _selfishnessFactor;
     private bool _determinedSelfishThisTurn;
+
+    // The spell cast last round (0 for none), and whether it is left out this round.
+    private uint _lastCastSpellId;
+    private bool _avoidRepeatThisTurn;
 
     private Hand _roundHand;
     private CombatDuelSubCircle[] _friendlySubcircles
@@ -213,6 +220,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
         DetermineAttitude();
         var action = DetermineTurnAction();
+        _lastCastSpellId = action.MoveType == (byte) CombatMoveType.Attack
+            ? _currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection)?.m_templateID ?? 0
+            : 0;
 
         // Send the action to the duel actor.
         _currentDuelComponent.ActorRef.Tell(action, Self);
@@ -309,6 +319,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         _determinedSmartThisTurn = _random.NextDouble() < _intelligenceFactor;
         _determinedAggressiveThisTurn = _random.NextDouble() < _aggressivenessFactor;
         _determinedSelfishThisTurn = _random.NextDouble() < _selfishnessFactor;
+        _avoidRepeatThisTurn = _lastCastSpellId != 0 && _random.NextDouble() < s_avoidRepeatChance;
 
         Logger.Debug("Duel {0} | Slot {1} | Smart: {2} | Aggressive: {3} | Selfish: {4}",
             Logger.Args(_currentDuelComponent.SigilId,
@@ -370,7 +381,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             castableDamageSpells = realAttacks;
         }
         else if (realAttacks.Count == 0 && _random.NextDouble() < s_saveUpChance
-                 && SpellEffectFilter.FilterSpellsByOutgoingDamage(_roundHand.m_spellList).Any(x => !IsNaturalAttack(x))) {
+                 && SpellEffectFilter.FilterSpellsByOutgoingDamage(_roundHand.m_spellList).Any(x => !IsNaturalAttack(x) && !_currentSubCircle.HasPipsForSpell(x))) {
             Logger.Debug("Duel {0} | Slot {1} | Only the natural attack is affordable. Saving pips for a bigger attack.",
                 Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex));
 
@@ -563,6 +574,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             }
 
             castableSpells.Add(spell);
+        }
+
+        // Leave out last round's spell when another card can be cast.
+        if (_avoidRepeatThisTurn && castableSpells.Any(x => x.m_templateID != _lastCastSpellId)) {
+            castableSpells.RemoveAll(x => x.m_templateID == _lastCastSpellId);
         }
 
         return castableSpells;
