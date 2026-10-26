@@ -37,6 +37,8 @@ public partial class CombatResolver {
         return StepTargets(me, target, template, trigger, receiver).FirstOrDefault() is { } circle ? CodeOf(me, circle) : null;
     }
 
+    private static bool IsEveryone(string target) => (target ?? "").Trim().ToLowerInvariant() is "everyone" or "everyoneelse";
+
     // The .c1 code of a circle as the caster sees it: pN on its own side, eN on the other (FreeTargetCircle the other way).
     private static string CodeOf(CombatDuelSubCircle caster, CombatDuelSubCircle circle) {
         if (circle == caster) {
@@ -74,9 +76,10 @@ public partial class CombatResolver {
         };
         var count = Math.Clamp(step.Times, 1, 10);
         // OnTarget (Niduus, 2026-10-26): a spell that only goes on its caster goes on the Target, once on each one it
-        // names (every ally, every enemy...), as a .c1 on that circle.
+        // names (every ally, every enemy...), as a .c1 on that circle. Everyone and EveryoneElse (both sides) cast once on
+        // each one standing too, with or without OnTarget.
         var onTarget = step.OnTarget && (step.Target ?? "").Trim().Length > 0;
-        var targets = onTarget
+        var targets = onTarget || IsEveryone(step.Target)
             ? StepTargets(me, step.Target, template, trigger, receiver).Where(c => c is not null).Select(c => CodeOf(me, c)).Where(c => c is not null).ToList()
             : [FreeCastTarget(me, step.Target, template, trigger, receiver)];
         if (targets.Count == 0) {

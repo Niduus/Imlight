@@ -160,6 +160,7 @@
  *   Target also: Summoner (who summoned this minion, while it stands; else no one), LastAttacker (the last one on the other side whose
  *   spell hurt it; no one when that one has fallen), WeakestAlly (the lowest share of health on its side), StrongestAlly
  *   (the most health on its side), and the player cheats' me, p1-p4 (its own side's circles), e1-e4 and all.
+ *   Everyone (both sides, itself too) and EveryoneElse (both sides but itself), only those standing (Niduus, 2026-10-26).
  *   Say's Text in a player cheat goes to that wizard's own chat. SetHealth on a wizard sets only their health (their most
  *   health is their own).
  *

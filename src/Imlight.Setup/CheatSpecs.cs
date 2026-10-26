@@ -52,6 +52,9 @@ internal static class CheatSpecs {
         ("Summoner", "whoever summoned it"),
         ("LastAttacker", "the last one who hurt it"),
         ("AllAllies", "its whole side"),
+        // Niduus, 2026-10-26: both sides, standing.
+        ("Everyone", "everyone (both sides)"),
+        ("EveryoneElse", "everyone but itself"),
         // Niduus, 2026-10-24 (the gauntlets): the target of the block before, the ally hit (When an ally is hit), and
         // whoever has the block's mark.
         ("Last", "the same as the block before"),

@@ -14,7 +14,8 @@
  *   Spells (with AnyVersion), School, Kind, Category, CostMin, CostMax   narrow ICast, ICrit and EnemyCasts.
  *   Once, MaxTimes, Cooldown, Chance, HealthAbove, HealthUnder (my health), FromRound, ToRound, Off.
  *   Actions:
- *     { "Do": "FreeCast", "Spell"/"SpellID", "Target": p1-p4 / e1-e4 / all / "" (as the spell aims),
+ *     { "Do": "FreeCast", "Spell"/"SpellID", "Target": p1-p4 / e1-e4 / all / Everyone (both sides) /
+ *       EveryoneElse (both sides but me; a FreeCast casts once on each) / "" (as the spell aims),
  *       "Timing": "Now" / "First" / "Last" / "Before" / "After" (my card), "Silent", "Enchant", "Times",
  *       "OnTarget" }
  *       a free spell, as .c1 / .c2 cast it (CombatResolver.AddFreeDelayedCast). First and Last are the round's

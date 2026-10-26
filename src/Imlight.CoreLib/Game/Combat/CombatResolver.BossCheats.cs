@@ -1657,6 +1657,9 @@ public partial class CombatResolver {
             "allenemies" or "all" => enemies,
             "ally" => [others.Count > 0 ? others[Random.Shared.Next(others.Count)] : boss],
             "allallies" => allies,
+            // Niduus, 2026-10-26: both sides standing, with or without itself.
+            "everyone" => [.. allies.Concat(enemies).OrderBy(c => c.SlotIndex)],
+            "everyoneelse" => [.. others.Concat(enemies).OrderBy(c => c.SlotIndex)],
             _ when template is null => [boss],
             _ => [trigger is not null && trigger.OccupiedTeam != boss.OccupiedTeam
                   && Flatten(template).Any(e => s_enemyTargets.Contains(e.m_effectTarget))
