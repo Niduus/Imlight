@@ -116,7 +116,11 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 SourceName = sourceName,
                 Filter = 2,
             };
-        SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
+        var sentTo = SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
+        if (asTyped) {
+            Logger.Information("Chat: sent {0}'s line as typed to {1} other player(s) in {2}.",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), sentTo, wizard.Zone));
+        }
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHAT))]
@@ -559,6 +563,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         }
         else if (ChatFilter.ShowsRedWords(typed, mode)) {
             asTyped = true;
+            Logger.Information("Chat: {0}'s message has red words and goes to others as typed (open chat, whitelist not enforced): {1}",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), typed));
         }
 
         return true;
@@ -594,7 +600,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     /// Sends a zone chat message to all online players in the zone, skipping those
     /// who have ignored the sender.
     /// </summary>
-    private void SendFilteredZoneMessage(IMessage msg, ulong senderCharId, string zoneName) {
+    private int SendFilteredZoneMessage(IMessage msg, ulong senderCharId, string zoneName) {
+        var sent = 0;
         var blockedBy = BuddyRelationshipCollection.GetCharactersWhoBlocked(senderCharId);
         var playersInZone = OnlinePlayerCollection.GetPlayersInZone(zoneName);
 
@@ -610,7 +617,10 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             }
 
             Context.ActorSelection(player.ActorPath).Tell(msg);
+            sent++;
         }
+
+        return sent;
     }
 
     private void SendChatCommand(string input, CoreObject charObj, Wizard character) {
