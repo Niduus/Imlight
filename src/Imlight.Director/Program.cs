@@ -122,6 +122,7 @@ internal static class Program {
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini")
         );
         Logger.Information("Imlight configuration loaded.");
+        Imlight.CoreLib.Shared.Resources.ServerHealth.Start();
 
         // Saving Imlight.ini (by hand or from the Manager) applies at once.
         Imlight.CoreLib.Shared.Resources.LiveSettings.Start();

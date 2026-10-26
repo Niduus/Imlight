@@ -42,6 +42,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -265,7 +266,9 @@ public class ZoneEntity(
             MobileID = ReserveMobileId();
         }
 
+        var stopwatch = Stopwatch.StartNew();
         AutoAttachComponents();
+        var attachMs = stopwatch.ElapsedMilliseconds;
 
         // Two passes: every component is awoken (OnAwake) before any is started (OnStart), so OnStart
         // may rely on every other component being configured.
@@ -278,6 +281,12 @@ public class ZoneEntity(
         }
 
         Sender.Tell(new ZONE_102_PROTOCOL.MSG_ZONEOBJECTLOADRESULTS());
+
+        // Zone loads after a start took a minute (Niduus's log of 2026-10-26): name the slow part.
+        if (stopwatch.ElapsedMilliseconds >= SLOW_LOAD_MS) {
+            Logger.Warning("Slow load: {0} took {1} ms (choosing its parts {2} ms).",
+                Logger.Args(DescribeForLog(), stopwatch.ElapsedMilliseconds, attachMs));
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY))]
@@ -331,7 +340,13 @@ public class ZoneEntity(
             // this entity's components or wedge the zone load. Activator wraps a constructor's error in a
             // TargetInvocationException; log the inner message and skip only that one component.
             try {
-                if (shouldAttachToEntity(template)) {
+                var stopwatch = Stopwatch.StartNew();
+                var attach = shouldAttachToEntity(template);
+                if (stopwatch.ElapsedMilliseconds >= SLOW_LOAD_MS) {
+                    Logger.Warning("Slow load: deciding {0} for {1} took {2} ms.",
+                        Logger.Args(componentType.Name, DescribeForLog(), stopwatch.ElapsedMilliseconds));
+                }
+                if (attach) {
                     AddComponent(componentType);
                 }
             } catch (Exception ex) {
@@ -411,9 +426,16 @@ public class ZoneEntity(
         _componentOrder.Add(component);
     }
 
+    private const long SLOW_LOAD_MS = 250;
+
     private void RunLifecycleStep(ZoneEntityComponent component) {
+        var stopwatch = Stopwatch.StartNew();
         try {
             component.RunLifecycleStep();
+            if (stopwatch.ElapsedMilliseconds >= SLOW_LOAD_MS) {
+                Logger.Warning("Slow load: {0} of {1} took {2} ms to start.",
+                    Logger.Args(component.GetType().Name, DescribeForLog(), stopwatch.ElapsedMilliseconds));
+            }
         } catch (Exception ex) {
             Logger.Error("Component {Component} of {Entity} failed to initialize: {Exception}",
                 Logger.Args(component.GetType().Name, DescribeForLog(), ex));
