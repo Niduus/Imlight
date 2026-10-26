@@ -171,6 +171,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Chat", "EnforceWhitelist", "Enforce chat whitelist: red (bad) words from open chat accounts show as \"...\" (off: they go through; text chat accounts stay filtered)", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "HouseDuelTakesTurns", "House duel circles take turns, the PvP way (off: both sides act at once)", new() { OnContent = "On", OffContent = "Off" }),
     ];
@@ -209,6 +210,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly TextBox _accountSearch = new() { Watermark = "Search accounts by username or account ID" };
     private readonly ComboBox _accountLevel = FilterCombo(new[] { ANY_FILTER }.Concat(PlayerAccounts.AUTH_LEVELS.Select(LevelName)), 170);
     private readonly ComboBox _accountLocked = FilterCombo([ANY_FILTER, "Can log in", "Locked"], 130);
+    private readonly ComboBox _accountChat = FilterCombo(new[] { ANY_FILTER }.Concat(PlayerAccounts.CHAT_MODES.Select(ChatModeName)), 140);
     private readonly ComboBox _accountLogin = FilterCombo([ANY_FILTER, "Today", "In the last 7 days", "In the last 30 days", "Not in 30 days", "Never"], 170);
     private readonly NumericUpDown _accountCharsMin = FilterNumber(1);
     private readonly NumericUpDown _accountCharsMax = FilterNumber(1);
@@ -779,7 +781,7 @@ internal sealed partial class ManagerWindow : Window {
     private Control AccountsTab() {
         _newLevel.ItemsSource = PlayerAccounts.AUTH_LEVELS.Select(LevelName).ToList();
         _newLevel.SelectedIndex = 0;
-        WhenFiltersChange(RenderAccounts, _accountSearch, _accountLevel, _accountLocked, _accountLogin, _accountCharsMin, _accountCharsMax, _accountSort);
+        WhenFiltersChange(RenderAccounts, _accountSearch, _accountLevel, _accountChat, _accountLocked, _accountLogin, _accountCharsMin, _accountCharsMax, _accountSort);
 
         // One card: the accounts, and the boxes to add one under them (they were two cards).
         return Page(
@@ -788,7 +790,7 @@ internal sealed partial class ManagerWindow : Window {
                     Children = { WithDock(Action(Plain("Refresh"), LoadAccountsAsync), Dock.Right), WithCenter(_accountsNote) },
                 },
                 _accountSearch,
-                SearchFilters(SearchFilter("Level", _accountLevel), SearchFilter("Can log in", _accountLocked),
+                SearchFilters(SearchFilter("Level", _accountLevel), SearchFilter("Chat", _accountChat), SearchFilter("Can log in", _accountLocked),
                     SearchFilter("Last login", _accountLogin), SearchFilter("Characters from", _accountCharsMin),
                     SearchFilter("Characters to", _accountCharsMax), SearchFilter("Sort by", _accountSort)),
                 _accountRows,
@@ -2320,9 +2322,11 @@ internal sealed partial class ManagerWindow : Window {
         var list = _accountList;
         var query = _accountSearch.Text ?? "";
         var level = _accountLevel.SelectedIndex > 0 ? PlayerAccounts.AUTH_LEVELS[_accountLevel.SelectedIndex - 1] : null;
+        var chat = _accountChat.SelectedIndex > 0 ? PlayerAccounts.CHAT_MODES[_accountChat.SelectedIndex - 1] : null;
         var now = DateTime.Now;
         IEnumerable<AccountSummary> shown = list.Where(a => SearchText.Matches($"{a.Username} {a.AccountId}", query)
             && (level is null || a.AuthLevel == level)
+            && (chat is null || a.ChatMode == chat)
             && _accountLocked.SelectedIndex switch { 1 => !a.IsLocked, 2 => a.IsLocked, _ => true }
             && InFilterRange(a.Characters, _accountCharsMin, _accountCharsMax)
             && (AccountTime(a.LastLoginTime) is var login) && _accountLogin.SelectedIndex switch {
@@ -2342,7 +2346,8 @@ internal sealed partial class ManagerWindow : Window {
         };
         var rows = shown.ToList();
         _accountsNote.Text = (rows.Count == list.Count ? $"{list.Count} account{(list.Count == 1 ? "" : "s")}." : FilterCount(rows.Count, list.Count, "accounts")) +
-            " Level changes apply the next time that player logs in. To delete an account, use .account delete in game.";
+            " Level changes apply the next time that player logs in. Chat changes count within seconds; the game's chat box " +
+            "switches at their next login or zone change. To delete an account, use .account delete in game.";
         foreach (var account in rows) {
             _accountRows.Children.Add(AccountRow(account));
         }
@@ -2358,6 +2363,24 @@ internal sealed partial class ManagerWindow : Window {
                     using var accounts = _manager.Accounts();
                     await accounts.SetAuthLevelAsync(account.Username, chosen);
                     Say($"{account.Username} is now {LevelName(chosen)}. It applies the next time they log in.");
+                });
+            }
+        };
+
+        // Niduus, 2026-10-26: menu chat only, text chat (only words on the game's list), or open chat (the default).
+        var chat = new ComboBox { ItemsSource = PlayerAccounts.CHAT_MODES.Select(ChatModeName).ToList(), Width = 130 };
+        ToolTip.SetTip(chat, "Menu chat: only the chat menu, no typing.\nText chat: typing, but any yellow or red word turns the message into \"...\".\n" +
+            "Open chat: typing; red words turn the message into \"...\" unless Enforce chat whitelist is off.");
+        chat.SelectedIndex = Math.Max(0, Array.IndexOf(PlayerAccounts.CHAT_MODES, account.ChatMode));
+        chat.SelectionChanged += async (_, _) => {
+            var chosen = PlayerAccounts.CHAT_MODES[Math.Max(0, chat.SelectedIndex)];
+            if (chosen != account.ChatMode) {
+                await Guard(async () => {
+                    using var accounts = _manager.Accounts();
+                    await accounts.SetChatModeAsync(account.Username, chosen);
+                    Say($"{account.Username} now has {ChatModeName(chosen).ToLowerInvariant()}. Their typed chat follows it within seconds; " +
+                        "the game's chat box changes at their next login or zone change.");
+                    await LoadAccountsAsync();
                 });
             }
         };
@@ -2413,7 +2436,7 @@ internal sealed partial class ManagerWindow : Window {
 
         return ManagerTheme.Item(new DockPanel {
             Children = {
-                WithDock(Row(level, rename, password, lockButton), Dock.Right),
+                WithDock(Row(level, chat, rename, password, lockButton), Dock.Right),
                 WithDock(WithMargin(WithCenter(ManagerTheme.Tile("user", account.IsLocked ? BAD : ManagerTheme.Accent("Accounts"), 30)), new Thickness(0, 0, 12, 0)), Dock.Left),
                 new StackPanel {
                     VerticalAlignment = VerticalAlignment.Center,
@@ -2431,6 +2454,12 @@ internal sealed partial class ManagerWindow : Window {
         Say($"Account {username} was created.");
         await LoadAccountsAsync();
     }
+
+    private static string ChatModeName(string chatMode) => chatMode switch {
+        "Filtered" => "Text chat",
+        "Closed" => "Menu chat",
+        _ => "Open chat",
+    };
 
     private static string LevelName(string level) => level switch {
         "None" => "Player",

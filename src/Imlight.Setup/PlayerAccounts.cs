@@ -32,7 +32,7 @@ namespace Imlight.Setup;
 /// A player account as the control panel shows it. The password hash never leaves this class.
 /// </summary>
 internal sealed record AccountSummary(string Username, string AuthLevel, bool IsLocked, int Characters,
-    string? CreationTime, string? LastLoginTime, string AccountId);
+    string? CreationTime, string? LastLoginTime, string AccountId, string ChatMode = "Open");
 
 /// <summary>
 /// Reads and changes player accounts in the server's embedded RavenDB, through its HTTP API.
@@ -42,6 +42,9 @@ internal sealed record AccountSummary(string Username, string AuthLevel, bool Is
 internal sealed class PlayerAccounts : IDisposable {
 
     internal static readonly string[] AUTH_LEVELS = ["None", "QualityAssurance", "HallMonitor", "Developer", "Administrator"];
+
+    /// <summary>The server's ChatMode names, in its order: Open (open chat), Filtered (text chat), Closed (menu chat).</summary>
+    internal static readonly string[] CHAT_MODES = ["Open", "Filtered", "Closed"];
 
     private const string COLLECTION = "Accounts";
 
@@ -148,6 +151,10 @@ internal sealed class PlayerAccounts : IDisposable {
     internal Task SetAuthLevelAsync(string username, string authLevel)
         => UpdateAsync(username, doc => doc["AuthLevel"] = AuthLevelValue(doc, authLevel));
 
+    /// <summary>Sets an account's chat level (a <see cref="CHAT_MODES"/> name). The server picks it up within seconds.</summary>
+    internal Task SetChatModeAsync(string username, string chatMode)
+        => UpdateAsync(username, doc => doc["ChatMode"] = EnumValue(doc["ChatMode"], CHAT_MODES, chatMode, "chat level"));
+
     internal Task SetLockedAsync(string username, bool locked)
         => UpdateAsync(username, doc => doc["IsLocked"] = locked);
 
@@ -226,6 +233,10 @@ internal sealed class PlayerAccounts : IDisposable {
         var levelName = level?.GetValueKind() == System.Text.Json.JsonValueKind.Number
             ? AUTH_LEVELS.ElementAtOrDefault(level.GetValue<int>()) ?? level.ToString()
             : (string?) level ?? "None";
+        var chat = doc["ChatMode"];
+        var chatName = chat?.GetValueKind() == System.Text.Json.JsonValueKind.Number
+            ? CHAT_MODES.ElementAtOrDefault(chat.GetValue<int>()) ?? "Open"
+            : (string?) chat ?? "Open";
 
         return new AccountSummary(
             (string?) doc["Username"] ?? "?",
@@ -235,21 +246,32 @@ internal sealed class PlayerAccounts : IDisposable {
             (string?) doc["CreationTime"],
             (string?) doc["LastLoginTime"],
             // The number the server knows the account by (characters, gifts and logs use it), not the document's own id.
-            doc["AccountId"] is JsonValue id ? id.ToString() : "?");
+            doc["AccountId"] is JsonValue id ? id.ToString() : "?",
+            chatName);
     }
 
     /// <summary>
     /// The value to store for an auth level, as a number or a name to match how the server already stores it.
     /// </summary>
-    private static JsonNode AuthLevelValue(JsonObject sample, string authLevel) {
-        var index = Array.FindIndex(AUTH_LEVELS, l => l.Equals(authLevel, StringComparison.OrdinalIgnoreCase));
+    private static JsonNode AuthLevelValue(JsonObject sample, string authLevel)
+        => EnumValue(sample["AuthLevel"], AUTH_LEVELS, authLevel, "account level", asNameWhenUnknown: false);
+
+    /// <summary>
+    /// The value to store for one of the server's enums, as a number or a name to match how <paramref name="sample"/> is stored.
+    /// </summary>
+    private static JsonNode EnumValue(JsonNode? sample, string[] names, string name, string what, bool asNameWhenUnknown = true) {
+        var index = Array.FindIndex(names, l => l.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (index < 0) {
-            throw new AccountException($"Unknown account level {authLevel}.");
+            throw new AccountException($"Unknown {what} {name}.");
         }
 
-        return sample["AuthLevel"]?.GetValueKind() == System.Text.Json.JsonValueKind.String
-            ? JsonValue.Create(AUTH_LEVELS[index])
-            : JsonValue.Create(index);
+        var asName = sample?.GetValueKind() switch {
+            System.Text.Json.JsonValueKind.String => true,
+            System.Text.Json.JsonValueKind.Number => false,
+            _ => asNameWhenUnknown,
+        };
+
+        return asName ? JsonValue.Create(names[index]) : JsonValue.Create(index);
     }
 
     /// <summary>

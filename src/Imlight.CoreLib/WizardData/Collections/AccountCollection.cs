@@ -288,6 +288,19 @@ public static class AccountCollection {
     }
 
     /// <summary>
+    /// Reads only an account's chat level, as it is in the database now (the Manager changes it while players are on).
+    /// Null when there is no such account.
+    /// </summary>
+    public static ChatMode? GetChatMode(ulong id) {
+        using var session = s_store.OpenSession();
+
+        return session.Query<Account>(collectionName: CollectionName)
+            .Where(a => a.AccountId == id)
+            .Select(a => (ChatMode?) a.ChatMode)
+            .FirstOrDefault();
+    }
+
+    /// <summary>
     /// Gets an account from the database by its username.
     /// </summary>
     /// <param name="username"></param>

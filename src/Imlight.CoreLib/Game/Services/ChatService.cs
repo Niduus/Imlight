@@ -50,6 +50,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Commands;
 using Imlight.CoreLib.Game.Groups;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Utilities;
@@ -99,12 +100,16 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        if (!TryApplyChatLevel(message.Message, wizard, out var shown)) {
+            return;
+        }
+
         LogChatMessage(wizard.PlayerNameBehavior.GetWizardName(), cleanedMessage, wizard.Zone);
         SaveChatLog(cleanedMessage, charObj, wizard);
 
         // Broadcast the message to the zone, skipping players who have ignored the sender.
         var msg = new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-            Message = message.Message,
+            Message = shown is null ? message.Message : (ByteString) shown,
             SourceID = charObj.m_globalID,
             SourceName = sourceName,
             Filter = 2,
@@ -255,11 +260,15 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
+        if (!TryApplyChatLevel(message.Message, wizard, out var shown)) {
+            return;
+        }
+
         LogChatMessage(wizard.PlayerNameBehavior.GetWizardName(), $"{cleanedMessage} (friends)", wizard.Zone);
         SaveChatLog(cleanedMessage, charObj, wizard);
 
         SendToNearbyFriends(message.PlayerGID, wizard, new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-            Message = message.Message,
+            Message = shown is null ? message.Message : (ByteString) shown,
             SourceID = charObj.m_globalID,
             SourceName = GetSourceName(wizard),
             Filter = 2,
@@ -320,6 +329,14 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         // The client's /party line is a directed chat aimed at the group's channel ID.
         var myWizard = GetActiveWizard();
+        if (!TryApplyChatLevel(message.Message, myWizard, out var shown)) {
+            return;
+        }
+
+        if (shown is not null) {
+            message.Message = shown;
+        }
+
         if (GroupRegistry.IsGroupChannel(targetID)) {
             SendGroupChat(message, myWizard);
 
@@ -508,6 +525,32 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         Logger.Information("[Group {Channel}] {Name}: {Message}",
             Logger.Args(message.TargetID, wizard.PlayerNameBehavior.GetWizardName(), text));
         SaveChatLog(text, GetActiveGameObject(), wizard);
+    }
+
+    /// <summary>
+    /// Holds typed chat to the sender's chat level (<see cref="ChatFilter"/>). False when nothing may be sent (menu chat
+    /// only; the player is told). Otherwise <paramref name="shown"/> is null to send the message as typed, or the text
+    /// the others get instead ("...").
+    /// </summary>
+    private bool TryApplyChatLevel(string typed, Wizard wizard, out string shown) {
+        shown = null;
+        typed ??= string.Empty;
+        var mode = ChatFilter.CurrentChatMode(GetActiveAccount());
+        var forOthers = ChatFilter.ForOthers(typed, mode, out var why);
+        if (forOthers is null) {
+            Logger.Information("Chat: {0} cannot type in chat ({1}): {2}", Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), why, typed));
+            InformGameClient("Your account has menu chat only, so typed chat is turned off.");
+
+            return false;
+        }
+
+        if (!ReferenceEquals(forOthers, typed)) {
+            Logger.Information("Chat: {0}'s message shows as \"{1}\" ({2}): {3}",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), forOthers, why, typed));
+            shown = forOthers;
+        }
+
+        return true;
     }
 
     private static void LogChatMessage(string name, string message, string zoneName)

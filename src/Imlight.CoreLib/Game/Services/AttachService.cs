@@ -180,6 +180,17 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new AttachService(parentActor));
 
+    /// <summary>
+    /// The permissions for an account's chat level. The game reads bit 2 as open chat, else bit 0 as text chat, else
+    /// menu chat only (WizardGraphicalClient r806919: test [client+0x21dc4], 4 -> 2; test 1 -> 1; else 0), and shows its
+    /// chat box to match.
+    /// </summary>
+    internal static AccountPermissions ChatPermissionsFor(ChatMode chatMode) => chatMode switch {
+        ChatMode.Closed => AccountPermissions.Live & ~(AccountPermissions.FilteredChat | AccountPermissions.OpenChat),
+        ChatMode.Filtered => AccountPermissions.Live & ~AccountPermissions.OpenChat,
+        _ => AccountPermissions.Live,
+    };
+
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_ATTACH))]
     private void ReceiveAttach(GAME_5_PROTOCOL.MSG_ATTACH message) {
         var attachReceivedAt = Stopwatch.GetTimestamp();
@@ -294,7 +305,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
             Data = Compression.CompressWithLength(localGameObjectData),
             IsCSR = _account.AuthLevel > AuthLevel.None ? 1 : 0, // todo: Change this back before prod!
 
-            Permissions = (uint) AccountPermissions.Live,
+            Permissions = (uint) ChatPermissionsFor(Imlight.CoreLib.Game.Social.ChatFilter.CurrentChatMode(account)),
 
             // Set zone data.
             ZoneName = zoneName,
