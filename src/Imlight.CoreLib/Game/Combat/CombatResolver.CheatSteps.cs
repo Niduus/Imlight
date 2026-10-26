@@ -543,6 +543,7 @@ public partial class CombatResolver {
                         : string.IsNullOrWhiteSpace(step.School) ? e.m_sDamageType : step.School.Trim(),
                     m_disposition = kHangingDisposition.kBoth,
                 };
+                OneSided(bubbles[i], boss);
                 resized++;
             }
 
@@ -560,9 +561,23 @@ public partial class CombatResolver {
                 m_effectTarget = kEffectTarget.kGlobal, m_disposition = kHangingDisposition.kBoth,
                 m_spellTemplateID = look.Spell?.m_templateID ?? 0,
             });
+            OneSided(bubbles[^1], boss);
         }
 
         return cinematicTime;
+    }
+
+    // A player's cheat global helps only the players' side ("+666% to all ally spells"). The game draws the lookalike at its
+    // own size, so its size reaching the creatures made their hits much bigger on the server than on screen. A boss's
+    // global stays a real one that helps everyone.
+    private void OneSided(SpellEffect bubble, CombatDuelSubCircle owner) {
+        if (owner is not { IsHumanPlayer: true }) {
+            return;
+        }
+
+        CombatEffectApplicator.KeepToSide(bubble, owner.OccupiedTeam);
+        Logger.Information("Duel {0} | Slot {1} | the player's global helps only the {2} side.",
+            Logger.Args(_duel.m_duelID.Full, owner.SlotIndex, owner.OccupiedTeam));
     }
 
     /// <summary>The Dos of this file. False when the step is none of them.</summary>

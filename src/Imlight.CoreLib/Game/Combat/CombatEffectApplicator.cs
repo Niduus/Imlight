@@ -358,7 +358,7 @@ internal static class CombatEffectApplicator {
         damageFromCaster = CombatCharms.GetOutgoingDamageFromCharms(charms, damageFromCaster);
 
         var duel = caster._duelActor.Duel;
-        var bubbleDamageIncrease = GetGlobalEffectDamageModifier(duel, effect.m_sDamageType);
+        var bubbleDamageIncrease = GetGlobalEffectDamageModifier(duel, effect.m_sDamageType, caster);
 
         return (int) Math.Floor(damageFromCaster * (1 + bubbleDamageIncrease));
     }
@@ -371,7 +371,7 @@ internal static class CombatEffectApplicator {
         var pierce = GetPierce(caster, effect.m_sDamageType);
         pierce += charms.Where(c => c.m_effectType == kSpellEffects.kModifyOutgoingArmorPiercing).Sum(c => c.m_effectParam) / 100f;
         pierce += effect.m_armorPiercingParam / 100f;
-        pierce += GetGlobalEffect(caster._duelActor.Duel, kSpellEffects.kModifyOutgoingArmorPiercing, effect.m_sDamageType) / 100f;
+        pierce += GetGlobalEffect(caster._duelActor.Duel, kSpellEffects.kModifyOutgoingArmorPiercing, effect.m_sDamageType, caster) / 100f;
 
         return Math.Clamp(pierce, 0f, 1f);
     }
@@ -431,7 +431,7 @@ internal static class CombatEffectApplicator {
 
         // Calculate heal increase from current bubble
         var duel = caster._duelActor.Duel;
-        var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel);
+        var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel, caster);
         healFromCaster = (int) Math.Ceiling(healFromCaster * (1 + bubbleHealIncrease));
 
         foreach (var target in targets) {
@@ -609,7 +609,7 @@ internal static class CombatEffectApplicator {
 
         // Calculate heal increase from current bubble
         var duel = caster._duelActor.Duel;
-        var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel);
+        var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel, caster);
         healFromCaster = (int) Math.Ceiling(healFromCaster * (1 + bubbleHealIncrease));
 
         // A landed critical doubles the fully-boosted outgoing heal; incoming heal boosts still apply.
@@ -1047,24 +1047,41 @@ internal static class CombatEffectApplicator {
 
     // The bubble's damage change for a school: a school bubble (Inferno Salamander's) or an all-school one (Power Play
     // gives +25% to all, sDamageType "All", and was never matched).
-    private static float GetGlobalEffectDamageModifier(Duel duel, string damageType)
-        => GetGlobalEffect(duel, kSpellEffects.kModifyOutgoingDamage, damageType) / 100.0f;
+    private static float GetGlobalEffectDamageModifier(Duel duel, string damageType, CombatDuelSubCircle caster)
+        => GetGlobalEffect(duel, kSpellEffects.kModifyOutgoingDamage, damageType, caster) / 100.0f;
+
+    // Bubbles a player's cheat put up, with the side they help. The game only draws the lookalike bubble at its own size,
+    // so a cheat size that also reached the other side made its hits far bigger on the server than the game showed: a
+    // 666% global made a boss's Minotaur Death Sun hit for 10,013 where the game drew 921, and a wizard the game showed
+    // standing was found dead next round (Niduus 2026-10-25, "death bug again").
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SpellEffect, object> s_oneSided = new();
+
+    /// <summary>Makes a bubble help only the given side (a player cheat's "to all ally spells" global).</summary>
+    internal static void KeepToSide(SpellEffect bubble, CombatTeam side) {
+        if (bubble is not null) {
+            s_oneSided.AddOrUpdate(bubble, side);
+        }
+    }
+
+    // Whether a bubble works for this caster: every bubble does, except one kept to the other side.
+    private static bool WorksFor(SpellEffect bubble, CombatDuelSubCircle caster)
+        => caster is null || !s_oneSided.TryGetValue(bubble, out var side) || (CombatTeam) side == caster.OccupiedTeam;
 
     /// <summary>The sum of the battlefield's effects of a type for a school (or for all schools).</summary>
-    internal static int GetGlobalEffect(Duel duel, kSpellEffects type, string school) {
+    internal static int GetGlobalEffect(Duel duel, kSpellEffects type, string school, CombatDuelSubCircle caster = null) {
         var effects = duel?.m_duelModifier?.m_battlefieldEffects;
         if (effects is null) {
             return 0;
         }
 
-        return effects.Where(x => x is not null && x.m_effectType == type
+        return effects.Where(x => x is not null && x.m_effectType == type && WorksFor(x, caster)
                                   && (school is null || CombatCharms.SchoolMatches(x.m_sDamageType, school)))
             .Sum(x => x.m_effectParam);
     }
 
-    private static float GetGlobalEffectHealingModifier(Duel duel) {
+    private static float GetGlobalEffectHealingModifier(Duel duel, CombatDuelSubCircle caster) {
         var healBubble = duel.m_duelModifier.m_battlefieldEffects
-            .FirstOrDefault(x => x?.m_effectType == kSpellEffects.kModifyOutgoingHeal);
+            .FirstOrDefault(x => x?.m_effectType == kSpellEffects.kModifyOutgoingHeal && WorksFor(x, caster));
 
         if (healBubble is not null) {
             return healBubble.m_effectParam / 100.0f;
