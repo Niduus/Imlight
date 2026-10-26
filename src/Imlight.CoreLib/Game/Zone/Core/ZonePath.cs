@@ -215,21 +215,14 @@ public sealed class ZonePath : ZoneEntity {
         }
     }
 
+    // A slow creature is kept: it still follows the path and meets the players once it has loaded
+    // (ReceiveCreatureLoaded). Stopping it lost the zone's monsters whenever the server was busy.
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENTITYLOADTIMEOUT))]
     private void ReceiveCreatureLoadTimeout(ZONE_102_PROTOCOL.MSG_ENTITYLOADTIMEOUT message) {
-        if (!_loadingCreatures.Remove(message.Entity, out var creature)) {
-            return;
+        if (_loadingCreatures.TryGetValue(message.Entity, out var creature)) {
+            Logger.Warning("{Kind} {Name} is still loading after {Timeout} ms; it joins the zone once it is done.",
+                Logger.Args(nameof(CoreTemplate), creature.Name, OBJECT_CREATION_TIMEOUT_IN_MS));
         }
-
-        Logger.Error("Failed to create entity actor for {Kind} {Name} (no load reply within {Timeout} ms).",
-            Logger.Args(nameof(CoreTemplate), creature.Name, OBJECT_CREATION_TIMEOUT_IN_MS));
-
-        _creatureActors.Remove(message.Entity);
-        _aggroOnLoad.Remove(message.Entity);
-        _spawnObjectInfo.Remove(creature.ObjectId);
-        _spawnedTemplate.Remove(creature.ObjectId);
-        SetCreatureCount(creature.Spawner, CreatureCount(creature.Spawner) - 1);
-        Context.Stop(message.Entity);
     }
 
     // A ZoneObjects creature (this path is its own) that was removed or changed while the zone runs: its creature

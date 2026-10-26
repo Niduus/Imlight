@@ -105,14 +105,6 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         ReportLoadedWhenEntitiesLoad();
     }
 
-    protected override void OnEntityLoadFailed(IActorRef entityActor) {
-        _orderedTriggers.RemoveAll(x => x.Actor.Equals(entityActor));
-
-        foreach (var name in _triggerObjects.Where(x => x.Value.Actor.Equals(entityActor)).Select(x => x.Key).ToList()) {
-            _triggerObjects.Remove(name);
-        }
-    }
-
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_POSTEVENT))]
     private void ReceivePostEvent(ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
         // Client wads pair multiple triggers on the same event; every passing trigger fires

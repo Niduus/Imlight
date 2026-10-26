@@ -163,14 +163,6 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
         }
     }
 
-    protected override void OnEntityLoadFailed(IActorRef entityActor) {
-        foreach (var coreObject in _sigils.Where(x => x.Value.Equals(entityActor)).Select(x => x.Key).ToList()) {
-            _sigils.Remove(coreObject);
-        }
-
-        _pvpSigilObjectIds.Remove(entityActor);
-    }
-
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL))]
     private void ReceiveRequestCombatSigil(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL message) {
         var firstParticipantObj = message.StartingParticipants.Values.First();
