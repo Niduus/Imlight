@@ -473,7 +473,7 @@ internal sealed class GroupDirectory : ReceiveProtocolDispatcher, IWithTimers {
                 Message = message.Message,
                 TargetID = group.ChannelId,
                 Filter = 0,
-                Flags = GroupChatFlags
+                Flags = message.ShowAsTyped ? GroupChatFlags | ChatFilter.ShowAsTypedChatBit : GroupChatFlags
             });
         }
     }

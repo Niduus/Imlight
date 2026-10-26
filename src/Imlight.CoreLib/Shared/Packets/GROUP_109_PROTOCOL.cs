@@ -173,6 +173,11 @@ public sealed class GROUP_109_PROTOCOL : IServerProtocol {
         public WideByteString Message;
 
         /// <summary>
+        /// Shown as typed even with red words in it (open chat with [Chat] EnforceWhitelist off, see ChatFilter).
+        /// </summary>
+        public bool ShowAsTyped;
+
+        /// <summary>
         /// Members who ignore the sender and must not receive the line.
         /// </summary>
         public IReadOnlyCollection<ulong> CharIdsIgnoringSender;

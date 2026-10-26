@@ -100,7 +100,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (!TryApplyChatLevel(message.Message, wizard, out var shown)) {
+        if (!TryApplyChatLevel(message.Message, wizard, out var shown, out var asTyped)) {
             return;
         }
 
@@ -108,12 +108,14 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         SaveChatLog(cleanedMessage, charObj, wizard);
 
         // Broadcast the message to the zone, skipping players who have ignored the sender.
-        var msg = new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-            Message = shown is null ? message.Message : (ByteString) shown,
-            SourceID = charObj.m_globalID,
-            SourceName = sourceName,
-            Filter = 2,
-        };
+        var msg = asTyped
+            ? (IMessage) ShownAsTyped(sourceName, charObj.m_globalID, message.Message, ChatFilter.RadialChatType, filter: 2)
+            : new GAME_5_PROTOCOL.MSG_RADIALCHAT {
+                Message = shown is null ? message.Message : (ByteString) shown,
+                SourceID = charObj.m_globalID,
+                SourceName = sourceName,
+                Filter = 2,
+            };
         SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
     }
 
@@ -260,19 +262,21 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (!TryApplyChatLevel(message.Message, wizard, out var shown)) {
+        if (!TryApplyChatLevel(message.Message, wizard, out var shown, out var asTyped)) {
             return;
         }
 
         LogChatMessage(wizard.PlayerNameBehavior.GetWizardName(), $"{cleanedMessage} (friends)", wizard.Zone);
         SaveChatLog(cleanedMessage, charObj, wizard);
 
-        SendToNearbyFriends(message.PlayerGID, wizard, new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-            Message = shown is null ? message.Message : (ByteString) shown,
-            SourceID = charObj.m_globalID,
-            SourceName = GetSourceName(wizard),
-            Filter = 2,
-        });
+        SendToNearbyFriends(message.PlayerGID, wizard, asTyped
+            ? (IMessage) ShownAsTyped(GetSourceName(wizard), charObj.m_globalID, message.Message, ChatFilter.RadialChatType, filter: 2)
+            : new GAME_5_PROTOCOL.MSG_RADIALCHAT {
+                Message = shown is null ? message.Message : (ByteString) shown,
+                SourceID = charObj.m_globalID,
+                SourceName = GetSourceName(wizard),
+                Filter = 2,
+            });
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTZONECLUSTERQUICKCHAT))]
@@ -329,7 +333,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         // The client's /party line is a directed chat aimed at the group's channel ID.
         var myWizard = GetActiveWizard();
-        if (!TryApplyChatLevel(message.Message, myWizard, out var shown)) {
+        if (!TryApplyChatLevel(message.Message, myWizard, out var shown, out var asTyped)) {
             return;
         }
 
@@ -338,7 +342,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         if (GroupRegistry.IsGroupChannel(targetID)) {
-            SendGroupChat(message, myWizard);
+            SendGroupChat(message, myWizard, asTyped);
 
             return;
         }
@@ -358,12 +362,14 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         // Send the directed chat to the target player.
         var hexName = myWizard.PlayerNameBehavior.GetWizardNameAsByteHexString();
         var sourceName = DataManipulation.SpacedHexStringToBytes(hexName);
-        var msg = new GAME_5_PROTOCOL.MSG_DIRECTEDCHAT {
-            SourceName = sourceName,
-            SourceID = myWizard.CharId,
-            Message = message.Message,
-            Filter = 0
-        };
+        var msg = asTyped
+            ? (IMessage) ShownAsTyped(sourceName, myWizard.CharId, message.Message, ChatFilter.DirectedChatType, filter: 0)
+            : new GAME_5_PROTOCOL.MSG_DIRECTEDCHAT {
+                SourceName = sourceName,
+                SourceID = myWizard.CharId,
+                Message = message.Message,
+                Filter = 0
+            };
 
         var targetActorPath = targetPlayer.ActorPath;
         Context.ActorSelection(targetActorPath).Tell(msg);
@@ -510,7 +516,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         return cleanedMessage;
     }
 
-    private void SendGroupChat(GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDCHAT message, Wizard wizard) {
+    private void SendGroupChat(GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDCHAT message, Wizard wizard, bool asTyped) {
         var hexName = wizard.PlayerNameBehavior.GetWizardNameAsByteHexString();
         var text = message.Message.ToString() ?? string.Empty;
 
@@ -519,6 +525,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             ChannelId = message.TargetID,
             SourceName = DataManipulation.SpacedHexStringToBytes(hexName),
             Message = message.Message,
+            ShowAsTyped = asTyped,
             CharIdsIgnoringSender = BuddyRelationshipCollection.GetCharactersWhoBlocked(wizard.CharId)
         });
 
@@ -532,8 +539,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     /// only; the player is told). Otherwise <paramref name="shown"/> is null to send the message as typed, or the text
     /// the others get instead ("...").
     /// </summary>
-    private bool TryApplyChatLevel(string typed, Wizard wizard, out string shown) {
+    private bool TryApplyChatLevel(string typed, Wizard wizard, out string shown, out bool asTyped) {
         shown = null;
+        asTyped = false;
         typed ??= string.Empty;
         var mode = ChatFilter.CurrentChatMode(GetActiveAccount());
         var forOthers = ChatFilter.ForOthers(typed, mode, out var why);
@@ -549,9 +557,26 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), forOthers, why, typed));
             shown = forOthers;
         }
+        else if (ChatFilter.ShowsRedWords(typed, mode)) {
+            asTyped = true;
+        }
 
         return true;
     }
+
+    /// <summary>
+    /// A typed line the game must show as it is, red words and all (<see cref="ChatFilter.ShowAsTypedChatBit"/>): sent as
+    /// channel chat, whose Flags the game takes as the line's chat type.
+    /// </summary>
+    private static GAME_5_PROTOCOL.MSG_CHANNELCHAT ShownAsTyped(ByteString sourceName, ulong sourceId, string text, uint chatType, byte filter)
+        => new() {
+            SourceName = sourceName,
+            SourceID = sourceId,
+            Message = text,
+            TargetID = 0,
+            Filter = filter,
+            Flags = chatType | ChatFilter.ShowAsTypedChatBit,
+        };
 
     private static void LogChatMessage(string name, string message, string zoneName)
         => Logger.Information("[{0}] {1}: {2}", Logger.Args(zoneName, name, message));

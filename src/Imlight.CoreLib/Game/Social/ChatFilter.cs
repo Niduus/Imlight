@@ -47,6 +47,19 @@ internal static class ChatFilter {
     /// <summary>What the others see instead of a message that broke the rules.</summary>
     internal const string Hidden = "...";
 
+    /// <summary>
+    /// The game hides red words itself, in every client that receives typed chat (WizardGraphicalClient r806919,
+    /// DisplayChatTextMsgs: chat of type 8, radial, with Filter 2 goes through its Carlin list and comes out as "...").
+    /// Only a line whose chat type has bit 0 (the quick chat bit, as the client gives menu chat lines) or bit 2 or bit 8
+    /// is shown as sent. MSG_CHANNELCHAT's Flags become that chat type, so a line sent that way with this bit shows its
+    /// red words. The sender's own copy is drawn by their own client and still shows "...".
+    /// </summary>
+    internal const uint ShowAsTypedChatBit = 0x01;
+
+    /// <summary>Chat types the client uses (record +0x70): 8 for nearby chat, 0x80 for a whisper.</summary>
+    internal const uint RadialChatType = 0x08;
+    internal const uint DirectedChatType = 0x80;
+
     private const string FOLDER = "ChatFilter/";
     private const string PUNCTUATION = ".,!?;:\"'()[]{}*~-_";
     // How long a chat level read from the database counts before it is read again, so a Manager change applies quickly.
@@ -134,6 +147,13 @@ internal static class ChatFilter {
                 return text;
         }
     }
+
+    /// <summary>
+    /// True when a message that may go through has red words the game would hide on its own: open chat with
+    /// [Chat] EnforceWhitelist off. Such a line is sent with <see cref="ShowAsTypedChatBit"/>.
+    /// </summary>
+    internal static bool ShowsRedWords(string text, ChatMode mode)
+        => mode == ChatMode.Open && !EnforceWhitelist && FirstRedWord(text, textChat: false) is not null;
 
     /// <summary>The first word not on the game's word list (yellow in the game), or null.</summary>
     internal static string FirstYellowWord(string text) {
