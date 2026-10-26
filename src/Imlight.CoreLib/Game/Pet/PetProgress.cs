@@ -305,7 +305,7 @@ internal static class PetProgress {
 
     /// <summary>
     /// Puts a talent into a slot of the pet's pool without showing it (`.pet talent get`). The talent that was in the
-    /// slot leaves the pool and stops showing.
+    /// slot leaves the pool and stops showing. A talent already in another slot trades places with the slot's talent.
     /// </summary>
     /// <returns>Null when it worked, otherwise the reason in plain words.</returns>
     internal static string PutInPool(WizClientObjectItem pet, bool derby, int slot, PetTalentBaseTemplate talent) {
@@ -322,15 +322,17 @@ internal static class PetProgress {
         var pool = Pool(behavior, derby);
         var id = PetData.TalentId(talent.m_talentName);
         var at = pool.IndexOf(id);
-        if (at >= 0 && at != slot) {
-            return $"Your pet already has that talent in slot {at}.";
-        }
-
         while (pool.Count <= slot) {
             pool.Add(0);
         }
 
-        if (pool[slot] != id) {
+        if (at >= 0 && at != slot) {
+            // Already in another slot: the two slots trade talents, each keeping whether it is claimed.
+            (pool[at], pool[slot]) = (pool[slot], pool[at]);
+            var shown = Shown(behavior, derby);
+            shown.Sort((a, b) => pool.IndexOf(a).CompareTo(pool.IndexOf(b)));
+        }
+        else if (pool[slot] != id) {
             Shown(behavior, derby).Remove(pool[slot]);
             pool[slot] = id;
         }
@@ -338,6 +340,34 @@ internal static class PetProgress {
         RecalculateMaxStats(behavior, GetTemplate(pet));
 
         return null;
+    }
+
+    /// <summary>
+    /// Whether the talent in a slot of the pet's pool is claimed (shown).
+    /// </summary>
+    internal static bool IsClaimed(WizClientObjectItem pet, bool derby, int slot) {
+        var behavior = GetBehavior(pet);
+        var pool = behavior is null ? null : Pool(behavior, derby);
+
+        return pool is not null && slot < pool.Count && pool[slot] != 0 && Shown(behavior, derby).Contains(pool[slot]);
+    }
+
+    /// <summary>
+    /// Says in plain words what a slot of the pet's pool holds and whether it is claimed.
+    /// </summary>
+    internal static string DescribeSlot(WizClientObjectItem pet, bool derby, int slot) {
+        var behavior = GetBehavior(pet);
+        if (behavior is null) {
+            return "Wear a pet first.";
+        }
+
+        EnsureInitialized(pet);
+        var pool = Pool(behavior, derby);
+        if (slot >= pool.Count || pool[slot] == 0 || PetData.GetTalent(pool[slot]) is not { } talent) {
+            return $"Slot {slot} is empty.";
+        }
+
+        return $"Slot {slot} holds {TalentLabel(talent)}, {(IsClaimed(pet, derby, slot) ? "claimed" : "not claimed")}.";
     }
 
     /// <summary>
@@ -364,7 +394,13 @@ internal static class PetProgress {
         }
 
         if (claim && shown.Count >= MAX_SHOWN_TALENTS) {
-            return $"Your pet already shows {MAX_SHOWN_TALENTS} {(derby ? "derby talents" : "talents")}. Unclaim one first with .pet {(derby ? "derby" : "talent")} unclaim <slot>.";
+            // Names where each shown talent sits, since one given outside the slots does not show in the pet window.
+            var where = shown.Select(id => (pool.IndexOf(id) is var at and >= 0 ? $"slot {at}" : "no slot")
+                + $" {(PetData.GetTalent(id) is { } t ? TalentLabel(t) : id.ToString())}");
+
+            return $"Your pet already shows {MAX_SHOWN_TALENTS} {(derby ? "derby talents" : "talents")}: {string.Join(", ", where)}. "
+                + $"Unclaim one first with .pet {(derby ? "derby" : "talent")} unclaim <slot>"
+                + (shown.Any(id => !pool.Contains(id)) ? ", or take a no-slot one off with .pet untalent <name>." : ".");
         }
 
         if (claim) {
@@ -419,7 +455,8 @@ internal static class PetProgress {
         }
 
         if (!useMax && wanted > GetStat(behavior.m_maxStats, stat.m_name)) {
-            PetMaxRaises.Set(pet.m_globalID.Full, stat.m_name, wanted);
+            // The raise is kept without the talents' part, which RecalculateMaxStats adds back on top.
+            PetMaxRaises.Set(pet.m_globalID.Full, stat.m_name, Math.Max(0, wanted - TalentMaxBonus(behavior, pet, stat.m_name)));
             RecalculateMaxStats(behavior, GetTemplate(pet));
         }
 
@@ -698,18 +735,12 @@ internal static class PetProgress {
 
         // Selfish talents raise the maximum: the pet's own and the one of a jewel in its socket (Mighty is +65
         // Strength). Taking the jewel out puts the maximum back (Niduus, 2026-10-20).
+        // A `.pet stats` raise lifts the pet's own maximum and the talents add on top of it, so Mighty on a pet raised to
+        // 260 Strength gives 325 (Niduus, 2026-10-26: it used to give the base 220 + 65 = 285).
         var pet = s_pets.TryGetValue(behavior, out var found) ? found : null;
-        var bonus = (behavior.m_expressedTalents ?? [])
-            .Select(PetData.GetTalent)
-            .Concat(pet is null ? [] : JewelSockets.GetPetJewelTalents(pet).Select(PetData.GetTalent))
-            .OfType<PetTalentTemplate>()
-            .SelectMany(t => t.m_maxStatList ?? [])
-            .Where(s => s is not null)
-            .ToList();
         var petId = pet?.m_globalID.Full ?? 0UL;
-        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name, Math.Max(
-            BaseMaxStat(template, petId, name) + bonus.Where(b => SameStat(b.m_name, name)).Sum(b => b.m_value),
-            petId == 0 ? 0 : CappedRaise(petId, name))))];
+        behavior.m_maxStats = [.. StatNames(template).Select(name => NewStat(name,
+            Math.Max(BaseMaxStat(template, petId, name), petId == 0 ? 0 : CappedRaise(petId, name)) + TalentMaxBonus(behavior, pet, name)))];
 
         // Selfish talents raise only the maximum; the stat itself still has to be trained up (Niduus, 2026-10-20).
         // 0.10.17 added their points to the stat too, so those points are taken back once.
@@ -722,6 +753,18 @@ internal static class PetProgress {
             stat.m_value = Math.Min(stat.m_value, GetStat(behavior.m_maxStats, stat.m_name));
         }
     }
+
+    /// <summary>
+    /// What the pet's shown talents and the jewel in its socket add to the maximum of one stat (Mighty is +65 Strength).
+    /// </summary>
+    private static int TalentMaxBonus(ClientPetItemBehavior behavior, WizClientObjectItem pet, string name)
+        => (behavior.m_expressedTalents ?? [])
+            .Select(PetData.GetTalent)
+            .Concat(pet is null ? [] : JewelSockets.GetPetJewelTalents(pet).Select(PetData.GetTalent))
+            .OfType<PetTalentTemplate>()
+            .SelectMany(t => t.m_maxStatList ?? [])
+            .Where(s => s is not null && SameStat(s.m_name, name))
+            .Sum(s => s.m_value);
 
     // A raised maximum never goes past the server's maximum ([Pets] MaxStrength and the others): only selfish talents
     // do (Niduus, 2026-10-20). 0.10.58 hatching saved raises above it, which this also undoes.

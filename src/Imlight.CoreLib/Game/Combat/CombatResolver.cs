@@ -467,6 +467,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: true, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
+            // A spell on a whole side whose picked wizard or creature is gone goes on someone still standing there.
+            RetargetGroupSpell(action);
             // A boss cheat that interrupts goes off before the spell it answers.
             cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
@@ -1033,6 +1035,51 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         return [PickFreeTarget(caster, template, null)];
+    }
+
+    private static readonly HashSet<kEffectTarget> s_wholeSide = [
+        kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kFriendlyTeam, kEffectTarget.kFriendlyTeamAllAtOnce,
+    ];
+
+    private static readonly HashSet<kEffectTarget> s_onePicked = [
+        kEffectTarget.kEnemySingle, kEffectTarget.kPreselectedEnemySingle, kEffectTarget.kFriendlySingle,
+        kEffectTarget.kFriendlySingleNotMe,
+    ];
+
+    // Every effect of a spell, the ones inside effect lists too.
+    private static IEnumerable<SpellEffect> AllEffects(SpellTemplate template)
+        => (template?.m_effects ?? []).Where(e => e is not null)
+            .SelectMany(e => e is EffectListSpellEffect list ? (list.m_effectList ?? []).Where(x => x is not null).Prepend(e) : [e]);
+
+    /// <summary>
+    /// A spell on a whole side (such as Glowbug Squall) still goes off when the wizard or creature the game sent as its
+    /// target was defeated earlier in the round: it goes on the first one still standing on that side, as in the real
+    /// game. A spell aimed at one picked target is left alone, so it is still lost when that target is gone.
+    /// </summary>
+    private void RetargetGroupSpell(QueuedCombatAction action) {
+        if (action?.SelectedTarget is not { } picked || action.Spell is null || picked.IsAlive && picked.AddedToDuel) {
+            return;
+        }
+
+        var spell = action.SpellTemplate ?? CoreObjectFactory.GetCoreTemplate(action.Spell.m_templateID) as SpellTemplate;
+        if (spell is null || IsRevive(spell)) {
+            return;
+        }
+
+        var effects = AllEffects(spell).ToList();
+        if (!effects.Any(e => s_wholeSide.Contains(e.m_effectTarget)) || effects.Any(e => s_onePicked.Contains(e.m_effectTarget))) {
+            return;
+        }
+
+        var standing = picked._duelActor.ActiveSubCircles
+            .Where(c => c.AddedToDuel && c.IsAlive && c.OccupiedTeam == picked.OccupiedTeam).OrderBy(c => c.SlotIndex).FirstOrDefault();
+        if (standing is null) {
+            return;
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | {2} goes on the whole side: slot {3} is gone, so it aims at slot {4}.",
+            Logger.Args(_duel.m_duelID.Full, action.SpellCaster?.SlotIndex, (string) spell.m_name, picked.SlotIndex, standing.SlotIndex));
+        action.SelectedTarget = standing;
     }
 
     // A spell that brings a defeated participant back: it has an afterlife (kAfterlife), at the top or in a list.

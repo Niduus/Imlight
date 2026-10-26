@@ -272,7 +272,11 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         var serializer = new ObjectSerializer(
             Versionable: false
         );
-        var criticalObjects = GetCriticalObjects(zoneDetails.CriticalObjects);
+        // The game holds its loading screen until every listed object's MSG_NEWOBJECT arrives, or 30 s. Objects are now
+        // held back per player (quest-only NPCs, dynamods, spawn requirements), and each one held back from a list cost
+        // the full 30 s: "Failed to load 5 critical objects in 30.00 seconds" in Unicorn Way, 1 porting from the house
+        // to a friend in Ravenwood (Niduus's game log of 2026-10-25). The list is left empty unless asked for.
+        var criticalObjects = GetCriticalObjects(s_waitForCriticalObjects ? zoneDetails.CriticalObjects : []);
         if (!serializer.Serialize(criticalObjects, flags, out var criticalObjectData)) {
             Logger.Error($"User {message.UserID} failed to serialize their critical object list.");
 
@@ -399,6 +403,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
     // [Character] StartingCrowns: crowns every wizard starts with. RefillCrowns: crowns go back up to that
     // amount every time the wizard arrives somewhere.
+    private static bool s_waitForCriticalObjects => ConfigurationManager.GetValue("Game Server.WaitForCriticalObjects", false);
     private static int s_startingCrowns => Math.Max(0, ConfigurationManager.GetValue("Character.StartingCrowns", 100_000_000));
     private static bool s_refillCrowns => ConfigurationManager.GetValue("Character.RefillCrowns", true);
 
