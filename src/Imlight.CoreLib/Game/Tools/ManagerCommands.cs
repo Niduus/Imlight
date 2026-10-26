@@ -123,7 +123,7 @@ internal static class ManagerCommands {
                 foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
                     var actor = s_system.ActorSelection(player.ActorPath);
                     if (box) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? AnnouncementBox(text) : text, Modal = 1 });
+                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? AnnouncementBox(text) : ServerMessages.Own(text), Modal = 1 });
                     }
 
                     if (chat) {

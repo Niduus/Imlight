@@ -1084,7 +1084,7 @@ public partial class CombatResolver {
                     if (step.Text.Length > 0) {
                         // A player cheat's words go to that wizard's own chat.
                         if (boss.IsHumanPlayer) {
-                            boss.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = step.Text, Modal = 0 });
+                            boss.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = Tools.ServerMessages.Own(step.Text), Modal = 0 });
                         }
                         else {
                             TellPlayers($"{bossName}: {step.Text}");
@@ -1514,8 +1514,9 @@ public partial class CombatResolver {
         return -amount - take;
     }
 
-    // Say's Text: the words go to every player's chat.
+    // Say's Text: the words go to every player's chat. They are the cheat's own words, so the Announcements tab leaves them.
     private void TellPlayers(string text) {
+        Tools.ServerMessages.Own(text);
         foreach (var player in _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null)) {
             player.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
         }

@@ -26,19 +26,23 @@ namespace Imlight.CoreLib.Game.Tools;
 
 /// <summary>
 /// The words of every announcement (AnnouncementCatalog), with the Manager's changes from announcements.json:
-/// { "Texts": { "event.on": "..." }, "Off": [ "raid.sigil" ] }. The file is looked at again at most once a second, so a
-/// change applies without a restart. A line with no words of its own uses the catalog's; a line that is off is not sent.
+/// { "Texts": { "event.on": "..." }, "Off": [ "raid.sigil" ], "OffGroups": [ "Guild raids" ] }. Server messages
+/// (ServerMessageCatalog, applied in ServerMessages.cs) keep their settings in the same file. The file is looked at
+/// again at most once a second, so a change applies without a restart. A line with no words of its own uses the
+/// catalog's; a line that is off, or whose group is off, is not sent.
 /// </summary>
 internal static class Announcements {
 
     private sealed class AnnouncementFile {
         public Dictionary<string, string> Texts { get; set; } = [];
         public List<string> Off { get; set; } = [];
+        public List<string> OffGroups { get; set; } = [];
     }
 
     private static readonly object s_lock = new();
     private static Dictionary<string, string> s_texts = new(StringComparer.OrdinalIgnoreCase);
     private static HashSet<string> s_off = new(StringComparer.OrdinalIgnoreCase);
+    private static HashSet<string> s_offGroups = new(StringComparer.OrdinalIgnoreCase);
     private static DateTime s_fileTime;
     private static DateTime s_lastLook;
 
@@ -47,24 +51,37 @@ internal static class Announcements {
     /// the line is turned off in the Manager.
     /// </summary>
     internal static string Text(string key, params (string Field, object Value)[] values) {
-        Refresh();
-        string text;
-        lock (s_lock) {
-            if (s_off.Contains(key)) {
-                return null;
-            }
-
-            text = s_texts.GetValueOrDefault(key);
+        var line = AnnouncementCatalog.Find(key);
+        if (IsOff(key, line?.Group)) {
+            return null;
         }
 
+        var text = Changed(key);
         if (string.IsNullOrWhiteSpace(text)) {
-            text = AnnouncementCatalog.Find(key)?.Default ?? key;
+            text = line?.Default ?? key;
         }
 
         var fields = values.ToDictionary(v => v.Field, v => Convert.ToString(v.Value, System.Globalization.CultureInfo.InvariantCulture) ?? "",
             StringComparer.OrdinalIgnoreCase);
 
-        return AnnouncementCatalog.Fill(text, fields);
+        // Already the Manager's words: ServerMessages lets it go out as it is.
+        return ServerMessages.Own(AnnouncementCatalog.Fill(text, fields));
+    }
+
+    /// <summary>True when the line, or its whole group, is turned off in the Manager.</summary>
+    internal static bool IsOff(string key, string group) {
+        Refresh();
+        lock (s_lock) {
+            return s_off.Contains(key) || (group is not null && s_offGroups.Contains(group));
+        }
+    }
+
+    /// <summary>The Manager's own words for a line, or null when it keeps the first ones.</summary>
+    internal static string Changed(string key) {
+        Refresh();
+        lock (s_lock) {
+            return s_texts.GetValueOrDefault(key);
+        }
     }
 
     private static void Refresh() {
@@ -89,11 +106,13 @@ internal static class Announcements {
             lock (s_lock) {
                 s_texts = new Dictionary<string, string>(file.Texts ?? [], StringComparer.OrdinalIgnoreCase);
                 s_off = new HashSet<string>(file.Off ?? [], StringComparer.OrdinalIgnoreCase);
+                s_offGroups = new HashSet<string>(file.OffGroups ?? [], StringComparer.OrdinalIgnoreCase);
                 s_fileTime = time;
             }
 
             if (time != default) {
-                Logger.Information("Announcements: {0} changed lines and {1} turned off are in use now.", Logger.Args(s_texts.Count, s_off.Count));
+                Logger.Information("Announcements and server messages: {0} changed lines, {1} turned off and {2} groups turned off are in use now.",
+                    Logger.Args(s_texts.Count, s_off.Count, s_offGroups.Count));
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {

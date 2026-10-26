@@ -2535,7 +2535,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         ["Server"] = ("server", "Start and stop the server, and switch its modes."),
-        ["Announcements"] = ("chat", "Change the words of everything the server announces, and send your own."),
+        ["Announcements"] = ("chat", "Change the words of everything the server announces or tells a player, turn any of it off, and send your own."),
         ["Logs"] = ("log", "What the server and the game are writing down, as it happens."),
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),

@@ -95,6 +95,14 @@ internal sealed class SocketSender : ReceiveActor, IDisposable {
     }
 
     private void SendToSocket(IMessage message) {
+        // Every [Server Message] line and box goes out as the Manager's Announcements tab wants it, or not at all.
+        if (message is EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE serverMessage) {
+            message = Imlight.CoreLib.Game.Tools.ServerMessages.Apply(serverMessage);
+            if (message is null) {
+                return;
+            }
+        }
+
         if (_isDisposed || !_socket.Connected) {
             LogDroppedPacket(message, _isDisposed ? "disposed" : "not connected");
             Dispose();
