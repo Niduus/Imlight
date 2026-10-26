@@ -180,7 +180,8 @@ internal class CommandPetProtocol : CommandProtocol {
         PetTalentBaseTemplate talent;
         if (action == "get") {
             if (words.Length < 3) {
-                InformSenderClient($"Type {command} get {slot} <talent name>.");
+                // Without a name it tells what the slot holds (Niduus typed `.pet talent get 4` to look, 2026-10-25).
+                InformSenderClient($"{PetProgress.DescribeSlot(pet, derby, slot)} To change it type {command} get {slot} <talent name>.");
 
                 return true;
             }
@@ -206,6 +207,7 @@ internal class CommandPetProtocol : CommandProtocol {
         Imlight.CoreLib.Game.Combat.BattleModes.HandPickedPetTalents.Set(pet.m_globalID.Full, true);
         PetCare.Finish(Context.Character, pet, null, Send);
         InformSenderClient(action switch {
+            "get" when PetProgress.IsClaimed(pet, derby, slot) => $"Slot {slot} now holds {PetProgress.TalentLabel(talent)}, claimed.",
             "get" => $"Slot {slot} now holds {PetProgress.TalentLabel(talent)}, not claimed yet. Claim it with {command} claim {slot}.",
             "claim" => $"Claimed {PetProgress.TalentLabel(talent)} in slot {slot}.",
             _ => $"Unclaimed {PetProgress.TalentLabel(talent)} in slot {slot}.",
