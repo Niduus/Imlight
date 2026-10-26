@@ -94,8 +94,9 @@ internal class ClientService(SessionActor sessionActor) : MessageService(session
         var met = false;
         byte[] bytes = message.Requirement;
         if (TryParseRequirement(bytes, out var requirement) && GetActiveWizard() is { } wizard) {
-            var context = new GenericRequirementContext(new RequirementList(), SessionActor.ActorRef,
-                GetActiveGameObject(), wizard);
+            // A handler only takes part when the context's list holds its requirement.
+            var context = new GenericRequirementContext(new RequirementList { m_requirements = [requirement] },
+                SessionActor.ActorRef, GetActiveGameObject(), wizard);
             met = RequirementDispatcher.EvaluateIndividualRequirement(requirement, context);
             Logger.Verbose("SessionActor {0}: the game asked about {1} {2}: {3}.",
                 Logger.Args(SessionActor.SessionID, requirement.GetType().Name,
