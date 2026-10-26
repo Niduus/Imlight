@@ -947,14 +947,12 @@ internal sealed partial class ManagerWindow {
             rounds.IsVisible = m is "every" or "both";
         }
 
-        var choice = BlockFields.Choice([("each", "every round"), ("round", "round"), ("every", "every"), ("both", "round")], mode, m => {
+        var choice = BlockFields.Choice([("each", "every round"), ("round", "round …"), ("every", "every … rounds"), ("both", "round … then every …")], mode, m => {
             block.Set("Round", m is "round" or "both" ? Math.Max(1, int.TryParse(round.Text, out var r) ? r : 1) : 0);
             block.Set("Every", m is "every" or "both" ? Math.Max(1, int.TryParse(every.Text, out var e) ? e : 2) : 0);
             Show(m);
             changed();
         });
-        // Two choices read "round": the second one is "round N, then every M".
-        choice.ItemsSource = new[] { "every round", "round …", "every … rounds", "round … then every …" };
         Show(mode);
         panel.Children.Add(choice);
         panel.Children.Add(round);
