@@ -331,9 +331,7 @@ internal sealed partial class ManagerWindow {
         if (_gearPicked is not null && shown.Contains(_gearPicked)) {
             _gearList.SelectedItem = _gearPicked;
         }
-        else if (shown.Count > 0 && query.Length > 0) {
-            _gearList.SelectedItem = shown[0];
-        }
+        // Typing only narrows the list: nothing is picked (and no details pop open) until an item is clicked.
     }
 
     /// <summary>One item in the list: its school, its name, and its slot, level and ID underneath.</summary>

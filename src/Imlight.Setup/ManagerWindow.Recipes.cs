@@ -318,9 +318,7 @@ internal sealed partial class ManagerWindow {
         if (_recipePicked is not null && _recipesShown.Contains(_recipePicked)) {
             _recipeList.SelectedItem = _recipePicked;
         }
-        else if (_recipesShown.Count > 0 && query.Length > 0) {
-            _recipeList.SelectedItem = _recipesShown[0];
-        }
+        // Typing only narrows the list: nothing is picked (and no details pop open) until an item is clicked.
     }
 
     /// <summary>One recipe in the list: its picture, its name, and its station, cooldown and ID underneath.</summary>
