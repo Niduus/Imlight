@@ -61,6 +61,10 @@ internal static class CombatActionResolver {
     // The enemies the wizard picked for the cast being resolved (a duel resolves one cast at a time on its thread).
     [ThreadStatic] private static List<CombatDuelSubCircle> s_picked;
 
+    // Where the cast's effects on its caster (kSelf) go: the cast's target for a cheat's FreeCast with OnTarget, else
+    // null (the caster).
+    [ThreadStatic] private static CombatDuelSubCircle s_selfGoesOn;
+
     // One cast being resolved.
     private sealed class Cast {
         internal QueuedCombatAction Action;
@@ -91,11 +95,13 @@ internal static class CombatActionResolver {
     internal static bool ProcessedQueuedCombatAction(QueuedCombatAction action, ref CombatAction combatAction, ref float cinematicTime,
                                                      out string notes) {
         s_picked = action.PickedTargets;
+        s_selfGoesOn = action.SelfOnTarget && action.SelectedTarget is { } onTarget && onTarget != action.SpellCaster ? onTarget : null;
         try {
             return Process(action, ref combatAction, ref cinematicTime, out notes);
         }
         finally {
             s_picked = null;
+            s_selfGoesOn = null;
         }
     }
 
@@ -277,7 +283,7 @@ internal static class CombatActionResolver {
         // A team-wide conditional checks each participant on its own; a single one checks the card's target.
         var checkedOn = IsGroupTarget(conditional.m_effectTarget)
             ? Restrict(GetEffectTargets(conditional, caster, selected), conditional, only)
-            : [conditional.m_effectTarget == kEffectTarget.kSelf ? caster : selected ?? caster];
+            : [conditional.m_effectTarget == kEffectTarget.kSelf ? s_selfGoesOn ?? caster : selected ?? caster];
 
         foreach (var target in checkedOn) {
             var element = elements.FirstOrDefault(e => CombatRequirements.Met(e.m_pReqs, caster, target));
@@ -619,7 +625,7 @@ internal static class CombatActionResolver {
                 break;
             case kEffectTarget.kSelf:
             case kEffectTarget.kInvalidTarget:
-                targets = [caster];
+                targets = [s_selfGoesOn ?? caster];
                 break;
             // A whole-team spell leaves out the defeated (Niduus, 2026-10-22: Malistaire's Roar still listed Paul after he
             // was downed, and the game played its hit on him, so he stood up again on his circle while his nameplate

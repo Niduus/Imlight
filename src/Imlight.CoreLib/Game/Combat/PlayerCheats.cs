@@ -15,10 +15,13 @@
  *   Once, MaxTimes, Cooldown, Chance, HealthAbove, HealthUnder (my health), FromRound, ToRound, Off.
  *   Actions:
  *     { "Do": "FreeCast", "Spell"/"SpellID", "Target": p1-p4 / e1-e4 / all / "" (as the spell aims),
- *       "Timing": "Now" / "First" / "Last" / "Before" / "After" (my card), "Silent", "Enchant", "Times" }
+ *       "Timing": "Now" / "First" / "Last" / "Before" / "After" (my card), "Silent", "Enchant", "Times",
+ *       "OnTarget" }
  *       a free spell, as .c1 / .c2 cast it (CombatResolver.AddFreeDelayedCast). First and Last are the round's
  *       first and last moves (the next round's first when the round is already under way); Before and After are
  *       around my own card (the next round's when it has been played); Now is at once.
+ *       OnTarget: a spell that only goes on its caster (a self blade, Shadow Shrike) goes on the Target instead (any
+ *       Target a boss step takes: WeakestAlly, Ally, AllAllies, AllEnemies...), once on each one it names.
  *     { "Do": "Pips", "Amount", "Kind": Normal/Power/Shadow }   { "Do": "Heal", "Amount", "Percent" }
  *     { "Do": "Say", "Line" }  a .ca banner over me;  "Text": words in my chat.
  * Each one that goes off writes "Custom cheat | ... player cheat ..." to the log.

@@ -495,13 +495,13 @@ internal static class CheatSpecs {
             b => $"(the next {Math.Max(1, b.Number("Count"))} only for {b.Text("School")}{Target(b).Replace(" on ", ": ")})"),
 
         // Do... (first made for the player cheats; "alias" ones are the same as a block above, kept to read old files)
-        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked.",
-            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants}",
+        new("D.FreeCast", BlockKind.Do, "sparkle", "cast for free", "A free spell, as the .c1 and .c2 commands cast it. Pick when: right away, before or after your card, or first or last in the round. Silent skips the casting animation; enchanted adds the enchantments you pick (several stack), or the best one that fits when none is picked. Self spells go on the target: a spell that only goes on its caster (a self blade, Shadow Shrike) goes on the target you pick instead, once on each for every ally or every player. For example, Shadow Shrike on the weakest ally, or a self blade on every ally.",
+            "Cast {Spell} on {Target} {Timing} {Times} times {Silent} {Enchant} {Enchants} {OnTarget}",
             [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target), F("Timing", CheatFieldType.Choice, "Now", s_timings),
              F("Times", CheatFieldType.Number, 1, max: 10), new("Silent", CheatFieldType.Toggle, false, Label: "silent"), new("Enchant", CheatFieldType.Toggle, false, Label: "enchanted"),
-             F("Enchants", CheatFieldType.Enchants)],
+             F("Enchants", CheatFieldType.Enchants), new("OnTarget", CheatFieldType.Toggle, false, Label: "self spells go on the target")],
             b => $"cast {SpellName(b)}{Target(b)} {LabelOf(s_timings, b.Text("Timing"))}"
-                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}"),
+                 + $"{(b.Number("Times") > 1 ? $" x{b.Number("Times")}" : "")}{(b.Flag("Silent") ? " (silent)" : "")}{(b.Flag("Enchant") ? b.List("Enchants") is { Count: > 0 } picked ? $" (enchanted: {string.Join(" + ", picked)})" : " (enchanted)" : "")}{(b.Flag("OnTarget") ? " (self spells on the target)" : "")}"),
         new("D.MyPips", BlockKind.Do, "pips", "give me pips", "Gives you pips (or takes them away).",
             "{Amount} {Kind} pips for me", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds)],
             b => $"{(b.Number("Amount") < 0 ? "take" : "give me")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips", "alias"),

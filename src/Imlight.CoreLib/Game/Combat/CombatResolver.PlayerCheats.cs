@@ -72,11 +72,26 @@ public partial class CombatResolver {
             "after" => (false, 'n'),
             _ => (true, NOW_QUEUE),
         };
-        var target = FreeCastTarget(me, step.Target, template, trigger, receiver);
         var count = Math.Clamp(step.Times, 1, 10);
-        for (var i = 0; i < count; i++) {
-            if (AddFreeDelayedCast(me, spell.m_templateID, atStart, out _, target, step.Silent, when, step.Enchant, step.Enchants) == 0) {
-                return 0;
+        // OnTarget (Niduus, 2026-10-26): a spell that only goes on its caster goes on the Target, once on each one it
+        // names (every ally, every enemy...), as a .c1 on that circle.
+        var onTarget = step.OnTarget && (step.Target ?? "").Trim().Length > 0;
+        var targets = onTarget
+            ? StepTargets(me, step.Target, template, trigger, receiver).Where(c => c is not null).Select(c => CodeOf(me, c)).Where(c => c is not null).ToList()
+            : [FreeCastTarget(me, step.Target, template, trigger, receiver)];
+        if (targets.Count == 0) {
+            Logger.Information("Duel {0} | Slot {1} | Cheat free cast {2}: no one stands where its Target \"{3}\" aims.",
+                Logger.Args(_duel.m_duelID.Full, me.SlotIndex, (string) template.m_name, step.Target));
+
+            return 0;
+        }
+
+        foreach (var target in targets) {
+            for (var i = 0; i < count; i++) {
+                if (AddFreeDelayedCast(me, spell.m_templateID, atStart, out _, target, step.Silent, when, step.Enchant, step.Enchants,
+                        onTarget) == 0) {
+                    return 0;
+                }
             }
         }
 

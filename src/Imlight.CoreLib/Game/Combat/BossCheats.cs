@@ -153,6 +153,8 @@
  *                is not).
  *   Actions also:
  *     { "Do": "FreeCast", ... }             the player cheats' free cast (PlayerCheats.cs), for a boss too.
+ *                                           "OnTarget": true puts a spell that only goes on its caster on
+ *                                           the Target (once on each for AllAllies, AllEnemies...).
  *     { "Do": "Wait", "Rounds" }            the steps after it go off at the start of the round Rounds rounds later, if
  *                                           it still stands (Rounds 4: a minion falls in round 3, they go in round 7).
  *   Target also: Summoner (who summoned this minion, while it stands; else no one), LastAttacker (the last one on the other side whose
@@ -501,6 +503,9 @@ internal static class BossCheats {
         public bool Each { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
+        // For FreeCast (Niduus, 2026-10-26): a spell that only goes on its caster (a self blade, Shadow Shrike) goes on
+        // the step's Target instead, once on each when the Target is many (AllAllies, AllEnemies).
+        public bool OnTarget { get; set; }
         // For Announce: Box (default), Chat or Both; and who gets it ("" every wizard in the battle, Players).
         public string Style { get; set; } = "";
         public string Who { get; set; } = "";

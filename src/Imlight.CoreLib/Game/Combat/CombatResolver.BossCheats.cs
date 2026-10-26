@@ -1212,7 +1212,7 @@ public partial class CombatResolver {
             "damagecap" => step.Amount > 0 ? $"damage capped at {step.Amount} for {RoundsText(step.Rounds)}{on}" : $"damage caps off{on}",
             "swaphealth" => $"swap health{on}",
             "freecast" => $"free cast {spell}{on} x{Math.Max(1, step.Times)} ({(step.Timing.Length > 0 ? step.Timing : "Now")}"
-                          + $"{(step.Silent ? ", silent" : "")}{(step.Enchant ? ", enchanted" : "")})",
+                          + $"{(step.Silent ? ", silent" : "")}{(step.Enchant ? ", enchanted" : "")}{(step.OnTarget ? ", self spells on the target" : "")})",
             _ => step.Do.ToLowerInvariant(),
         };
     }
