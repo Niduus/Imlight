@@ -186,6 +186,17 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>Reads the server's quest details and your changes again when either was saved since. Runs when the tab shows.</summary>
     private void LoadQuestEditor() {
+        var changed = LoadQuestDetails();
+        _qeChanges = ReadQuestChanges();
+        // The story order of the Quests tab's list.
+        LoadQuestGuide();
+        if (changed || _qeResults.ItemsSource is null) {
+            RenderQuestEditor();
+        }
+    }
+
+    /// <summary>Reads quest-details.json again when the server wrote it since (the Quest Tree tab reads it too). True when it changed.</summary>
+    private bool LoadQuestDetails() {
         var changed = false;
         try {
             var written = File.Exists(QuestDetailsPath) ? File.GetLastWriteTimeUtc(QuestDetailsPath) : DateTime.MinValue;
@@ -206,12 +217,7 @@ internal sealed partial class ManagerWindow {
             _qeCount.Text = $"Could not read {QUEST_DETAILS_FILE}: {ex.Message}";
         }
 
-        _qeChanges = ReadQuestChanges();
-        // The story order of the Quests tab's list.
-        LoadQuestGuide();
-        if (changed || _qeResults.ItemsSource is null) {
-            RenderQuestEditor();
-        }
+        return changed;
     }
 
     private List<QeChange> ReadQuestChanges() {

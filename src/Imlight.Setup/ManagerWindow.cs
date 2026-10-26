@@ -316,6 +316,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Gear", GearTab),
             Tab("Recipes", RecipesTab),
             Tab("Vendors", VendorsTab),
+            Tab("Quest Tree", QuestTreeTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Customs", CustomsTab),
@@ -441,6 +442,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Lookup": await LoadLookupAsync(); break;
             case "Quests": LoadQuests(); break;
             case "Vendors": await LoadVendorsAsync(); break;
+            case "Quest Tree": await LoadQuestTreeAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Customs": await LoadCustomsAsync(); break;
@@ -2526,6 +2528,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
         ["Recipes"] = ("flask", "Every crafting recipe: what it needs, what it makes, and recipe vendors of your own."),
         ["Vendors"] = ("bag", "Every vendor and trainer of the game: where they stand, what they sell and what they teach."),
+        ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),

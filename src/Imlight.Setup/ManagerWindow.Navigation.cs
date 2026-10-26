@@ -45,9 +45,11 @@ internal sealed partial class ManagerWindow {
         ("Play", "play", "Play, commands, quests",
             "Play Wizard101, find chat commands and follow your wizard's quests.", ["Play", "Commands", "Quests"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
-        ("Database", "search", "IDs, spells, gear, bosses, vendors",
-            "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, and every line of text.",
-            ["Lookup", "Spells", "Gear", "Bosses", "Recipes", "Vendors", "Phrases"]),
+        // Niduus, 2026-10-26: "in database, add Quest Tree in detail to show the main quest tree's in their entirety".
+        ("Database", "search", "IDs, spells, gear, bosses, quests",
+            "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, every world's " +
+            "quest tree, and every line of text.",
+            ["Lookup", "Spells", "Gear", "Bosses", "Recipes", "Vendors", "Quest Tree", "Phrases"]),
         ("Create", "puzzle", "Cheats, customs, quests",
             "Change quests, make cheats for yourself, build your own creatures and areas, and word what the server announces.",
             ["Player Cheats", "Customs", "Quest Editor", "Announcements", "Guides"]),
@@ -382,7 +384,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Quest Tree", _qtSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),
