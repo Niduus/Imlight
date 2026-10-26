@@ -59,7 +59,7 @@ public partial class CombatResolver {
                 cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
                 // A cheat's cast, out of the turn order as the others (BossCheats.CastsAsInterrupt).
                 for (var i = before; BossCheats.CastsAsInterrupt && i < combatActionList.m_actionList.Count; i++) {
-                    combatActionList.m_actionList[i].m_interrupt = true;
+                    combatActionList.m_actionList[i].m_interrupt = CastsAsInterrupt(combatActionList.m_actionList[i]);
                 }
 
                 Logger.Information("Duel {0} | Slot {1} | {2} sent now, so the game shows the new form.",

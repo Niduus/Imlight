@@ -508,9 +508,14 @@ public partial class CombatResolver {
         ("stun resist", kSpellEffects.kStunResist, false), ("power pip", kSpellEffects.kModifyPowerPipChance, false),
     ];
 
-    /// <summary>"damage 50, resist 20": each stat's effect type and its param (resist is less damage coming in).</summary>
-    internal static List<(kSpellEffects Type, int Param)> AuraStats(string text, int damage) {
-        var stats = new List<(kSpellEffects, int)>();
+    private static readonly string[] s_auraSchools = ["fire", "ice", "storm", "myth", "life", "death", "balance", "star", "sun", "moon", "shadow", "all"];
+
+    /// <summary>
+    /// "damage 50, fire pierce 20": each stat's effect type, its param (resist is less damage coming in) and its school
+    /// (the word before the stat, Niduus 2026-10-26: "Shadow Damage, Fire Pierce"; null: the block's school).
+    /// </summary>
+    internal static List<(kSpellEffects Type, int Param, string School)> AuraStats(string text, int damage) {
+        var stats = new List<(kSpellEffects, int, string)>();
         foreach (var part in (text ?? "").Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
             var m = Regex.Match(part, @"^(?<w>[a-zA-Z ]+?)\s*(?<n>[+-]?\d+)\s*%?$");
             if (!m.Success) {
@@ -518,6 +523,13 @@ public partial class CombatResolver {
             }
 
             var word = m.Groups["w"].Value.Trim().ToLowerInvariant();
+            string school = null;
+            var first = word.Split(' ', 2);
+            if (first.Length == 2 && s_auraSchools.Contains(first[0])) {
+                school = first[0] == "all" ? "All" : char.ToUpperInvariant(first[0][0]) + first[0][1..];
+                word = first[1].Trim();
+            }
+
             var stat = s_auraStats.FirstOrDefault(x => word == x.Word);
             if (stat.Word is null) {
                 stat = s_auraStats.FirstOrDefault(x => word.StartsWith(x.Word, StringComparison.Ordinal));
@@ -532,11 +544,11 @@ public partial class CombatResolver {
                 continue;
             }
 
-            stats.Add((stat.Type, stat.Minus ? -n : n));
+            stats.Add((stat.Type, stat.Minus ? -n : n, school));
         }
 
         if (damage != 0 && stats.All(x => x.Item1 != kSpellEffects.kModifyOutgoingDamage)) {
-            stats.Insert(0, (kSpellEffects.kModifyOutgoingDamage, damage));
+            stats.Insert(0, (kSpellEffects.kModifyOutgoingDamage, damage, null));
         }
 
         return stats;
@@ -560,7 +572,7 @@ public partial class CombatResolver {
         }
     });
 
-    private static (SpellTemplate Template, uint Id) AuraLookalike(List<(kSpellEffects Type, int Param)> stats, string school) {
+    private static (SpellTemplate Template, uint Id) AuraLookalike(List<(kSpellEffects Type, int Param, string School)> stats, string school) {
         var wanted = stats.Select(x => x.Type).ToList();
 
         return s_auraLooks.Value
@@ -593,7 +605,7 @@ public partial class CombatResolver {
         var named = step.Spell.Length > 0 || step.SpellID != 0;
         var (lookTemplate, lookId) = named ? FindSpell(step.Spell, step.SpellID) is var f && f.Template is not null ? (f.Template, f.Spell.m_templateID) : default
             : AuraLookalike(stats, step.Look ?? "");
-        SpellEffect Made(kSpellEffects type, int param, int rounds) => CheatEffect(type, param, school, rounds,
+        SpellEffect Made(kSpellEffects type, int param, string own, int rounds) => CheatEffect(type, param, own ?? school, rounds,
             good: type == kSpellEffects.kModifyIncomingDamage ? param <= 0 : param >= 0) with { m_spellTemplateID = lookId };
         var cinematicTime = 0f;
         if (onSelf && lookTemplate is not null) {
@@ -604,15 +616,15 @@ public partial class CombatResolver {
             var put = boss._hangingEffects.Where(e => e is not null && !had.Contains(e) && e.m_spellTemplateID == lookId).ToList();
             var rounds = step.Rounds > 0 ? step.Rounds : put.Select(e => e.m_numRounds).DefaultIfEmpty(4).Max();
             CombatCharms.RemoveExact(boss._hangingEffects, put);
-            foreach (var (type, param) in stats) {
-                boss._hangingEffects.Add(Made(type, param, rounds));
+            foreach (var (type, param, own) in stats) {
+                boss._hangingEffects.Add(Made(type, param, own, rounds));
             }
 
             // Each stat the lookalike has is shown with its own number, in the lookalike's order.
             if (BossCheats.ShowOwnValue) {
                 var overrides = new List<SpellEffectParamOverride>();
                 var used = new HashSet<int>();
-                foreach (var (type, param) in stats) {
+                foreach (var (type, param, _) in stats) {
                     var index = lookTemplate.m_effects.FindIndex(e => e is not null && e.m_effectType == type && !used.Contains(lookTemplate.m_effects.IndexOf(e)));
                     if (index >= 0) {
                         used.Add(index);
@@ -629,7 +641,7 @@ public partial class CombatResolver {
 
             Logger.Information("Duel {0} | Slot {1} | {2}: {3} cast so the game shows the aura; it is made {4} for {5} rounds.",
                 Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, (string) lookTemplate.m_name,
-                    string.Join(", ", stats.Select(x => $"{x.Type} {x.Param}")), rounds));
+                    string.Join(", ", stats.Select(x => $"{x.School ?? school} {x.Type} {x.Param}")), rounds));
 
             return cinematicTime;
         }
@@ -638,13 +650,13 @@ public partial class CombatResolver {
         var lasting = step.Rounds > 0 ? step.Rounds : 4;
         foreach (var target in StepTargets(boss, aim, null, trigger, receiver).Where(t => t?._hangingEffects is not null && t.IsAlive)) {
             target._hangingEffects.RemoveAll(CombatRequirements.IsAura);
-            foreach (var (type, param) in stats) {
-                target._hangingEffects.Add(Made(type, param, lasting));
+            foreach (var (type, param, own) in stats) {
+                target._hangingEffects.Add(Made(type, param, own, lasting));
             }
         }
 
         Logger.Information("Duel {0} | Slot {1} | {2}: an aura of {3} goes on {4} unseen.",
-            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, string.Join(", ", stats.Select(x => $"{x.Type} {x.Param}")), aim));
+            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, string.Join(", ", stats.Select(x => $"{x.School ?? school} {x.Type} {x.Param}")), aim));
 
         return cinematicTime;
     }

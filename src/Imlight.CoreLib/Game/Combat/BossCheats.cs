@@ -606,6 +606,10 @@ internal static class BossCheats {
     // sent as plain casts, the game took each for the caster's turn and played its over-time ticks again.
     internal static bool CastsAsInterrupt => ConfigurationManager.GetValue("BossCheats.CastsAsInterrupt", true);
 
+    // [BossCheats] GlobalsInTurn: a cheat's global (bubble) cast goes in the turn order, not as an interrupt; as one the
+    // game never put the bubble up (Niduus, 2026-10-26).
+    internal static bool GlobalsInTurn => ConfigurationManager.GetValue("BossCheats.GlobalsInTurn", true);
+
     // [BossCheats] ShowOwnValue (Niduus, 2026-10-26: "get the game to render custom values like a 666 blade"): AddCharm's
     // lookalike cast carries its own size in Spell.m_paramOverrides, so the game can show that number.
     internal static bool ShowOwnValue => ConfigurationManager.GetValue("BossCheats.ShowOwnValue", true);

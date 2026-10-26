@@ -1161,21 +1161,34 @@ internal sealed partial class ManagerWindow {
 
     private static readonly System.Text.RegularExpressions.Regex s_auraStat = new(@"^(?<w>[a-zA-Z ]+?)\s*(?<n>[+-]?\d+)\s*%?$");
 
-    /// <summary>"resist 20, accuracy 15": each stat and its number.</summary>
-    internal static List<(string Stat, int Amount)> ReadAuraStats(string text) {
-        var stats = new List<(string, int)>();
+    /// <summary>"resist 20, fire pierce 15": each stat, its school ("" = the block's) and its number.</summary>
+    internal static List<(string Stat, string School, int Amount)> ReadAuraStats(string text) {
+        var stats = new List<(string, string, int)>();
         foreach (var part in (text ?? "").Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
             var m = s_auraStat.Match(part);
-            if (m.Success && int.TryParse(m.Groups["n"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)) {
-                stats.Add((m.Groups["w"].Value.Trim().ToLowerInvariant(), n));
+            if (!m.Success || !int.TryParse(m.Groups["n"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)) {
+                continue;
             }
+
+            var word = m.Groups["w"].Value.Trim().ToLowerInvariant();
+            var school = "";
+            var first = word.Split(' ', 2);
+            if (first.Length == 2 && (first[0] == "all" || CheatSpecs.SCHOOLS.Any(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)))) {
+                school = first[0] == "all" ? "All" : CheatSpecs.SCHOOLS.First(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)).Value;
+                word = first[1].Trim();
+            }
+
+            stats.Add((word, school, n));
         }
 
         return stats;
     }
 
-    internal static string WriteAuraStats(IEnumerable<(string Stat, int Amount)> stats)
-        => string.Join(", ", stats.Select(s => $"{s.Stat} {s.Amount.ToString(CultureInfo.InvariantCulture)}"));
+    internal static string WriteAuraStats(IEnumerable<(string Stat, string School, int Amount)> stats)
+        => string.Join(", ", stats.Select(s => $"{(s.School.Length > 0 ? s.School.ToLowerInvariant() + " " : "")}{s.Stat} {s.Amount.ToString(CultureInfo.InvariantCulture)}"));
+
+    // A stat's school: the block's own, all schools, or one.
+    private static readonly (string Value, string Label)[] s_auraStatSchools = [("", "block's school"), ("All", "all schools"), .. CheatSpecs.SCHOOLS[1..]];
 
     /// <summary>
     /// An aura's stats (Niduus, 2026-10-26: "walk the player into what stats they want"): a pop-up of steps, one row a
@@ -1192,10 +1205,10 @@ internal sealed partial class ManagerWindow {
 
             string Label(string stat) => s_auraStatChoices.FirstOrDefault(c => c.Value == stat).Label?.Replace("more ", "") ?? stat;
 
-            return "aura stats: " + string.Join(", ", stats.Select(s => $"{(s.Amount < 0 ? "" : "+")}{s.Amount}% {Label(s.Stat)}"));
+            return "aura stats: " + string.Join(", ", stats.Select(s => $"{(s.Amount < 0 ? "" : "+")}{s.Amount}% {(s.School.Length > 0 ? s.School + " " : "")}{Label(s.Stat)}"));
         }
 
-        void Save(List<(string Stat, int Amount)> stats) {
+        void Save(List<(string Stat, string School, int Amount)> stats) {
             block.Set("AuraStats", WriteAuraStats(stats));
             BlockFields.SetPicker(button!, new TextBlock { Text = "🌀", VerticalAlignment = VerticalAlignment.Center }, Shown());
             changed();
@@ -1210,7 +1223,7 @@ internal sealed partial class ManagerWindow {
     }
 
     // The steps of the aura stats pop-up: a row a stat (pick it, how much, ✕), and a button for one more.
-    private static Control AuraStatsEditor(List<(string Stat, int Amount)> stats, Action<List<(string Stat, int Amount)>> save) {
+    private static Control AuraStatsEditor(List<(string Stat, string School, int Amount)> stats, Action<List<(string Stat, string School, int Amount)>> save) {
         var rows = new StackPanel { Spacing = 6 };
         void Render() {
             rows.Children.Clear();
@@ -1220,12 +1233,16 @@ internal sealed partial class ManagerWindow {
 
             for (var i = 0; i < stats.Count; i++) {
                 var at = i;
-                var stat = BlockFields.Choice(s_auraStatChoices, stats[at].Stat, v => {
-                    stats[at] = (v, stats[at].Amount);
+                var school = BlockFields.Choice(s_auraStatSchools, stats[at].School, v => {
+                    stats[at] = (stats[at].Stat, v, stats[at].Amount);
                     save(stats);
-                }, 210);
+                }, 140);
+                var stat = BlockFields.Choice(s_auraStatChoices, stats[at].Stat, v => {
+                    stats[at] = (v, stats[at].School, stats[at].Amount);
+                    save(stats);
+                }, 200);
                 var amount = BlockFields.Number(stats[at].Amount, n => {
-                    stats[at] = (stats[at].Stat, n);
+                    stats[at] = (stats[at].Stat, stats[at].School, n);
                     save(stats);
                 }, -1000, 1000, 64);
                 var remove = new Button { Content = "✕", Padding = new Thickness(8, 2), MinHeight = 26 };
@@ -1239,7 +1256,7 @@ internal sealed partial class ManagerWindow {
                     Orientation = Orientation.Horizontal, Spacing = 6,
                     Children = {
                         new TextBlock { Text = $"{at + 1}.", Width = 20, VerticalAlignment = VerticalAlignment.Center },
-                        stat, new TextBlock { Text = "by", VerticalAlignment = VerticalAlignment.Center }, amount,
+                        school, stat, new TextBlock { Text = "by", VerticalAlignment = VerticalAlignment.Center }, amount,
                         new TextBlock { Text = "%", VerticalAlignment = VerticalAlignment.Center }, remove,
                     },
                 });
@@ -1249,17 +1266,17 @@ internal sealed partial class ManagerWindow {
         var add = new Button { Content = "+ Add a stat", Padding = new Thickness(12, 4) };
         add.Click += (_, _) => {
             var next = s_auraStatChoices.Select(c => c.Value).FirstOrDefault(v => stats.All(s => s.Stat != v)) ?? "damage";
-            stats.Add((next, 10));
+            stats.Add((next, "", 10));
             save(stats);
             Render();
         };
         Render();
 
         return new StackPanel {
-            Spacing = 8, Width = 420,
+            Spacing = 8, Width = 560,
             Children = {
                 Sub("Step 1: click \"Add a stat\" for each stat the aura gives."),
-                Sub("Step 2: in each row, pick the stat and type how much. A minus number lowers it instead (such as -20 resist)."),
+                Sub("Step 2: in each row, pick the school (such as Shadow for Shadow damage, Fire for Fire pierce), the stat, and type how much. A minus number lowers it instead (such as -20 resist)."),
                 Sub("The number at the start of the block is extra damage on top. Set it to 0 for none."),
                 rows, add,
             },

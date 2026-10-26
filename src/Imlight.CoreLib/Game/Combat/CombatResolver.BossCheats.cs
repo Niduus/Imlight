@@ -1003,9 +1003,27 @@ public partial class CombatResolver {
 
         foreach (var action in combatActionList.m_actionList) {
             if (action is not null && !had.Contains(action)) {
-                action.m_interrupt = true;
+                action.m_interrupt = CastsAsInterrupt(action);
             }
         }
+    }
+
+    /// <summary>
+    /// Whether a cheat's action goes to the game as an interrupt. A global (bubble) does not ([BossCheats]
+    /// GlobalsInTurn): sent as an interrupt the game played its cast but never put the bubble up (Niduus, 2026-10-26:
+    /// "no global still. if it helps, it's a shadow global").
+    /// </summary>
+    internal static bool CastsAsInterrupt(CombatAction action) {
+        if (!BossCheats.CastsAsInterrupt) {
+            return false;
+        }
+
+        if (!BossCheats.GlobalsInTurn || action?.m_spell is not { } spell) {
+            return true;
+        }
+
+        return CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template
+               || template.m_effects?.Any(e => e is not null && e.m_effectTarget == kEffectTarget.kGlobal) != true;
     }
 
     // A cheat's steps, in order. A Wait step keeps the ones after it for the start of a later round (WaitedCheats).

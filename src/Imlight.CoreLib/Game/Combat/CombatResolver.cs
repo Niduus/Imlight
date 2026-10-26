@@ -1014,7 +1014,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
                     // A cheat's free cast for later (First, Last, Before, After) is out of the turn order too.
                     for (var i = before; delayed.Cheat && BossCheats.CastsAsInterrupt && i < combatActionList.m_actionList.Count; i++) {
-                        combatActionList.m_actionList[i].m_interrupt = true;
+                        combatActionList.m_actionList[i].m_interrupt = CastsAsInterrupt(combatActionList.m_actionList[i]);
                     }
                 }
                 catch (Exception e) {
