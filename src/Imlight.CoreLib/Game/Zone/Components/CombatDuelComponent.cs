@@ -483,8 +483,63 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // A wizard is in one battle at a time (Niduus, 2026-10-25: "a player can only be in ONE battle at a time"): two
+        // monsters touching a wizard at once, or a wizard walking between two circles, must not start a second one.
+        var startingPlayer = message.StartingParticipants?.Values.FirstOrDefault(x => x?.m_templateID == 1);
+        if (startingPlayer is null || !TryClaimPlayer(startingPlayer)) {
+            return;
+        }
+
         InitializeDuel(message.StartingParticipants);
         ActivateSigil();
+    }
+
+    // Which battle each wizard (by global id) is in, shared by every battle circle of every zone. A claim is the
+    // battle's once the wizard stands on one of its circles; until then it holds for CLAIM_HOLD_SECONDS, so two
+    // circles starting at the same moment cannot both take the wizard. A finished or left battle no longer holds.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, (CombatDuelComponent Battle, DateTime At)> s_playerBattles = new();
+    private const double CLAIM_HOLD_SECONDS = 5;
+
+    // Read from another battle's actor, so a circle list changing mid-read counts as "still holds".
+    private bool HoldsPlayer(ulong gid) {
+        try {
+            return _isActive && SubCircles is { } circles
+                && circles.Any(c => c is not null && c.Occupied && c.OccupiedTeam == CombatTeam.Player && !c.IsSummonedMinion
+                                    && c.ParticipantObject?.m_globalID.Full == gid);
+        } catch (InvalidOperationException) {
+            return true;
+        }
+    }
+
+    private bool TryClaimPlayer(CoreObject player) {
+        if (IsPvPDuel) {
+            return true;
+        }
+
+        var gid = player.m_globalID.Full;
+        while (true) {
+            var now = DateTime.UtcNow;
+            if (!s_playerBattles.TryGetValue(gid, out var claim)) {
+                if (s_playerBattles.TryAdd(gid, (this, now))) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            var held = claim.Battle != this
+                && (claim.Battle.HoldsPlayer(gid) || (now - claim.At).TotalSeconds < CLAIM_HOLD_SECONDS);
+            if (held) {
+                Logger.Information("Duel {0} | {1} is already in another battle; not added to this one.",
+                    Logger.Args(Duel?.m_duelID.Full ?? SigilId, player.m_debugName));
+
+                return false;
+            }
+
+            if (s_playerBattles.TryUpdate(gid, (this, now), claim)) {
+                return true;
+            }
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_STARTPVPMATCH))]
@@ -1729,6 +1784,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         var alreadyInDuel = SubCircles.Any(x => x?.ParticipantObject?.m_globalID == participantObject.m_globalID);
         if (alreadyInDuel) {
+            return;
+        }
+
+        if (isPlayer && !TryClaimPlayer(participantObject)) {
             return;
         }
 
