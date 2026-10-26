@@ -622,6 +622,13 @@ internal sealed partial class ManagerWindow {
             }
         }
 
+        // A field its sentence forgets still gets a box at the end (remove effects' "even protected ones" had none,
+        // Niduus 2026-10-26).
+        var shown = new HashSet<string>(parts.Where((_, i) => i % 2 == 1));
+        foreach (var field in spec.Fields.Where(f => !shown.Contains(f.Key))) {
+            view.Field(FieldFor(board, rule, block, field, Changed));
+        }
+
         return view;
     }
 
