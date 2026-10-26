@@ -43,6 +43,7 @@ using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
@@ -73,9 +74,11 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
         var account = wizard.Account;
         var equippedInputs = inputs.Where(input => wizard.EquipmentBehavior.HasItemEquipped(input.m_globalID)).ToList();
 
-        // The results are added before the inputs go. An equipped input already takes a backpack slot while worn.
-        var slotsNeeded = results.Count;
-        if (wizard.BackpackFreeSlots < slotsNeeded) {
+        // The inputs go before the results are added, so only the slots the request adds on balance must be free. A worn
+        // input takes a backpack slot too (Wizard.BackpackFreeSlots counts it), so a stitch of two items into one never
+        // needs a free slot, even in a full backpack.
+        var slotsNeeded = results.Count(BankRules.TakesBackpackSlot) - inputs.Count(BankRules.TakesBackpackSlot);
+        if (slotsNeeded > 0 && wizard.BackpackFreeSlots < slotsNeeded) {
             failure = $"{slotsNeeded} free inventory slots are needed and {wizard.BackpackFreeSlots} are free";
 
             return false;
@@ -145,16 +148,6 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
 
     private bool TryChangeBackpack(IReadOnlyList<WizClientObjectItem> inputs, IReadOnlyList<WizClientObjectItem> results,
                                    List<WizClientObjectItem> added, List<WizClientObjectItem> removed, out string failure) {
-        foreach (var result in results) {
-            if (!wizard.InventoryBehavior.AddItem(result)) {
-                failure = $"item {result.m_globalID.Full} could not be added to the inventory";
-
-                return false;
-            }
-
-            added.Add(result);
-        }
-
         foreach (var input in inputs) {
             if (!wizard.InventoryBehavior.RemoveItem(input)) {
                 failure = $"item {input.m_globalID.Full} is not in the inventory";
@@ -163,6 +156,16 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
             }
 
             removed.Add(input);
+        }
+
+        foreach (var result in results) {
+            if (!wizard.InventoryBehavior.AddItem(result)) {
+                failure = $"item {result.m_globalID.Full} could not be added to the inventory";
+
+                return false;
+            }
+
+            added.Add(result);
         }
 
         failure = string.Empty;
