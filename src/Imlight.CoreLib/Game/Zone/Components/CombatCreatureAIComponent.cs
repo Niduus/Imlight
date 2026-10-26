@@ -67,6 +67,12 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         ConfigurationManager.GetValue("Combat.HealingThreshhold", 0.75f));
     private float _healingPercentChance => ConfigurationManager.Settings["Combat.HealingPercentChance"].AsFloat();
     private float _preparePassChance => ConfigurationManager.Settings["Combat.PreparePassChance"].AsFloat();
+    // [Combat] NaturalAttackChance: how often a natural attack (the "NA ..." melee cards) is picked while a real
+    // attack spell can be paid for too. Picked like any other card, Skeletal Pirates swung almost every round.
+    private static float s_naturalAttackChance => ConfigurationManager.GetValue("Combat.NaturalAttackChance", 0.25f);
+    // [Combat] SaveUpChance: how often a creature that can only pay for its natural attack keeps its pips for the
+    // bigger attack spell in its hand instead.
+    private static float s_saveUpChance => ConfigurationManager.GetValue("Combat.SaveUpChance", 0.35f);
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();
     private readonly int _provokeAggroIncrease   = ConfigurationManager.Settings["Combat.ProvokeAggroIncrease"].AsInt();
@@ -358,6 +364,20 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             return msg;
         }
 
+        var realAttacks = castableDamageSpells.Where(x => !IsNaturalAttack(x)).ToList();
+        if (realAttacks.Count > 0 && realAttacks.Count < castableDamageSpells.Count
+            && _random.NextDouble() >= s_naturalAttackChance) {
+            castableDamageSpells = realAttacks;
+        }
+        else if (realAttacks.Count == 0 && _random.NextDouble() < s_saveUpChance
+                 && SpellEffectFilter.FilterSpellsByOutgoingDamage(_roundHand.m_spellList).Any(x => !IsNaturalAttack(x))) {
+            Logger.Debug("Duel {0} | Slot {1} | Only the natural attack is affordable. Saving pips for a bigger attack.",
+                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex));
+
+            msg.MoveType = (byte) CombatMoveType.Pass;
+            return msg;
+        }
+
         var targetIdx = GetMostHatedTarget();
         msg.SpellTarget = (byte) targetIdx;
 
@@ -524,6 +544,15 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         }
 
         return msg;
+    }
+
+    // A creature's natural attack: the game names those cards "NA <creature>" (and a few "<name> NA").
+    private static bool IsNaturalAttack(Spell spell) {
+        var name = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate template
+            ? (string) template.m_name ?? ""
+            : "";
+
+        return name.StartsWith("NA ", StringComparison.Ordinal) || name.EndsWith(" NA", StringComparison.Ordinal);
     }
 
     private List<Spell> GetCastableSpells(List<Spell> spells) {
