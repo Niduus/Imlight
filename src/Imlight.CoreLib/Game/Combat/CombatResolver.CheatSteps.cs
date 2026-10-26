@@ -803,6 +803,73 @@ public partial class CombatResolver {
             .FirstOrDefault();
     }
 
+    // The kinds of "add an effect of your own size" past blade, weakness, shield, trap, absorb, DoT, HoT and the globals
+    // (Niduus, 2026-10-26: "get expansive on the custom effects like being able to do pierce, flat and so on"): each
+    // one's effect, the sign of its amount and whether it helps whoever has it.
+    private static readonly Dictionary<string, (kSpellEffects Type, int Sign, bool Good)> s_moreKinds = new(StringComparer.OrdinalIgnoreCase) {
+        ["PierceBlade"] = (kSpellEffects.kModifyOutgoingArmorPiercing, 1, true),
+        ["PierceWeakness"] = (kSpellEffects.kModifyOutgoingArmorPiercing, -1, false),
+        ["PierceTrap"] = (kSpellEffects.kModifyIncomingArmorPiercing, 1, false),
+        ["PierceShield"] = (kSpellEffects.kModifyIncomingArmorPiercing, -1, true),
+        ["FlatBlade"] = (kSpellEffects.kModifyOutgoingDamageFlat, 1, true),
+        ["FlatWeakness"] = (kSpellEffects.kModifyOutgoingDamageFlat, -1, false),
+        ["FlatShield"] = (kSpellEffects.kModifyIncomingDamageFlat, -1, true),
+        ["FlatTrap"] = (kSpellEffects.kModifyIncomingDamageFlat, 1, false),
+        ["Accuracy"] = (kSpellEffects.kModifyAccuracy, 1, true),
+        ["Smoke"] = (kSpellEffects.kModifyAccuracy, -1, false),
+        ["Critical"] = (kSpellEffects.kCritBoost, 1, true),
+        ["CritBlock"] = (kSpellEffects.kCritBlock, 1, true),
+        ["HealBoost"] = (kSpellEffects.kModifyOutgoingHeal, 1, true),
+        ["HealWeakness"] = (kSpellEffects.kModifyOutgoingHeal, -1, false),
+        ["HealIn"] = (kSpellEffects.kModifyIncomingHeal, 1, true),
+        ["Infection"] = (kSpellEffects.kModifyIncomingHeal, -1, false),
+        ["FlatHeal"] = (kSpellEffects.kModifyOutgoingHealFlat, 1, true),
+        ["FlatHealIn"] = (kSpellEffects.kModifyIncomingHealFlat, 1, true),
+        ["DotShield"] = (kSpellEffects.kModifyIncomingDamageOverTime, -1, true),
+        ["DotTrap"] = (kSpellEffects.kModifyIncomingDamageOverTime, 1, false),
+        ["StunBlock"] = (kSpellEffects.kStunBlock, 1, true),
+        ["StunResist"] = (kSpellEffects.kStunResist, 1, true),
+        ["DamageCap"] = (kSpellEffects.kMaximumIncomingDamage, 1, true),
+        ["PowerPip"] = (kSpellEffects.kModifyPowerPipChance, 1, true),
+        ["PipConversion"] = (kSpellEffects.kPipConversion, 1, true),
+        ["DispelBlock"] = (kSpellEffects.kDispelBlock, 1, true),
+    };
+
+    // Every one-effect charm or ward of the game: what a new kind casts so the game draws it.
+    private static readonly Lazy<List<(string Name, SpellEffect Effect)>> s_charmLooks = new(() => {
+        try {
+            return [.. SpellFactory.AllSpellTemplates()
+                .Where(t => t.Template.m_effects is [{ } e] && e.GetType() == typeof(SpellEffect) && e.m_numRounds == 0
+                            && e.m_effectTarget is kEffectTarget.kSelf or kEffectTarget.kFriendlySingle or kEffectTarget.kEnemySingle
+                                or kEffectTarget.kFriendlySingleNotMe
+                            && SpellFactory.Exists((string) t.Template.m_name))
+                .Select(t => ((string) t.Template.m_name, t.Template.m_effects[0]))];
+        }
+        catch (Exception e) {
+            Logger.Error("Boss cheats | The charms and wards could not be listed: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    /// <summary>
+    /// The game's own one-effect spell of this effect type and sign (one aimed at a friend for a helpful one, at an
+    /// enemy for a harmful one when there is), its school first ("All" next), nearest in size. Null when the game has none.
+    /// </summary>
+    private static string? AutoLookalike(kSpellEffects type, int param, string? school, bool good) {
+        var wanted = string.IsNullOrWhiteSpace(school) ? "All" : school.Trim();
+
+        return s_charmLooks.Value
+            .Where(c => c.Effect.m_effectType == type && Math.Sign(c.Effect.m_effectParam) == Math.Sign(param))
+            .OrderByDescending(c => (c.Effect.m_effectTarget == kEffectTarget.kEnemySingle) != good)
+            .ThenByDescending(c => string.Equals((string) c.Effect.m_sDamageType, wanted, StringComparison.OrdinalIgnoreCase))
+            .ThenByDescending(c => string.Equals((string) c.Effect.m_sDamageType, "All", StringComparison.OrdinalIgnoreCase))
+            .ThenBy(c => Math.Abs(c.Effect.m_effectParam - param))
+            .ThenBy(c => c.Name.Length)
+            .Select(c => c.Name)
+            .FirstOrDefault();
+    }
+
     // A player's cheat global helps only the players' side ("+666% to all ally spells"). The game draws the lookalike at its
     // own size, so its size reaching the creatures made their hits much bigger on the server than on screen. A boss's
     // global stays a real one that helps everyone.
@@ -937,7 +1004,10 @@ public partial class CombatResolver {
                     var overRounds = step.Rounds > 0 ? step.Rounds : 3;
                     // As a real one: m_effectParam the whole amount, m_paramPerRound each round's share.
                     var perRound = amount / overRounds;
-                    var effect = (step.Kind ?? "").ToLowerInvariant() switch {
+                    var isMore = s_moreKinds.TryGetValue((step.Kind ?? "").Trim(), out var more);
+                    var effect = isMore
+                        ? CheatEffect(more.Type, more.Sign * amount, step.School, 0, more.Good)
+                        : (step.Kind ?? "").ToLowerInvariant() switch {
                         "dot" => CheatEffect(kSpellEffects.kDamageOverTime, amount, step.School, overRounds, good: false) with { m_paramPerRound = perRound },
                         "hot" => CheatEffect(kSpellEffects.kHealOverTime, amount, step.School, overRounds, good: true) with { m_paramPerRound = perRound },
                         "weakness" => CheatEffect(kSpellEffects.kModifyOutgoingDamage, -amount, step.School, 0, good: false),
@@ -949,7 +1019,9 @@ public partial class CombatResolver {
                     var fallback = effect.m_disposition == kHangingDisposition.kHarmful ? "Caster" : "Self";
                     var named = step.Spell.Length > 0 || step.SpellID != 0;
                     var aim = step.Target.Length > 0 ? step.Target : fallback;
-                    var lookName = named ? step.Spell : LookalikeName(step, aim.Equals("Self", StringComparison.OrdinalIgnoreCase), boss, bossName);
+                    var lookName = named ? step.Spell
+                        : isMore ? AutoLookalike(effect.m_effectType, effect.m_effectParam, step.School, more.Good) ?? ""
+                        : LookalikeName(step, aim.Equals("Self", StringComparison.OrdinalIgnoreCase), boss, bossName);
 
                     var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
 
