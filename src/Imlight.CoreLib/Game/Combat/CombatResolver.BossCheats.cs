@@ -1127,6 +1127,12 @@ public partial class CombatResolver {
                     Logger.Information("Duel {0} | Slot {1} | Boss moves on to phase {2}.",
                         Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, step.Phase));
                     break;
+                case "bubble":
+                    // Any words in a chat bubble over the speaker (Niduus, 2026-10-26: "custom boss words that appear over
+                    // me and in combat"). The game shows only its own lines as a boss line, so these go as local chat from
+                    // the speaker, timed for when the round gets to this point.
+                    SpeakBubble(boss, step, trigger, receiver, cinematicTimeSoFar + cinematicTime);
+                    break;
                 case "say":
                     if (step.Line.Length > 0) {
                         if (CommandAnnounceProtocol.TryResolve(step.Line, out var line, out _, out var problem)) {
@@ -1606,6 +1612,32 @@ public partial class CombatResolver {
     }
 
     // Say's Text: the words go to every player's chat. They are the cheat's own words, so the Announcements tab leaves them.
+    private void SpeakBubble(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver,
+                             float afterSeconds) {
+        var said = AnnounceText(step.Text, boss, trigger);
+        if (said.Length == 0) {
+            return;
+        }
+
+        var speakers = StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)
+            .Where(c => c?.ParticipantObject is not null).ToList();
+        var players = _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null)
+            .Select(c => c.ParticipantActor).ToList();
+        foreach (var speaker in speakers) {
+            var message = new GAME_5_PROTOCOL.MSG_RADIALCHAT {
+                Message = (Imcodec.IO.ByteString) said, SourceID = speaker.ParticipantObject.m_globalID, SourceName = (Imcodec.IO.ByteString) FighterName(speaker), Filter = 2,
+            };
+            var delay = TimeSpan.FromSeconds(Math.Max(0, afterSeconds));
+            _ = System.Threading.Tasks.Task.Delay(delay).ContinueWith(_ => {
+                foreach (var player in players) {
+                    player.Tell(message);
+                }
+            });
+            Logger.Information("Duel {0} | Slot {1} says \"{2}\" in a bubble, {3:0.0} s into the round's play.",
+                Logger.Args(_duel.m_duelID.Full, speaker.SlotIndex, said, delay.TotalSeconds));
+        }
+    }
+
     private void TellPlayers(string text) {
         Tools.ServerMessages.Own(text);
         foreach (var player in _subCircles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && c.ParticipantActor is not null)) {
