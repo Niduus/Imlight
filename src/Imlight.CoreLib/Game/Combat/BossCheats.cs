@@ -529,6 +529,11 @@ internal static class BossCheats {
 
     internal static bool Enabled => ConfigurationManager.GetValue("BossCheats.Enabled", true);
 
+    // [BossCheats] CastsAsInterrupt (Niduus, 2026-10-26: "It visually shows a DoT/HoT tick during a cheat"): a cheat's
+    // casts go to the game as interrupts (CombatAction.m_interrupt), out of the turn order, as the game's own boss cheats;
+    // sent as plain casts, the game took each for the caster's turn and played its over-time ticks again.
+    internal static bool CastsAsInterrupt => ConfigurationManager.GetValue("BossCheats.CastsAsInterrupt", true);
+
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,
         AllowTrailingCommas = true,

@@ -961,11 +961,30 @@ public partial class CombatResolver {
                                 CombatActionListObj combatActionList, float cinematicTimeSoFar, CombatDuelSubCircle matched = null) {
         var (owner, wasMatched) = (_cheatOwner, _cheatMatched);
         (_cheatOwner, _cheatMatched) = (boss, matched);
+        var had = combatActionList.m_actionList.ToHashSet(ReferenceEqualityComparer.Instance);
         try {
             return RunCheatStepsInOrder(boss, cheat, steps, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar);
         }
         finally {
             (_cheatOwner, _cheatMatched) = (owner, wasMatched);
+            MarkCheatCasts(combatActionList, had);
+        }
+    }
+
+    /// <summary>
+    /// The actions a cheat added (its casts, their fizzles and lines) go to the game as interrupts, out of the turn
+    /// order ([BossCheats] CastsAsInterrupt), so the game does not take them for the caster's turn and play its
+    /// damage and heal over time ticks with them; the server ticks those once, on the caster's own turn.
+    /// </summary>
+    private static void MarkCheatCasts(CombatActionListObj combatActionList, IReadOnlySet<object> had) {
+        if (!BossCheats.CastsAsInterrupt) {
+            return;
+        }
+
+        foreach (var action in combatActionList.m_actionList) {
+            if (action is not null && !had.Contains(action)) {
+                action.m_interrupt = true;
+            }
         }
     }
 

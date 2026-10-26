@@ -55,7 +55,13 @@ public partial class CombatResolver {
             try {
                 target._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar + cinematicTime;
                 var action = new QueuedCombatAction { SpellCaster = target, SelectedTarget = target, Spell = spell, SpellTemplate = template };
+                var before = combatActionList.m_actionList.Count;
                 cinematicTime += HandleSuccessfulAction(action, combatActionList, alreadyPaid: true);
+                // A cheat's cast, out of the turn order as the others (BossCheats.CastsAsInterrupt).
+                for (var i = before; BossCheats.CastsAsInterrupt && i < combatActionList.m_actionList.Count; i++) {
+                    combatActionList.m_actionList[i].m_interrupt = true;
+                }
+
                 Logger.Information("Duel {0} | Slot {1} | {2} sent now, so the game shows the new form.",
                     Logger.Args(_duel.m_duelID.Full, target.SlotIndex, (string) template.m_name));
             }
