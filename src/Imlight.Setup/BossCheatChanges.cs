@@ -551,6 +551,27 @@ internal sealed class CheatRule {
                 values.Remove("DispelImmune");
             }
 
+            // An aura made with "add an effect of your own size" is now the aura block (Niduus, 2026-10-26: "Make them their
+            // own blocks instead"); its amount was its damage.
+            if (spec == "D.AddCharm" && BossChanges.FindIn(values, "Kind") is JsonValue kind && kind.ToString().Equals("Aura", StringComparison.OrdinalIgnoreCase)) {
+                spec = "D.Aura";
+                var stats = BossChanges.FindIn(values, "AuraStats") is JsonValue st ? st.ToString() : "";
+                var amount = BossChanges.FindIn(values, "Amount") is JsonValue am && am.TryGetValue<int>(out var n) ? n : 0;
+                var school = BossChanges.FindIn(values, "School") is JsonValue sc ? sc.ToString().Trim().ToLowerInvariant() : "";
+                if (amount != 0 && !System.Text.RegularExpressions.Regex.IsMatch(stats, @"(^|,|\s)damage\s", System.Text.RegularExpressions.RegexOptions.IgnoreCase)) {
+                    var damage = $"{(school.Length > 0 ? school + " " : "")}damage {amount}";
+                    stats = stats.Trim().Length > 0 ? $"{damage}, {stats.Trim()}" : damage;
+                }
+
+                foreach (var key in new[] { "Kind", "Amount", "School", "Look", "AuraStats" }) {
+                    if (values.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Key is { } k) {
+                        values.Remove(k);
+                    }
+                }
+
+                values["AuraStats"] = stats;
+            }
+
             if (spec is null) {
                 // An action this app does not know is kept as it is, under its own name.
                 values["Do"] = what;

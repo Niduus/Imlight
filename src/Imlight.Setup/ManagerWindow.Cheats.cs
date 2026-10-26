@@ -1216,7 +1216,7 @@ internal sealed partial class ManagerWindow {
 
         button = BlockFields.Picker(new TextBlock { Text = "🌀", VerticalAlignment = VerticalAlignment.Center }, Shown(),
             _ => AuraStatsEditor(ReadAuraStats(block.Text("AuraStats")), Save), "Click to pick the aura's stats, one by one");
-        button.IsVisible = block.Text("Kind") == "Aura";
+        button.IsVisible = block.Spec == "D.Aura" || block.Text("Kind") == "Aura";
         _auraPickers.AddOrUpdate(block, button);
 
         return button;

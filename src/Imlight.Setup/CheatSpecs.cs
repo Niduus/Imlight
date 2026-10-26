@@ -119,8 +119,7 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_announceWho = [("", "everyone in the battle"), ("Players", "only the players' side")];
     private static readonly (string, string)[] s_addKinds = [("Blade", "blade"), ("Weakness", "weakness"), ("Shield", "shield"), ("Trap", "trap"), ("Absorb", "absorb"),
         ("DoT", "damage over time"), ("HoT", "heal over time"), ("Global", "global (more damage)"), ("HealGlobal", "global (more healing)"),
-        ("GloomGlobal", "global (less healing)"),
-        ("Aura", "aura (several stats)")];
+        ("GloomGlobal", "global (less healing)")];
     private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy")];
     private static readonly (string, string)[] s_timings = [
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
@@ -570,6 +569,11 @@ internal static class CheatSpecs {
                 : b.Text("Kind") is "DoT" or "HoT"
                 ? $"put a {N(b.Number("Amount"))} {SchoolWord(b)}{LabelOf(s_addKinds, b.Text("Kind"))} over {Math.Max(1, b.Number("Rounds") > 0 ? b.Number("Rounds") : 3)} rounds{Target(b)}{(b.Text("Spell").Length > 0 ? $" (shown as {b.Text("Spell")})" : "")}"
                 : $"put a {b.Number("Amount")}{(b.Text("Kind") == "Absorb" ? "" : "%")} {SchoolWord(b)}{LabelOf(s_addKinds, b.Text("Kind"))}{Target(b)}{(b.Text("Spell").Length > 0 ? $" (shown as {b.Text("Spell")})" : "")}{(b.Text("Look").Length > 0 && b.Text("Spell").Length == 0 ? $", {b.Text("Look")} cast" : "")}"),
+        new("D.Aura", BlockKind.Do, "sparkle", "aura", "An aura of its own: one or more stats at once for its rounds (the shown aura's own if 0), never used up, and one aura at a time as in the game (a new one takes the old one's place). Pick each stat in the 🌀 list: its school (\"block's school\" = all), the stat (damage, resist, accuracy, pierce, critical, critical block, healing given, healing taken, stun resist, power pip chance) and how much; a minus number lowers it. Example: Shadow damage 100, Fire resist 20, accuracy 15. Works on bosses, creatures and players alike. On itself, the game's aura most like it is cast so the game draws it (or \"shown as\"), with your numbers on the stats that aura has; on anyone else it goes on unseen. Silent: no casting animation.",
+            "Put an aura on {Target} for {Rounds} rounds {AuraStats} shown as {Spell} {Silent}",
+            [F("Target", CheatFieldType.Target, "Self"), F("Rounds", CheatFieldType.Number, 0, max: 99), F("AuraStats", CheatFieldType.AuraStats, "damage 25"),
+             F("Spell", CheatFieldType.Words, ""), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"put an aura of {(b.Text("AuraStats").Length > 0 ? b.Text("AuraStats") : "no stats")}{Target(b)} for {(b.Number("Rounds") > 0 ? $"{b.Number("Rounds")} rounds" : "its own rounds")}{(b.Text("Spell").Length > 0 ? $" (shown as {b.Text("Spell")})" : "")}{(b.Flag("Silent") ? ", silent" : "")}"),
         new("D.IfCleared", BlockKind.Do, "broom", "only if something came off", "Put it after \"remove effects\" (or remove charms, wards or auras): the next blocks (how many) go off only if at least this many effects came off. With \"once for each\" they go off once for each effect that came off. Example, Reap the Whirlwind's \"Clear DoT for +55% Storm blade\": remove 1 damage over time from whoever the spell was aimed at, then this block (next 1 block), then put a 55% Storm blade on itself.",
             "Do the next {Count} blocks only if at least {Amount} effects came off {Each}", [new("Count", CheatFieldType.Number, 1, Max: 20, Min: 1), new("Amount", CheatFieldType.Number, 1, Max: 99, Min: 1), new("Each", CheatFieldType.Toggle, false, Label: "once for each")],
             b => b.Flag("Each") ? $"(the next {Math.Max(1, b.Number("Count"))} once for each effect that came off)"

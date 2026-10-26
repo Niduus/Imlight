@@ -920,6 +920,7 @@ public partial class CombatResolver {
 
                     return true;
                 }
+                case "aura":
                 case "addcharm" when (step.Kind ?? "").Trim().Equals("Aura", StringComparison.OrdinalIgnoreCase):
                     cinematicTime = AddCustomAura(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
 

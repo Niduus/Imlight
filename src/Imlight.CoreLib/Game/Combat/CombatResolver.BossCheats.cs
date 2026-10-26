@@ -1290,6 +1290,7 @@ public partial class CombatResolver {
             "removeauras" => $"remove auras{on}",
             "announce" => $"announce \"{step.Text}\" to the battle ({(step.Style.Length > 0 ? step.Style : "Box")}{(step.Who.Length > 0 ? $", {step.Who}" : "")})",
             "removeeffects" => $"remove {(step.Kind.Length > 0 ? step.Kind : "all")} effects x{(step.Count > 0 ? step.Count : "all")}{(step.Bypass ? " (even protected)" : "")}{on}",
+            "aura" => $"put an aura of {step.AuraStats}{on}",
             "addcharm" when CheatLookalikes.IsGlobal(step.Kind)
                 => $"put up a {(step.Kind.Equals("GloomGlobal", StringComparison.OrdinalIgnoreCase) ? -Math.Abs(step.Amount) : Math.Abs(step.Amount))}% {SchoolText(step.School)}{CheatLookalikes.KindWord(step.Kind)}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
             "addcharm" => step.Kind.ToLowerInvariant() is "dot" or "hot"
