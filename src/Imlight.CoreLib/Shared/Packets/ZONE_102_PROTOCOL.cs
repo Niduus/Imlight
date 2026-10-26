@@ -800,6 +800,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public string Variant;
 
         /// <summary>
+        /// A dungeon's way out that names no destination: the player goes back to where they were before the dungeon
+        /// (the safe spot outside any instance). DestinationZone is filled in by the player's session.
+        /// </summary>
+        public bool LeaveInstance;
+
+        /// <summary>
         /// How the client is asked to load the house zone the player is entering. Null for every ordinary zone.
         /// </summary>
         public HouseEntry HouseEntry;

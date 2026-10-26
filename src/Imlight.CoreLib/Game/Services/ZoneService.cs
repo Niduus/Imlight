@@ -230,6 +230,24 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return null;
         }
 
+        // A dungeon's way out that names no destination goes back to the last spot outside any instance.
+        if (message.LeaveInstance && string.IsNullOrEmpty(message.DestinationZone)) {
+            var leaving = GetActiveWizard();
+            if (!_currentZoneIsInstance || leaving is null || string.IsNullOrEmpty(leaving.SafeZone)
+                || string.IsNullOrEmpty(leaving.SafeLocation) || HouseZoneIndex.IsHouseZone(leaving.SafeZone)) {
+                Logger.Warning("Session {0}: a way out of {1} names no destination and there is no spot outside to go back to.",
+                    Logger.Args(SessionActor.SessionID, leaving?.Zone));
+
+                return null;
+            }
+
+            Logger.Information("Session {0}: the way out of {1} names no destination; going back to {2}.",
+                Logger.Args(SessionActor.SessionID, leaving.Zone, leaving.SafeZone));
+            message.DestinationZone = leaving.SafeZone;
+            message.DestinationLocation = leaving.SafeLocation;
+            message.OwnerCharId = leaving.CharId;
+        }
+
         // A trigger or a script that teleports into a house zone names no lot, so the player's own house in that zone is used.
         if (message.SendToClient && message.HouseEntry is null && HouseZoneIndex.IsHouseZone(message.DestinationZone)
             && !TryUseOwnHouse(message)) {
@@ -245,8 +263,28 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return null;
         }
 
+        // A player who went into a dungeon with a team is in the copy of the player who started it. Walking on to the
+        // dungeon's next room keeps them in that copy, so the team stays together (each player went to a copy of their
+        // own before, because the room's door names no owner).
+        var teamOwner = TeamDungeonOwner(message);
+        if (teamOwner != 0) {
+            message.OwnerCharId = teamOwner;
+        }
+
         // Sending the server transfer request to the server will allocate and load the zone.
         var zoneDetails = AskServer<ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP>(message);
+        if (teamOwner != 0 && zoneDetails.ErrorCode == 0) {
+            var wizard = GetActiveWizard();
+            if (zoneDetails.IsInstance) {
+                ZoneInstanceOwners.Assign(wizard.CharId, message.DestinationZone, teamOwner);
+                Logger.Information("Session {0}: {1} goes on to {2} in the dungeon copy of {3}.",
+                    Logger.Args(SessionActor.SessionID, wizard.CharId, message.DestinationZone, teamOwner));
+            }
+            else {
+                ZoneInstanceOwners.Clear(wizard.CharId, message.DestinationZone);
+            }
+        }
+
         if (message.SendToClient && zoneDetails.ErrorCode == 0) {
             // Check if the destination zone is the same as the current zone. If so, just teleport the player.
             var wizard = GetActiveWizard();
@@ -273,6 +311,22 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         Sender.Tell(zoneDetails);
 
         return zoneDetails;
+    }
+
+    // The owner of the dungeon copy the player is in, when it is a teammate's and the transfer is an ordinary one out of
+    // it (a door or teleport of the room, which names the player as owner); 0 otherwise.
+    private ulong TeamDungeonOwner(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
+        if (!message.SendToClient || message.IsPrivate || message.HouseEntry is not null || !_currentZoneIsInstance) {
+            return 0;
+        }
+
+        var wizard = GetActiveWizard();
+        if (wizard is null || message.OwnerCharId != wizard.CharId || HouseZoneIndex.IsHouseZone(wizard.Zone)
+            || !ZoneInstanceOwners.TryGetOwner(wizard.CharId, wizard.Zone, out var owner) || owner == wizard.CharId) {
+            return 0;
+        }
+
+        return owner;
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_ZONETRANSFERACK))]

@@ -1,0 +1,4465 @@
+[
+ {
+  "ZoneName": "Arcanum/AR_Z01_Hub",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportTo_DeadArchive",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Arcanum/Interiors/AR_Z01_DeadArchive",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z02_HighRoad",
+  "Teleports": [
+   {
+    "TriggerName": "Jabberwock Teleport",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z02_JabberwockLair",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AV_02_FireSpitter",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z02_FireSpitter",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AV_02_TowerHarlequin",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z02_TowerHarlequin",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AV_Z02_RedThornTower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z02_TowerRedThorn",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AV_Z02_Well",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z02_Well",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z03_CaerLyon",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportTo__ArchnalHideout",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z03_ArchnalHideout",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To HarvestHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z03_HarvestHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To TowerDarkKnight",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z03_TowerDarkKnight",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z04_TheWild",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil-Blue-Dahlia",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z04_TowerBlueDahlia",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil-WhiteOwlTower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z04_WhiteOwlTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "SigilToDreadKeep",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z04_TowerDreadKeep",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z05_TheWyrd",
+  "Teleports": [
+   {
+    "TriggerName": "Lost_Abbey_Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z05_LostAbbey",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To Tomb of the Nameless",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z05_TombNameless",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z07_OuterYard",
+  "Teleports": [
+   {
+    "TriggerName": "AV-Broken-Tower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z07_TowerBroken",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "AV-Overlook-Tower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z07_TowerOverlook",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "AV-PrisonTowerSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z07_TowerPrison",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z08_LakeShore",
+  "Teleports": [
+   {
+    "TriggerName": "To AV_Z08_BogWitch",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z08_BogWitch",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Avalon/AV_Z10_Catacombs",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_DeadKingsCrypt",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Avalon/Interiors/AV_Z10_DeadKingsCrypt",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z00_Zocalo",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_To_CryingSkyShrine",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z00_CryingSkyShrine",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z01_ThreePoints",
+  "Teleports": [
+   {
+    "TriggerName": "To AZ_Z01_BlackSunPyramid_Room01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z01_BlackSunPyramid_Room01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ_Z01_BlackSunPyramid_Room02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z01_BlackSunPyramid_Room02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z02_Cenote",
+  "Teleports": [
+   {
+    "TriggerName": "To AZ-Z02-Mine2",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z02_Mine02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ-Z02-Mine3",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z02_Mine03",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To WhiteFirePyramid",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z02_WhiteFirePyramid",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z03_MangroveMarsh",
+  "Teleports": [
+   {
+    "TriggerName": "To AZ_Z03_Clearing01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z03_Clearing01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ_Z03_Tomb04",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z03_Tomb04",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z04_SaltmeadowSwamp",
+  "Teleports": [
+   {
+    "TriggerName": "AZ_Z04_Clearing01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_Clearing01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "AZ_Z04_Clearing02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_Clearing02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "AZ_Z04_MonquistanHold",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_MonquistanShipHold",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil-RiverCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_CaveByRiver",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ-Z04_TreeOfSecrets01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_TreeOfSecrets01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ-Z04_TreeOfSecrets02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_TreeOfSecrets02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ-Z04_TreeOfSecrets03",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_TreeOfSecrets03",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ_Z04_DeadTree",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z04_DeadTreeCavern",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z05_ZultunDock",
+  "Teleports": [
+   {
+    "TriggerName": "AZ-Z05-Charred Tower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z05_CharredTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z06_CloudburstIsland",
+  "Teleports": [
+   {
+    "TriggerName": "To HouseofFlowers",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z06_HouseOfFlowers",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z07_TierraDeBrea",
+  "Teleports": [
+   {
+    "TriggerName": "Cipactli",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z07_CipactliCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z08_PitchBlackLake",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil-CorazonCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z08_CorazonCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil-MakTheKnife",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z08_MakKnifeCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil-Tzapotec",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z08_CaveOfTzapotec",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_WatermurkGrotto",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z08_WatermurkGrotto",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z10_FloatingMountains",
+  "Teleports": [
+   {
+    "TriggerName": "AZ-Sigil-ToSevenStabs",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z10_SevenStabs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/AZ_Z11_TwinGiants",
+  "Teleports": [
+   {
+    "TriggerName": "To AZ-ButterflyShrine",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z11_Butterfly_Shrine",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To AZ-Z12-Xibalba",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/AZ_Z12_Xibalba",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger01",
+    "Teleport": {
+     "m_destinationLoc": "Target01",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger05",
+    "Teleport": {
+     "m_destinationLoc": "Target05",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/Interiors/AZ_Z01_JuraPalace_Room01",
+  "Teleports": [
+   {
+    "TriggerName": "To AZ_Z00_JuraPalace_Room02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z01_JuraPalace_Room02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Azteca/Interiors/AZ_Z02_GlimmeringChamber",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location",
+    "Teleport": {
+     "m_destinationLoc": "Target location",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z02_GlimmeringChamber",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Hub",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport To TempleOfTheSun",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/CL_Z11_Temple_Of_The_Sun",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Z03_District_Of_The_Stars",
+  "Teleports": [
+   {
+    "TriggerName": "CL_Z03i2_District_of_the_Stars_Underground",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CL_Z03i2_District_of_the_Stars",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Z05_The_Floating_Land",
+  "Teleports": [
+   {
+    "TriggerName": "To_CL_Z05i1_FloatingLand",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CL_Z05i1_FloatingLand",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_CL_Z05i2_FloatingLand",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CL_Z05i2_FloatingLand",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Z07_Storm_Lord_Temple",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil To StormSurgeCavern",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CS_StormSurgeCaverns",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Z09_Science_Center",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger CL-STRM-C01-001",
+    "Teleport": {
+     "m_destinationLoc": "Target location CL-STRM-C01-001",
+     "m_destinationZone": "Celestia/CL_Z09_Science_Center",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/CL_Z10_Kingdom_Of_The_Crabs",
+  "Teleports": [
+   {
+    "TriggerName": "CL_Z10i08-Hexfin",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CL_Z10i8_Kingdom_Of_The_Crabs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_VicegripsHideout",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Celestia/Interiors/CL_Z10I12_VicegripsHideout",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Celestia/Interiors/CL_Z10I12_VicegripsHideout",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportSource_Exit",
+    "Teleport": {
+     "m_destinationLoc": "TargetLocation_From_VicegripsHideout",
+     "m_destinationZone": "Celestia/CL_Z10_Kingdom_Of_The_Crabs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "DragonSpire/DS_A3_Kings/DS_A3Z1_CrystalGrove",
+  "Teleports": [
+   {
+    "TriggerName": "ToTower4FromDS_CrystalGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_CrystalGrove_Gauntlet_7Room",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToTower6FromDS_CrystalGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_CrystalGrove_Gauntlet_7Room",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToTower7FromDS_CrystalGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_CrystalGrove_Gauntlet_7Room",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z00_Aeriel_HUB",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to EM_TrollRallyCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_TrollRallyCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport toZ01_BeastmanCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z01_Jungle",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to EM_Z01_CrushersLair",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_CrushersLair",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z01_HiddenClearing",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_HiddenClearing",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior EM_Z01_JungleClearing01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_JungleClearing01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil EM_Z01_TowerOfSycorax",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_TowerOfSycorax",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z02_Zanadu",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_To_Gatehouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_Gatehouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to ByrinsHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_ByrinsHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to NuhnesHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_NuhnesHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Palace",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_Palace",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to TwylightsHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_TwylightsHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to ZigiHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_ZigisHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_KanesHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_KanesHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_ShadowHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_ShadowHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z03_OuterAthanor",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to EM_Z03_IceAccessTunnel",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_IceAccessTunnel",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z03_IceCuttingComplex",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_IceCuttingComplex",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z03_IceSupplyCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_IceSupplyCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z03_MagicalArchive",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_MagicalArchive",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z03_MeltingHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_MeltingHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z03_Vault",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_Vault",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z04_InnerAthanor",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-Cistern",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z04_Cistern",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-ToTempleOfLight",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z04_I03_LightTemple",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z07_NimbusCitadel",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-AudienceChamber",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z07_AudienceChambers",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-ToPrivateWing",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z07_PrivateWing",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z08_SWAeroplains",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_CretanBullField",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z08_CretanBullField",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_2_DarkCloudBase",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z08_DarkCloudBase",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_2_MeowlsDen",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z08_MeowlsDen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z09_NWAeroplains",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_HumongishBattleField",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z09_HumongishfrogBattlefield",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_2_VoltergeistCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z09_VoltergeistCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z12_LandingZone",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportToEM_Z12_I09_Clearing_C",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z12_I09_Clearing_C",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z13_SamsaraDestroyed",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport toEM_Z13_PossessedShrine",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/Em_Z13_PossessedShrine",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z14_ChaosJungle",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to EM_Z12_GladeOfShavarram",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z12_GladeOfShavarram",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z14_Cave Refuge",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z14_CaveRefuge",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to EM_Z14_FeralClearing",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z14_FeralClearing",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/EM_Z16_Husk",
+  "Teleports": [
+   {
+    "TriggerName": "To_AstralGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z16_I01_AstralGrove",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_ElementalGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z16_I02_ElementalGrove",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_SpiritGrove",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z16_I03_SpiritualGrove",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z01_BeastmanStockade",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil EM_Z01_MountainPath",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil Winch01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil Winch02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z01_MonkeySpiderCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Z01_BookwormsCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_BookwormsCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Z01_MonkeySpiderNest",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_MonkeySpiderNest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger Exit",
+    "Teleport": {
+     "m_destinationLoc": "From BeastMountain",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanStockade",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z01_MountainVillage",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil EM_CalibansFort",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z01_CalibansFort",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z02_BeaconHope",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_Down_1stFloor",
+    "Teleport": {
+     "m_destinationLoc": "Target_Down_1stFloor",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_Down_2ndFloor",
+    "Teleport": {
+     "m_destinationLoc": "Target_Down_2ndFloor",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_Up_2ndFloor",
+    "Teleport": {
+     "m_destinationLoc": "Target_Up_2ndFloor",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_Up_3rdFloor",
+    "Teleport": {
+     "m_destinationLoc": "Target_Up_3rdFloor",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z02_Sewers",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to BatCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BatCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to ChargingStation",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_ChargingStation",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z03_IceGreatHall",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to EM_Z03_IceCouncilChamber",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z03_IceCouncilChamber",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z04_Cistern",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location-ExitingCistern",
+    "Teleport": {
+     "m_destinationLoc": "Target location-FromCistern",
+     "m_destinationZone": "Empyrea/EM_Z04_InnerAthanor",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z07_AudienceChambers",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger-TeleportExit",
+    "Teleport": {
+     "m_destinationLoc": "Target location-FromAudenceChamber",
+     "m_destinationZone": "Empyrea/EM_Z07_NimbusCitadel",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z07_MilitaryStronghold",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-TrainingGrounds",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z07_TrainingGrounds",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z07_SecondaryDock",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-ToRearCourtyard",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z07_RearCourtyard",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z07_TechnologistAcademy",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-AcademyCombat",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z07_AcademyCombat",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z09_HelenasCamp",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_HelenaBattle",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z09_HelenasBattle",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z09_HumongishfrogBattlefield",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2nd_Exit",
+    "Teleport": {
+     "m_destinationLoc": "Target_From_HumongishBattlefield",
+     "m_destinationZone": "Empyrea/EM_Z09_NWAeroplains",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Empyrea/Interiors/EM_Z12_DyingJungle",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportTo_EM_Z12_AshenCaves",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z12_AshenCaves",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportTo_EM_Z12_DyingGlade",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "G14_HS/HS_Z01_ZigazagUpper",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to HouseOfScales",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "G14_HS/HS_Z04_HouseOfScales",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_AbandCity/GH_EntranceHall",
+  "Teleports": [
+   {
+    "TriggerName": "ToHallofKings",
+    "Teleport": {
+     "m_destinationLoc": "FromEntranceHall",
+     "m_destinationZone": "Grizzleheim/GH_AbandCity/GH_HallofKings",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToLabyrinth",
+    "Teleport": {
+     "m_destinationLoc": "FromEntranceHall",
+     "m_destinationZone": "Grizzleheim/GH_AbandCity/GH_Labyrinth",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_HFjord/GH_HFjord",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil to Nastrond",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/GH_HFjord/GH_Nastrond",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_HFjord/GH_Nordrilund",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_GH_Nord_Cave01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/GH_HFjord/Interiors/GH_Nord_Cave01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_HFjord/GH_Vestrilund",
+  "Teleports": [
+   {
+    "TriggerName": "VestriHallSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/GH_HFjord/Interiors/GH_Vest_Vestri_Hall",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_Hero",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportToHeroT2",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportToHeroT3",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T3",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportToHeroT4",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T4",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportToHeroT5",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T5",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportToHeroT6",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T6",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_Raven",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_SecludedCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_SecludedCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT1",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T1",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT10",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T10",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT11",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T11",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT2",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT3",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T3",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT4",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T4",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT5",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T5",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT6",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T6",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT7",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T7",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToRavenFortressT9",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T9",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Grizzleheim/GH_RedClaw",
+  "Teleports": [
+   {
+    "TriggerName": "ToGH_RedClaw_4Room",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_4Room",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToGH_RedClaw_T1",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T1",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToGH_RedClaw_T2",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToGH_RedClaw_T4",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T4",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ToGH_Redclaw_T3",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T3",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z00_CavityDining",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to KM_Z00_CavityPassage",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_CavityPassage",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z00_Glockenspiel_01",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger Level02",
+    "Teleport": {
+     "m_destinationLoc": "Target location Level 2",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_Glockenspiel_01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger Level03",
+    "Teleport": {
+     "m_destinationLoc": "Target location Level 3",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_Glockenspiel_01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z03_HangryGobblerCave_01",
+  "Teleports": [
+   {
+    "TriggerName": "To_GumdropForest(Exit)",
+    "Teleport": {
+     "m_destinationLoc": "FromGobblerCave",
+     "m_destinationZone": "Karamelle/KM_Z03_GumdropForest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z04_GummyPlant",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-To PowerRoom",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z04_PowerRoom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z05_TreacleFoundry",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_To_OrsonOffice",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z05_OrsonOffice",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_PumpRoom",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z05_PumpRoom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z09_FactoryFarm",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil To_FarmersHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_FarmersHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z09_HotHouse",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger Level02",
+    "Teleport": {
+     "m_destinationLoc": "Target location Level02",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_HotHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/Interiors/KM_Z09_Silo",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger Level02",
+    "Teleport": {
+     "m_destinationLoc": "Target location Level02",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_Silo",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z00_HUB",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Glockenspiel",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_Glockenspiel_01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil The_Lobby",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_TheLobby",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to ProductionJunction",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z00_ProductionJunction",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z03_GumdropForest",
+  "Teleports": [
+   {
+    "TriggerName": "TeleportToGobblerCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z03_HangryGobblerCave_01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_PipelineCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z03_I02_PipelineCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_TreemuggerHideout",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z03_I03_TreemuggerHideout",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z04_Sweetzburg",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-IceCream",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z04_IceCreamParlor",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-Jamburglar",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z04_Jamburglar",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-UweWorkshop",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z04_UwesWorkshop",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z05_Nibbleheim",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_To_Choc Shoppe",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z05_ChocShoppe",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_PipeJunction",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z05_PipeJunction",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_ToffeeHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z05_ToffeeHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z07_Gutenstadt",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-GutenShoppe",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z07_GutenShoppe",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-HeidisHideout",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z07_HeidisHideout",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Interior sigil-ToCupcake",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z07_CupcakeFactory",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z08_LicoriceForest",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil To_RosinasHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z08_RosinasHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_CinnamonTrollCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z08_CinnamonTrollCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z09_CandyCornFarm",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil KM_Z09_Hot_House",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_HotHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_ChocolateMooitaurCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_ChocolateMooitaurCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_KM_Z09_Silo",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z09_Silo",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Karamelle/KM_Z10_Gobblerton",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_to_GobblertonLibrary",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z10_GobblertonLibrary",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_to_ThroneRoomB",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z10_ThroneRoom_B",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_to_UnderwaterGrotto",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Karamelle/Interiors/KM_Z10_UnderwaterGrotto",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_To_KR_I07_Mausoleum03",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room03",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_To_Mausoleum01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_To_Mausoleum02",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_ButternutTower",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingButternutTower",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromButternutTower",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_Grotto",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingGrotto",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromKR-Grotto",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_HiddenCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingHiddenCave",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromHiddenCave",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_Honeymill",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingHoneymill",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromHoneymill",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_KhazriCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingGrotto",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromKhazriCave",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_MandibleCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingMandableCave",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromVespaCave",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_StingersCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingStingersCave",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromStingerCave",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z02_VespaCave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ExitingVespaCave",
+    "Teleport": {
+     "m_destinationLoc": "Target-FromVespaCave",
+     "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z06_I01_Hermitcave",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to HermitCaveCombat",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I01_Hermitcave02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z10_I08_SolarArcMain",
+  "Teleports": [
+   {
+    "TriggerName": "To_BalanceArc",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I09_SolarArcChambBalance",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_DeathArc",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I10_SolarArcChambDeath",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_ShadowArc",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I16_SolarArcChambShadow",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_StormArc",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I11_SolarArcChambStorm",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/Interiors/KR_Z12_I02_Entry",
+  "Teleports": [
+   {
+    "TriggerName": "KR-ToGalleries",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z12_I03_Galleries",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z00_Hub",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Broken Tower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I05_Bastion_BrokenTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to TwoFace",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_TwoFaced",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to TymenWhiteFlame",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z000_Tymen_WhiteFlame",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z01_SilentMarket",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to DoomMask",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z01_DoomMask",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to KR-Blind Tower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I04_Bastion_BlindTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to QuietOne",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z01_QuietOne",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z02_MoonCliffs",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport-ButternutTower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_ButternutTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-HiddenCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_HiddenCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-Honeymill",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_Honeymill",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-KR-Grotto",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_Grotto",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-KhazriCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_KhazriCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-MandibleCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MandibleCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-StingerCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_StingersCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-VespaCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z02_VespaCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z03_LastWood",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_To_DeathsHead_Cave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_DeathsHead_Cave_Int",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_To_WorldRazer_Tent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_WorldRazer_Tent",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_to_WeaponTent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_WeaponTent_Int",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to GardeningQuest",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_GardeningQuest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Reverence Cave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_ReverenceCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to UlleksTent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_UlleksTent",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport-RagweedMeadow",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_RagweedMeadow",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_To_AsphodelMeadow",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z03_AsphodelMeadow",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z04_TyrianGorge",
+  "Teleports": [
+   {
+    "TriggerName": "AbyssalCaveSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z04_I07_AbyssalCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Combat Sigil Overlook",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z04_Overlook",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to UgorCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z04_I10_UgorCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z05_FortRachias",
+  "Teleports": [
+   {
+    "TriggerName": "HornedBarracksSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_I13_HornedBarracks",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "ManeBarracksSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_I12_ManeBarracks",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "MessHallSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_I04_MessHall",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to KR-Z05_BeachCave01",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_BeachCave01",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to SaqqaraBird",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_SaqqaraBird",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TrainingHallSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z05_I03_TrainingHall",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z06_CrescentBeach",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to CB Guard Tent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I04_UmbraGuardTent",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z07_RuinedAlcazar",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Combat Sigil sigil - Astrolabe",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z07_I02_AstrolabeCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Combat Sigil sigil-Serpent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z08_I03_SerpentTower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z09_MantisCity",
+  "Teleports": [
+   {
+    "TriggerName": "To_GarrisonArmory",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I22_GarrisonArmory",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_MunitionsRoom",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I20_MunitionsRoom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_NadezhaHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I02_NadezhaHouseLG",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_PatronGate",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I14_TroikaPalacePatronGate",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_RozimundHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I24_RozimundHouseLG",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_SeaTower",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I04_SeaTowerBot",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_SoothsayerGate",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I14_TroikaPalaceSoothsayerGate",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_TorrekHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I23_TorrekHouseLG",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_ZoudicaHouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z09_I26_ZoudicaHouseLG",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z10_KondhaDesert",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to DryGulchCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I05_DryGulchCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportToAlluviumCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I05_AlluviumCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_BloodstoneCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I17_BloodStoneCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_FoodCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I18_FoodCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_TreebeardCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I05_TreeBeardCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Khrysalis/KR_Z11_TheHive",
+  "Teleports": [
+   {
+    "TriggerName": "Black_Hole_Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z11_I01_BlackHole",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "KR-RecluseCave_Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z11_I02_RecluseChamber",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Krokotopia/KT_Krokosphinx/KT_Retreat",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location (Sphinx05 Tower04 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Sphinx05 Tower04 Entrance)",
+     "m_destinationZone": "Krokotopia/KT_Krokosphinx/Interiors/KT_Retreat_T4",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Krokotopia/KT_Pyramid/KT_PalaceOfFire",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_KrokonominautLair",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Krokotopia/Interiors/KT_KrokonominautLair",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Krokotopia/KT_Tomb/KT_AhnicTomb",
+  "Teleports": [
+   {
+    "TriggerName": "ToTower2FromCrypt1",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Crypt01 Tower02 Entrance)",
+     "m_destinationZone": "Krokotopia/KT_Tomb/Interiors/KT_AhnicTomb_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Krokotopia/KT_Tomb/KT_Barracks",
+  "Teleports": [
+   {
+    "TriggerName": "ToTower1FromCrypt3",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Crypt03 Tower01 Entrance)",
+     "m_destinationZone": "Krokotopia/KT_Tomb/Interiors/KT_Barracks_T1",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Krokotopia/KT_Tomb/KT_DjeseritTomb",
+  "Teleports": [
+   {
+    "TriggerName": "ToTower1FromCrypt2",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Crypt02 Tower01 Entrance)",
+     "m_destinationZone": "Krokotopia/KT_Tomb/Interiors/KT_DjeseritTomb_T1",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Lemuria/LM_Z02_UrsaiVillage",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-ToVolcano",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Lemuria/Interiors/LM_Z02_VolcanoTop",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Lemuria/LM_Z05_Mandoria",
+  "Teleports": [
+   {
+    "TriggerName": "To_MonitoringStation",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Lemuria/Interiors/LM_Z06_MonitoringStation",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Lemuria/LM_Z06_SkyCity",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_WaterTreatment",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Lemuria/Interiors/LM_Z06_WaterTreatment",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Marleybone/Interiors/MB_PreAZ_HalleysTowerInt",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_FromTelescope",
+    "Teleport": {
+     "m_destinationLoc": "FromTelescope",
+     "m_destinationZone": "Marleybone/Interiors/MB_PreAZ_HalleysTowerInt",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_ToTelescope",
+    "Teleport": {
+     "m_destinationLoc": "ToTelescope",
+     "m_destinationZone": "Marleybone/Interiors/MB_PreAZ_HalleysTowerInt",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Marleybone/MB_BigBen/MB_BigBen",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location (Boss Level20 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Boss Level20 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level16 Level15 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level16 Level15 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level17 Level16 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level17 Level16 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level18 Level17 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Leve18 Level17 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level19 Level18 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level19 Level18 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level20 Level19 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level20 Level19 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level15 Level16 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level15 Level16 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level16 Level17 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level16 Leve17 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level17 Level18 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level17 Level18 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level18 Level19 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level18 Level19 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level19 Level20 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level19 Level20 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level20 Boss Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level20 Boss Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Marleybone/MB_BigBen/MB_CounterweightEast",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location (Boss Level10 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Boss Level10 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level10 Level9 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level10 Level9 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level2 Level1 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level2 Level1 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level3 Level2 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level3 Level2 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level4 Level3 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level4 Level3 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level5 Level4 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level5 Level4 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level6 Level5 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level6 Level5 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level7 Level6 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level7 Level6 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level8 Level7 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level8 Level7 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level9 Level8 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level9 Level8 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level1 Level2 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level1 Level2 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level10 Boss Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level10 Boss Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level2 Level3 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level2 Level3 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level3 Level4 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level3 Level4 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level4 Level5 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level4 Level5 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level5 Level6 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level5 Level6 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level6 Level7 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level6 Level7 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level7 Level8 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level7 Level8 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level8 Level9 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level8 Level9 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level9 Level10 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level9 Level10 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Marleybone/MB_BigBen/MB_CounterweightWest",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport location (Level10 Level9 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level10 Level9 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level2 Level1 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level2 Level1 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level3 Level2 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level3 Level2 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level4 Level3 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level4 Level3 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level5 Level4 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level5 Level4 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level6 Level5 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level6 Level5 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level7 Level6 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level7 Level6 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level8 Level7 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level8 Level7 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport location (Level9 Level8 Exit)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level9 Level8 Exit)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level1 Level2 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level1 Level2 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level10 Boss Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level10 Boss Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level2 Level3 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level2 Level3 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level3 Level4 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level3 Level4 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level4 Level5 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level4 Level5 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level5 Level6 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level5 Level6 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level6 Level7 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level6 Level7 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level7 Level8 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level7 Level8 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level8 Level9 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level8 Level9 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger (Level9 Level10 Entrance)",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Level9 Level10 Entrance)",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Marleybone/MB_BigBen/MB_Museum_Instance",
+  "Teleports": [
+   {
+    "TriggerName": "BigBenSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "CounterWeightEastSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightEast",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "CounterWeightWestSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Marleybone/MB_BigBen/MB_CounterweightWest",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Mirage/Interiors/MR_Z05_CatstanRuins",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-SnakishPass",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Mirage/Interiors/MR_Z05_TetrusPrison",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Interior sigil-ToArmory",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z05_Armory",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Mirage/Interiors/MR_Z10_SandsofTime",
+  "Teleports": [
+   {
+    "TriggerName": "To_EastDunes",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z10_EastTimeDunes",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "To_NorthDunes",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z10_NorthTimeDunes",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Mirage/MR_Z00_Hub",
+  "Teleports": [
+   {
+    "TriggerName": "KM-Z00-SnakeCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakeSafehouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Mirage/MR_Z02_Aggrobah",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to MR_Z02_Palace",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z02_Palace",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport to Z02_TheRoost",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Mirage/Interiors/MR_Z02_TheRoost02",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Novus/Interiors/NV_Z07_I03_DoomMoonBridge",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to NV_Z07_I04_NovusSkies",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Novus/Interiors/NV_Z07_I04_NovusSkies",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Novus/NV_Z03_PuertoNuovo_MQ",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_FlowerCave",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Novus/Interiors/NV_Z03_FlowerCave",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_2_FortressInt",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Novus/Interiors/NV_Z03_FortressInt",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Novus/NV_Z03_PuertoNuovo_VA",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_2_AngryTent",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Novus/Interiors/NV_Z03_AngryTent",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Novus/NV_Z07_DoomMoon",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to NV_Z07_I01_EngineeringWing",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Novus/Interiors/NV_Z07_I01_EngineeringWing_Hard",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger",
+    "Teleport": {
+     "m_destinationLoc": "Target location",
+     "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Polaris/Interiors/PL_Z00_TikiTavern",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport_To_TikiStockroom",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Polaris/Interiors/PL_Z00_TikiStockroom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Polaris/Interiors/PL_Z07_SkyAnchorPeak",
+  "Teleports": [
+   {
+    "TriggerName": "To_HorizonHold",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Polaris/Interiors/PL_Z07_PL_Horizon_Hold",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Catacombs",
+  "Teleports": [
+   {
+    "TriggerName": "Sigil_to_ViggorsTomb",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Catacombs_ViggorsTomb",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Sigil_to_WhisperingSepulcher",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Catacombs_WhisperingSepulcher",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Colossus",
+  "Teleports": [
+   {
+    "TriggerName": "Street 6 Castle Instance Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Target (Street6 WC_Street6_GobblerKing_ThroneRoom Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Colossus_ThroneRoom",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Street 6 Tower 1 Instance Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Street6 Tower1 Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Colossus_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Street 6 Tower 2 Instance Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Street6 Tower2 Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Colossus_T3",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger WC-CATA-SIDE-003",
+    "Teleport": {
+     "m_destinationLoc": "Target location WC-CATA-SIDE-003",
+     "m_destinationZone": "WizardCity/WC_Streets/WC_Colossus",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Drains/Z00_Drains_HUB",
+  "Teleports": [
+   {
+    "TriggerName": "Teleport to Clubhouse",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "WizardCity/WC_Streets/WC_Drains/Z00_ClubHouse",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Firecat",
+  "Teleports": [
+   {
+    "TriggerName": "Street 5 Tower 3 Instance Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Street5 Tower3 Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Firecat_T3",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "TeleportSigil_Wormguts",
+    "Teleport": {
+     "m_destinationLoc": "Target location (Street5 Tower2 Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Firecat_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Trigger WC-CATA-SIDE-003",
+    "Teleport": {
+     "m_destinationLoc": "Target location WC-CATA-SIDE-003",
+     "m_destinationZone": "WizardCity/WC_Streets/WC_Firecat",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_OldeTown",
+  "Teleports": [
+   {
+    "TriggerName": "Street 2 Tower 2 Instance Sigil",
+    "Teleport": {
+     "m_destinationLoc": "Target (Street2 Tower2 Entrance)",
+     "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_OldeTown_T2",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   },
+   {
+    "TriggerName": "Teleport_to_OldeTownDrains",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "WizardCity/WC_Streets/WC_Drains/Z04_OldeTownDrains",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Triton",
+  "Teleports": [
+   {
+    "TriggerName": "Trigger WC-CATA-SIDE-003",
+    "Teleport": {
+     "m_destinationLoc": "Target location WC-CATA-SIDE-003",
+     "m_destinationZone": "WizardCity/WC_Streets/WC_Triton",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "WizardCity/WC_Streets/WC_Triton_Underwater/WC_Triton_Underwater",
+  "Teleports": [
+   {
+    "TriggerName": "ToCastle",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "WizardCity/Interiors/WC_CastleTours",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Wysteria/Interiors/PA_Library",
+  "Teleports": [
+   {
+    "TriggerName": "ToArchive",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Wysteria/Interiors/PA_Library_Archive",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ },
+ {
+  "ZoneName": "Wysteria/PA_Z01_Pegasus",
+  "Teleports": [
+   {
+    "TriggerName": "CrystalTowerSigil",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Wysteria/Interiors/PA_Crystal_Tower",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
+   }
+  ]
+ }
+]

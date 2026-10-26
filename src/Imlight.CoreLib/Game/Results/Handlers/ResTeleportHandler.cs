@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -54,6 +55,19 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
 
             // The exits of a house zone name no destination, so the player leaves to the hub of the house's world.
             if (!HouseExits.TryResolve(context.GetZonePath(), out destinationZone, out destinationLocation)) {
+                // A dungeon's exit that names none takes the player back to where they were before the dungeon (their
+                // session knows whether this zone is an instance and where that was).
+                if ((context as GenericResultContext)?.TriggerName is { } exitName
+                    && exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase)) {
+                    context.GetPlayerRef().Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                        LeaveInstance = true,
+                        SendToClient = true,
+                        OwnerCharId = playerObj.m_characterId,
+                    });
+
+                    return true;
+                }
+
                 Logger.Warning("A teleport in {0} names no destination zone; the player stays where they are.",
                     Logger.Args(context.GetZonePath()));
 

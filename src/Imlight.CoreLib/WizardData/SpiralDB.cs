@@ -344,6 +344,7 @@ public static class SpiralDB {
             foreach (var (npcId, inventory) in extraNpcInventories) {
                 npcInventories[npcId] = inventory;
             }
+            extraFiles += AddDungeonTeleports(extraPath, zoneData);
             filesLoaded += extraFiles;
             Logger.Information("Loaded {0} extra SpiralDB files from {1} in {2} ms (SpiralDB's own files took {3} ms).",
                 Logger.Args(extraFiles, extraPath, (int) Stopwatch.GetElapsedTime(extraStart).TotalMilliseconds,
@@ -789,6 +790,50 @@ public static class SpiralDB {
         });
 
         return count;
+    }
+
+    // spiraldb-extra/DungeonTeleports: where the dungeon sigils and the dungeon doors go that SpiralDB has no capture of,
+    // worked out from the game's own zone files (each way in or out is named like the spot it leads to). They are added
+    // to a zone's teleports; one SpiralDB has (from the live game) is never replaced.
+    private static int AddDungeonTeleports(string basePath, ConcurrentDictionary<string, WizardZoneData> target) {
+        var dir = Path.Combine(basePath, "DungeonTeleports");
+        if (!Directory.Exists(dir)) {
+            return 0;
+        }
+
+        var files = 0;
+        var added = 0;
+        foreach (var file in Directory.GetFiles(dir, "*.json")) {
+            try {
+                using var stream = File.OpenRead(file);
+                var zones = JsonSerializer.Deserialize<List<WizardZoneData>>(stream, s_jsonOptions) ?? [];
+                foreach (var zone in zones) {
+                    if (string.IsNullOrEmpty(zone?.ZoneName) || zone.Teleports is null) {
+                        continue;
+                    }
+
+                    var existing = target.GetOrAdd(zone.ZoneName, name => new WizardZoneData { ZoneName = name, Teleports = [] });
+                    existing.Teleports ??= [];
+                    foreach (var teleport in zone.Teleports) {
+                        if (teleport?.Teleport is null || string.IsNullOrEmpty(teleport.TriggerName)
+                            || existing.Teleports.Any(t => t.TriggerName == teleport.TriggerName)) {
+                            continue;
+                        }
+
+                        existing.Teleports.Add(teleport);
+                        added++;
+                    }
+                }
+
+                files++;
+            } catch (Exception e) {
+                Logger.Warning("Failed to load dungeon teleports {0}: {1}", Logger.Args(Path.GetFileName(file), e.Message));
+            }
+        }
+
+        Logger.Information("Added {0} dungeon sigil and door teleports from the game's zone files.", Logger.Args(added));
+
+        return files;
     }
 
     private static int LoadZoneData(string basePath, ConcurrentDictionary<string, WizardZoneData> target) {

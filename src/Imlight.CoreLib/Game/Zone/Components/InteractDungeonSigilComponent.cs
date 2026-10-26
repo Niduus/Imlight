@@ -488,6 +488,18 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             return null;
         }
 
+        // A teleport named exactly like the pad comes first (spiraldb-extra/DungeonTeleports names them so): "Street 6
+        // Tower 1" must not take the teleport of "Street 6 CustTower 1".
+        var tagNorm = NormalizeSigilToken(tag);
+        var exact = zoneData.Teleports.FirstOrDefault(t => {
+            var norm = NormalizeSigilToken(t.TriggerName);
+
+            return norm.Length > 0 && norm == tagNorm;
+        });
+        if (exact is not null) {
+            return exact;
+        }
+
         var tagMatch = s_streetTowerRx.Match(tag);
         if (tagMatch.Success) {
             var streetTok = "street" + tagMatch.Groups[1].Value;
@@ -500,13 +512,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             });
         }
 
-        var tagNorm = NormalizeSigilToken(tag);
-
-        return zoneData.Teleports.FirstOrDefault(t => {
-            var norm = NormalizeSigilToken(t.TriggerName);
-
-            return norm.Length > 0 && norm == tagNorm;
-        });
+        return null;
     }
 
     private static bool TryDeriveTowerDestination(string zoneName, string tag, WizardZoneData zoneData,
