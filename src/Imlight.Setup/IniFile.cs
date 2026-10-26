@@ -79,6 +79,8 @@ internal static class IniFile {
     private static readonly (string Section, string Key, string Old, string New)[] s_changedDefaults = [
         // Niduus, 2026-10-25: "Default should be 80 btw for cap without elixir".
         ("Character", "MaxInventoryItems", "75", "80"),
+        // Niduus, 2026-10-26: "global is up but doesn't state it or show effects visually" (the game drops a told size).
+        ("BossCheats", "ShowOwnValueGlobals", "true", "false"),
     ];
 
     /// <summary>

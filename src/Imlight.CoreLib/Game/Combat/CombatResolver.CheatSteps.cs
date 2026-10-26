@@ -704,6 +704,12 @@ public partial class CombatResolver {
         var param = kind == "gloomglobal" ? -amount : amount;
         var named = step.Spell.Length > 0 || step.SpellID != 0;
         var lookName = named ? step.Spell : LookalikeName(step, onCaster: true, boss, bossName);
+        if (!named && string.IsNullOrWhiteSpace(step.Look) && !BossCheats.ShowOwnValueGlobals
+            && ClosestGlobal(type, param, kind == "global" ? step.School : null) is { } closest) {
+            // The game draws a bubble only at its own size: the real one nearest to this size shows the nearest number.
+            lookName = closest;
+        }
+
         var look = lookName.Length > 0 || step.SpellID != 0 ? FindSpell(lookName, named ? step.SpellID : 0) : default;
         var bubbles = _duel.m_duelModifier.m_battlefieldEffects;
         var cinematicTime = 0f;
@@ -754,6 +760,35 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    // Every real bubble: one global effect and nothing else, as the game casts and draws them.
+    private static readonly Lazy<List<(string Name, SpellEffect Effect)>> s_globalLooks = new(() => {
+        try {
+            return [.. SpellFactory.AllSpellTemplates()
+                .Where(t => t.Template.m_effects is [{ } e] && e.GetType() == typeof(SpellEffect) && e.m_effectTarget == kEffectTarget.kGlobal
+                            && e.m_effectType is kSpellEffects.kModifyOutgoingDamage or kSpellEffects.kModifyOutgoingHeal
+                            && SpellFactory.Exists((string) t.Template.m_name))
+                .Select(t => ((string) t.Template.m_name, t.Template.m_effects[0]))];
+        }
+        catch (Exception e) {
+            Logger.Error("Boss cheats | The globals could not be listed: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    // The real bubble of this type and school (null: any school for a healing one; blank: All) whose own size is nearest.
+    private static string? ClosestGlobal(kSpellEffects type, int param, string? school) {
+        var wanted = school is null ? null : string.IsNullOrWhiteSpace(school) ? "All" : school.Trim();
+
+        return s_globalLooks.Value
+            .Where(g => g.Effect.m_effectType == type && Math.Sign(g.Effect.m_effectParam) == Math.Sign(param)
+                        && (wanted is null || string.Equals((string) g.Effect.m_sDamageType, wanted, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(g => Math.Abs(g.Effect.m_effectParam - param))
+            .ThenBy(g => g.Name.Length)
+            .Select(g => g.Name)
+            .FirstOrDefault();
     }
 
     // A player's cheat global helps only the players' side ("+666% to all ally spells"). The game draws the lookalike at its

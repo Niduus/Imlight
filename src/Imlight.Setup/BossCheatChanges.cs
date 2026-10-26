@@ -35,6 +35,8 @@ internal enum CheatFieldType {
     VersionChoice, MatchCount, PlayerTarget,
     // The enchantments picked for an enchanted free cast (a list of names), shown while its Enchant box is ticked.
     Enchants,
+    // An aura's stats, picked one by one ("resist 20, accuracy 15"), shown while its kind is Aura.
+    AuraStats,
 }
 
 /// <summary>A box of a cheat block: the cheat file's name for it, its type, its first value and, for a Choice, its choices.</summary>

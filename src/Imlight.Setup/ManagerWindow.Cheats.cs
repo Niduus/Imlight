@@ -601,7 +601,12 @@ internal sealed partial class ManagerWindow {
         }
 
         if (block.Spec == "D.AddCharm") {
-            refreshNote = () => view.Note(AddCharmWarning(block));
+            refreshNote = () => {
+                view.Note(AddCharmWarning(block));
+                if (_auraPickers.TryGetValue(block, out var aura)) {
+                    aura.IsVisible = block.Text("Kind") == "Aura";
+                }
+            };
             refreshNote();
         }
 
@@ -735,6 +740,8 @@ internal sealed partial class ManagerWindow {
                 });
             case CheatFieldType.Enchants:
                 return EnchantsField(block, changed);
+            case CheatFieldType.AuraStats:
+                return AuraStatsField(block, changed);
             // One list of targets for boss and player cheats alike (the .c1 circles are in it).
             case CheatFieldType.Target or CheatFieldType.PlayerTarget:
                 return BlockFields.Choice(CheatSpecs.TARGETS, block.Text(field.Key), v => Set(field.Key, v));
@@ -1141,6 +1148,122 @@ internal sealed partial class ManagerWindow {
         _enchantPickers.AddOrUpdate(block, button);
 
         return button;
+    }
+
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<CheatBlock, Control> _auraPickers = [];
+
+    // The stats an aura can have: the server's word for each (CombatResolver.AuraStats) and what it does, in plain words.
+    private static readonly (string Value, string Label)[] s_auraStatChoices = [
+        ("damage", "more damage"), ("resist", "more resist"), ("accuracy", "more accuracy"), ("pierce", "more pierce"),
+        ("critical", "more critical"), ("block", "more critical block"), ("heal", "more healing given"),
+        ("healing in", "more healing taken"), ("stun resist", "more stun resist"), ("power pip", "more power pip chance"),
+    ];
+
+    private static readonly System.Text.RegularExpressions.Regex s_auraStat = new(@"^(?<w>[a-zA-Z ]+?)\s*(?<n>[+-]?\d+)\s*%?$");
+
+    /// <summary>"resist 20, accuracy 15": each stat and its number.</summary>
+    internal static List<(string Stat, int Amount)> ReadAuraStats(string text) {
+        var stats = new List<(string, int)>();
+        foreach (var part in (text ?? "").Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+            var m = s_auraStat.Match(part);
+            if (m.Success && int.TryParse(m.Groups["n"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)) {
+                stats.Add((m.Groups["w"].Value.Trim().ToLowerInvariant(), n));
+            }
+        }
+
+        return stats;
+    }
+
+    internal static string WriteAuraStats(IEnumerable<(string Stat, int Amount)> stats)
+        => string.Join(", ", stats.Select(s => $"{s.Stat} {s.Amount.ToString(CultureInfo.InvariantCulture)}"));
+
+    /// <summary>
+    /// An aura's stats (Niduus, 2026-10-26: "walk the player into what stats they want"): a pop-up of steps, one row a
+    /// stat (what it boosts and by how much, a minus number lowers it), and a button for another. Kept as the words the
+    /// server reads ("resist 20, accuracy 15"), so older cheats keep working.
+    /// </summary>
+    private Control AuraStatsField(CheatBlock block, Action changed) {
+        Button? button = null;
+        string Shown() {
+            var stats = ReadAuraStats(block.Text("AuraStats"));
+            if (stats.Count == 0) {
+                return "aura stats: pick them";
+            }
+
+            string Label(string stat) => s_auraStatChoices.FirstOrDefault(c => c.Value == stat).Label?.Replace("more ", "") ?? stat;
+
+            return "aura stats: " + string.Join(", ", stats.Select(s => $"{(s.Amount < 0 ? "" : "+")}{s.Amount}% {Label(s.Stat)}"));
+        }
+
+        void Save(List<(string Stat, int Amount)> stats) {
+            block.Set("AuraStats", WriteAuraStats(stats));
+            BlockFields.SetPicker(button!, new TextBlock { Text = "🌀", VerticalAlignment = VerticalAlignment.Center }, Shown());
+            changed();
+        }
+
+        button = BlockFields.Picker(new TextBlock { Text = "🌀", VerticalAlignment = VerticalAlignment.Center }, Shown(),
+            _ => AuraStatsEditor(ReadAuraStats(block.Text("AuraStats")), Save), "Click to pick the aura's stats, one by one");
+        button.IsVisible = block.Text("Kind") == "Aura";
+        _auraPickers.AddOrUpdate(block, button);
+
+        return button;
+    }
+
+    // The steps of the aura stats pop-up: a row a stat (pick it, how much, ✕), and a button for one more.
+    private static Control AuraStatsEditor(List<(string Stat, int Amount)> stats, Action<List<(string Stat, int Amount)>> save) {
+        var rows = new StackPanel { Spacing = 6 };
+        void Render() {
+            rows.Children.Clear();
+            if (stats.Count == 0) {
+                rows.Children.Add(Sub("No stats yet. Click \"Add a stat\" below."));
+            }
+
+            for (var i = 0; i < stats.Count; i++) {
+                var at = i;
+                var stat = BlockFields.Choice(s_auraStatChoices, stats[at].Stat, v => {
+                    stats[at] = (v, stats[at].Amount);
+                    save(stats);
+                }, 210);
+                var amount = BlockFields.Number(stats[at].Amount, n => {
+                    stats[at] = (stats[at].Stat, n);
+                    save(stats);
+                }, -1000, 1000, 64);
+                var remove = new Button { Content = "✕", Padding = new Thickness(8, 2), MinHeight = 26 };
+                ToolTip.SetTip(remove, "Take this stat off the aura");
+                remove.Click += (_, _) => {
+                    stats.RemoveAt(at);
+                    save(stats);
+                    Render();
+                };
+                rows.Children.Add(new StackPanel {
+                    Orientation = Orientation.Horizontal, Spacing = 6,
+                    Children = {
+                        new TextBlock { Text = $"{at + 1}.", Width = 20, VerticalAlignment = VerticalAlignment.Center },
+                        stat, new TextBlock { Text = "by", VerticalAlignment = VerticalAlignment.Center }, amount,
+                        new TextBlock { Text = "%", VerticalAlignment = VerticalAlignment.Center }, remove,
+                    },
+                });
+            }
+        }
+
+        var add = new Button { Content = "+ Add a stat", Padding = new Thickness(12, 4) };
+        add.Click += (_, _) => {
+            var next = s_auraStatChoices.Select(c => c.Value).FirstOrDefault(v => stats.All(s => s.Stat != v)) ?? "damage";
+            stats.Add((next, 10));
+            save(stats);
+            Render();
+        };
+        Render();
+
+        return new StackPanel {
+            Spacing = 8, Width = 420,
+            Children = {
+                Sub("Step 1: click \"Add a stat\" for each stat the aura gives."),
+                Sub("Step 2: in each row, pick the stat and type how much. A minus number lowers it instead (such as -20 resist)."),
+                Sub("The number at the start of the block is extra damage on top. Set it to 0 for none."),
+                rows, add,
+            },
+        };
     }
 
     // A creature of the game, or one of the customs.

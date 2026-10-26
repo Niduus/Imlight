@@ -610,9 +610,10 @@ internal static class BossCheats {
     // lookalike cast carries its own size in Spell.m_paramOverrides, so the game can show that number.
     internal static bool ShowOwnValue => ConfigurationManager.GetValue("BossCheats.ShowOwnValue", true);
 
-    // [BossCheats] ShowOwnValueGlobals: the same for a global (bubble), on its own switch (Niduus, 2026-10-26: blades
-    // showed their own number, a global did not show in the list at all).
-    internal static bool ShowOwnValueGlobals => ConfigurationManager.GetValue("BossCheats.ShowOwnValueGlobals", true);
+    // [BossCheats] ShowOwnValueGlobals: the same for a global (bubble), on its own switch, off: told its own size, the
+    // game resolved the bubble but never drew it (Niduus, 2026-10-26: "global is up but doesn't state it or show
+    // effects visually"); off, the real bubble closest to the size is cast instead.
+    internal static bool ShowOwnValueGlobals => ConfigurationManager.GetValue("BossCheats.ShowOwnValueGlobals", false);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,
