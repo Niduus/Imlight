@@ -59,9 +59,11 @@ internal static class PetCare {
     /// <param name="count">How many of that snack to feed.</param>
     /// <param name="send">Sends a message to the owner's game.</param>
     /// <param name="growth">What the snacks did.</param>
+    /// <param name="happinessOnly">Fed from the pet's happiness bar: like the real game it gives no XP or stats, only
+    /// happiness, as much as the snack's XP would be (Niduus, 2026-10-26).</param>
     /// <returns>Null when it worked, otherwise the reason in plain words.</returns>
     internal static string Feed(Wizard wizard, WizClientObjectItem pet, ulong snackTemplateId, int count,
-            Action<IMessage> send, out PetProgress.PetGrowth growth) {
+            Action<IMessage> send, out PetProgress.PetGrowth growth, bool happinessOnly = false) {
         growth = new PetProgress.PetGrowth();
         var behavior = PetProgress.GetBehavior(pet);
         if (behavior is null) {
@@ -95,6 +97,16 @@ internal static class PetCare {
                     GlobalID = wizard.GameObjectID,
                     ItemID = left.m_globalID,
                 });
+
+            if (happinessOnly) {
+                var before = behavior.m_happiness;
+                if (behavior.m_maximumHappiness > 0) {
+                    behavior.m_happiness = Math.Min(behavior.m_maximumHappiness, behavior.m_happiness + PetProgress.SnackXp(pet, snackTemplate));
+                }
+
+                growth.HappinessGained += behavior.m_happiness - before;
+                continue;
+            }
 
             PetProgress.AddXp(pet, PetProgress.SnackXp(pet, snackTemplate), growth);
             PetProgress.ApplyStatChanges(pet, PetProgress.SnackStatChanges(snackTemplate), growth);
@@ -185,6 +197,10 @@ internal static class PetCare {
             parts.Add(string.Join(", ", growth.StatChanges
                 .GroupBy(c => c.Stat)
                 .Select(g => $"+{g.Sum(c => c.Change)} {g.Key}")));
+        }
+
+        if (growth.HappinessGained > 0) {
+            parts.Add($"+{growth.HappinessGained} happiness");
         }
 
         var text = parts.Count > 0 ? string.Join(", ", parts) + "." : "Nothing changed.";

@@ -74,6 +74,7 @@ internal static class PetProgress {
     /// <summary>What a feeding or an XP grant did to a pet.</summary>
     internal sealed class PetGrowth {
         internal uint XpGained;
+        internal uint HappinessGained;
         internal int LevelsGained;
         internal readonly List<PetTalentBaseTemplate> NewTalents = [];
         internal readonly List<PetTalentBaseTemplate> NewDerbyTalents = [];

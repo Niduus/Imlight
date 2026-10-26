@@ -221,7 +221,9 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
         // From the feed window after a skipped game, that window waits for MSG_PETGAMESNACKFEEDSUCCESS first.
         var inFeedWindow = pet is not null && _skipAwaitingFeed != 0 && _skipAwaitingFeed == pet.m_globalID.Full;
         var held = new List<IMessage>();
-        var problem = PetCare.Feed(wizard, pet, message.SnackTemplateID, count, inFeedWindow ? held.Add : SendToSocket, out var growth);
+        // Outside the after-game feed window this is the happiness bar: happiness only, no XP or stats.
+        var problem = PetCare.Feed(wizard, pet, message.SnackTemplateID, count, inFeedWindow ? held.Add : SendToSocket, out var growth,
+            happinessOnly: !inFeedWindow);
         if (problem is not null) {
             if (inFeedWindow) {
                 SendToSocket(new PET_9_PROTOCOL.MSG_PETGAMESNACKFEEDFAILED());
