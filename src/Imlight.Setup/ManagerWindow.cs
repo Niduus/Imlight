@@ -229,6 +229,12 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _lookupMadeFor = FilterCombo([ANY_FILTER, "Custom (made for this build)", "Imlight's own"], 200);
     private readonly ComboBox _lookupSort = FilterCombo(Lookup.SORTS, 160);
     private readonly CheckBox _lookupHasCommand = new() { Content = "Only ones with a command" };
+    // Teleport areas (Niduus, 2026-10-26: "add teleport area list to manager in look up").
+    private readonly ComboBox _lookupWorld = FilterCombo([ANY_FILTER], 150);
+    private readonly ComboBox _lookupArea = FilterCombo([ANY_FILTER], 160);
+    private readonly ComboBox _lookupAccess = FilterCombo([ANY_FILTER], 140);
+    private readonly CheckBox _lookupHideOld = new() { Content = "Hide old and test zones", IsChecked = true };
+    private Control? _lookupAreaFilters;
     private readonly ListBox _lookupResults = new() { Background = Brushes.Transparent };
     private readonly DispatcherTimer _lookupDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private Lookup? _lookup;
@@ -652,11 +658,21 @@ internal sealed partial class ManagerWindow : Window {
         };
         _lookupKind.SelectionChanged += (_, _) => {
             ShowSpellMode();
+            if (_lookupAreaFilters is not null) {
+                _lookupAreaFilters.IsVisible = (_lookupKind.SelectedItem as string) == Lookup.TELEPORT_AREA;
+            }
+
             RenderLookup();
         };
         _lookupResults.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
         WhenFiltersChange(RenderLookup, _lookupSchool, _lookupLevelMin, _lookupLevelMax, _lookupIdMin, _lookupIdMax, _lookupWho,
-            _lookupMadeFor, _lookupSort, _lookupHasCommand);
+            _lookupMadeFor, _lookupSort, _lookupHasCommand, _lookupWorld, _lookupArea, _lookupAccess, _lookupHideOld);
+        _lookupAreaFilters = SearchFilters(
+            SearchFilter("World", _lookupWorld),
+            SearchFilter("Kind of area", _lookupArea),
+            SearchFilter("Access", _lookupAccess),
+            SearchTick(_lookupHideOld));
+        _lookupAreaFilters.IsVisible = false;
         var filters = SearchFilters(
             SearchFilter("School", _lookupSchool),
             SearchFilter("Level from", _lookupLevelMin),
@@ -677,11 +693,13 @@ internal sealed partial class ManagerWindow : Window {
                     "Search every command, item, spell, creature, zone and quest.",
                     WithHint(new DockPanel {
                         Children = { WithDock(WithMargin(_lookupKind, new Thickness(8, 0, 0, 0)), Dock.Right), _lookupSearch },
-                    }, "Every in-game command, bundle, item, spell, creature, NPC, zone and quest. Type commands in the game's chat, " +
+                    }, "Every in-game command, bundle, item, spell, creature, NPC, teleport area and quest. Type commands in the game's chat, " +
                        "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card. " +
                        "Leave the box empty to list everything, then narrow it with the filters: school (items, spells and creatures), " +
-                       "level (creatures), template ID, who can use a command and whether it was made for this build."),
+                       "level (creatures), template ID, who can use a command and whether it was made for this build. Pick Teleport area on " +
+                       "the right for every zone you can teleport to, with filters for its world, kind and access, and a Teleport button."),
                     filters,
+                    _lookupAreaFilters,
                     _lookupCount), Dock.Top),
                 WithMargin(Card(new Panel { Children = { _lookupResults, SpellView() } }), new Thickness(0, 14, 0, 0)),
             },
@@ -1606,7 +1624,8 @@ internal sealed partial class ManagerWindow : Window {
 
         _lookupCount.Text = "Loading…";
         try {
-            _lookup = await Task.Run(() => Lookup.Load(folder));
+            var zoneDetails = Path.Combine(_manager.ExtraFolder, "Zones", "zone-details.json");
+            _lookup = await Task.Run(() => Lookup.Load(folder, zoneDetails));
             _lookupLoadedFrom = changed;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
@@ -1636,6 +1655,11 @@ internal sealed partial class ManagerWindow : Window {
         var who = FilterPick(_lookupWho);
         var madeFor = _lookupMadeFor.SelectedIndex;
         var hasCommand = _lookupHasCommand.IsChecked == true;
+        var areas = kind == Lookup.TELEPORT_AREA;
+        var world = areas ? FilterPick(_lookupWorld) : null;
+        var area = areas ? FilterPick(_lookupArea) : null;
+        var access = areas ? FilterPick(_lookupAccess) : null;
+        var hideOld = areas && _lookupHideOld.IsChecked == true;
         var levels = _lookupLevelMin.Value is not null || _lookupLevelMax.Value is not null;
         var ids = _lookupIdMin.Value is not null || _lookupIdMax.Value is not null;
         bool Filter(LookupEntry e) => (school is null || e.School.Equals(school, StringComparison.OrdinalIgnoreCase))
@@ -1643,8 +1667,13 @@ internal sealed partial class ManagerWindow : Window {
                                       && (!ids || (e.Number > 0 && InFilterRange(e.Number, _lookupIdMin, _lookupIdMax)))
                                       && (who is null || e.Who == who)
                                       && (madeFor == 0 || (e.Kind == "Command" && e.Custom == (madeFor == 1)))
-                                      && (!hasCommand || e.Typed is not null);
-        var filtered = school is not null || who is not null || madeFor > 0 || hasCommand || levels || ids;
+                                      && (!hasCommand || e.Typed is not null)
+                                      && (world is null || e.World == world)
+                                      && (area is null || e.Area == area)
+                                      && (access is null || e.Access == access)
+                                      && (!hideOld || !e.OldOrTest);
+        var filtered = school is not null || who is not null || madeFor > 0 || hasCommand || levels || ids
+                       || world is not null || area is not null || access is not null || hideOld;
         var results = _lookup.Search(kind, query, MAX, out var total, filtered ? Filter : null, _lookupSort.SelectedItem as string ?? Lookup.SORT_BEST);
         _lookupResults.ItemsSource = results;
 
@@ -1667,6 +1696,10 @@ internal sealed partial class ManagerWindow : Window {
         FillFilterCombo(_lookupSchool, lookup.Entries.Select(e => e.School).Where(s => s.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase));
         FillFilterCombo(_lookupWho, Lookup.COMMANDS.Select(c => c.Who).Distinct());
+        var areas = lookup.Entries.Where(e => e.Kind == Lookup.TELEPORT_AREA).ToList();
+        FillFilterCombo(_lookupWorld, areas.Select(e => e.World).GroupBy(w => w).OrderByDescending(g => g.Count()).Select(g => g.Key));
+        FillFilterCombo(_lookupArea, areas.Select(e => e.Area).OrderBy(a => a, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_lookupAccess, areas.Select(e => e.Access).OrderBy(a => a, StringComparer.OrdinalIgnoreCase));
     }
 
     private Control LookupRow(LookupEntry entry) {
@@ -1676,6 +1709,16 @@ internal sealed partial class ManagerWindow : Window {
             buttons.Children.Add(Action(Plain("Send to my gifts"), () => {
                 _manager.SendCommand(entry.Typed);
                 Say($"Sent {entry.Name} to your gifts. Click the gift button in the game to claim it.");
+
+                return Task.CompletedTask;
+            }));
+        }
+
+        if (entry.Kind == Lookup.TELEPORT_AREA && entry.Zone.Length > 0) {
+            // Runs .tp for the wizard playing on this PC.
+            buttons.Children.Add(Action(Primary("Teleport"), () => {
+                _manager.SendCommand($".tp {entry.Zone}");
+                Say($"Teleporting to {entry.Name} ({entry.Zone}). The game's chat says if it worked; log in first.");
 
                 return Task.CompletedTask;
             }));

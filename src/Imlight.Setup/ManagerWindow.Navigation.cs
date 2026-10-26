@@ -397,7 +397,7 @@ internal sealed partial class ManagerWindow {
         "Spell" => "cards",
         "Creature" => "skull",
         "NPC" => "user",
-        "Zone" => "map",
+        Lookup.TELEPORT_AREA => "map",
         "Quest" => "flag",
         "Phrase" => "quote",
         _ => "search",

@@ -56,6 +56,13 @@ internal sealed record LookupEntry(string Kind, string Name, string Id, string D
     /// <summary>Who can use a command: its Detail ("Every player", "Administrator only"...), "" for the rest.</summary>
     internal string Who => Kind == "Command" ? Detail : "";
 
+    /// <summary>A teleport area's zone (what .tp takes), world, kind of area and access; "" for the rest.</summary>
+    internal string Zone { get; init; } = "";
+    internal string World { get; init; } = "";
+    internal string Area { get; init; } = "";
+    internal string Access { get; init; } = "";
+    internal bool OldOrTest { get; init; }
+
 }
 
 /// <summary>
@@ -67,7 +74,13 @@ internal sealed class Lookup {
     internal const string EVERYTHING = "Everything";
 
     /// <summary>The filters the tab offers, in order.</summary>
-    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Bundle", "Item", "Spell", "Creature", "NPC", "Zone", "Quest", "Phrase"];
+    internal static readonly string[] KINDS = [EVERYTHING, "Command", "Bundle", "Item", "Spell", "Creature", "NPC", TELEPORT_AREA, "Quest", "Phrase"];
+
+    /// <summary>
+    /// A zone .tp takes you to (Niduus, 2026-10-26: "add teleport area list to manager in look up"), named as the game
+    /// names it, with its world, kind of area and access (spiraldb-extra/Zones/zone-details.json, from Wizard404).
+    /// </summary>
+    internal const string TELEPORT_AREA = "Teleport area";
 
     private const string QA = "Quality assurance or higher";
     private const string HM = "Hall monitor or higher";
@@ -249,7 +262,7 @@ internal sealed class Lookup {
         Imlight("No fizzle", ".cheat nofizzle", QA, "Turns spells that never fizzle on or off."),
 
         // Moving around.
-        Imlight("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Search Zone in this tab for every name."),
+        Imlight("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Pick Teleport area in the Lookup tab for every zone, with a Teleport button."),
         Imlight("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
         Imlight("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
         Imlight("Show object", ".debug enableobj <zone tag>", QA, "Shows an object hidden with .debug disableobj."),
@@ -340,7 +353,8 @@ internal sealed class Lookup {
     /// <summary>
     /// Reads the commands and the lists the server wrote to its ID lookup folder.
     /// </summary>
-    internal static Lookup Load(string folder) {
+    /// <param name="zoneDetails">The zones' names and kinds (zone-details.json), or null.</param>
+    internal static Lookup Load(string folder, string? zoneDetails = null) {
         var entries = new List<LookupEntry>(COMMANDS);
         var ids = Path.Combine(folder, "ids.csv");
         string? missing = null;
@@ -368,9 +382,11 @@ internal sealed class Lookup {
 
         var zones = Path.Combine(folder, "zones.txt");
         if (File.Exists(zones)) {
+            var details = ReadZoneDetails(zoneDetails);
             entries.AddRange(File.ReadLines(zones)
-                .Where(z => z.Trim().Length > 0)
-                .Select(z => new LookupEntry("Zone", z.Trim(), "", "", $".tp {z.Trim()}", "Takes you to this zone.")));
+                .Select(z => z.Trim())
+                .Where(z => z.Length > 0)
+                .Select(z => TeleportArea(z, details.TryGetValue(z, out var d) ? d : null)));
         }
 
         var quests = Path.Combine(folder, "quests.csv");
@@ -509,6 +525,66 @@ internal sealed class Lookup {
             fields.Add(field.ToString());
             yield return fields;
         }
+    }
+
+    // A zone of zones.txt as a teleport area.
+    private static LookupEntry TeleportArea(string zone, string[]? details) {
+        var shown = details is { Length: > 0 } && details[0].Length > 0 ? details[0] : "";
+        var world = ZoneWorld(zone);
+        var area = zone.StartsWith("Housing", StringComparison.OrdinalIgnoreCase) ? "House"
+            : details is { Length: > 2 } ? details[2] switch { "S" => "World area", "D" => "Instance (dungeon)", "T" => "Starting area", _ => "" }
+            : "";
+        var access = details is { Length: > 1 } ? details[1] switch { "F" => "Free", "P" => "Paid (members)", _ => "" } : "";
+        var flags = details is { Length: > 3 } ? details[3] : "";
+        var marks = (flags.Contains('r') ? " Old (retired) zone." : "") + (flags.Contains('d') ? " A test zone of the game's makers." : "");
+
+        return new LookupEntry(TELEPORT_AREA, shown.Length > 0 ? shown : zone, "",
+            string.Join(" · ", new[] { world, area, access }.Where(t => t.Length > 0)), $".tp {zone}",
+            $"Zone {zone}. Teleport takes you there.{marks}") {
+            Zone = zone, World = world, Area = area, Access = access, OldOrTest = flags.Length > 0,
+        };
+    }
+
+    private static readonly (string Top, string World)[] s_zoneWorlds = [
+        ("WizardCity", "Wizard City"), ("DragonSpire", "Dragonspyre"), ("MooShu", "Mooshu"), ("ThePhantomZoneWorld", "Phantom zones"),
+        ("MonthlyEvents", "Events"), ("Holiday", "Events"), ("PetDerby", "Pet Derby"), ("Heroic_Dungeons_01", "Dungeons"),
+    ];
+
+    /// <summary>The world of a zone, by the start of its path (WizardCity/WC_Hub is Wizard City, Housing_... is Houses).</summary>
+    internal static string ZoneWorld(string zone) {
+        var top = zone.Split('/')[0];
+        if (top.StartsWith("Housing", StringComparison.OrdinalIgnoreCase)) {
+            return "Houses";
+        }
+
+        foreach (var (start, world) in s_zoneWorlds) {
+            if (top.Equals(start, StringComparison.OrdinalIgnoreCase)) {
+                return world;
+            }
+        }
+
+        return top.Contains('_') ? "Other" : top;
+    }
+
+    // zone-details.json: zone -> [name, access, type, flags]. Empty when it is missing or cannot be read.
+    private static Dictionary<string, string[]> ReadZoneDetails(string? path) {
+        var result = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        try {
+            if (path is null || !File.Exists(path)) {
+                return result;
+            }
+
+            using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
+            foreach (var zone in document.RootElement.GetProperty("Zones").EnumerateObject()) {
+                result[zone.Name] = [.. zone.Value.EnumerateArray().Select(v => v.GetString() ?? "")];
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or InvalidOperationException
+                                      or KeyNotFoundException) {
+            // The zones show by their paths only.
+        }
+
+        return result;
     }
 
 }
