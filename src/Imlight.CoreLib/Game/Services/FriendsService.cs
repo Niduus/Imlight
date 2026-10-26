@@ -593,10 +593,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             Logger.Warning("Player {0} tried to teleport to character ID {1}, who is not a friend.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
 
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
-                TargetCharacterID = targetID,
-                Error = 1
-            });
+            RefuseGoTo("friend.busy.notfriend");
 
             return;
         }
@@ -606,9 +603,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             Logger.Debug("Player {0} tried to teleport to character ID {1}, but the character is not online.",
                 Logger.Args(GetActiveWizard().PlayerNameBehavior.GetWizardName(), targetID));
 
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
-                Error = 1
-            });
+            RefuseGoTo("friend.busy.offline");
 
             return;
         }
@@ -643,14 +638,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             if (!canVisit) {
                 Logger.Information("Player {0} cannot go to character ID {1} in a house: {2}.",
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID, failure));
-                InformGameClient(failure == HouseVisitFailure.Denied
-                    ? "That house is closed to visitors right now."
-                    : "You cannot teleport to your friend's house right now.");
-
-                SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
-                    TargetCharacterID = targetID,
-                    Error = 1
-                });
+                RefuseGoTo(failure == HouseVisitFailure.Denied ? "friend.busy.houseclosed" : "friend.busy.house");
 
                 return;
             }
@@ -664,12 +652,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             if (queryResult.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetID)) {
                 Logger.Information("Player {0} cannot go to character ID {1}, who is in an instance.",
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
-                InformGameClient("You cannot teleport to a friend who is in a dungeon.");
-
-                SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP {
-                    TargetCharacterID = targetID,
-                    Error = 1
-                });
+                RefuseGoTo("friend.busy.dungeon");
 
                 return;
             }
@@ -684,6 +667,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         }
         else {
             Logger.Error("Failed to query the target wizard for teleportation.");
+            RefuseGoTo("friend.busy.offline");
         }
     }
 

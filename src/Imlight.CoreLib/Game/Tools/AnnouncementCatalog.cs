@@ -138,6 +138,25 @@ internal static class AnnouncementCatalog {
         new("manager.chat", "Your announcements", "Chat line", "Everyone online, when you send an announcement with Chat line. A cheat's \"announce\" block as a chat line uses it too.",
             "Announcement: {text}", [("{text}", "what you typed")]),
 
+        // Teleport to a friend (Niduus, 2026-10-26: "should state \"Your friend is busy right now. [reason]\"")
+        new("friend.busy", "Teleport to a friend", "Friend is busy (box)",
+            "A player who tries to teleport to a friend or group mate who cannot be reached, in a box with an OK button.",
+            "Your friend is busy right now. {reason}", [("{reason}", "one of the reason lines below")]),
+        new("friend.busy.dungeon", "Teleport to a friend", "Reason: in a dungeon", "Put in place of {reason} when the friend is in a dungeon or other instance.",
+            "They are in a dungeon.", []),
+        new("friend.busy.offline", "Teleport to a friend", "Reason: not online", "Put in place of {reason} when the friend is not online.",
+            "They are not online.", []),
+        new("friend.busy.houseclosed", "Teleport to a friend", "Reason: house closed", "Put in place of {reason} when the friend is in a house closed to visitors.",
+            "They are in a house that is closed to visitors.", []),
+        new("friend.busy.house", "Teleport to a friend", "Reason: house not ready", "Put in place of {reason} when the friend's house cannot take visitors right now.",
+            "Their house cannot take visitors right now.", []),
+        new("friend.busy.notfriend", "Teleport to a friend", "Reason: not friends", "Put in place of {reason} when the two are not friends.",
+            "You are not friends.", []),
+        new("friend.busy.notgrouped", "Teleport to a friend", "Reason: not in your group", "Put in place of {reason} when a group mate left the group.",
+            "They are not in your group anymore.", []),
+        new("friend.busy.realm", "Teleport to a friend", "Reason: other realm", "Put in place of {reason} when a group mate is in another realm.",
+            "They are in another realm.", []),
+
         // Server notices
         new("server.kicked", "Server notices", "Kicked", "A player who is kicked from the server.", "You have been kicked from the server.", []),
         new("server.diedelete", "Server notices", "Die = Delete", "A player whose wizard died with Die = Delete on.",

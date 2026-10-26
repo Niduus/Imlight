@@ -181,10 +181,20 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
         var wizard = GetActiveWizard();
         var targetCharId = message.TargetCharacterID;
 
-        if (!GroupRegistry.AreGrouped(wizard.CharId, targetCharId)
-            || !TryGetOnlinePlayer(targetCharId, out var target)
-            || target.CurrentRealm != GetRealmName()) {
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+        if (!GroupRegistry.AreGrouped(wizard.CharId, targetCharId)) {
+            RefuseGoTo("friend.busy.notgrouped");
+
+            return;
+        }
+
+        if (!TryGetOnlinePlayer(targetCharId, out var target)) {
+            RefuseGoTo("friend.busy.offline");
+
+            return;
+        }
+
+        if (target.CurrentRealm != GetRealmName()) {
+            RefuseGoTo("friend.busy.realm");
 
             return;
         }
@@ -195,7 +205,7 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
                 timeout: TimeSpan.FromSeconds(QueryGroupMateTimeoutInSeconds))
             .Result;
         if (targetCharacter?.Wizard is null) {
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+            RefuseGoTo("friend.busy.offline");
 
             return;
         }
@@ -205,10 +215,7 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
         if (targetCharacter.Wizard.AttachedLotGid != 0 && !HouseVisits.TryPrepare(wizard, targetCharacter.Wizard, out houseEntry, out var failure)) {
             Logger.Information("Character {CharId} cannot go to group mate {TargetCharId} in a house: {Failure}.",
                 Logger.Args(wizard.CharId, targetCharId, failure));
-            InformGameClient(failure == HouseVisitFailure.Denied
-                ? "That house is closed to visitors right now."
-                : "You cannot teleport to your group mate's house right now.");
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+            RefuseGoTo(failure == HouseVisitFailure.Denied ? "friend.busy.houseclosed" : "friend.busy.house");
 
             return;
         }
@@ -217,8 +224,7 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
         if (targetCharacter.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetCharId)) {
             Logger.Information("Character {CharId} cannot go to group mate {TargetCharId}, who is in an instance.",
                 Logger.Args(wizard.CharId, targetCharId));
-            InformGameClient("You cannot teleport to a group mate who is in a dungeon.");
-            SendToSocket(new GAME_5_PROTOCOL.MSG_GOTOPLAYERRESP { TargetCharacterID = targetCharId, Error = 1 });
+            RefuseGoTo("friend.busy.dungeon");
 
             return;
         }

@@ -424,6 +424,19 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
             Modal = (byte) (isImportant ? 1 : 0)
         });
 
+    /// <summary>
+    /// Tells a player why they cannot teleport to a friend or group mate, in a box: "Your friend is busy right now."
+    /// and the reason (Niduus, 2026-10-26). The words are on the Manager's Announcements tab (group "Teleport to a
+    /// friend"). No MSG_GOTOPLAYERRESP with an error is sent: the game shows that as an empty box.
+    /// </summary>
+    /// <param name="reasonKey">The reason's line, such as "friend.busy.dungeon".</param>
+    protected void RefuseGoTo(string reasonKey) {
+        var reason = Game.Tools.Announcements.Text(reasonKey) ?? "";
+        if (Game.Tools.Announcements.Text("friend.busy", ("reason", reason)) is { } box) {
+            InformGameClient(box.Trim(), isImportant: true);
+        }
+    }
+
     protected override void PreRestart(Exception reason, object message) {
         Logger.Error("MessageService {ServiceName} restarting due to {Reason}",
             Logger.Args(GetType().Name, reason.Message));
