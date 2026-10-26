@@ -17,10 +17,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Tools;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -497,6 +499,156 @@ public partial class CombatResolver {
             .Replace("{round}", _duel.m_roundNum.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
+    // An aura's stats (Niduus, 2026-10-26: "support for aura's with multi stats"): "damage 50, resist 20, accuracy 10".
+    private static readonly (string Word, kSpellEffects Type, bool Minus)[] s_auraStats = [
+        ("damage", kSpellEffects.kModifyOutgoingDamage, false), ("resist", kSpellEffects.kModifyIncomingDamage, true),
+        ("healing in", kSpellEffects.kModifyIncomingHeal, false), ("heal", kSpellEffects.kModifyOutgoingHeal, false),
+        ("accuracy", kSpellEffects.kModifyAccuracy, false), ("pierce", kSpellEffects.kModifyOutgoingArmorPiercing, false),
+        ("critical", kSpellEffects.kCritBoost, false), ("block", kSpellEffects.kCritBlock, false),
+        ("stun resist", kSpellEffects.kStunResist, false), ("power pip", kSpellEffects.kModifyPowerPipChance, false),
+    ];
+
+    /// <summary>"damage 50, resist 20": each stat's effect type and its param (resist is less damage coming in).</summary>
+    internal static List<(kSpellEffects Type, int Param)> AuraStats(string text, int damage) {
+        var stats = new List<(kSpellEffects, int)>();
+        foreach (var part in (text ?? "").Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+            var m = Regex.Match(part, @"^(?<w>[a-zA-Z ]+?)\s*(?<n>[+-]?\d+)\s*%?$");
+            if (!m.Success) {
+                continue;
+            }
+
+            var word = m.Groups["w"].Value.Trim().ToLowerInvariant();
+            var stat = s_auraStats.FirstOrDefault(x => word == x.Word);
+            if (stat.Word is null) {
+                stat = s_auraStats.FirstOrDefault(x => word.StartsWith(x.Word, StringComparison.Ordinal));
+            }
+
+            if (stat.Word is null && word.Length >= 3) {
+                // A short word: "crit 20", "acc 10".
+                stat = s_auraStats.FirstOrDefault(x => x.Word.StartsWith(word, StringComparison.Ordinal));
+            }
+
+            if (stat.Word is null || !int.TryParse(m.Groups["n"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)) {
+                continue;
+            }
+
+            stats.Add((stat.Type, stat.Minus ? -n : n));
+        }
+
+        if (damage != 0 && stats.All(x => x.Item1 != kSpellEffects.kModifyOutgoingDamage)) {
+            stats.Insert(0, (kSpellEffects.kModifyOutgoingDamage, damage));
+        }
+
+        return stats;
+    }
+
+    // The game's aura that looks most like these stats: the most of them in its own effects, then the fewest others.
+    private static readonly Lazy<List<(SpellTemplate Template, uint Id)>> s_auraLooks = new(() => {
+        try {
+            return [.. SpellFactory.AllSpellTemplates()
+                .Where(t => ((string) t.Template.m_sTypeName ?? "").Equals("Aura", StringComparison.OrdinalIgnoreCase) && !t.Template.m_Treasure
+                            && t.Template.m_effects is { Count: > 0 } effects && effects.All(e => e is not null && e.GetType() == typeof(SpellEffect)
+                                && e.m_effectTarget == kEffectTarget.kSelf && e.m_numRounds > 0)
+                            && SpellFactory.Exists((string) t.Template.m_name))
+                .Select(t => (t.Template, SpellFactory.GetSpell((string) t.Template.m_name)?.m_templateID ?? 0u))
+                .Where(t => t.Item2 != 0)];
+        }
+        catch (Exception e) {
+            Logger.Error("Boss cheats | The auras could not be listed: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    private static (SpellTemplate Template, uint Id) AuraLookalike(List<(kSpellEffects Type, int Param)> stats, string school) {
+        var wanted = stats.Select(x => x.Type).ToList();
+
+        return s_auraLooks.Value
+            .OrderByDescending(t => wanted.Count(w => t.Template.m_effects.Any(e => e.m_effectType == w)))
+            .ThenBy(t => t.Template.m_effects.Count(e => !wanted.Contains(e.m_effectType)))
+            .ThenByDescending(t => school.Length > 0 && ((string) t.Template.m_sMagicSchoolName ?? "").Equals(school, StringComparison.OrdinalIgnoreCase))
+            .ThenBy(t => ((string) t.Template.m_name).Length)
+            .FirstOrDefault();
+    }
+
+    /// <summary>
+    /// AddCharm Aura: an aura of several stats (Stats, plus Amount as damage) on the target for Rounds rounds (the
+    /// lookalike's own if 0). On itself, the game's aura most like it (or "shown as") is cast so the game draws it, and the
+    /// aura it puts on is then made these stats; each stat the lookalike also has is told to the game with its own number
+    /// (ShowOwnValue). On another one, it goes on unseen.
+    /// </summary>
+    private float AddCustomAura(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle trigger,
+                                CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
+                                float cinematicTimeSoFar, bool custom) {
+        var stats = AuraStats(step.AuraStats, step.Amount);
+        if (stats.Count == 0) {
+            Logger.Information("Duel {0} | Slot {1} | {2}: the aura has no stats.", Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
+
+            return 0;
+        }
+
+        var school = string.IsNullOrWhiteSpace(step.School) ? "All" : step.School.Trim();
+        var aim = step.Target.Length > 0 ? step.Target : "Self";
+        var onSelf = aim.Equals("Self", StringComparison.OrdinalIgnoreCase) || aim.Equals("Owner", StringComparison.OrdinalIgnoreCase);
+        var named = step.Spell.Length > 0 || step.SpellID != 0;
+        var (lookTemplate, lookId) = named ? FindSpell(step.Spell, step.SpellID) is var f && f.Template is not null ? (f.Template, f.Spell.m_templateID) : default
+            : AuraLookalike(stats, step.Look ?? "");
+        SpellEffect Made(kSpellEffects type, int param, int rounds) => CheatEffect(type, param, school, rounds,
+            good: type == kSpellEffects.kModifyIncomingDamage ? param <= 0 : param >= 0) with { m_spellTemplateID = lookId };
+        var cinematicTime = 0f;
+        if (onSelf && lookTemplate is not null) {
+            var had = boss._hangingEffects.ToHashSet(ReferenceEqualityComparer.Instance);
+            var sentBefore = combatActionList.m_actionList.Count;
+            var cast = step with { Do = "Cast", Spell = (string) lookTemplate.m_name, SpellID = lookId, Target = "Self" };
+            cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+            var put = boss._hangingEffects.Where(e => e is not null && !had.Contains(e) && e.m_spellTemplateID == lookId).ToList();
+            var rounds = step.Rounds > 0 ? step.Rounds : put.Select(e => e.m_numRounds).DefaultIfEmpty(4).Max();
+            CombatCharms.RemoveExact(boss._hangingEffects, put);
+            foreach (var (type, param) in stats) {
+                boss._hangingEffects.Add(Made(type, param, rounds));
+            }
+
+            // Each stat the lookalike has is shown with its own number, in the lookalike's order.
+            if (BossCheats.ShowOwnValue) {
+                var overrides = new List<SpellEffectParamOverride>();
+                var used = new HashSet<int>();
+                foreach (var (type, param) in stats) {
+                    var index = lookTemplate.m_effects.FindIndex(e => e is not null && e.m_effectType == type && !used.Contains(lookTemplate.m_effects.IndexOf(e)));
+                    if (index >= 0) {
+                        used.Add(index);
+                        overrides.Add(new SpellEffectParamOverride { m_effectIndex = index, m_paramValue = param });
+                    }
+                }
+
+                for (var i = sentBefore; i < combatActionList.m_actionList.Count; i++) {
+                    if (combatActionList.m_actionList[i]?.m_spell is { } sent && sent.m_templateID == lookId) {
+                        combatActionList.m_actionList[i].m_spell = sent with { m_paramOverrides = [.. overrides] };
+                    }
+                }
+            }
+
+            Logger.Information("Duel {0} | Slot {1} | {2}: {3} cast so the game shows the aura; it is made {4} for {5} rounds.",
+                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, (string) lookTemplate.m_name,
+                    string.Join(", ", stats.Select(x => $"{x.Type} {x.Param}")), rounds));
+
+            return cinematicTime;
+        }
+
+        // On another one (or with no aura to cast): unseen, one aura at a time as in the game.
+        var lasting = step.Rounds > 0 ? step.Rounds : 4;
+        foreach (var target in StepTargets(boss, aim, null, trigger, receiver).Where(t => t?._hangingEffects is not null && t.IsAlive)) {
+            target._hangingEffects.RemoveAll(CombatRequirements.IsAura);
+            foreach (var (type, param) in stats) {
+                target._hangingEffects.Add(Made(type, param, lasting));
+            }
+        }
+
+        Logger.Information("Duel {0} | Slot {1} | {2}: an aura of {3} goes on {4} unseen.",
+            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, string.Join(", ", stats.Select(x => $"{x.Type} {x.Param}")), aim));
+
+        return cinematicTime;
+    }
+
     /// <summary>
     /// The lookalike's casts just added (from index <paramref name="from"/>) carry the effect's own size in
     /// Spell.m_paramOverrides ([BossCheats] ShowOwnValue), the list the game uses for a spell whose numbers differ from
@@ -521,6 +673,7 @@ public partial class CombatResolver {
             action.m_spell = action.m_spell with {
                 m_paramOverrides = [new SpellEffectParamOverride { m_effectIndex = index, m_paramValue = param }],
             };
+            Logger.Debug("Cheat lookalike {0}: the game is told effect {1} is {2}.", Logger.Args(lookId, index, param));
         }
     }
 
@@ -562,7 +715,9 @@ public partial class CombatResolver {
             var cast = step with { Do = "Cast", Spell = (string) look.Template.m_name, SpellID = lookId, Target = "Self" };
             var sentBefore = combatActionList.m_actionList.Count;
             cinematicTime = CheatCast(boss, cheat, cast, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
-            ShowOwnValue(combatActionList, sentBefore, lookId, look.Template, type, param);
+            if (BossCheats.ShowOwnValueGlobals) {
+                ShowOwnValue(combatActionList, sentBefore, lookId, look.Template, type, param);
+            }
             for (var i = 0; i < bubbles.Count; i++) {
                 var e = bubbles[i];
                 if (e is null || had.Contains(e) || e.m_spellTemplateID != lookId) {
@@ -718,6 +873,10 @@ public partial class CombatResolver {
 
                     return true;
                 }
+                case "addcharm" when (step.Kind ?? "").Trim().Equals("Aura", StringComparison.OrdinalIgnoreCase):
+                    cinematicTime = AddCustomAura(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
+
+                    return true;
                 case "addcharm" when CheatLookalikes.IsGlobal(step.Kind):
                     cinematicTime = AddCustomGlobal(boss, cheat, step, trigger, receiver, bossName, lines, combatActionList, cinematicTimeSoFar, custom);
 

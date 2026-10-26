@@ -563,6 +563,8 @@ internal static class BossCheats {
         public string Who { get; set; } = "";
         // For AddCharm: the cast animation of the spell cast for it ("" normal, Sun, Shadow, Moon, Star, or a school).
         public string Look { get; set; } = "";
+        // AddCharm Aura: its stats, "damage 50, resist 20, accuracy 10" (Niduus, 2026-10-26).
+        public string AuraStats { get; set; } = "";
         // For FirstTurn: Us (the cheat's own side acts first) or Them (the other side).
         public string Side { get; set; } = "";
         // The enchantments picked for an enchanted FreeCast, put on in this order (none: the best one that fits).
@@ -607,6 +609,10 @@ internal static class BossCheats {
     // [BossCheats] ShowOwnValue (Niduus, 2026-10-26: "get the game to render custom values like a 666 blade"): AddCharm's
     // lookalike cast carries its own size in Spell.m_paramOverrides, so the game can show that number.
     internal static bool ShowOwnValue => ConfigurationManager.GetValue("BossCheats.ShowOwnValue", true);
+
+    // [BossCheats] ShowOwnValueGlobals: the same for a global (bubble), on its own switch (Niduus, 2026-10-26: blades
+    // showed their own number, a global did not show in the list at all).
+    internal static bool ShowOwnValueGlobals => ConfigurationManager.GetValue("BossCheats.ShowOwnValueGlobals", true);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,

@@ -640,7 +640,7 @@ internal sealed partial class ManagerWindow {
     /// </summary>
     private string? AddCharmWarning(CheatBlock block) {
         var kind = block.Text("Kind");
-        if (kind is "DoT" or "HoT") {
+        if (kind is "DoT" or "HoT" or "Aura") {
             return null;
         }
 
