@@ -118,13 +118,14 @@ public static class IdCatalog {
             return;
         }
 
-        _ = Task.Run(WriteZonesAndQuests);
-        // The Manager's Quests tab: every quest in play order, with where it's given.
-        _ = Task.Run(() => Imlight.CoreLib.Game.Tools.QuestGuide.WriteList(OutputPath));
-        // The Customs tab's vendor and trainer presets, worked out from the game files each boot.
-        _ = Task.Run(() => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
-        // The Manager's Vendors & Trainers search: every shop keeper and trainer, what they sell and teach, where they stand.
-        Imlight.CoreLib.Game.Tools.VendorGuide.WriteLater(OutputPath);
+        // The Manager's files are written one after another on a low-priority thread, after the first logins: run
+        // all at once right at boot they took the server's CPU and game files for minutes, so logins timed out.
+        var managerFiles = new System.Threading.Thread(WriteManagerFiles) {
+            IsBackground = true,
+            Priority = System.Threading.ThreadPriority.BelowNormal,
+            Name = "Manager files",
+        };
+        managerFiles.Start();
         _ = Task.Run(() => {
             try {
                 if (TryLoadFromDisk()) {
@@ -146,6 +147,29 @@ public static class IdCatalog {
                 Logger.Error("Could not build the ID lookup. {Exception}", Logger.Args(ex));
             }
         });
+    }
+
+    private static void WriteManagerFiles() {
+        System.Threading.Thread.Sleep(ManagerFilesDelay);
+
+        RunManagerFile("zones and quests", WriteZonesAndQuests);
+        // The Manager's Quests tab: every quest in play order, with where it's given.
+        RunManagerFile("quest guide", () => Imlight.CoreLib.Game.Tools.QuestGuide.WriteList(OutputPath));
+        // The Customs tab's vendor and trainer presets, worked out from the game files each boot.
+        RunManagerFile("vendor and trainer presets", () => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
+        // The Manager's Vendors & Trainers search: every shop keeper and trainer, what they sell and teach, where they stand.
+        RunManagerFile("vendors and trainers", () => Imlight.CoreLib.Game.Tools.VendorGuide.Write(OutputPath));
+    }
+
+    private static readonly TimeSpan ManagerFilesDelay = TimeSpan.FromSeconds(90);
+
+    private static void RunManagerFile(string what, System.Action write) {
+        try {
+            write();
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not write the Manager's {0}: {1}", Logger.Args(what, ex));
+        }
     }
 
     /// <summary>

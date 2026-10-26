@@ -51,13 +51,8 @@ internal static class VendorGuide {
 
     private static readonly JsonSerializerOptions s_write = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
-    /// <summary>Works the list out and writes it, a minute after the server starts so it never slows the start.</summary>
-    internal static void WriteLater(string folder) => _ = Task.Run(async () => {
-        await Task.Delay(TimeSpan.FromSeconds(60));
-        Write(folder);
-    });
-
-    private static void Write(string folder) {
+    /// <summary>Works the list out and writes it (IdCatalog runs it after the server's start).</summary>
+    internal static void Write(string folder) {
         try {
             var (zoneNames, zonesOf) = LoadZones();
             var files = CoreObjectFactory.TemplateManifest.m_serializedTemplates.Where(t => t is not null)

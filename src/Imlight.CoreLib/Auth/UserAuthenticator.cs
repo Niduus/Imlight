@@ -78,7 +78,7 @@ internal static class UserAuthenticator {
         => ConfigurationManager.Settings["Global Settings.EnforceRevision"].AsBool();
     private static string s_serverRevision
         => ConfigurationManager.Settings["Global Settings.GameRevision"].AsString();
-    private static readonly TimeSpan s_deadline = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan s_slowLogin = TimeSpan.FromSeconds(10);
 
     internal class AuthenticationDetails {
         
@@ -143,8 +143,11 @@ internal static class UserAuthenticator {
             return details;
         }
 
-        if (stopwatch.Elapsed > s_deadline) {
-            return TimedOut(details, sessionActor, stopwatch);
+        // A slow lookup (a busy server right after its start) still lets the wizard in: the work is done, and the
+        // game waits much longer than this. Refusing here made every login of the first minutes fail.
+        if (stopwatch.Elapsed > s_slowLogin) {
+            Logger.Warning("SessionActor {0} account lookup was slow: {1} ms.",
+                Logger.Args(sessionId, stopwatch.ElapsedMilliseconds));
         }
 
         // Check to see if this machine is banned.
@@ -173,10 +176,6 @@ internal static class UserAuthenticator {
             return details;
         }
 
-        if (stopwatch.Elapsed > s_deadline) {
-            return TimedOut(details, sessionActor, stopwatch);
-        }
-
         details._account = matchedAccount;
 
         var doesPasswordMatch = ClientKey.VerifyCK1(matchedAccount.PasswordHash, sessionId, offerTime, offerMilli, clientKey1);
@@ -203,15 +202,6 @@ internal static class UserAuthenticator {
 
             return details;
         }
-    }
-
-    private static AuthenticationDetails TimedOut(AuthenticationDetails details, SessionActor sessionActor, Stopwatch stopwatch) {
-        Logger.Warning("SessionActor {0} authentication ran past its deadline after {1} ms.",
-            Logger.Args(sessionActor.SessionID, stopwatch.ElapsedMilliseconds));
-
-        details._result = UserAuthenResult.Timeout;
-
-        return details;
     }
 
     private static (ushort, string, string) DecodeRec1(ByteString rec1, SessionActor sessionActor) {
