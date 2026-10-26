@@ -321,8 +321,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // and its spawner brings it back later, instead of walking through the fight. A boss fight's own group (the
         // boss, and anyone standing in the circle with it before the first round) is not cut down by this rule.
         var bossGroup = Duel.m_roundNum == 0 && (bossOfThisFight || HasBossInBattle());
-        if (!bossGroup && !IsSlotAvailable(CombatTeam.Monster)) {
-            Refused(IsNewbieSigil
+        if (bossGroup ? GetAvailableSubCircleTeamCreature() is null : !IsSlotAvailable(CombatTeam.Monster)) {
+            Refused(bossGroup ? $"the enemy side is full ({CreatureCount} monsters); it vanishes"
+                : IsNewbieSigil
                 ? $"starter street circle, one monster per wizard ({CreatureCount} monsters, {PlayerCount} wizards); it vanishes"
                 : $"the battle is full ({CreatureCount} monsters for {PlayerCount} wizards); it vanishes");
             suspect.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
