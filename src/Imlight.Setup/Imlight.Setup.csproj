@@ -37,6 +37,8 @@
     <!-- What a spell name covers in a cheat ("Scald" is every Scald), the same file the server uses. -->
     <Compile Include="..\Imlight.CoreLib\Game\Combat\SpellNameFamily.cs" Link="Shared\SpellNameFamily.cs" />
     <Compile Include="..\Imlight.CoreLib\Game\Combat\CheatLookalikes.cs" Link="Shared\CheatLookalikes.cs" />
+    <!-- The [Trainers] TrainingPointRules words, read and written the same way the server reads them. -->
+    <Compile Include="..\Imlight.CoreLib\Shared\Character\TrainingPointRules.cs" Link="Shared\TrainingPointRules.cs" />
     <!-- Every line the server announces, for the Announcements tab: the same list the server uses. -->
     <Compile Include="..\Imlight.CoreLib\Game\Tools\AnnouncementCatalog.cs" Link="Shared\AnnouncementCatalog.cs" />
     <!-- And every other message the server sends a player, with its groups. -->

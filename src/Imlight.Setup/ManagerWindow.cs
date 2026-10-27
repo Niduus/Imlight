@@ -128,7 +128,6 @@ internal sealed partial class ManagerWindow : Window {
         ("NoSpellRequirements", "No spell requirements", new() { OnContent = "On", OffContent = "Off" }),
         ("NoLevelRequirements", "No level requirements", new() { OnContent = "On", OffContent = "Off" }),
         ("FreeTraining", "Free training (no training points)", new() { OnContent = "On", OffContent = "Off" }),
-        ("TrainingPointPerLevel", "Training points for every level gained", new() { OnContent = "On", OffContent = "Off" }),
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
         ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
     ];
@@ -179,7 +178,6 @@ internal sealed partial class ManagerWindow : Window {
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "HouseDuelTakesTurns", "House duel circles take turns, the PvP way (off: both sides act at once)", new() { OnContent = "On", OffContent = "Off" }),
     ];
-    private readonly NumericUpDown _pointsPerLevel = new() { Minimum = 0, Maximum = 100, Increment = 1, FormatString = "0", Width = 130 };
 
     // Settings.
     private readonly TextBox _settingSearch = new() { Watermark = "Search settings by name, what they do or their value" };
@@ -286,10 +284,10 @@ internal sealed partial class ManagerWindow : Window {
             trainerRows.Children.Add(row);
         }
 
-        trainerRows.Children.Add(SwitchRow("Training points per level", _pointsPerLevel));
+        trainerRows.Children.Add(TrainingPointRows());
         // The two long lists of switches start folded shut: they are set once, not on every visit.
         _trainersCard = Shut(Fold("school", "Lookup", "Spell trainers",
-            "What trainers ask for before they teach a spell, with or without randomizer mode.",
+            "What trainers ask for before they teach a spell, with or without randomizer mode, and the training points leveling gives.",
             trainerRows));
         _trainersCard.IsVisible = false;
         var battleRows = new StackPanel { Spacing = 4 };
@@ -739,12 +737,6 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.SelectionChanged += async (_, _) => {
             if (!_updatingRandomizer && _maxMonsters.SelectedIndex >= 0) {
                 await Guard(() => SetMaxMonstersAsync(_maxMonsters.SelectedIndex));
-            }
-        };
-
-        _pointsPerLevel.ValueChanged += async (_, _) => {
-            if (!_updatingRandomizer && _pointsPerLevel.Value is { } value) {
-                await Guard(() => SetPointsPerLevelAsync((int) value));
             }
         };
 
@@ -1344,9 +1336,7 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.IsEnabled = Has("Battle", "MaxMonsters");
         _maxMonsters.SelectedIndex = int.TryParse(ini.GetValueOrDefault(("Battle", "MaxMonsters")), out var maxMonsters)
             && maxMonsters is >= 1 and <= 4 ? maxMonsters : 0;
-        if (!_pointsPerLevel.IsFocused) {
-            _pointsPerLevel.Value = int.TryParse(ini.GetValueOrDefault(("Trainers", "TrainingPointsPerLevel")), out var points) ? points : 1;
-        }
+        ShowTrainingPoints(ini);
 
         _updatingRandomizer = false;
     }
@@ -1508,19 +1498,6 @@ internal sealed partial class ManagerWindow : Window {
         if (restart && await ConfirmAsync($"{name} is now {(on ? "on" : "off")}. Restart the server now to use it?")) {
             Say(await _manager.RestartServerAsync());
         }
-    }
-
-    private Task SetPointsPerLevelAsync(int points) {
-        if (!_manager.HasSetting("Trainers", "TrainingPointsPerLevel")
-                || _manager.GetSetting("Trainers", "TrainingPointsPerLevel") == points.ToString()) {
-            return Task.CompletedTask;
-        }
-
-        _manager.SaveSettings([new Setting("Trainers", "TrainingPointsPerLevel", points.ToString(), "")]);
-        _settings = [];
-        Say($"Each level now gives {points} training points while that switch is on. It applies right away.");
-
-        return Task.CompletedTask;
     }
 
     private Task SetMaxMonstersAsync(int most) {
