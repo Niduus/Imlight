@@ -78,11 +78,14 @@ public static class PackManager {
 
         foreach (var tableName in lootTables) {
             var rollTable = (string) tableName;
-            if (DropTableCollection.GetDropTable(rollTable) is null) {
+            var sagaSpellement = SagaSpellements.Roll(rollTable, wizard.MagicSchoolBehavior?.MagicSchool.ToString() ?? "");
+            if (sagaSpellement is null && DropTableCollection.GetDropTable(rollTable) is null) {
                 rollTable = StandInTable(boosterTemplate, rollTable);
             }
 
-            var rollResult = rollTable is null ? new DropTableResult { Items = [] }
+            var rollResult = sagaSpellement is { } saga
+                ? new DropTableResult { Items = [new DropItemResult { ItemId = saga.Id.ToString(), ItemName = saga.Name, Quantity = 1 }] }
+                : rollTable is null ? new DropTableResult { Items = [] }
                 : DropTableRoller.Roll([rollTable], sessionActorRef, wizard.GameObject, wizard);
             if (rollResult.Items.Count == 0 && rollTable is null && IsSpellementSlot(tableName)
                     && RandomSpellement() is { } spellement) {
