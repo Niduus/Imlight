@@ -37,7 +37,8 @@ public partial class CombatResolver {
         return StepTargets(me, target, template, trigger, receiver).FirstOrDefault() is { } circle ? CodeOf(me, circle) : null;
     }
 
-    private static bool IsEveryone(string target) => (target ?? "").Trim().ToLowerInvariant() is "everyone" or "everyoneelse";
+    private static bool IsEveryone(string target) => (target ?? "").Trim().ToLowerInvariant() is "everyone" or "everyoneelse" or "allplayers" or "allplayersbutself"
+        || (target ?? "").StartsWith("slot:", StringComparison.OrdinalIgnoreCase);
 
     // The .c1 code of a circle as the caster sees it: pN on its own side, eN on the other (FreeTargetCircle the other way).
     private static string CodeOf(CombatDuelSubCircle caster, CombatDuelSubCircle circle) {

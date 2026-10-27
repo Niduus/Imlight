@@ -79,8 +79,9 @@ internal static class IniFile {
     private static readonly (string Section, string Key, string Old, string New)[] s_changedDefaults = [
         // Niduus, 2026-10-25: "Default should be 80 btw for cap without elixir".
         ("Character", "MaxInventoryItems", "75", "80"),
-        // Niduus, 2026-10-26: "global is up but doesn't state it or show effects visually" (the game drops a told size).
-        ("BossCheats", "ShowOwnValueGlobals", "true", "false"),
+        // Niduus, 2026-10-27 ("globals should display like this"): sent in the turn order since v0.10.451, a global's told
+        // size shows (the bubble was missing as an interrupt, not for its size), so the own number is back on.
+        ("BossCheats", "ShowOwnValueGlobals", "false", "true"),
     ];
 
     /// <summary>

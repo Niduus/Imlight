@@ -211,6 +211,10 @@ public partial class CombatResolver {
             "everyenemy" or "allenemies" => (enemies, 'e'),
             "everyally" or "allallies" => (allies, 'e'),
             "everyone" => (standing, 'e'),
+            // Niduus, 2026-10-27: every wizard (ALL PLAYERS), without whoever's cheat it is, or any one of them.
+            "allplayers" => ([.. standing.Where(c => c.IsHumanPlayer)], 'e'),
+            "allplayersbutself" => ([.. standing.Where(c => c.IsHumanPlayer && c != boss && c != _cheatOwner)], 'e'),
+            "anyplayer" => ([.. standing.Where(c => c.IsHumanPlayer)], 'a'),
             "enemyside" => (enemies, 's'),
             "allyside" => (allies, 's'),
             "bothsides" => (standing, 's'),

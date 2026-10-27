@@ -1173,8 +1173,12 @@ internal sealed partial class ManagerWindow {
             var word = m.Groups["w"].Value.Trim().ToLowerInvariant();
             var school = "";
             var first = word.Split(' ', 2);
-            if (first.Length == 2 && (first[0] == "all" || CheatSpecs.SCHOOLS.Any(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)))) {
-                school = first[0] == "all" ? "All" : CheatSpecs.SCHOOLS.First(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)).Value;
+            if (first.Length == 2 && (first[0] is "all" or "chromatic" || CheatSpecs.SCHOOLS.Any(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)))) {
+                school = first[0] switch {
+                    "all" => "All",
+                    "chromatic" => "Chromatic",
+                    _ => CheatSpecs.SCHOOLS.First(x => x.Value.Equals(first[0], StringComparison.OrdinalIgnoreCase)).Value,
+                };
                 word = first[1].Trim();
             }
 
@@ -1188,7 +1192,8 @@ internal sealed partial class ManagerWindow {
         => string.Join(", ", stats.Select(s => $"{(s.School.Length > 0 ? s.School.ToLowerInvariant() + " " : "")}{s.Stat} {s.Amount.ToString(CultureInfo.InvariantCulture)}"));
 
     // A stat's school: the block's own, all schools, or one.
-    private static readonly (string Value, string Label)[] s_auraStatSchools = [("", "block's school"), ("All", "all schools"), .. CheatSpecs.SCHOOLS[1..]];
+    private static readonly (string Value, string Label)[] s_auraStatSchools = [("", "block's school"), ("All", "all schools"), .. CheatSpecs.SCHOOLS[1..],
+        ("Chromatic", "Chromatic: the school of whoever has the aura")];
 
     /// <summary>
     /// An aura's stats (Niduus, 2026-10-26: "walk the player into what stats they want"): a pop-up of steps, one row a

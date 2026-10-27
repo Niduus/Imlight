@@ -39,6 +39,10 @@ internal static class CheatSpecs {
 
     internal static readonly (string Value, string Label)[] TARGETS = [
         ("", "where the spell aims"),
+        // Niduus, 2026-10-27: "blocks to state "ALL PLAYERS" with "ALL PLAYERS (Excluding self)" as an option": every
+        // wizard standing, on either side; the second without whoever's cheat it is.
+        ("AllPlayers", "ALL PLAYERS"),
+        ("AllPlayersButSelf", "ALL PLAYERS (Excluding self)"),
         ("Self", "itself"),
         ("Caster", "the attacker"),
         ("Receiver", "whoever that spell was aimed at"),
@@ -155,7 +159,22 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side"),
         ("AllEnemies", "every player")];
     private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
-    private static readonly (string, string)[] s_anySchool = [("", "universal (every school)"), .. SCHOOLS[1..]];
+    // Chromatic (Niduus, 2026-10-27: "Chromatic SELF (Meaning gain a blade of that targets school) Chromatic ENEMY (Give a
+    // weakness on that enemy specifically for their school) ... COVER ALL CORNERS"): a school the server picks when the
+    // block runs, from the fighters (CombatResolver.Chromatic.cs).
+    internal static readonly (string Value, string Label)[] CHROMATIC = [
+        ("Chromatic", "Chromatic: each target's own school"),
+        ("ChromaticRival", "Chromatic: the rival of each target's school"),
+        ("ChromaticTrigger", "Chromatic: the school of whoever set it off"),
+        ("ChromaticReceiver", "Chromatic: the school of whoever the spell was aimed at"),
+        ("ChromaticFoes", "Chromatic: one of each school on the other side"),
+        ("ChromaticAllies", "Chromatic: one of each school on its own side"),
+        ("ChromaticLast", "Chromatic: the school of the block before's target"),
+        ("ChromaticOwn", "Chromatic: its own school"),
+        ("ChromaticOwnRival", "Chromatic: the rival of its own school"),
+    ];
+    private static readonly (string, string)[] s_anySchool = [("", "universal (every school)"), .. SCHOOLS[1..], .. CHROMATIC];
+    private static readonly (string, string)[] s_changeSchools = [.. SCHOOLS[1..], .. CHROMATIC];
     // Niduus, 2026-10-25 ("Expand on existing cheats"): the blocks of CombatResolver.MoreCheats.cs.
     private static readonly (string, string)[] s_removedFrom = [("", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"), ("Anyone", "anyone")];
     private static readonly (string, string)[] s_spellDoes = [
@@ -176,7 +195,8 @@ internal static class CheatSpecs {
     // Niduus, 2026-10-26 ("You can legit do anything"): the conditions (each one entry of the cheat's Conditions, with NOT
     // and OR groups) and the creative Do blocks (the server's CombatResolver.CreativeCheats.cs).
     internal static readonly (string Value, string Label)[] COND_WHO = [
-        ("", "it"), ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Matched", "the one the If found"),
+        ("", "it"), ("AllPlayers", "ALL PLAYERS"), ("AllPlayersButSelf", "ALL PLAYERS (Excluding self)"), ("AnyPlayer", "any player"),
+        ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Matched", "the one the If found"),
         ("LastAttacker", "the last one who hurt it"), ("Summoner", "whoever summoned it"),
         ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side"), ("Anyone", "anyone"),
         ("EveryEnemy", "everyone on the other side"), ("EveryAlly", "everyone on its side"), ("Everyone", "everyone"),
@@ -185,11 +205,11 @@ internal static class CheatSpecs {
         ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"),
     ];
     private static readonly (string, string)[] s_ops = [(">=", "at least"), ("<=", "at most"), (">", "more than"), ("<", "less than"), ("=", "exactly"), ("!=", "anything but")];
-    private static readonly (string, string)[] s_casters = [("", "anyone"), ("Self", "it"), ("Allies", "its side"), ("OtherAllies", "its allies"),
+    private static readonly (string, string)[] s_casters = [("", "anyone"), ("AllPlayers", "ALL PLAYERS"), ("AllPlayersButSelf", "ALL PLAYERS (Excluding self)"), ("Self", "it"), ("Allies", "its side"), ("OtherAllies", "its allies"),
         ("Enemies", "the other side"), ("Caster", "the attacker"), ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"),
         ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"), ("p1", "its side's circle 1"), ("p2", "its side's circle 2"),
         ("p3", "its side's circle 3"), ("p4", "its side's circle 4")];
-    private static readonly (string, string)[] s_onWho = [("", "anyone"), ("Self", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"),
+    private static readonly (string, string)[] s_onWho = [("", "anyone"), ("AllPlayers", "ALL PLAYERS"), ("AllPlayersButSelf", "ALL PLAYERS (Excluding self)"), ("Self", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"),
         ("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at")];
     private static readonly (string, string)[] s_results = [("", "landed or not"), ("Landed", "landed"), ("Crit", "landed as a critical"), ("Fizzled", "fizzled")];
     private static readonly (string, string)[] s_within = [("", "this battle"), ("Round", "this round"), ("LastRound", "last round")];
@@ -266,7 +286,12 @@ internal static class CheatSpecs {
     private static string CreatureList(List<string> ids) => ids.Count == 0 ? "(no creatures picked)"
         : string.Join(", ", ids.Select(w => uint.TryParse(w, out var id) && CreatureNames?.Invoke(id) is { } name ? name : w));
 
-    private static string SchoolWord(CheatBlock b) => b.Text("School").Length > 0 ? b.Text("School") + " " : "";
+    private static string SchoolWord(CheatBlock b) => b.Text("School").Length > 0 ? SchoolName(b.Text("School")) + " " : "";
+
+    // A school as a sentence says it: a Chromatic one by its words ("chromatic (rival of each target's school)").
+    internal static string SchoolName(string school)
+        => CHROMATIC.FirstOrDefault(c => c.Value.Equals(school, StringComparison.OrdinalIgnoreCase)).Label is { } label
+            ? "chromatic (" + label["Chromatic: ".Length..] + ")" : school;
 
     /// <summary>The kind of card a When such as "a player heals" stands for (as the server's s_castWhens).</summary>
     internal static string CastWhenKind(string spec) => spec switch {
@@ -571,7 +596,7 @@ internal static class CheatSpecs {
         new("D.AddEffects", BlockKind.Do, "shield", "add a spell's charms", "The charms and wards of a spell (Tower Shield, Fire Blade, Feint...) go on at once, with no casting.",
             "Put the charms and wards of {Spell} on {Target}", [F("Spell", CheatFieldType.Spell), F("Target", CheatFieldType.Target, "Self")],
             b => $"put the effects of {SpellName(b)}{Target(b)}"),
-        new("D.AddCharm", BlockKind.Do, "shield", "add an effect of your own size", "A blade, weakness, shield, trap or absorb of your own size goes on at once, and is used up like a real one: the amount is a percent (hit points for an absorb), so \"55, Storm, blade\" is a +55% Storm blade. A damage or heal over time is the amount in all, spread over the rounds (3 if 0); pick its school. The game only draws an effect it sees cast, so a real spell of that kind and school is cast for it (Shadowblade for a Shadow blade, Balanceblade for all schools...) and then made your size: the game shows the real spell's number, the server uses yours. \"Shown as\" (optional) picks that spell yourself; two of the same spell then count once on a hit, as real ones do. A damage or heal over time is not drawn. After \"remove effects\" and \"only if something came off\" it is a reward: \"Clear DoT on the target for +55% Storm blade on me\". Cast animation: the game plays the casting of the cast spell's own school, so Sun or Shadow casts a real Sun or Shadow spell of that kind (example: 666, Shadow, blade, on me, Sun animation casts Sun Blade, then makes it a +666% Shadow blade; the game shows the Sun Blade's icon). Sun has a blade, shield and absorb, Shadow all five kinds, Moon a blade, Star a blade, shield and absorb; any other pick is cast normally. With \"shown as\" filled in, that spell's school decides. A global is a battlefield bubble: it takes the current one's place, as a real one does, and its school's real bubble is cast for it (Wyldfire, Balefrost, Darkwind, Blood Moon, Circle of Thorns, Deadzone, Balance of Power, Shadow; Power Play for all schools; Sanctuary for more healing, Doom and Gloom for less), then made your size: \"100, Storm, global\" is a +100% Storm global. The target does not matter for a global. A yellow note shows when the game will show an effect of another school than yours (it then uses it on other hits than the server does). Silent: the spell cast for it plays no casting animation; the effect still shows. More kinds: pierce boost (spear) and less pierce, pierce trap and pierce shield, flat damage boost and weakness, flat shield and trap, accuracy boost and loss, critical and critical block boosts, healing given or taken (more or less, percent or flat), damage over time taken (more or less), stun block, stun resist, damage cap (the most a hit can do), power pip chance, pip conversion and dispel block. For each, the game's own spell of that kind closest in school and size is cast so the game draws it, then made your size. Flat kinds, absorb, stun block, damage cap, pip conversion and dispel block are a number, not a percent (the % sign is then ignored). Aura (several stats): an aura that changes several stats at once for its rounds (the aura's own if 0), never used up, one aura at a time as in the game. The amount is its damage; \"aura stats\" adds more, with commas: damage, resist, heal, healing in, accuracy, pierce, critical, block, stun resist, power pip, each with a number (minus lowers it). Example: 50, Fire, aura, stats \"resist 20, accuracy 15, pierce 10\" is +50% Fire damage, 20% less damage taken, +15% accuracy and +10% pierce. On itself, the game's aura most like it is cast so it shows (or \"shown as\"), with your numbers on the stats it has; on another one it goes on unseen.",
+        new("D.AddCharm", BlockKind.Do, "shield", "add an effect of your own size", "A blade, weakness, shield, trap or absorb of your own size goes on at once, and is used up like a real one: the amount is a percent (hit points for an absorb), so \"55, Storm, blade\" is a +55% Storm blade. A damage or heal over time is the amount in all, spread over the rounds (3 if 0); pick its school. The game only draws an effect it sees cast, so a real spell of that kind and school is cast for it (Shadowblade for a Shadow blade, Balanceblade for all schools...) and then made your size: the game shows the real spell's number, the server uses yours. \"Shown as\" (optional) picks that spell yourself; two of the same spell then count once on a hit, as real ones do. A damage or heal over time is not drawn. After \"remove effects\" and \"only if something came off\" it is a reward: \"Clear DoT on the target for +55% Storm blade on me\". Cast animation: the game plays the casting of the cast spell's own school, so Sun or Shadow casts a real Sun or Shadow spell of that kind (example: 666, Shadow, blade, on me, Sun animation casts Sun Blade, then makes it a +666% Shadow blade; the game shows the Sun Blade's icon). Sun has a blade, shield and absorb, Shadow all five kinds, Moon a blade, Star a blade, shield and absorb; any other pick is cast normally. With \"shown as\" filled in, that spell's school decides. A global is a battlefield bubble: it takes the current one's place, as a real one does, and its school's real bubble is cast for it (Wyldfire, Balefrost, Darkwind, Blood Moon, Circle of Thorns, Deadzone, Balance of Power, Shadow; Power Play for all schools; Sanctuary for more healing, Doom and Gloom for less), then made your size: \"100, Storm, global\" is a +100% Storm global. The target does not matter for a global. A yellow note shows when the game will show an effect of another school than yours (it then uses it on other hits than the server does). Silent: the spell cast for it plays no casting animation; the effect still shows. More kinds: pierce boost (spear) and less pierce, pierce trap and pierce shield, flat damage boost and weakness, flat shield and trap, accuracy boost and loss, critical and critical block boosts, healing given or taken (more or less, percent or flat), damage over time taken (more or less), stun block, stun resist, damage cap (the most a hit can do), power pip chance, pip conversion and dispel block. For each, the game's own spell of that kind closest in school and size is cast so the game draws it, then made your size. Flat kinds, absorb, stun block, damage cap, pip conversion and dispel block are a number, not a percent (the % sign is then ignored). Aura (several stats): an aura that changes several stats at once for its rounds (the aura's own if 0), never used up, one aura at a time as in the game. The amount is its damage; \"aura stats\" adds more, with commas: damage, resist, heal, healing in, accuracy, pierce, critical, block, stun resist, power pip, each with a number (minus lowers it). Example: 50, Fire, aura, stats \"resist 20, accuracy 15, pierce 10\" is +50% Fire damage, 20% less damage taken, +15% accuracy and +10% pierce. On itself, the game's aura most like it is cast so it shows (or \"shown as\"), with your numbers on the stats it has; on another one it goes on unseen. Chromatic schools are picked when the block runs: \"each target's own school\" puts a Fire weakness on a Fire wizard and an Ice one on an Ice wizard (ALL PLAYERS: each gets their own); \"the school of whoever set it off\" gives itself a blade of the attacker's school; \"one of each school on the other side\" gives one of each players' schools.",
             "Put a {Amount} {School} {Kind} on {Target} for {Rounds} rounds, shown as {Spell}, with the {Look} cast animation {Silent} {AuraStats}", [F("Amount", CheatFieldType.Percent, 50, max: 100_000), F("School", CheatFieldType.Choice, "", s_anySchool), F("Kind", CheatFieldType.Choice, "Blade", s_addKinds), F("Target", CheatFieldType.Target, "Self"), F("Rounds", CheatFieldType.Number, 0, max: 99), F("Spell", CheatFieldType.Words, ""), F("Look", CheatFieldType.Choice, "", s_castLooks),
              new("Silent", CheatFieldType.Toggle, false, Label: "silent"), F("AuraStats", CheatFieldType.AuraStats, "")],
             b => b.Text("Kind") == "Aura"
@@ -592,7 +617,7 @@ internal static class CheatSpecs {
                 : $"(the next {Math.Max(1, b.Number("Count"))} only if {Math.Max(1, b.Number("Amount"))} or more came off)"),
         new("D.Boost", BlockKind.Do, "bolt", "boost or enrage", "Raises (or with a minus number, lowers) its damage, resist, healing or accuracy for some rounds; 0 rounds is the rest of the battle. It is never used up and stacks: on a \"from round … on\" cheat it is an enrage.",
             "Change the {Kind} of {Target} by {Amount} for {School} spells for {Rounds} rounds", [F("Kind", CheatFieldType.Choice, "Damage", s_boostKinds), F("Target", CheatFieldType.Target, "Self"), new("Amount", CheatFieldType.Number, 10, Max: 1000, Min: -100), F("School", CheatFieldType.Choice, "", s_anySchool), F("Rounds", CheatFieldType.Number, 0, max: 99)],
-            b => $"{LabelOf(s_boostKinds, b.Text("Kind"))} {(b.Number("Amount") >= 0 ? "+" : "")}{b.Number("Amount")}%{(b.Text("School").Length > 0 ? $" ({b.Text("School")})" : "")}{Target(b)} for {RoundsFor(b)}"),
+            b => $"{LabelOf(s_boostKinds, b.Text("Kind"))} {(b.Number("Amount") >= 0 ? "+" : "")}{b.Number("Amount")}%{(b.Text("School").Length > 0 ? $" ({SchoolName(b.Text("School"))})" : "")}{Target(b)} for {RoundsFor(b)}"),
         new("D.Immune", BlockKind.Do, "shield", "become immune", "No damage from that school (or any) for some rounds; 0 rounds is the rest of the battle. Pierce still gets through, as against a shield.",
             "Make {Target} immune to {School} damage for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.Choice, "Fire", s_anySchool), F("Rounds", CheatFieldType.Number, 2, max: 99)],
             b => $"immune to {SchoolWord(b)}damage{Target(b)} for {RoundsFor(b)}"),
@@ -740,8 +765,8 @@ internal static class CheatSpecs {
             "Give {Target} {Amount} pips a round, {Power} % power pips, for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("Amount", CheatFieldType.Number, 2, max: 14), F("Power", CheatFieldType.Words), F("Rounds", CheatFieldType.Number, 0, max: 99)],
             b => $"{b.Number("Amount")} pips a round{Target(b)}{(b.Text("Power").Length > 0 ? $", {b.Text("Power").TrimEnd('%')}% power" : "")}{(b.Number("Rounds") > 0 ? $" for {b.Number("Rounds")} rounds" : "")}"),
         new("D.ChangeSchool", BlockKind.Do, "school", "change school", "Someone counts as another school for this many rounds (0: the rest of the battle; from this one when the round is under way): for school Ifs, spell needs, school pips, mastery and archmastery. Ticked: its boosts and resists of its own school and the new one trade places. The game shows nothing; only the battle counts it.",
-            "Make {Target} count as {School} for {Rounds} rounds {Stats}", [F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.School, "Fire"), F("Rounds", CheatFieldType.Number, 3, max: 99), new("Stats", CheatFieldType.Toggle, false, Label: "boosts and resists too")],
-            b => $"counts as {b.Text("School")}{Target(b)}{(b.Number("Rounds") > 0 ? $" for {b.Number("Rounds")} rounds" : "")}{(b.Flag("Stats") ? " (stats too)" : "")}"),
+            "Make {Target} count as {School} for {Rounds} rounds {Stats}", [F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.Choice, "Fire", s_changeSchools), F("Rounds", CheatFieldType.Number, 3, max: 99), new("Stats", CheatFieldType.Toggle, false, Label: "boosts and resists too")],
+            b => $"counts as {SchoolName(b.Text("School"))}{Target(b)}{(b.Number("Rounds") > 0 ? $" for {b.Number("Rounds")} rounds" : "")}{(b.Flag("Stats") ? " (stats too)" : "")}"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
             "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),
     ];

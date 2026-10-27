@@ -1093,6 +1093,20 @@ public partial class CombatResolver {
                 continue;
             }
 
+            // Chromatic (CombatResolver.Chromatic.cs): the school is picked now from the fighters, and the step goes once
+            // for each target (or school) when each gets their own.
+            if (IsChromatic(step)) {
+                var picked = ChromaticSteps(boss, step, trigger, receiver, bossName);
+                steps = [.. steps.Take(s), .. picked, .. steps.Skip(s + 1)];
+                if (picked.Count == 0) {
+                    s--;
+
+                    continue;
+                }
+
+                step = steps[s];
+            }
+
             switch (step.Do.ToLowerInvariant()) {
                 case "form" or "sethealth":
                     break;
@@ -1793,7 +1807,7 @@ public partial class CombatResolver {
         // A step on itself does not count as "the block before": a Brace on itself after a spell on a wizard still
         // lets the next block look at that wizard.
         var found = TargetsFor(code, boss, template, trigger, receiver, enemies, allies, others);
-        if (code is not ("self" or "me")) {
+        if (code is not ("self" or "me") && !code.StartsWith("slot:", StringComparison.Ordinal)) {
             _lastStepTargets = found;
         }
 
@@ -1839,6 +1853,13 @@ public partial class CombatResolver {
             // Niduus, 2026-10-26: both sides standing, with or without itself.
             "everyone" => [.. allies.Concat(enemies).OrderBy(c => c.SlotIndex)],
             "everyoneelse" => [.. others.Concat(enemies).OrderBy(c => c.SlotIndex)],
+            // Niduus, 2026-10-27: ALL PLAYERS (every wizard standing, on either side) and ALL PLAYERS (Excluding self),
+            // without whoever's cheat it is.
+            "allplayers" => [.. allies.Concat(enemies).Where(c => c.IsHumanPlayer).OrderBy(c => c.SlotIndex)],
+            "allplayersbutself" => [.. allies.Concat(enemies).Where(c => c.IsHumanPlayer && c != boss && c != _cheatOwner).OrderBy(c => c.SlotIndex)],
+            "anyplayer" => [.. allies.Concat(enemies).Where(c => c.IsHumanPlayer).OrderBy(_ => Random.Shared.Next()).Take(1)],
+            // One fighter picked by its circle (a Chromatic block run once for each target, CombatResolver.Chromatic.cs).
+            _ when code.StartsWith("slot:", StringComparison.Ordinal) => [.. allies.Concat(enemies).Where(c => code == $"slot:{c.SlotIndex}")],
             _ when template is null => [boss],
             _ => [trigger is not null && trigger.OccupiedTeam != boss.OccupiedTeam
                   && Flatten(template).Any(e => s_enemyTargets.Contains(e.m_effectTarget))
