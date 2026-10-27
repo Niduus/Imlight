@@ -1,0 +1,96 @@
+{
+  "Name": "PetLevel_Mega_Storm_01",
+  "Description": "Pet reaches Mega (Storm pets): Storm reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "Storm reagent, rank 1",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731032",
+      "ItemName": "Turmoil Lotus",
+      "Notes": "Storm reagent, rank 1",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "Storm reagent, rank 3",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "Storm reagent, rank 3",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1206360",
+      "ItemName": "Comet Tail",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}

@@ -68,6 +68,7 @@ internal class CommandPetProtocol : CommandProtocol {
 
         var growth = PetProgress.AddXp(pet, xp);
         PetCare.Finish(Context.Character, pet, growth, Send);
+        PetCare.GrantLevelLoot(Context.SessionActor, Context.CharacterObject, Context.Character, pet, growth);
         InformSenderClient(PetCare.Summary(pet, growth));
     }
 
@@ -87,6 +88,7 @@ internal class CommandPetProtocol : CommandProtocol {
 
         var growth = PetProgress.SetLevel(pet, target.Value);
         PetCare.Finish(Context.Character, pet, growth, Send);
+        PetCare.GrantLevelLoot(Context.SessionActor, Context.CharacterObject, Context.Character, pet, growth);
         InformSenderClient($"Your pet is now {PetProgress.LevelName(target.Value)}."
             + (growth.NewTalents.Count + growth.NewDerbyTalents.Count > 0
                 ? $" New talents: {string.Join(", ", growth.NewTalents.Concat(growth.NewDerbyTalents).Select(PetProgress.TalentLabel))}."
@@ -268,6 +270,7 @@ internal class CommandPetProtocol : CommandProtocol {
         }
 
         var problem = PetCare.Feed(wizard, pet, snack.m_templateID, all ? snack.m_quantity : 1, Send, out var growth);
+        PetCare.GrantLevelLoot(Context.SessionActor, Context.CharacterObject, wizard, pet, growth);
         InformSenderClient(problem ?? PetCare.Summary(pet, growth));
     }
 

@@ -1,0 +1,285 @@
+{
+  "Name": "PetLevel_Epic_Spirit_01",
+  "Description": "Pet reaches Epic (Spirit pets): spirit reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "Death reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731035",
+      "ItemName": "Doom Lotus",
+      "Notes": "Death reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1359769",
+      "ItemName": "Flax",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731034",
+      "ItemName": "Primeval Lotus",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731033",
+      "ItemName": "Trickster Lotus",
+      "Notes": "Myth reagent, rank 1",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1784436",
+      "ItemName": "Eldritch Sign",
+      "Notes": "Death reagent, rank 2",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "Myth reagent, rank 2",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "Death reagent, rank 2",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "Life reagent, rank 3",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "Life reagent, rank 3",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "Myth reagent, rank 3",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "Death reagent, rank 3",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "Death reagent, rank 4",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "Life reagent, rank 4",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1784439",
+      "ItemName": "Akashic Mark",
+      "Notes": "Death reagent, rank 5",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "Life reagent, rank 5",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1705555",
+      "ItemName": "Aged Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1659473",
+      "ItemName": "Black Rose",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1621540",
+      "ItemName": "Dream Stone",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1392204",
+      "ItemName": "Fulgurite",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1705546",
+      "ItemName": "Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1646520",
+      "ItemName": "Rose",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 6.7,
+      "MinCount": 1,
+      "MaxCount": 3
+    }
+  ]
+}

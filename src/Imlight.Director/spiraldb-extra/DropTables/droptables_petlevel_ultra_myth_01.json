@@ -1,0 +1,96 @@
+{
+  "Name": "PetLevel_Ultra_Myth_01",
+  "Description": "Pet reaches Ultra (Myth pets): Myth reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1731033",
+      "ItemName": "Trickster Lotus",
+      "Notes": "Myth reagent, rank 1",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment",
+      "Notes": "Myth reagent, rank 2",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil",
+      "Notes": "Myth reagent, rank 3",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "1392204",
+      "ItemName": "Fulgurite",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 33.3,
+      "MinCount": 2,
+      "MaxCount": 5
+    }
+  ]
+}

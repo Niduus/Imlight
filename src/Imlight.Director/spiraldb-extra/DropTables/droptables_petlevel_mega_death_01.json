@@ -1,0 +1,114 @@
+{
+  "Name": "PetLevel_Mega_Death_01",
+  "Description": "Pet reaches Mega (Death pets): Death reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom",
+      "Notes": "Death reagent, rank 1",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731035",
+      "ItemName": "Doom Lotus",
+      "Notes": "Death reagent, rank 1",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1784436",
+      "ItemName": "Eldritch Sign",
+      "Notes": "Death reagent, rank 2",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake",
+      "Notes": "Death reagent, rank 2",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade",
+      "Notes": "Death reagent, rank 3",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss",
+      "Notes": "Death reagent, rank 4",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1784439",
+      "ItemName": "Akashic Mark",
+      "Notes": "Death reagent, rank 5",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1705555",
+      "ItemName": "Aged Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1659473",
+      "ItemName": "Black Rose",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1705546",
+      "ItemName": "Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 27.3,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}

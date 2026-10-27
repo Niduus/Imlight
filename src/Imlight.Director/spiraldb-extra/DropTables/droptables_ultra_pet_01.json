@@ -1,0 +1,258 @@
+{
+  "Name": "Ultra_Pet_01",
+  "Description": "Pet reaches Ultra: rare reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1784439",
+      "ItemName": "Akashic Mark",
+      "Notes": "Death reagent, rank 5",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "Life reagent, rank 5",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1359770",
+      "ItemName": "Frosted Flax",
+      "Notes": "Ice reagent, rank 5",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "Balance reagent, rank 5",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1705555",
+      "ItemName": "Aged Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1659473",
+      "ItemName": "Black Rose",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1206360",
+      "ItemName": "Comet Tail",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1621540",
+      "ItemName": "Dream Stone",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1392204",
+      "ItemName": "Fulgurite",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1392216",
+      "ItemName": "Glass Sliver",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1705546",
+      "ItemName": "Ichor",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "Pearl",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1646520",
+      "ItemName": "Rose",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "Balance reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258587",
+      "ItemName": "Shell",
+      "Notes": "Death reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine",
+      "Notes": "Myth reagent, rank 6",
+      "Requirements": null,
+      "Chance": 7.4,
+      "MinCount": 1,
+      "MaxCount": 2
+    }
+  ]
+}

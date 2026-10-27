@@ -28,8 +28,10 @@
  * NOTE:
  * A table that SpiralDB does not have is skipped and logged once, never replaced with invented loot.
  *
- * TODO:
- * - All the level loot tables the pet templates name are missing from SpiralDB today.
+ * The tables (PetLevel_Ancient_Common_01, PetLevel_Epic_<Elemental|Spirit|Balance>_01, PetLevel_Mega_<School>_01,
+ * PetLevel_Ultra_<School>_01, Ultra_Pet_01) are ours, in spiraldb-extra/DropTables: the game's harvest reagents,
+ * picked by age and school (Niduus, 2026-10-27: "Add pet reagent drops to each pet age on Ancient+"). The game files
+ * only name them, so what they drop is a guess; change them in the app's drop table editor.
  *
  * Created by: Jay
  * Version: KALI 1.0
