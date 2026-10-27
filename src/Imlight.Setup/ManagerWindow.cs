@@ -128,9 +128,9 @@ internal sealed partial class ManagerWindow : Window {
         ("NoSpellRequirements", "No spell requirements", new() { OnContent = "On", OffContent = "Off" }),
         ("NoLevelRequirements", "No level requirements", new() { OnContent = "On", OffContent = "Off" }),
         ("FreeTraining", "Free training (no training points)", new() { OnContent = "On", OffContent = "Off" }),
-        ("TrainingPointPerLevel", "Training points for every level gained", new() { OnContent = "On", OffContent = "Off" }),
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
         ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
+        ("VanillaTrainers", "Vanilla trainers: each trainer teaches only its real game spells, with real levels, costs and quests", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
     // [Battle] MaxMonsters: Off (0) keeps the wizards + 1 rule, 1 to 4 is the most monsters a battle holds.
@@ -149,6 +149,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "FullPipConversion", "100% pip conversion (with Pip Conversion gear, a spell's school always turns a normal pip into a power pip)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "NoPipsFromDaybreakerNightbringer", "Daybreaker and Nightbringer do not add pips to card", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "AllLevels", "Archmastery at every level, not just 50 and up", new() { OnContent = "On", OffContent = "Off" }),
+        ("Archmastery", "FromLevel", "Archmastery from level 50 like the game (off: only from gear, jewels and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "Creatures", "Creatures use their Archmastery too (school pips, and they set the pace)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "SchoolPips", "School pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "AnySchoolPips", "School pips count as any school pips", new() { OnContent = "On", OffContent = "Off" }),
@@ -156,6 +157,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "RandomSchoolPips", "Random school pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "ShadowPips", "Shadow pips (min, max and chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "NaturalShadowPips", "Gain shadow pips without stats", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "ShadowMagicNeedsQuest", "Shadow pips only after the quest Shadow Dancer (or shadow pip rating gear), like the game", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "CreatureShadowPips", "Creatures can get shadow pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "RandomCreatureShadowPips", "Creatures get shadow magic only by chance (chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "Tame", "Randomizer: tame mode (creatures, their decks and pips stay normal so quests can be done)", new() { OnContent = "On", OffContent = "Off" }),
@@ -179,7 +181,6 @@ internal sealed partial class ManagerWindow : Window {
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "HouseDuelTakesTurns", "House duel circles take turns, the PvP way (off: both sides act at once)", new() { OnContent = "On", OffContent = "Off" }),
     ];
-    private readonly NumericUpDown _pointsPerLevel = new() { Minimum = 0, Maximum = 100, Increment = 1, FormatString = "0", Width = 130 };
 
     // Settings.
     private readonly TextBox _settingSearch = new() { Watermark = "Search settings by name, what they do or their value" };
@@ -286,10 +287,10 @@ internal sealed partial class ManagerWindow : Window {
             trainerRows.Children.Add(row);
         }
 
-        trainerRows.Children.Add(SwitchRow("Training points per level", _pointsPerLevel));
+        trainerRows.Children.Add(TrainingPointRows());
         // The two long lists of switches start folded shut: they are set once, not on every visit.
         _trainersCard = Shut(Fold("school", "Lookup", "Spell trainers",
-            "What trainers ask for before they teach a spell, with or without randomizer mode.",
+            "What trainers ask for before they teach a spell, with or without randomizer mode, and the training points leveling gives.",
             trainerRows));
         _trainersCard.IsVisible = false;
         var battleRows = new StackPanel { Spacing = 4 };
@@ -441,6 +442,11 @@ internal sealed partial class ManagerWindow : Window {
             case "Quest Editor": LoadQuestEditor(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
             case "Guides":
+                // The wizard may be on the Customs tab's New custom page; it comes back here.
+                if (IsCustomPage("new")) {
+                    BackToCustoms();
+                }
+
                 await LoadBossesAsync();
                 UpdateCustomWizard();
                 break;
@@ -734,12 +740,6 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.SelectionChanged += async (_, _) => {
             if (!_updatingRandomizer && _maxMonsters.SelectedIndex >= 0) {
                 await Guard(() => SetMaxMonstersAsync(_maxMonsters.SelectedIndex));
-            }
-        };
-
-        _pointsPerLevel.ValueChanged += async (_, _) => {
-            if (!_updatingRandomizer && _pointsPerLevel.Value is { } value) {
-                await Guard(() => SetPointsPerLevelAsync((int) value));
             }
         };
 
@@ -1339,9 +1339,7 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.IsEnabled = Has("Battle", "MaxMonsters");
         _maxMonsters.SelectedIndex = int.TryParse(ini.GetValueOrDefault(("Battle", "MaxMonsters")), out var maxMonsters)
             && maxMonsters is >= 1 and <= 4 ? maxMonsters : 0;
-        if (!_pointsPerLevel.IsFocused) {
-            _pointsPerLevel.Value = int.TryParse(ini.GetValueOrDefault(("Trainers", "TrainingPointsPerLevel")), out var points) ? points : 1;
-        }
+        ShowTrainingPoints(ini);
 
         _updatingRandomizer = false;
     }
@@ -1503,19 +1501,6 @@ internal sealed partial class ManagerWindow : Window {
         if (restart && await ConfirmAsync($"{name} is now {(on ? "on" : "off")}. Restart the server now to use it?")) {
             Say(await _manager.RestartServerAsync());
         }
-    }
-
-    private Task SetPointsPerLevelAsync(int points) {
-        if (!_manager.HasSetting("Trainers", "TrainingPointsPerLevel")
-                || _manager.GetSetting("Trainers", "TrainingPointsPerLevel") == points.ToString()) {
-            return Task.CompletedTask;
-        }
-
-        _manager.SaveSettings([new Setting("Trainers", "TrainingPointsPerLevel", points.ToString(), "")]);
-        _settings = [];
-        Say($"Each level now gives {points} training points while that switch is on. It applies right away.");
-
-        return Task.CompletedTask;
     }
 
     private Task SetMaxMonstersAsync(int most) {

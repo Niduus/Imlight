@@ -45,6 +45,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Madlibs;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
@@ -1156,7 +1157,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                     continue;
                 }
 
-                ProcessCombatGoal(wizard, qInstance, bountyGoal, message.MobAdjectives, foughtWithGroupMate);
+                ProcessCombatGoal(wizard, qInstance, bountyGoal, message.MobAdjectives, message.MobAdjectivesPerMob, foughtWithGroupMate);
             }
         }
     }
@@ -1703,6 +1704,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         ShowQuestCompletionDialogue(qTemplate);
 
+        // Listed before the results teach them, since a known spell is left out.
+        var spellRewards = new LootInfoList {
+            m_loot = []
+        };
+        AppendSpellRewards(spellRewards.m_loot, qTemplate, wizard);
+
         ResultDispatcher.ExecuteResults(
             actorContext: Context,
             results: qTemplate.m_endResults,
@@ -1718,16 +1725,17 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         // Fire the "you have learned a new spell!" cinematic for the spell rewards. Only the spells
         // go here; the gold/XP/item popup is already sent by the drop table handlers (MSG_LOOT).
-        var spellRewards = new LootInfoList {
-            m_loot = []
-        };
-        AppendSpellRewards(spellRewards.m_loot, qTemplate, wizard);
         if (spellRewards.m_loot.Count > 0
             && _goalSerializer.Serialize(spellRewards, 1, out var spellRewardData)) {
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_QUESTREWARDS {
                 QuestID = questInstance.ID,
                 LootList = spellRewardData
             });
+        }
+
+        // The worn pet gets a little XP for every finished quest ([Pets] QuestXp, 4 by default).
+        if (PetRules.QuestXp > 0 && wizard.GetEquippedPetItem() is { } pet) {
+            PetXpAward.Give(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, (uint) PetRules.QuestXp, PetXpSource.Quest);
         }
 
         // Chain advance: completion stamps the "Complete" registry entry, which is the ReqHasEntry
@@ -1892,6 +1900,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                                    QuestInstance qInstance,
                                    BountyGoalTemplate goalTemplate,
                                    string[] defeatedMobAdjectives,
+                                   string[][] adjectivesPerMob,
                                    bool foughtWithGroupMate) {
         var shouldIncrement = goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTY;
         var goalMobAdjectives = goalTemplate.m_npcAdjectives ?? [];
@@ -1904,9 +1913,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        // If there were, determine how many of the adjectives matched.
-        // We'll increment by that amount.
-        var matchCount = anyCreature ? 1 : defeatedMobAdjectives.Count(adjective => goalMobAdjectives.Contains(adjective));
+        // Each defeated mob that matches counts once. Counting matching adjectives instead counted a mob with two of
+        // the step's adjectives twice ("4/2" for two monsters, Niduus's log of 2026-10-25).
+        var matchCount = anyCreature ? 1
+            : adjectivesPerMob is { Length: > 0 }
+                ? adjectivesPerMob.Count(mob => mob?.Any(adjective => goalMobAdjectives.Contains(adjective)) == true)
+                : defeatedMobAdjectives.Count(adjective => goalMobAdjectives.Contains(adjective));
 
         if (goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT) {
             var chance = goalTemplate.m_tallyCounter?.m_percentChance ?? DEFAULT_KILL_COLLECT_CHANCE;
@@ -1924,12 +1936,13 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         if (shouldIncrement) {
-            for (int i = 0; i < matchCount; i++) {
+            // The count stops at the step's total, as the quest book shows it.
+            var goalMax = QuestMadlibs.GetGoalTotal(goalTemplate);
+            var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goalTemplate.m_goalName);
+            for (int i = 0; i < matchCount && (gInstance is null || goalMax <= 0 || gInstance.CurrentProgress < goalMax); i++) {
                 wizard.IncrementQuestGoal(qInstance.QuestName, goalTemplate.m_goalName);
             }
 
-            var goalMax = QuestMadlibs.GetGoalTotal(goalTemplate);
-            var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goalTemplate.m_goalName);
             Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a won battle.",
                 Logger.Args(wizard.CharId, qInstance.QuestName, goalTemplate.m_goalName, gInstance?.CurrentProgress, goalMax));
 
@@ -2149,6 +2162,11 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                 if (!RequirementDispatcher.EvaluateRequirements(learnSpell.m_requirements, requirementContext)) {
                     continue;
                 }
+            }
+
+            // A spell the wizard already knows (Pixie is taught by To Ravenwood! and again by a later quest) is no reward.
+            if (playerWizard?.SpellbookBehavior?.HasSpell(learnSpell.m_templateID) == true) {
+                continue;
             }
 
             loot.Add(new AddSpellLootInfo {

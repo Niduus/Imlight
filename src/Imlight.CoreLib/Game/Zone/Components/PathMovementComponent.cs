@@ -191,10 +191,10 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
         }
         _justPaused = false;
 
-        // Target a new node and begin moving towards it.
-        // Capture the current position as the start of this movement segment for
-        // interpolation before UpdateGameObjectLocation overwrites m_location.
-        _lastStartLocation = Entity.ActiveGameObject.m_location;
+        // Target a new node and begin moving towards it, from where the creature is right now. m_location is only
+        // brought up to date every quarter second, so it could be that far behind.
+        _lastStartLocation = GetPosition();
+        Entity.ActiveGameObject.m_location = _lastStartLocation;
         _currentNode = GetNextNode();
 
         // Determine how long it will take to reach the new node.
@@ -206,7 +206,9 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
             travelTimeInMilli = TRAVEL_TIME_CLAMP_MINIMUM_IN_MS;
         }
 
-        UpdateGameObjectLocation(_currentNode);
+        // m_location stays where the creature is and follows it every quarter second (GetPosition). It used to jump
+        // to the next node at once, so for up to a quarter second a wisp was where the game had not drawn it yet and
+        // walking into it did nothing (Niduus, 2026-10-26: "wisp detection could use some work").
         BroadcastMovement(_currentNode);
         RestartMoveInterval(travelTimeInMilli);
         _lastMoveTime = DateTime.Now;
@@ -314,13 +316,6 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
         };
         Entity.ZoneRef.Tell(movementMsgBroadcast);
     }
-
-    private void UpdateGameObjectLocation(NodeObject nodeObject)
-        => Entity.ActiveGameObject.m_location = new Vector3(
-            nodeObject.m_location.X,
-            nodeObject.m_location.Y,
-            nodeObject.m_location.Z
-        );
 
     private Vector3 GetPosition() {
         if (_currentNode is null) {

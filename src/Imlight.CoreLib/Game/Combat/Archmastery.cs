@@ -54,6 +54,9 @@ internal static class Archmastery {
     internal static readonly bool Enabled = true;
     // Gives wizards under level 50 the level 50 Archmastery, so they get school pips too.
     internal static bool AllLevels => ConfigurationManager.GetValue("Archmastery.AllLevels", false);
+    // The game's level table gives wizards Archmastery from level 50 (40, up to 144 at 180). If false, only gear,
+    // jewels, pets and BonusRating do: no rating, no Power Orb.
+    internal static bool FromLevel => ConfigurationManager.GetValue("Archmastery.FromLevel", true);
     // Extra Archmastery for every wizard (on top of gear and jewels).
     internal static float BonusRating => Math.Max(0f, ConfigurationManager.GetValue("Archmastery.BonusRating", 0f));
     // How much the fastest orb fills in a round (1 = a school pip every round). 0 uses the game's own number.
@@ -111,7 +114,7 @@ internal static class Archmastery {
     }
 
     /// <summary>
-    /// The level table's Archmastery (0 under level 50 unless AllLevels) plus [Archmastery] BonusRating.
+    /// The level table's Archmastery (0 under level 50 unless AllLevels, 0 with FromLevel off) plus [Archmastery] BonusRating.
     /// This is what the client is told in MSG_UPDATEARCHMASTERY; gear is added by the client itself.
     /// </summary>
     internal static float BaseRating(MagicSchool school, int level) {
@@ -119,17 +122,15 @@ internal static class Archmastery {
             return 0;
         }
 
-        if (level < LEVEL && !AllLevels) {
+        if (!FromLevel || (level < LEVEL && !AllLevels)) {
             return BonusRating;
         }
 
         var rating = MagicLevelsConfig.GetPlayerLevelInfo(school, level)?.m_archmastery ?? 0f;
         if (rating <= 0) {
             // The level table may have no number for this level; the level 50 one stands in.
+            // No table at all gives none: Archmastery only comes with rating.
             rating = MagicLevelsConfig.GetPlayerLevelInfo(school, LEVEL)?.m_archmastery ?? 0f;
-            if (rating <= 0) {
-                rating = 1f;
-            }
         }
 
         return rating + BonusRating;

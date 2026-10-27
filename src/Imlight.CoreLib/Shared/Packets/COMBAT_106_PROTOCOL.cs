@@ -186,6 +186,9 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
         public int UsedPips;
         public string[] MobAdjectives;
+
+        /// <summary>The adjectives of each defeated mob on its own, so a quest step counts a mob once.</summary>
+        public string[][] MobAdjectivesPerMob;
         public ulong[] MobTemplateIds;
 
         /// <summary>What each defeated mob drops by: a custom's key (Customs.cs) or its template id.</summary>

@@ -3736,6 +3736,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             var victoryMsg = new COMBAT_106_PROTOCOL.MSG_COMBATWIN() {
                 UsedPips = circle._usedPipsForExperienceGain,
                 MobAdjectives = [.. adjectivesOfDefeatedMobs],
+                MobAdjectivesPerMob = [.. adjectivesPerDefeatedMob.Select(a => a.ToArray())],
                 MobTemplateIds = [.. templateIdsOfDefeatedMobs],
                 MobLootKeys = [.. lootKeysOfDefeatedMobs],
                 AllyCharIds = [.. allyCharIds],

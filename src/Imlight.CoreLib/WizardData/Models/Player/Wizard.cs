@@ -526,6 +526,20 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    /// <summary>
+    /// Remembers that "Shadow Dancer" is done: the wizard has shadow magic like the game ([Battle] ShadowMagicNeedsQuest).
+    /// </summary>
+    public void MarkShadowQuestDone() {
+        if (GameStats is null || GameStats.m_shadowQuestDone) {
+            return;
+        }
+
+        GameStats.m_shadowQuestDone = true;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void SetInvisibleToFriends(bool invisible) {
         GameStats.m_invisibleToFriends = invisible;
 
@@ -1831,6 +1845,10 @@ public class Wizard {
         // Persistent save.
         WizardCollection.UpdateCharacterQuestBehavior(this);
         QuestInstanceCollection.RemoveQuestInstance(CharId, questName);
+
+        if (string.Equals(questName, Imlight.CoreLib.Game.Combat.CombatDuelSubCircle.SHADOW_MAGIC_QUEST, StringComparison.OrdinalIgnoreCase)) {
+            MarkShadowQuestDone();
+        }
 
         return questStatus;
     }

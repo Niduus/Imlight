@@ -155,7 +155,7 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side"),
         ("AllEnemies", "every player")];
     private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
-    private static readonly (string, string)[] s_anySchool = [("", "every school"), .. SCHOOLS[1..]];
+    private static readonly (string, string)[] s_anySchool = [("", "universal (every school)"), .. SCHOOLS[1..]];
     // Niduus, 2026-10-25 ("Expand on existing cheats"): the blocks of CombatResolver.MoreCheats.cs.
     private static readonly (string, string)[] s_removedFrom = [("", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"), ("Anyone", "anyone")];
     private static readonly (string, string)[] s_spellDoes = [

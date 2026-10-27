@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,9 +68,48 @@ internal sealed partial class ManagerWindow {
         var hubs = SafeHubs();
         _hubCount.Text = hubs.Count == 0 ? "No hubs yet." : hubs.Count == 1 ? "1 hub." : $"{hubs.Count} hubs.";
         foreach (var hub in hubs) {
-            _hubRows.Children.Add(HubRow(hub));
+            _hubRows.Children.Add(HubListRow(hub));
+        }
+
+        // Its open page shows what the file has now; a deleted hub's page closes.
+        if (IsCustomPage("hub")) {
+            if (hubs.FirstOrDefault(h => h.Id.ToString(CultureInfo.InvariantCulture) == _customsPageKey) is { } open) {
+                OpenHub(open);
+            }
+            else {
+                BackToCustoms();
+            }
         }
     }
+
+    // A hub in the list: its name, where it is and how many stones are linked. Edit opens its page.
+    private Control HubListRow(TeleporterHub hub) => ManagerTheme.Item(highlighted: false, content: new DockPanel {
+        Children = {
+            WithDock(Row(
+                Action(Primary("Edit"), () => {
+                    OpenHub(hub);
+
+                    return Task.CompletedTask;
+                }),
+                Action(Plain("Move hub here"), () => MoveHubAsync(hub)),
+                Danger(Action(Plain("Delete"), () => DeleteHubAsync(hub)))), Dock.Right),
+            WithDock(WithMargin(WithCenter(ManagerTheme.Tile("sigil", ManagerTheme.Accent("Customs"), 32)), new Thickness(0, 0, 12, 0)), Dock.Left),
+            new StackPanel {
+                Spacing = 2, VerticalAlignment = VerticalAlignment.Center,
+                Children = {
+                    new TextBlock { Text = $"{hub.Id}.  {hub.Shown}", FontWeight = FontWeight.SemiBold, FontSize = 15 },
+                    new TextBlock {
+                        Text = $"{ZoneDisplay(hub.Zone)}  ·  {hub.Pads.Count(p => p.Street is not null)} of {hub.Pads.Count} stones linked",
+                        Foreground = MUTED, TextWrapping = TextWrapping.Wrap,
+                    },
+                },
+            },
+        },
+    });
+
+    /// <summary>The page of one hub: its name, style, landing and each stone with its street.</summary>
+    private void OpenHub(TeleporterHub hub) => ShowCustomPage("hub", hub.Id.ToString(CultureInfo.InvariantCulture), "sigil", $"Hub {hub.Id}: {hub.Shown}",
+        $"In {ZoneDisplay(hub.Zone)}. {hub.Pads.Count(p => p.Street is not null)} of {hub.Pads.Count} stones linked to a street.", null, HubEditor(hub));
 
     // The stone looks to pick from: every style's stones from the game files (0: the hub style's stone of its place).
     private static readonly (ulong Id, string Label)[] HUB_LOOKS = [
@@ -82,12 +122,12 @@ internal sealed partial class ManagerWindow {
         .. TeleporterHub.STYLES.SelectMany(style => style.Street.Select((id, i) => (id, $"{style.Label} street stone {(char) ('A' + i)}"))),
     ];
 
-    private Control HubRow(TeleporterHub saved) {
+    private Control HubEditor(TeleporterHub saved) {
         var hub = saved.Copy();
         var name = new TextBox { Width = 300, Text = hub.Name, Watermark = "The hub's name, such as Colossus Hub", HorizontalAlignment = HorizontalAlignment.Left };
         name.TextChanged += (_, _) => hub.Name = name.Text ?? "";
 
-        var stones = new StackPanel { Spacing = 8, Margin = new Thickness(44, 6, 0, 0) };
+        var stones = new StackPanel { Spacing = 8, Margin = new Thickness(0, 6, 0, 0) };
         for (var i = 0; i < hub.Pads.Count; i++) {
             var index = i;
             var pad = hub.Pads[i];
@@ -128,7 +168,7 @@ internal sealed partial class ManagerWindow {
         var center = new CheckBox { Content = "Middle piece (the hub base the game's hubs stand round)", IsChecked = hub.CenterPiece };
         center.IsCheckedChanged += (_, _) => hub.CenterPiece = center.IsChecked == true;
         var hubSettings = new StackPanel {
-            Spacing = 4, Margin = new Thickness(44, 6, 0, 0),
+            Spacing = 4, Margin = new Thickness(0, 6, 0, 0),
             Children = {
                 WrapRow(WithCenter(new TextBlock { Text = "Style", Width = 60 }), style, WithCenter(center)),
                 LandingEditor("Landing", "where players coming back arrive at the hub (empty: the middle of the hub)",
@@ -146,8 +186,6 @@ internal sealed partial class ManagerWindow {
                             Action(Primary("Save changes"), () => SaveHubAsync(hub)),
                             Action(Plain("Move hub here"), () => MoveHubAsync(saved)),
                             Danger(Action(Plain("Delete"), () => DeleteHubAsync(saved)))), Dock.Right),
-                        WithDock(WithMargin(WithCenter(ManagerTheme.Tile("sigil", ManagerTheme.Accent("Customs"), 32)),
-                            new Thickness(0, 0, 12, 0)), Dock.Left),
                         new StackPanel {
                             Spacing = 2, VerticalAlignment = VerticalAlignment.Center,
                             Children = {
@@ -279,6 +317,7 @@ internal sealed partial class ManagerWindow {
         hub.PlaceAt(zone, x, y, z, yaw);
         TeleporterHubs.Set(_manager.CustomsFolder, hub.Id, hub);
         RenderHubs();
+        OpenHub(hub);
         Say($"Made {hub.Shown} with {TeleporterHub.PAD_COUNT} stones round where {who} stands in {ZoneDisplay(zone)}. It is in the game now. " +
             "Go to a street and press Put street teleporter here on a stone to link it.");
 

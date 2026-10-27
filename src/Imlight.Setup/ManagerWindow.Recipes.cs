@@ -686,8 +686,10 @@ internal sealed partial class ManagerWindow {
             var window = vendor.Window;
             vendor.Window = "Recipe";
             CustomNpcs.Set(_manager.CustomsFolder, vendor.Id, vendor);
+            // An open page of that vendor on the Customs tab shows it too, without leaving this tab.
             if (_npcEdit?.Id == vendor.Id) {
-                OpenNpc(vendor);
+                _npcEdit = vendor.Copy();
+                RenderNpcEditor();
             }
 
             Say($"{vendor.Shown} now sells {recipe.Name} for {recipe.GoldCost:N0} gold" +

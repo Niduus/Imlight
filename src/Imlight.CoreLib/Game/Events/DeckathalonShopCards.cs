@@ -27,11 +27,11 @@
  * [Deckathalon] ShopCards turns it on or off. ShopCardsAll (Niduus, 2026-10-26: "Instead of select Fire TC's, just do all
  * of them for the Fire Deckathalon") sells every treasure card of the school; turned off, <School>ShopCards lists each
  * school's cards by name. All are read each time a shop opens, so a change in the app's Settings tab counts at once.
- * Each card costs its own gold price.
+ * ShopCardsRival sells the cards of the school's rival (Fire tower: Ice cards). Each card costs its own gold price.
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/26/2026
+ * Last Updated: 10/27/2026
  */
 
 using System;
@@ -100,7 +100,20 @@ internal static class DeckathalonShopCards {
 
     /// <summary>The cards of the Deckathalon that is on, or none (no event, or ShopCards off).</summary>
     internal static List<TreasureCardEntry> Current()
-        => Enabled && Deckathalon.CurrentEvent is { } running ? ForSchool(running.School) : [];
+        => Enabled && Deckathalon.CurrentEvent is { } running ? ForSchool(SoldSchoolOf(running.School)) : [];
+
+    /// <summary>
+    /// The school whose cards a Deckathalon sells ([Deckathalon] ShopCardsRival, Niduus 2026-10-27: "I want it to be of
+    /// the opposite school. So since it's fire rn, ICE TC's"): its rival, as the game's own tower shops do (the Fire tower
+    /// sells Ice recipes, Storm sells Myth, Death sells Life); Balance sells Balance, as the game's Balance tower does.
+    /// </summary>
+    internal static string SoldSchoolOf(string school)
+        => !ConfigurationManager.GetValue("Deckathalon.ShopCardsRival", true) ? school : school?.ToLowerInvariant() switch {
+            "fire" => "Ice", "ice" => "Fire",
+            "storm" => "Myth", "myth" => "Storm",
+            "life" => "Death", "death" => "Life",
+            _ => school,
+        };
 
     /// <summary>A school's cards (all of them, or [Deckathalon] &lt;School&gt;ShopCards), each with its price.</summary>
     internal static List<TreasureCardEntry> ForSchool(string school) {

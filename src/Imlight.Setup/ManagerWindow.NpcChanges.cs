@@ -58,8 +58,7 @@ internal sealed partial class ManagerWindow {
             Flyout = SearchFlyout("Search NPCs by name or ID", NpcOnlyResults, picked => OpenNpcChanges((uint) picked)),
         }),
         _npcChangeCount,
-        _npcChangeRows,
-        _npcChangeEditorHost);
+        _npcChangeRows);
 
     private List<NpcChange> SafeNpcChanges() {
         try {
@@ -111,7 +110,13 @@ internal sealed partial class ManagerWindow {
         _npcChangeEdit = change;
         RenderNpcChangeEditor();
         RenderNpcChanges();
-        Dispatcher.UIThread.Post(() => _npcChangeEditorHost.BringIntoView(), DispatcherPriority.Background);
+        ShowCustomPage("change", templateId.ToString(CultureInfo.InvariantCulture), "bag", $"Change {ChangeName(change)}",
+            $"A vendor or trainer of the game, ID {change.TemplateID}. Every copy of it in the game changes.", CloseNpcChanges, _npcChangeEditorHost);
+    }
+
+    private void CloseNpcChanges() {
+        _npcChangeEdit = null;
+        _npcChangeEditorHost.Child = null;
     }
 
     private async Task UndoNpcChangesAsync(NpcChange change) {
@@ -121,8 +126,11 @@ internal sealed partial class ManagerWindow {
 
         NpcChanges.Set(_manager.CustomsFolder, change.TemplateID, null);
         if (_npcChangeEdit?.TemplateID == change.TemplateID) {
-            _npcChangeEdit = null;
-            _npcChangeEditorHost.Child = null;
+            CloseNpcChanges();
+        }
+
+        if (IsCustomPage("change", change.TemplateID.ToString(CultureInfo.InvariantCulture))) {
+            BackToCustoms();
         }
 
         RenderNpcChanges();
@@ -139,7 +147,6 @@ internal sealed partial class ManagerWindow {
         var body = new StackPanel {
             Spacing = 8,
             Children = {
-                new TextBlock { Text = $"Changing {ChangeName(change)} (ID {change.TemplateID})", FontSize = 18, FontWeight = FontWeight.SemiBold },
                 Sub("Each part below changes only what you set; leave a part as it is to keep the game's own."),
             },
         };
@@ -177,9 +184,7 @@ internal sealed partial class ManagerWindow {
         body.Children.Add(WithMargin(Row(
             Action(Primary("Save"), SaveNpcChangesAsync),
             Action(Plain("Close without saving"), () => {
-                _npcChangeEdit = null;
-                _npcChangeEditorHost.Child = null;
-                RenderNpcChanges();
+                BackToCustoms();
 
                 return Task.CompletedTask;
             })), new Thickness(0, 6, 0, 0)));

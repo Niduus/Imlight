@@ -61,6 +61,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     public bool m_shadowMagicUnlocked;
     // Shadow pip slots of this wizard's own (.intothedarkness gives 1, .sp slots sets it); 0 follows the settings.
     public int m_shadowPipSlots;
+    // "Shadow Dancer" (Moon Cliffs) is done: shadow magic like the game ([Battle] ShadowMagicNeedsQuest).
+    public bool m_shadowQuestDone;
     public byte m_fishingLevel;
     public int m_fishingXP;
     public uint m_subscriberBenefitFlags;
@@ -192,12 +194,15 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
         return copy;
     }
 
+    private bool ShadowSlotsShown => CombatDuelSubCircle.ShadowPipsOn && (!CombatDuelSubCircle.ShadowMagicNeedsQuest || m_shadowQuestDone);
+
     /// <summary>
     /// Clears what gear, pets and jewels add, so the stats can be added up again. Without it every rebuild added the
     /// gear on top of the last one: logging in rebuilt twice, so 67% resist was 134% in battle (immune; Niduus,
     /// 2026-10-20).
     /// </summary>
     internal void ClearEquipmentStats() {
+        m_bonusShadowPipRating = 0;
         m_dmgBonusPercent = null;
         m_dmgBonusFlat = null;
         m_accBonusPercent = null;
@@ -343,9 +348,10 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_buddyListLimit = m_buddyListLimit,
             m_dontAllowFriendFinderCodes = m_dontAllowFriendFinderCodes,
             // Shadow pips on ([Battle] ShadowPips) unlock shadow magic, which lays out the shadow pip slots.
-            m_shadowMagicUnlocked = m_shadowMagicUnlocked || CombatDuelSubCircle.ShadowPipsOn,
+            // With [Battle] ShadowMagicNeedsQuest, only once "Shadow Dancer" is done (gear rating shows in battle).
+            m_shadowMagicUnlocked = m_shadowMagicUnlocked || ShadowSlotsShown,
             m_shadowPipMax = m_shadowPipSlots > 0 ? m_shadowPipSlots
-                : CombatDuelSubCircle.ShadowPipsOn || m_shadowMagicUnlocked
+                : ShadowSlotsShown || m_shadowMagicUnlocked
                 ? CombatDuelSubCircle.ShownPlayerShadowSlots
                 : m_shadowPipMax,
             m_fishingLevel = m_fishingLevel,

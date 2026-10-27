@@ -60,6 +60,11 @@ internal enum PetXpSource {
     /// <summary>
     /// A snack the pet ate.
     /// </summary>
-    Snack
+    Snack,
+
+    /// <summary>
+    /// A quest its owner finished.
+    /// </summary>
+    Quest
 
 }

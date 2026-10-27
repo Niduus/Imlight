@@ -657,7 +657,7 @@ internal sealed partial class ManagerWindow {
         var target = block.Text("Target");
         var onCaster = global || target.Equals("Self", StringComparison.OrdinalIgnoreCase)
                        || target.Length == 0 && kind is not ("Weakness" or "Trap");
-        static string SchoolWord(string s) => string.IsNullOrWhiteSpace(s) || s.Equals("All", StringComparison.OrdinalIgnoreCase) ? "all-school" : s;
+        static string SchoolWord(string s) => string.IsNullOrWhiteSpace(s) || s.Equals("All", StringComparison.OrdinalIgnoreCase) ? "universal" : s;
         static string A(string w) => "aeiou".Contains(char.ToLowerInvariant(w[0])) ? $"an {w}" : $"a {w}";
         string shown;
         string shownSchool;

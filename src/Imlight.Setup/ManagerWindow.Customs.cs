@@ -58,7 +58,6 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _customListBoss = new() { Content = "Boss of one of my areas" };
     private readonly TextBlock _customNewBaseText = new() { Text = "No creature picked yet.", Foreground = MUTED };
     private readonly TextBox _customNewName = new() { Watermark = "Its name in battle, such as Malistaire the Unbroken", Width = 360 };
-    private readonly Border _customHeaderCard = new();
     private readonly TextBlock _customHeaderTitle = new() { FontSize = 18, FontWeight = FontWeight.SemiBold };
     private readonly TextBlock _customHeaderBase = Sub("");
     private readonly TextBox _customJoinMe = new() { IsReadOnly = true, Width = 360 };
@@ -85,13 +84,15 @@ internal sealed partial class ManagerWindow {
             if (_editCustom is { } custom) {
                 var name = (_customName.Text ?? "").Trim();
                 _customHeaderTitle.Text = $"Custom {custom.Id}: {(name.Length > 0 ? name : $"Custom {custom.Id}")}";
+                if (IsCustomPage("mob", custom.Id.ToString(CultureInfo.InvariantCulture))) {
+                    _customsPageTitle.Text = _customHeaderTitle.Text;
+                }
             }
         };
-        _customHeaderCard.IsVisible = false;
         // The custom's own fields now sit in the editor's Identity, Drops and Forms sections (ManagerWindow.CustomBosses.cs).
 
-        // The step-by-step maker lives on the Guides tab (Niduus, 2026-10-22: "move to guide"); New custom… opens it there.
-        return Page(
+        // New custom… opens the step-by-step maker on a page of its own; it is on the Guides tab too.
+        return CustomsPages(Page(
             MissingNote("customs need " + ServerSource.DefaultName + ", which lists the creatures and reads the customs and areas.",
                 () => !_manager.HasExtraFolder || !_manager.HasIdLookup),
             CustomsGuide(),
@@ -116,15 +117,16 @@ internal sealed partial class ManagerWindow {
             CustomTeleportersCard(),
             CustomBattlesCard(),
             GauntletSigilsCard(),
-            CustomAreasCard(),
-            _customHeaderCard,
-            _customsEditorHost);
+            CustomAreasCard()));
     }
 
     private async Task LoadCustomsAsync() {
         await LoadBossesAsync();
-        // The editor may have moved to the Bosses tab since.
-        _customHeaderCard.IsVisible = _bossEditor.Parent == _customsEditorHost && _editCustom is not null;
+        // The editor may have moved to the Bosses tab since, which leaves the custom's page empty.
+        if (IsCustomPage("mob") && _bossEditor.Parent != _customsEditorHost) {
+            BackToCustoms();
+        }
+
         RenderCustoms();
         RenderCustomBaseResults();
         RenderNpcs();
@@ -161,7 +163,7 @@ internal sealed partial class ManagerWindow {
                 custom.JoinMe,
                 usedIn.Count > 0 ? "boss of " + string.Join(", ", usedIn.Select(RoomName)) : "",
             }.Where(t => t.Length > 0);
-            var editing = _editCustom?.Id == custom.Id && _bossEditor.Parent == _customsEditorHost;
+            var editing = _editCustom?.Id == custom.Id && _bossEditor.Parent == _customsEditorHost && _customsEditorHost.Parent is not null;
             _customRows.Children.Add(ManagerTheme.Item(highlighted: editing, content: new DockPanel {
                     Children = {
                         WithDock(Row(
@@ -392,11 +394,9 @@ internal sealed partial class ManagerWindow {
         _customNewName.Text = "";
         _customBaseSearch.Text = "";
         _customBaseResults.Children.Clear();
+        // The new custom's own page opens in place of the maker, on the Customs tab.
         OpenCustom(custom);
         UpdateCustomWizard();
-        // The wizard is on the Guides tab and the custom's editor on the Customs tab, so it goes there.
-        SelectTab("Customs");
-        Dispatcher.UIThread.Post(() => _customsEditorHost.BringIntoView(), DispatcherPriority.Background);
         Say($"Made custom {custom.Id}. It fights as the game's {creature.Name} until you change it in its editor. Bring it in with {custom.JoinMe}.");
 
         return Task.CompletedTask;
@@ -425,7 +425,8 @@ internal sealed partial class ManagerWindow {
             AddCustomFormRow(form, id.ToString(CultureInfo.InvariantCulture));
         }
 
-        _customHeaderCard.IsVisible = true;
+        ShowCustomPage("mob", custom.Id.ToString(CultureInfo.InvariantCulture), "paw", $"Custom {custom.Id}: {custom.Shown}",
+            $"Based on {creature.Name} (ID {creature.Id}). Bring it in with {custom.JoinMe}", null, _customsEditorHost);
         RenderCustoms();
     }
 
@@ -503,8 +504,11 @@ internal sealed partial class ManagerWindow {
         }
 
         if (_editCustom?.Id == custom.Id) {
+            if (IsCustomPage("mob", custom.Id.ToString(CultureInfo.InvariantCulture))) {
+                BackToCustoms();
+            }
+
             _customsEditorHost.Child = null;
-            _customHeaderCard.IsVisible = false;
             _editCustom = null;
             _boss = null;
         }

@@ -436,12 +436,16 @@ internal sealed partial class ManagerWindow {
 
     private Section? _newCustomSection;
 
+    // Where the maker sits on the Guides tab; New custom… on the Customs tab borrows it for its own page.
+    private readonly Border _newCustomGuideHost = new();
+
     /// <summary>
     /// The Guides tab: a line on how to read the guides, the Make a custom wizard (moved here from the Customs tab,
     /// Niduus, 2026-10-22: "move to guide"), then every guide, folded.
     /// </summary>
     private Control GuidesTab() {
         _newCustomSection = NewCustomWizard();
+        _newCustomGuideHost.Child = _newCustomSection;
         var cards = new List<Control> {
             Card(new StackPanel {
                 Spacing = 8,
@@ -452,7 +456,7 @@ internal sealed partial class ManagerWindow {
                     GuideChips(),
                 },
             }),
-            _newCustomSection,
+            _newCustomGuideHost,
         };
         foreach (var guide in s_guides) {
             var section = HowTo(guide);
@@ -525,9 +529,11 @@ internal sealed partial class ManagerWindow {
         return row;
     }
 
-    /// <summary>The Customs tab's New custom… button: the Guides tab, with the Make a custom wizard open and in view.</summary>
+    /// <summary>
+    /// The Customs tab's New custom… button: a page of its own on the Customs tab with the Make a custom wizard, which
+    /// goes back to the Guides tab when the page closes.
+    /// </summary>
     private void ShowNewCustom() {
-        SelectTab("Guides");
         // The creatures to start from show before anything is typed.
         _ = Guard(async () => {
             if (_bossCatalog is null) {
@@ -538,10 +544,18 @@ internal sealed partial class ManagerWindow {
         });
         if (_newCustomSection is { } section) {
             section.SetOpen(true);
-            Dispatcher.UIThread.Post(() => {
-                section.BringIntoView();
-                _customBaseSearch.Focus();
-            }, DispatcherPriority.Background);
+            ShowCustomPage("new", "", "plus", "New custom",
+                "Your own copy of a game creature. Pick it, name it and press Make the custom; its page opens next.",
+                ReturnNewCustomWizard, section);
+            Dispatcher.UIThread.Post(() => _customBaseSearch.Focus(), DispatcherPriority.Background);
+        }
+    }
+
+    /// <summary>Puts the Make a custom wizard back on the Guides tab.</summary>
+    private void ReturnNewCustomWizard() {
+        if (_newCustomSection is { } section && section.Parent != _newCustomGuideHost) {
+            Detach(section);
+            _newCustomGuideHost.Child = section;
         }
     }
 

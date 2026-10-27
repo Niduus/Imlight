@@ -35,6 +35,10 @@ internal static class CheatLookalikes {
         ["shield fire"] = [new("Fire Shield", "Fire")], ["shield ice"] = [new("Snow Shield", "Ice")], ["shield storm"] = [new("Storm Shield", "Storm")],
         ["shield myth"] = [new("Myth Shield", "Myth")], ["shield life"] = [new("Life Shield", "Life")], ["shield death"] = [new("Death Shield", "Death")],
         ["shield shadow"] = [new("Shadow Shield", "Shadow")], ["shield"] = [new("Tower Shield", "All")],
+        // Balance only (Niduus, 2026-10-26: "Universal blade and BALANCE blade where it's actually only for BALANCE"):
+        // Balanceblade, Hex and the like work for every school, so a Balance one casts the game's Balance-only one.
+        ["blade balance"] = [new("Balanceblade - Balance - Nerys", "Balance")], ["trap balance"] = [new("Attenuate - Balance", "Balance")],
+        ["shield balance"] = [new("Single Balance Shield - 80", "Balance")],
         ["weakness"] = [new("Weakness", "All")],
         ["absorb"] = [new("Spirit Armor", "All")],
         // Globals (battlefield bubbles): one at a time, a new one takes the old one's place.
@@ -108,6 +112,12 @@ internal static class CheatLookalikes {
         }
 
         // One of the seven schools: that school's own blade, trap, shield or global (Spirit Armor for any absorb).
+        // The Balance cast of a universal (or another school's) blade, trap or shield is still the universal one, whose
+        // casting is Balance's (Balanceblade, Hex); only a Balance one casts the Balance-only spell.
+        if (l == "balance" && k is "blade" or "trap" or "shield" && !(school ?? "").Trim().Equals("balance", StringComparison.OrdinalIgnoreCase)) {
+            return Plain(k, "");
+        }
+
         return s_schools.Contains(l) && k is "blade" or "trap" or "shield" or "absorb" or "global" ? Plain(k, l) : null;
     }
 

@@ -284,6 +284,10 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
+    /// <summary>Sends a player this NPC's options again without closing what the game shows (a quest dialog).</summary>
+    internal void SendServiceOptions(IActorRef playerActor)
+        => SendActorServiceOptions(playerActor);
+
     internal void ShowServiceOptions(IActorRef playerActor, int reinteract = 0) {
         SendLeaveServiceRange(playerActor);
         SendActorServiceOptions(playerActor, reinteract);
