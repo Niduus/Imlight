@@ -193,7 +193,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "DM-GRAVE-NPC16C",
+            "m_personaName": "DM-MORT-NPC02",
             "m_nameOverride": "NPCs_01749566",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -205,12 +205,12 @@
             "m_soundFile": "Sound/Dialogue/DM_1.590/Lucy_Easton_DM-MORT_059.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1675666,
+            "m_actorTemplateID": 1687154,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "DM-GRAVE-NPC16C",
+            "m_personaName": "DM-MORT-NPC02",
             "m_nameOverride": "NPCs_01749566",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -222,12 +222,12 @@
             "m_soundFile": "Sound/Dialogue/DM_1.590/Lucy_Easton_DM-MORT_060.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1675666,
+            "m_actorTemplateID": 1687154,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "DM-GRAVE-NPC16C",
+            "m_personaName": "DM-MORT-NPC02",
             "m_nameOverride": "NPCs_01749566",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -239,7 +239,7 @@
             "m_soundFile": "Sound/Dialogue/DM_1.590/Lucy_Easton_DM-MORT_061.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1675666,
+            "m_actorTemplateID": 1687154,
             "m_cameraName": ""
           }
         ]

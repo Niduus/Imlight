@@ -208,7 +208,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "AV-WILD-NPC02_Persona",
+            "m_personaName": "AV-WILD-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -220,12 +220,12 @@
             "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/SirDrustanSilverharp_AVA_07.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 470268,
+            "m_actorTemplateID": 470334,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "AV-WILD-NPC02_Persona",
+            "m_personaName": "AV-WILD-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -237,12 +237,12 @@
             "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/SirDrustanSilverharp_AVA_08.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 470268,
+            "m_actorTemplateID": 470334,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "AV-WILD-NPC02_Persona",
+            "m_personaName": "AV-WILD-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -254,7 +254,7 @@
             "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/SirDrustanSilverharp_AVA_09.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 470268,
+            "m_actorTemplateID": 470334,
             "m_cameraName": ""
           }
         ]

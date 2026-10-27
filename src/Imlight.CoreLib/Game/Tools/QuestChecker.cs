@@ -63,6 +63,10 @@ internal static class QuestChecker {
         public readonly HashSet<ulong> Templates = [];
         public readonly HashSet<string> Names = new(StringComparer.Ordinal);
         public readonly HashSet<string> Adjectives = new(StringComparer.Ordinal);
+
+        // Of the creatures you can fight only: their adjectives and English names.
+        public readonly HashSet<string> FoeAdjectives = new(StringComparer.Ordinal);
+        public readonly HashSet<string> FoeNames = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> Areas = new(StringComparer.Ordinal);
     }
 
@@ -216,7 +220,7 @@ internal static class QuestChecker {
 
                 switch (goal) {
                     case PersonaGoalTemplate persona:
-                        CheckPersona(step, persona, zoneName, zone, anywhere, npcZones, problems);
+                        CheckPersona(step, persona, zoneName, zone, anywhere, npcZones, problems, notes);
                         break;
                     case BountyGoalTemplate bounty:
                         CheckBounty(step, questName, bounty, zoneName, zone, zones, problems, notes);
@@ -255,7 +259,7 @@ internal static class QuestChecker {
     }
 
     private static void CheckPersona(string step, PersonaGoalTemplate persona, string zoneName, ZoneFacts zone, ZoneFacts anywhere,
-                                     Dictionary<ulong, List<string>> npcZones, List<string> problems) {
+                                     Dictionary<ulong, List<string>> npcZones, List<string> problems, List<string> notes) {
         string personaName = persona.m_personaName;
         var template = QuestMadlibs.SpeakerTemplateOf(personaName, 0);
         bool HasIn(ZoneFacts facts) => facts is not null
@@ -275,7 +279,10 @@ internal static class QuestChecker {
             problems.Add($"{step}: no NPC called {personaName} is in the game files.");
         }
         else if (elsewhere is { Count: > 0 }) {
-            problems.Add($"{step}: {who} isn't in {zoneName}; the game has them in {string.Join(", ", elsewhere.Take(3))}.");
+            // Talking to them counts in any zone; the step's zone only sets where the quest arrow points.
+            if (!elsewhere.Contains(zoneName, StringComparer.OrdinalIgnoreCase)) {
+                notes.Add($"{step}: {who} stands in {string.Join(", ", elsewhere.Take(3))}, not {zoneName}; talking to them there still counts.");
+            }
         }
         else {
             problems.Add($"{step}: {who} doesn't stand in {(zone is null ? "any zone" : zoneName)}.");
@@ -294,21 +301,25 @@ internal static class QuestChecker {
             return;
         }
 
-        if (zone is not null && wanted.Any(zone.Adjectives.Contains)) {
+        // A creature counts by its adjectives, or by the name of the talking NPC the step marks (BountyStandIns).
+        var names = Quests.BountyStandIns.NamesOf(wanted);
+        bool Counts(ZoneFacts facts) => wanted.Any(facts.FoeAdjectives.Contains) || names.Any(facts.FoeNames.Contains);
+        if (zone is not null && Counts(zone)) {
             return;
         }
 
-        var others = zones.Where(z => wanted.Any(z.Value.Adjectives.Contains)).Select(z => z.Key).Take(3).ToList();
-        if (zone is null) {
-            if (others.Count == 0) {
-                problems.Add($"{step}: no creature in the quest's zones counts for it (it needs one marked {string.Join(" or ", wanted)}).");
+        // A won battle counts in any zone; the step's zone only sets where the quest arrow points.
+        var others = zones.Where(z => Counts(z.Value)).Select(z => z.Key).Take(3).ToList();
+        if (others.Count > 0) {
+            if (zone is not null) {
+                notes.Add($"{step}: the creatures to defeat are in {string.Join(", ", others)}, not {zoneName}; the step still counts there.");
             }
 
             return;
         }
 
-        problems.Add($"{step}: no creature in {zoneName} counts for it (it needs one marked {string.Join(" or ", wanted)})"
-            + (others.Count > 0 ? $"; some in {string.Join(", ", others)} do." : "."));
+        var foes = names.Count > 0 ? $"a creature called {string.Join(" or ", names)} or one marked " : "one marked ";
+        problems.Add($"{step}: no creature you can fight in the game's zones counts for it (it needs {foes}{string.Join(" or ", wanted)}).");
     }
 
     // ---------------------------------------------------------------------
@@ -381,10 +392,18 @@ internal static class QuestChecker {
             facts.Names.Add(name);
         }
 
+        var foe = Quests.BountyStandIns.IsFoe(template);
         foreach (var adjective in template.m_adjectiveList ?? []) {
             if ((string) adjective is { Length: > 0 } text) {
                 facts.Adjectives.Add(text);
+                if (foe) {
+                    facts.FoeAdjectives.Add(text);
+                }
             }
+        }
+
+        if (foe && Quests.BountyStandIns.FoeNameOf(id) is { Length: > 0 } foeName) {
+            facts.FoeNames.Add(foeName);
         }
     }
 

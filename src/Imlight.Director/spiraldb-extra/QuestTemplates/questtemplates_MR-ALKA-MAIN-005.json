@@ -298,7 +298,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "MR-ALKA-NPC05-B_Persona",
+            "m_personaName": "MR-ALKA-NPC05_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -310,12 +310,12 @@
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_15.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1381172,
+            "m_actorTemplateID": 1381170,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "MR-ALKA-NPC05-B_Persona",
+            "m_personaName": "MR-ALKA-NPC05_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -327,12 +327,12 @@
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_16.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1381172,
+            "m_actorTemplateID": 1381170,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "MR-ALKA-NPC05-B_Persona",
+            "m_personaName": "MR-ALKA-NPC05_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -344,7 +344,7 @@
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_17.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1381172,
+            "m_actorTemplateID": 1381170,
             "m_cameraName": ""
           }
         ]
