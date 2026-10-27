@@ -137,6 +137,13 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _maxMonsters = new() {
         ItemsSource = new[] { "Off (normal rule)", "1", "2", "3", "4" }, SelectedIndex = 0, Width = 170,
     };
+    // [Battle] EngageExtraReach: how much farther than the game's own reach walking into a monster starts a battle.
+    private static readonly int[] s_engageReaches = [0, 25, 50, 100, 150, 250];
+    private readonly ComboBox _engageReach = new() {
+        ItemsSource = new[] { "Game's own reach", "A little farther (+25)", "Farther (+50, default)", "Much farther (+100)",
+            "Very far (+150)", "Huge (+250)" },
+        SelectedIndex = 2, Width = 170,
+    };
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
@@ -310,6 +317,8 @@ internal sealed partial class ManagerWindow : Window {
             if (key == "MobsJoinLate") {
                 battleRows.Children.Add(SwitchRow("Most monsters in a battle", _maxMonsters,
                     "Off: 2 for 1 wizard, 3 for 2, 4 for 3 or 4 (Unicorn Way 1 per wizard). 1 to 4: always that many at most."));
+                battleRows.Children.Add(SwitchRow("Reach to start a battle", _engageReach,
+                    "How close you must walk to a monster to start a battle. Farther makes walking into monsters start fights more easily."));
             }
         }
 
@@ -736,6 +745,12 @@ internal sealed partial class ManagerWindow : Window {
                 }
             };
         }
+
+        _engageReach.SelectionChanged += async (_, _) => {
+            if (!_updatingRandomizer && _engageReach.SelectedIndex >= 0) {
+                await Guard(() => SetEngageReachAsync(s_engageReaches[_engageReach.SelectedIndex]));
+            }
+        };
 
         _maxMonsters.SelectionChanged += async (_, _) => {
             if (!_updatingRandomizer && _maxMonsters.SelectedIndex >= 0) {
@@ -1339,6 +1354,10 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.IsEnabled = Has("Battle", "MaxMonsters");
         _maxMonsters.SelectedIndex = int.TryParse(ini.GetValueOrDefault(("Battle", "MaxMonsters")), out var maxMonsters)
             && maxMonsters is >= 1 and <= 4 ? maxMonsters : 0;
+        _engageReach.IsEnabled = Has("Battle", "EngageExtraReach");
+        var reach = int.TryParse(ini.GetValueOrDefault(("Battle", "EngageExtraReach")), out var r) ? r : 50;
+        _engageReach.SelectedIndex = Array.IndexOf(s_engageReaches,
+            s_engageReaches.OrderBy(x => Math.Abs(x - reach)).First());
         ShowTrainingPoints(ini);
 
         _updatingRandomizer = false;
@@ -1501,6 +1520,19 @@ internal sealed partial class ManagerWindow : Window {
         if (restart && await ConfirmAsync($"{name} is now {(on ? "on" : "off")}. Restart the server now to use it?")) {
             Say(await _manager.RestartServerAsync());
         }
+    }
+
+    private Task SetEngageReachAsync(int reach) {
+        if (!_manager.HasSetting("Battle", "EngageExtraReach") || _manager.GetSetting("Battle", "EngageExtraReach") == reach.ToString()) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("Battle", "EngageExtraReach", reach.ToString(), "")]);
+        _settings = [];
+        Say(reach == 0 ? "Walking into a monster now uses the game's own reach. It applies right away."
+            : $"Walking into a monster now starts a battle from {reach} farther than the game's own reach. It applies right away.");
+
+        return Task.CompletedTask;
     }
 
     private Task SetMaxMonstersAsync(int most) {

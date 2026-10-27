@@ -146,6 +146,12 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
 
     public void Stop() => Stopped = true;
 
+    /// <summary>
+    /// Where the creature is right now along its walk. m_location is only brought up to date every quarter second, so
+    /// it can be that far behind where the game draws a walking creature.
+    /// </summary>
+    internal Vector3 CurrentPosition => Stopped ? Entity.ActiveGameObject.m_location : GetPosition();
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PATHDETAILS))]
     private void ReceivePathDetails(ZONE_102_PROTOCOL.MSG_PATHDETAILS message) {
         _receivedPathDetails = true;
@@ -200,7 +206,9 @@ internal sealed class PathMovementComponent(ZoneEntity entity) : ZoneEntityCompo
         // Determine how long it will take to reach the new node.
         var distanceToNewNode = Vector3.Distance(_lastStartLocation, _currentNode.m_location);
         var travelTimeInSeconds = distanceToNewNode / (_movementSpeed * _movementScale);
-        var travelTimeInMilli = (uint) travelTimeInSeconds * 1000;
+        // Whole seconds were taken before multiplying, so a 2.9 second walk was cut to 2: the next leg began well short of
+        // the node the game was still walking the creature to.
+        var travelTimeInMilli = (uint) (travelTimeInSeconds * 1000);
 
         if (travelTimeInMilli < TRAVEL_TIME_CLAMP_MINIMUM_IN_MS) {
             travelTimeInMilli = TRAVEL_TIME_CLAMP_MINIMUM_IN_MS;

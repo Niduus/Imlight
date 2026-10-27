@@ -65,8 +65,6 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
     public float Proximity { get; private set; }
     public string NameOverride { get; private set; }
 
-    // Keyed by the player's actor: a CoreObject is a record whose hash follows its location.
-    private readonly HashSet<IActorRef> _playersInRange = [];
     private readonly NPCBehaviorTemplate _npcBehaviorTemplate;
     private readonly DuelistBehaviorTemplate _duelistBehaviorTemplate;
 
@@ -147,22 +145,107 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         }
     }
 
+    // [Battle] EngageExtraReach (live): how much farther than the game's own reach (the creature's m_npcProximity) a
+    // wizard starts a battle by walking into a monster (Niduus, 2026-10-27: "Make combat easier to start/engage when
+    // walking directly to the mob"). 0 = only the game's own reach.
+    internal static float EngageExtraReach => Math.Clamp(ConfigurationManager.GetValue("Battle.EngageExtraReach", 50f), 0f, 500f);
+
+    // Farther than this between two checks is a teleport, not a walk: only where the wizard landed counts.
+    private const float MAX_STEP = 1500f;
+    // A wizard standing in reach whose battle did not start (the nearest circle was busy, or the wizard was still
+    // held by another battle) is tried again this often.
+    private static readonly TimeSpan s_engageRetry = TimeSpan.FromSeconds(1);
+
+    private readonly Dictionary<IActorRef, (float X, float Y, float Z)> _lastPlayerLocations = [];
+    private readonly Dictionary<IActorRef, DateTime> _engageAsked = [];
+    private readonly HashSet<IActorRef> _nearMisses = [];
+
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        // Check if the player is now in range of the object.
-        // A player only counts as in range once a battle was asked for: one who walked in while still in a
-        // battle or its grace is pulled in on the next check (every 250 ms), even standing still (Niduus, 2026-10-25).
-        if (IsInRadius(playerObj, Proximity) && !_playersInRange.Contains(playerActor)) {
-            if (OnProximityEnter(playerObj, playerActor, playerWizard)) {
-                _playersInRange.Add(playerActor);
+        // Checked every quarter second, even standing still. A monster asks for a battle while a wizard is in reach and
+        // not in one, again every second if it did not start, so standing next to a monster always ends up in a fight.
+        if (!IsMonster || playerObj is null) {
+            return;
+        }
+
+        if (!Reached(playerObj, playerActor, out var ground, out var height, out var reach)) {
+            _engageAsked.Remove(playerActor);
+
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        if (_engageAsked.TryGetValue(playerActor, out var askedAt) && now - askedAt < s_engageRetry) {
+            return;
+        }
+
+        if (OnProximityEnter(playerObj, playerActor, playerWizard)) {
+            if (!_engageAsked.ContainsKey(playerActor)) {
+                Logger.Debug("Engage: {0} touched {1}: {2} away on the ground, {3} in height (reach {4} = game {5} + {6}).",
+                    Logger.Args(NameOverride ?? Entity.ActiveGameObject?.m_debugName, playerObj.m_debugName, (int) ground,
+                        (int) height, (int) reach, (int) Proximity, (int) EngageExtraReach));
             }
-        } 
-        else if (!IsInRadius(playerObj, Proximity) && _playersInRange.Contains(playerActor)) {
-            _playersInRange.Remove(playerActor);
+
+            _engageAsked[playerActor] = now;
         }
     }
 
-    public override void OnPlayerLeave(IActorRef playerActor, ulong id)
-        => _playersInRange.Remove(playerActor);
+    /// <summary>
+    /// True when the wizard is in this monster's reach now or walked through it since the last check. The wizard's
+    /// whole walked line counts, so running past a monster between two checks still touches it; the monster is
+    /// taken where it is right now along its walk, not where it was up to a quarter second ago; and distance is on
+    /// the ground with room for height, so slopes and stairs do not keep a wizard out of reach.
+    /// </summary>
+    private bool Reached(CoreObject player, IActorRef playerActor, out float ground, out float height, out float reach) {
+        reach = Proximity + EngageExtraReach;
+        var now = (player.m_location.X, player.m_location.Y, player.m_location.Z);
+        var from = _lastPlayerLocations.TryGetValue(playerActor, out var last) ? last : now;
+        _lastPlayerLocations[playerActor] = now;
+
+        var stepX = now.X - from.X;
+        var stepY = now.Y - from.Y;
+        var stepZ = now.Z - from.Z;
+        var stepLengthSquared = (stepX * stepX) + (stepY * stepY);
+        if (stepLengthSquared > MAX_STEP * MAX_STEP) {
+            from = now;
+            stepX = stepY = stepZ = 0;
+            stepLengthSquared = 0;
+        }
+
+        var target = Entity.GetComponentOfType<PathMovementComponent>()?.CurrentPosition ?? Entity.ActiveGameObject.m_location;
+        var t = stepLengthSquared > 0
+            ? Math.Clamp((((target.X - from.X) * stepX) + ((target.Y - from.Y) * stepY)) / stepLengthSquared, 0f, 1f)
+            : 1f;
+        var dx = target.X - (from.X + (stepX * t));
+        var dy = target.Y - (from.Y + (stepY * t));
+        var dz = target.Z - (from.Z + (stepZ * t));
+        ground = MathF.Sqrt((dx * dx) + (dy * dy));
+        height = dz;
+
+        if (ground <= reach && Math.Abs(dz) <= Math.Max(reach * 1.5f, 150f)) {
+            _nearMisses.Remove(playerActor);
+
+            return true;
+        }
+
+        // A wizard who came close but not close enough, once per approach, so a monster that did not fight shows in
+        // the log.
+        if (ground <= reach * 2 && _nearMisses.Add(playerActor)) {
+            Logger.Debug("Engage: {0} did not start a battle with {1}: {2} away on the ground, {3} in height (reach {4} = game {5} + {6}).",
+                Logger.Args(NameOverride ?? Entity.ActiveGameObject?.m_debugName, player.m_debugName, (int) ground,
+                    (int) dz, (int) reach, (int) Proximity, (int) EngageExtraReach));
+        }
+        else if (ground > reach * 2) {
+            _nearMisses.Remove(playerActor);
+        }
+
+        return false;
+    }
+
+    public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _lastPlayerLocations.Remove(playerActor);
+        _engageAsked.Remove(playerActor);
+        _nearMisses.Remove(playerActor);
+    }
 
     public NPCBehavior GetClientBehaviorInstance() => new() {
         m_isMonster = IsMonster,
@@ -181,6 +264,11 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         }
 
         if (playerWizard.IsInCombatGrace || playerWizard.IsInDuel) {
+            return false;
+        }
+
+        // A monster already fighting (or dying) starts no other battle; a battle's own minion never does.
+        if (Entity.IsCombatOnlyMinion || Entity.GetComponentOfType<CombatCreatureAIComponent>()?.IsInDuel == true) {
             return false;
         }
 

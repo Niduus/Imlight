@@ -556,6 +556,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public Dictionary<IActorRef, CoreObject> StartingParticipants;
 
+        // Circles that were asked and already had a battle running; the next closest free one is asked instead.
+        public HashSet<IActorRef> BusySigils;
+
     }
 
     /// <summary>

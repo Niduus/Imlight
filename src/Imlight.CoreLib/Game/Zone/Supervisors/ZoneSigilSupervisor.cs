@@ -39,6 +39,8 @@ namespace Imlight.CoreLib.Game.Zone.Supervisors;
 internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor(zone) {
 
     private readonly Dictionary<CoreObject, IActorRef> _sigils = [];
+    // How far a battle may start from the wizard when the closest circle is busy.
+    private const float MAX_FREE_CIRCLE_DISTANCE = 2000f;
     private readonly Dictionary<IActorRef, ulong> _pvpSigilObjectIds = [];
     
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS))]
@@ -168,12 +170,22 @@ internal sealed class ZoneSigilSupervisor(Core.Zone zone) : ZoneEntitySupervisor
         var firstParticipantObj = message.StartingParticipants.Values.First();
 
         // Find the sigil that is closest to the first participant. Forward
-        // the request to that sigil.
+        // the request to that sigil. One that had a battle running already sent it back: the next closest free one
+        // near enough takes it, so a monster touched beside a busy circle still fights (Niduus, 2026-10-27).
+        var busy = message.BusySigils;
         var closestSigil = _sigils
-            .Where(x => !_pvpSigilObjectIds.ContainsKey(x.Value))
+            .Where(x => !_pvpSigilObjectIds.ContainsKey(x.Value) && (busy is null || !busy.Contains(x.Value)))
             .OrderBy(x => Vector3.Distance(x.Key.m_location, firstParticipantObj.m_location))
             .FirstOrDefault();
-        
+
+        if (busy is { Count: > 0 } && (closestSigil.Value is null
+            || Vector3.Distance(closestSigil.Key.m_location, firstParticipantObj.m_location) > MAX_FREE_CIRCLE_DISTANCE)) {
+            Logger.Debug("Engage: {0} touched a monster but every battle circle near enough is busy ({1} busy).",
+                Logger.Args(firstParticipantObj.m_debugName, busy.Count));
+
+            return;
+        }
+
         closestSigil.Value?.Forward(message);
     }
 

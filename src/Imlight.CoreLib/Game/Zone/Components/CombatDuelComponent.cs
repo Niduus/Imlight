@@ -467,6 +467,16 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL))]
     private void ReceiveDuelStart(ZONE_102_PROTOCOL.MSG_REQUESTCOMBATSIGIL message) {
         if (_isActive) {
+            // Someone else's battle runs here: the zone asks the next closest free circle (ZoneSigilSupervisor), so a
+            // wizard who walks into a monster beside a busy circle still gets a fight. A wizard already in this battle
+            // starts nothing.
+            var players = message.StartingParticipants?.Values.Where(x => x?.m_templateID == 1).Select(x => x.m_globalID).ToList();
+            if (!IsPvPDuel && players is { Count: > 0 }
+                && !SubCircles.Any(c => c?.ParticipantObject is { } o && players.Contains(o.m_globalID))) {
+                (message.BusySigils ??= []).Add(Self);
+                ZoneActor.Tell(message);
+            }
+
             return;
         }
 
