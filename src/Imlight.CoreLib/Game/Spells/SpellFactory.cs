@@ -168,6 +168,15 @@ internal class SpellFactory : RootDirectoryResourceSingleton<SpellFactory>, IMem
     }
 
     /// <summary>
+    /// False for spells that are never cast in battle and so never go in a deck: fishing, gardening, cantrip and
+    /// Castle Magic spells. The game fills a new wizard's deck with every spell it knows when the tutorial ends, which
+    /// put the starter fishing spells in the deck.
+    /// </summary>
+    internal static bool CanGoInDeck(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is not
+            (FishingSpellTemplate or GardenSpellTemplate or CantripsSpellTemplate or CastleMagicSpellTemplate);
+
+    /// <summary>
     /// Creates a spell from a template ID.
     /// </summary>
     /// <param name="templateId">The ID of the spell template.</param>

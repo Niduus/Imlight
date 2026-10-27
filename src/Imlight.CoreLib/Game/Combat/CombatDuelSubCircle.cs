@@ -1541,6 +1541,11 @@ public partial class CombatDuelSubCircle {
         var vaultSpells = new List<CombatDeckSpellData>();
         if (_wizard.SpellbookBehavior.SpellList is not null) {
             foreach (var spell in _wizard.SpellbookBehavior.SpellList) {
+                // Fishing, gardening, cantrip and Castle Magic spells are never drawn in battle.
+                if (!Imlight.CoreLib.Game.Spells.SpellFactory.CanGoInDeck(spell.m_templateID)) {
+                    continue;
+                }
+
                 var template = CoreObjectFactory.GetCoreTemplate(spell.m_templateID);
                 var isTreasureCard = template is SpellTemplate spellTemplate
                     && (spellTemplate.m_Treasure || ((string)spellTemplate.m_name).EndsWith(" TC"));
