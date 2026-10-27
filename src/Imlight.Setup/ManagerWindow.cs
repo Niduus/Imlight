@@ -137,12 +137,11 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _maxMonsters = new() {
         ItemsSource = new[] { "Off (normal rule)", "1", "2", "3", "4" }, SelectedIndex = 0, Width = 170,
     };
-    // [Battle] EngageExtraReach: how much farther than the game's own reach walking into a monster starts a battle.
-    private static readonly int[] s_engageReaches = [0, 25, 50, 100, 150, 250];
+    // [Battle] EngageReach: how close a wizard walks to a monster to start a battle (0 = the game files' 350).
+    private static readonly int[] s_engageReaches = [100, 175, 250, 0];
     private readonly ComboBox _engageReach = new() {
-        ItemsSource = new[] { "Game's own reach", "A little farther (+25)", "Farther (+50, default)", "Much farther (+100)",
-            "Very far (+150)", "Huge (+250)" },
-        SelectedIndex = 2, Width = 170,
+        ItemsSource = new[] { "Close (100)", "Moderate (175, default)", "Far (250)", "Game files (350, very far)" },
+        SelectedIndex = 1, Width = 170,
     };
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
@@ -329,7 +328,7 @@ internal sealed partial class ManagerWindow : Window {
                 battleRows.Children.Add(SwitchRow("Most monsters in a battle", _maxMonsters,
                     "Off: 2 for 1 wizard, 3 for 2, 4 for 3 or 4 (Unicorn Way 1 per wizard). 1 to 4: always that many at most."));
                 battleRows.Children.Add(SwitchRow("Reach to start a battle", _engageReach,
-                    "How close you must walk to a monster to start a battle. Farther makes walking into monsters start fights more easily."));
+                    "How close you must walk to a monster to start a battle. Close is nearly touching it; the game files (350) pull you in from far off."));
             }
         }
 
@@ -1373,10 +1372,10 @@ internal sealed partial class ManagerWindow : Window {
         _maxMonsters.IsEnabled = Has("Battle", "MaxMonsters");
         _maxMonsters.SelectedIndex = int.TryParse(ini.GetValueOrDefault(("Battle", "MaxMonsters")), out var maxMonsters)
             && maxMonsters is >= 1 and <= 4 ? maxMonsters : 0;
-        _engageReach.IsEnabled = Has("Battle", "EngageExtraReach");
-        var reach = int.TryParse(ini.GetValueOrDefault(("Battle", "EngageExtraReach")), out var r) ? r : 50;
+        _engageReach.IsEnabled = Has("Battle", "EngageReach");
+        var reach = int.TryParse(ini.GetValueOrDefault(("Battle", "EngageReach")), out var r) ? r : 175;
         _engageReach.SelectedIndex = Array.IndexOf(s_engageReaches,
-            s_engageReaches.OrderBy(x => Math.Abs(x - reach)).First());
+            s_engageReaches.OrderBy(x => Math.Abs((x == 0 ? 350 : x) - (reach <= 0 ? 350 : reach))).First());
         ShowCreateOnLogin(ini);
         ShowTrainingPoints(ini);
 
@@ -1543,14 +1542,14 @@ internal sealed partial class ManagerWindow : Window {
     }
 
     private Task SetEngageReachAsync(int reach) {
-        if (!_manager.HasSetting("Battle", "EngageExtraReach") || _manager.GetSetting("Battle", "EngageExtraReach") == reach.ToString()) {
+        if (!_manager.HasSetting("Battle", "EngageReach") || _manager.GetSetting("Battle", "EngageReach") == reach.ToString()) {
             return Task.CompletedTask;
         }
 
-        _manager.SaveSettings([new Setting("Battle", "EngageExtraReach", reach.ToString(), "")]);
+        _manager.SaveSettings([new Setting("Battle", "EngageReach", reach.ToString(), "")]);
         _settings = [];
-        Say(reach == 0 ? "Walking into a monster now uses the game's own reach. It applies right away."
-            : $"Walking into a monster now starts a battle from {reach} farther than the game's own reach. It applies right away.");
+        Say(reach == 0 ? "Walking into a monster now uses the game files' reach (350, very far). It applies right away."
+            : $"Walking within {reach} of a monster now starts a battle. It applies right away.");
 
         return Task.CompletedTask;
     }
