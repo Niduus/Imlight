@@ -449,6 +449,24 @@ internal sealed partial class ServerManager(string installFolder) {
 
     internal bool HasQuestEditor => ServerKnows("quest-details.json");
 
+    // The Quest Testing tab's "Check all quests": the server checks every main quest against the game's zone files
+    // (QuestChecker) and writes quest-check.json in the ID lookup folder.
+    private const string QUEST_CHECK_REQUEST_FILE = "quest-check-request.txt";
+
+    internal bool HasQuestChecker => ServerKnows(QUEST_CHECK_REQUEST_FILE);
+
+    internal void RequestQuestCheck() {
+        if (!HasQuestChecker) {
+            throw new PanelException("This server copy can't check quests yet. Update Imlight at the top of the window first.");
+        }
+
+        if (!InstalledCommands.IsServerRunning(InstallFolder)) {
+            throw new PanelException("Start the server first. You don't need to log in to the game.");
+        }
+
+        File.WriteAllText(Path.Combine(ServerFolder, QUEST_CHECK_REQUEST_FILE), DateTime.UtcNow.ToString("o"));
+    }
+
     /// <summary>Whether the server writes the ID lists (id-lookup) that Lookup, Bosses and Customs search.</summary>
     internal bool HasIdLookup => ServerKnows("ID Lookup.OutputPath");
 
