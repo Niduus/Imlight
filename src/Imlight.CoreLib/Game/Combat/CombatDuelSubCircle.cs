@@ -387,7 +387,7 @@ public partial class CombatDuelSubCircle {
         }
 
         _cheatShadowMagic = true;
-        var shadow = MaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(MaxShadowPips, 1);
+        var shadow = ShownShadowSlots(MaxShadowPips);
         pips.m_shadowPips = (byte) Math.Max(pips.m_shadowPips, shadow);
 
         var fullMana = ParticipantGameStats.m_baseMana;
@@ -505,6 +505,15 @@ public partial class CombatDuelSubCircle {
     // [Battle] NaturalShadowPips: wizards get shadow pips without the shadow pip rating stat.
     private static bool s_naturalShadowPips => ConfigurationManager.GetValue("Battle.NaturalShadowPips", false);
     private const int NATURAL_SHADOW_PIP_CHANCE = 25;
+    // [Battle] ShadowMagicNeedsQuest: like the game, a wizard has no shadow magic until "Shadow Dancer" (Moon Cliffs,
+    // Khrysalis, the quest that teaches the first shadow spell) is done, or gear, jewels or pets give shadow pip rating.
+    private static bool s_shadowMagicNeedsQuest => ConfigurationManager.GetValue("Battle.ShadowMagicNeedsQuest", true);
+    internal static bool ShadowMagicNeedsQuest => s_shadowMagicNeedsQuest;
+    internal const string SHADOW_MAGIC_QUEST = "KR-MOON-C14-001";
+    // [Battle] NaturalShadowPipLimit: the most shadow pips the gauge gives on its own (2, like the game). Spells,
+    // cheats and commands can give more, up to the shadow pip limits. 0 means no limit of its own. A boss with its own
+    // shadow pip count (cheat file or Bosses tab) keeps it.
+    private static int s_naturalShadowPipLimit => Math.Clamp(ConfigurationManager.GetValue("Battle.NaturalShadowPipLimit", 2), 0, NO_SHADOW_LIMIT);
 
     /// <summary>
     /// The school a new school pip goes to: a random one with RandomSchoolPips, else the participant's own
@@ -597,6 +606,60 @@ public partial class CombatDuelSubCircle {
     }
 
     private static int ShadowLimit(int value) => value <= 0 ? NO_SHADOW_LIMIT : Math.Min(value, NO_SHADOW_LIMIT);
+
+    /// <summary>
+    /// The most shadow pips the gauge gives on its own: [Battle] NaturalShadowPipLimit, under the shadow pip limit.
+    /// </summary>
+    private int NaturalMaxShadowPips {
+        get {
+            var max = MaxShadowPips;
+            // Bosses with their own count, and wizards given their own slots (.sp slots), fill all of them.
+            if (s_naturalShadowPipLimit <= 0 || BossShadowPips.Most > 0 || ParticipantGameStats?.m_shadowPipSlots > 0) {
+                return max;
+            }
+
+            return Math.Min(max, s_naturalShadowPipLimit);
+        }
+    }
+
+    // The shadow pip slots the client lays out for a limit.
+    private static int ShownShadowSlots(int max) => max >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : Math.Max(max, 1);
+
+    /// <summary>
+    /// Whether a wizard has earned shadow magic like the game: "Shadow Dancer" done, or shadow pip rating from gear,
+    /// jewels or pets. Always true with [Battle] ShadowMagicNeedsQuest off.
+    /// </summary>
+    internal static bool EarnedShadowMagic(Wizard wizard, ServerWizGameStats stats) {
+        if (!s_shadowMagicNeedsQuest || wizard is null) {
+            return true;
+        }
+
+        if (stats is not null && stats.m_bonusShadowPipRating > 0) {
+            return true;
+        }
+
+        if (wizard.GameStats?.m_shadowQuestDone == true) {
+            return true;
+        }
+
+        if (!wizard.HasCompletedQuest(SHADOW_MAGIC_QUEST)) {
+            return false;
+        }
+
+        // Done before this check existed: remember it, so the shadow slots show at login too.
+        wizard.MarkShadowQuestDone();
+
+        return true;
+    }
+
+    // The level table's shadow pip rating (from level 90 in the game's data), once a wizard has shadow magic.
+    private float LevelShadowPipRating() {
+        if (_wizard is null || ParticipantGameStats is null) {
+            return 0;
+        }
+
+        return Shared.Character.MagicLevelsConfig.GetPlayerLevelInfo((MagicSchool) ParticipantGameStats.m_schoolID, ParticipantGameStats.Level)?.m_shadowPipRating ?? 0f;
+    }
     private static int s_shadowPipChance => Math.Clamp(ConfigurationManager.GetValue("Battle.ShadowPipChance", 0), 0, 100);
 
     /// <summary>
@@ -615,7 +678,8 @@ public partial class CombatDuelSubCircle {
             pipCount.m_shadowPips = (byte) Math.Min(s_playerMinShadowPips, max);
         }
 
-        if (pipCount.m_shadowPips >= max) {
+        // [Battle] NaturalShadowPipLimit: the gauge stops here; more only come from spells and cheats.
+        if (pipCount.m_shadowPips >= NaturalMaxShadowPips) {
             return;
         }
 
@@ -630,7 +694,7 @@ public partial class CombatDuelSubCircle {
     private int ShadowPipChance() {
         var chance = s_shadowPipChance > 0
             ? s_shadowPipChance
-            : (int) Math.Round(ParticipantGameStats.m_shadowPipRating + ParticipantGameStats.m_bonusShadowPipRating);
+            : (int) Math.Round(ParticipantGameStats.m_shadowPipRating + ParticipantGameStats.m_bonusShadowPipRating + LevelShadowPipRating());
         if ((s_naturalShadowPips || HasOwnShadowMagic) && _wizard is not null && chance <= 0) {
             chance = NATURAL_SHADOW_PIP_CHANCE;
         }
@@ -833,9 +897,8 @@ public partial class CombatDuelSubCircle {
             return;
         }
 
-        var max = MaxShadowPips;
         stats.m_shadowMagicUnlocked = true;
-        stats.m_shadowPipMax = Math.Max(max >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : max,
+        stats.m_shadowPipMax = Math.Max(ShownShadowSlots(NaturalMaxShadowPips),
             CombatParticipant?.m_pipCount?.m_shadowPips ?? 0);
         stats.m_shadowPipRating = ShadowPipChance();
         stats.m_shadowPipRateAccumulated = _shadowGauge;
@@ -847,7 +910,7 @@ public partial class CombatDuelSubCircle {
     /// Shown shadow pip slots in the settings the server uses, for the login stats.
     /// </summary>
     internal static int ShownPlayerShadowSlots
-        => s_playerMaxShadowPips >= NO_SHADOW_LIMIT ? SHOWN_SHADOW_SLOTS_WITHOUT_LIMIT : s_playerMaxShadowPips;
+        => ShownShadowSlots(s_naturalShadowPipLimit > 0 ? Math.Min(s_playerMaxShadowPips, s_naturalShadowPipLimit) : s_playerMaxShadowPips);
 
     internal static bool ShadowPipsOn => s_shadowPips;
 
@@ -859,7 +922,7 @@ public partial class CombatDuelSubCircle {
 
     private bool HasShadowMagic => _cheatShadowMagic
         || (_wizard is null ? s_shadowPips && !BossHasNoShadowPips && (CreatureHasShadowMagic || BossShadowPips.Most > 0)
-                            : s_shadowPips || HasOwnShadowMagic);
+                            : (s_shadowPips && EarnedShadowMagic(_wizard, ParticipantGameStats)) || HasOwnShadowMagic);
 
     private static readonly MagicSchool[] s_pipSchools = [
         MagicSchool.Balance, MagicSchool.Death, MagicSchool.Fire, MagicSchool.Ice,

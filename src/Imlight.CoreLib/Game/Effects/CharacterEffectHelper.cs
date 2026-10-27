@@ -224,6 +224,8 @@ internal static class CharacterEffectHelper {
         stats.m_healIncBonusPercentAll += statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent += statistic.m_stunResistancePercent;
         stats.m_archmasteryBonus += statistic.m_archmastery;
+        // Shadow pip rating from gear, jewels and pets: the gauge fills faster, and it unlocks shadow magic.
+        stats.m_bonusShadowPipRating += statistic.m_shadowPipRating;
         stats.m_archmasteryBonusPercent += statistic.m_archmasteryBonusPercent;
         LogBattleStat("added", effectName, statistic);
 
@@ -283,6 +285,7 @@ internal static class CharacterEffectHelper {
         stats.m_healIncBonusPercentAll -= statistic.m_healIncBonusPercent;
         stats.m_stunResistancePercent -= statistic.m_stunResistancePercent;
         stats.m_archmasteryBonus -= statistic.m_archmastery;
+        stats.m_bonusShadowPipRating -= statistic.m_shadowPipRating;
         stats.m_archmasteryBonusPercent -= statistic.m_archmasteryBonusPercent;
         LogBattleStat("removed", effectName, statistic);
 
