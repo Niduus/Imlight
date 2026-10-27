@@ -136,7 +136,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     // queue's next spell.
     private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null,
                                       bool SkipCast = false, char When = 'n', string Announcement = null, bool OnTarget = false,
-                                      bool Cheat = false);
+                                      bool Cheat = false, string Tag = null);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -823,7 +823,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, out string enchantment,
                                     string target = null, bool skipCast = false, char when = 'n', bool enchant = false,
                                     IReadOnlyList<string> enchants = null, bool onTarget = false, bool cheat = false,
-                                    List<CombatDuelSubCircle> pickedTargets = null) {
+                                    List<CombatDuelSubCircle> pickedTargets = null, string tag = null) {
         enchantment = null;
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
@@ -873,7 +873,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             SpellCaster = caster, Spell = spell, SpellTemplate = template, PickedTargets = pickedTargets, PicksChosen = pickedTargets is not null,
         };
         _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast,
-                                       When: when, OnTarget: onTarget, Cheat: cheat));
+                                       When: when, OnTarget: onTarget, Cheat: cheat, Tag: tag));
 
         return _delayedCasts.Count(d => d.Free && d.Announcement is null && d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when);
     }
@@ -989,7 +989,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                         SpellTemplate = action.SpellTemplate,
                     };
                     var before = combatActionList.m_actionList.Count;
+                    // A cheat's tagged free cast tags what it puts on (CombatResolver.EffectTags.cs).
+                    var tagging = string.IsNullOrWhiteSpace(delayed.Tag) ? null : HangingNow();
                     var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
+                    if (tagging is not null) {
+                        TagNewEffects(tagging, delayed.Tag);
+                    }
                     // Chained .ca lines show just before this spell.
                     if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
                         cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], lines, caster.SlotIndex);

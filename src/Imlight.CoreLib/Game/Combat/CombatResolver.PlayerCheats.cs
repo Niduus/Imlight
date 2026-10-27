@@ -109,7 +109,7 @@ public partial class CombatResolver {
         foreach (var target in targets) {
             for (var i = 0; i < count; i++) {
                 if (AddFreeDelayedCast(me, spell.m_templateID, atStart, out _, target, step.Silent, when, step.Enchant, step.Enchants,
-                        onTarget, cheat: true, pickedTargets: picks) == 0) {
+                        onTarget, cheat: true, pickedTargets: picks, tag: step.Tag) == 0) {
                     return 0;
                 }
             }

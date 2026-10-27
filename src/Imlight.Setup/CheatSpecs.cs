@@ -183,6 +183,10 @@ internal static class CheatSpecs {
     private static string CircleName(string kind) => s_circles.FirstOrDefault(c => c.Item1.Equals(kind, StringComparison.OrdinalIgnoreCase)).Item2 ?? kind;
     private static readonly (string, string)[] s_changeSchools = [.. SCHOOLS[1..], .. CHROMATIC];
     // Niduus, 2026-10-25 ("Expand on existing cheats"): the blocks of CombatResolver.MoreCheats.cs.
+    // The Do blocks that put effects on, and so take a tag (declared before All, which reads it; Niduus, 2026-10-27: "my cheat for casting 7% x3 Chromatic
+    // blades on my self, I want to add a tag on it like BABA"); "remove effects" takes only effects with the tag.
+    private static readonly HashSet<string> s_tagged = ["D.Cast", "D.FreeCast", "D.CastBy", "D.AddEffects", "D.AddCharm", "D.Aura", "D.Boost", "D.Immune"];
+
     private static readonly (string, string)[] s_removedFrom = [("", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"), ("Anyone", "anyone")];
     private static readonly (string, string)[] s_spellDoes = [
         ("RemoveCharm", "removes a charm"), ("RemoveBlade", "removes a blade"), ("RemoveWeakness", "removes a weakness (curse)"),
@@ -312,7 +316,7 @@ internal static class CheatSpecs {
             $"When a player {verb} with a {{School}} spell {{Count}}", [F("School", CheatFieldType.School), F("Count", CheatFieldType.MatchCount)],
             b => $"When a player {verb}{(b.Text("School").Length > 0 ? $" ({b.Text("School")})" : "")}");
 
-    internal static readonly CheatSpec[] All = [
+    internal static readonly CheatSpec[] All = WithTags([
         // When... (first made for bosses; a player cheat's "it" is you, and its "players" the creatures)
         new("W.BattleStart", BlockKind.When, "flag", "the battle starts", "Its first round. A boss brought in later counts from its own first round.",
             "When the battle starts", [], _ => "When the battle starts"),
@@ -376,6 +380,11 @@ internal static class CheatSpecs {
             "When {RemovedFrom} loses a {RemovedKind} from {RemovedSpell} to a spell",
             [F("RemovedFrom", CheatFieldType.Choice, "", s_removedFrom), F("RemovedKind", CheatFieldType.Choice, "", s_hasKinds), F("RemovedSpell", CheatFieldType.Words, "")],
             b => $"When {LabelOf(s_removedFrom, b.Text("RemovedFrom"))} loses {(b.Text("RemovedSpell").Length > 0 ? b.Text("RemovedSpell") + " " : "a ")}{LabelOf(s_hasKinds, b.Text("RemovedKind"))}"),
+        // Niduus, 2026-10-27: "If I have 0 BABA tag blades, it will immediately cast the cheat again".
+        new("W.TagGone", BlockKind.When, "layers", "runs out of tagged effects", "The moment it (or someone on a side) has no effect left with this tag, after having had one: used up by a hit, taken off, or run out. Tag the effects with the Tag box of the block that puts them on (cast, add an effect of your own size...). It goes off once each time they run out, right after the move that used the last one. \"Also at a round's start\" makes it go off at the start of any round when there are none, so it needs no other When for the first time. \"The attacker\" and \"the one hit\" are the one who ran out. Example: When it runs out of effects tagged BABA (also at a round's start), put a 7% Chromatic blade on itself, tagged BABA, three times.",
+            "When {TagWho} has no effects tagged {Tag} left {TagStart}",
+            [F("TagWho", CheatFieldType.Choice, "", s_removedFrom), F("Tag", CheatFieldType.Words, "BABA"), new("TagStart", CheatFieldType.Toggle, false, Label: "also at a round's start")],
+            b => $"When {LabelOf(s_removedFrom, b.Text("TagWho"))} runs out of effects tagged \"{b.Text("Tag")}\"{(b.Flag("TagStart") ? " (also at a round's start)" : "")}"),
 
         // When... (first made for the player cheats; a boss's "I" is the boss)
         new("W.ICast", BlockKind.When, "sparkle", "I cast", "Your spell, just before it lands. Pick the kind of card and school, and add a \"these spells\" block to name spells.",
@@ -468,10 +477,11 @@ internal static class CheatSpecs {
             "Only if {CreatureWho} is {Creature} {NotCreature}", [F("CreatureWho", CheatFieldType.Choice, "", s_creatureWho), F("Creature", CheatFieldType.Creature), new("NotCreature", CheatFieldType.Toggle, false, Label: "anyone but it")],
             b => $"only if {(b.Text("CreatureWho").Length > 0 ? LabelOf(s_creatureWho, b.Text("CreatureWho")) : "it")} is {(b.Flag("NotCreature") ? "not " : "")}{Creature(b)}"),
         // If... (Niduus, 2026-10-24: the gauntlets' cheats)
-        new("I.Has", BlockKind.If, "shield", "has a charm or ward", "Only if that one has a charm, ward, aura or over-time of this kind on them, or one from this spell (any version), at least this many (0 or 1: one; Coatl answers a fourth blade). With \"has none\", only if they have fewer: Kurokage answers a wizard who attacks with no shield up. \"Someone on the other side\" or \"someone on its side\" looks at everyone there (\"has none\": no one there), and \"the one the If found\" is the target of its Do blocks.",
-            "Only if {HasWho} has {HasCount} {HasKind} from {HasSpell} {HasNot}",
-            [F("HasWho", CheatFieldType.Choice, "Caster", s_hasWho), F("HasCount", CheatFieldType.Number, 0, max: 99), F("HasKind", CheatFieldType.Choice, "Shield", s_hasKinds), F("HasSpell", CheatFieldType.Words, ""), new("HasNot", CheatFieldType.Toggle, false, Label: "has none")],
-            b => $"only if {LabelOf(s_hasWho, b.Text("HasWho"))} {(b.Flag("HasNot") ? "has no" : b.Number("HasCount") > 1 ? $"has {b.Number("HasCount")} or more" : "has a")} {(b.Text("HasSpell").Length > 0 ? b.Text("HasSpell") + " " : "")}{LabelOf(s_hasKinds, b.Text("HasKind"))}"),
+        new("I.Has", BlockKind.If, "shield", "has a charm or ward", "Only if that one has a charm, ward, aura or over-time of this kind on them, or one from this spell (any version), at least this many (0 or 1: one; Coatl answers a fourth blade). Tagged (optional): only effects with this tag, as a Do block's Tag box put on (BABA). With \"has none\", only if they have fewer: Kurokage answers a wizard who attacks with no shield up. \"Someone on the other side\" or \"someone on its side\" looks at everyone there (\"has none\": no one there), and \"the one the If found\" is the target of its Do blocks.",
+            "Only if {HasWho} has {HasCount} {HasKind} from {HasSpell} tagged {HasTag} {HasNot}",
+            [F("HasWho", CheatFieldType.Choice, "Caster", s_hasWho), F("HasCount", CheatFieldType.Number, 0, max: 99), F("HasKind", CheatFieldType.Choice, "Shield", s_hasKinds), F("HasSpell", CheatFieldType.Words, ""),
+             F("HasTag", CheatFieldType.Words, ""), new("HasNot", CheatFieldType.Toggle, false, Label: "has none")],
+            b => $"only if {LabelOf(s_hasWho, b.Text("HasWho"))} {(b.Flag("HasNot") ? "has no" : b.Number("HasCount") > 1 ? $"has {b.Number("HasCount")} or more" : "has a")} {(b.Text("HasSpell").Length > 0 ? b.Text("HasSpell") + " " : "")}{LabelOf(s_hasKinds, b.Text("HasKind"))}{(b.Text("HasTag").Length > 0 ? $" tagged \"{b.Text("HasTag")}\"" : "")}"),
         new("I.Allies", BlockKind.If, "users", "how many allies", "Only while this many others stand on its side. Leave the top at 0 for no top.",
             "Only while {AlliesMin} to {AlliesMax} others stand on its side", [F("AlliesMin", CheatFieldType.Number, 1, max: 7), F("AlliesMax", CheatFieldType.Number, 0, max: 7)],
             b => b.Number("AlliesMax") > 0 ? $"with {b.Number("AlliesMin")}-{b.Number("AlliesMax")} allies" : $"with {b.Number("AlliesMin")}+ allies"),
@@ -540,9 +550,9 @@ internal static class CheatSpecs {
              F("CostMin", CheatFieldType.Number, 0, max: 14), F("CostMax", CheatFieldType.Number, 0, max: 14), F("Treasure", CheatFieldType.Choice, "", s_yesNo),
              F("Enchanted", CheatFieldType.Choice, "", s_yesNo), F("Result", CheatFieldType.Choice, "", s_results)],
             b => $"if the last spell of {LabelOf(s_casters, b.Text("Who"))} was {(b.Text("Spell").Length > 0 ? b.Text("Spell") : $"{SchoolWord(b)}{(b.Text("Kind").Length > 0 ? LabelOf(CATEGORIES, b.Text("Kind")) + " " : "")}a spell")}"),
-        Cond("C.Effects", "layers", "effects on someone", "How many charms, wards, auras or over-times of a kind (or from a spell: names or spell IDs) someone has. Example: someone on the other side has at least 3 blades — they are about to hit hard.",
-            "If {Who} has {Op} {Value} {Kind} from {Spell}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Spell", CheatFieldType.Words)],
-            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_hasKinds, b.Text("Kind"))}{(b.Text("Spell").Length > 0 ? $" from {b.Text("Spell")}" : "")}"),
+        Cond("C.Effects", "layers", "effects on someone", "How many charms, wards, auras or over-times of a kind (or from a spell: names or spell IDs) someone has. Tagged (optional): only effects with this tag, as a Do block's Tag box put on. Example: someone on the other side has at least 3 blades — they are about to hit hard; it has at most 0 blades tagged BABA — they are all used up.",
+            "If {Who} has {Op} {Value} {Kind} from {Spell} tagged {Tag}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Spell", CheatFieldType.Words), F("Tag", CheatFieldType.Words)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_hasKinds, b.Text("Kind"))}{(b.Text("Spell").Length > 0 ? $" from {b.Text("Spell")}" : "")}{(b.Text("Tag").Length > 0 ? $" tagged \"{b.Text("Tag")}\"" : "")}"),
         Cond("C.Pips", "pips", "pips of a kind", "Someone's pips of one kind: power, normal, shadow, or a school's. \"Both sides, added up\" with shadow pips counts the shadow pips in play.",
             "If {Who} has {Op} {Value} {Kind}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 3, max: 99), F("Kind", CheatFieldType.Choice, "", s_condPips)],
             b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_condPips, b.Text("Kind"))}"),
@@ -782,7 +792,24 @@ internal static class CheatSpecs {
             b => $"unlocks {CircleName(b.Text("Kind"))}"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
             "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),
-    ];
+    ]);
+
+    private const string TAG_HELP = " Tag (optional): a name of your own, such as BABA, put on every effect this block puts on. The \"has a charm or ward\" If,"
+        + " the \"effects on someone\" If, \"remove effects\" and the When \"runs out of tagged effects\" can then look at only those.";
+
+    private static CheatSpec[] WithTags(CheatSpec[] specs) => [.. specs.Select(spec =>
+        s_tagged.Contains(spec.Id)
+            ? spec with {
+                Help = spec.Help + TAG_HELP, Sentence = spec.Sentence + " tagged {Tag}", Fields = [.. spec.Fields, F("Tag", CheatFieldType.Words, "")],
+                Summary = b => spec.Summary(b) + (b.Text("Tag").Length > 0 ? $" (tagged \"{b.Text("Tag")}\")" : ""),
+            }
+            : spec.Id == "D.RemoveEffects"
+            ? spec with {
+                Help = spec.Help + " Tag (optional): only effects with this tag (a tag a block put on, such as BABA) come off.",
+                Sentence = spec.Sentence + " tagged {Tag}", Fields = [.. spec.Fields, F("Tag", CheatFieldType.Words, "")],
+                Summary = b => spec.Summary(b) + (b.Text("Tag").Length > 0 ? $" (only those tagged \"{b.Text("Tag")}\")" : ""),
+            }
+            : spec)];
 
     private static readonly Dictionary<string, CheatSpec> s_byId = All.ToDictionary(s => s.Id);
 

@@ -209,11 +209,12 @@ internal sealed class CheatRule {
             ["Enchant"] = "", ["NotEnchant"] = false, ["Global"] = "", ["GlobalSchool"] = "", ["GlobalSpell"] = "", ["SchoolPips"] = 0,
             ["SchoolPipsSchool"] = "", ["SchoolPipsWho"] = "", ["SchoolPipsMost"] = false, ["PipsMin"] = 0, ["PipsMax"] = 0, ["PipsWho"] = "",
             ["Circles"] = "", ["CirclesWho"] = "", ["Conditions"] = new JsonArray(),
+            ["Tag"] = "", ["TagWho"] = "", ["TagStart"] = false, ["HasTag"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
         foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
-                     "RemovedKind", "RemovedSpell", "RemovedFrom" }) {
+                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -309,7 +310,7 @@ internal sealed class CheatRule {
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
         foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
-                     "RemovedKind", "RemovedSpell", "RemovedFrom" }) {
+                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart" }) {
             var boxed = whenBlock.Values.Any(p => p.Key == key);
             if (Node(key) is { } value) {
                 // A School or Category the When has no box for (on "boss defeated", "a player puts a charm") is kept on
@@ -408,10 +409,10 @@ internal sealed class CheatRule {
         }
 
         // The gauntlets' Ifs (Niduus, 2026-10-24).
-        if (Text("HasKind").Length > 0 || Text("HasSpell").Length > 0 || Flag("HasNot")) {
+        if (Text("HasKind").Length > 0 || Text("HasSpell").Length > 0 || Text("HasTag").Length > 0 || Flag("HasNot")) {
             If("I.Has", new JsonObject {
                 ["HasWho"] = Text("HasWho").Length > 0 ? Text("HasWho") : "Caster", ["HasCount"] = Number("HasCount"), ["HasKind"] = Text("HasKind"),
-                ["HasSpell"] = Text("HasSpell"), ["HasNot"] = Flag("HasNot"),
+                ["HasSpell"] = Text("HasSpell"), ["HasTag"] = Text("HasTag"), ["HasNot"] = Flag("HasNot"),
             });
         }
 
