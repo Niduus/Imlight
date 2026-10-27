@@ -130,6 +130,7 @@ internal sealed partial class ManagerWindow : Window {
         ("FreeTraining", "Free training (no training points)", new() { OnContent = "On", OffContent = "Off" }),
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
         ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
+        ("VanillaTrainers", "Vanilla trainers: each trainer teaches only its real game spells, with real levels, costs and quests", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
     // [Battle] MaxMonsters: Off (0) keeps the wizards + 1 rule, 1 to 4 is the most monsters a battle holds.

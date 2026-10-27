@@ -47,6 +47,7 @@ using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Randomization;
+using Imlight.CoreLib.WizardData.Models.Player;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 
@@ -93,6 +94,13 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         var spellEntry = trainerComponent.SpellInventory[message.TrainingIndex];
+
+        // [Trainers] VanillaTrainers: the real game's rules, and no randomizer swaps or Imlight training settings.
+        if (trainerComponent.IsVanilla) {
+            TrainVanilla(wizard, trainerComponent, message.TrainingIndex, (uint) spellEntry.TemplateID);
+
+            return;
+        }
 
         // In randomizer mode the trainer offered this wizard's swapped spell; teach that one.
         var spellId = trainerComponent.TeachesAsListed
@@ -178,6 +186,47 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         SendToSocket(trainCompleteMsg);
     }
 
+
+    private void TrainVanilla(Wizard wizard, InteractTrainerComponent trainer, int index, uint spellId) {
+        var wizardName = wizard.PlayerNameBehavior.GetWizardName();
+        if (CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate spellTemplate || wizard.SpellbookBehavior.HasSpell(spellId)) {
+            Logger.Warning("Vanilla trainers: {0} tried to train spell {1}, which is not a spell or is known already.", Logger.Args(wizardName, spellId));
+
+            return;
+        }
+
+        var verdict = trainer.JudgeVanilla(wizard, index, spellTemplate);
+        if (!verdict.CanTrain) {
+            Logger.Warning("Vanilla trainers: {0} can't train {1} yet: {2}.", Logger.Args(wizardName, (string) spellTemplate.m_name, verdict.Why));
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "WizTraining_00000040", Success = 0 });
+
+            return;
+        }
+
+        if (!wizard.LearnSpell(SpellFactory.GetSpell(spellId))) {
+            Logger.Error("Wizard {0} attempted to train spell {1} but failed to learn it.", Logger.Args(wizardName, spellId));
+
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) spellId });
+        if (verdict.Gold > 0) {
+            LootGranter.UpdateWizardGold(SessionActor.ActorRef, wizard, -verdict.Gold);
+        }
+
+        var vanillaSpell = trainer.VanillaSpellOf(spellId);
+        if ((vanillaSpell?.Kind ?? "School") == "School") {
+            TrainingReset.Record(wizard, spellId, verdict.Cost);
+        }
+
+        Imlight.CoreLib.Game.World.VanillaTrainers.Trained(wizard, vanillaSpell);
+        var newTrainingPoints = wizard.MagicSchoolBehavior.TrainingPoints - verdict.Cost;
+        wizard.UpdateTrainingPoints(newTrainingPoints);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATETRAINING { TrainingPoints = newTrainingPoints });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "WizTraining_00000040", Success = 1 });
+        Logger.Information("Vanilla trainers: {0} trained {1} for {2} training points and {3} gold.",
+            Logger.Args(wizardName, (string) spellTemplate.m_name, verdict.Cost, verdict.Gold));
+    }
 
     // The game's reset window (opened by TrainingReset.OpenWindow) answers with one of these; which one is not known
     // yet, so both are taken, and only from a wizard who was just shown the window.

@@ -75,6 +75,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             || TestTrainerKindOf(goTemplate) is not null
             || Imlight.CoreLib.Game.World.TradeTrainers.For(goTemplate.m_templateID) is not null
             || Imlight.CoreLib.Game.Gardening.GardenLessons.IsTrainer(goTemplate.m_templateID)
+            // Every trainer of the real game, for [Trainers] VanillaTrainers (it teaches nothing while that is off).
+            || Imlight.CoreLib.Game.World.VanillaTrainers.For(goTemplate.m_templateID) is not null
             || Imlight.CoreLib.Game.World.NpcChanges.For(goTemplate.m_templateID) is { HideTraining: false, Spells.Count: > 0 });
 
     /// <summary>
@@ -93,7 +95,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public bool IsCustom => _custom is not null;
 
     /// <summary>Whether the trainer teaches its spells as listed: the randomizer's swaps do not reach them.</summary>
-    public bool TeachesAsListed => IsTestTrainer || IsCustom || IsGardenTrainer
+    public bool TeachesAsListed => IsVanilla || IsTestTrainer || IsCustom || IsGardenTrainer
         || (_change is not null && SpellInventory.Count > TEST_TRAINER_MAX_OPTIONS);
 
     /// <summary>
@@ -324,7 +326,48 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     public override void OnStart() {
         StartTraining();
         _baseSpells = SpellInventory;
+        StartVanilla();
     }
+
+    // [Trainers] VanillaTrainers: the real game's list of this trainer (VanillaTrainers), used over _baseSpells while
+    // the setting is on. Custom trainers and the trainer hall's tomes are no game trainers and never switch.
+    private Imlight.CoreLib.Game.World.VanillaTrainers.Trainer _vanilla;
+    private List<NPCSpellEntry> _vanillaSpells = [];
+    private Dictionary<ulong, Imlight.CoreLib.Game.World.VanillaTrainers.Spell> _vanillaById = [];
+    private bool _canBeVanilla;
+    private bool _usedVanilla;
+
+    /// <summary>
+    /// Whether this trainer now teaches as in the real game ([Trainers] VanillaTrainers): its real list only, by the
+    /// real game's rules (VanillaTrainers.Judge). Follows the setting the next time the trainer lists its spells.
+    /// </summary>
+    public bool IsVanilla => _usedVanilla;
+
+    private void StartVanilla() {
+        // The Deckathalon Tome teaches only as a trainer hall tome, which is no game trainer.
+        if (IsCustom || Entity.Template is not GameObjectTemplate template || TestTrainerKindOf(template) == TestTrainerKind.Hall) {
+            return;
+        }
+
+        _canBeVanilla = true;
+        _vanilla = Imlight.CoreLib.Game.World.VanillaTrainers.For(template.m_templateID);
+        foreach (var spell in _vanilla?.Spells ?? []) {
+            if (CoreObjectFactory.GetCoreTemplate(spell.Id) is not SpellTemplate || !_vanillaById.TryAdd(spell.Id, spell)) {
+                continue;
+            }
+
+            _vanillaSpells.Add(new NPCSpellEntry { TemplateID = spell.Id, RequiredSpellID = 0, Level = spell.Kind == "School" ? System.Math.Max(spell.Rank, 1) : 0 });
+        }
+    }
+
+    /// <summary>The real game's entry of a spell of this trainer, or null (a spell the Customs tab added).</summary>
+    internal Imlight.CoreLib.Game.World.VanillaTrainers.Spell VanillaSpellOf(ulong templateId)
+        => _vanillaById.GetValueOrDefault(templateId);
+
+    /// <summary>The real game's verdict on the spell at an index for a wizard, while this trainer is vanilla.</summary>
+    internal Imlight.CoreLib.Game.World.VanillaTrainers.Verdict JudgeVanilla(Wizard wizard, int index, SpellTemplate spellTemplate)
+        => Imlight.CoreLib.Game.World.VanillaTrainers.Judge(wizard, VanillaSpellOf(SpellInventory[index].TemplateID), spellTemplate,
+            ChangedCostOf(spellTemplate));
 
     // The Customs tab's changes to this game trainer (NpcChanges), used over what it teaches by itself (_baseSpells):
     // spells added or the whole list replaced, spells taken out, their prices in training points, or no spell list.
@@ -339,23 +382,32 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         }
 
         var version = Imlight.CoreLib.Game.World.NpcChanges.Version;
-        if (version == _changesVersion) {
+        var vanilla = _canBeVanilla && Imlight.CoreLib.Game.World.VanillaTrainers.On;
+        if (version == _changesVersion && vanilla == _usedVanilla) {
             return;
         }
 
+        if (vanilla != _usedVanilla) {
+            _sectionStart.Clear();
+            Logger.Debug("Trainer {0} now teaches {1}.", Logger.Args(Entity.ActiveGameObject.m_debugName,
+                vanilla ? $"its real game list ({_vanillaSpells.Count} spells)" : "the Imlight list"));
+        }
+
         _changesVersion = version;
+        _usedVanilla = vanilla;
+        var baseSpells = vanilla ? _vanillaSpells : _baseSpells;
         var templateId = Entity.ActiveGameObject.m_templateID.MParts.TemplateId;
         _change = Imlight.CoreLib.Game.World.NpcChanges.For(templateId);
         _changeCosts = [];
         if (_change is null) {
-            SpellInventory = _baseSpells;
+            SpellInventory = baseSpells;
             InitializeServiceBases();
 
             return;
         }
 
         var removed = _change.RemoveSpells.Select(id => (ulong) id).ToHashSet();
-        var spells = _change.ReplacesSpells ? [] : _baseSpells.Where(entry => !removed.Contains(entry.TemplateID)).ToList();
+        var spells = _change.ReplacesSpells ? [] : baseSpells.Where(entry => !removed.Contains(entry.TemplateID)).ToList();
         foreach (var entry in _change.Spells.Where(e => !removed.Contains(e.ID))) {
             if (CoreObjectFactory.GetCoreTemplate(entry.ID) is not SpellTemplate) {
                 continue;
@@ -428,6 +480,16 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             InitializeServiceBases();
             Logger.Debug("{0} trainer {1} teaches {2} of its {3} spells.",
                 Logger.Args(trade.Kind, trade.Name, SpellInventory.Count, trade.Spells.Count));
+
+            return;
+        }
+
+        // A trainer of the real game that Imlight's own lists leave out teaches only with VanillaTrainers on.
+        if (Entity.Template is GameObjectTemplate realTrainer
+            && !NpcSpellInventoryCollection.TryGetNpcInventory(realTrainer.m_templateID, out _)
+            && Imlight.CoreLib.Game.World.VanillaTrainers.For(realTrainer.m_templateID) is not null) {
+            SpellInventory = [];
+            InitializeServiceBases();
 
             return;
         }
@@ -510,6 +572,11 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             return [];
         }
 
+        // A vanilla trainer with nothing to teach (Mellori, the Tome of Fishing) is no trainer, as in the real game.
+        if (IsVanilla && SpellInventory.Count == 0) {
+            return [];
+        }
+
         if (wizard is null) {
             return TeachesAsListed ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }
@@ -529,6 +596,10 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         // However, these options can change depending on how far the player has progressed.
         // We must now edit each service option to reflect the player's status.
         List<ServiceOptionBase> newServiceOptions = [];
+
+        if (IsVanilla) {
+            return VanillaOptions(wizard);
+        }
 
         foreach (var i in OfferedIndexes(wizard)) {
             // In randomizer mode the wizard learns a swapped spell, so the trainer offers that one instead.
@@ -631,6 +702,28 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         return newServiceOptions;
     }
 
+    // The real game's way: every spell of the list the wizard does not know yet, greyed out with what it still needs.
+    private List<ServiceOptionBase> VanillaOptions(Wizard wizard) {
+        List<ServiceOptionBase> options = [];
+        foreach (var i in OfferedIndexes(wizard)) {
+            var spellId = (uint) SpellInventory[i].TemplateID;
+            if (CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate spellTemplate || wizard.SpellbookBehavior.HasSpell(spellId)) {
+                continue;
+            }
+
+            var verdict = JudgeVanilla(wizard, i, spellTemplate);
+            var option = (WizTrainingOption) _serviceOptionBases[i] with { };
+            option.m_trainingCost = verdict.Cost;
+            option.m_requiredLevel = verdict.RequiredLevel;
+            option.m_requirements = Imlight.CoreLib.Game.World.VanillaTrainers.ShownRequirements(VanillaSpellOf(spellId));
+            option.m_bCanTrain = verdict.CanTrain;
+            option.m_failedRequirement = verdict.Failed;
+            options.Add(option);
+        }
+
+        return options;
+    }
+
     private void LogCustomOffer(Wizard wizard, List<ServiceOptionBase> offered) {
         var list = string.Join(", ", offered.OfType<WizTrainingOption>()
             .Select(o => $"{SpellInventory[o.m_trainingIndex].TemplateID} {(string) o.m_spellName} for {o.m_trainingCost}{(o.m_bCanTrain ? "" : " (can't yet)")}"));
@@ -713,7 +806,8 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
     /// spell of a garden trainer, and the garden spells of a custom trainer (the Customs tab's "Garden Spells").
     /// </summary>
     internal int? GardenRankFor(int index, uint spellId)
-        => IsGardenTrainer ? SpellInventory[index].Level
+        => IsVanilla ? null
+         : IsGardenTrainer ? SpellInventory[index].Level
          : IsCustom ? Imlight.CoreLib.Game.Gardening.GardenLessons.Of(spellId)?.Level
          : null;
 
