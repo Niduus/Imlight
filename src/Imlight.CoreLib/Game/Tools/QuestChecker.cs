@@ -174,7 +174,7 @@ internal static class QuestChecker {
     private static QuestResult Check(QuestTemplate quest, Dictionary<string, ZoneFacts> zones, ZoneFacts anywhere,
                                      Dictionary<ulong, List<string>> npcZones, HashSet<(string, string)> usable) {
         var problems = new List<string>();
-        var unchecked = new List<string>();
+        var notChecked = new List<string>();
         var notes = new List<string>();
         string questName = quest.m_questName;
 
@@ -210,7 +210,7 @@ internal static class QuestChecker {
 
                 var zone = zoneName.Length > 0 ? zones.GetValueOrDefault(zoneName) : null;
                 if (zoneName.Length > 0 && zone is null) {
-                    unchecked.Add($"{step}: the zone {zoneName} could not be read.");
+                    notChecked.Add($"{step}: the zone {zoneName} could not be read.");
                     continue;
                 }
 
@@ -241,17 +241,17 @@ internal static class QuestChecker {
                             }
                         }
                         else if (goal.m_goalType != GOAL_TYPE.GOAL_TYPE_COMPLETEQUEST) {
-                            unchecked.Add($"{step}: a {goal.m_goalType.ToString().Replace("GOAL_TYPE_", "").ToLowerInvariant()} step, which the computer can't check.");
+                            notChecked.Add($"{step}: a {goal.m_goalType.ToString().Replace("GOAL_TYPE_", "").ToLowerInvariant()} step, which the computer can't check.");
                         }
                         break;
                 }
             }
         }
         catch (Exception ex) {
-            unchecked.Add($"The check stopped on this quest: {ex.Message}");
+            notChecked.Add($"The check stopped on this quest: {ex.Message}");
         }
 
-        return new QuestResult(questName, problems.Count == 0 && unchecked.Count == 0, problems, unchecked, notes);
+        return new QuestResult(questName, problems.Count == 0 && notChecked.Count == 0, problems, notChecked, notes);
     }
 
     private static void CheckPersona(string step, PersonaGoalTemplate persona, string zoneName, ZoneFacts zone, ZoneFacts anywhere,
