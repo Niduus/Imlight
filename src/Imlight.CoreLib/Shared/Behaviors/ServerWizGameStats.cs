@@ -347,9 +347,11 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_questFinderEnabled = m_questFinderEnabled,
             m_buddyListLimit = m_buddyListLimit,
             m_dontAllowFriendFinderCodes = m_dontAllowFriendFinderCodes,
-            // Shadow pips on ([Battle] ShadowPips) unlock shadow magic, which lays out the shadow pip slots.
-            // With [Battle] ShadowMagicNeedsQuest, only once "Shadow Dancer" is done (gear rating shows in battle).
-            m_shadowMagicUnlocked = m_shadowMagicUnlocked || ShadowSlotsShown,
+            // The client shows the Spell Deck's Shadow tab from this, so it is on whenever shadow pips are on
+            // ([Battle] ShadowPips), as the shadow trainers are; the Shadow tab went missing when it waited for
+            // "Shadow Dancer" (Niduus, 2026-10-27). Battles send their own stats, so shadow pips still wait for it.
+            m_shadowMagicUnlocked = m_shadowMagicUnlocked || CombatDuelSubCircle.ShadowPipsOn,
+            // With [Battle] ShadowMagicNeedsQuest, the shadow pip slots wait for "Shadow Dancer" (gear rating shows in battle).
             m_shadowPipMax = m_shadowPipSlots > 0 ? m_shadowPipSlots
                 : ShadowSlotsShown || m_shadowMagicUnlocked
                 ? CombatDuelSubCircle.ShownPlayerShadowSlots
