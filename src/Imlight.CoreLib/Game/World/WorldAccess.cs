@@ -21,7 +21,8 @@
  *
  * PURPOSE:
  * The worlds the Spiral Door lists for a wizard. A world opens the way the game opens it: with the first quest that
- * sends the wizard there (a quest step whose zone is in that world), started or done.
+ * sends the wizard there (a quest step whose zone is in that world), started or done. A world once opened stays open
+ * for that character (a registry entry), even if the quest is later removed or reset (Niduus 2026-10-27).
  */
 
 using System;
@@ -51,18 +52,40 @@ internal static class WorldAccess {
     private static Tuple<int, Dictionary<string, string[]>> s_questsByWorld = Tuple.Create(-1, new Dictionary<string, string[]>());
     private static readonly object s_lock = new();
 
+    // The character's registry entry that keeps a world open for good.
+    private const string OPEN_ENTRY_PREFIX = "ImlightWorldOpen_";
+
     /// <summary>
     /// The worlds this wizard can pick at the Spiral Door. [World] OpenAllDoors opens them all.
     /// </summary>
     public static List<string> OpenWorlds(Wizard wizard) {
         var openAll = ConfigurationManager.GetValue("World.OpenAllDoors", false);
         var here = wizard?.Zone?.Split('/')[0];
-        var byWorld = QuestsByWorld();
 
         return [.. s_worlds.Where(world => openAll || wizard is null || s_alwaysOpen.Contains(world) || world == here
-            || (byWorld.TryGetValue(world, out var quests)
-                && quests.Any(q => wizard.HasQuest(q) || wizard.HasCompletedQuest(q))))];
+            || wizard.HasRegistryValue(OPEN_ENTRY_PREFIX + world) || QuestsOpen(wizard, world))];
     }
+
+    /// <summary>
+    /// Saves on the character every world its quests have opened, so it keeps them whatever happens to the quests.
+    /// Called from the wizard's own session (quest start and finish, the Spiral Door).
+    /// </summary>
+    public static void Remember(Wizard wizard) {
+        if (wizard is null) {
+            return;
+        }
+
+        foreach (var world in s_worlds) {
+            if (!s_alwaysOpen.Contains(world) && !wizard.HasRegistryValue(OPEN_ENTRY_PREFIX + world) && QuestsOpen(wizard, world)) {
+                wizard.SetRegistryValue(OPEN_ENTRY_PREFIX + world, 1);
+                Logger.Information("{0} opened {1} for the Spiral Door for good.", Logger.Args(wizard.CharId, world));
+            }
+        }
+    }
+
+    private static bool QuestsOpen(Wizard wizard, string world)
+        => QuestsByWorld().TryGetValue(world, out var quests)
+           && quests.Any(q => wizard.HasQuest(q) || wizard.HasCompletedQuest(q));
 
     // The quests with a step in each world, worked out once for each set of quest changes.
     private static Dictionary<string, string[]> QuestsByWorld() {
