@@ -35,6 +35,9 @@ internal sealed partial class CombatDuelComponent {
     private sealed class WillCastState {
         internal int FirstRound;
         internal readonly Dictionary<uint, (int Uses, int LastRound)> Used = [];
+        // Why the card was last shown red, told once in chat so the player knows (the card itself only says
+        // "Requirements for this spell aren't met").
+        internal string ProblemTold;
     }
 
     private readonly Dictionary<ulong, WillCastState> _willCasts = [];
@@ -120,7 +123,13 @@ internal sealed partial class CombatDuelComponent {
         }
 
         var cooldown = WillCastCooldown(circle, shown);
-        var failed = WillCastProblem(circle, shown) is not null && cooldown == 0;
+        var problem = cooldown == 0 ? WillCastProblem(circle, shown) : null;
+        var failed = problem is not null;
+        var state = WillCastStateOf(circle);
+        if (failed && problem != state.ProblemTold) {
+            circle.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = problem });
+        }
+        state.ProblemTold = problem;
         circle.ParticipantActor.Tell(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_SHOWPETCARD {
             PetData = data,
             Cooldown = cooldown,
