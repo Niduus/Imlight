@@ -61,8 +61,9 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal class PlayerQuestOfferState {
-    public bool HasAvailableQuest { get; set; }
-    public QuestTemplate AvailableQuest { get; set; }
+    public bool HasAvailableQuest => AvailableQuests.Count > 0;
+    public QuestTemplate AvailableQuest => HasAvailableQuest ? AvailableQuests[0] : null;
+    public List<QuestTemplate> AvailableQuests { get; } = [];
     public DateTime LastUpdated { get; set; }
 }
 
@@ -155,15 +156,14 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         // The memento wizbang tick reads this property; refresh it from live state.
         WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
 
-        if (!state.HasAvailableQuest || state.AvailableQuest == null) {
-            yield break;
+        // One option per quest the wizard can take, so an NPC with several lets the player pick (Niduus 2026-10-27).
+        foreach (var quest in state.AvailableQuests) {
+            yield return new PrepEntry {
+                m_displayKey = quest.m_questTitle,
+                m_iconKey = PREP_NPC_ICON,
+                m_serviceName = ServiceName,
+            };
         }
-
-        yield return new PrepEntry {
-            m_displayKey = state.AvailableQuest.m_questTitle,
-            m_iconKey = PREP_NPC_ICON,
-            m_serviceName = ServiceName,
-        };
     }
 
     public override void OnStart() => CacheGivenQuests();
@@ -229,9 +229,11 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        // The index is this service's own option: the quest at that place in the list it showed.
         var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
-        if (state.HasAvailableQuest && state.AvailableQuest != null) {
-            HandleQuestOffer(playerActor, state.AvailableQuest, playerCharacter);
+        if (state.HasAvailableQuest) {
+            var quests = state.AvailableQuests;
+            HandleQuestOffer(playerActor, quests[(int) Math.Min(serviceOptionIndex, (uint) quests.Count - 1)], playerCharacter);
         }
     }
 
@@ -276,10 +278,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
                 context: new QuestRequirementContext(quest.m_requirements, null, null, wizard, quest.m_questName));
 
             if (requirementsMet) {
-                state.HasAvailableQuest = true;
-                state.AvailableQuest = quest;
-
-                break; // Take the first available quest.
+                state.AvailableQuests.Add(quest);
             }
         }
 
