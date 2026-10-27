@@ -195,13 +195,16 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private const int MAX_ONE_LIST = (ushort.MaxValue - 8) / 20;
     private static int s_oneList => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
 
-    // [Bazaar] SendInParts: the whole Bazaar goes in parts (see SendAuctionHouseContents). Off sends one list as before.
-    private static bool s_sendInParts => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendInParts", true);
+    // [Bazaar] SendInParts: a list too big for one message goes in parts (see SendAuctionHouseContents). The game showed
+    // nothing when it got 6 parts (Niduus, 2026-10-27), so it is off: one list, with what fits.
+    private static bool s_sendInParts => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendInParts", false);
 
-    // [Bazaar] SendEverything: every tab of a window gets everything the Bazaar sells, because the game keeps one list
-    // per window and each answer replaced the last, so only the tab that answer was for showed anything (Niduus,
-    // 2026-10-19). Off sends each tab only its own items.
-    private static bool s_sendEverything => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", true);
+    // [Bazaar] SendEverything: every tab of a window gets everything the Bazaar sells (the fix of 2026-10-19, when the
+    // whole Bazaar fit in one list). With every item (about 20,000) it does not: sent in parts, the game showed nothing
+    // at all (Niduus, 2026-10-27, "bazaar no stocked"). Off (the default) answers each tab with its own items: every tab
+    // asks with its adjective when it is clicked (Hat, Robe, Reagent, SquareJewel, Furniture...; a school id for
+    // treasure cards), and each of those fits in one list.
+    private static bool s_sendEverything => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", false);
 
     private static string WizardName(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard)
         => wizard?.PlayerNameBehavior?.GetWizardName() is { Length: > 0 } name ? name : $"wizard {wizard?.CharId}";
