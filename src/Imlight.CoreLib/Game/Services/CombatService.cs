@@ -110,6 +110,10 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         // Unequip mounts if the player has one equipped
         UnEquipMount();
 
+        // A battle is fought in the wizard's own look: Play as Pet ends, and the pet comes back beside them.
+        Commands.Protocols.CommandPetFormProtocol.End(GetActiveWizard(), SessionActor.ActorRef, SessionActor.GetZoneActor(),
+            text => InformGameClient(text));
+
         // Set the persistent location and orientation of the wizard
         var wizard = GetActiveWizard();
         wizard.IsInDuel = true;

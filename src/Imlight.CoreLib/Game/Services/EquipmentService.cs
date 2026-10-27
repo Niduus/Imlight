@@ -123,9 +123,12 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             // The other players get this wizard's speed with their spawn (ZoneService), right after the wizard's object.
             SendAddEffects([.. effects], shareSpeed: false);
             ShowPetFormToZone(playerCharacter);
+            Commands.Protocols.CommandPetFormProtocol.TellGameAfterZoneChange(playerCharacter, SessionActor.ActorRef);
 
-            // Spawn the equipped pet as a zone entity if one is equipped.
-            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0 && !ReWearIfNamed(null)) {
+            // Spawn the equipped pet as a zone entity if one is equipped. A wizard in their pet's look has none beside
+            // them, and the named pet's off-and-on (ReWearIfNamed) waits until the look ends.
+            if (playerCharacter.PetOwnerBehavior.EquippedPetTemplateId != 0
+                && !Commands.Protocols.CommandPetFormProtocol.IsInPetForm(playerCharacter) && !ReWearIfNamed(null)) {
                 SpawnPetEntity();
             }
 
@@ -257,9 +260,16 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             SendRemoveEffects(removedEffects);
         }
 
-        // If this is a pet, spawn it as a zone entity so it appears in the world.
+        // If this is a pet, spawn it as a zone entity so it appears in the world. A wizard in a pet's look takes the
+        // new pet's look instead.
         if (message.SlotName == "Pet") {
-            SpawnPetEntity(item);
+            if (Commands.Protocols.CommandPetFormProtocol.End(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(), null)) {
+                Commands.Protocols.CommandPetFormProtocol.Toggle(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(),
+                    text => InformGameClient(text));
+            }
+            else {
+                SpawnPetEntity(item);
+            }
         }
     }
 
@@ -360,6 +370,9 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
         if (isPet) {
             DismissPetEntity();
+            // No pet, no pet look: the wizard turns back.
+            Commands.Protocols.CommandPetFormProtocol.End(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(),
+                text => InformGameClient(text));
         }
 
         var isVictoryDance = slotObj?.SlotType == EquipmentSlotType.PIIVictoryDance;
@@ -424,6 +437,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 }
                 if (removal.SlotType == EquipmentSlotType.Pet) {
                     DismissPetEntity();
+                    Commands.Protocols.CommandPetFormProtocol.End(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(),
+                        text => InformGameClient(text));
                 }
             }
 
@@ -626,7 +641,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         if (message.On) {
             DismissPetEntity();
         }
-        else {
+        // The look may already be back (a new pet put on while in the old one's look); the summon checks it again.
+        else if (Commands.Protocols.CommandPetFormProtocol.IsInPetForm(GetActiveWizard()) || !ReWearIfNamed(null)) {
             SpawnPetEntity();
         }
     }

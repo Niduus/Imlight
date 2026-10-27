@@ -252,6 +252,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
         // Tiny anti-cheat measure. When the character object is created, we recalculate the game stats.
         CharacterHelper.RecalculateGameStats(_wizard);
+        // That dropped every effect the gear doesn't give, the pet's look (Play as Pet) among them.
+        Commands.Protocols.CommandPetFormProtocol.RestoreAfterZoneChange(_wizard);
 
         // Get the best game server for this user.
         var gameServer = GetGameServer();

@@ -1567,6 +1567,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         foreach (var speedMsg in SharedSpeed.CurrentMessages(wizard)) {
             actorRef.Tell(speedMsg);
         }
+
+        // A wizard playing as their pet looks like it to players who arrive later too.
+        if (Commands.Protocols.CommandPetFormProtocol.LookMessage(wizard) is { } petLook) {
+            actorRef.Tell(petLook);
+        }
     }
 
     private void SendTeleportEffects() {

@@ -91,6 +91,8 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
             // The game comes back from character select with a new quest helper that knows no quest yet.
             Game.Services.QuestService.ForgetQuestHelper(character.CharId);
             Game.Commands.Protocols.CommandArrowLogProtocol.Forget(character.CharId);
+            // A new login starts in the wizard's own look (Play as Pet off).
+            Game.Commands.Protocols.CommandPetFormProtocol.Forget(character.CharId);
         }
 
         if (character is null) {
