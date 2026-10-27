@@ -148,7 +148,9 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
             yield break;
         }
 
-        var state = GetOrUpdatePlayerState(wizard);
+        // Always fresh: the quest a goal just finished unlocks must be offered at once (Firecat Alley, Niduus 2026-10-25:
+        // the game asked for the next quest right after the talk and found no offer).
+        var state = GetOrUpdatePlayerState(wizard, forceUpdate: true);
 
         // The memento wizbang tick reads this property; refresh it from live state.
         WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
@@ -227,7 +229,7 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        var state = GetOrUpdatePlayerState(playerCharacter);
+        var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasAvailableQuest && state.AvailableQuest != null) {
             HandleQuestOffer(playerActor, state.AvailableQuest, playerCharacter);
         }

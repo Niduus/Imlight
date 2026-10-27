@@ -175,7 +175,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             yield break;
         }
 
-        var state = GetOrUpdatePlayerState(wizard);
+        var state = GetOrUpdatePlayerState(wizard, forceUpdate: true);
 
         // The memento wizbang tick reads this property; refresh it from live state.
         WizBang = state.HasActiveGoal ? WizBangs.CompleteQuestGoal : WizBangs.None;
@@ -307,7 +307,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        var state = GetOrUpdatePlayerState(playerCharacter);
+        var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasActiveGoal) {
             HandlePersonaGoalCompletion(playerActor, playerCharacter, playerObject, state);
         }
