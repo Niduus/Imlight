@@ -40,6 +40,13 @@ public static class QuestSpellRewards {
                 .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
+            // Our quests rebuilt from Wizard404 name their spell in a combat "add a card to the hand" result with no
+            // template; it would run at quest end and teach nothing. The list's learn results stand in for it.
+            var removed = 0;
+            foreach (var quest in byName.Values) {
+                removed += quest.m_endResults?.m_results?.RemoveAll(r => r is ResAddSpell { m_templateID: 0 }) ?? 0;
+            }
+
             var added = 0;
             foreach (var entry in entries) {
                 if (entry?.Quest is null || entry.Spell == 0 || !byName.TryGetValue(entry.Quest, out var quest)) {
@@ -63,7 +70,7 @@ public static class QuestSpellRewards {
                 added++;
             }
 
-            Logger.Information("Quest spells: added {0} spell rewards to quests.", Logger.Args(added));
+            Logger.Information("Quest spells: added {0} spell rewards to quests, removed {1} empty ones.", Logger.Args(added, removed));
         } catch (Exception ex) {
             Logger.Warning("Quest spells could not be added: {0}", Logger.Args(ex.Message));
         }

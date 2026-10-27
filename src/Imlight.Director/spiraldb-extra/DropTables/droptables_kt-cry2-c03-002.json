@@ -1,0 +1,137 @@
+{
+  "Name": "KT-CRY2-C03-002",
+  "Description": "Quest reward matched to Wizard404 (2026-10-27)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 845,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "77629",
+      "ItemName": "Headdress of Pyramids",
+      "Notes": "Life hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77630",
+      "ItemName": "Somatic Helm",
+      "Notes": "Death hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77631",
+      "ItemName": "Cap of Capacity",
+      "Notes": "Balance hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77632",
+      "ItemName": "Circlet of the Sunbird",
+      "Notes": "Fire hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77633",
+      "ItemName": "Permafrost Circlet",
+      "Notes": "Ice hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77634",
+      "ItemName": "Magnetic Circlet",
+      "Notes": "Storm hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77635",
+      "ItemName": "Superstitious Circlet",
+      "Notes": "Myth hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    }
+  ],
+  "CreatedAt": "2026-10-14T18:06:45.307419Z",
+  "ModifiedAt": "2026-10-14T18:06:45.307419Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder"
+}

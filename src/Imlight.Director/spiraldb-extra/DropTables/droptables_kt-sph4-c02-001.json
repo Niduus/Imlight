@@ -1,0 +1,144 @@
+{
+  "Name": "KT-SPH4-C02-001",
+  "Description": "Quest reward matched to Wizard404 (2026-10-27)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 86,
+  "MaxGold": 86,
+  "ExperienceAmount": 600,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "82896",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "77651",
+      "ItemName": "Pharaoh's Crown",
+      "Notes": "Life hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77652",
+      "ItemName": "Cap of Oblivion",
+      "Notes": "Death hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77653",
+      "ItemName": "Circlet of the Adept",
+      "Notes": "Balance hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77654",
+      "ItemName": "Flamelicked Shroud",
+      "Notes": "Fire hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77655",
+      "ItemName": "Chilled Shroud",
+      "Notes": "Ice hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77656",
+      "ItemName": "Shroud of Downpour",
+      "Notes": "Storm hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "77657",
+      "ItemName": "Enchanted Cap",
+      "Notes": "Myth hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    }
+  ],
+  "CreatedAt": "2026-10-14T18:06:45.307535Z",
+  "ModifiedAt": "2026-10-14T18:06:45.307535Z",
+  "CreatedBy": "quest_builder",
+  "ModifiedBy": "quest_builder",
+  "EachItem": true
+}

@@ -88,5 +88,6 @@
   {"quest": "WC-UNICORN-MAIN-008", "school": "Life", "spell": 1086363375, "name": "Minor Blessing"},
   {"quest": "WC-UNICORN-MAIN-008", "school": "Myth", "spell": 1711313596, "name": "Golem Minion"},
   {"quest": "WC-UNICORN-MAIN-008", "school": "Storm", "spell": 743740871, "name": "Lightning Strike"},
-  {"quest": "WC-UNICORN-MAIN-008", "school": "Balance", "spell": 751181746, "name": "Elemental Shield"}
+  {"quest": "WC-UNICORN-MAIN-008", "school": "Balance", "spell": 751181746, "name": "Elemental Shield"},
+  {"quest": "LM-W404-1658113843", "school": "Myth", "spell": 1001659918, "name": "Barbarian's Saga"}
 ]

@@ -11,52 +11,956 @@
   "TrainingPoints": 0,
   "Items": [
     {
+      "ItemId": "1514592",
+      "ItemName": "Fiery Liaison's Hat",
+      "Notes": "Fire hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514593",
+      "ItemName": "Icy Liaison's Hat",
+      "Notes": "Ice hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514594",
+      "ItemName": "Storm Liaison's Hat",
+      "Notes": "Storm hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
       "ItemId": "1514595",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Hat",
+      "Notes": "Myth hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514596",
+      "ItemName": "Lively Liaison's Hat",
+      "Notes": "Life hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514597",
+      "ItemName": "Deathly Liaison's Hat",
+      "Notes": "Death hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514598",
+      "ItemName": "Balanced Liaison's Hat",
+      "Notes": "Balance hat",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514599",
+      "ItemName": "Fiery Liaison's Robe",
+      "Notes": "Fire robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514600",
+      "ItemName": "Icy Liaison's Robe",
+      "Notes": "Ice robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514601",
+      "ItemName": "Storm Liaison's Robe",
+      "Notes": "Storm robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1514602",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Robe",
+      "Notes": "Myth robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514603",
+      "ItemName": "Lively Liaison's Robe",
+      "Notes": "Life robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514604",
+      "ItemName": "Deathly Liaison's Robe",
+      "Notes": "Death robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514605",
+      "ItemName": "Balanced Liaison's Robe",
+      "Notes": "Balance robe",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514606",
+      "ItemName": "Fiery Liaison's Boots",
+      "Notes": "Fire shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514607",
+      "ItemName": "Icy Liaison's Boots",
+      "Notes": "Ice shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514608",
+      "ItemName": "Storm Liaison's Boots",
+      "Notes": "Storm shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1514609",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Boots",
+      "Notes": "Myth shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514610",
+      "ItemName": "Lively Liaison's Boots",
+      "Notes": "Life shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514611",
+      "ItemName": "Deathly Liaison's Boots",
+      "Notes": "Death shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514612",
+      "ItemName": "Balanced Liaison's Boots",
+      "Notes": "Balance shoes",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514901",
+      "ItemName": "Fiery Liaison's Athame",
+      "Notes": "Fire athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514902",
+      "ItemName": "Icy Liaison's Athame",
+      "Notes": "Ice athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514903",
+      "ItemName": "Storm Liaison's Athame",
+      "Notes": "Storm athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1514904",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Athame",
+      "Notes": "Myth athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514905",
+      "ItemName": "Lively Liaison's Athame",
+      "Notes": "Life athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514906",
+      "ItemName": "Deathly Liaison's Athame",
+      "Notes": "Death athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514907",
+      "ItemName": "Balanced Liaison's Athame",
+      "Notes": "Balance athame",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514908",
+      "ItemName": "Fiery Liaison's Amulet",
+      "Notes": "Fire amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514909",
+      "ItemName": "Icy Liaison's Amulet",
+      "Notes": "Ice amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514910",
+      "ItemName": "Storm Liaison's Amulet",
+      "Notes": "Storm amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1514911",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Amulet",
+      "Notes": "Myth amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514912",
+      "ItemName": "Lively Liaison's Amulet",
+      "Notes": "Life amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514913",
+      "ItemName": "Deathly Liaison's Amulet",
+      "Notes": "Death amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514914",
+      "ItemName": "Balanced Liaison's Amulet",
+      "Notes": "Balance amulet",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514915",
+      "ItemName": "Fiery Liaison's Ring",
+      "Notes": "Fire ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514916",
+      "ItemName": "Icy Liaison's Ring",
+      "Notes": "Ice ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514917",
+      "ItemName": "Storm Liaison's Ring",
+      "Notes": "Storm ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1514918",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Ring",
+      "Notes": "Myth ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514919",
+      "ItemName": "Lively Liaison's Ring",
+      "Notes": "Life ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514920",
+      "ItemName": "Deathly Liaison's Ring",
+      "Notes": "Death ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1514921",
+      "ItemName": "Balanced Liaison's Ring",
+      "Notes": "Balance ring",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515210",
+      "ItemName": "Fiery Liaison's Sword",
+      "Notes": "Fire weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515211",
+      "ItemName": "Icy Liaison's Sword",
+      "Notes": "Ice weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515212",
+      "ItemName": "Storm Liaison's Sword",
+      "Notes": "Storm weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1515213",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Sword",
+      "Notes": "Myth weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515214",
+      "ItemName": "Lively Liaison's Sword",
+      "Notes": "Life weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515215",
+      "ItemName": "Deathly Liaison's Sword",
+      "Notes": "Death weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515216",
+      "ItemName": "Balanced Liaison's Sword",
+      "Notes": "Balance weapon",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515322",
+      "ItemName": "Fiery Liaison's Deck",
+      "Notes": "Fire deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Fire",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515323",
+      "ItemName": "Icy Liaison's Deck",
+      "Notes": "Ice deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Ice",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515324",
+      "ItemName": "Storm Liaison's Deck",
+      "Notes": "Storm deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Storm",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     },
     {
       "ItemId": "1515325",
-      "ItemName": "",
-      "Notes": "",
-      "Requirements": null
+      "ItemName": "Mythic Liaison's Deck",
+      "Notes": "Myth deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Myth",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515326",
+      "ItemName": "Lively Liaison's Deck",
+      "Notes": "Life deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Life",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515327",
+      "ItemName": "Deathly Liaison's Deck",
+      "Notes": "Death deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Death",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    },
+    {
+      "ItemId": "1515328",
+      "ItemName": "Balanced Liaison's Deck",
+      "Notes": "Balance deck",
+      "Requirements": {
+        "m_requirements": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+            "m_magicSchool": "Balance",
+            "m_applyNOT": false,
+            "m_operator": "ROP_AND"
+          }
+        ],
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
     }
   ]
 }
