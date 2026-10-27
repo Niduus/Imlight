@@ -76,6 +76,10 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     // [Combat] AvoidRepeatChance: how often a creature leaves out the spell it cast last round when it has another
     // card it can cast, so it does not chain the same attack round after round.
     private static float s_avoidRepeatChance => ConfigurationManager.GetValue("Combat.AvoidRepeatChance", 0.75f);
+    // [Combat] MaxSameSpellInARow: the most rounds in a row a creature casts the same spell (0 = no cap). At the cap the
+    // spell is left out even when nothing else can be cast, so a creature whose deck is one card (the Darkmoor
+    // Draconians) passes that round instead of casting it a third time (Niduus, 2026-10-27).
+    private static int s_maxSameSpellInARow => ConfigurationManager.GetValue("Combat.MaxSameSpellInARow", 2);
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();
     private readonly int _provokeAggroIncrease   = ConfigurationManager.Settings["Combat.ProvokeAggroIncrease"].AsInt();
@@ -101,9 +105,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     private float _selfishnessFactor;
     private bool _determinedSelfishThisTurn;
 
-    // The spell cast last round (0 for none), and whether it is left out this round.
+    // The spell cast last round (0 for none), how many rounds in a row it was cast, and whether it is left out this round.
     private uint _lastCastSpellId;
+    private int _sameSpellStreak;
     private bool _avoidRepeatThisTurn;
+    private bool _mustSkipRepeatThisTurn;
 
     private Hand _roundHand;
     private CombatDuelSubCircle[] _friendlySubcircles
@@ -220,9 +226,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
         DetermineAttitude();
         var action = WithPicks(DetermineTurnAction());
-        _lastCastSpellId = action.MoveType == (byte) CombatMoveType.Attack
+        var castSpellId = action.MoveType == (byte) CombatMoveType.Attack
             ? _currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection)?.m_templateID ?? 0
             : 0;
+        _sameSpellStreak = castSpellId != 0 && castSpellId == _lastCastSpellId ? _sameSpellStreak + 1 : castSpellId != 0 ? 1 : 0;
+        _lastCastSpellId = castSpellId;
 
         // Send the action to the duel actor.
         _currentDuelComponent.ActorRef.Tell(action, Self);
@@ -320,6 +328,12 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         _determinedAggressiveThisTurn = _random.NextDouble() < _aggressivenessFactor;
         _determinedSelfishThisTurn = _random.NextDouble() < _selfishnessFactor;
         _avoidRepeatThisTurn = _lastCastSpellId != 0 && _random.NextDouble() < s_avoidRepeatChance;
+        var maxInARow = s_maxSameSpellInARow;
+        _mustSkipRepeatThisTurn = _lastCastSpellId != 0 && maxInARow > 0 && _sameSpellStreak >= maxInARow;
+        if (_mustSkipRepeatThisTurn) {
+            Logger.Debug("Duel {0} | Slot {1} | Cast spell {2} {3} rounds in a row. Leaving it out this round.",
+                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex, _lastCastSpellId, _sameSpellStreak));
+        }
 
         Logger.Debug("Duel {0} | Slot {1} | Smart: {2} | Aggressive: {3} | Selfish: {4}",
             Logger.Args(_currentDuelComponent.SigilId,
@@ -576,8 +590,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             castableSpells.Add(spell);
         }
 
-        // Leave out last round's spell when another card can be cast.
-        if (_avoidRepeatThisTurn && castableSpells.Any(x => x.m_templateID != _lastCastSpellId)) {
+        // At the cap, last round's spell is always left out. Before it, only when another card can be cast.
+        if (_mustSkipRepeatThisTurn
+            || (_avoidRepeatThisTurn && castableSpells.Any(x => x.m_templateID != _lastCastSpellId))) {
             castableSpells.RemoveAll(x => x.m_templateID == _lastCastSpellId);
         }
 
