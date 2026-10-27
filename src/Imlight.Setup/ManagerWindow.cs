@@ -140,7 +140,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
-        ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps (how many per wizard under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "LateJoinersJoinImmediately", "A wizard who joins a battle late plays the current round (off: waits for the next one)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "MobsJoinLate", "Monsters can join a battle late", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "ResetTimerWhenMobJoins", "Card timer starts over when a monster joins the battle", new() { OnContent = "On", OffContent = "Off" }),
@@ -177,6 +177,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
+        ("World", "GoldWispsGiveCrowns", "Gold wisps give crowns as well as gold (how many under Settings, World)", new() { OnContent = "On", OffContent = "Off" }),
         ("Chat", "EnforceWhitelist", "Enforce chat whitelist: red (bad) words from open chat accounts show as \"...\" (off: they go through; text chat accounts stay filtered)", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "HouseDuelTakesTurns", "House duel circles take turns, the PvP way (off: both sides act at once)", new() { OnContent = "On", OffContent = "Off" }),

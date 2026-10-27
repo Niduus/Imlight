@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
@@ -71,21 +72,38 @@ internal static class BattleDrops {
         return 0;
     }
 
+    // [Battle] HealthWispsPerWizard / ManaWispsPerWizard / GoldWispsPerWizard (Niduus, 2026-10-27: "after combat, spawn
+    // 2 wisps of each per person and have them wonder around"), read live, 0 to 10 each.
+    private static int PerWizard(string kind)
+        => Math.Clamp(ConfigurationManager.GetValue($"Battle.{kind}WispsPerWizard", 2), 0, 10);
+
     /// <summary>
-    /// Drops one health, one mana and one gold wisp around <paramref name="location"/>.
+    /// Drops health, mana and gold wisps around <paramref name="location"/>, a number of each for every wizard who won
+    /// the battle. They wander around where they fell (BattleDropComponent).
     /// </summary>
-    internal static void Spawn(IActorRef zoneRef, Vector3 location) {
+    internal static void Spawn(IActorRef zoneRef, Vector3 location, int wizards) {
         if (!Enabled || zoneRef is null) {
             return;
         }
 
-        foreach (var templateId in new[] { s_healthWisp.Value, s_manaWisp.Value, s_goldWisp.Value }) {
+        wizards = Math.Max(1, wizards);
+        var drops = new List<uint>();
+        foreach (var (kind, templateId) in new[] {
+                     ("Health", s_healthWisp.Value), ("Mana", s_manaWisp.Value), ("Gold", s_goldWisp.Value) }) {
+            for (var i = PerWizard(kind) * wizards; i > 0; i--) {
+                drops.Add(templateId);
+            }
+        }
+
+        // More wisps spread out further, so they don't sit on top of each other.
+        var maxScatter = MAX_SCATTER + (10f * drops.Count);
+        foreach (var templateId in drops) {
             if (templateId == 0 || CoreObjectFactory.GetCoreTemplate(templateId) is not GameObjectTemplate template) {
                 continue;
             }
 
             var angle = Random.Shared.NextSingle() * MathF.Tau;
-            var distance = MIN_SCATTER + (Random.Shared.NextSingle() * (MAX_SCATTER - MIN_SCATTER));
+            var distance = MIN_SCATTER + (Random.Shared.NextSingle() * (maxScatter - MIN_SCATTER));
             var info = new CoreObjectInfo {
                 m_templateID = templateId,
                 m_fScale = 1.0f,

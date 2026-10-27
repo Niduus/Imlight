@@ -21,6 +21,7 @@ using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -53,6 +54,20 @@ internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent
             Gold = playerWizard.GameStats.m_currentGold,
             MaxGold = playerWizard.GameStats.m_baseGoldPouch
         });
+
+        // [World] GoldWispsGiveCrowns (Niduus, 2026-10-27: "Gold Wisps give players GOLD (With a config in manager to
+        // gain crowns)"): on top of the gold, GoldWispCrowns crowns go to the wizard's account. Read live.
+        var crowns = Math.Clamp(ConfigurationManager.GetValue("World.GoldWispCrowns", 10), 0, 1_000_000);
+        if (ConfigurationManager.GetValue("World.GoldWispsGiveCrowns", false) && crowns > 0
+            && playerWizard.Account is { } account) {
+            account.SetCrowns((int) Math.Min((long) account.Crowns + crowns, int.MaxValue));
+            playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_CROWNBALANCE {
+                Failure = 0,
+                TotalCrowns = account.Crowns,
+                CharacterID = playerWizard.CharId,
+                CacheBalanceForCSSegmentation = 1
+            });
+        }
 
         Entity.DeleteObject("WispDespawn", playerWizard.GameObjectID);
     }

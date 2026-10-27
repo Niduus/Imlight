@@ -1117,6 +1117,26 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message that sends a wisp dropped after a battle off to a new spot near where it fell.
+    /// </summary>
+    public sealed class MSG_BATTLEDROPWANDER : IServerMessage {
+
+        public byte MessageOrder { get; } = 105;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
+    /// Timer-fired message that brings a wandering battle wisp's server location up to where the game draws it.
+    /// </summary>
+    public sealed class MSG_BATTLEDROPTICK : IServerMessage {
+
+        public byte MessageOrder { get; } = 106;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
     /// Timer-fired message that puts a hatchery sigil back to its lit look after a countdown, which the game leaves
     /// blank when its count runs out.
     /// </summary>

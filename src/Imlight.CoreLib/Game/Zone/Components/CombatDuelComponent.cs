@@ -3748,8 +3748,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         PostMonsterKilledEvents(adjectivesPerDefeatedMob);
 
-        // A won battle (not one everybody fled) leaves health, mana and gold wisps behind.
-        BattleDrops.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location);
+        // A won battle (not one everybody fled) leaves health, mana and gold wisps behind, some for each wizard.
+        var wizards = 0;
+        EnactActionOnSubCircles(circle => {
+            if (circle.IsHumanPlayer) {
+                wizards++;
+            }
+        });
+        BattleDrops.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location, wizards);
     }
 
     private void CountRoundForTamedDrops() {
