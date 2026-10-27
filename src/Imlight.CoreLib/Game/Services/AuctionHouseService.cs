@@ -133,35 +133,47 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         if (BazaarLink.Opening) {
             // The Bazaar bot is still reading the game files (about a minute after a server start).
             InformGameClient("Elik is still setting up the Bazaar. Try again in a minute.");
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS { Contents = WriteAuctionBlob(category, []), GlobalID = npcId, LastSegment = 0 });
+            SendList(npcId, category, []);
 
             return;
         }
 
         var records = BazaarLink.Records(category, s_sendEverything);
-        var perList = s_oneList * BazaarBook.RECORD_BYTES;
-        var parts = Math.Max(1, (records.Length + perList - 1) / perList);
-        if (!s_sendInParts && parts > 1) {
-            // The old way: one list, and what does not fit as stock updates (which the game did not add to the list).
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-                Contents = WriteAuctionBlob(category, records.AsSpan(0, perList)), GlobalID = npcId, LastSegment = 0,
-            });
-            SendUpdates(records.AsSpan(perList).ToArray());
+        Logger.Debug("Bazaar: sending {0} entries.", Logger.Args(records.Length / BazaarBook.RECORD_BYTES));
+        SendList(npcId, category, records);
+    }
+
+    // What MSG_AUCTIONHOUSECONTENTS' LastSegment tells the game (read from its Bazaar window, 2026-10-27). The game keeps
+    // the bytes of the list it was sent and reads the entries from the start of them:
+    //   LAST_ONLY (99): these bytes are the whole list; replace what it had and show it.
+    //   FIRST_PART (1): replace what it had with these bytes, and wait for more.
+    //   MORE_PART (2): add these bytes to what it has, and wait for more.
+    //   LAST_PART (0): add these bytes to what it has and show the list.
+    // Every list used to go with 0, so each answer was added after the first one and the game read the first one again:
+    // every tab showed the hats (Niduus, 2026-10-27: "Bazaar is only rendering hats").
+    private const sbyte LAST_ONLY = 99;
+    private const sbyte FIRST_PART = 1;
+    private const sbyte MORE_PART = 2;
+    private const sbyte LAST_PART = 0;
+
+    // A message's Contents is written with a 16-bit length; a bigger list goes in parts, cut anywhere (the game joins the
+    // bytes), with one header for the whole list.
+    private const int PART_BYTES = 60_000;
+
+    private void SendList(ulong npcId, uint category, ReadOnlySpan<byte> records) {
+        byte[] list = WriteAuctionBlob(category, records);
+        if (list.Length <= PART_BYTES) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS { Contents = list, GlobalID = npcId, LastSegment = LAST_ONLY });
 
             return;
         }
 
-        // A list is written with a 16-bit byte length, so the whole Bazaar (about 20,000 entries) goes in parts of at most
-        // [Bazaar] OneList entries. Every part but the last says more is coming (LastSegment 0); the last says 1. One
-        // part alone is sent as before (LastSegment 0), which the game showed.
-        Logger.Debug("Bazaar: sending {0} entries in {1} part(s).", Logger.Args(records.Length / BazaarBook.RECORD_BYTES, parts));
-        for (var part = 0; part < parts; part++) {
-            var from = part * perList;
-            var length = Math.Min(perList, records.Length - from);
+        for (var from = 0; from < list.Length; from += PART_BYTES) {
+            var length = Math.Min(PART_BYTES, list.Length - from);
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSECONTENTS {
-                Contents = WriteAuctionBlob(category, records.AsSpan(from, length)),
+                Contents = list.AsSpan(from, length).ToArray(),
                 GlobalID = npcId,
-                LastSegment = (sbyte) (parts > 1 && part == parts - 1 ? 1 : 0),
+                LastSegment = from == 0 ? FIRST_PART : from + length == list.Length ? LAST_PART : MORE_PART,
             });
         }
     }
@@ -189,21 +201,9 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     private const int UPDATE_ENTRIES = 800;
 
-    // [Bazaar] OneList: how many entries one list (or one part of it) holds. Big lists used to drop the connection, but
-    // that was the long frame length bug (see SocketSender.FixLongFrameLength); 2946 in one list worked after the fix
-    // (Niduus, 2026-10-19). The list is written with a 16-bit byte length, so 20-byte entries top out at MAX_ONE_LIST.
-    private const int MAX_ONE_LIST = (ushort.MaxValue - 8) / 20;
-    private static int s_oneList => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Bazaar.OneList", MAX_ONE_LIST), 1, MAX_ONE_LIST);
-
-    // [Bazaar] SendInParts: a list too big for one message goes in parts (see SendAuctionHouseContents). The game showed
-    // nothing when it got 6 parts (Niduus, 2026-10-27), so it is off: one list, with what fits.
-    private static bool s_sendInParts => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendInParts", false);
-
-    // [Bazaar] SendEverything: every tab of a window gets everything the Bazaar sells (the fix of 2026-10-19, when the
-    // whole Bazaar fit in one list). With every item (about 20,000) it does not: sent in parts, the game showed nothing
-    // at all (Niduus, 2026-10-27, "bazaar no stocked"). Off (the default) answers each tab with its own items: every tab
-    // asks with its adjective when it is clicked (Hat, Robe, Reagent, SquareJewel, Furniture...; a school id for
-    // treasure cards), and each of those fits in one list.
+    // [Bazaar] SendEverything: every tab gets everything the Bazaar sells, its own items first. Off (the default) answers
+    // each tab with its own items: every tab asks with its adjective when it is clicked (Hat, Robe, Reagent, SquareJewel,
+    // Furniture...; a school's name for treasure cards: Fire, Astral, Shadow, Monstrology, Cantrips, Gardening...).
     private static bool s_sendEverything => Imlight.Common.ConfigurationManager.GetValue("Bazaar.SendEverything", false);
 
     private static string WizardName(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard)

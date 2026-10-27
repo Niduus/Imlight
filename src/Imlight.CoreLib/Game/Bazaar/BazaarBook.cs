@@ -63,8 +63,10 @@ public sealed class BazaarBook {
     private const ulong BAZAAR_TYPE = 9UL << 40;
     public const int RECORD_BYTES = 20;
 
-    // What the snack, reagent, jewel and pin window asks for when it opens (its name is not known).
-    private const uint MIXED_CATEGORY = 1610882238;
+    // The treasure card window's Astral tab has the Sun, Moon and Star cards. Its other tabs ask with a school's name
+    // (Fire... Shadow, Monstrology, Cantrips, Gardening, CastleMagic), which is what a card's tab is.
+    private static readonly uint s_astralTab = StringHash.Compute("Astral");
+    private static readonly HashSet<uint> s_astralSchools = Hashes("Sun", "Moon", "Star");
 
     private static readonly HashSet<uint> s_snackTabs = Hashes("PetSnack", "PetSnacks", "Snack", "Snacks");
     private static readonly HashSet<uint> s_cardTabs = Hashes("TreasureCards", "TreasureCard", "Treasure Cards", "Treasure Card",
@@ -216,7 +218,8 @@ public sealed class BazaarBook {
 
             var templateId = (uint) card.m_templateID;
             var price = Math.Clamp(spell.m_baseCost, 1, 200);
-            var school = Enum.TryParse<MagicSchool>((string) spell.m_sMagicSchoolName, true, out var found) ? (uint) found : 0;
+            // The school's name hashed is the tab the card is in (the same as MagicSchool for the seven schools and the astral ones).
+            var school = StringHash.Compute((string) spell.m_sMagicSchoolName);
             string shown = spell.m_displayName;
             cards.Add(new BazaarItem(templateId, BazaarKind.Card, Locale.GetEnglishName(shown) is { Length: > 0 } english ? english : name,
                 0, price, Math.Max(1, price / 2), school == 0 ? [] : [school], false, name, templateId));
@@ -260,9 +263,9 @@ public sealed class BazaarBook {
     // ---------------------------------------------------------------------
 
     /// <summary>
-    /// The entries a tab gets, as the game's 20-byte records (id, stock, buy price, sell price). The tab's own items
-    /// come first; with everything, the rest of the Bazaar follows, because the game keeps one list per window and
-    /// sorts it into the tabs itself. Entries with none left are not listed.
+    /// The entries a tab gets, as the game's 20-byte records (id, stock, buy price, sell price): the tab's own items, and
+    /// with everything, the rest of the Bazaar after them. A tab with nothing of its own gets an empty list. Entries with
+    /// none left are not listed.
     /// </summary>
     public byte[] Records(uint category, bool everything) {
         lock (_lock) {
@@ -277,9 +280,6 @@ public sealed class BazaarBook {
                 var kind = own.Count > 0 ? own[0].Kind : BazaarKind.Item;
                 var ownIds = own.Select(item => item.Id).ToHashSet();
                 list = own.Concat(shown.Where(item => !ownIds.Contains(item.Id)).OrderBy(item => item.Kind == kind ? 0 : 1));
-            }
-            else if (own.Count == 0) {
-                list = shown;
             }
 
             return Write(list, start);
@@ -310,21 +310,13 @@ public sealed class BazaarBook {
         => item.Kind != BazaarKind.Card || (_cardRank.TryGetValue(item.Id, out var rank) && rank < cardsPerSchool);
 
     private static bool IsFor(BazaarItem item, uint category) {
-        if (Enum.IsDefined(typeof(MagicSchool), (int) category) && category != 0) {
-            // The treasure card tab asks once per school, with the school's id.
-            return item.Kind == BazaarKind.Card && item.Tabs.Contains(category);
-        }
-
-        if (s_cardTabs.Contains(category)) {
-            return item.Kind == BazaarKind.Card;
+        if (item.Kind == BazaarKind.Card) {
+            return item.Tabs.Contains(category) || s_cardTabs.Contains(category)
+                || (category == s_astralTab && item.Tabs.Any(s_astralSchools.Contains));
         }
 
         if (s_snackTabs.Contains(category)) {
             return item.Kind == BazaarKind.Snack;
-        }
-
-        if (category == MIXED_CATEGORY) {
-            return item.Kind is BazaarKind.Snack or BazaarKind.Reagent || item.Tabs.Contains(s_jewelTab);
         }
 
         return item.Tabs.Contains(category);
