@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C06-004",
+  "Description": "Wysteria quest The Principal's Office (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 10,
+  "MaxGold": 10,
+  "ExperienceAmount": 135,
+  "TrainingPoints": 0,
+  "Items": []
+}

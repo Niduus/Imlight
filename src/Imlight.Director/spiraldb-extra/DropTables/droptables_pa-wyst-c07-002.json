@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C07-002",
+  "Description": "Wysteria quest All Signs Point To... (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 120,
+  "MaxGold": 120,
+  "ExperienceAmount": 1515,
+  "TrainingPoints": 0,
+  "Items": []
+}

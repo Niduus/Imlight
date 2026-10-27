@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C01-002",
+  "Description": "Wysteria quest Bunking With the Enemy (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 690,
+  "TrainingPoints": 0,
+  "Items": []
+}

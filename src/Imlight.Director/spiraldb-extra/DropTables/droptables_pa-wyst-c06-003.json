@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C06-003",
+  "Description": "Wysteria quest Show Must Go On (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1515,
+  "MaxGold": 1515,
+  "ExperienceAmount": 120,
+  "TrainingPoints": 0,
+  "Items": []
+}

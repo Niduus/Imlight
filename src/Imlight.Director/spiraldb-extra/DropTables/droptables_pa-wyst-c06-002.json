@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C06-002",
+  "Description": "Wysteria quest It Was Just Here... (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 30,
+  "MaxGold": 30,
+  "ExperienceAmount": 405,
+  "TrainingPoints": 0,
+  "Items": []
+}

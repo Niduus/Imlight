@@ -1,0 +1,13 @@
+{
+  "Name": "SL-W404-571927574",
+  "Description": "Selenopolis quest Weremander By Night (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 50,
+  "MaxGold": 50,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

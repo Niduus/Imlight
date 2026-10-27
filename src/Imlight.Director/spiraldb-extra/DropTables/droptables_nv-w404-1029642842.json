@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-1029642842",
+  "Description": "Novus quest Don't Drink the Water (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 460,
+  "MaxGold": 460,
+  "ExperienceAmount": 156230,
+  "TrainingPoints": 0,
+  "Items": []
+}

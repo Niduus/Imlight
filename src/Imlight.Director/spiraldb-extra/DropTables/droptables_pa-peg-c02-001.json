@@ -1,0 +1,13 @@
+{
+  "Name": "PA-PEG-C02-001",
+  "Description": "Wysteria quest Of Unknown Origin (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 25,
+  "MaxGold": 25,
+  "ExperienceAmount": 305,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "WC-CATA-MAIN-007",
+  "Description": "WizardCity quest Ashback (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 230,
+  "MaxGold": 230,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1479458",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "PA-WYST-C12-001",
+  "Description": "Wysteria quest Last Round (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 135,
+  "MaxGold": 135,
+  "ExperienceAmount": 1765,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "469715",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}
