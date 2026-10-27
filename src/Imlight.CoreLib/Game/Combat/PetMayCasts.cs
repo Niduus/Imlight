@@ -105,9 +105,13 @@ internal static class PetMayCasts {
     /// <param name="mayCast">The May Cast.</param>
     /// <param name="inDeckathalon">Whether the battle is a Deckathalon floor: the [PetCasting] Deckathalon chances,
     /// when set, are used there instead of every other chance (Niduus, 2026-10-25: "add to maycast section in the
-    /// manager for Deckathalon's OWN % chance to casts").</param>
+    /// manager for Deckathalon's OWN % chance to casts"). Each May Cast can also have its own Deckathalon chances,
+    /// [PetCastingDeckathalon] &lt;card&gt;, which come before those (Niduus, 2026-10-27: "I want separat values of each
+    /// Maycast for Deckathalon").</param>
     internal static (int Cast, int Damage, int Heal, int Pass) Chances(MayCast mayCast, bool inDeckathalon = false) {
-        var text = (inDeckathalon && !string.IsNullOrWhiteSpace(s_deckathalon) ? s_deckathalon
+        var own = inDeckathalon ? ConfigurationManager.GetSetting($"PetCastingDeckathalon.{mayCast.Key}") : null;
+        var text = (!string.IsNullOrWhiteSpace(own) ? own
+            : inDeckathalon && !string.IsNullOrWhiteSpace(s_deckathalon) ? s_deckathalon
             : ConfigurationManager.GetSetting($"PetCasting.{mayCast.Key}"))?.Trim();
         if (string.IsNullOrEmpty(text)) {
             return (s_onCast, s_onDamage, s_onHeal, s_onPass);

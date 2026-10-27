@@ -213,6 +213,9 @@ internal sealed partial class ManagerWindow : Window {
     // (Niduus, 2026-10-25: "shows in the same sequence the PvE | Deckathalon %'s next to one another").
     private const string PET_CHANCES = "Chances";
     private const string PET_DECKATHALON = "Deckathalon";
+    // Each May Cast's own Deckathalon chances; shown next to its [PetCasting] row, not as a section of their own.
+    private const string PET_CASTING_DECKATHALON = "PetCastingDeckathalon";
+    private readonly Dictionary<string, Setting> _petTowerSettings = new(StringComparer.OrdinalIgnoreCase);
     private static readonly (string Key, string Label)[] PET_CHANCE_ROWS =
         [("OnCast", "Casts a spell"), ("OnDamage", "Takes damage"), ("OnHeal", "Is healed"), ("OnPass", "Passes")];
     private readonly Dictionary<string, Setting> _petChanceSettings = new(StringComparer.OrdinalIgnoreCase);
@@ -2061,7 +2064,14 @@ internal sealed partial class ManagerWindow : Window {
 
     private void LoadSettings() {
         // Each May Cast card's key gets what the card does, so it can be searched by kind (Niduus: typing Aura shows every aura).
-        _settings = _manager.ReadSettings()
+        var read = _manager.ReadSettings();
+        _petTowerSettings.Clear();
+        foreach (var tower in read.Where(group => group.Section == PET_CASTING_DECKATHALON).SelectMany(group => group.Settings)) {
+            _petTowerSettings[tower.Key] = tower;
+        }
+
+        _settings = read
+            .Where(group => group.Section != PET_CASTING_DECKATHALON)
             .Select(group => (group.Section, group.Section != PET_CASTING ? group.Settings : PetChanceTable(group.Settings
                 .Select(s => PetCastCards.Details.TryGetValue(s.Key, out var card)
                     ? s with { Help = s.Help.Length > 0 ? $"{card}\n{s.Help}" : card }
@@ -2097,7 +2107,9 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             foreach (var setting in settings) {
-                var row = section == PET_CASTING && setting.Key == PET_CHANCES ? PetChancesRow() : SettingRow(setting);
+                var row = section == PET_CASTING && setting.Key == PET_CHANCES ? PetChancesRow()
+                    : section == PET_CASTING && _petTowerSettings.TryGetValue(setting.Key, out var tower) ? PetCastRow(setting, tower)
+                    : SettingRow(setting);
                 list.Add((setting, row));
                 (section == PET_CASTING ? _petCastRows : rows).Children.Add(row);
             }
@@ -2258,10 +2270,36 @@ internal sealed partial class ManagerWindow : Window {
             Children = {
                 grid,
                 Sub("Chance in percent, 0 to 100. PvE is used in every battle. Deckathalon is used only on Deckathalon floors, " +
-                    "for every May Cast there (also the cards with their own chances below). 0 turns May Casts off there; " +
+                    "for every May Cast there that has no Deckathalon chance of its own below. 0 turns May Casts off there; " +
                     "an empty Deckathalon box uses the PvE chance."),
             },
         };
+
+        return new Border { BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(0, 0, 0, 8), Child = row };
+    }
+
+    // A May Cast card's own chances: PvE ([PetCasting] <card>) and, next to it, Deckathalon ([PetCastingDeckathalon]
+    // <card>), each written as cast/damage/heal/pass. An empty Deckathalon box uses the Deckathalon chances above.
+    private Control PetCastRow(Setting normal, Setting tower) {
+        string Current(Setting setting)
+            => _pending.TryGetValue((setting.Section, setting.Key), out var changed) ? changed.Value : setting.Value;
+
+        var pve = new TextBox { Text = Current(normal), Watermark = "PvE: same as the chances above" };
+        pve.TextChanged += (_, _) => Change(normal, pve.Text ?? "");
+        var deckathalon = new TextBox { Text = Current(tower), Watermark = "Deckathalon: same as above" };
+        deckathalon.TextChanged += (_, _) => Change(tower, deckathalon.Text ?? "");
+
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*,12,*"), Margin = new Thickness(0, 8) };
+        grid.Children.Add(new TextBlock { Text = normal.Key, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap });
+        Grid.SetColumn(pve, 1);
+        grid.Children.Add(pve);
+        Grid.SetColumn(deckathalon, 3);
+        grid.Children.Add(deckathalon);
+
+        var row = new StackPanel { Children = { grid } };
+        if (normal.Help.Length > 0) {
+            row.Children.Add(Sub(normal.Help));
+        }
 
         return new Border { BorderBrush = LINE, BorderThickness = new Thickness(0, 0, 0, 1), Padding = new Thickness(0, 0, 0, 8), Child = row };
     }
