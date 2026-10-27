@@ -277,7 +277,9 @@ internal static class PetTalentGuide {
         var type = info?.GetType().Name ?? "";
         switch (type) {
             case "ProvidePetPowerInfo": {
-                kinds.Add("Pet power");
+                // A combat pet power is a Will Cast: the pet card shown each round (PetWillCasts).
+                var willCast = Get(info, "m_combatTalent") is true;
+                kinds.Add(willCast ? "Will Cast" : "Pet power");
                 var power = Shown(Get(info, "m_powerDisplayName")?.ToString());
                 var words = Shown(Get(info, "m_description")?.ToString());
                 var happiness = Number(info, "m_happinessCost");
@@ -296,7 +298,7 @@ internal static class PetTalentGuide {
                     bits.Add($"{uses} use{(uses == 1 ? "" : "s")} per battle");
                 }
 
-                return $"Pet power{(power.Length > 0 ? $" {power}" : "")}{(words.Length > 0 ? $": {words.TrimEnd('.')}" : "")}" +
+                return $"{(willCast ? "Will Cast" : "Pet power")}{(power.Length > 0 ? $" {power}" : "")}{(words.Length > 0 ? $": {words.TrimEnd('.')}" : "")}" +
                        $"{(bits.Count > 0 ? $" ({string.Join(", ", bits)})" : "")}.";
             }
             case "NonCombatMayCastSpellInfo": {
