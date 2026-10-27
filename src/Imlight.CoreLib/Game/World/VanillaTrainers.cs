@@ -172,7 +172,7 @@ internal static class VanillaTrainers {
         if (spell?.Needs is { } needs) {
             var knownNames = KnownNames(wizard);
             if (!Meets(needs, wizard, knownNames, out var failed)) {
-                return new(false, cost, gold, requiredLevel, failed?.Game, $"needs {Describe(failed)}");
+                return new(false, cost, gold, requiredLevel, failed?.Class == "HasSpell" ? failed.Game : null, $"needs {Describe(failed)}");
             }
         }
 
@@ -326,8 +326,26 @@ internal static class VanillaTrainers {
             _ => new RequirementList { m_applyNOT = need.Not, m_operator = OperatorOf(need), m_requirements = [] },
         };
 
-    /// <summary>The spell's requirements as the game's own list, for the training window, or null.</summary>
-    internal static RequirementList ShownRequirements(Spell spell)
-        => spell?.Needs?.Game as RequirementList;
+    /// <summary>
+    /// The spells this spell needs first, as the game's own list for the training window, or null. Only spell
+    /// requirements go to the game: with the whole list (quests, schools, badges) the game could not read Lydia
+    /// Greyrose's options and she could not be talked to (WizardClient.log 2026-10-26: "Failed to find type by name
+    /// hash" in m_failedRequirement, so the whole ServiceMementoBase failed). The server still checks all of it.
+    /// </summary>
+    internal static RequirementList ShownRequirements(Spell spell) {
+        var spells = spell?.Needs?.Items?.Where(item => item.Class == "HasSpell" && !item.Not).ToList();
+        if (spells is null || spells.Count == 0) {
+            return null;
+        }
+
+        return s_shown.GetValue(spell, _ => new RequirementList {
+            m_applyNOT = false, m_operator = Operator.ROP_AND,
+            m_requirements = [.. spells.Select(item => (Requirement) new ReqHasSpell {
+                m_applyNOT = false, m_operator = Operator.ROP_AND, m_spellName = item.Spell ?? "",
+            })],
+        });
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Spell, RequirementList> s_shown = new();
 
 }
