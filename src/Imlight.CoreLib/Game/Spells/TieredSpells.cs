@@ -82,6 +82,7 @@ internal static class TieredSpells {
     private static int s_costPercent => ConfigurationManager.GetValue("SpellUpgrades.CostPercent", 100);
     private static bool s_showAll => ConfigurationManager.GetValue("SpellUpgrades.ShowAllGroups", false);
     private static bool s_keepEveryTier => ConfigurationManager.GetValue("SpellUpgrades.KeepEveryTier", true);
+    private static bool s_showHeldSpellements => ConfigurationManager.GetValue("SpellUpgrades.ShowGroupsOfHeldSpellements", true);
 
     private static readonly object s_lock = new();
     private static bool s_loaded;
@@ -351,8 +352,10 @@ internal static class TieredSpells {
     }
 
     /// <summary>
-    /// The game's TieredSpellGroupVisibility for this wizard: a group shows when the wizard knows one of its spells,
-    /// and can upgrade when one of those has a next tier the wizard has the Spellements for.
+    /// The game's TieredSpellGroupVisibility for this wizard: a group shows when the wizard knows one of its spells or
+    /// holds its Spellement ([SpellUpgrades] ShowGroupsOfHeldSpellements; Niduus, 2026-10-27: "spellements are not
+    /// showing spells in the spellwrighting section" after opening Spellement packs), and can upgrade when a known spell
+    /// of it has a next tier the wizard has the Spellements for.
     /// </summary>
     internal static TieredSpellGroupVisibility Visibility(Wizard wizard) {
         var groups = Groups;
@@ -360,6 +363,19 @@ internal static class TieredSpells {
         var canUpgrade = new int[groups.Count];
         if (s_showAll) {
             Array.Fill(visible, (byte) 1);
+        }
+
+        if (s_showHeldSpellements) {
+            var held = wizard?.AlchemyBehavior?.Reagents?
+                .Where(r => r is not null && r.m_quantity > 0)
+                .Select(r => (ulong) r.m_templateID)
+                .ToHashSet() ?? [];
+            for (var group = 0; group < groups.Count; group++) {
+                var shard = ShardOf(group);
+                if (shard != 0 && held.Contains(shard)) {
+                    visible[group] = 1;
+                }
+            }
         }
 
         foreach (var (_, template, group) in KnownTieredSpells(wizard)) {
@@ -381,7 +397,11 @@ internal static class TieredSpells {
     internal static WIZARD2_53_PROTOCOL.MSG_CANSEETIEREDSPELLGROUPS VisibilityMessage(Wizard wizard) {
         try {
             var serializer = new ObjectSerializer(Versionable: false);
-            if (!serializer.Serialize(Visibility(wizard), VISIBILITY_MASK, out var data)) {
+            var visibility = Visibility(wizard);
+            Logger.Debug("Spell upgrades | {0} of {1} spell groups show, {2} can be upgraded.", Logger.Args(
+                visibility.m_visibilityList.Count(v => v != 0), visibility.m_visibilityList.Count(),
+                visibility.m_canUpgradeList.Count(v => v != 0)));
+            if (!serializer.Serialize(visibility, VISIBILITY_MASK, out var data)) {
                 Logger.Error("Spell upgrades | The spell group list could not be serialized.");
 
                 return null;

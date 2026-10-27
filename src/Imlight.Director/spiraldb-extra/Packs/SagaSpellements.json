@@ -1,0 +1,667 @@
+{
+  "Arc01": {
+    "Pack": "Malistaire Saga Spellement Pack",
+    "Spellements": [
+      {
+        "Id": 1492248,
+        "Name": "Fire Cat",
+        "School": "Fire"
+      },
+      {
+        "Id": 1494693,
+        "Name": "Fire Elf",
+        "School": "Fire"
+      },
+      {
+        "Id": 1552063,
+        "Name": "Helephant",
+        "School": "Fire"
+      },
+      {
+        "Id": 1552052,
+        "Name": "Immolate",
+        "School": "Fire"
+      },
+      {
+        "Id": 1552058,
+        "Name": "Phoenix",
+        "School": "Fire"
+      },
+      {
+        "Id": 1552045,
+        "Name": "Sunbird",
+        "School": "Fire"
+      },
+      {
+        "Id": 1552004,
+        "Name": "Blight Hound",
+        "School": "Ice"
+      },
+      {
+        "Id": 1552064,
+        "Name": "Colossus",
+        "School": "Ice"
+      },
+      {
+        "Id": 1552047,
+        "Name": "Evil Snowman",
+        "School": "Ice"
+      },
+      {
+        "Id": 1494687,
+        "Name": "Frost Beetle",
+        "School": "Ice"
+      },
+      {
+        "Id": 1552053,
+        "Name": "Ice Wyvern",
+        "School": "Ice"
+      },
+      {
+        "Id": 1494694,
+        "Name": "Snow Serpent",
+        "School": "Ice"
+      },
+      {
+        "Id": 1552056,
+        "Name": "Kraken",
+        "School": "Storm"
+      },
+      {
+        "Id": 1494698,
+        "Name": "Lightning Bats",
+        "School": "Storm"
+      },
+      {
+        "Id": 1552046,
+        "Name": "Storm Shark",
+        "School": "Storm"
+      },
+      {
+        "Id": 1552060,
+        "Name": "Stormzilla",
+        "School": "Storm"
+      },
+      {
+        "Id": 1494699,
+        "Name": "Thunder Snake",
+        "School": "Storm"
+      },
+      {
+        "Id": 1552066,
+        "Name": "Triton",
+        "School": "Storm"
+      },
+      {
+        "Id": 1552065,
+        "Name": "Centaur",
+        "School": "Life"
+      },
+      {
+        "Id": 1552005,
+        "Name": "Earth Walker",
+        "School": "Life"
+      },
+      {
+        "Id": 1494695,
+        "Name": "Imp",
+        "School": "Life"
+      },
+      {
+        "Id": 1494688,
+        "Name": "Leprechaun",
+        "School": "Life"
+      },
+      {
+        "Id": 1552048,
+        "Name": "Nature's Wrath",
+        "School": "Life"
+      },
+      {
+        "Id": 1552054,
+        "Name": "Seraph",
+        "School": "Life"
+      },
+      {
+        "Id": 1552022,
+        "Name": "Banshee",
+        "School": "Death"
+      },
+      {
+        "Id": 1494689,
+        "Name": "Dark Sprite",
+        "School": "Death"
+      },
+      {
+        "Id": 1494692,
+        "Name": "Ghoul",
+        "School": "Death"
+      },
+      {
+        "Id": 1552057,
+        "Name": "Skeletal Pirate",
+        "School": "Death"
+      },
+      {
+        "Id": 1552051,
+        "Name": "Vampire",
+        "School": "Death"
+      },
+      {
+        "Id": 1552062,
+        "Name": "Wraith",
+        "School": "Death"
+      },
+      {
+        "Id": 1494696,
+        "Name": "Blood Bat",
+        "School": "Myth"
+      },
+      {
+        "Id": 1552049,
+        "Name": "Cyclops",
+        "School": "Myth"
+      },
+      {
+        "Id": 1552231,
+        "Name": "Cyclops Minion",
+        "School": "Myth"
+      },
+      {
+        "Id": 1552059,
+        "Name": "Minotaur",
+        "School": "Myth"
+      },
+      {
+        "Id": 1552006,
+        "Name": "Stone Colossus",
+        "School": "Myth"
+      },
+      {
+        "Id": 1494697,
+        "Name": "Troll",
+        "School": "Myth"
+      },
+      {
+        "Id": 1552050,
+        "Name": "Gearhead Destroyer",
+        "School": "Balance"
+      },
+      {
+        "Id": 1552061,
+        "Name": "Hydra",
+        "School": "Balance"
+      },
+      {
+        "Id": 1494690,
+        "Name": "Scarab",
+        "School": "Balance"
+      },
+      {
+        "Id": 1494691,
+        "Name": "Scorpion",
+        "School": "Balance"
+      },
+      {
+        "Id": 1492526,
+        "Name": "Spectral Blast",
+        "School": "Balance"
+      }
+    ]
+  },
+  "Arc02": {
+    "Pack": "Morganthe Saga Spellement Pack",
+    "Spellements": [
+      {
+        "Id": 1640641,
+        "Name": "Efreet",
+        "School": "Fire"
+      },
+      {
+        "Id": 1640640,
+        "Name": "Fire Dragon",
+        "School": "Fire"
+      },
+      {
+        "Id": 1640629,
+        "Name": "King Artorius",
+        "School": "Fire"
+      },
+      {
+        "Id": 1640642,
+        "Name": "Rain of Fire",
+        "School": "Fire"
+      },
+      {
+        "Id": 1640643,
+        "Name": "Sun Serpent",
+        "School": "Fire"
+      },
+      {
+        "Id": 1640644,
+        "Name": "Frost Giant",
+        "School": "Ice"
+      },
+      {
+        "Id": 1640630,
+        "Name": "King Artorius",
+        "School": "Ice"
+      },
+      {
+        "Id": 1640647,
+        "Name": "Lord of Winter",
+        "School": "Ice"
+      },
+      {
+        "Id": 1640645,
+        "Name": "Snow Angel",
+        "School": "Ice"
+      },
+      {
+        "Id": 1640646,
+        "Name": "Woolly Mammoth",
+        "School": "Ice"
+      },
+      {
+        "Id": 1640633,
+        "Name": "King Artorius",
+        "School": "Storm"
+      },
+      {
+        "Id": 1640658,
+        "Name": "Leviathan",
+        "School": "Storm"
+      },
+      {
+        "Id": 1640657,
+        "Name": "Sirens",
+        "School": "Storm"
+      },
+      {
+        "Id": 1640659,
+        "Name": "Storm Lord",
+        "School": "Storm"
+      },
+      {
+        "Id": 1640656,
+        "Name": "Storm Owl",
+        "School": "Storm"
+      },
+      {
+        "Id": 1640648,
+        "Name": "Forest Lord",
+        "School": "Life"
+      },
+      {
+        "Id": 1640650,
+        "Name": "Gnomes!",
+        "School": "Life"
+      },
+      {
+        "Id": 1640631,
+        "Name": "King Artorius",
+        "School": "Life"
+      },
+      {
+        "Id": 1640649,
+        "Name": "Rebirth",
+        "School": "Life"
+      },
+      {
+        "Id": 1640651,
+        "Name": "Spinysaur",
+        "School": "Life"
+      },
+      {
+        "Id": 1640639,
+        "Name": "Avenging Fossil",
+        "School": "Death"
+      },
+      {
+        "Id": 1640638,
+        "Name": "Dr. Von's Monster",
+        "School": "Death"
+      },
+      {
+        "Id": 1640628,
+        "Name": "King Artorius",
+        "School": "Death"
+      },
+      {
+        "Id": 1640636,
+        "Name": "Scarecrow",
+        "School": "Death"
+      },
+      {
+        "Id": 1640637,
+        "Name": "Skeletal Dragon",
+        "School": "Death"
+      },
+      {
+        "Id": 1640654,
+        "Name": "Basilisk",
+        "School": "Myth"
+      },
+      {
+        "Id": 1640655,
+        "Name": "Celestial Calendar",
+        "School": "Myth"
+      },
+      {
+        "Id": 1640632,
+        "Name": "King Artorius",
+        "School": "Myth"
+      },
+      {
+        "Id": 1640653,
+        "Name": "Medusa",
+        "School": "Myth"
+      },
+      {
+        "Id": 1640652,
+        "Name": "Orthrus",
+        "School": "Myth"
+      },
+      {
+        "Id": 1640634,
+        "Name": "Chimera",
+        "School": "Balance"
+      },
+      {
+        "Id": 1640627,
+        "Name": "King Artorius",
+        "School": "Balance"
+      },
+      {
+        "Id": 1640626,
+        "Name": "Ra",
+        "School": "Balance"
+      },
+      {
+        "Id": 1640635,
+        "Name": "Sabertooth",
+        "School": "Balance"
+      }
+    ]
+  },
+  "Arc03": {
+    "Pack": "Spider Saga Spellement Pack",
+    "Spellements": [
+      {
+        "Id": 1688489,
+        "Name": "Raging Bull",
+        "School": "Fire"
+      },
+      {
+        "Id": 1688320,
+        "Name": "Scion of Fire",
+        "School": "Fire"
+      },
+      {
+        "Id": 1688486,
+        "Name": "Scorching Scimitars",
+        "School": "Fire"
+      },
+      {
+        "Id": 1688488,
+        "Name": "Climaclysm",
+        "School": "Ice"
+      },
+      {
+        "Id": 1688400,
+        "Name": "Scion of Ice",
+        "School": "Ice"
+      },
+      {
+        "Id": 1688490,
+        "Name": "Snowball Barrage",
+        "School": "Ice"
+      },
+      {
+        "Id": 1688483,
+        "Name": "Iron Sultan",
+        "School": "Storm"
+      },
+      {
+        "Id": 1688491,
+        "Name": "Rusalka's Wrath",
+        "School": "Storm"
+      },
+      {
+        "Id": 1688403,
+        "Name": "Scion of Storm",
+        "School": "Storm"
+      },
+      {
+        "Id": 1688485,
+        "Name": "Lamassu",
+        "School": "Life"
+      },
+      {
+        "Id": 1688401,
+        "Name": "Scion of Life",
+        "School": "Life"
+      },
+      {
+        "Id": 1688493,
+        "Name": "Wings of Fate",
+        "School": "Life"
+      },
+      {
+        "Id": 1688487,
+        "Name": "Qismah's Curse",
+        "School": "Death"
+      },
+      {
+        "Id": 1688399,
+        "Name": "Scion of Death",
+        "School": "Death"
+      },
+      {
+        "Id": 1688494,
+        "Name": "Winged Sorrow",
+        "School": "Death"
+      },
+      {
+        "Id": 1688402,
+        "Name": "Scion of Myth",
+        "School": "Myth"
+      },
+      {
+        "Id": 1688484,
+        "Name": "Snake Charmer",
+        "School": "Myth"
+      },
+      {
+        "Id": 1688495,
+        "Name": "Witch's House Call",
+        "School": "Myth"
+      },
+      {
+        "Id": 1688482,
+        "Name": "Sand Wurm",
+        "School": "Balance"
+      },
+      {
+        "Id": 1688398,
+        "Name": "Scion of Balance",
+        "School": "Balance"
+      }
+    ]
+  },
+  "Arc04": {
+    "Pack": "Dasein Saga Spellement Pack",
+    "Spellements": [
+      {
+        "Id": 1669481,
+        "Name": "Ammut",
+        "School": "Fire"
+      },
+      {
+        "Id": 1492425,
+        "Name": "Blast Off!",
+        "School": "Fire"
+      },
+      {
+        "Id": 1580229,
+        "Name": "Glimpse of Infinity",
+        "School": "Fire"
+      },
+      {
+        "Id": 1621734,
+        "Name": "Phantasmania!",
+        "School": "Fire"
+      },
+      {
+        "Id": 1504150,
+        "Name": "S'more Machine",
+        "School": "Fire"
+      },
+      {
+        "Id": 1621745,
+        "Name": "Count Croakula",
+        "School": "Ice"
+      },
+      {
+        "Id": 1580231,
+        "Name": "Deathly Depths",
+        "School": "Ice"
+      },
+      {
+        "Id": 1535581,
+        "Name": "Freeze Ray",
+        "School": "Ice"
+      },
+      {
+        "Id": 1504148,
+        "Name": "Shatterhorn",
+        "School": "Ice"
+      },
+      {
+        "Id": 1674173,
+        "Name": "Shu",
+        "School": "Ice"
+      },
+      {
+        "Id": 1621751,
+        "Name": "Bunyip's Rage",
+        "School": "Storm"
+      },
+      {
+        "Id": 1492430,
+        "Name": "Dark & Stormy",
+        "School": "Storm"
+      },
+      {
+        "Id": 1674174,
+        "Name": "Heqet",
+        "School": "Storm"
+      },
+      {
+        "Id": 1504147,
+        "Name": "Sound of Musicology",
+        "School": "Storm"
+      },
+      {
+        "Id": 1580233,
+        "Name": "Tree of Strife",
+        "School": "Storm"
+      },
+      {
+        "Id": 1504151,
+        "Name": "Grrnadier",
+        "School": "Life"
+      },
+      {
+        "Id": 1492428,
+        "Name": "Lord of the Jungle",
+        "School": "Life"
+      },
+      {
+        "Id": 1580230,
+        "Name": "Starspawn",
+        "School": "Life"
+      },
+      {
+        "Id": 1674176,
+        "Name": "Taweret",
+        "School": "Life"
+      },
+      {
+        "Id": 1621758,
+        "Name": "Zand the Bandit",
+        "School": "Life"
+      },
+      {
+        "Id": 1674177,
+        "Name": "Anubis",
+        "School": "Death"
+      },
+      {
+        "Id": 1580232,
+        "Name": "Gravestorm",
+        "School": "Death"
+      },
+      {
+        "Id": 1492426,
+        "Name": "Grim Reader",
+        "School": "Death"
+      },
+      {
+        "Id": 1504149,
+        "Name": "Snack Attack",
+        "School": "Death"
+      },
+      {
+        "Id": 1621733,
+        "Name": "Wobbegong Frenzy",
+        "School": "Death"
+      },
+      {
+        "Id": 1492429,
+        "Name": "Barbarian's Saga",
+        "School": "Myth"
+      },
+      {
+        "Id": 1621755,
+        "Name": "Drop Bear Fury",
+        "School": "Myth"
+      },
+      {
+        "Id": 1580234,
+        "Name": "Improbable Gaze",
+        "School": "Myth"
+      },
+      {
+        "Id": 1519005,
+        "Name": "Tatzlewurm Terror",
+        "School": "Myth"
+      },
+      {
+        "Id": 1674175,
+        "Name": "Thoth",
+        "School": "Myth"
+      },
+      {
+        "Id": 1669485,
+        "Name": "Chameleon Clash",
+        "School": "Balance"
+      },
+      {
+        "Id": 1504146,
+        "Name": "Mockenspiel",
+        "School": "Balance"
+      },
+      {
+        "Id": 1621727,
+        "Name": "Rainbow Serpent",
+        "School": "Balance"
+      },
+      {
+        "Id": 1580235,
+        "Name": "Scales of Destiny",
+        "School": "Balance"
+      }
+    ]
+  }
+}
