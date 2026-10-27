@@ -36,7 +36,7 @@ public enum BazaarKind : byte { Item, Snack, Reagent, Card }
 
 /// <summary>One thing the Bazaar sells. Tabs are the StringHash of the item's adjectives (the game's tabs ask by them).</summary>
 public sealed record BazaarItem(ulong Id, BazaarKind Kind, string Name, int Level, int BuyPrice, int SellPrice, uint[] Tabs,
-    bool NoAuction, string SpellName = null, uint SpellTemplateId = 0);
+    bool Restricted, string SpellName = null, uint SpellTemplateId = 0);
 
 /// <summary>What the game server needs to sell or buy one Bazaar entry.</summary>
 public sealed class BazaarQuote {
@@ -77,7 +77,7 @@ public sealed class BazaarBook {
     private static HashSet<uint> Hashes(params string[] names)
         => [.. names.SelectMany(name => new[] { StringHash.Compute(name), StringHash.Compute(name.ToLowerInvariant()) })];
 
-    private static int StartStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.StartStock", 100), 1, MaxStock);
+    private static int StartStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.StartStock", 999), 1, MaxStock);
     private static int MaxStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.MaxStock", 999), 1, 1_000_000);
     private static bool WithNoAuction => ConfigurationManager.GetValue("Bazaar.NoAuctionItems", false);
     private static int CardsPerSchool => Math.Clamp(ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, 100_000);
@@ -118,6 +118,9 @@ public sealed class BazaarBook {
     /// </summary>
     public static BazaarBook Build(string stockFile) {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        // Item names come from the game's text. Not loaded by itself: without it every item had no name and was left out
+        // (v0.10.498 sold only treasure cards, Niduus 2026-10-27).
+        _ = Locale.Instance;
         var items = new List<BazaarItem>();
         var looked = 0;
         foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
@@ -174,8 +177,15 @@ public sealed class BazaarBook {
         // Snacks, reagents, jewels and pins stay at 1 gold, as they were for testing (Niduus, 2026-10-19).
         var buy = kind != BazaarKind.Item || tabs.Contains(s_jewelTab) ? 1 : -1;
 
-        return new BazaarItem(id, kind, name, RequiredLevel(template), buy, sell, tabs, adjectives.Contains("FLAG_NoAuction"));
+        return new BazaarItem(id, kind, name, RequiredLevel(template), buy, sell, tabs, IsRestricted(adjectives));
     }
+
+    // What the Bazaar never takes (Niduus, 2026-10-27: "Populate with items that are NOT No Trade, No Auction, Crowns, No
+    // Bazaar"). The game has no FLAG_NoBazaar; any adjective naming it counts, and BazaarAllowed lets an item in anyway.
+    private static bool IsRestricted(List<string> adjectives)
+        => !adjectives.Contains("BazaarAllowed")
+        && adjectives.Any(adjective => adjective is "FLAG_NoAuction" or "FLAG_NoTrade" or "FLAG_CrownsOnly"
+            || adjective.Contains("NoBazaar", StringComparison.OrdinalIgnoreCase));
 
     private static int RequiredLevel(WizItemTemplate template)
         => (int) ((template.m_equipRequirements?.m_requirements ?? [])
@@ -228,7 +238,7 @@ public sealed class BazaarBook {
         return Math.Max(1, (int) Math.Min(int.MaxValue, (long) item.SellPrice * 2 * percent / 100));
     }
 
-    private bool Sold(BazaarItem item) => !item.NoAuction || WithNoAuction;
+    private bool Sold(BazaarItem item) => !item.Restricted || WithNoAuction;
 
     private int StockOf(ulong id) => StockOf(id, StartStock);
 
@@ -259,7 +269,7 @@ public sealed class BazaarBook {
             var start = StartStock;
             var cards = CardsPerSchool;
             var withNoAuction = WithNoAuction;
-            var shown = _items.Where(item => (!item.NoAuction || withNoAuction) && StockOf(item.Id, start) > 0 && ShowsCard(item, cards)).ToList();
+            var shown = _items.Where(item => (!item.Restricted || withNoAuction) && StockOf(item.Id, start) > 0 && ShowsCard(item, cards)).ToList();
             var own = shown.Where(item => IsFor(item, category)).ToList();
             IEnumerable<BazaarItem> list = own;
             if (everything) {

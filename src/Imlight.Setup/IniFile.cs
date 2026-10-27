@@ -82,6 +82,8 @@ internal static class IniFile {
         // Niduus, 2026-10-27 ("globals should display like this"): sent in the turn order since v0.10.451, a global's told
         // size shows (the bubble was missing as an interrupt, not for its size), so the own number is back on.
         ("BossCheats", "ShowOwnValueGlobals", "false", "true"),
+        // Niduus, 2026-10-27: "Set all # to max amount so that way, buy more can actually buy more".
+        ("Bazaar", "StartStock", "100", "999"),
     ];
 
     /// <summary>

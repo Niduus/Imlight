@@ -72,9 +72,9 @@ internal sealed partial class ManagerWindow {
             _bazaarBotState,
             SwitchRow("Run the Bazaar as its own program", _bazaarOwnServer,
                 "Off has the server run the Bazaar itself, as before."),
-            SwitchRow("Items the real Bazaar never takes", _bazaarNoAuction,
-                "No-auction items (most pet jewels, quest rewards, crown-only gear). Left out unless you turn this on."),
-            SwitchRow("Stock at the start", _bazaarStartStock, "How many of each thing the Bazaar has before anyone buys."),
+            SwitchRow("No Auction, No Trade and Crowns items", _bazaarNoAuction,
+                "Items the real Bazaar never takes (quest rewards, most pet jewels, crown-only gear). Left out unless you turn this on."),
+            SwitchRow("Stock at the start", _bazaarStartStock, "How many of each thing the Bazaar has before anyone buys (999 is the most, so Buy More can buy plenty)."),
             SwitchRow("Restock every", _bazaarRestockMinutes, "Minutes between restocks. 0 = never restock."),
             SwitchRow("Restock amount", _bazaarRestockAmount, "How many more of each thing below the start stock, per restock."),
             SwitchRow("Gear and housing price (percent)", _bazaarPricePercent,
@@ -104,7 +104,7 @@ internal sealed partial class ManagerWindow {
         try {
             _bazaarOwnServer.IsChecked = !string.Equals(_manager.GetSetting("Bazaar", "OwnServer"), "false", StringComparison.OrdinalIgnoreCase);
             _bazaarNoAuction.IsChecked = _manager.GetSwitch("Bazaar", "NoAuctionItems");
-            _bazaarStartStock.Value = Number("StartStock", 100);
+            _bazaarStartStock.Value = Number("StartStock", 999);
             _bazaarRestockMinutes.Value = Number("RestockMinutes", 30);
             _bazaarRestockAmount.Value = Number("RestockAmount", 10);
             _bazaarPricePercent.Value = Number("ItemPricePercent", 200);
