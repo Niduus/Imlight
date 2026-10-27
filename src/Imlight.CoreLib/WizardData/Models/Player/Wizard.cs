@@ -1292,6 +1292,60 @@ public class Wizard {
     }
 
     /// <summary>
+    /// Takes fishing, gardening, cantrip and Castle Magic spells out of every deck (see SpellFactory.CanGoInDeck).
+    /// Decks filled before that check had the starter fishing spells in them.
+    /// </summary>
+    /// <returns>How many cards came out.</returns>
+    internal int RemoveNonBattleSpellsFromDecks() {
+        var removed = 0;
+        try {
+            var decks = InventoryBehavior.Items.Concat(EquipmentBehavior?.EquippedItems ?? [])
+                .Where(item => item is not null)
+                .GroupBy(item => item.m_globalID.Full)
+                .Select(g => g.First())
+                .ToList();
+            foreach (var deck in decks) {
+                if (!CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deck, out var deckBehavior)) {
+                    continue;
+                }
+
+                var wrong = (deckBehavior.m_spellList ?? [])
+                    .Where(s => !Imlight.CoreLib.Game.Spells.SpellFactory.CanGoInDeck(s.m_templateID))
+                    .Select(s => (s.m_templateID, Copies: Math.Max(1, (int) s.m_quantity)))
+                    .ToList();
+                if (wrong.Count == 0) {
+                    continue;
+                }
+
+                // The equipped deck's cards are also held by the spellbook, which may be its own copy of the list.
+                var equipped = EquipmentBehavior?.EquippedItems?.Any(i => i?.m_globalID.Full == deck.m_globalID.Full) == true;
+                foreach (var (templateId, copies) in wrong) {
+                    for (var i = 0; i < copies; i++) {
+                        if (equipped && !ReferenceEquals(SpellbookBehavior.SpellList, deckBehavior.m_spellList)) {
+                            SpellbookBehavior.RemoveSpellFromDeck(templateId);
+                        }
+
+                        WizardItemCollection.RemoveSpellFromDeck(deck.m_globalID.Full, templateId);
+                        removed++;
+                    }
+                }
+
+                deckBehavior.m_spellList?.RemoveAll(s => !Imlight.CoreLib.Game.Spells.SpellFactory.CanGoInDeck(s.m_templateID));
+            }
+
+            if (removed > 0) {
+                Logger.Information("Took {0} fishing, gardening, cantrip or Castle Magic cards out of {1}'s decks.",
+                    Logger.Args(removed, PlayerNameBehavior.GetWizardName()));
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not take the non-battle spells out of {0}'s decks. {1}", Logger.Args(CharId, ex.Message));
+        }
+
+        return removed;
+    }
+
+    /// <summary>
     /// Moves pet snacks and reagents that were stored as single items in the backpack or the bank into their bags.
     /// Loot used to grant a snack as an item: the client then listed it in the backpack with a quantity of 0, the
     /// bank window computed 0 snacks to move and showed "Shared Bank Full" (BankingWindow 0x1406979a6), and the
@@ -1480,6 +1534,13 @@ public class Wizard {
     }
 
     public bool AddSpellToDeck(uint spellTemplateId, ulong deckId) {
+        if (!Imlight.CoreLib.Game.Spells.SpellFactory.CanGoInDeck(spellTemplateId)) {
+            Logger.Debug("Spell {0} is not a battle spell and does not go in {1}'s deck.",
+                Logger.Args(spellTemplateId, PlayerNameBehavior.GetWizardName()));
+
+            return false;
+        }
+
         // Find the actual item in the inventory.
         var item = InventoryBehavior.Items.FirstOrDefault(i => i.m_globalID == deckId);
         if (item is null) {

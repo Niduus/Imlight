@@ -34,6 +34,7 @@ public static class WizardObjectLoader {
     public static WizClientObject GetPlayerGameObject(Wizard character) {
         // Snacks and reagents stored as items go into their bags first, so the object carries them as stacks.
         character.MoveStrayStacksIntoBags();
+        character.RemoveNonBattleSpellsFromDecks();
         var clientObject = CoreObjectFactory.InitializeCoreObjectBehaviors(new WizClientObject(), 1);
 
         // Set the stats on the new object.
