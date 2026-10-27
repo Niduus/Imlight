@@ -238,6 +238,8 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
                 (CoreObjectFactory.GetCoreTemplate(message.SnackTemplateID) as PetSnackItemTemplate)?.m_statModifierSet, growth));
         }
 
+        PetCare.GrantLevelLoot(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, growth);
+
         SendToSocket(new WIZARD2_53_PROTOCOL.MSG_PETFEEDHAPPINESS {
             SnackTemplateID = message.SnackTemplateID,
             FeedStack = message.FeedStack,
@@ -329,6 +331,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
         if (!feedOnly) {
             PetCare.Finish(wizard, pet, growth, SendToSocket);
+            PetCare.GrantLevelLoot(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, growth);
         }
 
         var snack = FindSnackIn(wizard, snackData);
@@ -350,6 +353,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
                 growth.StatChanges.AddRange(fed.StatChanges);
                 var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
                 SendHeldThenFeedResult(held, gameName, fed.XpGained, WithActualChanges(snackMods, fed));
+                PetCare.GrantLevelLoot(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, fed);
                 Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_FeedPetSnack);
             }
             else {
@@ -421,6 +425,16 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
     private bool TryWriteEndData(string gameName, uint xpGained, PetStatModificationSet statMods, out Imcodec.IO.ByteString data,
                                  float score = 1.0f) {
+        // The results window reads the stat list without checking for none: a game that gave no stats (a Dance
+        // missed in its first round) crashed the game, so an empty list goes instead.
+        statMods ??= new PetStatModificationSet { m_name = "", m_scene = "" };
+        if (statMods.m_modifications is null || statMods.m_gameScoreFactor is null) {
+            statMods = statMods with {
+                m_modifications = statMods.m_modifications ?? [],
+                m_gameScoreFactor = statMods.m_gameScoreFactor ?? [],
+            };
+        }
+
         var endData = new PetGameEndData {
             m_Score = score,
             m_statMods = statMods,

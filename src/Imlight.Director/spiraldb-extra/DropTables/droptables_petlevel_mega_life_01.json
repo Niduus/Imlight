@@ -1,0 +1,105 @@
+{
+  "Name": "PetLevel_Mega_Life_01",
+  "Description": "Pet reaches Mega (Life pets): Life reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1359769",
+      "ItemName": "Flax",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731034",
+      "ItemName": "Primeval Lotus",
+      "Notes": "Life reagent, rank 1",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106932",
+      "ItemName": "Acorn",
+      "Notes": "Life reagent, rank 3",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus",
+      "Notes": "Life reagent, rank 3",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106970",
+      "ItemName": "Grendelweed",
+      "Notes": "Life reagent, rank 4",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl",
+      "Notes": "Life reagent, rank 5",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1621540",
+      "ItemName": "Dream Stone",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "Kelp",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1646520",
+      "ItemName": "Rose",
+      "Notes": "Life reagent, rank 6",
+      "Requirements": null,
+      "Chance": 30.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}

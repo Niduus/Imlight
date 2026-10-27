@@ -474,7 +474,8 @@ internal static class PetProgression {
     }
 
     private static bool EnsureExpressed(ClientPetItemBehavior behavior) {
-        var earned = behavior.m_level - 1;
+        // One talent of each kind per age from Teen to Mega; Ultra brings none, as in the game (Niduus, 2026-10-27).
+        var earned = Math.Min(behavior.m_level - 1, PetProgress.MAX_SHOWN_TALENTS);
         var changed = ExpressUpTo(behavior.m_allTalents, behavior.m_expressedTalents ??= [], earned);
         changed |= ExpressUpTo(behavior.m_allDerbyTalents, behavior.m_expressedDerbyTalents ??= [], earned);
 

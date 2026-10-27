@@ -1,0 +1,78 @@
+{
+  "Name": "PetLevel_Mega_Ice_01",
+  "Description": "Pet reaches Mega (Ice pets): Ice reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1731016",
+      "ItemName": "Everwinter Lotus",
+      "Notes": "Ice reagent, rank 1",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "Ice reagent, rank 1",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "Ice reagent, rank 2",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "Ice reagent, rank 3",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1359770",
+      "ItemName": "Frosted Flax",
+      "Notes": "Ice reagent, rank 5",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1392216",
+      "ItemName": "Glass Sliver",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 42.9,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}
