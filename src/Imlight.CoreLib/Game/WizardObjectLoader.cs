@@ -35,6 +35,10 @@ public static class WizardObjectLoader {
         // Snacks and reagents stored as items go into their bags first, so the object carries them as stacks.
         character.MoveStrayStacksIntoBags();
         character.RemoveNonBattleSpellsFromDecks();
+        // "Shadow Dancer" done before it was remembered: remember it now, so the shadow pip slots show at login.
+        if (character.QuestBehavior is not null) {
+            Imlight.CoreLib.Game.Combat.CombatDuelSubCircle.EarnedShadowMagic(character, character.GameStats);
+        }
         var clientObject = CoreObjectFactory.InitializeCoreObjectBehaviors(new WizClientObject(), 1);
 
         // Set the stats on the new object.
