@@ -485,6 +485,7 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
 
         // Closing the NPC dialog and walking back up should return to the shared service menu.
         _showingSpellOptions.Remove(wizard.CharId);
+        _spellsAfterGoal.Remove(wizard.CharId);
         if (!TeachesAsListed) {
             return;
         }
@@ -659,12 +660,41 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
         || ((_isTradeTrainer || IsGardenTrainer || IsTome) && Entity.GetComponentsOfType<IServiceComponent>()
             .Any(c => c != this && (c.GetServiceOptions(wizard)?.Any() ?? false)));
 
+    // When each wizard was last sent the spell list right after finishing a quest goal here (ShowSpellsAfterGoal).
+    private readonly Dictionary<ulong, System.DateTime> _spellsAfterGoal = [];
+    private static readonly System.TimeSpan SPELLS_AFTER_GOAL_HOLD = System.TimeSpan.FromSeconds(20);
+
+    /// <summary>
+    /// A teacher's talk goal (Lydia Greyrose's "WC-COMMONS-MAIN-002-ICE") ends with the game opening the training
+    /// window by itself, from the options it was sent last. Those held only the quest and one "Spell List" choice, so
+    /// the window opened empty (Niduus 2026-10-26). Right after such a goal the wizard is sent the spells themselves,
+    /// and they are kept for a short while even when the game asks for the options again as the dialog closes.
+    /// </summary>
+    internal static void ShowSpellsAfterGoal(ZoneEntity entity, IActorRef playerActor, Wizard wizard) {
+        if (wizard is null || entity.GetComponentOfType<InteractTrainerComponent>() is not { } trainer) {
+            return;
+        }
+
+        trainer._showingSpellOptions.Add(wizard.CharId);
+        if (!(trainer.GetServiceOptions(wizard)?.Any() ?? false)) {
+            trainer._showingSpellOptions.Remove(wizard.CharId);
+
+            return;
+        }
+
+        trainer._spellsAfterGoal[wizard.CharId] = System.DateTime.UtcNow;
+        entity.GetComponentOfType<InteractServiceMementoComponent>()?.SendServiceOptions(playerActor);
+    }
+
+    private bool HoldsSpellsAfterGoal(Wizard wizard)
+        => _spellsAfterGoal.TryGetValue(wizard.CharId, out var at) && System.DateTime.UtcNow - at < SPELLS_AFTER_GOAL_HOLD;
+
     internal static bool IsShowingSpellOptions(ZoneEntity entity, Wizard wizard)
         => wizard is not null
             && entity.GetComponentOfType<InteractTrainerComponent>()?._showingSpellOptions.Contains(wizard.CharId) == true;
 
     internal void ResetSpellOptions(Wizard wizard) {
-        if (wizard is not null) {
+        if (wizard is not null && !HoldsSpellsAfterGoal(wizard)) {
             _showingSpellOptions.Remove(wizard.CharId);
         }
     }

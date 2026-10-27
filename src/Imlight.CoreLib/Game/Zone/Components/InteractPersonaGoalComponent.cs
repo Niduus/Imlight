@@ -405,6 +405,9 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         // Recalculate wizbang immediately to check for new available goals.
         var newState = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         WizBang = newState.HasActiveGoal ? WizBangs.CompleteQuestGoal : WizBangs.None;
+
+        // A teacher's goal ends in the game's training window: send the spells it shows.
+        InteractTrainerComponent.ShowSpellsAfterGoal(Entity, playerActor, playerCharacter);
     }
 
     private static bool WillPersonaGoalCompletionCompleteQuest(Wizard playerCharacter, PlayerPersonaGoalState state) {
