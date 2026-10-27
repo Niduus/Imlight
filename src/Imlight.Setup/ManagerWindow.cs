@@ -350,6 +350,8 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Gear", GearTab),
             Tab("Recipes", RecipesTab),
             Tab("Vendors", VendorsTab),
+            Tab("Pet Talents", PetTalentsTab),
+            Tab("Pet Derby", PetDerbyTab),
             Tab("Quest Tree", QuestTreeTab),
             Tab("Quest Testing", QuestTestingTab),
             Tab("Bosses", BossesTab),
@@ -453,6 +455,8 @@ internal sealed partial class ManagerWindow : Window {
             case "Lookup": await LoadLookupAsync(); break;
             case "Quests": LoadQuests(); break;
             case "Vendors": await LoadVendorsAsync(); break;
+            case "Pet Talents": await LoadPetTalentsAsync(_petTalentPage); break;
+            case "Pet Derby": await LoadPetTalentsAsync(_petDerbyPage); break;
             case "Quest Tree": await LoadQuestTreeAsync(); break;
             case "Quest Testing": await LoadQuestTestingAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
@@ -2670,6 +2674,8 @@ internal sealed partial class ManagerWindow : Window {
         ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
         ["Recipes"] = ("flask", "Every crafting recipe: what it needs, what it makes, and recipe vendors of your own."),
         ["Vendors"] = ("bag", "Every vendor and trainer of the game: where they stand, what they sell and what they teach."),
+        ["Pet Talents"] = ("star", "Every pet talent: May Casts, Will Casts, cards and stats, which pets have them, and buttons for your pet."),
+        ["Pet Derby"] = ("bolt", "Every pet derby racing talent, which pets have them, and buttons for your pet."),
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),

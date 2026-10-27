@@ -52,8 +52,8 @@ internal sealed partial class ManagerWindow {
             ["Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
         ("Database", "search", "IDs, spells, gear, bosses",
-            "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, and every line of text.",
-            ["Lookup", "Spells", "Gear", "Bosses", "Recipes", "Vendors", "Phrases"]),
+            "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
+            ["Lookup", "Spells", "Gear", "Bosses", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Phrases"]),
         ("Create", "puzzle", "Cheats, customs, guides",
             "Make cheats for yourself, build your own creatures and areas, word what the server announces, and step-by-step guides.",
             ["Player Cheats", "Customs", "Announcements", "Guides"]),
@@ -395,7 +395,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),

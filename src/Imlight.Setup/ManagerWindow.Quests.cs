@@ -288,8 +288,8 @@ internal sealed partial class ManagerWindow {
         return top;
     }
 
-    /// <summary>Lists the wizards the server has written quests for, this PC's first. True when the list changed.</summary>
-    private bool FillQuestWizards() {
+    /// <summary>The wizards the server has written quests for, this PC's first, newest first (the wizard pickers).</summary>
+    private List<QuestWizard> ReadQuestWizards() {
         var wizards = new List<QuestWizard>();
         try {
             if (Directory.Exists(QuestProgressFolder)) {
@@ -305,7 +305,12 @@ internal sealed partial class ManagerWindow {
             // A file being written right now is read on the next look.
         }
 
-        wizards = [.. wizards.OrderByDescending(w => w.OnThisPc).ThenByDescending(w => w.Written)];
+        return [.. wizards.OrderByDescending(w => w.OnThisPc).ThenByDescending(w => w.Written)];
+    }
+
+    /// <summary>Lists the wizards the server has written quests for, this PC's first. True when the list changed.</summary>
+    private bool FillQuestWizards() {
+        var wizards = ReadQuestWizards();
         var current = _questWizard.ItemsSource as List<QuestWizard> ?? [];
         if (current.Select(w => (w.File, w.Name, w.OnThisPc)).SequenceEqual(wizards.Select(w => (w.File, w.Name, w.OnThisPc)))) {
             return false;

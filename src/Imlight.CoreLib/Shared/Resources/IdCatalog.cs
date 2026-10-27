@@ -159,6 +159,8 @@ public static class IdCatalog {
         RunManagerFile("vendor and trainer presets", () => Imlight.CoreLib.Game.World.CustomNpcPresets.Write(OutputPath));
         // The Manager's Vendors & Trainers search: every shop keeper and trainer, what they sell and teach, where they stand.
         RunManagerFile("vendors and trainers", () => Imlight.CoreLib.Game.Tools.VendorGuide.Write(OutputPath));
+        // The Manager's Pet Talents and Pet Derby searches: every talent, what it does and which pets can have it.
+        RunManagerFile("pet talents", () => Imlight.CoreLib.Game.Tools.PetTalentGuide.Write(OutputPath));
     }
 
     private static readonly TimeSpan ManagerFilesDelay = TimeSpan.FromSeconds(90);

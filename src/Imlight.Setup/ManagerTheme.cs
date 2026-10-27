@@ -120,6 +120,8 @@ internal static class ManagerTheme {
         ["Gear"] = Color.FromRgb(52, 170, 200),
         ["Recipes"] = Color.FromRgb(168, 120, 60),
         ["Vendors"] = Color.FromRgb(120, 150, 60),
+        ["Pet Talents"] = Color.FromRgb(230, 110, 160),
+        ["Pet Derby"] = Color.FromRgb(240, 150, 60),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
         ["Customs"] = BLOCK_DO,

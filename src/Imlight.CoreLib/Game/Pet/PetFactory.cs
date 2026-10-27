@@ -63,6 +63,9 @@ public class PetFactory : RootDirectoryResourceSingleton<PetFactory>, IMemoryStr
 
     public static bool IsPetTemplate(uint templateId) => s_petTemplates.ContainsKey(templateId);
 
+    /// <summary>Every pet template of the game files, by template id (the Manager's pet talent list).</summary>
+    internal static IReadOnlyDictionary<uint, GameObjectTemplate> AllPetTemplates => s_petTemplates;
+
     /// <summary>
     /// Builds a hatched pet with a random name, the way the game names a new pet. Every way of getting a pet (shops,
     /// the Crown Shop, packs, drops, commands) comes through here; before, only hatched eggs got a name, so the others
