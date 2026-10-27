@@ -324,6 +324,12 @@ internal static class QuestMadlibs {
             var madlibs = new System.Collections.Generic.List<ActorMadlib>();
 
             foreach (var entry in dialog.m_dialogEntries.OfType<NPCDialogEntry>().Where(e => e.m_nameSTKey.IsEmpty)) {
+                // A line the game names itself (m_nameOverride, a key of its name tables: "Old Judd", "Gamma") keeps that
+                // name; giving it a persona's name over it named Old Judd for whoever else shows his picture.
+                if (HasGameName(entry.m_nameOverride)) {
+                    continue;
+                }
+
                 // The persona says who speaks; the actor template ID can be another NPC's ("pesky Skeletal Pirates" is
                 // Olivia Dawnwillow's persona with Ceren Nightchant's template; Niduus, 2026-10-25).
                 ulong templateId = SpeakerTemplateOf(entry.m_personaName, entry.m_actorTemplateID);
@@ -383,6 +389,9 @@ internal static class QuestMadlibs {
             }
         }
     }
+
+    private static bool HasGameName(string nameKey)
+        => !string.IsNullOrEmpty(nameKey) && !string.IsNullOrEmpty(Locale.GetEnglishName(nameKey));
 
     private static Dictionary<string, string> s_picturePersonas;
 

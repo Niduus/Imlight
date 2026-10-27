@@ -20,6 +20,9 @@ public static partial class QuestTextKeys {
     [GeneratedRegex(@"^[A-Za-z0-9\-]+_[A-Za-z0-9]+$")]
     private static partial Regex KeyPattern();
 
+    // Longer than any NPC's name: a line of dialogue put where the name goes.
+    private const int MAX_NAME_LENGTH = 48;
+
     private static bool IsText(string value)
         => !string.IsNullOrWhiteSpace(value) && !KeyPattern().IsMatch(value.Trim());
 
@@ -60,7 +63,8 @@ public static partial class QuestTextKeys {
         }
 
         var ours = quests.Where(q => q is not null && (IsText(q.m_questTitle)
-            || DialogEntries(q.m_dialogList).Any(e => IsText(e.m_dialog))
+            || DialogEntries(q.m_dialogList).Any(e => IsText(e.m_dialog) || IsText(e.m_nameOverride))
+            || q.m_goals.Any(g => DialogEntries(g.m_dialogList).Any(e => IsText(e.m_nameOverride)))
             || q.m_goals.Any(g => IsText(g.m_goalTitle)
                 || IsText(g.m_tallyCounter?.m_descriptor) || IsText(g.m_tallyCounter?.m_descriptor2)
                 || DialogEntries(g.m_dialogList).Any(e => IsText(e.m_dialog))))).ToList();
@@ -72,6 +76,7 @@ public static partial class QuestTextKeys {
             Want(quest.m_questTitle);
             foreach (var entry in DialogEntries(quest.m_dialogList)) {
                 Want(entry.m_dialog);
+                Want(entry.m_nameOverride);
             }
 
             foreach (var goal in quest.m_goals) {
@@ -80,6 +85,7 @@ public static partial class QuestTextKeys {
                 Want(goal.m_tallyCounter?.m_descriptor2);
                 foreach (var entry in DialogEntries(goal.m_dialogList)) {
                     Want(entry.m_dialog);
+                    Want(entry.m_nameOverride);
                 }
             }
         }
@@ -110,6 +116,19 @@ public static partial class QuestTextKeys {
             return found[0];
         }
 
+        // The name over a line (m_nameOverride) is a key of the game's name tables; our quests have it written out
+        // ("Old One"), which the game cannot show. A format key or a whole sentence there is no name at all: it goes,
+        // and the line is named for its persona (QuestMadlibs.NameDialogSpeakers).
+        string SpeakerName(string value) {
+            if (string.IsNullOrEmpty(value) || value.StartsWith("NPCFormats_", StringComparison.Ordinal)) {
+                return string.IsNullOrEmpty(value) ? value : "";
+            }
+
+            var picked = Pick(value, null, "NPCs", "WC-NPCs", "WCNameplates", "WizardMobs", "WizardGameObjects");
+
+            return IsText(picked) && picked.Length > MAX_NAME_LENGTH ? "" : picked;
+        }
+
         foreach (var quest in ours) {
             // The quest's own dialogue table is the one most of its lines are in.
             var allLines = DialogEntries(quest.m_dialogList)
@@ -128,6 +147,7 @@ public static partial class QuestTextKeys {
             quest.m_questTitle = Pick(quest.m_questTitle, null, "QuestTitle", "QuestTitle*");
             foreach (var entry in DialogEntries(quest.m_dialogList)) {
                 entry.m_dialog = Pick(entry.m_dialog, home, "WizQst*");
+                entry.m_nameOverride = SpeakerName(entry.m_nameOverride);
             }
 
             foreach (var goal in quest.m_goals) {
@@ -139,6 +159,7 @@ public static partial class QuestTextKeys {
 
                 foreach (var entry in DialogEntries(goal.m_dialogList)) {
                     entry.m_dialog = Pick(entry.m_dialog, home, "WizQst*");
+                    entry.m_nameOverride = SpeakerName(entry.m_nameOverride);
                 }
             }
         }
