@@ -125,6 +125,11 @@ internal static class PetRules {
     internal static int ItemFeedEnergyCost => Math.Max(0, ConfigurationManager.GetValue("Pets.ItemFeedEnergyCost", 1));
 
     /// <summary>
+    /// The pet XP the worn pet gets for each finished quest ([Pets] QuestXp, read live; Niduus 2026-10-27: 4).
+    /// </summary>
+    internal static int QuestXp => Math.Max(0, ConfigurationManager.GetValue("Pets.QuestXp", 4));
+
+    /// <summary>
     /// Gets the factor applied to XP from a source, for a wizard who counts as a member.
     /// </summary>
     /// <param name="source">Where the XP comes from.</param>

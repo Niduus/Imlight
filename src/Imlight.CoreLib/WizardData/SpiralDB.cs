@@ -196,6 +196,9 @@ public static class SpiralDB {
             // Zone signals the real game's server sends when a quest step starts or ends (a boss spawning, a door opening).
             QuestGoalEvents.ApplyAll(questTemplates, extraPath);
 
+            // Spells the real game's quests teach that our quest files lack (school spells, Ra, Plow and Revive).
+            QuestSpellRewards.ApplyAll(questTemplates, extraPath);
+
             // The Manager's quest changes (Create page, Quest Editor) go on copies; the files' own quests stay as they are.
             s_originalQuestTemplates = questTemplates;
             Imlight.CoreLib.Game.Quests.QuestOptions.Apply();
