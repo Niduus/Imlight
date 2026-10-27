@@ -387,7 +387,7 @@ internal static class Deckathalon {
         if (!isEvent && !tester && !s_alwaysOpen) {
             reply = current is null
                 ? "No Deckathalon is on right now. The Events card of the Imlight app starts one."
-                : $"The {current.School} Deckathalon is on now. Type .deckathalon to climb it.";
+                : $"The {current.School} Deckathalon is on now. Take its tower portal in the Duel Arena to climb it.";
 
             return false;
         }
@@ -453,7 +453,7 @@ internal static class Deckathalon {
             lines.Add($"You start from your checkpoint, on floor {run.Floor}.");
         }
 
-        lines.Add("Step into the battle circle to fight. Win to go up a floor. Type .deckathalon leave to leave.");
+        lines.Add("Step into the battle circle to fight. Win to go up a floor. Walk out of the tower to leave.");
         reply = string.Join("<br>", lines);
         GoToFloor(session, run);
 

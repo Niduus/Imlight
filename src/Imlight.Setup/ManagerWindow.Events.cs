@@ -103,7 +103,7 @@ internal sealed partial class ManagerWindow {
             "crafting, Daily Assignments, Team Up), the Pet Activity (pet games, snacks, hatching), Castle Tours, " +
             "Wizard City Day and the six Monthly Gauntlets. The Scroll of Fortune is always on, like the live game. " +
             "In the game, the event button at the top of the screen shows them, .events lists them and " +
-            ".deckathalon climbs the Deckathalon that is on.",
+            "the tower portals of the Duel Arena climb the Deckathalon that is on.",
             _eventNow,
             Row(Action(_eventsStart, StartEventsAsync), Action(Plain("End the events on now"), EndCurrentEventAsync),
                 Action(Danger(Plain("Clear the queue")), ClearEventsAsync)),

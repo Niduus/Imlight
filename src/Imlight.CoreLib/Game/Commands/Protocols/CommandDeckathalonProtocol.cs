@@ -7,16 +7,16 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// `.deckathalon` for the Deckathalon (Niduus, 2026-10-24; Game/Events/Deckathalon.cs): the event that is on and your
-/// best floor, climbing the tower, leaving it, and the best wizards of the event. The server's testers can climb any
-/// school's tower at any time (`.deckathalon start ice`).
+/// The Deckathalon's chat commands (Game/Events/Deckathalon.cs): `.leaderboard` and `.credits`. The `.deckathalon`
+/// command is vaulted (Niduus, 2026-10-27: "unable to give/spawn decks via command or program because of conflict with
+/// `.deck` and `.deckathalon`. Vault `.deckathalon`"): its `.deck` alias took the gear `.deck` command. Its code stays
+/// here, unregistered; climbs start at the tower portals of the Duel Arena.
 /// </summary>
 internal class CommandDeckathalonProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "";
 
-    [Command("deckathalon")]
-    [Alias("deck", "tower")]
+    // Vaulted: no [Command] attribute, so the dispatcher does not register it.
     private void DeckathalonCommand([Remainder] string text = "") {
         try {
             var words = (text ?? "").Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
