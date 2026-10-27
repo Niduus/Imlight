@@ -39,9 +39,12 @@
  * Last Updated: 3/18/2025
 */
 
+using System;
+using System.Collections.Generic;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Cantrips;
@@ -125,6 +128,48 @@ public class CantripFactory : RootSingleResourceSingleton<CantripFactory>, IMemo
     /// <returns>The maximum cantrip level.</returns>
     public static int GetMaxCantripLevel() 
         => s_cantripXPConfig.m_maxLevel;
+
+    private static readonly Lazy<List<(uint Id, CantripsSpellTemplate Template)>> s_playerCantrips = new(LoadPlayerCantrips);
+
+    /// <summary>
+    /// The cantrips a wizard learns in the game, with their template ids: the ones in Spells/Cantrips itself. Treasure
+    /// card copies (TC), raid sigils (the Raid folder and CantripSigil*) and the event rituals (passing bombs and
+    /// cannonballs, snowballs, Magic Touch) are left out, as the game only hands those out in raids and events.
+    /// </summary>
+    internal static List<(uint Id, CantripsSpellTemplate Template)> PlayerCantrips() => s_playerCantrips.Value;
+
+    private static List<(uint Id, CantripsSpellTemplate Template)> LoadPlayerCantrips() {
+        var ids = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            string file = location?.m_filename;
+            if (!string.IsNullOrEmpty(file) && location.m_id <= uint.MaxValue) {
+                ids.TryAdd(file, (uint) location.m_id);
+            }
+        }
+
+        var cantrips = new List<(uint, CantripsSpellTemplate)>();
+        foreach (var (path, template) in SpellFactory.AllSpellTemplates()) {
+            if (template is not CantripsSpellTemplate cantrip || !ids.TryGetValue(path, out var id)) {
+                continue;
+            }
+
+            var folder = path.Replace('\\', '/');
+            folder = folder[..Math.Max(0, folder.LastIndexOf('/'))];
+            var name = cantrip.m_name.ToString() ?? "";
+            if (!folder.EndsWith("Cantrips", StringComparison.OrdinalIgnoreCase)
+                || name.EndsWith("TC", StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("CantripSigil", StringComparison.OrdinalIgnoreCase)
+                || cantrip.m_cantripsSpellEffect is CantripsSpellEffect.CSE_Ritual or CantripsSpellEffect.CSE_Sigil) {
+                continue;
+            }
+
+            cantrips.Add((id, cantrip));
+        }
+
+        Logger.Information("Cantrips: {0} cantrips a wizard can learn.", Logger.Args(cantrips.Count));
+
+        return cantrips;
+    }
 
     public void DisposeStream() {
         s_cantripXPConfig = null;

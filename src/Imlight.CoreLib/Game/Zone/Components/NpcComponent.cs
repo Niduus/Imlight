@@ -169,6 +169,11 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
             return;
         }
 
+        // The Sneak cantrip keeps monsters from starting a battle for a while.
+        if (playerWizard is not null && Imlight.CoreLib.Game.Services.CantripService.IsSneaking(playerWizard.CharId)) {
+            return;
+        }
+
         if (!Reached(playerObj, playerActor, out var ground, out var height, out var reach)) {
             _engageAsked.Remove(playerActor);
 

@@ -42,13 +42,17 @@
  */
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Akka.Actor;
 using Imcodec.CoreObject;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Cantrips;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -68,10 +72,93 @@ internal class CantripService(SessionActor sessionActor) : MessageService(sessio
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new CantripService(parentActor));
 
+    // [Cantrips] UnlockAll (live): every wizard has the Cantrips tab at the top cantrip level and knows every cantrip,
+    // without the game's unlock quest (Niduus, 2026-10-27: "We might need cantrips as well. For now, unlock by default").
+    internal static bool UnlockAll => ConfigurationManager.GetValue("Cantrips.UnlockAll", true);
+
+    // Sneak (CSE_NoAggro): monsters do not start a battle with the wizard until this time.
+    private static readonly ConcurrentDictionary<ulong, DateTime> s_sneakUntil = new();
+    private const int SNEAK_SECONDS = 30;
+
+    /// <summary>True while the wizard's Sneak cantrip keeps monsters from starting a battle.</summary>
+    internal static bool IsSneaking(ulong charId)
+        => s_sneakUntil.TryGetValue(charId, out var until) && DateTime.UtcNow < until;
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PRELOGIN))]
+    private void ReceivePreLogin(ZONE_102_PROTOCOL.MSG_PRELOGIN message) {
+        try {
+            UnlockCantrips();
+        }
+        catch (Exception e) {
+            Logger.Error("Cantrips: could not unlock the cantrips: {0}", Logger.Args(e));
+        }
+    }
+
+    /// <summary>
+    /// With [Cantrips] UnlockAll on, raises the wizard to the top cantrip level and teaches every cantrip they do not
+    /// know yet. Runs on every zone entry, so turning the setting on reaches wizards already playing at their next
+    /// zone. Turning it off takes nothing away.
+    /// </summary>
+    private void UnlockCantrips() {
+        if (!UnlockAll) {
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        if (wizard?.GameStats is null || wizard.SpellbookBehavior is null) {
+            return;
+        }
+
+        _ = CantripFactory.Instance;
+        var maxLevel = (byte) Math.Clamp(CantripFactory.GetMaxCantripLevel(), 1, byte.MaxValue);
+        if (wizard.GameStats.m_cantripLevel < maxLevel) {
+            wizard.UpdateCantripLevel(maxLevel);
+            SendToSocket(new CANTRIPSMESSAGES_57_PROTOCOL.MSG_UPDATECANTRIPXP {
+                GlobalID = wizard.GameObjectID,
+                XP = wizard.GameStats.m_cantripXP,
+                Level = maxLevel
+            });
+            Logger.Information("Cantrips: {0} is cantrip level {1} now.", Logger.Args(wizard.CharId, maxLevel));
+        }
+
+        var taught = new List<string>();
+        foreach (var (id, template) in CantripFactory.PlayerCantrips()) {
+            if (wizard.SpellbookBehavior.HasSpell(id)) {
+                continue;
+            }
+
+            var spell = SpellFactory.GetSpell(id);
+            if (spell is null || !wizard.LearnSpell(spell)) {
+                continue;
+            }
+
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+            taught.Add(template.m_name.ToString());
+        }
+
+        if (taught.Count > 0) {
+            Logger.Information("Cantrips: taught {0} {1} cantrips: {2}.",
+                Logger.Args(wizard.CharId, taught.Count, string.Join(", ", taught)));
+        }
+    }
+
     [MessageHandler(typeof(CANTRIPSMESSAGES_57_PROTOCOL.MSG_CANTRIPSSPELLCAST))]
     private void ReceiveCantripSpellCast(CANTRIPSMESSAGES_57_PROTOCOL.MSG_CANTRIPSSPELLCAST message) {
         var wizard = GetActiveWizard();
         CantripsSpellTemplate cantrip = CantripFactory.CreateCantripTemplateFromId(message.SpellTemplateID);
+        if (wizard is null || cantrip is null) {
+            return;
+        }
+
+        // Cantrips the server cannot do yet (healing, mana and fishing luck radiances, Calescent Tracker, Second Mark
+        // and Second Recall) cost no energy and say so, instead of taking energy and doing nothing.
+        if (cantrip.m_cantripsSpellEffect is CantripsSpellEffect.CSE_Beneficial or CantripsSpellEffect.CSE_HotCold
+            or CantripsSpellEffect.CSE_Mark or CantripsSpellEffect.CSE_Recall) {
+            SendToSocket(new CANTRIPSMESSAGES_57_PROTOCOL.MSG_CANTRIPSRESPONSE { EnergyUsed = 0, CooldownSeconds = 0, OutOfEnergy = 0 });
+            InformGameClient("This cantrip does not work on this server yet.");
+
+            return;
+        }
 
         // Rituals require a target to be selected first, so don't use energy here
         if (cantrip.m_cantripsSpellEffect != CantripsSpellEffect.CSE_Ritual) {
@@ -92,7 +179,11 @@ internal class CantripService(SessionActor sessionActor) : MessageService(sessio
                 CastEmoteCantrip(cantrip, ref castEffect);
                 break;
             case CantripsSpellEffect.CSE_PlayEffect:
+            case CantripsSpellEffect.CSE_PlaySchoolEffect:
                 CastPlayEffectCantrip(cantrip, ref castEffect);
+                break;
+            case CantripsSpellEffect.CSE_NoAggro:
+                CastSneakCantrip(wizard);
                 break;
             case CantripsSpellEffect.CSE_Teleport:
                 CastTeleportCantrip(cantrip);
@@ -234,16 +325,30 @@ internal class CantripService(SessionActor sessionActor) : MessageService(sessio
     private void CastPlayEffectCantrip(CantripsSpellTemplate cantrip, ref CANTRIPSMESSAGES_57_PROTOCOL.MSG_CASTEFFECT castEffect) {
         // note that the only cantrip from this section that needs rng is the dice roll one
         // all the other cantrips in this section only have 1 animation
+        var count = Math.Min(cantrip.m_animationKFMs?.Count ?? 0, cantrip.m_animationNames?.Count ?? 0);
+        if (count == 0) {
+            return;
+        }
+
         var rand = new Random();
-        int num = rand.Next(cantrip.m_animationKFMs.Count);
+        int num = rand.Next(count);
         castEffect.AnimationKFM = cantrip.m_animationKFMs[num];
         castEffect.AnimationName = cantrip.m_animationNames[num];
     }
 
+    private void CastSneakCantrip(Wizard wizard) {
+        // Monsters leave the wizard alone for 30 seconds (NpcComponent.OnPlayerMove asks IsSneaking).
+        s_sneakUntil[wizard.CharId] = DateTime.UtcNow.AddSeconds(SNEAK_SECONDS);
+        ZoneBroadcast(new CANTRIPSMESSAGES_57_PROTOCOL.MSG_CANTRIPNOAGGRO { GlobalID = wizard.GameObjectID }, isSelfless: false);
+    }
+
     private void CastTeleportCantrip(CantripsSpellTemplate cantrip) {
+        // "Zone" or "Zone=Location" (To Buttersfield: "Wysteria/PA_Hub=Target_TeleportToHampshireButtersfield").
+        var parameter = cantrip.m_effectParameter.ToString() ?? "";
+        var split = parameter.IndexOf('=');
         var tpmsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
-            DestinationLocation = "Start",
-            DestinationZone = cantrip.m_effectParameter,
+            DestinationLocation = split > 0 ? parameter[(split + 1)..] : "Start",
+            DestinationZone = split > 0 ? parameter[..split] : parameter,
             SendToClient = true,
             OwnerCharId = GetActiveWizard().CharId
         };
