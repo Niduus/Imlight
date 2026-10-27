@@ -18,6 +18,8 @@
 
 using System;
 using Akka.Actor;
+using Imcodec.Cryptography;
+using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -31,6 +33,12 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// A gold wisp gives gold to the first wizard who walks into it, more for higher levels.
 /// </summary>
 internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory {
+
+    // StateData\PlayerMobileStates.xml; the effect and sound the game's WC_WispGold template names (same as health).
+    private static readonly uint RESET_STATE_ID = StringHash.Compute("Unremarkable");
+    private static readonly uint WISP_STATE_ID = StringHash.Compute("ActionEmoting");
+    private const string PARTICLE_ASSET = "Character/FX_WispRed_Dsppr.nif";
+    private const string SOUND_ASSET = "Sound/GUI/ui_health_powerup_01.wav";
 
     private readonly WispPickup _pickup = new();
     private bool _collected;
@@ -49,11 +57,18 @@ internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent
 
         _collected = true;
         var level = Math.Max(1, playerWizard.MagicSchoolBehavior.Level);
+        var goldBefore = playerWizard.GameStats.m_currentGold;
         playerWizard.AddGold(Random.Shared.Next(level * 2, level * 5 + 1) + 10);
+        var goldGained = playerWizard.GameStats.m_currentGold - goldBefore;
         playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
             Gold = playerWizard.GameStats.m_currentGold,
             MaxGold = playerWizard.GameStats.m_baseGoldPouch
         });
+
+        // The game's own gold wisp (WC_WispGold) plays the same pickup sparkle and sound as a health wisp. Nothing
+        // showed or played, and nothing said how much it gave (Niduus, 2026-10-27).
+        SendPlayerStateChange(playerWizard);
+        var said = $"You picked up {goldGained} gold.";
 
         // [World] GoldWispsGiveCrowns (Niduus, 2026-10-27: "Gold Wisps give players GOLD (With a config in manager to
         // gain crowns)"): on top of the gold, GoldWispCrowns crowns go to the wizard's account. Read live.
@@ -67,9 +82,47 @@ internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent
                 CharacterID = playerWizard.CharId,
                 CacheBalanceForCSSegmentation = 1
             });
+            said = $"You picked up {goldGained} gold and {crowns} crowns.";
         }
 
+        playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = said, Modal = 0 });
         Entity.DeleteObject("WispDespawn", playerWizard.GameObjectID);
+    }
+
+    private void SendPlayerStateChange(Wizard playerWizard) {
+        var playerGid = playerWizard.GameObjectID;
+
+        // Already in ActionEmoting (another wisp just now): Unremarkable first, so this one plays too.
+        if (playerWizard.CurrentAnimationState == WISP_STATE_ID) {
+            PlayerBroadcast(new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+                GameObjectID = playerGid,
+                State = RESET_STATE_ID,
+                Data = new ByteString(),
+                IgnoreIfCurrentStateIsOff = 0,
+            });
+            playerWizard.CurrentAnimationState = RESET_STATE_ID;
+        }
+
+        var state = new EmoteStateOverrideInfo {
+            m_stateNameID = WISP_STATE_ID,
+            m_emoteName = "",
+            m_particleAsset = PARTICLE_ASSET,
+            m_loop = false,
+            m_particleNode = "",
+            m_soundAsset = SOUND_ASSET,
+            m_wizBangID = 0
+        };
+
+        var serializer = new ObjectSerializer(Versionable: false, Behaviors: SerializerFlags.None);
+        if (serializer.Serialize(state, 1, out var emoteData)) {
+            PlayerBroadcast(new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+                GameObjectID = playerGid,
+                State = WISP_STATE_ID,
+                Data = emoteData,
+                IgnoreIfCurrentStateIsOff = 0,
+            });
+            playerWizard.CurrentAnimationState = WISP_STATE_ID;
+        }
     }
 
 }
