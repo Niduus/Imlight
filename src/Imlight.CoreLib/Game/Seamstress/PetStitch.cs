@@ -80,7 +80,15 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
             return false;
         }
 
-        if (!TryPrepare([pet], 1, crowns, out failure)) {
+        // With a full backpack the look pet goes to the bank, like a hatched pet does.
+        var toBank = !SeamstressOverflow.FitsBackpack(wizard, look);
+        if (toBank && !SeamstressOverflow.FitsBank(wizard, look)) {
+            failure = "the backpack and the bank are both full";
+
+            return false;
+        }
+
+        if (!TryPrepare([pet], toBank ? 0 : 1, crowns, out failure)) {
             return false;
         }
 
@@ -92,16 +100,19 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
         pet.m_primaryColor = color1;
         pet.m_secondaryColor = color2;
         pet.m_pattern = StitchRules.LockOf(pet);
-        if (!ItemSync.TrySerialize(look, out _) || !wizard.InventoryBehavior.AddItem(look)) {
+        if (!ItemSync.TrySerialize(look, out _) || (!toBank && !wizard.InventoryBehavior.AddItem(look))) {
             (pet.m_displayID, pet.m_primaryColor, pet.m_secondaryColor, pet.m_pattern) = before;
             failure = "the look pet could not be added";
 
             return false;
         }
 
-        if (!Save(crowns, [pet, look], [])) {
+        WizClientObjectItem[] changed = toBank ? [pet] : [pet, look];
+        if (!Save(crowns, changed, [])) {
             (pet.m_displayID, pet.m_primaryColor, pet.m_secondaryColor, pet.m_pattern) = before;
-            wizard.InventoryBehavior.RemoveItem(look);
+            if (!toBank) {
+                wizard.InventoryBehavior.RemoveItem(look);
+            }
             failure = "the pets could not be stored";
 
             return false;
@@ -110,7 +121,11 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
         Logger.Information("[Seamstress] Pet {0} of {1} unstitched; its look came back as pet {2} (template {3}).",
             Logger.Args(pet.m_globalID.Full, wizard.CharId, look.m_globalID.Full, lookId));
         Refresh(pet);
-        ItemSync.SendAdded(session, wizard, look);
+        if (toBank) {
+            SeamstressOverflow.GiveToBank(session, wizard, look);
+        } else {
+            ItemSync.SendAdded(session, wizard, look);
+        }
         SendCrowns(crowns);
 
         return true;

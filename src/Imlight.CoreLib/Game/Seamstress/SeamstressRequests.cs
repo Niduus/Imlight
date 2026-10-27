@@ -31,7 +31,8 @@
  * The client sends item ids only. It never checks for a free backpack slot and never takes off a worn
  * input, so the transaction does both. A refusal shows the client only its generic failure box.
  * The item lock does not stop a stitch or an unstitch (the game lists locked items in the window); the results
- * stay locked instead (Niduus, 2026-10-25: every stitch was refused because his items were locked).
+ * stay locked instead (Niduus, 2026-10-25: every stitch was refused because his items were locked). With a full
+ * backpack the appearance item of an unstitch goes to the bank (Niduus, 2026-10-27: unstitching never worked).
  *
  * TODO:
  *
@@ -148,8 +149,21 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
         }
 
         StitchedItemFactory.CopySockets(stitchedItem, statsItem);
-        if (!TryApply([stitchedItem], [statsItem, appearanceItem], unstitchCrowns, out var failure)) {
+
+        // The stats item takes the stitched item's slot. With a full backpack the appearance item goes to the bank,
+        // like a drop does, so a full backpack does not stop an unstitch.
+        var toBank = !SeamstressOverflow.FitsBackpack(wizard, appearanceItem);
+        if (toBank && !SeamstressOverflow.FitsBank(wizard, appearanceItem)) {
+            return Deny($"unstitch of item {itemId}", "the backpack and the bank are both full");
+        }
+
+        WizClientObjectItem[] results = toBank ? [statsItem] : [statsItem, appearanceItem];
+        if (!TryApply([stitchedItem], results, unstitchCrowns, out var failure)) {
             return Deny($"unstitch of item {itemId}", failure);
+        }
+
+        if (toBank) {
+            SeamstressOverflow.GiveToBank(session, wizard, appearanceItem);
         }
 
         return true;
