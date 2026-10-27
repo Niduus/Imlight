@@ -234,8 +234,16 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         if (state.HasAvailableQuest) {
             var quests = state.AvailableQuests;
             HandleQuestOffer(playerActor, quests[(int) Math.Min(serviceOptionIndex, (uint) quests.Count - 1)], playerCharacter);
+
+            return;
         }
+
+        Entity.GetComponentOfType<InteractServiceMementoComponent>()?.EndTalk(playerActor, "no quest to offer");
     }
+
+    /// <summary>True when this NPC has a quest the wizard can take right now.</summary>
+    internal bool HasOfferFor(Wizard wizard)
+        => wizard is not null && GetServiceOptions(wizard).Any();
 
     private PlayerQuestOfferState GetOrUpdatePlayerState(Wizard wizard, bool forceUpdate = false) {
         if (_givesVersion != QuestOptions.Version) {

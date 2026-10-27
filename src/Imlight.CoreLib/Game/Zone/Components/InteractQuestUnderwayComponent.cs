@@ -191,7 +191,11 @@ internal sealed class InteractQuestUnderwayComponent(ZoneEntity entity)
         var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasUnderwayQuest && state.UnderwayQuest != null) {
             ShowQuestUnderwayDialog(playerActor, state.UnderwayQuest);
+
+            return;
         }
+
+        Entity.GetComponentOfType<InteractServiceMementoComponent>()?.EndTalk(playerActor, "no quest underway");
     }
 
     private PlayerQuestUnderwayState GetOrUpdatePlayerState(Wizard wizard, bool forceUpdate = false) {

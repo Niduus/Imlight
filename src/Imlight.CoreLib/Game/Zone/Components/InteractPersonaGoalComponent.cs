@@ -310,7 +310,11 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasActiveGoal) {
             HandlePersonaGoalCompletion(playerActor, playerCharacter, playerObject, state);
+
+            return;
         }
+
+        Entity.GetComponentOfType<InteractServiceMementoComponent>()?.EndTalk(playerActor, "no quest step here");
     }
 
     private PlayerPersonaGoalState GetOrUpdatePlayerState(Wizard wizard, bool forceUpdate = false) {
@@ -489,6 +493,12 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             return;
         }
 
+        // Only go on to the next quest when this NPC has one for the wizard now. Asking the game to talk again with
+        // nothing to offer held the camera on the NPC (Niduus 2026-10-27, Muldoon gives his next quest only later).
+        if (Entity.GetComponentOfType<InteractQuestOfferComponent>() is not { } offers || !offers.HasOfferFor(playerCharacter)) {
+            return;
+        }
+
         var reinteractMsg = new QUEST_MESSAGES_52_PROTOCOL.MSG_INTERACTNPC {
             GlobalID = Entity.ActiveGameObject.m_nMobileID,
             ServiceName = "",
@@ -515,6 +525,13 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         var serviceMementoComponent = Entity.GetComponentOfType<InteractServiceMementoComponent>();
         if (serviceMementoComponent == null) {
             Logger.Warning("No service memento component found for delayed quest offer");
+
+            return;
+        }
+
+        // The offer can be gone in the moment since the talk was asked for (taken on another NPC): end the talk.
+        if (Entity.GetComponentOfType<InteractQuestOfferComponent>() is not { } offers || !offers.HasOfferFor(message.PlayerCharacter)) {
+            serviceMementoComponent.EndTalk(message.PlayerActor, "next quest no longer offered");
 
             return;
         }
