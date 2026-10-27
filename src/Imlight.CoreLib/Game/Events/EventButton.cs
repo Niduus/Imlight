@@ -257,7 +257,11 @@ internal static class EventButton {
         }
 
         try {
-            property.SetValue(player, Convert.ChangeType(Math.Clamp(count, 0, byte.MaxValue), property.PropertyType));
+            // The game's event window (client 0x1403d70f0) reads an activity with goal 1 and a daily limit
+            // (Deckathalon "use treasure cards", 0/20) from the HIGH byte, every other one from the low byte.
+            // Both bytes carry the count so each kind of activity shows it.
+            var clamped = Math.Clamp(count, 0, byte.MaxValue);
+            property.SetValue(player, Convert.ChangeType(clamped | (clamped << 8), property.PropertyType));
         }
         catch (Exception e) {
             Logger.Warning("Event button: could not set {0}: {1}", Logger.Args(property.Name, e.Message));
