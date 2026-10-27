@@ -494,7 +494,7 @@ internal static class QuestChecker {
 
     // A "go to" step's zone tag, or the step's destination zone.
     private static string RawZoneOf(GoalTemplate goal) {
-        string tag = goal is WaypointGoalTemplate waypoint ? waypoint.m_zoneTag : null;
+        string tag = goal is WaypointGoalTemplate waypoint ? (string) waypoint.m_zoneTag : null;
         string destination = goal.m_destinationZone;
 
         return string.IsNullOrEmpty(tag) ? destination ?? "" : tag;
