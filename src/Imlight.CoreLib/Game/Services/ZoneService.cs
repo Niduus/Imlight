@@ -765,6 +765,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         // Only a world the Spiral Door listed for this wizard (WorldAccess).
+        WorldAccess.Remember(GetActiveWizard());
         var world = message.World.ToString();
         if (!WorldAccess.OpenWorlds(GetActiveWizard()).Contains(world.Split('/')[0])) {
             Logger.Warning("{0} asked the Spiral Door for {1}, which their quests have not opened.",

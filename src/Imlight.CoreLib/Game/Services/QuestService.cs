@@ -1118,9 +1118,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         NoteProgress(wizard);
     }
 
-    // For the Quests tab of ImlightManager.
-    private void NoteProgress(Wizard wizard)
-        => Imlight.CoreLib.Game.Tools.QuestGuide.Update(wizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
+    // For the Quests tab of ImlightManager. A world a quest just opened (or one opened before this was kept) is saved
+    // on the character for good too (WorldAccess).
+    private void NoteProgress(Wizard wizard) {
+        Imlight.CoreLib.Game.Tools.QuestGuide.Update(wizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
+        Imlight.CoreLib.Game.World.WorldAccess.Remember(wizard);
+    }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatVictory(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
