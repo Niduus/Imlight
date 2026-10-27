@@ -285,6 +285,16 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_blockRatingAll = m_blockRatingAll,
             m_criticalHitPercentAll = CombatCriticals.RatingToChance(m_criticalHitRatingAll, Level),
             m_blockPercentAll = CombatCriticals.RatingToChance(m_blockRatingAll, Level),
+            // School Mastery from amulets and other gear: the game only lets a power pip pay 2 for a mastered school's
+            // cards when the battle stats say so. Left out, mastery cards it could afford stayed greyed out (Niduus,
+            // 2026-10-27).
+            m_balanceMastery = m_balanceMastery,
+            m_deathMastery = m_deathMastery,
+            m_fireMastery = m_fireMastery,
+            m_iceMastery = m_iceMastery,
+            m_lifeMastery = m_lifeMastery,
+            m_mythMastery = m_mythMastery,
+            m_stormMastery = m_stormMastery,
         };
     }
 
