@@ -48,6 +48,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.WizBang;
@@ -92,7 +93,13 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
         var chosen = ChooseOption(GetOfferedOptions(playerCharacter).ToList(), CurrentState());
         if (chosen is not null) {
             Apply(chosen, playerActor, playerObject);
+
+            return;
         }
+
+        // Said in the log so a puzzle piece that does nothing can be traced to its state and requirements.
+        Logger.Warning("Use of {0} did nothing for {1}: no option fits its state '{2}' and the wizard's progress.",
+            Logger.Args(ObjectName, playerCharacter?.CharId, CurrentState()));
     }
 
     /// <summary>
@@ -236,7 +243,16 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
     private static bool ChangesWorld(InteractOptionTemplate option)
         => !string.IsNullOrEmpty(EnterState(option))
         || !string.IsNullOrEmpty(option.m_questEvent)
-        || Results(option)?.m_results?.Any(r => r is ResPostEvent or ResModifyTriggerObject or ResActorDialog or ResMinigame) == true;
+        || Results(option)?.m_results?.Any(ChangesWorld) == true;
+
+    // Results that move a zone or quest on: a use that runs one of them is a real step. A quest event (Avalon's Deep
+    // Water teleporter, the Silverharp cage), a token or counter (raid coins, plants and essences, the Gauntlet's
+    // library pages), a shown or hidden piece or a spawn were once not counted, so those objects could not be used.
+    private static bool ChangesWorld(Result result)
+        => result is ResPostEvent or ResModifyTriggerObject or ResActorDialog or ResMinigame or ResPostQuestEvent
+            or ResZoneTokenEnable or ResZoneTokenDisable or ResZoneTokenModify or ResZoneTokenReset or ResZoneCounter
+            or ResAddDynaMod or ResRemoveDynaMod or ResAddTriggerObject or ResRemoveTriggerObject or ResSpawn
+            or ResStateChange or ResIfThenElse;
 
     private static string EnterState(InteractOptionTemplate option)
         => (option as InteractStateOptionTemplate)?.m_enterState.ToString();

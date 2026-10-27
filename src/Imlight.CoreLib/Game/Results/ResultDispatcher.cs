@@ -38,6 +38,7 @@ namespace Imlight.CoreLib.Game.Results;
 public static class ResultDispatcher {
 
     private static readonly Dictionary<Type, MethodInfo> s_resultHandlers = [];
+    private static readonly Dictionary<Type, Type> s_handlersByType = [];
     private const float QUERY_WIZARD_TIMEOUT_SECONDS = 5.0f;
 
     static ResultDispatcher()
@@ -234,6 +235,11 @@ public static class ResultDispatcher {
     /// Finds the appropriate handler type for a given result type (exposed for ResultExecutorActor)
     /// </summary>
     internal static Type FindHandlerForResult(Type resultType, IResultContext context) {
+        // By the result's own type first, so a result is never left undone because the context's list lacks it.
+        if (s_handlersByType.TryGetValue(resultType, out var byType)) {
+            return byType;
+        }
+
         foreach (var kv in s_resultHandlers) {
             var handlerType = kv.Key;
             var shouldAttachMethod = kv.Value;
@@ -307,6 +313,9 @@ public static class ResultDispatcher {
 
             if (shouldAttachMethod != null) {
                 s_resultHandlers.Add(type, shouldAttachMethod);
+                if (!type.IsGenericTypeDefinition && type.BaseType?.IsGenericType == true) {
+                    s_handlersByType.TryAdd(type.BaseType.GetGenericArguments()[0], type);
+                }
             }
             else {
                 Logger.Warning("Could not find ShouldAttachToContext method on: {0}",

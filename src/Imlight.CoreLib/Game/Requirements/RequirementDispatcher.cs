@@ -57,6 +57,7 @@ namespace Imlight.CoreLib.Game.Requirements;
 public static class RequirementDispatcher {
 
     private static readonly Dictionary<Type, MethodInfo> s_requirementHandlers = [];
+    private static readonly Dictionary<Type, Type> s_handlersByType = [];
 
     // ctor
     static RequirementDispatcher()
@@ -134,6 +135,13 @@ public static class RequirementDispatcher {
     /// Finds the appropriate handler type for a given requirement type.
     /// </summary>
     internal static Type FindHandlerForRequirement(Type requirementType, IRequirementContext context) {
+        // A handler is chosen by the requirement's own type. Asking each handler whether the context's list holds its
+        // type failed whenever a requirement was checked with another list than the context's: ReqHasEntry checks
+        // came back "no handler" (false) 10,643 times on 2026-10-25, which locked steps and doors that should open.
+        if (s_handlersByType.TryGetValue(requirementType, out var byType)) {
+            return byType;
+        }
+
         foreach (var kv in s_requirementHandlers) {
             var handlerType = kv.Key;
             var shouldAttachMethod = kv.Value;
@@ -201,6 +209,9 @@ public static class RequirementDispatcher {
 
             if (shouldAttachMethod != null) {
                 s_requirementHandlers.Add(type, shouldAttachMethod);
+                if (!type.IsGenericTypeDefinition && type.BaseType?.IsGenericType == true) {
+                    s_handlersByType.TryAdd(type.BaseType.GetGenericArguments()[0], type);
+                }
             }
             else {
                 Logger.Warning("Could not find ShouldAttachToContext method on: {0}",
