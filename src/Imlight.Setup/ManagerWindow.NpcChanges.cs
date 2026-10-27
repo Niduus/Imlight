@@ -258,7 +258,7 @@ internal sealed partial class ManagerWindow {
                     Add(id);
 
                     return Task.CompletedTask;
-                })),
+                }), spells: kind == "Spell"),
             },
             byId,
             Action(Plain("Add this ID"), () => {

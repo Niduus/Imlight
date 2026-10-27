@@ -1061,6 +1061,7 @@ internal sealed partial class ManagerWindow {
                             },
                         },
                     };
+                    SpellCardTip(row, spell.Id, spell.School);
                     row.Click += (_, _) => {
                         block.Set("Spell", spell.Name);
                         block.Set("SpellID", spell.Id);

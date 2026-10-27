@@ -152,6 +152,27 @@ internal sealed partial class ManagerWindow {
         return host;
     }
 
+    /// <summary>
+    /// Pointing at <paramref name="target"/> (a search result row) shows the spell's card big, as a card in a deck does,
+    /// so versions with the same name can be told apart before one is picked (player suggestion, 2026-10-27).
+    /// </summary>
+    private void SpellCardTip(Control target, uint spellId, string school) {
+        target.PointerEntered += (_, _) => {
+            if (ToolTip.GetTip(target) is not null) {
+                return;
+            }
+
+            if (CardOf(spellId) is null) {
+                EnsureGameIcons(() => { });
+
+                return;
+            }
+
+            ToolTip.SetTip(target, SpellThumb(spellId, school, 200));
+            ToolTip.SetShowDelay(target, 150);
+        };
+    }
+
     /// <summary>A mob's portrait: a round frame in its school's colour with its school's icon and its initials.</summary>
     private Control MobPortrait(string name, string school, double size = 72) {
         var initials = string.Concat((name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(w => char.IsLetter(w[0])).Take(2).Select(w => char.ToUpperInvariant(w[0])));

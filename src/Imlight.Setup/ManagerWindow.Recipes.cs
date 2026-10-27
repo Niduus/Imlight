@@ -645,7 +645,7 @@ internal sealed partial class ManagerWindow {
         return new Button {
             Content = "Find",
             Flyout = SearchFlyout("Search items and cards by name or ID", q => [.. LookupResults("Item", q), .. LookupResults("Spell", q).Take(10)],
-                picked => box.Text = picked.ToString(CultureInfo.InvariantCulture)),
+                picked => box.Text = picked.ToString(CultureInfo.InvariantCulture), spells: true),
         };
     }
 

@@ -433,7 +433,7 @@ internal sealed partial class ManagerWindow {
                     Add(id);
 
                     return Task.CompletedTask;
-                })),
+                }), spells: kind == "Spell"),
             },
             byId,
             Action(Plain("Add this ID"), () => {
@@ -507,7 +507,7 @@ internal sealed partial class ManagerWindow {
             .Select(e => (ulong.Parse(e.Id, CultureInfo.InvariantCulture), string.Join("  ·  ", new[] { e.Name, e.Detail, $"ID {e.Id}" }.Where(t => t.Length > 0))))];
 
     // A search box with its results under it; pressing a result picks it.
-    private Flyout SearchFlyout(string watermark, Func<string, List<(ulong Id, string Text)>> search, Action<ulong> picked) {
+    private Flyout SearchFlyout(string watermark, Func<string, List<(ulong Id, string Text)>> search, Action<ulong> picked, bool spells = false) {
         var box = new TextBox { Width = 420, Watermark = watermark };
         var results = new StackPanel { Spacing = 2 };
         var flyout = new Flyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
@@ -525,6 +525,11 @@ internal sealed partial class ManagerWindow {
                     HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left, Background = Brushes.Transparent,
                     Content = new TextBlock { Text = text },
                 };
+                // A spell's row shows its card when pointed at; other rows (items, NPCs) have none.
+                if (spells && id <= uint.MaxValue && (_spellBook is null || CardOf((uint) id) is not null)) {
+                    SpellCardTip(b, (uint) id, _bossCatalog?.Spells.GetValueOrDefault((uint) id)?.School ?? "");
+                }
+
                 b.Click += (_, _) => {
                     flyout.Hide();
                     picked(id);
