@@ -375,28 +375,32 @@ internal static class CharacterEffectHelper {
         effectList[schoolIndex] += value;
     }
 
-    private static void ApplySchoolMastery(ServerWizGameStats stats, string effectCategory) {
+    // Counted, so taking off one of two Fire mastery items keeps Fire mastered.
+    private static void ApplySchoolMastery(ServerWizGameStats stats, string effectCategory) => ChangeSchoolMastery(stats, effectCategory, 1);
+
+    private static void ChangeSchoolMastery(ServerWizGameStats stats, string effectCategory, int change) {
+        static int Changed(int count, int change) => System.Math.Max(0, count + change);
         switch (effectCategory) {
             case var category when category.Contains("Ice"):
-                stats.m_iceMastery = 1;
+                stats.m_iceMastery = Changed(stats.m_iceMastery, change);
                 break;
             case var category when category.Contains("Life"):
-                stats.m_lifeMastery = 1;
+                stats.m_lifeMastery = Changed(stats.m_lifeMastery, change);
                 break;
             case var category when category.Contains("Fire"):
-                stats.m_fireMastery = 1;
+                stats.m_fireMastery = Changed(stats.m_fireMastery, change);
                 break;
             case var category when category.Contains("Myth"):
-                stats.m_mythMastery = 1;
+                stats.m_mythMastery = Changed(stats.m_mythMastery, change);
                 break;
             case var category when category.Contains("Death"):
-                stats.m_deathMastery = 1;
+                stats.m_deathMastery = Changed(stats.m_deathMastery, change);
                 break;
             case var category when category.Contains("Storm"):
-                stats.m_stormMastery = 1;
+                stats.m_stormMastery = Changed(stats.m_stormMastery, change);
                 break;
             case var category when category.Contains("Balance"):
-                stats.m_balanceMastery = 1;
+                stats.m_balanceMastery = Changed(stats.m_balanceMastery, change);
                 break;
         }
     }
@@ -485,31 +489,7 @@ internal static class CharacterEffectHelper {
         effectList[index] -= value;
     }
 
-    private static void RemoveSchoolMastery(ServerWizGameStats stats, string effectCategory) {
-        switch (effectCategory) {
-            case var category when category.Contains("Ice"):
-                stats.m_iceMastery = 0;
-                break;
-            case var category when category.Contains("Life"):
-                stats.m_lifeMastery = 0;
-                break;
-            case var category when category.Contains("Fire"):
-                stats.m_fireMastery = 0;
-                break;
-            case var category when category.Contains("Myth"):
-                stats.m_mythMastery = 0;
-                break;
-            case var category when category.Contains("Death"):
-                stats.m_deathMastery = 0;
-                break;
-            case var category when category.Contains("Storm"):
-                stats.m_stormMastery = 0;
-                break;
-            case var category when category.Contains("Balance"):
-                stats.m_balanceMastery = 0;
-                break;
-        }
-    }
+    private static void RemoveSchoolMastery(ServerWizGameStats stats, string effectCategory) => ChangeSchoolMastery(stats, effectCategory, -1);
 
     private static void RemoveDamageIncrease(ServerWizGameStats stats, string effectName, WizStatisticEffect statistic) {
         if (effectName.Contains("Flat")) {
