@@ -489,8 +489,35 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             return true;
         }
 
+        // A character the zone's own triggers bring out with a dynamod (the old Gretta Darkkettle, WC-ST05-NPC02, shown in
+        // her house only while a player holds one of her old quests) is shown by that dynamod alone: the quests she
+        // offers are retired ones, and offering them put a second Gretta next to the new one (Niduus 2026-10-27).
+        if (ZoneTriggersShowIt()) {
+            return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard);
+        }
+
         return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
             || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true;
+    }
+
+    private bool? _zoneTriggersShowIt;
+
+    // Whether a trigger of this zone has a dynamod that shows this object (by its zone tag).
+    private bool ZoneTriggersShowIt() {
+        if (_zoneTriggersShowIt is { } known) {
+            return known;
+        }
+
+        var tag = Entity.Info?.m_zoneTag;
+        var triggers = Entity.Zone?.TriggersByName;
+        if (string.IsNullOrEmpty(tag) || triggers is null || triggers.Count == 0) {
+            return false;
+        }
+
+        _zoneTriggersShowIt = triggers.Values.Any(t => t?.m_results?.m_results?.OfType<ResAddDynaMod>().Any(d => d.m_bShowsObject
+            && string.Equals(d.m_dynaModClientTag, tag, System.StringComparison.OrdinalIgnoreCase)) == true);
+
+        return _zoneTriggersShowIt.Value;
     }
 
     // Looked at again every few seconds while the player moves, so a quest step that starts brings its NPC out.
