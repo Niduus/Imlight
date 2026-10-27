@@ -86,7 +86,6 @@ internal static class IniFile {
         ("Bazaar", "StartStock", "100", "999"),
         // Niduus, 2026-10-27 ("bazaar no stocked"): the whole Bazaar in 6 parts showed nothing; each tab gets its own items.
         ("Bazaar", "SendEverything", "true", "false"),
-        ("Bazaar", "SendInParts", "true", "false"),
         // Niduus, 2026-10-27 ("Willcasts crash the game"): the pet card sent as a Spell crashed the game.
         ("Pets", "WillCastCardData", "Spell", "Power"),
     ];
