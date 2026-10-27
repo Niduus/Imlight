@@ -539,18 +539,19 @@ internal partial class PetService {
         var growth = new PetProgress.PetGrowth();
         var game = Imlight.CoreLib.Game.Pet.PetGameConfig.FindGame(_play.Game);
         var cost = Imlight.CoreLib.Game.Pet.PetGameConfig.TryGetEnergyCost(_play.Game, behavior.m_level, out var energy) ? energy : 2;
-        var xp = PlayedGameXp(cost, score);
+        var grade = PlayedGameGrade(score);
+        var xp = PlayedGameXp(cost, grade);
         PetProgress.AddXp(pet, xp, growth);
 
         PetStatModificationSet chosen = null;
         var tracks = game?.m_trackChoices;
-        if (tracks is { Count: > 0 } && score > 0f) {
+        if (tracks is { Count: > 0 } && grade >= PlayedGameStatsMinGrade) {
             chosen = tracks[_play.Track >= 0 && _play.Track < tracks.Count ? _play.Track : s_playRandom.Next(tracks.Count)];
             PetProgress.ApplyStatChanges(pet, chosen?.m_modifications, growth);
         }
 
-        Logger.Information("Pet game: {0} ended ({1}), score {2:0.00}: {3} XP, stats from track {4}.",
-            Logger.Args(_play.Game, why, score, xp, chosen is null ? "none" : _play.Track));
+        Logger.Information("Pet game: {0} ended ({1}), score {2:0.00}, grade {3} of 4: {4} XP, stats from track {5}.",
+            Logger.Args(_play.Game, why, score, grade, xp, chosen is null ? "none" : _play.Track));
 
         // The results window first: level-up windows sent while it opens may not show.
         if (TryWriteEndData(_play.Game, growth.XpGained, WithActualChanges(chosen, growth), out var data, score)) {
@@ -567,18 +568,38 @@ internal partial class PetService {
     }
 
     /// <summary>
-    /// A finished game gives half again what a skip gives (twice the energy cost); a game stopped early gives its part
-    /// of a skip's. [Pets] PlayedGameXpPercent changes the finished game's share.
+    /// The grade the results window shows: the game reads Result0 to Result4 as the score times 4, and dances its
+    /// pet (instead of the fail animation) from 2 up. Dance: rounds danced of 5; course: 2 to 4 when finished in time.
     /// </summary>
-    private static uint PlayedGameXp(int energyCost, float score) {
-        var skipXp = Math.Max(2, energyCost * 2);
-        if (score >= 1f) {
-            var percent = Math.Max(1, ConfigurationManager.GetValue("Pets.PlayedGameXpPercent", 150));
+    private static int PlayedGameGrade(float score)
+        => Math.Clamp((int) (Math.Clamp(score, 0f, 1f) * 4f), 0, 4);
 
-            return (uint) Math.Max(1, (int) Math.Round(skipXp * percent / 100.0));
+    /// <summary>
+    /// The lowest grade that gives the track's stats ([Pets] PlayedGameStatsMinGrade, 2 = the game's passing grade).
+    /// </summary>
+    private static int PlayedGameStatsMinGrade
+        => Math.Clamp(ConfigurationManager.GetValue("Pets.PlayedGameStatsMinGrade", 2), 0, 5);
+
+    private static readonly double[] s_defaultGradeXp = [0.5, 1, 1.5, 2, 3];
+
+    /// <summary>
+    /// A played game's XP: the game's energy cost times the grade's factor ([Pets] PlayedGameXpByGrade, Fail to
+    /// Perfect: 0.5, 1, 1.5, 2, 3 times the energy). At least 1.
+    /// </summary>
+    private static uint PlayedGameXp(int energyCost, int grade) {
+        var factors = s_defaultGradeXp;
+        var text = ConfigurationManager.GetValue("Pets.PlayedGameXpByGrade", "");
+        if (!string.IsNullOrWhiteSpace(text)) {
+            var parsed = text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .Select(part => double.TryParse(part, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out var value) ? Math.Max(0, value) : double.NaN)
+                .ToArray();
+            if (parsed.Length == 5 && parsed.All(value => !double.IsNaN(value))) {
+                factors = parsed;
+            }
         }
 
-        return (uint) Math.Max(1, (int) Math.Round(skipXp * score));
+        return (uint) Math.Max(1, (int) Math.Round(Math.Max(1, energyCost) * factors[Math.Clamp(grade, 0, 4)]));
     }
 
     /// <summary>
