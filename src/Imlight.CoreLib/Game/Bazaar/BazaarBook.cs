@@ -59,8 +59,11 @@ public sealed class BazaarQuote {
 /// </summary>
 public sealed class BazaarBook {
 
-    // The template id goes with the bazaar's type bits on top; live entries use type 9.
+    // The template id goes with the bazaar's type bits on top; live entries use type 9. The game looks up a treasure
+    // card's stock and price under its spell template id with type 0x60 (read from its Bazaar window, 2026-10-27), so
+    // cards sent with type 9 showed 0 in stock (Niduus, 2026-10-27: Treasure Cards "has their # set to 0").
     private const ulong BAZAAR_TYPE = 9UL << 40;
+    private const ulong CARD_TYPE = 0x60UL << 40;
     public const int RECORD_BYTES = 20;
 
     // The treasure card window's Astral tab has the Sun, Moon and Star cards. Its other tabs ask with a school's name
@@ -197,7 +200,11 @@ public sealed class BazaarBook {
             .DefaultIfEmpty(0)
             .Max());
 
-    // Treasure cards: the ones in the game's TreasureCards folder, one per name and school, priced from 1 to 200 gold.
+    // Cantrips, Castle Magic and Gardening treasure cards are not in the TreasureCards folder; their tabs were empty.
+    private static readonly HashSet<string> s_cardSchoolsOutsideFolder = new(StringComparer.OrdinalIgnoreCase) { "Cantrips", "CastleMagic", "Gardening" };
+
+    // Treasure cards: the ones in the game's TreasureCards folder (and the Cantrips, Castle Magic and Gardening ones), one
+    // per name and school, priced from 1 to 200 gold.
     private static IEnumerable<BazaarItem> Cards() {
         var seen = new HashSet<string>();
         var cards = new List<BazaarItem>();
@@ -209,7 +216,8 @@ public sealed class BazaarBook {
         foreach (var (path, spell) in spells) {
             string name = spell.m_name;
             if (string.IsNullOrEmpty(name) || !spell.m_Treasure
-                || path?.Replace('\\', '/').Contains("TreasureCards/", StringComparison.OrdinalIgnoreCase) != true
+                || (path?.Replace('\\', '/').Contains("TreasureCards/", StringComparison.OrdinalIgnoreCase) != true
+                    && !s_cardSchoolsOutsideFolder.Contains((string) spell.m_sMagicSchoolName ?? ""))
                 || string.IsNullOrEmpty((string) spell.m_sMagicSchoolName) || string.IsNullOrEmpty((string) spell.m_displayName)
                 || !seen.Add($"{spell.m_displayName}|{spell.m_sMagicSchoolName}")
                 || Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(name) is not { } card) {
@@ -297,7 +305,7 @@ public sealed class BazaarBook {
         var writer = new BitWriter();
         var percent = PricePercent;
         foreach (var item in items) {
-            writer.WriteUInt64(item.Id | BAZAAR_TYPE);
+            writer.WriteUInt64(item.Id | (item.Kind == BazaarKind.Card ? CARD_TYPE : BAZAAR_TYPE));
             writer.WriteInt32(StockOf(item.Id, start));
             writer.WriteInt32(PriceOf(item, percent));
             writer.WriteInt32(item.SellPrice);
