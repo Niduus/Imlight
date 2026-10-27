@@ -197,6 +197,7 @@ internal class AuthenticatorService(SessionActor parentActor) : MessageService(p
             SessionId = SessionActor.SessionID,
             AccountId = account.AccountId,
             CurrentRealm = "LoginServer",
+            AccountName = account.Username,
             ActorPath = SessionActor.ActorRef.Path.ToString(),
         };
 

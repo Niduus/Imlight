@@ -78,6 +78,7 @@ public class GameServer : Server {
         this._sessionKeys = s_sessionKeysByServer.GetOrAdd(serverName, _ => new Cache<ByteString, ulong>());
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
+        Tools.OnlineList.Start();
         Tools.MemberBenefits.Start(Context.System);
         Events.GameEvents.Start(Context.System);
         Loyalty.LoyaltyStore.Start(Context.System);

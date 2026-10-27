@@ -183,6 +183,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Instance", "ResetWhenEmpty", "Dungeons start fresh once everyone has left (off: kept for 10 minutes)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeItemCards", "Randomizer: random item cards (from gear and pets)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Character", "FullRestoreOnLevelUp", "Leveling up fills health, mana and energy to full, like the real game", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
@@ -347,6 +348,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Recipes", RecipesTab),
             Tab("Vendors", VendorsTab),
             Tab("Quest Tree", QuestTreeTab),
+            Tab("Quest Testing", QuestTestingTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Customs", CustomsTab),
@@ -449,6 +451,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Quests": LoadQuests(); break;
             case "Vendors": await LoadVendorsAsync(); break;
             case "Quest Tree": await LoadQuestTreeAsync(); break;
+            case "Quest Testing": await LoadQuestTestingAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Customs": await LoadCustomsAsync(); break;
@@ -2630,6 +2633,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Recipes"] = ("flask", "Every crafting recipe: what it needs, what it makes, and recipe vendors of your own."),
         ["Vendors"] = ("bag", "Every vendor and trainer of the game: where they stand, what they sell and what they teach."),
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
+        ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),

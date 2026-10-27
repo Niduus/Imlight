@@ -48,7 +48,8 @@ internal sealed partial class ManagerWindow {
         // editor sit on one page.
         ("Quests", "flag", "Quests, story, editor",
             "Follow your wizard's quests, see every world's main story in order, and change any quest or make your own.",
-            ["Quests", "Quest Tree", "Quest Editor"]),
+            // Niduus, 2026-10-27: a main quest testing list, story order, start to finish.
+            ["Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
         ("Database", "search", "IDs, spells, gear, bosses",
             "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, and every line of text.",
@@ -221,6 +222,7 @@ internal sealed partial class ManagerWindow {
 
         var cards = new List<Control> {
             hero,
+            HomeWhosOnline(),
             HomeWhatsNew(),
             Fold("search", HOME, "Search everything",
                 "Every page, setting, command, item, spell, creature, zone and quest at once.",
@@ -393,7 +395,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Quest Tree", _qtSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),
@@ -464,6 +466,7 @@ internal sealed partial class ManagerWindow {
         _homeStart.IsEnabled = !status.Running;
         _homeStop.IsEnabled = status.Running;
         _homePlay.IsEnabled = status.ClientFound;
+        RefreshWhosOnline(status.Running);
     }
 
     // ---------------------------------------------------------------------
