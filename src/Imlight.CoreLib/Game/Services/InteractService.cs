@@ -98,6 +98,11 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
     private void HandleInteraction<T>(T message, Func<T, ulong> getObjectId, Func<T, string> getServiceName, Func<T, uint> getServiceIndex) {
         var wizard = GetActiveWizard();
 
+        // A group mate's mount with a free seat: MountRideService answers that one.
+        if (Mounts.MountRides.IsDriverObject(getObjectId(message))) {
+            return;
+        }
+
         // Search for the interaction object.
         var npc = GetZoneObject(getObjectId(message));
         if (npc == null) {

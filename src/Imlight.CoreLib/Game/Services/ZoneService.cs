@@ -1578,6 +1578,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             actorRef.Tell(speedMsg);
         }
 
+        // A passenger on a group mate's mount (or the riders on this wizard's own) sits there for late arrivals too.
+        foreach (var rideMsg in Mounts.MountRides.SpawnMessages(wizard)) {
+            actorRef.Tell(rideMsg);
+        }
+
         // A wizard playing as their pet looks like it to players who arrive later too.
         if (Commands.Protocols.CommandPetFormProtocol.LookMessage(wizard) is { } petLook) {
             actorRef.Tell(petLook);
