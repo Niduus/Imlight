@@ -17,9 +17,9 @@
  *   WillCasts                 false: no Will Casts at all.
  *   WillCastsFreeReagents     true: locked Will Casts work right away and unlock without reagents.
  *   WillCastsCostHappiness    false: a Will Cast takes no happiness.
- *   WillCastCardData          how the pet card is sent to the game (MSG_SHOWPETCARD PetData): Spell (the card, serialized
- *                             like a hand card), SpellName or TalentName. The game files name the message but not its
- *                             layout, so this is a test switch.
+ *   WillCastCardData          how the pet card is sent to the game (MSG_SHOWPETCARD PetData): Power (the game's own
+ *                             ProvidePetPower effect), Off (no button), or the tests SpellTest, SpellName, TalentName.
+ *                             The game files name the message but not its layout. A Spell crashed the game (v0.10.504).
  */
 
 using System;
@@ -59,7 +59,7 @@ internal static class PetWillCasts {
     internal static bool Enabled => ConfigurationManager.GetValue("Pets.WillCasts", true);
     internal static bool FreeReagents => ConfigurationManager.GetValue("Pets.WillCastsFreeReagents", false);
     internal static bool CostsHappiness => ConfigurationManager.GetValue("Pets.WillCastsCostHappiness", true);
-    internal static string CardData => (ConfigurationManager.GetSetting("Pets.WillCastCardData") ?? "Spell").Trim();
+    internal static string CardData => (ConfigurationManager.GetSetting("Pets.WillCastCardData") ?? "Power").Trim();
 
     /// <summary>The pet the wizard wears, or null.</summary>
     internal static WizClientObjectItem WornPet(Wizard wizard)
