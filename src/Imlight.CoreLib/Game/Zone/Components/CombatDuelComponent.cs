@@ -3766,6 +3766,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
         });
         BattleDrops.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location, wizards);
+
+        // A beaten boss that cheats leaves a Second Chance Chest for the wizards of the battle (Niduus, 2026-10-27).
+        Imlight.CoreLib.Game.DropTables.SecondChanceChests.Spawn(Entity.ZoneRef, Entity.ActiveGameObject.m_location,
+            lootKeysOfDefeatedMobs, allyCharIds);
     }
 
     private void CountRoundForTamedDrops() {

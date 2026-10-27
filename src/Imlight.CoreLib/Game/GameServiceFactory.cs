@@ -106,6 +106,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(CraftingService),
         typeof(CastleToursService),
         typeof(MapService),
+        typeof(SecondChanceChestService),
     ];
 
     public static Props Props() 

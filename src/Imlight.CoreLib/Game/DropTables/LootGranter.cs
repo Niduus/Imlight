@@ -421,4 +421,27 @@ public static class LootGranter {
         playerActor.Tell(lootMsg);
     }
 
+    /// <summary>
+    /// Tells the game's paid loot roll window (a Second Chance Chest) what an open cost and gave, in the loot list form
+    /// of the loot popup.
+    /// </summary>
+    internal static void SendPaidLootRollResult(IActorRef playerActor, ulong chestId, int cost, int balance, int uses,
+        DropTableResult results) {
+        var networkLootList = DropTableConverter.ToLootInfoList(results);
+        var serializer = new ObjectSerializer(Versionable: false);
+        if (!serializer.Serialize(networkLootList, LOOT_LIST_SERIALIZATION_FLAGS, out var serializedLootList)) {
+            Logger.Error("Failed to serialize the Second Chance Chest loot list for network transmission.");
+
+            return;
+        }
+
+        playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_PAID_LOOT_ROLL_RESULT {
+            Id = chestId,
+            Cost = cost,
+            Balance = balance,
+            Uses = uses,
+            Loot = serializedLootList,
+        });
+    }
+
 }

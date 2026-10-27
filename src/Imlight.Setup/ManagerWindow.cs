@@ -148,6 +148,8 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps (how many per wizard under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
+        ("SecondChanceChest", "Enabled", "Bosses that cheat leave a Second Chance Chest (open it with Crowns for another roll of the boss's drops; cost and uses under Settings, SecondChanceChest)", new() { OnContent = "On", OffContent = "Off" }),
+        ("SecondChanceChest", "Free", "Second Chance Chests are free (no Crowns)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "LateJoinersJoinImmediately", "A wizard who joins a battle late plays the current round (off: waits for the next one)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "MobsJoinLate", "Monsters can join a battle late", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "ResetTimerWhenMobJoins", "Card timer starts over when a monster joins the battle", new() { OnContent = "On", OffContent = "Off" }),

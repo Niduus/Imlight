@@ -31,7 +31,7 @@ internal sealed partial class ManagerWindow {
         ("DailyPvPBonus", "Daily PvP Bonus", "Not on this server yet: it has no daily PvP assignments."),
         ("FishingBonus", "Fishing Bonus", "Fishing costs no energy."),
         ("CraftingBonus", "Double Reagents (Crafting Bonus)", "Double reagents from creature drops, reagent spots, garden harvests and minigames, and no crafting cooldowns. The game shows it as Double Reagents."),
-        ("SecondChanceChestBonus", "Second Chance Chest", "Not on this server yet: it has no second chance chests."),
+        ("SecondChanceChestBonus", "Second Chance Chest", "Each wizard's first open of a Second Chance Chest (left by a boss that cheats) is free."),
         ("DoubleScrollOfFortunePoints", "Double Scroll of Fortune Points", "Scroll of Fortune points count double."),
         ("FasterEnergyRegeneration", "Faster Energy Regeneration", "Energy comes back twice as fast."),
     ];
