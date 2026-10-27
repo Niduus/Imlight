@@ -109,6 +109,20 @@ internal sealed partial class CombatDuelComponent {
         }
     }
 
+    // After a hand update in the planning phase (Niduus, 2026-10-27: "lost my will cast card from drawing").
+    private void ResendPetCard(CombatDuelSubCircle circle) {
+        if (!PetWillCasts.Enabled || !circle.IsHumanPlayer || !circle.IsAlive || circle._wizard is null || circle.ParticipantActor is null) {
+            return;
+        }
+
+        try {
+            SendPetCard(circle);
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Slot {1} | Pet Will Cast card could not be sent again: {2}", Logger.Args(SigilId, circle.SlotIndex, e));
+        }
+    }
+
     private void SendPetCard(CombatDuelSubCircle circle) {
         var willCasts = PetWillCasts.ForWizard(circle._wizard);
         if (willCasts.Count == 0) {
