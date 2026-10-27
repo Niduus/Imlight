@@ -281,6 +281,7 @@ internal static class CombatEffectApplicator {
                             target._hangingEffects[index] = overTime with {
                                 m_numRounds = Math.Max(1, overTime.m_numRounds + effect.m_effectParam),
                             };
+                            CombatResolver.CarryTags(overTime, target._hangingEffects[index]);
                         }
                     }
                 }
@@ -639,6 +640,7 @@ internal static class CombatEffectApplicator {
             var index = target._hangingEffects.FindIndex(x => ReferenceEquals(x, hanging));
             if (hanging.m_protected && !remover.m_bypassProtection && index >= 0) {
                 target._hangingEffects[index] = hanging with { m_protected = false };
+                CombatResolver.CarryTags(hanging, target._hangingEffects[index]);
             }
             else {
                 going.Add(hanging);

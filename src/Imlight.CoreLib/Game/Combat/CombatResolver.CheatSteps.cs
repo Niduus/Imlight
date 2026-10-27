@@ -343,7 +343,8 @@ public partial class CombatResolver {
     // (with HasNot: no one there); the one found is the target "Matched" of its steps.
     private bool HasAllows(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
         _hasMatch = null;
-        if (string.IsNullOrWhiteSpace(cheat.HasKind) && string.IsNullOrWhiteSpace(cheat.HasSpell) && !cheat.HasNot) {
+        if (string.IsNullOrWhiteSpace(cheat.HasKind) && string.IsNullOrWhiteSpace(cheat.HasSpell) && string.IsNullOrWhiteSpace(cheat.HasTag)
+            && !cheat.HasNot) {
             return true;
         }
 
@@ -353,7 +354,7 @@ public partial class CombatResolver {
 
         int Count(CombatDuelSubCircle who) => (who?.CombatParticipant?.m_hangingEffects ?? [])
             .Count(e => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
-                        && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell)));
+                        && (string.IsNullOrWhiteSpace(cheat.HasSpell) || FromSpell(e, cheat.HasSpell)) && HasTag(e, cheat.HasTag));
         // Someone without it, or a whole side together (CombatResolver.MoreCheats.cs).
         if (MoreHasAllows(boss, cheat, Count, need) is { } more) {
             return more;
@@ -966,12 +967,13 @@ public partial class CombatResolver {
                 case "removeeffects": {
                     // Its hanging effects of Kind (Shield, Trap, Blade, Weakness, Charm, Ward, Aura, DoT, HoT; several
                     // with commas; empty for all) come off the target (itself if none is picked), the newest first, Count
-                    // of them (0 = all); protected ones stay, unless Bypass.
+                    // of them (0 = all); protected ones stay, unless Bypass. With a Tag, only effects with that tag.
                     var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {
                         var gone = target._hangingEffects.Where(e => e is not null && (step.Bypass || !e.m_protected) && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)))
-                                                                     && FromSpell(e, step.Spell))
-                            .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
+                                                                     && FromSpell(e, step.Spell) && HasTag(e, step.Tag))
+                            .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToHashSet(ReferenceEqualityComparer.Instance);
+                        // The very ones picked, not others alike (a tagged blade's untagged twin stays).
                         target._hangingEffects.RemoveAll(gone.Contains);
                         _clearedCount += gone.Count;
                         Logger.Information("Duel {0} | Slot {1} | Cheat takes off {2} of its {3} effects.",

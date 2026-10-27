@@ -253,6 +253,11 @@
  * CombatResolver.CreativeCheats.cs; {name} in a message's Text is that
  * variable. Examples to copy, on no creature, are in spiraldb-extra/CheatExamples (the server never reads them).
  *
+ * Tags on effects (Niduus, 2026-10-27; CombatResolver.EffectTags.cs): a Do step's Tag tags each effect it puts on
+ * ("BABA"); HasTag and a Conditions "effects" entry's Tag count only those; RemoveEffects with a Tag takes off only
+ * those; the When TagGone goes off the moment TagWho ("" itself, AnyAlly, AnyEnemy, Anyone) has none left (TagStart:
+ * also at a round's start when there is none).
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -411,6 +416,13 @@ internal static class BossCheats {
         // CirclesWho stands in one of these circles of its side ("2, 3, 4").
         public string Circles { get; set; } = "";
         public string CirclesWho { get; set; } = "";
+        // Tags on effects (Niduus, 2026-10-27; CombatResolver.EffectTags.cs). When TagGone: TagWho ("" itself, AnyAlly,
+        // AnyEnemy, Anyone) has no effect tagged Tag left; TagStart: also at a round's start when there is none. HasTag:
+        // the "has" If counts only effects with this tag.
+        public string Tag { get; set; } = "";
+        public string TagWho { get; set; } = "";
+        public bool TagStart { get; set; }
+        public string HasTag { get; set; } = "";
         // Many more Ifs, each one entry, with AND / OR / NOT (Niduus, 2026-10-26: "You can legit do anything";
         // CombatResolver.CreativeCheats.cs): every entry with Any 0 must hold, and of the entries of one Any group (1, 2...)
         // at least one; Not turns an entry round.
@@ -510,6 +522,8 @@ internal static class BossCheats {
         // School: "" = of School, "Rival" = of School's rival (Ice -> Fire), "RivalOfIt" = of the rival of the cheat's
         // own one's school (Niduus, 2026-10-26).
         public string Match { get; set; } = "";
+        // For "effects": only effects with this tag (a Do step's Tag put it on).
+        public string Tag { get; set; } = "";
     }
 
     /// <summary>One spell of a cheat's Casts.</summary>
@@ -593,6 +607,9 @@ internal static class BossCheats {
         // on several teammates): whom it picks, as a Target (WeakestEnemy, Marked, AllEnemies...), and Count of them (0:
         // all it names). Empty: it hits every enemy, as before (MultiPicks.cs, CombatResolver.BossCheats.cs CheatPicks).
         public string Pick { get; set; } = "";
+        // Every effect this step puts on anyone gets this tag ("BABA"; several with commas), for HasTag, a Conditions
+        // entry's Tag and the When TagGone. For RemoveEffects: only effects with this tag come off.
+        public string Tag { get; set; } = "";
 
         internal bool Is(string what) => Do.Equals(what, StringComparison.OrdinalIgnoreCase);
 

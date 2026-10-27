@@ -215,6 +215,7 @@ public partial class CombatResolver {
 
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += TagGoneCheats(roundStart: !atEnd, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossDefeatCheats(null, [], combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             // Extra turns go last in the round, as free casts (CreativeCheats).
@@ -449,6 +450,7 @@ public partial class CombatResolver {
             cinematicTime += MoreWhenCheats(mover, landed, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += MinionDefeatCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += PlayerStateCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
+            cinematicTime += TagGoneCheats(roundStart: false, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossDefeatCheats(mover, landed, combatActionList, cinematicTimeSoFar + cinematicTime);
             cinematicTime += BossHealthCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
         }
@@ -1107,6 +1109,8 @@ public partial class CombatResolver {
                 step = steps[s];
             }
 
+            // A Tag tags whatever this step puts on anyone (CombatResolver.EffectTags.cs); RemoveEffects reads it itself.
+            var tagging = (step.Tag ?? "").Trim().Length > 0 && !step.Is("RemoveEffects") ? HangingNow() : null;
             switch (step.Do.ToLowerInvariant()) {
                 case "form" or "sethealth":
                     break;
@@ -1244,6 +1248,10 @@ public partial class CombatResolver {
                     Logger.Warning("Duel {0} | Boss cheat of {1}: \"{2}\" is not something a cheat can do.",
                         Logger.Args(_duel.m_duelID.Full, bossName, step.Do));
                     break;
+            }
+
+            if (tagging is not null) {
+                TagNewEffects(tagging, step.Tag);
             }
         }
 

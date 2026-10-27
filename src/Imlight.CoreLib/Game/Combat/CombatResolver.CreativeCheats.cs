@@ -413,7 +413,7 @@ public partial class CombatResolver {
                 var kinds = (c.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 return Measured(boss, c, trigger, receiver, w => (w._hangingEffects ?? []).Count(e => e is not null
-                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell)));
+                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell) && HasTag(e, c.Tag)));
             }
             case "pips":
                 return Measured(boss, c, trigger, receiver, w => PipsOfKind(w, c.Kind));
