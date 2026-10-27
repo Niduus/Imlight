@@ -315,6 +315,43 @@ internal static class PetProgression {
     }
 
     /// <summary>
+    /// Swaps one of the pet's talents for another in the same place, in its genes and its expressed talents (a locked
+    /// Will Cast for its unlocked one).
+    /// </summary>
+    /// <param name="pet">The pet item.</param>
+    /// <param name="oldId">The talent the pet has.</param>
+    /// <param name="newId">The talent that takes its place.</param>
+    /// <returns>False if the pet is unknown, not hatched or lacks the old talent.</returns>
+    internal static bool ReplaceTalent(WizClientObjectItem pet, uint oldId, uint newId) {
+        if (!TryGetPet(pet, out var behavior, out _) || behavior.m_level == 0) {
+            return false;
+        }
+
+        EnsureInitialized(pet);
+        var found = false;
+        foreach (var list in new[] { behavior.m_allTalents, behavior.m_expressedTalents }) {
+            var index = list?.IndexOf(oldId) ?? -1;
+            if (index < 0) {
+                continue;
+            }
+
+            found = true;
+            if (list.Contains(newId)) {
+                list.RemoveAt(index);
+            }
+            else {
+                list[index] = newId;
+            }
+        }
+
+        if (found) {
+            RefreshRatings(behavior);
+        }
+
+        return found;
+    }
+
+    /// <summary>
     /// Rolls a pet's genes: the guaranteed talents first, then the rest of the pool in random order.
     /// </summary>
     /// <param name="guaranteed">The guaranteed talent names, which may lie outside the pool.</param>

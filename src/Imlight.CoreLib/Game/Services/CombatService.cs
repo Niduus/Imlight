@@ -411,6 +411,33 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         _currentDuelActor.Tell(message);
     }
 
+    // The game's pet Will Cast button. PetCastingSpell's layout is not in the game files, so it is logged in full.
+    [MessageHandler(typeof(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_PETWILLCAST))]
+    private void ReceivePetWillCast(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_PETWILLCAST message) {
+        byte[] data = message.PetCastingSpell;
+        Logger.Information("Session {0} | Pet Will Cast button: Target {1}, PetCastingSpell ({2} bytes) {3}",
+            Logger.Args(SessionActor.SessionID, message.Target, data?.Length ?? 0, data is null ? "" : Convert.ToHexString(data)));
+        if (_currentDuelActor is null) {
+            return;
+        }
+
+        _currentDuelActor.Tell(new COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST {
+            GameData = data, Target = message.Target, Actor = SessionActor.ActorRef,
+        });
+    }
+
+    [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST))]
+    private void ReceivePetWillCastRequest(COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST message) {
+        if (_currentDuelActor is null) {
+            InformGameClient("Will Casts work in a battle. Out of one, .willcast lists your pet's Will Casts and .willcast unlock unlocks them.");
+
+            return;
+        }
+
+        message.Actor = SessionActor.ActorRef;
+        _currentDuelActor.Tell(message);
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL))]
     private void ReceiveSetArchmasterySchool(COMBAT_106_PROTOCOL.MSG_SETARCHMASTERYSCHOOL message) {
         // Out of battle the deck keeps it for the next one (SpellBookService saved it).

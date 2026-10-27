@@ -690,6 +690,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         SendCombatPips();
         SendCombatHealth();
         SendCombatUI(PlanningSeconds);
+        // The game's pet Will Cast button for each wizard whose pet has one (CombatDuelComponent.WillCasts.cs).
+        SendPetCards();
         LogRoundPipsAndHealth();
         _planningStartedAt = DateTime.UtcNow;
 
