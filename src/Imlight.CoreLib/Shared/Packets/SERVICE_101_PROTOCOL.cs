@@ -310,4 +310,22 @@ internal sealed class SERVICE_101_PROTOCOL : IServerProtocol {
         public byte MessageOrder { get; } = 27;
         public byte ServiceID { get; } = 101;
     }
+
+    /// <summary>
+    /// Timer signal for MountRideService: keeps the multi-person mount driver entry, the ride prompt and the seat.
+    /// </summary>
+    public class MSG_MOUNTRIDE_TICK : IServerMessage {
+        public byte MessageOrder { get; } = 28;
+        public byte ServiceID { get; } = 101;
+    }
+
+    /// <summary>
+    /// Sent by .ride to the caller's session: get on the named driver's mount, or off the current one.
+    /// </summary>
+    public class MSG_MOUNTRIDE_REQUEST : IServerMessage {
+        public byte MessageOrder { get; } = 29;
+        public byte ServiceID { get; } = 101;
+        public ulong DriverCharId;
+        public bool GetOff;
+    }
 }
