@@ -1,0 +1,32 @@
+{
+  "Name": "PA-PEG-C04-001",
+  "Description": "Wysteria quest Portal Remains (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 140,
+  "MaxGold": 140,
+  "ExperienceAmount": 1685,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "468541",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "468539",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "468540",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "NV-W404-81061182",
+  "Description": "Novus quest Executive Action (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 160,
+  "MaxGold": 160,
+  "ExperienceAmount": 55140,
+  "TrainingPoints": 0,
+  "Items": []
+}

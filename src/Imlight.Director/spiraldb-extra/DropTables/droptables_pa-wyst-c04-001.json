@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C04-001",
+  "Description": "Wysteria quest Shopping List (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 750,
+  "TrainingPoints": 0,
+  "Items": []
+}

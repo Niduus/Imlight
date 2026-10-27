@@ -1,0 +1,13 @@
+{
+  "Name": "LM-W404-1308889634",
+  "Description": "Lemuria quest The Lost Word (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2150,
+  "MaxGold": 2150,
+  "ExperienceAmount": 108810,
+  "TrainingPoints": 0,
+  "Items": []
+}

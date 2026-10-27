@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C02-003",
+  "Description": "Wysteria quest O'Hare-y Situation (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 10,
+  "MaxGold": 10,
+  "ExperienceAmount": 125,
+  "TrainingPoints": 0,
+  "Items": []
+}

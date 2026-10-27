@@ -1,0 +1,13 @@
+{
+  "Name": "PA-WYST-C11-001",
+  "Description": "Wysteria quest Step Into My Parlor (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 95,
+  "MaxGold": 95,
+  "ExperienceAmount": 1185,
+  "TrainingPoints": 0,
+  "Items": []
+}
