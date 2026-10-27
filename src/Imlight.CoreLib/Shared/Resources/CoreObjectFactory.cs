@@ -236,6 +236,24 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
         => TemplateLocations().TryGetValue(id, out var location)
         && ((string) location.m_filename)?.StartsWith("ObjectData/", StringComparison.OrdinalIgnoreCase) == true;
 
+    /// <summary>The id of the template whose file is named this ("KM-ESTATE-NPC01", no folder or extension), or 0.</summary>
+    public static ulong IdOfFileName(string name)
+        => !string.IsNullOrEmpty(name)
+            && LazyInitializer.EnsureInitialized(ref s_idsByFileName, IndexFileNames).TryGetValue(name, out var id) ? id : 0;
+
+    private static Dictionary<string, ulong> s_idsByFileName;
+
+    private static Dictionary<string, ulong> IndexFileNames() {
+        var ids = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (id, location) in TemplateLocations()) {
+            if ((string) location.m_filename is { Length: > 0 } file) {
+                ids.TryAdd(System.IO.Path.GetFileNameWithoutExtension(file.Replace('|', '/')), id);
+            }
+        }
+
+        return ids;
+    }
+
     private static Dictionary<ulong, TemplateLocation> TemplateLocations()
         => LazyInitializer.EnsureInitialized(ref s_templateLocations, IndexTemplateLocations);
 

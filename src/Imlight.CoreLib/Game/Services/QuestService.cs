@@ -1169,7 +1169,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                     continue;
                 }
 
-                ProcessCombatGoal(wizard, qInstance, bountyGoal, message.MobAdjectives, message.MobAdjectivesPerMob, foughtWithGroupMate);
+                ProcessCombatGoal(wizard, qInstance, bountyGoal, message.MobAdjectives, message.MobAdjectivesPerMob, message.MobTemplateIds,
+                    foughtWithGroupMate);
             }
         }
     }
@@ -1913,6 +1914,7 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
                                    BountyGoalTemplate goalTemplate,
                                    string[] defeatedMobAdjectives,
                                    string[][] adjectivesPerMob,
+                                   ulong[] templateIdsPerMob,
                                    bool foughtWithGroupMate) {
         var shouldIncrement = goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTY;
         var goalMobAdjectives = goalTemplate.m_npcAdjectives ?? [];
@@ -1920,17 +1922,21 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         // The Manager's Quest Editor can let any won battle count for the step, once a battle.
         var anyCreature = QuestOptions.AnyCreatureCounts(qInstance.QuestName, goalTemplate.m_goalName);
 
-        // Check to see if the defeated mob matches the goal's NPC adjectives.
-        if (!anyCreature && !defeatedMobAdjectives.Any(adjective => goalMobAdjectives.Contains(adjective))) {
-            return;
-        }
+        // A defeated mob counts when it carries one of the goal's adjectives, or has the name of the talking NPC a
+        // rebuilt quest marks the foe with (BountyStandIns). Each one that counts counts once: counting matching
+        // adjectives instead counted a mob with two of the step's adjectives twice ("4/2" for two monsters, Niduus's
+        // log of 2026-10-25).
+        bool MobCounts(int index) => adjectivesPerMob[index]?.Any(adjective => goalMobAdjectives.Contains(adjective)) == true
+            || templateIdsPerMob is not null && index < templateIdsPerMob.Length
+            && Imlight.CoreLib.Game.Quests.BountyStandIns.Counts(goalMobAdjectives.Select(a => (string) a), templateIdsPerMob[index]);
 
-        // Each defeated mob that matches counts once. Counting matching adjectives instead counted a mob with two of
-        // the step's adjectives twice ("4/2" for two monsters, Niduus's log of 2026-10-25).
         var matchCount = anyCreature ? 1
             : adjectivesPerMob is { Length: > 0 }
-                ? adjectivesPerMob.Count(mob => mob?.Any(adjective => goalMobAdjectives.Contains(adjective)) == true)
+                ? Enumerable.Range(0, adjectivesPerMob.Length).Count(MobCounts)
                 : defeatedMobAdjectives.Count(adjective => goalMobAdjectives.Contains(adjective));
+        if (matchCount == 0) {
+            return;
+        }
 
         if (goalTemplate.m_goalType == GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT) {
             var chance = goalTemplate.m_tallyCounter?.m_percentChance ?? DEFAULT_KILL_COLLECT_CHANCE;

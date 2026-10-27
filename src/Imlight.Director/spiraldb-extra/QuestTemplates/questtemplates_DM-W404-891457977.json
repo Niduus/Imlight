@@ -101,7 +101,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "DM-GRAVE-NPC16C",
+            "m_personaName": "DM-GRAVE-NPC16B",
             "m_nameOverride": "NPCs_01749604",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -113,7 +113,7 @@
             "m_soundFile": "Sound/Dialogue/DM_1.590/Lucy_Easton_DM-GRAVE_029.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1675666,
+            "m_actorTemplateID": 1704074,
             "m_cameraName": ""
           },
           {

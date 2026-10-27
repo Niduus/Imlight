@@ -208,7 +208,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-JUNG-NPC03_Persona",
+            "m_personaName": "EM-JUNG-NPC03-B_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -220,12 +220,12 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_19.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1397550,
+            "m_actorTemplateID": 1397660,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-JUNG-NPC03_Persona",
+            "m_personaName": "EM-JUNG-NPC03-B_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -237,12 +237,12 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_20.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1397550,
+            "m_actorTemplateID": 1397660,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-JUNG-NPC03_Persona",
+            "m_personaName": "EM-JUNG-NPC03-B_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -254,7 +254,7 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_21.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1397550,
+            "m_actorTemplateID": 1397660,
             "m_cameraName": ""
           }
         ]

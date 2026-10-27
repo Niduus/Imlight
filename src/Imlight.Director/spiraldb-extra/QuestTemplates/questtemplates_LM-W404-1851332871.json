@@ -101,7 +101,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "LM-WILD-NPC05",
+            "m_personaName": "LM-TELOS-NPC03-B",
             "m_nameOverride": "WC-NPCs_00002610",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -113,12 +113,12 @@
             "m_soundFile": "Sound/Dialogue/LM/Supreme_Hierarch_LM-TELOS_007.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1520120,
+            "m_actorTemplateID": 1521388,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "LM-WILD-NPC05",
+            "m_personaName": "LM-TELOS-NPC03-B",
             "m_nameOverride": "WC-NPCs_00002610",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -130,12 +130,12 @@
             "m_soundFile": "Sound/Dialogue/LM/Supreme_Hierarch_LM-TELOS_008.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1520120,
+            "m_actorTemplateID": 1521388,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "LM-WILD-NPC05",
+            "m_personaName": "LM-TELOS-NPC03-B",
             "m_nameOverride": "WC-NPCs_00002610",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -147,7 +147,7 @@
             "m_soundFile": "Sound/Dialogue/LM/Supreme_Hierarch_LM-TELOS_009.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1520120,
+            "m_actorTemplateID": 1521388,
             "m_cameraName": ""
           },
           {
@@ -169,7 +169,7 @@
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "LM-WILD-NPC05",
+            "m_personaName": "LM-TELOS-NPC03-B",
             "m_nameOverride": "WC-NPCs_00002610",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -181,7 +181,7 @@
             "m_soundFile": "Sound/Dialogue/LM/Supreme_Hierarch_LM-TELOS_010.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1520120,
+            "m_actorTemplateID": 1521388,
             "m_cameraName": ""
           }
         ]
