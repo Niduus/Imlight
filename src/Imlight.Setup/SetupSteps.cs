@@ -471,6 +471,9 @@ internal sealed class SetupSteps : IDisposable {
             File.WriteAllText(Path.Combine(staging, ServerSource.STAMP_FILE), _sourceStamp);
         }
 
+        // The app's own version, for the server's .ver command.
+        File.WriteAllText(Path.Combine(staging, "ahziael-version.txt"), SelfUpdate.CurrentVersion.ToString());
+
         if (toPending) {
             if (Directory.Exists(PendingServerFolder)) {
                 Directory.Delete(PendingServerFolder, recursive: true);

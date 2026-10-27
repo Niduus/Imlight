@@ -120,6 +120,8 @@ internal sealed class Lookup {
         Imlight("Set training points", ".mod settp <amount>", QA, "Sets your character's training points. Also .mod settrainingpoints."),
         Command("Gain training points", ".gaintp <amount>", "Every player", "Gives your character 1 to 100 training points. Also .trainingpoints. " +
             "Works for every player unless the server turned it off (Settings, Trainers, PlayersCanGainTrainingPoints)."),
+        Command("Version", ".ver", "Every player", "Shows the Ahziael version the running server was built by, the commit and when the server started. " +
+            "Use it after an update to check the server was restarted. Also .version."),
         Command("Reset training points", ".respec", "Every player", "Says how many training points you would get back and which spells you would lose. " +
             ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
         Imlight("Cantrip level up", ".mod clvlup", QA, "Raises your cantrip level by one. Also .mod cantriplevelup."),
