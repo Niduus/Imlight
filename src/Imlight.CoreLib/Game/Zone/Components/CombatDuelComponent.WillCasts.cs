@@ -16,6 +16,7 @@ using System.Text;
 using Akka.Actor;
 using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
@@ -131,21 +132,57 @@ internal sealed partial class CombatDuelComponent {
     }
 
     private ByteString? PetCardData(PetWillCasts.WillCast willCast) {
+        PropertyClass card;
         switch (PetWillCasts.CardData.ToLowerInvariant()) {
+            case "off":
+                return null;
             case "spellname":
                 return (ByteString) Encoding.ASCII.GetBytes(willCast.SpellName);
             case "talentname":
                 return (ByteString) Encoding.ASCII.GetBytes(willCast.Talent);
+            case "spelltest":
+                // Crashed the game (Niduus's client log, 2026-10-27: "DynamicCast failed to cast class GraphicalSpell",
+                // then an access violation): the pet card is not a Spell. Kept only as a test switch
+                // (SpellTest); a plain "Spell" left in Imlight.ini by v0.10.504 means Power.
+                card = SpellFactory.GetSpell(willCast.SpellTemplateId);
+                break;
             default:
-                var spell = SpellFactory.GetSpell(willCast.SpellTemplateId);
-                if (spell is null || !_serializer.Serialize(spell, _combatParticipantHandFlags, out var buffer)) {
-                    Logger.Error("Duel {0} | Pet Will Cast card {1} could not be serialized.", Logger.Args(SigilId, willCast.SpellName));
-
-                    return null;
-                }
-
-                return buffer;
+                // The pet power itself, as the game's own effect (ProvidePetPower) made from the talent's
+                // ProvidePetPowerInfo: what the game casts to when it reads the pet card.
+                card = PowerOf(willCast);
+                break;
         }
+
+        if (card is null || !_serializer.Serialize(card, _combatParticipantHandFlags, out var buffer)) {
+            Logger.Error("Duel {0} | Pet Will Cast card {1} could not be serialized.", Logger.Args(SigilId, willCast.SpellName));
+
+            return null;
+        }
+
+        return buffer;
+    }
+
+    private static ProvidePetPower PowerOf(PetWillCasts.WillCast willCast) {
+        var info = willCast.Power;
+
+        return new ProvidePetPower {
+            m_effectNameID = Imcodec.Cryptography.StringHash.Compute(string.IsNullOrEmpty((string) info.m_effectName) ? "ProvidePetPower" : (string) info.m_effectName),
+            m_bIsOnPet = true,
+            m_happinessCost = info.m_happinessCost,
+            m_cooldown = info.m_cooldown,
+            m_usesPerCombat = info.m_usesPerCombat,
+            m_combatTalent = true,
+            m_triggerName = info.m_triggerName,
+            m_extra1 = willCast.SpellName,
+            m_extra2 = info.m_extra2,
+            m_lootTableName = info.m_lootTableName,
+            m_powerDisplayName = info.m_powerDisplayName,
+            m_requirementFailedString = info.m_requirementFailedString,
+            m_noPVP = info.m_noPVP,
+            m_rampUp = info.m_rampUp,
+            m_description = info.m_description,
+            m_myTurn = info.m_myTurn,
+        };
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST))]
