@@ -461,12 +461,23 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         PetCastCards.Clear();
         // A form taken last round right after an afterlife, shown now (CombatResolver.Afterlife.cs).
         cinematicTime += ReplayPolymorphs(combatActionList, cinematicTime);
-        // .cf (Niduus, 2026-10-22; was .c1 f / .c2 f): the queue casts before anyone's turn, then the round goes on.
-        cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
-        NoteHealthBeat(cinematicTime);
         // Boss cheats for the start of the round (BossCheats.cs).
         var firstTeam = _duel.m_firstTeamToAct;
         cinematicTime += BossCheatsAtRoundStart(combatActionList, cinematicTime);
+        NoteHealthBeat(cinematicTime);
+        // .cf (Niduus, 2026-10-22; was .c1 f / .c2 f): the queue casts before anyone's turn, then the round goes on.
+        // It goes after the round's starting cheats (Niduus, 2026-10-26: ".cf se all pwn" in round 1 defeated
+        // Malistaire before his battle start cheat gave him his afterlife, so he never came back for his second phase).
+        cinematicTime += CastEveryonesDelayed('f', combatActionList, cinematicTime);
+        // A boss those casts defeated comes back if an afterlife waits on it, and its defeat and health cheats answer.
+        ProcessAfterlives();
+        try {
+            cinematicTime += BossDefeatCheats(null, [], combatActionList, cinematicTime);
+            cinematicTime += BossHealthCheats(combatActionList, cinematicTime);
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Boss cheats after the first casts failed: {1}", Logger.Args(_duel.m_duelID.Full, e));
+        }
         // A raid's sigil spells cast on its battles (CombatResolver.Raids.cs).
         cinematicTime += RaidSigilSpells(combatActionList, cinematicTime);
         // A turn order cheat at the start of the round (When the battle starts: we go first) counts this round, as no
