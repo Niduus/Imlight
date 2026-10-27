@@ -11,6 +11,10 @@
  * had one: checked after every move and at the start and end of each round. TagStart: also at the start of a round
  * when there is none (so a first round's cheat needs no other When). "The attacker" and "the one hit" are the one who
  * ran out.
+ * When: Always (Niduus, 2026-10-27: "I want it so IF tags = 0, THEN CAST tags. Not check WHEN tags"): no event; it
+ * goes off whenever its Ifs hold, looked at after every move and at the start and end of each round (at most once
+ * each look). "If it has no blade tagged BABA" then "add three 7% blades tagged BABA" keeps them up. "The attacker"
+ * and "the one hit" are itself.
  */
 
 using System;
@@ -88,12 +92,37 @@ public partial class CombatResolver {
     // TagGone: whether each one watched had a tagged effect at the last look, by cheat.
     private readonly Dictionary<(CombatDuelSubCircle Owner, BossCheats.BossCheat Cheat, CombatDuelSubCircle Who), bool> _tagsHeld = [];
 
-    /// <summary>The When TagGone, after a move and at a round's start (<paramref name="roundStart"/>) or end.</summary>
+    // A look of Always and TagGone is under way (a cheat's own steps never start another).
+    private bool _watchingCheats;
+
+    /// <summary>The Whens Always and TagGone, after a move and at a round's start (<paramref name="roundStart"/>) or end.</summary>
     private float TagGoneCheats(bool roundStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        if (_watchingCheats) {
+            return 0;
+        }
+
+        _watchingCheats = true;
+        try {
+            return WatchCheats(roundStart, combatActionList, cinematicTimeSoFar);
+        }
+        finally {
+            _watchingCheats = false;
+        }
+    }
+
+    private float WatchCheats(bool roundStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
         foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
             for (var i = 0; i < cheats.Count; i++) {
                 var cheat = cheats[i];
+                // Always: whenever its Ifs hold (TryBossCheat looks at them), about itself.
+                if (cheat.Is("Always") && boss.IsAlive && InPhase(boss, cheat)) {
+                    cinematicTime += TryBossCheat(boss, i, cheat, boss, boss, "its Ifs holding", combatActionList,
+                        cinematicTimeSoFar + cinematicTime);
+
+                    continue;
+                }
+
                 if (!cheat.Is("TagGone") || TagsOf(cheat.Tag).Length == 0 || !boss.IsAlive || !InPhase(boss, cheat)) {
                     continue;
                 }
