@@ -145,10 +145,12 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         }
     }
 
-    // [Battle] EngageExtraReach (live): how much farther than the game's own reach (the creature's m_npcProximity) a
-    // wizard starts a battle by walking into a monster (Niduus, 2026-10-27: "Make combat easier to start/engage when
-    // walking directly to the mob"). 0 = only the game's own reach.
-    internal static float EngageExtraReach => Math.Clamp(ConfigurationManager.GetValue("Battle.EngageExtraReach", 50f), 0f, 500f);
+    // [Battle] EngageReach (live): how close a wizard walks to a monster to start a battle. The game files give most
+    // monsters 350 (m_npcProximity), which pulled wizards in from far off once every check counted (Niduus, 2026-10-27:
+    // "Holy pull range", "I wish the pull range was more tame and moderated"). 0 = the game files' reach.
+    internal static float EngageReach => ConfigurationManager.GetValue("Battle.EngageReach", 175f) is var reach && reach > 0
+        ? Math.Clamp(reach, 25f, 1000f)
+        : 0f;
 
     // Farther than this between two checks is a teleport, not a walk: only where the wizard landed counts.
     private const float MAX_STEP = 1500f;
@@ -180,9 +182,9 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
 
         if (OnProximityEnter(playerObj, playerActor, playerWizard)) {
             if (!_engageAsked.ContainsKey(playerActor)) {
-                Logger.Debug("Engage: {0} touched {1}: {2} away on the ground, {3} in height (reach {4} = game {5} + {6}).",
+                Logger.Debug("Engage: {0} touched {1}: {2} away on the ground, {3} in height (reach {4}, game files {5}).",
                     Logger.Args(NameOverride ?? Entity.ActiveGameObject?.m_debugName, playerObj.m_debugName, (int) ground,
-                        (int) height, (int) reach, (int) Proximity, (int) EngageExtraReach));
+                        (int) height, (int) reach, (int) Proximity));
             }
 
             _engageAsked[playerActor] = now;
@@ -196,7 +198,7 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
     /// the ground with room for height, so slopes and stairs do not keep a wizard out of reach.
     /// </summary>
     private bool Reached(CoreObject player, IActorRef playerActor, out float ground, out float height, out float reach) {
-        reach = Proximity + EngageExtraReach;
+        reach = EngageReach is > 0 and var own ? own : Proximity;
         var now = (player.m_location.X, player.m_location.Y, player.m_location.Z);
         var from = _lastPlayerLocations.TryGetValue(playerActor, out var last) ? last : now;
         _lastPlayerLocations[playerActor] = now;
@@ -230,9 +232,9 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
         // A wizard who came close but not close enough, once per approach, so a monster that did not fight shows in
         // the log.
         if (ground <= reach * 2 && _nearMisses.Add(playerActor)) {
-            Logger.Debug("Engage: {0} did not start a battle with {1}: {2} away on the ground, {3} in height (reach {4} = game {5} + {6}).",
+            Logger.Debug("Engage: {0} did not start a battle with {1}: {2} away on the ground, {3} in height (reach {4}, game files {5}).",
                 Logger.Args(NameOverride ?? Entity.ActiveGameObject?.m_debugName, player.m_debugName, (int) ground,
-                    (int) dz, (int) reach, (int) Proximity, (int) EngageExtraReach));
+                    (int) dz, (int) reach, (int) Proximity));
         }
         else if (ground > reach * 2) {
             _nearMisses.Remove(playerActor);
