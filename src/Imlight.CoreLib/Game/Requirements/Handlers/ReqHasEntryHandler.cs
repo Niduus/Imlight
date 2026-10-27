@@ -47,6 +47,14 @@ internal sealed class ReqHasEntryHandler : BaseRequirementHandler<ReqHasEntry> {
             return true;
         }
 
+        // The same for the "<quest>_Complete" entry the game keeps when a quest is done (dungeon sigils ask for it).
+        if (!Requirement.m_isQuestRegistry
+            && entryName.ToString() is var entry
+            && entry.EndsWith("_Complete", StringComparison.OrdinalIgnoreCase)
+            && Imlight.CoreLib.Game.Quests.QuestOptions.IsSkipped(entry[..^"_Complete".Length])) {
+            return true;
+        }
+
         if (Requirement.m_isQuestRegistry
             && string.Equals(entryName, "Complete", StringComparison.OrdinalIgnoreCase)
             && context is IZoneStateContext { InstanceQuestCompleted: { } instanceCompleted }

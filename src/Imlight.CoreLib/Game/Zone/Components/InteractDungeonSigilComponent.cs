@@ -61,6 +61,8 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Requirements;
+using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.TeamUp;
 using Imlight.CoreLib.Game.WizBang;
@@ -153,8 +155,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             || name.Contains("TeleportFullCircle");
     }
 
-    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _) {
-        if (!IsAvailable) {
+    public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
+        if (!IsAvailable || !MayEnter(wizard)) {
             return [];
         }
 
@@ -276,7 +278,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        if (!TryResolveDestination(out var sigil)) {
+        if (!TryResolveDestination(out var sigil) || !MayEnter(playerCharacter)) {
             return;
         }
 
@@ -369,6 +371,21 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
         Logger.Information("Dungeon sigil {0}: {1} joins the countdown of {2} ({3} of {4}, {5:0.0} s left).",
             Logger.Args(SigilInfo.m_zoneTag2.ToString(), playerCharacter.CharId, _party[0].CharId, _party.Count, size, left));
+    }
+
+    // The pad's own requirements in the zone file, as the game has them: the Olde Town Drains want the quest "Dog Gone
+    // Doug" given or done (Niduus, 2026-10-27: dungeons let him in before their quest). [World] AccessAllWorlds opens
+    // every pad; a pad the Customs tab added has none.
+    private bool MayEnter(Wizard wizard) {
+        var requirements = SigilInfo?.m_requirements;
+        if (wizard is null || requirements?.m_requirements is not { Count: > 0 } || World.WorldAccess.AllOpen) {
+            return true;
+        }
+
+        return RequirementDispatcher.EvaluateRequirements(requirements,
+            new ZoneRequirementContext(requirements, null, null, wizard, ZoneActor, SigilInfo.m_zoneTag2.ToString()) {
+                ScriptState = Zone?.ScriptState,
+            });
     }
 
     private sealed record PartyMember(IActorRef Actor, ulong CharId, int FaceSlot);
