@@ -478,8 +478,10 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 EntryGID = message.RecipientCharId,
                 OwnerName = myWizardNameBytes,
                 EntryName = entryWizardNameBytes,
-                SourceObjectID = myWizard.GameObjectID,
-                DestObjectID = entryWizard.GameObjectID,
+                // Source is the wizard who accepted, Dest the one who asked (see top of file). Swapped, the
+                // client added a nameless friend with ID 0 next to the real one.
+                SourceObjectID = entryWizard.GameObjectID,
+                DestObjectID = myWizard.GameObjectID,
                 Error = 0,
                 Permissions = (uint) entryWizard.Account.GetAccountFlags(),
                 EntryLocale = _englishLocaleHash,
@@ -518,8 +520,14 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         var buddyCharID = message.EntryGID;
 
         if (!wizard.RemoveFriend(buddyCharID)) {
-            Logger.Error("{0} tried to remove character ID {1} as a friend, but they are not friends.",
+            Logger.Warning("{0} removed character ID {1}, who is not a friend; clearing it from their list.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), buddyCharID));
+
+            // A stray entry (like a nameless one) has nothing saved, so only the client's list needs it gone.
+            SendToSocket(new GAME_5_PROTOCOL.MSG_BUDDYDROP {
+                ListOwnerGID = wizard.GameObjectID,
+                EntryGID = buddyCharID
+            });
 
             return;
         }
@@ -810,9 +818,19 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
         => InformBuddiesOfStatusChange(false);
 
     private void SendBuddyEntry(Wizard buddy, Relationship relationship, Wizard owner) {
+        // Only real wizards with a name go on the list; anything else shows as a blank friend.
+        var buddyHexName = buddy.CharId == 0 || buddy.CharId == owner.CharId
+            ? null
+            : buddy.PlayerNameBehavior?.GetWizardNameAsByteHexString();
+        if (string.IsNullOrWhiteSpace(buddyHexName)) {
+            Logger.Warning("{0} has a friend with character ID {1} who has no name; it is left off the list.",
+                Logger.Args(owner.PlayerNameBehavior.GetWizardName(), buddy.CharId));
+
+            return;
+        }
+
         // Check if this buddy is online.
         var isOnline = TryGetOnlinePlayer(buddy.CharId, out var onlinePlayer);
-        var buddyHexName = buddy.PlayerNameBehavior.GetWizardNameAsByteHexString();
         var buddyByteName = DataManipulation.SpacedHexStringToBytes(buddyHexName);
 
         // Log
