@@ -108,8 +108,11 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 // Buy More is 7 (template only) and Sell More is 8 (with the held item's id), per Niduus's log. The
                 // request is matched by what its ids name: a snack or an item the player holds is sold, a bazaar
                 // entry is bought.
-                Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}).",
-                    Logger.Args(message.Command, message.itemTemplateID, message.itemGlobalID, message.quantity, message.itemType, message.category));
+                // Every field, to find where the game puts the number asked for (quantity was 0 in Niduus's log of 2026-10-27).
+                Logger.Information("Bazaar: more request {0} (template {1}, item {2}, quantity {3}, type {4}, category {5}, key {6}, " +
+                                   "texture {7}, decal {8}, decal2 {9}, pet name {10}, backpack buddy {11}).",
+                    Logger.Args(message.Command, message.itemTemplateID, message.itemGlobalID, message.quantity, message.itemType, message.category,
+                        message.key, message.texture, message.decal, message.decal2, message.petName, message.BackpackBuddy));
                 BuyOrSellMore(message);
                 break;
             case 6:
@@ -319,7 +322,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
 
     // The most copies one Buy More or Sell More request moves.
-    private const uint MAX_MORE = 99;
+    private const uint MAX_MORE = 999;
 
     private void BuyOrSellMore(WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST message) {
         var wizard = GetActiveWizard();
