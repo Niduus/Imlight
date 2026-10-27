@@ -510,8 +510,19 @@ internal sealed partial class ManagerWindow {
         }
 
         foreach (var spell in spells) {
+            // Only the spell's picture and name show its card when pointed at, not the Add button (player, 2026-10-27).
+            var name = new StackPanel {
+                Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center, Background = Brushes.Transparent,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Children = {
+                    SpellThumb(spell.Id, spell.School, 30),
+                    WithCenter(new TextBlock {
+                        Text = string.Join("  ·  ", new[] { spell.Name, spell.School, $"ID {spell.Id}" }.Where(t => t.Length > 0)),
+                    }),
+                },
+            };
+            SpellCardTip(name, spell.Id, spell.School);
             var row = new DockPanel {
-                Background = Brushes.Transparent,
                 Children = {
                     WithDock(Action(Plain("Add"), () => {
                         if (_bossDeck.Any(c => c.SpellId == spell.Id)) {
@@ -525,18 +536,9 @@ internal sealed partial class ManagerWindow {
 
                         return Task.CompletedTask;
                     }), Dock.Right),
-                    new StackPanel {
-                        Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center,
-                        Children = {
-                            SpellThumb(spell.Id, spell.School, 30),
-                            WithCenter(new TextBlock {
-                                Text = string.Join("  ·  ", new[] { spell.Name, spell.School, $"ID {spell.Id}" }.Where(t => t.Length > 0)),
-                            }),
-                        },
-                    },
+                    name,
                 },
             };
-            SpellCardTip(row, spell.Id, spell.School);
             _bossSpellResults.Children.Add(row);
         }
     }
