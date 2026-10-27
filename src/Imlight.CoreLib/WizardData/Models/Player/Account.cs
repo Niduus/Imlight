@@ -330,14 +330,24 @@ public class Account {
         return flags;
     }
 
-    private const AccountFlags NonChatFlags =
-        AccountFlags.CanHaveCustomNames | AccountFlags.CanReportBugs;
+    /// <summary>
+    /// The nameplate's m_chatPermissions. The game draws the chat icon after the name from its low bits: bits 0 and 1
+    /// both set with all of bits 0-3 = open chat (no icon), bits 0 and 1 but not all four = text chat (white speech
+    /// bubble, FilteredBalloon), anything else = menu chat (crossed-out bubble, WordBalloon).
+    /// </summary>
+    public uint GetChatPermissions(ChatMode chatMode) {
+        const uint textChat = 0x3;
+        const uint openChat = 0xF;
+        if (AuthLevel >= AuthLevel.HallMonitor) {
+            chatMode = ChatMode.Open;
+        }
 
-    public uint GetChatPermissions()
-        => ChatMode == ChatMode.Closed && AuthLevel < AuthLevel.HallMonitor
-            ? (uint) ChatPermissions.None
-            : (uint) (GetAccountFlags() & ~NonChatFlags)
-              | (uint) (ChatPermissions.ChatEnabled | ChatPermissions.OpenChatLegacy);
+        return chatMode switch {
+            ChatMode.Open => openChat | (uint) ChatPermissions.OpenChatLegacy,
+            ChatMode.Filtered => textChat,
+            _ => (uint) ChatPermissions.None,
+        };
+    }
 
     /// <summary>
     /// Retrieves the highest level wizard on the account.

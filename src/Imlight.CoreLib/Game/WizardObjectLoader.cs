@@ -138,7 +138,11 @@ public static class WizardObjectLoader {
     public static void SetPlayerNameBehavior(WizClientObject clientObject, ref Wizard character) {
         if (CoreObjectFactory.FindBehaviorInstance<ClientWizPlayerNameBehavior>(clientObject, out var nameBehavior)) {
             if (character.Account is not null) {
-                character.PlayerNameBehavior.ChatPermissions = character.Account.GetChatPermissions();
+                character.PlayerNameBehavior.ChatPermissions = character.Account.GetChatPermissions(Imlight.CoreLib.Game.Social.ChatFilter.CurrentChatMode(character.Account));
+            }
+            else if ((character.PlayerNameBehavior.ChatPermissions & 0x8) != 0) {
+                // Saved by older versions for open chat, which drew the text chat bubble.
+                character.PlayerNameBehavior.ChatPermissions |= 0xF;
             }
 
             var idx = clientObject.m_inactiveBehaviors.IndexOf(nameBehavior);
