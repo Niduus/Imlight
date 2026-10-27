@@ -559,6 +559,7 @@ internal partial class PetService {
 
         _skipAwaitingFeed = pet.m_globalID.Full;
         PetCare.Finish(wizard, pet, growth, SendToSocket);
+        PetCare.GrantLevelLoot(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, growth);
         if (score > 0f) {
             Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_WinPetGame);
         }
@@ -608,6 +609,7 @@ internal partial class PetService {
         _skipAwaitingFeed = 0;
         var snackMods = (CoreObjectFactory.GetCoreTemplate(snackTemplateId) as PetSnackItemTemplate)?.m_statModifierSet;
         SendHeldThenFeedResult(held, _play?.Game ?? "", fed.XpGained, WithActualChanges(snackMods, fed));
+        PetCare.GrantLevelLoot(SessionActor.ActorRef, GetActiveGameObject(), wizard, pet, fed);
         InformGameClient(PetCare.Summary(pet, fed));
         ResummonAfterLevelUp(pet, fed);
     }

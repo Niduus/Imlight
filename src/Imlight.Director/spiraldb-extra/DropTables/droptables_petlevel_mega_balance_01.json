@@ -1,0 +1,69 @@
+{
+  "Name": "PetLevel_Mega_Balance_01",
+  "Description": "Pet reaches Mega (Balance pets): Balance reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1421822",
+      "ItemName": "Aethyr Dust",
+      "Notes": "Balance reagent, rank 1",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1421823",
+      "ItemName": "Aethyr Ore",
+      "Notes": "Balance reagent, rank 1",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block",
+      "Notes": "Balance reagent, rank 1",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll",
+      "Notes": "Balance reagent, rank 4",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring",
+      "Notes": "Balance reagent, rank 5",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258585",
+      "ItemName": "Sandstone",
+      "Notes": "Balance reagent, rank 6",
+      "Requirements": null,
+      "Chance": 50.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}

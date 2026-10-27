@@ -1,0 +1,195 @@
+{
+  "Name": "PetLevel_Epic_Elemental_01",
+  "Description": "Pet reaches Epic (Elemental pets): elemental reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail",
+      "Notes": "Storm reagent, rank 1",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731016",
+      "ItemName": "Everwinter Lotus",
+      "Notes": "Ice reagent, rank 1",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1728030",
+      "ItemName": "Infernal Lotus",
+      "Notes": "Fire reagent, rank 1",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore",
+      "Notes": "Ice reagent, rank 1",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1731032",
+      "ItemName": "Turmoil Lotus",
+      "Notes": "Storm reagent, rank 1",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower",
+      "Notes": "Ice reagent, rank 2",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond",
+      "Notes": "Ice reagent, rank 3",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106963",
+      "ItemName": "Scrap Iron",
+      "Notes": "Storm reagent, rank 3",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106940",
+      "ItemName": "Water Lily",
+      "Notes": "Storm reagent, rank 3",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "Fire reagent, rank 4",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1359770",
+      "ItemName": "Frosted Flax",
+      "Notes": "Ice reagent, rank 5",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1206360",
+      "ItemName": "Comet Tail",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1392216",
+      "ItemName": "Glass Sliver",
+      "Notes": "Ice reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust",
+      "Notes": "Storm reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 10.0,
+      "MinCount": 1,
+      "MaxCount": 3
+    }
+  ]
+}

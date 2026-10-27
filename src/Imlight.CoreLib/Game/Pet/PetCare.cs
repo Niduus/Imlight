@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Akka.Actor;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
@@ -180,6 +181,26 @@ internal static class PetCare {
         }
         catch (Exception e) {
             Logger.Error("Could not tell the game about pet {0}: {1}", Logger.Args(pet.m_globalID, e));
+        }
+    }
+
+    /// <summary>
+    /// Drops the reagents (and anything else) the pet's template names for each age it just reached, Ancient and up
+    /// (Niduus, 2026-10-27: "Add pet reagent drops to each pet age on Ancient+"), with the loot popup.
+    /// </summary>
+    internal static void GrantLevelLoot(IActorRef session, CoreObject playerObj, Wizard wizard, WizClientObjectItem pet,
+            PetProgress.PetGrowth growth) {
+        if (session is null || growth is null) {
+            return;
+        }
+
+        foreach (var (level, _, _) in growth.LevelUps) {
+            try {
+                PetLevelLoot.Grant(session, playerObj, wizard, pet, level);
+            }
+            catch (Exception e) {
+                Logger.Error("Could not give pet {0}'s level {1} drops: {2}", Logger.Args(pet.m_globalID, level, e));
+            }
         }
     }
 

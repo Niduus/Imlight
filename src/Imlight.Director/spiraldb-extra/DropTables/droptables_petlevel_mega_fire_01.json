@@ -1,0 +1,51 @@
+{
+  "Name": "PetLevel_Mega_Fire_01",
+  "Description": "Pet reaches Mega (Fire pets): Fire reagents",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "EachItem": true,
+  "Items": [
+    {
+      "ItemId": "1728030",
+      "ItemName": "Infernal Lotus",
+      "Notes": "Fire reagent, rank 1",
+      "Requirements": null,
+      "Chance": 75.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily",
+      "Notes": "Fire reagent, rank 4",
+      "Requirements": null,
+      "Chance": 75.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 75.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone",
+      "Notes": "Fire reagent, rank 6",
+      "Requirements": null,
+      "Chance": 75.0,
+      "MinCount": 2,
+      "MaxCount": 3
+    }
+  ]
+}
