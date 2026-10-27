@@ -30,6 +30,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Threading;
 
 namespace Imlight.Setup;
 
@@ -40,11 +41,45 @@ namespace Imlight.Setup;
 /// it is played, each with why it may not work on this server, what to do and what should happen, and a tick for the
 /// ones he has tested. The list is built into the app (Assets/quest-testing.json.gz, made by
 /// tools/quest-testing/build_quest_testing.py); the ticks are kept on this PC (install folder, quest-testing-done.json).
+/// Then (Niduus, 2026-10-27: "I really don't want to quest all those 2k quests") the server checks every quest against
+/// the game's zone files (QuestChecker, quest-check.json in the ID lookup folder): a quest that passes, and needs nothing
+/// a person must see, ticks itself, and of the quests sharing one kind of fix in a world only the first is left to play.
 /// </summary>
 internal sealed partial class ManagerWindow {
 
     private const string QUEST_TESTING_ASSET = "quest-testing.json.gz";
     private const string QUEST_TESTING_DONE = "quest-testing-done.json";
+    private const string QUEST_CHECK_FILE = "quest-check.json";
+    private const string QUEST_CHECK_PROGRESS = "quest-check-progress.txt";
+
+    // What the computer check says about a quest.
+    private const string QX_PASSED = "Checked by computer";
+    private const string QX_COVERED = "Covered by another test";
+    private const string QX_PROBLEM = "Computer found a problem";
+    private const string QX_UNCHECKED = "Computer couldn't check";
+
+    // Flags a person has to see for each quest, whatever the check says.
+    private static readonly HashSet<string> s_qxByHand = [
+        "Spawns or opens something", "Step the server can't do", "Untested fix", "Changed by us", "Opens a world", "Teaches a spell",
+    ];
+
+    // Flags that are one fix for many quests: the first quest of a world with it is played, the rest trust it.
+    private static readonly string[] s_qxGrouped = ["Rewards changed", "Dungeon"];
+
+    private sealed class QxCheck {
+        public string Code { get; init; } = "";
+        public bool Ok { get; init; }
+        public List<string> Problems { get; init; } = [];
+        public List<string> Unchecked { get; init; } = [];
+        public List<string> Notes { get; init; } = [];
+    }
+
+    private sealed class QxCheckFile {
+        public string Written { get; init; } = "";
+        public int Zones { get; init; }
+        public int ZonesNotRead { get; init; }
+        public List<QxCheck> Quests { get; init; } = [];
+    }
 
     private sealed class QxFlag {
         public string Kind { get; init; } = "";
@@ -69,6 +104,13 @@ internal sealed partial class ManagerWindow {
         public string World { get; set; } = "";
         public int Step { get; set; }
         public string Haystack { get; set; } = "";
+        // The computer check's word (QX_PASSED and the rest; "" before a check), what it found, why a person still has
+        // to play it, and the quests whose test covers it.
+        public string Checked { get; set; } = "";
+        public List<string> CheckLines { get; set; } = [];
+        public List<string> ByHand { get; set; } = [];
+        public List<string> CoveredBy { get; set; } = [];
+        public bool AutoDone => Checked is QX_PASSED or QX_COVERED;
         // What the tick is kept by: the quest code, or the world and name of a quest the server doesn't have.
         public string Key => Code.Length > 0 ? Code : $"{World}|{Name}";
         public bool OnServer => Code.Length > 0;
@@ -90,7 +132,7 @@ internal sealed partial class ManagerWindow {
     private sealed record QxRow(QxRowKind Kind, string Text, string Line, QxQuest? Quest);
 
     private const string QX_ONLY_FLAGGED = "Only quests with something to check";
-    private static readonly string[] s_qxShow = [ANY_FILTER, "Not tested yet", "Tested"];
+    private static readonly string[] s_qxShow = [ANY_FILTER, "Left to test", "Tested"];
     private static readonly string[] s_qxServer = [ANY_FILTER, "On the server", "Not on the server"];
 
     private readonly TextBox _qxSearch = new() { Watermark = "Search a quest, an NPC, a step, a reward or why it's flagged" };
@@ -103,6 +145,12 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _qxCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _qxList = new() { Background = Brushes.Transparent };
     private readonly StackPanel _qxDetails = new() { Spacing = 6 };
+    private readonly TextBlock _qxCheckStatus = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED };
+    private readonly DispatcherTimer _qxCheckTimer = new() { Interval = TimeSpan.FromSeconds(3) };
+    private Dictionary<string, QxCheck> _qxChecks = new(StringComparer.OrdinalIgnoreCase);
+    private QxCheckFile? _qxCheckFile;
+    private DateTime _qxCheckRead;
+    private DateTime _qxCheckAsked;
 
     private List<QxWorld> _qxWorlds = [];
     private List<QxQuest> _qxQuests = [];
@@ -112,8 +160,14 @@ internal sealed partial class ManagerWindow {
     private ObservableCollection<QxRow> _qxRows = [];
 
     private string QuestTestingDonePath => Path.Combine(_manager.InstallFolder, QUEST_TESTING_DONE);
+    private string QuestCheckPath => Path.Combine(_manager.IdLookupFolder, QUEST_CHECK_FILE);
+
+    // Ticked by him, or by the computer check.
+    private bool QxDone(QxQuest quest) => _qxDone.Contains(quest.Key) || quest.AutoDone;
 
     private Control QuestTestingTab() {
+        // What's left to play, at first.
+        _qxShowing.SelectedIndex = 1;
         _qxList.ItemTemplate = new FuncDataTemplate<QxRow>((row, _) => row is null ? new Panel() : QuestTestingRowView(row));
         _qxList.SelectionChanged += (_, e) => {
             if (e.Source != _qxList) {
@@ -133,6 +187,11 @@ internal sealed partial class ManagerWindow {
 
         var next = Primary("Next to test");
         ToolTip.SetTip(next, "Shows the first quest in story order that isn't ticked yet.");
+        var check = Plain("Check all quests");
+        ToolTip.SetTip(check, "The server reads the game's zone files and checks every step of every main quest: the NPC to talk to " +
+                              "is there, the monsters spawn, the place exists, the object to click is there. Quests that pass tick " +
+                              "themselves. It runs in the background and can take 10 to 30 minutes the first time.");
+        _qxCheckTimer.Tick += (_, _) => QuestCheckPoll();
 
         var details = new ScrollViewer { Width = 470, Margin = new Thickness(14, 0, 0, 0), Content = Card(_qxDetails) };
         ShowQuestTesting(null);
@@ -163,9 +222,19 @@ internal sealed partial class ManagerWindow {
 
                                 return Task.CompletedTask;
                             })),
+                            Spaced(Action(check, () => {
+                                _manager.RequestQuestCheck();
+                                _qxCheckAsked = DateTime.UtcNow;
+                                _qxCheckStatus.Text = "Asked the server to check every quest. This line shows how far it got.";
+                                _qxCheckTimer.Start();
+                                Say("The server is checking every main quest. Keep it running; the list updates by itself when it's done.");
+
+                                return Task.CompletedTask;
+                            })),
                         },
                     },
-                    _qxCount), Dock.Top),
+                    _qxCount,
+                    _qxCheckStatus), Dock.Top),
                 WithMargin(_qxList, new Thickness(0, 14, 0, 0)),
             },
         };
@@ -174,6 +243,11 @@ internal sealed partial class ManagerWindow {
     /// <summary>Reads the built-in list and the ticks once. Runs when the tab shows.</summary>
     private async Task LoadQuestTestingAsync() {
         if (_qxWorlds.Count > 0) {
+            // A check that finished while the tab was away.
+            if (ReadQuestCheck()) {
+                RenderQuestTesting();
+            }
+
             return;
         }
 
@@ -184,8 +258,108 @@ internal sealed partial class ManagerWindow {
         _qxQuests = quests;
         _qxDone = ReadQuestTestingDone();
         FillFilterCombo(_qxWorld, _qxWorlds.Select(w => w.Name));
-        FillFilterCombo(_qxFlag, quests.SelectMany(q => q.Flags).GroupBy(f => f.Kind).OrderByDescending(g => g.Count()).Select(g => g.Key));
+        ReadQuestCheck();
         RenderQuestTesting();
+    }
+
+    private void FillQuestTestingFlags() {
+        var kinds = _qxQuests.SelectMany(q => q.Flags).GroupBy(f => f.Kind).OrderByDescending(g => g.Count()).Select(g => g.Key);
+        var checks = _qxQuests.Select(q => q.Checked).Where(c => c.Length > 0).Distinct();
+        FillFilterCombo(_qxFlag, checks.Concat(kinds));
+    }
+
+    /// <summary>Reads the server's quest check when it changed since, and works out what each quest still needs.</summary>
+    private bool ReadQuestCheck() {
+        QxCheckFile? file = null;
+        try {
+            var path = QuestCheckPath;
+            var written = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+            if (written == _qxCheckRead && _qxCheckFile is not null) {
+                return false;
+            }
+
+            if (written != DateTime.MinValue) {
+                file = JsonSerializer.Deserialize<QxCheckFile>(File.ReadAllText(path), s_qeJson);
+            }
+
+            _qxCheckRead = written;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            // Being written: read on the next look.
+            return false;
+        }
+
+        _qxCheckFile = file;
+        _qxChecks = new Dictionary<string, QxCheck>(StringComparer.OrdinalIgnoreCase);
+        foreach (var check in file?.Quests ?? []) {
+            _qxChecks.TryAdd(check.Code, check);
+        }
+
+        foreach (var world in _qxWorlds) {
+            var firstOf = new Dictionary<string, QxQuest>();
+            foreach (var quest in world.Quests) {
+                quest.Checked = "";
+                quest.CheckLines = [];
+                quest.ByHand = [];
+                quest.CoveredBy = [];
+                if (!quest.OnServer) {
+                    continue;
+                }
+
+                var kinds = quest.Flags.Select(f => f.Kind).ToHashSet();
+                quest.ByHand.AddRange(kinds.Where(s_qxByHand.Contains).Select(k => $"{k}: a person has to see it happen."));
+                foreach (var kind in s_qxGrouped.Where(kinds.Contains)) {
+                    if (firstOf.TryGetValue(kind, out var first)) {
+                        quest.CoveredBy.Add($"{kind}: same fix as {first.Name} (quest {first.Step}), so testing that one covers this one.");
+                    }
+                    else {
+                        firstOf[kind] = quest;
+                        quest.ByHand.Add($"{kind}: the first quest in {world.Name} with it. Testing this one covers the rest.");
+                    }
+                }
+
+                var results = new[] { quest.Code }.Concat(quest.Copies).Select(c => _qxChecks.GetValueOrDefault(c)).Where(c => c is not null).ToList();
+                if (results.Count == 0) {
+                    continue;
+                }
+
+                var problems = results.SelectMany(r => r!.Problems).Distinct().ToList();
+                var notChecked = results.SelectMany(r => r!.Unchecked).Distinct().ToList();
+                quest.CheckLines = [.. problems.Select(p => "Problem: " + p), .. notChecked.Select(u => "Not checked: " + u),
+                    .. results.SelectMany(r => r!.Notes).Distinct().Select(n => "Note: " + n)];
+                quest.Checked = problems.Count > 0 ? QX_PROBLEM
+                    : notChecked.Count > 0 ? QX_UNCHECKED
+                    : quest.ByHand.Count > 0 ? ""
+                    : quest.CoveredBy.Count > 0 ? QX_COVERED
+                    : QX_PASSED;
+            }
+        }
+
+        FillQuestTestingFlags();
+
+        return true;
+    }
+
+    // While a check runs: its progress line, and the list again once it wrote its results.
+    private void QuestCheckPoll() {
+        try {
+            var progress = Path.Combine(_manager.IdLookupFolder, QUEST_CHECK_PROGRESS);
+            if (File.Exists(progress) && File.ReadAllText(progress).Split('\t') is [_, var text, ..]) {
+                _qxCheckStatus.Text = "Quest check: " + text;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Being written.
+        }
+
+        if (File.Exists(QuestCheckPath) && File.GetLastWriteTimeUtc(QuestCheckPath) > _qxCheckAsked && ReadQuestCheck()) {
+            _qxCheckTimer.Stop();
+            RenderQuestTesting();
+            Say("The quest check is done. Quests that passed are ticked; the list shows what's left.");
+        }
+        else if (DateTime.UtcNow - _qxCheckAsked > TimeSpan.FromHours(2)) {
+            _qxCheckTimer.Stop();
+        }
     }
 
     private static (QxFile?, List<QxQuest>) ReadQuestTesting() {
@@ -288,17 +462,17 @@ internal sealed partial class ManagerWindow {
     private QxRow QuestTestingWorldRow(QxWorld w) {
         var onServer = w.Quests.Where(q => q.OnServer).ToList();
         return new QxRow(QxRowKind.World, w.Name + (w.SideWorld ? "  (side world)" : ""),
-            $"{onServer.Count(q => _qxDone.Contains(q.Key)):N0} of {onServer.Count:N0} quests on the server tested. " +
+            $"{onServer.Count(QxDone):N0} of {onServer.Count:N0} quests on the server tested. " +
             $"{w.Quests.Count - onServer.Count:N0} not on the server.", null);
     }
 
     private bool QuestTestingMatches(QxQuest quest, string[] words, string? flag) {
-        var done = _qxDone.Contains(quest.Key);
+        var done = QxDone(quest);
         return words.All(w => quest.Haystack.Contains(w, StringComparison.Ordinal))
-               && (flag is null || quest.Flags.Any(f => f.Kind == flag))
+               && (flag is null || quest.Flags.Any(f => f.Kind == flag) || quest.Checked == flag)
                && (_qxFlaggedOnly.IsChecked != true || quest.Flags.Count > 0)
                && _qxShowing.SelectedIndex switch {
-                   1 => !done,
+                   1 => !done && (quest.OnServer || _qxServer.SelectedIndex == 2),
                    2 => done,
                    _ => true,
                }
@@ -351,11 +525,27 @@ internal sealed partial class ManagerWindow {
         }
 
         var playable = _qxQuests.Where(q => q.OnServer).ToList();
-        var done = playable.Count(q => _qxDone.Contains(q.Key));
-        _qxCount.Text = $"{FilterCount(_qxShown, _qxQuests.Count, "main story quests")} You've tested {done:N0} of the {playable.Count:N0} on the server" +
-                        (playable.Count > 0 ? $" ({done * 100 / playable.Count}%)." : ".") +
+        var done = playable.Count(QxDone);
+        _qxCount.Text = $"{FilterCount(_qxShown, _qxQuests.Count, "main story quests")} {done:N0} of the {playable.Count:N0} on the server are done" +
+                        (playable.Count > 0 ? $" ({done * 100 / playable.Count}%)" : "") +
+                        $", {playable.Count - done:N0} left to play." +
                         (_qxSource.Length > 0 ? $" Made from {_qxSource}." : "");
+        if (!_qxCheckTimer.IsEnabled) {
+            _qxCheckStatus.Text = _qxCheckFile is not { } check
+                ? "The computer hasn't checked these quests yet. Start the server and press Check all quests: quests that pass tick themselves."
+                : $"Computer check ({QxWhen(check.Written)}): {playable.Count(q => q.Checked == QX_PASSED):N0} passed, " +
+                  $"{playable.Count(q => q.Checked == QX_COVERED):N0} covered by another quest's test, " +
+                  $"{playable.Count(q => q.Checked == QX_PROBLEM):N0} with a problem, " +
+                  $"{playable.Count(q => q.Checked == QX_UNCHECKED):N0} it couldn't check" +
+                  (check.ZonesNotRead > 0 ? $" ({check.ZonesNotRead:N0} zones could not be read)." : ".") +
+                  " Press Check all quests again after an update.";
+        }
     }
+
+    private static string QxWhen(string written)
+        => DateTime.TryParse(written, null, System.Globalization.DateTimeStyles.RoundtripKind, out var when)
+            ? when.ToLocalTime().ToString("MMM d, h:mm tt")
+            : "earlier";
 
     private Control QuestTestingRowView(QxRow row) {
         if (row.Kind == QxRowKind.World) {
@@ -369,8 +559,9 @@ internal sealed partial class ManagerWindow {
         }
 
         var quest = row.Quest!;
-        var tick = new CheckBox { IsChecked = _qxDone.Contains(quest.Key), VerticalAlignment = VerticalAlignment.Center, IsEnabled = quest.OnServer };
-        ToolTip.SetTip(tick, quest.OnServer ? "Tick once this quest worked." : "Not on the server, so there's nothing to test.");
+        var tick = new CheckBox { IsChecked = QxDone(quest), VerticalAlignment = VerticalAlignment.Center, IsEnabled = quest.OnServer && !quest.AutoDone };
+        ToolTip.SetTip(tick, !quest.OnServer ? "Not on the server, so there's nothing to test."
+            : quest.AutoDone ? "The computer check ticked this one: nothing in it needs a person." : "Tick once this quest worked.");
         tick.IsCheckedChanged += (_, _) => SetQuestTested(quest, tick.IsChecked == true);
 
         var title = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
@@ -384,6 +575,10 @@ internal sealed partial class ManagerWindow {
         title.Children.Add(name);
         // The flags go on a row of their own, wrapping, so a quest with many of them still fits.
         var tags = new WrapPanel { Margin = new Thickness(80, 2, 0, 0) };
+        if (quest.Checked.Length > 0) {
+            tags.Children.Add(WithMargin(QtTag(quest.Checked, QuestFlagBrush(quest.Checked)), new Thickness(0, 0, 6, 2)));
+        }
+
         foreach (var kind in quest.Flags.Select(f => f.Kind).Distinct()) {
             tags.Children.Add(WithMargin(QtTag(kind, QuestFlagBrush(kind)), new Thickness(0, 0, 6, 2)));
         }
@@ -401,7 +596,7 @@ internal sealed partial class ManagerWindow {
             Padding = new Thickness(4, 5, 4, 5),
             BorderBrush = LINE,
             BorderThickness = new Thickness(0, 0, 0, 1),
-            Opacity = _qxDone.Contains(quest.Key) ? 0.6 : 1,
+            Opacity = QxDone(quest) ? 0.6 : 1,
             Child = new StackPanel {
                 Spacing = 2,
                 Children = { title, tags, WithMargin(Sub(string.Join("  ·  ", bits.Where(b => b.Length > 0))), new Thickness(80, 0, 0, 0)) },
@@ -411,13 +606,15 @@ internal sealed partial class ManagerWindow {
 
     // Red = the story may stop here; amber = something new to check; grey = a reminder.
     private static IBrush QuestFlagBrush(string kind) => kind switch {
+        QX_PASSED or QX_COVERED => GOOD,
+        QX_PROBLEM => BAD,
         "Not on the server" or "No giver" or "Needs a missing quest" or "Step the server can't do" => BAD,
         "Rebuilt by us" or "Click an object" or "Steps differ" or "No real-game copy" or "Not in the story list" or "One per school" => MUTED,
         _ => WARN,
     };
 
     private void QuestTestingNext() {
-        var next = _qxQuests.FirstOrDefault(q => q.OnServer && !_qxDone.Contains(q.Key));
+        var next = _qxQuests.FirstOrDefault(q => q.OnServer && !QxDone(q));
         if (next is null) {
             Say("Every quest on the server is ticked as tested.");
 
@@ -429,7 +626,7 @@ internal sealed partial class ManagerWindow {
             _qxSearch.Text = "";
             _qxWorld.SelectedIndex = 0;
             _qxFlag.SelectedIndex = 0;
-            _qxShowing.SelectedIndex = 0;
+            _qxShowing.SelectedIndex = 1;
             _qxServer.SelectedIndex = 0;
             _qxFlaggedOnly.IsChecked = false;
             _qxSideWorlds.IsChecked = true;
@@ -466,7 +663,8 @@ internal sealed partial class ManagerWindow {
                                     (quest.Level > 1 ? $" Level {quest.Level}." : "")));
 
         if (quest.OnServer) {
-            var tested = new CheckBox { Content = "Tested: it worked", IsChecked = _qxDone.Contains(quest.Key) };
+            var tested = new CheckBox { Content = quest.AutoDone ? "Done: the computer check covers it" : "Tested: it worked",
+                IsChecked = QxDone(quest), IsEnabled = !quest.AutoDone };
             tested.IsCheckedChanged += (_, _) => SetQuestTested(quest, tested.IsChecked == true);
             _qxDetails.Children.Add(tested);
 
@@ -494,6 +692,25 @@ internal sealed partial class ManagerWindow {
             })));
             buttons.Children.Add(Spaced(Action(Plain("Copy code"), () => CopyAsync(code))));
             _qxDetails.Children.Add(buttons);
+        }
+
+        if (quest.OnServer) {
+            Heading("Computer check");
+            var lines = new List<string>();
+            if (_qxCheckFile is null) {
+                lines.Add("Not checked yet: press Check all quests at the top.");
+            }
+            else if (quest.CheckLines.Count == 0 && quest.Checked.Length == 0 && !_qxChecks.ContainsKey(quest.Code)) {
+                lines.Add("The last check didn't include this quest.");
+            }
+            else if (quest.CheckLines.All(l => l.StartsWith("Note: ", StringComparison.Ordinal))) {
+                lines.Add("Passed: every NPC, monster, place and object its steps need is in the game's zone files.");
+            }
+
+            lines.AddRange(quest.CheckLines);
+            lines.AddRange(quest.ByHand.Select(b => "Still play it: " + b));
+            lines.AddRange(quest.CoveredBy);
+            Lines(lines);
         }
 
         Heading($"Why it's flagged ({quest.Flags.Count})");

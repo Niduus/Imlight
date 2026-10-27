@@ -245,6 +245,10 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     internal static bool IsNamedByUsageGoal(InteractOptionTemplate option)
         => UsageGoals.Names(option);
 
+    /// <summary>The usage goals that using this object counts for (the quest checker asks, QuestChecker.cs).</summary>
+    internal static IEnumerable<(string Quest, GoalTemplate Goal)> UsageGoalsOf(GameObjectTemplate template)
+        => UsageGoals.Of(template);
+
     private static IEnumerable<InteractOptionTemplate> InteractOptions(GameObjectTemplate gameObjectTemplate)
         => gameObjectTemplate.m_behaviors
             .OfType<InteractableBehaviorTemplate>()

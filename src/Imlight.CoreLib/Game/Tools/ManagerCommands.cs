@@ -59,6 +59,7 @@ internal static class ManagerCommands {
 
     private static void Poll() {
         PollAnnouncements();
+        PollQuestCheck();
         try {
             if (!File.Exists(COMMANDS_FILE)) {
                 return;
@@ -103,6 +104,24 @@ internal static class ManagerCommands {
         }
 
         return (wizard, line.TrimStart('.').Trim());
+    }
+
+    // The Quest Testing tab's "Check all quests" button (QuestChecker): no wizard needs to be online.
+    private static void PollQuestCheck() {
+        try {
+            if (!File.Exists(QuestChecker.REQUEST_FILE)) {
+                return;
+            }
+
+            TryDelete(QuestChecker.REQUEST_FILE);
+            var folder = Imlight.CoreLib.Shared.Resources.IdCatalog.OutputPath;
+            Logger.Information(QuestChecker.Start(folder)
+                ? "Imlight app: checking every main quest against the game's zone files."
+                : "Imlight app: the quest check is running already.");
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not start the quest check: {0}", Logger.Args(ex.Message));
+        }
     }
 
     private static void PollAnnouncements() {
