@@ -153,7 +153,7 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
     }
 
     private bool TriggerAllows(IActorRef playerActor, Wizard wizard, CoreObject playerObject) {
-        if (ConfigurationManager.GetValue("World.OpenAllDoors", false)) {
+        if (Imlight.CoreLib.Game.World.WorldAccess.AllOpen) {
             return true;
         }
 

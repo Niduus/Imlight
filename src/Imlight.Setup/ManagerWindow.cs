@@ -186,6 +186,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Character", "RefillCrowns", "Crowns refill to the starting amount (amount under Settings, Character)", new() { OnContent = "On", OffContent = "Off" }),
         ("Login Server", "DisableIdleKick", "Disable idle kick (never disconnect idle players)", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "OpenAllDoors", "Open every door (no quest or level needed, such as Nightside)", new() { OnContent = "On", OffContent = "Off" }),
+        ("World", "AccessAllWorlds", "Access to all worlds: every character can pick every world at the Spiral Door and use every quest-locked teleporter", new() { OnContent = "On", OffContent = "Off" }),
         ("World", "GoldWispsGiveCrowns", "Gold wisps give crowns as well as gold (how many under Settings, World)", new() { OnContent = "On", OffContent = "Off" }),
         ("Chat", "EnforceWhitelist", "Enforce chat whitelist: red (bad) words from open chat accounts show as \"...\" (off: they go through; text chat accounts stay filtered)", new() { OnContent = "On", OffContent = "Off" }),
         ("PvP", "DuelCircles", "Duel circles: wizards standing on both sides of a house's duel circle (or a Customs duel circle) duel each other", new() { OnContent = "On", OffContent = "Off" }),

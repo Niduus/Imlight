@@ -47,7 +47,8 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
     private static bool s_randomizeGateways => ConfigurationManager.Settings["April Fools.RandomizeGateways"].AsBool();
 
     // [World] OpenAllDoors: doors and other teleports work without their quest, level or event requirements.
-    private static bool s_openAllDoors => ConfigurationManager.GetValue("World.OpenAllDoors", false);
+    // [World] AccessAllWorlds does the same for every teleport (Imlight.CoreLib.Game.World.WorldAccess.AllOpen).
+    private static bool s_openAllDoors => Imlight.CoreLib.Game.World.WorldAccess.AllOpen;
 
     // A trigger's own object is hidden with this state when the trigger is deactivated.
     private const string DEACTIVATED_OBJECT_STATE = "Off";

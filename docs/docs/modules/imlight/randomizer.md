@@ -87,6 +87,7 @@ The `[Battle]` section works with or without randomizer mode, with switches on t
 | Setting | Default | What it does |
 | ------- | ------- | ------------ |
 | `OpenAllDoors` | `false` | Every door and teleport works without the quest, level or event it normally needs, such as the Nightside door in the Commons. |
+| `AccessAllWorlds` | `false` | Every character can pick every world at the Spiral Door and use every teleporter a quest normally unlocks. Off: a world opens with the first quest that sends the wizard there and stays open on that character. |
 
 More school pip settings, also in `[Battle]`:
 

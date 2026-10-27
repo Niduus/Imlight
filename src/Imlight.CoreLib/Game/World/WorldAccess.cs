@@ -56,10 +56,17 @@ internal static class WorldAccess {
     private const string OPEN_ENTRY_PREFIX = "ImlightWorldOpen_";
 
     /// <summary>
-    /// The worlds this wizard can pick at the Spiral Door. [World] OpenAllDoors opens them all.
+    /// [World] AccessAllWorlds (or OpenAllDoors): every character may use every world on the Spiral Door and every
+    /// quest-locked teleporter, whatever their quests. Read live.
+    /// </summary>
+    public static bool AllOpen
+        => ConfigurationManager.GetValue("World.AccessAllWorlds", false) || ConfigurationManager.GetValue("World.OpenAllDoors", false);
+
+    /// <summary>
+    /// The worlds this wizard can pick at the Spiral Door. AllOpen opens them all.
     /// </summary>
     public static List<string> OpenWorlds(Wizard wizard) {
-        var openAll = ConfigurationManager.GetValue("World.OpenAllDoors", false);
+        var openAll = AllOpen;
         var here = wizard?.Zone?.Split('/')[0];
 
         return [.. s_worlds.Where(world => openAll || wizard is null || s_alwaysOpen.Contains(world) || world == here
