@@ -2525,8 +2525,10 @@ public class Wizard {
                 continue;
             }
 
-            // Remove completed quests.
-            if (QuestBehavior.HasCompletedQuest(quest.QuestName)) {
+            // Remove completed quests. A quest the Quest Editor made repeatable keeps its "Complete" mark while a new
+            // run is under way, so that run stays.
+            if (QuestBehavior.HasCompletedQuest(quest.QuestName)
+                && !Imlight.CoreLib.Game.Quests.QuestOptions.IsRepeatable(quest.QuestName)) {
                 QuestBehavior.CurrentQuestInstances.Remove(quest);
                 QuestInstanceCollection.RemoveQuestInstance(CharId, quest.QuestName);
 
