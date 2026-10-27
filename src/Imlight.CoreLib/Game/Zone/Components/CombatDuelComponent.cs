@@ -2331,6 +2331,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         };
 
         circle.ParticipantActor.Tell(msg);
+
+        // The game clears the Will Cast card with each new hand (a draw, a discard), so it is sent again.
+        if (_awaitingCombatMoves) {
+            ResendPetCard(circle);
+        }
     }
 
     internal void SendCombatPips() {

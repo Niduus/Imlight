@@ -12,6 +12,7 @@
  *   m_noPVP           no use in PvP
  * Most come "-Locked" on a pet: unlocking one (MSG_UNLOCKPETTALENT) costs the m_unlockReagent* reagents once and swaps
  * the talent for its m_unlockedTemplate. The reagents are not paid per cast.
+ * Will Casts work in Deckathalon battles too (Niduus, 2026-10-27: "Willcasts are allowed in Deckathalon").
  *
  * [Pets] in Imlight.ini, all read each time so a change applies without a restart:
  *   WillCasts                 false: no Will Casts at all.
