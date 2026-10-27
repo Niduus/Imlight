@@ -219,6 +219,12 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
         return RootArchiveLoader.GetFile<CoreTemplate>(fileName);
     }
 
+    /// <summary>The template's file name without folder or extension ("WC_Firecat_TeleporterA"), or null.</summary>
+    public static string FileNameOf(ulong id)
+        => TemplateLocations().TryGetValue(id, out var location) && location.m_filename is { } name
+            ? System.IO.Path.GetFileNameWithoutExtension(name.ToString().Replace('|', '/'))
+            : null;
+
     /// <summary>Whether the game files have a template with this id.</summary>
     public static bool HasTemplate(ulong id) => TemplateLocations().ContainsKey(id);
 
