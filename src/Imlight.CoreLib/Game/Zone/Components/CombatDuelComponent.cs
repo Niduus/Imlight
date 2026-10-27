@@ -1328,6 +1328,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();
+        // In the Deckathalon tower the wizards go first ([Deckathalon] PlayersFirst, read live; Niduus, 2026-10-27:
+        // "In Deckathalon, add a config where the player ALWAYS goes first").
+        if (Events.Deckathalon.IsFloorZone(Entity.Zone?.ZonePath) && ConfigurationManager.GetValue("Deckathalon.PlayersFirst", true)) {
+            Duel.m_firstTeamToAct = (int) CombatTeam.Player;
+        }
+
         _tutorialDirector.OnDuelCreated(Duel);
 
         // When the duel is created, it must be created by two suspects: the player and the creature.
