@@ -1575,7 +1575,9 @@ public class Wizard {
             return false;
         }
 
-        var spellList = deckBehavior.m_spellList ?? [];
+        // A new deck (from a shop, a drop or .mod additem) has no list yet: one kept only here was lost, and the card
+        // could not be taken out again.
+        var spellList = deckBehavior.m_spellList ??= [];
         var spellDeckData = spellList.FirstOrDefault(s => s.m_templateID == spellTemplateId);
         if (spellDeckData is null) {
             // It may not be included yet. We'll add another entry.
