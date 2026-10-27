@@ -1087,8 +1087,17 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             }
         }
 
+        // Force-granting a quest the wizard already finished starts it over: its old "Complete" mark would make the
+        // next load (any zone change) drop the new copy as done (Niduus, 2026-10-27: "test quests are not sticking
+        // during zone transfers").
+        var again = force && wizard.HasCompletedQuest(template.m_questName);
+        if (again) {
+            wizard.QuestBehavior.RemoveAllQuestRegistryEntries(template.m_questName);
+            WizardCollection.UpdateCharacterQuestBehavior(wizard);
+        }
+
         StartQuest(template, wizard);
-        CommandReply($"Granted quest '{template.m_questName}'{(force ? " (requirements skipped)" : "")}.");
+        CommandReply($"Granted quest '{template.m_questName}'{(force ? " (requirements skipped)" : "")}{(again ? ", started over" : "")}.");
     }
 
     private void StartQuest(QuestTemplate quest, Wizard wizard) {
