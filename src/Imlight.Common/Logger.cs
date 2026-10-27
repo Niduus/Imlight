@@ -57,7 +57,15 @@ namespace Imlight.Common;
 public class Logger {
 
     private const byte MaxCallerNameLength = 40;
-    private static readonly string s_path = ConfigurationManager.Settings["Logging.LogPath"].AsString()
+
+    /// <summary>
+    /// A log file of its own for a helper program the server starts (the Bazaar bot), instead of [Logging] LogPath: two
+    /// programs cannot write one log file.
+    /// </summary>
+    public const string LOG_PATH_VARIABLE = "IMLIGHT_LOG_PATH";
+
+    private static readonly string s_path = Environment.GetEnvironmentVariable(LOG_PATH_VARIABLE) is { Length: > 0 } own ? own
+        : ConfigurationManager.Settings["Logging.LogPath"].AsString()
         ?? Path.Combine(Directory.GetCurrentDirectory(), "logs", "log.txt");
     private static readonly string s_logFormat = ConfigurationManager.Settings["Logging.LogFormat"].AsString()
         ?? "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";

@@ -102,7 +102,18 @@ internal static class Program {
     private static readonly string s_adminAccountPassword = 
         ConfigurationManager.Settings["Database.AdminAccountPassword"].AsString();
 
-    private static void Main() {
+    private static void Main(string[] args) {
+        // The Bazaar bot is this program started again with --bazaar by the game server (see BazaarLink): it reads the
+        // settings and the game files, and nothing else of the server.
+        if (Array.IndexOf(args, "--bazaar") >= 0) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                Logger.Fatal("The Bazaar bot stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.Bazaar.BazaarBot.Run(args);
+
+            return;
+        }
+
         // =============================================================
         // THREAD POOL
         // =============================================================
@@ -218,6 +229,9 @@ internal static class Program {
 
             return;
         }
+
+        // The Bazaar runs as a program of its own, so its lists and stock never slow the game server down.
+        Imlight.CoreLib.Game.Bazaar.BazaarLink.StartWatching();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");

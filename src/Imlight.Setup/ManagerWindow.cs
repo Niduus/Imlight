@@ -780,6 +780,7 @@ internal sealed partial class ManagerWindow : Window {
             EventsCard(),
             LoyaltyStoreCard(),
             CrownShopCard(),
+            BazaarBotCard(),
             _trainersCard);
     }
 
@@ -1136,6 +1137,7 @@ internal sealed partial class ManagerWindow : Window {
                 SearchFilters(SearchFilter("Kind of line", _logLevel), SearchTick(_logRepeated)),
                 LogWell(_logScroll),
                 Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)))),
+            BazaarBotLogCard(),
             Shut(Fold("log", "Logs", "Game log",
                 "The newest log Wizard101 wrote, updated every 2 seconds.",
                 _clientLogFile,

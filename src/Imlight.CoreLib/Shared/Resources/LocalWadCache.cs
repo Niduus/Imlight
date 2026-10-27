@@ -76,6 +76,25 @@ internal static class LocalWadCache {
 
     static LocalWadCache() => Initialize();
 
+    /// <summary>
+    /// Opens the cache file. The Bazaar bot (a second copy of the server) reads it too, and LiteDB lets one program in
+    /// at a time, so the other waits its turn (up to a minute) instead of failing.
+    /// </summary>
+    private static LiteDatabase OpenDatabase() {
+        for (var attempt = 0; ; attempt++) {
+            try {
+                return new LiteDatabase(s_path);
+            }
+            catch (Exception e) when ((e is IOException || e.InnerException is IOException) && attempt < 240) {
+                if (attempt == 0) {
+                    Logger.Debug("The local cache is in use by another program; waiting for it.");
+                }
+
+                System.Threading.Thread.Sleep(250);
+            }
+        }
+    }
+
     public static void Initialize() {
         if (s_hasInitialized) {
             return;
@@ -106,7 +125,7 @@ internal static class LocalWadCache {
         // Instead, copy the stream to a memory stream.
         var fileStream = new MemoryStream();
         lock (s_fileLock) {
-            using var db = new LiteDatabase(s_path);
+            using var db = OpenDatabase();
             var fs = db.GetStorage<FileDefinition>();
 
             var file = fs.Find(f => f.Filename == wadName)
@@ -129,7 +148,7 @@ internal static class LocalWadCache {
 
     internal static List<FileDefinition> GetAllCachedFiles() {
         lock (s_fileLock) {
-            using var db = new LiteDatabase(s_path);
+            using var db = OpenDatabase();
             var fs = db.GetStorage<FileDefinition>();
 
             var allFiles = fs.FindAll();
@@ -146,7 +165,7 @@ internal static class LocalWadCache {
 
     private static void CacheWadUnlocked(string fileName, Archive wad) {
         fileName = SanitizeWadName(fileName);
-        using var db = new LiteDatabase(s_path);
+        using var db = OpenDatabase();
         var fs = db.GetStorage<FileDefinition>();
 
         // Search to see if this file exists. If it does, we'll warn the user
@@ -191,7 +210,7 @@ internal static class LocalWadCache {
 
     private static void DeleteWadUnlocked(string fileName) {
         fileName = SanitizeWadName(fileName);
-        using var db = new LiteDatabase(s_path);
+        using var db = OpenDatabase();
         var fs = db.GetStorage<FileDefinition>();
 
         var file = fs.Find(f => f.Filename == fileName)
