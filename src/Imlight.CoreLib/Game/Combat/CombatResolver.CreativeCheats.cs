@@ -473,6 +473,25 @@ public partial class CombatResolver {
         var duel = _duel.m_duelID.Full;
 
         switch (step.Do.ToLowerInvariant()) {
+            case "lockcircle" or "unlockcircle": {
+                // Niduus, 2026-10-27 ("add a lock zones block so I can like lock the moon slot or gem in battle"): no one
+                // new takes the circle (no wizard or creature joining, no minion summoned) for Rounds rounds (0: the rest
+                // of the battle; from this one when the round is under way). Kind: the circle's symbol (Dagger, Key, Gem,
+                // Spiral on the creature side; Sun, Eye, Star, Moon on the wizards'), OwnSide, OtherSide or All.
+                var locking = step.Is("LockCircle");
+                var circles = CirclesNamed(boss, step.Kind);
+                foreach (var circle in circles) {
+                    circle.LockedUntil = !locking ? 0
+                        : step.Rounds <= 0 ? int.MaxValue : BattleRound + step.Rounds - (_cheatAtRoundStart ? 1 : 0);
+                }
+
+                Logger.Information("Duel {0} | {1}: {2} circle {3} ({4}){5}.", Logger.Args(duel, bossName, locking ? "locked" : "unlocked",
+                    string.Join(", ", circles.Select(c => c.Symbol)), step.Kind,
+                    locking ? step.Rounds <= 0 ? " for the rest of the battle" : $" for {step.Rounds} rounds" : ""));
+
+                return true;
+            }
+
             case "setvar": {
                 if (string.IsNullOrWhiteSpace(step.Var)) {
                     return true;
@@ -743,6 +762,22 @@ public partial class CombatResolver {
             Logger.Information("Duel {0} | Slot {1} | Extra turn: {2} again{3}, last in the round.", Logger.Args(_duel.m_duelID.Full, who.SlotIndex,
                 spell, code is null ? "" : $" on {code}"));
         }
+    }
+
+    // The circles a LockCircle names: a symbol (or several, commas between), its own side's, the other side's, or all.
+    private List<CombatDuelSubCircle> CirclesNamed(CombatDuelSubCircle boss, string names) {
+        var all = _subCircles.Where(c => c is not null).ToList();
+        var found = new List<CombatDuelSubCircle>();
+        foreach (var name in (names ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+            found.AddRange(name.ToLowerInvariant() switch {
+                "all" => all,
+                "ownside" => all.Where(c => c.SlotType == boss.SlotType),
+                "otherside" => all.Where(c => c.SlotType != boss.SlotType),
+                _ => all.Where(c => c.Symbol.Equals(name, StringComparison.OrdinalIgnoreCase)),
+            });
+        }
+
+        return [.. found.Distinct()];
     }
 
 }

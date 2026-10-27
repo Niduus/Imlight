@@ -1723,7 +1723,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     private CombatDuelSubCircle GetAvailableSubCircleTeamCreature() {
         for (int i = 0; i < 4; i++) {
-            if (!SubCircles[i].Occupied) {
+            if (SubCircles[i].Free) {
                 return SubCircles[i];
             }
         }
@@ -1736,7 +1736,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     private CombatDuelSubCircle GetAvailableSubCircleTeamPlayer() {
         for (int i = 4; i < 8; i++) {
-            if (!SubCircles[i].Occupied) {
+            if (SubCircles[i].Free) {
                 return SubCircles[i];
             }
         }
@@ -1871,7 +1871,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     // The free enemy circle nearest to where a creature stands, or null when none is free.
     private CombatDuelSubCircle NearestFreeCreatureCircle(CoreObject creature)
-        => SubCircles.Take(4).Where(c => c is not null && !c.Occupied)
+        => SubCircles.Take(4).Where(c => c is not null && c.Free)
             .OrderBy(c => (c.WorldPosition - creature.m_location).LengthSquared())
             .FirstOrDefault();
 
@@ -1903,7 +1903,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return null;
         }
 
-        bool Free(CombatDuelSubCircle c) => !c.Occupied && (allowed?.Invoke(c) ?? true);
+        bool Free(CombatDuelSubCircle c) => c.Free && (allowed?.Invoke(c) ?? true);
 
         return Free(wanted) ? wanted
             : side.Where(Free).OrderBy(c => (c.WorldPosition - wanted.WorldPosition).LengthSquared())
@@ -1926,7 +1926,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // A passive circle wins over where it stands (preferred).
         var subCircle = isPlayer ? ChoosePlayerSubCircle(participantObject)
             : PassiveCircle(true, PassiveCircleOf(participantObject))
-              ?? (preferred is { Occupied: false } ? preferred : GetAvailableSubCircleTeamCreature());
+              ?? (preferred is { Free: true } ? preferred : GetAvailableSubCircleTeamCreature());
         if (subCircle is null) {
             if (isPlayer && _groupReservations.Count > 0) {
                 Logger.Debug("Duel {DuelId} | Every free circle is held for a group; {Participant} cannot join.",

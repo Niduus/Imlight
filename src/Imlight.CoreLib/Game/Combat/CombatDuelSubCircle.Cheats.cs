@@ -44,6 +44,18 @@ public partial class CombatDuelSubCircle {
 
     private int CheatRound => (int) (_duelActor?.Duel?.m_roundNum ?? 0);
 
+    // LockCircle (Niduus, 2026-10-27: "lock the moon slot or gem in battle"): up to which round (counted in) no one new
+    // takes this circle: no wizard or creature walking in, no minion summoned on it. 0: not locked.
+    internal int LockedUntil { get; set; }
+
+    internal bool Locked => LockedUntil > 0 && CheatRound <= LockedUntil;
+
+    /// <summary>Whether someone new can take this circle: no one stands on it and it is not locked.</summary>
+    internal bool Free => !Occupied && !Locked;
+
+    /// <summary>The symbol the game shows for this circle (Dagger, Key, Gem, Spiral; Sun, Eye, Star, Moon).</summary>
+    internal string Symbol => DynamicSymbol.ToString();
+
     private bool CheatPipsActive => (CheatPipGain >= 0 || CheatPowerPipChance >= 0) && CheatRound <= CheatPipUntil;
 
     /// <summary>The school a cheat makes it count as now, or null.</summary>

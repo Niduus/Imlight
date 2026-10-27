@@ -74,17 +74,17 @@ internal sealed class CombatGroupReservations {
 
         if (_slotIndexByCharId.TryGetValue(charId, out var reservedIndex)) {
             var reserved = playerCircles.FirstOrDefault(circle => circle.SlotIndex == reservedIndex);
-            if (reserved is not null && !reserved.Occupied) {
+            if (reserved is not null && reserved.Free) {
                 return reserved;
             }
         }
 
         var preferred = GetPreferredCircle(charId, playerCircles);
-        if (preferred is not null && !preferred.Occupied && !IsHeldForSomeoneElse(preferred, charId)) {
+        if (preferred is not null && preferred.Free && !IsHeldForSomeoneElse(preferred, charId)) {
             return preferred;
         }
 
-        return playerCircles.FirstOrDefault(circle => !circle.Occupied && !IsHeldForSomeoneElse(circle, charId));
+        return playerCircles.FirstOrDefault(circle => circle.Free && !IsHeldForSomeoneElse(circle, charId));
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ internal sealed class CombatGroupReservations {
     }
 
     private bool IsFree(CombatDuelSubCircle circle)
-        => !circle.Occupied && !_slotIndexByCharId.ContainsValue(circle.SlotIndex);
+        => circle.Free && !_slotIndexByCharId.ContainsValue(circle.SlotIndex);
 
     internal bool IsHeldForSomeoneElse(CombatDuelSubCircle circle, ulong charId)
         => _slotIndexByCharId.Any(reservation => reservation.Value == circle.SlotIndex && reservation.Key != charId);

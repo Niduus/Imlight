@@ -174,6 +174,13 @@ internal static class CheatSpecs {
         ("ChromaticOwnRival", "Chromatic: the rival of its own school"),
     ];
     private static readonly (string, string)[] s_anySchool = [("", "universal (every school)"), .. SCHOOLS[1..], .. CHROMATIC];
+    // Niduus, 2026-10-27 ("add a lock zones block so I can like lock the moon slot or gem in battle"): the circles of a
+    // battle by the symbol the game draws on them.
+    private static readonly (string, string)[] s_circles = [
+        ("Sun", "Sun (wizards' circle 1)"), ("Eye", "Eye (wizards' circle 2)"), ("Star", "Star (wizards' circle 3)"), ("Moon", "Moon (wizards' circle 4)"),
+        ("Dagger", "Dagger (creatures' circle 1)"), ("Key", "Key (creatures' circle 2)"), ("Gem", "Gem (creatures' circle 3)"), ("Spiral", "Spiral (creatures' circle 4)"),
+        ("OwnSide", "every circle on its own side"), ("OtherSide", "every circle on the other side"), ("All", "every circle")];
+    private static string CircleName(string kind) => s_circles.FirstOrDefault(c => c.Item1.Equals(kind, StringComparison.OrdinalIgnoreCase)).Item2 ?? kind;
     private static readonly (string, string)[] s_changeSchools = [.. SCHOOLS[1..], .. CHROMATIC];
     // Niduus, 2026-10-25 ("Expand on existing cheats"): the blocks of CombatResolver.MoreCheats.cs.
     private static readonly (string, string)[] s_removedFrom = [("", "it"), ("AnyAlly", "someone on its side"), ("AnyEnemy", "someone on the other side"), ("Anyone", "anyone")];
@@ -767,6 +774,12 @@ internal static class CheatSpecs {
         new("D.ChangeSchool", BlockKind.Do, "school", "change school", "Someone counts as another school for this many rounds (0: the rest of the battle; from this one when the round is under way): for school Ifs, spell needs, school pips, mastery and archmastery. Ticked: its boosts and resists of its own school and the new one trade places. The game shows nothing; only the battle counts it.",
             "Make {Target} count as {School} for {Rounds} rounds {Stats}", [F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.Choice, "Fire", s_changeSchools), F("Rounds", CheatFieldType.Number, 3, max: 99), new("Stats", CheatFieldType.Toggle, false, Label: "boosts and resists too")],
             b => $"counts as {SchoolName(b.Text("School"))}{Target(b)}{(b.Number("Rounds") > 0 ? $" for {b.Number("Rounds")} rounds" : "")}{(b.Flag("Stats") ? " (stats too)" : "")}"),
+        new("D.LockCircle", BlockKind.Do, "lock", "lock a circle", "Locks a battle circle for this many rounds (0: the rest of the battle; from this one when the round is under way): no one can join the battle there, no walking-in monster or wizard and no summoned minion. Whoever already stands on it stays. Works the same for a wizard's cheat and a creature's. The game draws nothing on a locked circle.",
+            "Lock the {Kind} for {Rounds} rounds", [F("Kind", CheatFieldType.Choice, "Moon", s_circles), F("Rounds", CheatFieldType.Number, 0, max: 99)],
+            b => $"locks {CircleName(b.Text("Kind"))}{(b.Number("Rounds") > 0 ? $" for {b.Number("Rounds")} rounds" : " for the battle")}"),
+        new("D.UnlockCircle", BlockKind.Do, "unlock", "unlock a circle", "Opens a circle a lock block closed, before its rounds run out.",
+            "Unlock the {Kind}", [F("Kind", CheatFieldType.Choice, "Moon", s_circles)],
+            b => $"unlocks {CircleName(b.Text("Kind"))}"),
         new("D.Other", BlockKind.Do, "puzzle", "something else", "An action this app does not know, kept as the file has it.",
             "Do {Do}", [F("Do", CheatFieldType.Words)], b => $"do {b.Text("Do")}"),
     ];
