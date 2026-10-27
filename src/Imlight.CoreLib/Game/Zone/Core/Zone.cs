@@ -117,6 +117,12 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     /// </summary>
     public ZoneScriptState ScriptState { get; }
 
+    /// <summary>
+    /// The zone's triggers by name, set when the zone loads: a Press X teleporter checks the same quest steps its
+    /// trigger in the game's zone files asks for.
+    /// </summary>
+    public IReadOnlyDictionary<string, Trigger> TriggersByName { get; set; } = new Dictionary<string, Trigger>();
+
     public ITimerScheduler Timers { get; set; }
 
     private readonly uint _dynamicZoneId;

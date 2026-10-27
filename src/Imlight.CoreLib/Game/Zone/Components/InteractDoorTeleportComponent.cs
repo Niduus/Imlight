@@ -45,6 +45,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Game.Requirements;
+using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
@@ -99,6 +102,15 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
             return;
         }
 
+        // The teleporter's trigger in the game's zone files says which quest opens it (Niduus 2026-10-27: "when
+        // teleport access is given via quests"); walking into a teleport volume already checks this.
+        if (!TriggerAllows(playerActor, playerCharacter, playerObject)) {
+            Logger.Debug("Zone {0}: teleporter {1} refused {2}: its quest requirements are not met.",
+                Logger.Args(Entity.Zone?.ZonePath, (Entity.Template as GameObjectTemplate)?.m_objectName, playerCharacter?.CharId));
+
+            return;
+        }
+
         // The same request a trigger's ResTeleport sends: the session readies the client and transfers.
         playerActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = teleport.m_destinationZone,
@@ -138,6 +150,28 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
         }
 
         return !string.IsNullOrEmpty(teleport?.m_destinationZone);
+    }
+
+    private bool TriggerAllows(IActorRef playerActor, Wizard wizard, CoreObject playerObject) {
+        if (ConfigurationManager.GetValue("World.OpenAllDoors", false)) {
+            return true;
+        }
+
+        var name = (Entity.Template as GameObjectTemplate)?.m_objectName.ToString();
+        if (string.IsNullOrEmpty(name) || Entity.Zone?.TriggersByName is not { } triggers
+            || !triggers.TryGetValue(name, out var trigger)
+            || trigger.m_requirements?.m_requirements is not { Count: > 0 }
+            // A requirement Imcodec cannot read is no reason to keep the door shut.
+            || ZoneTrigger.HasUndecodableRequirement(trigger.m_requirements)) {
+            return true;
+        }
+
+        return RequirementDispatcher.EvaluateRequirements(
+            requirements: trigger.m_requirements,
+            context: new ZoneRequirementContext(trigger.m_requirements, playerActor, playerObject, wizard,
+                Entity.ZoneRef, trigger.m_triggerName) {
+                ScriptState = Entity.Zone.ScriptState,
+            });
     }
 
     private static bool HasInteractableBehavior(GameObjectTemplate template)

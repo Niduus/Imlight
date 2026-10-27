@@ -36,12 +36,15 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imcodec.IO;
 using Imlight.Common;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
@@ -76,21 +79,15 @@ internal sealed class WorldTeleportDoorComponent(ZoneEntity entity) : ZoneEntity
         ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        SendWorldTeleportOptions(playerActor);
+        SendWorldTeleportOptions(playerActor, playerCharacter);
         SendPlayerIntoWizbang(playerObject.m_globalID);
         SendPlayerIntoState(playerObject.m_globalID);
     }
 
-    private void SendWorldTeleportOptions(IActorRef playerActor) {
+    private void SendWorldTeleportOptions(IActorRef playerActor, Wizard wizard) {
+        // The worlds the wizard's quests have opened (WorldAccess); it used to be the same six worlds for everyone.
         var teleportDoorOptions = new WorldTeleportOptions {
-            m_worldList = [ // TODO: fetch available worlds for user to teleport to from db
-                "WizardCity",
-                "Krokotopia",
-                "Marleybone",
-                "MooShu",
-                "Grizzleheim",
-                "DragonSpire"
-            ]
+            m_worldList = [.. WorldAccess.OpenWorlds(wizard).Select(world => (ByteString) world)]
         };
 
         // Serialize the teleport door options and send it to the player.

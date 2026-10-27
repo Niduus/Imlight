@@ -87,6 +87,14 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
 
         SeedTriggerStates(replacedTriggers);
 
+        var byName = new Dictionary<string, Trigger>(StringComparer.Ordinal);
+        foreach (var trigger in replacedTriggers) {
+            if (!string.IsNullOrEmpty(trigger?.m_triggerName)) {
+                byName.TryAdd(trigger.m_triggerName, trigger);
+            }
+        }
+        Zone.TriggersByName = byName;
+
         _orderedTriggers.Clear();
         foreach (var trigger in replacedTriggers) {
             var triggerActor = Context.ActorOf(Props.Create(() => new ZoneTrigger(ZoneRef, Zone, trigger)));
