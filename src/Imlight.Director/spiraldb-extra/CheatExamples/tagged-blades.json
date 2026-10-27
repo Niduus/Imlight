@@ -1,12 +1,14 @@
 {
   "TemplateID": 0,
   "Name": "Example: blades that come back",
-  "Notes": "An example to copy (on no creature, or into the player cheats). It keeps three 7% blades of its own school, tagged BABA: at the start of any round with none, and the moment the last BABA blade is used up or taken off, it puts three on again. Only the BABA ones count, so other blades do not stop it.",
+  "Notes": "An example to copy (on no creature, or into the player cheats). If it has no blade tagged BABA, then it puts three 7% blades of its own school on itself, tagged BABA. It is looked at after every move and at the start and end of each round, so the blades come back right after the last BABA one is used up or taken off. Only the BABA ones count, so other blades do not stop it.",
   "Cheats": [
     {
-      "When": "TagGone",
-      "Tag": "BABA",
-      "TagStart": true,
+      "When": "Always",
+      "HasWho": "Self",
+      "HasKind": "Blade",
+      "HasTag": "BABA",
+      "HasNot": true,
       "Actions": [
         { "Do": "Repeat", "Count": 1, "Times": 3 },
         { "Do": "AddCharm", "Kind": "Blade", "Amount": 7, "School": "ChromaticOwn", "Target": "Self", "Tag": "BABA" }
