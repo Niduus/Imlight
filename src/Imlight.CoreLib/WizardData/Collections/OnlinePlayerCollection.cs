@@ -53,6 +53,8 @@ public static class OnlinePlayerCollection {
     private static readonly IDocumentStore s_store;
 
     private static readonly ConcurrentDictionary<ulong, OnlinePlayer> s_onlinePlayerCache = new();
+    // The login names of accounts seen this run: a zone change drops the player and adds them back without it.
+    private static readonly ConcurrentDictionary<ulong, string> s_accountNames = new();
 
     static OnlinePlayerCollection() 
         => s_store = PlayerDatabase.Instance.Store;
@@ -68,6 +70,13 @@ public static class OnlinePlayerCollection {
     /// </summary>
     /// <param name="onlinePlayer">The online player to add.</param>
     public static void AddOnlinePlayer(OnlinePlayer onlinePlayer) {
+        if (!string.IsNullOrEmpty(onlinePlayer.AccountName)) {
+            s_accountNames[onlinePlayer.AccountId] = onlinePlayer.AccountName;
+        }
+        else if (s_accountNames.TryGetValue(onlinePlayer.AccountId, out var accountName)) {
+            onlinePlayer.AccountName = accountName;
+        }
+
         s_onlinePlayerCache.AddOrUpdate(
             onlinePlayer.AccountId,
             onlinePlayer,
@@ -141,6 +150,12 @@ public static class OnlinePlayerCollection {
 
         return session.Query<OnlinePlayer>(collectionName: CollectionName).ToArray();
     }
+
+    /// <summary>
+    /// The players online on this server right now, from memory only (never the database), so it costs nothing to ask
+    /// often.
+    /// </summary>
+    public static OnlinePlayer[] GetCachedOnlinePlayers() => s_onlinePlayerCache.Values.ToArray();
 
     /// <summary>
     /// Retrieves the online player with the specified character ID from the collection.

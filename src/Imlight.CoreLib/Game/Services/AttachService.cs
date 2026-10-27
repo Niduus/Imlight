@@ -604,6 +604,7 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
             CurrentZone = zoneName,
             CurrentRealm = realmName,
             ActorPath = playerActor.Path.ToString(),
+            WizardName = wizard.PlayerNameBehavior?.GetWizardName(),
         };
 
         OnlinePlayerCollection.AddOnlinePlayer(onlinePlayerRef);

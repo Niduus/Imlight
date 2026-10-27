@@ -441,6 +441,9 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>Whether the server reads its own additions folder (spiraldb-extra), which Bosses, Customs and cheats save to.</summary>
     internal bool HasExtraFolder => ServerKnows("Database.SpiralDBExtraPath");
 
+    /// <summary>Whether the server writes who is online for Home's "Who's online" card (OnlineList).</summary>
+    internal bool HasWhosOnline => ServerKnows("online-players.json");
+
     /// <summary>Whether the server writes the quest list and each wizard's quests for the Quests tab.</summary>
     internal bool HasQuestGuide => ServerKnows("quest-guide.txt");
 

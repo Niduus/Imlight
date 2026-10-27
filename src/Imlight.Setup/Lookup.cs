@@ -567,7 +567,7 @@ internal sealed class Lookup {
     }
 
     // zone-details.json: zone -> [name, access, type, flags]. Empty when it is missing or cannot be read.
-    private static Dictionary<string, string[]> ReadZoneDetails(string? path) {
+    internal static Dictionary<string, string[]> ReadZoneDetails(string? path) {
         var result = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
         try {
             if (path is null || !File.Exists(path)) {

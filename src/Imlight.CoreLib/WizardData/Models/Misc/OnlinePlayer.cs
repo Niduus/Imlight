@@ -27,5 +27,8 @@ public class OnlinePlayer {
     public string CurrentZoneDisplayName;
     public string CurrentRealm;
     public string ActorPath;
+    // For Ahziael's "Who's online" card (OnlineList).
+    public string AccountName;
+    public string WizardName;
 
 }

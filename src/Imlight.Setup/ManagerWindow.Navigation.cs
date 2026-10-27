@@ -222,6 +222,7 @@ internal sealed partial class ManagerWindow {
 
         var cards = new List<Control> {
             hero,
+            HomeWhosOnline(),
             HomeWhatsNew(),
             Fold("search", HOME, "Search everything",
                 "Every page, setting, command, item, spell, creature, zone and quest at once.",
@@ -465,6 +466,7 @@ internal sealed partial class ManagerWindow {
         _homeStart.IsEnabled = !status.Running;
         _homeStop.IsEnabled = status.Running;
         _homePlay.IsEnabled = status.ClientFound;
+        RefreshWhosOnline(status.Running);
     }
 
     // ---------------------------------------------------------------------
