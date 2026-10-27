@@ -425,6 +425,16 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
     private bool TryWriteEndData(string gameName, uint xpGained, PetStatModificationSet statMods, out Imcodec.IO.ByteString data,
                                  float score = 1.0f) {
+        // The results window reads the stat list without checking for none: a game that gave no stats (a Dance
+        // missed in its first round) crashed the game, so an empty list goes instead.
+        statMods ??= new PetStatModificationSet { m_name = "", m_scene = "" };
+        if (statMods.m_modifications is null || statMods.m_gameScoreFactor is null) {
+            statMods = statMods with {
+                m_modifications = statMods.m_modifications ?? [],
+                m_gameScoreFactor = statMods.m_gameScoreFactor ?? [],
+            };
+        }
+
         var endData = new PetGameEndData {
             m_Score = score,
             m_statMods = statMods,
