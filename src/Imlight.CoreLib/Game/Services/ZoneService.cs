@@ -604,18 +604,18 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_GOHOME))]
     private void ReceiveGoHome(WIZARD_12_PROTOCOL.MSG_GOHOME message) {
         // this teleports the wizard to the world hub, NOT their home/dorm. for that you want MSG_GOTODORM. goofy ahh naming scheme
-        // Niduus's server: this button always goes to the Commons, from any world.
+        // Like the game: the button goes to the hub of the world you are in (the Oasis in Krokotopia, and so on).
         var wizard = GetActiveWizard();
         Logger.Information("{0} pressed the Commons button in {1}.", Logger.Args(wizard.CharId, wizard.Zone));
         SendTeleportEffects();
 
         // A visitor the owner sends away answers with this message too, so a house zone leaves the way its exit
-        // trigger does. Anywhere else, the button goes to the Commons.
+        // trigger does. Anywhere else, the button goes to this world's hub, or the Commons when the world has none.
         if (!HouseExits.TryResolve(wizard.Zone, out var destinationZone, out var destinationLocation)) {
-            var zoneMap = WorldHubZones.GetHubForZone("WizardCity");
-            destinationZone = COMMONS_ZONE;
-            destinationLocation = zoneMap is not null && (string) zoneMap.m_hubZone == COMMONS_ZONE ? (string) zoneMap.m_location : "Start";
+            ResolveWorldHub(wizard.Zone, out destinationZone, out destinationLocation);
         }
+
+        Logger.Information("{0} goes to {1} {2}.", Logger.Args(wizard.CharId, destinationZone, destinationLocation));
 
         var tpmsg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = destinationZone,
@@ -628,6 +628,23 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         var delay = TimeSpan.FromSeconds(TELEPORT_EFFECTS_TIME);
         Timers.StartSingleTimer("zonetransfer", tpmsg, delay);
+    }
+
+    /// <summary>
+    /// The hub the Commons button leads to from <paramref name="zone"/>, from the game's WorldHubZones.xml. A part of a
+    /// world with its own entry (Krokotopia/KT_Selenopolis) uses that entry; zones of a world the list does not name
+    /// lead to the Commons.
+    /// </summary>
+    internal static void ResolveWorldHub(string zone, out string hubZone, out string hubLocation) {
+        _ = WorldHubZones.Instance;
+        var parts = (zone ?? "").Split('/');
+        var hub = (parts.Length > 2 ? WorldHubZones.GetHubForZone(parts[1]) : null) ?? WorldHubZones.GetHubForZone(parts[0]);
+        if (hub is null || string.IsNullOrEmpty(hub.m_hubZone.ToString())) {
+            hub = WorldHubZones.GetHubForZone("WizardCity");
+        }
+
+        hubZone = hub is null || string.IsNullOrEmpty(hub.m_hubZone.ToString()) ? COMMONS_ZONE : hub.m_hubZone.ToString();
+        hubLocation = hub is null || string.IsNullOrEmpty(hub.m_location.ToString()) ? "Start" : hub.m_location.ToString();
     }
 
     // This button and the GoHome button are locked client-side until level 2.
