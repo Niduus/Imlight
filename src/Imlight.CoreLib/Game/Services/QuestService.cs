@@ -1736,6 +1736,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         foreach (var g in gTemplates) {
             StartGoal(questInstance, g);
         }
+
+        // The Manager's Spell Quests tab shows which step each wizard is on.
+        NoteProgress(wizard);
     }
 
     // Zone triggers listen for this event to react to a goal (an NPC walks to a new spot, a barricade falls).
