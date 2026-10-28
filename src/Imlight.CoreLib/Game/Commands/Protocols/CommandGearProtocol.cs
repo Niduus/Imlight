@@ -6,11 +6,17 @@
  * of that kind is given: an exact name first, then the shortest name holding every word. Gear that comes in several
  * levels under one name gives the version for that level, or the highest level when no level is typed; every
  * version with that name and level (such as one per socket shape) is given.
+ *
+ * House items (Niduus, 2026-10-28: "a furniture browser with a .furniture command for it"):
+ *   .furniture 1 Crimson Scroll Stand    .furniture 3 82947    .furniture find scroll stand
+ * Any item with the game's Housing mark: furniture, decorations, wall hangings, outdoor items, plants, music scrolls,
+ * castle blocks, wallpapers and the rest. find lists the first matches with their IDs instead of giving one.
  */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Pet;
@@ -23,6 +29,11 @@ internal class CommandGearProtocol : CommandProtocol {
 
     private const int MAX_COPIES = 100;
     private const int MAX_CANDIDATES = 5000;
+    private const int MAX_LISTED = 10;
+    private const string FURNITURE = "Housing";
+
+    // Wallpapers and floors carry WallpaperCarpet instead of Housing.
+    private static readonly string[] s_furnitureKinds = [FURNITURE, "WallpaperCarpet"];
 
     internal override string Group { get; set; } = "";
 
@@ -65,6 +76,20 @@ internal class CommandGearProtocol : CommandProtocol {
     [Alias("item")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void GearCommand([Remainder] string text) => Give("gear", text);
+
+    [Command("furniture")]
+    [Alias("housing", "houseitem", "decor")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void FurnitureCommand([Remainder] string text) {
+        var words = (text ?? "").Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length > 0 && words[0].Equals("find", StringComparison.OrdinalIgnoreCase)) {
+            FindFurniture(words.Length > 1 ? words[1].Trim() : "");
+
+            return;
+        }
+
+        Give("furniture", text, s_furnitureKinds);
+    }
 
     [Command("deck")]
     [AuthRequired(AuthLevel.QualityAssurance)]
@@ -109,6 +134,43 @@ internal class CommandGearProtocol : CommandProtocol {
         foreach (var template in templates) {
             GiveCopies(template, copies);
         }
+    }
+
+    /// <summary>Lists the first house items whose names hold every word, with their IDs, to give with .furniture.</summary>
+    private void FindFurniture(string query) {
+        if (query.Length == 0) {
+            InformSenderClient("Type .furniture find <words>, such as .furniture find scroll stand");
+
+            return;
+        }
+
+        if (!IdCatalog.IsReady) {
+            InformSenderClient("The ID lookup is still being built. Try again shortly.");
+
+            return;
+        }
+
+        var found = IdCatalog.Search(IdCatalogKind.Item, query, MAX_CANDIDATES)
+            .Select(entry => CoreObjectFactory.GetCoreTemplate(entry.Id) as WizItemTemplate)
+            .Where(template => template is not null && HasKind(template, s_furnitureKinds))
+            .GroupBy(ShownName, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
+        if (found.Count == 0) {
+            InformSenderClient($"No house item named \"{query}\" was found. Try fewer words.");
+
+            return;
+        }
+
+        var message = new StringBuilder().AppendLine($"<center>House items for \"{query}\":</center>\n");
+        foreach (var template in found.Take(MAX_LISTED)) {
+            message.AppendLine($"{(uint) template.m_templateID}  {ShownName(template)}");
+        }
+
+        message.AppendLine(found.Count > MAX_LISTED
+            ? $"\n{found.Count - MAX_LISTED} more. Add words to narrow it, or use the app's Furniture tab."
+            : "\nGive one with .furniture 1 <ID>.");
+        InformSenderClient(message.ToString(), true);
     }
 
     private void GiveCopies(WizItemTemplate template, int copies) {
@@ -189,7 +251,7 @@ internal class CommandGearProtocol : CommandProtocol {
             return [.. versions.Where(t => RequiredLevel(t) == RequiredLevel(chosen))];
         }
 
-        problem = $"No {(kinds.Length == 0 ? "item" : kinds[0].ToLowerInvariant())} named \"{query}\" was found. "
+        problem = $"No {(kinds.Length == 0 ? "item" : kinds.Contains(FURNITURE) ? "house item" : kinds[0].ToLowerInvariant())} named \"{query}\" was found. "
             + "Try fewer words, or .lookup item " + query;
 
         return [];
@@ -221,6 +283,7 @@ internal class CommandGearProtocol : CommandProtocol {
     private static string Example(string command) => command switch {
         "hat" => "Malistaire Veil",
         "pet" => "Chromatic Pet",
+        "furniture" => "Crimson Scroll Stand",
         _ => "<name>",
     };
 
