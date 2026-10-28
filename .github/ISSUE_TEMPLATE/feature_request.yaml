@@ -1,0 +1,26 @@
+name: Idea or request
+description: Suggest a new feature, cheat, boss, or change for Imlight
+title: "[Idea] "
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What's your idea?
+      placeholder: "Example: Add a Pet Derby track in Wizard City."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it be good?
+      description: How it works in the real game, or why it would be fun.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Links or pictures
+      description: Wiki pages, screenshots, videos, anything that helps.
+    validations:
+      required: false
