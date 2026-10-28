@@ -1,46 +1,59 @@
 name: Bug report
-description: Report a bug which occured using Imlight
-labels: ['Class: bug']
+description: Something in Imlight or Ahziael is broken or acting wrong
+title: "[Bug] "
+labels: ['bug']
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Fill in what you can. Short answers are fine.
+  - type: input
+    id: version
+    attributes:
+      label: Imlight version
+      description: Shown in the Ahziael app (the "What's new" list marks yours). For example 0.10.603.
+      placeholder: 0.10.603
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where did it happen?
+      options:
+        - In the game (quests, battles, items, NPCs, ...)
+        - In the Ahziael app
+        - Installing or updating
+        - Something else
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
-      label: Description of the problem
-      description: Precise description of the problem.
-      placeholder: A clear and concise description of what the bug is.
+      label: What went wrong?
+      placeholder: "Example: Malistaire's cheat didn't trigger when I cast a blade."
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: Reproduction steps
-      description: Description of the steps which are necessary to reproduce this bug
-      placeholder: A clear and concise list of steps on how to reproduce the problem or code to reproduce the problem.
+      label: How can we make it happen again?
+      description: The steps you took, in order. Include the world, zone, NPC or command if you know it.
+      placeholder: |
+        1. Go to ...
+        2. Talk to / fight / type ...
+        3. See the problem
     validations:
-      required: true
+      required: false
   - type: textarea
     id: expected
     attributes:
-      label: Expected behaviour
-      description: Describe the expected behaviour
-      placeholder: A clear and concise description of what you expected to happen.
+      label: What should have happened?
     validations:
-      required: true
-  - type: dropdown
-    id: ai-used
-    attributes:
-      label: Was AI used to prepare this report?
-      description: Disclose any use of AI tools (e.g. ChatGPT, Claude, Copilot) in diagnosing or writing up this issue. See CONTRIBUTING.md.
-      options:
-        - "No"
-        - "Yes, to help diagnose the issue"
-        - "Yes, to help write the report"
-        - "Yes, for both diagnosis and writing"
-    validations:
-      required: true
+      required: false
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: 'Any other additional context you''d like to add'
-      placeholder: Add any other context or screenshots about the problem here.
+      label: Screenshots or logs
+      description: Drag pictures or log files into this box.
+    validations:
+      required: false
