@@ -26,6 +26,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Results;
+using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -510,10 +511,15 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
 
             return ItemHelper.GetItemSlot(template)?.SlotType == slotType;
         });
-        if (item is null || wizard.EquipmentBehavior.HasItemEquipped(item.m_globalID)) {
+        if (item is null || wizard.EquipmentBehavior.HasItemEquipped(item.m_globalID)
+            || wizard.EquipmentBehavior.GetItemInSlot(slotType) is not null) {
             return;
         }
 
+        EquipStarterItem(wizard, item, slotType);
+    }
+
+    private void EquipStarterItem(Wizard wizard, WizClientObjectItem item, EquipmentSlotType slotType) {
         // Move the item into its slot; this also informs the spellbook for decks and
         // persists the change.
         if (!wizard.InventoryToEquipmentTransfer(item.m_globalID, out var equipEffects, out _)) {
@@ -622,11 +628,25 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
             .Select(id => ulong.TryParse(id, out var parsed) ? parsed : 0)
             .Where(id => id > 0)
             .ToArray();
-        if (templateIds.Length == 0) {
+        var adeptIds = AdeptStarterGear.TemplateIdsFor(wizard.MagicSchoolBehavior.MagicSchool);
+        if (templateIds.Length == 0 && adeptIds.Length == 0) {
             return;
         }
 
-        var grantedItems = wizard.GrantStarterItems(templateIds);
+        var grantedItems = templateIds.Length > 0 ? wizard.GrantStarterItems(templateIds) : [];
+        // A batch of its own: the kit already fills most of the 16 items RavenDB saves at once.
+        var adeptItems = new List<WizClientObjectItem>();
+        if (adeptIds.Length > 0) {
+            try {
+                adeptItems = wizard.GrantStarterItems(adeptIds, withDefaultPet: false);
+                grantedItems.AddRange(adeptItems);
+            }
+            catch (Exception ex) {
+                Logger.Error("Could not give {0} the Adept starter gear: {1}",
+                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), ex.Message));
+            }
+        }
+
         Randomization.Randomizer.PutStartingSpellsInDeck(wizard, grantedItems);
         Logger.Information("Granted starter kit ({0} items) to {1}.",
             Logger.Args(grantedItems.Count, wizard.PlayerNameBehavior.GetWizardName()));
@@ -635,6 +655,27 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
         // runs, so push each item to the client explicitly or the kit stays invisible this session.
         foreach (var item in grantedItems) {
             SendInventoryAdd(wizard, item);
+        }
+
+        // The Adept set and Ghulture go on right away. The starter wand equipped at the end of the tutorial only
+        // fills an empty wand slot, so the Adept wand stays on.
+        foreach (var item in adeptItems) {
+            try {
+                var template = ItemHelper.GetItemTemplate(item);
+                var slotType = template is null ? null : ItemHelper.GetItemSlot(template)?.SlotType;
+                if (slotType is not null) {
+                    EquipStarterItem(wizard, item, slotType.Value);
+                }
+            }
+            catch (Exception ex) {
+                Logger.Error("Could not put Adept starter item {0} on {1}: {2}",
+                    Logger.Args(item.m_templateID, wizard.PlayerNameBehavior.GetWizardName(), ex.Message));
+            }
+        }
+
+        if (adeptItems.Count > 0) {
+            // Off the mount indoors, like equipping one by hand.
+            TellOtherServices(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
         }
     }
 
