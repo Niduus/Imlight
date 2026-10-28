@@ -182,6 +182,16 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kStun:
                 cinematicTime += ApplyStunEffect(effect, targets);
                 break;
+            // Beguile, Confuse and Spy (CombatResolver.MindEffects.cs).
+            case kSpellEffects.kMindControl:
+                CombatResolver.ApplyMindControl(effect, caster, targets);
+                break;
+            case kSpellEffects.kConfusion:
+                CombatResolver.ApplyConfusion(effect, targets);
+                break;
+            case kSpellEffects.kClue:
+                CombatResolver.ApplySpied(effect, targets);
+                break;
             case kSpellEffects.kSummonCreature:
             case kSpellEffects.kSpawnCreature:
                 ApplySummonCreature(effect, caster);

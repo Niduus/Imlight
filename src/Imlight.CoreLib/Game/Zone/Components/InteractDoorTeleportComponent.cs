@@ -116,6 +116,7 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
             DestinationZone = teleport.m_destinationZone,
             DestinationLocation = teleport.m_destinationLoc,
             SendToClient = true,
+            ByZoneDoor = true,
             OwnerCharId = playerCharacter.CharId
         });
     }

@@ -88,6 +88,7 @@ internal static partial class SpellSupport {
         kSpellEffects.kRemoveOverTime, kSpellEffects.kRemoveAura, kSpellEffects.kPushCharm, kSpellEffects.kPushWard,
         kSpellEffects.kPushOverTime, kSpellEffects.kStealOverTime, kSpellEffects.kSwapCharm, kSpellEffects.kSwapWard,
         kSpellEffects.kSwapOverTime, kSpellEffects.kSwapAll, kSpellEffects.kModifyOverTimeDuration,
+        kSpellEffects.kMindControl, kSpellEffects.kConfusion, kSpellEffects.kClue,
     ];
 
     // CombatEffectApplicator.s_hangingEffects that something in the combat code reads back when it matters.

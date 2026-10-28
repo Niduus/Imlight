@@ -641,9 +641,12 @@ internal static partial class SpellSupport {
             case kSpellEffects.kAfterlife:
                 return Say($"If {who} {(who == "you" ? "are" : "is")} defeated{(rounds > 0 ? $" in the next {Rounds(rounds)}" : "")}, brings them back");
             case kSpellEffects.kConfusion:
-                return Say($"Confuses {who}{forRounds}, so spells may hit the wrong side");
+                return Say($"Confuses {who}{forRounds}: {n}% chance each turn that their spell hits a random target");
+            // Beguile and Spy keep their rounds in m_effectParam.
             case kSpellEffects.kMindControl:
-                return Say($"Beguiles {who} so it fights for your side{forRounds}");
+                return Say($"Beguiles {who} so it fights for your side for {Rounds(effect.m_effectParam)}");
+            case kSpellEffects.kClue:
+                return Say($"Spies on {who} for {Rounds(effect.m_effectParam)}");
             case kSpellEffects.kAddSpellToHand:
                 return Say($"Adds a card to {whose} hand");
             case kSpellEffects.kAddSpellToDeck:

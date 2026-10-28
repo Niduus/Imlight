@@ -93,6 +93,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     // How far back along the path walked the login spot is put, so it is not on the sigil or in the door used.
     private const float SAFE_SPOT_STEP_BACK = 200f;
     private HouseEntry _pendingHouseEntry;
+    // Where the wizard came into the instance zone they are in: the Dungeon Recall button brings them back there.
+    private string _instanceArrival;
 
     private const string SIGIL_ENTER_TIMER_KEY = "sigilenter";
     private const float SIGIL_COUNTDOWN_SECONDS = 10.0f;
@@ -128,6 +130,14 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         var globalId = gameObj.m_globalID;
 
         // If the zone reference is not null, we'll tell the zone to remove the player.
+        // Logging out inside a dungeon gives the Dungeon Recall button at the next login, as in the live game.
+        try {
+            OfferDungeonRecall(null, null);
+        }
+        catch (Exception ex) {
+            Logger.Error("Session {0}: the Dungeon Recall at logout failed: {1}", Logger.Args(SessionActor.SessionID, ex.Message));
+        }
+
         ZoneActor?.Tell(new ZONE_102_PROTOCOL.MSG_REMOVEPLAYER() {
             PlayerActor = SessionActor.ActorRef,
             GlobalId = globalId,
@@ -160,6 +170,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             PlayerGameObject = GetActiveGameObject()
         };
         ZoneActor.Tell(postEventMsg);
+
+        // The HUD starts empty in every zone, so a Dungeon Recall the wizard has is shown again.
+        _instanceArrival = _currentZoneIsInstance
+            ? Util.GetCompactStringFromVector(wizard.Location, wizard.Orientation)
+            : null;
+        DungeonRecall.OnAttach(SessionActor.ActorRef, wizard.CharId);
 
         // Sync crowns. Send an immediate sync, then periodic sync so that whenever the
         // character stats page or Crown Shop is opened, the crowns display correctly.
@@ -294,6 +310,13 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
                 return zoneDetails;
             }
 
+            try {
+                OfferDungeonRecall(message, zoneDetails);
+            }
+            catch (Exception ex) {
+                Logger.Error("Session {0}: the Dungeon Recall failed: {1}", Logger.Args(SessionActor.SessionID, ex.Message));
+            }
+
             ReadyClientForZoneTransfer(message);
         }
         else if (zoneDetails.ErrorCode != 0) {
@@ -311,6 +334,79 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         Sender.Tell(zoneDetails);
 
         return zoneDetails;
+    }
+
+    /// <summary>
+    /// Leaving a dungeon by anything but its own doors (fleeing, losing a battle, the Commons or Home button, a world gate,
+    /// logging out) gives the Dungeon Recall button back into the same copy, as in the live game (DungeonRecall).
+    /// </summary>
+    /// <param name="message">The transfer out, or null when the wizard logs out.</param>
+    /// <param name="zoneDetails">Where the transfer goes, or null when the wizard logs out.</param>
+    private void OfferDungeonRecall(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message, ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP zoneDetails) {
+        var wizard = GetActiveWizard();
+        if (!_currentZoneIsInstance || wizard is null || string.IsNullOrEmpty(wizard.Zone) || !DungeonRecall.Enabled
+            || message is { ByZoneDoor: true } or { LeaveInstance: true } || wizard.AttachedLotGid != 0
+            || HouseZoneIndex.IsHouseZone(wizard.Zone) || Imlight.CoreLib.Game.Events.Deckathalon.IsFloorZone(wizard.Zone)) {
+            return;
+        }
+
+        var owner = ZoneInstanceOwners.TryGetOwner(wizard.CharId, wizard.Zone, out var assigned) ? assigned : wizard.CharId;
+        if (Imlight.CoreLib.Game.PvP.PvPRegistry.IsMatchInstanceOwner(owner)) {
+            return;
+        }
+
+        // Going on into another room of the same copy (the button itself, a sigil back in) is not leaving it.
+        if (zoneDetails is { IsInstance: true } && message.OwnerCharId == owner && message.HouseEntry is null
+            && !HouseZoneIndex.IsHouseZone(message.DestinationZone)) {
+            return;
+        }
+
+        DungeonRecall.Offer(message is null ? null : SessionActor.ActorRef, wizard.CharId, owner, wizard.Zone,
+            _instanceArrival, wizard.ZoneDisplayName);
+    }
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_RESUMEINSTANCETELEPORTPLAYER))]
+    private void ReceiveResumeInstance(WIZARD2_53_PROTOCOL.MSG_RESUMEINSTANCETELEPORTPLAYER message) {
+        // The Dungeon Recall button: back into the copy of the dungeon the wizard left, where they came into that room.
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        if (!DungeonRecall.TryGet(wizard.CharId, out var ticket)) {
+            Logger.Information("Session {0}: {1} pressed Dungeon Recall, but that dungeon is gone.",
+                Logger.Args(SessionActor.SessionID, wizard.CharId));
+            InformGameClient("That dungeon has closed.", true);
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_CLEARRESUMEINSTANCE());
+
+            return;
+        }
+
+        if (wizard.IsInDuel) {
+            InformGameClient("You cannot use Dungeon Recall during a battle.", true);
+
+            return;
+        }
+
+        Logger.Information("Session {0}: {1} uses Dungeon Recall back to {2} (copy of {3}).",
+            Logger.Args(SessionActor.SessionID, wizard.CharId, ticket.Zone, ticket.OwnerCharId));
+
+        // The attach after the transfer has to land in the same copy (ZoneInstanceOwners), as a sigil team's does.
+        if (ticket.OwnerCharId != wizard.CharId) {
+            ZoneInstanceOwners.Assign(wizard.CharId, ticket.Zone, ticket.OwnerCharId);
+        }
+        else {
+            ZoneInstanceOwners.Clear(wizard.CharId, ticket.Zone);
+        }
+
+        SendTeleportEffects();
+        Timers.StartSingleTimer("zonetransfer", new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+            DestinationZone = ticket.Zone,
+            DestinationLocation = ticket.Location,
+            SendToClient = true,
+            IsPrivate = true,
+            OwnerCharId = ticket.OwnerCharId,
+        }, TimeSpan.FromSeconds(TELEPORT_EFFECTS_TIME));
     }
 
     // The owner of the dungeon copy the player is in, when it is a teammate's and the transfer is an ordinary one out of
