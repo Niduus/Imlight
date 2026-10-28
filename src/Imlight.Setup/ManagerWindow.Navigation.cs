@@ -60,6 +60,10 @@ internal sealed partial class ManagerWindow {
         ("Server", "server", "Settings, accounts, logs",
             "Run the server and set it up: settings, who can log in, logs, game files and tools.",
             ["Server", "Settings", "Accounts", "Logs", "Game Files", "Tools"]),
+        // Niduus, 2026-10-28: plugins that change Ahziael, such as a friend's Roguelike, on top of the latest version.
+        ("Plugins", "puzzle", "Add-ons from friends",
+            "Add-ons that change the server, from friends or your own, each with its own switch and settings.",
+            ["Plugins"]),
     ];
 
     private const string HOME = "Home";

@@ -130,6 +130,7 @@ internal static class ManagerTheme {
         ["Server"] = Color.FromRgb(63, 167, 160),
         ["Announcements"] = Color.FromRgb(224, 128, 72),
         ["Logs"] = Color.FromRgb(108, 122, 140),
+        ["Plugins"] = Color.FromRgb(160, 96, 230),
         ["Settings"] = ACCENT,
         ["Accounts"] = Color.FromRgb(199, 92, 154),
         ["Game Files"] = Color.FromRgb(201, 162, 39),

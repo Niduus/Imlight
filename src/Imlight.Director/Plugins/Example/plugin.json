@@ -1,0 +1,14 @@
+{
+  // A small plugin to copy when making your own. Turn it on in Ahziael: Plugins.
+  "name": "Example",
+  "version": "1.0.0",
+  "author": "Niduus",
+  "description": "Adds the chat command .hello, which greets you. Copy this folder to start a plugin of your own.",
+  "settings": [
+    { "key": "Greeting", "label": "What .hello says", "type": "text", "default": "Hello from a plugin!" },
+    { "key": "Shout", "label": "Show it in a pop-up", "type": "switch", "default": "false" }
+  ],
+  "commands": [
+    { "name": ".hello", "help": "Says the greeting set on the Plugins page." }
+  ]
+}

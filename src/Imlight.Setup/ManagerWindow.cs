@@ -380,6 +380,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Accounts", AccountsTab),
             Tab("Game Files", GameFilesTab),
             Tab("Tools", ToolsTab),
+            Tab("Plugins", PluginsTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -495,6 +496,7 @@ internal sealed partial class ManagerWindow : Window {
                 break;
             case "Settings" when _settings.Count == 0: LoadSettings(); break;
             case "Accounts": await LoadAccountsAsync(); break;
+            case "Plugins": ShowPlugins(); break;
             case WHATS_NEW: await LoadNotesAsync(); break;
         }
 
@@ -2738,6 +2740,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
         ["Game Files"] = ("folder", "Read the game's data files, without ever changing them."),
         ["Tools"] = ("wrench", "Update Ahziael, open its folders, or remove it."),
+        ["Plugins"] = ("puzzle", "Add-ons that change the server, from friends or your own, each with an on/off switch and settings."),
     };
 
     /// <summary>

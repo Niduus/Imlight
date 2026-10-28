@@ -105,6 +105,14 @@ internal static class Program {
     private static void Main(string[] args) {
         // The Bazaar bot is this program started again with --bazaar by the game server (see BazaarLink): it reads the
         // settings and the game files, and nothing else of the server.
+        // Compiles the plugins and prints their errors without starting the server.
+        var check = Array.IndexOf(args, "--check-plugins");
+        if (check >= 0) {
+            Environment.ExitCode = PluginLoader.Check(check + 1 < args.Length ? args[check + 1] : null);
+
+            return;
+        }
+
         if (Array.IndexOf(args, "--bazaar") >= 0) {
             ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
@@ -233,6 +241,9 @@ internal static class Program {
 
         // The Bazaar runs as a program of its own, so its lists and stock never slow the game server down.
         Imlight.CoreLib.Game.Bazaar.BazaarLink.StartWatching();
+
+        // Add-ons in the Plugins folder, compiled against this very server; they reload when the folder changes.
+        PluginLoader.Start();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");

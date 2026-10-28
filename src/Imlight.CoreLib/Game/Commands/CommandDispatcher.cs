@@ -119,15 +119,17 @@ internal class CommandDispatcher : ReceiveProtocolDispatcher {
         var protocolName = split[0].ToLower();
         var command = split.Length > 1 ? split[1].ToLower() : "";
 
-        if (s_protocols.TryGetValue(protocolName, out var protocol)) {
+        // A plugin's commands come first, so a plugin can also take over one of the server's own groups.
+        var protocol = Imlight.CoreLib.Plugins.PluginCommands.Group(protocolName);
+        if (protocol is not null || s_protocols.TryGetValue(protocolName, out protocol)) {
             // Create new parameters with the first two words removed.
             var parameters = split.Skip(2).ToArray();
             var executed = protocol.Execute(command, context, parameters);
 
             // A group name can also be a command with no group, like `.pet 1 Chromatic Pet` beside `.pet stats`.
             if (!executed) {
-                executed = s_protocols.Values
-                    .Where(x => x is not null && string.IsNullOrEmpty(x.Group))
+                executed = Imlight.CoreLib.Plugins.PluginCommands.Groupless
+                    .Concat(s_protocols.Values.Where(x => x is not null && string.IsNullOrEmpty(x.Group)))
                     .Any(p => p.Execute(protocolName, context, split.Skip(1).ToArray()));
             }
 
@@ -137,7 +139,8 @@ internal class CommandDispatcher : ReceiveProtocolDispatcher {
         }
         else {
             // If we couldn't find it, try searching for protocols with no group name.
-            var protocols = s_protocols.Values.Where(x => x is not null && string.IsNullOrEmpty(x.Group));
+            var protocols = Imlight.CoreLib.Plugins.PluginCommands.Groupless
+                .Concat(s_protocols.Values.Where(x => x is not null && string.IsNullOrEmpty(x.Group)));
             var commandFound = false;
 
             foreach (var p in protocols) {

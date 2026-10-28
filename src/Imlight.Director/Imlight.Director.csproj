@@ -34,6 +34,12 @@
     <Content Include="spiraldb-extra\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Plugins that ship with the server, off until turned on in Ahziael. The server compiles their code itself when
+         it starts (PluginLoader), so it is not part of this build. -->
+    <Compile Remove="Plugins\**" />
+    <Content Include="Plugins\**" Exclude="Plugins\**\status.json;Plugins\**\settings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
