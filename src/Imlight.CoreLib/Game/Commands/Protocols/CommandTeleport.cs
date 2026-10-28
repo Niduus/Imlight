@@ -65,13 +65,38 @@ internal class CommandTeleport : CommandProtocol {
         SendTo(actualZoneName);
     }
 
+    // The Manager's quest step buttons: right to where a step of a quest happens (Game/Tools/QuestStepSpots), even when
+    // the quests or doors before it are not done (Niduus, 2026-10-28).
+    [Command("tpstep")]
+    [Alias("stepto")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void TeleportToStepCommand(string quest, string step) {
+        var template = WizardData.Collections.QuestTemplateCollection.GetQuestByName(quest);
+        if (template is null) {
+            InformSenderClient($"There is no quest {quest}.");
+
+            return;
+        }
+
+        if (!int.TryParse(step, out var number)
+            || Tools.QuestStepSpots.Find(template, number) is not { } spot) {
+            InformSenderClient($"Step {step} of {quest} has no place the server knows.");
+
+            return;
+        }
+
+        Logger.Information("Teleport to step {0} of {1}: {2} at {3} ({4}).", Logger.Args(number, quest, spot.Zone, spot.Location, spot.How));
+        InformSenderClient($"Going to step {number}: {spot.How}.");
+        SendTo(spot.Zone, spot.Location);
+    }
+
     private const string BAZAAR_ZONE = "WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse";
 
     [Command("bazaar")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void BazaarCommand() => SendTo(BAZAAR_ZONE);
 
-    private void SendTo(string actualZoneName) {
+    private void SendTo(string actualZoneName, string location = "Start") {
         var teleportEffectsMsg = new CHARACTER_103_PROTOCOL.MSG_DOTELEPORTEFFECTS();
         Context.SessionActor.Tell(teleportEffectsMsg);
 
@@ -80,7 +105,7 @@ internal class CommandTeleport : CommandProtocol {
 
         var msg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER() {
             DestinationZone = actualZoneName,
-            DestinationLocation = "Start",
+            DestinationLocation = location,
             SendToClient = true,
             OwnerCharId = Context.Character.CharId
         };

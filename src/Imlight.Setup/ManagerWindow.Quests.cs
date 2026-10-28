@@ -195,6 +195,8 @@ internal sealed partial class ManagerWindow {
     /// <summary>Reads the quest list and the wizards again when the server has written them since. Runs when the tab shows.</summary>
     private void LoadQuests() {
         var changed = LoadQuestGuide();
+        // Each quest's steps, for the step buttons that teleport right to a step.
+        changed |= LoadQuestDetails();
         changed |= FillQuestWizards();
         changed |= LoadQuestProgress();
         if (changed) {
@@ -553,6 +555,19 @@ internal sealed partial class ManagerWindow {
         if (extra.Length > 0) {
             details.Children.Add(Sub(extra));
         }
+        // The quests to do now get a button per step that lands you right where the step happens (Niduus, 2026-10-28).
+        if (row.State is QuestState.InProgress or QuestState.NextUp && _qeByCode.TryGetValue(quest.Code, out var full) && full.Goals.Count > 0) {
+            var steps = new WrapPanel();
+            for (var i = 0; i < full.Goals.Count; i++) {
+                var step = StepButton(quest.Code, i + 1, full.Goals[i].Text, false, RunQuestCommand);
+                step.Margin = new Thickness(0, 4, 8, 2);
+                step.Padding = new Thickness(10, 4);
+                steps.Children.Add(step);
+            }
+
+            details.Children.Add(steps);
+        }
+
         if (row.Missing.Length > 0) {
             var titles = row.Missing.Take(3).Select(code => _quests.FirstOrDefault(q => q.Code.Equals(code, StringComparison.OrdinalIgnoreCase))?.Title ?? code);
             details.Children.Add(Sub($"Needs first: {string.Join(", ", titles)}{(row.Missing.Length > 3 ? $" and {row.Missing.Length - 3} more" : "")}."));
