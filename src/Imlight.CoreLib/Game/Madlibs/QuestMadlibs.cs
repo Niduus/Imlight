@@ -203,9 +203,53 @@ internal static class QuestMadlibs {
         }
 
         string fullName = npcTemplate.m_displayName;
+        if (string.IsNullOrEmpty(fullName)) {
+            return StandInNameKeys(npcTemplate);
+        }
+
         var (first, last) = Locale.GetEnglishNameKeys(fullName);
 
         return string.IsNullOrEmpty(first) ? (fullName ?? string.Empty, string.Empty) : (first, last);
+    }
+
+    private static readonly System.Text.RegularExpressions.Regex s_standInMark
+        = new(@"[-_]?Stand-?In(?=$|[-_])", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly ConcurrentDictionary<ulong, (string First, string Last)> s_standInNames = new();
+
+    /// <summary>
+    /// The name keys of the character a nameless stand-in plays. The game gives stand-ins (1,100 of them) no name of
+    /// their own: AZ-Raptor-Warrior-F_StandIn is AZ-Raptor-Warrior-F, AZ-Standin-YacateFarwalker is the line
+    /// "Yacate Farwalker" (Yacate's lines in "This Is the Way the World Ends" showed no name; Niduus, 2026-10-28).
+    /// </summary>
+    private static (string First, string Last) StandInNameKeys(GameObjectTemplate template) {
+        ulong templateId = template.m_templateID;
+        string objectName = template.m_objectName;
+        if (string.IsNullOrEmpty(objectName) || !s_standInMark.IsMatch(objectName)) {
+            return (string.Empty, string.Empty);
+        }
+
+        return s_standInNames.GetOrAdd(templateId, _ => {
+            // The stand-in of an object, named for it.
+            var played = s_standInMark.Replace(objectName, "");
+            if (TemplatesByFileName().GetValueOrDefault(played) is var playedId and not 0 && playedId != templateId) {
+                var keys = NameKeysOfTemplate(playedId);
+                if (!string.IsNullOrEmpty(keys.First)) {
+                    return keys;
+                }
+            }
+
+            // A stand-in named for a character: its words (the world's code and single letters left out) are the name.
+            var words = played.Split(['-', '_', ' '], StringSplitOptions.RemoveEmptyEntries)
+                .Where(w => w.Length > 1 && w.Any(char.IsLower))
+                .Select(w => System.Text.RegularExpressions.Regex.Replace(w, "(?<=[a-z])(?=[A-Z])", " "));
+            var key = Locale.KeyOf(string.Join(' ', words));
+            if (key is null) {
+                return (string.Empty, string.Empty);
+            }
+
+            var (first, last) = Locale.GetEnglishNameKeys(key);
+            return string.IsNullOrEmpty(first) ? (key, string.Empty) : (first, last);
+        });
     }
 
     private static readonly ConcurrentDictionary<string, uint> s_personaTemplates = new(StringComparer.Ordinal);
