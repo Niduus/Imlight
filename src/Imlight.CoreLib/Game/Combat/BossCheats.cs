@@ -517,6 +517,8 @@ internal static class BossCheats {
         public string School { get; set; } = "";
         public string Kind { get; set; } = "";
         public string Name { get; set; } = "";
+        // For Effects: only effects of this school ("" any; Universal: only all-school ones).
+        public string EffectSchool { get; set; } = "";
         public string Var { get; set; } = "";
         public string Scope { get; set; } = "";
         public string On { get; set; } = "";
@@ -617,6 +619,9 @@ internal static class BossCheats {
         // that variable's number (Scope as above), so a blade can be as big as a remembered trap.
         public string From { get; set; } = "";
         public string AmountVar { get; set; } = "";
+        // For RemoveEffects and Remember: only effects of this school ("" any; Universal: only all-school ones, such as a
+        // Hex, Curse or Feint; Niduus, 2026-10-28: "what if I wanted it to be just universal stuff?").
+        public string EffectSchool { get; set; } = "";
         public int Cheat { get; set; }
         // For RunCheat: its own Ifs must hold too.
         public bool Check { get; set; }

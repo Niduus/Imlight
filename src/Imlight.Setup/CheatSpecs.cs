@@ -230,6 +230,9 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_condPips = [("", "pips (all kinds)"), ("Normal", "normal pips"), ("Power", "power pips"), ("Shadow", "shadow pips"),
         ("Fire", "Fire pips"), ("Ice", "Ice pips"), ("Storm", "Storm pips"), ("Myth", "Myth pips"), ("Life", "Life pips"), ("Death", "Death pips"), ("Balance", "Balance pips")];
     private static readonly (string, string)[] s_scopes = [("", "its own"), ("Battle", "the battle's")];
+    // Niduus, 2026-10-28 ("what if I wanted it to be just universal stuff? like traps, Hex, Curse and Feint"): which
+    // effects by their school.
+    private static readonly (string, string)[] s_effectSchools = [("", "of any school"), ("Universal", "universal (all-school) only"), .. SCHOOLS[1..]];
     private static readonly (string, string)[] s_rememberFrom = [
         ("Spell", "the size of the spell that set it off"), ("Newest", "the size of the newest"), ("Biggest", "the size of the biggest"),
         ("Total", "the sizes added up of all"), ("Count", "how many there are of"), ("Health", "the health of"),
@@ -570,8 +573,8 @@ internal static class CheatSpecs {
              F("Enchanted", CheatFieldType.Choice, "", s_yesNo), F("Result", CheatFieldType.Choice, "", s_results)],
             b => $"if the last spell of {LabelOf(s_casters, b.Text("Who"))} was {(b.Text("Spell").Length > 0 ? b.Text("Spell") : $"{SchoolWord(b)}{(b.Text("Kind").Length > 0 ? LabelOf(CATEGORIES, b.Text("Kind")) + " " : "")}a spell")}"),
         Cond("C.Effects", "layers", "effects on someone", "How many charms, wards, auras or over-times of a kind (or from a spell: names or spell IDs) someone has. Tagged (optional): only effects with this tag, as a Do block's Tag box put on. Example: someone on the other side has at least 3 blades — they are about to hit hard; it has at most 0 blades tagged BABA — they are all used up.",
-            "If {Who} has {Op} {Value} {Kind} from {Spell} tagged {Tag}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Spell", CheatFieldType.Words), F("Tag", CheatFieldType.Words)],
-            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_hasKinds, b.Text("Kind"))}{(b.Text("Spell").Length > 0 ? $" from {b.Text("Spell")}" : "")}{(b.Text("Tag").Length > 0 ? $" tagged \"{b.Text("Tag")}\"" : "")}"),
+            "If {Who} has {Op} {Value} {EffectSchool} {Kind} from {Spell} tagged {Tag}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Spell", CheatFieldType.Words), F("Tag", CheatFieldType.Words)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{(b.Text("Spell").Length > 0 ? $" from {b.Text("Spell")}" : "")}{(b.Text("Tag").Length > 0 ? $" tagged \"{b.Text("Tag")}\"" : "")}"),
         Cond("C.Pips", "pips", "pips of a kind", "Someone's pips of one kind: power, normal, shadow, or a school's. \"Both sides, added up\" with shadow pips counts the shadow pips in play.",
             "If {Who} has {Op} {Value} {Kind}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 3, max: 99), F("Kind", CheatFieldType.Choice, "", s_condPips)],
             b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_condPips, b.Text("Kind"))}"),
@@ -650,9 +653,9 @@ internal static class CheatSpecs {
             "Remove {Count} {Kind} wards from {Target} made by {Spell}", [F("Count", CheatFieldType.Number, 0, max: 99), F("Kind", CheatFieldType.Choice, "All", s_charmKinds), F("Target", CheatFieldType.Target, "AllEnemies"), F("Spell", CheatFieldType.Words, "")],
             b => $"remove {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} {LabelOf(s_charmKinds, b.Text("Kind")).Replace("of any", "")} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}wards{Target(b).Replace(" on ", " from ")}".Replace("  ", " ")),
         new("D.RemoveEffects", BlockKind.Do, "broom", "remove effects", "Takes hanging effects of a kind (shields, traps, blades, weaknesses, any charm or ward, auras, damage or heal over time) off the target, newest first. 0 means all of them. Name a spell to take off only its effects (any version). Protected ones (Aegis, Indemnity) stay, unless \"even protected ones\" is ticked. Example: a player's spell lands, \"remove 1 blade from the receiver made by Balanceblade\" (even protected ones), then \"only if something came off\" and \"add an effect of your own size\": it destroys their blade and takes a bigger one.",
-            "Remove {Count} {Kind} from {Target} made by {Spell} {Bypass}", [F("Count", CheatFieldType.Number, 0, max: 99), F("Kind", CheatFieldType.Choice, "Ward", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Spell", CheatFieldType.Words, ""),
+            "Remove {Count} {EffectSchool} {Kind} from {Target} made by {Spell} {Bypass}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Ward", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Spell", CheatFieldType.Words, ""),
              new("Bypass", CheatFieldType.Toggle, false, Label: "even protected ones")],
-            b => $"remove {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}{LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}{(b.Flag("Bypass") ? " (even protected ones)" : "")}".Replace("  ", " ")),
+            b => $"remove {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}{LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}{(b.Flag("Bypass") ? " (even protected ones)" : "")}".Replace("  ", " ")),
         new("D.RemoveAuras", BlockKind.Do, "broom", "remove auras", "Takes auras (and boosts from cheats) off.",
             "Remove the auras of {Target}", [F("Target", CheatFieldType.Target, "AllEnemies")], b => $"remove the auras{Target(b).Replace(" on ", " of ")}"),
         new("D.AddEffects", BlockKind.Do, "shield", "add a spell's charms", "The charms and wards of a spell (Tower Shield, Fire Blade, Feint...) go on at once, with no casting.",
@@ -779,8 +782,8 @@ internal static class CheatSpecs {
             b => $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {N(b.Number("Amount"))}"),
         new("D.Remember", BlockKind.Do, "list", "remember a number", "Keeps a number read from the battle right now in a variable, for later blocks: put the variable's name in another block's \"as big as variable\" box (a blade as big as a trap), in an \"a variable\" If, or as {name} in a message. " +
             "\"The size of the spell that set it off\": a +30% trap is 30 (pick the Kind to read that part of the spell). The newest / biggest / all: effects of the Kind on the target right now. Example: when an enemy casts a trap, remember the size of the spell (trap) as trap, take its trap off, put a blade as big as variable trap on yourself.",
-            "Remember {From} {Kind} {Target} as {Scope} variable {Var}", [F("From", CheatFieldType.Choice, "Spell", s_rememberFrom), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "trap")],
-            b => $"remember {LabelOf(s_rememberFrom, b.Text("From").Length > 0 ? b.Text("From") : "Spell")}{(b.Text("Kind").Length > 0 ? " " + LabelOf(s_hasKinds, b.Text("Kind")) : "")}{(b.Text("From") is "Spell" or "" or "Round" ? "" : Target(b))} as {b.Text("Var")}"),
+            "Remember {From} {EffectSchool} {Kind} {Target} as {Scope} variable {Var}", [F("From", CheatFieldType.Choice, "Spell", s_rememberFrom), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "trap")],
+            b => $"remember {LabelOf(s_rememberFrom, b.Text("From").Length > 0 ? b.Text("From") : "Spell")}{Universal(b)}{(b.Text("Kind").Length > 0 ? " " + LabelOf(s_hasKinds, b.Text("Kind")) : "")}{(b.Text("From") is "Spell" or "" or "Round" ? "" : Target(b))} as {b.Text("Var")}"),
         new("D.IfVar", BlockKind.Do, "list", "only if a variable", "The blocks under it (how many) go off only if the variable is so. Example: rage at least 5, then 3 blocks of an enrage.",
             "Only if {Scope} variable {Var} is {Op} {Amount}, do the next {Count} blocks",
             [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, ">=", s_ops), new("Amount", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000), F("Count", CheatFieldType.Number, 1, max: 20)],
@@ -875,6 +878,11 @@ internal static class CheatSpecs {
         => All.FirstOrDefault(s => IsCondition(s.Id) && s.Id != "C.Other" && s.Id[2..].Equals((kind ?? "").Trim(), StringComparison.OrdinalIgnoreCase)) ?? s_byId["C.Other"];
 
     /// <summary>The server's Do for a Do block.</summary>
+    // " universal" or " Fire" for a block's EffectSchool, else nothing.
+    private static string Universal(CheatBlock b) => b.Text("EffectSchool").Trim() switch {
+        "" => "", "Universal" => " universal", var school => " " + school,
+    };
+
     // A block's amount taken from a variable (AmountVar; the Remember block keeps one).
     private static string SizeFromVar(CheatBlock b, string text)
         => b.Text("AmountVar").Trim().Length > 0 ? $"{text} (as big as {b.Text("AmountVar").Trim()})" : text;

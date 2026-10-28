@@ -40,6 +40,7 @@
  *                   Newest, Biggest, Total   the size of Target's (Self) newest, biggest or all hanging effects of Kind
  *                            (commas; empty any) from Spell.     Count: how many of them.
  *                   Health, HealthPercent, Pips (all of them), Round.
+ *                 EffectSchool narrows the effects (Universal: only all-school ones).
  *                 A later step's AmountVar uses it: a blade with AmountVar trap is as big as the trap.
  *   IfVar         the next Count steps (1) only if Var Op Amount.         Repeat: the next Count steps (1) Times times.
  *   MaxHealth     Target's most health is set to Amount (Op Add: raised by it; Percent: Amount is a share of the most now);
@@ -148,10 +149,23 @@ public partial class CombatResolver {
         => ((scope ?? "").Trim().Equals("Battle", StringComparison.OrdinalIgnoreCase) ? BATTLE_VARS : owner?.ParticipantObject?.m_globalID.Full ?? 0,
             (name ?? "").Trim().ToLowerInvariant());
 
+    // An effect's school: "" any, Universal only an all-school one (a Hex, Curse or Feint), else only that school's.
+    private static bool EffectSchoolIs(SpellEffect e, string school) {
+        var want = (school ?? "").Trim();
+        if (want.Length == 0) {
+            return true;
+        }
+
+        var has = ((string) e.m_sDamageType ?? "").Trim();
+        var universal = has.Length == 0 || has.Equals("All", StringComparison.OrdinalIgnoreCase);
+
+        return want.Equals("Universal", StringComparison.OrdinalIgnoreCase) ? universal : !universal && has.Equals(want, StringComparison.OrdinalIgnoreCase);
+    }
+
     // The number a Remember step keeps (see the top of this file).
     private int Remembered(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle target) {
         var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        bool Fits(SpellEffect e) => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k)));
+        bool Fits(SpellEffect e) => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && EffectSchoolIs(e, step.EffectSchool);
         var from = (step.From ?? "").Trim().ToLowerInvariant();
         switch (from) {
             case "" or "spell": {
@@ -467,7 +481,7 @@ public partial class CombatResolver {
                 var kinds = (c.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 return Measured(boss, c, trigger, receiver, w => (w._hangingEffects ?? []).Count(e => e is not null
-                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell) && HasTag(e, c.Tag)));
+                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell) && HasTag(e, c.Tag) && EffectSchoolIs(e, c.EffectSchool)));
             }
             case "pips":
                 return Measured(boss, c, trigger, receiver, w => PipsOfKind(w, c.Kind));
