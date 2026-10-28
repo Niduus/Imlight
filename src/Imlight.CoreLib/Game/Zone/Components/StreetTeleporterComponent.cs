@@ -23,8 +23,22 @@
  * The game's own street teleporter stones (Niduus 2026-10-27: "existing street teleporters do not work"): a street's
  * hub of three stones (WC_Firecat_TeleporterA/B/C) and, far down the street, the "To Teleporter Hub" stone of each
  * (WC_Firecat_TeleporterA_ToMain). The game files give them nothing but a Press X; where they go is the server's
- * part. A stone sends the wizard to its partner in the same zone: the hub stone to its _ToMain stone and back.
- * Other worlds name theirs the same way (KT_TeleporterB_ToHub_Arena, MS_NEW_Ham_TeleporterA_ToMain).
+ * part. A stone sends the wizard to its partner in the same zone: the hub stone to its far stone and back.
+ *
+ * Each world names its pairs its own way (Niduus 2026-10-28: "street teleporters do not always work on streets where
+ * they exist in vanilla"):
+ *   WC_Firecat_TeleporterA            / WC_Firecat_TeleporterA_ToMain
+ *   MS_NEW_Ham_TeleporterA            / MS_NEW_Ham_TeleporterA_ToMain
+ *   KT_TeleporterB_Arena              / KT_TeleporterB_ToHub_Arena (and _BackToHub_, _ToMain_)
+ *   MB_TeleportStoneAMain             / MB_TeleportStoneASecondary
+ *   MS_TeleporterMainA                / MS_TeleporterSecondaryA
+ *   DS_TeleportStoneA_Main            / DS_TeleportStoneA_Secondary
+ *   CL_TeleportStoneBMain-Z02         / CL_TeleportStoneBSecondary-Z02
+ *   ZF_TeleportStoneAMain_DrumJungle  / ZF_TeleportStoneASecondary_DrumJungle
+ * A pair is the two stones whose names match once the far and hub words are taken out. Some names are misspelled in
+ * the game files (KTl_TeleporterA_RoyalHall / KT_TeleporterA_ToMain_RoyalHall, KT_TeleporterA_DjeseritTomb /
+ * KT_TeleporterA_ToMain_DkeserotTomb), so a stone with no exact match takes the other-side stone of its letter.
+ * The server log says which stone went where ("Street teleporter: ... uses ... and goes to ...").
  */
 
 using System;
@@ -56,9 +70,21 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
     // How far in front of the stone the wizard lands, clear of its collision.
     private const float ARRIVE_DISTANCE = 150f;
 
-    // The stone's pair key ("WC_Firecat_TeleporterA") and whether it is the far stone (_ToMain, _ToHub, _BackToHub).
-    [GeneratedRegex(@"^(?<pair>.+?Teleport(?:er)?[A-Z])(?<far>_(?:ToMain|ToHub|BackToHub)(?:_.*)?)?$", RegexOptions.IgnoreCase)]
-    private static partial Regex StoneName();
+    // The words that make a stone the far one of its pair, and the hub stone's own word.
+    [GeneratedRegex(@"BackToHub|ToHub|ToMain|Secondary", RegexOptions.IgnoreCase)]
+    private static partial Regex FarWord();
+
+    [GeneratedRegex(@"Main", RegexOptions.IgnoreCase)]
+    private static partial Regex MainWord();
+
+    // The stone's letter in its hub: TeleporterA, TeleportA, TeleportStoneAMain, TeleporterMainA, TeleportStoneZ03AMain.
+    [GeneratedRegex(@"Teleport(?:er|Stone)?(?:Main|Secondary)?(?:Z\d+)?(?<letter>[A-D])(?=$|[_\-]|Main|Secondary)")]
+    private static partial Regex StoneLetter();
+
+    // How far apart the stones of one hub can stand.
+    private const float HUB_SIZE = 2500f;
+
+    private readonly record struct StoneName(string Key, char Letter, bool Far);
 
     public string ServiceName     => "Interact";
     public string NpcIcon         => (Entity.Template as GameObjectTemplate)?.m_sIcon;
@@ -125,14 +151,21 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         _partnerLooked = true;
         var me = Parse((Entity.Template as GameObjectTemplate)?.m_objectName.ToString());
         var objects = Entity.Zone?.ZoneData?.m_objectList;
-        if (me is null || objects is null) {
+        if (me is not { } mine || objects is null) {
             return null;
         }
 
-        _partner = objects.FirstOrDefault(o => o is not null && o.m_templateID != 0
-            && Parse(CoreObjectFactory.FileNameOf(o.m_templateID)) is { } other
-            && string.Equals(other.Pair, me.Value.Pair, StringComparison.OrdinalIgnoreCase)
-            && other.Far != me.Value.Far);
+        var others = Stones(objects).Where(s => s.Name.Far != mine.Far).ToList();
+        // The same name but for the far and hub words; else, for a misspelled name, the other side's stone of its
+        // letter, the one whose name starts most like this one's (then the nearest); a stone with no letter takes the
+        // zone's only other-side stone with none (CL_TeleportStoneMain_Z06 / CL_TeleportStonetoHub).
+        var sameLetter = others.Where(s => s.Name.Letter == mine.Letter).ToList();
+        _partner = others.FirstOrDefault(s => s.Name.Key == mine.Key).Info
+            ?? (mine.Letter != '\0'
+                ? sameLetter.OrderByDescending(s => SharedStart(s.Name.Key, mine.Key))
+                    .ThenBy(s => DistanceSquared(s.Info, Entity.Info))
+                    .FirstOrDefault().Info
+                : sameLetter.Count == 1 ? sameLetter[0].Info : null);
 
         if (_partner is null) {
             Logger.Debug("Street teleporter {0} in {1} has no partner stone in the zone.",
@@ -142,18 +175,17 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         return _partner;
     }
 
-    // The middle of this street's hub stones (WC_Firecat_TeleporterA/B/C), or null with fewer than two.
+    // The middle of the hub stones round whichever of the pair is the hub one, or null with fewer than two.
     private (float X, float Y)? HubMiddle() {
         var me = Parse((Entity.Template as GameObjectTemplate)?.m_objectName.ToString());
         var objects = Entity.Zone?.ZoneData?.m_objectList;
-        if (me is null || objects is null) {
+        var hub = me is { Far: false } ? Entity.Info : _partner;
+        if (me is null || objects is null || hub is null) {
             return null;
         }
 
-        var street = me.Value.Pair[..^1];
-        var hubStones = objects.Where(o => o is not null && o.m_templateID != 0
-            && Parse(CoreObjectFactory.FileNameOf(o.m_templateID)) is { Far: false } other
-            && other.Pair.StartsWith(street, StringComparison.OrdinalIgnoreCase) && other.Pair.Length == street.Length + 1).ToList();
+        var hubStones = Stones(objects).Where(s => !s.Name.Far && s.Name.Letter != '\0'
+            && DistanceSquared(s.Info, hub) < HUB_SIZE * HUB_SIZE).Select(s => s.Info).ToList();
         if (hubStones.Count < 2) {
             return null;
         }
@@ -161,14 +193,47 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         return (hubStones.Average(o => o.m_location.X), hubStones.Average(o => o.m_location.Y));
     }
 
-    private static (string Pair, bool Far)? Parse(string name) {
-        if (string.IsNullOrEmpty(name)) {
+    // The zone's teleporter stones, by their template's file name.
+    private static IEnumerable<(CoreObjectInfo Info, StoneName Name)> Stones(IEnumerable<CoreObjectInfo> objects)
+        => objects.Where(o => o is not null && o.m_templateID != 0)
+            .Select(o => (Info: o, Name: Parse(CoreObjectFactory.FileNameOf(o.m_templateID))))
+            .Where(s => s.Name is not null)
+            .Select(s => (s.Info, s.Name.Value));
+
+    private static StoneName? Parse(string name) {
+        if (string.IsNullOrEmpty(name) || !name.Contains("Teleport", StringComparison.OrdinalIgnoreCase)) {
             return null;
         }
 
-        var match = StoneName().Match(name);
+        var far = FarWord().IsMatch(name);
+        var letter = StoneLetter().Match(name) is { Success: true } match ? match.Groups["letter"].Value[0] : '\0';
+        var rest = FarWord().Replace(name, "");
+        if (!far && letter == '\0' && !MainWord().IsMatch(rest)) {
+            return null;
+        }
 
-        return match.Success ? (match.Groups["pair"].Value, match.Groups["far"].Success) : null;
+        var key = MainWord().Replace(rest, "").Replace("_", "").Replace("-", "").ToLowerInvariant();
+
+        return new StoneName(key, letter, far);
+    }
+
+    private static int SharedStart(string a, string b) {
+        var n = 0;
+        while (n < a.Length && n < b.Length && a[n] == b[n]) {
+            n++;
+        }
+
+        return n;
+    }
+
+    private static float DistanceSquared(CoreObjectInfo a, CoreObjectInfo b) {
+        if (a is null || b is null) {
+            return float.MaxValue;
+        }
+
+        var (dx, dy) = (a.m_location.X - b.m_location.X, a.m_location.Y - b.m_location.Y);
+
+        return (dx * dx) + (dy * dy);
     }
 
 }
