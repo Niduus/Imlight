@@ -16,6 +16,9 @@
  *   the house sellers' lists (HouseVendors): each reagent kind and jewel shape, Hao's pet snacks and Doctor Purreau's
  *                      elixir recipes, in their own windows.
  *   Garden Seeds       the seeds the game's garden vendors sell; All Seeds: every seed of the game, by name, in parts.
+ *   Spellements: <School>  the Spellements of that school's upgradable spells (Niduus, 2026-10-28: "add school
+ *                      specific vendors for spellements to custom section"), from the game's TieredSpells.xml: each
+ *                      spell group's Spellement (m_shardType) goes to the school of its tier one spell.
  * Trainers, each split into fixed parts of at most 50 spells, "<Name> 1 of 2" and so on, so a trainer always teaches
  * the same set and never pages (Niduus, 2026-10-23: "Split up Trainers into parts so they have a set train"):
  *   All <School> Spells  every spell some trainer of the game teaches, of that school (NpcSpellInventories).
@@ -74,6 +77,7 @@ internal static class CustomNpcPresets {
 
         Add("the housing gauntlets", HousingGauntlets);
         Add("the house sellers", HouseSellers);
+        Add("the school Spellement vendors", SchoolSpellements);
         Add("the recipe vendors", RecipeVendors);
         Add("the seed vendors", SeedVendors);
         Add("the school trainers", SchoolTrainers);
@@ -248,6 +252,39 @@ internal static class CustomNpcPresets {
         yield return Vendor("Pet Snacks", "Snack", "Every pet snack of rank 8 or higher, as Hao sells.", HouseVendors.Snacks);
         yield return Vendor("Pet Elixirs", "Recipe", "Doctor Purreau's recipes: buying one gives what it makes.",
             HouseVendors.RecipesOf(HouseVendors.PetElixirVendorId).Select(r => r.Id));
+    }
+
+    // One vendor per school selling the Spellements of that school's upgradable spells, by name, in the reagent window
+    // the Spellement Seller uses. Astral and Shadow spells get their own when the game has any.
+    private static IEnumerable<Preset> SchoolSpellements() {
+        var bySchool = new Dictionary<string, HashSet<uint>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var group in Spells.TieredSpells.Groups) {
+            if (group is null) {
+                continue;
+            }
+
+            var shard = (uint) group.m_shardType.Full;
+            string tierOne = group.m_tierOneSpell;
+            if (shard == 0 || string.IsNullOrEmpty(tierOne) || CoreObjectFactory.GetCoreTemplate(shard) is not WizItemTemplate
+                || CoreObjectFactory.GetCoreTemplate(Spells.TieredSpells.TemplateIdOf(tierOne)) is not SpellTemplate spell
+                || ((string) spell.m_sMagicSchoolName ?? "") is not { Length: > 0 } school) {
+                continue;
+            }
+
+            if (!bySchool.TryGetValue(school, out var set)) {
+                bySchool[school] = set = [];
+            }
+
+            set.Add(shard);
+        }
+
+        Logger.Information("Vendor presets: Spellements by school: {0}.",
+            Logger.Args(string.Join(", ", bySchool.Select(s => $"{s.Key} {s.Value.Count}"))));
+        foreach (var (school, shards) in bySchool.OrderBy(s => Array.IndexOf(s_schools, s.Key) is var i and >= 0 ? i : 99).ThenBy(s => s.Key)) {
+            yield return Vendor($"Spellements: {school}", "Reagent",
+                $"The Spellements of every upgradable {school} spell, by name: {shards.Count}. Each upgrades its own spell in the spellbook's Spellements tab.",
+                shards.OrderBy(id => Spells.TieredSpells.ShardName(id), StringComparer.OrdinalIgnoreCase));
+        }
     }
 
     // Niduus (2026-10-24): "make a recipe vendor". A vendor for each crafting station of the game, with every recipe
