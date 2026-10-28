@@ -190,6 +190,7 @@ internal static class ManagerTheme {
     internal const double PAD = 18;
     internal const double CONTROL_HEIGHT = 34;
     internal const double PAGE_MAX_WIDTH = 1060;
+    internal const double WIDE_PAGE_MAX_WIDTH = 1720;
 
     // ---------------------------------------------------------------------
     // Icons (drawn on a 24 by 24 grid, so they show before the game files are found)
