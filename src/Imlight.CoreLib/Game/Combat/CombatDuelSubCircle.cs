@@ -1569,6 +1569,26 @@ public partial class CombatDuelSubCircle {
         return stats;
     }
 
+    // Scales the copy of the wizard's stats to the Level Scaling Elixir's level. The scaled health starts at the same share
+    // of the scaled most as the wizard's health of their own most, so a hurt wizard stays hurt; the game is told the
+    // stats as they are, as in a scaled PvP duel (it scales them itself by the elixir's effect).
+    private void ScaleToElixir(string effectName) {
+        var ownHealth = _wizard.GameStats.m_currentHitpoints;
+        var ownMost = Math.Max(1, _wizard.GameStats.m_baseHitpoints);
+        var unscaled = ParticipantGameStats.GetCombatGameStats();
+        if (!PvPLeagueScaling.TryScaleStats(effectName, ParticipantGameStats)) {
+            return;
+        }
+
+        var scaledMost = Math.Max(1, ParticipantGameStats.m_baseHitpoints);
+        var share = Math.Clamp((double) ownHealth / ownMost, 0, 1);
+        ParticipantGameStats.m_currentHitpoints = Math.Max(1, (int) Math.Ceiling(share * scaledMost));
+        _clientGameStats = unscaled;
+        _resolverGameStats = ParticipantGameStats.GetCombatGameStats();
+        Logger.Information("Level scaling ({0}): {1} fights with {2}/{3} health ({4}/{5} unscaled).",
+            Logger.Args(effectName, SlotName, ParticipantGameStats.m_currentHitpoints, scaledMost, ownHealth, ownMost));
+    }
+
     private void InitializePlayerSubCircle() {
         // todo: this method is a mess.
         var queryCharacterMsg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
@@ -1584,9 +1604,12 @@ public partial class CombatDuelSubCircle {
         IsSandboxed = _duelActor.Duel.m_bPVP;
         // The Deckathalon (Game/Events/Deckathalon.cs): the stats of the wizard's level and deck, and treasure cards only.
         var deckathalon = !IsSandboxed && Imlight.CoreLib.Game.Events.Deckathalon.FightsHere(_wizard);
-        FightsWithCopy = IsSandboxed || deckathalon;
+        // A Level Scaling Elixir from the Scales of Knowledge (Game/LevelScaling/LevelScales.cs): against creatures the
+        // wizard fights with a copy of their stats scaled to its level.
+        var levelScaling = IsSandboxed || deckathalon ? null : Imlight.CoreLib.Game.LevelScaling.LevelScales.ActiveEffect(_wizard);
+        FightsWithCopy = IsSandboxed || deckathalon || levelScaling is not null;
         ParticipantGameStats = deckathalon ? Imlight.CoreLib.Game.Events.Deckathalon.StatsFor(_wizard)
-            : IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
+            : FightsWithCopy ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
         // The astral school's perks again, so a change to [AstralSchools] applies from this battle on. The Deckathalon
         // fights with level and deck stats only.
         if (!deckathalon) {
@@ -1602,6 +1625,9 @@ public partial class CombatDuelSubCircle {
         if (IsSandboxed && PvPLeagueScaling.TryScaleDuelStats(_duelActor.PvPLeagueId, ParticipantGameStats)) {
             _clientGameStats = combatStats;
             _resolverGameStats = ParticipantGameStats.GetCombatGameStats();
+        }
+        else if (levelScaling is not null) {
+            ScaleToElixir(levelScaling);
         }
 
         // Collage spells the player has learned and temporary spells (perhaps from equipment)

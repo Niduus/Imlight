@@ -814,4 +814,19 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Gives the player a Level Scaling Elixir and starts it (Game/LevelScaling/LevelScales): any level scaling elixir
+    /// they already have running is taken off first, as the Scales of Knowledge do. 0 takes the running one off only.
+    /// </summary>
+    public sealed class MSG_APPLYLEVELSCALING : IServerMessage {
+
+        public byte MessageOrder { get; } = 151;
+        public byte ServiceID { get; } = 103;
+
+        public uint ElixirTemplateId;
+        // The game's text to show once it runs, such as LevelScaling_00000007 ("Level Scaling (LV 70) Applied").
+        public string AppliedTextKey;
+
+    }
+
 }
