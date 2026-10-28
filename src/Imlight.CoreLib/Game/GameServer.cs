@@ -92,6 +92,7 @@ public class GameServer : Server {
         Tools.OnlineList.Start();
         Tools.WizardList.Start();
         Tools.MemberBenefits.Start(Context.System);
+        Quests.QuestRewardCatchUp.Start();
         Events.GameEvents.Start(Context.System);
         Loyalty.LoyaltyStore.Start(Context.System);
         World.HouseTrainers.ForgetOldSpots();

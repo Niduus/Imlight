@@ -193,6 +193,8 @@ internal static class QuestOptions {
 
             // The Manager's quest list shows the quests as they are now.
             Tools.QuestGuide.WriteListAgain();
+            // A new quest's reward is noted before anyone can finish it (QuestRewardCatchUp).
+            QuestRewardCatchUp.NoteAllQuests();
         }
         catch (Exception ex) {
             Logger.Warning("Quest changes could not be put in use: {0}", Logger.Args(ex.Message));

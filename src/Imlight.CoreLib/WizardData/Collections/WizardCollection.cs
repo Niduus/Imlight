@@ -495,6 +495,13 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.QuestRewardCredits"/>.
+    /// </summary>
+    public static void UpdateCharacterQuestRewardCredits(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.QuestRewardCredits = new(wizard.QuestRewardCredits));
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.Overdose"/>.
     /// </summary>
     public static void UpdateCharacterOverdose(Wizard wizard) {

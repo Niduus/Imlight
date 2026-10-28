@@ -1773,6 +1773,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         // The quest's fixed reward is given below, so a repair of it at login is not needed.
         QuestRewardRepair.MarkDone(wizard, questInstance.QuestName);
+        // Its reward as it is now counts as given, so a later catch-up gives only what is better than that.
+        QuestRewardCatchUp.NoteFinished(wizard, questInstance.QuestName);
 
         // The "Complete" entry counts this player's completions of a dungeon quest.
         if (IsZoneDungeonQuest(wizard, questInstance.QuestName)) {
