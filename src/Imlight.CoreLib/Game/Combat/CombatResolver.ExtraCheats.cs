@@ -13,6 +13,13 @@
  *   ProtectEffects  Target's (Self) effects of Kind can't be removed (Kind Off: they can again).
  *   Damage          Target (Caster) loses Amount health (Percent: a share of its most health), never below 1.
  *   Drain           Target (Caster) loses Amount health (Percent: of its most) and it gets as much back.
+ *   Revive          A fallen one on its side (Target AllAllies: all of them, Self: itself) gets up with Amount health
+ *                   (Percent: of its most).
+ *   Detonate        Target's (Caster) damage/heal over time and bombs of Kind (empty: all) go off at once with all the
+ *                   rounds they have left (Amount percent of it; 100 if 0), and are gone.
+ *   HitShare        Kind Thorns (who hits Target takes Amount % back, never below 1), Lifesteal (Target heals Amount % of
+ *                   what it deals) or HealFromHits (Amount % of each hit heals Target instead), for Rounds (0: the battle).
+ * Ifs: Cards (Kind Hand, Deck, Treasure, TreasureInHand) and LastHit (Kind Taken or Dealt): how much the last hit did.
  *
  * Whens after each move (the move's spell is "the spell that set it off"; "the attacker" the one who moved, "the one hit"
  * the one it happened to). RemovedFrom picks whose ("" itself, AnyAlly, AnyEnemy, Anyone), RemovedKind and RemovedSpell
@@ -223,9 +230,92 @@ public partial class CombatResolver {
                 }
 
                 return true;
+            case "revive": {
+                // Fallen ones on its side (Target: "" one at random, AllAllies all of them, Self itself) get up with Amount
+                // health (Percent: a share of their most).
+                var fallen = boss._duelActor.ActiveSubCircles
+                    .Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: false } && c.ParticipantGameStats is not null && c.OccupiedTeam == boss.OccupiedTeam).ToList();
+                var who = (step.Target ?? "").Trim().ToLowerInvariant();
+                var picked = who switch {
+                    "self" or "me" => fallen.Where(c => c == boss).ToList(),
+                    "allallies" or "allies" => fallen,
+                    _ => fallen.Count > 0 ? [fallen[Random.Shared.Next(fallen.Count)]] : [],
+                };
+                foreach (var target in picked) {
+                    var most = Math.Max(1, MostHealth(target));
+                    var health = Math.Clamp(step.Percent ? most * step.Amount / 100 : step.Amount, 1, most);
+                    target.SetHealthTo(health);
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3} gets up with {4} health.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, health));
+                }
+
+                return true;
+            }
+            case "detonate": {
+                // Target's (Caster) damage and heal over time (and bombs) of Kind go off at once with all their rounds
+                // left, Amount percent of it (100 if 0), and are gone.
+                foreach (var target in On("Caster").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
+                    var overTime = target._hangingEffects.Where(e => e is not null && CombatRequirements.IsOverTime(e) && Fits(e))
+                        .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
+                    var share = step.Amount > 0 ? step.Amount : 100;
+                    foreach (var e in overTime) {
+                        var left = e.m_effectType == kSpellEffects.kDeferredDamage ? e.m_paramPerRound : e.m_paramPerRound * Math.Max(1, e.m_numRounds);
+                        left = left * share / 100;
+                        if (e.m_effectType == kSpellEffects.kHealOverTime) {
+                            HealFromCheat(target, left);
+                        }
+                        else if (left > 0) {
+                            CombatEffectApplicator.TickDamage(target, e, left);
+                            target.SyncParticipantHealth();
+                        }
+                    }
+
+                    CombatCharms.RemoveExact(target._hangingEffects, overTime);
+                    Logger.Information("Duel {0} | Slot {1} | {2}: {3} over-time effects on slot {4} go off at once.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, overTime.Count, target.SlotIndex));
+                }
+
+                return true;
+            }
+            case "hitshare": {
+                // Kind Thorns / Lifesteal / HealFromHits on Target (Self): Amount percent for Rounds rounds (0: the rest of
+                // the battle); 0 percent takes it off.
+                var kind = (step.Kind ?? "").Trim();
+                if (kind.Length == 0) {
+                    return true;
+                }
+
+                var until = step.Rounds > 0 ? (int) _duel.m_roundNum + step.Rounds - 1 : 0;
+                foreach (var target in On("Self").Where(t => t is not null)) {
+                    if (step.Amount == 0) {
+                        target.CheatHitShares.Remove(kind);
+                    }
+                    else {
+                        target.CheatHitShares[kind] = (step.Amount, until);
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3} {4} {5}%.", Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, kind, step.Amount));
+                }
+
+                return true;
+            }
             default:
                 return false;
         }
+    }
+
+    // How many cards: Hand in the hand, Deck left in the deck (with the hand), Treasure treasure cards left.
+    private static int CardsOf(CombatDuelSubCircle who, string kind) {
+        if (who?._combatDeck is not { } deck) {
+            return 0;
+        }
+
+        return (kind ?? "").Trim().ToLowerInvariant() switch {
+            "deck" => deck.RemainingCardCount,
+            "treasure" => deck.VaultRemainingCount,
+            "treasureinhand" => deck.TreasureCardsInHand,
+            _ => deck.LastGivenHand?.Count ?? 0,
+        };
     }
 
     // Everyone's health and stun before the move, for Healed and Stunned.

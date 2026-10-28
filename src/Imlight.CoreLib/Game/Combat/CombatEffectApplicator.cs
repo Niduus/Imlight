@@ -526,7 +526,15 @@ internal static class CombatEffectApplicator {
             cinematicTime += wards.Count * HANGING_EFFECT_CONSUME_TIME;
             damage = CombatWards.GetIncomingDamageFromWards(wards, damage, ref pierceLeft);
 
-            var dealt = DoDamageToTarget(target, damage, finalSchool, pierceLeft);
+            // A cheat's "hits heal me": that share of the hit heals the target instead.
+            var turned = (int) Math.Floor(damage * Math.Clamp(target.HitShare("HealFromHits"), 0, 100) / 100.0);
+            var dealt = DoDamageToTarget(target, damage - turned, finalSchool, pierceLeft);
+            if (turned > 0 && target.IsAlive) {
+                target.HealParticipant(turned);
+                target.SyncParticipantHealth();
+            }
+
+            HitShares(caster, target, dealt);
             damageDealt += dealt;
             hits.Add($"{TargetName(target)}: dealt {dealt}");
 
@@ -961,6 +969,30 @@ internal static class CombatEffectApplicator {
         target.DamageParticipant(reducedDamage);
 
         return reducedDamage;
+    }
+
+    // Cheats: the last hit each side saw, thorns back on the attacker and lifesteal for it (never below 1 health).
+    private static void HitShares(CombatDuelSubCircle caster, CombatDuelSubCircle target, int dealt) {
+        target.CheatLastHitTaken = dealt;
+        if (caster is null || caster == target || dealt <= 0) {
+            return;
+        }
+
+        caster.CheatLastHitDealt = dealt;
+        var thorns = dealt * target.HitShare("Thorns") / 100;
+        var now = caster.ParticipantGameStats?.m_currentHitpoints ?? 0;
+        if (thorns > 0 && now > 1) {
+            caster.DamageParticipant(Math.Min(thorns, now - 1));
+            caster.SyncParticipantHealth();
+            Logger.Information("Slot {0} | Thorns: {1} damage back to slot {2}.", Logger.Args(target.SlotIndex, Math.Min(thorns, now - 1), caster.SlotIndex));
+        }
+
+        var stolen = dealt * caster.HitShare("Lifesteal") / 100;
+        if (stolen > 0 && caster.IsAlive) {
+            caster.HealParticipant(stolen);
+            caster.SyncParticipantHealth();
+            Logger.Information("Slot {0} | Lifesteal: heals {1}.", Logger.Args(caster.SlotIndex, stolen));
+        }
     }
 
     // Equalize and the like: a bubble or ward that caps the damage of one hit.
