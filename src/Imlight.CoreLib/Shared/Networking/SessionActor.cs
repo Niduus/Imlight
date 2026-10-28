@@ -48,6 +48,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imcodec.MessageLayer;
+using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Shared.Packets;
@@ -102,6 +103,16 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     private bool _stoppedByStrategy;
     private bool _isDeallocated;
     private ICancelable _clientCloseTimer;
+
+    // Quest and NPC dialogs sent while the game is still on its loading screen are not shown there; the game shows
+    // them later, often only when the player leaves the zone. They wait here until the game says it has loaded
+    // (MSG_CLIENTZONED), or until the fallback when it never says so.
+    private static readonly TimeSpan s_heldDialogFallback    = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan s_dialogAfterZoned      = TimeSpan.FromMilliseconds(500);
+    private const string FLUSH_HELD_DIALOGS                  = "FlushHeldDialogs";
+    private readonly List<(IMessage Message, IActorRef Sender)> _heldDialogs = [];
+    private bool _clientZoned;
+    private bool _heldDialogFlushScheduled;
 
     // ctor
     public SessionActor(Socket socket, ushort sessionId, IActorRef server, IActorRef actorFactoryRef = null) {
@@ -410,6 +421,7 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         Receive<string>(x => x == "CloseAfterClient", x => Dispose("client logout", waitForClientClose: true));
         Receive<string>(x => x == "ClientCloseTimeout", x => StopWaitingForClientClose("client did not close"));
         Receive<string>(x => x == "Identify", x => Sender.Tell(this));
+        Receive<string>(x => x == FLUSH_HELD_DIALOGS, _ => FlushHeldDialogs());
         Receive<SERVICE_101_PROTOCOL.MSG_GETALLSERVICES>(InitializeActiveSession);
         Receive<SERVER_100_PROTOCOL.MSG_PING>(x => this.Ping = x.Ping);
         Receive<Exception>(ReceiveException);
@@ -431,7 +443,53 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     }
 
     private void SendToSocket(IMessage message) {
+        if (message is WIZARD_12_PROTOCOL.MSG_ACTORDIALOG && (!_clientZoned || _heldDialogs.Count > 0)) {
+            _heldDialogs.Add((message, Sender));
+            if (!_heldDialogFlushScheduled) {
+                _heldDialogFlushScheduled = true;
+                Context.System.Scheduler.ScheduleTellOnce(s_heldDialogFallback, Self, FLUSH_HELD_DIALOGS, Self);
+            }
+
+            return;
+        }
+
         _socketSenderRef.Forward(message);
+    }
+
+    private void NoteClientZoned() {
+        if (_clientZoned) {
+            return;
+        }
+
+        _clientZoned = true;
+        if (_heldDialogs.Count > 0) {
+            // A moment for the game's HUD to come up after the loading screen.
+            Context.System.Scheduler.ScheduleTellOnce(s_dialogAfterZoned, Self, FLUSH_HELD_DIALOGS, Self);
+        }
+    }
+
+    private void FlushHeldDialogs() {
+        _heldDialogFlushScheduled = false;
+        if (_heldDialogs.Count == 0 || _isDisposed) {
+            _heldDialogs.Clear();
+
+            return;
+        }
+
+        if (!_clientZoned) {
+            Logger.Information("SessionActor {0}: the game did not say it had loaded the zone; sending {1} held dialog(s) now.",
+                Logger.Args(SessionID, _heldDialogs.Count));
+            _clientZoned = true;
+        }
+        else {
+            Logger.Information("SessionActor {0}: sending {1} dialog(s) held while the game loaded the zone.",
+                Logger.Args(SessionID, _heldDialogs.Count));
+        }
+
+        foreach (var (message, sender) in _heldDialogs) {
+            _socketSenderRef.Tell(message, sender);
+        }
+        _heldDialogs.Clear();
     }
 
     private void InitializeActiveSession(SERVICE_101_PROTOCOL.MSG_GETALLSERVICES message) {
@@ -519,6 +577,13 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         var logPrefix = ClientMessageLogPrefix;
         if (logPrefix is not null) {
             LogClientMessage(logPrefix, packet);
+        }
+
+        if (packet is GAME_5_PROTOCOL.MSG_ATTACH) {
+            _clientZoned = false;
+        }
+        else if (packet is WIZARD2_53_PROTOCOL.MSG_CLIENTZONED) {
+            NoteClientZoned();
         }
 
         if (_dispatchTable.TryGetValue(packet.GetType(), out var handlers)) {
