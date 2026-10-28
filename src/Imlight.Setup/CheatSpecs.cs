@@ -49,7 +49,7 @@ internal static class CheatSpecs {
         ("Enemy", "a random player"),
         ("FirstEnemy", "the first player"),
         ("WeakestEnemy", "the weakest player"),
-        ("AllEnemies", "every player"),
+        ("AllEnemies", "every enemy (the whole other side)"),
         ("Ally", "a random ally"),
         ("WeakestAlly", "its weakest ally"),
         ("StrongestAlly", "its strongest ally"),
@@ -85,7 +85,7 @@ internal static class CheatSpecs {
     private static readonly (string Value, string Label)[] s_picks = [
         ("", "no pick: every enemy"), ("WeakestEnemy", "the weakest players"), ("StrongestEnemy", "the strongest players"),
         ("Enemy", "players at random"), ("MostPips", "the players with the most pips"), ("Marked", "whoever has the mark"),
-        ("Unmarked", "the players without the mark"), ("AllEnemies", "every player"), ("Caster", "the attacker"),
+        ("Unmarked", "the players without the mark"), ("AllEnemies", "every enemy"), ("Caster", "the attacker"),
         ("Matched", "the one the If found"), ("Last", "the same as the block before"), ("WeakestAlly", "its weakest allies"),
         ("StrongestAlly", "its strongest allies"), ("Ally", "allies at random"), ("AllAllies", "its whole side"),
         ("Everyone", "everyone (both sides)"), ("EveryoneElse", "everyone but itself"),
@@ -165,7 +165,7 @@ internal static class CheatSpecs {
     // Niduus, 2026-10-26: a school, or its rival (opposite).
     private static readonly (string, string)[] s_schoolMatch = [("", "the school"), ("Rival", "the rival of"), ("RivalOfIt", "the rival of its own school (box not used):")];
     private static readonly (string, string)[] s_markWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"), ("AnyEnemy", "someone on the other side"),
-        ("AllEnemies", "every player")];
+        ("AllEnemies", "every enemy")];
     private static readonly (string, string)[] s_castBy = [("Creature", "this creature:"), ("Ally", "a random ally"), ("WeakestAlly", "its weakest ally"), ("StrongestAlly", "its strongest ally"), ("Summoner", "whoever summoned it")];
     // Chromatic (Niduus, 2026-10-27: "Chromatic SELF (Meaning gain a blade of that targets school) Chromatic ENEMY (Give a
     // weakness on that enemy specifically for their school) ... COVER ALL CORNERS"): a school the server picks when the
