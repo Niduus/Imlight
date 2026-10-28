@@ -1809,6 +1809,15 @@ public partial class CombatDuelSubCircle {
             m_powerPips = ParticipantGameStats.m_startingPowerPips,
             m_genericPips = ParticipantGameStats.m_startingPips
         };
+        if (_wizard is not null) {
+            // Where a wizard's power pips come from: gear that starts them with pips, and the chance each new pip has.
+            var stats = ParticipantGameStats;
+            Logger.Debug("{0} starts with {1} pips and {2} power pips (gear); power pip chance {3:0.#}% (level {4:0.#}% + gear {5:0.#}%).",
+                Logger.Args(_wizard.PlayerNameBehavior.GetWizardName(), pipCount.m_genericPips, pipCount.m_powerPips,
+                    100 * (stats.m_powerPipBase + stats.m_powerPipBonusPercentAll), 100 * stats.m_powerPipBase,
+                    100 * stats.m_powerPipBonusPercentAll));
+        }
+
 
         // Ensure that the total number of pips does not exceed MAX_PIP_COUNT.
         if (pipCount.m_genericPips + pipCount.m_powerPips > MAX_PIP_COUNT) {
@@ -1834,8 +1843,9 @@ public partial class CombatDuelSubCircle {
         var stats = ResolverGameStats;
         var powerPipChance = 100 * (stats.m_powerPipBase + stats.m_powerPipBonusPercentAll);
 
-        var powerPipRoll = Random.Shared.Next(0, 100);
-        return powerPipRoll <= powerPipChance;
+        // The roll is 0 to 99, so "below" the chance: with "at or below", 0% still gave a power pip 1 time in 100
+        // (Niduus, 2026-10-28: a level 7 wizard at 0% got power pips).
+        return powerPipChance > 0 && Random.Shared.Next(0, 100) < powerPipChance;
     }
 
 }
