@@ -46,6 +46,7 @@ internal sealed partial class ManagerWindow {
     private const string FAV_GEAR = "Gear";
     private const string FAV_BOSSES = "Bosses";
     private const string FAV_RECIPES = "Recipes";
+    private const string FAV_FURNITURE = "Furniture";
     private const string FAV_VENDORS = "Vendors";
     private const string FAV_PET_TALENTS = "Pet Talents";
     private const string FAV_PET_DERBY = "Pet Derby";
