@@ -689,8 +689,9 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         SendToSocket(shopDenyMsg);
     }
 
-    // The most copies one Buy More request buys.
-    private const uint MAX_COPIES = 99;
+    // The most copies one Buy More request buys: the game's Buy More goes up to 999, and reagent and snack stacks hold 999.
+    // It was 99, so picking more than 99 gave 99 (Niduus, 2026-10-28).
+    private const uint MAX_COPIES = 999;
 
     /// <summary>
     /// Buys a snack into the snack bag or a reagent into the reagent bag, the same messages the bazaar sends.
