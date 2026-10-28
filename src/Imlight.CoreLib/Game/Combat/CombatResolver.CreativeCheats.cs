@@ -33,6 +33,15 @@
  *
  * Dos:
  *   SetVar        Var (Scope) is Set to, Add, Subtract, Multiply by Amount, or Random from 0 to Amount. A message's {Var} shows it.
+ *   Remember      Var (Scope) is set to a number read from the battle now (Niduus, 2026-10-28: "If universal trap is cast
+ *                 on player, remove trap, gain blade that's the same value as trap"), From:
+ *                   Spell    the size of the spell that set the cheat off: its first effect of Kind (Trap, Blade...; empty:
+ *                            its first with a size), so a +30% trap is 30.
+ *                   Newest, Biggest, Total   the size of Target's (Self) newest, biggest or all hanging effects of Kind
+ *                            (commas; empty any) from Spell.     Count: how many of them.
+ *                   Health, HealthPercent, Pips (all of them), Round.
+ *                 EffectSchool narrows the effects (Universal: only all-school ones).
+ *                 A later step's AmountVar uses it: a blade with AmountVar trap is as big as the trap.
  *   IfVar         the next Count steps (1) only if Var Op Amount.         Repeat: the next Count steps (1) Times times.
  *   MaxHealth     Target's most health is set to Amount (Op Add: raised by it; Percent: Amount is a share of the most now);
  *                 its health stays, and is never above the new most. Only the server knows it: the game's bar keeps its top.
@@ -139,6 +148,63 @@ public partial class CombatResolver {
     private static (ulong, string) VarKey(CombatDuelSubCircle owner, string name, string scope)
         => ((scope ?? "").Trim().Equals("Battle", StringComparison.OrdinalIgnoreCase) ? BATTLE_VARS : owner?.ParticipantObject?.m_globalID.Full ?? 0,
             (name ?? "").Trim().ToLowerInvariant());
+
+    // An effect's school: "" any, Universal only an all-school one (a Hex, Curse or Feint), else only that school's.
+    private static bool EffectSchoolIs(SpellEffect e, string school) {
+        var want = (school ?? "").Trim();
+        if (want.Length == 0) {
+            return true;
+        }
+
+        var has = ((string) e.m_sDamageType ?? "").Trim();
+        var universal = has.Length == 0 || has.Equals("All", StringComparison.OrdinalIgnoreCase);
+
+        return want.Equals("Universal", StringComparison.OrdinalIgnoreCase) ? universal : !universal && has.Equals(want, StringComparison.OrdinalIgnoreCase);
+    }
+
+    // The number a Remember step keeps (see the top of this file).
+    private int Remembered(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle target) {
+        var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        bool Fits(SpellEffect e) => e is not null && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && EffectSchoolIs(e, step.EffectSchool);
+        var from = (step.From ?? "").Trim().ToLowerInvariant();
+        switch (from) {
+            case "" or "spell": {
+                var template = _cheatSpellId == 0 ? null : FindSpell("", _cheatSpellId).Template;
+                var sized = CombatEnchantments.Leaves(template?.m_effects ?? []).Where(e => e is not null && e.m_effectParam != 0).ToList();
+                var effect = sized.FirstOrDefault(Fits) ?? (kinds.Length == 0 ? sized.FirstOrDefault() : null);
+
+                return effect is null ? 0 : Math.Abs(effect.m_effectParam);
+            }
+            case "round":
+                return BattleRound;
+        }
+
+        if (target is null) {
+            return 0;
+        }
+
+        switch (from) {
+            case "health":
+                return target.ParticipantGameStats?.m_currentHitpoints ?? 0;
+            case "healthpercent": {
+                var most = MostHealth(target);
+
+                return most <= 0 ? 0 : (int) Math.Round(100.0 * (target.ParticipantGameStats?.m_currentHitpoints ?? 0) / most);
+            }
+            case "pips":
+                return PipsOfKind(target, "");
+        }
+
+        var hanging = (target._hangingEffects ?? []).Where(e => Fits(e) && FromSpell(e, step.Spell)).ToList();
+
+        return from switch {
+            "newest" => hanging.Count == 0 ? 0 : Math.Abs(hanging[^1].m_effectParam),
+            "biggest" => hanging.Count == 0 ? 0 : hanging.Max(e => Math.Abs(e.m_effectParam)),
+            "total" => hanging.Sum(e => Math.Abs(e.m_effectParam)),
+            "count" => hanging.Count,
+            _ => 0,
+        };
+    }
 
     private int GetVar(CombatDuelSubCircle owner, string name, string scope) => _cheatVars.GetValueOrDefault(VarKey(owner, name, scope));
 
@@ -415,7 +481,7 @@ public partial class CombatResolver {
                 var kinds = (c.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 return Measured(boss, c, trigger, receiver, w => (w._hangingEffects ?? []).Count(e => e is not null
-                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell) && HasTag(e, c.Tag)));
+                    && (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, c.Spell) && HasTag(e, c.Tag) && EffectSchoolIs(e, c.EffectSchool)));
             }
             case "pips":
                 return Measured(boss, c, trigger, receiver, w => PipsOfKind(w, c.Kind));
@@ -497,6 +563,19 @@ public partial class CombatResolver {
                 Logger.Information("Duel {0} | {1}: {2} circle {3} ({4}){5}.", Logger.Args(duel, bossName, locking ? "locked" : "unlocked",
                     string.Join(", ", circles.Select(c => c.Symbol)), step.Kind,
                     locking ? step.Rounds <= 0 ? " for the rest of the battle" : $" for {step.Rounds} rounds" : ""));
+
+                return true;
+            }
+
+            case "remember": {
+                if (string.IsNullOrWhiteSpace(step.Var)) {
+                    return true;
+                }
+
+                var value = Remembered(boss, step, On("Self").FirstOrDefault(t => t is not null));
+                _cheatVars[VarKey(boss, step.Var, step.Scope)] = value;
+                Logger.Information("Duel {0} | Slot {1} | {2}: remembers {3} ({4}) as {5}.",
+                    Logger.Args(duel, boss.SlotIndex, bossName, value, step.From, step.Var.Trim()));
 
                 return true;
             }
