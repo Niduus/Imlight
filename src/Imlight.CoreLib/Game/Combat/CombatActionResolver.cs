@@ -127,7 +127,7 @@ internal static class CombatActionResolver {
             var spellSchool = MagicSchools.GetMagicSchool(action.Spell.m_magicSchoolID)?.m_schoolName;
             if (spellSchool is not null) {
                 var isHealCast = CombatEnchantments.Leaves(topEffects).Any(x => x.m_effectType == kSpellEffects.kHeal);
-                var isOffensiveCast = critPrimaryTarget.OccupiedTeam != action.SpellCaster.OccupiedTeam;
+                var isOffensiveCast = critPrimaryTarget.OccupiedTeam != action.SpellCaster.FightsFor;
                 if (isHealCast || isOffensiveCast) {
                     landedCrit = CombatCriticals.RollsCritical(action.SpellCaster, critPrimaryTarget, spellSchool, isHealCast);
                     if (landedCrit) {
@@ -394,7 +394,7 @@ internal static class CombatActionResolver {
         }
 
         // If the spell has any targets that are alive or on the same team as the caster, it's worth casting.
-        if (targets.Any(x => x.IsAlive) || targets.Any(x => x.OccupiedTeam == caster.OccupiedTeam)) {
+        if (targets.Any(x => x.IsAlive) || targets.Any(x => x.OccupiedTeam == caster.FightsFor)) {
             cast.Worth = true;
         }
 
@@ -568,8 +568,9 @@ internal static class CombatActionResolver {
     private static CombatDuelSubCircle[] GetEffectTargets(SpellEffect effect, CombatDuelSubCircle caster, CombatDuelSubCircle target) {
         var targets = Array.Empty<CombatDuelSubCircle>();
         var _activeSubCircles = caster._duelActor.ActiveSubCircles;
-        var enemies = _activeSubCircles.Where(x => x.OccupiedTeam != caster.OccupiedTeam && x.IsAlive && x.AddedToDuel).ToArray();
-        var friends = _activeSubCircles.Where(x => x.OccupiedTeam == caster.OccupiedTeam && x.IsAlive && x.AddedToDuel).ToArray();
+        // A beguiled caster fights for the other side (CombatResolver.MindEffects.cs), but never hits itself as an enemy.
+        var enemies = _activeSubCircles.Where(x => x.OccupiedTeam != caster.FightsFor && x != caster && x.IsAlive && x.AddedToDuel).ToArray();
+        var friends = _activeSubCircles.Where(x => x.OccupiedTeam == caster.FightsFor && x.IsAlive && x.AddedToDuel).ToArray();
 
         switch (effect.m_effectTarget) {
             case kEffectTarget.kEnemySingle:
@@ -579,12 +580,12 @@ internal static class CombatActionResolver {
             // A single friend who is not the caster (Donate Power, some Pacify and Confuse spells). It had no case, so
             // these spells never had a target and were thrown away as "not worth casting".
             case kEffectTarget.kFriendlySingleNotMe:
-                targets = target is not null && target != caster && target.OccupiedTeam == caster.OccupiedTeam ? [target] : [];
+                targets = target is not null && target != caster && target.OccupiedTeam == caster.FightsFor ? [target] : [];
                 break;
             // The card's enemy, or else the first enemy standing (Qismah's Curse tiers, monster AI picks).
             case kEffectTarget.kPreselectedEnemySingle:
             case kEffectTarget.kAtLeastOneEnemy:
-                targets = target is not null && target.OccupiedTeam != caster.OccupiedTeam && target.IsAlive
+                targets = target is not null && target.OccupiedTeam != caster.FightsFor && target.IsAlive
                     ? [target]
                     : [.. enemies.Take(1)];
                 break;
@@ -593,10 +594,10 @@ internal static class CombatActionResolver {
             // enemy standing, not for how many were picked. A monster's AI and a cheat's Pick choose their own picks
             // (MultiPicks.cs, 2026-10-26); a cast with none, or a pick that has all fallen, hits every enemy standing.
             case kEffectTarget.kMultiTargetEnemy: {
-                var picked = (s_picked ?? []).Where(p => p.OccupiedTeam != caster.OccupiedTeam && p.IsAlive && p.AddedToDuel)
+                var picked = (s_picked ?? []).Where(p => p.OccupiedTeam != caster.FightsFor && p.IsAlive && p.AddedToDuel)
                     .Distinct().ToArray();
                 targets = picked.Length > 0 ? picked
-                    : caster.IsHumanPlayer && s_picked is null && target is not null && target.OccupiedTeam != caster.OccupiedTeam
+                    : caster.IsHumanPlayer && s_picked is null && target is not null && target.OccupiedTeam != caster.FightsFor
                         && target.IsAlive ? [target]
                     : enemies;
                 break;
@@ -605,7 +606,7 @@ internal static class CombatActionResolver {
             // whole team.
             case kEffectTarget.kMultiTargetFriendly: {
                 var ownPicks = s_picksChosen
-                    ? (s_picked ?? []).Where(p => p.OccupiedTeam == caster.OccupiedTeam && p.IsAlive && p.AddedToDuel).Distinct().ToArray()
+                    ? (s_picked ?? []).Where(p => p.OccupiedTeam == caster.FightsFor && p.IsAlive && p.AddedToDuel).Distinct().ToArray()
                     : [];
                 targets = ownPicks.Length > 0 ? ownPicks : friends;
                 break;
@@ -614,7 +615,7 @@ internal static class CombatActionResolver {
             case kEffectTarget.kFriendlyMinion:
                 // The client drives minion selection; validate the pick belongs to the caster's team, or else use the
                 // caster's own minion (Drain Health on a card aimed at the caster).
-                targets = target is not null && target.IsSummonedMinion && target.OccupiedTeam == caster.OccupiedTeam
+                targets = target is not null && target.IsSummonedMinion && target.OccupiedTeam == caster.FightsFor
                     ? [target]
                     : CasterMinion(caster) is { } own ? [own] : [];
                 break;
@@ -623,7 +624,7 @@ internal static class CombatActionResolver {
                 targets = CasterMinion(caster) is { } mine ? [mine] : [];
                 break;
             case kEffectTarget.kEnemyMinion:
-                targets = target is not null && target.IsSummonedMinion && target.OccupiedTeam != caster.OccupiedTeam
+                targets = target is not null && target.IsSummonedMinion && target.OccupiedTeam != caster.FightsFor
                     ? [target]
                     : [];
                 break;
@@ -641,12 +642,12 @@ internal static class CombatActionResolver {
             // said DEFEATED). Only an afterlife (a revive) goes on a defeated teammate.
             case kEffectTarget.kFriendlyTeam:
             case kEffectTarget.kFriendlyTeamAllAtOnce:
-                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam == caster.OccupiedTeam
+                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam == caster.FightsFor
                                                            && (x.IsAlive || effect.m_effectType == kSpellEffects.kAfterlife))];
                 break;
             case kEffectTarget.kEnemyTeam:
             case kEffectTarget.kEnemyTeamAllAtOnce:
-                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam != caster.OccupiedTeam && x.IsAlive)];
+                targets = [.. _activeSubCircles.Where(x => x.OccupiedTeam != caster.FightsFor && x != caster && x.IsAlive)];
                 break;
             case kEffectTarget.kGlobal:
             case kEffectTarget.kSpell:

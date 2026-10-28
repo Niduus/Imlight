@@ -83,6 +83,8 @@ public class QueuedCombatAction {
     public SpellTemplate SpellTemplate;
     // A boss cheat with an Interrupt step went off before it: the spell fizzles (CombatResolver.BossCheats.cs).
     public bool Interrupted;
+    // Confusion sent the spell to a random target (CombatResolver.MindEffects.cs); the game is told so.
+    public bool Confused;
     // A cheat's FreeCast with OnTarget: the spell's effects on its caster (kSelf) go on SelectedTarget instead.
     public bool SelfOnTarget;
     
@@ -497,6 +499,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             // A boss cheat that interrupts goes off before the spell it answers.
             cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
+            // A beguiled caster fights for the other side, and a confused one may hit anyone (CombatResolver.MindEffects.cs).
+            AimMindAffected(action);
             // What everyone has on before the move, for cheats that answer an effect being taken off.
             NoteEffectsBeforeMove();
             var before = combatActionList.m_actionList.Count;
@@ -513,7 +517,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             cinematicTime += WithPetMayCasts(() => CastDelayed(action.SpellCaster, atStart: false, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
+            // A beguile or confusion counts down a round on the participant's own turn.
+            CountDownMindEffects(action.SpellCaster);
         }
+        // Spied counts down at the end of every round.
+        CountDownSpied();
         // Boss cheats for the end of the round, after everyone's move.
         cinematicTime += BossCheatsAtRoundEnd(combatActionList, cinematicTime);
         NoteHealthBeat(cinematicTime);
@@ -1477,6 +1485,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         m_shadowPactTarget = -1,
         m_petCastTarget = -1,
         m_CritHitList = [],
+        m_confusedTarget = action.Confused,
     };
 
     // [Battle] PlayerCastsUseNormalAnimation (Niduus, 2026-10-22, "Swap where possible"): a wizard casting a boss's or
