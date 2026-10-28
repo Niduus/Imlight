@@ -408,6 +408,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         var lines = Tools.MemberBenefits.GreetingFor(_wizard.AccountId);
         // Quest rewards a fix gives back (Game/Quests/QuestRewardRepair).
         lines.AddRange(Quests.QuestRewardRepair.GiveMissedRewards(SessionActor.ActorRef, _wizard));
+        // Finished quests whose rewards got better since ([Character] QuestCatchUpRewards).
+        lines.AddRange(Quests.QuestRewardCatchUp.GiveCatchUp(SessionActor.ActorRef, GetActiveGameObject(), _wizard));
         lines.AddRange(Events.GameEvents.GreetingFor(_wizard.AccountId));
         lines.AddRange(Imlight.CoreLib.Auth.AutoAccounts.GreetingFor(_wizard.AccountId));
         if (lines.Count == 0) {

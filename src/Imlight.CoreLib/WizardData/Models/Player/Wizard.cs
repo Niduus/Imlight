@@ -84,6 +84,8 @@ public class Wizard {
     public bool Overdose { get; set; }
     // The missed quest rewards already given back to this wizard (Game/Quests/QuestRewardRepair).
     public List<string> RewardRepairs { get; set; } = [];
+    // The best reward each finished quest gave, where it is more than its first one (Game/Quests/QuestRewardCatchUp).
+    public Dictionary<string, QuestRewardCredit> QuestRewardCredits { get; set; } = [];
     // Badges earned by older fork builds. BadgeService moves them into BadgeBehavior at login.
     public List<uint> Badges { get; set; } = [];
     // The Monstrology tome: the Animus kept for each monster (its tome template id), see Game/Monstrology.
