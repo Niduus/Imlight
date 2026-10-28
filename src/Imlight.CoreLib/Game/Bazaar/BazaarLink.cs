@@ -304,9 +304,9 @@ public static class BazaarLink {
     public static bool Take(ulong id, int count, string who, int gold)
         => Answer(new BazaarRequest { Op = "take", Id = id, Count = count, Who = who, Gold = gold }).Ok;
 
-    /// <summary>Puts back a copy taken for a buy that did not go through (a full bag).</summary>
-    public static void PutBack(ulong id)
-        => Answer(new BazaarRequest { Op = "putback", Id = id, Count = 1 });
+    /// <summary>Puts back copies taken for a buy that did not go through (a full bag).</summary>
+    public static void PutBack(ulong id, int count = 1)
+        => Answer(new BazaarRequest { Op = "putback", Id = id, Count = count });
 
     /// <summary>Puts what a player sold into the stock.</summary>
     public static void Give(ulong id, int count, string who, int gold)
