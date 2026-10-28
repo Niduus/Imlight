@@ -91,8 +91,11 @@ internal sealed partial class ManagerWindow {
         var items = new List<TabItem> {
             NavItem(HOME, "home", "Start here, search it all", HomePage()),
             NavItem(WHATS_NEW, "sparkle", "Every version's changes", WhatsNewPage()),
-            NavItem(AI_GUIDE, "chat", "Ask about Ahziael, with your own key", AiGuidePage()),
         };
+        if (AI_GUIDE_ON) {
+            items.Add(NavItem(AI_GUIDE, "chat", "Ask about Ahziael, with your own key", AiGuidePage()));
+        }
+
         foreach (var group in s_groups) {
             var inner = new TabControl {
                 Classes = { "subnav" }, Padding = new Thickness(0), TabStripPlacement = Dock.Top,
@@ -314,7 +317,7 @@ internal sealed partial class ManagerWindow {
                 tabRows.Add(ResultRow("sparkle", WHATS_NEW, WHATS_NEW, "Every version's changes, with a search.", () => SelectTab(WHATS_NEW)));
             }
 
-            if (SearchText.Matches($"{AI_GUIDE} ai claude help ask question chat assistant", query)) {
+            if (AI_GUIDE_ON && SearchText.Matches($"{AI_GUIDE} ai claude help ask question chat assistant", query)) {
                 tabRows.Add(ResultRow("chat", AI_GUIDE, AI_GUIDE, "Ask anything about Ahziael and the server, with your own key.", () => SelectTab(AI_GUIDE)));
             }
 
