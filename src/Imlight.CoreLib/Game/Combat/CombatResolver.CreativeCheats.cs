@@ -193,6 +193,12 @@ public partial class CombatResolver {
             }
             case "pips":
                 return PipsOfKind(target, "");
+            case "lasthittaken":
+                return target.CheatLastHitTaken;
+            case "lasthitdealt":
+                return target.CheatLastHitDealt;
+            case "hand" or "deck" or "treasure":
+                return CardsOf(target, from);
         }
 
         var hanging = (target._hangingEffects ?? []).Where(e => Fits(e) && FromSpell(e, step.Spell)).ToList();
@@ -548,6 +554,11 @@ public partial class CombatResolver {
                 return IsTrueOf(boss, c, trigger, receiver, w => HasCheatStatus(w, c.Kind));
             case "time":
                 return TimeHolds(c);
+            case "cards":
+                return Measured(boss, c, trigger, receiver, w => CardsOf(w, c.Kind));
+            case "lasthit":
+                return Measured(boss, c, trigger, receiver, w => (c.Kind ?? "").Trim().Equals("Dealt", StringComparison.OrdinalIgnoreCase)
+                    ? w?.CheatLastHitDealt ?? 0 : w?.CheatLastHitTaken ?? 0);
             case "wears":
                 return IsTrueOf(boss, c, trigger, receiver, w => Wears(w, c.Name));
             case "quest":
