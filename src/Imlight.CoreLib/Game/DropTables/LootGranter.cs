@@ -249,6 +249,10 @@ public static class LootGranter {
                 itemGuid = card.m_templateID;
             }
 
+            // Safeguard: an entry named as a treasure card whose number is something else (Grim Tales' "Sprite TC" was
+            // the Sprite pet) gives the treasure card of that name.
+            itemGuid = TreasureCardByName(item, itemGuid);
+
             // Randomizer mode may swap the drop; the loot popup then lists what was really granted.
             var mappedGuid = Randomization.Randomizer.MapDrop(wizard, itemGuid);
             if (mappedGuid != itemGuid) {
@@ -374,6 +378,49 @@ public static class LootGranter {
         }
 
         return cardCount;
+    }
+
+    /// <summary>
+    /// The treasure card a drop table entry names ("Sprite TC") when its number is not a treasure card, else the number.
+    /// </summary>
+    internal static ulong TreasureCardByName(DropItemResult item, ulong templateId) {
+        var name = item.ItemName?.Trim();
+        if (string.IsNullOrEmpty(name) || !IsTreasureCardName(name)
+                || CoreObjectFactory.GetCoreTemplate(templateId) is SpellTemplate { m_Treasure: true }) {
+            return templateId;
+        }
+
+        var spellName = TreasureCardSpellName(name);
+        if (!SpellFactory.Exists(spellName) || SpellFactory.GetSpell(spellName) is not { } card
+                || CoreObjectFactory.GetCoreTemplate(card.m_templateID) is not SpellTemplate { m_Treasure: true }) {
+            return templateId;
+        }
+
+        if (s_warnedTemplateIds.TryAdd(templateId, 0)) {
+            Logger.Warning("Drop table entry {0} is named {1} but is not that treasure card; giving treasure card {2} instead.",
+                Logger.Args(templateId, name, card.m_templateID));
+        }
+
+        item.ItemId = card.m_templateID.ToString();
+
+        return card.m_templateID;
+    }
+
+    // "Sprite TC", "Sprite (TC)", "Sprite Treasure Card".
+    private static bool IsTreasureCardName(string name)
+        => name.EndsWith(" TC", StringComparison.OrdinalIgnoreCase)
+           || name.EndsWith("(TC)", StringComparison.OrdinalIgnoreCase)
+           || name.EndsWith("Treasure Card", StringComparison.OrdinalIgnoreCase);
+
+    // The game names a treasure card's spell "<spell> TC".
+    private static string TreasureCardSpellName(string name) {
+        foreach (var suffix in new[] { "(TC)", "Treasure Card", "TC" }) {
+            if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) {
+                return name[..^suffix.Length].Trim() + " TC";
+            }
+        }
+
+        return name;
     }
 
     private static void WarnSkippedOnce(ulong templateId, string reason) {

@@ -488,6 +488,13 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.RewardRepairs"/>.
+    /// </summary>
+    public static void UpdateCharacterRewardRepairs(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.RewardRepairs = [.. wizard.RewardRepairs]);
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.Overdose"/>.
     /// </summary>
     public static void UpdateCharacterOverdose(Wizard wizard) {

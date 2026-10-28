@@ -67,6 +67,14 @@ public static class DropTableConverter {
             });
         }
 
+        // The extra potion bottle, shown like the real game's "+1 potion".
+        if (dropResult.GrantsPotionSlot) {
+            lootItems.Add(new MaxPotionLootInfo {
+                m_lootType = LOOT_TYPE.LOOT_TYPE_MAX_POTION,
+                m_maxPotionToAdd = 1
+            });
+        }
+
         // Convert item rewards.
         foreach (var itemResult in dropResult.Items) {
             if (!string.IsNullOrEmpty(itemResult.ItemId)) {

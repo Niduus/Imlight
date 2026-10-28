@@ -88,8 +88,9 @@ public static class DropTableRoller {
             combinedResult.ExperienceAmount += tableResult.ExperienceAmount;
             combinedResult.TrainingPoints += tableResult.TrainingPoints;
             combinedResult.Items.AddRange(tableResult.Items);
-            combinedResult.GrantsPotionSlot = tableResult.GrantsPotionSlot;
-            
+            // Any table that gives a potion bottle gives it, whatever tables come after it.
+            combinedResult.GrantsPotionSlot |= tableResult.GrantsPotionSlot;
+
         }
 
         return combinedResult;
@@ -126,7 +127,9 @@ public static class DropTableRoller {
         result.ExperienceAmount = dropTable.ExperienceAmount;
         result.MagicSchool = "All"; 
         result.TrainingPoints = dropTable.TrainingPoints;
-        
+        // The table's extra potion bottle (Grim Tales and the other main quests that give one); it was never passed on.
+        result.GrantsPotionSlot = dropTable.GrantsPotionSlot;
+
         // Roll items with requirements validation.
         result.Items = RollTableItems(dropTable, playerRef, playerObj, wizard, random, chanceScale);
             
