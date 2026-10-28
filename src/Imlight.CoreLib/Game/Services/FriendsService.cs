@@ -872,17 +872,28 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
         var charID = ownerWizard.CharId;
+        TryGetOnlinePlayer(charID, out var ownerOnline);
 
         // Inform all buddies of the status change.
         var buddies = BuddyRelationshipCollection.GetBuddiesForWizard(charID);
         foreach (var buddy in buddies.Where(buddy => buddy != null)) {
             if (TryGetOnlinePlayer(buddy.CharId, out var onlinePlayer)) {
+                ownerWizard.FriendsBehavior.TryGetRelationship(buddy.CharId, out var relationship);
+
+                // The game copies every field of this message over its friend entry, as MSG_BUDDYENTRY does. Left
+                // at 0, Permissions hid the friend's Text Chat button (the window needs bit 1 or 3 from it) and
+                // FriendInfo wiped the level, school and best friend symbol.
                 var buddyStatusMsg = new GAME_5_PROTOCOL.MSG_BUDDYSTATUSUPDATE {
                     ListOwnerGID = buddy.GameObjectID,
                     EntryGID = charID,
                     Status = isOnline ? ONLINE_STATUS_CODE : OFFLINE_STATUS_CODE,
-                    ZoneName = onlinePlayer.CurrentZoneDisplayName,
-                    RealmName = onlinePlayer.CurrentRealm
+                    Permissions = (uint) ownerWizard.Account.GetAccountFlags(),
+                    ZoneName = isOnline ? ownerOnline?.CurrentZoneDisplayName ?? string.Empty : string.Empty,
+                    RealmName = isOnline ? ownerOnline?.CurrentRealm ?? string.Empty : string.Empty,
+                    FriendInfo = BuildFriendInfo(ownerWizard, relationship?.GetFriendSymbol(buddy.CharId) ?? 0),
+                    FriendDate = relationship?.RelationshipEpochInSeconds ?? 0,
+                    FriendStatusDate = relationship?.RelationshipEpochInSeconds ?? 0,
+                    PreviousName = string.Empty
                 };
                 var buddyActorPath = onlinePlayer.ActorPath;
                 Context.ActorSelection(buddyActorPath).Tell(buddyStatusMsg);
