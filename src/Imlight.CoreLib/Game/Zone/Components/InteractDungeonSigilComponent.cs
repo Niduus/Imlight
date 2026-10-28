@@ -436,23 +436,24 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     // The pad's own requirements in the zone file, as the game has them: the Olde Town Drains want the quest "Dog Gone
     // Doug" given or done (Niduus, 2026-10-27: dungeons let him in before their quest). [World] AccessAllWorlds opens
     // every pad; a pad the Customs tab added has none.
-    // A pad that waits for a quest or quest step the server does not have (the quests rebuilt from guides carry names
-    // of their own, such as LM-W404-..., where the zone file names the game's) stays open: no player could ever meet it
-    // (Niduus 2026-10-28: "sigils via main quests are not interactable").
+    // Requirements the server can never make true (a quest rebuilt under a name of its own, a "QT-" entry no quest of
+    // the server sets) count as met, so no pad stays shut for good (SigilRequirements; Niduus 2026-10-28: "sigils via
+    // main quests are not interactable", Galvanost Tower).
     private bool MayEnter(Wizard wizard) {
         var requirements = SigilInfo?.m_requirements;
-        if (wizard is null || requirements?.m_requirements is not { Count: > 0 } || World.WorldAccess.AllOpen
-            || WaitsForUnknownQuest()) {
+        if (wizard is null || requirements?.m_requirements is not { Count: > 0 } || World.WorldAccess.AllOpen) {
             return true;
         }
 
-        var met = RequirementDispatcher.EvaluateRequirements(requirements,
+        LogUnmeetableOnce();
+        var met = SigilRequirements.IsMet(requirements,
             new ZoneRequirementContext(requirements, null, null, wizard, ZoneActor, SigilInfo.m_zoneTag2.ToString()) {
                 ScriptState = Zone?.ScriptState,
             });
         if (!met && _keptOutLogged.Add(wizard.CharId)) {
             Logger.Information("Dungeon sigil {0} in {1} keeps {2} out: needs {3}.",
-                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, wizard.CharId, Describe(requirements)));
+                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, wizard.CharId,
+                    SigilRequirements.Describe(requirements)));
         }
 
         return met;
@@ -460,73 +461,20 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
     // Players told once in the log that the pad keeps them out.
     private readonly HashSet<ulong> _keptOutLogged = [];
-    private int _unknownQuestVersion = -1;
-    private bool _waitsForUnknownQuest;
+    private bool _unmeetableLogged;
 
-    private bool WaitsForUnknownQuest() {
-        var version = Imlight.CoreLib.Game.Quests.QuestOptions.Version;
-        if (_unknownQuestVersion == version) {
-            return _waitsForUnknownQuest;
+    private void LogUnmeetableOnce() {
+        if (_unmeetableLogged) {
+            return;
         }
 
-        _unknownQuestVersion = version;
-        var unknown = UnknownQuestsOf(SigilInfo?.m_requirements).Distinct().ToList();
-        _waitsForUnknownQuest = unknown.Count > 0;
-        if (_waitsForUnknownQuest) {
-            Logger.Information("Dungeon sigil {0} in {1} stays open: it waits for {2}, which the server does not have.",
-                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, string.Join(", ", unknown)));
-        }
-
-        return _waitsForUnknownQuest;
-    }
-
-    // The quests (or quest steps) a requirement list waits for that the server has no quest or step for.
-    private static IEnumerable<string> UnknownQuestsOf(RequirementList list) {
-        foreach (var requirement in list?.m_requirements ?? []) {
-            switch (requirement) {
-                case RequirementList nested:
-                    foreach (var name in UnknownQuestsOf(nested)) {
-                        yield return name;
-                    }
-                    break;
-                case ReqHasQuest quest when !KnowsQuest(quest.m_questName):
-                    yield return quest.m_questName.ToString();
-                    break;
-                case ReqHasGoal goal when !KnowsQuest(goal.m_questName):
-                    yield return goal.m_questName.ToString();
-                    break;
-                case ReqHasGoal goal when !KnowsGoal(goal.m_questName, goal.m_goalName):
-                    yield return $"{goal.m_questName} step {goal.m_goalName}";
-                    break;
-                case ReqHasEntry { m_isQuestRegistry: true } entry when !KnowsQuest(entry.m_questName):
-                    yield return entry.m_questName.ToString();
-                    break;
-                case ReqHasEntry { m_isQuestRegistry: false } entry
-                    when entry.m_entryName.ToString() is { } name
-                         && name.EndsWith("_Complete", StringComparison.OrdinalIgnoreCase)
-                         && !KnowsQuest(name[..^"_Complete".Length]):
-                    yield return name[..^"_Complete".Length];
-                    break;
-            }
+        _unmeetableLogged = true;
+        var unmeetable = SigilRequirements.Unmeetable(SigilInfo?.m_requirements).Distinct().ToList();
+        if (unmeetable.Count > 0) {
+            Logger.Information("Dungeon sigil {0} in {1}: counts as met what the server can never make true: {2}.",
+                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, string.Join(", ", unmeetable)));
         }
     }
-
-    private static bool KnowsQuest(string questName)
-        => string.IsNullOrEmpty(questName) || SpiralDB.GetQuestByName(questName) is not null;
-
-    private static bool KnowsGoal(string questName, string goalName)
-        => string.IsNullOrEmpty(goalName)
-           || SpiralDB.GetQuestByName(questName)?.m_goals?.Any(g => (string) g?.m_goalName == goalName) != false;
-
-    private static string Describe(RequirementList list)
-        => string.Join(list?.m_requirements?.Count > 1 ? " / " : "", (list?.m_requirements ?? []).Select(r => r switch {
-            RequirementList nested => "(" + Describe(nested) + ")",
-            ReqHasQuest q => $"{(q.m_applyNOT ? "not " : "")}quest {q.m_questName}",
-            ReqHasGoal g => $"{(g.m_applyNOT ? "not " : "")}step {g.m_questName}/{g.m_goalName} {g.m_requiredStatus}",
-            ReqHasEntry e => $"{(e.m_applyNOT ? "not " : "")}entry {(e.m_isQuestRegistry ? e.m_questName + "/" : "")}{e.m_entryName}",
-            null => "nothing",
-            _ => $"{(r.m_applyNOT ? "not " : "")}{r.GetType().Name}",
-        }));
 
     private sealed record PartyMember(IActorRef Actor, ulong CharId, int FaceSlot);
 
