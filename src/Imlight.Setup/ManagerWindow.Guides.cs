@@ -357,7 +357,7 @@ internal sealed partial class ManagerWindow {
             ]),
 
         new("files", "folder", "Game Files", "Files and backups", "Where your work is kept, backups and undo",
-            "Everything you make is kept in the Server folder's spiraldb-extra, and updates keep it.",
+            "Everything you make stays on this PC, in the Server folder, and updates keep it.",
             [
                 new GuideTerms("What is where (inside spiraldb-extra)",
                     ("Customs", "One file for each custom, by number (1.json, 2.json...): its stats, deck, cheats, drops and forms. " +
@@ -366,21 +366,30 @@ internal sealed partial class ManagerWindow {
                     ("Customs/Area originals", "Each area as it came with Imlight, kept the first time you save it, for [Go back to the original]."),
                     ("ZoneObjects", "One file for each custom area (its zone, and @variant for a private copy)."),
                     ("BossOverrides", "Your changes to real bosses from the Bosses tab, one file for each creature ID."),
-                    ("BossCheats", "Boss cheat files kept on this PC only; Imlight updates never ship or replace them. Cheat changes made in the app are saved in " +
-                                   "the custom's or the BossOverrides file."),
+                    ("BossCheats", "The boss cheats that come with Imlight. Cheat changes made in the app are saved in the custom's or the " +
+                                   "BossOverrides file, so these stay as Imlight ships them."),
                     ("DropTables, NpcDropTable", "The drop tables, and which tables each game creature drops."),
                     ("DropOdds.json", "How often each kind of drop rolls (gear, jewels, treasure cards...) by the creature's rank, in percent: " +
                                       "the gauntlet drop tables (W404 ...) take their chance from it. Change a number and it counts from the next " +
                                       "battle; updates keep your copy.")),
+                new GuideTerms("What updates keep",
+                    ("Everything you made", "Customs, areas, boss and player cheats, drop tables, quest changes, vendors, recipes and " +
+                                            "teleporters in spiraldb-extra; the Crown Shop, events, codes, member benefits, Loyalty Store, " +
+                                            "tamed drops, garden times and sigils in the Server folder; every setting in Config\\Imlight.ini; " +
+                                            "and every account and character."),
+                    ("Files you changed by hand", "A spiraldb-extra file you changed or deleted yourself is kept as it is; an update " +
+                                                  "only brings Imlight's new version of the files you left alone."),
+                    ("New settings", "An update adds the settings it brings to Imlight.ini with their usual value, and leaves yours alone.")),
                 new GuideActions(BACKUP, OPEN_EXTRA, OPEN_SERVER),
                 new GuideSteps("Make a backup",
-                    $"Press [{BACKUP}]. Imlight puts the whole spiraldb-extra folder (customs, areas, boss changes and drop tables) " +
-                    "into one .zip file on your desktop, with the date and time in its name.",
+                    $"Press [{BACKUP}]. Imlight puts the whole spiraldb-extra folder (customs, areas, boss changes and drop tables), " +
+                    "your settings (Config\\Imlight.ini) and the Crown Shop, events, codes and other files of the Server folder into " +
+                    "one .zip file on your desktop, with the date and time in its name. Accounts and characters are not in it.",
                     "Keep that file somewhere safe, such as a USB stick or a cloud folder. Make one before big changes."),
                 new GuideSteps("Put a backup back",
                     "Stop the server: [Server] tab, [Stop server].",
                     $"Press [{OPEN_SERVER}].",
-                    "Open the backup .zip file and drag the spiraldb-extra folder inside it into the Server folder. When Windows asks, " +
+                    "Open the backup .zip file, select everything inside it and drag it into the Server folder. When Windows asks, " +
                     "choose to replace the files.",
                     "Start the server again."),
                 new GuideTerms("Undo",
@@ -767,6 +776,12 @@ internal sealed partial class ManagerWindow {
     // Backups
     // ---------------------------------------------------------------------
 
+    /// <summary>The files outside spiraldb-extra that the app's tabs save, by their place in the Server folder.</summary>
+    private static readonly string[] s_backedUpServerFiles = [
+        Path.Combine("Config", "Imlight.ini"), CROWN_SHOP_FILE, EVENTS_FILE, CODES_FILE, MEMBER_BENEFITS_FILE, LOYALTY_FILE,
+        TAMED_DROPS_FILE, GARDEN_GROWTH_FILE, GAUNTLET_SIGILS_FILE, "announcements.json",
+    ];
+
     private async Task BackupExtraAsync() {
         var folder = _manager.ExtraFolder;
         if (!Directory.Exists(folder)) {
@@ -779,8 +794,23 @@ internal sealed partial class ManagerWindow {
         }
 
         var target = Path.Combine(desktop, $"Imlight customs backup {DateTime.Now:yyyy-MM-dd HH-mm-ss}.zip");
-        await Task.Run(() => ZipFile.CreateFromDirectory(folder, target, CompressionLevel.Optimal, includeBaseDirectory: true));
-        Say($"Saved a backup to your desktop as \"{Path.GetFileName(target)}\". It holds your customs, areas, boss changes and drop tables.");
+        var server = _manager.ServerFolder;
+        await Task.Run(() => {
+            using var zip = ZipFile.Open(target, ZipArchiveMode.Create);
+            foreach (var file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories)) {
+                zip.CreateEntryFromFile(file, "spiraldb-extra/" + Path.GetRelativePath(folder, file).Replace('\\', '/'), CompressionLevel.Optimal);
+            }
+
+            // The rest of what the app's tabs save, at the same place in the Server folder.
+            foreach (var name in s_backedUpServerFiles) {
+                var file = Path.Combine(server, name);
+                if (File.Exists(file)) {
+                    zip.CreateEntryFromFile(file, name.Replace('\\', '/'), CompressionLevel.Optimal);
+                }
+            }
+        });
+        Say($"Saved a backup to your desktop as \"{Path.GetFileName(target)}\". It holds your customs, areas, cheats, drop tables, " +
+            "settings, Crown Shop, events and codes.");
     }
 
     // ---------------------------------------------------------------------

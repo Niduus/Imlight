@@ -508,7 +508,10 @@ internal sealed class SetupSteps : IDisposable {
     private void InstallServer(string build) {
         var existingConfig = File.Exists(ConfigFile);
         // DropOdds.json is tuned by hand on this PC (the drop chances of every Wizard404 drop table), so an update keeps it.
-        CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini", "spiraldb-extra/DropOdds.json"]);
+        // Any other spiraldb-extra file changed or deleted on this PC is kept as it is too (ShippedExtraFiles).
+        var shipped = ShippedExtraFiles.Load(ServerFolder);
+        CopyFolder(build, ServerFolder, keepIfPresent: ["Config/Imlight.ini", "spiraldb-extra/DropOdds.json"], shipped);
+        shipped.Save(ServerFolder);
         if (!File.Exists(Path.Combine(build, ServerSource.STAMP_FILE))) {
             // An older build's stamp would say the server is still that version.
             File.Delete(Path.Combine(ServerFolder, ServerSource.STAMP_FILE));
@@ -554,22 +557,38 @@ internal sealed class SetupSteps : IDisposable {
         }
     }
 
-    private static void CopyFolder(string from, string to, string[] keepIfPresent) {
+    private static void CopyFolder(string from, string to, string[] keepIfPresent, ShippedExtraFiles shipped) {
+        var kept = 0;
         foreach (var file in Directory.EnumerateFiles(from, "*", SearchOption.AllDirectories)) {
             var relative = Path.GetRelativePath(from, file).Replace('\\', '/');
             var target = Path.Combine(to, relative);
-            if (File.Exists(target) && keepIfPresent.Contains(relative, StringComparer.OrdinalIgnoreCase)) {
-                continue;
+            var covered = ShippedExtraFiles.Covers(relative);
+            var keep = File.Exists(target) && keepIfPresent.Contains(relative, StringComparer.OrdinalIgnoreCase);
+            if (!keep && File.Exists(target) && IsEditedArea(relative, target)) {
+                SetupLog.Detail($"Kept {relative}: it was changed in the Customs tab.");
+                keep = true;
             }
 
-            if (File.Exists(target) && IsEditedArea(relative, target)) {
-                SetupLog.Detail($"Kept {relative}: it was changed in the Customs tab.");
+            if (!keep && covered && shipped.KeepReason(relative, target) is { } reason) {
+                SetupLog.Detail($"Kept {relative}: {reason}.");
+                kept++;
+                keep = true;
+            }
 
+            if (covered) {
+                shipped.Add(relative, file);
+            }
+
+            if (keep) {
                 continue;
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             File.Copy(file, target, overwrite: true);
+        }
+
+        if (kept > 0) {
+            SetupLog.Info($"Kept {kept} spiraldb-extra {(kept == 1 ? "file" : "files")} you changed or deleted on this PC.");
         }
     }
 
