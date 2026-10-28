@@ -138,6 +138,9 @@ internal static class CheatSpecs {
         "StunBlock", "DamageCap", "PipConversion", "DispelBlock"];
     private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy"),
         ("Critical", "critical"), ("Block", "block"), ("Pierce", "pierce"), ("StunResist", "stun resist"), ("HealIn", "healing taken"), ("PowerPip", "power pip chance")];
+    private static readonly (string, string)[] s_statKinds = [("Damage", "damage"), ("Resist", "resist"), ("Pierce", "pierce"), ("Critical", "critical"), ("Block", "block"), ("Accuracy", "accuracy")];
+    private static readonly (string, string)[] s_statusKinds = [("Stunned", "stunned"), ("Confused", "confused"), ("Polymorphed", "polymorphed")];
+    private static readonly (string, string)[] s_timeKinds = [("Hour", "hour"), ("Month", "month"), ("Day", "day of the month"), ("Weekday", "weekday")];
     private static readonly (string, string)[] s_convertTo = [("Blade", "blades"), ("Weakness", "weaknesses"), ("Shield", "shields"), ("Trap", "traps"), ("Absorb", "absorbs")];
     private static readonly (string, string)[] s_protectOnOff = [("", "can't be removed"), ("Off", "can be removed again")];
     private static readonly (string, string)[] s_timings = [
@@ -596,6 +599,25 @@ internal static class CheatSpecs {
         Cond("C.Pips", "pips", "pips of a kind", "Someone's pips of one kind: power, normal, shadow, or a school's. \"Both sides, added up\" with shadow pips counts the shadow pips in play.",
             "If {Who} has {Op} {Value} {Kind}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 3, max: 99), F("Kind", CheatFieldType.Choice, "", s_condPips)],
             b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_condPips, b.Text("Kind"))}"),
+        // Niduus, 2026-10-28 (the cheat ideas list; server: CombatResolver.ExtraCheats.cs).
+        Cond("C.Stat", "user", "a stat", "Someone's damage, resist, pierce, critical, block or accuracy from their gear and stats (not blades or shields), for a school or all. Percent; a rating for critical and block. Example: the attacker has more than 40 pierce — raise its shields.",
+            "If {Who} has {Kind} for {School} {Op} {Value}", [WhoField(), F("Kind", CheatFieldType.Choice, "Damage", s_statKinds), F("School", CheatFieldType.Choice, "", SCHOOLS), OpField(), F("Value", CheatFieldType.Number, 40, max: 10_000)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} {LabelOf(s_statKinds, b.Text("Kind"))}{(b.Text("School").Length > 0 ? $" ({b.Text("School")})" : "")}"),
+        Cond("C.Status", "stop", "stunned or confused", "Someone is stunned, confused or polymorphed right now.",
+            "If {Who} is {Kind}", [WhoField(), F("Kind", CheatFieldType.Choice, "Stunned", s_statusKinds)],
+            b => $"if {Who(b)} is {LabelOf(s_statusKinds, b.Text("Kind"))}"),
+        Cond("C.Time", "clock", "time or date", "The server PC's clock: the hour (0-23), the month (1-12), the day of the month, or the weekday (names, commas between). Example: month = 10 for Halloween cheats; weekday Saturday, Sunday for weekend ones.",
+            "If the {Kind} is {Op} {Value} (weekdays: {Name})", [F("Kind", CheatFieldType.Choice, "Hour", s_timeKinds), OpField(), F("Value", CheatFieldType.Number, 18, max: 31), F("Name", CheatFieldType.Words, "")],
+            b => b.Text("Kind") == "Weekday" ? $"if it is {b.Text("Name")}" : $"if the {LabelOf(s_timeKinds, b.Text("Kind"))} is {Op(b)} {b.Number("Value")}"),
+        Cond("C.Wears", "user", "wears an item", "A wizard has an item on (gear, pet, mount, deck) whose name or ID holds one of these words (commas between). Example: the attacker wears Darkmoor — the boss gets angrier.",
+            "If {Who} wears {Name}", [WhoField(), F("Name", CheatFieldType.Words, "Darkmoor")],
+            b => $"if {Who(b)} wears {b.Text("Name")}"),
+        Cond("C.Quest", "flag", "finished a quest", "A wizard has finished one of these quests (their names as the game keeps them, commas between).",
+            "If {Who} finished {Name}", [WhoField(), F("Name", CheatFieldType.Words, "")],
+            b => $"if {Who(b)} finished {b.Text("Name")}"),
+        Cond("C.Badge", "flag", "has a badge", "A wizard has one of these badges (badge IDs, commas between; the Badges list shows them).",
+            "If {Who} has badge {Name}", [WhoField(), F("Name", CheatFieldType.Words, "")],
+            b => $"if {Who(b)} has badge {b.Text("Name")}"),
         Cond("C.Level", "user", "level", "Someone's level (a side added up: their average). Example: the attacker is at most level 30 — go easy on low levels.",
             "If {Who} is level {Op} {Value}", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 50, max: 200)],
             b => $"if {Who(b)} is level {Op(b)} {b.Number("Value")}"),
@@ -917,7 +939,6 @@ internal static class CheatSpecs {
     internal static CheatSpec ConditionSpec(string kind)
         => All.FirstOrDefault(s => IsCondition(s.Id) && s.Id != "C.Other" && s.Id[2..].Equals((kind ?? "").Trim(), StringComparison.OrdinalIgnoreCase)) ?? s_byId["C.Other"];
 
-    /// <summary>The server's Do for a Do block.</summary>
     // " universal" or " Fire" for a block's EffectSchool, else nothing.
     private static string Universal(CheatBlock b) => b.Text("EffectSchool").Trim() switch {
         "" => "", "Universal" => " universal", var school => " " + school,
@@ -927,6 +948,7 @@ internal static class CheatSpecs {
     private static string SizeFromVar(CheatBlock b, string text)
         => b.Text("AmountVar").Trim().Length > 0 ? $"{text} (as big as {b.Text("AmountVar").Trim()})" : text;
 
+    /// <summary>The server's Do for a Do block.</summary>
     internal static string DoOf(string id) => id switch {
         "D.Say" or "D.Chat" or "D.Banner" or "D.MyChat" => "Say", "D.MyPips" => "Pips", "D.MyHeal" => "Heal", _ => id[2..],
     };

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Behaviors;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -248,6 +250,76 @@ public partial class CombatResolver {
         }
 
         return cinematicTime;
+    }
+
+    // ---- Ifs (CreativeCheats' condition switch) ----
+    //   Stat     Who's Kind (Damage, Resist, Pierce, Critical, Block, Accuracy) for School ("" all) from gear and stats, Op Value
+    //            (percent; rating for Critical and Block).
+    //   Status   Who is Kind: Stunned, Confused, Polymorphed (a form), Shadowed (a shadow creature or form).
+    //   Time     the server PC's time: Kind Hour, Month, Day (of the month) Op Value; Weekday: one of Name (Monday, ...).
+    //   Wears    Who (a wizard) has an item on (gear, pet, mount) whose id or name holds one of Name (commas).
+    //   Quest    Who (a wizard) has finished one of the quests Name (commas).   Badge: has one of the badges Name (ids).
+
+    private static List<string> Words(string text)
+        => [.. (text ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+
+    private static double StatOf(CombatDuelSubCircle who, string kind, string school) {
+        if (who?.ParticipantGameStats is not { } stats) {
+            return 0;
+        }
+
+        var row = (kind ?? "").Trim();
+        school = (school ?? "").Trim();
+        if (row.Equals("Accuracy", StringComparison.OrdinalIgnoreCase)) {
+            var index = MagicSchools.All.FirstOrDefault(s => ((string) s.m_schoolName).Equals(school, StringComparison.OrdinalIgnoreCase))?.m_schoolIndex;
+            var bySchool = index is { } i && stats.m_accBonusPercent is { } list && i < list.Count ? list[i] : 0f;
+
+            return CombatEffectApplicator.AsFraction(bySchool + stats.m_accBonusPercentAll) * 100f;
+        }
+
+        return BossOverrides.GameValue(stats, row.Length > 0 ? char.ToUpperInvariant(row[0]) + row[1..].ToLowerInvariant() : "Damage", school);
+    }
+
+    private static bool HasCheatStatus(CombatDuelSubCircle who, string kind) => (kind ?? "").Trim().ToLowerInvariant() switch {
+        "stunned" => who?.CombatParticipant?.m_stunned > 0,
+        "confused" => who?.CombatParticipant?.m_confused > 0,
+        "polymorphed" => who?.CombatParticipant?.m_polymorphSpellTemplateID is > 0,
+        _ => false,
+    };
+
+    private static bool TimeHolds(BossCheats.CheatCondition c) {
+        var now = DateTime.Now;
+        switch ((c.Kind ?? "").Trim().ToLowerInvariant()) {
+            case "weekday":
+                return Words(c.Name).Any(d => now.DayOfWeek.ToString().StartsWith(d, StringComparison.OrdinalIgnoreCase));
+            case "month":
+                return Compare(now.Month, c.Op, c.Value);
+            case "day":
+                return Compare(now.Day, c.Op, c.Value);
+            default:
+                return Compare(now.Hour, c.Op, c.Value);
+        }
+    }
+
+    private static bool Wears(CombatDuelSubCircle who, string names) {
+        var items = who?._wizard?.EquipmentBehavior?.EquippedItems;
+        var words = Words(names);
+        if (items is null || words.Count == 0) {
+            return false;
+        }
+
+        foreach (var item in items.Where(i => i is not null)) {
+            var id = item.m_templateID.Full.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID.Full) as GameObjectTemplate;
+            string objectName = template?.m_objectName ?? "";
+            string key = template?.m_displayName ?? "";
+            var shown = key.Length > 0 ? Locale.GetEnglishName(key) ?? "" : "";
+            if (words.Any(w => w == id || objectName.Contains(w, StringComparison.OrdinalIgnoreCase) || shown.Contains(w, StringComparison.OrdinalIgnoreCase))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // What "add an effect of your own size" calls an effect: Blade, Weakness, Shield, Trap or Absorb; null for any other.
