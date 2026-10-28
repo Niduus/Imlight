@@ -1,0 +1,46 @@
+{
+  "Zone": "Lemuria/Interiors/LM_Z00_I08_HallofHeroesInner",
+  "Notes": "Lemuria's final battle, Hall of Heroes (Niduus, 2026-10-28: \"the final boss fight is a 8 boss fight in the SAME fight\"). The game puts Stallion Quartermane and his 7 heroes all on one 12-circle battle circle (a DynamicSigil with two enemy teams of 4 and the wizards' 4) that the server cannot read or make, so the room had no battle circle at all. Here: an ordinary battle circle where the game's one stands, the 7 heroes are left out of the room, and walking into Stallion starts the fight with 3 heroes beside him; the other 4 wait and each steps into the circle of a hero who falls (Reinforcements), until all 8 have fought.",
+  "Objects": [
+    {
+      "Name": "HallOfHeroes_BattleCircle",
+      "Notes": "Where the game's DynamicSigil stands (12.22, 733.08, 6.2, facing 3.094).",
+      "TemplateID": 560,
+      "X": 12.22245,
+      "Y": 733.0845,
+      "Z": 6.200073,
+      "Yaw": 3.094485,
+      "CombatSigil": {
+        "SigilType": "CombatSigil8Actor",
+        "Radius": 1200
+      }
+    }
+  ],
+  "Remove": [
+    1530703,
+    1530714,
+    1530712,
+    1530707,
+    1530545,
+    1530504,
+    1530719
+  ],
+  "Encounters": [
+    {
+      "Boss": 1530633,
+      "Notes": "Stallion Quartermane: 3 heroes start beside him, the other 4 step in one at a time as heroes fall.",
+      "Minions": [
+        1530703,
+        1530714,
+        1530712,
+        1530707,
+        1530545,
+        1530504,
+        1530719
+      ],
+      "MinionCount": 3,
+      "JoinRadius": 0,
+      "Reinforcements": true
+    }
+  ]
+}

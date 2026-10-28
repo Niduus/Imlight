@@ -179,6 +179,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private ZoneObjects.ZoneEncounter _encounter;
     private CombatDuelSubCircle _encounterBossCircle;
     private readonly HashSet<ulong> _encounterJoined = [];
+    // An encounter with Reinforcements: the minions still to come in, in the order they step in as enemy circles free up.
+    private readonly Queue<ulong> _reinforcements = new();
     // Global ids of the room's own creatures that joined this battle's encounter (alive or defeated since), so a lost
     // or fled battle puts them back in the room for the next try (ZonePath, MSG_ENCOUNTERRESET).
     private readonly HashSet<ulong> _encounterZoneMinions = [];
@@ -1121,6 +1123,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
         });
 
+        BringReinforcements();
+
         // All spells have been called. Inform the client whether this duel continues or ends.
         Duel.m_duelPhase = kDuelPhase.kPhase_Resolution;
         SendCombatPhase((byte) Duel.m_duelPhase);
@@ -1385,6 +1389,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _encounter = null;
         _encounterJoined.Clear();
         _encounterZoneMinions.Clear();
+        _reinforcements.Clear();
         // A zone file's encounter, else the boss's passive "Minions" cheat (the creatures it comes into a battle with).
         var encounter = Entity.Zone?.Extras.EncounterFor(boss.m_templateID) ?? PassiveEncounter(boss);
         _brought.Add((_battle, boss.m_globalID.Full));
@@ -1562,7 +1567,45 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         Logger.Information("Duel {0} | encounter for {1}: {2} of the zone's minions joined, {3} of {4} spawned ({5}).",
             Logger.Args(Duel.m_duelID.Full, encounter.Boss, fromZone, spawned, picked.Count, string.Join(", ", picked)));
+        if (encounter.Reinforcements) {
+            foreach (var minion in encounter.Minions.Distinct().Where(m => !_encounterJoined.Contains(m) && !picked.Contains(m))
+                         .OrderBy(_ => Random.Shared.Next())) {
+                _reinforcements.Enqueue(minion);
+            }
+
+            Logger.Information("Duel {0} | encounter for {1}: {2} more wait to step in as the others fall ({3}).",
+                Logger.Args(Duel.m_duelID.Full, encounter.Boss, _reinforcements.Count, string.Join(", ", _reinforcements)));
+        }
+
         BringMinionsForPlayers();
+    }
+
+    // Reinforcements (ZoneObjects encounter; Niduus, 2026-10-28, Lemuria's 8 heroes "in the SAME fight"): after a round,
+    // each enemy circle that is free, or held by a minion defeated this round, takes the next waiting minion, which
+    // fights from the next round. A dead minion's circle is cleared here rather than when its actor goes (it checks it
+    // still holds the circle, OnMinionRemoved), so the next one is in before the round that follows.
+    private void BringReinforcements() {
+        if (_reinforcements.Count == 0 || !_isActive || IsPvPDuel) {
+            return;
+        }
+
+        foreach (var circle in SubCircles.Take(4).Where(c => c is { Occupied: true, IsSummonedMinion: true, IsAlive: false }
+                                                           && c.OccupiedTeam == CombatTeam.Monster)) {
+            NoteDefeatedEnemyMinion(circle);
+            DuelBroadcast(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATREMOVE {
+                DuelID = SigilId,
+                ParticipantID = circle.ParticipantObject.m_globalID,
+            });
+            circle.RemoveParticipant();
+        }
+
+        while (_reinforcements.Count > 0 && GetAvailableSubCircleTeamCreature() is not null) {
+            var next = _reinforcements.Dequeue();
+            var circle = SpawnAndAssignMinion((uint) next, null, forEnemies: true);
+            Logger.Information("Duel {0} | reinforcement {1} {2}; {3} still waiting.",
+                Logger.Args(Duel.m_duelID.Full, next, circle is null ? "could not come in" : $"steps into slot {circle.SlotIndex}",
+                    _reinforcements.Count));
+        }
     }
 
     private Duel CreateDuelWithDefaults() => new() {
@@ -1786,8 +1829,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             TimeSpan.FromSeconds(spawnDelay));
     }
 
-    internal static void OnMinionRemoved(CombatDuelSubCircle circle)
-        => circle.RemoveParticipant();
+    // Only while the circle still holds that minion: a reinforcement may have taken it already (BringReinforcements).
+    internal static void OnMinionRemoved(CombatDuelSubCircle circle, CoreObject minion) {
+        if (circle.ParticipantObject is null || minion is null || circle.ParticipantObject.m_globalID == minion.m_globalID) {
+            circle.RemoveParticipant();
+        }
+    }
 
     private void NoteDefeatedEnemyMinion(CombatDuelSubCircle circle) {
         if (circle.IsSummonedMinion && circle.OccupiedTeam == CombatTeam.Monster && circle.ParticipantObject is { } minion

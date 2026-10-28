@@ -27,7 +27,10 @@
  *               When a battle in the zone starts against the boss, MinionCount different ones of Minions join it on
  *               the boss's side and fight from the first round: first the zone's own creatures of those templates
  *               that are not fighting (within JoinRadius of the battle circle; 0 for anywhere in the zone), then,
- *               a second later, spawned ones picked at random for the rest.
+ *               a second later, spawned ones picked at random for the rest. Reinforcements true: the Minions that
+ *               did not join wait their turn and come in one at a time, each taking an enemy circle as one frees up,
+ *               until every one of them has fought (Lemuria's Hall of Heroes: the game puts all 8 heroes on a 12-circle
+ *               battle circle the server cannot make, so 4 fight at once and the others step in as they fall).
  *   ReplaceSpawns  creature templates the zone's spawners (its own and the file's) spawn as a custom of the app's
  *               Customs tab instead (Customs.cs): { "1336035": 1 } spawns Malistaire the Undying as custom 1. The
  *               Customs tab's rooms (Customs/Rooms.json) do the same without changing this file, and win over it.
@@ -158,6 +161,7 @@ internal static class ZoneObjects {
         public List<ulong> Minions { get; set; } = [];
         public int MinionCount { get; set; }
         public float JoinRadius { get; set; }
+        public bool Reinforcements { get; set; }
     }
 
     internal sealed class ZoneExit {

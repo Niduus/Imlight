@@ -284,12 +284,14 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             return;
         }
 
-        // An encounter minion can die before its duel slot is fully set up: nothing to remove from, just go.
-        if (_currentDuelComponent is null || _currentSubCircle?.ParticipantObject is null) {
+        // An encounter minion can die before its duel slot is fully set up: nothing to remove from, just go. So does a
+        // minion whose circle a reinforcement took already (CombatDuelComponent.BringReinforcements took it out).
+        if (_currentDuelComponent is null || _currentSubCircle?.ParticipantObject is null
+            || _currentSubCircle.ParticipantObject.m_globalID != Entity.ActiveGameObject.m_globalID) {
             _sentFinalKill = true;
             Entity.DeleteObject();
             if (_currentSubCircle?.IsSummonedMinion == true) {
-                CombatDuelComponent.OnMinionRemoved(_currentSubCircle);
+                CombatDuelComponent.OnMinionRemoved(_currentSubCircle, Entity.ActiveGameObject);
             }
 
             return;
@@ -305,7 +307,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             Entity.DeleteObject();
 
             // Free the sub-circle so a future summon can reuse the slot.
-            CombatDuelComponent.OnMinionRemoved(_currentSubCircle);
+            CombatDuelComponent.OnMinionRemoved(_currentSubCircle, Entity.ActiveGameObject);
 
             return;
         }

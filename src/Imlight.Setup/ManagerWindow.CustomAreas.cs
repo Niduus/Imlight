@@ -912,6 +912,9 @@ internal sealed partial class ManagerWindow {
                         Number(edit, encounter, "MinionCount", "0", 100, integer: true)),
                     Field("Join distance", "How near the battle circle the zone's own helpers must be to join. 0: anywhere in the zone.",
                         Number(edit, encounter, "JoinRadius", "0", 100)),
+                    Field("The rest step in", "On: the helpers that did not join wait their turn, and each time an enemy falls the next " +
+                                              "one takes its circle, until every helper has fought (Lemuria's 8 heroes).",
+                        ReinforcementsSwitch(edit, encounter)),
                     Field("Notes", "Your own notes.", Text(edit, encounter, "Notes", "", 560, multiline: true)),
                 },
             };
@@ -942,6 +945,17 @@ internal sealed partial class ManagerWindow {
 
         return OpenState(Section(SectionHeader(Tile(Glyph(AreaIcon.Encounters, ENCOUNTERS), ENCOUNTERS), "Battles, helpers and the boss", encounters.Count.ToString(CultureInfo.InvariantCulture), Timing.NextUse),
             body, ENCOUNTERS, false), edit.Area.File + "/encounters");
+    }
+
+    private static ToggleSwitch ReinforcementsSwitch(AreaEdit edit, JsonObject encounter) {
+        var on = BossChanges.FindIn(encounter, "Reinforcements") is JsonValue v && v.TryGetValue<bool>(out var b) && b;
+        var toggle = new ToggleSwitch { IsChecked = on, OnContent = "On", OffContent = "Off" };
+        toggle.IsCheckedChanged += (_, _) => {
+            Set(encounter, "Reinforcements", toggle.IsChecked == true ? JsonValue.Create(true) : null);
+            edit.Changed();
+        };
+
+        return toggle;
     }
 
     // Who a room's boss is: the game's creature, or one of the customs made from it (Customs/Rooms.json, saved at once).
