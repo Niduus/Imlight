@@ -175,8 +175,19 @@ internal static partial class SpellSupport {
                 return [new Clause("Turns charms or wards into other effects")];
             case DelaySpellEffect:
                 return [new Clause("Goes off a few rounds later")];
-            case ShadowPactSpellEffect:
-                return [new Clause("Calls on a shadow creature")];
+            case ShadowPactSpellEffect pact: {
+                var self = pact.m_effectType == kSpellEffects.kShadowSelf
+                    ? (pact.m_effectList ?? []).SelectMany(e => Clauses(e, school, depth + 1)).ToList()
+                    : [];
+                var kind = pact.m_pactEffectKind switch {
+                    kEffectKinds.kCharm => "a blade", kEffectKinds.kCurse => "a weakness", kEffectKinds.kWard => "a shield",
+                    kEffectKinds.kJinx => "a trap", kEffectKinds.kHOT => "a heal over time", _ => "a damage over time",
+                };
+                var on = pact.m_effectTarget == kEffectTarget.kSelf ? "the caster" : "an enemy";
+                var pactClause = new Clause($"Shadow Pact for {pact.m_numRounds} rounds: keep {kind} on {on}, or the caster gets {pact.m_backlashPerRound} backlash a round");
+
+                return self.Count == 0 ? [pactClause] : [new Clause("Shadow self: " + Lower(Join(self))), pactClause];
+            }
             case CountBasedSpellEffect count:
                 var inside = (count.m_effectList ?? []).SelectMany(e => Clauses(e, school, depth + 1)).ToList();
 
