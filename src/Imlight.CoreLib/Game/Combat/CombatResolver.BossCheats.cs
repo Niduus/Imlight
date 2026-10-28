@@ -167,6 +167,7 @@ public partial class CombatResolver {
             if (!atEnd) {
                 // Everyone's health as the round starts, for the Ifs "lost / gained this round" (CreativeCheats).
                 NoteRoundStart();
+                CountdownsAtRoundStart();
                 cinematicTime += WaitedCheats(combatActionList, cinematicTimeSoFar);
                 cinematicTime += JoinCheats(combatActionList, cinematicTimeSoFar + cinematicTime);
             }

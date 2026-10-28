@@ -2765,6 +2765,14 @@ internal sealed partial class ManagerWindow : Window {
         return new ScrollViewer { Content = stack };
     }
 
+    // A page that may grow wider than the others, for editors that use the room (the Player Cheats tab).
+    private static Control WidePage(params Control[] cards) {
+        var stack = new StackPanel { Margin = new Thickness(24, 12, 24, 24), Spacing = ManagerTheme.GAP, MaxWidth = ManagerTheme.WIDE_PAGE_MAX_WIDTH };
+        stack.Children.AddRange(cards);
+
+        return new ScrollViewer { Content = stack };
+    }
+
     private static Border Card(Control content) => new() {
         Background = ManagerTheme.SURFACE_BRUSH, BorderBrush = LINE, BorderThickness = new Thickness(1),
         CornerRadius = new CornerRadius(ManagerTheme.RADIUS), Padding = new Thickness(ManagerTheme.PAD), Child = content,

@@ -30,6 +30,9 @@
  *   Healed          its health went up.         Stunned: it was stunned by the move.
  *   CardPlayed      the mover played a card of RemovedKind (Treasure, Item, Deck; "" any), of RemovedSpell if named.
  *   Summoned        someone came into the battle during the move (not there before it).
+ *   OverTimeTick    a damage or heal over time (or a bomb) ticked on someone (RemovedKind DoT / HoT).
+ * Countdown: a number shown once a round, counting down from Amount (Text with {n}; Style Chat, Box, Both).
+ * Sound: a game sound (template ID or file name, Text) played for the wizards in the battle (you, in a player cheat).
  * StealCard: Count cards (random, or of Spell) of Target's (Caster) hand go into its own next hand.
  */
 
@@ -45,6 +48,8 @@ using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.WizardData.Models.World;
+using Imlight.CoreLib.Game.Tools;
+using Imcodec.Types;
 
 namespace Imlight.CoreLib.Game.Combat;
 
@@ -320,9 +325,134 @@ public partial class CombatResolver {
 
                 return true;
             }
+            case "countdown": {
+                // A number counting down once a round, shown with Text ({n} is the number) as Style (Chat, Box, Both) to the
+                // wizards in the battle (you alone, in a player cheat): Amount now, one less each round, gone after 1.
+                var start = Math.Clamp(step.Amount, 1, 99);
+                var text = (step.Text ?? "").Trim().Length > 0 ? step.Text.Trim() : "{n}";
+                _countdowns.Add(new Countdown(boss, text, step.Style ?? "", start));
+                ShowCountdown(_countdowns[^1]);
+
+                return true;
+            }
+            case "sound": {
+                // A game sound (its template ID, or a sound file name the game knows) played for Target's wizards (every
+                // wizard in the battle; you, in a player cheat).
+                var sound = (step.Text ?? "").Trim();
+                if (sound.Length == 0) {
+                    return true;
+                }
+
+                // As the game's own sound results take it: a file (with its extension), a template ID, or part of a sound
+                // template's file name.
+                GAME_5_PROTOCOL.MSG_PLAYSOUND message;
+                if (System.IO.Path.HasExtension(sound)) {
+                    message = new GAME_5_PROTOCOL.MSG_PLAYSOUND { SoundID = new GID(), SoundFilename = sound };
+                }
+                else if (uint.TryParse(sound, out var id)
+                         || CoreObjectFactory.TryGetCoreTemplateID(x => x.m_filename.ToString().Contains(sound, StringComparison.OrdinalIgnoreCase), out id)) {
+                    message = new GAME_5_PROTOCOL.MSG_PLAYSOUND { SoundID = new GID(id), SoundFilename = "" };
+                }
+                else {
+                    Logger.Warning("Duel {0} | {1}: no sound \"{2}\" was found.", Logger.Args(duel, bossName, sound));
+
+                    return true;
+                }
+                var fallback = boss.IsHumanPlayer ? "Self" : "Everyone";
+                var to = On(fallback);
+                foreach (var wizard in to.Where(t => t is { IsHumanPlayer: true, ParticipantActor: not null }).Distinct()) {
+                    wizard.ParticipantActor.Tell(message);
+                }
+
+                Logger.Information("Duel {0} | Slot {1} | {2}: plays sound {3}.", Logger.Args(duel, boss.SlotIndex, bossName, sound));
+
+                return true;
+            }
             default:
                 return false;
         }
+    }
+
+    // ---- Countdown: a number shown once a round, counting down. ----
+    private sealed class Countdown(CombatDuelSubCircle owner, string text, string style, int left) {
+        internal CombatDuelSubCircle Owner { get; } = owner;
+        internal string Text { get; } = text;
+        internal string Style { get; } = style;
+        internal int Left { get; set; } = left;
+    }
+
+    private readonly List<Countdown> _countdowns = [];
+
+    private void CountdownsAtRoundStart() {
+        foreach (var countdown in _countdowns.ToList()) {
+            countdown.Left--;
+            if (countdown.Left <= 0 || countdown.Owner is not { Occupied: true }) {
+                _countdowns.Remove(countdown);
+                continue;
+            }
+
+            ShowCountdown(countdown);
+        }
+    }
+
+    private void ShowCountdown(Countdown countdown) {
+        var text = AnnounceText(countdown.Text.Replace("{n}", countdown.Left.ToString(), StringComparison.OrdinalIgnoreCase), countdown.Owner, null);
+        var style = countdown.Style.Trim().ToLowerInvariant();
+        var box = style is "box" or "both";
+        var chat = style is "" or "chat" or "both";
+        var wizards = countdown.Owner.IsHumanPlayer
+            ? [countdown.Owner]
+            : _subCircles.Where(c => c is { Occupied: true, IsHumanPlayer: true }).ToList();
+        foreach (var wizard in wizards.Where(w => w.ParticipantActor is not null)) {
+            if (box) {
+                wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = ManagerCommands.AnnouncementBox(text), Modal = 1 });
+            }
+
+            if (chat) {
+                wizard.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
+            }
+        }
+    }
+
+    // ---- When a damage or heal over time (or a bomb) ticks: OverTimeTick, on RemovedFrom ("" itself, AnyAlly, AnyEnemy,
+    // Anyone), RemovedKind DoT / HoT ("" either), RemovedSpell. "The one hit" and "the attacker" are the one it ticked on. ----
+    private readonly List<SpellEffect> _ticked = [];
+
+    private float OverTimeTickCheats(CombatDuelSubCircle ticked, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        if (_ticked.Count == 0 || ticked is null) {
+            return 0;
+        }
+
+        var ticks = _ticked.ToList();
+        foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
+            for (var i = 0; i < cheats.Count; i++) {
+                var cheat = cheats[i];
+                if (!cheat.Is("OverTimeTick") || !InPhase(boss, cheat)) {
+                    continue;
+                }
+
+                var from = (cheat.RemovedFrom ?? "").Trim().ToLowerInvariant();
+                var fits = from switch {
+                    "anyally" => ticked.OccupiedTeam == boss.OccupiedTeam,
+                    "anyenemy" => ticked.OccupiedTeam != boss.OccupiedTeam,
+                    "anyone" => true,
+                    _ => ticked == boss,
+                };
+                var kinds = (cheat.RemovedKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var tick = ticks.FirstOrDefault(e => (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, cheat.RemovedSpell));
+                if (!fits || tick is null) {
+                    continue;
+                }
+
+                _cheatSpellId = tick.m_spellTemplateID;
+                cinematicTime += TryBossCheat(boss, i, cheat, ticked, ticked, $"an over-time effect ticked on slot {ticked.SlotIndex}",
+                    combatActionList, cinematicTimeSoFar + cinematicTime);
+                _cheatSpellId = 0;
+            }
+        }
+
+        return cinematicTime;
     }
 
     // A card in a hand is one of these spells (names or numbers, commas between).

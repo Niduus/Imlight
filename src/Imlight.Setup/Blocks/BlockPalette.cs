@@ -39,6 +39,19 @@ internal sealed class BlockPalette : Border {
     private readonly TextBox _search = new() { Watermark = "Find a block: jinx, curse, clear, pips…", FontSize = 13 };
     private readonly List<PaletteEntry> _entries;
     private readonly Action<PaletteEntry> _picked;
+    private int _columns = 1;
+
+    /// <summary>How many columns of blocks it shows (2 on a wide window).</summary>
+    internal int Columns {
+        get => _columns;
+        set {
+            value = Math.Clamp(value, 1, 3);
+            if (value != _columns) {
+                _columns = value;
+                Render();
+            }
+        }
+    }
 
     internal BlockPalette(IEnumerable<PaletteEntry> entries, Action<PaletteEntry> picked, string title = "Blocks") {
         _entries = [.. entries];
@@ -64,6 +77,13 @@ internal sealed class BlockPalette : Border {
             },
         };
         Render();
+    }
+
+    private static Control WithRightGap(Control control) {
+        control.Margin = new Thickness(0, 0, 6, 0);
+        control.VerticalAlignment = VerticalAlignment.Center;
+
+        return control;
     }
 
     private static T Docked<T>(T control, Dock dock) where T : Control {
@@ -96,9 +116,23 @@ internal sealed class BlockPalette : Border {
                     },
                 },
             });
-            foreach (var entry in found) {
-                _groups.Children.Add(Chip(entry));
+            if (_columns == 1) {
+                foreach (var entry in found) {
+                    _groups.Children.Add(Chip(entry));
+                }
+
+                continue;
             }
+
+            // Side by side, each column as wide as the palette allows.
+            var grid = new Avalonia.Controls.Primitives.UniformGrid { Columns = _columns };
+            foreach (var entry in found) {
+                var chip = Chip(entry);
+                chip.Margin = new Thickness(0, 2, 6, 4);
+                grid.Children.Add(chip);
+            }
+
+            _groups.Children.Add(grid);
         }
     }
 
@@ -108,12 +142,11 @@ internal sealed class BlockPalette : Border {
         Fill = BlockColors.Fill(entry.Kind),
         Edge = BlockColors.Edge(entry.Kind),
         Padding = new Thickness(8, (BlockColors.IsHat(entry.Kind) ? BlockShape.HAT_HEIGHT : BlockShape.NOTCH_DEPTH) + 3, 8, 5),
-        MinWidth = 150,
-        Child = new StackPanel {
-            Orientation = Orientation.Horizontal, Spacing = 6,
+        MinWidth = 120,
+        Child = new DockPanel {
             Children = {
-                BlockIcons.Icon(entry.Icon, 15, BlockColors.TEXT),
-                new TextBlock { Text = entry.Label, Foreground = BlockColors.TEXT, FontSize = 13, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center },
+                Docked(WithRightGap(BlockIcons.Icon(entry.Icon, 15, BlockColors.TEXT)), Dock.Left),
+                new TextBlock { Text = entry.Label, Foreground = BlockColors.TEXT, FontSize = 13, FontWeight = FontWeight.Medium, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis },
             },
         },
     };

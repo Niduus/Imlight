@@ -64,6 +64,7 @@ internal sealed partial class ManagerWindow {
         internal Grid EditGrid { get; } = new() { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
         internal ContentControl EditHead { get; } = new();
         internal ScrollViewer EditScroll { get; } = new() { HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        internal BlockPalette? Palette { get; set; }
     }
 
     private readonly CheatBoard _bossBoard = new(player: false);
@@ -127,7 +128,7 @@ internal sealed partial class ManagerWindow {
             });
         }
 
-        return Page(Fold("bolt", "Player Cheats", "Your cheats",
+        return WidePage(Fold("bolt", "Player Cheats", "Your cheats",
             "Cheats for you, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
             "works here too, with you as \"it\" and the monsters as \"the players\". A cheat is for the wizard you play on this PC, " +
             "unless it has a \"who gets it\" If (wizard is, wizard's name is, wizard's account, friend of, in a group with, account rank, " +
@@ -171,6 +172,17 @@ internal sealed partial class ManagerWindow {
             "Cheat blocks") {
             Width = 236, VerticalAlignment = VerticalAlignment.Stretch,
         };
+        board.Palette = palette;
+        SizeChanged += (_, _) => {
+            if (board.Editing is not null) {
+                FitEditPage(board);
+            }
+        };
+        board.EditGrid.SizeChanged += (_, e) => {
+            if (board.Editing is not null && Math.Abs(e.NewSize.Width - e.PreviousSize.Width) > 1) {
+                FitEditPage(board);
+            }
+        };
 
         Control Legends() => new WrapPanel {
             Children = {
@@ -205,13 +217,19 @@ internal sealed partial class ManagerWindow {
             Children = {
                 Row([back, .. editButtons]),
                 board.EditHead,
-                Sub("Click a block in the palette to add it at the end, or drag it to the place you want. Drag a block's grip to move it."),
-                Legends(),
+                EditLegends(),
                 board.EditGrid,
             },
         };
 
         return new StackPanel { Children = { board.ListView, board.EditView } };
+
+        Control EditLegends() {
+            var legends = Legends();
+            ToolTip.SetTip(legends, "Click a block in the palette to add it at the end, or drag it to the place you want. Drag a block's grip to move it.");
+
+            return legends;
+        }
     }
 
     private static Control Legend(BlockKind kind, string text) => new StackPanel {
@@ -316,11 +334,25 @@ internal sealed partial class ManagerWindow {
         }
 
         board.EditScroll.Content = stack;
-        board.EditGrid.Height = Math.Clamp(ClientSize.Height - 400, 400, 1100);
+        FitEditPage(board);
         if (opened) {
             board.EditScroll.Offset = default;
             Dispatcher.UIThread.Post(() => board.EditView.BringIntoView(), DispatcherPriority.Background);
         }
+    }
+
+    // The edit page uses the window's room (Niduus, 2026-10-28: "allow for the UI to be cleaner and use up some more of
+    // the loose space"): on a wide window the palette shows two columns of blocks, and the blocks take the window's height.
+    private void FitEditPage(CheatBoard board) {
+        // By the room the editor has, not the window: the Customs page is narrower than the Player Cheats page.
+        var room = board.EditGrid.Bounds.Width > 0 ? board.EditGrid.Bounds.Width : ClientSize.Width - 300;
+        var wide = room >= 1150;
+        if (board.Palette is { } palette) {
+            palette.Width = wide ? 420 : 236;
+            palette.Columns = wide ? 2 : 1;
+        }
+
+        board.EditGrid.Height = Math.Clamp(ClientSize.Height - 330, 420, 1400);
     }
 
     // A player cheat's name and whether players may switch it for themselves in chat (Niduus, 2026-10-28: "How can we
@@ -868,7 +900,7 @@ internal sealed partial class ManagerWindow {
     // block's count hides while a "these spells" block shows it.
     private Control MatchCountField(CheatBoard board, CheatRule rule, bool inWhen) {
         var text = new TextBlock { Foreground = BlockColors.TEXT, FontStyle = FontStyle.Italic, FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
-        var holder = new Border { Background = new SolidColorBrush(Color.FromArgb(50, 0, 0, 0)), CornerRadius = new CornerRadius(10), Padding = new Thickness(8, 2), Child = text };
+        var holder = new Border { Background = new SolidColorBrush(Color.FromArgb(50, 0, 0, 0)), CornerRadius = new CornerRadius(10), Padding = new Thickness(8, 2, 11, 2), Child = text };
         void Refresh() {
             holder.IsVisible = !inWhen || !rule.Ifs.Any(b => b.On && b.Spec == "I.Spells");
             var (count, names, note) = SpellMatches(rule);

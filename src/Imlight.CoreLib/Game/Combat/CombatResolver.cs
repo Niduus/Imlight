@@ -1171,6 +1171,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             // We want to invoke the overtime effects after we check for death.
             // This is because the overtime effects can kill a participant, and we want to see the animation.
             cinematicTime += InvokeOverTimeEffects(action.SpellCaster);
+            cinematicTime += OverTimeTickCheats(action.SpellCaster, combatActionList, cinematicTimeSoFar + cinematicTime);
 
             // A null spell indicates the caster is passing their turn.
             if (action.Spell is null || action.SelectedTarget is null) {
@@ -1371,6 +1372,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             return cinematicTime;
         }
 
+        _ticked.Clear();
         try {
             // A copy of the list, since ticks take effects (and used wards) off it.
             var overTime = caster._hangingEffects
@@ -1385,6 +1387,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                         // Only the wards of the tick's school count, and they are used up (they were not before).
                         var used = CombatEffectApplicator.TickDamage(caster, effect, effect.m_paramPerRound);
                         cinematicTime += HANGING_EFFECT_CONSUME_TIME * used;
+                        _ticked.Add(effect);
                         break;
                     }
                     case kSpellEffects.kDeferredDamage:
@@ -1393,6 +1396,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                             cinematicTime += OVER_TIME_ACTIVATION_TIME;
                             cinematicTime += HANGING_EFFECT_CONSUME_TIME
                                              * CombatEffectApplicator.TickDamage(caster, effect, effect.m_paramPerRound);
+                            _ticked.Add(effect);
                         }
                         break;
                     case kSpellEffects.kHealOverTime:
@@ -1404,6 +1408,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
                         cinematicTime += OVER_TIME_ACTIVATION_TIME;
                         caster.HealParticipant(effect.m_paramPerRound);
+                        _ticked.Add(effect);
                         break;
                 }
 
