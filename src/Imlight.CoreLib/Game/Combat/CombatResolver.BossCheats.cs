@@ -49,17 +49,15 @@ public partial class CombatResolver {
     // .joinme counts its own rounds).
     private readonly Dictionary<CombatDuelSubCircle, (int Phase, int FirstRound)> _bossPhases = [];
 
-    // Everyone in the battle with cheats, each with its own: a creature by its cheat file, and the wizard played on the
-    // server's own PC by the player cheats (PlayerCheats.cs). Every When, If and Do works the same for both (Niduus,
+    // Everyone in the battle with cheats, each with its own: a creature by its cheat file, and a wizard by the player
+    // cheats it has (PlayerCheats.cs: the wizard played on the server's own PC, or the ones a cheat's "who has it" Ifs pick). Every When, If and Do works the same for both (Niduus,
     // 2026-10-23: "ALL CHEATS are to be compatible for PLAYERS and CREATURES"): "it" is whoever the cheats are of, and
     // "a player" is someone on the other side (IsFoe).
     private IEnumerable<(CombatDuelSubCircle Boss, List<BossCheats.BossCheat> Cheats)> BossesWithCheats(bool defeatedToo = false)
         // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Niduus's log, 2026-10-21).
         => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && (defeatedToo || c.IsAlive) && c.ParticipantObject is not null)
-            .Select(c => (c, c.IsHumanPlayer ? PlayerCheats.IsLocal(c) ? PlayerCheats.Current() : s_noCheats : BossCheats.For(CheatTemplate(c))))
+            .Select(c => (c, c.IsHumanPlayer ? PlayerCheats.For(c) : BossCheats.For(CheatTemplate(c))))
             .Where(b => b.Item2.Count > 0);
-
-    private static readonly List<BossCheats.BossCheat> s_noCheats = [];
 
     // "A player" of a cheat: someone on the other side. For a creature's cheats that is a wizard (their minions do not
     // count, as before); for a wizard's player cheats, anyone there.

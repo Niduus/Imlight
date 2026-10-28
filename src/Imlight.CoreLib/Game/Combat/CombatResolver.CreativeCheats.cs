@@ -26,6 +26,8 @@
  *   Level         Who's level Op Value.  School: Who is of School.  Name: Who's name holds Name.  Creature: Who is of that
  *                 template.  Boss: Who is a boss.  Player: Who is a wizard.
  *   InBattle      someone of Creature (or whose name holds Name) stands on Side (Us, Them, "" either).
+ *   Wizard, WizardName, Account, ThisPc, Friend, Grouped, Rank, AnyWizard   who Who is (PlayerCheats.cs; about "it" in
+ *                 a player cheat they say which wizards have the cheat).   Online: a wizard is online anywhere.
  *   Roll          a Value percent chance.
  *   Var           the variable Var (Scope "" its own, Battle the battle's) Op Value.
  *
@@ -452,6 +454,13 @@ public partial class CombatResolver {
                                             && (c.Name.Trim().Length == 0 || FighterName(x).Contains(c.Name.Trim(), StringComparison.OrdinalIgnoreCase))
                                             && (c.Creature != 0 || c.Name.Trim().Length > 0));
             }
+            // Who has it (Niduus, 2026-10-28: "put them on other people"; PlayerCheats.cs): about anyone, for a creature's
+            // cheats too. A creature is never a wizard.
+            case "wizard" or "wizardname" or "account" or "thispc" or "friend" or "grouped" or "rank" or "anywizard":
+                return IsTrueOf(boss, c, trigger, receiver, w => w.IsHumanPlayer && w._wizard is { } wizard
+                    && PlayerCheats.WizardIs(c, wizard.CharId, wizard, boss._wizard?.CharId ?? 0) == true);
+            case "online":
+                return PlayerCheats.IsOnline(c);
             case "roll" or "chance":
                 return Random.Shared.Next(100) < c.Value;
             case "var":

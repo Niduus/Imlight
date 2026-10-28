@@ -134,7 +134,8 @@
  *     { "Do": "PickOne", "Count" (0 = all the rest), "Weights": "2, 1, 1" }   of the next Count actions only one goes
  *       off, picked at random by Weights (1 each if left out).
  * Each cheat made or changed in the app (and each cheat of a custom) writes "Custom cheat | ..." to the log as it goes off.
- * Player cheats (PlayerCheats.cs) use these same cheats for the wizard played on the server's own PC.
+ * Player cheats (PlayerCheats.cs) use these same cheats for the wizard played on the server's own PC, or for the
+ * wizards their "who has it" Ifs pick (Wizard, WizardName, Account, ThisPc, Friend, Grouped, Rank, AnyWizard, Online).
  *
  * For players and creatures alike (Niduus, 2026-10-23: "IMPLEMENT RULE. ALL CHEATS are to be compatible for PLAYERS and
  * CREATURES"): every When, If and Do works in a boss's file and in the player cheats, through one set of code
@@ -524,6 +525,11 @@ internal static class BossCheats {
         public string Match { get; set; } = "";
         // For "effects": only effects with this tag (a Do step's Tag put it on).
         public string Tag { get; set; } = "";
+        // The "who has it" Ifs (PlayerCheats.cs): wizards by character id and accounts by username (commas between), and
+        // the least account rank.
+        public string Wizard { get; set; } = "";
+        public string Account { get; set; } = "";
+        public string Rank { get; set; } = "";
     }
 
     /// <summary>One spell of a cheat's Casts.</summary>

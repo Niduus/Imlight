@@ -242,6 +242,17 @@ internal static class CheatSpecs {
             sentence + " {Not} OR group {Any}", [.. fields, new("Not", CheatFieldType.Toggle, false, Label: "NOT"), F("Any", CheatFieldType.Number, 0, max: 9)],
             b => (b.Flag("Not") ? "not: " : "") + summary(b) + (b.Number("Any") > 0 ? $" (or-group {b.Number("Any")})" : ""));
 
+    private static readonly (string, string)[] s_ranks = [("None", "any rank"), ("QualityAssurance", "Quality Assurance"), ("HallMonitor", "Hall Monitor"),
+        ("Developer", "Developer"), ("Administrator", "Administrator")];
+
+    private const string WHO_HAS_IT = " In a player cheat, about \"it\", it says who gets the cheat: every wizard it fits, on any PC (a player cheat with none of"
+        + " these blocks is only for the wizard you play on this PC). It also works about anyone else (the attacker, someone on the other side...)"
+        + " and in a boss's cheats, where a creature is never a wizard. Tick NOT for everyone but them.";
+
+    // A picked wizard as words: the name, with the account.
+    private static string WizardWords(CheatBlock b) => b.Text("Name").Length == 0 ? "(no wizard picked)"
+        : b.Text("Account").Length > 0 ? $"{b.Text("Name")} ({b.Text("Account")})" : b.Text("Name");
+
     private static string Op(CheatBlock b) => LabelOf(s_ops, b.Text("Op").Length > 0 ? b.Text("Op") : ">=");
 
     private static string Who(CheatBlock b, string key = "Who") => LabelOf(COND_WHO, b.Text(key));
@@ -576,6 +587,32 @@ internal static class CheatSpecs {
             "If {Who} is a boss", [WhoField()], b => $"if {Who(b)} is a boss"),
         Cond("C.Player", "user", "is a wizard", "Someone is a wizard (not a creature).",
             "If {Who} is a wizard", [WhoField()], b => $"if {Who(b)} is a wizard"),
+        // Who has it (Niduus, 2026-10-28: "expand on cheats so I can put them on other people ... If wizard is ... If
+        // wizards name is ... Get creative"): about "it" in a player cheat they pick the wizards who get the cheat.
+        Cond("C.Wizard", "user", "wizard is", "That one is this wizard: pick the account, then the wizard on it (the list shows each wizard's school and level)." + WHO_HAS_IT,
+            "If {Who} is the wizard {Wizard}", [WhoField(), F("Wizard", CheatFieldType.Wizard)],
+            b => $"if {Who(b)} is {WizardWords(b)}"),
+        Cond("C.WizardName", "quote", "wizard's name is", "That one's whole name is one of these, with commas between (capitals and extra spaces don't matter). Unlike \"name has\", the whole name must match: \"Ahzi Fire\" is not \"Ahzi Firedust\"." + WHO_HAS_IT,
+            "If {Who}'s name is {Name}", [WhoField(), F("Name", CheatFieldType.Words)],
+            b => $"if {Who(b)}'s name is \"{(b.Text("Name").Length > 0 ? b.Text("Name") : "(no name typed)")}\""),
+        Cond("C.Account", "users", "wizard's account", "That one is a wizard on this account. \"Any account\" is every wizard." + WHO_HAS_IT,
+            "If {Who} is on the account {Account}", [WhoField(), F("Account", CheatFieldType.Account)],
+            b => $"if {Who(b)} is on {(b.Text("Account").Length > 0 ? $"the account {b.Text("Account")}" : "any account")}"),
+        Cond("C.ThisPc", "user", "played on this PC", "That one is a wizard played on the server's own PC (yours). Turned round with NOT: every wizard but yours." + WHO_HAS_IT,
+            "If {Who} is played on this PC", [WhoField()], b => $"if {Who(b)} is played on this PC"),
+        Cond("C.Friend", "heart", "friend of", "That one is on this wizard's friend list. Example: give a cheat to every friend of your main wizard." + WHO_HAS_IT,
+            "If {Who} is a friend of {Wizard}", [WhoField(), F("Wizard", CheatFieldType.Wizard)],
+            b => $"if {Who(b)} is a friend of {WizardWords(b)}"),
+        Cond("C.Grouped", "users", "in a group with", "That one is in a group with this wizard. With no wizard picked: in a group with whoever's cheat it is." + WHO_HAS_IT,
+            "If {Who} is in a group with {Wizard}", [WhoField(), F("Wizard", CheatFieldType.Wizard)],
+            b => $"if {Who(b)} is in a group with {(b.Text("Wizard").Length > 0 || b.Text("Name").Length > 0 ? WizardWords(b) : "it")}"),
+        Cond("C.Rank", "flag", "account rank", "That one's account is at least this rank (the rank the Accounts card sets). Example: a cheat only admins get." + WHO_HAS_IT,
+            "If {Who}'s account is at least {Rank}", [WhoField(), F("Rank", CheatFieldType.Choice, "Administrator", s_ranks)],
+            b => $"if {Who(b)}'s account is at least {LabelOf(s_ranks, b.Text("Rank"))}"),
+        Cond("C.AnyWizard", "users", "every wizard", "With \"it\", gives a player cheat to every wizard on the server, not only yours; add school, level or other blocks to narrow it (every Fire wizard under level 20). About someone else it means \"is a wizard\"." + WHO_HAS_IT,
+            "If {Who} is any wizard", [WhoField()], b => b.Text("Who").Length == 0 ? "for every wizard" : $"if {Who(b)} is any wizard"),
+        Cond("C.Online", "users", "wizard is online", "This wizard is online anywhere on the server right now, in this battle or not. Example: a boss gets a damage boost while your friend is on.",
+            "If {Wizard} is online", [F("Wizard", CheatFieldType.Wizard)], b => $"if {WizardWords(b)} is online"),
         Cond("C.InBattle", "users", "someone is in the battle", "A creature of this template, or anyone whose name has these words, stands in the battle. Example: \"Fairy\" on its side — only while a fairy still stands.",
             "If {Creature} or someone named {Name} stands on {Side}", [F("Creature", CheatFieldType.Creature), F("Name", CheatFieldType.Words), F("Side", CheatFieldType.Choice, "", s_inSide)],
             b => $"if {(b.Id("Creature") > 0 ? Creature(b) : $"\"{b.Text("Name")}\"")} stands on {LabelOf(s_inSide, b.Text("Side"))}"),

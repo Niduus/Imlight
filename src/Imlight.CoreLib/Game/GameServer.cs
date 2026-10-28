@@ -79,6 +79,7 @@ public class GameServer : Server {
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
         Tools.OnlineList.Start();
+        Tools.WizardList.Start();
         Tools.MemberBenefits.Start(Context.System);
         Events.GameEvents.Start(Context.System);
         Loyalty.LoyaltyStore.Start(Context.System);
