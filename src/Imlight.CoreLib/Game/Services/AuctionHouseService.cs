@@ -98,12 +98,20 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 ConfirmBuyFromAuctionHouse(message.itemTemplateID, message.key);
                 break;
             case 2:
-                SellToAuctionHouse(message.itemGlobalID, message.key);
+                // LOCK_SELL_PRICE: the game asks what an item sells for and shows "Are you sure...?"; Yes sends 4.
+                // The game also asks again by itself when the backpack changes, so this never sells
+                // (Niduus, 2026-10-28: selling sold before Yes, and Yes bought a card back).
+                LockSellPrice(message.itemGlobalID, message.itemTemplateID);
                 break;
             case 3:
                 BuyFromAuctionHouse(message.itemTemplateID, message.texture, message.decal, message.key);
                 break;
             case 4:
+                // SELL_TO_AUCTIONHOUSE: the Yes of the sell question. A treasure card comes with only its card id.
+                Logger.Information("Bazaar: sell {0} (template {1}).", Logger.Args(message.itemGlobalID, message.itemTemplateID));
+                SellToAuctionHouse(message.itemGlobalID != 0 ? message.itemGlobalID
+                    : (message.itemTemplateID & ~0xFFFFFFFFUL) == CARD_TYPE ? message.itemTemplateID : _lockedSellId, message.key);
+                break;
             case 5:
             case 7:
             case 8:
@@ -444,12 +452,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Gold = wizard.GameStats.m_currentGold,
             MaxGold = wizard.GameStats.m_baseGoldPouch
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
-            Command = 2,
-            ItemTemplateID = templateId,
-            Cost = gold,
-            ReturnCode = 0
-        });
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
 
         return gold;
@@ -524,12 +526,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Gold = wizard.GameStats.m_currentGold,
             MaxGold = wizard.GameStats.m_baseGoldPouch
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
-            Command = 2,
-            ItemTemplateID = snack.m_templateID,
-            Cost = gold,
-            ReturnCode = 0
-        });
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
 
         return gold;
@@ -562,7 +558,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         var gold = each * sold.Count;
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE { Command = 2, ItemTemplateID = first.m_templateID, Cost = gold, ReturnCode = 0 });
         foreach (var id in sold) {
             SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM { GlobalID = wizard.GameObjectID, ItemID = id });
         }
@@ -611,12 +606,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = spellId, EnchantmentID = 0 });
         }
 
-        var each = BazaarLink.Find(cardId)?.SellPrice ?? 0;
-        if (each < 1) {
-            each = Math.Max(1, (int) Math.Ceiling(spell.m_baseCost * 0.5f));
-        }
-
-        var gold = each * sold;
+        var gold = CardSellPrice(cardId) * sold;
         BazaarLink.Give(cardId, sold, WizardName(wizard), gold);
         SendStockOf(cardId);
         wizard.AddGold(gold);
@@ -624,9 +614,69 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             Gold = wizard.GameStats.m_currentGold,
             MaxGold = wizard.GameStats.m_baseGoldPouch
         });
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE { Command = 2, ItemTemplateID = cardId, Cost = gold, ReturnCode = 0 });
 
         return gold;
+    }
+
+    // The item the game last asked the sell price of, for a sell (4) that names no item.
+    private ulong _lockedSellId;
+
+    /// <summary>
+    /// Answers the game's "what does this sell for" (command 2) with the price of one, or a refusal. Sells nothing.
+    /// </summary>
+    private void LockSellPrice(ulong itemGlobalId, ulong templateId) {
+        var wizard = GetActiveWizard();
+        var id = itemGlobalId != 0 ? itemGlobalId : templateId;
+        _lockedSellId = id;
+        ulong shownTemplate = templateId;
+        var price = 0;
+        if (wizard.InventoryBehavior.GetItem(id) is { } item) {
+            shownTemplate = item.m_templateID;
+            if (CoreObjectFactory.GetCoreTemplate(item.m_templateID) is WizItemTemplate template
+                && !ItemHelper.IsLocked(item) && !wizard.IsFilledVault(id) && !ItemHelper.IsStitched(item)
+                && !template.m_adjectiveList.Any(x => x == "FLAG_NoAuction")) {
+                price = (int) Math.Ceiling(template.m_baseCost * 0.5f);
+                if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
+                    price = (int) Math.Ceiling(price * 1.225f);
+                }
+            }
+        }
+        else if (wizard.PetSnackBehavior.Snacks?.FirstOrDefault(snack => snack.m_globalID.Full == id) is { } snack) {
+            shownTemplate = snack.m_templateID;
+            price = BagPrice(snack.m_templateID);
+        }
+        else if (wizard.AlchemyBehavior.Reagents?.FirstOrDefault(reagent => reagent.m_globalID.Full == id) is { } reagent) {
+            shownTemplate = reagent.m_templateID;
+            price = BagPrice(reagent.m_templateID);
+        }
+        else if ((id & ~0xFFFFFFFFUL) == CARD_TYPE && wizard.SpellbookBehavior.TreasureCardCount((uint) (id & 0xFFFFFFFFUL)) > 0) {
+            shownTemplate = id;
+            price = CardSellPrice(id);
+        }
+        else {
+            // Gone already (the game asks again after a sale): nothing to answer.
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
+            Command = 2,
+            ItemTemplateID = shownTemplate,
+            Cost = price,
+            ReturnCode = (sbyte) (price > 0 ? 0 : 1),
+        });
+    }
+
+    // Snacks and reagents sell for half their value, at least 1 gold.
+    private static int BagPrice(ulong templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template ? Math.Max(1, (int) Math.Ceiling(template.m_baseCost * 0.5f)) : 1;
+
+    private static int CardSellPrice(ulong cardId) {
+        var each = BazaarLink.Find(cardId)?.SellPrice ?? 0;
+        if (each < 1 && CoreObjectFactory.GetCoreTemplate((uint) (cardId & 0xFFFFFFFFUL)) is SpellTemplate spell) {
+            each = (int) Math.Ceiling(spell.m_baseCost * 0.5f);
+        }
+
+        return Math.Max(1, each);
     }
 
     private void SellToAuctionHouse(ulong itemGlobalId, uint key) {
@@ -657,14 +707,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         // Check player has item.
         var hasItem = wizard.InventoryBehavior.HasItem(itemGlobalId);
         if (!hasItem) {
-            // Todo: respond with error
-            var auctionRspErrorMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
-                Command = 5,
-                ItemTemplateID = 0, // Can't get this ID if item doesn't exist.
-                Cost = 0,
-                ReturnCode = 0
-            };
-            SendToSocket(auctionRspErrorMsg);
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 1 });
             return;
         }
 
@@ -686,14 +729,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         var isNoAuction = isLocked || isFilledVault || template.m_adjectiveList.Any(x => x == "FLAG_NoAuction") || ItemHelper.IsStitched(item);
         if (isNoAuction) { // The item cannot be sold to the bazaar.
-            // Todo: respond with error
-            var auctionRspErrorMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
-                Command = 2,
-                ItemTemplateID = item.m_templateID,
-                Cost = 0,
-                ReturnCode = 1
-            };
-            SendToSocket(auctionRspErrorMsg);
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 1 });
             return;
         }
 
@@ -702,14 +738,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
             gold = (int) Math.Ceiling(gold * 1.225f);
         }
-
-        var auctionRspMsg = new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE {
-            Command = 2,
-            ItemTemplateID = item.m_templateID,
-            Cost = gold,
-            ReturnCode = 0
-        };
-        SendToSocket(auctionRspMsg);
 
         // Remove item from inventory, then put it up in the Bazaar (the Bazaar bot keeps the stock).
         _ = wizard.RemoveItemFromInventory(itemGlobalId, reason: "sold at the Bazaar");
