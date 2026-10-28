@@ -22,9 +22,10 @@ using Imlight.CoreLib.Shared.Behaviors;
 namespace Imlight.CoreLib.Shared.Character;
 
 /// <summary>
-/// New wizards start wearing their school's Adept set (the level 30 Crown Shop set: hat, robe, shoes, wand, dirk,
-/// ring and ampul) and ride their school's Ghulture (PERM) (Niduus, 2026-10-28). [Character] StartInAdeptGear turns
-/// it off; it is read when the starter kit is handed out, so a change applies to the next new wizard.
+/// New wizards start wearing their school's Adept set (the Crown Shop set: hat, robe, shoes, wand, dirk, ring, ampul
+/// and deck; "L30" in the file names, but the only thing needed to wear it is the school) and ride their school's
+/// Ghulture (PERM) (Niduus, 2026-10-28). [Character] StartInAdeptGear turns it off; it is read when the starter kit is
+/// handed out, so a change applies to the next new wizard.
 /// </summary>
 internal static class AdeptStarterGear {
 
@@ -39,6 +40,7 @@ internal static class AdeptStarterGear {
     private const ulong DIRK = 1712578;
     private const ulong RING = 1712585;
     private const ulong AMPUL = 1712592;
+    private const ulong DECK = 1712599;
     private const ulong GHULTURE = 1392135;
 
     /// <summary>
@@ -61,7 +63,7 @@ internal static class AdeptStarterGear {
         };
 
         return [HAT + offset, ROBE + offset, SHOES + offset, WAND + offset, DIRK + offset, RING + offset,
-                AMPUL + offset, GHULTURE + offset];
+                AMPUL + offset, DECK + offset, GHULTURE + offset];
     }
 
 }
