@@ -517,6 +517,9 @@ internal static class BossCheats {
         public string School { get; set; } = "";
         public string Kind { get; set; } = "";
         public string Name { get; set; } = "";
+        // For Var: compared with this variable (and whose it is) instead of Value, when given.
+        public string Var2 { get; set; } = "";
+        public string Scope2 { get; set; } = "";
         // For Effects: only effects of this school ("" any; Universal: only all-school ones).
         public string EffectSchool { get; set; } = "";
         public string Var { get; set; } = "";
@@ -622,6 +625,9 @@ internal static class BossCheats {
         // For RemoveEffects and Remember: only effects of this school ("" any; Universal: only all-school ones, such as a
         // Hex, Curse or Feint; Niduus, 2026-10-28: "what if I wanted it to be just universal stuff?").
         public string EffectSchool { get; set; } = "";
+        // For ConvertEffects: what the effects become (Blade, Weakness, Shield, Trap, Absorb). For ProtectEffects: Off takes the
+        // protection away (CombatResolver.ExtraCheats.cs).
+        public string To { get; set; } = "";
         public int Cheat { get; set; }
         // For RunCheat: its own Ifs must hold too.
         public bool Check { get; set; }

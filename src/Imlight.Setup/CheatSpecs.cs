@@ -136,7 +136,10 @@ internal static class CheatSpecs {
     // The kinds whose amount is a number, not a percent.
     private static readonly HashSet<string> s_flatKinds = ["Absorb", "FlatBlade", "FlatWeakness", "FlatShield", "FlatTrap", "FlatHeal", "FlatHealIn",
         "StunBlock", "DamageCap", "PipConversion", "DispelBlock"];
-    private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy")];
+    private static readonly (string, string)[] s_boostKinds = [("Damage", "damage"), ("Resist", "resist"), ("Heal", "healing"), ("Accuracy", "accuracy"),
+        ("Critical", "critical"), ("Block", "block"), ("Pierce", "pierce"), ("StunResist", "stun resist"), ("HealIn", "healing taken"), ("PowerPip", "power pip chance")];
+    private static readonly (string, string)[] s_convertTo = [("Blade", "blades"), ("Weakness", "weaknesses"), ("Shield", "shields"), ("Trap", "traps"), ("Absorb", "absorbs")];
+    private static readonly (string, string)[] s_protectOnOff = [("", "can't be removed"), ("Off", "can be removed again")];
     private static readonly (string, string)[] s_timings = [
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
     ];
@@ -626,9 +629,10 @@ internal static class CheatSpecs {
             b => $"if {(b.Id("Creature") > 0 ? Creature(b) : $"\"{b.Text("Name")}\"")} stands on {LabelOf(s_inSide, b.Text("Side"))}"),
         Cond("C.Roll", "dice", "chance (in a group)", "A chance that comes up this often, rolled each time: unlike \"chance\" it can be put in an OR group or turned round.",
             "If a {Value} chance comes up", [F("Value", CheatFieldType.Percent, 50, max: 100)], b => $"{b.Number("Value")}% roll"),
-        Cond("C.Var", "list", "a variable", "A number a \"set a variable\" block keeps. Its own: each fighter has its own; the battle's: one for everyone. Example: rage at least 5.",
-            "If {Scope} variable {Var} is {Op} {Value}", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), OpField(), new("Value", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000)],
-            b => $"if {b.Text("Var")} is {Op(b)} {N(b.Number("Value"))}"),
+        Cond("C.Var", "list", "a variable", "A number a \"set a variable\" or \"remember\" block keeps. Its own: each fighter has its own; the battle's: one for everyone. Example: rage at least 5. Fill in the second variable to compare two variables instead (trap bigger than blade).",
+            "If {Scope} variable {Var} is {Op} {Value} (or than {Scope2} variable {Var2})", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), OpField(), new("Value", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000),
+                F("Scope2", CheatFieldType.Choice, "", s_scopes), F("Var2", CheatFieldType.Words, "")],
+            b => $"if {b.Text("Var")} is {Op(b)} {(b.Text("Var2").Trim().Length > 0 ? b.Text("Var2").Trim() : N(b.Number("Value")))}"),
 
         new("C.Other", BlockKind.If, "puzzle", "another If", "An If of the cheat's Conditions this app does not know, kept as the file has it.",
             "If {If}", [F("If", CheatFieldType.Words)], b => $"if {b.Text("If")}", "alias"),
@@ -780,6 +784,27 @@ internal static class CheatSpecs {
         new("D.SetVar", BlockKind.Do, "list", "set a variable", "Keeps a number by a name, such as rage, for the If \"a variable\" and for messages: {rage} in a message's words shows it. Its own: each fighter has its own; the battle's: one for everyone.",
             "Set {Scope} variable {Var}: {Op} {Amount}", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, "Add", s_varOps), new("Amount", CheatFieldType.Number, 1, Max: 1_000_000, Min: -1_000_000)],
             b => $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {N(b.Number("Amount"))}"),
+        new("D.ConvertEffects", BlockKind.Do, "swap", "convert effects", "Takes effects of a kind off the target and gives each one back as another kind, the same size and school, drawn by the game: every trap on you becomes a blade of its size. 0 means all of them.",
+            "Turn {Count} {EffectSchool} {Kind} on {Target} into {To} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Trap", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "Blade", s_convertTo), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"turn {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} into {LabelOf(s_convertTo, b.Text("To"))}"),
+        new("D.CopyEffects", BlockKind.Do, "copy", "copy effects", "Copies effects of a kind from the target onto itself (you, in a player cheat), the same size and school; the target keeps them. 0 means all of them.",
+            "Copy {Count} {EffectSchool} {Kind} from {Target} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Caster"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"copy {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}"),
+        new("D.ScaleEffects", BlockKind.Do, "bolt", "make effects bigger or smaller", "Every effect of a kind on the target gets this percent of its size: 200 doubles, 50 halves. The game keeps showing the old number, but the hits use the new one.",
+            "Make {EffectSchool} {Kind} on {Target} {Amount} % of their size", [F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), new("Amount", CheatFieldType.Number, 200, Max: 10_000, Min: 0)],
+            b => $"make{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} {b.Number("Amount")}% of their size"),
+        new("D.EffectsSchool", BlockKind.Do, "swap", "change effects' school", "Every effect of a kind on the target becomes of another school, or universal: a Fire blade becomes a Storm blade. The game keeps showing the old icon, but the hits use the new school.",
+            "Make {EffectSchool} {Kind} on {Target} into {School}", [F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("School", CheatFieldType.Choice, "", s_anySchool)],
+            b => $"make{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} into {(b.Text("School").Length > 0 ? b.Text("School") : "universal")}"),
+        new("D.ProtectEffects", BlockKind.Do, "shield", "protect effects", "Effects of a kind on the target can't be removed (or, picked the other way, can be again).",
+            "{EffectSchool} {Kind} on {Target} {To}", [F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "", s_protectOnOff)],
+            b => $"{Universal(b).Trim()} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} {LabelOf(s_protectOnOff, b.Text("To"))}".Trim()),
+        new("D.Damage", BlockKind.Do, "hit", "do damage", "The target loses health, by hit points or by a share of its most health, with no spell. It never goes below 1 (add \"defeat\" to finish one off).",
+            "Take {Amount} {Percent} health from {Target}", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster")],
+            b => $"take {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}"),
+        new("D.Drain", BlockKind.Do, "heal", "drain health", "The target loses health (hit points or a share of its most) and it (you, in a player cheat) gets as much back.",
+            "Drain {Amount} {Percent} health from {Target}", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster")],
+            b => $"drain {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}"),
         new("D.Remember", BlockKind.Do, "list", "remember a number", "Keeps a number read from the battle right now in a variable, for later blocks: put the variable's name in another block's \"as big as variable\" box (a blade as big as a trap), in an \"a variable\" If, or as {name} in a message. " +
             "\"The size of the spell that set it off\": a +30% trap is 30 (pick the Kind to read that part of the spell). The newest / biggest / all: effects of the Kind on the target right now. Example: when an enemy casts a trap, remember the size of the spell (trap) as trap, take its trap off, put a blade as big as variable trap on yourself.",
             "Remember {From} {EffectSchool} {Kind} {Target} as {Scope} variable {Var}", [F("From", CheatFieldType.Choice, "Spell", s_rememberFrom), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "trap")],

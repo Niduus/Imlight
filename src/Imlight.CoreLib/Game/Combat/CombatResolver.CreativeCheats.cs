@@ -530,7 +530,8 @@ public partial class CombatResolver {
             case "roll" or "chance":
                 return Random.Shared.Next(100) < c.Value;
             case "var":
-                return Compare(GetVar(boss, c.Var, c.Scope), c.Op, c.Value);
+                // With Var2, against another variable (Niduus, 2026-10-28: "if a variable is bigger than another").
+                return Compare(GetVar(boss, c.Var, c.Scope), c.Op, (c.Var2 ?? "").Trim().Length > 0 ? GetVar(boss, c.Var2, c.Scope2) : c.Value);
             default:
                 Logger.Warning("Duel {0} | \"{1}\" is not an If a cheat knows; it does not hold.", Logger.Args(_duel.m_duelID.Full, c.If));
 
@@ -815,7 +816,7 @@ public partial class CombatResolver {
                 return true;
             }
             default:
-                return false;
+                return TryExtraCheatSteps(boss, cheat, step, trigger, receiver, bossName, combatActionList, cinematicTimeSoFar, custom, out cinematicTime);
         }
     }
 
