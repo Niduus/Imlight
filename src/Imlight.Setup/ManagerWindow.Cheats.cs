@@ -129,8 +129,9 @@ internal sealed partial class ManagerWindow {
 
         return Page(Fold("bolt", "Player Cheats", "Your cheats",
             "Cheats for you, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
-            "works here too, with you as \"it\" and the monsters as \"the players\". They only work for the wizard you play on this PC, " +
-            "never for a friend's wizard. Saved changes count from the next round, with no restart.",
+            "works here too, with you as \"it\" and the monsters as \"the players\". A cheat is for the wizard you play on this PC, " +
+            "unless it has a \"who gets it\" If (wizard is, wizard's name is, wizard's account, friend of, in a group with, account rank, " +
+            "played on this PC, every wizard): then it goes to every wizard those blocks pick, on any PC. Saved changes count from the next round, with no restart.",
             grid));
     }
 
@@ -469,6 +470,13 @@ internal sealed partial class ManagerWindow {
                     case CheatFieldType.Creature when block.Id("Creature") == 0 && block.Number("Custom") == 0:
                         missing.Add($"In {name}, click \"pick a creature\" and choose one.");
                         break;
+                    // Grouped with no wizard picked means "with it".
+                    case CheatFieldType.Wizard when block.Spec != "C.Grouped" && block.Text("Wizard").Length == 0 && block.Text("Name").Length == 0:
+                        missing.Add($"In {name}, pick the account and then the wizard.");
+                        break;
+                    case CheatFieldType.Words when field.Key == "Name" && block.Spec == "C.WizardName" && block.Text("Name").Length == 0:
+                        missing.Add($"In {name}, type the wizard's whole name.");
+                        break;
                     case CheatFieldType.Words when field.Key == "Text" && block.Text("Text").Length == 0:
                         missing.Add($"In {name}, type the words to show.");
                         break;
@@ -797,6 +805,10 @@ internal sealed partial class ManagerWindow {
                 return SpellField(block, changed);
             case CheatFieldType.Creature:
                 return CreatureField(block, changed);
+            case CheatFieldType.Wizard:
+                return WizardField(block, changed);
+            case CheatFieldType.Account:
+                return AccountField(block, field.Key, changed);
             case CheatFieldType.Line:
                 return LineField(block, changed);
             default:

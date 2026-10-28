@@ -37,6 +37,9 @@ internal enum CheatFieldType {
     Enchants,
     // An aura's stats, picked one by one ("resist 20, accuracy 15"), shown while its kind is Aura.
     AuraStats,
+    // A wizard (an account, then one of its wizards: "Account", "Wizard" its character id, "Name"), and an account, from the
+    // server's wizard-list.json (Niduus, 2026-10-28).
+    Wizard, Account,
 }
 
 /// <summary>A box of a cheat block: the cheat file's name for it, its type, its first value and, for a Choice, its choices.</summary>
@@ -141,6 +144,7 @@ internal sealed class CheatBlock {
         CheatFieldType.HealAmount => [("Amount", 500), ("Percent", false)],
         CheatFieldType.Spell => [("Spell", ""), ("SpellID", 0)],
         CheatFieldType.Creature => [("Creature", 0), ("Custom", 0)],
+        CheatFieldType.Wizard => [("Account", ""), ("Wizard", ""), ("Name", "")],
         CheatFieldType.Cards or CheatFieldType.Enchants => [(field.Key, new JsonArray())],
         CheatFieldType.MatchCount => [],
         _ => [(field.Key, field.Default?.DeepClone() ?? field.Type switch {
@@ -715,7 +719,8 @@ internal sealed class BossCheatList {
 
 /// <summary>
 /// Player cheats (Niduus, 2026-10-22: "add PLAYER cheats for the local player to do"): spiraldb-extra/PlayerCheats.json,
-/// which the server reads (PlayerCheats.cs) for the wizard played on the server's own PC only. Every cheat in it is the
+/// which the server reads (PlayerCheats.cs) for the wizard played on the server's own PC, or for the wizards a cheat's
+/// "who gets it" If blocks pick (Niduus, 2026-10-28: "put them on other people"). Every cheat in it is the
 /// player's own, so each is "added" (Index -1).
 /// </summary>
 internal static class PlayerCheatFile {

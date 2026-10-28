@@ -1405,15 +1405,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private readonly HashSet<(int Battle, ulong Who)> _brought = [];
 
     // The passive "Minions" cheat of whoever's cheats they are (BossCheats.cs): a creature's file, or the player cheats
-    // for the wizard played on this PC. Null when none.
+    // the wizard has. Null when none.
     private static BossCheats.BossCheat PassiveMinionsOf(CoreObject who) {
         if (who is null) {
             return null;
         }
 
         if (who.m_templateID == 1) {
-            return Wizard.TryGetCharacterId(who.m_globalID, out var charId) && PlayerCheats.IsLocalChar(charId)
-                ? BossCheats.MinionsOf(PlayerCheats.Current()) : null;
+            return Wizard.TryGetCharacterId(who.m_globalID, out var charId)
+                ? BossCheats.MinionsOf(PlayerCheats.ForChar(charId)) : null;
         }
 
         return BossCheats.MinionsOf(BossCheats.For(Customs.KeyOf(who)));
@@ -1426,8 +1426,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         if (who.m_templateID == 1) {
-            return Wizard.TryGetCharacterId(who.m_globalID, out var charId) && PlayerCheats.IsLocalChar(charId)
-                ? BossCheats.MinionsForPlayersOf(PlayerCheats.Current()) : [];
+            return Wizard.TryGetCharacterId(who.m_globalID, out var charId)
+                ? BossCheats.MinionsForPlayersOf(PlayerCheats.ForChar(charId)) : [];
         }
 
         return BossCheats.MinionsForPlayersOf(BossCheats.For(Customs.KeyOf(who)));
@@ -1891,8 +1891,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         if (participant.m_templateID == 1) {
-            return Wizard.TryGetCharacterId(participant.m_globalID, out var charId) && PlayerCheats.IsLocalChar(charId)
-                ? BossCheats.CircleOf(PlayerCheats.Current()) : 0;
+            return Wizard.TryGetCharacterId(participant.m_globalID, out var charId)
+                ? BossCheats.CircleOf(PlayerCheats.ForChar(charId)) : 0;
         }
 
         return BossCheats.CircleOf(BossCheats.For(Customs.KeyOf(participant)));
