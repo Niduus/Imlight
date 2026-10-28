@@ -75,6 +75,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _vendorPlaced = new() { Content = "Only ones standing in a zone" };
     private readonly CheckBox _vendorShops = new() { Content = "Has more than one shop" };
     private readonly CheckBox _vendorChanged = new() { Content = "Only ones I changed" };
+    private readonly CheckBox _vendorFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _vendorCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _vendorList = new() { Background = Brushes.Transparent };
     private readonly StackPanel _vendorDetails = new() { Spacing = 6 };
@@ -95,7 +96,8 @@ internal sealed partial class ManagerWindow {
         };
         WhenFiltersChange(RenderVendors, _vendorSearch, _vendorKind, _vendorWindow, _vendorWorld, _vendorZone, _vendorFrom,
             _vendorSchool, _vendorSells, _vendorTeaches, _vendorLevelMin, _vendorLevelMax, _vendorCountMin, _vendorCountMax,
-            _vendorSort, _vendorCards, _vendorRecipes, _vendorPlaced, _vendorShops, _vendorChanged);
+            _vendorSort, _vendorCards, _vendorRecipes, _vendorPlaced, _vendorShops, _vendorChanged, _vendorFavoritesOnly);
+        WhenFavoritesChange(FAV_VENDORS, RenderVendors);
 
         var details = new ScrollViewer { Width = 430, Margin = new Thickness(14, 0, 0, 0), Content = Card(_vendorDetails) };
         ShowVendor(null);
@@ -107,7 +109,7 @@ internal sealed partial class ManagerWindow {
                 WithDock(Fold("bag", "Vendors", "Find vendors and trainers",
                     "Search or filter, then click one to see everything it sells or teaches and where it stands.",
                     WithHint(_vendorSearch, "Search by the NPC's name, its zone or world, its shop's name, or the name or ID of anything it " +
-                        "sells or teaches. With nothing typed, every vendor and trainer shows. Click one to see its whole list."),
+                        "sells or teaches. With nothing typed, every vendor and trainer shows. Click one to see its whole list. Click the star on a row to make it a favorite: favorites show first."),
                     SearchFilters(
                         SearchFilter("Kind", _vendorKind),
                         SearchFilter("Shop window", _vendorWindow),
@@ -126,7 +128,8 @@ internal sealed partial class ManagerWindow {
                         SearchTick(_vendorRecipes),
                         SearchTick(_vendorShops),
                         SearchTick(_vendorPlaced),
-                        SearchTick(_vendorChanged)),
+                        SearchTick(_vendorChanged),
+                        SearchTick(_vendorFavoritesOnly)),
                     _vendorCount), Dock.Top),
                 WithMargin(_vendorList, new Thickness(0, 14, 0, 0)),
             },
@@ -235,6 +238,8 @@ internal sealed partial class ManagerWindow {
         var teaches = SearchText.Words(_vendorTeaches.Text);
         var levels = _vendorLevelMin.Value is not null || _vendorLevelMax.Value is not null;
         var changed = _vendorChanged.IsChecked == true ? SafeNpcChanges().Select(c => c.TemplateID).ToHashSet() : null;
+        var favorites = Favorites(FAV_VENDORS);
+        var favoritesOnly = _vendorFavoritesOnly.IsChecked == true;
 
         var rows = _vendors.Where(row => {
             var npc = row.Npc;
@@ -258,7 +263,8 @@ internal sealed partial class ManagerWindow {
                 && (_vendorRecipes.IsChecked != true || npc.Shops.Any(s => s.Recipes.Count > 0))
                 && (_vendorShops.IsChecked != true || npc.Shops.Count > 1)
                 && (_vendorPlaced.IsChecked != true || npc.Zones.Count > 0)
-                && (changed is null || changed.Contains(npc.Id));
+                && (changed is null || changed.Contains(npc.Id))
+                && (!favoritesOnly || favorites.Contains(VendorKey(row)));
         }).ToList();
 
         rows = _vendorSort.SelectedIndex switch {
@@ -270,6 +276,7 @@ internal sealed partial class ManagerWindow {
             _ => rows,
         };
 
+        rows = [.. FavoritesFirst(rows, FAV_VENDORS, VendorKey)];
         _vendorList.ItemsSource = rows;
         var vendors = rows.Count(r => r.Npc.Kind != "Trainer");
         _vendorCount.Text = $"{FilterCount(rows.Count, _vendors.Count, "vendors and trainers")} " +
@@ -296,7 +303,7 @@ internal sealed partial class ManagerWindow {
             Padding = new Thickness(4, 6),
             BorderBrush = LINE,
             BorderThickness = new Thickness(0, 0, 0, 1),
-            Child = new StackPanel {
+            Child = new DockPanel { Children = { WithDock(FavoriteStar(FAV_VENDORS, VendorKey(row)), Dock.Left), new StackPanel {
                 Spacing = 2,
                 Children = {
                     new StackPanel {
@@ -312,9 +319,11 @@ internal sealed partial class ManagerWindow {
                     },
                     Sub(string.Join("; ", what) + (npc.Place.Length > 0 ? $". In {npc.Place}{(npc.Zones.Count > 1 ? $" and {npc.Zones.Count - 1} more" : "")}." : ". Not standing in any zone the app knows.")),
                 },
-            },
+            } } },
         };
     }
+
+    private static string VendorKey(VendorRow row) => row.Npc.Id.ToString(CultureInfo.InvariantCulture);
 
     private void ShowVendor(VendorNpc? npc) {
         _vendorPicked = npc;

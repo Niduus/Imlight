@@ -89,6 +89,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _spellsNoEnchant = new() { Content = "Can't be enchanted" };
     private readonly CheckBox _spellsNoDiscard = new() { Content = "Can't be discarded" };
     private readonly CheckBox _spellsCloaked = new() { Content = "Cloaked" };
+    private readonly CheckBox _spellsFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _spellsCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ItemsControl _spellsGrid = new();
     private readonly ScrollViewer _spellsScroll = new() { HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
@@ -134,7 +135,9 @@ internal sealed partial class ManagerWindow {
 
         _spellsHidden.IsCheckedChanged += (_, _) => RenderSpellsTab();
         WhenFiltersChange(RenderSpellsTab, _spellsAccuracyMin, _spellsAccuracyMax, _spellsLevelMin, _spellsLevelMax, _spellsCategory, _spellsSource,
-            _spellsWorks, _spellsMode, _spellsEffect, _spellsTarget, _spellsShadow, _spellsSchoolPips, _spellsNoEnchant, _spellsNoDiscard, _spellsCloaked);
+            _spellsWorks, _spellsMode, _spellsEffect, _spellsTarget, _spellsShadow, _spellsSchoolPips, _spellsNoEnchant, _spellsNoDiscard, _spellsCloaked,
+            _spellsFavoritesOnly);
+        WhenFavoritesChange(FAV_SPELLS, RenderSpellsTab);
         var hideBroken = HideBrokenBox(RenderSpellsTab);
         _spellsGrid.ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel());
         _spellsGrid.ItemTemplate = new FuncDataTemplate<SpellCard[]>((row, _) => row is null ? new Panel() : SpellsRow(row));
@@ -174,7 +177,8 @@ internal sealed partial class ManagerWindow {
                 SearchTick(_spellsSchoolPips),
                 SearchTick(_spellsNoEnchant),
                 SearchTick(_spellsNoDiscard),
-                SearchTick(_spellsCloaked));
+                SearchTick(_spellsCloaked),
+                SearchTick(_spellsFavoritesOnly));
         // The card big on the left of the pop-up, everything about it on the right.
         var details = new DockPanel {
             Children = {
@@ -195,7 +199,8 @@ internal sealed partial class ManagerWindow {
                                     "effects and ID. Hidden and cheat spells are the monsters', bosses' and tests' own copies: a search always " +
                                     "finds them too; the switch shows them while browsing without a search. " +
                                     "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
-                                    "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects)."),
+                                    "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects). " +
+                                    "Click the star under a card to make it a favorite: favorites show first."),
                                 filters, _spellsCount,
                             },
                         }), Dock.Top),
@@ -300,6 +305,8 @@ internal sealed partial class ManagerWindow {
         var noEnchant = _spellsNoEnchant.IsChecked == true;
         var noDiscard = _spellsNoDiscard.IsChecked == true;
         var cloaked = _spellsCloaked.IsChecked == true;
+        var favorites = Favorites(FAV_SPELLS);
+        var favoritesOnly = _spellsFavoritesOnly.IsChecked == true;
         var id = uint.TryParse(query, NumberStyles.None, CultureInfo.InvariantCulture, out var number) ? number : (uint?) null;
 
         var matched = book.Spells.Where(s =>
@@ -329,7 +336,8 @@ internal sealed partial class ManagerWindow {
             && (!schoolPips || s.SchoolPips.Count > 0)
             && (!noEnchant || s.NoPvEEnchant || s.NoPvPEnchant)
             && (!noDiscard || s.NoDiscard)
-            && (!cloaked || s.Cloaked)).ToList();
+            && (!cloaked || s.Cloaked)
+            && (!favoritesOnly || favorites.Contains(SpellKey(s)))).ToList();
 
         // Broken cards are left out unless asked for by their ID; how many is said in the count.
         var brokenHidden = 0;
@@ -352,14 +360,16 @@ internal sealed partial class ManagerWindow {
         };
         // Among same-named cards, the one players know (its file is named like the card) before treasure, item, pet
         // and monster copies.
-        _spellsShown = [.. sorted.ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Hidden)
+        // Favorites first.
+        _spellsShown = [.. FavoritesFirst(sorted.ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Hidden)
             .ThenBy(s => s.Code.Equals(s.Name, StringComparison.OrdinalIgnoreCase) ? 0 : s.Treasure ? 1 : 2)
-            .ThenBy(s => s.PipSort).ThenBy(s => s.Id)];
+            .ThenBy(s => s.PipSort).ThenBy(s => s.Id), FAV_SPELLS, SpellKey)];
 
         var total = book.Spells.Count;
         _spellsCount.Text = (_spellsShown.Count == 0
             ? brokenHidden > 0
                 ? "No working spell card matches. Clear \"Hide broken cards\" to see the broken ones."
+                : favoritesOnly ? "None of your favorite cards match. Click the star under a card to make it a favorite, or clear \"Only my favorites\"."
                 : "No spell card matches. Clear the search or pick \"All\" in the filters."
             : $"{_spellsShown.Count:N0} of {total:N0} spell cards. Click one to see everything about it.") + BrokenHiddenNote(brokenHidden);
         LayOutSpells();
@@ -441,7 +451,13 @@ internal sealed partial class ManagerWindow {
         var caption = new StackPanel {
             Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center,
             Children = {
-                new TextBlock { Text = $"ID {card.Id}", FontSize = 11, Foreground = MUTED, HorizontalAlignment = HorizontalAlignment.Center },
+                new StackPanel {
+                    Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center,
+                    Children = {
+                        FavoriteStar(FAV_SPELLS, SpellKey(card), 14),
+                        new TextBlock { Text = $"ID {card.Id}", FontSize = 11, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center },
+                    },
+                },
                 marks,
             },
         };

@@ -441,7 +441,7 @@ internal sealed class Lookup {
     /// Entries of a kind that hold every word of the query, best matches first.
     /// </summary>
     internal List<LookupEntry> Search(string kind, string query, int max, out int total, Func<LookupEntry, bool>? filter = null,
-                                      string sort = SORT_BEST) {
+                                      string sort = SORT_BEST, Func<LookupEntry, bool>? favorite = null) {
         var words = SearchText.Words(query);
         // An empty search lists everything of the kind (Niduus, 2026-10-25: "have them all generate search results if left
         // empty"), commands first.
@@ -464,6 +464,11 @@ internal sealed class Lookup {
                 .ThenBy(e => Array.IndexOf(KINDS, e.Kind))
                 .ThenBy(e => words.Length == 0 ? 0 : e.Name.Length),
         };
+
+        // Favorites first, before the list is cut, so a starred one always shows.
+        if (favorite is not null) {
+            sorted = sorted.OrderBy(e => !favorite(e));
+        }
 
         return [.. sorted.Take(max)];
     }

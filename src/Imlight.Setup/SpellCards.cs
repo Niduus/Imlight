@@ -493,7 +493,8 @@ internal sealed partial class SpellBook {
     /// As <see cref="Search(string, int, out int)"/>; with <paramref name="hideBroken"/>, cards the server can't do are
     /// left out (and counted in <paramref name="brokenHidden"/>) unless asked for by their ID.
     /// </summary>
-    internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden, Func<SpellCard, bool>? filter = null) {
+    internal List<SpellCard> Search(string query, int max, bool hideBroken, out int total, out int brokenHidden, Func<SpellCard, bool>? filter = null,
+                                    Func<SpellCard, bool>? favorite = null) {
         var words = SearchText.Words(query);
         var exact = query.Trim();
         var matches = Spells.Where(s => words.All(s.Haystack.Contains) && (filter is null || filter(s))).ToList();
@@ -507,7 +508,9 @@ internal sealed partial class SpellBook {
         total = matches.Count;
 
         return [.. matches
-            .OrderBy(s => !(s.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || s.Id.ToString(CultureInfo.InvariantCulture) == exact))
+            // Favorites first (the Spells tab's stars).
+            .OrderBy(s => favorite is not null && !favorite(s))
+            .ThenBy(s => !(s.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || s.Id.ToString(CultureInfo.InvariantCulture) == exact))
             .ThenBy(s => !s.Name.StartsWith(exact, StringComparison.OrdinalIgnoreCase))
             .ThenBy(s => words.Length == 0 ? 0 : s.Name.Length)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)

@@ -254,6 +254,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _lookupMadeFor = FilterCombo([ANY_FILTER, "Custom (made for this build)", "Imlight's own"], 200);
     private readonly ComboBox _lookupSort = FilterCombo(Lookup.SORTS, 160);
     private readonly CheckBox _lookupHasCommand = new() { Content = "Only ones with a command" };
+    private readonly CheckBox _lookupFavoritesOnly = FavoritesOnlyTick();
     // Teleport areas (Niduus, 2026-10-26: "add teleport area list to manager in look up").
     private readonly ComboBox _lookupWorld = FilterCombo([ANY_FILTER], 150);
     private readonly ComboBox _lookupArea = FilterCombo([ANY_FILTER], 160);
@@ -644,7 +645,8 @@ internal sealed partial class ManagerWindow : Window {
                 2 => matches.OrderBy(c => c.Typed, StringComparer.OrdinalIgnoreCase),
                 _ => matches,
             };
-            var shown = matches.ToList();
+            // Commands starred here or in Lookup come first.
+            var shown = FavoritesFirst(matches, FAV_LOOKUP, LookupKey).ToList();
             count.Text = FilterCount(shown.Count, Lookup.COMMANDS.Length, "commands");
             _customCommands.ItemsSource = shown.Where(c => c.Custom).ToList();
             _imlightCommands.ItemsSource = shown.Where(c => !c.Custom).ToList();
@@ -654,6 +656,7 @@ internal sealed partial class ManagerWindow : Window {
 
         _commandSearch.TextChanged += (_, _) => Render();
         WhenFiltersChange(Render, who, needs, sort);
+        WhenFavoritesChange(FAV_LOOKUP, Render);
         Render();
 
         return new DockPanel {
@@ -692,7 +695,9 @@ internal sealed partial class ManagerWindow : Window {
         };
         _lookupResults.ItemTemplate = new FuncDataTemplate<LookupEntry>((entry, _) => entry is null ? new Panel() : LookupRow(entry));
         WhenFiltersChange(RenderLookup, _lookupSchool, _lookupLevelMin, _lookupLevelMax, _lookupIdMin, _lookupIdMax, _lookupWho,
-            _lookupMadeFor, _lookupSort, _lookupHasCommand, _lookupWorld, _lookupArea, _lookupAccess, _lookupHideOld);
+            _lookupMadeFor, _lookupSort, _lookupHasCommand, _lookupWorld, _lookupArea, _lookupAccess, _lookupHideOld, _lookupFavoritesOnly);
+        WhenFavoritesChange(FAV_LOOKUP, RenderLookup);
+        WhenFavoritesChange(FAV_SPELLS, RenderSpells);
         _lookupAreaFilters = SearchFilters(
             SearchFilter("World", _lookupWorld),
             SearchFilter("Kind of area", _lookupArea),
@@ -708,7 +713,8 @@ internal sealed partial class ManagerWindow : Window {
             SearchFilter("Who can use the command", _lookupWho),
             SearchFilter("Command made for", _lookupMadeFor),
             SearchFilter("Sort by", _lookupSort),
-            SearchTick(_lookupHasCommand));
+            SearchTick(_lookupHasCommand),
+            SearchTick(_lookupFavoritesOnly));
 
         return new DockPanel {
             Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
@@ -723,7 +729,8 @@ internal sealed partial class ManagerWindow : Window {
                        "starting with the dot. Copy puts the text on your clipboard. Pick Spell on the right to see each spell's card. " +
                        "Leave the box empty to list everything, then narrow it with the filters: school (items, spells and creatures), " +
                        "level (creatures), template ID, who can use a command and whether it was made for this build. Pick Teleport area on " +
-                       "the right for every zone you can teleport to, with filters for its world, kind and access, and a Teleport button."),
+                       "the right for every zone you can teleport to, with filters for its world, kind and access, and a Teleport button. " +
+                       "Click the star on a row to make it a favorite: favorites show first."),
                     filters,
                     _lookupAreaFilters,
                     _lookupCount), Dock.Top),
@@ -1709,6 +1716,8 @@ internal sealed partial class ManagerWindow : Window {
         var who = FilterPick(_lookupWho);
         var madeFor = _lookupMadeFor.SelectedIndex;
         var hasCommand = _lookupHasCommand.IsChecked == true;
+        var favorites = Favorites(FAV_LOOKUP);
+        var favoritesOnly = _lookupFavoritesOnly.IsChecked == true;
         var areas = kind == Lookup.TELEPORT_AREA;
         var world = areas ? FilterPick(_lookupWorld) : null;
         var area = areas ? FilterPick(_lookupArea) : null;
@@ -1725,13 +1734,16 @@ internal sealed partial class ManagerWindow : Window {
                                       && (world is null || e.World == world)
                                       && (area is null || e.Area == area)
                                       && (access is null || e.Access == access)
-                                      && (!hideOld || !e.OldOrTest);
+                                      && (!hideOld || !e.OldOrTest)
+                                      && (!favoritesOnly || favorites.Contains(LookupKey(e)));
         var filtered = school is not null || who is not null || madeFor > 0 || hasCommand || levels || ids
-                       || world is not null || area is not null || access is not null || hideOld;
-        var results = _lookup.Search(kind, query, MAX, out var total, filtered ? Filter : null, _lookupSort.SelectedItem as string ?? Lookup.SORT_BEST);
+                       || world is not null || area is not null || access is not null || hideOld || favoritesOnly;
+        var results = _lookup.Search(kind, query, MAX, out var total, filtered ? Filter : null, _lookupSort.SelectedItem as string ?? Lookup.SORT_BEST,
+            favorites.Count > 0 ? e => favorites.Contains(LookupKey(e)) : null);
         _lookupResults.ItemsSource = results;
 
-        var count = total == 0 ? "Nothing matches. Clear the search or set the filters back to Any."
+        var count = total == 0 ? favoritesOnly ? "None of your favorites match. Star a row to make it a favorite, or clear \"Only my favorites\"."
+                : "Nothing matches. Clear the search or set the filters back to Any."
             : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words or filters to narrow it down."
             : total == 1 ? "1 match." : $"{total:N0} matches.";
         _lookupCount.Text = _lookup.Missing is null ? count : $"{count} {_lookup.Missing}";
@@ -1809,9 +1821,12 @@ internal sealed partial class ManagerWindow : Window {
             Padding = new Thickness(4, 6),
             BorderBrush = LINE,
             BorderThickness = new Thickness(0, 0, 0, 1),
-            Child = new DockPanel { Children = { WithDock(buttons, Dock.Right), details } },
+            Child = new DockPanel { Children = { WithDock(FavoriteStar(FAV_LOOKUP, LookupKey(entry)), Dock.Left), WithDock(buttons, Dock.Right), details } },
         };
     }
+
+    /// <summary>What a Lookup row's favorite is saved as: its kind and ID, or for a command (no ID) its text.</summary>
+    private static string LookupKey(LookupEntry entry) => $"{entry.Kind}|{(entry.Id.Length > 0 ? entry.Id : entry.Typed ?? entry.Name)}";
 
     private async Task CopyLogAsync() {
         if (_shownLog.Count == 0) {
