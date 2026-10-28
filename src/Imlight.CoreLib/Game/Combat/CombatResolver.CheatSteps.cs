@@ -1126,6 +1126,13 @@ public partial class CombatResolver {
                         "resist" => CheatEffect(kSpellEffects.kModifyIncomingDamage, -amount, step.School, rounds, good: amount >= 0),
                         "heal" => CheatEffect(kSpellEffects.kModifyOutgoingHeal, amount, step.School, rounds, good: amount >= 0),
                         "accuracy" => CheatEffect(kSpellEffects.kModifyAccuracy, amount, step.School, rounds, good: amount >= 0),
+                        // Niduus, 2026-10-28 (the cheat ideas list): the other stats an aura can carry.
+                        "critical" => CheatEffect(kSpellEffects.kCritBoost, amount, step.School, rounds, good: amount >= 0),
+                        "block" => CheatEffect(kSpellEffects.kCritBlock, amount, step.School, rounds, good: amount >= 0),
+                        "pierce" => CheatEffect(kSpellEffects.kModifyOutgoingArmorPiercing, amount, step.School, rounds, good: amount >= 0),
+                        "stunresist" => CheatEffect(kSpellEffects.kStunResist, amount, step.School, rounds, good: amount >= 0),
+                        "healin" => CheatEffect(kSpellEffects.kModifyIncomingHeal, amount, step.School, rounds, good: amount >= 0),
+                        "powerpip" => CheatEffect(kSpellEffects.kModifyPowerPipChance, amount, step.School, rounds, good: amount >= 0),
                         _ => CheatEffect(kSpellEffects.kModifyOutgoingDamage, amount, step.School, rounds, good: amount >= 0),
                     };
                     foreach (var target in On("Self").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
