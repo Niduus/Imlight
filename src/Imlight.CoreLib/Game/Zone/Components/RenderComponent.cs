@@ -452,9 +452,21 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
            && info.GetType() == typeof(CoreObjectInfo)
            && Entity.ActiveGameObject is not WizClientPet
-           && Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate)
            && !Entity.Template.m_behaviors.Any(b => b is WizShoppingBehaviorTemplate)
-           && Entity.GetComponentsOfType<IServiceComponent>().All(IsQuestService);
+           && Entity.GetComponentsOfType<IServiceComponent>().All(IsQuestService)
+           && (Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate) || IsQuestObject());
+
+    /// <summary>
+    /// A hidden-placed thing that is no character (a crate, book, sparkle, rope, blocker or puzzle piece of a side
+    /// quest) waits for its quest too, when something can bring it out: a quest step that uses it, a quest's dynamod or
+    /// a dynamod of the zone's own triggers. They stood in the world for everyone (Niduus 2026-10-28: "begin to hide
+    /// side quest triggers unless they are called. Some still lurk around visually"). One nothing brings out (a
+    /// teleporter, Azteca's floating mountain teleport) stays, as before.
+    /// </summary>
+    private bool IsQuestObject()
+        => Entity.GetComponentOfType<InteractQuestSelectComponent>() is not null
+           || Imlight.CoreLib.Game.Quests.QuestShownObjects.Contains(Entity.Info?.m_zoneTag)
+           || ZoneTriggersShowIt();
 
     // The services a quest character offers; any other (a shop, a trainer, a bank) means the character always stands there.
     private static bool IsQuestService(IServiceComponent service)
@@ -497,7 +509,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
 
         return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
-            || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true;
+            || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true
+            // A quest step of the player's uses this object now.
+            || Entity.GetComponentOfType<InteractQuestSelectComponent>()?.GetServiceOptions(wizard).Any() == true;
     }
 
     private bool? _zoneTriggersShowIt;
