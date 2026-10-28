@@ -38,9 +38,16 @@ internal class CommandSpaceProtocol : CommandProtocol {
 
     [Command("backpack")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void SetBackpackCommand(string amount) {
+    private void SetBackpackCommand([Remainder] string amount = "") {
+        // With no number: how the server counts this backpack, to set beside what the backpack window says.
+        if (string.IsNullOrWhiteSpace(amount)) {
+            InformSenderClient($"Backpack: {BankRules.BackpackReport(Context.Character)}");
+
+            return;
+        }
+
         if (!TryReadSpace(amount, s_backpackCommandMax, out var limit)) {
-            InformSenderClient($"Use .backpack and a number of items (1 to {s_backpackCommandMax}), or .backpack max.");
+            InformSenderClient($"Use .backpack and a number of items (1 to {s_backpackCommandMax}), or .backpack max. .backpack alone shows how the backpack is counted.");
 
             return;
         }

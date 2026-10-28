@@ -327,6 +327,33 @@ internal static class BankRules {
         }
     }
 
+    /// <summary>
+    /// How the server counts a backpack, in one line (Niduus, 2026-10-28: "the 75 bug still occurring in backpacks").
+    /// The counted items are grouped by their first adjective (Hat, Pet, Housing...), so a count that differs from the
+    /// backpack window shows which kind of item the game counts another way.
+    /// </summary>
+    /// <param name="wizard">The wizard in question.</param>
+    internal static string BackpackReport(Wizard wizard) {
+        var inventory = wizard.InventoryBehavior;
+        var items = inventory.Items.Where(item => item is not null).ToList();
+        var counted = items.Where(item => TakesBackpackSlot(item) && ServerWizInventoryBehavior.IsShownInGame(item)).ToList();
+        var worn = wizard.WornGearSlots;
+        var kinds = counted
+            .GroupBy(item => GetTemplate(item)?.m_adjectiveList is { Count: > 0 } adjectives && adjectives[0].ToString() is { Length: > 0 } kind ? kind : "other")
+            .OrderByDescending(group => group.Count())
+            .Select(group => $"{group.Key} {group.Count()}");
+        var jewels = items.Count(IsJewel);
+        var notCounted = items.Count(item => !TakesBackpackSlot(item) && !IsJewel(item));
+        var hidden = items.Count(item => TakesBackpackSlot(item) && !ServerWizInventoryBehavior.IsShownInGame(item));
+        var both = (wizard.EquipmentBehavior?.EquippedItems ?? []).Count(item => item is not null && inventory.HasItem(item.m_globalID));
+
+        return $"{counted.Count} in the backpack + {worn} worn gear = {counted.Count + worn} of {inventory.Limit}"
+            + $" (base {inventory.BaseLimit}, elixirs {inventory.ExtraSlots}); free {wizard.BackpackFreeSlots}."
+            + $" Counted: {string.Join(", ", kinds)}."
+            + $" Not counted: {jewels} jewels, {notCounted} snacks/reagents/emotes, {hidden} the game is not shown."
+            + (both > 0 ? $" {both} worn items are also listed in the backpack." : "");
+    }
+
     private static WizItemTemplate GetTemplate(WizClientObjectItem item)
         => CoreObjectFactory.GetCoreTemplate(item.m_templateID) as WizItemTemplate;
 
