@@ -90,11 +90,13 @@ public static class DyeMapper {
     /// <param name="decal">The secondary dye color.</param>
     /// <param name="decal2">The tertiary dye color.</param>
     public static void ApplyAllDye(WizClientObjectItem item, DyeColor texture, DyeColor decal, DyeColor decal2) {
+        // Bit 31 of m_pattern is the item lock, which the game keeps when it dyes an item, so the dye does too.
+        var pattern = (item.m_pattern & ItemHelper.LockBit) | (int) decal2;
         item.m_primaryColor = (int) texture;
         item.m_secondaryColor = (int) decal;
-        item.m_pattern = (int) decal2;
+        item.m_pattern = pattern;
 
-        var persistentSaveSuccess = WizardItemCollection.ApplyAllDye(item, (int) texture, (int) decal, (int) decal2);
+        var persistentSaveSuccess = WizardItemCollection.ApplyAllDye(item, (int) texture, (int) decal, pattern);
         if (!persistentSaveSuccess) {
             Logger.Error("Failed to save all dye {0} for item {1}", 
                 Logger.Args(texture, item.m_globalID));
