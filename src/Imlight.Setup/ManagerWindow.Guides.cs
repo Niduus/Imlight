@@ -376,7 +376,7 @@ internal sealed partial class ManagerWindow {
                     ("Everything you made", "Customs, areas, boss and player cheats, drop tables, quest changes, vendors, recipes and " +
                                             "teleporters in spiraldb-extra; the Crown Shop, events, codes, member benefits, Loyalty Store, " +
                                             "tamed drops, garden times and sigils in the Server folder; every setting in Config\\Imlight.ini; " +
-                                            "and every account and character."),
+                                            "your starred favorites in the Database lists; and every account and character."),
                     ("Files you changed by hand", "A spiraldb-extra file you changed or deleted yourself is kept as it is; an update " +
                                                   "only brings Imlight's new version of the files you left alone."),
                     ("New settings", "An update adds the settings it brings to Imlight.ini with their usual value, and leaves yours alone.")),

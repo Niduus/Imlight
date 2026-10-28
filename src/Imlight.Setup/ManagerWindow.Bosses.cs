@@ -59,6 +59,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _bossSort = FilterCombo(s_bossSorts, 160);
     private readonly CheckBox _bossChangedOnly = new() { Content = "Only ones I changed" };
     private readonly CheckBox _bossHasStats = new() { Content = "Has extra stats from the game" };
+    private readonly CheckBox _bossFavoritesOnly = FavoritesOnlyTick();
     // Off by default, so changed ones sit where the sort puts them; on pins them first, as before (a player's idea Niduus
     // passed on, 2026-10-28). Remembered between runs by a file next to the app.
     private readonly CheckBox _bossChangedFirst = new() { Content = "Changed ones at the top" };
@@ -129,7 +130,8 @@ internal sealed partial class ManagerWindow {
             }
         };
         WhenFiltersChange(RenderBossResults, _bossFilterSchool, _bossFilterWorld, _bossLevelMin, _bossLevelMax, _bossHealthMin, _bossHealthMax,
-            _bossSort, _bossChangedOnly, _bossHasStats, _bossChangedFirst);
+            _bossSort, _bossChangedOnly, _bossHasStats, _bossChangedFirst, _bossFavoritesOnly);
+        WhenFavoritesChange(FAV_BOSSES, RenderBossResults);
         _bossResults.ItemTemplate = new FuncDataTemplate<BossInfo>((boss, _) => boss is null ? new Panel() : BossRow(boss));
         _bossResults.SelectionChanged += async (_, _) => {
             if (_bossResults.SelectedItem is BossInfo boss && boss != _boss) {
@@ -183,7 +185,8 @@ internal sealed partial class ManagerWindow {
                    "Turn off Bosses only to find any creature that fights. A name typed partly or with a slip finds it too. " +
                    "Search their cheats finds bosses whose cheats use those words, blocks or spells (\"remove dot\", \"cap damage\", Supernova; " +
                    "a jinx is a trap and a curse a weakness). Typed filters: world:Darkmoor, zone:DM_ (the game file's name), has:cheats, " +
-                   "uses:\"Storm Global\". Leave the box empty to list them all, then narrow it with the filters."),
+                   "uses:\"Storm Global\". Leave the box empty to list them all, then narrow it with the filters. " +
+                   "Click the star on a row to make it a favorite: favorites show first."),
                 SearchFilters(
                     SearchFilter("School", _bossFilterSchool),
                     SearchFilter("World", _bossFilterWorld),
@@ -194,7 +197,8 @@ internal sealed partial class ManagerWindow {
                     SearchFilter("Sort by", _bossSort),
                     SearchTick(_bossChangedOnly),
                     SearchTick(_bossChangedFirst),
-                    SearchTick(_bossHasStats)),
+                    SearchTick(_bossHasStats),
+                    SearchTick(_bossFavoritesOnly)),
                 _bossCount,
                 _bossResults),
             _bossesEditorHost);
@@ -343,6 +347,8 @@ internal sealed partial class ManagerWindow {
         var world = FilterPick(_bossFilterWorld);
         var changedOnly = _bossChangedOnly.IsChecked == true;
         var hasStats = _bossHasStats.IsChecked == true;
+        var favorites = Favorites(FAV_BOSSES);
+        var favoritesOnly = _bossFavoritesOnly.IsChecked == true;
         IEnumerable<BossInfo> found = FindCreatures(query, _bossesOnly.IsChecked == true, changed, int.MaxValue, out _, _bossInCheats.IsChecked == true,
                 _bossHasCheats.IsChecked == true, _bossChangedFirst.IsChecked == true)
             .Where(c => (school is null || c.School.Equals(school, StringComparison.OrdinalIgnoreCase))
@@ -350,7 +356,8 @@ internal sealed partial class ManagerWindow {
                         && InFilterRange(c.Level, _bossLevelMin, _bossLevelMax)
                         && InFilterRange(c.Health, _bossHealthMin, _bossHealthMax)
                         && (!changedOnly || changed.Contains(c.Id))
-                        && (!hasStats || c.Stats.Length > 0));
+                        && (!hasStats || c.Stats.Length > 0)
+                        && (!favoritesOnly || favorites.Contains(c.Id)));
         found = _bossSort.SelectedIndex switch {
             1 => found.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase),
             2 => found.OrderByDescending(c => c.Level),
@@ -361,10 +368,12 @@ internal sealed partial class ManagerWindow {
             7 => found.OrderBy(c => long.TryParse(c.Id, out var n) ? n : long.MaxValue),
             _ => found,
         };
-        var all = found.ToList();
+        // Favorites first, before the list is cut.
+        var all = FavoritesFirst(found, FAV_BOSSES, c => c.Id).ToList();
         var total = all.Count;
         _bossResults.ItemsSource = all.Take(MAX).ToList();
-        _bossCount.Text = total == 0 ? _bossesOnly.IsChecked == true ? "No boss matches. Turn off Bosses only to search every creature, or set the filters back to Any." : "Nothing matches."
+        _bossCount.Text = total == 0 && favoritesOnly ? "None of your favorites match. Star a creature to make it a favorite, or clear \"Only my favorites\"."
+            : total == 0 ? _bossesOnly.IsChecked == true ? "No boss matches. Turn off Bosses only to search every creature, or set the filters back to Any." : "Nothing matches."
             : total > MAX ? $"{total:N0} matches. Showing the first {MAX}; add words or filters to narrow it down."
             : total == 1 ? "1 match." : $"{total:N0} matches.";
     }
@@ -400,7 +409,8 @@ internal sealed partial class ManagerWindow {
             Child = new StackPanel {
                 Orientation = Orientation.Horizontal, Spacing = 10,
                 Children = {
-                    new TextBlock { Text = boss.Name, FontWeight = FontWeight.SemiBold, FontSize = 15 },
+                    FavoriteStar(FAV_BOSSES, boss.Id),
+                    new TextBlock { Text = boss.Name, FontWeight = FontWeight.SemiBold, FontSize = 15, VerticalAlignment = VerticalAlignment.Center },
                     WithCenter(new TextBlock { Text = string.Join("  ·  ", details), Foreground = changed ? WARN : MUTED }),
                 },
             },

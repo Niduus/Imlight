@@ -61,6 +61,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _phraseExact = new() { Content = "Words in this exact order" };
     private readonly CheckBox _phraseFilled = new() { Content = "Has words the game fills in (such as %s)" };
     private readonly CheckBox _phraseLines = new() { Content = "More than one line" };
+    private readonly CheckBox _phraseFavoritesOnly = FavoritesOnlyTick();
 
     private Control PhrasesTab() {
         _phraseDelay.Tick += (_, _) => {
@@ -76,7 +77,8 @@ internal sealed partial class ManagerWindow {
                 RenderPhrases();
             }
         };
-        WhenFiltersChange(RenderPhrases, _phraseFrom, _phraseTo, _phraseLength, _phraseSort, _phraseKey, _phraseExact, _phraseFilled, _phraseLines);
+        WhenFiltersChange(RenderPhrases, _phraseFrom, _phraseTo, _phraseLength, _phraseSort, _phraseKey, _phraseExact, _phraseFilled, _phraseLines, _phraseFavoritesOnly);
+        WhenFavoritesChange(FAV_PHRASES, RenderPhrases);
         // Short rows: a ListBoxItem's own padding and height would make each row twice as tall.
         _phraseList.Styles.Add(new Style(x => x.OfType<ListBoxItem>()) {
             Setters = {
@@ -107,7 +109,8 @@ internal sealed partial class ManagerWindow {
                     }, "Every line of the game's text, by number. Type words from a line, its number or its key (such as " +
                        "CombatMessages) to find it, or pick a group on the right. Battle lines are in the CombatMessages group. " +
                        "In battle, .ca and its number shows the line over you like a boss's cheat line. The filters narrow it by number, " +
-                       "key, length, and lines with words the game fills in (a name or number)."),
+                       "key, length, and lines with words the game fills in (a name or number). " +
+                       "Click the star on a line to make it a favorite: favorites show first."),
                     SearchFilters(
                         SearchFilter("Number from", _phraseFrom),
                         SearchFilter("Number to", _phraseTo),
@@ -116,25 +119,31 @@ internal sealed partial class ManagerWindow {
                         SearchFilter("Sort by", _phraseSort),
                         SearchTick(_phraseExact),
                         SearchTick(_phraseFilled),
-                        SearchTick(_phraseLines)),
+                        SearchTick(_phraseLines),
+                        SearchTick(_phraseFavoritesOnly)),
                     _phraseCount), Dock.Top),
                 WithMargin(Card(_phraseList), new Thickness(0, 14, 0, 0)),
             },
         };
     }
 
-    private static Control PhraseRowView(PhraseRow row) {
+    private static string PhraseKey(PhraseRow row) => row.Number.ToString(CultureInfo.InvariantCulture);
+
+    private Control PhraseRowView(PhraseRow row) {
         var text = new TextBlock { Text = row.Text.Replace('\n', ' '), TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center };
         ToolTip.SetTip(text, row.Text);
-        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("60,*,Auto") };
-        grid.Children.Add(new TextBlock {
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,60,*,Auto") };
+        grid.Children.Add(FavoriteStar(FAV_PHRASES, PhraseKey(row), 14));
+        var number = new TextBlock {
             Text = row.Number.ToString(CultureInfo.InvariantCulture), FontFamily = MONO, FontSize = 12, Foreground = MUTED,
             VerticalAlignment = VerticalAlignment.Center,
-        });
-        Grid.SetColumn(text, 1);
+        };
+        Grid.SetColumn(number, 1);
+        grid.Children.Add(number);
+        Grid.SetColumn(text, 2);
         grid.Children.Add(text);
         var key = new TextBlock { Text = row.Key, FontSize = 11, Foreground = MUTED, Margin = new Thickness(12, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-        Grid.SetColumn(key, 2);
+        Grid.SetColumn(key, 3);
         grid.Children.Add(key);
 
         return grid;
@@ -196,6 +205,8 @@ internal sealed partial class ManagerWindow {
         var length = _phraseLength.SelectedIndex;
         var filled = _phraseFilled.IsChecked == true;
         var lines = _phraseLines.IsChecked == true;
+        var favorites = Favorites(FAV_PHRASES);
+        var favoritesOnly = _phraseFavoritesOnly.IsChecked == true;
         IEnumerable<PhraseRow> matched = phrases.Where(p => (group is null || p.Group == group)
                                                             && (p.Number == number || (inOrder is null ? words.All(p.Haystack.Contains)
                                                                 : string.Join(' ', SearchText.Words(p.Text)).Contains(inOrder, StringComparison.Ordinal)))
@@ -208,7 +219,8 @@ internal sealed partial class ManagerWindow {
                                                                 _ => true,
                                                             }
                                                             && (!filled || p.Text.Contains('%') || p.Text.Contains('{') || p.Text.Contains('<'))
-                                                            && (!lines || p.Text.Contains('\n')));
+                                                            && (!lines || p.Text.Contains('\n'))
+                                                            && (!favoritesOnly || favorites.Contains(PhraseKey(p))));
         matched = _phraseSort.SelectedIndex switch {
             1 => matched.OrderByDescending(p => p.Number),
             2 => matched.OrderBy(p => p.Text, StringComparer.OrdinalIgnoreCase),
@@ -225,8 +237,12 @@ internal sealed partial class ManagerWindow {
             shown.Insert(0, exact);
         }
 
+        // Favorites first.
+        shown = [.. FavoritesFirst(shown, FAV_PHRASES, PhraseKey)];
         _phraseList.ItemsSource = shown;
-        _phraseCount.Text = shown.Count == phrases.Count
+        _phraseCount.Text = shown.Count == 0 && favoritesOnly
+            ? "None of your favorite lines match. Star a line to make it a favorite, or clear \"Only my favorites\"."
+            : shown.Count == phrases.Count
             ? $"{phrases.Count:N0} lines. Click one to copy its .ca command."
             : $"{shown.Count:N0} of {phrases.Count:N0} lines. Click one to copy its .ca command.";
     }

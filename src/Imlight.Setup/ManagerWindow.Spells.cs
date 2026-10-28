@@ -164,8 +164,12 @@ internal sealed partial class ManagerWindow {
 
         var query = _lookupSearch.Text ?? "";
         var school = FilterPick(_lookupSchool);
+        var favorites = Favorites(FAV_SPELLS);
+        var favoritesOnly = _lookupFavoritesOnly.IsChecked == true;
         var results = _spellBook.Search(query, SPELL_MAX, HideBroken, out var total, out var brokenHidden,
-            school is null ? null : s => s.School.Equals(school, StringComparison.OrdinalIgnoreCase));
+            school is null && !favoritesOnly ? null : s => (school is null || s.School.Equals(school, StringComparison.OrdinalIgnoreCase))
+                                                          && (!favoritesOnly || favorites.Contains(SpellKey(s))),
+            favorites.Count > 0 ? s => favorites.Contains(SpellKey(s)) : null);
         var selected = _spellResults.SelectedItem as SpellCard;
         _spellResults.ItemsSource = results;
         if (selected is not null && results.Contains(selected)) {
@@ -209,6 +213,7 @@ internal sealed partial class ManagerWindow {
             BorderThickness = new Thickness(0, 0, 0, 1),
             Child = new DockPanel {
                 Children = {
+                    WithDock(FavoriteStar(FAV_SPELLS, SpellKey(spell)), Dock.Left),
                     WithDock(new Border {
                         Width = 6, CornerRadius = new CornerRadius(3), Margin = new Thickness(0, 2, 10, 2),
                         Background = new SolidColorBrush(Color.FromUInt32(CardPainter.SchoolColor(spell.School))),

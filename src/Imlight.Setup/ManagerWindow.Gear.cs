@@ -81,6 +81,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _gearHasCards = new() { Content = "Gives item cards" };
     private readonly CheckBox _gearInSet = new() { Content = "Part of a gear set" };
     private readonly CheckBox _gearRental = new() { Content = "Rentals only" };
+    private readonly CheckBox _gearFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _gearCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _gearList = new() { Background = Brushes.Transparent };
     private readonly Border _gearTooltipHost = new() { HorizontalAlignment = HorizontalAlignment.Center };
@@ -127,7 +128,8 @@ internal sealed partial class ManagerWindow {
         _gearCrowns.IsCheckedChanged += (_, _) => RenderGearTab();
         _gearUnnamed.IsCheckedChanged += (_, _) => RenderGearTab();
         WhenFiltersChange(RenderGearTab, _gearRarity, _gearMark, _gearCardSchool, _gearSocketsMin, _gearSocketsMax, _gearGoldMin, _gearGoldMax,
-            _gearHasCards, _gearInSet, _gearRental);
+            _gearHasCards, _gearInSet, _gearRental, _gearFavoritesOnly);
+        WhenFavoritesChange(FAV_GEAR, RenderGearTab);
         _gearList.ItemTemplate = new FuncDataTemplate<GearItem>((item, _) => item is null ? new Panel() : GearRow(item));
         _gearList.SelectionChanged += (_, e) => {
             if (e.Source == _gearList && _gearList.SelectedItem is GearItem item && item != _gearPicked) {
@@ -158,6 +160,7 @@ internal sealed partial class ManagerWindow {
                 SearchTick(_gearHasCards),
                 SearchTick(_gearInSet),
                 SearchTick(_gearRental),
+                SearchTick(_gearFavoritesOnly),
                 GearStatFilters());
         // The item as the game draws it on the left of the pop-up, its cards and details on the right.
         var details = new ScrollViewer {
@@ -182,7 +185,7 @@ internal sealed partial class ManagerWindow {
                                 WithHint(_gearSearch, "Search by name or template ID, or narrow the list with the filters. Click an item to see its " +
                                     "tooltip as the game draws it, with its stats, item cards, sockets, the level it needs and its marks. Point at a " +
                                     "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
-                                    "which players never see."),
+                                    "which players never see. Click the star on a row to make it a favorite: favorites show first."),
                                 filters, _gearCount, GearGuide(),
                             },
                         }), Dock.Top),
@@ -292,6 +295,8 @@ internal sealed partial class ManagerWindow {
         var hasCards = _gearHasCards.IsChecked == true;
         var inSet = _gearInSet.IsChecked == true;
         var rental = _gearRental.IsChecked == true;
+        var favorites = Favorites(FAV_GEAR);
+        var favoritesOnly = _gearFavoritesOnly.IsChecked == true;
 
         var found = gear.Items.Where(i =>
             (id is not null ? i.Id == id || words.All(i.Haystack.Contains) : words.All(i.Haystack.Contains))
@@ -310,7 +315,8 @@ internal sealed partial class ManagerWindow {
             && InFilterRange(i.GoldCost, _gearGoldMin, _gearGoldMax)
             && (!hasCards || i.Spells.Count > 0)
             && (!inSet || i.SetId != 0)
-            && (!rental || i.Rental.Length > 0));
+            && (!rental || i.Rental.Length > 0)
+            && (!favoritesOnly || favorites.Contains(GearKey(i))));
 
         List<GearItem> shown = _gearSort.SelectedIndex switch {
             1 => [.. found.OrderByDescending(i => i.Level).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],
@@ -324,15 +330,19 @@ internal sealed partial class ManagerWindow {
                 .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ThenBy(i => i.Level).ThenBy(i => i.Id)],
         };
 
+        shown = [.. FavoritesFirst(shown, FAV_GEAR, GearKey)];
         _gearList.ItemsSource = shown;
         _gearCount.Text = shown.Count == 0
-            ? "Nothing matches. Clear the search or pick \"All\" in the filters."
+            ? favoritesOnly ? "None of your favorites match. Star an item to make it a favorite, or clear \"Only my favorites\"."
+            : "Nothing matches. Clear the search or pick \"All\" in the filters."
             : $"{shown.Count:N0} of {gear.Items.Count:N0} items. Click one to see it as the game shows it.";
         if (_gearPicked is not null && shown.Contains(_gearPicked)) {
             _gearList.SelectedItem = _gearPicked;
         }
         // Typing only narrows the list: nothing is picked (and no details pop open) until an item is clicked.
     }
+
+    private static string GearKey(GearItem item) => item.Id.ToString(CultureInfo.InvariantCulture);
 
     /// <summary>One item in the list: its school, its name, and its slot, level and ID underneath.</summary>
     private Control GearRow(GearItem item) {
@@ -370,6 +380,7 @@ internal sealed partial class ManagerWindow {
         return new DockPanel {
             Margin = new Thickness(2, 3),
             Children = {
+                WithDock(FavoriteStar(FAV_GEAR, GearKey(item)), Dock.Left),
                 WithDock(WithMargin(badge, new Thickness(0, 0, 10, 0)), Dock.Left),
                 WithDock(marks, Dock.Right),
                 new StackPanel {

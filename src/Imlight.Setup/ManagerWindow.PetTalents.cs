@@ -83,6 +83,8 @@ internal sealed partial class ManagerWindow {
         internal CheckBox HideOld { get; } = new() { Content = "Hide retired and hidden ones", IsChecked = true };
         internal CheckBox SureOnly { get; } = new() { Content = "Only ones some pet always gets" };
         internal CheckBox OnPets { get; } = new() { Content = "Only ones a pet can have" };
+        internal CheckBox FavoritesOnly { get; } = FavoritesOnlyTick();
+        internal string FavoritesList => Derby ? FAV_PET_DERBY : FAV_PET_TALENTS;
         internal TextBlock Count { get; } = new() { TextWrapping = TextWrapping.Wrap };
         internal ListBox List { get; } = new() { Background = Brushes.Transparent };
         internal StackPanel Details { get; } = new() { Spacing = 6 };
@@ -111,7 +113,8 @@ internal sealed partial class ManagerWindow {
             }
         };
         WhenFiltersChange(() => RenderPetTalents(page), page.Search, page.Kind, page.Rarity, page.Stat, page.Does, page.Pet,
-            page.Card, page.PetsMin, page.PetsMax, page.WaitMin, page.WaitMax, page.Sort, page.HideOld, page.SureOnly, page.OnPets);
+            page.Card, page.PetsMin, page.PetsMax, page.WaitMin, page.WaitMax, page.Sort, page.HideOld, page.SureOnly, page.OnPets, page.FavoritesOnly);
+        WhenFavoritesChange(page.FavoritesList, () => RenderPetTalents(page));
 
         var filters = page.Derby
             ? SearchFilters(
@@ -126,7 +129,8 @@ internal sealed partial class ManagerWindow {
                 SearchFilter("Sort by", page.Sort),
                 SearchTick(page.HideOld),
                 SearchTick(page.OnPets),
-                SearchTick(page.SureOnly))
+                SearchTick(page.SureOnly),
+                SearchTick(page.FavoritesOnly))
             : SearchFilters(
                 SearchFilter("Kind", page.Kind),
                 SearchFilter("Rarity", page.Rarity),
@@ -139,7 +143,8 @@ internal sealed partial class ManagerWindow {
                 SearchFilter("Sort by", page.Sort),
                 SearchTick(page.HideOld),
                 SearchTick(page.OnPets),
-                SearchTick(page.SureOnly));
+                SearchTick(page.SureOnly),
+                SearchTick(page.FavoritesOnly));
 
         var details = new ScrollViewer { Width = 640, Content = page.Details };
         page.Popup = new DetailsPopup(page.Derby ? "Derby talent" : "Pet talent", details,
@@ -160,9 +165,11 @@ internal sealed partial class ManagerWindow {
                                 : "Search or filter, then click a talent to see what it does, which pets can have it, and to put it on your pet.",
                             WithHint(page.Search, page.Derby
                                 ? "Search by the talent's name, what it does (speed, morale, lane, obstacle) or a pet's name. With nothing typed, every " +
-                                  "derby talent shows. Click one to see it and to put it in one of your pet's derby slots."
+                                  "derby talent shows. Click one to see it and to put it in one of your pet's derby slots. " +
+                                  "Click the star on a row to make it a favorite: favorites show first."
                                 : "Search by the talent's name, what it does, the card it casts or gives, or a pet's name. With nothing typed, every " +
-                                  "talent shows. Click one to see it and to put it in one of your pet's talent slots."),
+                                  "talent shows. Click one to see it and to put it in one of your pet's talent slots. " +
+                                  "Click the star on a row to make it a favorite: favorites show first."),
                             filters,
                             page.Count), Dock.Top),
                         WithMargin(page.List, new Thickness(0, 14, 0, 0)),
@@ -245,6 +252,8 @@ internal sealed partial class ManagerWindow {
         var does = SearchText.Words(page.Does.Text);
         var pet = SearchText.Words(page.Pet.Text);
         var card = SearchText.Words(page.Card.Text);
+        var favorites = Favorites(page.FavoritesList);
+        var favoritesOnly = page.FavoritesOnly.IsChecked == true;
 
         var rows = all.Where(row => {
             var t = row.Talent;
@@ -261,7 +270,8 @@ internal sealed partial class ManagerWindow {
                 && (!page.Derby || InFilterRange((long) Math.Round(t.Cooldown), page.WaitMin, page.WaitMax))
                 && (page.HideOld.IsChecked != true || !(t.Retired || t.Hidden))
                 && (page.OnPets.IsChecked != true || t.Pets.Count > 0)
-                && (page.SureOnly.IsChecked != true || t.Sure.Count > 0);
+                && (page.SureOnly.IsChecked != true || t.Sure.Count > 0)
+                && (!favoritesOnly || favorites.Contains(t.Name));
         }).ToList();
 
         var byName = StringComparer.OrdinalIgnoreCase;
@@ -276,6 +286,7 @@ internal sealed partial class ManagerWindow {
             _ => rows,
         };
 
+        rows = [.. FavoritesFirst(rows, page.FavoritesList, r => r.Talent.Name)];
         page.List.ItemsSource = rows;
         var what = page.Derby ? "derby talents" : "pet talents";
         page.Count.Text = page.Derby
@@ -298,7 +309,7 @@ internal sealed partial class ManagerWindow {
             Padding = new Thickness(4, 6),
             BorderBrush = LINE,
             BorderThickness = new Thickness(0, 0, 0, 1),
-            Child = new StackPanel {
+            Child = new DockPanel { Children = { WithDock(FavoriteStar(t.Derby ? FAV_PET_DERBY : FAV_PET_TALENTS, t.Name), Dock.Left), new StackPanel {
                 Spacing = 2,
                 Children = {
                     new StackPanel {
@@ -310,7 +321,7 @@ internal sealed partial class ManagerWindow {
                     },
                     Sub(t.Effects.Count > 0 ? string.Join(" ", t.Effects.Take(2)) : t.Description.Length > 0 ? t.Description : t.Name),
                 },
-            },
+            } } },
         };
     }
 

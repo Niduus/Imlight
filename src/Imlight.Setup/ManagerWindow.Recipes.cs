@@ -70,6 +70,7 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _recipeGoldMin = FilterNumber(100, 130);
     private readonly NumericUpDown _recipeGoldMax = FilterNumber(100, 130);
     private readonly CheckBox _recipeCrowns = new() { Content = "Costs Crowns" };
+    private readonly CheckBox _recipeFavoritesOnly = FavoritesOnlyTick();
     private readonly ComboBox _recipeSort = FilterCombo(s_recipeSorts, 170);
     private HashSet<uint> _recipeChanged = [];
     private readonly TextBlock _recipeCount = new() { TextWrapping = TextWrapping.Wrap };
@@ -117,7 +118,8 @@ internal sealed partial class ManagerWindow {
 
         WhenFiltersChange(RenderRecipesTab, _recipeCategory, _recipeMakes, _recipeMakesSlot, _recipeNeedsKind, _recipeNeedsName,
             _recipeIngredientsMin, _recipeIngredientsMax, _recipeCooldownMin, _recipeCooldownMax, _recipeGoldMin, _recipeGoldMax,
-            _recipeCrowns, _recipeSort);
+            _recipeCrowns, _recipeSort, _recipeFavoritesOnly);
+        WhenFavoritesChange(FAV_RECIPES, RenderRecipesTab);
         var filters = SearchFilters(
                 Labelled("Crafting station", _recipeStation),
                 Labelled("School", _recipeSchool),
@@ -135,7 +137,8 @@ internal sealed partial class ManagerWindow {
                 Labelled("Sort by", _recipeSort),
                 WithMargin(_recipeCrowns, new Thickness(4, 18, 0, 6)),
                 WithMargin(_recipeNoStation, new Thickness(14, 18, 0, 6)),
-                WithMargin(_recipeChangedOnly, new Thickness(14, 18, 0, 6)));
+                WithMargin(_recipeChangedOnly, new Thickness(14, 18, 0, 6)),
+                WithMargin(_recipeFavoritesOnly, new Thickness(14, 18, 0, 6)));
         var vendor = WithHint(Row(
                 Action(Primary("Make a recipe vendor here"), MakeRecipeVendorAsync),
                 Action(Plain("Open my crafting window"), () => {
@@ -159,7 +162,7 @@ internal sealed partial class ManagerWindow {
                             Children = {
                                 MissingNote("the .recipe and .craft commands are " + ServerSource.DefaultName + "'s.", () => !_manager.HasRecipeCommands),
                                 WithHint(_recipeSearch, "Search by the recipe's name, what it makes, an ingredient, or its template ID. Click a recipe to see " +
-                                    "its ingredients, the station it is crafted at and its cooldown. Learn on my wizard teaches it to the wizard you play here."),
+                                    "its ingredients, the station it is crafted at and its cooldown. Learn on my wizard teaches it to the wizard you play here. Click the star on a row to make it a favorite: favorites show first."),
                                 filters, vendor, _recipeCount,
                             },
                         }), Dock.Top),
@@ -274,6 +277,8 @@ internal sealed partial class ManagerWindow {
         var needsKind = FilterPick(_recipeNeedsKind);
         var needsName = SearchText.Words(_recipeNeedsName.Text);
         var crowns = _recipeCrowns.IsChecked == true;
+        var favorites = Favorites(FAV_RECIPES);
+        var favoritesOnly = _recipeFavoritesOnly.IsChecked == true;
         _recipeChanged = [.. SafeRecipeChanges().Select(c => c.Id)];
 
         _recipesShown = [.. book.Recipes.Where(r =>
@@ -293,8 +298,11 @@ internal sealed partial class ManagerWindow {
                 && (_recipeCooldownMin.Value is not { } least || r.Cooldown >= least * 60)
                 && (_recipeCooldownMax.Value is not { } most || r.Cooldown <= most * 60)
                 && InFilterRange(r.GoldCost, _recipeGoldMin, _recipeGoldMax)
-                && (!crowns || r.CrownsCost > 0))
-            .OrderBy(r => _recipeSort.SelectedIndex switch {
+                && (!crowns || r.CrownsCost > 0)
+                && (!favoritesOnly || favorites.Contains(RecipeKey(r))))
+            // Favorites first.
+            .OrderBy(r => !favorites.Contains(RecipeKey(r)))
+            .ThenBy(r => _recipeSort.SelectedIndex switch {
                 2 => r.Cooldown,
                 3 => -r.Cooldown,
                 4 => r.GoldCost,
@@ -313,13 +321,16 @@ internal sealed partial class ManagerWindow {
             ? $"No recipes could be read from your game files ({book.FileCount:N0} recipe files of {book.TemplateCount:N0} templates). " +
               (book.Problems.Length > 0 ? $"What went wrong: {book.Problems}. " : "") + "Send Claude a screenshot of this."
             : _recipesShown.Count == 0
-            ? "Nothing matches. Clear the search or pick \"All\" in the filters."
+            ? favoritesOnly ? "None of your favorites match. Star a recipe to make it a favorite, or clear \"Only my favorites\"."
+            : "Nothing matches. Clear the search or pick \"All\" in the filters."
             : $"{_recipesShown.Count:N0} of {book.Recipes.Count:N0} recipes. Click one to see what it needs and makes.";
         if (_recipePicked is not null && _recipesShown.Contains(_recipePicked)) {
             _recipeList.SelectedItem = _recipePicked;
         }
         // Typing only narrows the list: nothing is picked (and no details pop open) until an item is clicked.
     }
+
+    private static string RecipeKey(Recipe recipe) => recipe.Id.ToString(CultureInfo.InvariantCulture);
 
     /// <summary>One recipe in the list: its picture, its name, and its station, cooldown and ID underneath.</summary>
     private Control RecipeRow(Recipe recipe) {
@@ -328,6 +339,7 @@ internal sealed partial class ManagerWindow {
         return new DockPanel {
             Margin = new Thickness(2, 3),
             Children = {
+                WithDock(FavoriteStar(FAV_RECIPES, RecipeKey(recipe)), Dock.Left),
                 WithDock(WithMargin(RecipeIcon(recipe.MakesId, recipe.MakesFile, recipe.MakesSpell, 30), new Thickness(0, 0, 10, 0)), Dock.Left),
                 new StackPanel {
                     Children = {
