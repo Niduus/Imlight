@@ -42,8 +42,8 @@
  * combat sigil supervisor conventions use; the fallback derives "<parent>/Interiors/<leaf>_T<N>" for
  * towers whose entrance teleport isn't named like the pad.
  * 
- * TODO:
- * - Quest/DynaMod gating of the Glowy state (when a pad should be dark) is future work.
+ * A pad whose own requirements the player does not meet (MayEnter) stays dark for that player, and lights up
+ * once they do (checked again as they move), so a side-quest dungeon no longer glows before its quest.
  * 
  * Created by: Jay
  * Version: KALI 1.0
@@ -116,6 +116,13 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     private DateTime _partyEnds;
     // Players the pad has been lit for since they joined (once more on their first move).
     private readonly HashSet<IActorRef> _litFor = [];
+    // Players the pad is shown dark to: they do not meet its requirements yet (MayEnter).
+    private readonly HashSet<IActorRef> _darkFor = [];
+    // When each player was last checked against the pad's requirements as they move.
+    private readonly Dictionary<IActorRef, DateTime> _checkedAt = [];
+    private static readonly TimeSpan RECHECK_INTERVAL = TimeSpan.FromSeconds(2);
+    // The pad's dark look in MinigameSigilStatesNew (a pad the game just made is Off).
+    private const string DARK_STATE = "Off";
     // Every player in the zone the pad knows of, so a look changed in the Customs tab reaches them all at once.
     private readonly HashSet<IActorRef> _players = [];
     // A changed look is sent once the pad was sent again (RenderComponent's 400 ms), and the last state of a look that
@@ -185,7 +192,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         _players.Add(playerActor);
         _litFor.Remove(playerActor);
-        Light(playerActor, "join");
+        Show(playerActor, playerWizard, "join");
     }
 
     // The join-time state may be sent before the game has the pad, which leaves it Off, so it goes once more on the
@@ -194,7 +201,10 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         if (playerWizard is not null) {
             _players.Add(playerActor);
             if (_litFor.Add(playerActor)) {
-                Light(playerActor, "first move");
+                Show(playerActor, playerWizard, "first move");
+            }
+            else {
+                Recheck(playerActor, playerWizard);
             }
         }
 
@@ -209,6 +219,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
         _players.Remove(playerActor);
         _litFor.Remove(playerActor);
+        _darkFor.Remove(playerActor);
+        _checkedAt.Remove(playerActor);
         Timers?.Cancel(("SigilConfirm", playerActor));
         LeaveParty(playerActor);
     }
@@ -251,8 +263,55 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         }
     }
 
+    // Lights the pad for a player who may go in, and keeps it dark for one who may not yet: a side quest's dungeon
+    // glowed before its quest was taken (Niduus 2026-10-28: "still have their sigils lit when they shouldn't be unless
+    // able to interact with them per the condition they may enter").
+    private void Show(IActorRef playerActor, Wizard wizard, string why) {
+        if (playerActor is null) {
+            return;
+        }
+
+        _checkedAt[playerActor] = DateTime.UtcNow;
+        if (wizard is null || MayEnter(wizard)) {
+            _darkFor.Remove(playerActor);
+        }
+        else {
+            _darkFor.Add(playerActor);
+        }
+
+        Light(playerActor, why);
+    }
+
+    // As the player moves, the pad's requirements are checked again now and then, so it lights up once they take the
+    // quest it waits for (and goes dark if they no longer meet them).
+    private void Recheck(IActorRef playerActor, Wizard wizard) {
+        if (SigilInfo?.m_requirements?.m_requirements is not { Count: > 0 } || !IsAvailable) {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        if (_checkedAt.TryGetValue(playerActor, out var last) && now - last < RECHECK_INTERVAL) {
+            return;
+        }
+
+        _checkedAt[playerActor] = now;
+        var dark = !MayEnter(wizard);
+        if (dark != _darkFor.Contains(playerActor)) {
+            Show(playerActor, wizard, dark ? "requirements no longer met" : "requirements now met");
+        }
+    }
+
     private void Light(IActorRef playerActor, string why, bool lastOnly = false) {
         if (playerActor is null || !IsAvailable) {
+            return;
+        }
+
+        if (_darkFor.Contains(playerActor)) {
+            Timers?.Cancel(("SigilConfirm", playerActor));
+            Entity.ChangeStateExclusiveSender(DARK_STATE, playerActor);
+            Logger.Debug("Dungeon sigil {0}: kept dark for {1}, who does not meet its requirements ({2}).",
+                Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), playerActor.Path.Name, why));
+
             return;
         }
 
