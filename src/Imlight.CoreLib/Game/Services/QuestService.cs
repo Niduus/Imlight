@@ -1201,7 +1201,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
     private void NoteProgress(Wizard wizard) {
         Imlight.CoreLib.Game.Tools.QuestGuide.Update(wizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
         Imlight.CoreLib.Game.World.WorldAccess.Remember(wizard);
+        RefreshTutorialTips(wizard);
     }
+
+    // Tips waiting on a quest show once it is done; the rest stay held back (TutorialTipGate).
+    private void RefreshTutorialTips(Wizard wizard)
+        => TutorialTipGate.Refresh(wizard, GetActiveGameObject(), SessionActor.ActorRef, SendToSocket);
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_COMBATWIN))]
     private void ReceiveCombatVictory(COMBAT_106_PROTOCOL.MSG_COMBATWIN message) {
@@ -1783,6 +1788,8 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BADGEEVENT { Kind = BadgeEventKind.Recheck });
 
+        // Before the game hears the quest is done: its "quest complete" tips look at the log then.
+        RefreshTutorialTips(wizard);
         SendCompleteQuest(questInstance.ID);
 
         var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
