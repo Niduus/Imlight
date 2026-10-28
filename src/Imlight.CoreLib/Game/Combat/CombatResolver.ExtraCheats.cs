@@ -13,12 +13,20 @@
  *   ProtectEffects  Target's (Self) effects of Kind can't be removed (Kind Off: they can again).
  *   Damage          Target (Caster) loses Amount health (Percent: a share of its most health), never below 1.
  *   Drain           Target (Caster) loses Amount health (Percent: of its most) and it gets as much back.
+ *
+ * Whens after each move (the move's spell is "the spell that set it off"; "the attacker" the one who moved, "the one hit"
+ * the one it happened to). RemovedFrom picks whose ("" itself, AnyAlly, AnyEnemy, Anyone), RemovedKind and RemovedSpell
+ * which effects, as for EffectRemoved:
+ *   EffectAdded     a charm, ward, aura or over-time is put on (after the spell lands, unlike EnemyCasts).
+ *   EffectUsed      one is used up by a hit or a heal (a shield popped, a blade spent), not taken off by a spell.
+ *   Healed          its health went up.         Stunned: it was stunned by the move.
  */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Combat;
@@ -148,6 +156,98 @@ public partial class CombatResolver {
             default:
                 return false;
         }
+    }
+
+    // Everyone's health and stun before the move, for Healed and Stunned.
+    private Dictionary<CombatDuelSubCircle, (int Health, int Stunned)> _statsBeforeMove;
+
+    private static bool IsAfterMoveWhen(BossCheats.BossCheat c)
+        => c.Is("EffectAdded") || c.Is("EffectUsed") || c.Is("Healed") || c.Is("Stunned");
+
+    private void NoteStatsBeforeMove()
+        => _statsBeforeMove = _subCircles.Where(c => c is not null && c.Occupied && c.ParticipantGameStats is not null)
+            .ToDictionary(c => c, c => (c.ParticipantGameStats.m_currentHitpoints, c.CombatParticipant?.m_stunned ?? 0));
+
+    // The effects on someone now that were not before the move (two alike count as two).
+    private List<SpellEffect> AddedTo(CombatDuelSubCircle who) {
+        if (_effectsBeforeMove is null || !_effectsBeforeMove.TryGetValue(who, out var before)) {
+            return [];
+        }
+
+        var had = before.ToList();
+        var added = new List<SpellEffect>();
+        foreach (var e in (who._hangingEffects ?? []).Where(e => e is not null)) {
+            var i = had.IndexOf(e);
+            if (i >= 0) {
+                had.RemoveAt(i);
+            }
+            else {
+                added.Add(e);
+            }
+        }
+
+        return added;
+    }
+
+    private float AfterMoveWhenCheats(CombatDuelSubCircle mover, List<(CombatAction Action, SpellTemplate Spell)> landed, bool removingSpell,
+                                      CombatActionListObj combatActionList, float cinematicTimeSoFar) {
+        var cinematicTime = 0.0f;
+        if (_effectsBeforeMove is null) {
+            return 0;
+        }
+
+        var spell = landed.FirstOrDefault(m => m.Spell is not null);
+        foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
+            for (var i = 0; i < cheats.Count; i++) {
+                var cheat = cheats[i];
+                if (!InPhase(boss, cheat) || cheat.Interrupts || !IsAfterMoveWhen(cheat)) {
+                    continue;
+                }
+
+                var kinds = (cheat.RemovedKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                bool Fits(SpellEffect e) => (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, cheat.RemovedSpell);
+                var from = (cheat.RemovedFrom ?? "").Trim().ToLowerInvariant();
+                var who = from switch {
+                    "anyally" => _subCircles.Where(c => c is not null && c.Occupied && c.OccupiedTeam == boss.OccupiedTeam),
+                    "anyenemy" => _subCircles.Where(c => c is not null && c.Occupied && c.OccupiedTeam != boss.OccupiedTeam),
+                    "anyone" => _subCircles.Where(c => c is not null && c.Occupied),
+                    _ => [boss],
+                };
+                CombatDuelSubCircle hit = null;
+                var what = "";
+                foreach (var c in who) {
+                    var stats = _statsBeforeMove?.GetValueOrDefault(c) ?? default;
+                    if (cheat.Is("EffectAdded") && AddedTo(c).Count(Fits) is > 0 and var added) {
+                        (hit, what) = (c, $"{added} effects put on slot {c.SlotIndex}");
+                    }
+                    else if (cheat.Is("EffectUsed") && !removingSpell && GoneFrom(c).Count(Fits) is > 0 and var used) {
+                        (hit, what) = (c, $"{used} effects of slot {c.SlotIndex} used up");
+                    }
+                    else if (cheat.Is("Healed") && _statsBeforeMove is not null && c.ParticipantGameStats?.m_currentHitpoints > stats.Health && stats.Health > 0) {
+                        (hit, what) = (c, $"slot {c.SlotIndex} healed");
+                    }
+                    else if (cheat.Is("Stunned") && _statsBeforeMove is not null && stats.Stunned <= 0 && (c.CombatParticipant?.m_stunned ?? 0) > 0) {
+                        (hit, what) = (c, $"slot {c.SlotIndex} stunned");
+                    }
+
+                    if (hit is not null) {
+                        break;
+                    }
+                }
+
+                if (hit is null) {
+                    continue;
+                }
+
+                _cheatSpellId = spell.Spell is not null ? spell.Action.m_spell.m_templateID : 0;
+                _cheatCard = spell.Spell is not null ? spell.Action.m_spell : null;
+                cinematicTime += TryBossCheat(boss, i, cheat, mover, hit, what, combatActionList, cinematicTimeSoFar + cinematicTime);
+                _cheatSpellId = 0;
+                _cheatCard = null;
+            }
+        }
+
+        return cinematicTime;
     }
 
     // What "add an effect of your own size" calls an effect: Blade, Weakness, Shield, Trap or Absorb; null for any other.

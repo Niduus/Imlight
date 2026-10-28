@@ -342,12 +342,14 @@ public partial class CombatResolver {
     /// <summary>Everyone's hanging effects before a move, when someone's cheats answer an effect being removed.</summary>
     private void NoteEffectsBeforeMove() {
         _effectsBeforeMove = null;
-        if (!BossesWithCheats().Any(b => b.Cheats.Any(c => c is { Off: false } && c.Is("EffectRemoved")))) {
+        _statsBeforeMove = null;
+        if (!BossesWithCheats().Any(b => b.Cheats.Any(c => c is { Off: false } && (c.Is("EffectRemoved") || IsAfterMoveWhen(c))))) {
             return;
         }
 
         _effectsBeforeMove = _subCircles.Where(c => c is not null && c.Occupied && c._hangingEffects is not null)
             .ToDictionary(c => c, c => c._hangingEffects.Where(e => e is not null).ToList());
+        NoteStatsBeforeMove();
     }
 
     // The effects that were on someone before the move and are not now (two alike count as two).
@@ -409,6 +411,8 @@ public partial class CombatResolver {
                 }
             }
         }
+
+        cinematicTime += AfterMoveWhenCheats(mover, landed, removing.Spell is not null, combatActionList, cinematicTimeSoFar + cinematicTime);
 
         return cinematicTime;
     }
