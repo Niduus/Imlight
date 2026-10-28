@@ -698,6 +698,11 @@ public class Wizard {
         EquipmentSlotType.Mount, EquipmentSlotType.Deck,
     ];
 
+    /// <summary>
+    /// The worn gear that takes a backpack slot, see <see cref="BackpackFreeSlots"/>.
+    /// </summary>
+    [JsonIgnore] public int WornGearSlots => CountWornGear();
+
     private int CountWornGear() {
         var slots = EquipmentBehavior?.SlotList;
         var items = EquipmentBehavior?.EquippedItems;
@@ -705,7 +710,9 @@ public class Wizard {
             return 0;
         }
 
+        // An item listed both as worn and in the backpack (an old save) is counted once, with the backpack.
         return items.Count(item => Imlight.CoreLib.Game.Bank.BankRules.TakesBackpackSlot(item)
+            && InventoryBehavior?.HasItem(item.m_globalID) != true
             && slots.Any(slot => slot.ItemId.Value == item.m_globalID.Value && s_gearSlots.Contains(slot.SlotType)));
     }
 

@@ -176,6 +176,11 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     /// </summary>
     private static bool CanSendToGame(WizClientObjectItem item) => CanSendToGame(item, report: true);
 
+    /// <summary>
+    /// Whether the game is sent this item, so it shows in the backpack. See CanSendToGame.
+    /// </summary>
+    internal static bool IsShownInGame(WizClientObjectItem item) => CanSendToGame(item, report: false);
+
     private static bool CanSendToGame(WizClientObjectItem item, bool report) {
         var template = CoreObjectFactory.GetCoreTemplate(item.m_templateID);
         // Bundles, booster packs and currency amounts are not backpack objects to the game: one in the list stops the

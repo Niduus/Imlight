@@ -94,6 +94,11 @@ internal static class ItemPlacement {
         }
 
         if (wizard.StorageBehavior.HasRoomFor(item) && wizard.AddItemToBank(item)) {
+            if (!isJewel) {
+                Logger.Information("Backpack full: item {ItemId} (template {TemplateId}) of {CharId} went to the bank. Backpack: {Report}",
+                    Logger.Args(item.m_globalID.Full, item.m_templateID.Full, wizard.CharId, BankRules.BackpackReport(wizard)));
+            }
+
             return Placement.Bank;
         }
 
