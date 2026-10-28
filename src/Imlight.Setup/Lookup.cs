@@ -272,6 +272,7 @@ internal sealed class Lookup {
 
         // Moving around.
         Imlight("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Pick Teleport area in the Lookup tab for every zone, with a Teleport button."),
+        Imlight("Teleport to a quest step", ".tpstep <quest code> <step>", QA, "Takes you right to where a step of a quest happens: the spot the game's quest arrow points at, else where the step's NPC stands, else the step's zone. Works even when the quests or doors before it are not done. The step buttons on the Quests page run it. Also .stepto."),
         Imlight("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
         Imlight("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
         Imlight("Show object", ".debug enableobj <zone tag>", QA, "Shows an object hidden with .debug disableobj."),

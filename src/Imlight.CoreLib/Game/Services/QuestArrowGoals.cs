@@ -46,6 +46,8 @@ internal static class QuestArrowGoals {
 
     private static readonly Lock s_lock = new();
     private static Dictionary<uint, Dictionary<uint, HashSet<string>>> s_poiGoals;
+    // Where each goal's arrow points: the zone and the spot of its target (an NPC, an object, a place).
+    private static Dictionary<ulong, List<(string Zone, Imcodec.Math.Vector3 Spot)>> s_poiSpots = [];
     private static readonly ConcurrentDictionary<string, Dictionary<string, uint>> s_questGoalIds
         = new(StringComparer.OrdinalIgnoreCase);
 
@@ -61,6 +63,28 @@ internal static class QuestArrowGoals {
         var ids = s_questGoalIds.GetOrAdd((string) quest.m_questName ?? "", _ => ResolveGoalIds(quest));
 
         return ids.TryGetValue((string) goal.m_goalName ?? "", out var id) ? id : 0;
+    }
+
+    /// <summary>
+    /// The spots the game's quest arrow points at for this goal (zone and position), the goal's own zone first. Empty
+    /// when poi.dat has none. The Manager's step buttons teleport there (Niduus, 2026-10-28: "TP me to EXACTLY the place").
+    /// </summary>
+    internal static List<(string Zone, Imcodec.Math.Vector3 Spot)> GetSpots(QuestTemplate quest, GoalTemplate goal) {
+        var id = GetGoalNameId(quest, goal);
+        GetPoiGoals();
+        if (id == 0 || quest is null) {
+            return [];
+        }
+
+        var key = ((ulong) id << 32) | StringHash.Compute((string) quest.m_questName ?? "");
+        lock (s_lock) {
+            if (!s_poiSpots.TryGetValue(key, out var spots)) {
+                return [];
+            }
+
+            string zone = goal.m_destinationZone;
+            return [.. spots.OrderBy(s => string.Equals(s.Zone, zone, StringComparison.OrdinalIgnoreCase) ? 0 : 1)];
+        }
     }
 
     private static Dictionary<string, uint> ResolveGoalIds(QuestTemplate quest) {
@@ -114,6 +138,7 @@ internal static class QuestArrowGoals {
             }
 
             var goals = new Dictionary<uint, Dictionary<uint, HashSet<string>>>();
+            var spots = new Dictionary<ulong, List<(string Zone, Imcodec.Math.Vector3 Spot)>>();
             try {
                 using var stream = RootArchiveLoader.GetFileStream(POI_FILE);
                 using var reader = new BinaryReader(stream, Encoding.Latin1);
@@ -128,7 +153,16 @@ internal static class QuestArrowGoals {
                     var key = reader.ReadUInt64();
                     reader.ReadByte();
                     var zone = reader.ReadUInt16();
-                    reader.ReadBytes(8 + 12 + 2);
+                    reader.ReadUInt64();
+                    var spot = new Imcodec.Math.Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    reader.ReadBytes(2);
+                    if (zone < zones.Length) {
+                        if (!spots.TryGetValue(key, out var keySpots)) {
+                            spots[key] = keySpots = [];
+                        }
+
+                        keySpots.Add((zones[zone], spot));
+                    }
 
                     var questHash = (uint) key;
                     var goalId = (uint) (key >> 32);
@@ -153,6 +187,7 @@ internal static class QuestArrowGoals {
             }
 
             s_poiGoals = goals;
+            s_poiSpots = spots;
 
             return s_poiGoals;
         }

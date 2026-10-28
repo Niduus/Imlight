@@ -725,7 +725,12 @@ internal sealed partial class ManagerWindow {
 
         if (server is { Goals.Count: > 0 }) {
             Heading($"Steps on this server ({server.Goals.Count})");
-            Lines(server.Goals.Select((g, i) => $"{i + 1}. {g.Text}{(g.Place.Length > 0 && !g.Text.Contains(g.Place, StringComparison.OrdinalIgnoreCase) ? $" ({g.Place})" : "")}"));
+            Lines(["Click a step to teleport right to where it happens."]);
+            for (var i = 0; i < server.Goals.Count; i++) {
+                var g = server.Goals[i];
+                _qtDetails.Children.Add(StepButton(server.Code, i + 1,
+                    $"{g.Text}{(g.Place.Length > 0 && !g.Text.Contains(g.Place, StringComparison.OrdinalIgnoreCase) ? $" ({g.Place})" : "")}", false, RunQuestCommand));
+            }
         }
 
         if (wiki is { Goals.Count: > 0 }) {

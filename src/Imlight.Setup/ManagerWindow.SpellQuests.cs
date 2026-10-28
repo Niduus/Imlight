@@ -489,12 +489,77 @@ internal sealed partial class ManagerWindow {
         _ => when,
     };
 
+    private static IBrush QuestAccent(byte alpha = 255) => ManagerTheme.Brush(ManagerTheme.AccentColor("Quests"), alpha);
+
+    /// <summary>
+    /// A quest step as a highlighted button: click it to land right where the step happens (.tpstep: where the game's
+    /// quest arrow points, else where its NPC stands), even when the quests or doors before it are not done (Niduus,
+    /// 2026-10-28: "a highlight around certain text that will be used as a button. This button will TP me to EXACTLY the
+    /// place I need to TP to").
+    /// </summary>
+    private Button StepButton(string code, int step, string text, bool here, Func<string, string, Task> run) {
+        var brush = here ? GOOD : QuestAccent();
+        var content = new StackPanel {
+            Orientation = Orientation.Horizontal, Spacing = 8,
+            Children = {
+                new TextBlock { Text = $"Step {step}", FontSize = 11, FontWeight = FontWeight.Bold, Foreground = brush, VerticalAlignment = VerticalAlignment.Center },
+                new TextBlock { Text = Regex.Replace(text, @",(?=\S)", ", "), FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, MaxWidth = 360 },
+                new TextBlock { Text = "➜", Foreground = brush, FontSize = 14, VerticalAlignment = VerticalAlignment.Center },
+            },
+        };
+        if (here) {
+            content.Children.Add(QtTag("you are here", GOOD));
+        }
+
+        var button = new Button {
+            Content = content, Padding = new Thickness(12, 7), CornerRadius = new CornerRadius(10),
+            Background = here ? ManagerTheme.Brush(Colors.LimeGreen, 30) : QuestAccent(26), BorderBrush = brush, BorderThickness = new Thickness(1.5),
+            HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 10, 0, 2),
+            Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand),
+        };
+        ToolTip.SetTip(button, $"Teleports you right to step {step}: where the game's quest arrow points for it, or where its NPC stands " +
+                               "(.tpstep). Works even when the quests or doors before it are not done. Start the server and log in first.");
+
+        return Action(button, () => run($".tpstep {code} {step}", $"Going to step {step} of {code}: {text}."));
+    }
+
+    // What NPCs say: one block per speaker turn, the name in the accent colour above their words.
+    private Control SpeechBlock(string heading, IEnumerable<SqLine> lines) {
+        var panel = new StackPanel { Spacing = 6, Margin = new Thickness(0, 8, 0, 0) };
+        panel.Children.Add(new TextBlock { Text = heading.ToUpperInvariant(), FontSize = 10, FontWeight = FontWeight.Bold, Foreground = MUTED });
+        var turns = new List<(string Speaker, List<string> Words)>();
+        foreach (var line in lines) {
+            var text = CleanLine(line.Text);
+            if (turns.Count > 0 && turns[^1].Speaker == line.Speaker) {
+                turns[^1].Words.Add(text);
+            }
+            else {
+                turns.Add((line.Speaker, [text]));
+            }
+        }
+
+        foreach (var (speaker, words) in turns) {
+            var turn = new StackPanel { Spacing = 2 };
+            if (speaker.Length > 0) {
+                turn.Children.Add(new TextBlock { Text = speaker, FontWeight = FontWeight.SemiBold, FontSize = 12, Foreground = QuestAccent() });
+            }
+
+            turn.Children.Add(new SelectableTextBlock { Text = string.Join("\n\n", words), TextWrapping = TextWrapping.Wrap, FontSize = 13, LineHeight = 19 });
+            panel.Children.Add(new Border {
+                Background = ManagerTheme.Glass(9), CornerRadius = new CornerRadius(8), Padding = new Thickness(10, 7),
+                BorderBrush = QuestAccent(90), BorderThickness = new Thickness(2, 0, 0, 0), Child = turn,
+            });
+        }
+
+        return panel;
+    }
+
     private void ShowSpellChain(SqChain? chain) {
         _sqPicked = chain;
         _sqDetails.Children.Clear();
         if (chain is null) {
             _sqDetails.Children.Add(Sub("Pick a chain on the left to see each of its quests in order: who gives it, its steps, everything " +
-                                        "its NPCs say, the spell it teaches, and where your wizard is."));
+                                        "its NPCs say, the spell it teaches, and where your wizard is. Click a step to teleport right to it."));
 
             return;
         }
@@ -503,29 +568,35 @@ internal sealed partial class ManagerWindow {
         var state = ChainStateOf(chain, out var at);
         var guide = _quests.GroupBy(q => q.Code, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
-        void Heading(string text, IBrush? brush = null) => _sqDetails.Children.Add(new TextBlock {
-            Text = text, FontSize = 15, FontWeight = FontWeight.SemiBold, Foreground = brush ?? ManagerTheme.Accent("Quests"),
-            Margin = new Thickness(0, 14, 0, 0), TextWrapping = TextWrapping.Wrap,
-        });
-
-        void Small(string text) => _sqDetails.Children.Add(new TextBlock {
-            Text = text.ToUpperInvariant(), FontSize = 11, FontWeight = FontWeight.Bold, Foreground = MUTED, Margin = new Thickness(0, 8, 0, 0),
-        });
-
-        void Lines(IEnumerable<string> lines) => _sqDetails.Children.Add(new SelectableTextBlock {
-            Text = string.Join('\n', lines), TextWrapping = TextWrapping.Wrap, FontSize = 13,
-        });
-
         _sqDetails.Children.Add(new SelectableTextBlock {
             Text = quests.Count == 1 ? quests[0].Title : $"{quests[0].Title} → {quests[^1].Title}",
-            FontSize = 18, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+            FontSize = 20, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap,
         });
-        _sqDetails.Children.Add(Sub($"{chain.World}. {(quests.Count == 1 ? "A single quest" : $"A chain of {quests.Count} quests")} that teaches " +
-                                    $"{SpellsText(chain)}." + (chain.OpenedBy is { } by ? $" It opens after the main story quest {by.Title}." : "")));
-        if (chain.Variants.Count > 1) {
-            _sqDetails.Children.Add(Sub($"Each school has its own copy of these quests ({chain.Variants.Count}); this shows " +
-                                        (ReferenceEquals(quests, chain.Quests) ? "the first one" : "the one your wizard is doing") + "."));
+        _sqDetails.Children.Add(Sub($"{chain.World} · {(quests.Count == 1 ? "a single quest" : $"a chain of {quests.Count} quests")}" +
+                                    (chain.OpenedBy is { } by ? $" · opens after the main story quest {by.Title}" : "")));
+
+        // What it all leads to.
+        var spells = chain.Variants.SelectMany(v => v).Distinct().SelectMany(q => SpellsOfQuest(q.Code))
+            .GroupBy(sp => sp.Name, StringComparer.OrdinalIgnoreCase).Select(g => g.First()).ToList();
+        var spellWrap = new WrapPanel();
+        foreach (var spell in spells) {
+            spellWrap.Children.Add(WithMargin(QtTag(spell.School.Length > 0 ? $"{spell.Name} · {spell.School}" : spell.Name, QuestAccent()), new Thickness(0, 3, 6, 3)));
         }
+
+        _sqDetails.Children.Add(new Border {
+            Background = QuestAccent(30), CornerRadius = new CornerRadius(10), Padding = new Thickness(12, 9), Margin = new Thickness(0, 6, 0, 0),
+            Child = new StackPanel {
+                Spacing = 4,
+                Children = {
+                    new TextBlock { Text = "★  Teaches", FontWeight = FontWeight.Bold, Foreground = QuestAccent() },
+                    spellWrap,
+                    chain.Variants.Count > 1
+                        ? Sub($"Each school has its own copy of these quests and learns its own spell; this shows " +
+                              (ReferenceEquals(quests, chain.Quests) ? "the first copy." : "the copy your wizard is doing."))
+                        : new Panel(),
+                },
+            },
+        });
 
         _sqDetails.Children.Add(new TextBlock {
             Text = _sqWizard.SelectedItem is not QuestWizard ? "Pick a wizard above to see where they are in this chain."
@@ -537,88 +608,98 @@ internal sealed partial class ManagerWindow {
                     _ => $"{_sqWizardName} hasn't started it, and can't yet: an earlier quest is needed first.",
                 },
             Foreground = state == SqState.Done ? GOOD : state == SqState.OnIt ? WARN : MUTED, TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 6, 0, 0), FontWeight = FontWeight.SemiBold,
         });
 
         for (var i = 0; i < quests.Count; i++) {
             var quest = quests[i];
             var questState = QuestStateOf(quest);
             var lines = _sqLines.GetValueOrDefault(quest.Code)?.Lines ?? [];
-            var spells = SpellsOfQuest(quest.Code);
-            var mark = questState switch {
-                SqState.OnIt => "  (in your quest book)",
-                SqState.Done => "  (done)",
-                _ => "",
+            var questSpells = SpellsOfQuest(quest.Code);
+            var stateBrush = questState switch {
+                SqState.Done => GOOD,
+                SqState.OnIt => WARN,
+                _ => QuestAccent(),
             };
-            Heading($"{i + 1}. {quest.Title}{mark}", questState == SqState.Done ? GOOD : questState == SqState.OnIt ? WARN : null);
+            var card = new StackPanel { Spacing = 4 };
 
-            var about = new List<string>();
+            var title = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
+            title.Children.Add(new Border {
+                Width = 26, Height = 26, CornerRadius = new CornerRadius(13), Background = stateBrush, VerticalAlignment = VerticalAlignment.Center,
+                Child = new TextBlock {
+                    Text = questState == SqState.Done ? "✓" : $"{i + 1}", FontWeight = FontWeight.Bold, Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+                },
+            });
+            title.Children.Add(new TextBlock { Text = quest.Title, FontSize = 16, FontWeight = FontWeight.Bold, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, MaxWidth = 300 });
+            if (questState == SqState.OnIt) {
+                title.Children.Add(QtTag("in your quest book", WARN));
+            }
+            else if (questState == SqState.Done) {
+                title.Children.Add(QtTag("done", GOOD));
+            }
+
+            card.Children.Add(title);
             var zone = guide.GetValueOrDefault(quest.Code)?.Zone ?? "";
-            about.Add(quest.StartsByItself ? "Starts by itself when the quest before it is done."
-                : quest.GiverName.Length > 0 ? $"Given by {quest.GiverName}{(zone.Length > 0 ? $", in {zone}" : "")}." : "Who gives it is not known.");
-            if (quest.Level > 0) {
-                about.Add($"Level {quest.Level}. Code {quest.Code}.");
-            }
-            else {
-                about.Add($"Code {quest.Code}.");
+            var giver = quest.StartsByItself ? "Starts by itself when the quest before it is done"
+                : quest.GiverName.Length > 0 ? $"From {quest.GiverName}{(zone.Length > 0 ? $" · {zone}" : "")}" : "Who gives it is not known";
+            card.Children.Add(WithMargin(Sub($"{giver}{(quest.Level > 0 ? $" · level {quest.Level}" : "")} · {quest.Code}"), new Thickness(36, 0, 0, 0)));
+            if (questSpells.Count > 0) {
+                var wrap = new WrapPanel { Margin = new Thickness(36, 2, 0, 0) };
+                wrap.Children.Add(WithCenter(new TextBlock { Text = "★ Teaches ", Foreground = QuestAccent(), FontWeight = FontWeight.SemiBold }));
+                foreach (var spell in questSpells) {
+                    wrap.Children.Add(WithMargin(QtTag(spell.School.Length > 0 ? $"{spell.Name} · {spell.School} only" : spell.Name, QuestAccent()), new Thickness(0, 2, 6, 2)));
+                }
+
+                card.Children.Add(wrap);
             }
 
-            if (spells.Count > 0) {
-                about.Add("Teaches: " + string.Join(", ", spells.Select(s => s.School.Length > 0 ? $"{s.Name} (only {s.School} wizards)" : s.Name)) + ".");
-            }
-
-            Lines(about);
-
-            var buttons = new WrapPanel();
+            var buttons = new WrapPanel { Margin = new Thickness(36, 4, 0, 0) };
             var code = quest.Code;
             var start = Plain("Start");
             ToolTip.SetTip(start, "Gives this quest now (.quest forcegrant), even if the quests before it are not done. Start the server and log in first.");
             buttons.Children.Add(Spaced(Action(start, () => RunSpellQuestCommand($".quest forcegrant {code}", $"Started {quest.Title}."))));
             if (zone.Length > 0) {
-                var teleport = Plain("Teleport");
+                var teleport = Plain("Go to the giver");
                 ToolTip.SetTip(teleport, $"Takes you to {zone}, where it is given (.tp).");
                 buttons.Children.Add(Spaced(Action(teleport, () => RunSpellQuestCommand($".tp {zone}", $"Teleporting to {zone}."))));
             }
 
             buttons.Children.Add(Spaced(Action(Plain("Copy code"), () => CopyAsync(code))));
-            _sqDetails.Children.Add(buttons);
+            card.Children.Add(buttons);
 
             // The offer and what the giver says while you have it.
             var questLines = lines.Where(l => l.Step == 0).ToList();
             foreach (var group in questLines.GroupBy(l => l.When)) {
-                Small(WhenShown(0, group.Key));
-                Lines(group.Select(l => (l.Speaker.Length > 0 ? $"{l.Speaker}: " : "") + CleanLine(l.Text)));
+                card.Children.Add(SpeechBlock(WhenShown(0, group.Key), group));
             }
 
             if (questLines.All(l => l.When != "Prep")) {
-                Small("When it is offered");
-                Lines(["No lines: the quest's files have nothing for its offer."]);
+                card.Children.Add(WithMargin(Sub("No lines when it is offered: the quest's files have none."), new Thickness(0, 8, 0, 0)));
             }
 
             var held = _sqSteps.GetValueOrDefault(quest.Code);
             for (var s = 0; s < quest.Goals.Count; s++) {
                 var goal = quest.Goals[s];
                 var here = questState == SqState.OnIt && held?.Contains(goal.Name) == true;
-                var stepTitle = new TextBlock {
-                    Text = $"Step {s + 1}: {goal.Text}{(goal.Place.Length > 0 && !goal.Text.Contains(goal.Place, StringComparison.OrdinalIgnoreCase) ? $" ({goal.Place})" : "")}" +
-                           (here ? "   ◀ you are here" : ""),
-                    FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 10, 0, 0),
-                };
-                if (here) {
-                    stepTitle.Foreground = WARN;
-                }
-
-                _sqDetails.Children.Add(stepTitle);
+                var text = goal.Text + (goal.Place.Length > 0 && !goal.Text.Contains(goal.Place, StringComparison.OrdinalIgnoreCase) ? $" ({goal.Place})" : "");
+                card.Children.Add(StepButton(code, s + 1, text, here, RunSpellQuestCommand));
                 var stepLines = lines.Where(l => l.Step == s + 1).ToList();
                 if (stepLines.Count == 0) {
-                    _sqDetails.Children.Add(Sub(goal.Kind == "Talk" ? "No lines: nobody says anything on this step." : "No lines on this step."));
+                    card.Children.Add(Sub(goal.Kind == "Talk" ? "No lines: nobody says anything on this step." : "No lines on this step."));
                     continue;
                 }
 
-                foreach (var group in stepLines.GroupBy(l => WhenShown(s + 1, l.When))) {
-                    Small(group.Key);
-                    Lines(group.Select(l => (l.Speaker.Length > 0 ? $"{l.Speaker}: " : "") + CleanLine(l.Text)));
+                var step = s + 1;
+                foreach (var group in stepLines.GroupBy(l => WhenShown(step, l.When))) {
+                    card.Children.Add(SpeechBlock(group.Key, group));
                 }
             }
+
+            _sqDetails.Children.Add(new Border {
+                Margin = new Thickness(0, 12, 0, 0), Padding = new Thickness(14, 12), CornerRadius = new CornerRadius(12),
+                Background = ManagerTheme.Glass(7), BorderBrush = stateBrush, BorderThickness = new Thickness(3, 0, 0, 0), Child = card,
+            });
         }
     }
 
