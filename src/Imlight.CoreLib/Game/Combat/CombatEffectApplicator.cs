@@ -227,6 +227,10 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kMaxHealthDamage:
                 cinematicTime += ApplyMaxHealthDamageEffect(effect, targets);
                 break;
+            // Shadow Backlash Damage: the target's backlash as a share of its health (CombatResolver.ShadowMagic.cs).
+            case kSpellEffects.kBacklashDamage:
+                CombatResolver.ApplyBacklashDamage(targets);
+                break;
             case kSpellEffects.kReshuffle:
                 foreach (var target in targets.Where(t => t?._combatDeck is not null)) {
                     ApplyReshuffleEffect(target);
@@ -525,6 +529,16 @@ internal static class CombatEffectApplicator {
             cinematicTime += wards.Count * HANGING_EFFECT_CONSUME_TIME;
             damage = CombatWards.GetIncomingDamageFromWards(wards, damage, ref pierceLeft);
 
+            // A teammate's Shadow Sentinel takes its Intercept share of the hit (CombatResolver.ShadowMagic.cs).
+            var (interceptor, interceptPercent) = CombatResolver.Interceptor(target);
+            if (interceptor is not null && interceptPercent > 0 && damage > 0) {
+                var share = (int) Math.Floor(damage * interceptPercent / 100.0);
+                damage -= share;
+                var taken = DoDamageToTarget(interceptor, share, finalSchool, pierceLeft);
+                damageDealt += taken;
+                hits.Add($"{TargetName(interceptor)}: intercepted {taken}");
+            }
+
             // A cheat's "hits heal me": that share of the hit heals the target instead.
             var turned = (int) Math.Floor(damage * Math.Clamp(target.HitShare("HealFromHits"), 0, 100) / 100.0);
             var dealt = DoDamageToTarget(target, damage - turned, finalSchool, pierceLeft);
@@ -749,7 +763,7 @@ internal static class CombatEffectApplicator {
 
     private static List<SpellEffect> Auras(CombatDuelSubCircle target, kHangingDisposition disposition)
         => target?._hangingEffects is { } hanging
-            ? [.. hanging.Where(x => CombatRequirements.IsAura(x) && CombatCharms.Disposed(x, disposition)).Reverse()]
+            ? [.. hanging.Where(x => CombatRequirements.IsAura(x) && !CombatResolver.IsShadowSelf(x) && CombatCharms.Disposed(x, disposition)).Reverse()]
             : [];
 
     /// <summary>
@@ -771,7 +785,7 @@ internal static class CombatEffectApplicator {
 
             // A participant has one aura at a time: a new one (Fortify, Amplify, Frenzy...) takes the old one's place.
             if (CombatRequirements.IsAura(copy)) {
-                hanging.RemoveAll(x => CombatRequirements.IsAura(x) && (x.m_spellTemplateID != id || id == 0));
+                hanging.RemoveAll(x => CombatRequirements.IsAura(x) && !CombatResolver.IsShadowSelf(x) && (x.m_spellTemplateID != id || id == 0));
             }
 
             hanging.Add(copy);

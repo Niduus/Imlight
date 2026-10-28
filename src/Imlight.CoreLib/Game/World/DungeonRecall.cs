@@ -76,6 +76,11 @@ internal static class DungeonRecall {
     // The instance zones that exist, by container owner and zone path.
     private static readonly ConcurrentDictionary<(ulong Owner, string Zone), int> s_openZones = new(new OwnerZoneComparer());
 
+    // The characters whose instance is a real dungeon, raid or private copy (one they went into by a sigil, a raid gate,
+    // the button or [Instance] PrivateZones, and the rooms they walked on to from it). Small zones load as instances too
+    // (shop and house interiors of the open world: a hard limit of 12 or less), and those give no recall.
+    private static readonly ConcurrentDictionary<ulong, byte> s_inDungeon = new();
+
     private static readonly Lock s_timerLock = new();
     private static Timer s_timer;
 
@@ -178,9 +183,33 @@ internal static class DungeonRecall {
         }
     }
 
-    internal static void Entered(ulong ownerCharId, ulong charId, string zone) {
-        // A house is in its owner's container too, but going home is not going back into the dungeon.
-        if (ownerCharId == 0 || charId == 0 || Housing.HouseZoneIndex.IsHouseZone(zone)) {
+    /// <summary>Whether the character is in a dungeon, raid or private copy, not an open world interior.</summary>
+    internal static bool IsInDungeon(ulong charId) => s_inDungeon.ContainsKey(charId);
+
+    /// <summary>Records whether the zone the character is going to is a dungeon, raid or private copy.</summary>
+    internal static void SetInDungeon(ulong charId, bool inDungeon) {
+        if (inDungeon) {
+            s_inDungeon[charId] = 0;
+        }
+        else {
+            s_inDungeon.TryRemove(charId, out _);
+        }
+    }
+
+    /// <param name="hasBattles">The zone has battle circles of its own: a copy with battles in it is a dungeon, raid or
+    /// instance however the wizard got there (Xibalba is reached by the quest helper's teleport, not a sigil).</param>
+    internal static void Entered(ulong ownerCharId, ulong charId, string zone, bool hasBattles) {
+        if (ownerCharId == 0 || charId == 0 || Housing.HouseZoneIndex.IsHouseZone(zone)
+            || PvP.PvPRegistry.IsMatchInstanceOwner(ownerCharId)) {
+            return;
+        }
+
+        if (hasBattles) {
+            SetInDungeon(charId, true);
+        }
+
+        // An open world interior that loads as an instance (a shop) is no dungeon.
+        if (!IsInDungeon(charId)) {
             return;
         }
 

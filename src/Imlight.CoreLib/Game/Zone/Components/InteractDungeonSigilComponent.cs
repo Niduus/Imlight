@@ -70,6 +70,7 @@ using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 using Imlight.CoreLib.WizardData.Models.World;
@@ -435,16 +436,44 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     // The pad's own requirements in the zone file, as the game has them: the Olde Town Drains want the quest "Dog Gone
     // Doug" given or done (Niduus, 2026-10-27: dungeons let him in before their quest). [World] AccessAllWorlds opens
     // every pad; a pad the Customs tab added has none.
+    // Requirements the server can never make true (a quest rebuilt under a name of its own, a "QT-" entry no quest of
+    // the server sets) count as met, or as the quest they name when the server knows it, so no pad stays shut for good
+    // (SigilRequirements; Niduus 2026-10-28: "sigils via main quests are not interactable", Galvanost Tower).
     private bool MayEnter(Wizard wizard) {
         var requirements = SigilInfo?.m_requirements;
         if (wizard is null || requirements?.m_requirements is not { Count: > 0 } || World.WorldAccess.AllOpen) {
             return true;
         }
 
-        return RequirementDispatcher.EvaluateRequirements(requirements,
+        LogUnmeetableOnce();
+        var met = SigilRequirements.IsMet(requirements,
             new ZoneRequirementContext(requirements, null, null, wizard, ZoneActor, SigilInfo.m_zoneTag2.ToString()) {
                 ScriptState = Zone?.ScriptState,
             });
+        if (!met && _keptOutLogged.Add(wizard.CharId)) {
+            Logger.Information("Dungeon sigil {0} in {1} keeps {2} out: needs {3}.",
+                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, wizard.CharId,
+                    SigilRequirements.Describe(requirements)));
+        }
+
+        return met;
+    }
+
+    // Players told once in the log that the pad keeps them out.
+    private readonly HashSet<ulong> _keptOutLogged = [];
+    private bool _unmeetableLogged;
+
+    private void LogUnmeetableOnce() {
+        if (_unmeetableLogged) {
+            return;
+        }
+
+        _unmeetableLogged = true;
+        var unmeetable = SigilRequirements.Unmeetable(SigilInfo?.m_requirements).Distinct().ToList();
+        if (unmeetable.Count > 0) {
+            Logger.Information("Dungeon sigil {0} in {1}: counts as met what the server can never make true: {2}.",
+                Logger.Args(SigilInfo.m_zoneTag2.ToString(), Entity.Zone?.ZonePath, string.Join(", ", unmeetable)));
+        }
     }
 
     private sealed record PartyMember(IActorRef Actor, ulong CharId, int FaceSlot);

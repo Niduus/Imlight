@@ -89,6 +89,11 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     public ulong ContainerOwnerId { get; }
 
     /// <summary>
+    /// Whether the zone has battle circles of its own; an instance with battles counts for Dungeon Recall.
+    /// </summary>
+    public bool HasBattles { get; private set; }
+
+    /// <summary>
     /// How many battles against a ZoneObjects encounter's boss run in this zone now. A distinct spawner (the boss's
     /// minions) does not spawn while one runs, so the room's helpers are not doubled by spawned ones.
     /// </summary>
@@ -279,7 +284,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
         _instancedCharIds[playerActor] = wizard.CharId;
         World.InstancedPlayers.Enter(wizard.CharId, this);
-        World.DungeonRecall.Entered(ContainerOwnerId, wizard.CharId, ZonePath);
+        World.DungeonRecall.Entered(ContainerOwnerId, wizard.CharId, ZonePath, HasBattles);
     }
 
     protected override void PostStop() {
@@ -397,6 +402,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         // A change to those files (the Customs tab moving an object) reaches this copy while it runs.
         ZoneObjects.Register(Self, ZonePath, message.Variant);
         ZoneData = message.ZoneData;
+        HasBattles = ZoneData?.m_objectList?.Any(o => o is CombatSigilObjectInfo) == true;
         SetUpRaid(message.TriggerData);
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply

@@ -522,6 +522,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
         // Spied counts down at the end of every round.
         CountDownSpied();
+        // Shadow pacts are fed or not, creatures step in and backlash strikes (CombatResolver.ShadowMagic.cs); their
+        // casts go in the round's last queue below.
+        cinematicTime += TickShadowPacts();
         // Boss cheats for the end of the round, after everyone's move.
         cinematicTime += BossCheatsAtRoundEnd(combatActionList, cinematicTime);
         NoteHealthBeat(cinematicTime);
