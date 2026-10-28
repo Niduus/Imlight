@@ -255,6 +255,7 @@ internal class MountRideService : MessageService {
         if (driver is not null) {
             SendRidePrompt(driver);
             _promptDriverObject = objectId;
+            Logger.Information("{0} is near {1}'s mount and sees the ride prompt.", Logger.Args(wizard.CharId, driver.CharId));
         }
     }
 
@@ -284,14 +285,15 @@ internal class MountRideService : MessageService {
         return best;
     }
 
+    // The prompt shows for a wizard outside the driver's group too: pressing X then says to join the group first,
+    // where no prompt at all left them guessing (Niduus 2026-10-28).
     private static bool CanBoard(Wizard wizard, MountDriver driver, IActorRef zone)
         => driver.CharId != wizard.CharId
            && driver.HasFreeSeat
            && !driver.InDuel
            && !driver.Stowed
            && driver.ZoneActor is not null
-           && driver.ZoneActor.Equals(zone)
-           && (!MountRides.RequireGroup || GroupRegistry.AreGrouped(wizard.CharId, driver.CharId));
+           && driver.ZoneActor.Equals(zone);
 
     private void SendRidePrompt(MountDriver driver) {
         var memento = new ServiceMementoBase {
@@ -350,6 +352,7 @@ internal class MountRideService : MessageService {
             return;
         }
 
+        Logger.Information("{0} pressed X on {1}'s mount.", Logger.Args(GetActiveWizard()?.CharId, driver.CharId));
         Board(driver, fromCommand: false);
     }
 
@@ -397,7 +400,7 @@ internal class MountRideService : MessageService {
             refusal = "Take off your own mount first.";
         }
         else if (MountRides.RequireGroup && !GroupRegistry.AreGrouped(wizard.CharId, driver.CharId)) {
-            refusal = "You have to be in their group to ride their mount.";
+            refusal = $"You have to be in {(driver.Name is { Length: > 0 } name ? name + "'s" : "the driver's")} group to ride their mount. Ask them for a group invite, then press X again.";
         }
         else if (driver.ZoneActor is null || !driver.ZoneActor.Equals(SessionActor.GetZoneActor())) {
             refusal = "They are not in this area.";
@@ -419,6 +422,7 @@ internal class MountRideService : MessageService {
 
         if (refusal is not null) {
             InformGameClient(refusal);
+            Logger.Information("{0} could not get on {1}'s mount: {2}", Logger.Args(wizard.CharId, driver.CharId, refusal));
 
             return;
         }

@@ -61,9 +61,11 @@ internal class CommandRideProtocol : CommandProtocol {
             .Where(driver => driver.CharId != me.CharId
                              && (!MountRides.RequireGroup || GroupRegistry.AreGrouped(me.CharId, driver.CharId)))
             .ToList();
+        var outsideGroup = MountRides.Drivers.Count(driver => driver.CharId != me.CharId) - drivers.Count;
         if (text.Length == 0) {
             InformSenderClient(drivers.Count == 0
                 ? "Nobody in your group is on a mount with room for passengers."
+                  + (outsideGroup > 0 ? " Someone outside your group is: join their group first." : "")
                 : "Mounts you can ride: " + string.Join("; ", drivers.Select(driver =>
                     $"{driver.Name} ({driver.RiderIds.Length} of {driver.Passengers} seats taken)")) + ". Type .ride and their name.");
 
@@ -73,7 +75,11 @@ internal class CommandRideProtocol : CommandProtocol {
         var match = drivers.FirstOrDefault(driver => string.Equals(driver.Name, text, StringComparison.OrdinalIgnoreCase))
                     ?? drivers.FirstOrDefault(driver => driver.Name?.StartsWith(text, StringComparison.OrdinalIgnoreCase) == true);
         if (match is null) {
-            InformSenderClient($"Nobody named {text} is on a mount you can ride{(MountRides.RequireGroup ? " (they have to be in your group)" : "")}.");
+            var outsider = MountRides.Drivers.FirstOrDefault(driver => driver.CharId != me.CharId
+                                                                       && driver.Name?.StartsWith(text, StringComparison.OrdinalIgnoreCase) == true);
+            InformSenderClient(outsider is not null
+                ? $"{outsider.Name} is not in your group. Join their group first, then type .ride {outsider.Name} again."
+                : $"Nobody named {text} is on a mount you can ride{(MountRides.RequireGroup ? " (they have to be in your group)" : "")}.");
 
             return;
         }
