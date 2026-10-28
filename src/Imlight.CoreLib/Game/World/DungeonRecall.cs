@@ -81,6 +81,10 @@ internal static class DungeonRecall {
     // (shop and house interiors of the open world: a hard limit of 12 or less), and those give no recall.
     private static readonly ConcurrentDictionary<ulong, byte> s_inDungeon = new();
 
+    // The rooms of a copy whose boss was beaten. Like live, a finished dungeon gives no way back (Niduus, 2026-10-28:
+    // "is there no instance check for when it's completed to not give a dungeon recall?"). Forgotten when the room closes.
+    private static readonly ConcurrentDictionary<(ulong Owner, string Zone), byte> s_completed = new(new OwnerZoneComparer());
+
     private static readonly Lock s_timerLock = new();
     private static Timer s_timer;
 
@@ -98,6 +102,13 @@ internal static class DungeonRecall {
     /// <param name="session">The wizard's session, or null when they are logging out (the button comes at their next login).</param>
     internal static void Offer(IActorRef session, ulong charId, ulong ownerCharId, string zone, string location, string displayName) {
         if (!Enabled || charId == 0 || string.IsNullOrEmpty(zone) || !IsOpen(ownerCharId, zone)) {
+            return;
+        }
+
+        if (IsCompleted(ownerCharId, zone)) {
+            Logger.Information("Dungeon Recall: none for {0}, the boss of {1} (copy of {2}) is beaten.",
+                Logger.Args(charId, zone, ownerCharId));
+
             return;
         }
 
@@ -164,6 +175,26 @@ internal static class DungeonRecall {
         return held;
     }
 
+    /// <summary>A boss was beaten in this room of the copy: the dungeon is done, so leaving it gives no recall, and
+    /// anyone who left it earlier loses theirs.</summary>
+    internal static void MarkCompleted(ulong ownerCharId, string zone) {
+        if (ownerCharId == 0 || string.IsNullOrEmpty(zone) || !IsOpen(ownerCharId, zone)
+            || !s_completed.TryAdd((ownerCharId, zone), 0)) {
+            return;
+        }
+
+        Logger.Information("Dungeon Recall: the boss of {0} (copy of {1}) is beaten, it gives no recall now.",
+            Logger.Args(zone, ownerCharId));
+        foreach (var ticket in s_tickets.Values) {
+            if (ticket.OwnerCharId == ownerCharId && string.Equals(ticket.Zone, zone, StringComparison.OrdinalIgnoreCase)) {
+                Remove(ticket, "its boss is beaten");
+            }
+        }
+    }
+
+    internal static bool IsCompleted(ulong ownerCharId, string zone)
+        => zone is not null && s_completed.ContainsKey((ownerCharId, zone));
+
     // The zones tell these.
 
     internal static void ZoneOpened(ulong ownerCharId, string zone) {
@@ -180,6 +211,7 @@ internal static class DungeonRecall {
         var key = (ownerCharId, zone);
         if (s_openZones.AddOrUpdate(key, 0, (_, n) => n - 1) <= 0) {
             s_openZones.TryRemove(key, out _);
+            s_completed.TryRemove(key, out _);
         }
     }
 
