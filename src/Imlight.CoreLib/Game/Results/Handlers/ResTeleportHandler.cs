@@ -61,6 +61,7 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                     && exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase)) {
                     context.GetPlayerRef().Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
                         LeaveInstance = true,
+                        ByZoneDoor = true,
                         SendToClient = true,
                         OwnerCharId = playerObj.m_characterId,
                     });
@@ -79,6 +80,7 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
             DestinationZone = destinationZone,
             DestinationLocation = destinationLocation,
             SendToClient = true,
+            ByZoneDoor = true,
             OwnerCharId = playerObj.m_characterId
         };
 

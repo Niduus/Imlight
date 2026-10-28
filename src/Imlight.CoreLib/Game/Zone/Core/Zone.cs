@@ -84,6 +84,11 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     public bool IsInstance { get; }
 
     /// <summary>
+    /// The owner of the instance container this zone is in, or 0 for a shared zone.
+    /// </summary>
+    public ulong ContainerOwnerId { get; }
+
+    /// <summary>
     /// How many battles against a ZoneObjects encounter's boss run in this zone now. A distinct spawner (the boss's
     /// minions) does not spawn while one runs, so the room's helpers are not doubled by spawned ones.
     /// </summary>
@@ -154,9 +159,13 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     /// <param name="dynamicZoneId">The dynamic zone ID of the zone.</param>
     /// <param name="isInstance">Whether this zone is a private, per-owner instance.</param>
     /// <param name="questProgress">The quest progress shared by the zones of one instance container; null for a zone of its own.</param>
-    public Zone(string zonePath, uint dynamicZoneId, bool isInstance, InstanceQuestProgress questProgress = null) {
+    /// <param name="containerOwnerId">The owner of the instance container the zone is in; 0 for a shared zone.</param>
+    public Zone(string zonePath, uint dynamicZoneId, bool isInstance, InstanceQuestProgress questProgress = null,
+                ulong containerOwnerId = 0) {
         this.ScriptState = new ZoneScriptState(questProgress);
         this.ZonePath = zonePath;
+        this.ContainerOwnerId = containerOwnerId;
+        World.DungeonRecall.ZoneOpened(containerOwnerId, zonePath);
         this._dynamicZoneId = dynamicZoneId;
         this.IsInstance = isInstance;
         this._isLoading = true;
@@ -185,8 +194,9 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     }
 
     // Props
-    public static Props Props(string zonePath, uint dynamicZoneId, bool isInstance, InstanceQuestProgress questProgress = null)
-        => Akka.Actor.Props.Create(() => new Zone(zonePath, dynamicZoneId, isInstance, questProgress))
+    public static Props Props(string zonePath, uint dynamicZoneId, bool isInstance, InstanceQuestProgress questProgress = null,
+                              ulong containerOwnerId = 0)
+        => Akka.Actor.Props.Create(() => new Zone(zonePath, dynamicZoneId, isInstance, questProgress, containerOwnerId))
             .WithMailbox("akka.actor.mailbox.zone-priority");
 
     protected override void PreRestart(Exception reason, object message) {
@@ -269,13 +279,16 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
         _instancedCharIds[playerActor] = wizard.CharId;
         World.InstancedPlayers.Enter(wizard.CharId, this);
+        World.DungeonRecall.Entered(ContainerOwnerId, wizard.CharId, ZonePath);
     }
 
     protected override void PostStop() {
         ZoneObjects.Unregister(Self);
         foreach (var charId in _instancedCharIds.Values) {
             World.InstancedPlayers.Leave(charId, this);
+            World.DungeonRecall.Left(ContainerOwnerId, charId);
         }
+        World.DungeonRecall.ZoneClosed(ContainerOwnerId, ZonePath);
 
         base.PostStop();
     }
@@ -305,6 +318,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         ScriptState.PlayerCount = _players.Count;
         if (_instancedCharIds.Remove(message.PlayerActor, out var charId)) {
             World.InstancedPlayers.Leave(charId, this);
+            World.DungeonRecall.Left(ContainerOwnerId, charId);
         }
         ReleaseObjectIdentifier(message.MobileId);
         ScheduleIdleExpiryIfEmpty();
@@ -692,6 +706,15 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
             return;
         }
 
+        // A wizard's Dungeon Recall into this copy keeps it until the recall runs out (DungeonRecall), then this asks again.
+        var heldFor = (long) World.DungeonRecall.HeldUntil(ContainerOwnerId) - DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (heldFor > 0) {
+            Timers.StartSingleTimer(IDLE_EXPIRE_TIMER, new ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE(),
+                TimeSpan.FromSeconds(heldFor + 2));
+
+            return;
+        }
+
         // [Instance] ResetWhenEmpty: a dungeon starts fresh once everyone has left, after a few seconds so a
         // player still loading back in is not caught by it.
         if (ConfigurationManager.GetValue("Instance.ResetWhenEmpty", true)) {
@@ -713,6 +736,12 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE))]
     private void ReceiveInstanceIdleExpire(ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE message) {
         if (!IsInstance || _players.Count > 0) {
+            return;
+        }
+
+        if (World.DungeonRecall.HeldUntil(ContainerOwnerId) > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) {
+            ScheduleIdleExpiryIfEmpty();
+
             return;
         }
 

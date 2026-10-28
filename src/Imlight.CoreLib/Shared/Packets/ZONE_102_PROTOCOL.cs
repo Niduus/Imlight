@@ -809,6 +809,12 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool LeaveInstance;
 
         /// <summary>
+        /// The transfer is one of the zone's own doors or teleports (its exit among them), so leaving a dungeon this way
+        /// gives no Dungeon Recall. Fleeing, the Commons and Home buttons and the like leave it unset.
+        /// </summary>
+        public bool ByZoneDoor;
+
+        /// <summary>
         /// How the client is asked to load the house zone the player is entering. Null for every ordinary zone.
         /// </summary>
         public HouseEntry HouseEntry;
