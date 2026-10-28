@@ -501,8 +501,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // A battle slow to set up leaves the wizard who ran into the monster standing there, so it is logged.
+        var setUp = System.Diagnostics.Stopwatch.StartNew();
         InitializeDuel(message.StartingParticipants);
         ActivateSigil();
+        if (setUp.ElapsedMilliseconds > 1000) {
+            Logger.Warning("Duel {0} | took {1} ms to set up after a monster was touched.",
+                Logger.Args(Duel?.m_duelID.Full ?? SigilId, setUp.ElapsedMilliseconds));
+        }
     }
 
     // Which battle each wizard (by global id) is in, shared by every battle circle of every zone. A claim is the
