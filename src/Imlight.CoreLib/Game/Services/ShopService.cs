@@ -198,6 +198,12 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
                 break;
             }
 
+            // The game gets its confirm with the first copy, so the Buy button is ready again right away while
+            // the rest go in (Niduus, 2026-10-28).
+            if (bought == 0) {
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
+            }
+
             bought++;
         }
 
@@ -207,7 +213,6 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
         if (bought < copies) {
             InformGameClient($"Bought {bought} of {copies}: not enough gold or room for the rest.");
         }
@@ -699,41 +704,42 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
     private void BuyIntoBag(Wizard wizard, WizItemTemplate template, int goldCost, uint quantity) {
         var templateId = (ulong) template.m_templateID;
         var copies = (int) Math.Clamp(quantity, 1u, MAX_COPIES);
-        var bought = 0;
-        while (bought < copies && wizard.GameStats.m_currentGold >= goldCost) {
-            if (template is PetSnackItemTemplate) {
-                if (!wizard.AddSnack(templateId, out var snack) || !s_itemSerializer.Serialize(snack, 24, out var snackData)) {
-                    break;
-                }
 
-                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
-                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE { GlobalID = wizard.GameObjectID, ItemID = snack.m_globalID, Quantity = snack.m_quantity });
-                if (bought == 0) {
-                    SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = snack.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
-                }
-            }
-            else {
-                if (!wizard.AddReagent(templateId, out var reagent) || !s_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
-                    break;
-                }
-
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE { GlobalID = wizard.GameObjectID, ItemID = reagent.m_globalID, Quantity = reagent.m_quantity });
-                if (bought == 0) {
-                    SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = reagent.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
-                }
-            }
-
-            wizard.RemoveGold(goldCost);
-            bought++;
-        }
-
-        if (bought == 0) {
+        // The whole stack goes in at once and is saved once, so a big Buy More answers right away (Niduus, 2026-10-28).
+        var affordable = goldCost > 0 ? (int) Math.Min(copies, wizard.GameStats.m_currentGold / goldCost) : copies;
+        if (affordable <= 0) {
             SendShopDenyMessage();
 
             return;
         }
 
+        int bought;
+        if (template is PetSnackItemTemplate) {
+            bought = wizard.AddSnacks(templateId, affordable, out var snack);
+            if (bought <= 0 || !s_itemSerializer.Serialize(snack, 24, out var snackData)) {
+                SendShopDenyMessage();
+
+                return;
+            }
+
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
+            SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE { GlobalID = wizard.GameObjectID, ItemID = snack.m_globalID, Quantity = snack.m_quantity });
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = snack.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
+        }
+        else {
+            bought = wizard.AddReagents(templateId, affordable, out var reagent);
+            if (bought <= 0 || !s_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
+                SendShopDenyMessage();
+
+                return;
+            }
+
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE { GlobalID = wizard.GameObjectID, ItemID = reagent.m_globalID, Quantity = reagent.m_quantity });
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_ITEMACQUISITION { ItemGlobalID = reagent.m_globalID, ItemTemplateID = (uint) templateId, ItemLocation = 1 });
+        }
+
+        wizard.RemoveGold(goldCost * bought);
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD { Gold = wizard.GameStats.m_currentGold, MaxGold = wizard.GameStats.m_baseGoldPouch });
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM());
         if (bought < copies) {

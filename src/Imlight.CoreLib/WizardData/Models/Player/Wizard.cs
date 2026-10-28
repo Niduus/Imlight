@@ -1254,6 +1254,45 @@ public class Wizard {
         return true;
     }
 
+    /// <summary>
+    /// Adds up to <paramref name="count"/> of one snack in a single step: the stack grows once and is saved once,
+    /// so a big Buy More answers right away instead of saving every copy (Niduus, 2026-10-28).
+    /// </summary>
+    /// <returns>How many were added: fewer than asked when the stack fills up (999), 0 when nothing fit.</returns>
+    public int AddSnacks(ulong snackTemplateId, int count, out ClientPetSnackItem snackObj) {
+        snackObj = PetSnackBehavior.GetSnack(snackTemplateId);
+        var existing = snackObj is not null;
+        var room = ServerPetSnackBehavior.MaxStack - (existing ? snackObj.m_quantity : 0);
+        var added = Math.Min(count, room);
+        if (added <= 0) {
+            return 0;
+        }
+
+        if (existing) {
+            snackObj.m_quantity += added;
+            WizardPetSnackCollection.UpdateSnack(snackObj);
+        }
+        else {
+            snackObj = (ClientPetSnackItem) CoreObjectFactory.FinalizeCoreObject(snackTemplateId);
+            if (snackObj is null) {
+                return 0;
+            }
+
+            CoreObjectFactory.InitializeCoreObjectBehaviors(snackObj, snackObj.m_templateID);
+            snackObj.m_characterId = (GID) CharId;
+            snackObj.m_quantity = added;
+            if (!PetSnackBehavior.AddSnack(snackObj)) {
+                return 0;
+            }
+
+            WizardPetSnackCollection.AddSnack(snackObj);
+        }
+
+        WizardCollection.UpdateCharacterItems(this);
+
+        return added;
+    }
+
     public bool RemoveSnack(ulong globalId, out ClientPetSnackItem snack)
         => RemoveSnack(globalId, 1, out snack);
 
@@ -1449,6 +1488,42 @@ public class Wizard {
         WizardCollection.UpdateCharacterItems(this);
 
         return true;
+    }
+
+    /// <summary>
+    /// Adds up to <paramref name="count"/> of one reagent in a single step: the stack grows once and is saved once,
+    /// so a big Buy More answers right away instead of saving every copy (Niduus, 2026-10-28).
+    /// </summary>
+    /// <returns>How many were added: fewer than asked when the stack fills up (999), 0 when nothing fit.</returns>
+    public int AddReagents(ulong reagentTemplateId, int count, out ClientReagentItem reagentObj) {
+        reagentObj = AlchemyBehavior.GetReagent(reagentTemplateId);
+        var existing = reagentObj is not null;
+        var room = ServerAlchemyBehavior.MaxStack - (existing ? reagentObj.m_quantity : 0);
+        var added = Math.Min(count, room);
+        if (added <= 0) {
+            return 0;
+        }
+
+        if (existing) {
+            reagentObj.m_quantity += added;
+        }
+        else {
+            reagentObj = (ClientReagentItem) CoreObjectFactory.FinalizeCoreObject(reagentTemplateId);
+            if (reagentObj is null) {
+                return 0;
+            }
+
+            reagentObj.m_characterId = (GID) CharId;
+            reagentObj.m_quantity = added;
+            if (!AlchemyBehavior.AddReagent(reagentObj)) {
+                return 0;
+            }
+        }
+
+        WizardReagentCollection.SetReagentQuantity(reagentObj);
+        WizardCollection.UpdateCharacterItems(this);
+
+        return added;
     }
 
     public bool RemoveReagent(ulong globalId, out ClientReagentItem reagent) {

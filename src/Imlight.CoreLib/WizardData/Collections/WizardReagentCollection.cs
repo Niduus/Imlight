@@ -63,6 +63,30 @@ internal sealed class WizardReagentCollection {
     }
 
     /// <summary>
+    /// Saves the reagent's whole stack: sets the stored quantity to the bag's, or stores the reagent when it is new.
+    /// </summary>
+    public static void SetReagentQuantity(ClientReagentItem reagentItem) {
+        using var session = s_store.OpenSession();
+
+        var existingReagent = session.Query<ClientReagentItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .FirstOrDefault(x => x.m_characterId == reagentItem.m_characterId
+                              && x.m_templateID == reagentItem.m_templateID);
+        if (existingReagent != null) {
+            existingReagent.m_quantity = reagentItem.m_quantity;
+            session.SaveChanges();
+
+            return;
+        }
+
+        session.Store(reagentItem);
+        var metaData = session.Advanced.GetMetadataFor(reagentItem);
+        metaData[Raven.Client.Constants.Documents.Metadata.Collection] = CollectionName;
+
+        session.SaveChanges();
+    }
+
+    /// <summary>
     /// Removes a reagent from the reagent collection. Assumes that the caller has already
     /// removed this particular reagent from the player's inventory.
     /// </summary>

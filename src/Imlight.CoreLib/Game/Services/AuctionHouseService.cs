@@ -58,6 +58,7 @@ using Imlight.Common;
 using Imcodec.Types;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Bazaar;
+using Imlight.CoreLib.Shared.Behaviors;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -238,19 +239,10 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
             return;
         }
 
-        switch (quote.Kind) {
-            case BazaarKind.Card:
-                BuyTreasureCard(wizard, quote);
+        if (quote.Kind is BazaarKind.Card or BazaarKind.Snack or BazaarKind.Reagent) {
+            SendBuyConfirm(failed: BuyStack(wizard, quote, 1) == 0);
 
-                return;
-            case BazaarKind.Snack:
-                BuySnack(wizard, quote);
-
-                return;
-            case BazaarKind.Reagent:
-                BuyReagent(wizard, quote);
-
-                return;
+            return;
         }
 
         // The game sends the id with the bazaar's type bits on top (9 << 40); the template is the low 32 bits.
@@ -379,6 +371,20 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 Logger.Information("Bazaar: Sell More of {0}, which the player does not hold.", Logger.Args(id));
 
                 continue;
+            }
+
+            if (BazaarLink.Find(id) is { Kind: BazaarKind.Card or BazaarKind.Snack or BazaarKind.Reagent } stackQuote) {
+                // Cards, snacks and reagents go in all at once: one take from the stock and one save, so the game
+                // gets its answer right away instead of after every copy is saved (Niduus, 2026-10-28).
+                var goldBefore = wizard.GameStats.m_currentGold;
+                var bought = BuyStack(wizard, stackQuote, quantity);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (bought > 0 ? 0 : 1), WebFailure = 0, Credits = 0 });
+                SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, bought);
+                if (bought > 0 && bought < quantity) {
+                    InformGameClient($"Bought {bought} of {quantity}: not enough gold, stock or room for the rest.");
+                }
+
+                return;
             }
 
             if (BazaarLink.Find(id) is not null) {
@@ -642,94 +648,92 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     }
 
 
-    private void BuyReagent(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarQuote quote) {
-        var templateId = quote.Id & 0xFFFFFFFFUL;
-        if (!BazaarLink.Take(templateId, 1, WizardName(wizard), quote.BuyPrice)) {
-            SendBuyConfirm(failed: true);
-
-            return;
+    /// <summary>
+    /// Buys up to <paramref name="count"/> of a card, snack or reagent: as many as the gold, the stock and the stack
+    /// room allow, taken from the stock in one go and saved once. Sends no buy confirm.
+    /// </summary>
+    /// <returns>How many were bought.</returns>
+    private int BuyStack(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarQuote quote, int count) {
+        var templateId = quote.Kind == BazaarKind.Card ? quote.Id : quote.Id & 0xFFFFFFFFUL;
+        var n = Math.Min(count, quote.Stock);
+        if (quote.BuyPrice > 0) {
+            n = Math.Min(n, wizard.GameStats.m_currentGold / quote.BuyPrice);
         }
 
-        if (!wizard.AddReagent(templateId, out var reagent) || !_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
-            BazaarLink.PutBack(templateId);
-            SendBuyConfirm(failed: true);
-
-            return;
+        n = quote.Kind switch {
+            BazaarKind.Snack => Math.Min(n, ServerPetSnackBehavior.MaxStack - (wizard.PetSnackBehavior.GetSnack(templateId)?.m_quantity ?? 0)),
+            BazaarKind.Reagent => Math.Min(n, ServerAlchemyBehavior.MaxStack - (wizard.AlchemyBehavior.GetReagent(templateId)?.m_quantity ?? 0)),
+            _ => n,
+        };
+        if (n < 1 || (quote.Kind == BazaarKind.Card && string.IsNullOrEmpty(quote.SpellName))
+            || !BazaarLink.Take(templateId, n, WizardName(wizard), quote.BuyPrice * n)) {
+            return 0;
         }
 
-        // Same messages as a crown shop reagent: it goes into the reagent bag.
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
-        SendItemAcquisition(reagent.m_globalID, reagent.m_templateID);
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE {
-            GlobalID = wizard.GameObjectID,
-            ItemID = reagent.m_globalID,
-            Quantity = reagent.m_quantity,
-        });
+        int added;
+        switch (quote.Kind) {
+            case BazaarKind.Reagent: {
+                added = wizard.AddReagents(templateId, n, out var reagent);
+                if (added < 1 || !_itemSerializer.Serialize(reagent, 27, out var reagentData)) {
+                    BazaarLink.PutBack(templateId, n);
 
-        wizard.RemoveGold(quote.BuyPrice);
+                    return 0;
+                }
+
+                // Same messages as a crown shop reagent: it goes into the reagent bag.
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTADD { GlobalID = wizard.GameObjectID, Data = reagentData });
+                SendItemAcquisition(reagent.m_globalID, reagent.m_templateID);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_REAGENTUPDATE {
+                    GlobalID = wizard.GameObjectID,
+                    ItemID = reagent.m_globalID,
+                    Quantity = reagent.m_quantity,
+                });
+                break;
+            }
+            case BazaarKind.Snack: {
+                added = wizard.AddSnacks(templateId, n, out var snack);
+                if (added < 1 || !_itemSerializer.Serialize(snack, 24, out var snackData)) {
+                    BazaarLink.PutBack(templateId, n);
+
+                    return 0;
+                }
+
+                // Same messages as .mod addsnack: the snack goes into the snack bag.
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
+                SendItemAcquisition(snack.m_globalID, snack.m_templateID);
+                SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
+                    GlobalID = wizard.GameObjectID,
+                    ItemID = snack.m_globalID,
+                    Quantity = snack.m_quantity,
+                });
+                break;
+            }
+            default: {
+                // Same as buying from a treasure card shop: the cards go into the treasure book and are saved once.
+                var spellId = (int) StringHash.Compute(quote.SpellName);
+                for (var i = 0; i < n; i++) {
+                    SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTOBOOK { SpellID = spellId, EnchantmentID = 0 });
+                    wizard.SpellbookBehavior.AddTreasureCard(quote.SpellTemplateId);
+                }
+
+                WizardCollection.AddTreasureCards(wizard, quote.SpellTemplateId, n);
+                added = n;
+                break;
+            }
+        }
+
+        if (added < n) {
+            BazaarLink.PutBack(templateId, n - added);
+        }
+
+        wizard.RemoveGold(quote.BuyPrice * added);
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
             Gold = wizard.GameStats.m_currentGold,
             MaxGold = wizard.GameStats.m_baseGoldPouch
         });
-        SendStockOf(templateId);
-        SendBuyConfirm(failed: false);
-    }
+        SendStockOf(quote.Kind == BazaarKind.Card ? quote.Id : templateId);
 
-    private void BuySnack(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarQuote quote) {
-        var templateId = quote.Id & 0xFFFFFFFFUL;
-        if (!BazaarLink.Take(templateId, 1, WizardName(wizard), quote.BuyPrice)) {
-            SendBuyConfirm(failed: true);
-
-            return;
-        }
-
-        if (!wizard.AddSnack(templateId, out var snack) || !_itemSerializer.Serialize(snack, 24, out var snackData)) {
-            BazaarLink.PutBack(templateId);
-            SendBuyConfirm(failed: true);
-
-            return;
-        }
-
-        // Same messages as .mod addsnack: the snack goes into the snack bag.
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKADD { GlobalID = wizard.GameObjectID, Data = snackData });
-        SendItemAcquisition(snack.m_globalID, snack.m_templateID);
-        SendToSocket(new PET_9_PROTOCOL.MSG_PETSNACKUPDATE {
-            GlobalID = wizard.GameObjectID,
-            ItemID = snack.m_globalID,
-            Quantity = snack.m_quantity,
-        });
-
-        wizard.RemoveGold(quote.BuyPrice);
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
-            Gold = wizard.GameStats.m_currentGold,
-            MaxGold = wizard.GameStats.m_baseGoldPouch
-        });
-        SendStockOf(templateId);
-        SendBuyConfirm(failed: false);
-    }
-
-    private void BuyTreasureCard(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BazaarQuote quote) {
-        if (string.IsNullOrEmpty(quote.SpellName) || !BazaarLink.Take(quote.Id, 1, WizardName(wizard), quote.BuyPrice)) {
-            SendBuyConfirm(failed: true);
-
-            return;
-        }
-
-        // Same as buying from a treasure card shop: the card goes into the treasure book and is saved.
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTOBOOK {
-            SpellID = (int) StringHash.Compute(quote.SpellName),
-            EnchantmentID = 0,
-        });
-        wizard.SpellbookBehavior.AddTreasureCard(quote.SpellTemplateId);
-        WizardCollection.AddTreasureCard(wizard, quote.SpellTemplateId);
-
-        wizard.RemoveGold(quote.BuyPrice);
-        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
-            Gold = wizard.GameStats.m_currentGold,
-            MaxGold = wizard.GameStats.m_baseGoldPouch
-        });
-        SendStockOf(quote.Id);
-        SendBuyConfirm(failed: false);
+        return added;
     }
 
 }

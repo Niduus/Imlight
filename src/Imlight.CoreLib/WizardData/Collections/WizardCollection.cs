@@ -716,6 +716,14 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Adds several copies of one treasure card to the spellbook of a wizard in one save.
+    /// </summary>
+    public static void AddTreasureCards(Wizard wizard, uint spellTemplateId, int count) {
+        UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.SpellbookBehavior.AddTreasureCards(Enumerable.Repeat(spellTemplateId, count)));
+    }
+
+    /// <summary>
     /// Removes a treasure card from the spellbook of a wizard.
     /// </summary>
     /// <param name="wizard">The wizard whose spellbook will be modified.</param>
