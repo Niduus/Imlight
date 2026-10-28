@@ -91,6 +91,8 @@ internal static class CharacterHelper {
         // Pet talents and socketed jewels, on top of the gear.
         EquipmentExtras.Forget(wizard);
         EquipmentExtras.Refresh(wizard);
+        // The perks of the astral school picked with .astral (Game/Combat/AstralSchools.cs).
+        Imlight.CoreLib.Game.Combat.AstralSchools.Apply(wizard.GameStats);
 
         // Check for level/XP mismatches, but don't modify XP on login.
         // Any mismatch will be corrected on the next XP gain.

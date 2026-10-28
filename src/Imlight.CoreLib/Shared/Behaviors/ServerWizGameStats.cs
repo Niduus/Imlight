@@ -63,6 +63,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     public int m_shadowPipSlots;
     // "Shadow Dancer" (Moon Cliffs) is done: shadow magic like the game ([Battle] ShadowMagicNeedsQuest).
     public bool m_shadowQuestDone;
+    // The astral school picked with .astral on top of the wizard's own ("Sun", "Moon", "Star", "Shadow"); empty for none.
+    public string m_astralSchool;
     public byte m_fishingLevel;
     public int m_fishingXP;
     public uint m_subscriberBenefitFlags;
@@ -170,6 +172,9 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     [JsonIgnore] public byte m_startingPips;
     [JsonIgnore] public byte m_startingPowerPips;
 
+    // What AstralSchools.Apply last added, so it can be taken back before the perks are added again.
+    [JsonIgnore] internal AstralPerks AstralPerksAdded;
+
     [JsonIgnore] public MagicSchool MagicSchool;
     [JsonIgnore] public int Level;
 
@@ -202,6 +207,7 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     /// 2026-10-20).
     /// </summary>
     internal void ClearEquipmentStats() {
+        AstralPerksAdded = default;
         m_bonusShadowPipRating = 0;
         m_dmgBonusPercent = null;
         m_dmgBonusFlat = null;

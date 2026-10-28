@@ -527,6 +527,18 @@ public class Wizard {
     }
 
     /// <summary>
+    /// Sets the astral school picked with .astral ("Sun", "Moon", "Star", "Shadow"; null for none), puts its perks in
+    /// the stats and saves it.
+    /// </summary>
+    public void SetAstralSchool(string school) {
+        GameStats.m_astralSchool = school;
+        Imlight.CoreLib.Game.Combat.AstralSchools.Apply(GameStats);
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    /// <summary>
     /// Remembers that "Shadow Dancer" is done: the wizard has shadow magic like the game ([Battle] ShadowMagicNeedsQuest).
     /// </summary>
     public void MarkShadowQuestDone() {
