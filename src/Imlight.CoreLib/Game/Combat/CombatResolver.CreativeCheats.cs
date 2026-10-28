@@ -206,7 +206,18 @@ public partial class CombatResolver {
         };
     }
 
-    private int GetVar(CombatDuelSubCircle owner, string name, string scope) => _cheatVars.GetValueOrDefault(VarKey(owner, name, scope));
+    private int GetVar(CombatDuelSubCircle owner, string name, string scope)
+        => SavedCheatVars.KeyOf(owner, name, scope) is { } saved ? SavedCheatVars.Get(saved) : _cheatVars.GetValueOrDefault(VarKey(owner, name, scope));
+
+    // A variable set: kept for this battle, or (Scope Saved / SavedAll) in the file, across battles.
+    private void SetVar(CombatDuelSubCircle owner, string name, string scope, int value) {
+        if (SavedCheatVars.KeyOf(owner, name, scope) is { } saved) {
+            SavedCheatVars.Set(saved, value);
+        }
+        else {
+            _cheatVars[VarKey(owner, name, scope)] = value;
+        }
+    }
 
     private static readonly Regex s_varWord = new(@"\{([A-Za-z_][A-Za-z0-9_ ]*)\}", RegexOptions.Compiled);
 
@@ -216,7 +227,8 @@ public partial class CombatResolver {
         var own = (owner?.ParticipantObject?.m_globalID.Full ?? 0, name);
 
         return _cheatVars.TryGetValue(own, out var mine) ? mine.ToString(CultureInfo.InvariantCulture)
-            : _cheatVars.TryGetValue((BATTLE_VARS, name), out var battle) ? battle.ToString(CultureInfo.InvariantCulture) : m.Value;
+            : _cheatVars.TryGetValue((BATTLE_VARS, name), out var battle) ? battle.ToString(CultureInfo.InvariantCulture)
+            : SavedCheatVars.Find(owner, name) is { } saved ? saved.ToString(CultureInfo.InvariantCulture) : m.Value;
     });
 
     private static bool Compare(double value, string op, double than) => (op ?? "").Trim() switch {
@@ -588,7 +600,7 @@ public partial class CombatResolver {
                 }
 
                 var value = Remembered(boss, step, On("Self").FirstOrDefault(t => t is not null));
-                _cheatVars[VarKey(boss, step.Var, step.Scope)] = value;
+                SetVar(boss, step.Var, step.Scope, value);
                 Logger.Information("Duel {0} | Slot {1} | {2}: remembers {3} ({4}) as {5}.",
                     Logger.Args(duel, boss.SlotIndex, bossName, value, step.From, step.Var.Trim()));
 
@@ -600,8 +612,7 @@ public partial class CombatResolver {
                     return true;
                 }
 
-                var key = VarKey(boss, step.Var, step.Scope);
-                var now = _cheatVars.GetValueOrDefault(key);
+                var now = GetVar(boss, step.Var, step.Scope);
                 var value = (step.Op ?? "").Trim().ToLowerInvariant() switch {
                     "add" or "+" => now + step.Amount,
                     "subtract" or "-" => now - step.Amount,
@@ -609,7 +620,7 @@ public partial class CombatResolver {
                     "random" => Random.Shared.Next(Math.Min(0, step.Amount), Math.Max(0, step.Amount) + 1),
                     _ => step.Amount,
                 };
-                _cheatVars[key] = value;
+                SetVar(boss, step.Var, step.Scope, value);
                 Logger.Information("Duel {0} | Slot {1} | {2}: {3} is now {4}.", Logger.Args(duel, boss.SlotIndex, bossName, step.Var.Trim(), value));
 
                 return true;

@@ -29,7 +29,11 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
+using Akka.Actor;
+using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
+using Imlight.CoreLib.Game.DropTables;
+using Imlight.CoreLib.WizardData.Models.World;
 
 namespace Imlight.CoreLib.Game.Combat;
 
@@ -155,6 +159,70 @@ public partial class CombatResolver {
 
                 return true;
             }
+            case "spellrule": {
+                // Kind Hit / Fizzle / Crit / NoCrit for Target's (Self) next Count spells (0: the rest of the battle).
+                var rule = (step.Kind ?? "").Trim();
+                var left = step.Count > 0 ? step.Count : -1;
+                foreach (var target in On("Self").Where(t => t is not null && t.IsAlive)) {
+                    if (rule.Equals("Hit", StringComparison.OrdinalIgnoreCase) || rule.Equals("Fizzle", StringComparison.OrdinalIgnoreCase)) {
+                        (target.CheatHitRule, target.CheatHitLeft) = (char.ToUpperInvariant(rule[0]) + rule[1..].ToLowerInvariant(), left);
+                    }
+                    else if (rule.Equals("Crit", StringComparison.OrdinalIgnoreCase)) {
+                        (target.CheatCritRule, target.CheatCritLeft) = ("Crit", left);
+                    }
+                    else if (rule.Equals("NoCrit", StringComparison.OrdinalIgnoreCase)) {
+                        (target.CheatCritRule, target.CheatCritLeft) = ("NoCrit", left);
+                    }
+                    else if (rule.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
+                        (target.CheatHitRule, target.CheatHitLeft, target.CheatCritRule, target.CheatCritLeft) = ("", 0, "", 0);
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3}'s next {4} spells: {5}.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, left < 0 ? "all" : left.ToString(), rule));
+                }
+
+                return true;
+            }
+            case "reward": {
+                // Target's wizards (every wizard in the battle, or you in a player cheat) get Gold, Xp, Tp and Items at once,
+                // as a drop would give them, and a chat line saying so.
+                var items = Words(step.Items).Select(i => new DropItemResult { ItemId = i, Quantity = Math.Max(1, step.Count) }).ToList();
+                foreach (var target in On(boss.IsHumanPlayer ? "Self" : "AllPlayers").Where(t => t?._wizard is not null && t.ParticipantActor is not null)) {
+                    var result = new DropTableResult {
+                        GoldAmount = Math.Max(0, step.Gold), ExperienceAmount = Math.Max(0, step.Xp), TrainingPoints = Math.Max(0, step.Tp),
+                        Items = [.. items.Select(i => new DropItemResult { ItemId = i.ItemId, Quantity = i.Quantity })],
+                    };
+                    LootGranter.Grant(target.ParticipantActor, target._wizard, result);
+                    var got = string.Join(", ", new[] {
+                        step.Gold > 0 ? $"{step.Gold} gold" : "", step.Xp > 0 ? $"{step.Xp} experience" : "", step.Tp > 0 ? $"{step.Tp} training points" : "",
+                        result.Items.Count > 0 ? $"{result.Items.Count} item(s)" : "",
+                    }.Where(t => t.Length > 0));
+                    if (got.Length > 0) {
+                        target.ParticipantActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = $"Reward: {got}.", Modal = 0 });
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2}: rewards slot {3} with {4}.", Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, got));
+                }
+
+                return true;
+            }
+            case "noflee":
+                // Target (everyone) can't flee for the rest of the battle (Kind Off: can again).
+                foreach (var target in On("Everyone").Where(t => t is not null)) {
+                    target.CheatNoFlee = !(step.Kind ?? "").Trim().Equals("Off", StringComparison.OrdinalIgnoreCase);
+                }
+
+                return true;
+            case "handsize":
+                // Target's (Self) hand is refilled up to Amount cards (0-7) for the next Rounds hands (0: the rest of the battle).
+                foreach (var target in On("Self").Where(t => t?._combatDeck is not null && t.IsAlive)) {
+                    target._combatDeck.CheatHandSize = Math.Clamp(step.Amount, 0, 7);
+                    target._combatDeck.CheatHandRounds = step.Rounds > 0 ? step.Rounds : -1;
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3}'s hand size is {4}.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, target._combatDeck.CheatHandSize));
+                }
+
+                return true;
             default:
                 return false;
         }

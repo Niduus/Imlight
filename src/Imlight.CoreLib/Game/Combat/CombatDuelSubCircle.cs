@@ -141,6 +141,29 @@ public partial class CombatDuelSubCircle {
     internal CombatTeam OccupiedTeam => SlotType == CombatSlotType.Creature && Occupied ? CombatTeam.Monster : CombatTeam.Player;
     internal bool IsAlive => ParticipantGameStats?.m_currentHitpoints > 0;
     internal bool CheatNoFizzle;
+
+    // Cheats (CombatResolver.ExtraCheats.cs): its next spells always land ("Hit") or fizzle ("Fizzle"), and always or never
+    // crit ("Crit", "NoCrit"), for so many more spells (-1: the rest of the battle).
+    // A cheat locked fleeing: the Flee button counts as a pass (NoFlee).
+    internal bool CheatNoFlee;
+    internal string CheatHitRule = "";
+    internal int CheatHitLeft;
+    internal string CheatCritRule = "";
+    internal int CheatCritLeft;
+
+    /// <summary>A cheat's rule for this spell (and one spell less of it), or "".</summary>
+    internal static string UseRule(ref string rule, ref int left) {
+        if (rule.Length == 0 || left == 0) {
+            return "";
+        }
+
+        var now = rule;
+        if (left > 0 && --left == 0) {
+            rule = "";
+        }
+
+        return now;
+    }
     internal CombatDeck _combatDeck;
     private WizGameStats _clientGameStats;
     private WizGameStats _resolverGameStats;

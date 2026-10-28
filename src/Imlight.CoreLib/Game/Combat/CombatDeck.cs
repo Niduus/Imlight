@@ -58,6 +58,10 @@ internal class CombatDeck {
     private readonly List<CombatDeckSpellData> _spellData;
     private readonly List<CombatDeckSpellData> _treasureVault;
     private readonly byte _handSize;
+
+    // A cheat's hand size and for how many more hands (-1: the rest of the battle; 0: none).
+    internal int CheatHandSize;
+    internal int CheatHandRounds;
     private readonly List<CombatDeckSpellData> _usedUpSpellData;
     private readonly List<CombatDeckSpellData> _treasureVaultUsed;
     private readonly List<Spell> _cardsDiscardedThisTurn;
@@ -128,8 +132,16 @@ internal class CombatDeck {
         }
         _cardsDiscardedThisTurn.Clear();
 
-        // Refill the hand with new cards.
-        var cardsToRefill = _handSize - LastGivenHand.Count;
+        // Refill the hand with new cards (up to a cheat's hand size while it lasts: HandSize, CombatResolver.ExtraCheats.cs).
+        var size = (int) _handSize;
+        if (CheatHandRounds != 0) {
+            size = Math.Clamp(CheatHandSize, 0, 7);
+            if (CheatHandRounds > 0) {
+                CheatHandRounds--;
+            }
+        }
+
+        var cardsToRefill = size - LastGivenHand.Count;
         for (var i = 0; i < cardsToRefill; i++) {
             if (RemainingCardCount <= 0) {
                 break; // No more spells available.

@@ -141,6 +141,8 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_statKinds = [("Damage", "damage"), ("Resist", "resist"), ("Pierce", "pierce"), ("Critical", "critical"), ("Block", "block"), ("Accuracy", "accuracy")];
     private static readonly (string, string)[] s_statusKinds = [("Stunned", "stunned"), ("Confused", "confused"), ("Polymorphed", "polymorphed")];
     private static readonly (string, string)[] s_timeKinds = [("Hour", "hour"), ("Month", "month"), ("Day", "day of the month"), ("Weekday", "weekday")];
+    private static readonly (string, string)[] s_spellRules = [("Hit", "always land"), ("Fizzle", "always fizzle"), ("Crit", "always crit"), ("NoCrit", "never crit"), ("Off", "go back to normal")];
+    private static readonly (string, string)[] s_fleeOnOff = [("", "can't flee"), ("Off", "can flee again")];
     private static readonly (string, string)[] s_convertTo = [("Blade", "blades"), ("Weakness", "weaknesses"), ("Shield", "shields"), ("Trap", "traps"), ("Absorb", "absorbs")];
     private static readonly (string, string)[] s_protectOnOff = [("", "can't be removed"), ("Off", "can be removed again")];
     private static readonly (string, string)[] s_timings = [
@@ -235,7 +237,8 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_inSide = [("", "either side"), ("Us", "its side"), ("Them", "the other side")];
     private static readonly (string, string)[] s_condPips = [("", "pips (all kinds)"), ("Normal", "normal pips"), ("Power", "power pips"), ("Shadow", "shadow pips"),
         ("Fire", "Fire pips"), ("Ice", "Ice pips"), ("Storm", "Storm pips"), ("Myth", "Myth pips"), ("Life", "Life pips"), ("Death", "Death pips"), ("Balance", "Balance pips")];
-    private static readonly (string, string)[] s_scopes = [("", "its own"), ("Battle", "the battle's")];
+    private static readonly (string, string)[] s_scopes = [("", "its own"), ("Battle", "the battle's"),
+        ("Saved", "its own, kept across battles"), ("SavedAll", "everyone's, kept across battles")];
     // Niduus, 2026-10-28 ("what if I wanted it to be just universal stuff? like traps, Hex, Curse and Feint"): which
     // effects by their school.
     private static readonly (string, string)[] s_effectSchools = [("", "of any school"), ("Universal", "universal (all-school) only"), .. SCHOOLS[1..]];
@@ -842,6 +845,18 @@ internal static class CheatSpecs {
         new("D.Drain", BlockKind.Do, "heal", "drain health", "The target loses health (hit points or a share of its most) and it (you, in a player cheat) gets as much back.",
             "Drain {Amount} {Percent} health from {Target}", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster")],
             b => $"drain {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}"),
+        new("D.SpellRule", BlockKind.Do, "bolt", "always land, fizzle or crit", "The target's next spells (how many; 0 is the rest of the battle) always land, always fizzle, always crit or never crit. \"Go back to normal\" ends it. Example: when I pass, my next spell crits.",
+            "{Target}'s next {Count} spells {Kind}", [F("Target", CheatFieldType.Target, "Self"), F("Count", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "Crit", s_spellRules)],
+            b => $"the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} spells{Target(b).Replace(" on ", " of ")} {LabelOf(s_spellRules, b.Text("Kind"))}"),
+        new("D.HandSize", BlockKind.Do, "cards", "hand size", "The target's hand is filled up to this many cards (0 to 7) for the next hands (0 is the rest of the battle). Cards already in the hand stay.",
+            "Fill {Target}'s hand up to {Amount} cards for {Rounds} hands", [F("Target", CheatFieldType.Target, "Self"), F("Amount", CheatFieldType.Number, 4, max: 7), F("Rounds", CheatFieldType.Number, 1, max: 99)],
+            b => $"hand of {b.Number("Amount")} cards{Target(b).Replace(" on ", " for ")} for {(b.Number("Rounds") > 0 ? $"{b.Number("Rounds")} hands" : "the rest of the battle")}"),
+        new("D.Reward", BlockKind.Do, "gift", "give a reward", "Gives gold, experience, training points and items (item IDs or treasure card names, commas between; each this many times) right away, as a drop would, with a chat line saying so. For a boss: to every wizard in the battle (or whoever you pick); in a player cheat: to you. Example: when it is defeated, if no one healed, give the rare hat.",
+            "Give {Target} {Gold} gold, {Xp} experience, {Tp} training points and items {Items} x {Count}", [F("Target", CheatFieldType.Target, ""), F("Gold", CheatFieldType.Number, 0, max: 1_000_000), F("Xp", CheatFieldType.Number, 0, max: 1_000_000), F("Tp", CheatFieldType.Number, 0, max: 100), F("Items", CheatFieldType.Words, ""), F("Count", CheatFieldType.Number, 1, max: 99)],
+            b => $"give{Target(b).Replace(" on ", " ")} {string.Join(", ", new[] { b.Number("Gold") > 0 ? $"{N(b.Number("Gold"))} gold" : "", b.Number("Xp") > 0 ? $"{N(b.Number("Xp"))} XP" : "", b.Number("Tp") > 0 ? $"{b.Number("Tp")} training points" : "", b.Text("Items").Trim().Length > 0 ? $"items {b.Text("Items").Trim()}" : "" }.Where(t => t.Length > 0))}".TrimEnd()),
+        new("D.NoFlee", BlockKind.Do, "stop", "lock fleeing", "The target (everyone, if none is picked) can't flee for the rest of the battle: pressing Flee counts as a pass. Pick \"can flee again\" to unlock it.",
+            "{Target} {Kind}", [F("Target", CheatFieldType.Target, "Everyone"), F("Kind", CheatFieldType.Choice, "", s_fleeOnOff)],
+            b => $"{(Target(b).Trim().Length > 0 ? Target(b).Replace(" on ", "").Trim() : "everyone")} {LabelOf(s_fleeOnOff, b.Text("Kind"))}"),
         new("D.Remember", BlockKind.Do, "list", "remember a number", "Keeps a number read from the battle right now in a variable, for later blocks: put the variable's name in another block's \"as big as variable\" box (a blade as big as a trap), in an \"a variable\" If, or as {name} in a message. " +
             "\"The size of the spell that set it off\": a +30% trap is 30 (pick the Kind to read that part of the spell). The newest / biggest / all: effects of the Kind on the target right now. Example: when an enemy casts a trap, remember the size of the spell (trap) as trap, take its trap off, put a blade as big as variable trap on yourself.",
             "Remember {From} {EffectSchool} {Kind} {Target} as {Scope} variable {Var}", [F("From", CheatFieldType.Choice, "Spell", s_rememberFrom), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "trap")],
