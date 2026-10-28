@@ -628,6 +628,12 @@ internal static class BossCheats {
         // For ConvertEffects: what the effects become (Blade, Weakness, Shield, Trap, Absorb). For ProtectEffects: Off takes the
         // protection away (CombatResolver.ExtraCheats.cs).
         public string To { get; set; } = "";
+        // For Reward: gold, experience and training points, and items (template IDs or treasure card names, commas) given
+        // Count times each (1).
+        public int Gold { get; set; }
+        public int Xp { get; set; }
+        public int Tp { get; set; }
+        public string Items { get; set; } = "";
         public int Cheat { get; set; }
         // For RunCheat: its own Ifs must hold too.
         public bool Check { get; set; }

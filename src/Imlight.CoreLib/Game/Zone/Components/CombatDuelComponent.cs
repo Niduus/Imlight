@@ -840,6 +840,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             case CombatMoveType.Attack:
                 HandleAttackMove(caster, message.SpellSelection, message.SpellTarget, message.RawSpellTarget);
                 break;
+            case CombatMoveType.Flee when caster.CheatNoFlee:
+                // A cheat locked fleeing (NoFlee, CombatResolver.ExtraCheats.cs): it counts as a pass.
+                caster.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = "You can't flee this battle.", Modal = 0 });
+                HandlePassMove(caster);
+                break;
             case CombatMoveType.Flee:
                 HandleFleeAction(caster);
                 break;

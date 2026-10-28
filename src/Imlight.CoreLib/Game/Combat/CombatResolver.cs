@@ -1640,6 +1640,13 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             return true;
         }
 
+        switch (CombatDuelSubCircle.UseRule(ref caster.CheatHitRule, ref caster.CheatHitLeft)) {
+            case "Hit":
+                return true;
+            case "Fizzle":
+                return false;
+        }
+
         var spellAccuracy = (int) spell.m_accuracy;
         var schoolName = MagicSchools.GetMagicSchool(spell.m_magicSchoolID)?.m_schoolName ?? "";
         try {

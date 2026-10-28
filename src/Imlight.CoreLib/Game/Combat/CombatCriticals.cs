@@ -69,6 +69,16 @@ internal static class CombatCriticals {
     }
 
     internal static bool RollsCritical(CombatDuelSubCircle caster, CombatDuelSubCircle target, string school, bool isHeal) {
+        // A cheat's "always crit" / "never crit" (CombatResolver.ExtraCheats.cs) for its next spells.
+        if (caster is not null) {
+            switch (CombatDuelSubCircle.UseRule(ref caster.CheatCritRule, ref caster.CheatCritLeft)) {
+                case "Crit":
+                    return true;
+                case "NoCrit":
+                    return false;
+            }
+        }
+
         // One combined roll: the target's block is part of the crit chance, so a
         // separate block roll does not exist. Heals have no block side; they roll
         // the rating against K alone and can never be blocked.
