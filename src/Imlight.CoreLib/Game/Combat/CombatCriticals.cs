@@ -21,31 +21,38 @@
  * 
  * PURPOSE:
  * Owns the critical hit / block stat lookups, the level-scaled rating to
- * chance conversion, and the single roll that decides whether a cast crits.
+ * chance conversion (the stat page), and the crit roll of each cast.
  * 
  * USAGE EXAMPLE:
- * Called from CombatActionResolver once per cast; the resulting multiplier
- * threads into CombatEffectApplicator through the action resolver.
+ * CombatActionResolver starts a CastCrits per cast; CombatEffectApplicator
+ * asks it for each target's multiplier as damage and heals land.
  * 
  * NOTE:
- * Modern model: the crit chance depends on BOTH ratings (crit vs
- * crit + K * block), so it cannot be computed from the attacker's rating
- * alone. One roll decides the outcome; there is no separate block roll.
- * The landed multiplier varies between 1 and 2 by the crit/block ratio.
- * K(level) is the client's level-scaled crit divisor (100 + 3 * level in
- * WizStatisticEffectConfig), clamped into the 200-400 band. Heals roll the
- * rating against K alone, so they can never be blocked, and land the full
- * x2. Vengeance and Conviction add to their side of the roll, then are
- * consumed. Crits are gated by the config's level threshold.
+ * Live model (the 2020 crit/block rebalance): one roll per cast, checked
+ * against each target. Chance = levelFactor * 3C / (3C + B), where C is the
+ * caster's crit rating, B the target's block rating and levelFactor =
+ * min(level, 100) / 100. A landed crit multiplies by 1 + add * (1 - 3B / (C + 3B))
+ * (add = m_criticalDamageAddPercent / m_criticalHealAddPercent, 1 in the
+ * shipped data): x2 with no block, about x1.25 when block matches crit. A roll
+ * that would have crit with no block but missed because of it shows as
+ * blocked. Vengeance and Conviction add to their side of the roll, then are
+ * consumed.
+ * 
+ * HARD RULE (Niduus, 2026-10-28, not a setting): only an ENEMY can block a
+ * crit. A crit from a teammate (a crit heal on an ally, for players and
+ * creatures alike) rolls as if the receiver had no block, lands the full
+ * multiplier and never uses up the receiver's Conviction. Live lets the
+ * receiving teammate block it; Ahziael never does.
  * 
  * TODO:
  * 
  * Created by: Jooty
  * Version: KALI 1.0
- * Last Updated: 09/26/2026
+ * Last Updated: 10/28/2026
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Effects;
@@ -59,6 +66,8 @@ internal static class CombatCriticals {
     private const float RATING_K_MAX = 400f;
     private const float RATING_K_SLOPE = 1.25f;
     private const int RATING_K_BASE_LEVEL = 10;
+    private const int FULL_CRIT_LEVEL = 100; // The level factor stops growing here.
+    private const float BLOCK_WEIGHT = 3f;
 
     internal static float RatingToChance(float rating, int level) {
         if (rating <= 0f) {
@@ -68,55 +77,119 @@ internal static class CombatCriticals {
         return Math.Min(MAX_CHANCE, rating / (rating + GetRatingK(level)));
     }
 
-    internal static bool RollsCritical(CombatDuelSubCircle caster, CombatDuelSubCircle target, string school, bool isHeal) {
-        // A cheat's "always crit" / "never crit" (CombatResolver.ExtraCheats.cs) for its next spells.
-        if (caster is not null) {
-            switch (CombatDuelSubCircle.UseRule(ref caster.CheatCritRule, ref caster.CheatCritLeft)) {
-                case "Crit":
-                    return true;
-                case "NoCrit":
-                    return false;
-            }
-        }
-
-        // One combined roll: the target's block is part of the crit chance, so a
-        // separate block roll does not exist. Heals have no block side; they roll
-        // the rating against K alone and can never be blocked.
-        var level = GetLevel(caster);
-        if (level < WizStatisticEffectConfigLoader.GetCriticalHitLevelThreshold()) {
-            return false;
-        }
-
-        var crit = GetCriticalRating(caster, school);
-        var block = isHeal ? 1f : GetBlockRating(target, school);
-        var chance = Math.Min(MAX_CHANCE, crit / (crit + GetRatingK(level) * block));
-
-        // Vengeance and Conviction modify only their side of the roll, then are
-        // consumed. A heal roll has no block side, so Conviction does not apply.
-        chance += GetCritBoostPercent(caster);
-        if (!isHeal) {
-            chance -= GetCritBlockPercent(target);
-        }
-
-        chance = Math.Clamp(chance, 0f, MAX_CHANCE);
-
-        return Rolls(chance);
+    /// <summary>What one target got from a cast's crit roll.</summary>
+    internal readonly record struct Outcome(bool Crit, float Multiplier, bool Blocked) {
+        internal static readonly Outcome None = new(false, 1f, false);
     }
 
-    internal static float GetCritMultiplier(CombatDuelSubCircle caster, CombatDuelSubCircle target, string school, bool isHeal) {
-        // The landed crit multiplier, from the crit/block ratio:
-        // 2 - (3 * block) / (crit + 3 * block). Ranges from just above 1
-        // (block near crit) to 2 (crit far above block). Heals are never
-        // blocked, so they always land the full x2.
-        var crit = GetCriticalRating(caster, school);
-        var block = isHeal ? 0f : GetBlockRating(target, school);
+    /// <summary>
+    /// The crit roll of one cast: rolled once, checked against each target as its damage or heal lands.
+    /// </summary>
+    internal sealed class CastCrits {
 
-        var denominator = crit + 3f * block;
-        if (denominator <= 0f) {
-            return 1f;
+        private readonly CombatDuelSubCircle _caster;
+        private readonly string _school;
+        private readonly float _roll = (float) Random.Shared.NextDouble();
+        private bool _cheatRuleTaken;
+        private string _cheatRule;
+        private float? _boost;
+        private readonly Dictionary<CombatDuelSubCircle, Outcome> _byTarget = [];
+
+        internal CastCrits(CombatDuelSubCircle caster, string school) {
+            _caster = caster;
+            _school = school;
         }
 
-        return 2f - 3f * block / denominator;
+        /// <summary>The outcomes so far, by the target's slot.</summary>
+        internal Outcome ForSlot(int slot) {
+            foreach (var (target, outcome) in _byTarget) {
+                if (target.SlotIndex == slot) {
+                    return outcome;
+                }
+            }
+
+            return Outcome.None;
+        }
+
+        internal bool AnyCrit => _byTarget.Values.Any(x => x.Crit);
+
+        /// <summary>
+        /// The target's outcome. A teammate can only be critted by a heal, and never blocks it.
+        /// </summary>
+        internal Outcome For(CombatDuelSubCircle target, bool isHeal) {
+            if (target is null) {
+                return Outcome.None;
+            }
+
+            if (_byTarget.TryGetValue(target, out var known)) {
+                return known;
+            }
+
+            var outcome = Roll(target, isHeal);
+            _byTarget[target] = outcome;
+
+            return outcome;
+        }
+
+        private Outcome Roll(CombatDuelSubCircle target, bool isHeal) {
+            var enemy = target.OccupiedTeam != _caster.FightsFor;
+            if (!enemy && !isHeal) {
+                return Outcome.None;
+            }
+
+            // A cheat's "always crit" / "never crit" (CombatResolver.ExtraCheats.cs), used up once per cast.
+            if (!_cheatRuleTaken) {
+                _cheatRuleTaken = true;
+                _cheatRule = CombatDuelSubCircle.UseRule(ref _caster.CheatCritRule, ref _caster.CheatCritLeft);
+            }
+
+            if (_cheatRule == "NoCrit") {
+                return Outcome.None;
+            }
+
+            var crit = GetCriticalRating(_caster, _school);
+
+            // Only an enemy's block counts (HARD RULE above).
+            var block = enemy ? Math.Max(0f, GetBlockRating(target, _school)) : 0f;
+            var multiplier = Multiplier(crit, block, isHeal);
+            if (_cheatRule == "Crit") {
+                return new Outcome(true, multiplier, false);
+            }
+
+            if (crit <= 0f) {
+                return Outcome.None;
+            }
+
+            var levelFactor = Math.Clamp(GetLevel(_caster) / (float) FULL_CRIT_LEVEL, 0f, 1f);
+            _boost ??= GetCritBoostPercent(_caster);
+            var unblocked = Math.Clamp(levelFactor + _boost.Value, 0f, MAX_CHANCE);
+            var chance = levelFactor * BLOCK_WEIGHT * crit / (BLOCK_WEIGHT * crit + block) + _boost.Value;
+            if (enemy) {
+                chance -= GetCritBlockPercent(target);
+            }
+
+            chance = Math.Clamp(chance, 0f, MAX_CHANCE);
+            if (_roll < chance) {
+                return new Outcome(true, multiplier, false);
+            }
+
+            // It would have crit against no block: the enemy blocked it.
+            return new Outcome(false, 1f, enemy && _roll < unblocked);
+        }
+
+    }
+
+    private static float Multiplier(float crit, float block, bool isHeal) {
+        var config = WizStatisticEffectConfigLoader.Config;
+        var add = isHeal ? config?.m_criticalHealAddPercent ?? 1f : config?.m_criticalDamageAddPercent ?? 1f;
+        if (add <= 0f) {
+            add = 1f;
+        }
+
+        var denominator = crit + BLOCK_WEIGHT * block;
+        var share = denominator <= 0f ? 1f : 1f - BLOCK_WEIGHT * block / denominator;
+
+        return 1f + add * share;
     }
 
     private static float GetCritBoostPercent(CombatDuelSubCircle caster) {
@@ -171,14 +244,6 @@ internal static class CombatCriticals {
         }
 
         return Math.Clamp(divisor, RATING_K_MIN, RATING_K_MAX);
-    }
-
-    private static bool Rolls(float chance) {
-        if (chance <= 0f) {
-            return false;
-        }
-
-        return Random.Shared.Next(0, 10000) < (int) (chance * 10000f);
     }
 
 }
