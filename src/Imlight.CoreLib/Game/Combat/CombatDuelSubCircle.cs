@@ -1430,15 +1430,37 @@ public partial class CombatDuelSubCircle {
         var isMastered = HasSchoolMastery((uint) school);
         var pipCount = CombatParticipant.m_pipCount;
 
-        // Deduct pips based on the spell rank.
-        // We have a second conditional here incase of byte overflow.
+        // Normal pips go first, like the game: a 1 pip card costs a normal pip, never a power pip, while there is one
+        // (Niduus, 2026-10-28). A mastered card pays 2 at a time with power pips (and school pips of its school), and
+        // its odd last pip with a normal pip. We have a second conditional here incase of byte overflow.
         while (spellRank is > 0 and < (MAX_PIP_COUNT * 2)) {
-            if (isMastered && pipCount.m_powerPips > 0) {
-                pipCount.m_powerPips--;
+            var ownSchoolPips = SchoolPips(pipCount, school) ?? 0;
+            var otherSchool = s_pipSchools.Where(other => other != school && (SchoolPips(pipCount, other) ?? 0) > 0)
+                .Cast<MagicSchool?>().FirstOrDefault();
 
-                // A power pip is worth 2 here; paying the last 1 with it wastes half. Pip conserve
-                // (100% with FullPipConserve) hands that half back as a normal pip.
-                if (spellRank == 1) {
+            if (isMastered && spellRank >= 2 && pipCount.m_powerPips > 0) {
+                pipCount.m_powerPips--;
+                spellRank -= 2;
+            }
+            else if (isMastered && spellRank >= 2 && ownSchoolPips > 0) {
+                // A school pip of the spell's school pays like a power pip.
+                SetSchoolPips(pipCount, school, (byte) (ownSchoolPips - 1));
+                spellRank -= 2;
+            }
+            else if (pipCount.m_genericPips > 0) {
+                pipCount.m_genericPips--;
+                spellRank--;
+            }
+            else if (otherSchool is { } other) {
+                // Any other school pip pays like a normal pip.
+                SetSchoolPips(pipCount, other, (byte) (SchoolPips(pipCount, other).Value - 1));
+                spellRank--;
+            }
+            else if (pipCount.m_powerPips > 0) {
+                pipCount.m_powerPips--;
+                if (isMastered && spellRank == 1) {
+                    // A power pip is worth 2 here; paying the last 1 with it wastes half. Pip conserve
+                    // (100% with FullPipConserve) hands that half back as a normal pip.
                     if (fullPipConserve) {
                         pipCount.m_genericPips++;
                     }
@@ -1446,25 +1468,11 @@ public partial class CombatDuelSubCircle {
                     break;
                 }
 
-                spellRank -= 2;
-            }
-            else if (!isMastered && pipCount.m_powerPips > 0) {
-                pipCount.m_powerPips--;
                 spellRank--;
             }
-            else if (pipCount.m_powerPips == 0 && pipCount.m_genericPips > 0) {
-                pipCount.m_genericPips--;
-                spellRank--;
-            }
-            else if ((SchoolPips(pipCount, school) ?? 0) > 0) {
-                // A school pip of the spell's school pays like a power pip.
-                SetSchoolPips(pipCount, school, (byte) (SchoolPips(pipCount, school).Value - 1));
+            else if (ownSchoolPips > 0) {
+                SetSchoolPips(pipCount, school, (byte) (ownSchoolPips - 1));
                 spellRank = (byte) Math.Max(0, spellRank - (isMastered ? 2 : 1));
-            }
-            else if (s_pipSchools.Where(other => (SchoolPips(pipCount, other) ?? 0) > 0).Cast<MagicSchool?>().FirstOrDefault() is { } other) {
-                // Any other school pip pays like a normal pip.
-                SetSchoolPips(pipCount, other, (byte) (SchoolPips(pipCount, other).Value - 1));
-                spellRank--;
             }
             else {
                 break;
