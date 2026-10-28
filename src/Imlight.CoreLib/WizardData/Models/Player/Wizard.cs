@@ -2370,7 +2370,8 @@ public class Wizard {
     /// Adds the starter kit items (config-driven) to the inventory and database.
     /// Called on first attach: in the tutorial, or on first login when the tutorial is disabled.
     /// </summary>
-    public List<WizClientObjectItem> GrantStarterItems(IEnumerable<ulong> templateIds) {
+    /// <param name="withDefaultPet">False for items handed out on top of the kit, which already brought the pet.</param>
+    public List<WizClientObjectItem> GrantStarterItems(IEnumerable<ulong> templateIds, bool withDefaultPet = true) {
         var itemsToAdd = new List<WizClientObjectItem>();
         foreach (var templateId in templateIds) {
             var cObj = (WizClientObjectItem) CoreObjectFactory.FinalizeCoreObject(templateId);
@@ -2383,10 +2384,12 @@ public class Wizard {
         }
 
         // The default pet must be created through the pet factory. 
-        var defaultPet = PetFactory.CreateHatchedPet(CharId, _defaultPetTemplateId);
+        var defaultPet = withDefaultPet ? PetFactory.CreateHatchedPet(CharId, _defaultPetTemplateId) : null;
         if (defaultPet is null) {
-            Logger.Error("Could not create default pet (template {0}) for Wizard {1}.",
-                Logger.Args(_defaultPetTemplateId, CharId));
+            if (withDefaultPet) {
+                Logger.Error("Could not create default pet (template {0}) for Wizard {1}.",
+                    Logger.Args(_defaultPetTemplateId, CharId));
+            }
         }
         else {
             PetProgression.EnsureInitialized(defaultPet);
