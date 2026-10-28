@@ -1523,6 +1523,11 @@ public partial class CombatDuelSubCircle {
         FightsWithCopy = IsSandboxed || deckathalon;
         ParticipantGameStats = deckathalon ? Imlight.CoreLib.Game.Events.Deckathalon.StatsFor(_wizard)
             : IsSandboxed ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
+        // The astral school's perks again, so a change to [AstralSchools] applies from this battle on. The Deckathalon
+        // fights with level and deck stats only.
+        if (!deckathalon) {
+            AstralSchools.Apply(ParticipantGameStats);
+        }
         var combatStats = ParticipantGameStats.GetCombatGameStats();
         // What the game is told this wizard fights with, to hold next to .stats and the game's Stats page.
         Logger.Debug("Stats sent to the game for {0}: damage [{1}] + {2} all, resist [{3}] + {4} all, pierce [{5}] + {6} all, flat [{7}] + {8} all.",
