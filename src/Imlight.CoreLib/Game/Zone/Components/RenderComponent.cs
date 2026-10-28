@@ -451,6 +451,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private bool IsQuestOnly
         => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
            && info.GetType() == typeof(CoreObjectInfo)
+           && !IsAlwaysShown(info)
            && Entity.ActiveGameObject is not WizClientPet
            && !Entity.Template.m_behaviors.Any(b => b is WizShoppingBehaviorTemplate)
            && Entity.GetComponentsOfType<IServiceComponent>().All(IsQuestService)
@@ -467,6 +468,21 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         => Entity.GetComponentOfType<InteractQuestSelectComponent>() is not null
            || Imlight.CoreLib.Game.Quests.QuestShownObjects.Contains(Entity.Info?.m_zoneTag)
            || ZoneTriggersShowIt();
+
+    /// <summary>
+    /// Characters placed undetectable that always stand where they are, whatever the player's quests. Abby K. Doodle in
+    /// the headmaster's office: Merle Ambrose introduces her as the player first walks in, and the camera turns to her
+    /// spot, but the City Tour she offers needs the enrollment the intro gives, so she was held back and the camera
+    /// showed an empty floor (Mitsu, 2026-10-28: "Abby isn't in Merle's office and so the camera just points to
+    /// nothing").
+    /// </summary>
+    private static readonly HashSet<(string Zone, string ZoneTag)> s_alwaysShown = [
+        ("WizardCity/Interiors/WC_Headmistress_House", "WC-HUB-NPC16 instance"),
+    ];
+
+    private bool IsAlwaysShown(CoreObjectInfo info)
+        => s_alwaysShown.Any(s => string.Equals(s.ZoneTag, info.m_zoneTag, System.StringComparison.OrdinalIgnoreCase)
+                                  && string.Equals(s.Zone, Entity.Zone?.ZonePath, System.StringComparison.OrdinalIgnoreCase));
 
     // The services a quest character offers; any other (a shop, a trainer, a bank) means the character always stands there.
     private static bool IsQuestService(IServiceComponent service)
