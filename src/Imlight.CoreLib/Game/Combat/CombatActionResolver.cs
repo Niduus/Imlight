@@ -72,7 +72,6 @@ internal static class CombatActionResolver {
         internal CombatAction CombatAction;
         internal CombatEffectStack Stack = new();
         internal float CinematicTime;
-        internal float CritMultiplier = 1f;
         internal readonly List<int> CritSlots = [];
         // The charms this cast used, taken off the caster at the end (auras stay).
         internal readonly List<SpellEffect> UsedCharms = [];
@@ -118,24 +117,14 @@ internal static class CombatActionResolver {
         combatAction.m_xPipCost = GetXPipCost(action.Spell, action.SpellCaster);
         cast.DamageEffectCount = topEffects.Count(e => CombatEnchantments.Leaves([e]).Any(l => IsFlatAdjusted(l.m_effectType)));
 
-        // One combined roll per cast: the target's block is part of the crit chance
-        // (crit vs crit + K * block), so there is no separate block roll. The landed
-        // multiplier varies by the crit/block ratio. Heals crit with no block side.
-        var landedCrit = false;
-        var critPrimaryTarget = action.SelectedTarget;
-        if (critPrimaryTarget is not null) {
-            var spellSchool = MagicSchools.GetMagicSchool(action.Spell.m_magicSchoolID)?.m_schoolName;
-            if (spellSchool is not null) {
-                var isHealCast = CombatEnchantments.Leaves(topEffects).Any(x => x.m_effectType == kSpellEffects.kHeal);
-                var isOffensiveCast = critPrimaryTarget.OccupiedTeam != action.SpellCaster.FightsFor;
-                if (isHealCast || isOffensiveCast) {
-                    landedCrit = CombatCriticals.RollsCritical(action.SpellCaster, critPrimaryTarget, spellSchool, isHealCast);
-                    if (landedCrit) {
-                        cast.CritMultiplier = CombatCriticals.GetCritMultiplier(action.SpellCaster, critPrimaryTarget, spellSchool, isHealCast);
-                    }
-                }
-            }
-        }
+        // One crit roll per cast, checked against each target as its damage or heal lands (CombatCriticals.cs). Only
+        // an enemy can block it: a teammate's crit heal is never blocked (Niduus, 2026-10-28, a hard rule).
+        var spellSchool = action.Spell is null ? null : MagicSchools.GetMagicSchool(action.Spell.m_magicSchoolID)?.m_schoolName;
+        var crits = spellSchool is not null && action.SpellCaster is not null
+            ? new CombatCriticals.CastCrits(action.SpellCaster, spellSchool)
+            : null;
+        var outerCrits = CombatEffectApplicator.Crits;
+        CombatEffectApplicator.Crits = crits;
 
         // One stun resist roll per cast, the server's and the game's (Niduus, 2026-10-23: a friend at 100% Stun
         // Resistance resisted every stun on the server but the game still showed him stunned).
@@ -157,16 +146,21 @@ internal static class CombatActionResolver {
         }
 
         CombatEffectApplicator.StunResistRoll = null;
+        CombatEffectApplicator.Crits = outerCrits;
         cinematicTime += cast.CinematicTime;
 
         if (cast.CritSlots.Count > 0) {
-            combatAction.m_CritHitList = [.. cast.CritSlots.Select(slot => new TargetCritHit {
-                m_target = slot,
-                m_mult = landedCrit ? cast.CritMultiplier : 0f,
-                m_blocked = false,
+            combatAction.m_CritHitList = [.. cast.CritSlots.Select(slot => {
+                var outcome = crits?.ForSlot(slot) ?? CombatCriticals.Outcome.None;
+
+                return new TargetCritHit {
+                    m_target = slot,
+                    m_mult = outcome.Crit ? outcome.Multiplier : 0f,
+                    m_blocked = outcome.Blocked,
+                };
             })];
 
-            if (landedCrit) {
+            if (crits?.AnyCrit == true) {
                 combatAction.m_spellHits = (char) 2;
             }
         }
@@ -382,7 +376,7 @@ internal static class CombatActionResolver {
         if (chosenEffect.m_effectTarget == kEffectTarget.kGlobal) {
             cast.Worth = true;
             cast.Global = true;
-            cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], caster, [], cast.CritMultiplier, cast.TemplateId);
+            cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], caster, [], 1f, cast.TemplateId);
 
             return;
         }
@@ -428,7 +422,7 @@ internal static class CombatActionResolver {
             cast.UsedCharms.Add(charm);
         }
 
-        cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [.. charms], caster, targets, cast.CritMultiplier,
+        cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [.. charms], caster, targets, 1f,
                                                                 cast.TemplateId);
     }
 

@@ -485,11 +485,8 @@ internal static class CombatEffectApplicator {
         var cinematicTime = charms.Length * HANGING_EFFECT_CONSUME_TIME;
         var damageFromCaster = OutgoingDamage(effect, charms, caster);
 
-        // A landed critical multiplies the fully-boosted outgoing damage by a variable factor;
-        // wards and resist still reduce it.
-        damageFromCaster = (int) Math.Floor(damageFromCaster * critMultiplier);
         var casterStats = caster?.ParticipantGameStats;
-        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (crit x{4}). Raw stats: damage {5} school + {6} all,"
+        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (before crits, extra x{4}). Raw stats: damage {5} school + {6} all,"
                      + " flat {7}, pierce {8} school + {9} all, charms [{10}].",
             Logger.Args(caster?.SlotIndex, effect.m_effectType, effect.m_effectParam, damageFromCaster, critMultiplier,
                 caster?.GetStatBySchool(casterStats?.m_dmgBonusPercent, effect.m_sDamageType), casterStats?.m_dmgBonusPercentAll,
@@ -508,7 +505,9 @@ internal static class CombatEffectApplicator {
                 continue;
             }
 
-            var damage = damageFromCaster;
+            // A landed critical multiplies the fully-boosted outgoing damage by a variable factor (this target's block
+            // lowers it); wards and resist still reduce it.
+            var damage = (int) Math.Floor(damageFromCaster * CritOn(target, critMultiplier, isHeal: false));
             var pierceLeft = pierce;
 
             // Pierce traps and the like on the target (kModifyIncomingArmorPiercing): more (or, when negative, less)
@@ -632,13 +631,12 @@ internal static class CombatEffectApplicator {
         var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel, caster);
         healFromCaster = (int) Math.Ceiling(healFromCaster * (1 + bubbleHealIncrease));
 
-        // A landed critical doubles the fully-boosted outgoing heal; incoming heal boosts still apply.
-        healFromCaster = (int) Math.Ceiling(healFromCaster * critMultiplier);
-
-        // Apply heal to each target
+        // Apply heal to each target. A landed critical doubles the fully-boosted outgoing heal (a teammate never blocks
+        // it); incoming heal boosts still apply.
         foreach (var target in targets) {
             if (target is not null) {
-                _ = DoHealToTarget(target, healFromCaster, RevivesWithHeal(effect, caster, target));
+                var heal = (int) Math.Ceiling(healFromCaster * CritOn(target, critMultiplier, isHeal: true));
+                _ = DoHealToTarget(target, heal, RevivesWithHeal(effect, caster, target));
             }
         }
 
@@ -889,6 +887,14 @@ internal static class CombatEffectApplicator {
     /// shows the same resist the server decided; null rolls per target.
     /// </summary>
     [ThreadStatic] internal static byte? StunResistRoll;
+
+    // The crit roll of the cast being resolved (CombatCriticals.cs), or null outside a cast.
+    [ThreadStatic] internal static CombatCriticals.CastCrits Crits;
+
+    // The crit multiplier one target takes from this hit: the cast's roll against it (only an enemy's block counts),
+    // times any multiplier the caller passed.
+    private static float CritOn(CombatDuelSubCircle target, float critMultiplier, bool isHeal)
+        => Crits is { } crits && target is not null ? crits.For(target, isHeal).Multiplier * critMultiplier : critMultiplier;
 
     private static float ApplyStunEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {
         var cinematicTime = 0.0f;
