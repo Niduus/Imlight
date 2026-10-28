@@ -502,6 +502,13 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.TutorialTipsRead"/>.
+    /// </summary>
+    public static void UpdateCharacterTutorialTipsRead(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.TutorialTipsRead = [.. wizard.TutorialTipsRead]);
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.Overdose"/>.
     /// </summary>
     public static void UpdateCharacterOverdose(Wizard wizard) {
