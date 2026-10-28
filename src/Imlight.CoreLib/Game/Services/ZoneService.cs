@@ -312,6 +312,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
             try {
                 OfferDungeonRecall(message, zoneDetails);
+                DungeonRecall.SetInDungeon(wizard.CharId, EntersDungeon(message, zoneDetails));
             }
             catch (Exception ex) {
                 Logger.Error("Session {0}: the Dungeon Recall failed: {1}", Logger.Args(SessionActor.SessionID, ex.Message));
@@ -328,6 +329,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             // for MSG_ATTACH. In which case, the client is already prepared for the zone transfer.
             SetZone(zoneDetails.ZoneActorRef);
             _currentDynamicZoneId = zoneDetails.DynamicZoneId;
+            // A login outside any instance is not in a dungeon; a reattach into one stays as it was.
+            if (!zoneDetails.IsInstance && GetActiveWizard() is { } attaching) {
+                DungeonRecall.SetInDungeon(attaching.CharId, false);
+            }
             _currentZoneIsInstance = zoneDetails.IsInstance;
         }
 
@@ -345,7 +350,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private void OfferDungeonRecall(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message, ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP zoneDetails) {
         var wizard = GetActiveWizard();
         if (!_currentZoneIsInstance || wizard is null || string.IsNullOrEmpty(wizard.Zone) || !DungeonRecall.Enabled
-            || message is { ByZoneDoor: true } or { LeaveInstance: true } || wizard.AttachedLotGid != 0
+            || !DungeonRecall.IsInDungeon(wizard.CharId) || message is { ByZoneDoor: true } or { LeaveInstance: true } || wizard.AttachedLotGid != 0
             || HouseZoneIndex.IsHouseZone(wizard.Zone) || Imlight.CoreLib.Game.Events.Deckathalon.IsFloorZone(wizard.Zone)) {
             return;
         }
@@ -363,6 +368,24 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
         DungeonRecall.Offer(message is null ? null : SessionActor.ActorRef, wizard.CharId, owner, wizard.Zone,
             _instanceArrival, wizard.ZoneDisplayName);
+    }
+
+    /// <summary>
+    /// Whether a transfer goes into a dungeon, raid or private copy, which is what Dungeon Recall is for. A private
+    /// transfer into an instance is one (a sigil, a raid gate, the button, [Instance] PrivateZones); a door or teleport
+    /// into an instance is one only when it leads on from one (the dungeon's next room). Anything else that loads as an
+    /// instance, such as a shop or house interior in the open world, is not (Niduus, 2026-10-28: "Should only affect
+    /// dungeons, raids and instances").
+    /// </summary>
+    private bool EntersDungeon(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message, ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP zoneDetails) {
+        var wizard = GetActiveWizard();
+        if (!zoneDetails.IsInstance || message.HouseEntry is not null || HouseZoneIndex.IsHouseZone(message.DestinationZone)
+            || Imlight.CoreLib.Game.Events.Deckathalon.IsFloorZone(message.DestinationZone)
+            || Imlight.CoreLib.Game.PvP.PvPRegistry.IsMatchInstanceOwner(message.OwnerCharId)) {
+            return false;
+        }
+
+        return message.IsPrivate || (_currentZoneIsInstance && DungeonRecall.IsInDungeon(wizard.CharId));
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_RESUMEINSTANCETELEPORTPLAYER))]
@@ -585,6 +608,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP answer;
         try {
             answer = RequestZoneTransfer(tpMsg);
+            // A pet hatching trip is a private copy, but not a dungeon: leaving it gives no Dungeon Recall.
+            if (entry.OnFailed is CHARACTER_103_PROTOCOL.MSG_HATCHTRIPFAILED) {
+                DungeonRecall.SetInDungeon(wizard.CharId, false);
+            }
         }
         catch (Exception ex) {
             Logger.Error("{0}: asking for '{1}' failed. {2}", Logger.Args(SigilLogName(entry), entry.DestinationZone, ex));
