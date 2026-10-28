@@ -437,8 +437,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     // Doug" given or done (Niduus, 2026-10-27: dungeons let him in before their quest). [World] AccessAllWorlds opens
     // every pad; a pad the Customs tab added has none.
     // Requirements the server can never make true (a quest rebuilt under a name of its own, a "QT-" entry no quest of
-    // the server sets) count as met, so no pad stays shut for good (SigilRequirements; Niduus 2026-10-28: "sigils via
-    // main quests are not interactable", Galvanost Tower).
+    // the server sets) count as met, or as the quest they name when the server knows it, so no pad stays shut for good
+    // (SigilRequirements; Niduus 2026-10-28: "sigils via main quests are not interactable", Galvanost Tower).
     private bool MayEnter(Wizard wizard) {
         var requirements = SigilInfo?.m_requirements;
         if (wizard is null || requirements?.m_requirements is not { Count: > 0 } || World.WorldAccess.AllOpen) {
