@@ -1555,6 +1555,16 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
                 Targets = ZoneBroadcastTarget.Players,
             });
         }
+
+        // A passenger on a group mate's mount (or the riders on this wizard's own) sits there for the players here.
+        foreach (var rideMsg in Mounts.MountRides.SpawnMessages(wizard)) {
+            ZoneActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Message = rideMsg,
+                Selfless = true,
+                Sender = SessionActor.ActorRef,
+                Targets = ZoneBroadcastTarget.Players,
+            });
+        }
     }
 
     private void SpawnMyselfFor(IActorRef actorRef) {

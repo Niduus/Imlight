@@ -356,12 +356,27 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 Logger.Args(wizard.CharId, itemId, slotObj.SlotType, HouseDeeds.ResolveEquippedHouse(wizard)));
         }
 
-        // A manual unequip abandons any pending auto-remount.
-        if (Enum.TryParse<EquipmentSlotType>(slotName, true, out var unequippedSlot)
-            && unequippedSlot == EquipmentSlotType.Mount
-            && wizard.InteriorStowedMountId != 0) {
+        // The game stowing the mount itself (MSG_SETSTOREDMOUNT just before, as it does ahead of a Spiral Door or
+        // world teleport) gets it back in the next zone that allows mounts; any other unequip by hand abandons a
+        // pending auto-remount (Niduus, 2026-10-28: "mount not staying equipped when transfering zones").
+        var isMount = Enum.TryParse<EquipmentSlotType>(slotName, true, out var unequippedSlot)
+                      && unequippedSlot == EquipmentSlotType.Mount;
+        if (isMount && _gameStoredMountId == itemId) {
+            wizard.InteriorStowedMountId = itemId;
+            WizardCollection.UpdateCharacterInteriorStowedMount(wizard);
+            Logger.Information("{0}: the game stowed mount {1}; it goes back on in the next area that allows mounts.",
+                Logger.Args(wizard.CharId, itemId));
+            // A cantrip that does not take the wizard anywhere gives it back here once it has been cast (a trip ends
+            // this session first, and the next area puts it back on).
+            Timers.StartSingleTimer("game-stowed-mount", new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT(), s_gameStowedRemountAfter);
+        }
+        else if (isMount && wizard.InteriorStowedMountId != 0) {
             wizard.InteriorStowedMountId = 0;
             WizardCollection.UpdateCharacterInteriorStowedMount(wizard);
+        }
+
+        if (isMount) {
+            _gameStoredMountId = 0;
         }
 
         if (s_hidePetWhileMounted && (EquipmentSlotType) slot == EquipmentSlotType.Mount) {
@@ -692,6 +707,16 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         _summonedPetId = 0;
     }
 
+    // The mount the game said it is stowing (MSG_SETSTOREDMOUNT); its unequip follows right after.
+    private ulong _gameStoredMountId;
+    private static readonly TimeSpan s_gameStowedRemountAfter = TimeSpan.FromSeconds(12);
+
+    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_SETSTOREDMOUNT))]
+    private void ReceiveSetStoredMount(WIZARD2_53_PROTOCOL.MSG_SETSTOREDMOUNT message) {
+        _gameStoredMountId = message.MountGID;
+        Logger.Debug("The game is stowing mount {0}.", Logger.Args(message.MountGID));
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT))]
     private void ReceiveEnforceInteriorMount(ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT message) {
         // Zone data flags disallow mounts (m_noMounts): really unequip on entry (model and speed effect) and
@@ -722,7 +747,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                     SpawnPetEntity();
                 }
             }
-            else if (wizard.InteriorStowedMountId != 0) {
+            else if (wizard.InteriorStowedMountId != 0 && !wizard.IsInDuel) {
                 var gid = wizard.InteriorStowedMountId;
                 wizard.InteriorStowedMountId = 0;
                 WizardCollection.UpdateCharacterInteriorStowedMount(wizard);
