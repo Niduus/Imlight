@@ -42,7 +42,8 @@ internal sealed record FishInfo(
     int Xp,
     int SalePrice,
     bool IsChest,
-    bool IsTest) {
+    bool IsTest,
+    bool IsHoliday = false) {
 
     /// <summary>The length the catch window shows: the base length times the size.</summary>
     internal float LengthOf(float size) => BaseLength * size;
@@ -124,7 +125,8 @@ internal static class FishingData {
                         Math.Max(behavior.m_fishingXP, 1),
                         Math.Max(behavior.m_fishSalePrice, 0),
                         objectName.Contains("Chest", StringComparison.OrdinalIgnoreCase),
-                        holiday.Contains("Test", StringComparison.OrdinalIgnoreCase));
+                        holiday.Contains("Test", StringComparison.OrdinalIgnoreCase),
+                        holiday.Trim().Length > 0);
                 }
             }
         }
@@ -136,6 +138,45 @@ internal static class FishingData {
         s_fish[templateId] = info;
 
         return info;
+    }
+
+    /// <summary>The FishBehaviorTemplate of a fish template, or null when the template is not a fish.</summary>
+    internal static FishBehaviorTemplate FishTemplate(uint templateId)
+        => templateId == 0 ? null : CoreObjectFactory.GetCoreTemplate(templateId)?.m_behaviors?.OfType<FishBehaviorTemplate>().FirstOrDefault();
+
+    // The chest the ponds hold (ObjectData/Fish, "LootChest"): a fish that is a chest is this template, with the fish's loot.
+    private const uint LootChestTemplate = 1212051;
+
+    /// <summary>The template a pond's chest swims as: the game's LootChest, when it is a fishing chest.</summary>
+    internal static uint ChestTemplateId => Fish(LootChestTemplate) is { IsChest: true } ? LootChestTemplate : 0;
+
+    private static readonly Lazy<List<FishInfo>> s_allFish = new(LoadAllFish);
+
+    /// <summary>
+    /// Every fish a wizard can catch any day of the year: the templates of ObjectData/Fish that are fish, without the
+    /// chests, the test fish and the holiday fish. The Catch of the Day and the tournament fish are picked from these.
+    /// </summary>
+    internal static List<FishInfo> AllFish => s_allFish.Value;
+
+    private static List<FishInfo> LoadAllFish() {
+        var fish = new List<FishInfo>();
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            string file = location?.m_filename;
+            if (string.IsNullOrEmpty(file) || location.m_id > uint.MaxValue
+                || !file.StartsWith("ObjectData/Fish/", StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            if (Fish((uint) location.m_id) is { IsChest: false, IsTest: false, IsHoliday: false } info
+                && info.Rank > 0 && info.MaxSize > info.MinSize && !string.IsNullOrEmpty(info.Name)) {
+                fish.Add(info);
+            }
+        }
+
+        fish.Sort((a, b) => a.TemplateId.CompareTo(b.TemplateId));
+        Logger.Information("Fishing: {0} kinds of fish can be the Catch of the Day or a tournament fish.", Logger.Args(fish.Count));
+
+        return fish;
     }
 
     /// <summary>

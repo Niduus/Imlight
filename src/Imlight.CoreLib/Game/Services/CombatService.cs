@@ -202,6 +202,22 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             message.CountedRounds);
         // The Scroll of Fortune and the other events count each creature beaten (ClassProjects.cs).
         Imlight.CoreLib.Game.Events.ClassProjects.CreaturesBeaten(SessionActor.ActorRef, GetActiveWizard(), message.MobTemplateIds);
+        MarkDungeonCompleted(message.MobTemplateIds);
+    }
+
+    // A boss beaten in a dungeon, raid or private copy finishes that room of it: leaving gives no Dungeon Recall.
+    private void MarkDungeonCompleted(ulong[] mobTemplateIds) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || string.IsNullOrEmpty(wizard.Zone) || mobTemplateIds is null
+            || !Imlight.CoreLib.Game.World.DungeonRecall.IsInDungeon(wizard.CharId)
+            || !System.Linq.Enumerable.Any(mobTemplateIds, TamedDrops.IsBoss)) {
+            return;
+        }
+
+        var owner = Imlight.CoreLib.Game.World.ZoneInstanceOwners.TryGetOwner(wizard.CharId, wizard.Zone, out var assigned)
+            ? assigned
+            : wizard.CharId;
+        Imlight.CoreLib.Game.World.DungeonRecall.MarkCompleted(owner, wizard.Zone);
     }
 
     private void TeachSpellAfterBattle() {

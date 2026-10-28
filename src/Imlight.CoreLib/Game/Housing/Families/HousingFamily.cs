@@ -143,7 +143,8 @@ internal static class HousingFamilies {
         Declare("Monster", "Monster", "MonsterAttic", [typeof(MonsterArenaBehaviorTemplate)]),
         Declare("Train", "Train", "TrainAttic", [typeof(TrainBehaviorTemplate)]),
         Declare("Equip", null, "EquipAttic", [typeof(EquipmentBehaviorTemplate)]),
-        Declare("Fish", null, "FishAttic", [typeof(AquariumBehaviorTemplate)]),
+        // Aquariums keep the fish put in them (Game/Housing/HouseVaults, HousingService.Vaults).
+        Declare("Fish", null, "FishAttic", [typeof(AquariumBehaviorTemplate)], enabled: true),
         Declare("SeedShed", null, "SeedShedAttic", [typeof(GardeningShedBehaviorTemplate)]),
         Declare("BreadCrumb", null, "BreadCrumbAttic", [typeof(BreadCrumbBehaviorTemplate)]),
         Declare("Gear", null, "GearAttic", [typeof(GearVaultBehaviorTemplate)]),

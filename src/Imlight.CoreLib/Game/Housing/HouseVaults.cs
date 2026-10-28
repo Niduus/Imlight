@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * The storage furniture of a house: the Gear Vault, the Jewel Vault, the Gardening Shed (Seed Vault), the Treasure
- * Card Vault and the Treasure Card Poster. Says which placed items are one, how much they hold, and builds the data
+ * Card Vault, the Treasure Card Poster and the aquariums. Says which placed items are one, how much they hold, and builds the data
  * the client shows them from.
  *
  * USAGE EXAMPLE:
@@ -41,6 +41,10 @@
  * - The Treasure Card Vault's data is 0xFACE1ACE, version 1, the count and one (spell, enchantment) pair per card, and it
  *   holds 1000 (TreasureCardVaultBehaviorBase, 0x141dfca80 and 0x141dfcf10). The poster's is 0xFACE0ACE, version 1, the
  *   spell, the enchantment and a flags byte (0x141dfac70).
+ * - An aquarium's data is 0xFACEACE7, version 1, a 2-byte count and one (fish template, size) pair per fish
+ *   (AquariumBehavior::OnPostLoad, 0x141d5b530); MSG_PATCHAQUARIUM is checked like the vault patches (0x140f1c0b0).
+ *   A tank holds its template's m_numberOfFish, and only fish whose m_fishtankType is the tank's and whose size class is
+ *   its m_fishtankSize (1 whopper, 2 keeper, 3 small fry: HousingAquariumWindow, 0x1405f2bc2).
  * - The windows show "count/100" for gear, jewels and seeds and "count/1000" for treasure cards, so those are the limits.
  * - A vault keeps what it holds wherever it goes (Niduus, 2026-10-23): on the PlacedItem in a house, on the AtticItem in
  *   the attic, and in Wizard.PackedVaults by the item's global id in the backpack and the bank. The gear, jewels and seeds
@@ -82,6 +86,7 @@ internal enum VaultKind {
     Seed,
     TreasureCard,
     Poster,
+    Aquarium,
 }
 
 internal static class HouseVaults {
@@ -91,6 +96,7 @@ internal static class HouseVaults {
     private const uint GearEntryMask = 0x18;
     private const uint CardVaultMagic = 0xFACE1ACE;
     private const uint PosterMagic = 0xFACE0ACE;
+    private const uint AquariumMagic = 0xFACEACE7;
     private const uint DataVersion = 1;
 
     // Template id to vault kind, so a house with many items reads each template once.
@@ -124,6 +130,7 @@ internal static class HouseVaults {
             VaultKind.Seed => "Seed Vault",
             VaultKind.TreasureCard => "Treasure Card Vault",
             VaultKind.Poster => "Treasure Card Poster",
+            VaultKind.Aquarium => "Aquarium",
             _ => "object",
         };
 
@@ -204,6 +211,9 @@ internal static class HouseVaults {
             VaultKind.TreasureCard => new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHTREASURECARDVAULT {
                 Data = data, SubType = ItemSubType, PackageNumber = 0, VersionNumber = revision, GIDID = gidId,
             },
+            VaultKind.Aquarium => new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHAQUARIUM {
+                Data = data, SubType = ItemSubType, PackageNumber = 0, VersionNumber = revision, GIDID = gidId,
+            },
             VaultKind.Poster => new WIZARDHOUSING_50_PROTOCOL.MSG_PATCHTREASURECARDPOSTER {
                 Data = data, SubType = ItemSubType, PackageNumber = 0, VersionNumber = revision, GIDID = gidId,
             },
@@ -263,6 +273,10 @@ internal static class HouseVaults {
                     data = vault.Poster is null ? null : (ByteString?) PosterData(vault.Poster, vault.PosterFlags);
 
                     return true;
+                case VaultKind.Aquarium:
+                    data = AquariumData(vault.Fish ?? []);
+
+                    return true;
                 default:
                     return false;
             }
@@ -287,6 +301,51 @@ internal static class HouseVaults {
         writer.Flush();
 
         return new ByteString(stream.ToArray());
+    }
+
+    private static ByteString AquariumData(IReadOnlyList<VaultFish> fish) {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        writer.Write(AquariumMagic);
+        writer.Write(DataVersion);
+        var count = Math.Min(fish.Count, ushort.MaxValue);
+        writer.Write((ushort) count);
+        foreach (var one in fish.Take(count)) {
+            writer.Write(one.TemplateId);
+            writer.Write(one.Size);
+        }
+
+        writer.Flush();
+
+        return new ByteString(stream.ToArray());
+    }
+
+    /// <summary>
+    /// What an aquarium template takes: how many fish, of which tank type and size class.
+    /// </summary>
+    /// <param name="templateId">The aquarium's template.</param>
+    /// <returns>The tank, or <c>null</c> when the template is not an aquarium.</returns>
+    internal static AquariumBehaviorTemplate AquariumOf(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template
+            ? (template.m_behaviors ?? []).OfType<AquariumBehaviorTemplate>().FirstOrDefault()
+            : null;
+
+    /// <summary>
+    /// The size class an aquarium takes a fish of, the way the game's aquarium window sorts them: 1 for a whopper (the
+    /// biggest tenth of its sizes), 3 for a small fry (the smallest tenth), 2 for the rest.
+    /// </summary>
+    internal static int SizeClassOf(FishBehaviorTemplate fish, float size) {
+        var range = fish.m_maximumSize - fish.m_minimumSize;
+        if (range == 0) {
+            return 2;
+        }
+
+        var fromMin = size - fish.m_minimumSize;
+        if (fromMin > range * 0.9f) {
+            return 1;
+        }
+
+        return range * 0.1f > fromMin ? 3 : 2;
     }
 
     private static ByteString PosterData(VaultCard card, byte flags) {
@@ -334,6 +393,8 @@ internal static class HouseVaults {
                     return VaultKind.TreasureCard;
                 case "TCPoster":
                     return VaultKind.Poster;
+                case "Fish":
+                    return VaultKind.Aquarium;
             }
         }
 

@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Fishing;
@@ -40,6 +41,33 @@ internal static class FishingSettings {
 
     /// <summary>Casting a fishing spell uses its energy.</summary>
     internal static bool UseEnergy => ConfigurationManager.GetValue("Fishing.UseEnergy", true);
+
+    /// <summary>Chests swim in the ponds: a fish with a loot chance in the zone's fishing file is a chest that often.</summary>
+    internal static bool Chests => ConfigurationManager.GetValue("Fishing.Chests", true);
+
+    /// <summary>The game's chest chances are multiplied by this.</summary>
+    internal static double ChestChanceMultiplier => Math.Clamp(ConfigurationManager.GetValue("Fishing.ChestChanceMultiplier", 1.0), 0, 100);
+
+    /// <summary>
+    /// The prize of one tournament fish: [Fishing] Tournament&lt;Medal&gt;Gold and Tournament&lt;Medal&gt;Items (item template
+    /// ids, comma separated), for GoldMedal, SilverMedal, BronzeMedal and Consolation.
+    /// </summary>
+    internal static (int Gold, List<uint> Items) TournamentPrize(TournamentMedal medal) {
+        var (key, gold) = medal switch {
+            TournamentMedal.Gold => ("GoldMedal", 10000),
+            TournamentMedal.Silver => ("SilverMedal", 5000),
+            TournamentMedal.Bronze => ("BronzeMedal", 2500),
+            _ => ("Consolation", 250),
+        };
+        var items = new List<uint>();
+        foreach (var part in ConfigurationManager.GetValue($"Fishing.Tournament{key}Items", "").Split(',', ';', ' ')) {
+            if (uint.TryParse(part.Trim(), out var id) && id != 0) {
+                items.Add(id);
+            }
+        }
+
+        return (Math.Max(0, ConfigurationManager.GetValue($"Fishing.Tournament{key}Gold", gold)), items);
+    }
 
     /// <summary>Every shop vendor also offers "Sell Fish". Off: only Lucky Hookline buys fish (Niduus 2026-10-25).</summary>
     internal static bool SellAtShops => ConfigurationManager.GetValue("Fishing.SellFishAtAllShops", false);

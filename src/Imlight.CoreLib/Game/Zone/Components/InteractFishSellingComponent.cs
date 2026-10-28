@@ -23,6 +23,9 @@
  * Gives Lucky Hookline, and every shop vendor while [Fishing] SellFishAtAllShops is on (off by default), the game's "Sell Fish" option
  * (FishSellingOption). Picking it opens the game's fish seller window; FishingService answers the window's basket
  * request and its Sell button (MSG_SELLFISHREQUEST).
+ * Lucky Hookline also offers "Catch of the Day" (FishCatchOfTheDayOption), "Fishing Tournament" (FishTournamentOption)
+ * and the tournament leaderboard (FishTournamentLeaderboardOption), which open the game's own windows for them
+ * (Game/Fishing/FishingDays and FishTournaments).
  */
 
 using System.Collections.Generic;
@@ -68,11 +71,27 @@ internal sealed class InteractFishSellingComponent(ZoneEntity entity) : ZoneEnti
             return [];
         }
 
-        return [new FishSellingOption {
-            m_displayKey = DisplayKey,
-            m_iconKey = "SellFish",
-            m_serviceName = ServiceName,
-        }];
+        var options = new List<ServiceOptionBase> {
+            new FishSellingOption {
+                m_displayKey = DisplayKey,
+                m_iconKey = "SellFish",
+                m_serviceName = ServiceName,
+            },
+        };
+
+        // The day's fish and the week's tournament are told by the fisherman, not by every shop that buys fish.
+        if (Entity.Template is GameObjectTemplate template && IsFishingNpc(template)) {
+            if (FishingDays.CatchOfTheDayOn) {
+                options.Add(new FishCatchOfTheDayOption { m_displayKey = "Fishing_00000194", m_iconKey = "SellFish", m_serviceName = ServiceName });
+            }
+
+            if (FishingDays.TournamentsOn) {
+                options.Add(new FishTournamentOption { m_displayKey = "Fishing_00000202", m_iconKey = "SellFish", m_serviceName = ServiceName });
+                options.Add(new FishTournamentLeaderboardOption { m_displayKey = "Fishing_00000206", m_iconKey = "GuildAchievements", m_serviceName = ServiceName });
+            }
+        }
+
+        return options;
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
@@ -80,10 +99,42 @@ internal sealed class InteractFishSellingComponent(ZoneEntity entity) : ZoneEnti
             return;
         }
 
+        var options = GetServiceOptions(playerCharacter).ToList();
+        var picked = serviceOptionIndex < options.Count ? options[(int) serviceOptionIndex] : options.FirstOrDefault();
+        var npc = Entity.ActiveGameObject.m_globalID.Full;
+        switch (picked) {
+            case FishCatchOfTheDayOption:
+                playerActor.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_CATCHOFTHEDAYOPEN {
+                    GlobalID = npc,
+                    FishTemplateID = FishingDays.CatchOfTheDay,
+                    CatchOfTheDayBonus = (uint) FishingDays.BonusToday(playerCharacter.FishingBehavior),
+                });
+
+                return;
+            case FishTournamentOption: {
+                var (fish, whoppers) = FishTournaments.FishOf(FishingDays.WeekEnd());
+                playerActor.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_FISHTOURNAMENTOPEN {
+                    GlobalID = npc,
+                    FishTemplateID = fish,
+                    FishSizeTarget = whoppers ? 1u : 0u,
+                });
+
+                return;
+            }
+            case FishTournamentLeaderboardOption:
+                playerActor.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_FISHTOURNAMENTLEADERBOARDOPEN {
+                    ThisWeeksExpireTime = FishingDays.WeekEnd(),
+                    LastWeeksExpireTime = FishingDays.WeekEnd(1),
+                });
+
+                return;
+        }
+
+        // The seller window prices the Catch of the Day itself: three times, plus the bonus it is sent.
         playerActor.Tell(new WIZARDHOUSING_50_PROTOCOL.MSG_SELLFISHOPEN {
-            GlobalID = Entity.ActiveGameObject.m_globalID.Full,
-            FishTemplateID = 0,
-            CatchOfTheDayBonus = 0,
+            GlobalID = npc,
+            FishTemplateID = FishingDays.CatchOfTheDay,
+            CatchOfTheDayBonus = (uint) FishingDays.BonusToday(playerCharacter.FishingBehavior),
         });
         // The window lists the basket the game was last sent, so it gets the basket as it is now.
         playerActor.Tell(FishingService.BasketMessage(playerCharacter));

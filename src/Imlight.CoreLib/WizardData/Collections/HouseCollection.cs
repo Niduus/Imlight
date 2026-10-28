@@ -244,6 +244,34 @@ public static class HouseCollection {
     }
 
     /// <summary>
+    /// Writes a house together with its owner's fish basket in one transaction, so a fish that moves between the basket
+    /// and an aquarium is in one of them, never lost and never in both.
+    /// </summary>
+    /// <param name="house">The house to save.</param>
+    /// <param name="owner">The owner, whose fishing behavior holds the basket.</param>
+    /// <returns><c>true</c> when both are stored; <c>false</c> when neither changed.</returns>
+    public static bool SaveWithFishing(House house, Wizard owner) {
+        try {
+            return WizardCollection.UpdateCharacterWithSession(owner.CharId, (session, storedOwner) => {
+                var stored = session.Load<House>(house.Id);
+                if (stored is null || owner.FishingBehavior is null) {
+                    return false;
+                }
+
+                CopyChanging(house, stored);
+                storedOwner.FishingBehavior = owner.FishingBehavior;
+
+                return true;
+            });
+        } catch (Exception ex) {
+            Logger.Error("Failed to save house {HouseId} with the fish basket of character {CharId}: {Reason}",
+                Logger.Args(house.Id, owner.CharId, ex.Message));
+
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Writes a house together with its owner's attic in one transaction, so objects that move between them are
     /// either in the house or in the attic, never lost and never in both.
     /// </summary>

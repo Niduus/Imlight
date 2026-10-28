@@ -32,7 +32,7 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
 /// Fishing from chat: `.fishing` shows your fishing level, basket and the fish here, `.fishing basket` lists the basket,
-/// `.fishing sell` sells it all. QA: `.fishing spells` teaches every fishing spell, `.fishing level &lt;n&gt;` sets the
+/// `.fishing sell` sells it all, `.fishing today` names the Catch of the Day and this week's tournament fish. QA: `.fishing spells` teaches every fishing spell, `.fishing level &lt;n&gt;` sets the
 /// fishing level and `.fishing reset` fills this zone's ponds with new fish.
 /// </summary>
 internal class CommandFishingProtocol : CommandProtocol {
@@ -55,6 +55,10 @@ internal class CommandFishingProtocol : CommandProtocol {
                 break;
             case "sell":
                 Sell(me);
+                break;
+            case "today":
+            case "tournament":
+                InformSenderClient(FishingDays.Describe(me.FishingBehavior));
                 break;
             case "spells":
                 if (RequireQa()) {
@@ -79,7 +83,7 @@ internal class CommandFishingProtocol : CommandProtocol {
                 }
                 break;
             default:
-                InformSenderClient("Use .fishing, .fishing basket or .fishing sell (QA: .fishing spells, .fishing level 10, .fishing reset).");
+                InformSenderClient("Use .fishing, .fishing basket, .fishing sell or .fishing today (QA: .fishing spells, .fishing level 10, .fishing reset).");
                 break;
         }
     }
@@ -146,7 +150,7 @@ internal class CommandFishingProtocol : CommandProtocol {
             return;
         }
 
-        var gold = basket.Sum(f => FishingData.Fish(f.TemplateId)?.PriceOf(f.Size) ?? 0);
+        var gold = basket.Sum(f => FishingDays.SalePrice(me.FishingBehavior, f.TemplateId, f.Size));
         var count = basket.Count;
         basket.Clear();
         WizardCollection.UpdateCharacterFishingBehavior(me);
