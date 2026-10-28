@@ -26,6 +26,16 @@ internal class CommandCheatProtocol : CommandProtocol {
 
     internal override string Group { get; set; } = "cheat";
 
+    // Every player may switch their own cheats (Niduus, 2026-10-28; see PlayerCheatSwitches).
+    [Command("list")]
+    private void ListCommand() => InformSenderClient(PlayerCheatChat.List(Context.Character));
+
+    [Command("on")]
+    private void OnCommand([Remainder] string which = "") => InformSenderClient(PlayerCheatChat.Switch(Context.Character, which, true));
+
+    [Command("off")]
+    private void OffCommand([Remainder] string which = "") => InformSenderClient(PlayerCheatChat.Switch(Context.Character, which, false));
+
     [Command("win")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void InstaWinCommand() 

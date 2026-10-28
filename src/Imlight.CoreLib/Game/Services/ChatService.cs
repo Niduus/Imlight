@@ -94,7 +94,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         var cleanedMessage = CleanMessageTrash(message.Message);
 
         // Parse in-game chat commands. Do not broadcast it to the zone.
-        if (cleanedMessage.StartsWith(CommandPrefix) && account.AuthLevel > AuthLevel.None) {
+        if (IsChatCommand(cleanedMessage, account)) {
             SendChatCommand(cleanedMessage, charObj, wizard);
 
             return;
@@ -260,7 +260,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         var wizard = GetActiveWizard();
         var cleanedMessage = CleanMessageTrash(message.Message);
 
-        if (cleanedMessage.StartsWith(CommandPrefix) && GetActiveAccount().AuthLevel > AuthLevel.None) {
+        if (IsChatCommand(cleanedMessage, GetActiveAccount())) {
             SendChatCommand(cleanedMessage, charObj, wizard);
 
             return;
@@ -622,6 +622,12 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         return sent;
     }
+
+    // A dot command, never shown to anyone else. Every player may use them (Niduus, 2026-10-28: players' own cheats by
+    // "phantom commands"); a player's line must have a letter after the dot, so "..." or ". lol" still is chat.
+    private static bool IsChatCommand(string text, Account account)
+        => text.StartsWith(CommandPrefix)
+           && (account.AuthLevel > AuthLevel.None || text.Length > 1 && char.IsLetter(text[1]));
 
     private void SendChatCommand(string input, CoreObject charObj, Wizard character) {
         var account = GetActiveAccount();

@@ -224,6 +224,7 @@ internal class CommandAccountProtocol : CommandProtocol {
 
     [Command("infractions")]
     [Alias("warns", "warnings")]
+    [AuthRequired(AuthLevel.HallMonitor)]
     private void GetAccountInfractionsCommand(string username) {
         var account = AccountCollection.GetAccount(username);
         if (account is null) {
