@@ -650,6 +650,9 @@ internal static class BossCheats {
 
     private static readonly Lazy<Dictionary<ulong, BossCheatFile>> s_bosses = new(Load);
 
+    /// <summary>Reads the boss cheat files now, so the first battle after a start does not wait for them (BattleWarmUp).</summary>
+    internal static int WarmUp() => s_bosses.Value.Count;
+
     /// <summary>
     /// The cheats of a boss template, or none. For a custom's key (Customs.cs): its creature's file with the custom's
     /// own changes laid over it.

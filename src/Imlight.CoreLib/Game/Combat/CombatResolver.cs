@@ -1486,6 +1486,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     private static readonly Lazy<Dictionary<uint, uint>> s_lookalikes = new(BuildLookalikes);
 
+    /// <summary>Builds the spell lookups the first cast needs now, so the first battle after a start does not wait (BattleWarmUp).</summary>
+    internal static void WarmUp() {
+        _ = s_lookalikes.Value;
+        _ = s_allSpells.Value;
+    }
+
     private static Dictionary<uint, uint> BuildLookalikes() {
         try {
             var ids = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
