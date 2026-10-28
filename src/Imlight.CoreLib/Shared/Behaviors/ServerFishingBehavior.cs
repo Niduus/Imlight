@@ -54,6 +54,12 @@ public class ServerFishingBehavior {
     public List<BasketFish> Basket { get; set; } = [];
     public List<FishRecord> History { get; set; } = [];
 
+    /// <summary>The Catch of the Day bonus: 100 gold more for each day the day's fish was caught, up to 3000.</summary>
+    public int CatchOfTheDayBonus { get; set; }
+
+    /// <summary>The last day (US Central, yyyy-MM-dd) the Catch of the Day was caught; that day's sales get the bonus.</summary>
+    public string CatchOfTheDayCaught { get; set; }
+
     /// <summary>Puts a fish in the basket and counts it in the journal.</summary>
     public void Add(uint templateId, float size, bool smallFry, bool whopper) {
         Basket ??= [];
@@ -72,6 +78,13 @@ public class ServerFishingBehavior {
         record.SmallFries += smallFry ? 1u : 0u;
         record.Whoppers += whopper ? 1u : 0u;
     }
+
+    /// <summary>The fish of this kind closest to this size in the basket, left in it.</summary>
+    public BasketFish Peek(uint templateId, float size)
+        => (Basket ?? [])
+            .Where(f => f.TemplateId == templateId)
+            .OrderBy(f => Math.Abs(f.Size - size))
+            .FirstOrDefault();
 
     /// <summary>Takes the fish of this kind closest to this size out of the basket.</summary>
     public BasketFish Take(uint templateId, float size) {

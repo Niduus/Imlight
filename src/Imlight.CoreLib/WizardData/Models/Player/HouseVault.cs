@@ -21,7 +21,7 @@
  *
  * PURPOSE:
  * What a storage object placed in a house holds: the Gear Vault, the Jewel Vault, the Gardening Shed (the
- * client's "Seed Vault"), the Treasure Card Vault and the Treasure Card Poster. It is stored on the placed item,
+ * client's "Seed Vault"), the Treasure Card Vault, the Treasure Card Poster and an aquarium's fish. It is stored on the placed item,
  * so it is written with the house and survives restarts like the house does.
  *
  * USAGE EXAMPLE:
@@ -87,6 +87,17 @@ public sealed record VaultCard {
 }
 
 /// <summary>
+/// One fish swimming in an aquarium: the fish from the basket, as it was caught.
+/// </summary>
+public sealed record VaultFish {
+
+    public uint TemplateId { get; init; }
+
+    public float Size { get; init; }
+
+}
+
+/// <summary>
 /// The contents of a storage object, which it keeps wherever it goes: placed, in the attic, in the backpack or the bank.
 /// </summary>
 public sealed record HouseVault {
@@ -104,6 +115,11 @@ public sealed record HouseVault {
     public List<VaultCard> Cards { get; init; } = [];
 
     /// <summary>
+    /// The fish of an aquarium, in the order they went in.
+    /// </summary>
+    public List<VaultFish> Fish { get; init; } = [];
+
+    /// <summary>
     /// The card a poster shows, or <c>null</c>.
     /// </summary>
     public VaultCard Poster { get; init; }
@@ -116,7 +132,7 @@ public sealed record HouseVault {
     /// <summary>
     /// Whether the vault holds anything that would be lost with it. A poster's card is shown, not held.
     /// </summary>
-    [JsonIgnore] public bool HoldsItems => (Items?.Count ?? 0) > 0 || (Cards?.Count ?? 0) > 0;
+    [JsonIgnore] public bool HoldsItems => (Items?.Count ?? 0) > 0 || (Cards?.Count ?? 0) > 0 || (Fish?.Count ?? 0) > 0;
 
     /// <summary>
     /// Counts the entries of a template.
