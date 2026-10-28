@@ -61,10 +61,11 @@ internal sealed partial class ManagerWindow {
     // Flags a person has to see for each quest, whatever the check says.
     private static readonly HashSet<string> s_qxByHand = [
         "Spawns or opens something", "Step the server can't do", "Untested fix", "Changed by us", "Opens a world", "Teaches a spell",
+        "Text fixed",
     ];
 
     // Flags that are one fix for many quests: the first quest of a world with it is played, the rest trust it.
-    private static readonly string[] s_qxGrouped = ["Rewards changed", "Dungeon"];
+    private static readonly string[] s_qxGrouped = ["Rewards changed", "Dungeon", "Dialog on arrival", "Fight counts now"];
 
     private sealed class QxCheck {
         public string Code { get; init; } = "";
@@ -85,6 +86,8 @@ internal sealed partial class ManagerWindow {
         public string Kind { get; init; } = "";
         public string Why { get; init; } = "";
         public string Check { get; init; } = "";
+        // A fix made since the last list (v0.10.590 on): the "Recent fixes" view shows these, ticked or not.
+        public bool Recent { get; init; }
     }
 
     private sealed class QxQuest {
@@ -114,6 +117,7 @@ internal sealed partial class ManagerWindow {
         // What the tick is kept by: the quest code, or the world and name of a quest the server doesn't have.
         public string Key => Code.Length > 0 ? Code : $"{World}|{Name}";
         public bool OnServer => Code.Length > 0;
+        public bool Recent => Flags.Any(f => f.Recent);
     }
 
     private sealed class QxWorld {
@@ -132,7 +136,8 @@ internal sealed partial class ManagerWindow {
     private sealed record QxRow(QxRowKind Kind, string Text, string Line, QxQuest? Quest);
 
     private const string QX_ONLY_FLAGGED = "Only quests with something to check";
-    private static readonly string[] s_qxShow = [ANY_FILTER, "Left to test", "Tested"];
+    private const string QX_RECENT = "Recent fixes";
+    private static readonly string[] s_qxShow = [ANY_FILTER, "Left to test", "Tested", QX_RECENT];
     private static readonly string[] s_qxServer = [ANY_FILTER, "On the server", "Not on the server"];
 
     private readonly TextBox _qxSearch = new() { Watermark = "Search a quest, an NPC, a step, a reward or why it's flagged" };
@@ -193,21 +198,22 @@ internal sealed partial class ManagerWindow {
                               "themselves. It runs in the background and can take 10 to 30 minutes the first time.");
         _qxCheckTimer.Tick += (_, _) => QuestCheckPoll();
 
-        var details = new ScrollViewer { Width = 470, Margin = new Thickness(14, 0, 0, 0), Content = Card(_qxDetails) };
+        // The details take a share of a wide window instead of a fixed strip, so less of it is left empty.
+        var details = new ScrollViewer { MinWidth = 420, Margin = new Thickness(14, 0, 0, 0), Content = Card(_qxDetails) };
         ShowQuestTesting(null);
 
-        return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16),
+        var left = new DockPanel {
             Children = {
-                WithDock(details, Dock.Right),
                 WithDock(Fold("flag", "Quests", "Main quest testing",
                     "Every main story quest from the first to the last, in the order you play them, with why each one may not work " +
                     "here, what to do, and what should happen. Tick a quest once it worked.",
                     WithHint(_qxSearch, "Play the story top to bottom and tick each quest once it went the way \"Should happen\" says. " +
                         "Why it's flagged: Rebuilt by us = not recorded from the real game, so steps may point the wrong way; " +
                         "Rewards changed / Teaches a spell = new rewards in v0.10.477 and v0.10.463; Spawns or opens something = a boss, " +
-                        "door or scene the quest should now start; Dungeon = its sigil or door; Not on the server = the server doesn't " +
-                        "have it, so check the next quest is still offered. Ticks are kept on this PC only."),
+                        "door or scene the quest should now start; Dungeon = its sigil or door; Text fixed = a raw code in the quest book was " +
+                        "replaced; Dialog on arrival = a dialog that used to play late; Fight counts now = a defeat step that never " +
+                        "counted; Not on the server = the server doesn't have it, so check the next quest is still offered. " +
+                        "Showing: Recent fixes lists the quests changed lately (New fix), ticked or not. Ticks are kept on this PC only."),
                     SearchFilters(
                         SearchFilter("World", _qxWorld),
                         SearchFilter("Why it's flagged", _qxFlag),
@@ -237,6 +243,13 @@ internal sealed partial class ManagerWindow {
                     _qxCheckStatus), Dock.Top),
                 WithMargin(_qxList, new Thickness(0, 14, 0, 0)),
             },
+        };
+        Grid.SetColumn(details, 1);
+
+        return new Grid {
+            Margin = new Thickness(24, 12, 24, 16),
+            ColumnDefinitions = new ColumnDefinitions("3*,2*"),
+            Children = { left, details },
         };
     }
 
@@ -439,7 +452,7 @@ internal sealed partial class ManagerWindow {
 
         if (index >= 0) {
             // A tested quest leaves a "Not tested yet" list, and an untested one a "Tested" list.
-            if (_qxShowing.SelectedIndex > 0) {
+            if (_qxShowing.SelectedIndex is 1 or 2) {
                 _qxRows.RemoveAt(index);
                 _qxShown--;
             }
@@ -474,6 +487,7 @@ internal sealed partial class ManagerWindow {
                && _qxShowing.SelectedIndex switch {
                    1 => !done && (quest.OnServer || _qxServer.SelectedIndex == 2),
                    2 => done,
+                   3 => quest.Recent,
                    _ => true,
                }
                && _qxServer.SelectedIndex switch {
@@ -577,6 +591,10 @@ internal sealed partial class ManagerWindow {
         var tags = new WrapPanel { Margin = new Thickness(80, 2, 0, 0) };
         if (quest.Checked.Length > 0) {
             tags.Children.Add(WithMargin(QtTag(quest.Checked, QuestFlagBrush(quest.Checked)), new Thickness(0, 0, 6, 2)));
+        }
+
+        if (quest.Recent) {
+            tags.Children.Add(WithMargin(QtTag("New fix", ManagerTheme.Accent("Quests")), new Thickness(0, 0, 6, 2)));
         }
 
         foreach (var kind in quest.Flags.Select(f => f.Kind).Distinct()) {
@@ -722,7 +740,7 @@ internal sealed partial class ManagerWindow {
             _qxDetails.Children.Add(new StackPanel {
                 Spacing = 2,
                 Children = {
-                    new TextBlock { Text = flag.Kind, FontWeight = FontWeight.SemiBold, Foreground = QuestFlagBrush(flag.Kind) },
+                    new TextBlock { Text = flag.Kind + (flag.Recent ? "  (new fix)" : ""), FontWeight = FontWeight.SemiBold, Foreground = QuestFlagBrush(flag.Kind) },
                     new SelectableTextBlock { Text = flag.Why, TextWrapping = TextWrapping.Wrap, FontSize = 13 },
                 },
             });
