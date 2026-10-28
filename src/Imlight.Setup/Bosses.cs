@@ -375,12 +375,13 @@ internal sealed class BossCatalog {
     /// <summary>
     /// Creatures that hold every word of the query, bosses and exact names first. A name typed partly or with a slip
     /// finds it too when nothing holds every word as typed (CheatSearch). Filter: only these (the filters typed in the
-    /// box: world, has cheats...). An empty query lists everything allowed, the changed ones first (Niduus, 2026-10-25:
-    /// "have them all generate search results if left empty"). Also: another way a creature fits the query (its world,
-    /// its cheats).
+    /// box: world, has cheats...). An empty query lists everything allowed (Niduus, 2026-10-25: "have them all generate search results if left
+    /// empty"). Also: another way a creature fits the query (its world, its cheats). ChangedFirst: the changed ones before
+    /// the others that match as well.
     /// </summary>
     internal List<BossInfo> Search(string query, bool bossesOnly, ISet<string> changed, int max, out int total,
-                                   Func<BossInfo, bool>? filter = null, Func<BossInfo, string, bool>? also = null) {
+                                   Func<BossInfo, bool>? filter = null, Func<BossInfo, string, bool>? also = null,
+                                   bool changedFirst = true) {
         var words = SearchText.Words(query);
         // A creature's template ID typed whole is that creature and no other (Niduus, 2026-10-26).
         if (SpellNameFamily.IsSpellId(query, out _) && Creatures.FirstOrDefault(c => c.Id == query.Trim()) is { } byId) {
@@ -404,7 +405,7 @@ internal sealed class BossCatalog {
         return [.. matches
             .OrderBy(c => !(c.Name.Equals(exact, StringComparison.OrdinalIgnoreCase) || c.Id == exact))
             .ThenByDescending(c => CheatSearch.NameScore(c.Name, query))
-            .ThenBy(c => !changed.Contains(c.Id))
+            .ThenBy(c => changedFirst && !changed.Contains(c.Id))
             .ThenBy(c => !c.IsBoss)
             .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
             .ThenBy(c => c.Level)

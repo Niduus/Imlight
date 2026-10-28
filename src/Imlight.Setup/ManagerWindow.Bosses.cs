@@ -59,6 +59,10 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _bossSort = FilterCombo(s_bossSorts, 160);
     private readonly CheckBox _bossChangedOnly = new() { Content = "Only ones I changed" };
     private readonly CheckBox _bossHasStats = new() { Content = "Has extra stats from the game" };
+    // Off by default, so changed ones sit where the sort puts them; on pins them first, as before (a player's idea Niduus
+    // passed on, 2026-10-28). Remembered between runs by a file next to the app.
+    private readonly CheckBox _bossChangedFirst = new() { Content = "Changed ones at the top" };
+    private const string BOSS_CHANGED_FIRST = "bosses-changed-first.txt";
     private bool _bossFiltersFilled;
     private readonly TextBlock _bossCount = Sub("");
     private readonly ListBox _bossResults = new() { Background = Brushes.Transparent, MaxHeight = 260 };
@@ -109,8 +113,23 @@ internal sealed partial class ManagerWindow {
         _bossesOnly.IsCheckedChanged += (_, _) => RenderBossResults();
         _bossHasCheats.IsCheckedChanged += (_, _) => RenderBossResults();
         _bossInCheats.IsCheckedChanged += (_, _) => RenderBossResults();
+        _bossChangedFirst.IsChecked = File.Exists(Path.Combine(_manager.InstallFolder, BOSS_CHANGED_FIRST));
+        _bossChangedFirst.IsCheckedChanged += (_, _) => {
+            var file = Path.Combine(_manager.InstallFolder, BOSS_CHANGED_FIRST);
+            try {
+                if (_bossChangedFirst.IsChecked == true) {
+                    File.WriteAllText(file, "Bosses tab: changed ones are listed first. Delete this file, or untick it in the app, to stop.");
+                }
+                else {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // Not remembered: it still applies until the app closes.
+            }
+        };
         WhenFiltersChange(RenderBossResults, _bossFilterSchool, _bossFilterWorld, _bossLevelMin, _bossLevelMax, _bossHealthMin, _bossHealthMax,
-            _bossSort, _bossChangedOnly, _bossHasStats);
+            _bossSort, _bossChangedOnly, _bossHasStats, _bossChangedFirst);
         _bossResults.ItemTemplate = new FuncDataTemplate<BossInfo>((boss, _) => boss is null ? new Panel() : BossRow(boss));
         _bossResults.SelectionChanged += async (_, _) => {
             if (_bossResults.SelectedItem is BossInfo boss && boss != _boss) {
@@ -174,6 +193,7 @@ internal sealed partial class ManagerWindow {
                     SearchFilter("Health to", _bossHealthMax),
                     SearchFilter("Sort by", _bossSort),
                     SearchTick(_bossChangedOnly),
+                    SearchTick(_bossChangedFirst),
                     SearchTick(_bossHasStats)),
                 _bossCount,
                 _bossResults),
@@ -324,7 +344,7 @@ internal sealed partial class ManagerWindow {
         var changedOnly = _bossChangedOnly.IsChecked == true;
         var hasStats = _bossHasStats.IsChecked == true;
         IEnumerable<BossInfo> found = FindCreatures(query, _bossesOnly.IsChecked == true, changed, int.MaxValue, out _, _bossInCheats.IsChecked == true,
-                _bossHasCheats.IsChecked == true)
+                _bossHasCheats.IsChecked == true, _bossChangedFirst.IsChecked == true)
             .Where(c => (school is null || c.School.Equals(school, StringComparison.OrdinalIgnoreCase))
                         && (world is null || WorldOf(c).Equals(world, StringComparison.OrdinalIgnoreCase))
                         && InFilterRange(c.Level, _bossLevelMin, _bossLevelMax)

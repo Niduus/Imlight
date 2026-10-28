@@ -150,7 +150,7 @@ internal sealed partial class ManagerWindow {
     /// has:nocheats), uses:"cap damage" (a cheat of it uses that block, spell or word).
     /// </summary>
     private List<BossInfo> FindCreatures(string text, bool bossesOnly, ISet<string> changed, int max, out int total, bool inCheats = false,
-                                         bool withCheats = false) {
+                                         bool withCheats = false, bool changedFirst = true) {
         total = 0;
         if (_bossCatalog is null) {
             return [];
@@ -171,7 +171,7 @@ internal sealed partial class ManagerWindow {
         // Its world and, when asked, its cheats are words it is found by too ("winged darkmoor", "remove jinx").
         bool Also(BossInfo c, string words) => CheatSearch.Matches(
             $"{c.Name} {c.Id} {WorldOf(c)} {(inCheats && CheatIndex().TryGetValue(c.Id, out var e) ? string.Join(' ', e.Cheats.Select(x => x.Text)) : "")}", words);
-        var found = _bossCatalog.Search(query.Words, bossesOnly, changed, max, out total, filtered ? Filter : null, Also);
+        var found = _bossCatalog.Search(query.Words, bossesOnly, changed, max, out total, filtered ? Filter : null, Also, changedFirst);
 
         return found;
     }
