@@ -235,6 +235,7 @@ internal static class ManagerTheme {
         ["puzzle"] = ("M10 3a2 2 0 0 1 4 0v2h5v5h-2a2 2 0 0 0 0 4h2v5h-5v-2a2 2 0 0 0-4 0v2H5v-5h2a2 2 0 0 0 0-4H5V5h5z", true),
         ["broom"] = ("M20 3l-8 8 M7 10l7 7 M7 10c-2 2-4 3-5 8 5-1 6-3 8-5", false),
         ["hourglass"] = ("M6 3h12 M6 21h12 M7 3c0 6 10 5 10 9s-10 3-10 9 M17 3c0 6-10 5-10 9s10 3 10 9", false),
+        ["music"] = ("M9 18V5l11-2v13 M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3z M20 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z", false),
         ["once"] = (C(12, 12, 9) + " M10 8.5l2.5-1.5v10", false),
         ["list"] = ("M8 6h13 M8 12h13 M8 18h13 M3 6h1 M3 12h1 M3 18h1", false),
         ["hit"] = ("M12 2l1.8 5.5L19 5l-2.5 5.2L22 12l-5.5 1.8L19 19l-5.2-2.5L12 22l-1.8-5.5L5 19l2.5-5.2L2 12l5.5-1.8L5 5l5.2 2.5z", true),
