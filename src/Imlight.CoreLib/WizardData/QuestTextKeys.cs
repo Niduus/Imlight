@@ -38,14 +38,20 @@ public static partial class QuestTextKeys {
             DropLinesTheGameLacks(quests);
         } catch (Exception ex) {
             Logger.Warning("Quest lines the game no longer has could not be left out: {0}", Logger.Args(ex.Message));
-        } finally {
-            Locale.ReleaseQuestTables();
         }
 
         try {
             ResolvePlaces(quests);
         } catch (Exception ex) {
             Logger.Warning("Quest places could not be matched to the game's places: {0}", Logger.Args(ex.Message));
+        }
+
+        try {
+            ReplaceMissingKeys(quests);
+        } catch (Exception ex) {
+            Logger.Warning("Quest keys the game does not have could not be replaced: {0}", Logger.Args(ex.Message));
+        } finally {
+            Locale.ReleaseQuestTables();
         }
     }
 
@@ -249,7 +255,8 @@ public static partial class QuestTextKeys {
             // A step with no place shows none, as in the game. The game's own quests also name places by a line of
             // their dialogue table (WizQst1ED24_00000009 says "World|Place"); those are kept.
             string current = goal.m_locationName;
-            if (string.IsNullOrEmpty(current) || IsPlace(current) || current.StartsWith("WizQst", StringComparison.Ordinal)) {
+            if (string.IsNullOrEmpty(current) || IsPlace(current)
+                || (current.StartsWith("WizQst", StringComparison.Ordinal) && Locale.HasLine(current) != false)) {
                 continue;
             }
 
@@ -302,6 +309,125 @@ public static partial class QuestTextKeys {
 
         Logger.Information("Quest places: {0} steps got a place the game knows, {1} by the place their zone or world uses most; {2} have none.",
             Logger.Args(goals.Count(g => IsPlace(g.m_locationName)), unplaced.Count - kept, kept));
+    }
+
+    /// <summary>
+    /// Whatever is still a key the game's text files lack shows as that key, letters and all
+    /// (WizQst9D0EA_00000009 under Explore in Tall Enough to Meet the Sun, Niduus 2026-10-28; Wizard404 has the same
+    /// key, so the game itself dropped the line). A step's thing to find takes its place's name (Explore Xibalba), a
+    /// speaker's name goes (the line is named for its persona), and a page of talk the game no longer has goes; when a
+    /// whole dialog is gone, the first page says the giver's last instructions instead (an Underway the quest book shows).
+    /// </summary>
+    private static void ReplaceMissingKeys(IReadOnlyList<QuestTemplate> quests) {
+        static bool Missing(string value)
+            => !string.IsNullOrEmpty(value) && KeyPattern().IsMatch(value.Trim()) && Locale.HasLine(value.Trim()) == false;
+
+        int descriptors = 0, names = 0, lines = 0, titles = 0;
+
+        void FixDialog(ActorDialog dialog, string instead) {
+            if (dialog?.m_dialogEntries is not { Count: > 0 } entries) {
+                return;
+            }
+
+            foreach (var npc in entries.OfType<NPCDialogEntry>().Where(e => Missing(e.m_nameOverride))) {
+                npc.m_nameOverride = "";
+                names++;
+            }
+
+            var gone = entries.OfType<NPCDialogEntry>().Where(e => Missing(e.m_dialog)).ToList();
+            if (gone.Count == 0) {
+                return;
+            }
+
+            var kept = gone.Count < entries.Count;
+            foreach (var entry in gone) {
+                lines++;
+                // A page that sets something off stays, saying what the giver said last.
+                if (!string.IsNullOrEmpty(entry.m_dialogEvent) || !string.IsNullOrEmpty(entry.m_action)
+                    || (!kept && instead is not null)) {
+                    entry.m_dialog = instead ?? "";
+                    kept = true;
+                    continue;
+                }
+
+                entries.Remove(entry);
+            }
+        }
+
+        void FixList(ActorDialogListBase list, string instead) {
+            var dialogs = (list as ActorDialogList)?.m_dialogs;
+            if (dialogs is null) {
+                return;
+            }
+
+            foreach (var dialog in dialogs.ToList()) {
+                FixDialog(dialog, instead);
+                if (dialog?.m_dialogEntries is { Count: 0 }) {
+                    dialogs.Remove(dialog);
+                }
+            }
+        }
+
+        void FixResults(ResultList results, string instead) {
+            foreach (var shown in results?.m_results?.OfType<ResActorDialog>() ?? []) {
+                FixDialog(shown.m_dialog, instead);
+            }
+        }
+
+        string PlaceName(GoalTemplate goal) {
+            var place = Locale.GetEnglishName((string) goal.m_locationName ?? "");
+            var bar = place.IndexOf('|');
+
+            return bar >= 0 ? place[(bar + 1)..].Trim() : "";
+        }
+
+        foreach (var quest in quests.Where(q => q is not null)) {
+            if (Missing(quest.m_questTitle)) {
+                Logger.Warning("Quest {0} has a title the game does not have ({1}).", Logger.Args((string) quest.m_questName, (string) quest.m_questTitle));
+                titles++;
+            }
+
+            // What the giver said last before the quest began: the words its book shows when its own are gone.
+            var instead = (quest.m_dialogList as ActorDialogList)?.m_dialogs?
+                .Where(d => (string) d?.m_dialogTag == "Prep")
+                .SelectMany(d => d.m_dialogEntries ?? [])
+                .OfType<NPCDialogEntry>()
+                .Select(e => (string) e.m_dialog)
+                .LastOrDefault(d => !string.IsNullOrEmpty(d) && !Missing(d));
+
+            FixList(quest.m_dialogList, instead);
+            FixResults(quest.m_startResults, instead);
+            FixResults(quest.m_endResults, instead);
+
+            foreach (var goal in quest.m_goals?.Where(g => g is not null) ?? []) {
+                FixList(goal.m_dialogList, instead);
+                FixResults(goal.m_completeResults, instead);
+
+                if (Missing(goal.m_goalTitle)) {
+                    Logger.Warning("Quest {0} step {1} has a title the game does not have ({2}).",
+                        Logger.Args((string) quest.m_questName, (string) goal.m_goalName, (string) goal.m_goalTitle));
+                    titles++;
+                }
+
+                if (goal.m_tallyCounter is not { } tally) {
+                    continue;
+                }
+
+                var place = goal is WaypointGoalTemplate ? PlaceName(goal) : "";
+                if (Missing(tally.m_descriptor)) {
+                    tally.m_descriptor = place;
+                    descriptors++;
+                }
+
+                if (Missing(tally.m_descriptor2)) {
+                    tally.m_descriptor2 = place;
+                    descriptors++;
+                }
+            }
+        }
+
+        Logger.Information("Quest text: replaced {0} step words, {1} speaker names and {2} dialog pages whose keys the game does not have; {3} titles left as they are.",
+            Logger.Args(descriptors, names, lines, titles));
     }
 
     /// <summary>The world of a zone, as the place table spells it: Celestia/Interiors/CL_Z01i1_Survey_Camp is celestia.</summary>

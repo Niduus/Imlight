@@ -328,6 +328,29 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         return lines.ContainsKey(key[(bar + 1)..]);
     }
 
+    /// <summary>
+    /// Whether the game has the line <paramref name="key"/> (Table_Id) in any of its text tables: null when its table is
+    /// not one the game has and is no quest table either, so nothing is known of it. A quest table the game has no file
+    /// for counts as having no lines.
+    /// </summary>
+    public static bool? HasLine(string key) {
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        var bar = key?.LastIndexOf('_') ?? -1;
+        if (bar <= 0 || s_data.Count == 0) {
+            return null;
+        }
+
+        var table = key[..bar];
+        if (!(s_data.TryGetValue(table, out var lines) || s_questTables.TryGetValue(table, out lines))) {
+            return table.StartsWith(s_qustFilePrefix, StringComparison.Ordinal) && table.Length > s_qustFilePrefix.Length ? false : null;
+        }
+
+        return lines.ContainsKey(key[(bar + 1)..]);
+    }
+
     /// <summary>The quest dialogue tables are only needed once; this lets them go.</summary>
     public static void ReleaseQuestTables()
         => s_questTables = [];
