@@ -39,6 +39,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.MessageLayer;
@@ -55,7 +56,7 @@ internal sealed class MountDriver {
 
     public ulong CharId { get; init; }
     public ulong ObjectId { get; init; }
-    public IActorRef Session { get; init; }
+    public volatile IActorRef Session;
 
     // Written only by the driver's session, read by the riders' sessions.
     public volatile IActorRef ZoneActor;
@@ -63,6 +64,17 @@ internal sealed class MountDriver {
     public volatile string Name;
     public volatile bool InDuel;
     public volatile bool InInstance;
+    /// <summary>The mount is stowed for a trip and comes back on in the next area that allows it.</summary>
+    public volatile bool Stowed;
+    public DateTime StowedSince;
+
+    private long _lastSeenTicks = DateTime.UtcNow.Ticks;
+
+    /// <summary>The driver's session checked in just now.</summary>
+    public void Touch() => Interlocked.Exchange(ref _lastSeenTicks, DateTime.UtcNow.Ticks);
+
+    /// <summary>No session of the driver has checked in for a while: logged out or lost.</summary>
+    public bool IsGone => DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSeenTicks) > MountRides.GoneAfter.Ticks;
     public ulong MountItemId;
     public ulong MountTemplateId;
     public int Seats;
@@ -106,6 +118,25 @@ internal static class MountRides {
 
     private static readonly ConcurrentDictionary<ulong, MountDriver> s_drivers = new();
     private static readonly ConcurrentDictionary<ulong, ulong> s_driverOfRider = new();
+    private static readonly ConcurrentDictionary<ulong, long> s_riderSeenTicks = new();
+
+    /// <summary>
+    /// How long a seat or a driver entry outlasts its wizard's last check-in. A zone change takes a few seconds with
+    /// no session at all; a logout that was not seen (a lost connection) runs out after this.
+    /// </summary>
+    internal static readonly TimeSpan GoneAfter = TimeSpan.FromSeconds(25);
+
+    internal static void TouchRider(ulong riderCharId) => s_riderSeenTicks[riderCharId] = DateTime.UtcNow.Ticks;
+
+    /// <summary>Frees the seats of riders who have not checked in for a while.</summary>
+    internal static void DropGoneRiders(MountDriver driver) {
+        var now = DateTime.UtcNow.Ticks;
+        foreach (var riderCharId in driver.RiderIds) {
+            if (!s_riderSeenTicks.TryGetValue(riderCharId, out var seen) || now - seen > GoneAfter.Ticks) {
+                Stand(riderCharId);
+            }
+        }
+    }
 
     internal static IEnumerable<MountDriver> Drivers => s_drivers.Values;
 
@@ -145,6 +176,7 @@ internal static class MountRides {
         }
 
         s_driverOfRider[riderCharId] = driver.CharId;
+        TouchRider(riderCharId);
 
         return true;
     }
@@ -194,11 +226,11 @@ internal static class MountRides {
             return messages;
         }
 
-        if (GetDriverOfRider(wizard.CharId) is { } driver) {
+        if (GetDriverOfRider(wizard.CharId) is { Stowed: false } driver) {
             messages.Add(RideMessage(wizard.GameObjectID, driver.ObjectId, true, driver.Location));
         }
 
-        if (GetDriver(wizard.CharId) is { } own) {
+        if (GetDriver(wizard.CharId) is { Stowed: false } own) {
             foreach (var riderCharId in own.RiderIds) {
                 messages.Add(RideMessage(Wizard.GetGameObjectId(riderCharId), own.ObjectId, true, own.Location));
             }

@@ -53,7 +53,7 @@ internal class MountRideService : MessageService {
     private const string TickTimerKey = "mount-ride";
     private static readonly TimeSpan s_tickInterval = TimeSpan.FromMilliseconds(300);
     private static readonly TimeSpan s_followTimeout = TimeSpan.FromSeconds(30);
-    private const int SeatResendTicks = 10;
+    private static readonly TimeSpan s_stowedHold = TimeSpan.FromSeconds(90);
 
     // As the driver.
     private MountDriver _driver;
@@ -63,18 +63,33 @@ internal class MountRideService : MessageService {
     private ulong _promptDriverObject;
     private DateTime _followStarted;
     private bool _following;
-    private int _seatResends;
+    private bool _adopted;
 
+    // Every zone change is a new session with new services, so the seat and the driver entry live in MountRides
+    // (by character) and each new session takes them over on its first check.
     public MountRideService(SessionActor sessionActor) : base(sessionActor) {
-        Timers.StartPeriodicTimer(TickTimerKey, new SERVICE_101_PROTOCOL.MSG_MOUNTRIDE_TICK(), s_tickInterval, s_tickInterval);
     }
 
     protected static Props Props(SessionActor parentActor)
         => Akka.Actor.Props.Create(() => new MountRideService(parentActor));
 
     protected override void OnPreDispose() {
+        // A zone change ends this session too: the seat and the driver entry stay for the next one (a logout is
+        // handled below, and anything left behind runs out in MountRides).
         Timers.Cancel(TickTimerKey);
+
+        base.OnPreDispose();
+    }
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT))]
+    private void ReceiveQueryLogout(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT message) => LeaveForGood();
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT))]
+    private void ReceiveClientDisconnect(GAME_5_PROTOCOL.MSG_CLIENT_DISCONNECT message) => LeaveForGood();
+
+    private void LeaveForGood() {
         try {
+            Adopt();
             if (_ride is not null) {
                 GetOff(tellOthers: true);
             }
@@ -84,8 +99,16 @@ internal class MountRideService : MessageService {
         catch (Exception ex) {
             Logger.Error("Error while leaving a multi-person mount at logout: {0}", Logger.Args(ex));
         }
+    }
 
-        base.OnPreDispose();
+    private void Adopt() {
+        if (_adopted || GetActiveWizard() is not { } wizard) {
+            return;
+        }
+
+        _adopted = true;
+        _driver = MountRides.GetDriver(wizard.CharId);
+        _ride = MountRides.GetDriverOfRider(wizard.CharId);
     }
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_MOUNTRIDE_TICK))]
@@ -96,6 +119,7 @@ internal class MountRideService : MessageService {
                 return;
             }
 
+            Adopt();
             if (!MountRides.Enabled) {
                 if (_ride is not null) {
                     GetOff(tellOthers: true);
@@ -133,6 +157,22 @@ internal class MountRideService : MessageService {
         }
 
         var mount = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount);
+
+        // The mount stowed for a trip (a Spiral Door, a world teleport, an area without mounts) comes back on in the
+        // next area that allows it: the riders hold their seats for a while and go along.
+        if (mount is null && _driver is not null && wizard.InteriorStowedMountId == _driver.MountItemId) {
+            if (!_driver.Stowed) {
+                _driver.StowedSince = DateTime.UtcNow;
+                _driver.Stowed = true;
+            }
+
+            if (DateTime.UtcNow - _driver.StowedSince <= s_stowedHold) {
+                Refresh(_driver, wizard);
+
+                return;
+            }
+        }
+
         var seats = MountRides.SeatsOf(mount);
         if (mount is null || seats < 2) {
             StopDriving();
@@ -164,9 +204,24 @@ internal class MountRideService : MessageService {
         }
 
         Refresh(_driver, wizard);
+        if (_driver.Stowed) {
+            // The mount is back on after a trip: seat the riders who came along, for everyone here.
+            _driver.Stowed = false;
+            foreach (var riderCharId in _driver.RiderIds) {
+                SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                    Message = MountRides.RideMessage(Wizard.GetGameObjectId(riderCharId), _driver.ObjectId, true, _driver.Location),
+                    Selfless = false,
+                    Sender = SessionActor.ActorRef,
+                    Targets = ZoneBroadcastTarget.Players,
+                }, Self);
+            }
+        }
     }
 
     private void Refresh(MountDriver driver, Wizard wizard) {
+        driver.Session = SessionActor.ActorRef;
+        driver.Touch();
+        MountRides.DropGoneRiders(driver);
         driver.ZoneActor = SessionActor.GetZoneActor();
         driver.ZonePath = wizard.Zone;
         driver.Name = wizard.PlayerNameBehavior?.GetWizardName();
@@ -233,6 +288,7 @@ internal class MountRideService : MessageService {
         => driver.CharId != wizard.CharId
            && driver.HasFreeSeat
            && !driver.InDuel
+           && !driver.Stowed
            && driver.ZoneActor is not null
            && driver.ZoneActor.Equals(zone)
            && (!MountRides.RequireGroup || GroupRegistry.AreGrouped(wizard.CharId, driver.CharId));
@@ -370,7 +426,6 @@ internal class MountRideService : MessageService {
         ClearPrompt();
         _ride = driver;
         _following = false;
-        _seatResends = SeatResendTicks;
         wizard.Location = driver.Location;
         BroadcastSeat(wizard, riding: true);
         Logger.Information("{0} got on {1}'s mount.", Logger.Args(wizard.CharId, driver.CharId));
@@ -388,8 +443,9 @@ internal class MountRideService : MessageService {
     // ------------------------------------------------------------------
 
     private void KeepSeat(Wizard wizard) {
+        MountRides.TouchRider(wizard.CharId);
         var driver = MountRides.GetDriver(_ride.CharId);
-        if (driver != _ride || !MountRides.IsRiding(wizard.CharId)) {
+        if (driver != _ride || !MountRides.IsRiding(wizard.CharId) || driver.IsGone) {
             GetOff(tellOthers: true); // the driver took the mount off or logged out
 
             return;
@@ -429,21 +485,13 @@ internal class MountRideService : MessageService {
             return;
         }
 
-        if (_following) {
-            // Arrived in the driver's zone: sit down again for everyone here.
-            _following = false;
-            _seatResends = SeatResendTicks;
-        }
+        // Arrived in the driver's zone. The seat is shown with each wizard's object (ZoneService.SpawnMyself and
+        // SpawnMyselfFor), so it is not sent again here: telling a seated rider's game again threw them off.
+        _following = false;
 
-        wizard.Location = driver.Location;
-
-        // Told again about 1, 2 and 3 seconds after sitting down or arriving, in case a game had not drawn the driver
-        // (or this wizard) yet when it was first told.
-        if (_seatResends > 0) {
-            _seatResends--;
-            if (_seatResends % 3 == 0) {
-                BroadcastSeat(wizard, riding: true);
-            }
+        // While the driver's mount is stowed the rider walks on their own; they sit back down when it comes back.
+        if (!driver.Stowed) {
+            wizard.Location = driver.Location;
         }
     }
 
@@ -477,10 +525,10 @@ internal class MountRideService : MessageService {
 
     [MessageHandler(typeof(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE))]
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
-        // A new zone was loaded: the old prompt is gone with it, and a rider sits down again once the game is in.
+        // In the world: the checks start (not at the character screen, where there is no wizard yet).
         _promptDriverObject = 0;
-        if (_ride is not null) {
-            _seatResends = SeatResendTicks;
+        if (!Timers.IsTimerActive(TickTimerKey)) {
+            Timers.StartPeriodicTimer(TickTimerKey, new SERVICE_101_PROTOCOL.MSG_MOUNTRIDE_TICK(), s_tickInterval, s_tickInterval);
         }
     }
 
