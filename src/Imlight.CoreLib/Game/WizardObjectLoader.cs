@@ -170,7 +170,10 @@ public static class WizardObjectLoader {
     public static void SetMagicSchoolBehavior(WizClientObject clientObject, ref Wizard character) {
         if (CoreObjectFactory.FindBehaviorInstance<ClientMagicSchoolBehavior>(clientObject, out var schoolBehavior)) {
             var idx = clientObject.m_inactiveBehaviors.IndexOf(schoolBehavior);
-            clientObject.m_inactiveBehaviors[idx] = character.MagicSchoolBehavior.GetClientBehaviorInstance();
+            var school = character.MagicSchoolBehavior.GetClientBehaviorInstance();
+            // The astral school with [AstralSchools] ShowAsSchoolIcon on (Game/Combat/AstralSchools.cs).
+            school.m_schoolOfFocus = Combat.AstralSchools.ShownSchoolId(character.MagicSchoolBehavior.MagicSchool, character.GameStats?.m_astralSchool);
+            clientObject.m_inactiveBehaviors[idx] = school;
         }
         else {
             throw new Exception("Behavior ClientMagicSchoolBehavior not found!");

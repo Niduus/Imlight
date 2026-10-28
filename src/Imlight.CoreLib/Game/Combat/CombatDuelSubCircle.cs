@@ -1505,6 +1505,14 @@ public partial class CombatDuelSubCircle {
     /// </summary>
     internal uint ConsumeFromVault(Spell spell) => _combatDeck.ConsumeFromVault(spell);
 
+    // A creature's battle stats as the game is told them, with its school (the health bar shows its icon from it).
+    private static WizGameStats CreatureCombatStats(ServerWizGameStats gameStats, MagicSchool school) {
+        var stats = gameStats.GetCombatGameStats();
+        stats.m_schoolID = (uint) school;
+
+        return stats;
+    }
+
     private void InitializePlayerSubCircle() {
         // todo: this method is a mess.
         var queryCharacterMsg = new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD();
@@ -1716,7 +1724,7 @@ public partial class CombatDuelSubCircle {
             m_maxPlayerHealth = gameStats.m_baseHitpoints,
             // todo: a PvE minion has always been told it acts with the creatures, is that right?
             m_myTeamTurn = _duelActor.Duel.m_firstTeamToAct == (int) (_duelActor.Duel.m_bPVP ? OccupiedTeam : CombatTeam.Monster),
-            m_pGameStats = gameStats.GetCombatGameStats(),
+            m_pGameStats = CreatureCombatStats(gameStats, school),
             m_mobLevel = level,
 
             m_minionStartingHealth = asMinion ? gameStats.m_currentHitpoints : 0,

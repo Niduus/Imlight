@@ -135,7 +135,7 @@ internal static class CharacterHelper {
         var creationInfo = new WizardCharacterCreationInfo {
             m_avatarBehavior = character.WizardAvatar,
             m_nameIndices = character.PlayerNameBehavior.NameIndices,
-            m_schoolOfFocus = (uint) character.MagicSchoolBehavior.MagicSchool,
+            m_schoolOfFocus = Imlight.CoreLib.Game.Combat.AstralSchools.ShownSchoolId(character.MagicSchoolBehavior.MagicSchool, character.GameStats?.m_astralSchool),
             m_level = character.MagicSchoolBehavior.Level,
             m_name = character.PlayerNameBehavior.NameOverride,
             m_location = character.ZoneDisplayName,
