@@ -738,6 +738,16 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Removes several copies of one treasure card from the spellbook of a wizard in one save.
+    /// </summary>
+    public static void RemoveTreasureCards(Wizard wizard, uint spellTemplateId, int count) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            for (var i = 0; i < count && existingCharacter.SpellbookBehavior.RemoveTreasureCard(spellTemplateId); i++) {
+            }
+        });
+    }
+
+    /// <summary>
     /// Removes a treasure card from the spellbook of a wizard.
     /// </summary>
     /// <param name="wizard">The wizard whose spellbook will be modified.</param>

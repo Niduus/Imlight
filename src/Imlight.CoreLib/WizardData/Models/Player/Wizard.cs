@@ -909,6 +909,36 @@ public class Wizard {
         return true;
     }
 
+    /// <summary>
+    /// Removes several backpack items with one item-history save and one character save, so a big Sell More
+    /// answers right away (Niduus, 2026-10-28). Filled vaults and items not in the backpack are skipped.
+    /// </summary>
+    /// <returns>The ids that were removed.</returns>
+    public List<ulong> RemoveItemsFromInventory(IEnumerable<ulong> itemIds, string reason, ItemRecordKind kind = ItemRecordKind.Removed) {
+        var removed = new List<ulong>();
+        var items = new List<WizClientObjectItem>();
+        foreach (var itemId in itemIds) {
+            if (IsFilledVault(itemId) || !InventoryBehavior.RemoveItem(itemId, out var item)) {
+                continue;
+            }
+
+            removed.Add(itemId);
+            items.Add(item);
+        }
+
+        if (removed.Count == 0) {
+            return removed;
+        }
+
+        // Copies first, so the items can be given back.
+        ItemHistory.RecordMany(CharId, items, kind, reason);
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterItems(this);
+
+        return removed;
+    }
+
     public bool InventoryToEquipmentTransfer(ulong itemId, out List<GameEffectBase> equipEffects, out List<GameEffectBase> unequipEffects) {
         equipEffects = null;
         unequipEffects = null;

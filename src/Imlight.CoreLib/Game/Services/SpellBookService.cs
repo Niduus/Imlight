@@ -101,6 +101,12 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
+        // A card the game shows but the server does not hold (the book was fuller than the game keeps) is taken out of
+        // the game's book too, so it does not keep jumping back out of the deck (Niduus, 2026-10-28).
+        if (wizard.SpellbookBehavior.TreasureCardCount(templateId) <= 0) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = message.SpellID, EnchantmentID = message.EnchantmentID });
+        }
+
         var deckAddSuccess = wizard.AddTreasureCardToDeck(templateId, message.DeckID);
 
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTODECK() {
