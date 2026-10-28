@@ -529,6 +529,20 @@ public partial class CombatResolver {
                 return PlayerCheats.IsOnline(c);
             case "roll" or "chance":
                 return Random.Shared.Next(100) < c.Value;
+            // Niduus, 2026-10-28 (the cheat ideas list; CombatResolver.ExtraCheats.cs).
+            case "stat":
+                return Measured(boss, c, trigger, receiver, w => StatOf(w, c.Kind, c.School));
+            case "status":
+                return IsTrueOf(boss, c, trigger, receiver, w => HasCheatStatus(w, c.Kind));
+            case "time":
+                return TimeHolds(c);
+            case "wears":
+                return IsTrueOf(boss, c, trigger, receiver, w => Wears(w, c.Name));
+            case "quest":
+                return IsTrueOf(boss, c, trigger, receiver, w => w?._wizard is { } wizard && Words(c.Name).Any(wizard.HasCompletedQuest));
+            case "badge":
+                return IsTrueOf(boss, c, trigger, receiver, w => w?._wizard is { } wizard
+                    && Words(c.Name).Any(b => uint.TryParse(b, out var id) && wizard.BadgeBehavior?.Earned?.ContainsKey(id) == true));
             case "var":
                 // With Var2, against another variable (Niduus, 2026-10-28: "if a variable is bigger than another").
                 return Compare(GetVar(boss, c.Var, c.Scope), c.Op, (c.Var2 ?? "").Trim().Length > 0 ? GetVar(boss, c.Var2, c.Scope2) : c.Value);
