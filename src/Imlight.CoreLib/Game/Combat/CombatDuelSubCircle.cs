@@ -139,6 +139,12 @@ public partial class CombatDuelSubCircle {
     internal bool IsAiCreature => Occupied && !IsHumanPlayer && !IsSummonedMinion;
     // The side of the circle the participant stands on; a minion stands on the side of its summoner.
     internal CombatTeam OccupiedTeam => SlotType == CombatSlotType.Creature && Occupied ? CombatTeam.Monster : CombatTeam.Player;
+    // The side the participant fights for now: the other side while it is beguiled (kMindControl, CombatResolver.MindEffects.cs).
+    internal CombatTeam FightsFor => CombatParticipant?.m_mindcontrolled > 0
+        ? OccupiedTeam == CombatTeam.Player ? CombatTeam.Monster : CombatTeam.Player
+        : OccupiedTeam;
+    // Confusion: the chance (percent) on each of its turns that the participant's spell goes on a random target.
+    internal int ConfusionChance;
     internal bool IsAlive => ParticipantGameStats?.m_currentHitpoints > 0;
     internal bool CheatNoFizzle;
     internal CombatDeck _combatDeck;
@@ -579,8 +585,8 @@ public partial class CombatDuelSubCircle {
     private bool BossHasNoShadowPips => _wizard is null && _bossOverride?.ShadowPips is <= 0;
 
     /// <summary>
-    /// Whether a beguile (mind control) may take this participant over. The server has no beguile effect yet
-    /// (kMindControl is not handled); this is for when it does: a boss set to Beguilable: No in the Bosses tab says no.
+    /// Whether a beguile (mind control) may take this participant over: a boss set to Beguilable: No in the Bosses tab
+    /// says no (CombatResolver.MindEffects.cs).
     /// </summary>
     internal bool CanBeBeguiled => _wizard is not null || _bossOverride?.Beguilable != false;
 
