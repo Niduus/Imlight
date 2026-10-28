@@ -22,6 +22,7 @@ using Akka.Actor;
 using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
@@ -38,7 +39,10 @@ internal sealed class BattleDropComponent(ZoneEntity entity) : ZoneEntityCompone
     private const string EXPIRE_TIMER_KEY = "BattleDropExpire";
     private const string WANDER_TIMER_KEY = "BattleDropWander";
     private const string TICK_TIMER_KEY = "BattleDropTick";
-    private static readonly TimeSpan s_lifetime = TimeSpan.FromMinutes(2);
+    // [Battle] BattleWispSeconds (Niduus, 2026-10-28: "when wisps spawn after a battle, they despawn after 7s"): how long
+    // a battle wisp stays when nobody takes it, 1 to 600, read when it falls.
+    private static TimeSpan s_lifetime
+        => TimeSpan.FromSeconds(Math.Clamp(ConfigurationManager.GetValue("Battle.BattleWispSeconds", 7), 1, 600));
     private static readonly TimeSpan s_tick = TimeSpan.FromMilliseconds(250);
 
     // How far from where it fell a wisp wanders, how fast when its template has no speed, and how long it rests.
@@ -83,8 +87,10 @@ internal sealed class BattleDropComponent(ZoneEntity entity) : ZoneEntityCompone
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_BATTLEDROPEXPIRED))]
-    private void ReceiveExpired(ZONE_102_PROTOCOL.MSG_BATTLEDROPEXPIRED message)
-        => Entity.DeleteObject("WispDespawn");
+    private void ReceiveExpired(ZONE_102_PROTOCOL.MSG_BATTLEDROPEXPIRED message) {
+        BattleDrops.Forget(Entity.ActiveGameObject.m_globalID.Full);
+        Entity.DeleteObject("WispDespawn");
+    }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_BATTLEDROPWANDER))]
     private void ReceiveWander(ZONE_102_PROTOCOL.MSG_BATTLEDROPWANDER message) {

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Combat;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
@@ -50,6 +51,12 @@ internal sealed class WispPickup {
         var key = player.m_globalID.Full;
         var from = _lastLocations.TryGetValue(key, out var last) ? last : now;
         _lastLocations[key] = now;
+
+        // A battle wisp that is another wizard's share ([Battle] BattleWispsPerPlayer) is not this wizard's to take.
+        var owner = BattleDrops.OwnerOf(wisp.m_globalID.Full);
+        if (owner != 0 && owner != key) {
+            return false;
+        }
 
         var stepX = now.X - from.X;
         var stepY = now.Y - from.Y;
