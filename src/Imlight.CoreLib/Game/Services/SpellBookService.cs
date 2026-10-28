@@ -46,6 +46,7 @@ using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.WizardData.Models.Player;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Services;
@@ -260,6 +261,48 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
         }
         catch (System.Exception e) {
             Logger.Error("Archmastery school could not be saved for {0}: {1}", Logger.Args(wizard.CharId, e.Message));
+        }
+    }
+
+    /// <summary>
+    /// Keeps the name picked in the deck's Name window. The client renames its own copy and sends the deck's new
+    /// m_pattern (DeckName: the name words in the low 15 bits, the item lock in bit 31) and m_secondaryColor
+    /// (DeckNameExtension: the class, type and number words), ClientDeckNameWindow 0x14219aa40. Without saving
+    /// both, the old name came back whenever the server sent the deck again (zone change, relog, deck swap).
+    /// </summary>
+    [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_SETDECKNAME))]
+    private void ReceiveSetDeckName(WIZARD_12_PROTOCOL.MSG_SETDECKNAME message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var deckId = (ulong) message.ItemGID;
+        try {
+            var deckItem = wizard.EquipmentBehavior.EquippedItems.FirstOrDefault(i => i.m_globalID == deckId)
+                ?? wizard.InventoryBehavior.Items.FirstOrDefault(i => i.m_globalID == deckId);
+            if (deckItem is null || !CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out _)) {
+                Logger.Warning("Deck name: deck {0} not found for {1}.", Logger.Args(deckId, wizard.CharId));
+
+                return;
+            }
+
+            // The lock stays as the server has it; only the name bits come from the client.
+            var pattern = (unchecked((int) message.DeckName) & ~ItemHelper.LockBit) | (deckItem.m_pattern & ItemHelper.LockBit);
+            var extension = unchecked((int) message.DeckNameExtension);
+            var before = (deckItem.m_pattern, deckItem.m_secondaryColor);
+            if (!WizardData.Collections.WizardItemCollection.ApplyDeckName(deckItem, pattern, extension)) {
+                Logger.Warning("Deck name: deck {0} of {1} is not in the database; the name is kept until logout only.",
+                    Logger.Args(deckId, wizard.CharId));
+            }
+
+            deckItem.m_pattern = pattern;
+            deckItem.m_secondaryColor = extension;
+            Logger.Information("Deck name: deck {0} of {1} renamed (pattern {2} -> {3}, extension {4} -> {5}).",
+                Logger.Args(deckId, wizard.CharId, before.m_pattern, pattern, before.m_secondaryColor, extension));
+        }
+        catch (System.Exception e) {
+            Logger.Error("Deck name: deck {0} of {1} could not be saved: {2}", Logger.Args(deckId, wizard.CharId, e.Message));
         }
     }
 

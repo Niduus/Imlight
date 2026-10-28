@@ -277,6 +277,29 @@ public static class WizardItemCollection {
     }
 
     /// <summary>
+    /// Stores a deck's name, which the game keeps in m_pattern (with the item lock in bit 31) and m_secondaryColor.
+    /// </summary>
+    /// <param name="item">The deck, with the character it is stored under.</param>
+    /// <param name="pattern">The new pattern.</param>
+    /// <param name="secondaryColor">The new secondary color (the name's extension words).</param>
+    /// <returns>True if the stored item was found and saved.</returns>
+    public static bool ApplyDeckName(WizClientObjectItem item, int pattern, int secondaryColor) {
+        using var session = s_store.OpenSession();
+        var associatedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .FirstOrDefault(x => x.m_globalID == item.m_globalID && x.m_characterId == item.m_characterId);
+        if (associatedItem is null) {
+            return false;
+        }
+
+        associatedItem.m_pattern = pattern;
+        associatedItem.m_secondaryColor = secondaryColor;
+        session.SaveChanges();
+
+        return true;
+    }
+
+    /// <summary>
     /// Applies the secondary dye to a WizClientObjectItem.
     /// </summary>
     /// <param name="item">The WizClientObjectItem to apply the secondary dye to.</param>
