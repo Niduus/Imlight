@@ -39,6 +39,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Imlight.Setup;
@@ -214,10 +215,6 @@ internal static class Program {
             }
         }
 
-        if (InstalledCommands.IsServerRunning(options.InstallFolder)) {
-            new ServerManager(options.InstallFolder).StopServer();
-        }
-
         if (!SetupLog.Open(options.InstallFolder)) {
             return 3;
         }
@@ -225,7 +222,25 @@ internal static class Program {
         using var steps = new SetupSteps(options);
         var exitCode = 0;
         try {
-            steps.InstallPendingServer();
+            // The server keeps running whenever the update allows it (Niduus, 2026-10-28): only a change to its program
+            // needs a restart, and Ahziael does that when it is safe. An older app stopped the server before this runs.
+            var running = InstalledCommands.IsServerRunning(options.InstallFolder);
+            var sort = running ? steps.SortPendingServer() : null;
+            if (sort is { NeedsRestart: true }) {
+                steps.LeavePendingServerForRestart();
+                SetupLog.Info($"The server keeps running for now: {sort.Describe()}. Ahziael restarts it when it is safe.");
+                SetupLog.Detail("Changed server program files: " + string.Join(", ", sort.Program.Take(20)));
+            }
+            else {
+                steps.InstallPendingServer();
+                if (sort is not null) {
+                    SetupLog.Info($"The server keeps running: {sort.Describe()}.");
+                    if (sort.LiveData.Count > 0) {
+                        ServerUpdate.RequestReload(steps.ServerFolder);
+                    }
+                }
+            }
+
             await steps.CreateShortcutsAsync();
             SetupLog.Info($"Updated to Imlight {SelfUpdate.CurrentVersion}.");
         }

@@ -232,6 +232,12 @@ internal sealed partial class ManagerWindow {
             title = "Update ready";
             line = $"{ready.Name} is ready. Click Restart to update to start using it.";
         }
+        else if (SetupSteps.ServerWaits(_manager.InstallFolder) && !_preparingUpdate && !busy) {
+            title = "Server update waiting";
+            line = _restartPlan == ServerRestartPlan.None
+                ? "Everything else is in. The server needs one restart; click the button to pick when."
+                : "Everything else is in. The server restarts for it when it is safe.";
+        }
         else if (busy || _preparingUpdate) {
             title = "Updating in the background";
             line = "Keep playing. It asks to restart when it is ready.";

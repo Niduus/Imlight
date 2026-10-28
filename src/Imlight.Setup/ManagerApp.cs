@@ -38,7 +38,12 @@ internal sealed class ManagerApp : Application {
     internal static bool StartServerOnOpen { get; private set; }
 
     /// <summary>
-    /// Shows the app until its window closes, then stops the server it started.
+    /// True when the app closes to restart into an update: the server keeps running through it (Niduus, 2026-10-28).
+    /// </summary>
+    internal static bool KeepServerRunning { get; set; }
+
+    /// <summary>
+    /// Shows the app until its window closes, then stops the server it started (unless it closes for an update).
     /// </summary>
     internal static int Run(string installFolder, bool startServer = false) {
         StartServerOnOpen = startServer;
@@ -69,7 +74,9 @@ internal sealed class ManagerApp : Application {
 
         ui.Start();
         ui.Join();
-        manager.StopServer();
+        if (!KeepServerRunning) {
+            manager.StopServer();
+        }
 
         return exitCode;
     }

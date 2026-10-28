@@ -519,6 +519,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, (CombatDuelComponent Battle, DateTime At)> s_playerBattles = new();
     private const double CLAIM_HOLD_SECONDS = 5;
 
+    /// <summary>
+    /// How many wizards stand in a battle right now, for Ahziael's "restart when nobody is in a battle" (OnlineList).
+    /// </summary>
+    internal static int PlayersInBattle => s_playerBattles.Count(pair => pair.Value.Battle.HoldsPlayer(pair.Key));
+
     // Read from another battle's actor, so a circle list changing mid-read counts as "still holds".
     private bool HoldsPlayer(ulong gid) {
         try {

@@ -76,6 +76,17 @@ public class GameServer : Server {
         RealmName = realmName ?? serverName;
         this._playerQueue = new ListQueue<SessionActor>();
         this._sessionKeys = s_sessionKeysByServer.GetOrAdd(serverName, _ => new Cache<ByteString, ulong>());
+        // And a restart of the whole server too: the accounts logged in before it can come back (KeptLoginKeys).
+        var kept = KeptLoginKeys.For(serverName);
+        foreach (var (accountId, left) in kept) {
+            _sessionKeys.Store(SessionKey.GenerateHash(_sessionKeyHashInput, accountId), accountId, left);
+        }
+
+        if (kept.Count > 0) {
+            Logger.Information("Game server {0}: {1} wizards logged in before the restart can come back without logging in again.",
+                Logger.Args(serverName, kept.Count));
+        }
+
         this.ActiveSessions.CollectionChanged += ActiveSessionsChangedEvent;
         Tools.ManagerCommands.Start(Context.System);
         Tools.OnlineList.Start();
@@ -384,6 +395,7 @@ public class GameServer : Server {
         // client finds its corresponding key, it will get it's account as well.
         var timeSpan = TimeSpan.FromSeconds(_sessionKeyValidityTime);
         _sessionKeys.Store(key, accountId, timeSpan);
+        KeptLoginKeys.Remember(Name, accountId, timeSpan);
 
         return key;
     }

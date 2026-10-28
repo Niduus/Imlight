@@ -35,6 +35,7 @@
  * one which they trained here (kept in their registry); weaving spells also need the game's weaving rank badges.
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,7 +106,7 @@ internal static class VanillaTrainers {
     /// <summary>What a wizard may do about one spell of a vanilla trainer.</summary>
     internal readonly record struct Verdict(bool CanTrain, int Cost, int Gold, int RequiredLevel, Requirement Failed, string Why);
 
-    private static readonly Lazy<IReadOnlyDictionary<uint, Trainer>> s_trainers = new(Load);
+    private static readonly ReloadingLazy<IReadOnlyDictionary<uint, Trainer>> s_trainers = new(Load);
 
     /// <summary>The real game's training list of this NPC, or null when it teaches nothing in the real game.</summary>
     internal static Trainer For(uint templateId)

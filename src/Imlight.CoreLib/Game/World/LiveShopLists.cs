@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +42,7 @@ internal sealed record LiveShop(string Title, int ShopType, int Kind, IReadOnlyL
 /// </summary>
 internal static class LiveShopLists {
 
-    private static readonly Lazy<IReadOnlyDictionary<uint, IReadOnlyList<LiveShop>>> s_shops = new(Load);
+    private static readonly ReloadingLazy<IReadOnlyDictionary<uint, IReadOnlyList<LiveShop>>> s_shops = new(Load);
 
     /// <summary>The shops of the NPC with this template id, or null.</summary>
     internal static IReadOnlyList<LiveShop> For(uint templateId)

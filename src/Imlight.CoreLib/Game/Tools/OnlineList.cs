@@ -83,7 +83,9 @@ internal static class OnlineList {
             var players = s_rows.Values.Select(r => r.Row)
                 .OrderBy(r => r.Account, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Wizard, StringComparer.OrdinalIgnoreCase)
                 .Select(r => new { r.Account, r.Wizard, r.Zone });
-            var json = JsonSerializer.Serialize(new { Players = players });
+            // How many are in a battle, so Ahziael can wait for the battles to end before it restarts the server for an update.
+            var inBattle = Zone.Components.CombatDuelComponent.PlayersInBattle;
+            var json = JsonSerializer.Serialize(new { Players = players, InBattle = inBattle });
             if (json == s_written) {
                 return;
             }
