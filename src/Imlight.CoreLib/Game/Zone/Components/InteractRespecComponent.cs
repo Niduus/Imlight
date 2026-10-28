@@ -23,7 +23,7 @@
  * Gives Mr. Lincoln a "reset training points" option (the game's RespecOption), and only him (Niduus 2026-10-24). Picking it opens the game's reset window; TrainService takes its answer and TrainingReset does the reset.
  *
  * NOTE:
- * Only Mr. Lincoln, while [Trainers] RespecAtTrainers is on. He is no trainer any more (Niduus 2026-10-25: his spell
+ * Only Mr. Lincoln, while [Trainers] RespecAtTrainers is on (live). He is no trainer any more (Niduus 2026-10-25: his spell
  * list showed empty), so the reset is his only choice.
  */
 
@@ -75,15 +75,15 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
         return key;
     });
 
+    // Always on Mr. Lincoln, so turning [Trainers] RespecAtTrainers on or off takes effect without a restart.
     public static bool ShouldAttachToEntity(CoreTemplate template)
-        => TrainingReset.AtTrainers
-        && template is GameObjectTemplate goTemplate
+        => template is GameObjectTemplate goTemplate
         && goTemplate.m_behaviors.Any(x => x is NPCBehaviorTemplate)
         && InteractTrainerComponent.IsLincoln(goTemplate);
 
-    /// <summary>Whether this NPC offers a wizard the reset right now: Mr. Lincoln always does.</summary>
+    /// <summary>Whether this NPC offers a wizard the reset right now: Mr. Lincoln does while the switch is on.</summary>
     internal static bool Offers(ZoneEntity entity, Wizard wizard)
-        => wizard is not null && entity.GetComponentOfType<InteractRespecComponent>() is not null;
+        => wizard is not null && TrainingReset.AtTrainers && entity.GetComponentOfType<InteractRespecComponent>() is not null;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
         if (!Offers(Entity, wizard)) {
@@ -98,7 +98,7 @@ internal sealed class InteractRespecComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
-        if (playerCharacter is null) {
+        if (!Offers(Entity, playerCharacter)) {
             return;
         }
 
