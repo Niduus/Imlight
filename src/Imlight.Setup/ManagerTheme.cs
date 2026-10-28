@@ -119,6 +119,7 @@ internal static class ManagerTheme {
         ["Spells"] = Color.FromRgb(196, 74, 112),
         ["Gear"] = Color.FromRgb(52, 170, 200),
         ["Recipes"] = Color.FromRgb(168, 120, 60),
+        ["Furniture"] = Color.FromRgb(196, 140, 90),
         ["Vendors"] = Color.FromRgb(120, 150, 60),
         ["Pet Talents"] = Color.FromRgb(230, 110, 160),
         ["Pet Derby"] = Color.FromRgb(240, 150, 60),

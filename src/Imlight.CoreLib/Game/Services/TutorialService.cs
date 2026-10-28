@@ -29,6 +29,7 @@ using Imlight.CoreLib.Game.Results;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -629,6 +630,12 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
             .Where(id => id > 0)
             .ToArray();
         var adeptIds = AdeptStarterGear.TemplateIdsFor(wizard.MagicSchoolBehavior.MagicSchool);
+        if (adeptIds.Length > 0) {
+            // The game puts the kit's wand on by itself when the tutorial ends, which took the Adept wand off
+            // (Niduus, 2026-10-28: "new wizards should have ALL their gear equipped"), so the kit's wands stay out.
+            templateIds = templateIds.Where(id => !IsWeapon(id)).ToArray();
+        }
+
         if (templateIds.Length == 0 && adeptIds.Length == 0) {
             return;
         }
@@ -648,6 +655,7 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
         }
 
         Randomization.Randomizer.PutStartingSpellsInDeck(wizard, grantedItems);
+        FillAdeptDeck(wizard, adeptItems, grantedItems);
         Logger.Information("Granted starter kit ({0} items) to {1}.",
             Logger.Args(grantedItems.Count, wizard.PlayerNameBehavior.GetWizardName()));
 
@@ -657,8 +665,8 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
             SendInventoryAdd(wizard, item);
         }
 
-        // The Adept set and Ghulture go on right away. The starter wand equipped at the end of the tutorial only
-        // fills an empty wand slot, so the Adept wand stays on.
+        // The Adept set and Ghulture go on right away. The starter wand and deck equipped at the end of the tutorial
+        // only fill an empty slot, so the Adept wand and deck stay on.
         foreach (var item in adeptItems) {
             try {
                 var template = ItemHelper.GetItemTemplate(item);
@@ -676,6 +684,56 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
         if (adeptItems.Count > 0) {
             // Off the mount indoors, like equipping one by hand.
             TellOtherServices(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
+        }
+    }
+
+    private static bool IsWeapon(ulong templateId) {
+        try {
+            return CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template
+                   && ItemHelper.GetItemSlot(template)?.SlotType == EquipmentSlotType.Weapon;
+        }
+        catch (InvalidOperationException) {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// The Adept deck comes empty, so it takes the starter deck's spells and every spell the wizard knows; it is the
+    /// deck worn from the start.
+    /// </summary>
+    private static void FillAdeptDeck(Wizard wizard, List<WizClientObjectItem> adeptItems,
+                                      List<WizClientObjectItem> grantedItems) {
+        var adeptDeck = adeptItems.FirstOrDefault(item => CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(item, out _));
+        if (adeptDeck is null || !CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(adeptDeck, out var adeptBehavior)) {
+            return;
+        }
+
+        try {
+            var spellIds = new List<uint>();
+            foreach (var item in grantedItems) {
+                if (item != adeptDeck && CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(item, out var deck)) {
+                    spellIds.AddRange((deck.m_spellList ?? []).Select(entry => entry.m_templateID));
+                }
+            }
+
+            foreach (var id in spellIds.Distinct().ToArray()) {
+                if (CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate { m_Treasure: false }
+                        && !wizard.SpellbookBehavior.LearnedSpellTemplateIds.Contains(id)
+                        && Imlight.CoreLib.Game.Spells.SpellFactory.GetSpell(id) is { } spell) {
+                    wizard.LearnSpell(spell);
+                }
+            }
+
+            var inDeck = (adeptBehavior.m_spellList ?? []).Select(entry => entry.m_templateID).ToHashSet();
+            foreach (var id in spellIds.Concat(wizard.SpellbookBehavior.LearnedSpellTemplateIds.ToArray())) {
+                if (CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate { m_Treasure: false } && inDeck.Add(id)) {
+                    wizard.AddSpellToDeck(id, adeptDeck.m_globalID);
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not put the starting spells in {0}'s Adept deck: {1}",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), ex.Message));
         }
     }
 

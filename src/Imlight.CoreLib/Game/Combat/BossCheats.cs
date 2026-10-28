@@ -430,6 +430,16 @@ internal static class BossCheats {
         // at least one; Not turns an entry round.
         public List<CheatCondition> Conditions { get; set; } = [];
 
+        // Player cheats (Niduus, 2026-10-28: players switch their own cheats): the name a player types in `.cheat on` /
+        // `.cheat off`, whether players may switch it for themselves, and whether it starts off until they switch it on.
+        public string Name { get; set; } = "";
+        public bool PlayersSwitch { get; set; }
+        public bool PlayersStartOff { get; set; }
+
+        /// <summary>Its number in the player cheat file (1 for the first), as the Manager shows it.</summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        internal int Number { get; set; }
+
         /// <summary>A cheat made or changed in the app (BossOverrides.CheatsOf) or a custom's: its firing is logged.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         internal bool Custom { get; set; }

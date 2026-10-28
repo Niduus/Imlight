@@ -342,6 +342,9 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         };
         SendToSocket(goldUpdateMsg);
 
+        // Worn gear (not a pet or mount) comes off in the game for a moment, so the dye confirmation below finds it.
+        var reWorn = isEquipped && TakeOffForDye(wizard, item);
+
         // Apply the dyes
         var texture = (DyeColor) message.texture;
         var decal = (DyeColor) message.decal;
@@ -350,7 +353,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         // If the item is equipped, update the client's local item cache with the
         // new colors IN PLACE using MSG_EQUIPMENTBEHAVIOR_EQUIPITEM. 
-        if (isEquipped) {
+        if (isEquipped && !reWorn) {
             SendEquippedItemRefresh(wizard, item, template);
         }
 
@@ -364,7 +367,68 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         };
         SendToSocket(msgConfirm);
 
+        if (reWorn) {
+            PutBackOnAfterDye(wizard, item);
+        }
+
         ResummonIfEquippedPet(wizard, item);
+    }
+
+    /// <summary>
+    /// The dye window shows a worn item in the colors of the game's public list of worn looks, matched to the worn
+    /// items by their order (DyeShopWindow 0x140854260), and the dye confirmation only recolors backpack items
+    /// (ClientWizInventoryBehavior::DyeItem 0x142124310). A new look sent for a worn item is added at the end of that
+    /// list, so the window kept the old colors and refused to dye the item back to them (Niduus, 2026-10-28). The
+    /// item now comes off in the game, takes the dye in the backpack and goes back on, like the player's own clicks;
+    /// the server keeps it worn throughout. Pets and mounts keep the old refresh, taking them off drops their model.
+    /// </summary>
+    /// <returns>True when the item was taken off and <see cref="PutBackOnAfterDye"/> must follow.</returns>
+    private bool TakeOffForDye(Wizard wizard, WizClientObjectItem item) {
+        var equipment = wizard.EquipmentBehavior;
+        var slot = equipment.SlotList?.Find(s => s.ItemId == item.m_globalID);
+        if (slot is null || slot.SlotType is EquipmentSlotType.Pet or EquipmentSlotType.Mount) {
+            return false;
+        }
+
+        var index = equipment.GetSlotOfItem(item.m_globalID);
+        SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM {
+            ItemID = item.m_globalID,
+            SlotName = slot.SlotType.ToString(),
+            IsEquip = 0
+        });
+        ZoneBroadcast(new GAME_5_PROTOCOL.MSG_EQUIPMENTBEHAVIOR_PUBLICUNEQUIPITEM {
+            GlobalID = wizard.GameObjectID,
+            IndexToRemove = index
+        }, false);
+
+        return true;
+    }
+
+    /// <summary>Puts gear that <see cref="TakeOffForDye"/> took off back on, at the end of the worn list.</summary>
+    private void PutBackOnAfterDye(Wizard wizard, WizClientObjectItem item) {
+        var equipment = wizard.EquipmentBehavior;
+        var slot = equipment.SlotList?.Find(s => s.ItemId == item.m_globalID);
+        if (slot is null) {
+            return;
+        }
+
+        equipment.MoveSlotToEnd(item.m_globalID);
+        SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPITEM {
+            ItemID = item.m_globalID,
+            SlotName = slot.SlotType.ToString(),
+            IsEquip = 1
+        });
+
+        if (!s_itemSerializer.Serialize(ItemHelper.GetPublicItem(item), 1, out var pubData)) {
+            Logger.Error("Failed to serialize item {0} for dye broadcast", Logger.Args(item.m_globalID));
+
+            return;
+        }
+
+        ZoneBroadcast(new GAME_5_PROTOCOL.MSG_EQUIPMENTBEHAVIOR_PUBLICEQUIPITEM {
+            GlobalID = wizard.GameObjectID,
+            SerializedInfo = pubData
+        }, false);
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PETRENAMEREQUEST))]
@@ -597,7 +661,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         // A pet's colors are its template's own texture choices, so no dye beyond them is offered.
         return IsPetLayerDye(texture, item.m_primaryColor, template.m_numPrimaryColors)
             && IsPetLayerDye(decal, item.m_secondaryColor, template.m_numSecondaryColors)
-            && IsPetLayerDye(decal2, item.m_pattern, template.m_numPatterns);
+            && IsPetLayerDye(decal2, item.m_pattern & ~ItemHelper.LockBit, template.m_numPatterns);
     }
 
     private static bool TryCreatePurchasedPet(Wizard wizard, WizItemTemplate template,
