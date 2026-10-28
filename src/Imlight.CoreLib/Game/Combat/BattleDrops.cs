@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -77,27 +78,58 @@ internal static class BattleDrops {
     private static int PerWizard(string kind)
         => Math.Clamp(ConfigurationManager.GetValue($"Battle.{kind}WispsPerWizard", 2), 0, 10);
 
+    // [Battle] BattleWispsPerPlayer (Niduus, 2026-10-28: "each wisp is player sided so gold, health and mana are
+    // distributed evenly"): every wizard's share of the wisps is theirs alone, so nobody takes another's. Read live.
+    private static bool s_perPlayer => ConfigurationManager.GetValue("Battle.BattleWispsPerPlayer", true);
+
+    // The wizard (player object global id) each dropped wisp belongs to, by the wisp's global id, and when it fell.
+    private static readonly ConcurrentDictionary<ulong, (ulong Owner, DateTime At)> s_owners = new();
+    private static readonly TimeSpan s_forgetAfter = TimeSpan.FromMinutes(15);
+
     /// <summary>
-    /// Drops health, mana and gold wisps around <paramref name="location"/>, a number of each for every wizard who won
-    /// the battle. They wander around where they fell (BattleDropComponent).
+    /// The wizard a dropped wisp belongs to, or 0 when anyone may take it.
     /// </summary>
-    internal static void Spawn(IActorRef zoneRef, Vector3 location, int wizards) {
+    internal static ulong OwnerOf(ulong wispGlobalId)
+        => s_owners.TryGetValue(wispGlobalId, out var owner) ? owner.Owner : 0;
+
+    /// <summary>
+    /// Forgets whose a wisp was, once it is picked up or gone.
+    /// </summary>
+    internal static void Forget(ulong wispGlobalId) => s_owners.TryRemove(wispGlobalId, out _);
+
+    /// <summary>
+    /// Drops health, mana and gold wisps around <paramref name="location"/>, the same number of each for every wizard
+    /// who won the battle (<paramref name="wizards"/>, their player objects' global ids). With BattleWispsPerPlayer each
+    /// wizard's wisps are theirs only. They wander around where they fell (BattleDropComponent).
+    /// </summary>
+    internal static void Spawn(IActorRef zoneRef, Vector3 location, IReadOnlyList<ulong> wizards) {
         if (!Enabled || zoneRef is null) {
             return;
         }
 
-        wizards = Math.Max(1, wizards);
-        var drops = new List<uint>();
-        foreach (var (kind, templateId) in new[] {
-                     ("Health", s_healthWisp.Value), ("Mana", s_manaWisp.Value), ("Gold", s_goldWisp.Value) }) {
-            for (var i = PerWizard(kind) * wizards; i > 0; i--) {
-                drops.Add(templateId);
+        // Wisps a zone dropped and lost without them being picked up or expiring (the zone shut down).
+        var now = DateTime.UtcNow;
+        foreach (var (gid, owner) in s_owners) {
+            if (now - owner.At > s_forgetAfter) {
+                s_owners.TryRemove(gid, out _);
+            }
+        }
+
+        var perPlayer = s_perPlayer;
+        IReadOnlyList<ulong> owners = wizards is { Count: > 0 } ? wizards : [0UL];
+        var drops = new List<(uint TemplateId, ulong Owner)>();
+        foreach (var owner in owners) {
+            foreach (var (kind, templateId) in new[] {
+                         ("Health", s_healthWisp.Value), ("Mana", s_manaWisp.Value), ("Gold", s_goldWisp.Value) }) {
+                for (var i = PerWizard(kind); i > 0; i--) {
+                    drops.Add((templateId, perPlayer ? owner : 0));
+                }
             }
         }
 
         // More wisps spread out further, so they don't sit on top of each other.
         var maxScatter = MAX_SCATTER + (10f * drops.Count);
-        foreach (var templateId in drops) {
+        foreach (var (templateId, owner) in drops) {
             if (templateId == 0 || CoreObjectFactory.GetCoreTemplate(templateId) is not GameObjectTemplate template) {
                 continue;
             }
@@ -120,6 +152,10 @@ internal static class BattleDrops {
             }
 
             wisp = CoreObjectFactory.InitializeCoreObjectBehaviors(wisp, template);
+            if (owner != 0) {
+                s_owners[wisp.m_globalID.Full] = (owner, now);
+            }
+
             zoneRef.Tell(new ZONE_102_PROTOCOL.MSG_SPAWNENTITY { CoreObject = wisp, Template = template });
         }
     }

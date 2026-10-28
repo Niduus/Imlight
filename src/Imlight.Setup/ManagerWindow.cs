@@ -146,7 +146,8 @@ internal sealed partial class ManagerWindow : Window {
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
-        ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps (how many per wizard under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps (how many per wizard and how many seconds they stay under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "BattleWispsPerPlayer", "Each wizard gets their own battle wisps that only they can take", new() { OnContent = "On", OffContent = "Off" }),
         ("SecondChanceChest", "Enabled", "Bosses that cheat leave a Second Chance Chest (open it with Crowns for another roll of the boss's drops; cost and uses under Settings, SecondChanceChest)", new() { OnContent = "On", OffContent = "Off" }),
         ("SecondChanceChest", "Free", "Second Chance Chests are free (no Crowns)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "LateJoinersJoinImmediately", "A wizard who joins a battle late plays the current round (off: waits for the next one)", new() { OnContent = "On", OffContent = "Off" }),
