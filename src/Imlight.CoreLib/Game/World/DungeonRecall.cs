@@ -196,10 +196,20 @@ internal static class DungeonRecall {
         }
     }
 
-    internal static void Entered(ulong ownerCharId, ulong charId, string zone) {
-        // A house is in its owner's container too, but going home is not going back into the dungeon; nor is an open
-        // world interior that loads as an instance.
-        if (ownerCharId == 0 || charId == 0 || Housing.HouseZoneIndex.IsHouseZone(zone) || !IsInDungeon(charId)) {
+    /// <param name="hasBattles">The zone has battle circles of its own: a copy with battles in it is a dungeon, raid or
+    /// instance however the wizard got there (Xibalba is reached by the quest helper's teleport, not a sigil).</param>
+    internal static void Entered(ulong ownerCharId, ulong charId, string zone, bool hasBattles) {
+        if (ownerCharId == 0 || charId == 0 || Housing.HouseZoneIndex.IsHouseZone(zone)
+            || PvP.PvPRegistry.IsMatchInstanceOwner(ownerCharId)) {
+            return;
+        }
+
+        if (hasBattles) {
+            SetInDungeon(charId, true);
+        }
+
+        // An open world interior that loads as an instance (a shop) is no dungeon.
+        if (!IsInDungeon(charId)) {
             return;
         }
 
