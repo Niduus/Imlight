@@ -49,7 +49,7 @@ internal sealed partial class ManagerWindow {
         ("Quests", "flag", "Quests, story, editor",
             "Follow your wizard's quests, see every world's main story in order, and change any quest or make your own.",
             // Niduus, 2026-10-27: a main quest testing list, story order, start to finish.
-            ["Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
+            ["Quests", "Spell Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
         ("Database", "search", "IDs, spells, gear, bosses",
             "Everything in the game, ready to search: IDs, spell cards, gear, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
@@ -397,7 +397,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),

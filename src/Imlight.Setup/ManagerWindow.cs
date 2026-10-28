@@ -357,6 +357,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Pet Derby", PetDerbyTab),
             Tab("Quest Tree", QuestTreeTab),
             Tab("Quest Testing", QuestTestingTab),
+            Tab("Spell Quests", SpellQuestsTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Customs", CustomsTab),
@@ -462,6 +463,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Pet Derby": await LoadPetTalentsAsync(_petDerbyPage); break;
             case "Quest Tree": await LoadQuestTreeAsync(); break;
             case "Quest Testing": await LoadQuestTestingAsync(); break;
+            case "Spell Quests": LoadSpellQuests(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Customs": await LoadCustomsAsync(); break;
@@ -491,6 +493,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _questTimer.IsEnabled = shownTab == "Quests";
+        _sqTimer.IsEnabled = shownTab == "Spell Quests";
 
         _logTabShown = shownTab == "Logs";
         if (shownTab == "Logs") {
@@ -2681,6 +2684,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Pet Talents"] = ("star", "Every pet talent: May Casts, Will Casts, cards and stats, which pets have them, and buttons for your pet."),
         ["Pet Derby"] = ("bolt", "Every pet derby racing talent, which pets have them, and buttons for your pet."),
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
+        ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),

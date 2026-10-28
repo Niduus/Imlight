@@ -193,6 +193,9 @@ public static class SpiralDB {
             // Our own quests are written in English; give them the game's own lines.
             QuestTextKeys.ResolveAll(questTemplates);
 
+            // Talk steps whose lines the game files keep only as "Hyperlink" say them when you talk.
+            QuestTalkDialog.ApplyAll(questTemplates);
+
             // Zone signals the real game's server sends when a quest step starts or ends (a boss spawning, a door opening).
             QuestGoalEvents.ApplyAll(questTemplates, extraPath);
 

@@ -103,6 +103,7 @@ internal static class QuestGuide {
             if (!s_detailsWritten) {
                 s_detailsWritten = true;
                 WriteDetails(folder, personaZones);
+                WriteDialog(folder);
             }
         }
         catch (Exception ex) {
@@ -247,6 +248,127 @@ internal static class QuestGuide {
         catch (Exception ex) {
             Logger.Warning("Could not write the quest details for the Manager. {Exception}", Logger.Args(ex));
         }
+    }
+
+    // ---------------------------------------------------------------------
+    // Every quest's lines and spells, for the Spell Quests tab
+    // ---------------------------------------------------------------------
+
+    internal const string DIALOG_NAME = "quest-dialog.json";
+
+    // Step 0 is the quest itself (its offer and what the giver says while you have it); 1 is its first step.
+    private sealed record LineDetails(int Step, string When, string Speaker, string Text);
+
+    private sealed record SpellDetails(uint Id, string Name, string School);
+
+    private sealed record QuestLines(string Code, List<SpellDetails> Spells, List<LineDetails> Lines);
+
+    private sealed record DialogFile(List<QuestLines> Quests);
+
+    /// <summary>
+    /// Writes quest-dialog.json beside the quest details: for every quest, the spells it teaches and every line its
+    /// NPCs say, step by step, in English (Niduus, 2026-10-28: "a lot of side quests are missing dialog outright ... I
+    /// don't know if I got sent down a spell rabbit hole or not. Can you make this viewable in Ahziael for spell quests").
+    /// </summary>
+    private static void WriteDialog(string folder) {
+        try {
+            var speakers = new Dictionary<(string, ulong), string>();
+            string Speaker(NPCDialogEntry entry) {
+                string persona = entry.m_personaName;
+                var key = (persona ?? "", (ulong) entry.m_actorTemplateID);
+                if (speakers.TryGetValue(key, out var known)) {
+                    return known;
+                }
+
+                var name = "";
+                var id = QuestMadlibs.SpeakerTemplateOf(persona, entry.m_actorTemplateID);
+                if (id != 0 && CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate npc) {
+                    name = NameOf(npc);
+                }
+
+                return speakers[key] = name;
+            }
+
+            var quests = new List<QuestLines>();
+            foreach (var quest in WizardData.SpiralDB.QuestTemplates
+                         .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName))
+                         .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
+                         .Select(g => g.First())) {
+                var lines = new List<LineDetails>();
+                var seen = new HashSet<object>(ReferenceEqualityComparer.Instance);
+                void Add(int step, ActorDialogListBase list) {
+                    foreach (var dialog in (list as ActorDialogList)?.m_dialogs ?? []) {
+                        // A step's "Completion" lines can be its "Hyperlink" lines (WizardData/QuestTalkDialog): once is enough.
+                        if (dialog?.m_dialogEntries is not { Count: > 0 } entries || !seen.Add(entries)) {
+                            continue;
+                        }
+
+                        foreach (var entry in entries) {
+                            var text = English(entry?.m_dialog);
+                            if (text.Length == 0) {
+                                continue;
+                            }
+
+                            var npcEntry = entry as NPCDialogEntry;
+                            var speaker = npcEntry is null ? "" : Speaker(npcEntry);
+                            if (speaker.Length == 0 && npcEntry is not null && !string.IsNullOrEmpty(npcEntry.m_nameOverride)) {
+                                speaker = English(npcEntry.m_nameOverride);
+                            }
+
+                            lines.Add(new LineDetails(step, (string) dialog.m_dialogTag ?? "", speaker, text));
+                        }
+                    }
+                }
+
+                Add(0, quest.m_dialogList);
+                var goals = quest.m_goals ?? [];
+                for (var i = 0; i < goals.Count; i++) {
+                    if (goals[i] is { } goal) {
+                        Add(i + 1, goal.m_dialogList);
+                    }
+                }
+
+                var spells = SpellsOf(quest);
+                if (lines.Count > 0 || spells.Count > 0) {
+                    quests.Add(new QuestLines(quest.m_questName, spells, lines));
+                }
+            }
+
+            Directory.CreateDirectory(folder);
+            var path = Path.Combine(folder, DIALOG_NAME);
+            File.WriteAllText(path + ".tmp", System.Text.Json.JsonSerializer.Serialize(new DialogFile(quests)));
+            File.Move(path + ".tmp", path, overwrite: true);
+            Logger.Information("Quest guide: lines of {0} quests written for the Manager ({1} teach a spell).",
+                Logger.Args(quests.Count, quests.Count(q => q.Spells.Count > 0)));
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not write the quest lines for the Manager. {Exception}", Logger.Args(ex));
+        }
+    }
+
+    // The spells a quest teaches when it is done, each with the school it is for (none: every wizard).
+    private static List<SpellDetails> SpellsOf(QuestTemplate quest) {
+        var spells = new List<SpellDetails>();
+        foreach (var learn in (quest.m_endResults?.m_results ?? []).OfType<ResLearnSpell>()) {
+            if (learn.m_templateID == 0) {
+                continue;
+            }
+
+            var name = "";
+            if (CoreObjectFactory.GetCoreTemplate(learn.m_templateID) is SpellTemplate spell) {
+                string key = spell.m_displayName;
+                name = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+                if (string.IsNullOrEmpty(name)) {
+                    name = spell.m_name;
+                }
+            }
+
+            var school = learn.m_requirements?.m_requirements?.OfType<ReqSchoolOfFocus>().Select(r => (string) r.m_magicSchool)
+                .FirstOrDefault() ?? "";
+            spells.Add(new SpellDetails(learn.m_templateID, string.IsNullOrEmpty(name) ? $"Spell {learn.m_templateID}" : name, school));
+        }
+
+        return spells;
     }
 
     private static string NameOf(GameObjectTemplate npc) {
@@ -445,7 +567,7 @@ internal static class QuestGuide {
     // Each wizard's quests
     // ---------------------------------------------------------------------
 
-    private sealed record Progress(string Wizard, string Zone, bool OnThisPc, string[] Done, string[] Now);
+    private sealed record Progress(string Wizard, string Zone, bool OnThisPc, string[] Done, string[] Now, string[] Steps);
 
     private static readonly ConcurrentDictionary<ulong, Progress> s_pending = new();
     private static Timer s_timer;
@@ -464,8 +586,12 @@ internal static class QuestGuide {
                 .Where(p => p.Value > 0 && p.Key.EndsWith(COMPLETE_SUFFIX, StringComparison.Ordinal))
                 .Select(p => p.Key[..^COMPLETE_SUFFIX.Length])
                 .ToArray();
-            var now = quests.CurrentQuestInstances.Where(q => q is not null).Select(q => q.QuestName).ToArray();
-            s_pending[wizard.CharId] = new Progress(wizard.PlayerNameBehavior?.GetWizardName() ?? "", wizard.Zone ?? "", onThisPc, done, now);
+            var current = quests.CurrentQuestInstances.Where(q => q is not null).ToList();
+            var now = current.Select(q => q.QuestName).ToArray();
+            // The steps each held quest is on, as "quest<tab>step name" (the Spell Quests tab shows where a wizard is).
+            var steps = current.SelectMany(q => (q.GoalProgress ?? []).Where(g => g is not null && q.IsGoalActive(g.GoalName))
+                .Select(g => $"{Clean(q.QuestName)}\t{Clean(g.GoalName)}")).ToArray();
+            s_pending[wizard.CharId] = new Progress(wizard.PlayerNameBehavior?.GetWizardName() ?? "", wizard.Zone ?? "", onThisPc, done, now, steps);
             if (s_timer is null) {
                 Interlocked.CompareExchange(ref s_timer, new Timer(_ => WritePending(), null, 1000, 1000), null);
             }
@@ -495,6 +621,10 @@ internal static class QuestGuide {
 
                 foreach (var quest in progress.Now) {
                     text.Append("now\t").Append(Clean(quest)).Append('\n');
+                }
+
+                foreach (var step in progress.Steps) {
+                    text.Append("step\t").Append(step).Append('\n');
                 }
 
                 var folder = Path.Combine(Directory.GetCurrentDirectory(), PROGRESS_FOLDER);
