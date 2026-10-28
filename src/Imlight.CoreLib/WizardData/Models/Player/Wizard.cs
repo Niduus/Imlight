@@ -82,6 +82,8 @@ public class Wizard {
     public bool StartingCrownsGiven { get; set; }
     // .overdose: every battle starts with Quickening already cast on this wizard.
     public bool Overdose { get; set; }
+    // The missed quest rewards already given back to this wizard (Game/Quests/QuestRewardRepair).
+    public List<string> RewardRepairs { get; set; } = [];
     // Badges earned by older fork builds. BadgeService moves them into BadgeBehavior at login.
     public List<uint> Badges { get; set; } = [];
     // The Monstrology tome: the Animus kept for each monster (its tome template id), see Game/Monstrology.

@@ -1771,6 +1771,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
 
         Logger.Information("Quest complete: {0} quest '{1}'.", Logger.Args(wizard.CharId, questInstance.QuestName));
 
+        // The quest's fixed reward is given below, so a repair of it at login is not needed.
+        QuestRewardRepair.MarkDone(wizard, questInstance.QuestName);
+
         // The "Complete" entry counts this player's completions of a dungeon quest.
         if (IsZoneDungeonQuest(wizard, questInstance.QuestName)) {
             wizard.SetQuestRegistryValue(questInstance.QuestName, QUEST_COMPLETED_ENTRY, runCount + 1);

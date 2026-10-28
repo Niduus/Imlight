@@ -1,0 +1,25 @@
+{
+  "Name": "WC-UNICORN-MAIN-008",
+  "Description": "",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20,
+  "MaxGold": 20,
+  "ExperienceAmount": 150,
+  "TrainingPoints": 0,
+  "GrantsPotionSlot": true,
+  "Items": [
+    {
+      "ItemId": "1889148781",
+      "ItemName": "Sprite TC",
+      "Notes": "Was 100420, the Sprite pet; the quest gives the Sprite treasure card (Niduus 2026-10-28).",
+      "Requirements": null
+    }
+  ],
+  "CreatedAt": "2025-12-04T10:22:19.0066099Z",
+  "ModifiedAt": "2026-04-02T16:48:56.4858752Z",
+  "CreatedBy": "jay",
+  "ModifiedBy": "makima"
+}

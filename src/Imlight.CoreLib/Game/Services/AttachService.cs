@@ -406,6 +406,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     // chat is up to show them.
     private void TellMemberBenefits() {
         var lines = Tools.MemberBenefits.GreetingFor(_wizard.AccountId);
+        // Quest rewards a fix gives back (Game/Quests/QuestRewardRepair).
+        lines.AddRange(Quests.QuestRewardRepair.GiveMissedRewards(SessionActor.ActorRef, _wizard));
         lines.AddRange(Events.GameEvents.GreetingFor(_wizard.AccountId));
         lines.AddRange(Imlight.CoreLib.Auth.AutoAccounts.GreetingFor(_wizard.AccountId));
         if (lines.Count == 0) {
@@ -453,10 +455,12 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
     private static int s_startingPotions => Math.Clamp(ConfigurationManager.GetValue("Character.StartingPotions", 1), 0, 20);
 
     private void GiveStartingPotions() {
+        // Plus a bottle for each finished quest that gives one: before the fix of 2026-10-28 no quest gave its bottle.
         var stats = _wizard.GameStats;
-        if (stats.m_potionMax < s_startingPotions) {
-            var added = s_startingPotions - stats.m_potionMax;
-            _wizard.UpdatePotions(Math.Min(s_startingPotions, stats.m_potionCharge + added), s_startingPotions);
+        var bottles = s_startingPotions + Quests.QuestRewardRepair.PotionSlotsFromQuests(_wizard);
+        if (stats.m_potionMax < bottles) {
+            var added = bottles - stats.m_potionMax;
+            _wizard.UpdatePotions(Math.Min(bottles, stats.m_potionCharge + added), bottles);
         }
 
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEPOTIONS {
