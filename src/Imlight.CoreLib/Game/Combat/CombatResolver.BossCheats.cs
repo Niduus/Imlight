@@ -1093,6 +1093,11 @@ public partial class CombatResolver {
                 continue;
             }
 
+            // A step's Amount from a variable (AmountVar, such as a remembered trap's size; CreativeCheats).
+            if (!string.IsNullOrWhiteSpace(step.AmountVar)) {
+                step = step with { Amount = GetVar(boss, step.AmountVar, step.Scope) };
+            }
+
             // Chromatic (CombatResolver.Chromatic.cs): the school is picked now from the fighters, and the step goes once
             // for each target (or school) when each gets their own.
             if (IsChromatic(step)) {

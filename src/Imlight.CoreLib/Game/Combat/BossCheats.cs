@@ -612,6 +612,11 @@ internal static class BossCheats {
         public string Var { get; set; } = "";
         public string Op { get; set; } = "";
         public string Scope { get; set; } = "";
+        // Niduus, 2026-10-28 ("for cheats is there a remember?"). For Remember: what number Var keeps (Spell, Newest,
+        // Biggest, Total, Count, Health, HealthPercent, Pips, Round; CreativeCheats). AmountVar: on any step, its Amount is
+        // that variable's number (Scope as above), so a blade can be as big as a remembered trap.
+        public string From { get; set; } = "";
+        public string AmountVar { get; set; } = "";
         public int Cheat { get; set; }
         // For RunCheat: its own Ifs must hold too.
         public bool Check { get; set; }
