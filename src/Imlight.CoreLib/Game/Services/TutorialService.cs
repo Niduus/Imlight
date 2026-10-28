@@ -630,6 +630,12 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
             .Where(id => id > 0)
             .ToArray();
         var adeptIds = AdeptStarterGear.TemplateIdsFor(wizard.MagicSchoolBehavior.MagicSchool);
+        if (adeptIds.Length > 0) {
+            // The game puts the kit's wand on by itself when the tutorial ends, which took the Adept wand off
+            // (Niduus, 2026-10-28: "new wizards should have ALL their gear equipped"), so the kit's wands stay out.
+            templateIds = templateIds.Where(id => !IsWeapon(id)).ToArray();
+        }
+
         if (templateIds.Length == 0 && adeptIds.Length == 0) {
             return;
         }
@@ -678,6 +684,16 @@ internal sealed class TutorialService(SessionActor sessionActor) : MessageServic
         if (adeptItems.Count > 0) {
             // Off the mount indoors, like equipping one by hand.
             TellOtherServices(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
+        }
+    }
+
+    private static bool IsWeapon(ulong templateId) {
+        try {
+            return CoreObjectFactory.GetCoreTemplate(templateId) is WizItemTemplate template
+                   && ItemHelper.GetItemSlot(template)?.SlotType == EquipmentSlotType.Weapon;
+        }
+        catch (InvalidOperationException) {
+            return false;
         }
     }
 
