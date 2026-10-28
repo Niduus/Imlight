@@ -67,8 +67,8 @@
   { "quest": "ZF-DRUM-C04-003", "goal": "3_WizardQuestGoalsTalkNPC", "when": "complete", "events": ["ZF-DRUM-C04-003_Goal02"] },
   // Arcanum-Interiors-AR_Dunes: spawns renegade djinni for the next step
   { "quest": "AR-PreMR-MAIN-002", "goal": "6_WizardQuestGoals00000253", "when": "complete", "events": ["Event_Djin_Spawn"] },
-  // Azteca-AZ_Z12_Xibalba: spawns grim calaca, xipe flayed one, youala night drinker for the next step
-  { "quest": "AZ-ZOCA-C15-002", "goal": "2_WizardQuestGoalsExploreZone", "when": "complete", "events": ["SpawnMalMinions"] },
+  // Azteca-AZ_Z12_Xibalba: Malistaire's minions (grim calaca, xipe flayed one, youala night drinker) now come with him at
+  // the Xibalba Pillar, a step of the dungeon quest AZ-COMET-C01-001 (This Is the Way the World Ends).
   // Azteca-Interiors-AZ_Z02_House02: spawns moon skull zombie for the next step
   { "quest": "AZ-ZOCA-C17-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["CallTheZombies"] },
   // Azteca-Interiors-AZ_Z11_Cave03: spawns pachakutiq who shakes the earth, razan bitter blood for the next step
