@@ -24,6 +24,8 @@ using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Fishing;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -32,6 +34,7 @@ using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.WizardData.Models.World;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -104,6 +107,13 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         _clientZoned = true;
         Timers.Cancel(ZonedFallbackTimer);
         StartSync();
+
+        try {
+            GiveTournamentPrizes();
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: giving tournament prizes failed: {0}", Logger.Args(e));
+        }
     }
 
     [InternalMessageHandler(typeof(FishingZonedFallback))]
@@ -315,12 +325,10 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         var whopper = info.IsWhopper(size);
         var basket = wizard.FishingBehavior ??= new ServerFishingBehavior();
 
+        var catchOfTheDayBonus = 0;
+        var tournamentFish = false;
         if (info.IsChest) {
-            // A chest: its gold instead of a fish in the basket.
-            var gold = Math.Max(info.SalePrice, 25);
-            wizard.AddGold(gold);
-            SendGold(wizard);
-            InformGameClient($"You fished up {info.Name} with {gold} gold inside!");
+            OpenChest(wizard, info, caught.LootTable);
         }
         else if ((basket.Basket?.Count ?? 0) >= FishingSettings.BasketSize) {
             SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_NOFISHSPACE { GameObjectID = wizard.GameObjectID });
@@ -328,7 +336,12 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         }
         else {
             basket.Add(info.TemplateId, size, smallFry, whopper);
+            catchOfTheDayBonus = FishingDays.CountCatch(basket, info.TemplateId);
+            tournamentFish = FishingDays.IsTournamentFish(info.TemplateId, size);
             WizardCollection.UpdateCharacterFishingBehavior(wizard);
+            if (catchOfTheDayBonus > 0) {
+                Logger.Information("Fishing: {0} caught today's Catch of the Day; their bonus is {1} gold.", Logger.Args(wizard.CharId, catchOfTheDayBonus));
+            }
         }
 
         Logger.Information("Fishing: {0} caught {1} ({2}, rank {3} {4}), size {5:0.00}, length {6:0.0}{7}{8}.",
@@ -343,8 +356,8 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
             IsWopper = whopper ? (byte) 1 : (byte) 0,
             LootData = Array.Empty<byte>(),
             Energy = 0,
-            IsTournamentFish = 0,
-            CatchOfTheDayBonus = 0,
+            IsTournamentFish = tournamentFish ? (byte) 1 : (byte) 0,
+            CatchOfTheDayBonus = (uint) catchOfTheDayBonus,
         });
 
         // The others in the zone see the fish come out of the water.
@@ -456,7 +469,7 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
                     }
 
                     sold++;
-                    gold += FishingData.Fish(templateId)?.PriceOf(taken.Size) ?? 0;
+                    gold += FishingDays.SalePrice(basket, templateId, taken.Size);
                 }
             }
 
@@ -475,6 +488,124 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         catch (Exception e) {
             Logger.Error("Fishing: selling fish failed: {0}", Logger.Args(e));
         }
+    }
+
+    /// <summary>
+    /// A chest from a pond: the drop table its fish names (a table of that name made in the app's Drop tables editor),
+    /// otherwise what a wooden chest of this world gives.
+    /// </summary>
+    private void OpenChest(Wizard wizard, FishInfo info, string lootTable) {
+        DropTableResult loot = null;
+        if (!string.IsNullOrWhiteSpace(lootTable) && DropTableFiles.Get(lootTable) is not null) {
+            loot = DropTableRoller.Roll([lootTable], SessionActor.ActorRef, GetActiveGameObject(), wizard);
+        }
+
+        loot ??= WoodenChestLoot.Roll(info.TemplateId, _zonePath);
+        loot.GoldAmount = Math.Max(loot.GoldAmount, Math.Max(info.SalePrice, 25));
+        Logger.Information("Fishing: {0} fished up a chest ({1}): {2} gold and {3} item(s).",
+            Logger.Args(wizard.CharId, string.IsNullOrWhiteSpace(lootTable) ? "no loot table" : lootTable, loot.GoldAmount, loot.Items.Count));
+        LootGranter.GrantAndDisplay(SessionActor.ActorRef, wizard, loot);
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_ENTERTOURNAMENTFISH))]
+    private void ReceiveEnterTournamentFish(WIZARDHOUSING_50_PROTOCOL.MSG_ENTERTOURNAMENTFISH message) {
+        try {
+            var wizard = GetActiveWizard();
+            var basket = wizard.FishingBehavior ??= new ServerFishingBehavior();
+            var fish = basket.Peek(message.FishTemplateID, message.FishSize);
+            Logger.Information("Fishing: {0} enters fish {1} size {2:0.00} in the tournament ({3}).",
+                Logger.Args(wizard.CharId, message.FishTemplateID, message.FishSize, fish is null ? "not in the basket" : "in the basket"));
+            if (fish is null || !FishingDays.IsTournamentFish(fish.TemplateId, fish.Size)) {
+                InformGameClient(fish is null ? "That fish is not in your fish basket anymore." : "That fish is not this week's tournament fish.");
+                SendToSocket(BasketMessage(wizard));
+
+                return;
+            }
+
+            basket.Basket.Remove(fish);
+            WizardCollection.UpdateCharacterFishingBehavior(wizard);
+            var place = FishTournaments.Enter(wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName() ?? "",
+                wizard.PlayerNameBehavior?.GetWizardNameAsByteHexString() ?? "", fish.Size);
+            Logger.Information("Fishing: {0}'s fish is #{1} in this week's tournament.", Logger.Args(wizard.CharId, place + 1));
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_ENTERTOURNAMENTFISHRESULT { Position = place });
+            SendToSocket(BasketMessage(wizard));
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: entering a tournament fish failed: {0}", Logger.Args(e));
+        }
+    }
+
+    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_FISHTOURNAMENTLEADERBOARDREQUEST))]
+    private void ReceiveTournamentLeaderboardRequest(WIZARDHOUSING_50_PROTOCOL.MSG_FISHTOURNAMENTLEADERBOARDREQUEST message) {
+        try {
+            var wizard = GetActiveWizard();
+            var mine = (message.PageNumber & 0x8000) != 0;
+            var page = (int) (message.PageNumber & 0x7FFF);
+            var (count, fish, entries) = FishTournaments.Board(message.ExpireTime, page, mine, wizard.CharId);
+            var update = new FishTournamentUpdate {
+                m_numberOfEntries = count,
+                m_fishTemplateID = fish,
+                m_entryList = [.. entries.Select(e => new FishTournamentEntry {
+                    // On "My Fish" pages the game shows the place from this field.
+                    m_characterGID = mine ? (ulong) e.Place : e.Entry.CharId,
+                    m_fishSize = e.Entry.Size,
+                    m_packedName = string.IsNullOrEmpty(e.Entry.NameHex)
+                        ? new Imcodec.IO.ByteString([])
+                        : new Imcodec.IO.ByteString(Imlight.CoreLib.Shared.Utilities.DataManipulation.SpacedHexStringToBytes(e.Entry.NameHex)),
+                })],
+            };
+            var serializer = new Imcodec.ObjectProperty.ObjectSerializer(Versionable: false, Behaviors: Imcodec.ObjectProperty.SerializerFlags.None);
+            if (!serializer.Serialize(update, 4, out var data)) {
+                Logger.Error("Fishing: could not write the tournament leaderboard.", Logger.Args());
+
+                return;
+            }
+
+            Logger.Debug("Fishing: {0} looks at {1} page {2} of the tournament ending {3}: {4} of {5} entries.",
+                Logger.Args(wizard.CharId, mine ? "their fish," : "the leaderboard,", page, message.ExpireTime, entries.Count, count));
+            SendToSocket(new WIZARDHOUSING_50_PROTOCOL.MSG_FISHTOURNAMENTLEADERBOARDREQUEST {
+                ExpireTime = message.ExpireTime,
+                PageNumber = message.PageNumber,
+                Data = data,
+            });
+        }
+        catch (Exception e) {
+            Logger.Error("Fishing: sending the tournament leaderboard failed: {0}", Logger.Args(e));
+        }
+    }
+
+    /// <summary>Gives a wizard the prizes of the tournaments that ended since they last came in.</summary>
+    private void GiveTournamentPrizes() {
+        var wizard = GetActiveWizard();
+        if (wizard is null) {
+            return;
+        }
+
+        var prizes = FishTournaments.TakePrizes(wizard.CharId);
+        if (prizes.Count == 0) {
+            return;
+        }
+
+        var loot = new DropTableResult { DropTableId = "Fishing tournament" };
+        var lines = new List<string>();
+        foreach (var (_, fishId, place, medal) in prizes) {
+            var (gold, items) = FishingSettings.TournamentPrize(medal);
+            loot.GoldAmount += gold;
+            foreach (var item in items) {
+                loot.Items.Add(new DropItemResult { ItemId = item.ToString(), Quantity = 1 });
+            }
+
+            var name = FishingData.Fish(fishId)?.Name ?? "fish";
+            lines.Add(medal == TournamentMedal.Consolation
+                ? $"Your {name} placed #{place + 1}: a consolation prize."
+                : $"Your {name} placed #{place + 1}: a {medal.ToString().ToLowerInvariant()} medal!");
+        }
+
+        Logger.Information("Fishing: {0} gets the prizes of {1} tournament fish: {2} gold and {3} item(s).",
+            Logger.Args(wizard.CharId, prizes.Count, loot.GoldAmount, loot.Items.Count));
+        LootGranter.GrantAndDisplay(SessionActor.ActorRef, wizard, loot);
+        InformGameClient("Fishing Tournament results!<br>" + string.Join("<br>", lines.Take(10))
+                         + (lines.Count > 10 ? $"<br>... and {lines.Count - 10} more." : ""));
     }
 
     /// <summary>A zone's fish the way the game's MSG_SETINSTANCEFISH reads them: a 2-byte count, then each fish's template id, fish id and size.</summary>
@@ -530,13 +661,6 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         writer.Flush();
 
         return stream.ToArray();
-    }
-
-    [MessageHandler(typeof(WIZARDHOUSING_50_PROTOCOL.MSG_ADDFISHTOAQUARIUM))]
-    private void ReceiveAddFishToAquarium(WIZARDHOUSING_50_PROTOCOL.MSG_ADDFISHTOAQUARIUM message) {
-        Logger.Information("Fishing: the game asked to put fish {0} size {1:0.00} in aquarium {2}.",
-            Logger.Args(message.FishTemplateID, message.Size, message.GlobalID));
-        InformGameClient("Aquariums are not ready yet; your fish stays in your basket.");
     }
 
     /// <summary>Adds fishing XP and tells the client, with a level up when there is one.</summary>

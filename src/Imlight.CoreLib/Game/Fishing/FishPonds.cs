@@ -24,8 +24,11 @@ using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Fishing;
 
-/// <summary>A fish swimming in a pond right now.</summary>
-internal sealed record LiveFish(uint Id, uint TemplateId, float Size, int Water);
+/// <summary>
+/// A fish swimming in a pond right now. A chest swims as the game's chest template and keeps the loot table of the fish
+/// it stands in for (ZoneFish m_alternateLootTableName).
+/// </summary>
+internal sealed record LiveFish(uint Id, uint TemplateId, float Size, int Water, string LootTable = null);
 
 /// <summary>
 /// The fish swimming in each zone. Everyone in a zone fishes the same ponds: a caught or escaped fish is gone for
@@ -160,7 +163,17 @@ internal sealed class FishPond {
         }
 
         // The game puts a fish in the pond numbered by the low 4 bits of its id (FishingManager), so the pond goes there.
-        var fish = new LiveFish((_nextId++ << 4) | (uint) (water.Index & 0xF), pick.Info.TemplateId, RandomSize(pick.Info), water.Index);
+        var id = (_nextId++ << 4) | (uint) (water.Index & 0xF);
+        var fish = new LiveFish(id, pick.Info.TemplateId, RandomSize(pick.Info), water.Index);
+
+        // A fish with an alternate loot chance swims as a chest that often, which gives that loot table when caught.
+        var chest = FishingData.ChestTemplateId;
+        if (chest != 0 && FishingSettings.Chests && pick.Zone.m_alternateLootChance > 0
+            && _random.NextDouble() < Math.Min(1.0, pick.Zone.m_alternateLootChance * FishingSettings.ChestChanceMultiplier)) {
+            var info = FishingData.Fish(chest);
+            fish = new LiveFish(id, chest, info is null ? 1f : RandomSize(info), water.Index, pick.Zone.m_alternateLootTableName.ToString() ?? "");
+        }
+
         _fish[fish.Id] = fish;
         Version++;
     }
