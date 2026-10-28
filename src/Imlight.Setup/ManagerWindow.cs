@@ -430,8 +430,13 @@ internal sealed partial class ManagerWindow : Window {
 
             // The first time the app opens after an update, what that update changed (ManagerWindow.WhatsNew.cs).
             // Not waited for, so the update check below runs while it is open.
-            _ = Guard(ShowWhatsNewIfUpdatedAsync);
+            var whatsNew = Guard(ShowWhatsNewIfUpdatedAsync);
             _ = Guard(CheckForUpdateAsync);
+            // A server update left waiting for a restart is asked about once the What's New window is closed.
+            _ = Guard(async () => {
+                await whatsNew;
+                await OfferServerRestartAsync();
+            });
             await Guard(AutoUpdateAsync);
         };
         Closed += (_, _) => {
@@ -873,7 +878,7 @@ internal sealed partial class ManagerWindow : Window {
                 : "The app asks before it restarts into a new version again.");
         };
 
-        var row = SwitchRow("Install updates automatically", toggle, "Restarts into a new version without asking first.");
+        var row = SwitchRow("Install updates automatically", toggle, "Restarts Ahziael into a new version without asking first. The server keeps running; when an update changes its program, it restarts after a 2-minute warning in the game, once nobody is in a battle.");
         ToolTip.SetTip(row, "When a new version has downloaded and built, the app restarts into it without asking \"Yes\" first. " +
             "If the server is running it restarts too, so anyone playing is disconnected for a moment.");
 
@@ -1347,6 +1352,7 @@ internal sealed partial class ManagerWindow : Window {
         _statusText.Text = status.Ready ? "Running, ready for players" : status.Running ? "Starting…" : "Stopped";
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
         ShowHomeStatus(status);
+        TickServerRestart(status.Running);
         _startButton.IsEnabled = !status.Running;
         _stopButton.IsEnabled = status.Running;
         _restartButton.IsEnabled = status.Running;
@@ -1890,6 +1896,12 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
+        if (!_preparingUpdate && ServerUpdateWaits(await Task.Run(() => InstalledCommands.IsServerRunning(_manager.InstallFolder)))) {
+            await ChooseServerRestartAsync();
+
+            return;
+        }
+
         if (_preparingUpdate) {
             Say("The update is still downloading and building. The app asks to restart when it is ready.");
 
@@ -2026,7 +2038,7 @@ internal sealed partial class ManagerWindow : Window {
 
     /// <summary>
     /// Restarts into the ready update after asking, or straight away when <paramref name="withoutAsking"/> (the
-    /// Install updates automatically switch on the Tools tab). Either way the server restarts with it if it was running.
+    /// Install updates automatically switch on the Tools tab). The server keeps running; ServerUpdate decides what waits for its restart.
     /// </summary>
     private async Task OfferRestartAsync(bool withoutAsking = false) {
         if (_readyUpdate is not { } update) {
@@ -2035,12 +2047,18 @@ internal sealed partial class ManagerWindow : Window {
 
         var installFolder = _manager.InstallFolder;
         var running = await Task.Run(() => InstalledCommands.IsServerRunning(installFolder));
+        // What the update changes in the server decides whether it has to restart (ServerUpdate): only a change to the
+        // server's program does, and that waits until it is safe. Ahziael itself restarts either way.
+        var pendingServer = Path.Combine(installFolder, "Pending", "Server");
+        var sort = running && Directory.Exists(pendingServer) ? await Task.Run(() => ServerUpdate.Sort(pendingServer, _manager.ServerFolder)) : null;
+        var serverPart = !running ? ""
+            : sort is null ? " The server keeps running."
+            : sort.NeedsRestart ? $" The server keeps running for now: {sort.Describe()}, and Ahziael asks when after it reopens."
+            : $" The server keeps running: {sort.Describe()}.";
         if (withoutAsking) {
-            Say($"{update.Name} is ready and installs by itself now" + (running ? "; the server restarts with it." : "."));
+            Say($"{update.Name} is ready and installs by itself now.{serverPart}");
         }
-        else if (!await ConfirmAsync($"{update.Name} is ready. Restart Imlight now to use it?" + (running
-                ? " The server restarts with it, so anyone playing is disconnected for a moment."
-                : ""))) {
+        else if (!await ConfirmAsync($"{update.Name} is ready. Restart Ahziael now to use it?{serverPart}")) {
             Say($"{update.Name} is ready. Click Restart to update at the top of the window when you want to restart into it.");
 
             return;
@@ -2051,12 +2069,9 @@ internal sealed partial class ManagerWindow : Window {
             start.ArgumentList.Add(arg);
         }
 
-        if (running) {
-            start.ArgumentList.Add("--start-server");
-        }
-
-        // Closing the app stops the server; everyone playing is told why first.
-        ServerManager.StopNotice = "The server is updating now. You will be disconnected; log in again in a few minutes.";
+        // The server is left running when the app closes for the update; --apply-update puts in what it can while it
+        // runs, and a change to its program waits for a restart.
+        ManagerApp.KeepServerRunning = running;
         Process.Start(start)?.Dispose();
         Close();
     }

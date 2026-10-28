@@ -34,6 +34,7 @@
  *   (read live), else one of another school.
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,7 +67,7 @@ public static partial class SagaSpellements {
         public List<Spellement> Spellements { get; set; } = [];
     }
 
-    private static readonly Lazy<Dictionary<string, Arc>> s_arcs = new(Load);
+    private static readonly ReloadingLazy<Dictionary<string, Arc>> s_arcs = new(Load);
 
     private static int OwnSchoolChance => Math.Clamp(ConfigurationManager.GetValue("SpellementPacks.OwnSchoolChance", 50), 0, 100);
 

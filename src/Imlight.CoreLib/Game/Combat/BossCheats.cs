@@ -263,6 +263,7 @@
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -648,7 +649,7 @@ internal static class BossCheats {
         ReadCommentHandling = JsonCommentHandling.Skip,
     };
 
-    private static readonly Lazy<Dictionary<ulong, BossCheatFile>> s_bosses = new(Load);
+    private static readonly ReloadingLazy<Dictionary<ulong, BossCheatFile>> s_bosses = new(Load);
 
     /// <summary>Reads the boss cheat files now, so the first battle after a start does not wait for them (BattleWarmUp).</summary>
     internal static int WarmUp() => s_bosses.Value.Count;

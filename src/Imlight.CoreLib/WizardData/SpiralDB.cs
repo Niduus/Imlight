@@ -165,6 +165,31 @@ public static class SpiralDB {
             return;
         }
 
+        Use(read);
+    }
+
+    private static readonly object s_reloadLock = new();
+
+    /// <summary>
+    /// Reads SpiralDB's copy and spiraldb-extra again while the server runs, without fetching SpiralDB, and swaps the new
+    /// data in (an update's new quest, shop and drop files: Game/Tools/GameDataReload). If a file cannot be read, the
+    /// data in use stays as it was.
+    /// </summary>
+    /// <returns>True if the new data is in use.</returns>
+    internal static bool Reload() {
+        lock (s_reloadLock) {
+            var read = ReadFiles(sync: false);
+            if (read is null) {
+                Logger.Error("SpiralDB could not be read again; the server keeps the data it had.");
+
+                return false;
+            }
+
+            return Use(read, keepOnFailure: true);
+        }
+    }
+
+    private static bool Use(ReadResult read, bool keepOnFailure = false) {
         try {
             var (spellbooks, dropTables, globalRegistry, npcInventories, extraNpcInventories, npcSpellInventories,
                  npcDropTables, questTemplatesBag, questTemplatesByName, zoneData, treasureCardInventories,
@@ -222,10 +247,16 @@ public static class SpiralDB {
                     s_zoneData.Count,
                     s_badgeDefinitions.Count,
                     s_npcSeamstresses.Count));
+
+            return true;
         }
         catch (Exception ex) {
             Logger.Error("Failed to load SpiralDB: {0}", Logger.Args(ex.Message));
-            ClearUnlessRollback();
+            if (!keepOnFailure) {
+                ClearUnlessRollback();
+            }
+
+            return false;
         }
     }
 
@@ -249,10 +280,12 @@ public static class SpiralDB {
         s_npcSeamstresses.Clear();
     }
 
-    private static ReadResult ReadFiles() {
+    private static ReadResult ReadFiles() => ReadFiles(sync: true);
+
+    private static ReadResult ReadFiles(bool sync) {
         var basePath = Path.GetFullPath(s_localPath);
 
-        if (!s_disableRemote) {
+        if (sync && !s_disableRemote) {
             string[] xdgPaths = null;
             string[] globalPaths = null;
 

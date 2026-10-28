@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +37,7 @@ internal sealed record TradeTrainer(uint TemplateId, string Name, string Kind, I
 /// </summary>
 internal static class TradeTrainers {
 
-    private static readonly Lazy<IReadOnlyDictionary<uint, TradeTrainer>> s_trainers = new(Load);
+    private static readonly ReloadingLazy<IReadOnlyDictionary<uint, TradeTrainer>> s_trainers = new(Load);
 
     /// <summary>The trainer with this NPC template id, or null.</summary>
     internal static TradeTrainer For(uint templateId)

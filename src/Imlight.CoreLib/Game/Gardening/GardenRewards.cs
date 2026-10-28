@@ -44,6 +44,7 @@
  * Last Updated: 10/24/2026
  */
 
+using Imlight.CoreLib.Game.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,11 +99,11 @@ internal sealed record GardenLesson(uint SpellId, string Name, int Level, int Go
 /// </summary>
 internal static class GardenLessons {
 
-    private static readonly Lazy<IReadOnlyList<GardenLesson>> s_lessons = new(Load);
+    private static readonly ReloadingLazy<IReadOnlyList<GardenLesson>> s_lessons = new(Load);
 
     internal static IReadOnlyList<GardenLesson> All => s_lessons.Value;
 
-    private static readonly Lazy<HashSet<uint>> s_trainers = new(() => [.. All.SelectMany(lesson => lesson.Trainers)]);
+    private static readonly ReloadingLazy<HashSet<uint>> s_trainers = new(() => [.. All.SelectMany(lesson => lesson.Trainers)]);
 
     /// <summary>
     /// Whether every garden spell comes with its rank. Off (the default), only the spells no trainer sells (Plow, Plant
@@ -192,7 +193,7 @@ internal static class GardenHarvests {
 
     private sealed record Harvest(int GoldMin, int GoldMax, IReadOnlyList<HarvestItem> Items);
 
-    private static readonly Lazy<Dictionary<uint, Harvest>> s_overrides = new(LoadOverrides);
+    private static readonly ReloadingLazy<Dictionary<uint, Harvest>> s_overrides = new(LoadOverrides);
 
     /// <summary>
     /// Rolls a harvest.

@@ -54,12 +54,14 @@ internal static class ManagerCommands {
         // Commands left from before the server started are not run.
         TryDelete(COMMANDS_FILE);
         TryDelete(ANNOUNCEMENTS_FILE);
+        GameDataReload.ForgetOldRequest();
         s_timer = new Timer(_ => Poll(), null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(500));
     }
 
     private static void Poll() {
         PollAnnouncements();
         PollQuestCheck();
+        GameDataReload.Poll();
         ItemSafety.ItemHistory.PollRestoreRequests();
         try {
             if (!File.Exists(COMMANDS_FILE)) {

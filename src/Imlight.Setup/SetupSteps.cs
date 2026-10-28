@@ -487,6 +487,15 @@ internal sealed class SetupSteps : IDisposable {
 
         InstallServer(staging);
         Directory.Delete(staging, recursive: true);
+
+        // An older update left waiting for a restart would put the older server back the next time it starts.
+        if (Directory.Exists(PendingServerFolder)) {
+            Directory.Delete(PendingServerFolder, recursive: true);
+        }
+
+        if (File.Exists(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE))) {
+            File.Delete(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE));
+        }
     }
 
     /// <summary>
@@ -503,7 +512,27 @@ internal sealed class SetupSteps : IDisposable {
 
         InstallServer(PendingServerFolder);
         Directory.Delete(PendingServerFolder, recursive: true);
+        File.Delete(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE));
     }
+
+    /// <summary>
+    /// What installing the server --prepare-update built would change, or null when there is none to install (a server
+    /// that runs where it is, or nothing prepared).
+    /// </summary>
+    internal ServerUpdateSort? SortPendingServer()
+        => RunsInPlace || !Directory.Exists(PendingServerFolder) ? null : ServerUpdate.Sort(PendingServerFolder, ServerFolder);
+
+    /// <summary>
+    /// Leaves the server --prepare-update built in the Pending folder, marked to go in when the server next starts or
+    /// when Ahziael restarts it for the update.
+    /// </summary>
+    internal void LeavePendingServerForRestart()
+        => File.WriteAllText(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE), SelfUpdate.CurrentVersion.ToString());
+
+    /// <summary>Whether a prepared server waits for the server to restart (<see cref="LeavePendingServerForRestart"/>).</summary>
+    internal static bool ServerWaits(string installFolder)
+        => File.Exists(Path.Combine(installFolder, "Pending", ServerUpdate.WAITING_FILE))
+           && Directory.Exists(Path.Combine(installFolder, "Pending", "Server"));
 
     private void InstallServer(string build) {
         var existingConfig = File.Exists(ConfigFile);
@@ -580,6 +609,11 @@ internal sealed class SetupSteps : IDisposable {
             }
 
             if (keep) {
+                continue;
+            }
+
+            // A file the update did not change is left alone, so a running server's files are only touched when they changed.
+            if (ServerUpdate.SameFile(file, target)) {
                 continue;
             }
 
@@ -692,11 +726,18 @@ internal sealed class SetupSteps : IDisposable {
     private static void InstallSelf(string target) {
         var self = Environment.ProcessPath;
         var aside = target + ".old";
-        try {
-            File.Delete(aside);
+        foreach (var old in Directory.EnumerateFiles(Path.GetDirectoryName(target)!, Path.GetFileName(target) + ".old*")) {
+            try {
+                File.Delete(old);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // Still running from an earlier update (the program that serves the game files to a server left
+                // running through an update); removed next time.
+            }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
-            // Still running from an earlier update; removed next time.
+
+        if (File.Exists(aside)) {
+            aside = $"{target}.old{DateTime.Now:yyyyMMddHHmmss}";
         }
 
         if (self is null || Path.GetFullPath(self).Equals(Path.GetFullPath(target), StringComparison.OrdinalIgnoreCase)) {

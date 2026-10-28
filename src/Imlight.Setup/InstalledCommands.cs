@@ -69,6 +69,7 @@ internal static class InstalledCommands {
             return Fail("The Imlight server is already running in another window.");
         }
 
+        InstallWaitingServer(installFolder);
         using var gameFiles = StartGameDataServer(installFolder);
 
         var startInfo = new ProcessStartInfo(serverExe) {
@@ -95,6 +96,25 @@ internal static class InstalledCommands {
         }
 
         return server.ExitCode;
+    }
+
+    /// <summary>
+    /// Puts in the server an update left waiting for a restart (it changed the server's program while the server ran),
+    /// now that the server is stopped. If it can't go in, the server starts as it was and the update keeps waiting.
+    /// </summary>
+    private static void InstallWaitingServer(string installFolder) {
+        if (!SetupSteps.ServerWaits(installFolder)) {
+            return;
+        }
+
+        try {
+            using var steps = new SetupSteps(SetupOptions.Parse(["--dir", installFolder]));
+            steps.InstallPendingServer();
+            Console.WriteLine("Installed the server update that waited for a restart.");
+        }
+        catch (Exception ex) when (ex is SetupException or IOException or UnauthorizedAccessException) {
+            Console.WriteLine($"The server update that waits for a restart could not go in yet: {ex.Message}");
+        }
     }
 
     /// <summary>
