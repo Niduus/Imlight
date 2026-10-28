@@ -24,6 +24,7 @@
  * 
  * USAGE EXAMPLE:
  * if (PvPLeagueScaling.TryScaleDuelStats(leagueId, duelStats)) { }
+ * if (PvPLeagueScaling.TryScaleStats("LevelScaled_70", statsCopy)) { }   // a Level Scaling Elixir, against creatures
  * 
  * NOTE:
  * The scaling comes from data: the league lists duel modifiers, a modifier lists game effects, and one of those effects is a level scaling effect with the level to scale to. A league without such an effect, and league id 0, scale nothing.
@@ -33,7 +34,7 @@
  * 
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/18/2026
+ * Last Updated: 10/28/2026
  */
 
 using System;
@@ -76,13 +77,20 @@ internal static class PvPLeagueScaling {
         return [new GameEffectInfo { m_effectName = scale.EffectName }];
     }
 
-    internal static bool TryScaleDuelStats(uint leagueId, ServerWizGameStats duelStats) {
-        if (!TryGetScale(leagueId, out var scale)) {
-            return false;
-        }
+    internal static bool TryScaleDuelStats(uint leagueId, ServerWizGameStats duelStats)
+        => TryGetScale(leagueId, out var scale) && TryScale(duelStats, scale, $"League {leagueId}");
 
+    /// <summary>
+    /// Scales a copy of a wizard's stats by a level scaling effect (LevelScaled_70), as a Level Scaling Elixir does
+    /// in a battle against creatures (Game/LevelScaling/LevelScales.cs).
+    /// </summary>
+    internal static bool TryScaleStats(string effectName, ServerWizGameStats stats)
+        => LevelScaledEffectFactory.TryGetTemplate(effectName, out var template) && template.m_scaleToLevel > 0
+           && TryScale(stats, new PvPLevelScale(effectName, template.m_scaleToLevel, template.m_scaleUp), effectName);
+
+    private static bool TryScale(ServerWizGameStats duelStats, PvPLevelScale scale, string source) {
         if (!LevelScaledDataFactory.TryGetTable(out var table) || !TryGetSchoolIndices(out var schoolIndices)) {
-            Logger.Error("League {LeagueId} scales stats, but the level scaling data is not loaded.", Logger.Args(leagueId));
+            Logger.Error("{Source} scales stats, but the level scaling data is not loaded.", Logger.Args(source));
 
             return false;
         }
