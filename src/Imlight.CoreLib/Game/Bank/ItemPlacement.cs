@@ -21,8 +21,9 @@
  *
  * PURPOSE:
  * Finds a place for a new item a player is given (a drop, a reward, a purchase, a gift, an admin command): the
- * backpack, and when that is full the bank, and for a jewel the shared bank. An item with no room is lost. It
- * also tells the client where the item went.
+ * backpack, and when that is full the bank, and for a jewel the shared bank. When none has room the item goes in
+ * the backpack past its limit rather than being lost (Niduus, 2026-10-28: items disappearing); only a caller that
+ * can refuse instead, such as a shop, asks for no room to mean Lost. It also tells the client where the item went.
  *
  * USAGE EXAMPLE:
  * var placement = ItemPlacement.Place(wizard, item);
@@ -47,6 +48,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.WizardData.Collections;
@@ -63,8 +65,10 @@ internal static class ItemPlacement {
     /// </summary>
     /// <param name="wizard">The wizard that is given the item.</param>
     /// <param name="item">The new item, with its behaviors initialized. It is stored nowhere yet.</param>
+    /// <param name="overLimit">False for a caller that refuses the item instead (a purchase, a repeated command): with
+    /// no room anywhere the item is then Lost. True puts it in the backpack past its limit.</param>
     /// <returns>Where the item is now. Lost means it was stored nowhere.</returns>
-    internal static Placement Place(Wizard wizard, WizClientObjectItem item) {
+    internal static Placement Place(Wizard wizard, WizClientObjectItem item, bool overLimit = true) {
         // A pet snack or reagent is a stack of its bag, never an item of the backpack's list.
         if (Wizard.IsBagStack(item)) {
             return wizard.AddToBag(item.m_templateID, out _) ? Placement.Backpack : Placement.Lost;
@@ -80,7 +84,7 @@ internal static class ItemPlacement {
         }
 
         if (BankRules.IsRental(item) || !BankConfig.IsEnabled) {
-            return Placement.Lost;
+            return OverLimit(wizard, item, overLimit);
         }
 
         // The shared bank is asked only when its stored state may agree, so a full bank does not log a refusal for every item.
@@ -93,6 +97,18 @@ internal static class ItemPlacement {
             return Placement.Bank;
         }
 
+        return OverLimit(wizard, item, overLimit);
+    }
+
+    // The last place for an item that fits nowhere: losing it is worse than a backpack over its limit.
+    private static Placement OverLimit(Wizard wizard, WizClientObjectItem item, bool overLimit) {
+        if (overLimit && wizard.AddInitializedItemToInventory(item, ignoreLimit: true)) {
+            Logger.Warning("The backpack and bank of {CharId} were full, so item {ItemId} (template {TemplateId}) went in the backpack past its limit instead of being lost.",
+                Logger.Args(wizard.CharId, item.m_globalID.Full, item.m_templateID.Full));
+
+            return Placement.Backpack;
+        }
+
         return Placement.Lost;
     }
 
@@ -103,9 +119,10 @@ internal static class ItemPlacement {
     /// <param name="session">The SessionActor reference of the wizard's session.</param>
     /// <param name="wizard">The wizard that is given the item.</param>
     /// <param name="item">The new item, with its behaviors initialized. It is stored nowhere yet.</param>
+    /// <param name="overLimit">See Place.</param>
     /// <returns>Where the item is now. Lost means it was stored nowhere.</returns>
-    internal static Placement Give(IActorRef session, Wizard wizard, WizClientObjectItem item) {
-        var placement = Place(wizard, item);
+    internal static Placement Give(IActorRef session, Wizard wizard, WizClientObjectItem item, bool overLimit = true) {
+        var placement = Place(wizard, item, overLimit);
         if (placement != Placement.Lost) {
             Announce(session, wizard, item, placement);
         }
@@ -146,6 +163,7 @@ internal static class ItemPlacement {
             default:
                 Logger.Warning("There was no room for item {ItemId} (template {TemplateId}) of {CharId}, so it is lost.",
                     Logger.Args(item.m_globalID.Full, item.m_templateID.Full, wizard.CharId));
+                ItemHistory.Record(wizard.CharId, item, ItemRecordKind.Lost, "no room in the backpack or bank");
                 session.Tell(BankSync.ItemDrop(item.m_templateID.Full));
 
                 break;

@@ -864,7 +864,7 @@ internal static class Crafting {
             }
             case INGREDIENT_TYPE.INGREDIENT_ITEM: {
                 foreach (var item in BackpackItems(wizard, need.Id).Take(need.Count)) {
-                    if (wizard.RemoveItemFromInventory(item.m_globalID)) {
+                    if (wizard.RemoveItemFromInventory(item.m_globalID, reason: "used in crafting")) {
                         session.Tell(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM { GlobalID = wizard.GameObjectID, ItemID = item.m_globalID });
                     }
                 }

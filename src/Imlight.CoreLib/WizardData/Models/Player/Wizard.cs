@@ -22,6 +22,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Effects;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
@@ -30,6 +31,7 @@ using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Utilities;
 using Imlight.CoreLib.WizardData.Collections;
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -867,7 +869,10 @@ public class Wizard {
     public bool IsFilledVault(ulong itemId)
         => PackedVaults is not null && PackedVaults.TryGetValue(itemId, out var vault) && vault?.HoldsItems == true;
 
-    public bool RemoveItemFromInventory(ulong itemId) {
+    /// <param name="kind">Why it leaves, for the item history.</param>
+    /// <param name="reason">Plain words for the item history; null names the calling code.</param>
+    public bool RemoveItemFromInventory(ulong itemId, ItemRecordKind kind = ItemRecordKind.Removed, string reason = null,
+                                        [CallerMemberName] string caller = "", [CallerFilePath] string file = "") {
         // Every caller destroys the item, and a vault would take its contents with it.
         if (IsFilledVault(itemId)) {
             Logger.Warning("Vaults: refused to remove vault {ItemId} of {CharId} from the backpack, it still holds items.",
@@ -883,6 +888,9 @@ public class Wizard {
 
             return false;
         }
+
+        // A copy first, so the item can be given back (Niduus, 2026-10-28: items disappearing).
+        ItemHistory.Record(CharId, item, kind, reason, caller, file);
 
         // Persistent save.
         WizardCollection.UpdateCharacterItems(this);
@@ -992,11 +1000,13 @@ public class Wizard {
             return false;
         }
 
-        // Add the item to the inventory.
-        var invAddResult = InventoryBehavior.AddItem(item);
+        // Add the item to the inventory. It is already the wizard's, so a full backpack takes it past its limit: the
+        // limit used to drop it here, and the next save lost it for good (Niduus, 2026-10-28: items disappearing).
+        var invAddResult = InventoryBehavior.ReturnItem(item);
         if (!invAddResult) {
-            Logger.Warning("Tried to add item with global id {0} to inventory, but it already exists.",
+            Logger.Warning("Tried to add item with global id {0} to inventory, but it already exists. It stays worn.",
                 Logger.Args(itemId));
+            EquipmentBehavior.EquipItem(item, slot.SlotType);
 
             return false;
         }
@@ -1043,7 +1053,7 @@ public class Wizard {
 
         // A document that outlives a failed delete is not in the id lists, so the rental cannot come back.
         try {
-            WizardItemCollection.RemoveItem(CharId, itemId);
+            WizardItemCollection.RemoveItem(CharId, itemId, reason: "rental ran out");
         } catch (Exception ex) when (ex is TimeoutException or RavenException) {
             Logger.Error("Failed to delete the document of expired rental {0}: {1}", Logger.Args(itemId, ex.Message));
         }
@@ -1100,7 +1110,7 @@ public class Wizard {
 
         InventoryBehavior.RemoveItem(item);
         if (!StorageBehavior.AddItem(item)) {
-            InventoryBehavior.AddItem(item);
+            InventoryBehavior.ReturnItem(item);
 
             return false;
         }
@@ -1108,7 +1118,7 @@ public class Wizard {
         // Persistent save.
         return SaveItemsOrRollBack(() => {
             StorageBehavior.RemoveItem(item);
-            InventoryBehavior.AddItem(item);
+            InventoryBehavior.ReturnItem(item);
         });
     }
 
@@ -1383,7 +1393,7 @@ public class Wizard {
                 InventoryBehavior.RemoveItem(item.m_globalID, out _);
             }
 
-            WizardItemCollection.RemoveItem(CharId, item.m_globalID);
+            WizardItemCollection.RemoveItem(CharId, item.m_globalID, record: false);
             moved++;
         }
 

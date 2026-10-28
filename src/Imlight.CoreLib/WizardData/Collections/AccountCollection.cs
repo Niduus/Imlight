@@ -565,7 +565,7 @@ public static class AccountCollection {
 
                 foreach (var itemId in removedItemIds) {
                     // The backpack no longer lists the item, so a missing document is only an unused leftover.
-                    if (!WizardItemCollection.DeleteInSession(session, owner.CharId, itemId)) {
+                    if (!WizardItemCollection.DeleteInSession(session, owner.CharId, itemId, "used at the Seamstress")) {
                         Logger.Warning("Removed item {ItemId} of character {CharId} has no stored item to delete.",
                             Logger.Args(itemId, owner.CharId));
                     }

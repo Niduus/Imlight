@@ -57,6 +57,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Trading;
@@ -245,7 +246,7 @@ internal partial class HousingService {
                 }, document => HouseCollection.SaveWithBackpack(document, wizard));
             if (!change.Done) {
                 foreach (var item in removed) {
-                    if (!wizard.InventoryBehavior.AddItem(item)) {
+                    if (!wizard.InventoryBehavior.ReturnItem(item)) {
                         Logger.Error("Vaults: could not return item {ItemId} to the backpack of character {CharId} after it failed to go in the vault.",
                             Logger.Args(item.m_globalID.Full, wizard.CharId));
                     }
@@ -261,6 +262,9 @@ internal partial class HousingService {
 
         foreach (var item in items) {
             ItemSync.SendRemoved(SessionActor.ActorRef, wizard, item.m_globalID);
+            // So the item check at login knows where it went.
+            ItemHistory.Record(wizard.CharId, item.m_globalID.Full, item.m_templateID.Full, null, ItemRecordKind.Moved,
+                $"put in a {HouseVaults.NameOf(kind)}");
         }
 
         Logger.Information("Vaults: character {CharId} moved {Count} item(s) of template {TemplateId} into {Vault} {VaultGid}, which holds {Held}.",

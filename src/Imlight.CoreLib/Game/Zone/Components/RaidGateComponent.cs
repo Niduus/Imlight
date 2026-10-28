@@ -152,7 +152,7 @@ internal sealed class RaidGateComponent(ZoneEntity entity) : ZoneEntityComponent
         }
 
         ulong keyId = key.m_globalID;
-        if (!wizard.RemoveItemFromInventory(keyId)) {
+        if (!wizard.RemoveItemFromInventory(keyId, reason: "raid key used")) {
             return false;
         }
 

@@ -158,7 +158,7 @@ internal static class PetItemFeeding {
             return $"Your pet needs {energyCost} energy to eat that and has {energy}.";
         }
 
-        if (!wizard.RemoveItemFromInventory(item.m_globalID)) {
+        if (!wizard.RemoveItemFromInventory(item.m_globalID, reason: "fed to a pet")) {
             return "Your pet couldn't eat that item.";
         }
 

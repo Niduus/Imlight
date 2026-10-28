@@ -260,6 +260,11 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         _wizard.GameServerIp = gameServer.IP;
         _wizard.GameServerPort = (ushort) gameServer.Port;
 
+        // Items Ahziael gives back arrive now, so the game sees them; then the item check notes what the wizard holds
+        // (Niduus, 2026-10-28: items disappearing).
+        ItemSafety.ItemHistory.DeliverPending(_wizard);
+        ItemSafety.ItemAudit.Check(_wizard);
+
         // Craft the GameObject for this Wizard.
         var charGameObject = WizardObjectLoader.GetPlayerGameObject(_wizard);
 

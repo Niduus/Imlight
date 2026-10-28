@@ -126,12 +126,14 @@ internal class CommandGearProtocol : CommandProtocol {
                 break;
             }
 
-            var placement = ItemPlacement.Place(Context.Character, item);
-            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
+            // Copies stop at a full backpack and bank instead of piling up past the limit.
+            var placement = ItemPlacement.Place(Context.Character, item, overLimit: false);
             placements.Add(placement);
             if (placement == Placement.Lost) {
                 break;
             }
+
+            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
 
             given++;
         }

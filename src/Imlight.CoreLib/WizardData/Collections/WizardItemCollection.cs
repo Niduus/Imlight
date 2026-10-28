@@ -19,11 +19,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Session;
 using Raven.Client.Exceptions;
 using Imlight.Common;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Rentals;
 using Imlight.CoreLib.Shared.Resources;
@@ -107,8 +109,12 @@ public static class WizardItemCollection {
     /// </summary>
     /// <param name="playerId">The ID of the player.</param>
     /// <param name="item">The item to be removed.</param>
+    /// <param name="record">False when the caller already wrote the item's history record.</param>
+    /// <param name="kind">Why it leaves, for the item history.</param>
+    /// <param name="reason">Plain words for the item history; null names the calling code.</param>
     /// <returns>True if the item was successfully removed, false otherwise.</returns>
-    public static bool RemoveItem(WizClientObjectItem item) {
+    public static bool RemoveItem(WizClientObjectItem item, bool record = true, ItemRecordKind kind = ItemRecordKind.Removed,
+                                  string reason = null, [CallerMemberName] string caller = "", [CallerFilePath] string file = "") {
         using var session = s_store.OpenSession();
 
         // Get the item from the items collection.
@@ -119,6 +125,11 @@ public static class WizardItemCollection {
         // If the item was not found, return false.
         if (associatedItem is null) {
             return false;
+        }
+
+        // A copy first, so the item can be given back (Niduus, 2026-10-28: items disappearing).
+        if (record) {
+            ItemHistory.Record(associatedItem.m_characterId.Full, associatedItem, kind, reason, caller, file);
         }
 
         // Delete the item from the items collection.
@@ -153,8 +164,12 @@ public static class WizardItemCollection {
     /// </summary>
     /// <param name="charId">The ID of the player.</param>
     /// <param name="itemId">The ID of the item to remove.</param>
+    /// <param name="record">False when the caller already wrote the item's history record.</param>
+    /// <param name="kind">Why it leaves, for the item history.</param>
+    /// <param name="reason">Plain words for the item history; null names the calling code.</param>
     /// <returns>True if the item was successfully removed, false otherwise.</returns>
-    public static bool RemoveItem(ulong charId, ulong itemId) {
+    public static bool RemoveItem(ulong charId, ulong itemId, bool record = true, ItemRecordKind kind = ItemRecordKind.Removed,
+                                  string reason = null, [CallerMemberName] string caller = "", [CallerFilePath] string file = "") {
         using var session = s_store.OpenSession();
 
         // Get the item from the items collection, waiting for the index so a just-stored item is found too.
@@ -165,6 +180,11 @@ public static class WizardItemCollection {
         // If the item was not found, return false.
         if (associatedItem is null) {
             return false;
+        }
+
+        // A copy first, so the item can be given back (Niduus, 2026-10-28: items disappearing).
+        if (record) {
+            ItemHistory.Record(charId, associatedItem, kind, reason, caller, file);
         }
 
         // Delete the item from the items collection.
@@ -202,7 +222,8 @@ public static class WizardItemCollection {
     /// <param name="charId">The ID of the player.</param>
     /// <param name="itemId">The ID of the item to delete.</param>
     /// <returns>True if the stored item was found and marked for deletion, false otherwise.</returns>
-    internal static bool DeleteInSession(IDocumentSession session, ulong charId, ulong itemId) {
+    internal static bool DeleteInSession(IDocumentSession session, ulong charId, ulong itemId, string reason = null,
+                                         [CallerMemberName] string caller = "", [CallerFilePath] string file = "") {
         var storedItem = session.Query<WizClientObjectItem>(collectionName: CollectionName)
             .Customize(query => query.WaitForNonStaleResults())
             .FirstOrDefault(x => x.m_characterId == charId && x.m_globalID == itemId);
@@ -210,9 +231,24 @@ public static class WizardItemCollection {
             return false;
         }
 
+        ItemHistory.Record(charId, storedItem, ItemRecordKind.Removed, reason, caller, file);
+
         session.Delete(storedItem);
 
         return true;
+    }
+
+    /// <summary>
+    /// Gets the stored item with a global id, whoever owns it (a wizard, or an account for the shared bank).
+    /// </summary>
+    /// <param name="itemId">The global id of the item.</param>
+    /// <returns>The item, or null when no item has the id.</returns>
+    public static WizClientObjectItem GetItemOfAnyOwner(ulong itemId) {
+        using var session = s_store.OpenSession();
+
+        return session.Query<WizClientObjectItem>(collectionName: CollectionName)
+            .Customize(query => query.WaitForNonStaleResults())
+            .FirstOrDefault(x => x.m_globalID == itemId);
     }
 
     /// <summary>
