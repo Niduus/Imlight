@@ -253,6 +253,7 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_overTimeKinds = [("", "damage and heal over time and bombs"), ("DoT", "damage over time and bombs"), ("HoT", "heal over time")];
     private static readonly (string, string)[] s_hitShares = [("Thorns", "thorns: who hits it takes back"), ("Lifesteal", "lifesteal: heals from the damage it deals"), ("HealFromHits", "hits heal it instead, by")];
     private static readonly (string, string)[] s_cardKinds = [("Hand", "cards in the hand"), ("Deck", "cards left in the deck"), ("Treasure", "treasure cards left"), ("TreasureInHand", "treasure cards in the hand")];
+    private static readonly (string, string)[] s_cardPlayedKinds = [("", "any card"), ("Treasure", "treasure card"), ("Item", "item card (from gear)"), ("Deck", "card from the deck")];
     private static readonly (string, string)[] s_lastHitKinds = [("Taken", "taken"), ("Dealt", "dealt")];
     private static readonly (string, string)[] s_varOps = [("Set", "set to"), ("Add", "add"), ("Subtract", "take away"), ("Multiply", "multiply by"), ("Random", "a random number from 0 to")];
     private static readonly (string, string)[] s_maxOps = [("Set", "become"), ("Add", "go up by (below 0: down)")];
@@ -430,6 +431,13 @@ internal static class CheatSpecs {
         new("W.Stunned", BlockKind.When, "stop", "someone is stunned", "It (or someone on a side) is stunned by a move. Example: when a player is stunned, the boss gets a power pip.",
             "When {RemovedFrom} is stunned", [F("RemovedFrom", CheatFieldType.Choice, "AnyEnemy", s_removedFrom)],
             b => $"When {LabelOf(s_removedFrom, b.Text("RemovedFrom"))} is stunned"),
+        new("W.CardPlayed", BlockKind.When, "cards", "a card is played", "It (or someone on a side) plays a treasure card, an item card or a card from the deck, after it lands. Name spells to count only those. \"The attacker\" and \"the one hit\" are whoever played it. Example: when an enemy plays a treasure card, take 2 pips from them.",
+            "When {RemovedFrom} plays a {RemovedKind} {RemovedSpell}",
+            [F("RemovedFrom", CheatFieldType.Choice, "AnyEnemy", s_removedFrom), F("RemovedKind", CheatFieldType.Choice, "Treasure", s_cardPlayedKinds), F("RemovedSpell", CheatFieldType.Words, "")],
+            b => $"When {LabelOf(s_removedFrom, b.Text("RemovedFrom"))} plays {(b.Text("RemovedSpell").Length > 0 ? b.Text("RemovedSpell") + " as " : "")}a {LabelOf(s_cardPlayedKinds, b.Text("RemovedKind"))}"),
+        new("W.Summoned", BlockKind.When, "users", "someone comes in", "A minion or creature comes into the battle on a side during a move (a summon spell, or a cheat's minion). \"The one hit\" is the newcomer. Example: when the other side summons a minion, stun it.",
+            "When someone comes in on {RemovedFrom}", [F("RemovedFrom", CheatFieldType.Choice, "AnyEnemy", s_removedFrom)],
+            b => $"When someone comes in on {LabelOf(s_removedFrom, b.Text("RemovedFrom"))}"),
         // Niduus, 2026-10-27: "I want it so IF tags = 0, THEN CAST tags. Not check WHEN tags".
         new("W.Always", BlockKind.When, "bolt", "always (when its Ifs are true)", "No event: it goes off whenever its If blocks are all true, looked at after every move and at the start and end of each round (once each look). Give it If blocks, or it goes off every time. \"The attacker\" and \"the one hit\" are itself. Example, blades that stay up: Always, only if it has none blade tagged BABA (has none), then put a 7% Chromatic blade on itself tagged BABA, three times.",
             "Always, whenever its Ifs are true", [], _ => "Always (whenever its Ifs are true)"),
@@ -881,6 +889,9 @@ internal static class CheatSpecs {
             "Give {Target} {Kind} {Amount} % for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("Kind", CheatFieldType.Choice, "Thorns", s_hitShares), F("Amount", CheatFieldType.Number, 25, max: 1000), F("Rounds", CheatFieldType.Number, 0, max: 99), F("AmountVar", CheatFieldType.Words, "")],
             b => b.Number("Amount") == 0 && b.Text("AmountVar").Trim().Length == 0 ? $"take {LabelOf(s_hitShares, b.Text("Kind")).Split(':')[0]} off{Target(b)}"
                 : SizeFromVar(b, $"{LabelOf(s_hitShares, b.Text("Kind"))} {b.Number("Amount")}%{Target(b)} for {RoundsFor(b)}")),
+        new("D.StealCard", BlockKind.Do, "cards", "steal a card", "Takes cards (at random, or only of these spells) out of the target's hand at their next hand, and puts them in its own next hand (yours, in a player cheat). A wizard sees the change at the next planning phase.",
+            "Steal {Count} {Spell} cards from {Target}", [F("Count", CheatFieldType.Number, 1, max: 7), F("Spell", CheatFieldType.Words, ""), F("Target", CheatFieldType.Target, "Caster")],
+            b => $"steal {Math.Max(1, b.Number("Count"))} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}card{(b.Number("Count") > 1 ? "s" : "")}{Target(b).Replace(" on ", " from ")}"),
         new("D.Remember", BlockKind.Do, "list", "remember a number", "Keeps a number read from the battle right now in a variable, for later blocks: put the variable's name in another block's \"as big as variable\" box (a blade as big as a trap), in an \"a variable\" If, or as {name} in a message. " +
             "\"The size of the spell that set it off\": a +30% trap is 30 (pick the Kind to read that part of the spell). The newest / biggest / all: effects of the Kind on the target right now. Example: when an enemy casts a trap, remember the size of the spell (trap) as trap, take its trap off, put a blade as big as variable trap on yourself.",
             "Remember {From} {EffectSchool} {Kind} {Target} as {Scope} variable {Var}", [F("From", CheatFieldType.Choice, "Spell", s_rememberFrom), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "trap")],
