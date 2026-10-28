@@ -4,7 +4,8 @@
  *
  *   ConvertEffects  Count (0: all) of Target's (Self) effects of Kind (and EffectSchool, Spell) come off, and each comes back
  *                   as one of To (Blade, Weakness, Shield, Trap, Absorb) of the same size and school, drawn by the game as
- *                   "add an effect of your own size" draws one. "Turn every trap on me into a blade."
+ *                   "add an effect of your own size" draws one. "Turn every trap on me into a blade." ToMe: the new ones go on
+ *                   itself instead: "take every Death shield off the enemy, gain a Death blade of each one's size".
  *   CopyEffects     Count (0: all) of Target's (Caster) effects of Kind are copied onto it (Self), the same size and school;
  *                   Target keeps them.
  *   ScaleEffects    Target's (Self) effects of Kind get Amount percent of their size (200: double, 50: half). Only the
@@ -80,7 +81,7 @@ public partial class CombatResolver {
                             Amount = Math.Abs(e.m_effectParam),
                             School = school.Equals("All", StringComparison.OrdinalIgnoreCase) ? "" : school,
                             Kind = copying ? SizedKind(e) : (step.To ?? "").Trim().Length > 0 ? step.To.Trim() : "Blade",
-                            Target = copying ? $"slot:{boss.SlotIndex}" : $"slot:{target.SlotIndex}",
+                            Target = copying || step.ToMe ? $"slot:{boss.SlotIndex}" : $"slot:{target.SlotIndex}",
                             Silent = step.Silent,
                             Tag = step.Tag,
                         });
