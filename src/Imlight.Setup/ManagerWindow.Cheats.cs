@@ -131,7 +131,8 @@ internal sealed partial class ManagerWindow {
             "Cheats for you, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
             "works here too, with you as \"it\" and the monsters as \"the players\". A cheat is for the wizard you play on this PC, " +
             "unless it has a \"who gets it\" If (wizard is, wizard's name is, wizard's account, friend of, in a group with, account rank, " +
-            "played on this PC, every wizard): then it goes to every wizard those blocks pick, on any PC. Saved changes count from the next round, with no restart.",
+            "played on this PC, every wizard): then it goes to every wizard those blocks pick, on any PC. Players type .cheats to see theirs, and " +
+            "can switch one off or on with .cheat off / .cheat on and its name when you tick \"Players can switch this\" on its edit page. Saved changes count from the next round, with no restart.",
             grid));
     }
 
@@ -309,12 +310,48 @@ internal sealed partial class ManagerWindow {
         board.EditHead.Content = CheatCard(board, rule, board.List!.Cheats.IndexOf(rule) + 1, editing: true);
         var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
         notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
-        board.EditScroll.Content = new StackPanel { Spacing = 10, Margin = new Thickness(0, 0, 14, 0), Children = { CheatScript(board, rule), notes } };
+        var stack = new StackPanel { Spacing = 10, Margin = new Thickness(0, 0, 14, 0), Children = { CheatScript(board, rule), notes } };
+        if (board.Player) {
+            stack.Children.Add(PlayerSwitchBox(board, rule));
+        }
+
+        board.EditScroll.Content = stack;
         board.EditGrid.Height = Math.Clamp(ClientSize.Height - 400, 400, 1100);
         if (opened) {
             board.EditScroll.Offset = default;
             Dispatcher.UIThread.Post(() => board.EditView.BringIntoView(), DispatcherPriority.Background);
         }
+    }
+
+    // A player cheat's name and whether players may switch it for themselves in chat (Niduus, 2026-10-28: "How can we
+    // approach users using their own cheats? Phantom commands?"). The server reads them (PlayerCheatSwitches.cs).
+    private Control PlayerSwitchBox(CheatBoard board, CheatRule rule) {
+        var name = new TextBox { Text = rule.Name, Watermark = "Name players see and type, such as Free Blades (empty: \"Cheat 1\")", AcceptsReturn = false };
+        name.TextChanged += (_, _) => {
+            rule.Name = name.Text ?? "";
+            UpdateCheatHead(board, rule);
+        };
+        var canSwitch = new CheckBox { Content = "Players can switch this on or off for themselves", IsChecked = rule.PlayersSwitch };
+        ToolTip.SetTip(canSwitch, "Players type .cheats to see their cheats, and .cheat off Name / .cheat on Name to switch this one. " +
+                                  "Nobody else sees what they type. Off: it is always on for the wizards it is for.");
+        var startOff = new CheckBox { Content = "Starts off: each player turns it on with .cheat on", IsChecked = rule.PlayersStartOff, IsEnabled = rule.PlayersSwitch };
+        canSwitch.IsCheckedChanged += (_, _) => {
+            rule.PlayersSwitch = canSwitch.IsChecked == true;
+            startOff.IsEnabled = rule.PlayersSwitch;
+            UpdateCheatHead(board, rule);
+        };
+        startOff.IsCheckedChanged += (_, _) => {
+            rule.PlayersStartOff = startOff.IsChecked == true;
+            UpdateCheatHead(board, rule);
+        };
+
+        return new StackPanel {
+            Spacing = 6,
+            Children = {
+                Sub("Players' own switch. Save player cheats after changing these."),
+                name, canSwitch, startOff,
+            },
+        };
     }
 
     // One cheat: its number, its sentence and buttons (on the edit page, without Edit and moving).
@@ -425,6 +462,13 @@ internal sealed partial class ManagerWindow {
         var marks = new List<string>();
         if (board.Player) {
             marks.Add(rule.Off ? "Turned off" : "On");
+            if (rule.Name.Trim().Length > 0) {
+                marks.Add($"\"{rule.Name.Trim()}\"");
+            }
+
+            if (rule.PlayersSwitch) {
+                marks.Add(rule.PlayersStartOff ? "Players switch it (starts off)" : "Players switch it");
+            }
         }
         else {
             if (rule.Added) {

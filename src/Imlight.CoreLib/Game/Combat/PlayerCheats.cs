@@ -125,7 +125,14 @@ internal static class PlayerCheats {
                         s_fileTime = time;
                         s_file = time == DateTime.MinValue ? new PlayerCheatFile { Enabled = false }
                             : JsonSerializer.Deserialize<PlayerCheatFile>(File.ReadAllText(FilePath), s_options) ?? new PlayerCheatFile();
-                        s_file.Cheats = [.. (s_file.Cheats ?? []).Where(c => c is not null && !c.Off && !c.Is("Off"))];
+                        var all = s_file.Cheats ?? [];
+                        for (var i = 0; i < all.Count; i++) {
+                            if (all[i] is not null) {
+                                all[i].Number = i + 1;
+                            }
+                        }
+
+                        s_file.Cheats = [.. all.Where(c => c is not null && !c.Off && !c.Is("Off"))];
                         foreach (var cheat in s_file.Cheats) {
                             cheat.Custom = true;
                         }
@@ -174,10 +181,24 @@ internal static class PlayerCheats {
 
     private static List<BossCheats.BossCheat> Mine(List<BossCheats.BossCheat> file, ulong charId, Wizard wizard) {
         var local = IsLocalChar(charId);
-        var cheats = file.Select(c => Has(c, charId, wizard, local) ? c : s_notTheirs).ToList();
+        var cheats = file.Select(c => Has(c, charId, wizard, local) && PlayerCheatSwitches.IsOn(charId, c) ? c : s_notTheirs).ToList();
 
         return cheats.All(c => c == s_notTheirs) ? [] : cheats;
     }
+
+    /// <summary>
+    /// The cheats a wizard has, switched on or off (for `.cheats`): those its "who has it" Ifs give it, else, when it says
+    /// no one, the wizard played on this PC.
+    /// </summary>
+    internal static List<BossCheats.BossCheat> Owned(ulong charId) {
+        var wizard = s_wizards.GetValueOrDefault(charId);
+        var local = IsLocalChar(charId);
+
+        return [.. Current().Where(c => Has(c, charId, wizard, local))];
+    }
+
+    /// <summary>A wizard switched a cheat on or off: its list is worked out again at once.</summary>
+    internal static void Forget(ulong charId) => s_own.TryRemove(charId, out _);
 
     /// <summary>Whether a cheat says who has it (a "who has it" If about "it").</summary>
     internal static bool SaysWho(BossCheats.BossCheat cheat)

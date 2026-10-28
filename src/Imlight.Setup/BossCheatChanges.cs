@@ -170,6 +170,12 @@ internal sealed class CheatRule {
     internal bool Off { get; set; }
     internal string Notes { get; set; } = "";
 
+    // Player cheats only (PlayerCheatFile): the name players type in `.cheat on` / `.cheat off`, whether players may switch
+    // it for themselves, and whether it starts off until they do (Niduus, 2026-10-28).
+    internal string Name { get; set; } = "";
+    internal bool PlayersSwitch { get; set; }
+    internal bool PlayersStartOff { get; set; }
+
     // The cheat file's cheat as a full cheat, to see whether this one still is the same.
     internal string GameCanonical { get; init; } = "";
 
@@ -178,7 +184,9 @@ internal sealed class CheatRule {
     internal bool IsChanged => Added || Off || Canonical().ToJsonString() != GameCanonical;
 
     internal CheatRule Copy() {
-        var copy = new CheatRule { When = When.Copy(), Notes = Notes, Off = Off };
+        var copy = new CheatRule {
+            When = When.Copy(), Notes = Notes, Off = Off, Name = Name, PlayersSwitch = PlayersSwitch, PlayersStartOff = PlayersStartOff,
+        };
         copy.Ifs.AddRange(Ifs.Select(b => b.Copy()));
         copy.Dos.AddRange(Dos.Select(b => b.Copy()));
 
@@ -738,7 +746,11 @@ internal static class PlayerCheatFile {
         }
 
         foreach (var cheat in (BossChanges.FindIn(json, "Cheats") as JsonArray ?? []).OfType<JsonObject>()) {
-            list.Cheats.Add(CheatRule.FromCheat(cheat, player: true));
+            var rule = CheatRule.FromCheat(cheat, player: true);
+            rule.Name = BossChanges.FindIn(cheat, "Name") is JsonValue name && name.TryGetValue<string>(out var n) ? n : "";
+            rule.PlayersSwitch = BossChanges.FindIn(cheat, "PlayersSwitch") is JsonValue s && s.TryGetValue<bool>(out var sw) && sw;
+            rule.PlayersStartOff = BossChanges.FindIn(cheat, "PlayersStartOff") is JsonValue o && o.TryGetValue<bool>(out var so) && so;
+            list.Cheats.Add(rule);
         }
 
         var enabled = BossChanges.FindIn(json, "Enabled") is not JsonValue v || !v.TryGetValue<bool>(out var on) || on;
@@ -752,6 +764,15 @@ internal static class PlayerCheatFile {
             var json = rule.Canonical();
             if (rule.Off) {
                 json["Off"] = true;
+            }
+
+            if (rule.Name.Trim().Length > 0) {
+                json["Name"] = rule.Name.Trim();
+            }
+
+            if (rule.PlayersSwitch) {
+                json["PlayersSwitch"] = true;
+                json["PlayersStartOff"] = rule.PlayersStartOff;
             }
 
             cheats.Add(json);
