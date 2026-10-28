@@ -44,6 +44,16 @@ internal class CommandAstralProtocol : CommandProtocol {
             return;
         }
 
+        // Every player can always take theirs away, whatever [AstralSchools] says.
+        if (picked.ToLowerInvariant() is "off" or "none" or "remove" or "clear") {
+            Context.Character.SetAstralSchool(null);
+            InformSenderClient(AstralSchools.ShowAsSchoolIcon
+                ? "You no longer have an astral school. Log out and back in to see your own school's icon again."
+                : "You no longer have an astral school.");
+
+            return;
+        }
+
         if (!AstralSchools.Enabled) {
             InformSenderClient("Astral schools are turned off on this server.");
 
@@ -51,14 +61,7 @@ internal class CommandAstralProtocol : CommandProtocol {
         }
 
         if (!AstralSchools.PlayersCanPick && !AuthorityRequester.RequestAuthority(AuthLevel.QualityAssurance, Context.Account, "Command astral")) {
-            InformSenderClient("Only staff can pick an astral school on this server.");
-
-            return;
-        }
-
-        if (picked.ToLowerInvariant() is "off" or "none" or "remove" or "clear") {
-            Context.Character.SetAstralSchool(null);
-            InformSenderClient("You no longer have an astral school.");
+            InformSenderClient("Only staff can pick an astral school on this server. Type .astral off to take yours away.");
 
             return;
         }
@@ -71,7 +74,8 @@ internal class CommandAstralProtocol : CommandProtocol {
 
         Context.Character.SetAstralSchool(name);
         InformSenderClient($"You are now a {name} wizard: {AstralSchools.Describe(AstralSchools.PerksOf(name))} in battle, "
-            + "on top of your own school. It starts with your next battle.");
+            + "on top of your own school. It starts with your next battle."
+            + (AstralSchools.ShowAsSchoolIcon ? " Log out and back in to see its icon by your name." : ""));
     }
 
 }
