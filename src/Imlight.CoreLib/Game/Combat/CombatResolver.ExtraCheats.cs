@@ -13,6 +13,13 @@
  *   ProtectEffects  Target's (Self) effects of Kind can't be removed (Kind Off: they can again).
  *   Damage          Target (Caster) loses Amount health (Percent: a share of its most health), never below 1.
  *   Drain           Target (Caster) loses Amount health (Percent: of its most) and it gets as much back.
+ *   Revive          A fallen one on its side (Target AllAllies: all of them, Self: itself) gets up with Amount health
+ *                   (Percent: of its most).
+ *   Detonate        Target's (Caster) damage/heal over time and bombs of Kind (empty: all) go off at once with all the
+ *                   rounds they have left (Amount percent of it; 100 if 0), and are gone.
+ *   HitShare        Kind Thorns (who hits Target takes Amount % back, never below 1), Lifesteal (Target heals Amount % of
+ *                   what it deals) or HealFromHits (Amount % of each hit heals Target instead), for Rounds (0: the battle).
+ * Ifs: Cards (Kind Hand, Deck, Treasure, TreasureInHand) and LastHit (Kind Taken or Dealt): how much the last hit did.
  *
  * Whens after each move (the move's spell is "the spell that set it off"; "the attacker" the one who moved, "the one hit"
  * the one it happened to). RemovedFrom picks whose ("" itself, AnyAlly, AnyEnemy, Anyone), RemovedKind and RemovedSpell
@@ -20,6 +27,9 @@
  *   EffectAdded     a charm, ward, aura or over-time is put on (after the spell lands, unlike EnemyCasts).
  *   EffectUsed      one is used up by a hit or a heal (a shield popped, a blade spent), not taken off by a spell.
  *   Healed          its health went up.         Stunned: it was stunned by the move.
+ *   CardPlayed      the mover played a card of RemovedKind (Treasure, Item, Deck; "" any), of RemovedSpell if named.
+ *   Summoned        someone came into the battle during the move (not there before it).
+ * StealCard: Count cards (random, or of Spell) of Target's (Caster) hand go into its own next hand.
  */
 
 using System;
@@ -223,16 +233,135 @@ public partial class CombatResolver {
                 }
 
                 return true;
+            case "revive": {
+                // Fallen ones on its side (Target: "" one at random, AllAllies all of them, Self itself) get up with Amount
+                // health (Percent: a share of their most).
+                var fallen = boss._duelActor.ActiveSubCircles
+                    .Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: false } && c.ParticipantGameStats is not null && c.OccupiedTeam == boss.OccupiedTeam).ToList();
+                var who = (step.Target ?? "").Trim().ToLowerInvariant();
+                var picked = who switch {
+                    "self" or "me" => fallen.Where(c => c == boss).ToList(),
+                    "allallies" or "allies" => fallen,
+                    _ => fallen.Count > 0 ? [fallen[Random.Shared.Next(fallen.Count)]] : [],
+                };
+                foreach (var target in picked) {
+                    var most = Math.Max(1, MostHealth(target));
+                    var health = Math.Clamp(step.Percent ? most * step.Amount / 100 : step.Amount, 1, most);
+                    target.SetHealthTo(health);
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3} gets up with {4} health.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, health));
+                }
+
+                return true;
+            }
+            case "detonate": {
+                // Target's (Caster) damage and heal over time (and bombs) of Kind go off at once with all their rounds
+                // left, Amount percent of it (100 if 0), and are gone.
+                foreach (var target in On("Caster").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
+                    var overTime = target._hangingEffects.Where(e => e is not null && CombatRequirements.IsOverTime(e) && Fits(e))
+                        .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
+                    var share = step.Amount > 0 ? step.Amount : 100;
+                    foreach (var e in overTime) {
+                        var left = e.m_effectType == kSpellEffects.kDeferredDamage ? e.m_paramPerRound : e.m_paramPerRound * Math.Max(1, e.m_numRounds);
+                        left = left * share / 100;
+                        if (e.m_effectType == kSpellEffects.kHealOverTime) {
+                            HealFromCheat(target, left);
+                        }
+                        else if (left > 0) {
+                            CombatEffectApplicator.TickDamage(target, e, left);
+                            target.SyncParticipantHealth();
+                        }
+                    }
+
+                    CombatCharms.RemoveExact(target._hangingEffects, overTime);
+                    Logger.Information("Duel {0} | Slot {1} | {2}: {3} over-time effects on slot {4} go off at once.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, overTime.Count, target.SlotIndex));
+                }
+
+                return true;
+            }
+            case "hitshare": {
+                // Kind Thorns / Lifesteal / HealFromHits on Target (Self): Amount percent for Rounds rounds (0: the rest of
+                // the battle); 0 percent takes it off.
+                var kind = (step.Kind ?? "").Trim();
+                if (kind.Length == 0) {
+                    return true;
+                }
+
+                var until = step.Rounds > 0 ? (int) _duel.m_roundNum + step.Rounds - 1 : 0;
+                foreach (var target in On("Self").Where(t => t is not null)) {
+                    if (step.Amount == 0) {
+                        target.CheatHitShares.Remove(kind);
+                    }
+                    else {
+                        target.CheatHitShares[kind] = (step.Amount, until);
+                    }
+
+                    Logger.Information("Duel {0} | Slot {1} | {2}: slot {3} {4} {5}%.", Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, kind, step.Amount));
+                }
+
+                return true;
+            }
+            case "stealcard": {
+                // Count random cards (or of Spell / Kind) of Target's (Caster) hand leave it at the next hand and go into
+                // its own (yours, in a player cheat) next hand.
+                foreach (var target in On("Caster").Where(t => t?._combatDeck?.LastGivenHand is not null && t.IsAlive && t != boss)) {
+                    var cards = target._combatDeck.LastGivenHand.Where(c => c is not null && (step.Spell.Length == 0 || MatchesCard(c, step.Spell))).ToList();
+                    for (var n = 0; n < Math.Clamp(step.Count, 1, 7) && cards.Count > 0; n++) {
+                        var card = cards[Random.Shared.Next(cards.Count)];
+                        cards.Remove(card);
+                        target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Discard", 1, card.m_templateID.ToString(), "", 0, false));
+                        boss.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Add", 1, "", "", card.m_templateID, false));
+                        Logger.Information("Duel {0} | Slot {1} | {2}: steals card {3} from slot {4}.",
+                            Logger.Args(duel, boss.SlotIndex, bossName, card.m_templateID, target.SlotIndex));
+                    }
+                }
+
+                return true;
+            }
             default:
                 return false;
         }
+    }
+
+    // A card in a hand is one of these spells (names or numbers, commas between).
+    private static bool MatchesCard(Spell card, string names) {
+        var template = CoreObjectFactory.GetCoreTemplate(card.m_templateID) as SpellTemplate;
+        string name = template?.m_name;
+        string key = template?.m_displayName;
+        var shown = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+
+        return Words(names).Any(n => SpellNameFamily.IsSpellId(n, out var id) ? card.m_templateID == id : SpellNameFamily.AnyInFamily(n, name, shown));
+    }
+
+    // How many cards: Hand in the hand, Deck left in the deck (with the hand), Treasure treasure cards left.
+    private static int CardsOf(CombatDuelSubCircle who, string kind) {
+        if (who?._combatDeck is not { } deck) {
+            return 0;
+        }
+
+        return (kind ?? "").Trim().ToLowerInvariant() switch {
+            "deck" => deck.RemainingCardCount,
+            "treasure" => deck.VaultRemainingCount,
+            "treasureinhand" => deck.TreasureCardsInHand,
+            _ => deck.LastGivenHand?.Count ?? 0,
+        };
     }
 
     // Everyone's health and stun before the move, for Healed and Stunned.
     private Dictionary<CombatDuelSubCircle, (int Health, int Stunned)> _statsBeforeMove;
 
     private static bool IsAfterMoveWhen(BossCheats.BossCheat c)
-        => c.Is("EffectAdded") || c.Is("EffectUsed") || c.Is("Healed") || c.Is("Stunned");
+        => c.Is("EffectAdded") || c.Is("EffectUsed") || c.Is("Healed") || c.Is("Stunned") || c.Is("CardPlayed") || c.Is("Summoned");
+
+    // The kind of card a move played: Treasure, Item or Deck (a card from the deck).
+    private static bool CardIs(Spell card, string kind) => (kind ?? "").Trim().ToLowerInvariant() switch {
+        "" => true,
+        "treasure" => card.m_treasureCard,
+        "item" => card.m_itemCard,
+        "deck" => !card.m_treasureCard && !card.m_itemCard,
+        _ => false,
+    };
 
     private void NoteStatsBeforeMove()
         => _statsBeforeMove = _subCircles.Where(c => c is not null && c.Occupied && c.ParticipantGameStats is not null)
@@ -274,6 +403,10 @@ public partial class CombatResolver {
                     continue;
                 }
 
+                if (cheat.Is("CardPlayed") && mover is not null && cheat.RemovedFrom is not ("Anyone" or "AnyAlly" or "AnyEnemy") && mover != boss) {
+                    continue;
+                }
+
                 var kinds = (cheat.RemovedKind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                 bool Fits(SpellEffect e) => (kinds.Length == 0 || kinds.Any(k => IsKind(e, k))) && FromSpell(e, cheat.RemovedSpell);
                 var from = (cheat.RemovedFrom ?? "").Trim().ToLowerInvariant();
@@ -298,6 +431,13 @@ public partial class CombatResolver {
                     }
                     else if (cheat.Is("Stunned") && _statsBeforeMove is not null && stats.Stunned <= 0 && (c.CombatParticipant?.m_stunned ?? 0) > 0) {
                         (hit, what) = (c, $"slot {c.SlotIndex} stunned");
+                    }
+                    else if (cheat.Is("CardPlayed") && c == mover && spell.Spell is not null && spell.Action.m_spell is { } card && CardIs(card, cheat.RemovedKind)
+                             && (string.IsNullOrWhiteSpace(cheat.RemovedSpell) || MatchesCard(card, cheat.RemovedSpell))) {
+                        (hit, what) = (c, $"slot {c.SlotIndex} played a {(card.m_treasureCard ? "treasure" : card.m_itemCard ? "item" : "deck")} card");
+                    }
+                    else if (cheat.Is("Summoned") && _statsBeforeMove is not null && !_statsBeforeMove.ContainsKey(c) && c.IsAlive) {
+                        (hit, what) = (c, $"slot {c.SlotIndex} came into the battle");
                     }
 
                     if (hit is not null) {

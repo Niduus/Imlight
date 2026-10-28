@@ -170,6 +170,25 @@ public partial class CombatDuelSubCircle {
 
         return now;
     }
+
+    // Cheats (HitShare): Thorns (who hits it takes this percent back), Lifesteal (it heals this percent of what it deals),
+    // HealFromHits (this percent of a hit heals it instead), each to its last round (0: the rest of the battle).
+    internal readonly Dictionary<string, (int Percent, int UntilRound)> CheatHitShares = new(StringComparer.OrdinalIgnoreCase);
+    // The last hit's damage it took and dealt, for the "last hit" If and Remember.
+    internal int CheatLastHitTaken;
+    internal int CheatLastHitDealt;
+
+    /// <summary>A cheat's hit share of this kind in this round, in percent (0: none).</summary>
+    internal int HitShare(string kind) {
+        if (!CheatHitShares.TryGetValue(kind, out var share)) {
+            return 0;
+        }
+
+        var round = (int) (_duelActor?.Duel?.m_roundNum ?? 0);
+
+        return share.UntilRound == 0 || round <= share.UntilRound ? share.Percent : 0;
+    }
+
     internal CombatDeck _combatDeck;
     private WizGameStats _clientGameStats;
     private WizGameStats _resolverGameStats;

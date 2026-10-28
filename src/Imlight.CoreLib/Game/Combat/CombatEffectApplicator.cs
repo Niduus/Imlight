@@ -489,11 +489,8 @@ internal static class CombatEffectApplicator {
         var cinematicTime = charms.Length * HANGING_EFFECT_CONSUME_TIME;
         var damageFromCaster = OutgoingDamage(effect, charms, caster);
 
-        // A landed critical multiplies the fully-boosted outgoing damage by a variable factor;
-        // wards and resist still reduce it.
-        damageFromCaster = (int) Math.Floor(damageFromCaster * critMultiplier);
         var casterStats = caster?.ParticipantGameStats;
-        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (crit x{4}). Raw stats: damage {5} school + {6} all,"
+        Logger.Debug("Damage from slot {0}: effect {1} base {2}, after boosts and charms {3} (before crits, extra x{4}). Raw stats: damage {5} school + {6} all,"
                      + " flat {7}, pierce {8} school + {9} all, charms [{10}].",
             Logger.Args(caster?.SlotIndex, effect.m_effectType, effect.m_effectParam, damageFromCaster, critMultiplier,
                 caster?.GetStatBySchool(casterStats?.m_dmgBonusPercent, effect.m_sDamageType), casterStats?.m_dmgBonusPercentAll,
@@ -512,7 +509,9 @@ internal static class CombatEffectApplicator {
                 continue;
             }
 
-            var damage = damageFromCaster;
+            // A landed critical multiplies the fully-boosted outgoing damage by a variable factor (this target's block
+            // lowers it); wards and resist still reduce it.
+            var damage = (int) Math.Floor(damageFromCaster * CritOn(target, critMultiplier, isHeal: false));
             var pierceLeft = pierce;
 
             // Pierce traps and the like on the target (kModifyIncomingArmorPiercing): more (or, when negative, less)
@@ -540,7 +539,15 @@ internal static class CombatEffectApplicator {
                 hits.Add($"{TargetName(interceptor)}: intercepted {taken}");
             }
 
-            var dealt = DoDamageToTarget(target, damage, finalSchool, pierceLeft);
+            // A cheat's "hits heal me": that share of the hit heals the target instead.
+            var turned = (int) Math.Floor(damage * Math.Clamp(target.HitShare("HealFromHits"), 0, 100) / 100.0);
+            var dealt = DoDamageToTarget(target, damage - turned, finalSchool, pierceLeft);
+            if (turned > 0 && target.IsAlive) {
+                target.HealParticipant(turned);
+                target.SyncParticipantHealth();
+            }
+
+            HitShares(caster, target, dealt);
             damageDealt += dealt;
             hits.Add($"{TargetName(target)}: dealt {dealt}");
 
@@ -638,13 +645,12 @@ internal static class CombatEffectApplicator {
         var bubbleHealIncrease = GetGlobalEffectHealingModifier(duel, caster);
         healFromCaster = (int) Math.Ceiling(healFromCaster * (1 + bubbleHealIncrease));
 
-        // A landed critical doubles the fully-boosted outgoing heal; incoming heal boosts still apply.
-        healFromCaster = (int) Math.Ceiling(healFromCaster * critMultiplier);
-
-        // Apply heal to each target
+        // Apply heal to each target. A landed critical doubles the fully-boosted outgoing heal (a teammate never blocks
+        // it); incoming heal boosts still apply.
         foreach (var target in targets) {
             if (target is not null) {
-                _ = DoHealToTarget(target, healFromCaster, RevivesWithHeal(effect, caster, target));
+                var heal = (int) Math.Ceiling(healFromCaster * CritOn(target, critMultiplier, isHeal: true));
+                _ = DoHealToTarget(target, heal, RevivesWithHeal(effect, caster, target));
             }
         }
 
@@ -896,6 +902,14 @@ internal static class CombatEffectApplicator {
     /// </summary>
     [ThreadStatic] internal static byte? StunResistRoll;
 
+    // The crit roll of the cast being resolved (CombatCriticals.cs), or null outside a cast.
+    [ThreadStatic] internal static CombatCriticals.CastCrits Crits;
+
+    // The crit multiplier one target takes from this hit: the cast's roll against it (only an enemy's block counts),
+    // times any multiplier the caller passed.
+    private static float CritOn(CombatDuelSubCircle target, float critMultiplier, bool isHeal)
+        => Crits is { } crits && target is not null ? crits.For(target, isHeal).Multiplier * critMultiplier : critMultiplier;
+
     private static float ApplyStunEffect(SpellEffect effect, CombatDuelSubCircle[] targets) {
         var cinematicTime = 0.0f;
 
@@ -975,6 +989,30 @@ internal static class CombatEffectApplicator {
         target.DamageParticipant(reducedDamage);
 
         return reducedDamage;
+    }
+
+    // Cheats: the last hit each side saw, thorns back on the attacker and lifesteal for it (never below 1 health).
+    private static void HitShares(CombatDuelSubCircle caster, CombatDuelSubCircle target, int dealt) {
+        target.CheatLastHitTaken = dealt;
+        if (caster is null || caster == target || dealt <= 0) {
+            return;
+        }
+
+        caster.CheatLastHitDealt = dealt;
+        var thorns = dealt * target.HitShare("Thorns") / 100;
+        var now = caster.ParticipantGameStats?.m_currentHitpoints ?? 0;
+        if (thorns > 0 && now > 1) {
+            caster.DamageParticipant(Math.Min(thorns, now - 1));
+            caster.SyncParticipantHealth();
+            Logger.Information("Slot {0} | Thorns: {1} damage back to slot {2}.", Logger.Args(target.SlotIndex, Math.Min(thorns, now - 1), caster.SlotIndex));
+        }
+
+        var stolen = dealt * caster.HitShare("Lifesteal") / 100;
+        if (stolen > 0 && caster.IsAlive) {
+            caster.HealParticipant(stolen);
+            caster.SyncParticipantHealth();
+            Logger.Information("Slot {0} | Lifesteal: heals {1}.", Logger.Args(caster.SlotIndex, stolen));
+        }
     }
 
     // Equalize and the like: a bubble or ward that caps the damage of one hit.
