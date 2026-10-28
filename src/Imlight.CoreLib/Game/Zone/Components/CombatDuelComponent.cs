@@ -175,6 +175,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
     // die, so the win would not see them; their drops come from this list.
     private readonly List<(ulong TemplateId, ulong GlobalId)> _defeatedEnemyMinions = [];
+    // An enemy of this battle has been defeated ([Battle] NoMobsJoinAfterKill).
+    private bool _enemyDefeated;
     // The ZoneObjects encounter of this battle while its minions gather, and the templates that joined from the zone.
     private ZoneObjects.ZoneEncounter _encounter;
     private CombatDuelSubCircle _encounterBossCircle;
@@ -317,6 +319,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // Once an enemy of the battle has been defeated, no more monsters join it, so the fight ends sooner. Like a
+        // monster that walks into a full battle, it vanishes and its spawner brings it back later.
+        if (s_noMobsJoinAfterKill && EnemyDefeated) {
+            Refused("an enemy of this battle has been defeated already (NoMobsJoinAfterKill); it vanishes");
+            suspect.Tell(new COMBAT_106_PROTOCOL.MSG_COMBATDEATH());
+
+            return;
+        }
+
         // The battle's size rule (Niduus, 2026-10-25: "1 player = 2 mobs in battle, 2 = 3 mobs, 3 and 4 players = 4
         // mobs"; Unicorn Way, whose circles the zone data marks as starter circles, one per wizard: IsSlotAvailable). A
         // monster that walks into a full battle vanishes ("They should despawn upon hitting the battle if it's full")
@@ -359,6 +370,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(name, creature.m_templateID.Full, Duel.m_duelID.Full,
                 circle.SlotIndex, now ? " and plays this round" : Duel.m_roundNum == 0 ? ", from the first round" : ", from the next round"));
     }
+
+    // [Battle] NoMobsJoinAfterKill (Niduus, 2026-10-28: "during the turns, if a mob is registered to be dead, prevent new
+    // ones from joining. Have this as a toggle, this is in design to make questing faster and better"). Read on each
+    // walk-in, so the switch works live. .joinme, a boss's minions and an encounter's reinforcements are not walk-ins.
+    private static bool s_noMobsJoinAfterKill => ConfigurationManager.GetValue("Battle.NoMobsJoinAfterKill", true);
+
+    // A death counts from the moment the spell lands, before the round's end takes the fallen monster off its circle.
+    private bool EnemyDefeated => _enemyDefeated || SubCircles.Any(c => c is { Occupied: true, IsHumanPlayer: false }
+        && c.OccupiedTeam == CombatTeam.Monster && c.ParticipantGameStats is { m_currentHitpoints: <= 0 });
 
     /// <summary>
     /// A monster that joins a running battle (walking in, or by .joinme) plays the round it joins in, as late wizards
@@ -1122,6 +1142,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         EnactActionOnSubCircles(circle => {
             // A dead minion can't be revived; remove it like an enemy.
             if (!circle.IsHumanPlayer && !circle.IsAlive) {
+                if (circle.OccupiedTeam == CombatTeam.Monster) {
+                    _enemyDefeated = true;
+                }
+
                 NoteDefeatedEnemyMinion(circle);
                 var removeMsg = new COMBAT_106_PROTOCOL.MSG_COMBATDEATH();
                 circle.ParticipantActor.Tell(removeMsg);
@@ -1342,6 +1366,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         SubCircles = CreateDuelActorSubCircles(_sigilTemplate);
         CombatResolver = new Combat.CombatResolver(Duel, SubCircles);
         _defeatedEnemyMinions.Clear();
+        _enemyDefeated = false;
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();
