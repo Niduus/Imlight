@@ -527,7 +527,64 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
             || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true
             // A quest step of the player's uses this object now.
-            || Entity.GetComponentOfType<InteractQuestSelectComponent>()?.GetServiceOptions(wizard).Any() == true;
+            || Entity.GetComponentOfType<InteractQuestSelectComponent>()?.GetServiceOptions(wizard).Any() == true
+            || SpeaksInQuestTalkFor(wizard);
+    }
+
+    private System.Tuple<int, List<QuestTemplate>> _talksHere;
+
+    /// <summary>
+    /// The character has a line in the talk of a quest another character here offers the player or the player holds:
+    /// the game turns the camera to it as it speaks, so it must stand there. Mitsu, 2026-10-28: Duncan Grimwater speaks
+    /// up while Suzie's brother offers The Shadow of Death Magic, and the camera showed an empty wall.
+    /// </summary>
+    private bool SpeaksInQuestTalkFor(Wizard wizard) {
+        foreach (var quest in TalksHere()) {
+            string name = quest.m_questName;
+            if (Imlight.CoreLib.Game.Quests.QuestOptions.IsOff(name)) {
+                continue;
+            }
+
+            if (wizard.HasQuest(name)) {
+                return true;
+            }
+
+            if (wizard.HasCompletedQuest(name) && !Imlight.CoreLib.Game.Quests.QuestOptions.IsRepeatable(name)) {
+                continue;
+            }
+
+            if (Imlight.CoreLib.Game.Madlibs.QuestMadlibs.GiverTemplateOf(quest) != 0
+                && (quest.m_requirements is null || RequirementDispatcher.EvaluateRequirements(quest.m_requirements,
+                    new QuestRequirementContext(quest.m_requirements, null, null, wizard, name)))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // The quests this character speaks in whose giver or another speaker is placed in this zone (not this character
+    // alone: its own offers and steps are found above).
+    private List<QuestTemplate> TalksHere() {
+        var known = _talksHere;
+        if (known is not null && known.Item1 == Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            return known.Item2;
+        }
+
+        var version = Imlight.CoreLib.Game.Quests.QuestOptions.Version;
+        var self = (ulong) ((Entity.Template as GameObjectTemplate)?.m_templateID ?? 0);
+        var placed = (Entity.Zone?.ZoneData?.m_objectList ?? [])
+            .Where(o => o is not null)
+            .Select(o => o.m_templateID.Full)
+            .Where(id => id != self)
+            .ToHashSet();
+        var quests = Imlight.CoreLib.Game.Quests.QuestDialogSpeakers.QuestsSpokenIn(self)
+            .Where(q => placed.Contains(Imlight.CoreLib.Game.Madlibs.QuestMadlibs.GiverTemplateOf(q))
+                        || Imlight.CoreLib.Game.Quests.QuestDialogSpeakers.SpeakersOf(q).Overlaps(placed))
+            .ToList();
+        _talksHere = System.Tuple.Create(version, quests);
+
+        return quests;
     }
 
     private bool? _zoneTriggersShowIt;
