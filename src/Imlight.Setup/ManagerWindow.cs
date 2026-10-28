@@ -185,6 +185,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
         ("Housing", "PlaceAnyAsDecoration", "Houses: place any furniture as decoration (vaults, signs, music players show but do not work yet)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "ResetWhenEmpty", "Dungeons start fresh once everyone has left (off: kept for 10 minutes)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Instance", "DungeonRecall", "Dungeon Recall: leaving a dungeon by fleeing, losing, Commons, Home or logging out gives the button back in (lasts RecallMinutes, stands still while anyone is inside)", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeItemCards", "Randomizer: random item cards (from gear and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Character", "FullRestoreOnLevelUp", "Leveling up fills health, mana and energy to full, like the real game", new() { OnContent = "On", OffContent = "Off" }),
