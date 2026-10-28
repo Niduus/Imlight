@@ -37,6 +37,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
@@ -264,24 +265,20 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        // Sell More on a backpack item sells that many copies of it.
+        // Sell More on a backpack item sells that many copies of it, all removed and saved at once so the game
+        // gets its answer right away (Niduus, 2026-10-28). The held item goes first.
+        var ids = new List<ulong> { message.GlobalID };
         if (quantity > 1) {
-            var copies = (wizard.InventoryBehavior.Items ?? [])
+            ids.AddRange((wizard.InventoryBehavior.Items ?? [])
                 .Where(other => other.m_templateID == item.m_templateID && other.m_globalID.Full != message.GlobalID
                     && !(wizard.EquipmentBehavior.EquippedItemIds?.Contains(other.m_globalID.Full) ?? false)
                     && !ItemHelper.IsLocked(other) && !wizard.IsFilledVault(other.m_globalID.Full))
                 .Take(quantity - 1)
-                .Select(other => other.m_globalID.Full)
-                .ToList();
-            foreach (var copy in copies) {
-                if (wizard.RemoveItemFromInventory(copy, reason: "sold to a shop")) {
-                    ProcessSuccessfulSale(wizard, copy, CalculateItemSellValue((WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID)));
-                }
-            }
+                .Select(other => other.m_globalID.Full));
         }
 
-        var removedItemSuccess = wizard.RemoveItemFromInventory(message.GlobalID, reason: "sold to a shop");
-        if (!removedItemSuccess) {
+        var sold = wizard.RemoveItemsFromInventory(ids, "sold to a shop");
+        if (!sold.Contains(message.GlobalID)) {
             Logger.Warning("Failed to find item {0} in inventory for shop sell", Logger.Args(message.GlobalID));
             ProcessFailedSale();
 
@@ -290,6 +287,9 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
 
         var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
         var gold = CalculateItemSellValue(template);
+        foreach (var copy in sold.Where(copy => copy != message.GlobalID)) {
+            ProcessSuccessfulSale(wizard, copy, gold);
+        }
 
         ProcessSuccessfulSale(wizard, message.GlobalID, gold);
     }

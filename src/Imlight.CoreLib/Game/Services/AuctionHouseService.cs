@@ -59,6 +59,7 @@ using Imcodec.Types;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Bazaar;
 using Imlight.CoreLib.Shared.Behaviors;
+using Imlight.CoreLib.Game.Trading;
 
 namespace Imlight.CoreLib.Game.Services;
 
@@ -350,18 +351,17 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                     .Take(quantity)
                     .ToList();
                 var goldBefore = wizard.GameStats.m_currentGold;
-                _sellingMore = true;
-                try {
-                    foreach (var copy in copies) {
-                        SellToAuctionHouse(copy, message.key);
-                    }
-                }
-                finally {
-                    _sellingMore = false;
-                }
+                var sold = SellItems(wizard, copies);
+                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = (sbyte) (sold > 0 ? 0 : 1) });
+                SendMoreAcknowledgement(templateId, isSell: true, wizard.GameStats.m_currentGold - goldBefore, sold);
 
+                return;
+            }
+
+            // Treasure cards are in the treasure book, by their card id (0x60 << 40 on top of the spell template).
+            if (SellCards(wizard, id, quantity, out var cardsSold) is var cardGold && cardsSold > 0) {
                 SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
-                SendMoreAcknowledgement(templateId, isSell: true, wizard.GameStats.m_currentGold - goldBefore, copies.Count);
+                SendMoreAcknowledgement(id, isSell: true, cardGold, cardsSold);
 
                 return;
             }
@@ -413,9 +413,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
     }
 
-    // While a Sell More runs, each copy is sold without its own confirm.
-    private bool _sellingMore;
-
     private int SellReagent(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, ulong reagentId, int quantity, out int sold) {
         sold = 0;
         var reagent = wizard.AlchemyBehavior.Reagents?.FirstOrDefault(r => r.m_globalID.Full == reagentId);
@@ -425,14 +422,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
         var templateId = reagent.m_templateID;
         var count = Math.Min(quantity, reagent.m_quantity);
-        ClientReagentItem left = null;
-        for (var i = 0; i < count && wizard.RemoveReagent(reagentId, out left); i++) {
-            sold++;
-        }
 
-        if (sold == 0) {
+        // The whole count comes off the stack in one save (Niduus, 2026-10-28: selling as quick as buying).
+        if (count < 1 || !wizard.RemoveReagents(reagentId, count, out var left)) {
             return 0;
         }
+
+        sold = count;
 
         var gold = Math.Max(1, (int) Math.Ceiling(template.m_baseCost * 0.5f)) * sold;
         BazaarLink.Give(templateId, sold, WizardName(wizard), gold);
@@ -539,8 +535,109 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         return gold;
     }
 
+    /// <summary>
+    /// Sells backpack items of one kind to the Bazaar in one go: removed and saved once, one stock change and one
+    /// gold change, so a big Sell More answers right away (Niduus, 2026-10-28). Sends no sell confirm.
+    /// </summary>
+    /// <returns>How many were sold.</returns>
+    private int SellItems(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, List<ulong> itemIds) {
+        var first = itemIds.Count > 0 ? wizard.InventoryBehavior.GetItem(itemIds[0]) : null;
+        if (first is null || CoreObjectFactory.GetCoreTemplate(first.m_templateID) is not WizItemTemplate template
+            || template.m_adjectiveList.Any(x => x == "FLAG_NoAuction")) {
+            return 0;
+        }
+
+        var sellable = itemIds.Where(id => wizard.InventoryBehavior.GetItem(id) is { } item
+                && !ItemHelper.IsLocked(item) && !ItemHelper.IsStitched(item) && !wizard.IsFilledVault(id))
+            .ToList();
+        var sold = wizard.RemoveItemsFromInventory(sellable, "sold at the Bazaar");
+        if (sold.Count == 0) {
+            return 0;
+        }
+
+        // Bazaar buys items at 50% of their value.
+        var each = (int) Math.Ceiling(template.m_baseCost * 0.5f);
+        if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
+            each = (int) Math.Ceiling(each * 1.225f);
+        }
+
+        var gold = each * sold.Count;
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE { Command = 2, ItemTemplateID = first.m_templateID, Cost = gold, ReturnCode = 0 });
+        foreach (var id in sold) {
+            SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM { GlobalID = wizard.GameObjectID, ItemID = id });
+        }
+
+        BazaarLink.Give(first.m_templateID, sold.Count, WizardName(wizard), gold);
+        SendStockOf(first.m_templateID);
+        wizard.AddGold(gold);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+
+        return sold.Count;
+    }
+
+    // The type bits the game puts on a treasure card's id in the Bazaar.
+    private const ulong CARD_TYPE = 0x60UL << 40;
+
+    /// <summary>
+    /// Sells treasure cards from the treasure book to the Bazaar: taken out and saved once (Niduus, 2026-10-28).
+    /// Sends no sell confirm.
+    /// </summary>
+    /// <returns>The gold paid.</returns>
+    private int SellCards(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, ulong cardId, int quantity, out int sold) {
+        sold = 0;
+        if ((cardId & ~0xFFFFFFFFUL) != CARD_TYPE) {
+            return 0;
+        }
+
+        var templateId = (uint) (cardId & 0xFFFFFFFFUL);
+        if (CoreObjectFactory.GetCoreTemplate(templateId) is not SpellTemplate spell) {
+            return 0;
+        }
+
+        while (sold < quantity && wizard.SpellbookBehavior.RemoveTreasureCard(templateId)) {
+            sold++;
+        }
+
+        if (sold == 0) {
+            return 0;
+        }
+
+        WizardCollection.RemoveTreasureCards(wizard, templateId, sold);
+        var spellId = (int) StringHash.Compute(spell.m_name);
+        for (var i = 0; i < sold; i++) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = spellId, EnchantmentID = 0 });
+        }
+
+        var each = BazaarLink.Find(cardId)?.SellPrice ?? 0;
+        if (each < 1) {
+            each = Math.Max(1, (int) Math.Ceiling(spell.m_baseCost * 0.5f));
+        }
+
+        var gold = each * sold;
+        BazaarLink.Give(cardId, sold, WizardName(wizard), gold);
+        SendStockOf(cardId);
+        wizard.AddGold(gold);
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEGOLD {
+            Gold = wizard.GameStats.m_currentGold,
+            MaxGold = wizard.GameStats.m_baseGoldPouch
+        });
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_AUCTIONRESPONSE { Command = 2, ItemTemplateID = cardId, Cost = gold, ReturnCode = 0 });
+
+        return gold;
+    }
+
     private void SellToAuctionHouse(ulong itemGlobalId, uint key) {
         var wizard = GetActiveWizard();
+        // Treasure cards live in the treasure book.
+        if (!wizard.InventoryBehavior.HasItem(itemGlobalId) && SellCards(wizard, itemGlobalId, 1, out _) > 0) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
+
+            return;
+        }
+
         // Snacks live in the snack bag, not the backpack.
         if (!wizard.InventoryBehavior.HasItem(itemGlobalId) && wizard.PetSnackBehavior.HasSnackID(itemGlobalId)) {
             SellSnack(wizard, itemGlobalId, 1, out _);
@@ -635,10 +732,6 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         };
         SendToSocket(removeItemMsg);
 
-        if (_sellingMore) {
-            return;
-        }
-
         var shopSellConfirmMsg = new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM {
             ClientRequestID = 0,
             GlobalID = 0,
@@ -658,6 +751,13 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         var n = Math.Min(count, quote.Stock);
         if (quote.BuyPrice > 0) {
             n = Math.Min(n, wizard.GameStats.m_currentGold / quote.BuyPrice);
+        }
+
+        // The game's treasure book holds 999 cards (Castle Magic aside) and drops any past that, so the server would
+        // hold cards the game does not show (Niduus, 2026-10-28: Elucidate cards that would not stay in the deck).
+        if (quote.Kind == BazaarKind.Card && TreasureCardTradePolicy.CountsTowardCapacity(quote.SpellTemplateId)) {
+            n = Math.Min(n, TradeLimits.TreasureBookCapacity
+                - TreasureCardTradePolicy.CountCapacityUsed(wizard.SpellbookBehavior.TreasureCardTemplateIds ?? []));
         }
 
         n = quote.Kind switch {

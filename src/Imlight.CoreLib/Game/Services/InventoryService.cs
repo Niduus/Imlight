@@ -37,6 +37,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.CoreObject;
@@ -242,6 +243,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
         var wizard = GetActiveWizard();
         int goldSum = 0;
+        var backpackSold = new List<(WizClientObjectItem Item, QuickSellItem Sold)>();
 
         if (!serializer.Deserialize<QuickSellItemList>(message.Data, 4, out var quickSellItemList)
             || quickSellItemList.m_quickSellItemList is null) {
@@ -269,24 +271,8 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             }
 
             if (item is not null) {
-                var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
-
-                wizard.RemoveItemFromInventory(item.m_globalID, reason: "quick sold");
-
-                // Some items (snack, reagents) are stackable.
-                for (int i = 0; i < quickSellItem.m_quantity; i++) {
-                    SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM() {
-                        GlobalID = wizard.GameObjectID,
-                        ItemID = quickSellItem.m_sellItemGID
-                    });
-
-                    var value = (int) Math.Ceiling(template.m_baseCost * 0.05f);
-                    if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
-                        value = (int) Math.Ceiling(value * 1.2275f); // Dyed items are more expensive.
-                    }
-
-                    goldSum += value;
-                }
+                // Taken out together after the loop, in one save, so a big quick sell answers right away.
+                backpackSold.Add((item, quickSellItem));
 
                 continue;
             }
@@ -318,13 +304,18 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             var treasureCardTemplateId = SpellFactory.GetTemplateIdByHash(sellItemHash);
             if (treasureCardTemplateId != 0
                 && CoreObjectFactory.GetCoreTemplate(treasureCardTemplateId) is SpellTemplate spellTemplate) {
-                for (int i = 0; i < quickSellItem.m_quantity; i++) {
-                    if (!wizard.SpellbookBehavior.RemoveTreasureCard(treasureCardTemplateId)) {
-                        break;
-                    }
+                // All copies come out of the book first and are saved once, so a big quick sell answers right away
+                // (Niduus, 2026-10-28).
+                var removed = 0;
+                while (removed < quickSellItem.m_quantity && wizard.SpellbookBehavior.RemoveTreasureCard(treasureCardTemplateId)) {
+                    removed++;
+                }
 
-                    WizardCollection.RemoveTreasureCard(wizard, treasureCardTemplateId);
+                if (removed > 0) {
+                    WizardCollection.RemoveTreasureCards(wizard, treasureCardTemplateId, removed);
+                }
 
+                for (var i = 0; i < removed; i++) {
                     SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK() {
                         SpellID = (int) sellItemHash,
                         EnchantmentID = 0
@@ -338,6 +329,31 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
 
             Logger.Log.Warning("Could not resolve quicksell item {0}; nothing was sold for it.",
                 Logger.Args(quickSellItem.m_sellItemGID));
+        }
+
+        var removedIds = wizard.RemoveItemsFromInventory(backpackSold.Select(sold => sold.Item.m_globalID.Full), "quick sold").ToHashSet();
+        foreach (var (item, quickSellItem) in backpackSold) {
+            // Paid once per item, even if the list names it twice.
+            if (!removedIds.Remove(item.m_globalID.Full)) {
+                continue;
+            }
+
+            var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
+
+            // Some items (snack, reagents) are stackable.
+            for (int i = 0; i < quickSellItem.m_quantity; i++) {
+                SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM() {
+                    GlobalID = wizard.GameObjectID,
+                    ItemID = quickSellItem.m_sellItemGID
+                });
+
+                var value = (int) Math.Ceiling(template.m_baseCost * 0.05f);
+                if (template.m_numPrimaryColors != 1 && template.m_numSecondaryColors != 0) {
+                    value = (int) Math.Ceiling(value * 1.2275f); // Dyed items are more expensive.
+                }
+
+                goldSum += value;
+            }
         }
 
         // Update player with their new gold balance.

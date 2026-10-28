@@ -135,6 +135,54 @@ public static class ItemHistory {
     /// </summary>
     public static ItemBackup Record(ulong charId, ulong itemId, ulong templateId, WizClientObjectItem item, ItemRecordKind kind, string reason,
                                     string of = null) {
+        var backup = NewBackup(charId, itemId, templateId, item, kind, reason, of);
+        if (!TrySave(backup) && item is not null) {
+            // The copy is what failed to store: the record without it still says what was lost.
+            backup.Item = null;
+            TrySave(backup);
+        }
+
+        Written(backup);
+
+        return backup;
+    }
+
+    /// <summary>
+    /// Writes a record with a copy of each item, all in one save, so a big Sell More does not wait on a save
+    /// per item (Niduus, 2026-10-28). Never throws.
+    /// </summary>
+    public static void RecordMany(ulong charId, IReadOnlyCollection<WizClientObjectItem> items, ItemRecordKind kind, string reason) {
+        var backups = items.Where(item => item is not null)
+            .Select(item => NewBackup(charId, item.m_globalID.Full, item.m_templateID.Full, item, kind, reason ?? "", null))
+            .ToList();
+        if (backups.Count == 0) {
+            return;
+        }
+
+        try {
+            using var session = Store.OpenSession();
+            foreach (var backup in backups) {
+                session.Store(backup, backup.Id);
+            }
+
+            session.SaveChanges();
+        }
+        catch (Exception ex) {
+            Logger.Error("Item history: could not store {0} records at once, storing them one by one: {1}",
+                Logger.Args(backups.Count, ex.Message));
+            foreach (var backup in backups.Where(backup => !TrySave(backup))) {
+                backup.Item = null;
+                TrySave(backup);
+            }
+        }
+
+        foreach (var backup in backups) {
+            Written(backup);
+        }
+    }
+
+    private static ItemBackup NewBackup(ulong charId, ulong itemId, ulong templateId, WizClientObjectItem item, ItemRecordKind kind,
+                                        string reason, string of) {
         var backup = new ItemBackup {
             Of = of,
             BackupId = NewBackupId(),
@@ -149,12 +197,12 @@ public static class ItemHistory {
         };
         backup.Id = ID_PREFIX + backup.BackupId;
 
-        if (!TrySave(backup) && item is not null) {
-            // The copy is what failed to store: the record without it still says what was lost.
-            backup.Item = null;
-            TrySave(backup);
-        }
+        return backup;
+    }
 
+    // The file line and the log line for a stored record.
+    private static void Written(ItemBackup backup) {
+        var (templateId, itemId, charId, kind) = (backup.TemplateId, backup.ItemId, backup.CharId, backup.Kind);
         AppendLine(backup);
         if (kind is ItemRecordKind.Lost or ItemRecordKind.Missing) {
             Logger.Warning("Item history {0}: {1} ({2}, item {3}) of {4} is {5}: {6}.",
@@ -164,8 +212,6 @@ public static class ItemHistory {
             Logger.Information("Item history {0}: {1} ({2}, item {3}) of {4} {5}: {6}.",
                 Logger.Args(backup.BackupId, backup.ItemName, templateId, itemId, charId, kind, backup.Reason));
         }
-
-        return backup;
     }
 
     private static bool TrySave(ItemBackup backup) {

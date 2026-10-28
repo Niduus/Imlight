@@ -84,6 +84,8 @@ public sealed class BazaarBook {
 
     private static int StartStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.StartStock", 999), 1, MaxStock);
     private static int MaxStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.MaxStock", 999), 1, 1_000_000);
+    // Buying never lowers the stock: everything, treasure cards too, always shows the start stock (Niduus, 2026-10-28).
+    private static bool Unlimited => ConfigurationManager.GetValue("Bazaar.Unlimited", true);
     private static bool WithNoAuction => ConfigurationManager.GetValue("Bazaar.NoAuctionItems", false);
     private static int CardsPerSchool => Math.Clamp(ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, 100_000);
 
@@ -253,7 +255,11 @@ public sealed class BazaarBook {
 
     private int StockOf(ulong id) => StockOf(id, StartStock);
 
-    private int StockOf(ulong id, int start) => _stock.TryGetValue(id, out var left) ? left : start;
+    private int StockOf(ulong id, int start) {
+        var left = _stock.TryGetValue(id, out var stored) ? stored : start;
+
+        return Unlimited ? Math.Max(left, start) : left;
+    }
 
     /// <summary>A short line of what is in the Bazaar, for the log.</summary>
     public string Describe() {
@@ -356,6 +362,12 @@ public sealed class BazaarBook {
             }
 
             left = StockOf(item.Id);
+            if (Unlimited) {
+                Logger.Information("Bazaar: {0} bought {1} {2} for {3} gold; the stock is unlimited.", Logger.Args(who ?? "someone", count, item.Name, gold));
+
+                return true;
+            }
+
             if (left < count) {
                 return false;
             }
