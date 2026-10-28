@@ -71,6 +71,20 @@ internal static class AstralSchools {
     internal static bool Enabled => ConfigurationManager.GetValue("AstralSchools.Enabled", true);
     // If false, only QA and up can pick one with .astral.
     internal static bool PlayersCanPick => ConfigurationManager.GetValue("AstralSchools.PlayersCanPick", true);
+    // If true, the game is told the astral school as the wizard's school outside battle, so the icon by their name, the
+    // character page and character select show Sun, Moon, Star or Shadow. A test: the game was made for the 7 schools
+    // only, so school gear, the spellbook or trainers may act up. Battles always use the real school. Counts from the
+    // next login.
+    internal static bool ShowAsSchoolIcon => ConfigurationManager.GetValue("AstralSchools.ShowAsSchoolIcon", false);
+
+    /// <summary>
+    /// The school the game is shown outside battle: the astral school with [AstralSchools] ShowAsSchoolIcon on, else
+    /// the wizard's own.
+    /// </summary>
+    internal static uint ShownSchoolId(MagicSchool school, string astral)
+        => Enabled && ShowAsSchoolIcon && Find(astral) is { } name && Enum.TryParse<MagicSchool>(name, out var shown)
+            ? (uint) shown
+            : (uint) school;
 
     /// <summary>The astral school's name as it is written ("Sun"), or null for none or an unknown name.</summary>
     internal static string Find(string name)

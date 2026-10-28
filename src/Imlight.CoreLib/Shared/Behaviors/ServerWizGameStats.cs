@@ -282,6 +282,9 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_powerPipBase = m_powerPipBase,
             m_powerPipBonusPercentAll = m_powerPipBonusPercentAll,
             m_xpPercentIncrease = m_xpPercentIncrease,
+            // The wizard's school; the battle health bar shows its icon from this (Niduus, 2026-10-28: no school icon
+            // by the health in battle). Always the real school, astral or not.
+            m_schoolID = m_schoolID != 0 ? m_schoolID : (uint) MagicSchool,
             // The client's cinematic re-simulates the crit from the rating and percent we send here.
             m_criticalHitPercentBySchool = ToChanceList(m_criticalHitRatingBySchool, Level),
             m_blockPercentBySchool = ToChanceList(m_blockRatingBySchool, Level),
@@ -408,6 +411,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_levelScaled = m_levelScaled,
             m_highestCharacterLevelOnAccount = m_highestCharacterLevelOnAccount,
             m_highestCharacterWorldOnAccount = m_highestCharacterWorldOnAccount,
+            // The character page's school (the astral school with [AstralSchools] ShowAsSchoolIcon on).
+            m_schoolID = AstralSchools.ShownSchoolId(MagicSchool, m_astralSchool),
         };
     }
     
