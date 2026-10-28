@@ -50,7 +50,7 @@ internal sealed class PetStitch(Wizard wizard, IActorRef session, Func<ulong, bo
 
         if (!Save(crowns, [stats], [look.m_globalID])) {
             (stats.m_displayID, stats.m_primaryColor, stats.m_secondaryColor, stats.m_pattern) = before;
-            wizard.InventoryBehavior.AddItem(look);
+            wizard.InventoryBehavior.ReturnItem(look);
             failure = "the pets could not be stored";
 
             return false;

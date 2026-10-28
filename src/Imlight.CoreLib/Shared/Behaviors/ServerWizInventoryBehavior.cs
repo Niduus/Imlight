@@ -114,6 +114,14 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     }
 
     /// <summary>
+    /// Puts an item the wizard already owns back in the backpack, such as one taken off or one whose move failed.
+    /// The limit is not checked: it was the wizard's before, and refusing it here would lose it (Niduus, 2026-10-28).
+    /// </summary>
+    /// <param name="item">The item to put back.</param>
+    /// <returns>False only when the backpack already holds it.</returns>
+    public bool ReturnItem(WizClientObjectItem item) => AddItem(item, ignoreLimit: true);
+
+    /// <summary>
     /// Removes an item from the player's inventory based on its unique identifier.
     /// </summary>
     /// <param name="itemId">The unique identifier of the item to be removed.</param>

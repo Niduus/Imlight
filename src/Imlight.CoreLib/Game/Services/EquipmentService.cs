@@ -898,7 +898,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             }
 
             if (wizard.InventoryBehavior.RemoveItem(item.m_globalID, out _)) {
-                WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID);
+                WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID, reason: "used (backpack elixir)");
                 WizardCollection.UpdateCharacterItems(wizard);
                 SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
                     GlobalID = wizard.GameObjectID,
@@ -923,7 +923,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 return;
             }
 
-            WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID);
+            WizardItemCollection.RemoveItem(wizard.CharId, item.m_globalID, reason: "used (instant elixir)");
             WizardCollection.UpdateCharacterItems(wizard);
 
             SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
@@ -973,7 +973,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }
 
         if (!equipBehavior.EquipElixir(item, durationSeconds)) {
-            wizard.InventoryBehavior.AddItem(item);
+            wizard.InventoryBehavior.ReturnItem(item);
             return;
         }
 
@@ -1128,7 +1128,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
         // Remove from server equipment behavior and database.
         wizard.EquipmentBehavior.UnequipItem(itemId);
-        WizardItemCollection.RemoveItem(wizard.CharId, itemId);
+        WizardItemCollection.RemoveItem(wizard.CharId, itemId, reason: "elixir ran out");
         WizardCollection.UpdateCharacterItems(wizard);
 
         SyncHealthAndMana(wizard, clampToMax: true);

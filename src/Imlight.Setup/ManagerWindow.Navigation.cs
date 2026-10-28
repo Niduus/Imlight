@@ -223,6 +223,7 @@ internal sealed partial class ManagerWindow {
         var cards = new List<Control> {
             hero,
             HomeWhosOnline(),
+            HomeLostItems(),
             HomeCreateOnLogin(),
             HomeWhatsNew(),
             Fold("search", HOME, "Search everything",
@@ -468,6 +469,7 @@ internal sealed partial class ManagerWindow {
         _homeStop.IsEnabled = status.Running;
         _homePlay.IsEnabled = status.ClientFound;
         RefreshWhosOnline(status.Running);
+        RefreshLostItems();
     }
 
     // ---------------------------------------------------------------------

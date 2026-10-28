@@ -269,13 +269,13 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
                 .Select(other => other.m_globalID.Full)
                 .ToList();
             foreach (var copy in copies) {
-                if (wizard.RemoveItemFromInventory(copy)) {
+                if (wizard.RemoveItemFromInventory(copy, reason: "sold to a shop")) {
                     ProcessSuccessfulSale(wizard, copy, CalculateItemSellValue((WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID)));
                 }
             }
         }
 
-        var removedItemSuccess = wizard.RemoveItemFromInventory(message.GlobalID);
+        var removedItemSuccess = wizard.RemoveItemFromInventory(message.GlobalID, reason: "sold to a shop");
         if (!removedItemSuccess) {
             Logger.Warning("Failed to find item {0} in inventory for shop sell", Logger.Args(message.GlobalID));
             ProcessFailedSale();
@@ -748,7 +748,7 @@ internal class ShopService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         // A full backpack sends the purchase to the bank, as the game does.
-        var placement = item is null ? Placement.Lost : ItemPlacement.Give(SessionActor.ActorRef, playerWizard, item);
+        var placement = item is null ? Placement.Lost : ItemPlacement.Give(SessionActor.ActorRef, playerWizard, item, overLimit: false);
         if (placement == Placement.Lost) {
             Logger.Warning("Could not add purchased item {0} to the backpack or bank of {1}.",
                 Logger.Args(itemTemplateID, playerWizard.CharId));

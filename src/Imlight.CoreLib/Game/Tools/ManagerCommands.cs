@@ -60,6 +60,7 @@ internal static class ManagerCommands {
     private static void Poll() {
         PollAnnouncements();
         PollQuestCheck();
+        ItemSafety.ItemHistory.PollRestoreRequests();
         try {
             if (!File.Exists(COMMANDS_FILE)) {
                 return;

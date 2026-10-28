@@ -609,7 +609,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         SendToSocket(auctionRspMsg);
 
         // Remove item from inventory, then put it up in the Bazaar (the Bazaar bot keeps the stock).
-        _ = wizard.RemoveItemFromInventory(itemGlobalId);
+        _ = wizard.RemoveItemFromInventory(itemGlobalId, reason: "sold at the Bazaar");
         BazaarLink.Give(item.m_templateID, 1, WizardName(wizard), gold);
         SendStockOf(item.m_templateID);
 

@@ -212,7 +212,7 @@ internal sealed class ResDeleteItemHandler : BaseResultHandler<ResDeleteItem> {
             .ToList();
         foreach (var item in items) {
             ulong itemId = item.m_globalID;
-            if (wizard.RemoveItemFromInventory(itemId)) {
+            if (wizard.RemoveItemFromInventory(itemId, reason: "taken by a raid")) {
                 playerRef.Tell(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
                     GlobalID = wizard.GameObjectID,
                     ItemID = itemId,

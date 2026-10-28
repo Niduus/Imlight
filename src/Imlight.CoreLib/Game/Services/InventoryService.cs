@@ -47,6 +47,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Effects;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Items;
@@ -115,7 +116,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             var slotName = slot.SlotType.ToString();
             var removedEffects = CharacterEffectHelper.RemoveEffectsFromWizard(wizard, template);
             wizard.EquipmentBehavior.UnequipItem(message.GlobalID);
-            WizardItemCollection.RemoveItem(wizard.CharId, message.GlobalID);
+            WizardItemCollection.RemoveItem(wizard.CharId, message.GlobalID, reason: "thrown away while worn");
             WizardCollection.UpdateCharacterItems(wizard);
 
             // For elixirs, send MSG_EQUIPMENTBEHAVIOR_UNEQUIPITEM so the client's ElixirGUIManager
@@ -188,7 +189,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             return;
         }
 
-        wizard.RemoveItemFromInventory(message.GlobalID);
+        wizard.RemoveItemFromInventory(message.GlobalID, reason: "thrown away");
         SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM() {
             GlobalID = wizard.GameObjectID,
             ItemID = message.GlobalID
@@ -270,7 +271,7 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             if (item is not null) {
                 var template = (WizItemTemplate) CoreObjectFactory.GetCoreTemplate(item.m_templateID);
 
-                wizard.RemoveItemFromInventory(item.m_globalID);
+                wizard.RemoveItemFromInventory(item.m_globalID, reason: "quick sold");
 
                 // Some items (snack, reagents) are stackable.
                 for (int i = 0; i < quickSellItem.m_quantity; i++) {
@@ -388,8 +389,8 @@ internal class InventoryService(SessionActor sessionActor) : MessageService(sess
             });
 
             // The jewel is part of the item now.
-            wizard.RemoveItemFromInventory(jewel.m_globalID);
-            WizardItemCollection.RemoveItem(jewel);
+            wizard.RemoveItemFromInventory(jewel.m_globalID, ItemRecordKind.Removed, "socketed into an item");
+            WizardItemCollection.RemoveItem(jewel, record: false);
             SendToSocket(new GAME_5_PROTOCOL.MSG_INVENTORYBEHAVIOR_REMOVEITEM {
                 GlobalID = wizard.GameObjectID,
                 ItemID = jewel.m_globalID,

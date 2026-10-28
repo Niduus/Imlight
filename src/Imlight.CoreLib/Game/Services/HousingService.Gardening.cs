@@ -375,7 +375,7 @@ internal partial class HousingService {
             return;
         }
 
-        if (wizard.RemoveItemFromInventory(item.m_globalID)) {
+        if (wizard.RemoveItemFromInventory(item.m_globalID, reason: "used in the garden")) {
             ItemSync.SendRemoved(SessionActor.ActorRef, wizard, item.m_globalID);
         }
 

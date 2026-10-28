@@ -49,6 +49,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -288,6 +289,7 @@ internal static class BankCollection {
                     return false;
                 }
 
+                ItemHistory.Record(wizard.CharId, item, ItemRecordKind.Removed, $"thrown away from the {container} window");
                 session.Delete(item);
                 ids.Remove(itemId);
 
@@ -524,6 +526,7 @@ internal static class BankCollection {
             return state.Deny(denial, $"item {itemId} may not be deleted: {denial}");
         }
 
+        ItemHistory.Record(storedAccount.AccountId, item, ItemRecordKind.Removed, "thrown away from the shared bank");
         session.Delete(item);
         shared.ItemIds.Remove(itemId);
         shared.Items.Remove(item);

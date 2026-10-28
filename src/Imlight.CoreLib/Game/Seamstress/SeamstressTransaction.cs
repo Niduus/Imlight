@@ -180,7 +180,7 @@ internal sealed class SeamstressTransaction(Wizard wizard, IActorRef session, Fu
         }
 
         foreach (var item in removed) {
-            if (!wizard.InventoryBehavior.AddItem(item)) {
+            if (!wizard.InventoryBehavior.ReturnItem(item)) {
                 Logger.Error("[Seamstress] Could not return item {ItemId} to the backpack of character {CharId} after a failed request.",
                     Logger.Args(item.m_globalID.Full, wizard.CharId));
             }

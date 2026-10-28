@@ -61,6 +61,7 @@ using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Housing.Families;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -289,7 +290,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
             change = house.TryAdd(placed with { Vault = packed }, document => HouseCollection.SaveWithBackpack(document, wizard));
             if (!change.Done) {
                 HouseVaults.Pack(wizard, itemId, packed);
-                if (!wizard.InventoryBehavior.AddItem(item)) {
+                if (!wizard.InventoryBehavior.ReturnItem(item)) {
                     Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to be placed.",
                         Logger.Args(itemId, wizard.CharId));
                 }
@@ -913,7 +914,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
 
                 return null;
             }, out refusal, out data), document => HouseCollection.SaveWithBackpack(document, wizard));
-            if (!change.Done && !wizard.InventoryBehavior.AddItem(scroll)) {
+            if (!change.Done && !wizard.InventoryBehavior.ReturnItem(scroll)) {
                 Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to go into a music player.",
                     Logger.Args(scroll.m_globalID, wizard.CharId));
             }
@@ -1264,7 +1265,7 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
     private static void DeleteStoredItem(ulong charId, ulong itemId) {
         // The item already left the backpack, so only an unused document is left to delete.
         try {
-            if (!WizardItemCollection.RemoveItem(charId, itemId)) {
+            if (!WizardItemCollection.RemoveItem(charId, itemId, kind: ItemRecordKind.Moved, reason: "placed in a house")) {
                 Logger.Warning("Placed item {ItemId} of character {CharId} has no stored item to delete.", Logger.Args(itemId, charId));
             }
         } catch (Exception exception) {

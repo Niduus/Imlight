@@ -53,6 +53,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Housing.Families;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Resources;
@@ -189,7 +190,7 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
                 document => AtticCollection.SaveWithBackpack(document, wizard));
             if (!change.Done) {
                 HouseVaults.Pack(wizard, itemId, packed);
-                if (!wizard.InventoryBehavior.AddItem(item)) {
+                if (!wizard.InventoryBehavior.ReturnItem(item)) {
                     Logger.Error("Could not return item {ItemId} to the backpack of character {CharId} after it failed to go in the attic.",
                         Logger.Args(itemId, wizard.CharId));
                 }
@@ -412,7 +413,7 @@ internal class AtticService(SessionActor sessionActor) : MessageService(sessionA
     private static void DeleteStoredItem(ulong charId, ulong itemId) {
         // The item already left the backpack, so only an unused document is left to delete.
         try {
-            if (!WizardItemCollection.RemoveItem(charId, itemId)) {
+            if (!WizardItemCollection.RemoveItem(charId, itemId, kind: ItemRecordKind.Moved, reason: "put in the attic")) {
                 Logger.Warning("Item {ItemId} of character {CharId} has no stored document to delete.", Logger.Args(itemId, charId));
             }
         } catch (Exception exception) {

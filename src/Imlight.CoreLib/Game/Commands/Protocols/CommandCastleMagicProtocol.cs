@@ -72,7 +72,7 @@ internal class CommandCastleMagicProtocol : CommandProtocol {
                 continue;
             }
 
-            var placement = ItemPlacement.Place(wizard, item);
+            var placement = ItemPlacement.Place(wizard, item, overLimit: false);
             if (placement == Placement.Lost) {
                 full = true;
 

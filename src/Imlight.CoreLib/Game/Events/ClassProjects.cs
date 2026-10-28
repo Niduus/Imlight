@@ -502,7 +502,7 @@ internal static class ClassProjects {
         foreach (var item in stray) {
             ulong itemId = item.m_globalID;
             var templateId = (uint) item.m_templateID;
-            if (!wizard.RemoveItemFromInventory(itemId)) {
+            if (!wizard.RemoveItemFromInventory(itemId, reason: "handed in for a class project")) {
                 continue;
             }
 

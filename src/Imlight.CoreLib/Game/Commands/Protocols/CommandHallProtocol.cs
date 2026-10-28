@@ -67,11 +67,12 @@ internal class CommandHallProtocol : CommandProtocol {
                 break;
             }
 
-            var placement = ItemPlacement.Place(Context.Character, item);
-            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
+            var placement = ItemPlacement.Place(Context.Character, item, overLimit: false);
             if (placement is not (Placement.Backpack or Placement.Bank or Placement.SharedBank)) {
                 break;
             }
+
+            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
 
             given++;
             where = placement;
@@ -97,11 +98,12 @@ internal class CommandHallProtocol : CommandProtocol {
                 continue;
             }
 
-            var placement = ItemPlacement.Place(Context.Character, item);
-            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
+            var placement = ItemPlacement.Place(Context.Character, item, overLimit: false);
             if (placement is not (Placement.Backpack or Placement.Bank or Placement.SharedBank)) {
                 break;
             }
+
+            ItemPlacement.Announce(Context.SessionActor, Context.Character, item, placement);
 
             given.Add(seller.Name);
         }
