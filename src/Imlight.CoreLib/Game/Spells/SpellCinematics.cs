@@ -86,6 +86,11 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
     }
 
     /// <summary>
+    /// How many spell animations were loaded from the game files.
+    /// </summary>
+    internal static int Count => s_cinematicTemplates.Count;
+
+    /// <summary>
     /// Retrieves a cinematic template based on its name.
     /// </summary>
     /// <param name="name">The name of the spell.</param>

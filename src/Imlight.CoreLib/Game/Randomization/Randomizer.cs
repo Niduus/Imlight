@@ -463,6 +463,10 @@ public static class Randomizer {
             }
         }
 
+        // Only spells with an animation the caster plays: the game's own check, when its animations are loaded.
+        _ = Imlight.CoreLib.Game.Spells.SpellCinematics.Instance;
+        var checkAnimations = Imlight.CoreLib.Game.Spells.SpellCinematics.Count > 0;
+
         var spells = new List<(ulong, SpellTemplate)>();
         foreach (var (path, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
             string name = spell.m_name;
@@ -473,6 +477,16 @@ public static class Randomizer {
                 continue;
             }
 
+            // A pet May Cast ("Pet - Frost Beetle Storm", "Mass Ice Trap - Pet") is played by the caster's pet, so a
+            // creature (which has none) cast it standing still: Field Guards with no casting animation (Niduus,
+            // 2026-10-28). Spells with no animation at all look the same.
+            string spellBase = spell.m_spellBase;
+            if (IsPetCast(spell, name) || string.IsNullOrEmpty(spellBase)
+                || string.Equals(spellBase, "Blank", StringComparison.OrdinalIgnoreCase)
+                || (checkAnimations && Imlight.CoreLib.Game.Spells.SpellCinematics.GetCinematicTemplate(spellBase) is null)) {
+                continue;
+            }
+
             if (idsByPath.TryGetValue(path, out var id) && id <= uint.MaxValue) {
                 spells.Add((id, spell));
             }
@@ -480,6 +494,15 @@ public static class Randomizer {
 
         return spells;
     }
+
+    /// <summary>
+    /// Whether a spell is a pet May Cast, whose animation is played by the caster's pet instead of the caster.
+    /// </summary>
+    internal static bool IsPetCast(SpellTemplate spell, string name)
+        => spell.m_spellSourceType == kSpellSourceType.kPet
+           || name.StartsWith("Pet - ", StringComparison.OrdinalIgnoreCase)
+           || name.StartsWith("Pet-", StringComparison.OrdinalIgnoreCase)
+           || name.EndsWith(" - Pet", StringComparison.OrdinalIgnoreCase);
 
     private static string SpellBucket(SpellTemplate spell) {
         string type = spell.m_sTypeName;
