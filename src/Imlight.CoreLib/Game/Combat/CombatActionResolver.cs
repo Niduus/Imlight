@@ -240,8 +240,13 @@ internal static class CombatActionResolver {
             case CountBasedSpellEffect:
                 cast.Notes.Add("count-based effect (CountBasedSpellEffect) is not done by the server");
                 return;
-            case ShadowPactSpellEffect:
-                cast.Notes.Add("shadow pact is not done by the server");
+            // Shadow selves and pacts (CombatResolver.ShadowMagic.cs).
+            case ShadowPactSpellEffect pact:
+                ResolveShadowPact(pact, cast, selected);
+                return;
+            case ShadowSpellEffect { m_effectType: kSpellEffects.kShadowSelf } shadowSelf when CombatResolver.ShadowSelfOn:
+                cast.Worth |= CombatResolver.ApplyShadowSelf(shadowSelf, s_selfGoesOn ?? cast.Action.SpellCaster, cast.TemplateId) > 0;
+                UpdateCombatActionTargets(ref cast.CombatAction, [s_selfGoesOn ?? cast.Action.SpellCaster]);
                 return;
         }
 
@@ -267,6 +272,30 @@ internal static class CombatActionResolver {
         }
 
         ApplyPlain(effect, cast, selected, only);
+    }
+
+    /// <summary>
+    /// A ShadowPactSpellEffect: a shadow self's buffs go on the caster (kShadowSelf), then the pact goes on the duel.
+    /// </summary>
+    private static void ResolveShadowPact(ShadowPactSpellEffect pact, Cast cast, CombatDuelSubCircle selected) {
+        var caster = cast.Action.SpellCaster;
+        if (pact.m_effectType == kSpellEffects.kShadowSelf && pact.m_effectList is { Count: > 0 }) {
+            if (CombatResolver.ShadowSelfOn) {
+                var self = s_selfGoesOn ?? caster;
+                cast.Worth |= CombatResolver.ApplyShadowSelf(pact, self, cast.TemplateId) > 0;
+                UpdateCombatActionTargets(ref cast.CombatAction, [self]);
+            }
+            else {
+                cast.Notes.Add("shadow self is off ([Shadow] ShadowSelf)");
+            }
+        }
+
+        if (!CombatResolver.ShadowPactsOn) {
+            cast.Notes.Add("shadow pacts are off ([Shadow] Pacts)");
+            return;
+        }
+
+        caster?._duelActor?.CombatResolver?.AddShadowPact(pact, caster, selected, cast.Action.SpellTemplate);
     }
 
     /// <summary>

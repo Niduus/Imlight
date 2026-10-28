@@ -289,8 +289,13 @@ internal static partial class SpellSupport {
             case CountBasedSpellEffect:
                 tally.Skipped.Add("an effect that counts cards or effects first (count-based)");
                 return;
-            case ShadowPactSpellEffect:
-                tally.Skipped.Add("the shadow pact (shadow creature)");
+            // Shadow selves and pacts are done by the server (CombatResolver.ShadowMagic.cs).
+            case ShadowPactSpellEffect pact:
+                tally.Done++;
+                foreach (var child in pact.m_effectList ?? []) {
+                    Walk(child, tally, depth + 1, enchantment);
+                }
+
                 return;
         }
 
