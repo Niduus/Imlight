@@ -43,15 +43,12 @@ internal sealed partial class ManagerWindow {
 
     private const string AI_GUIDE = "AI Guide";
 
-<<<<<<< HEAD
     /// <summary>
     /// Whether the AI Guide shows (Niduus, 2026-10-28: "vault the AI part"). Off: no menu button, no search result and
     /// nothing is ever sent to Anthropic; the code stays so it can come back. Turn it on here to bring it back.
     /// </summary>
     private static readonly bool AI_GUIDE_ON = false;
 
-=======
->>>>>>> origin/claude/project-thread-0mxlii
     private readonly TextBox _aiKey = new() { Watermark = "Paste your key here (it starts with sk-ant-)", PasswordChar = '•', MinWidth = 320 };
     private readonly ComboBox _aiModel = new() { MinWidth = 260 };
     private readonly TextBlock _aiModelLine = new() { Foreground = MUTED, TextWrapping = TextWrapping.Wrap };
