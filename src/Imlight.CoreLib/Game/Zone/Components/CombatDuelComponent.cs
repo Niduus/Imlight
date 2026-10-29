@@ -1142,6 +1142,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         LogRoundWaitOver();
 
+        // A wizard's minion goes when its wizard is defeated or gone (PlayerMinions.LeaveWithOwner).
+        foreach (var orphan in PlayerMinions.Orphaned(SubCircles)) {
+            Logger.Information("Duel {0} | Slot {1} | Minion leaves: its wizard is defeated or left the battle.",
+                Logger.Args(Duel.m_duelID.Full, orphan.SlotIndex));
+            orphan.DamageParticipant(orphan.ParticipantGameStats.m_currentHitpoints);
+        }
+
         // Iterate through dead creature participants and remove them from the duel.
         // Players can be healed and therefore don't need to be removed.
         EnactActionOnSubCircles(circle => {
@@ -1361,9 +1368,22 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // Two summons in one round: the second finds the first's minion standing (PlayerMinions.OnePerWizard).
+        if (PlayerMinions.OnePerWizard && message.Caster.IsHumanPlayer && PlayerMinions.OwnMinions(message.Caster, summonedOnly: true).Any()) {
+            Logger.Information("Duel {0} | Slot {1} | minion summon (tid {2}) dropped, the wizard has a minion already.",
+                Logger.Args(Duel.m_duelID.Full, message.Caster.SlotIndex, message.CreatureTid));
+
+            return;
+        }
+
         // A creature's summon (the Fairy Queen's fairies) brings its minion in on its own side, not the wizards'.
-        SpawnAndAssignMinion(message.CreatureTid, message.Caster,
+        var slot = SpawnAndAssignMinion(message.CreatureTid, message.Caster,
             forEnemies: !Duel.m_bPVP && message.Caster.OccupiedTeam == CombatTeam.Monster);
+
+        // A wizard's own minion (from a card) leaves with them and counts for OnePerWizard; a cheat's does not.
+        if (slot is not null && message.Caster.IsHumanPlayer && message.Caster.ParticipantObject is { } summoner) {
+            slot.MinionOwnerId = summoner.m_globalID.Full;
+        }
     }
 
     private void InitializeDuel(Dictionary<IActorRef, CoreObject> startingParticipants) {

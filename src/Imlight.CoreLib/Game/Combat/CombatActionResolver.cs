@@ -113,6 +113,13 @@ internal static class CombatActionResolver {
             CombatAction = combatAction,
             TemplateId = action.Spell?.m_templateID ?? 0,
         };
+        // A Sap with no minion to sacrifice, or a second minion (PlayerMinions.cs): it plays as a pass.
+        if (PlayerMinions.CastBlocked(action) is { } blocked) {
+            notes = blocked;
+
+            return false;
+        }
+
         var topEffects = (action.SpellTemplate.m_effects ?? []).Where(e => e is not null).ToList();
         combatAction.m_xPipCost = GetXPipCost(action.Spell, action.SpellCaster);
         cast.DamageEffectCount = topEffects.Count(e => CombatEnchantments.Leaves([e]).Any(l => IsFlatAdjusted(l.m_effectType)));
