@@ -737,6 +737,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "fastforward":
                 CommandFastForward(wizard);
                 return;
+            case "collectspells":
+                CommandCollectSpells(wizard);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client

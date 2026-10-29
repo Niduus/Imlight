@@ -118,6 +118,9 @@ internal static class VanillaTrainers {
     internal static Trainer For(uint templateId)
         => s_trainers.Value.TryGetValue(templateId, out var trainer) ? trainer : null;
 
+    /// <summary>Every game trainer's real training list.</summary>
+    internal static IEnumerable<Trainer> All => s_trainers.Value.Values;
+
     private static IReadOnlyDictionary<uint, Trainer> Load() {
         var path = Path.Combine(SpiralDB.ExtraPath, "VanillaTrainers", "Trainers.json");
         var result = new Dictionary<uint, Trainer>();

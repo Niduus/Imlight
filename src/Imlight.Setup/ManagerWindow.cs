@@ -373,6 +373,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Spell Quests", SpellQuestsTab),
             Tab("Fast Forward", FastForwardTab),
             Tab("Best Gear", BestGearTab),
+            Tab("Collect Spells", CollectSpellsTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Boss Test", BossTestTab),
@@ -488,6 +489,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Spell Quests": LoadSpellQuests(); break;
             case "Fast Forward": LoadFastForward(); break;
             case "Best Gear": await LoadBestGearAsync(); break;
+            case "Collect Spells": LoadCollectSpells(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Boss Test": await LoadBossTestAsync(); break;
@@ -2741,6 +2743,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
+        ["Collect Spells"] = ("sparkle", "Give a wizard every spell their finished quests, skipped side quests and trainers should have given them by now."),
         ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
