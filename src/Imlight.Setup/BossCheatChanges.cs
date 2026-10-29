@@ -623,15 +623,23 @@ internal sealed class BossCheatList {
     /// <summary>How many saved changes found no cheat in the file (it lost that cheat since).</summary>
     internal int Lost { get; private set; }
 
+    /// <summary>
+    /// Only its own cheats: the cheat file is left out, as the server's OnlyThese does (Niduus, 2026-10-29: a shared
+    /// custom fight brings every cheat of its own). Kept when the cheats are saved again.
+    /// </summary>
+    internal bool OnlyThese { get; private set; }
+
     private static readonly JsonDocumentOptions s_read = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
 
     internal static string FileOf(string extraFolder, string id) => Path.Combine(extraFolder, "BossCheats", $"{id}.json");
 
     internal static BossCheatList Load(string extraFolder, string id, JsonObject? saved) {
-        var list = new BossCheatList();
+        var list = new BossCheatList {
+            OnlyThese = saved is not null && BossChanges.FindIn(saved, "OnlyThese") is JsonValue only && only.TryGetValue<bool>(out var on) && on,
+        };
         var shipped = new List<JsonObject>();
         var file = FileOf(extraFolder, id);
-        if (File.Exists(file) && JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) is JsonObject json) {
+        if (!list.OnlyThese && File.Exists(file) && JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) is JsonObject json) {
             list.HasFile = true;
             shipped.AddRange((BossChanges.FindIn(json, "Cheats") as JsonArray ?? []).OfType<JsonObject>());
         }
@@ -716,11 +724,16 @@ internal sealed class BossCheatList {
             added.Add(json);
         }
 
-        if (changed.Count == 0 && added.Count == 0) {
+        if (changed.Count == 0 && added.Count == 0 && !OnlyThese) {
             return null;
         }
 
-        return new JsonObject { ["Changed"] = changed, ["Added"] = added };
+        var cheats = new JsonObject { ["Changed"] = changed, ["Added"] = added };
+        if (OnlyThese) {
+            cheats["OnlyThese"] = true;
+        }
+
+        return cheats;
     }
 
 }

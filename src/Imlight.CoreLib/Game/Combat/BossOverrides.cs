@@ -30,6 +30,9 @@
  *              is gone is left out).
  *     Added    whole new cheats, after the file's own, as a BossCheats file writes them. A creature with no cheat file
  *              can have them too.
+ *     OnlyThese true: only the Added cheats; the creature's cheat file is left out (and Changed with it), so they are
+ *              numbered from 1 and a change to that file never reaches them (Niduus, 2026-10-29: a custom fight made
+ *              to share, with every cheat its own).
  *   A form a boss is polymorphed into uses its own template's file (Haunted Malistaire: 1336037.json).
  * A custom creature of the Customs tab (Customs.cs) has a file of this format of its own, in spiraldb-extra/Customs,
  * with its CustomID, BaseTemplateID, Name (shown in battle), Drops and Forms; For reads it by the custom's key.
@@ -104,6 +107,8 @@ internal static class BossOverrides {
     }
 
     internal sealed class CheatChanges {
+        // Only its own cheats (Added): the creature's cheat file is left out, so Changed is not used either.
+        public bool OnlyThese { get; set; }
         public Dictionary<string, JsonObject> Changed { get; set; } = [];
         public List<BossCheats.BossCheat> Added { get; set; } = [];
     }
@@ -308,9 +313,9 @@ internal static class BossOverrides {
             return kept.Cheats;
         }
 
-        var cheats = new List<BossCheats.BossCheat>(shipped);
+        var cheats = changes.OnlyThese ? new List<BossCheats.BossCheat>() : new List<BossCheats.BossCheat>(shipped);
         var taken = new HashSet<int>();
-        foreach (var (key, change) in (changes.Changed ?? []).OrderBy(c => int.TryParse(c.Key, out var n) ? n : int.MaxValue)) {
+        foreach (var (key, change) in (changes.OnlyThese ? new Dictionary<string, JsonObject>() : changes.Changed ?? []).OrderBy(c => int.TryParse(c.Key, out var n) ? n : int.MaxValue)) {
             var match = change?.FirstOrDefault(p => p.Key.Equals("Match", StringComparison.OrdinalIgnoreCase)).Value?.ToString();
             var index = int.TryParse(key, out var n) ? n : -1;
             if (match is { Length: > 0 } && !(index >= 0 && index < shipped.Count && Fingerprint(shipped[index]) == match.ToLowerInvariant())) {

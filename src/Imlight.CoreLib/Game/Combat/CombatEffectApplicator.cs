@@ -785,7 +785,7 @@ internal static class CombatEffectApplicator {
 
             // A participant has one aura at a time: a new one (Fortify, Amplify, Frenzy...) takes the old one's place.
             if (CombatRequirements.IsAura(copy)) {
-                hanging.RemoveAll(x => CombatRequirements.IsAura(x) && !CombatResolver.IsShadowSelf(x) && (x.m_spellTemplateID != id || id == 0));
+                hanging.RemoveAll(x => CombatRequirements.IsAura(x) && !CombatResolver.StaysWithNewAura(x) && (x.m_spellTemplateID != id || id == 0));
             }
 
             hanging.Add(copy);
