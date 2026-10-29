@@ -145,7 +145,9 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_timeKinds = [("Hour", "hour"), ("Month", "month"), ("Day", "day of the month"), ("Weekday", "weekday")];
     private static readonly (string, string)[] s_spellRules = [("Hit", "always land"), ("Fizzle", "always fizzle"), ("Crit", "always crit"), ("NoCrit", "never crit"), ("Off", "go back to normal")];
     private static readonly (string, string)[] s_fleeOnOff = [("", "can't flee"), ("Off", "can flee again")];
-    private static readonly (string, string)[] s_convertTo = [("Blade", "blades"), ("Weakness", "weaknesses"), ("Shield", "shields"), ("Trap", "traps"), ("Absorb", "absorbs")];
+    private static readonly (string, string)[] s_convertTo = [("Blade", "blades"), ("Weakness", "weaknesses"), ("Shield", "shields"), ("Trap", "traps"), ("Absorb", "absorbs"),
+        ("HealBoost", "healing blades"), ("Infection", "healing traps (infection)")];
+    private static readonly (string, string)[] s_asSchool = [("", "of the same school"), ("Universal", "universal (all schools)"), .. SCHOOLS[1..]];
     private static readonly (string, string)[] s_protectOnOff = [("", "can't be removed"), ("Off", "can be removed again")];
     private static readonly (string, string)[] s_timings = [
         ("Now", "right away"), ("Before", "before my card"), ("After", "after my card"), ("First", "first in the round"), ("Last", "last in the round"),
@@ -162,7 +164,7 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_hasKinds = [
         ("", "charm, ward or aura"), ("Shield", "shield"), ("Trap", "trap (jinx)"), ("Blade", "blade"), ("Weakness", "weakness (curse)"), ("Charm", "charm (any)"),
         ("Ward", "ward (any)"), ("Aura", "aura"), ("DoT", "damage over time"), ("HoT", "heal over time"),
-        ("Dispel", "dispel"),
+        ("Dispel", "dispel"), ("Infection", "healing trap (infection)"), ("HealBoost", "healing blade"),
     ];
     // Niduus, 2026-10-26: a school, or its rival (opposite).
     private static readonly (string, string)[] s_schoolMatch = [("", "the school"), ("Rival", "the rival of"), ("RivalOfIt", "the rival of its own school (box not used):")];
@@ -868,8 +870,8 @@ internal static class CheatSpecs {
             b => b.Text("AmountVar").Trim().Length > 0 ? $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {b.Text("AmountVar").Trim()}"
                 : $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {N(b.Number("Amount"))}"),
         new("D.ConvertEffects", BlockKind.Do, "swap", "convert effects", "Takes effects of a kind off the target and gives each one back as another kind, the same size and school, drawn by the game: every trap on you becomes a blade of its size. 0 means all of them. Ticked \"give them to me\": the new ones go on itself (you, in a player cheat) instead, one for each taken off: every Death shield on the enemy becomes a Death blade of its size on you.",
-            "Turn {Count} {EffectSchool} {Kind} on {Target} into {To} {ToMe} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Trap", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "Blade", s_convertTo), new("ToMe", CheatFieldType.Toggle, false, Label: "give them to me"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
-            b => $"turn {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} into {LabelOf(s_convertTo, b.Text("To"))}{(b.Flag("ToMe") ? " on me" : "")}"),
+            "Turn {Count} {EffectSchool} {Kind} on {Target} into {To} {AsSchool} {ToMe} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Trap", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "Blade", s_convertTo), F("AsSchool", CheatFieldType.Choice, "", s_asSchool), new("ToMe", CheatFieldType.Toggle, false, Label: "give them to me"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"turn {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)} into {LabelOf(s_convertTo, b.Text("To"))}{(b.Text("AsSchool").Length > 0 ? $" ({LabelOf(s_asSchool, b.Text("AsSchool"))})" : "")}{(b.Flag("ToMe") ? " on me" : "")}"),
         new("D.CopyEffects", BlockKind.Do, "copy", "copy effects", "Copies effects of a kind from the target onto itself (you, in a player cheat), the same size and school; the target keeps them. 0 means all of them.",
             "Copy {Count} {EffectSchool} {Kind} from {Target} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Caster"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
             b => $"copy {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}"),

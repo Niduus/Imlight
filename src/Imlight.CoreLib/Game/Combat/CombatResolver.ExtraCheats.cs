@@ -85,6 +85,11 @@ public partial class CombatResolver {
 
                     foreach (var e in picked) {
                         var school = ((string) e.m_sDamageType ?? "").Trim();
+                        var asSchool = (step.AsSchool ?? "").Trim();
+                        if (!copying && asSchool.Length > 0) {
+                            school = asSchool.Equals("Universal", StringComparison.OrdinalIgnoreCase) ? "" : asSchool;
+                        }
+
                         redo.Add(new BossCheats.CheatAction {
                             Do = "AddCharm",
                             Amount = Math.Abs(e.m_effectParam),
@@ -748,7 +753,7 @@ public partial class CombatResolver {
             return "Absorb";
         }
 
-        foreach (var kind in new[] { "Blade", "Weakness", "Shield", "Trap" }) {
+        foreach (var kind in new[] { "Blade", "Weakness", "Shield", "Trap", "Infection", "HealBoost" }) {
             if (IsKind(e, kind)) {
                 return kind;
             }
