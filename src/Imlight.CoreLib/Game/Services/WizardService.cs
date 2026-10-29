@@ -92,6 +92,8 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
         _activeWizard.UpdateLastLoginTime((uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         // Player cheats (PlayerCheats.cs) go to the wizard played on the server's own PC, or to whom their Ifs pick.
         Imlight.CoreLib.Game.Combat.PlayerCheats.NoteWizard(_activeWizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
+        // Its next zone is its log in, for the cheats outside battle (OutsideCheats.cs).
+        Imlight.CoreLib.Game.Combat.OutsideCheats.NoteLogIn(_activeWizard.CharId);
         Imlight.CoreLib.Game.Tools.WizardList.Changed();
     }
 

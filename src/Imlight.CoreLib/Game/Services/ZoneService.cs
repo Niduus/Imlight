@@ -951,6 +951,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         // Dismount in no-mount zones, re-equip on leaving (EquipmentService owns the reconcile).
         SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ENFORCEINTERIORMOUNT());
 
+        // Cheats outside battle (OutsideCheats.cs): log in and coming into a zone.
+        Imlight.CoreLib.Game.Combat.OutsideCheats.ZoneEntered(GetActiveWizard(), SessionActor.ActorRef);
+
         if (_randomBackflips) {
             var wizard = GetActiveWizard();
             Timers.StartPeriodicTimer("backflip", new ZONE_102_PROTOCOL.MSG_RANDOMFLIPS {

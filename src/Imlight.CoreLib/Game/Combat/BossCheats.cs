@@ -425,6 +425,11 @@ internal static class BossCheats {
         public string TagWho { get; set; } = "";
         public bool TagStart { get; set; }
         public string HasTag { get; set; } = "";
+        // Outside battle and battle end (Niduus, 2026-10-29: "expand more on blocks again"; OutsideCheats.cs). ZoneEnter:
+        // a wizard comes into a zone whose name has one of Zone's words (commas; "" any zone). BattleEnd: Result Won,
+        // Lost or "" (either), for its own side.
+        public string Zone { get; set; } = "";
+        public string Result { get; set; } = "";
         // Many more Ifs, each one entry, with AND / OR / NOT (Niduus, 2026-10-26: "You can legit do anything";
         // CombatResolver.CreativeCheats.cs): every entry with Any 0 must hold, and of the entries of one Any group (1, 2...)
         // at least one; Not turns an entry round.
@@ -696,6 +701,10 @@ internal static class BossCheats {
     internal static List<BossCheat> For(ulong templateId)
         => Enabled ? BossOverrides.CheatsOf(templateId,
             s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss) ? boss.Cheats : s_none) : [];
+
+    /// <summary>Every creature's cheats, by template (for the Whens outside battle, OutsideCheats.cs).</summary>
+    internal static IEnumerable<(ulong Template, List<BossCheat> Cheats)> All()
+        => Enabled ? s_bosses.Value.Keys.Select(id => (id, For(id))) : [];
 
     /// <summary>
     /// The circle (1-4 of its side) a passive "Circle" cheat says a combatant always takes, or 0. The last one that is

@@ -54,6 +54,8 @@ internal static class CheatSpecs {
         ("WeakestAlly", "its weakest ally"),
         ("StrongestAlly", "its strongest ally"),
         ("Summoner", "whoever summoned it"),
+        // Niduus, 2026-10-29: the minions it summoned that stand.
+        ("MyMinions", "its minions"),
         ("LastAttacker", "the last one who hurt it"),
         ("AllAllies", "its whole side"),
         // Niduus, 2026-10-26: both sides, standing.
@@ -260,6 +262,7 @@ internal static class CheatSpecs {
     private static readonly (string, string)[] s_varOps = [("Set", "set to"), ("Add", "add"), ("Subtract", "take away"), ("Multiply", "multiply by"), ("Random", "a random number from 0 to")];
     private static readonly (string, string)[] s_maxOps = [("Set", "become"), ("Add", "go up by (below 0: down)")];
     private static readonly (string, string)[] s_onOff = [("Off", "off"), ("On", "back on")];
+    private static readonly (string, string)[] s_battleResults = [("", "won or lost"), ("Won", "won"), ("Lost", "lost")];
 
     // A condition block: the server's Conditions entry "If" is the id after "C."; every one can be turned round (NOT) and
     // put in an OR group (the blocks of one group need only one of them to hold).
@@ -444,6 +447,15 @@ internal static class CheatSpecs {
         new("W.Summoned", BlockKind.When, "users", "someone comes in", "A minion or creature comes into the battle on a side during a move (a summon spell, or a cheat's minion). \"The one hit\" is the newcomer. Example: when the other side summons a minion, stun it.",
             "When someone comes in on {RemovedFrom}", [F("RemovedFrom", CheatFieldType.Choice, "AnyEnemy", s_removedFrom)],
             b => $"When someone comes in on {LabelOf(s_removedFrom, b.Text("RemovedFrom"))}"),
+        // Niduus, 2026-10-29 ("expand more on blocks again"): the battle's end, and cheats outside battle (OutsideCheats.cs).
+        new("W.BattleEnd", BlockKind.When, "flag", "the battle ends", "The battle is over, won or lost by its side, before anyone leaves. The Dos that make sense then go off: a reward, a chat line, an announcement, a sound, a saved variable (\"kept across battles\"). Anything that needs another round does nothing. Example: when the battle is won, add 1 to the saved variable wins, and say \"That is {wins} wins!\"",
+            "When the battle ends, {Result}", [F("Result", CheatFieldType.Choice, "Won", s_battleResults)],
+            b => $"When the battle ends, {LabelOf(s_battleResults, b.Text("Result"))}"),
+        new("W.LogIn", BlockKind.When, "user", "a wizard logs in", "Outside battle: a wizard comes into the game, a few seconds after their first zone loads. In a player cheat it is the wizards who have it; in a creature's cheats, every wizard (a greeting from that creature). Works with Say, Announce, Reward, Sound and saved variables; the Ifs that work are \"who has it\", variable, quest, badge, level and school. Example: when I log in, say \"Welcome back, {player}!\"",
+            "When a wizard logs in", [], _ => "When a wizard logs in"),
+        new("W.ZoneEnter", BlockKind.When, "map", "a wizard enters a zone", "Outside battle: a wizard comes into a zone whose name has one of these words (commas between; empty: any zone), a few seconds after it loads. The words are the zone's file name, such as WC_Hub, Krokotopia or DarkmoorCastle. Works with the same blocks as \"a wizard logs in\". Example: when entering a zone with Darkmoor, play a sound and announce \"Malistaire is waiting\".",
+            "When a wizard enters a zone with {Zone} in its name", [F("Zone", CheatFieldType.Words, "")],
+            b => $"When a wizard enters {(b.Text("Zone").Length > 0 ? $"a zone with \"{b.Text("Zone")}\"" : "any zone")}"),
         // Niduus, 2026-10-27: "I want it so IF tags = 0, THEN CAST tags. Not check WHEN tags".
         new("W.Always", BlockKind.When, "bolt", "always (when its Ifs are true)", "No event: it goes off whenever its If blocks are all true, looked at after every move and at the start and end of each round (once each look). Give it If blocks, or it goes off every time. \"The attacker\" and \"the one hit\" are itself. Example, blades that stay up: Always, only if it has none blade tagged BABA (has none), then put a 7% Chromatic blade on itself tagged BABA, three times.",
             "Always, whenever its Ifs are true", [], _ => "Always (whenever its Ifs are true)"),
@@ -596,6 +608,9 @@ internal static class CheatSpecs {
         Cond("C.Standing", "users", "how many stand", "How many stand on a side right now (it counts on its own side). Example: exactly 1 on its side — it is alone.",
             "If {Op} {Value} stand on {Side}", [OpField(), F("Value", CheatFieldType.Number, 2, max: 8), F("Side", CheatFieldType.Choice, "", s_standSide)],
             b => $"if {Op(b)} {b.Number("Value")} stand on {LabelOf(s_standSide, b.Text("Side"))}"),
+        Cond("C.Minions", "users", "how many minions", "How many minions someone summoned that are standing now. Example: if it has 0 minions, summon two.",
+            "If {Who} has {Op} {Value} minions", [WhoField(), OpField(), F("Value", CheatFieldType.Number, 1, max: 8)],
+            b => $"if {Who(b)} has {Op(b)} {b.Number("Value")} minions"),
         Cond("C.Outnumbered", "users", "outnumbered", "Fewer stand on its side than on the other.",
             "If its side is outnumbered", [], _ => "if outnumbered"),
         Cond("C.Round", "clock", "odd / even / every Nth round", "The battle's round number, divided by Every, leaves this. Every 2 leaves 1: odd rounds; leaves 0: even rounds. Every 3 leaves 0: rounds 3, 6, 9...",
@@ -933,6 +948,9 @@ internal static class CheatSpecs {
         new("D.RunCheat", BlockKind.Do, "puzzle", "run another cheat", "The Do blocks of another of its cheats go off now (1 is the first in its list). Ticked: only if that cheat's own Ifs hold too.",
             "Do cheat {Cheat}'s blocks {Check}", [F("Cheat", CheatFieldType.Number, 1, max: 200), new("Check", CheatFieldType.Toggle, false, Label: "only if its Ifs hold")],
             b => $"run cheat {b.Number("Cheat")}"),
+        new("D.GiveCheat", BlockKind.Do, "users", "give a cheat to someone", "Gives one of its cheats (1 is the first in its list) to someone for the rest of the battle, as if it were in their own list: its minions by default, so a minion can have cheats of its own. Example: when a minion comes in, give it cheat 3 (when it is hit, heal its summoner 5%).",
+            "Give cheat {Cheat} to {Target}", [F("Cheat", CheatFieldType.Number, 1, max: 200), F("Target", CheatFieldType.Target, "MyMinions")],
+            b => $"give cheat {b.Number("Cheat")}{Target(b)}"),
         new("D.CheatOnOff", BlockKind.Do, "stop", "turn a cheat off / on", "Turns one of its cheats (1 is the first in its list) off for the rest of the battle, or back on.",
             "Turn cheat {Cheat} {Kind}", [F("Cheat", CheatFieldType.Number, 1, max: 200), F("Kind", CheatFieldType.Choice, "Off", s_onOff)],
             b => $"turn cheat {b.Number("Cheat")} {LabelOf(s_onOff, b.Text("Kind").Length > 0 ? b.Text("Kind") : "Off")}"),

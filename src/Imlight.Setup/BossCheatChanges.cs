@@ -221,12 +221,12 @@ internal sealed class CheatRule {
             ["Enchant"] = "", ["NotEnchant"] = false, ["Global"] = "", ["GlobalSchool"] = "", ["GlobalSpell"] = "", ["SchoolPips"] = 0,
             ["SchoolPipsSchool"] = "", ["SchoolPipsWho"] = "", ["SchoolPipsMost"] = false, ["PipsMin"] = 0, ["PipsMax"] = 0, ["PipsWho"] = "",
             ["Circles"] = "", ["CirclesWho"] = "", ["Conditions"] = new JsonArray(),
-            ["Tag"] = "", ["TagWho"] = "", ["TagStart"] = false, ["HasTag"] = "",
+            ["Tag"] = "", ["TagWho"] = "", ["TagStart"] = false, ["HasTag"] = "", ["Zone"] = "", ["Result"] = "",
         };
         void Put(string key, JsonNode? value) => json[key] = value?.DeepClone();
 
         foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
-                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart" }) {
+                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart", "Zone", "Result" }) {
             if (BossChanges.FindIn(When.Values, key) is { } value) {
                 Put(key, value);
             }
@@ -322,7 +322,7 @@ internal sealed class CheatRule {
             ? CheatBlock.New(CheatSpecs.Get("W.Other"), new JsonObject { ["When"] = when })
             : CheatBlock.New(whenSpec);
         foreach (var key in new[] { "Round", "Every", "Health", "Percent", "School", "Category", "Pips", "PipsOf", "PipsKind", "Minions", "Circle", "Brings", "BringsRandom", "BringsCount",
-                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart" }) {
+                     "RemovedKind", "RemovedSpell", "RemovedFrom", "Tag", "TagWho", "TagStart", "Zone", "Result" }) {
             var boxed = whenBlock.Values.Any(p => p.Key == key);
             if (Node(key) is { } value) {
                 // A School or Category the When has no box for (on "boss defeated", "a player puts a charm") is kept on

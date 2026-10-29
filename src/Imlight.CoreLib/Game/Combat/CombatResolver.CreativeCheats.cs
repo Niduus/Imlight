@@ -556,6 +556,8 @@ public partial class CombatResolver {
                 return TimeHolds(c);
             case "cards":
                 return Measured(boss, c, trigger, receiver, w => CardsOf(w, c.Kind));
+            case "minions":
+                return Measured(boss, c, trigger, receiver, w => MinionsOf(w).Count);
             case "lasthit":
                 return Measured(boss, c, trigger, receiver, w => (c.Kind ?? "").Trim().Equals("Dealt", StringComparison.OrdinalIgnoreCase)
                     ? w?.CheatLastHitDealt ?? 0 : w?.CheatLastHitTaken ?? 0);
