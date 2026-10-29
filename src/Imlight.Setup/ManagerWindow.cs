@@ -269,7 +269,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _lookupAccess = FilterCombo([ANY_FILTER], 140);
     private readonly CheckBox _lookupHideOld = new() { Content = "Hide old and test zones", IsChecked = true };
     private Control? _lookupAreaFilters;
-    private readonly ListBox _lookupResults = new() { Background = Brushes.Transparent };
+    private readonly ListBox _lookupResults = new() { Background = Brushes.Transparent, Classes = { "compact" } };
     private readonly DispatcherTimer _lookupDelay = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private Lookup? _lookup;
     private DateTime _lookupLoadedFrom;
@@ -361,6 +361,8 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Spells", SpellsTab),
             Tab("Gear", GearTab),
             Tab("Furniture", FurnitureTab),
+            Tab("Items", ItemsTab),
+            Tab("Badges", BadgesTab),
             Tab("Recipes", RecipesTab),
             Tab("Vendors", VendorsTab),
             Tab("Pet Talents", PetTalentsTab),
@@ -727,8 +729,9 @@ internal sealed partial class ManagerWindow : Window {
             SearchTick(_lookupHasCommand),
             SearchTick(_lookupFavoritesOnly));
 
+        // The whole width, as the Database's other tabs (Niduus, 2026-10-28: "use up some more of the loose space").
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+            Margin = new Thickness(18, 10, 18, 14),
             Children = {
                 WithDock(WithMargin(MissingNote("it doesn't write the lists of IDs this page searches.", () => !_manager.HasIdLookup),
                     new Thickness(0, 0, 0, 10)), Dock.Top),
@@ -2721,6 +2724,8 @@ internal sealed partial class ManagerWindow : Window {
         ["Spells"] = ("cards", "Every spell card, as the game draws it."),
         ["Gear"] = ("shield", "Every hat, robe, wand, mount, pet and bundle, as the game's item tooltip shows it."),
         ["Furniture"] = ("home", "Every house item: furniture, decorations, wall hangings, plants, music scrolls and castle blocks, ready to give to your wizard."),
+        ["Items"] = ("bag", "Every other item: reagents, jewels, pins, pet snacks, elixirs, henchmen, emotes, transformations and packs, ready to give to your wizard."),
+        ["Badges"] = ("crown", "Every badge: what it is for, its reward, and buttons that give it or add to its count."),
         ["Recipes"] = ("flask", "Every crafting recipe: what it needs, what it makes, and recipe vendors of your own."),
         ["Vendors"] = ("bag", "Every vendor and trainer of the game: where they stand, what they sell and what they teach."),
         ["Pet Talents"] = ("star", "Every pet talent: May Casts, Will Casts, cards and stats, which pets have them, and buttons for your pet."),

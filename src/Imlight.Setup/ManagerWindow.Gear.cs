@@ -83,7 +83,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _gearRental = new() { Content = "Rentals only" };
     private readonly CheckBox _gearFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _gearCount = new() { TextWrapping = TextWrapping.Wrap };
-    private readonly ListBox _gearList = new() { Background = Brushes.Transparent };
+    private readonly ListBox _gearList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
     private readonly Border _gearTooltipHost = new() { HorizontalAlignment = HorizontalAlignment.Center };
     // Bundle contents and spell cards, each row centered under the tooltip (Niduus, 2026-10-22: "always have spells centered").
     private readonly StackPanel _gearCards = new() { HorizontalAlignment = HorizontalAlignment.Center };
@@ -186,7 +186,7 @@ internal sealed partial class ManagerWindow {
                                     "tooltip as the game draws it, with its stats, item cards, sockets, the level it needs and its marks. Point at a " +
                                     "mark or a stat icon to read what it means. Unnamed and test items are the game's own copies with no name, " +
                                     "which players never see. Click the star on a row to make it a favorite: favorites show first."),
-                                filters, _gearCount, GearGuide(),
+                                WithCount(filters, _gearCount), GearGuide(),
                             },
                         }), Dock.Top),
                         WithMargin(_gearList, new Thickness(0, 12, 0, 0)),

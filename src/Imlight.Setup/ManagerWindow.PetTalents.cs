@@ -86,7 +86,7 @@ internal sealed partial class ManagerWindow {
         internal CheckBox FavoritesOnly { get; } = FavoritesOnlyTick();
         internal string FavoritesList => Derby ? FAV_PET_DERBY : FAV_PET_TALENTS;
         internal TextBlock Count { get; } = new() { TextWrapping = TextWrapping.Wrap };
-        internal ListBox List { get; } = new() { Background = Brushes.Transparent };
+        internal ListBox List { get; } = new() { Background = Brushes.Transparent, Classes = { "compact" } };
         internal StackPanel Details { get; } = new() { Spacing = 6 };
         internal DetailsPopup? Popup { get; set; }
         internal PetTalentInfo? Picked { get; set; }
@@ -170,8 +170,7 @@ internal sealed partial class ManagerWindow {
                                 : "Search by the talent's name, what it does, the card it casts or gives, or a pet's name. With nothing typed, every " +
                                   "talent shows. Click one to see it and to put it in one of your pet's talent slots. " +
                                   "Click the star on a row to make it a favorite: favorites show first."),
-                            filters,
-                            page.Count), Dock.Top),
+                            WithCount(filters, page.Count)), Dock.Top),
                         WithMargin(page.List, new Thickness(0, 14, 0, 0)),
                     },
                 },

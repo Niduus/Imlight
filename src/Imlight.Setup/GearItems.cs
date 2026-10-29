@@ -224,6 +224,27 @@ internal sealed partial class GearBook {
         return gear;
     }
 
+    /// <summary>
+    /// Only the stat tables, for reading the stats of items that are not gear (jewels, pins and elixirs) with
+    /// <see cref="Effects"/>, without reading every piece of gear first.
+    /// </summary>
+    internal static GearBook StatsOnly(SpellBook book) {
+        var gear = new GearBook(book);
+        gear.ReadStatTables();
+
+        return gear;
+    }
+
+    /// <summary>The stat lines and item cards an item gives, and the level and school it needs, as gear shows them.</summary>
+    internal (List<GearStat> Stats, List<GearSpell> Spells, int Level, string School) Effects(WizItemTemplate template) {
+        var stats = new List<GearStat>();
+        var spells = new List<GearSpell>();
+        ReadEffects(template.m_equipEffects, stats, spells);
+        var (level, school) = Requirements(template.m_equipRequirements);
+
+        return (stats, spells, level, school);
+    }
+
     private Dictionary<uint, GearItem>? _byId;
 
     /// <summary>A piece of gear (or bundle) by template ID, or null when it isn't gear.</summary>

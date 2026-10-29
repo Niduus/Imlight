@@ -57,6 +57,17 @@ internal sealed partial class ManagerWindow {
         return new FilterBar(panel);
     }
 
+    /// <summary>A search's filters with its "N of M found" line at the end of the Filters row.</summary>
+    private static Control WithCount(Control filters, TextBlock count) {
+        if (filters is FilterBar bar) {
+            bar.ShowCount(count);
+
+            return bar;
+        }
+
+        return new StackPanel { Spacing = 10, Children = { filters, count } };
+    }
+
     /// <summary>Previous or Next in a list's pop-up: picks the row before or after the picked one, which shows it.</summary>
     private static void StepList(ListBox list, int by) {
         var at = list.SelectedIndex + by;
@@ -243,6 +254,19 @@ internal sealed partial class ManagerWindow {
         // Each filter's value when the page was made, which its chip's x and Clear all put back.
         private readonly Dictionary<Control, object?> _defaults = [];
         private bool _resetting;
+        private readonly DockPanel _row;
+
+        /// <summary>
+        /// Puts the search's "N of M found" line at the end of the Filters row (Niduus, 2026-10-28: "allow for the UI to be
+        /// cleaner and use up some more of the loose space"), instead of on a row of its own under it.
+        /// </summary>
+        internal void ShowCount(TextBlock count) {
+            count.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+            count.TextAlignment = Avalonia.Media.TextAlignment.Right;
+            count.MaxWidth = 760;
+            count.Margin = new Thickness(12, 0, 0, 0);
+            _row.Children.Insert(1, WithDock(count, Avalonia.Controls.Dock.Right));
+        }
 
         internal FilterBar(Panel filters) {
             _filters = filters;
@@ -262,13 +286,14 @@ internal sealed partial class ManagerWindow {
                 Refresh();
             };
             _clearAll.Click += (_, _) => Reset(Inputs().Select(i => i.Box).ToList());
-            Children.Add(new DockPanel {
+            _row = new DockPanel {
                 Children = {
                     WithDock(WithMargin(_toggle, new Thickness(0, 0, 10, 0)), Avalonia.Controls.Dock.Left),
                     WithDock(_clearAll, Avalonia.Controls.Dock.Right),
                     _chips,
                 },
-            });
+            };
+            Children.Add(_row);
             Children.Add(_drawer);
 
             foreach (var (box, _) in Inputs()) {
