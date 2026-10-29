@@ -65,7 +65,7 @@ internal sealed partial class ManagerWindow {
     // The worlds in story order; the rest after them by name.
     private static readonly string[] s_btWorldOrder = [
         "Wizard City", "Krokotopia", "Marleybone", "MooShu", "Dragonspyre", "Celestia", "Wysteria", "Grizzleheim", "Zafaria",
-        "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru",
+        "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Arcanum", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru",
         "Selenopolis", "Darkmoor", "Dungeons",
     ];
 
