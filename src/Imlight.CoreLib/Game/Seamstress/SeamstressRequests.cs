@@ -42,10 +42,13 @@
  */
 
 using System;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Bank;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.WizardData.Models.Misc;
@@ -118,10 +121,11 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
         }
 
         StitchedItemFactory.CopySockets(statsItem, stitchedItem);
-        ReportJewelSockets(displayItem);
         if (!TryApply([displayItem, statsItem], [stitchedItem], stitchCrowns, out var failure)) {
             return Deny($"stitch of items {displayItemId} and {statsItemId}", failure);
         }
+
+        ReturnJewels(displayItem);
 
         return true;
     }
@@ -218,12 +222,20 @@ internal sealed class SeamstressRequests(Wizard wizard, IActorRef session, Func<
         Logger.Warning("[Seamstress] {Infraction} This has been logged as a suspicious behavior infraction.", Logger.Args(infractionText));
     }
 
-    private void ReportJewelSockets(params WizClientObjectItem[] items) {
-        foreach (var item in items) {
-            if (StitchedItemFactory.HasJewelSockets(item)) {
-                Logger.Warning("[Seamstress] Item {ItemId} of {CharId} has jewel sockets, which the seamstress does not handle.",
-                    Logger.Args(item.m_globalID.Full, wizard.CharId));
+    // The item that gives only its look is used up; the jewels and pins in it come back instead of vanishing with it.
+    private void ReturnJewels(WizClientObjectItem lookItem) {
+        foreach (var jewelTemplateId in JewelSockets.GetPairs(lookItem).Where(p => p is not null && p.m_jewelTemplateID != 0)
+                     .Select(p => p.m_jewelTemplateID).ToList()) {
+            if (!wizard.TryCreateItem(jewelTemplateId, out var jewel)
+                || ItemPlacement.Give(session, wizard, jewel) == Placement.Lost) {
+                Logger.Error("[Seamstress] Jewel {0} in the look item {1} of {2} could not come back.",
+                    Logger.Args(jewelTemplateId, lookItem.m_globalID.Full, wizard.CharId));
+
+                continue;
             }
+
+            Logger.Information("[Seamstress] Jewel {0} in the look item {1} of {2} came back.",
+                Logger.Args(jewelTemplateId, lookItem.m_globalID.Full, wizard.CharId));
         }
     }
 

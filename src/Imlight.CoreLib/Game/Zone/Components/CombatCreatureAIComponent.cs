@@ -254,6 +254,22 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             return;
         }
 
+        // Taunt or Pacify that the caster put on its own side (Mega Taunt and a minion's Taunt are "Threat Self", the
+        // Mega Pacify family goes on the caster or a teammate): this enemy hates the ones it went on more, or less, for
+        // each of its rounds (PlayerMinions.Taunt). Before, only a taunt aimed at this creature counted.
+        if (message.Effect.m_effectType is kSpellEffects.kTaunt or kSpellEffects.kPacify && PlayerMinions.Taunt) {
+            var onTheirSide = message.Targets.Where(t => t is not null && t.Occupied && t.OccupiedTeam != _currentSubCircle.OccupiedTeam).ToList();
+            if (onTheirSide.Count > 0) {
+                var rounds = Math.Max(1, message.Effect.m_numRounds);
+                var change = message.Effect.m_effectType == kSpellEffects.kTaunt ? _provokeAggroIncrease * rounds : -_pacifyAggroDecrease * rounds;
+                foreach (var who in onTheirSide) {
+                    UpdateHateTable(who.SlotIndex, change);
+                }
+
+                return;
+            }
+        }
+
         if (isTarget) {
             var isPacify = message.Effect.m_effectType is kSpellEffects.kPacify;
             var isProvoke = message.Effect.m_effectType is kSpellEffects.kTaunt;
