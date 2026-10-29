@@ -65,7 +65,7 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _ffLevel = new() { Minimum = 2, Maximum = 200, Value = 10, Increment = 1, FormatString = "0", Width = 130 };
     private readonly ComboBox _ffWorld = new() { MinWidth = 200 };
     private readonly ComboBox _ffWhich = new() { ItemsSource = s_ffWhich, SelectedIndex = 0, MinWidth = 220 };
-    private readonly CheckBox _ffSideWorlds = new() { Content = "Include side worlds (Wysteria, Grizzleheim, Wintertusk, Aquila, Darkmoor...)" };
+    private readonly CheckBox _ffSideWorlds = new() { Content = "Include side worlds (Wysteria, Grizzleheim, Wintertusk, Aquila...)" };
     private readonly CheckBox _ffPassLevels = new() { Content = "Go past level needs" };
     private readonly CheckBox _ffGo = new() { Content = "Take me to my next quest", IsChecked = true };
     private readonly StackPanel _ffPreview = new() { Spacing = 6 };
