@@ -125,7 +125,8 @@
  *       IfCleared, then AddCharm Blade 55 Storm Target Self.
  *     { "Do": "Boost", "Kind": Damage/Resist/Heal/Accuracy, "Amount" (percent, below 0 lowers), "School", "Rounds"
  *       (0 = the rest of the battle), "Target" (Self) }   an aura-like effect that is never used up (enrage: Boost
- *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do.
+ *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do, unless
+ *       "Lasting": true (a boss's growth that its own aura spells must not wipe; spells that take auras off still do).
  *     { "Do": "Immune", "School" ("" = all), "Rounds", "Target" (Self) }   a -100% ward of that school that is never
  *       used up (pierce still gets through, as against any shield).
  *     { "Do": "Stun", "Rounds" (1), "Target" (Caster) }   as a stun spell does, with no animation.
@@ -596,6 +597,8 @@ internal static class BossCheats {
         // For FreeCast (Niduus, 2026-10-26): a spell that only goes on its caster (a self blade, Shadow Shrike) goes on
         // the step's Target instead, once on each when the Target is many (AllAllies, AllEnemies).
         public bool OnTarget { get; set; }
+        // For Boost (Niduus, 2026-10-29): a new aura does not push it off (CombatResolver.StaysWithNewAura).
+        public bool Lasting { get; set; }
         // For RemoveEffects (Niduus, 2026-10-26: "destroy THEIR blade ... Even through protections"): protected ones
         // (Aegis, Indemnity, the game's unremovable charms) come off too.
         public bool Bypass { get; set; }
