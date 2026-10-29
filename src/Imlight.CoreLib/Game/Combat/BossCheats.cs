@@ -636,6 +636,8 @@ internal static class BossCheats {
         // For ConvertEffects: what the effects become (Blade, Weakness, Shield, Trap, Absorb). For ProtectEffects: Off takes the
         // protection away (CombatResolver.ExtraCheats.cs).
         public string To { get; set; } = "";
+        // ConvertEffects: the new ones are of this school ("" the same as the old one's; Universal: all schools).
+        public string AsSchool { get; set; } = "";
         // For ConvertEffects: the new effects go on itself (you, in a player cheat) instead of back on the target: "take an
         // enemy's Death shields, gain a Death blade of each one's size" (Niduus, 2026-10-28).
         public bool ToMe { get; set; }

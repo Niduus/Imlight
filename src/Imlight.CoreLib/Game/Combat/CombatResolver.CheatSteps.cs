@@ -403,6 +403,9 @@ public partial class CombatResolver {
             "hot" => e.m_effectType == kSpellEffects.kHealOverTime,
             // Niduus, 2026-10-26: a Dispel (Fire Dispel...) hanging on someone.
             "dispel" => e.m_effectType == kSpellEffects.kDispel,
+            // Niduus, 2026-10-29: a healing trap (Infection: less healing taken) and a healing blade (more healing given).
+            "infection" => ward && e.m_effectType is kSpellEffects.kModifyIncomingHeal or kSpellEffects.kModifyIncomingHealFlat && !good,
+            "healboost" => charm && e.m_effectType is kSpellEffects.kModifyOutgoingHeal or kSpellEffects.kModifyOutgoingHealFlat && good,
             _ => false,
         };
     }
