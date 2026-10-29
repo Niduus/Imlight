@@ -32,5 +32,7 @@ public enum CombatMoveType {
     Discard = 2,
     Pass = 3,
     ChangeMind = 4,
+    // Two cards of a Fusion Formula fused into the fused spell (SpellFusions.cs); the turn is not used up.
+    Fuse = 12,
     
 }

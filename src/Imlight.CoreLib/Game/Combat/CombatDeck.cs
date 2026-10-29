@@ -322,6 +322,23 @@ internal class CombatDeck {
     }
 
     /// <summary>
+    /// A fusion (SpellFusions.cs): both cards are used up and the fused card, which is not part of the deck, takes the
+    /// place of the first one in the hand.
+    /// </summary>
+    internal void Fuse(Spell first, Spell second, Spell fused) {
+        var at = LastGivenHand.IndexOf(first);
+        var secondAt = LastGivenHand.IndexOf(second);
+        if (secondAt >= 0 && secondAt < at) {
+            at--;
+        }
+
+        ConsumeCard(first);
+        ConsumeCard(second);
+        _extraCards.Add(fused);
+        LastGivenHand.Insert(Math.Clamp(at, 0, LastGivenHand.Count), fused);
+    }
+
+    /// <summary>
     /// Adds a spell directly to the current hand without drawing from the deck.
     /// </summary>
     internal void AddCardToHand(Spell spell) {

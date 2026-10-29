@@ -146,6 +146,8 @@ internal sealed partial class ManagerWindow : Window {
     };
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
+        ("SpellFusion", "Enabled", "Spell Fusion: drag one card of a Fusion Formula onto its other card in battle to fuse them (.fusions lists yours)", new() { OnContent = "On", OffContent = "Off" }),
+        ("SpellFusion", "NeedFormula", "Spell Fusion needs the Fusion Formula learned first (off: every fusion works for everyone)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "AdvancedMode", "Advanced Mode: dungeon sigils offer the game's Advanced Mode button (harder copies with stronger creatures; .advanced on/off in chat)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "UnlimitedMana", "Unlimited mana (spells cost none, the Commons refills it)", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "BattleWisps", "Battles drop health, mana and gold wisps (how many per wizard and how many seconds they stay under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),

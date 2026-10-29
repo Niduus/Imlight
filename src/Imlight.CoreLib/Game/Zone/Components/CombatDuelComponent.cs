@@ -62,6 +62,7 @@ using Imlight.CoreLib.Game.PvP;
 using Imlight.CoreLib.Game.PvP.Arena;
 using Imlight.CoreLib.Game.PvP.Data;
 using Imlight.CoreLib.Game.Sigils;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -851,6 +852,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             case CombatMoveType.ChangeMind:
                 HandleChangeMindAction(caster);
                 break;
+            case CombatMoveType.Fuse:
+                HandleFusionMove(caster, message.SpellSelection, message.SpellTarget, message.RawSpellTarget, message.SelectedTieredSpellID);
+                // Fusing does not use up the turn: the fused card is cast next.
+                return;
             default:
                 // An enchantment played onto a card may come as its own move type.
                 if (TryEnchantMove(caster, message.SpellSelection, message.SpellTarget, message.RawSpellTarget)) {
@@ -2401,7 +2406,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
                     cards.Count - handBeforeRound.Count, extra.Count));
         }
 
-        var hand = new Hand { m_spellList = [.. cards, .. extra] };
+        var hand = circle.WithFusions(new Hand { m_spellList = [.. cards, .. extra] });
         if (!_serializer.Serialize(hand, _combatParticipantHandFlags, out var buffer)) {
             Logger.Error("Failed to serialize pet cast hand for duel {0}", Logger.Args(SigilId));
 
@@ -2833,6 +2838,84 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         Logger.Debug("Duel {0} | Slot {1} | Enchantment applied successfully. Target spell {2} now has regularAdjust {3}, accuracy {4}.",
             Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, targetSpell.m_templateID, targetSpell.m_regularAdjust, targetSpell.m_accuracy));
+    }
+
+    /// <summary>
+    /// A fusion (SpellFusions.cs): the game sends the first card as the selection and the second card as the target (a
+    /// plain index, or a bit like other targets), and the fused spell picked. Both cards leave the hand and the fused
+    /// card takes the first one's place; the wizard then casts it like any card.
+    /// </summary>
+    private void HandleFusionMove(CombatDuelSubCircle caster, int spellSelection, uint spellTarget, uint rawSpellTarget, int requested) {
+        try {
+            if (!SpellFusions.Enabled) {
+                caster.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = "Spell Fusion is switched off on this server.", Modal = 0 });
+                SendCurrentCombatHand(caster);
+
+                return;
+            }
+
+            var hand = caster.GetCurrentHand()?.m_spellList;
+            var first = caster.GetSpellFromLastHand((byte) spellSelection);
+            if (hand is null || first is null) {
+                Logger.Warning("Duel {0} | Slot {1} | Fusion received for an empty hand slot ({2}).",
+                    Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spellSelection));
+                SendCurrentCombatHand(caster);
+
+                return;
+            }
+
+            var firstTemplate = CoreObjectFactory.GetCoreTemplate(first.m_templateID) as SpellTemplate;
+            var recipes = caster._wizard is null ? [.. SpellFusions.Recipes] : SpellFusions.KnownRecipes(caster._wizard);
+
+            // The second card: the plain index first, then the target read as a bit.
+            int bitSlot = (rawSpellTarget > 0 && (rawSpellTarget & (rawSpellTarget - 1)) == 0) ? (int) Math.Log2(rawSpellTarget) : -1;
+            Spell second = null;
+            SpellTemplate secondTemplate = null;
+            List<SpellFusions.Recipe> found = [];
+            foreach (var slot in new[] { (int) rawSpellTarget, (int) spellTarget, bitSlot }) {
+                if (slot < 0 || slot >= hand.Count || slot == spellSelection || hand[slot] is null) {
+                    continue;
+                }
+
+                var template = CoreObjectFactory.GetCoreTemplate(hand[slot].m_templateID) as SpellTemplate;
+                var matches = SpellFusions.RecipesFor(firstTemplate, template, recipes);
+                if (matches.Count > 0) {
+                    (second, secondTemplate, found) = (hand[slot], template, matches);
+                    break;
+                }
+            }
+
+            if (second is null) {
+                Logger.Warning("Duel {0} | Slot {1} | Fusion of card {2} with target {3}/{4}: no recipe of the wizard's fits.",
+                    Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spellSelection, spellTarget, rawSpellTarget));
+                caster.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                    Message = "Those two cards don't fuse. Learn the Fusion Formula first (.fusions lists yours).", Modal = 0,
+                });
+                SendCurrentCombatHand(caster);
+
+                return;
+            }
+
+            var outputId = SpellFusions.PickOutput(found, firstTemplate, secondTemplate, requested);
+            var fused = outputId == 0 ? null : SpellFactory.GetSpell(outputId);
+            if (fused is null) {
+                Logger.Warning("Duel {0} | Slot {1} | Fusion {2}: the fused spell {3} could not be made.",
+                    Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, found[0].Name, outputId));
+                SendCurrentCombatHand(caster);
+
+                return;
+            }
+
+            caster.FuseCards(first, second, fused);
+            Logger.Information("Duel {0} | Slot {1} | Fused {2} + {3} into {4} ({5}, asked for {6}).",
+                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, (string) firstTemplate?.m_name, (string) secondTemplate?.m_name,
+                    (string) (CoreObjectFactory.GetCoreTemplate(outputId) as SpellTemplate)?.m_name, found[0].Name, requested));
+        }
+        catch (Exception ex) {
+            Logger.Error("Duel {0} | Slot {1} | Fusion failed: {2}", Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, ex));
+        }
+
+        SendCurrentCombatHand(caster);
     }
 
     private void HandleDiscardMove(CombatDuelSubCircle caster, int spellSelection) {
