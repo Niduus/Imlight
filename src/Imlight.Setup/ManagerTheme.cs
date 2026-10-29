@@ -129,6 +129,7 @@ internal static class ManagerTheme {
         ["Pet Derby"] = Color.FromRgb(240, 150, 60),
         ["Fast Forward"] = Color.FromRgb(240, 170, 60),
         ["Best Gear"] = Color.FromRgb(70, 190, 170),
+        ["Collect Spells"] = Color.FromRgb(150, 120, 230),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
         ["Boss Test"] = Color.FromRgb(217, 101, 59),

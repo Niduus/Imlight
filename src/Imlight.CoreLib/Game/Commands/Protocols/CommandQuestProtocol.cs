@@ -110,6 +110,12 @@ internal class CommandQuest : CommandProtocol {
     private void QuestFastForwardCommand()
         => SendQuestAction("fastforward", "");
 
+    // Ahziael's Collect Spells: teaches the spells this wizard's quests and trainers should have given by now.
+    [Command("collectspells")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void QuestCollectSpellsCommand()
+        => SendQuestAction("collectspells", "");
+
     private void SendQuestAction(string action, string questName)
         => Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND {
             Action = action,
