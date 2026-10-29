@@ -692,7 +692,7 @@ public partial class CombatResolver {
             }
 
             var sentBefore = combatActionList.m_actionList.Count;
-            cinematicTime += CheatCast(boss, cheat, new BossCheats.CheatAction { Do = "Cast", Spell = look.Value.Name, Target = $"slot:{target.SlotIndex}" },
+            cinematicTime += CheatCast(boss, cheat, new BossCheats.CheatAction { Do = "Cast", Spell = look.Value.Name, Target = $"slot:{target.SlotIndex}", Silent = step.Silent },
                 trigger, receiver, bossName, [], combatActionList, cinematicTimeSoFar + cinematicTime, custom);
             for (var i = sentBefore; i < combatActionList.m_actionList.Count; i++) {
                 if (combatActionList.m_actionList[i]?.m_spell is { } sent) {
