@@ -254,9 +254,40 @@ public partial class CombatDuelSubCircle {
         CheatHandBeforeDraw();
         var newHand = _combatDeck.GetHand();
         CheatHandAfterDraw();
+        WithFusions(newHand);
         CombatParticipant.m_pHand = newHand;
 
         return newHand;
+    }
+
+    /// <summary>
+    /// Gives a hand going to the game the wizard's fusions (SpellFusions.cs): the fused spells it can make
+    /// (m_spellFusionIDList) and which cards fuse (m_fusionState).
+    /// </summary>
+    internal Hand WithFusions(Hand hand) {
+        if (hand is null || !IsHumanPlayer || _wizard is null) {
+            return hand;
+        }
+
+        if (!SpellFusions.Enabled) {
+            hand.m_spellFusionIDList = [];
+
+            return hand;
+        }
+
+        var recipes = SpellFusions.KnownRecipes(_wizard);
+        hand.m_spellFusionIDList = [.. recipes.SelectMany(r => r.Outputs).Distinct()];
+        SpellFusions.MarkHand(hand.m_spellList, recipes);
+
+        return hand;
+    }
+
+    /// <summary>
+    /// Fuses two cards of the current hand into the fused spell: both leave the hand (used up) and the fused card takes
+    /// the place of the first one.
+    /// </summary>
+    internal void FuseCards(Spell first, Spell second, Spell fused) {
+        _combatDeck.Fuse(first, second, fused);
     }
 
     /// <summary>
@@ -271,7 +302,7 @@ public partial class CombatDuelSubCircle {
 
     internal Hand GetCurrentHand() {
         // As-is, no draw or refill: a discard frees a slot this turn and the client must see it open.
-        return new() { m_spellList = _combatDeck.LastGivenHand ?? [] };
+        return WithFusions(new() { m_spellList = _combatDeck.LastGivenHand ?? [] });
     }
 
     /// <summary>

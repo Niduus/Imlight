@@ -36,6 +36,7 @@
  * Last Updated: 3/18/2025
  */
 
+using System;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
@@ -65,6 +66,66 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
             SpellID = message.SpellID,
             DeckID = message.DeckID,
             Success = (byte) (deckAddSuccess ? 1 : 0)
+        });
+    }
+
+    /// <summary>
+    /// The deck's Fusion page: a Fusion Formula puts both of its cards in the deck (SpellFusions.cs). The game names
+    /// the two cards by template ID or name hash.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_ADDSPELLFUSIONTODECK))]
+    private void ReceiveAddSpellFusionToDeck(WIZARD3_56_PROTOCOL.MSG_ADDSPELLFUSIONTODECK message) {
+        var wizard = GetActiveWizard();
+        var ok = false;
+        try {
+            var first = TieredSpells.ResolveTemplate((uint) message.SpellID1, out var firstId) is not null ? firstId : 0;
+            var second = TieredSpells.ResolveTemplate((uint) message.SpellID2, out var secondId) is not null ? secondId : 0;
+            if (first != 0 && second != 0) {
+                var firstAdded = wizard.AddSpellToDeck(first, message.DeckID);
+                var secondAdded = wizard.AddSpellToDeck(second, message.DeckID);
+                if (firstAdded && !secondAdded) {
+                    // Both or neither: the deck may be full.
+                    wizard.RemoveSpellFromDeck(first, message.DeckID);
+                }
+
+                ok = firstAdded && secondAdded;
+            }
+
+            Logger.Information("Spell Fusion: {0} put fusion cards {1} + {2} in deck {3}: {4}.",
+                Logger.Args(wizard.CharId, message.SpellID1, message.SpellID2, message.DeckID, ok));
+        }
+        catch (Exception ex) {
+            Logger.Error("Spell Fusion: adding fusion cards to the deck failed: {0}", Logger.Args(ex));
+        }
+
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_ADDSPELLFUSIONTODECK {
+            SpellID1 = message.SpellID1,
+            SpellID2 = message.SpellID2,
+            DeckID = message.DeckID,
+            Success = (byte) (ok ? 1 : 0),
+        });
+    }
+
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REMOVESPELLFUSIONFROMDECK))]
+    private void ReceiveRemoveSpellFusionFromDeck(WIZARD3_56_PROTOCOL.MSG_REMOVESPELLFUSIONFROMDECK message) {
+        var wizard = GetActiveWizard();
+        var ok = false;
+        try {
+            var first = TieredSpells.ResolveTemplate((uint) message.SpellID1, out var firstId) is not null ? firstId : 0;
+            var second = TieredSpells.ResolveTemplate((uint) message.SpellID2, out var secondId) is not null ? secondId : 0;
+            var firstRemoved = first != 0 && wizard.RemoveSpellFromDeck(first, message.DeckID);
+            var secondRemoved = second != 0 && wizard.RemoveSpellFromDeck(second, message.DeckID);
+            ok = firstRemoved || secondRemoved;
+        }
+        catch (Exception ex) {
+            Logger.Error("Spell Fusion: taking fusion cards out of the deck failed: {0}", Logger.Args(ex));
+        }
+
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_REMOVESPELLFUSIONFROMDECK {
+            SpellID1 = message.SpellID1,
+            SpellID2 = message.SpellID2,
+            DeckID = message.DeckID,
+            Success = (byte) (ok ? 1 : 0),
         });
     }
 
