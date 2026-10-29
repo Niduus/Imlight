@@ -54,6 +54,12 @@ internal static class VanillaTrainers {
     /// <summary>Whether game trainers behave as in the real game ([Trainers] VanillaTrainers, live).</summary>
     internal static bool On => ConfigurationManager.GetValue("Trainers.VanillaTrainers", false);
 
+    /// <summary>
+    /// [Trainers] VanillaTrainersSkipQuests: quests a spell needs count as done, for wizards who levelled without the
+    /// story (Niduus, 2026-10-29: Walter Blanco, a level 180 Death wizard, could not train Scarecrow). Applies live.
+    /// </summary>
+    internal static bool SkipQuests => ConfigurationManager.GetValue("Trainers.VanillaTrainersSkipQuests", true);
+
     // The registry entry that keeps a wizard's secondary school (its index in s_schools, from 1).
     private const string SECONDARY_SCHOOL_KEY = "Imlight_SecondarySchool";
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
@@ -243,8 +249,11 @@ internal static class VanillaTrainers {
                     ? Meets(item, wizard, knownNames, out itemFailed)
                     : MeetsOne(item, wizard, knownNames);
                 result = met != item.Not;
-                if (!result && failed is null) {
-                    failed = item.Class == "List" ? itemFailed ?? item : item;
+                var why = item.Class == "List" ? itemFailed ?? item : item;
+                if (!result && (failed is null || joinsWithOr && IsOtherSchool(failed) && !IsOtherSchool(why))) {
+                    // Of choices such as "Balance and quest A, or Death and quest B", the one for the wizard's own
+                    // school says what is missing (quest B); "needs Balance as school" would mislead a Death wizard.
+                    failed = why;
                 }
                 else if (result && joinsWithOr) {
                     failed = null;
@@ -261,6 +270,8 @@ internal static class VanillaTrainers {
         return result;
     }
 
+    private static bool IsOtherSchool(Need need) => need.Class == "SchoolOfFocus" && !need.Not;
+
     private static bool MeetsOne(Need need, Wizard wizard, HashSet<string> knownNames) {
         switch (need.Class) {
             case "HasSpell":
@@ -273,6 +284,9 @@ internal static class VanillaTrainers {
                 }
 
                 const string COMPLETE = "_Complete";
+                if (SkipQuests && (!string.IsNullOrEmpty(need.Quest) || need.Entry.EndsWith(COMPLETE, StringComparison.OrdinalIgnoreCase))) {
+                    return true;
+                }
 
                 return wizard.HasRegistryValue(need.Entry)
                     // A quest the Manager's Quest Editor skips counts as done.
