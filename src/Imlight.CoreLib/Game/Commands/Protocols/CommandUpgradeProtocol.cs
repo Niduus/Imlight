@@ -20,7 +20,9 @@ using System;
 using System.Linq;
 using System.Text;
 using Imlight.CoreLib.Auth;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -29,7 +31,8 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <summary>
 /// Spell upgrades by chat, the same as the game's upgrade window (see <see cref="TieredSpells"/>): `.upgrades` lists
 /// the upgradable spells you know, their next tiers and costs; `.upgrade Fire Cat B` upgrades Fire Cat along path B
-/// (path A when none is given). `.spellements 200` sets your Spellements to 200 for every upgradable spell you know (QA).
+/// (path A when none is given). `.spellements 200` sets your Spellements to 200 for every upgradable spell you know (QA);
+/// `.spellements full` gives what maxing every spell tree on your upgrade page still costs.
 /// </summary>
 internal class CommandUpgradeProtocol : CommandProtocol {
 
@@ -129,10 +132,17 @@ internal class CommandUpgradeProtocol : CommandProtocol {
     }
 
     [Command("spellements")]
+    [Alias("spellement")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void SpellementsCommand(string amount = "200") {
+        if (string.Equals(amount, "full", StringComparison.OrdinalIgnoreCase) || string.Equals(amount, "max", StringComparison.OrdinalIgnoreCase)) {
+            SpellementsFull();
+
+            return;
+        }
+
         if (!int.TryParse(amount, out var each) || each < 1) {
-            InformSenderClient("Type .spellements 200 for 200 of each.");
+            InformSenderClient("Type .spellements 200 for 200 of each, or .spellements full for what it takes to max every spell on your upgrade page.");
 
             return;
         }
@@ -142,6 +152,50 @@ internal class CommandUpgradeProtocol : CommandProtocol {
         InformSenderClient(given == 0
             ? $"Your Spellements are now {each} for each upgradable spell you know (or you know none)."
             : $"Your Spellements are now {each} for each upgradable spell you know ({given} given).");
+    }
+
+    // .spellements full: tops each Spellement up to what maxing every tree on the upgrade page still costs. Nothing is
+    // taken away, and a stack holds at most 999, so a bigger need fills to 999 (upgrade, then type it again).
+    private void SpellementsFull() {
+        var wizard = Context.Character;
+        var needs = TieredSpells.CostToMaxShownGroups(wizard);
+        if (needs.Count == 0) {
+            InformSenderClient("Your upgrade page shows no spells yet, so there is nothing to max.");
+
+            return;
+        }
+
+        var text = new StringBuilder();
+        var given = 0;
+        var capped = false;
+        foreach (var (shard, (cost, groups)) in needs.OrderBy(n => TieredSpells.ShardName(n.Key))) {
+            var have = TieredSpells.ShardCount(wizard, shard);
+            var want = Math.Min(cost, ServerAlchemyBehavior.MaxStack);
+            var add = want > have ? LootGranter.GrantReagent(Context.SessionActor, wizard, shard, want - have) : 0;
+            given += add;
+            if (cost == 0) {
+                continue;
+            }
+
+            text.Append($"\n{TieredSpells.ShardName(shard)}: {cost} needed for {groups} spell(s), gave {add}, you have {have + add}");
+            if (cost > ServerAlchemyBehavior.MaxStack) {
+                text.Append(" (stack holds 999)");
+                capped = true;
+            }
+        }
+
+        if (text.Length == 0) {
+            InformSenderClient("Every spell on your upgrade page is already maxed.");
+
+            return;
+        }
+
+        text.Insert(0, $"Spellements to max your upgrade page ({given} given):");
+        if (capped) {
+            text.Append("\nSome need more than one stack holds: upgrade with what you have, then type .spellements full again.");
+        }
+
+        InformSenderClient(text.ToString(), true);
     }
 
     // "Fire Cat - T03 - A" -> "A"; "Fire Cat - T02" -> "A" (the game's only path there).

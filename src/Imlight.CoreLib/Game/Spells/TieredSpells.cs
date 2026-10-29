@@ -876,6 +876,77 @@ internal static class TieredSpells {
     }
 
     /// <summary>
+    /// What it still costs to max every spell tree on the wizard's upgrade page (`.spellements full`): every tier of
+    /// every path of each group that shows, less the tiers already known (and the tiers before them). Groups that use
+    /// the same Spellement are added together. Returns Spellement -> (Spellements still needed, groups counted).
+    /// </summary>
+    internal static Dictionary<ulong, (int Cost, int Groups)> CostToMaxShownGroups(Wizard wizard) {
+        var needs = new Dictionary<ulong, (int Cost, int Groups)>();
+        if (wizard is null) {
+            return needs;
+        }
+
+        var shown = Visibility(wizard).m_visibilityList.Select((v, i) => (v, i)).Where(x => x.v != 0).Select(x => x.i).ToList();
+        foreach (var group in shown) {
+            var shard = ShardOf(group);
+            string tierOne = Groups[group]?.m_tierOneSpell;
+            if (shard == 0 || string.IsNullOrEmpty(tierOne)) {
+                continue;
+            }
+
+            var done = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            var cost = 0;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var queue = new Queue<string>([tierOne]);
+            while (queue.Count > 0) {
+                var name = queue.Dequeue();
+                if (!seen.Add(name) || CoreObjectFactory.GetCoreTemplate(TemplateIdOf(name)) is not TieredSpellTemplate template || template.m_retired) {
+                    continue;
+                }
+
+                if (!KnownOrPassed(wizard, template, done, [])) {
+                    cost += CostOf(template);
+                }
+
+                foreach (var next in template.m_nextTierSpells ?? []) {
+                    queue.Enqueue((string) next);
+                }
+            }
+
+            needs.TryGetValue(shard, out var sum);
+            needs[shard] = (sum.Cost + cost, sum.Groups + 1);
+        }
+
+        return needs;
+    }
+
+    // A tier counts as had when the wizard knows it or any tier after it (with KeepEveryTier off, upgrading takes the
+    // earlier tier away).
+    private static bool KnownOrPassed(Wizard wizard, TieredSpellTemplate template, Dictionary<string, bool> done, HashSet<string> visiting) {
+        string name = template.m_name;
+        if (done.TryGetValue(name, out var cached)) {
+            return cached;
+        }
+
+        if (!visiting.Add(name)) {
+            return false;
+        }
+
+        var had = wizard.SpellbookBehavior.HasSpell(TemplateIdOf(name));
+        foreach (var next in template.m_nextTierSpells ?? []) {
+            if (had) {
+                break;
+            }
+
+            had = CoreObjectFactory.GetCoreTemplate(TemplateIdOf((string) next)) is TieredSpellTemplate after && KnownOrPassed(wizard, after, done, visiting);
+        }
+
+        done[name] = had;
+
+        return had;
+    }
+
+    /// <summary>
     /// The game's Spellements 2.0 list of spells "done prep for multiple paths". A spell not on it uses the old upgrade
     /// window, which shows only one path as unlocked (Poison path A looked locked after path B, though known). Every
     /// upgradable spell is on it, so all paths show what the wizard knows. Group numbers are added too, in case the
