@@ -50,7 +50,7 @@ internal sealed partial class ManagerWindow {
     private static readonly (string Code, string World)[] s_questWorlds = [
         ("WC", "Wizard City"), ("KT", "Krokotopia"), ("MB", "Marleybone"), ("MS", "Mooshu"), ("DS", "Dragonspyre"),
         ("GH", "Grizzleheim"), ("CL", "Celestia"), ("WY", "Wysteria"), ("ZF", "Zafaria"), ("AV", "Avalon"),
-        ("AZ", "Azteca"), ("KR", "Khrysalis"), ("KH", "Khrysalis"), ("PL", "Polaris"), ("MR", "Mirage"), ("EM", "Empyrea"),
+        ("AZ", "Azteca"), ("KR", "Khrysalis"), ("KH", "Khrysalis"), ("PL", "Polaris"), ("AR", "Arcanum"), ("MR", "Mirage"), ("EM", "Empyrea"),
         ("KM", "Karamelle"), ("LM", "Lemuria"), ("NV", "Novus"), ("WL", "Wallaru"), ("SL", "Selenopolis"), ("DM", "Darkmoor"),
     ];
 

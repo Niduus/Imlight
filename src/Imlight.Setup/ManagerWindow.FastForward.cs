@@ -50,6 +50,10 @@ internal sealed partial class ManagerWindow {
     private const string FF_WORLD_END = "The end of a world";
     private const string FF_WORLD_START = "The start of a world";
     private static readonly string[] s_ffTargets = [FF_TO_LEVEL, FF_WORLD_END, FF_WORLD_START];
+    // Arcanum is no world of its own in the story list: its quests sit where they are played, first in the middle of
+    // Polaris. As a pick it means that first visit (Niduus, 2026-10-29: "Arcanum is missing from world listing").
+    private const string FF_ARCANUM = "Arcanum";
+    private const string FF_ARCANUM_HOST = "Polaris";
     private const string FF_MAIN = "Main story only";
     private const string FF_SIDE = "Main story and side quests";
     private static readonly string[] s_ffWhich = [FF_MAIN, FF_SIDE];
@@ -155,6 +159,11 @@ internal sealed partial class ManagerWindow {
         if (_ffWorlds.Count == 0) {
             _ffWorlds = ReadQuestTesting().Item1?.Worlds ?? [];
             var worlds = _ffWorlds.Select(w => w.Name).ToList();
+            var host = worlds.IndexOf(FF_ARCANUM_HOST);
+            if (host >= 0 && _ffWorlds[host].Quests.Any(IsArcanumQuest)) {
+                worlds.Insert(host + 1, FF_ARCANUM);
+            }
+
             _ffFilling = true;
             _ffWorld.ItemsSource = worlds;
             _ffWorld.SelectedIndex = worlds.Count > 1 ? 2 : 0;
@@ -286,13 +295,20 @@ internal sealed partial class ManagerWindow {
         var world = _ffWorld.SelectedItem as string ?? "";
         var sideWorlds = _ffSideWorlds.IsChecked == true;
 
+        // Arcanum: its first visit, in Polaris. The start stops before the quest that takes you there; the end is the last
+        // Arcanum quest of that visit.
+        var arcanum = world == FF_ARCANUM;
+        if (arcanum) {
+            world = FF_ARCANUM_HOST;
+        }
+
         // The worlds it goes through.
         var worlds = new List<QxWorld>();
         var pickedIndex = _ffWorlds.FindIndex(w => w.Name == world);
         for (var i = 0; i < _ffWorlds.Count; i++) {
             var w = _ffWorlds[i];
             if (target != FF_TO_LEVEL && pickedIndex >= 0) {
-                if (i > pickedIndex || (target == FF_WORLD_START && i == pickedIndex)) {
+                if (i > pickedIndex || (target == FF_WORLD_START && i == pickedIndex && !arcanum)) {
                     break;
                 }
             }
@@ -304,8 +320,17 @@ internal sealed partial class ManagerWindow {
             worlds.Add(w);
         }
 
+        // How many of the picked world's quests are done: all, or for Arcanum up to its start or end.
+        var hostQuests = pickedIndex >= 0 ? _ffWorlds[pickedIndex].Quests.Where(q => q.Code.Length > 0).ToList() : [];
+        var hostCount = hostQuests.Count;
+        if (arcanum && target != FF_TO_LEVEL) {
+            hostCount = target == FF_WORLD_START
+                ? Math.Max(0, hostQuests.FindIndex(IsArcanumQuest))
+                : hostQuests.FindLastIndex(IsArcanumQuest) + 1;
+        }
+
         if (target == FF_WORLD_START && pickedIndex >= 0) {
-            var first = _ffWorlds[pickedIndex].Quests.FirstOrDefault(q => q.Code.Length > 0);
+            var first = arcanum ? hostQuests.ElementAtOrDefault(hostCount) : _ffWorlds[pickedIndex].Quests.FirstOrDefault(q => q.Code.Length > 0);
             next = first is null ? [] : [first.Code, .. first.Copies];
         }
 
@@ -315,10 +340,19 @@ internal sealed partial class ManagerWindow {
         var index = 0;
         foreach (var w in worlds) {
             worldStart[w.Name] = index;
-            foreach (var quest in w.Quests.Where(q => q.Code.Length > 0)) {
+            var quests = w.Quests.Where(q => q.Code.Length > 0);
+            if (arcanum && target != FF_TO_LEVEL && w.Name == FF_ARCANUM_HOST) {
+                quests = quests.Take(hostCount);
+            }
+
+            foreach (var quest in quests) {
                 index++;
+                if (IsArcanumQuest(quest)) {
+                    worldStart.TryAdd(FF_ARCANUM, index - 1);
+                }
+
                 var copies = quest.Copies.Where(c => c.Length > 0).ToArray();
-                keyed.Add((index, new FfStep(quest.Code, quest.Name, w.Name, true, copies,
+                keyed.Add((index, new FfStep(quest.Code, quest.Name, IsArcanumQuest(quest) ? FF_ARCANUM : w.Name, true, copies,
                     new[] { quest.Code }.Concat(copies).Select(FfXpOf).DefaultIfEmpty().Max())));
                 foreach (var code in copies.Prepend(quest.Code)) {
                     keyOf[code] = index;
@@ -328,6 +362,10 @@ internal sealed partial class ManagerWindow {
 
         if (_ffWhich.SelectedItem as string == FF_SIDE) {
             var worldNames = worlds.Select(w => w.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (worldStart.ContainsKey(FF_ARCANUM)) {
+                worldNames.Add(FF_ARCANUM);
+            }
+
             var done = _ffPicked?.Done ?? [];
             var waiting = _quests.Where(q => !q.Main && !keyOf.ContainsKey(q.Code) && worldNames.Contains(q.World)
                                              && !q.Marks.Any(m => s_ffSkippedMarks.Contains(m))
@@ -380,6 +418,9 @@ internal sealed partial class ManagerWindow {
 
         return [.. keyed.OrderBy(k => k.Key).Select(k => k.Step)];
     }
+
+    // A quest played in Arcanum, by its code (AR-POL-MAIN-001 is the first one there).
+    private static bool IsArcanumQuest(QxQuest quest) => quest.Code.StartsWith("AR-", StringComparison.OrdinalIgnoreCase);
 
     // A quest made for another school than the wizard's, by its code (WC-FIRE-C13-001 is Fire's).
     private static bool OtherSchoolQuest(string code, string school) {
