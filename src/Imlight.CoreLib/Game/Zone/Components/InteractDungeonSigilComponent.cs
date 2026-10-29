@@ -444,7 +444,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                     Logger.Information("Advanced Mode: character {0} goes into {1} (pressed with mode {2}).",
                         Logger.Args(playerCharacter.CharId, _partyDestination, requestedMode));
                     playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                        Message = $"Advanced Mode: {AdvancedMode.NameOf(_partyDestination)}. Its creatures are stronger and cheat more.",
+                        Message = $"Advanced Mode: {AdvancedMode.NameOf(_partyDestination)}. Its creatures are stronger.",
                         Modal = 0,
                     });
                 }
