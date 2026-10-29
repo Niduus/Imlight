@@ -73,6 +73,7 @@ public sealed class ZonePath : ZoneEntity {
     private const string CREATURE_SPAWN_INTERVAL_LOCK = "CREATURE_SPAWN_INTERVAL_LOCK";
     private const uint MAX_SPAWNS_ALLOWED = 25;
     private const uint OBJECT_CREATION_TIMEOUT_IN_MS = 5000;
+    private const int FILL_STAGGER_IN_MS = 250;
 
     private readonly PathObjectTemplate _template;
     private readonly List<NodeObject> _nodes;
@@ -122,11 +123,11 @@ public sealed class ZonePath : ZoneEntity {
                 continue;
             }
 
-            StartSpawnTimer(spawnObject, i);
+            StartSpawnTimer(spawnObject, i, fillNow: true);
         }
     }
 
-    private void StartSpawnTimer(SpawnObject spawnObject, int index) {
+    private void StartSpawnTimer(SpawnObject spawnObject, int index, bool fillNow = false) {
         var timerKey = SpawnTimerKey(spawnObject, index);
         var msg = new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL { SpawnObject = spawnObject };
         var interval = TimeSpan.FromSeconds(spawnObject.m_spawnTime);
@@ -140,22 +141,35 @@ public sealed class ZonePath : ZoneEntity {
             return;
         }
 
-        // Otherwise, start the interval. This still ticks in an instanced zone so a multi-creature
-        // spawn point can populate up to its max on load; CanSpawn is what stops a defeated spawn
-        // point from ever refilling there (see _defeatedInInstance).
+        // Otherwise, start the interval. Each tick brings up to the spawner's respawn rate (m_respawnRate) back, as the
+        // game files mean it: a Dragonspire ore spawner with 5 at most and a 20 minute interval brings all 5 back at
+        // once, Unicorn Way's ghosts 2 every 30 seconds. One per tick left busy streets thin (Niduus, 2026-10-29: "some
+        // streets don't really have a lot of mob spawns"): each battle takes its monsters, and those that walk into a
+        // full battle vanish, faster than one a tick brought back. It still ticks in an instanced zone; CanSpawn is what
+        // stops a defeated spawn point from ever refilling there (see _defeatedInInstance).
+        var wave = new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL {
+            SpawnObject = spawnObject,
+            Count = (int) Math.Clamp(spawnObject.m_respawnRate, 1u, MAX_SPAWNS_ALLOWED),
+        };
+
         // The first spawn comes as the zone loads, as a spawner without an interval's does: a housing gauntlet's boss
         // (Rattlebones, whose spawner has an interval) came 5 seconds after the zone, while the Fairy Queen (none) stood
-        // there from the start (Niduus, 2026-10-24: "Rattlebones does spawn but not immediate"). Later ones keep the interval.
-        var delay = TimeSpan.Zero;
-        Timers.StartPeriodicTimer(timerKey, msg, delay, interval);
+        // there from the start (Niduus, 2026-10-24: "Rattlebones does spawn but not immediate").
+        if (!fillNow) {
+            Timers.StartPeriodicTimer(timerKey, wave, TimeSpan.Zero, interval);
 
-        // A ZoneObjects distinct spawner (a boss's minions) is full from the first spawn, so they are all there
-        // before anyone reaches the battle.
-        if (Zone.Extras.IsDistinctSpawner(spawnObject.m_name)) {
-            for (var i = 1; i < (int) spawnObject.m_maxNumberOfSpawns; i++) {
-                Timers.StartSingleTimer($"{timerKey}_fill_{i}", msg, delay);
-            }
+            return;
         }
+
+        // As the zone loads, every spawner fills up to its maximum, as on live, instead of one creature an interval: a
+        // street had a single monster per spawn point for minutes after the server started. They come a moment apart
+        // so a big street does not make all of them in the same instant. Later ones keep the interval.
+        var count = (int) Math.Clamp(spawnObject.m_maxNumberOfSpawns, 1u, MAX_SPAWNS_ALLOWED);
+        for (var i = 0; i < count; i++) {
+            Timers.StartSingleTimer($"{timerKey}_fill_{i}", msg, TimeSpan.FromMilliseconds(i * FILL_STAGGER_IN_MS));
+        }
+
+        Timers.StartPeriodicTimer(timerKey, wave, interval, interval);
     }
 
     private static string SpawnTimerKey(SpawnObject spawnObject, int index) {
@@ -307,8 +321,11 @@ public sealed class ZonePath : ZoneEntity {
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL))]
-    private void ReceiveCreatureSpawnInterval(ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL message) 
-        => HandleCreatureSpawn(message.SpawnObject, null);
+    private void ReceiveCreatureSpawnInterval(ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL message) {
+        for (var i = 0; i < Math.Max(1, message.Count); i++) {
+            HandleCreatureSpawn(message.SpawnObject, null);
+        }
+    }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEPATHSPAWN))]
     private void ReceiveCreatureSpawn(ZONE_102_PROTOCOL.MSG_ZONEPATHSPAWN message) {
