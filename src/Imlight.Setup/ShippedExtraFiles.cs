@@ -82,6 +82,18 @@ internal sealed class ShippedExtraFiles {
         return shipped.Contains(Hash(target)) ? null : "it was changed on this PC";
     }
 
+    /// <summary>
+    /// Whether a spiraldb-extra file was made or changed on this PC rather than shipped as it is (the Share tab's own
+    /// customs). Without the list it cannot tell, and says fallback.
+    /// </summary>
+    internal bool IsOwn(string relative, string file, bool fallback) {
+        if (!_known) {
+            return fallback;
+        }
+
+        return !_versions.TryGetValue(relative, out var shipped) || !shipped.Contains(Hash(file));
+    }
+
     /// <summary>Notes the version this update ships, so a later update knows it as Imlight's own.</summary>
     internal void Add(string relative, string shippedFile) {
         if (!_versions.TryGetValue(relative, out var hashes)) {
