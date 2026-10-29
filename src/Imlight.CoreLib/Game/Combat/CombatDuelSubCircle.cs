@@ -99,6 +99,8 @@ public partial class CombatDuelSubCircle {
     internal CombatParticipant CombatParticipant { get; private set; }
     internal bool AddedToDuel { get; set;}
     internal bool IsSummonedMinion { get; private set; }
+    // The wizard who summoned this minion (their global id), or 0 for a creature's minion (PlayerMinions.cs).
+    internal ulong MinionOwnerId { get; set; }
     // A sandboxed wizard fights with a copy of their stats, so nothing of the duel reaches the saved wizard.
     internal bool IsSandboxed { get; private set; }
     // A wizard who fights with a copy of their stats: a sandboxed one, or one in the Deckathalon (its own stats, made by
@@ -246,6 +248,7 @@ public partial class CombatDuelSubCircle {
         ParticipantObject = null;
         CombatParticipant = null;
         AddedToDuel = false;
+        MinionOwnerId = 0;
         _bossOverride = null;
     }
 
