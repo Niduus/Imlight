@@ -122,6 +122,8 @@ internal sealed class Lookup {
             "Works for every player unless the server turned it off (Settings, Trainers, PlayersCanGainTrainingPoints)."),
         Command("Version", ".ver", "Every player", "Shows the Ahziael version the running server was built by, the commit and when the server started. " +
             "Use it after an update to check the server was restarted. Also .version."),
+        Command("Advanced Mode", ".advanced on / off / list", "Every player", ".advanced on makes dungeon sigils that have a harder Advanced Mode copy take you there (the circle glows red). " +
+            ".advanced off goes back to normal, .advanced list names the dungeons that have one. The sigil's own Advanced Mode button works too. Also .challenge."),
         Command("Reset training points", ".respec", "Every player", "Says how many training points you would get back and which spells you would lose. " +
             ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
         Command("Unlearn boss and dev spells", ".unlearnboss", "Every player", "Lists the boss and dev (test) spells you know. " +

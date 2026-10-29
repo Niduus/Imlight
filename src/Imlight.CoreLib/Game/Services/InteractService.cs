@@ -88,14 +88,16 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
             return;
         }
 
-        HandleInteraction(message, msg => msg.GlobalID, msg => msg.ServiceName, msg => msg.ServiceIndex);
+        // RequestedSigilMode: 2 when a dungeon sigil is pressed with the game's Advanced Mode button on (Game/World/AdvancedMode).
+        HandleInteraction(message, msg => msg.GlobalID, msg => msg.ServiceName, msg => msg.ServiceIndex, message.RequestedSigilMode);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_INTERACTOPTION))]
     private void ReceiveInteractOption(GAME_5_PROTOCOL.MSG_INTERACTOPTION message)
         => HandleInteraction(message, msg => msg.ObjectID, msg => "Interact", msg => (uint) msg.OptionIndex);
 
-    private void HandleInteraction<T>(T message, Func<T, ulong> getObjectId, Func<T, string> getServiceName, Func<T, uint> getServiceIndex) {
+    private void HandleInteraction<T>(T message, Func<T, ulong> getObjectId, Func<T, string> getServiceName, Func<T, uint> getServiceIndex,
+                                      uint requestedSigilMode = 0) {
         var wizard = GetActiveWizard();
 
         // A group mate's mount with a free seat: MountRideService answers that one.
@@ -143,7 +145,8 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
             ServiceIndex = getServiceIndex(message),
             PlayerActor = actor,
             PlayerCharacter = wizard,
-            PlayerObject = gameObj
+            PlayerObject = gameObj,
+            RequestedSigilMode = requestedSigilMode,
         };
         serviceMementoComponent.ActorRef.Tell(msg);
         _lastInteractedNpc = serviceMementoComponent.ActorRef;

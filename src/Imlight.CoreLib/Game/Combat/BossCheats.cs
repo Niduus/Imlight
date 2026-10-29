@@ -705,7 +705,10 @@ internal static class BossCheats {
     /// </summary>
     internal static List<BossCheat> For(ulong templateId)
         => Enabled ? BossOverrides.CheatsOf(templateId,
-            s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss) ? boss.Cheats : s_none) : [];
+            s_bosses.Value.TryGetValue(Customs.BaseOf(templateId), out var boss)
+                // An Advanced Mode copy (Adv_...) with no file of its own cheats like its normal boss.
+                || s_bosses.Value.TryGetValue(Imlight.CoreLib.Game.World.AdvancedMode.NormalCreatureOf(Customs.BaseOf(templateId)), out boss)
+                ? boss.Cheats : s_none) : [];
 
     /// <summary>Every creature's cheats, by template (for the Whens outside battle, OutsideCheats.cs).</summary>
     internal static IEnumerable<(ulong Template, List<BossCheat> Cheats)> All()

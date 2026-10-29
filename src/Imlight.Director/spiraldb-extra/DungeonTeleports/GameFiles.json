@@ -4184,7 +4184,7 @@
     "TriggerName": "Teleport to NV_Z07_I01_EngineeringWing",
     "Teleport": {
      "m_destinationLoc": "Start",
-     "m_destinationZone": "Novus/Interiors/NV_Z07_I01_EngineeringWing_Hard",
+     "m_destinationZone": "Novus/Interiors/NV_Z07_I01_EngineeringWing",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",

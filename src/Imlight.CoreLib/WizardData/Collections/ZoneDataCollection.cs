@@ -29,8 +29,11 @@ public static class ZoneDataCollection {
     /// </summary>
     /// <param name="zoneName">The name of the zone.</param>
     /// <returns>The zone data, or null if not found.</returns>
+    /// <remarks>
+    /// An Advanced Mode copy of a dungeon (Game/World/AdvancedMode) has the normal dungeon's doors and exits too.
+    /// </remarks>
     public static WizardZoneData GetZoneData(string zoneName) 
-        => SpiralDB.GetZoneData(zoneName);
+        => Imlight.CoreLib.Game.World.AdvancedMode.ZoneDataOf(zoneName, SpiralDB.GetZoneData) ?? SpiralDB.GetZoneData(zoneName);
 
     /// <summary>
     /// Retrieves a random zone data entry.

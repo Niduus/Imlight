@@ -131,7 +131,10 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
         // SpiralDB spellbook named by the deck behavior. Either source may be missing.
         var deckBehavior = allBehaviors.OfType<DeckBehaviorTemplate>().FirstOrDefault();
         if (deckBehavior is not null && !string.IsNullOrEmpty(deckBehavior.m_defaultDeck)) {
-            var spellbook = CreatureSpellbookCollection.GetCreatureSpellbook(deckBehavior.m_defaultDeck);
+            // An Advanced Mode deck (Mdeck-...-Adv-...) SpiralDB lacks plays its normal deck.
+            var spellbook = CreatureSpellbookCollection.GetCreatureSpellbook(deckBehavior.m_defaultDeck)
+                ?? (Imlight.CoreLib.Game.World.AdvancedMode.NormalDeckOf(deckBehavior.m_defaultDeck) is { } normalDeck
+                    ? CreatureSpellbookCollection.GetCreatureSpellbook(normalDeck) : null);
             foreach (var spellId in spellbook?.SpellTemplateIds ?? []) {
                 Add(spellId);
             }

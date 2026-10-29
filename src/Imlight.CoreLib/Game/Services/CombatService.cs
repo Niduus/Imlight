@@ -258,6 +258,9 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             var customDrops = changes?.Drops;
             string[] tables = customDrops is { Count: > 0 } ? [.. customDrops]
                 : NpcDropTableCollection.TryGetDropTable(templateId, out var npcDropTable) ? npcDropTable.DropTableNames.ToArray()
+                // An Advanced Mode copy (Adv_...) with no table of its own drops like its normal creature.
+                : NpcDropTableCollection.TryGetDropTable(Imlight.CoreLib.Game.World.AdvancedMode.NormalCreatureOf(templateId), out var normalDropTable)
+                    ? normalDropTable.DropTableNames.ToArray()
                 : [];
 
             // Tamed Drops: a boss's loot follows how many rounds the battle took, with account-wide pity.
