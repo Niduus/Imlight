@@ -132,6 +132,7 @@ internal class CommandUpgradeProtocol : CommandProtocol {
     }
 
     [Command("spellements")]
+    [Alias("spellement")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void SpellementsCommand(string amount = "200") {
         if (string.Equals(amount, "full", StringComparison.OrdinalIgnoreCase) || string.Equals(amount, "max", StringComparison.OrdinalIgnoreCase)) {
