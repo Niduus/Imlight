@@ -74,14 +74,6 @@ internal static class StitchedItemFactory {
         => TryCreate(wizard, plan.TemplateId, plan.PrimaryColor, plan.SecondaryColor, plan.Pattern, out item);
 
     /// <summary>
-    /// Whether an item has jewel sockets, which a stitch would destroy or leave locked.
-    /// </summary>
-    /// <param name="item">The item in question.</param>
-    /// <returns>True when the item carries a jewel socket behavior.</returns>
-    internal static bool HasJewelSockets(WizClientObjectItem item)
-        => item.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().Any() == true;
-
-    /// <summary>
     /// Gives an item the jewel sockets of another: unlocked sockets stay unlocked and socketed jewels stay
     /// (Niduus, 2026-10-20: stitched wands came back with their sockets locked again).
     /// </summary>
@@ -125,6 +117,9 @@ internal static class StitchedItemFactory {
             return false;
         }
 
+        // A new item has no behaviors until they are made from its template, and without them there is no socket
+        // slot, so the sockets of the stats item were dropped (Niduus, 2026-10-29: stitching still lost jewels/pins).
+        CoreObjectFactory.InitializeCoreObjectBehaviors(item, item.m_templateID);
         item.m_characterId = wizard.CharId;
         item.m_primaryColor = primaryColor;
         item.m_secondaryColor = secondaryColor;
