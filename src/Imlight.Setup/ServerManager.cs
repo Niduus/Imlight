@@ -622,6 +622,18 @@ internal sealed partial class ServerManager(string installFolder) {
         RememberCommand(command);
     }
 
+    /// <summary>
+    /// Runs one command several times in a row, for commands that give one at a time (.mod addreagent gives one reagent),
+    /// and remembers it once in the previous commands.
+    /// </summary>
+    internal void SendCommand(string command, int times) {
+        SendCommand(command);
+        var line = command.Trim().ReplaceLineEndings(" ") + Environment.NewLine;
+        if (times > 1) {
+            File.AppendAllText(Path.Combine(ServerFolder, COMMANDS_FILE), string.Concat(Enumerable.Repeat(line, times - 1)));
+        }
+    }
+
     // The commands run from the app, newest first, for the "Previous commands" list.
     private const string COMMAND_HISTORY_FILE = "command-history.txt";
     private const int COMMAND_HISTORY_SIZE = 30;

@@ -52,11 +52,12 @@ internal sealed partial class ManagerWindow {
             ["Quests", "Spell Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
         ("Database", "search", "IDs, spells, gear, bosses",
-            "Everything in the game, ready to search: IDs, spell cards, gear, house items, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
-            ["Lookup", "Spells", "Gear", "Furniture", "Bosses", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Phrases"]),
+            "Everything in the game, ready to search: IDs, spell cards, gear, house items, reagents, jewels, snacks and every other item, badges, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
+            ["Lookup", "Spells", "Gear", "Furniture", "Items", "Badges", "Bosses", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Phrases"]),
         ("Create", "puzzle", "Cheats, customs, guides",
             "Make cheats for yourself, build your own creatures and areas, word what the server announces, and step-by-step guides.",
-            ["Player Cheats", "Customs", "Announcements", "Guides"]),
+            // Niduus, 2026-10-28: "Make BOSS TEST in the exe": the bosses with cheats to test, beside the cheat editor.
+            ["Player Cheats", "Boss Test", "Customs", "Announcements", "Guides"]),
         ("Server", "server", "Settings, accounts, logs",
             "Run the server and set it up: settings, who can log in, logs, game files and tools.",
             ["Server", "Settings", "Accounts", "Logs", "Game Files", "Tools"]),
@@ -405,7 +406,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
+        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Items", _itemsSearch), ("Badges", _badgesSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Boss Test", _btSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),

@@ -62,7 +62,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _furnitureFavoritesOnly = FavoritesOnlyTick();
     private readonly NumericUpDown _furnitureAmount = new() { Minimum = 1, Maximum = 100, Value = 1, Increment = 1, FormatString = "0", Width = 120 };
     private readonly TextBlock _furnitureCount = new() { TextWrapping = TextWrapping.Wrap };
-    private readonly ListBox _furnitureList = new() { Background = Brushes.Transparent };
+    private readonly ListBox _furnitureList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
     private readonly Border _furniturePicture = new() { HorizontalAlignment = HorizontalAlignment.Center };
     private readonly StackPanel _furnitureDetails = new() { Spacing = 4 };
     private readonly DispatcherTimer _furnitureDelay = new() { Interval = TimeSpan.FromMilliseconds(220) };
@@ -134,7 +134,7 @@ internal sealed partial class ManagerWindow {
                                     "from, rarity, marks and price. With nothing typed, every house item shows. Click one to see its " +
                                     "details, and Give to my wizard puts it in your backpack. In the game, .furniture 1 <name or ID> does the same, " +
                                     "and .furniture find <words> lists matches. Click the star on a row to make it a favorite: favorites show first."),
-                                filters, _furnitureCount,
+                                WithCount(filters, _furnitureCount),
                             },
                         }), Dock.Top),
                         WithMargin(_furnitureList, new Thickness(0, 12, 0, 0)),

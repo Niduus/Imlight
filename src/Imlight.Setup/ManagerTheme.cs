@@ -121,11 +121,14 @@ internal static class ManagerTheme {
         ["Gear"] = Color.FromRgb(52, 170, 200),
         ["Recipes"] = Color.FromRgb(168, 120, 60),
         ["Furniture"] = Color.FromRgb(196, 140, 90),
+        ["Items"] = Color.FromRgb(70, 180, 140),
+        ["Badges"] = Color.FromRgb(220, 180, 70),
         ["Vendors"] = Color.FromRgb(120, 150, 60),
         ["Pet Talents"] = Color.FromRgb(230, 110, 160),
         ["Pet Derby"] = Color.FromRgb(240, 150, 60),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
+        ["Boss Test"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
         ["Guides"] = Color.FromRgb(46, 160, 140),
         ["Server"] = Color.FromRgb(63, 167, 160),
@@ -738,6 +741,15 @@ internal static class ManagerTheme {
         };
         yield return new Style(x => x.OfType<TabControl>().Class("subnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
             Setters = { new Setter(Layoutable.MarginProperty, new Thickness(18, 10, 18, 0)) },
+        };
+
+        // The Database lists' rows (Niduus, 2026-10-28: "use up some more of the loose space"): less padding around each
+        // row, so a third more rows show at once.
+        yield return new Style(x => x.OfType<ListBox>().Class("compact").Descendant().OfType<ListBoxItem>()) {
+            Setters = {
+                new Setter(TemplatedControl.PaddingProperty, new Thickness(8, 4)),
+                new Setter(Layoutable.MinHeightProperty, 0.0),
+            },
         };
 
         // The clear button inside search boxes.

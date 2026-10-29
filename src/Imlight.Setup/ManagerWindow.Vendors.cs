@@ -77,7 +77,7 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _vendorChanged = new() { Content = "Only ones I changed" };
     private readonly CheckBox _vendorFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _vendorCount = new() { TextWrapping = TextWrapping.Wrap };
-    private readonly ListBox _vendorList = new() { Background = Brushes.Transparent };
+    private readonly ListBox _vendorList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
     private readonly StackPanel _vendorDetails = new() { Spacing = 6 };
 
     private List<VendorRow> _vendors = [];
@@ -110,7 +110,7 @@ internal sealed partial class ManagerWindow {
                     "Search or filter, then click one to see everything it sells or teaches and where it stands.",
                     WithHint(_vendorSearch, "Search by the NPC's name, its zone or world, its shop's name, or the name or ID of anything it " +
                         "sells or teaches. With nothing typed, every vendor and trainer shows. Click one to see its whole list. Click the star on a row to make it a favorite: favorites show first."),
-                    SearchFilters(
+                    WithCount(SearchFilters(
                         SearchFilter("Kind", _vendorKind),
                         SearchFilter("Shop window", _vendorWindow),
                         SearchFilter("World", _vendorWorld),
@@ -130,7 +130,7 @@ internal sealed partial class ManagerWindow {
                         SearchTick(_vendorPlaced),
                         SearchTick(_vendorChanged),
                         SearchTick(_vendorFavoritesOnly)),
-                    _vendorCount), Dock.Top),
+                    _vendorCount)), Dock.Top),
                 WithMargin(_vendorList, new Thickness(0, 14, 0, 0)),
             },
         };

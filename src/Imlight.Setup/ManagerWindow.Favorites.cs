@@ -51,6 +51,8 @@ internal sealed partial class ManagerWindow {
     private const string FAV_PET_TALENTS = "Pet Talents";
     private const string FAV_PET_DERBY = "Pet Derby";
     private const string FAV_PHRASES = "Phrases";
+    private const string FAV_ITEMS = "Items";
+    private const string FAV_BADGES = "Badges";
 
     private static readonly IBrush FAVORITE = new SolidColorBrush(Color.FromRgb(242, 194, 48));
     private static readonly JsonSerializerOptions s_favoritesWrite = new() { WriteIndented = true };
