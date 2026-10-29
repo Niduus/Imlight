@@ -124,6 +124,9 @@ internal sealed class Lookup {
             "Use it after an update to check the server was restarted. Also .version."),
         Command("Reset training points", ".respec", "Every player", "Says how many training points you would get back and which spells you would lose. " +
             ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
+        Command("Unlearn boss and dev spells", ".unlearnboss", "Every player", "Lists the boss and dev (test) spells you know. " +
+            ".unlearnboss yes takes them out of your spellbook and decks and gives back any training points they cost, so the wizard is legit again. " +
+            "Ahziael's Spells page has a button for it. Also .unlearndev."),
         Imlight("Cantrip level up", ".mod clvlup", QA, "Raises your cantrip level by one. Also .mod cantriplevelup."),
         Imlight("Set cantrip level", ".mod clvl <level>", QA, "Sets your cantrip level. Also .mod cantriplevel."),
 

@@ -209,7 +209,7 @@ internal static class TrainingReset {
     }
 
     // Every copy of the spell leaves every deck the wizard has, worn or in the backpack.
-    private static void RemoveFromDecks(IActorRef playerActor, Wizard wizard, uint spellId) {
+    internal static void RemoveFromDecks(IActorRef playerActor, Wizard wizard, uint spellId) {
         var decks = (wizard.EquipmentBehavior?.EquippedItems ?? []).Cast<CoreObject>()
             .Concat((wizard.InventoryBehavior?.Items ?? []).Cast<CoreObject>());
         foreach (var deck in decks.ToList()) {
@@ -230,6 +230,31 @@ internal static class TrainingReset {
                 });
             }
         }
+    }
+
+    /// <summary>
+    /// Forgets the trainings of these spells (they left the spellbook another way) and returns what each had cost.
+    /// </summary>
+    internal static Dictionary<uint, int> Forget(Wizard wizard, IEnumerable<uint> spellIds) {
+        var costs = new Dictionary<uint, int>();
+        lock (s_lock) {
+            var trained = Load();
+            if (!trained.TryGetValue(wizard.CharId, out var spells)) {
+                return costs;
+            }
+
+            foreach (var spellId in spellIds) {
+                if (spells.Remove(spellId, out var cost)) {
+                    costs[spellId] = cost;
+                }
+            }
+
+            if (costs.Count > 0) {
+                Save(trained);
+            }
+        }
+
+        return costs;
     }
 
     internal static void Tell(IActorRef playerActor, string text)

@@ -58,4 +58,32 @@ internal class CommandRespecProtocol : CommandProtocol {
             + $"{string.Join(", ", names)}{more}. Type .respec yes to do it.");
     }
 
+    // Ahziael's Spells page: takes the boss and dev spells out of the spellbook and decks, with their training points back.
+    [Command("unlearnboss")]
+    [Alias("unlearndev")]
+    private void UnlearnBossCommand([Remainder] string argument = "") {
+        var found = BossDevSpells.Of(Context.Character);
+        if ((argument ?? "").Trim().ToLowerInvariant() is "yes" or "y" or "confirm") {
+            var taken = BossDevSpells.Unlearn(Context.SessionActor, Context.Character);
+            var points = taken.Sum(t => t.Points);
+            InformSenderClient(taken.Count == 0
+                ? "You have no boss or dev spells. Your spellbook is already legit."
+                : $"Unlearned {taken.Count} boss and dev spells{(points > 0 ? $" and got {points} training points back" : "")}. "
+                  + "Ahziael's Spells page lists them.");
+
+            return;
+        }
+
+        if (found.Count == 0) {
+            InformSenderClient("You have no boss or dev spells. Your spellbook is already legit.");
+
+            return;
+        }
+
+        var names = found.Take(SHOWN_SPELLS).Select(s => s.Name);
+        var more = found.Count > SHOWN_SPELLS ? $" and {found.Count - SHOWN_SPELLS} more" : "";
+        InformSenderClient($"You know {found.Count} boss and dev spells: {string.Join(", ", names)}{more}. "
+            + "Type .unlearnboss yes to take them out of your spellbook and decks.");
+    }
+
 }

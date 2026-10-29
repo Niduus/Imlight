@@ -356,7 +356,7 @@ internal static class HouseTrainerSets {
     private static readonly System.Text.RegularExpressions.Regex s_devName
         = new(@"(^|[^A-Za-z])(Dev|DEV|Debug|DEBUG|GM|Admin|ADMIN)([^a-z]|$)");
 
-    private static IEnumerable<(ulong Id, int Level, SpellTemplate Spell, string Kind)> DevSpells() {
+    internal static IEnumerable<(ulong Id, int Level, SpellTemplate Spell, string Kind)> DevSpells() {
         var templateIds = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
         foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
             templateIds.TryAdd(location.m_filename, location.m_id);
