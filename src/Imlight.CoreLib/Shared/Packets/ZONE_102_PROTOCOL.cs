@@ -484,6 +484,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 102;
 
         public SpawnObject SpawnObject;
+
+        // How many creatures this tick may spawn: the spawner's respawn rate on its interval, one otherwise.
+        public int Count = 1;
     }
 
     /// <summary>
