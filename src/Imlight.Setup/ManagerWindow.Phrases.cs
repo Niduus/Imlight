@@ -111,7 +111,7 @@ internal sealed partial class ManagerWindow {
                        "In battle, .ca and its number shows the line over you like a boss's cheat line. The filters narrow it by number, " +
                        "key, length, and lines with words the game fills in (a name or number). " +
                        "Click the star on a line to make it a favorite: favorites show first."),
-                    SearchFilters(
+                    WithCount(SearchFilters(
                         SearchFilter("Number from", _phraseFrom),
                         SearchFilter("Number to", _phraseTo),
                         SearchFilter("Key has", _phraseKey),
@@ -121,7 +121,7 @@ internal sealed partial class ManagerWindow {
                         SearchTick(_phraseFilled),
                         SearchTick(_phraseLines),
                         SearchTick(_phraseFavoritesOnly)),
-                    _phraseCount), Dock.Top),
+                    _phraseCount)), Dock.Top),
                 WithMargin(Card(_phraseList), new Thickness(0, 14, 0, 0)),
             },
         };

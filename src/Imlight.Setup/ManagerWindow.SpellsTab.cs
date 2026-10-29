@@ -201,7 +201,7 @@ internal sealed partial class ManagerWindow {
                                     "BROKEN cards are ones Imlight's server can't do yet; PARTLY cards work but skip a part (point at the mark to see which). " +
                                     "Each card shows the game's text, then in { } what the code does (written by Imlight from the spell's effects). " +
                                     "Click the star under a card to make it a favorite: favorites show first."),
-                                filters, _spellsCount,
+                                WithCount(filters, _spellsCount),
                             },
                         }), Dock.Top),
                         WithMargin(_spellsScroll, new Thickness(0, 12, 0, 0)),

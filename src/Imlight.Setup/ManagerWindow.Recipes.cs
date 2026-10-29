@@ -74,7 +74,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _recipeSort = FilterCombo(s_recipeSorts, 170);
     private HashSet<uint> _recipeChanged = [];
     private readonly TextBlock _recipeCount = new() { TextWrapping = TextWrapping.Wrap };
-    private readonly ListBox _recipeList = new() { Background = Brushes.Transparent };
+    private readonly ListBox _recipeList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
     private readonly StackPanel _recipeDetails = new() { Spacing = 6 };
     private readonly DispatcherTimer _recipeDelay = new() { Interval = TimeSpan.FromMilliseconds(220) };
 
@@ -163,7 +163,7 @@ internal sealed partial class ManagerWindow {
                                 MissingNote("the .recipe and .craft commands are " + ServerSource.DefaultName + "'s.", () => !_manager.HasRecipeCommands),
                                 WithHint(_recipeSearch, "Search by the recipe's name, what it makes, an ingredient, or its template ID. Click a recipe to see " +
                                     "its ingredients, the station it is crafted at and its cooldown. Learn on my wizard teaches it to the wizard you play here. Click the star on a row to make it a favorite: favorites show first."),
-                                filters, vendor, _recipeCount,
+                                WithCount(filters, _recipeCount), vendor,
                             },
                         }), Dock.Top),
                         WithMargin(_recipeList, new Thickness(0, 12, 0, 0)),

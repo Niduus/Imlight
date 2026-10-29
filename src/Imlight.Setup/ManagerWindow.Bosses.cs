@@ -187,7 +187,7 @@ internal sealed partial class ManagerWindow {
                    "a jinx is a trap and a curse a weakness). Typed filters: world:Darkmoor, zone:DM_ (the game file's name), has:cheats, " +
                    "uses:\"Storm Global\". Leave the box empty to list them all, then narrow it with the filters. " +
                    "Click the star on a row to make it a favorite: favorites show first."),
-                SearchFilters(
+                WithCount(SearchFilters(
                     SearchFilter("School", _bossFilterSchool),
                     SearchFilter("World", _bossFilterWorld),
                     SearchFilter("Level from", _bossLevelMin),
@@ -199,7 +199,7 @@ internal sealed partial class ManagerWindow {
                     SearchTick(_bossChangedFirst),
                     SearchTick(_bossHasStats),
                     SearchTick(_bossFavoritesOnly)),
-                _bossCount,
+                    _bossCount),
                 _bossResults),
             _bossesEditorHost);
     }

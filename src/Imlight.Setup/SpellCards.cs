@@ -816,6 +816,7 @@ internal sealed partial class SpellBook {
         try {
             icon = DecodeTemplate(templateFile.Replace('\\', '/')) switch {
                 ReagentItemTemplate reagent => (string) reagent.m_imageName,
+                PetSnackItemTemplate snack => (string) snack.m_imageName is { Length: > 0 } image ? image : (string) snack.m_sIcon,
                 ItemTemplate item => (string) item.m_sIcon,
                 _ => null,
             };
