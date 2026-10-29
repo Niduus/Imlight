@@ -1,0 +1,2373 @@
+[
+  {
+    "ZoneName": "Krokotopia/KT_Hub",
+    "Teleports": [
+      {
+        "TriggerName": "KT-ToSELEBoat",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis",
+    "Teleports": [
+      {
+        "TriggerName": "KT-ToOASISBoat",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Selenopolis",
+          "m_destinationZone": "Krokotopia/KT_Hub"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Market",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_BlendedGrove",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Selenopolis",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I01_BlendedGrove"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Tomb",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Zigurat_Lower",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sele_Lower",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Bypass_2_Lower",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_Teleport_Bypass_From_Upper",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Bypass_2_Upper",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_Teleport_Bypass_From_Lower",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Garden",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z07_Garden"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_FromTop",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_Teleport_FromTop",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Cere’sa’s House",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I06_HouseCeresa"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_QuasarHouse",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I06_HouseQuasar"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_SafeHouse",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sele",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_SafeHouse"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Sanctum",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sele",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_MoonFestival",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sele",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_MoonFestival"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_SELE_Pyramid",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I01_BlendedGrove",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Selenopolis",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_BlendedGrove",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_WheelTutorial",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sele",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Tutorial_Wheel"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_FreezersBattleground",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_BlendedGrove",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_FreezersBattleground"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Tutorial_Wheel",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_WheelTutorial",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I01_BlendedGrove"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_FreezersBattleground",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_JuliusFreezerBattle",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I01_BlendedGrove"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I06_HouseCeresa",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport location",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromCere’sa’s House",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04I06_HouseQuasar",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport location",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromQuasarHouse",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_MoonFestival",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_MoonFestival",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_SafeHouse",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_SafeHouse",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sanctum",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Sanctum2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sanctum2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum_Adv",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sanctum",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Sanctum2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Sanctum2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele_Lower",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Zigurat_Lower",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Sele_Upper",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Zigurat_Upper",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid_Adv",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Sele_Lower",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Zigurat_Lower",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_Sele_Upper",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Zigurat_Upper",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/KT_Z05_Market",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Selenopolis",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Market",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport_Source_To_UndergroundMarket",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport_Source_To_GrandExposition",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_To_RogueTheater_Soloi_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_RogueTheater_Multi_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_PrologueHall_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I01_PrologueHall"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_CloudK9",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Market",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05_Cloud_K9"
+        }
+      },
+      {
+        "TriggerName": "Teleport_to_MARK_StoryTellers_Den_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05_StoryTellersDen"
+        }
+      },
+      {
+        "TriggerName": "Sigil_LegendOfSutekh",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I01_PrologueHall",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_Marketplace_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_PrologueHall_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_To_Marketplace_02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_PrologueHall_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_MarketPlace",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_RogueTheater_Solo_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_01_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_01_To",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_02_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_02_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_03_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_03_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_04_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_04_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_01_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_01_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_02_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_02_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_03_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_03_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_04_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_04_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_MarketPlace",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_RogueTheater_Multi_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_01_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_01_To",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_02_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_02_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_03_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_03_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_04_from_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_04_to",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_01_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_01_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_02_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_02_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_03_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_03_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Room_04_to_Lobby",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Room_04_from",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I06_MainTheater_Group"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05_Cloud_K9",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "-3181.228,-2364.462,0.000,-3.081891",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05_StoryTellersDen",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_To_Market",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_StorytellersDen",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport Djeserit",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "ReturnFromSutekh",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Teleport Room2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh02_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh02_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport Room1",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "FromRoom2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport Room3",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh03_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh03_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source (1)",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From Room3",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I11_LegendOfSutekh02_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "ReturnFromSutekh",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_Source_To_MarketPlaceOfIdeas",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_UndergroundMarket",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_PropDepartment_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I03_PropDepartment"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_Moonseum",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I05_Museum"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_ShrineOfMarcus_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I10_ShrineOfMarcus"
+        }
+      },
+      {
+        "TriggerName": "KT-SE-MARK_Teleporter_To_Punderdome",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I11_Punderdome"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I03_PropDepartment",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_UndergroundMarket_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_PropDepartment",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_To_UndergroundMarket_02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_PropDepartment",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I05_Museum",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_UndergroundMarket",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_Moonseum",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Exit_Teleporter",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_Moonseum",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I10_ShrineOfMarcus",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_UndergroundMarket",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_ShrineOfMarcus",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I11_Punderdome",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_Market",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "6504.122,15899.191,-465.060,1.491118",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I08_Storage_A_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_Market Place of Ideas_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_GrandExposition",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z05_Market"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Enter_PetZone_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Enter_PetZone_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Exit_PetZone_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Exit_PetZone_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_TheaterOfWar_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I02_TheaterOfWar"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_LieBrary_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_MARK_Gatehouse_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I07_Gatehouse"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I02_TheaterOfWar",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_GrandExposition_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_TheaterOfWar_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_To_GrandExposition_02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_TheaterOfWar_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_GrandExposition",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_LieBrary_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_White_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_White_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Yellow_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Yellow_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Cyan_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Cyan_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Magenta_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Magenta_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_From_White_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Lobby_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_From_Yellow_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Lobby_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_From_Cyan_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Lobby_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_From_Magenta_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_Lobby_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I04_LieBrary"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I07_Gatehouse",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_GrandExposition",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_Gatehouse_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z05I09_Storage_B_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten",
+    "Teleports": [
+      {
+        "TriggerName": "To The Hub",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Forgotten",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "TP Hall 01 to Hall 02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Into Hall 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger KrokosphinxDeathSt",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_KrokosphinxBoss"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_01_A",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit Callisto to Hall 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_01_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit Callisto Back to Hall 01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_02_A",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Land Hall 03 from 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_02_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Land Hall 02 from 03",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_03_A",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Into Hall 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_03_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Into Hall 04",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Sigil ChamberOfPhoebe",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I09_ChamberPhoebe_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Almathea",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I08_ChamberAmalthea_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Callisto",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I06_ChamberCallisto_New_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Mimas",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I07_ChamberMimas_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Light",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I02_TombLight_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Night",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I03_TombNight_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Chamber of Darkness",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I10_DarkChamber_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil ChamberOfTethys",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I05_ChamberTethys_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Crypt Of Ra",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I12_CryptOfRa_Int"
+        }
+      },
+      {
+        "TriggerName": "Sigil Field of Reeds",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I04_FieldReeds_Int"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_03",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_03",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_04",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_01_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_02_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "KT-Teleporter_ForgottenTombs_03_B",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_KrokosphinxBoss",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Return Krokosphinx",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I09_ChamberPhoebe_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Return TombOfForgottenFromPhoebe",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfPhoebe",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I08_ChamberAmalthea_Int",
+    "Teleports": [
+      {
+        "TriggerName": "TP Return From Amalthea",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfAlmathea",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I06_ChamberCallisto_New_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Return Hall 01 From Callisto",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit Callisto Back to Hall 01",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Into Hall 02 From Callisto",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit Callisto to Hall 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I07_ChamberMimas_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfMimas",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I02_TombLight_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfLight",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I03_TombNight_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfNight",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I10_DarkChamber_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport BackToHall03",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Into Hall 02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Teleport IntoHall04",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Into Hall 04",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I05_ChamberTethys_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfTethys",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I04_FieldReeds_Int",
+    "Teleports": [
+      {
+        "TriggerName": "TP to TombOfForgottenFromFieldReeds",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Field of Reeds",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I12_CryptOfRa_Int",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport To TombOfForgotten",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From Crypt Of Ra",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Teleport To TombOfForgotten (1)",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From Crypt Of Ra",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Teleport To MotherSunnRoom",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "MotherSunnRoom",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I12_CryptOfRa_Int"
+        }
+      },
+      {
+        "TriggerName": "Teleport To CryptRoom01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From MotherSunn",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I12_CryptOfRa_Int"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I12_CryptOfRa_Int_Hard",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport To TombOfForgotten",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From Crypt Of Ra",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "Teleport To TombOfForgotten (1)",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "From Crypt Of Ra",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z06I01_ForgottenRooms",
+    "Teleports": [
+      {
+        "TriggerName": "TP Exit to Hall 03 from Phoebe",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfPhoebe",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "TP Exit to Hall 03 from Night",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfNight",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      },
+      {
+        "TriggerName": "TP Exit to Hall 03 From Light",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Exit ChamberOfLight",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z06_Forgotten"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/KT_Z07_Garden",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Garden",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"
+        }
+      },
+      {
+        "TriggerName": "Teleport source-ToGutter",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      },
+      {
+        "TriggerName": "Trigger-TeleportToVivarium",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I01_Vivarium"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-MoonShrine",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I04_MoonShrine"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I04_MoonShrine",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-TeleportToGarden",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-ShrineNewMoon",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z07_Garden"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I01_Vivarium",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-ToGarden",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromVivarium",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z07_Garden"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_PitofGorn",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Vivarium",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_PitOfGorn"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-DarkAbode",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I03_DarkAbode"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_PitOfGorn",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target-FromPitOfGorn",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I01_Vivarium"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I03_DarkAbode",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromDarkAbode",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I01_Vivarium"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I03_DarkAbode_Hard",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromDarkAbode",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I01_Vivarium"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-ToGarden",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromGutter",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z07_Garden"
+        }
+      },
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-PublicBoss",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/KT_Z07_Garden"
+        }
+      },
+      {
+        "TriggerName": "Trigger-BrightsLab",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_BrightsLab"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-1MBoss",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_Unknown"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-SecretBase",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I05_SecretBase"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-Aqueduct",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_Aqueduct"
+        }
+      },
+      {
+        "TriggerName": "Teleport to Interior sigil-TrialsOfTreebow",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_01"
+        }
+      },
+      {
+        "TriggerName": "Teleport_To_ChamberOfLegends",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends"
+        }
+      },
+      {
+        "TriggerName": "Teleport_2_MemoriesofGalkoth",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_01"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_BrightsLab",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromBrightsLab",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_Unknown",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-Unknown",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I05_SecretBase",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromSecretBase",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_Aqueduct",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-Aqueduct",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_01",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-ToGutter",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromTreebowTrials",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      },
+      {
+        "TriggerName": "Teleport source-ToRoom2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_02"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_02",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-To1",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromRoom2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_01"
+        }
+      },
+      {
+        "TriggerName": "Teleport source-To3",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_03"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_TrialsOfTreebow_03",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source-ToGutter",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target location-FromTreebowTrials",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_Garden",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_ChamberOfLegends",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_To_Room_02",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends_02"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends_02",
+    "Teleports": [
+      {
+        "TriggerName": "TeleportSource_To_Room_01",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_Room_02",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends"
+        }
+      },
+      {
+        "TriggerName": "TeleportSource_To_Room_03",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends_03"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends_03",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_Room_03",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I06_ChamberOfLegends_02"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Exit_Chamber",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "TargetLocation_From_ChamberOfLegends",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_01",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport source",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_MemoryofGalkoth",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_R2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Room1",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_02"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_02",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Room1",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_R2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_01"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_2_Room3",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Room2",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_03"
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_03",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_2_Room2",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_Room3",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07_MemoryofGalkoth_02"
+        }
+      },
+      {
+        "TriggerName": "Trigger_Teleport_Exit",
+        "Teleport": {
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0,
+          "m_destinationLoc": "Target_From_MemoryofGalkoth",
+          "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I02_Gutter"
+        }
+      }
+    ]
+  }
+]
