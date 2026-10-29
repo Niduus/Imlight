@@ -198,7 +198,13 @@ internal class TrainService(SessionActor sessionActor) : MessageService(sessionA
         var verdict = trainer.JudgeVanilla(wizard, index, spellTemplate);
         if (!verdict.CanTrain) {
             Logger.Warning("Vanilla trainers: {0} can't train {1} yet: {2}.", Logger.Args(wizardName, (string) spellTemplate.m_name, verdict.Why));
-            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "WizTraining_00000040", Success = 0 });
+            // The game cannot be told of quest, school or badge needs in the window (VanillaTrainers.ShownRequirements),
+            // so the spell can still be picked there; say in chat why it was not learned. The window's own line
+            // ("Don't forget to add this new Spell to your Deck!") is left out: it read as if the spell was learned.
+            SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                Message = $"You can't learn {(string) spellTemplate.m_name} yet: it {verdict.Why}.", Modal = 0,
+            });
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE { SpellID = spellId, DisplayText = "", Success = 0 });
 
             return;
         }

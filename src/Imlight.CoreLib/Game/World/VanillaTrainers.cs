@@ -243,8 +243,11 @@ internal static class VanillaTrainers {
                     ? Meets(item, wizard, knownNames, out itemFailed)
                     : MeetsOne(item, wizard, knownNames);
                 result = met != item.Not;
-                if (!result && failed is null) {
-                    failed = item.Class == "List" ? itemFailed ?? item : item;
+                var why = item.Class == "List" ? itemFailed ?? item : item;
+                if (!result && (failed is null || joinsWithOr && IsOtherSchool(failed) && !IsOtherSchool(why))) {
+                    // Of choices such as "Balance and quest A, or Death and quest B", the one for the wizard's own
+                    // school says what is missing (quest B); "needs Balance as school" would mislead a Death wizard.
+                    failed = why;
                 }
                 else if (result && joinsWithOr) {
                     failed = null;
@@ -260,6 +263,8 @@ internal static class VanillaTrainers {
 
         return result;
     }
+
+    private static bool IsOtherSchool(Need need) => need.Class == "SchoolOfFocus" && !need.Not;
 
     private static bool MeetsOne(Need need, Wizard wizard, HashSet<string> knownNames) {
         switch (need.Class) {
