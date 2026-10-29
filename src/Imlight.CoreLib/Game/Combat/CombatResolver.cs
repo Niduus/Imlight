@@ -138,7 +138,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     // queue's next spell.
     private sealed record DelayedCast(QueuedCombatAction Action, bool AtStart, int Round, bool Free = false, string Target = null,
                                       bool SkipCast = false, char When = 'n', string Announcement = null, bool OnTarget = false,
-                                      bool Cheat = false, string Tag = null);
+                                      bool Cheat = false, string Tag = null, bool Pet = false);
     private readonly List<DelayedCast> _delayedCasts = [];
 
     /// <summary>
@@ -767,7 +767,19 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             }
         }
 
+        MarkPetCasts(combatActionList, before);
+
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// The actions a pet's cast added (from <paramref name="before"/> on) go to the game as interrupts ([PetCasting]
+    /// CastsAsInterrupt), so it does not take them for the owner's turn and tick their damage and heal over time again.
+    /// </summary>
+    private static void MarkPetCasts(CombatActionListObj combatActionList, int before) {
+        for (var i = before; PetMayCasts.CastsAsInterrupt && i < combatActionList.m_actionList.Count; i++) {
+            combatActionList.m_actionList[i].m_interrupt = InterruptUnlessGlobal(combatActionList.m_actionList[i]);
+        }
     }
 
     /// <summary>
@@ -834,7 +846,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     internal int AddFreeDelayedCast(CombatDuelSubCircle caster, uint spellTemplateId, bool atStart, out string enchantment,
                                     string target = null, bool skipCast = false, char when = 'n', bool enchant = false,
                                     IReadOnlyList<string> enchants = null, bool onTarget = false, bool cheat = false,
-                                    List<CombatDuelSubCircle> pickedTargets = null, string tag = null) {
+                                    List<CombatDuelSubCircle> pickedTargets = null, string tag = null, bool pet = false) {
         enchantment = null;
         var spell = SpellFactory.GetSpell(spellTemplateId);
         if (spell is null || CoreObjectFactory.GetCoreTemplate(spellTemplateId) is not SpellTemplate template) {
@@ -884,7 +896,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             SpellCaster = caster, Spell = spell, SpellTemplate = template, PickedTargets = pickedTargets, PicksChosen = pickedTargets is not null,
         };
         _delayedCasts.Add(new DelayedCast(action, atStart, (int) _duel.m_roundNum - 1, Free: true, Target: target, SkipCast: skipCast,
-                                       When: when, OnTarget: onTarget, Cheat: cheat, Tag: tag));
+                                       When: when, OnTarget: onTarget, Cheat: cheat, Tag: tag, Pet: pet));
 
         return _delayedCasts.Count(d => d.Free && d.Announcement is null && d.Action.SpellCaster == caster && d.AtStart == atStart && d.When == when);
     }
@@ -1042,6 +1054,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     // A cheat's free cast for later (First, Last, Before, After) is out of the turn order too.
                     for (var i = before; delayed.Cheat && BossCheats.CastsAsInterrupt && i < combatActionList.m_actionList.Count; i++) {
                         combatActionList.m_actionList[i].m_interrupt = CastsAsInterrupt(combatActionList.m_actionList[i]);
+                    }
+
+                    // A pet's Will Cast is out of the turn order as well.
+                    if (delayed.Pet) {
+                        MarkPetCasts(combatActionList, before);
                     }
                 }
                 catch (Exception e) {

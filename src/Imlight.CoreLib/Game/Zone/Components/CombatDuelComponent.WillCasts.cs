@@ -258,7 +258,7 @@ internal sealed partial class CombatDuelComponent {
             }
 
             var target = WillCastTarget(circle, willCast, message.Target);
-            var count = CombatResolver.AddFreeDelayedCast(circle, willCast.SpellTemplateId, true, target);
+            var count = CombatResolver.AddFreeDelayedCast(circle, willCast.SpellTemplateId, true, out _, target, pet: true);
             if (count == 0) {
                 Inform($"{willCast.ShownName} could not be cast.");
 
