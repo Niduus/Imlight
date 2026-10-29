@@ -110,6 +110,7 @@ internal static class ManagerTheme {
         ["What's New"] = Color.FromRgb(70, 170, 245),
         ["AI Guide"] = Color.FromRgb(196, 120, 255),
         ["Database"] = Color.FromRgb(58, 143, 217),
+        ["Progress"] = Color.FromRgb(240, 170, 60),
         ["Create"] = Color.FromRgb(217, 101, 59),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
@@ -126,10 +127,13 @@ internal static class ManagerTheme {
         ["Vendors"] = Color.FromRgb(120, 150, 60),
         ["Pet Talents"] = Color.FromRgb(230, 110, 160),
         ["Pet Derby"] = Color.FromRgb(240, 150, 60),
+        ["Fast Forward"] = Color.FromRgb(240, 170, 60),
+        ["Best Gear"] = Color.FromRgb(70, 190, 170),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
         ["Boss Test"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
+        ["Share"] = Color.FromRgb(64, 160, 220),
         ["Guides"] = Color.FromRgb(46, 160, 140),
         ["Server"] = Color.FromRgb(63, 167, 160),
         ["Announcements"] = Color.FromRgb(224, 128, 72),
@@ -400,6 +404,8 @@ internal static class ManagerTheme {
         ["Put back the game's values"] = "undo", ["Put back the game's deck"] = "undo", ["Put back the game's cheats"] = "undo",
         ["New password"] = "key", ["Rename"] = "pencil", ["Show"] = "eye", ["Hide"] = "eyeoff", ["Lock"] = "lock", ["Unlock"] = "unlock",
         ["Learn on my wizard"] = "sparkle", ["What's new"] = "sparkle", ["Send to my gifts"] = "gift",
+        ["Export ticked…"] = "download", ["Open a customs file…"] = "file", ["Import ticked"] = "check", ["Undo last import"] = "undo",
+        ["Open backups folder"] = "folder", ["Tick all"] = "check", ["Share or import customs…"] = "link",
     };
 
     /// <summary>A button with its label's icon. Primary ones are filled with the accent colour.</summary>

@@ -50,6 +50,11 @@ internal sealed partial class ManagerWindow {
             "Follow your wizard's quests, see every world's main story in order, and change any quest or make your own.",
             // Niduus, 2026-10-27: a main quest testing list, story order, start to finish.
             ["Quests", "Spell Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
+        // Niduus, 2026-10-29: "help guide the player softly to the stage they want to be in": catch up to a level or a
+        // world with the quests' real rewards, and the best gear for your level with where to get it.
+        ("Progress", "bolt", "Fast forward, best gear",
+            "Bring a wizard up to a level or a world with the quests' real rewards, and find the best gear for your level and where to get it.",
+            ["Fast Forward", "Best Gear"]),
         // Niduus, 2026-10-25: "move Bosses to Database".
         ("Database", "search", "IDs, spells, gear, bosses",
             "Everything in the game, ready to search: IDs, spell cards, gear, house items, reagents, jewels, snacks and every other item, badges, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
@@ -57,7 +62,8 @@ internal sealed partial class ManagerWindow {
         ("Create", "puzzle", "Cheats, customs, guides",
             "Make cheats for yourself, build your own creatures and areas, word what the server announces, and step-by-step guides.",
             // Niduus, 2026-10-28: "Make BOSS TEST in the exe": the bosses with cheats to test, beside the cheat editor.
-            ["Player Cheats", "Boss Test", "Customs", "Announcements", "Guides"]),
+            // Niduus, 2026-10-29: every custom can be exported and imported for sharing (Share, beside Customs).
+            ["Player Cheats", "Boss Test", "Customs", "Share", "Announcements", "Guides"]),
         ("Server", "server", "Settings, accounts, logs",
             "Run the server and set it up: settings, who can log in, logs, game files and tools.",
             ["Server", "Settings", "Accounts", "Logs", "Game Files", "Tools"]),
@@ -408,7 +414,7 @@ internal sealed partial class ManagerWindow {
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
         ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Items", _itemsSearch), ("Badges", _badgesSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Boss Test", _btSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
-        ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Accounts", _accountSearch),
+        ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Share", _shareSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch),
     ];
 

@@ -41,6 +41,8 @@ ZONE_WORLDS = {
 }
 # Spiral Door worlds open from the start (WorldAccess.s_alwaysOpen).
 ALWAYS_OPEN = {"WizardCity", "Grizzleheim", "Wysteria"}
+# Worlds played after every other one, in this order.
+LAST_WORLDS = ["Darkmoor"]
 
 # Quest results the server has no handler for (src/Imlight.CoreLib/Game/Results/Handlers), in plain words.
 UNHANDLED = {
@@ -461,6 +463,10 @@ def main(lookup, spiraldb, rewards_md, out_path):
         # A world the server has none of (Catacombs, Selenopolis) can't be played at all; leave it out.
         if any(x["Code"] for x in quests):
             out_worlds.append({"Name": w["Name"], "SideWorld": w["SideWorld"], "Quests": quests})
+
+    # Darkmoor's world comes after Selenopolis (the Spiral Tracker lists it after Khrysalis, as a side world).
+    late = [w for w in out_worlds if w["Name"] in LAST_WORLDS]
+    out_worlds = [w for w in out_worlds if w["Name"] not in LAST_WORLDS] + [dict(w, SideWorld=False) for w in late]
 
     out = {"Source": "Spiral Tracker order, the server's quests (v" + open(os.path.join(lookup, "..", "ahziael-version.txt")).read().strip()
            + ") and this repository's quest fixes" if os.path.exists(os.path.join(lookup, "..", "ahziael-version.txt")) else "",

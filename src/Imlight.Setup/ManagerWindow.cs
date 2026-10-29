@@ -131,6 +131,7 @@ internal sealed partial class ManagerWindow : Window {
         ("PlayersCanGainTrainingPoints", "Players can type .gaintp <amount> to get training points", new() { OnContent = "On", OffContent = "Off" }),
         ("RespecAtTrainers", "Mr. Lincoln offers to reset training points", new() { OnContent = "On", OffContent = "Off" }),
         ("VanillaTrainers", "Vanilla trainers: each trainer teaches only its real game spells, with real levels, costs and quests", new() { OnContent = "On", OffContent = "Off" }),
+        ("VanillaTrainersSkipQuests", "Vanilla trainers skip quests: spells don't need their quests done first", new() { OnContent = "On", OffContent = "Off" }),
     ];
     private readonly Border _battleCard;
     // [Battle] MaxMonsters: Off (0) keeps the wizards + 1 rule, 1 to 4 is the most monsters a battle holds.
@@ -370,10 +371,13 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Quest Tree", QuestTreeTab),
             Tab("Quest Testing", QuestTestingTab),
             Tab("Spell Quests", SpellQuestsTab),
+            Tab("Fast Forward", FastForwardTab),
+            Tab("Best Gear", BestGearTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Boss Test", BossTestTab),
             Tab("Customs", CustomsTab),
+            Tab("Share", ShareTab),
             Tab("Quest Editor", QuestEditorTab),
             Tab("Guides", GuidesTab),
             Tab("Server", ServerTab),
@@ -482,10 +486,13 @@ internal sealed partial class ManagerWindow : Window {
             case "Quest Tree": await LoadQuestTreeAsync(); break;
             case "Quest Testing": await LoadQuestTestingAsync(); break;
             case "Spell Quests": LoadSpellQuests(); break;
+            case "Fast Forward": LoadFastForward(); break;
+            case "Best Gear": await LoadBestGearAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Boss Test": await LoadBossTestAsync(); break;
             case "Customs": await LoadCustomsAsync(); break;
+            case "Share": await LoadShareAsync(); break;
             case "Quest Editor": LoadQuestEditor(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
             case "Guides":
@@ -2733,10 +2740,13 @@ internal sealed partial class ManagerWindow : Window {
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
         ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
+        ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
+        ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Boss Test"] = ("crown", "Every boss with cheats, by world: what each cheat should do, where it is, a button to bring it into your battle, and a tick when it worked."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
+        ["Share"] = ("link", "Export any of your customs to one file to share, or import a friend's file safely."),
         ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         ["Server"] = ("server", "Start and stop the server, and switch its modes."),

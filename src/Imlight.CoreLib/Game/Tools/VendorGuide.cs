@@ -159,7 +159,7 @@ internal static class VendorGuide {
     };
 
     // Where each NPC stands: the zones ([zone, its name]) and each NPC's zone numbers.
-    private static (List<string[]> Names, Dictionary<uint, int[]> Of) LoadZones() {
+    internal static (List<string[]> Names, Dictionary<uint, int[]> Of) LoadZones() {
         var names = new List<string[]>();
         var of = new Dictionary<uint, int[]>();
         var path = Path.Combine(SpiralDB.ExtraPath, ZONES_FILE);

@@ -467,6 +467,14 @@ public partial class CombatResolver {
     // An aura-like effect with rounds lasts that long and is never used up; 0 rounds is the rest of the battle.
     private const int REST_OF_BATTLE = 999;
 
+    // Boosts made with Lasting (Niduus, 2026-10-29): a new aura does not push them off, as with shadow selves, so an
+    // enrage that stacks survives the boss's own aura spells. Spells and cheats that take auras off still do.
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SpellEffect, object> s_lastingBoosts = new();
+
+    /// <summary>Whether a new aura leaves this aura where it is: a shadow self's buffs, or a lasting boost.</summary>
+    internal static bool StaysWithNewAura(SpellEffect effect)
+        => IsShadowSelf(effect) || effect is not null && s_lastingBoosts.TryGetValue(effect, out _);
+
     private static SpellEffect CheatEffect(kSpellEffects type, int amount, string school, int rounds, bool good) => new() {
         m_effectType = type,
         m_effectParam = amount,
@@ -642,7 +650,7 @@ public partial class CombatResolver {
             if (lookTemplate is null) {
                 // No aura to cast: unseen, one aura at a time as in the game.
                 var lasting = step.Rounds > 0 ? step.Rounds : 4;
-                target._hangingEffects.RemoveAll(CombatRequirements.IsAura);
+                target._hangingEffects.RemoveAll(e => CombatRequirements.IsAura(e) && !StaysWithNewAura(e));
                 foreach (var (type, param, own) in stats) {
                     target._hangingEffects.Add(Made(type, param, own, lasting));
                 }
@@ -1136,7 +1144,12 @@ public partial class CombatResolver {
                         _ => CheatEffect(kSpellEffects.kModifyOutgoingDamage, amount, step.School, rounds, good: amount >= 0),
                     };
                     foreach (var target in On("Self").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
-                        target._hangingEffects.Add(effect with { });
+                        var added = effect with { };
+                        if (step.Lasting) {
+                            s_lastingBoosts.AddOrUpdate(added, null);
+                        }
+
+                        target._hangingEffects.Add(added);
                     }
 
                     return true;
