@@ -386,7 +386,7 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 103;
 
         /// <summary>
-        /// One of: remove, completegoal, complete, grant, forcegrant, list, info.
+        /// One of: remove, completegoal, complete, grant, forcegrant, list, info, toquest, fastforward.
         /// </summary>
         public string Action;
 

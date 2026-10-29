@@ -110,6 +110,7 @@ internal static class ManagerTheme {
         ["What's New"] = Color.FromRgb(70, 170, 245),
         ["AI Guide"] = Color.FromRgb(196, 120, 255),
         ["Database"] = Color.FromRgb(58, 143, 217),
+        ["Progress"] = Color.FromRgb(240, 170, 60),
         ["Create"] = Color.FromRgb(217, 101, 59),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
@@ -126,6 +127,8 @@ internal static class ManagerTheme {
         ["Vendors"] = Color.FromRgb(120, 150, 60),
         ["Pet Talents"] = Color.FromRgb(230, 110, 160),
         ["Pet Derby"] = Color.FromRgb(240, 150, 60),
+        ["Fast Forward"] = Color.FromRgb(240, 170, 60),
+        ["Best Gear"] = Color.FromRgb(70, 190, 170),
         ["Bosses"] = Color.FromRgb(217, 101, 59),
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
         ["Boss Test"] = Color.FromRgb(217, 101, 59),

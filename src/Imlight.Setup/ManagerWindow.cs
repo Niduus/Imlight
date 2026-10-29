@@ -371,6 +371,8 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Quest Tree", QuestTreeTab),
             Tab("Quest Testing", QuestTestingTab),
             Tab("Spell Quests", SpellQuestsTab),
+            Tab("Fast Forward", FastForwardTab),
+            Tab("Best Gear", BestGearTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Boss Test", BossTestTab),
@@ -484,6 +486,8 @@ internal sealed partial class ManagerWindow : Window {
             case "Quest Tree": await LoadQuestTreeAsync(); break;
             case "Quest Testing": await LoadQuestTestingAsync(); break;
             case "Spell Quests": LoadSpellQuests(); break;
+            case "Fast Forward": LoadFastForward(); break;
+            case "Best Gear": await LoadBestGearAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Boss Test": await LoadBossTestAsync(); break;
@@ -2736,6 +2740,8 @@ internal sealed partial class ManagerWindow : Window {
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
         ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
+        ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
+        ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
         ["Boss Test"] = ("crown", "Every boss with cheats, by world: what each cheat should do, where it is, a button to bring it into your battle, and a tick when it worked."),
