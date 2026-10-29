@@ -74,6 +74,10 @@ public partial class CombatResolver {
                     var picked = target._hangingEffects.Where(e => Fits(e) && (copying || !e.m_protected) && SizedKind(e) is not null)
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                     if (!copying) {
+                        // The game is shown them coming off too, or it keeps drawing them (Niduus, 2026-10-29: "the convert
+                        // effect doesn't remove the target convert").
+                        cinematicTime += ShowRemoval(boss, cheat, step, target, picked, trigger, receiver, bossName, combatActionList,
+                            cinematicTimeSoFar + cinematicTime, custom);
                         var gone = picked.ToHashSet(ReferenceEqualityComparer.Instance);
                         target._hangingEffects.RemoveAll(gone.Contains);
                         _clearedCount += gone.Count;
@@ -98,7 +102,8 @@ public partial class CombatResolver {
                 }
 
                 if (redo.Count > 0) {
-                    cinematicTime = RunCheatStepsInOrder(boss, cheat, redo, trigger, receiver, bossName, custom, combatActionList, cinematicTimeSoFar);
+                    cinematicTime += RunCheatStepsInOrder(boss, cheat, redo, trigger, receiver, bossName, custom, combatActionList,
+                        cinematicTimeSoFar + cinematicTime);
                 }
 
                 return true;
@@ -664,6 +669,80 @@ public partial class CombatResolver {
     }
 
     // What "add an effect of your own size" calls an effect: Blade, Weakness, Shield, Trap or Absorb; null for any other.
+    // The game works the round out itself and draws only what it is shown cast: effects the server takes off with no spell
+    // stay on in the game. So a real removal spell (Enfeeble-like for blades, Pierce-like for shields...) is cast on the
+    // target for each kind taken, told to take that many, and the server then keeps exactly its own pick off. The game
+    // takes the newest of that kind, so when newer ones of another school sit on top it may show others gone.
+    private float ShowRemoval(CombatDuelSubCircle boss, BossCheats.BossCheat cheat, BossCheats.CheatAction step, CombatDuelSubCircle target,
+                              List<SpellEffect> picked, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver, string bossName,
+                              CombatActionListObj combatActionList, float cinematicTimeSoFar, bool custom) {
+        if (picked.Count == 0 || combatActionList is null) {
+            return 0;
+        }
+
+        var before = target._hangingEffects.ToList();
+        var cinematicTime = 0.0f;
+        var onEnemy = target.OccupiedTeam != boss.OccupiedTeam;
+        foreach (var group in picked.GroupBy(e => (Charm: s_charmEffects.Contains(e.m_effectType), Good: CombatRequirements.IsBeneficial(e)))) {
+            var look = RemovalLook(group.Key.Charm ? kSpellEffects.kRemoveCharm : kSpellEffects.kRemoveWard, group.Key.Good, onEnemy, target == boss);
+            if (look is null) {
+                Logger.Information("Duel {0} | {1}: no game spell takes off {2} {3}s on that side, so the game keeps showing them.",
+                    Logger.Args(_duel.m_duelID.Full, bossName, group.Key.Good ? "good" : "bad", group.Key.Charm ? "charm" : "ward"));
+                continue;
+            }
+
+            var sentBefore = combatActionList.m_actionList.Count;
+            cinematicTime += CheatCast(boss, cheat, new BossCheats.CheatAction { Do = "Cast", Spell = look.Value.Name, Target = $"slot:{target.SlotIndex}" },
+                trigger, receiver, bossName, [], combatActionList, cinematicTimeSoFar + cinematicTime, custom);
+            for (var i = sentBefore; i < combatActionList.m_actionList.Count; i++) {
+                if (combatActionList.m_actionList[i]?.m_spell is { } sent) {
+                    combatActionList.m_actionList[i].m_spell = sent with {
+                        m_paramOverrides = [new SpellEffectParamOverride { m_effectIndex = look.Value.Index, m_paramValue = group.Count() }],
+                    };
+                }
+            }
+        }
+
+        // The server's own pick, whatever the cast took.
+        target._hangingEffects.Clear();
+        target._hangingEffects.AddRange(before);
+
+        return cinematicTime;
+    }
+
+    // The game's removal spells of one effect (kRemoveCharm / kRemoveWard) on one target, by whether they take good or bad
+    // ones and whether they go on an enemy or a teammate: the shortest name of each.
+    private static readonly Lazy<List<(string Name, int Index, SpellEffect Effect)>> s_removalLooks = new(() => {
+        try {
+            return [.. SpellFactory.AllSpellTemplates()
+                .Where(t => t.Template.m_effects is [{ } e] && e.GetType() == typeof(SpellEffect)
+                            && e.m_effectType is kSpellEffects.kRemoveCharm or kSpellEffects.kRemoveWard
+                            && e.m_effectTarget is kEffectTarget.kEnemySingle or kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe
+                            && e.m_disposition is kHangingDisposition.kBeneficial or kHangingDisposition.kHarmful
+                            && SpellFactory.Exists((string) t.Template.m_name))
+                .Select(t => ((string) t.Template.m_name, 0, t.Template.m_effects[0]))
+                .OrderBy(t => t.Item1.Length)];
+        }
+        catch (Exception e) {
+            Logger.Error("Boss cheats | The removal spells could not be listed: {0}", Logger.Args(e));
+
+            return [];
+        }
+    });
+
+    private static (string Name, int Index)? RemovalLook(kSpellEffects type, bool good, bool onEnemy, bool onSelf) {
+        var disposition = good ? kHangingDisposition.kBeneficial : kHangingDisposition.kHarmful;
+        foreach (var (name, index, effect) in s_removalLooks.Value) {
+            if (effect.m_effectType == type && effect.m_disposition == disposition
+                && (effect.m_effectTarget == kEffectTarget.kEnemySingle) == onEnemy
+                && !(onSelf && effect.m_effectTarget == kEffectTarget.kFriendlySingleNotMe)) {
+                return (name, index);
+            }
+        }
+
+        return null;
+    }
+
     private static string SizedKind(SpellEffect e) {
         if (e.m_effectType == kSpellEffects.kAbsorbDamage) {
             return "Absorb";
