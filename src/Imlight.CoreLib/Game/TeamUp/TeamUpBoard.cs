@@ -335,8 +335,8 @@ internal static class TeamUpBoard {
         s_teams.Remove(team);
         var owner = team.Owner;
         // A team made in Advanced Mode (the game's button in the Team Up window) goes into the dungeon's Advanced copy.
-        var destination = Imlight.CoreLib.Game.World.AdvancedMode.DestinationFor(team.Sigil.DestinationZone, team.Mode,
-            owner?.CharId ?? 0);
+        var (destination, variant) = Imlight.CoreLib.Game.World.AdvancedMode.TripFor(team.Sigil.DestinationZone,
+            team.Sigil.Variant, team.Mode, owner?.CharId ?? 0);
         Logger.Information("Team Up: team {0} goes into {1} with {2} players ({3}).",
             Logger.Args(team.Id, destination, team.Members.Count, why));
 
@@ -357,7 +357,7 @@ internal static class TeamUpBoard {
                 SigilLoc = "",
                 DestinationZone = destination,
                 DestinationLoc = team.Sigil.DestinationLoc,
-                Variant = team.Sigil.Variant,
+                Variant = variant,
                 InstanceOwnerCharId = isOwner ? 0 : owner.CharId,
                 KeepInstance = !isOwner,
                 FaceSlot = i,

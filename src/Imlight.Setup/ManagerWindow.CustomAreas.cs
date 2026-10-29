@@ -927,6 +927,7 @@ internal sealed partial class ManagerWindow {
                         BossPicker(edit, boss.ToString(CultureInfo.InvariantCulture), rooms, customs),
                     },
                 }, SIGIL));
+                content.Children.Insert(2, AdvancedSection(edit, boss, minions, rooms, customs));
             }
 
             content.Children.Add(Row(Danger(Action(IconButton("Remove this battle", AreaIcon.Delete), () => RemoveEntry(edit, encounters, encounter)))));
@@ -992,6 +993,67 @@ internal sealed partial class ManagerWindow {
         });
 
         return Field("Boss of this room", choices.Count == 0 ? "Make a custom of this creature under Custom mobs to pick it here." : "", combo);
+    }
+
+    // The room's Advanced Mode version (the server's Game/World/AdvancedMode): Customs/Rooms.json's room with ~Advanced,
+    // naming the custom each creature is in Advanced Mode. A sigil to the room then offers the game's Advanced Mode button.
+    private const string ADVANCED_ROOM_SUFFIX = "~Advanced";
+
+    private Control AdvancedSection(AreaEdit edit, ulong boss, JsonArray minions, Dictionary<string, Dictionary<string, int>> rooms,
+        List<CustomMob> customs) {
+        var body = new StackPanel {
+            Spacing = FIELD_SPACING,
+            Children = {
+                Sub("A harder version of this fight. Pick which of your customs fight in Advanced Mode, and the sigil to this room shows " +
+                    "the game's Advanced Mode button (or the player types .advanced on). Each one left on \"Same as normal\" fights as it " +
+                    "does normally. Saved at once; it counts from the next time a team goes in."),
+                AdvancedPicker(edit, boss.ToString(CultureInfo.InvariantCulture), "Boss in Advanced Mode", rooms, customs),
+            },
+        };
+        foreach (var minion in minions.Select(m => m?.ToJsonString().Trim('"') ?? "").Where(m => m.Length > 0 && m != "0").Distinct()) {
+            if (customs.Any(c => c.BaseId == minion)) {
+                body.Children.Add(AdvancedPicker(edit, minion, $"{CreatureName(minion)} in Advanced Mode", rooms, customs));
+            }
+        }
+
+        if (minions.Count > 0 && body.Children.Count == 2) {
+            body.Children.Add(Sub("Make customs of the helpers under Custom mobs to give them harder versions here too."));
+        }
+
+        return SubPart(Tile(Glyph(AreaIcon.Boss, SIGIL, 14), SIGIL, 24), "Advanced Mode", Timing.NextUse, body, SIGIL);
+    }
+
+    private Control AdvancedPicker(AreaEdit edit, string template, string label, Dictionary<string, Dictionary<string, int>> rooms,
+        List<CustomMob> customs) {
+        var choices = customs.Where(c => c.BaseId == template).ToList();
+        var items = new List<string> { "Same as normal" };
+        items.AddRange(choices.Select(c => $"Custom {c.Id}: {c.Shown}"));
+        var room = edit.Area.Room + ADVANCED_ROOM_SUFFIX;
+        var now = rooms.TryGetValue(room, out var swaps) && swaps.TryGetValue(template, out var s) ? s : 0;
+        var combo = new ComboBox { Width = 360, ItemsSource = items, SelectedIndex = Math.Max(0, choices.FindIndex(c => c.Id == now) + 1) };
+        if (now > 0 && choices.All(c => c.Id != now)) {
+            items.Add($"Custom {now} (missing)");
+            combo.ItemsSource = items.ToList();
+            combo.SelectedIndex = items.Count - 1;
+        }
+
+        combo.SelectionChanged += async (_, _) => await Guard(() => {
+            var index = combo.SelectedIndex;
+            if (index < 0 || index > choices.Count) {
+                return Task.CompletedTask;
+            }
+
+            CustomRooms.Set(_manager.CustomsFolder, room, template, index == 0 ? 0 : choices[index - 1].Id);
+            RenderCustoms();
+            Say(index == 0
+                ? $"{RoomName(edit.Area.Room)} in Advanced Mode has its normal {CreatureName(template)} again."
+                : $"{RoomName(edit.Area.Room)} in Advanced Mode has custom {choices[index - 1].Id} instead of {CreatureName(template)}, " +
+                  "from the next time a team goes in.");
+
+            return Task.CompletedTask;
+        });
+
+        return Field(label, choices.Count == 0 ? "Make a custom of this creature under Custom mobs to pick it here." : "", combo);
     }
 
     // ---------------------------------------------------------------------

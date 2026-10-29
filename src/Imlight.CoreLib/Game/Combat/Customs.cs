@@ -125,9 +125,37 @@ internal static class Customs {
     /// @variant for a variant, as the ZoneObjects file names it.
     /// </summary>
     internal static int RoomCustomFor(string zonePath, string variant, ulong templateId) {
+        var rooms = Rooms();
+        if (rooms.Count == 0) {
+            return 0;
+        }
+
+        // A custom fight's Advanced version (Game/World/AdvancedMode): its own swaps first, then the room's.
+        var baseVariant = Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant);
+        var room = RoomName(zonePath, baseVariant);
+        var key = templateId.ToString();
+        if (Imlight.CoreLib.Game.World.AdvancedMode.IsAdvancedVariant(variant)
+            && rooms.TryGetValue(room + Imlight.CoreLib.Game.World.AdvancedMode.ADVANCED_SUFFIX, out var advanced)
+            && advanced.TryGetValue(key, out var advancedId) && advancedId != 0) {
+            return advancedId;
+        }
+
+        return rooms.TryGetValue(room, out var swaps) && swaps.TryGetValue(key, out var id) ? id : 0;
+    }
+
+    /// <summary>Whether the Customs tab gives a room an Advanced version (its name with ~Advanced, naming a creature).</summary>
+    internal static bool HasAdvancedRoom(string zonePath, string variant)
+        => Rooms().TryGetValue(RoomName(zonePath, variant) + Imlight.CoreLib.Game.World.AdvancedMode.ADVANCED_SUFFIX, out var swaps)
+           && swaps.Values.Any(id => id != 0);
+
+    private static string RoomName(string zonePath, string variant)
+        => string.IsNullOrEmpty(variant) ? zonePath : $"{zonePath}@{variant}";
+
+    // The rooms file, read again when it changes.
+    private static Dictionary<string, Dictionary<string, int>> Rooms() {
         var file = Path.Combine(SpiralDB.ExtraPath, FOLDER, ROOMS_FILE);
         if (!File.Exists(file)) {
-            return 0;
+            return [];
         }
 
         var written = File.GetLastWriteTimeUtc(file);
@@ -142,9 +170,7 @@ internal static class Customs {
             }
         }
 
-        var room = string.IsNullOrEmpty(variant) ? zonePath : $"{zonePath}@{variant}";
-
-        return s_rooms.Rooms.TryGetValue(room, out var swaps) && swaps.TryGetValue(templateId.ToString(), out var id) ? id : 0;
+        return s_rooms.Rooms;
     }
 
 }
