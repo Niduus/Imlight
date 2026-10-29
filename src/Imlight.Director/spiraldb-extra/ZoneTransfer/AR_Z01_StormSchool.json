@@ -1,0 +1,17 @@
+{
+  "ZoneName": "Arcanum/Interiors/AR_Z01_StormSchool",
+  "Events": [],
+  "Teleports": [
+    {
+      "TriggerName": "Teleport location",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-1903.375,-10489.58,-1.943245,-1.230102",
+        "m_destinationZone": "Arcanum/AR_Z01_Hub"
+      }
+    }
+  ]
+}

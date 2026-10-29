@@ -246,10 +246,13 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             return null;
         }
 
-        // A dungeon's way out that names no destination goes back to the last spot outside any instance.
+        // A dungeon's way out that names no destination goes back to the last spot outside any instance. So does the
+        // exit of a room that is not an instance (Arcanum's Hall of Shadow, whose exit the game renamed since SpiralDB's
+        // capture, kept the player in), as long as that spot is in another zone (Niduus, 2026-10-29).
         if (message.LeaveInstance && string.IsNullOrEmpty(message.DestinationZone)) {
             var leaving = GetActiveWizard();
-            if (!_currentZoneIsInstance || leaving is null || string.IsNullOrEmpty(leaving.SafeZone)
+            if (leaving is null || string.IsNullOrEmpty(leaving.SafeZone)
+                || !_currentZoneIsInstance && string.Equals(leaving.SafeZone, leaving.Zone, StringComparison.OrdinalIgnoreCase)
                 || string.IsNullOrEmpty(leaving.SafeLocation) || HouseZoneIndex.IsHouseZone(leaving.SafeZone)) {
                 Logger.Warning("Session {0}: a way out of {1} names no destination and there is no spot outside to go back to.",
                     Logger.Args(SessionActor.SessionID, leaving?.Zone));
