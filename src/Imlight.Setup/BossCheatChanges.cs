@@ -808,6 +808,15 @@ internal sealed class CheatLines {
 
     internal bool Any => _phrases.Count > 0;
 
+    private Dictionary<string, string>? _byKey;
+
+    /// <summary>The phrase of a key such as CombatMessages_00001011, or null.</summary>
+    internal string? ByKey(string key) {
+        _byKey ??= _phrases.GroupBy(p => p.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Text, StringComparer.OrdinalIgnoreCase);
+
+        return _byKey.GetValueOrDefault(key);
+    }
+
     /// <summary>
     /// The line a cheat's Line shows: the phrase of that number, the phrase of that key, or the first phrase holding
     /// the words. Null when none is found. The server's search (.ca) can pick a different phrase when several hold them.

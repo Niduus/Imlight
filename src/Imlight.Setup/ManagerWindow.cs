@@ -370,6 +370,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Spell Quests", SpellQuestsTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
+            Tab("Boss Test", BossTestTab),
             Tab("Customs", CustomsTab),
             Tab("Quest Editor", QuestEditorTab),
             Tab("Guides", GuidesTab),
@@ -481,6 +482,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Spell Quests": LoadSpellQuests(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
+            case "Boss Test": await LoadBossTestAsync(); break;
             case "Customs": await LoadCustomsAsync(); break;
             case "Quest Editor": LoadQuestEditor(); break;
             // The Make a custom wizard on the Guides tab searches the creature list.
@@ -2728,6 +2730,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
+        ["Boss Test"] = ("crown", "Every boss with cheats, by world: what each cheat should do, where it is, a button to bring it into your battle, and a tick when it worked."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
         ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
