@@ -99,6 +99,7 @@ internal static class QuestGuide {
             File.WriteAllText(temp, text.ToString());
             File.Move(temp, path, overwrite: true);
             Logger.Information("Quest guide: {0} quests listed for the Manager's Quests tab.", Logger.Args(quests.Count));
+            WriteXp(folder, quests);
 
             if (!s_detailsWritten) {
                 s_detailsWritten = true;
@@ -168,6 +169,63 @@ internal static class QuestGuide {
 
     private static string s_folder;
     private static bool s_detailsWritten;
+
+    // ---------------------------------------------------------------------
+    // XP, for the Fast Forward tab
+    // ---------------------------------------------------------------------
+
+    internal const string XP_NAME = "quest-xp.txt";
+
+    /// <summary>
+    /// Writes quest-xp.txt for the Manager's Fast Forward tab (Niduus, 2026-10-29: "I don't want to bunker up XP"): first
+    /// "level", the XP each level needs (level 1 first), then each quest's code and the XP all its reward tables give (its
+    /// steps' and its own, as the quests are now), so the tab can say which level a plan ends on, as the server will.
+    /// </summary>
+    private static void WriteXp(string folder, List<QuestTemplate> quests) {
+        try {
+            var text = new StringBuilder();
+            var max = Math.Max(1, Shared.Character.MagicLevelsConfig.MaxLevel);
+            text.Append("level");
+            for (var level = 1; level <= max; level++) {
+                text.Append('\t').Append(Shared.Character.MagicLevelsConfig.GetExperiencePointsAtLevel(level).ToString(CultureInfo.InvariantCulture));
+            }
+
+            text.Append('\n');
+            foreach (var quest in quests) {
+                var xp = XpOf(quest);
+                if (xp > 0) {
+                    text.Append(Clean(quest.m_questName)).Append('\t').Append(xp.ToString(CultureInfo.InvariantCulture)).Append('\n');
+                }
+            }
+
+            var path = Path.Combine(folder, XP_NAME);
+            File.WriteAllText(path + ".tmp", text.ToString());
+            File.Move(path + ".tmp", path, overwrite: true);
+        }
+        catch (Exception ex) {
+            Logger.Warning("Could not write the quests' XP for the Manager. {Exception}", Logger.Args(ex));
+        }
+    }
+
+    // The XP of every reward table a quest runs: when it starts, as its steps start and end, and when it is done.
+    private static int XpOf(QuestTemplate quest) {
+        var lists = new List<ResultList> { quest.m_startResults, quest.m_endResults };
+        foreach (var goal in quest.m_goals ?? []) {
+            if (goal is not null) {
+                lists.Add(goal.m_activateResults);
+                lists.Add(goal.m_completeResults);
+            }
+        }
+
+        var xp = 0;
+        foreach (var name in lists.SelectMany(l => l?.m_results ?? []).OfType<ResDropTable>().Select(r => (string) r.m_tableName)) {
+            if (!string.IsNullOrEmpty(name) && DropTables.DropTableFiles.Get(name) is { } table) {
+                xp += Math.Max(0, table.ExperienceAmount);
+            }
+        }
+
+        return xp;
+    }
 
     /// <summary>Writes the quest list again (after the Manager's Quest Editor changed quests), when it was written before.</summary>
     internal static void WriteListAgain() {
@@ -567,7 +625,12 @@ internal static class QuestGuide {
     // Each wizard's quests
     // ---------------------------------------------------------------------
 
-    private sealed record Progress(string Wizard, string Zone, bool OnThisPc, string[] Done, string[] Now, string[] Steps);
+    private sealed record Progress(string Wizard, string Zone, bool OnThisPc, string[] Done, string[] Now, string[] Steps) {
+        // Its level, XP and school, for the Manager's Fast Forward and Best Gear tabs.
+        public int Level { get; init; }
+        public int Xp { get; init; }
+        public string School { get; init; } = "";
+    }
 
     private static readonly ConcurrentDictionary<ulong, Progress> s_pending = new();
     private static Timer s_timer;
@@ -591,7 +654,11 @@ internal static class QuestGuide {
             // The steps each held quest is on, as "quest<tab>step name" (the Spell Quests tab shows where a wizard is).
             var steps = current.SelectMany(q => (q.GoalProgress ?? []).Where(g => g is not null && q.IsGoalActive(g.GoalName))
                 .Select(g => $"{Clean(q.QuestName)}\t{Clean(g.GoalName)}")).ToArray();
-            s_pending[wizard.CharId] = new Progress(wizard.PlayerNameBehavior?.GetWizardName() ?? "", wizard.Zone ?? "", onThisPc, done, now, steps);
+            s_pending[wizard.CharId] = new Progress(wizard.PlayerNameBehavior?.GetWizardName() ?? "", wizard.Zone ?? "", onThisPc, done, now, steps) {
+                Level = wizard.MagicSchoolBehavior?.Level ?? 0,
+                Xp = wizard.MagicSchoolBehavior?.ExperiencePoints ?? 0,
+                School = wizard.MagicSchoolBehavior?.MagicSchool.ToString() ?? "",
+            };
             if (s_timer is null) {
                 Interlocked.CompareExchange(ref s_timer, new Timer(_ => WritePending(), null, 1000, 1000), null);
             }
@@ -614,7 +681,10 @@ internal static class QuestGuide {
                     .Append("name\t").Append(Clean(progress.Wizard)).Append('\n')
                     .Append("zone\t").Append(Clean(progress.Zone)).Append('\n')
                     .Append("pc\t").Append(progress.OnThisPc ? "local" : "remote").Append('\n')
-                    .Append("updated\t").Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).Append('\n');
+                    .Append("updated\t").Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).Append('\n')
+                    .Append("level\t").Append(progress.Level.ToString(CultureInfo.InvariantCulture)).Append('\n')
+                    .Append("xp\t").Append(progress.Xp.ToString(CultureInfo.InvariantCulture)).Append('\n')
+                    .Append("school\t").Append(Clean(progress.School)).Append('\n');
                 foreach (var quest in progress.Done) {
                     text.Append("done\t").Append(Clean(quest)).Append('\n');
                 }

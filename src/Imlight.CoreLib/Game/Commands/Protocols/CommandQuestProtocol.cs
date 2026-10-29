@@ -104,6 +104,12 @@ internal class CommandQuest : CommandProtocol {
     private void QuestRemoveCommand([Remainder] string questName)
         => SendQuestAction("remove", questName);
 
+    // Ahziael's Fast Forward: finishes the quests of the plan Ahziael wrote for this wizard (QuestService.FastForward).
+    [Command("fastforward")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void QuestFastForwardCommand()
+        => SendQuestAction("fastforward", "");
+
     private void SendQuestAction(string action, string questName)
         => Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND {
             Action = action,

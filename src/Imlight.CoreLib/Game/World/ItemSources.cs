@@ -49,6 +49,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
@@ -202,6 +203,87 @@ internal static class ItemSources {
                 vendorIds is null || bossIds is null ? " (a location file of the game could not be read, so nothing is filtered by it)" : ""));
 
         return new Index(vendors, bosses, quests);
+    }
+
+    internal const string GUIDE_NAME = "item-sources.json";
+
+    private sealed record GuideNpc(uint Id, string Name, List<string> Zones, bool Boss);
+
+    private sealed record GuideQuest(string Code, string Title, string Zone);
+
+    private sealed record GuideItem(List<int> Drops, List<int> Quests);
+
+    private sealed record GuideFile(List<GuideNpc> Npcs, List<GuideQuest> Quests, Dictionary<uint, GuideItem> Items);
+
+    /// <summary>
+    /// Writes item-sources.json beside ids.csv for the Manager's Best Gear tab (Niduus, 2026-10-29: "If the player wants
+    /// to play legit, that's fine, the recommended gear will show them were to obtain it"): for every item a creature
+    /// drops or a quest gives, which ones, with where each creature stands (spiraldb-extra/Shops/npc-zones.json) and
+    /// whether the game lists it as a boss. Shops are in vendors.json already.
+    /// </summary>
+    internal static void WriteGuide(string folder) {
+        try {
+            var bossIds = LocationIds("BossLocationData.xml") ?? [];
+            var (zoneNames, zonesOf) = Imlight.CoreLib.Game.Tools.VendorGuide.LoadZones();
+            var tableItems = new Dictionary<string, List<uint>>(StringComparer.OrdinalIgnoreCase);
+            var npcs = new List<GuideNpc>();
+            var quests = new List<GuideQuest>();
+            var items = new Dictionary<uint, GuideItem>();
+            GuideItem ItemEntry(uint id) => items.TryGetValue(id, out var known) ? known : items[id] = new GuideItem([], []);
+
+            foreach (var (npcId, drops) in SpiralDB.NpcDropTables.OrderBy(p => p.Key)) {
+                var found = (drops.DropTableNames ?? []).SelectMany(name => ItemsOf(name, tableItems)).Distinct().ToList();
+                if (found.Count == 0) {
+                    continue;
+                }
+
+                var id = (uint) npcId;
+                var name = "";
+                if (CoreObjectFactory.GetCoreTemplate(npcId) is GameObjectTemplate template) {
+                    string key = template.m_displayName;
+                    name = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+                    if (string.IsNullOrEmpty(name)) {
+                        name = (string) template.m_objectName ?? "";
+                    }
+                }
+
+                var zones = zonesOf.TryGetValue(id, out var at)
+                    ? at.Where(i => i >= 0 && i < zoneNames.Count).Select(i => zoneNames[i][0] + "|" + zoneNames[i][1]).Distinct().Take(4).ToList()
+                    : [];
+                var index = npcs.Count;
+                npcs.Add(new GuideNpc(id, name, zones, bossIds.Contains(id)));
+                foreach (var item in found) {
+                    ItemEntry(item).Drops.Add(index);
+                }
+            }
+
+            foreach (var quest in SpiralDB.QuestTemplates.Where(q => q is not null && !q.m_outdated && !string.IsNullOrEmpty(q.m_questName))
+                         .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase).Select(g => g.First())) {
+                var found = (quest.m_endResults?.m_results ?? []).OfType<ResDropTable>()
+                    .SelectMany(r => ItemsOf(r.m_tableName, tableItems)).Distinct().ToList();
+                if (found.Count == 0) {
+                    continue;
+                }
+
+                string titleKey = quest.m_questTitle;
+                var title = string.IsNullOrEmpty(titleKey) ? "" : Locale.GetEnglishName(titleKey);
+                var index = quests.Count;
+                quests.Add(new GuideQuest(quest.m_questName, string.IsNullOrEmpty(title) ? quest.m_questName : title, FirstGoalLocation(quest)));
+                foreach (var item in found) {
+                    ItemEntry(item).Quests.Add(index);
+                }
+            }
+
+            Directory.CreateDirectory(folder);
+            var path = System.IO.Path.Combine(folder, GUIDE_NAME);
+            File.WriteAllText(path + ".tmp", System.Text.Json.JsonSerializer.Serialize(new GuideFile(npcs, quests, items)));
+            File.Move(path + ".tmp", path, overwrite: true);
+            Logger.Information("Item sources for the Manager: {0} items, from {1} creatures and {2} quests.",
+                Logger.Args(items.Count, npcs.Count, quests.Count));
+        }
+        catch (Exception exception) {
+            Logger.Warning("Item sources for the Manager could not be written: {0}", Logger.Args(exception.Message));
+        }
     }
 
     private static List<uint> ItemsOf(string tableName, Dictionary<string, List<uint>> cache) {

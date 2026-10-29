@@ -62,7 +62,7 @@ using System.Linq;
 
 namespace Imlight.CoreLib.Game.Services;
 
-internal class QuestService(SessionActor sessionActor) : MessageService(sessionActor) {
+internal partial class QuestService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const float DEFAULT_KILL_COLLECT_CHANCE = 0.5f;
     private const string QUEST_COMPLETED_ENTRY = "Complete";
@@ -734,6 +734,9 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
             case "toquest":
                 CommandToQuest(wizard, questName);
                 return;
+            case "fastforward":
+                CommandFastForward(wizard);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client
@@ -959,7 +962,12 @@ internal class QuestService(SessionActor sessionActor) : MessageService(sessionA
         }
         CommandReply("Use '.quest completegoal' to skip a step the server can't trigger yet.");
 
-        // Go to where the first step happens.
+        GoToFirstStep(wizard, template);
+    }
+
+    // Takes the wizard to where the quest's first active step happens.
+    private void GoToFirstStep(Wizard wizard, QuestTemplate template) {
+        string questName = template.m_questName;
         var firstGoal = template.m_goals?.FirstOrDefault(g => wizard.QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q?.QuestName == questName)?.IsGoalActive(g.m_goalName) == true);
         string zone = firstGoal is WaypointGoalTemplate waypoint && !string.IsNullOrEmpty(waypoint.m_zoneTag)
