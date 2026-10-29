@@ -698,6 +698,9 @@ internal sealed partial class ManagerWindow {
                 buttons.Children.Add(Spaced(Action(teleport, () => RunQuestCommand($".tp {quest.Zone}", $"Teleporting to {quest.Zone}."))));
             }
 
+            var goal = Plain("Complete Goal");
+            ToolTip.SetTip(goal, "Finishes only the step you are on (.quest completegoalfor), to get past one step that won't work.");
+            buttons.Children.Add(Spaced(Action(goal, () => RunQuestCommand($".quest completegoalfor {code}", $"Completing the step you are on in {quest.Name}."))));
             var finish = Plain("Finish");
             ToolTip.SetTip(finish, "Ends this quest now (.quest complete) and gives its rewards, to get past a step that won't work.");
             buttons.Children.Add(Spaced(Action(finish, () => RunQuestCommand($".quest complete {code}", $"Finished {quest.Name}."))));
