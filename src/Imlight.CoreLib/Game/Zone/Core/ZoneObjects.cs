@@ -324,7 +324,7 @@ internal static class ZoneObjects {
         }
 
         var files = FilesFor(zonePath, variant);
-        if (!string.IsNullOrEmpty(variant) && !Zones.ContainsKey(KeyOf(zonePath, variant))) {
+        if (!string.IsNullOrEmpty(Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant)) && !Zones.ContainsKey(KeyOf(zonePath, variant))) {
             Logger.Warning("Zone {0}: no {1} file for variant {2}.", Logger.Args(zonePath, FOLDER, variant));
         }
 
@@ -362,6 +362,7 @@ internal static class ZoneObjects {
 
     // The files a copy of a zone uses: the one for every copy, then the variant's.
     private static List<ZoneObjectFile> FilesFor(string zonePath, string variant) {
+        variant = Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant);
         var zones = Zones;
         var files = new List<ZoneObjectFile>();
         if (zones.TryGetValue(KeyOf(zonePath, ""), out var always)) {
@@ -396,7 +397,7 @@ internal static class ZoneObjects {
     /// <summary>A loaded copy of a zone, which a change to the files reaches.</summary>
     internal static void Register(IActorRef zone, string zonePath, string variant) {
         if (Enabled && zone is not null && !string.IsNullOrEmpty(zonePath)) {
-            s_live[zone] = (zonePath, variant ?? "");
+            s_live[zone] = (zonePath, Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant));
         }
     }
 
@@ -654,8 +655,9 @@ internal static class ZoneObjects {
     internal static string FileNameOf(string zonePath, string variant = "")
         => zonePath.Replace('/', '-') + (string.IsNullOrEmpty(variant) ? "" : "@" + variant) + ".json";
 
+    // A custom fight's Advanced version (variant ~Advanced, Game/World/AdvancedMode) uses its room's files.
     private static string KeyOf(string zonePath, string variant)
-        => $"{zonePath}@{variant}".ToLowerInvariant();
+        => $"{zonePath}@{Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant)}".ToLowerInvariant();
 
     private static ulong GlobalIdOf(string zonePath, string variant, string name, string part = "")
         => GLOBAL_ID_MARK | (RandomGen.GenerateHash(

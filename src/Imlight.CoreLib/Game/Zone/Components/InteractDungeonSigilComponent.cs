@@ -138,6 +138,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
     // Where the countdown running goes (the owner's choice of the dungeon or its Advanced copy), so the others join it.
     private string _partyDestination;
+    private string _partyVariant;
     // A changed look is sent once the pad was sent again (RenderComponent's 400 ms), and the last state of a look that
     // goes through another (Red, through Glowy) once more a moment later.
     private static readonly TimeSpan RELIGHT_ALL_DELAY = TimeSpan.FromMilliseconds(1000);
@@ -189,9 +190,13 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             var teamUp = TeamUpBoard.IsEnabled && TeamUpBoard.SigilButton && PartySize() > 1;
             // Advanced Mode (Game/World/AdvancedMode): a dungeon with an Advanced copy offers the game's sigil option
             // with its Advanced Mode fields, whose window has the button that turns the pad red.
-            var advanced = AdvancedMode.Enabled && AdvancedMode.TryGetAdvanced(sigil.DestinationZone, out var advancedZone)
+            // A custom fight with an Advanced version (Customs tab) offers it too, in the same zone.
+            var advanced = AdvancedMode.Offers(sigil.DestinationZone, sigil.Variant)
                 ? new MinigameSigilOptionAdvancedModeFields {
-                    m_successZone = advancedZone,
+                    m_successZone = AdvancedMode.TryGetAdvanced(sigil.DestinationZone, out var advancedZone)
+                                    && !AdvancedMode.HasCustomAdvanced(sigil.DestinationZone, sigil.Variant)
+                        ? advancedZone
+                        : sigil.DestinationZone,
                     m_teamUpAllowed = teamUp ? 1 : 0,
                     m_passedReqs = true,
                 }
@@ -347,7 +352,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         // Red (the Advanced Mode look) is only reached from Glowy in the pad's state set, so it goes through Glowy.
         var look = ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE;
         if (_charOf.TryGetValue(playerActor, out var lookChar) && AdvancedMode.Wants(lookChar)
-            && TryResolveDestination(out var lookSigil) && AdvancedMode.TryGetAdvanced(lookSigil.DestinationZone, out _)) {
+            && TryResolveDestination(out var lookSigil) && AdvancedMode.Offers(lookSigil.DestinationZone, lookSigil.Variant)) {
             look = ZoneObjects.SIGIL_ADVANCED_STATE;
         }
         var path = ZoneObjects.SigilStatePath(look);
@@ -439,18 +444,22 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             // Advanced Mode (Game/World/AdvancedMode): the player who starts the trip picks the dungeon or its Advanced
             // copy (the game's button, or `.advanced on`), and the others of the countdown go where they go.
             if (startsTrip) {
-                _partyDestination = AdvancedMode.DestinationFor(sigil.DestinationZone, requestedMode, playerCharacter.CharId);
-                if (AdvancedMode.IsAdvanced(_partyDestination)) {
-                    Logger.Information("Advanced Mode: character {0} goes into {1} (pressed with mode {2}).",
-                        Logger.Args(playerCharacter.CharId, _partyDestination, requestedMode));
+                (_partyDestination, _partyVariant) = AdvancedMode.TripFor(sigil.DestinationZone, sigil.Variant, requestedMode,
+                    playerCharacter.CharId);
+                if (AdvancedMode.IsAdvancedTrip(_partyDestination, _partyVariant)) {
+                    Logger.Information("Advanced Mode: character {0} goes into {1} {2} (pressed with mode {3}).",
+                        Logger.Args(playerCharacter.CharId, _partyDestination, _partyVariant, requestedMode));
                     playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                        Message = $"Advanced Mode: {AdvancedMode.NameOf(_partyDestination)}. Its creatures are stronger.",
+                        Message = AdvancedMode.IsAdvanced(_partyDestination)
+                            ? $"Advanced Mode: {AdvancedMode.NameOf(_partyDestination)}. Its creatures are stronger."
+                            : "Advanced Mode: the harder version of this fight.",
                         Modal = 0,
                     });
                 }
             }
 
             entry.DestinationZone = _partyDestination ?? entry.DestinationZone;
+            entry.Variant = _partyVariant ?? entry.Variant;
         }
 
         if (size <= 1 || _party.Count >= size) {
@@ -565,7 +574,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                     ? _partyZone
                     : _partyDestination ?? _resolved.DestinationZone,
                 DestinationLoc = _resolved.DestinationLoc,
-                Variant = _resolved.Variant,
+                Variant = _partyVariant ?? _resolved.Variant,
                 FaceSlot = member.FaceSlot,
                 InstanceOwnerCharId = isOwner ? 0 : owner.CharId,
                 KeepInstance = !isOwner,

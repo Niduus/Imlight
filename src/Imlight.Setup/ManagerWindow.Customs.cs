@@ -528,7 +528,14 @@ internal sealed partial class ManagerWindow {
     private string CreatureName(string id)
         => _bossCatalog?.Creatures.FirstOrDefault(c => c.Id == id) is { } c ? $"{c.Name} ({id})" : $"creature {id}";
 
-    private static string RoomName(string room) => room.Contains('@') ? $"the {room[(room.IndexOf('@') + 1)..]} room" : room;
+    private static string RoomName(string room) {
+        // A room's Advanced Mode version (ManagerWindow.CustomAreas.cs) ends with ~Advanced.
+        var advanced = room.EndsWith(ADVANCED_ROOM_SUFFIX, StringComparison.OrdinalIgnoreCase);
+        var name = advanced ? room[..^ADVANCED_ROOM_SUFFIX.Length] : room;
+        name = name.Contains('@') ? $"the {name[(name.IndexOf('@') + 1)..]} room" : name;
+
+        return advanced ? name + " (Advanced Mode)" : name;
+    }
 
     private Dictionary<string, Dictionary<string, int>> SafeRooms() {
         try {

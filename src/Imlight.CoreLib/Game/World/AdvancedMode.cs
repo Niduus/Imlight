@@ -36,6 +36,12 @@
  * - The copies' battle circles are a newer kind of sigil object (class 490043331, a Battleground sigil) the server
  *   could not read, so no fight started there: AdvancedCombatSigilObjectInfo reads them as ordinary combat circles.
  * - An Adv_ creature without drops, cheats or a deck of its own on this server uses its normal creature's.
+ * - Custom fights (Niduus, 2026-10-29: "allow for custom fights to have the advanced mode"): a room of the Customs tab
+ *   (Customs/Rooms.json, a zone with @variant for an added sigil's private copy) can have an Advanced version, the
+ *   room's name with ~Advanced on the end, naming the customs its creatures are in Advanced Mode. A sigil leading to
+ *   such a room offers the button, and Advanced goes into the same zone with the variant plus ~Advanced: a copy of
+ *   its own, with the room's ZoneObjects files, whose spawners spawn the Advanced room's customs first and the room's
+ *   for the creatures it does not name. This comes before the game's Advanced copy of the zone.
  */
 
 using System;
@@ -165,18 +171,46 @@ internal static partial class AdvancedMode {
         }
     }
 
+    /// <summary>The end of a variant (and of a room's name in Customs/Rooms.json) for the Advanced version of a custom fight.</summary>
+    internal const string ADVANCED_SUFFIX = "~Advanced";
+
+    /// <summary>A variant without its Advanced end, the one its ZoneObjects files are named by.</summary>
+    internal static string BaseVariant(string variant)
+        => IsAdvancedVariant(variant) ? variant[..^ADVANCED_SUFFIX.Length] : variant ?? "";
+
+    internal static bool IsAdvancedVariant(string variant)
+        => variant?.EndsWith(ADVANCED_SUFFIX, StringComparison.OrdinalIgnoreCase) == true;
+
+    /// <summary>Whether the Customs tab gives the room a sigil leads to an Advanced version.</summary>
+    internal static bool HasCustomAdvanced(string zone, string variant)
+        => !string.IsNullOrEmpty(zone) && Imlight.CoreLib.Game.Combat.Customs.HasAdvancedRoom(zone, BaseVariant(variant));
+
+    /// <summary>Whether a sigil to this zone (and variant) offers Advanced Mode: a custom fight's or the game's copy.</summary>
+    internal static bool Offers(string zone, string variant)
+        => Enabled && !IsAdvancedVariant(variant)
+           && (HasCustomAdvanced(zone, variant) || (string.IsNullOrEmpty(variant) && TryGetAdvanced(zone, out _)));
+
     /// <summary>
-    /// Where a sigil press goes: the Advanced copy of the dungeon for a press with the game's Advanced Mode button on,
-    /// or from a wizard with `.advanced on` (a press with the button off still goes in Advanced for them), else the
-    /// dungeon itself.
+    /// Where a sigil press goes, zone and variant: the Advanced version for a press with the game's Advanced Mode
+    /// button on, or from a wizard with `.advanced on`. A custom fight's Advanced version is the same zone with the
+    /// Advanced variant; otherwise the game's Advanced copy (only for a sigil with no variant, whose files are the
+    /// zone's). Anything else goes where the sigil says.
     /// </summary>
-    internal static string DestinationFor(string zone, uint requestedMode, ulong charId) {
-        if (!Enabled || !TryGetAdvanced(zone, out var advanced)) {
-            return zone;
+    internal static (string Zone, string Variant) TripFor(string zone, string variant, uint requestedMode, ulong charId) {
+        variant ??= "";
+        if (!Offers(zone, variant) || (requestedMode != ADVANCED_SIGIL_MODE && !Wants(charId))) {
+            return (zone, variant);
         }
 
-        return requestedMode == ADVANCED_SIGIL_MODE || Wants(charId) ? advanced : zone;
+        if (HasCustomAdvanced(zone, variant)) {
+            return (zone, variant + ADVANCED_SUFFIX);
+        }
+
+        return TryGetAdvanced(zone, out var advanced) ? (advanced, variant) : (zone, variant);
     }
+
+    /// <summary>Whether a trip goes in Advanced Mode (a game copy or a custom fight's Advanced version).</summary>
+    internal static bool IsAdvancedTrip(string zone, string variant) => IsAdvanced(zone) || IsAdvancedVariant(variant);
 
     // ---------------------------------------------------------------------
     // Doors and exits inside a copy
