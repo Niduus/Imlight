@@ -165,8 +165,9 @@ internal sealed partial class ManagerWindow {
                        "Next up: every quest it needs is done, so it is the one to do now, and the ones in your quest book stay " +
                        "in their place marked In progress. In progress: in your quest book. " +
                        "Not done: Next up and Later together. Start gives you the quest at once (.quest forcegrant), even when the " +
-                       "quests before it are not done. Teleport takes you to the zone of the NPC who gives it (.tp). Finish " +
-                       "completes a quest you have (.quest complete). The buttons run in the game on this PC, so start the server " +
+                       "quests before it are not done. Teleport takes you to the zone of the NPC who gives it (.tp). Complete Goal " +
+                       "finishes only the step you are on in a quest you have (.quest completegoalfor), and Finish " +
+                       "completes the whole quest (.quest complete). The buttons run in the game on this PC, so start the server " +
                        "and log in first."),
                     _questSearch,
                     SearchFilters(
@@ -489,6 +490,11 @@ internal sealed partial class ManagerWindow {
         var quest = row.Quest;
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, VerticalAlignment = VerticalAlignment.Center };
         if (row.State == QuestState.InProgress) {
+            // Niduus, 2026-10-29: "could you add a completegoal option to quest section in Ahziael?"
+            var goal = Plain("Complete Goal");
+            ToolTip.SetTip(goal, "Finishes only the step you are on (.quest completegoalfor), so the quest moves on to its next step.");
+            buttons.Children.Add(Action(goal, () => RunQuestCommand($".quest completegoalfor {quest.Code}",
+                $"Completing the step you are on in {quest.Title}. The quest moves on to its next step.")));
             buttons.Children.Add(Action(Plain("Finish"), () => RunQuestCommand($".quest complete {quest.Code}",
                 $"Finishing {quest.Title}. Its rewards show in the game.")));
         }
