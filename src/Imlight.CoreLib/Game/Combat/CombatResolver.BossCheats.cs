@@ -56,7 +56,7 @@ public partial class CombatResolver {
     private IEnumerable<(CombatDuelSubCircle Boss, List<BossCheats.BossCheat> Cheats)> BossesWithCheats(bool defeatedToo = false)
         // Not IsAiCreature: a boss brought in with .joinme is a summoned minion, and it cheats too (Niduus's log, 2026-10-21).
         => _subCircles.Where(c => c is not null && c.Occupied && c.AddedToDuel && (defeatedToo || c.IsAlive) && c.ParticipantObject is not null)
-            .Select(c => (c, c.IsHumanPlayer ? PlayerCheats.For(c) : BossCheats.For(CheatTemplate(c))))
+            .Select(c => (c, WithGiven(c, c.IsHumanPlayer ? PlayerCheats.For(c) : BossCheats.For(CheatTemplate(c)))))
             .Where(b => b.Item2.Count > 0);
 
     // "A player" of a cheat: someone on the other side. For a creature's cheats that is a wizard (their minions do not
@@ -1846,6 +1846,8 @@ public partial class CombatResolver {
             "mostpips" when enemies.Count > 0 => [enemies.OrderByDescending(c => PipCount(c)).First()],
             // The one who summoned it into the battle (a minion's summoner), while it stands; else no one.
             "summoner" => Summoner(boss) is { } summoner ? [summoner] : [],
+            // The minions it summoned that stand (Niduus, 2026-10-29).
+            "myminions" => MinionsOf(boss),
             // The last one on the other side whose spell hurt it; no one when that one has fallen.
             "lastattacker" => _lastAttackers.TryGetValue(boss, out var last) && enemies.Contains(last) ? [last] : [],
             "weakestally" => [others.Count > 0 ? others.OrderBy(HealthShare).First() : boss],

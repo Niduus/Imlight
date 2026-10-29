@@ -335,6 +335,8 @@ public partial class CombatResolver {
 
                 return true;
             }
+            case "givecheat":
+                return GiveCheat(boss, step, On("MyMinions"), bossName);
             case "sound": {
                 // A game sound (its template ID, or a sound file name the game knows) played for Target's wizards (every
                 // wizard in the battle; you, in a player cheat).

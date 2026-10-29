@@ -3510,6 +3510,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // A queued tutorial card grant must not leak into the next duel on this sigil.
         _tutorialDirector.OnDuelEnded();
 
+        // When the battle ends (CombatResolver.MinionCheats.cs), while everyone is still in their circle.
+        CombatResolver?.BattleEndCheats(playersWin ? Combat.CombatTeam.Player : creaturesWin ? Combat.CombatTeam.Monster : null);
+
         CancelHealthGlobes();
         RemovePlayersFromDuel(playersWin);
 
