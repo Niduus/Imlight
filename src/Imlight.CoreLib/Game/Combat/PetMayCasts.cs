@@ -42,6 +42,10 @@ internal static class PetMayCasts {
     // The game takes a card's pips from its template rank plus m_regularAdjust (m_pipCost is never sent), so the pet's
     // copy goes out with the rank taken off (Niduus, 2026-10-20: pets drained his pips and kept casting at 0).
     internal static bool ZeroCost => ConfigurationManager.GetValue("PetCasting.ZeroCost", true);
+    // Pet casts (May Casts and Will Casts) go to the game as interrupts, out of the turn order (Niduus, 2026-10-29: "pets
+    // trigger another turn in terms of HoT and DoT procs"): sent as plain casts of the owner, the game took each for the
+    // owner's turn and played their over-time ticks again. The server ticks them once, on the owner's own turn.
+    internal static bool CastsAsInterrupt => ConfigurationManager.GetValue("PetCasting.CastsAsInterrupt", true);
     /// <summary>
     /// `.petcasttest` ways of sending the cast, to find the one the game plays (it skipped plain, forced, item card and
     /// pet-flagged casts of the pet copy: "does not spell in hand"). Null uses the [PetCasting] switches.
