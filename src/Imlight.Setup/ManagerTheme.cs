@@ -405,7 +405,7 @@ internal static class ManagerTheme {
         ["New password"] = "key", ["Rename"] = "pencil", ["Show"] = "eye", ["Hide"] = "eyeoff", ["Lock"] = "lock", ["Unlock"] = "unlock",
         ["Learn on my wizard"] = "sparkle", ["What's new"] = "sparkle", ["Send to my gifts"] = "gift",
         ["Export ticked…"] = "download", ["Open a customs file…"] = "file", ["Import ticked"] = "check", ["Undo last import"] = "undo",
-        ["Open backups folder"] = "folder", ["Tick all"] = "check", ["Share or import customs…"] = "link",
+        ["Open backups folder"] = "folder", ["Tick all"] = "check", ["Share or import customs…"] = "link", ["Replace all of mine"] = "swap", ["Add all as new ones"] = "plus",
     };
 
     /// <summary>A button with its label's icon. Primary ones are filled with the accent colour.</summary>

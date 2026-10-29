@@ -293,6 +293,41 @@ internal sealed partial class ManagerWindow {
                                 (reading.MadeWith.Length > 0 ? $" (from {reading.MadeWith}{(reading.Made.Length > 0 ? ", " + reading.Made : "")})" : "") +
                                 $": {added} new, {replaces} already here with changes, {same} just like yours (left unticked).";
 
+        // Customs whose number is taken here: one press sets them all (a newer version of one's own customs replaces them).
+        var clashes = reading.Items.Where(i => i.CanRenumber).ToList();
+        if (clashes.Count > 0) {
+            void SetAll(bool asNew) {
+                foreach (var clash in clashes) {
+                    clash.AsNew = asNew;
+                    clash.Use = true;
+                }
+
+                RenderShareImport();
+            }
+
+            _shareImportRows.Children.Add(ManagerTheme.Item(new DockPanel {
+                Children = {
+                    WithDock(new StackPanel {
+                        Orientation = Orientation.Horizontal, Spacing = 8,
+                        Children = {
+                            Action(Plain("Replace all of mine"), () => {
+                                SetAll(false);
+
+                                return Task.CompletedTask;
+                            }),
+                            Action(Plain("Add all as new ones"), () => {
+                                SetAll(true);
+
+                                return Task.CompletedTask;
+                            }),
+                        },
+                    }, Dock.Right),
+                    WithCenter(Sub($"{clashes.Count} of these use a number you already have. A newer version of your own custom " +
+                                   "(made from the same creature) replaces yours unless you pick otherwise.")),
+                },
+            }));
+        }
+
         foreach (var group in reading.Items.GroupBy(i => i.Item.Kind)) {
             var list = new StackPanel { Spacing = 4 };
             list.Children.Add(new StackPanel {

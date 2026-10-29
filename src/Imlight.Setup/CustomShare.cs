@@ -432,7 +432,7 @@ internal static class CustomShare {
                 var same = old is not null && JsonNode.DeepEquals(old, data);
                 var item = new ShareItem(kind, key, NameOf(kind, key, data), data.DeepClone());
                 incoming.Add(new ShareIncoming {
-                    Item = item, Target = target, Exists = exists, Same = same, Use = !same, AsNew = exists && !same && kind.NumberField is not null,
+                    Item = item, Target = target, Exists = exists, Same = same, Use = !same, AsNew = exists && !same && kind.NumberField is not null && !IsUpdateOf(kind, old, data),
                 });
             }
             catch (PanelException ex) {
@@ -468,6 +468,23 @@ internal static class CustomShare {
         cache[kind] = found;
 
         return found;
+    }
+
+    /// <summary>
+    /// Whether a custom of the file looks like a newer version of this PC's one with its number (Niduus, 2026-10-29: importing
+    /// an updated Malistaire twice made copies instead of replacing): a custom made from the same creature, or a vendor or
+    /// hub with the same name. Those replace by default; anything else takes a free number by default.
+    /// </summary>
+    private static bool IsUpdateOf(ShareKind kind, JsonNode? old, JsonNode data) {
+        if (old is not JsonObject mine || data is not JsonObject theirs) {
+            return false;
+        }
+
+        var field = kind.Id == "custom" ? "BaseTemplateID" : "Name";
+        var a = Find(mine, field) is JsonValue x ? ValueText(x).Trim() : "";
+        var b = Find(theirs, field) is JsonValue y ? ValueText(y).Trim() : "";
+
+        return a.Length > 0 && string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>Throws when a custom's contents are not the shape its kind has.</summary>
