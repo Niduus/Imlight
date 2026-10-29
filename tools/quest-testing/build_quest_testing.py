@@ -54,12 +54,52 @@ UNHANDLED = {
     "ResSetGardeningLevel": "sets your gardening rank (the server can't)",
 }
 
-# Fixes made for one quest that were never tried in game (from the project's notes).
+# Fixes made for one quest that were never tried in game (from the project's notes). Code -> (why, should happen, version).
+GIVER_FIX = ("The quest checker (2026-10-27) found this quest's giver wasn't placed anywhere in the world. Since v0.10.534 the quest "
+             "names the placed NPC of the same name, so you can pick it up.",
+             "The giver stands in the world with a quest marker over them, and talking to them offers the quest.", "0.10.534")
 UNTESTED = {
-    "MS-MAIN-C07-001": ("Untested fix", "Rematch: reaching the obelisk in the Jade Palace should spawn the Jade Oni (v0.10.285, PR #412). "
+    "MS-MAIN-C07-001": ("Rematch: reaching the obelisk in the Jade Palace should spawn the Jade Oni (v0.10.285, PR #412). "
                         "Before, the Oni never came.",
-                        "Walk up to the obelisk: the Jade Oni appears and the fight can start."),
+                        "Walk up to the obelisk: the Jade Oni appears and the fight can start.", ""),
+    "AZ-COMET-C01-001": ("The Xibalba dungeon quest. The real game has it but no recording of it exists, so it was rebuilt from the game's "
+                         "own text and zone scripts (v0.10.594): Yacate, the three Obsidian Mirrors, the Frost, Fire and Thunder Webs, the "
+                         "ghost Lords of Night, then Morganthe and Malistaire at the pillar. Speaker names were added in v0.10.607. "
+                         "The order of the steps and who says each line are guesses, and it gives no rewards yet.",
+                         "Entering Xibalba gives the quest by itself. Each step points to the right mirror, web or boss, each web goes away "
+                         "when you smash, burn or freeze it, every line shows who says it, and Malistaire appears at the pillar for the last fight.",
+                         "0.10.607"),
+    "AZ-ZOCA-C15-002": ("Its 'Explore' step showed a raw code (WizQst9D0EA_00000009) in the quest book; the game dropped that line. "
+                        "Fixed in v0.10.593. It is also the quest that leads into Xibalba.",
+                        "The quest book shows a real place name for every step, never a code.", "0.10.593"),
+    "WC-OLDE-MAIN-003A": ("Its Olde Town tower dialog played when you LEFT the tower instead of when you walked in (seen in your log). "
+                          "Since v0.10.614 the server holds a zone's dialog until the game has finished loading it.",
+                          "The dialog plays as you arrive in the tower, not when you leave.", "0.10.614"),
+    "EM-INNER-MAIN-010": ("The quest checker found its 'Bat' NPC isn't in the game's zone files, so a step may have no one to talk to.",
+                          "Every step has someone or something to click. If one doesn't, use Finish on that step and tell me.", ""),
+    "DS-LIB-C02-001": ("The quest checker couldn't find the area one step points to, so the arrow may lead nowhere.",
+                       "The arrow and marker lead to a real spot and the step finishes there.", ""),
 }
+for _code in ["DM-W404-891457977", "LM-W404-1851332871", "KR-MARK-C02-001", "MR-CATE-MAIN-007", "MR-ALKA-MAIN-005", "EM-AERO-MAIN-008", "EM-AERI-J-MAIN-008", "AV-WILD-C04-001",
+              "DM-W404-1589247807", "DM-W404-1589245759", "DM-W404-1589243711", "DM-W404-1589241663", "DM-W404-1589237567"]:
+    UNTESTED.setdefault(_code, GIVER_FIX)
+
+# Quests that are not main story quests but are tested with the story, put right after the main quest given.
+EXTRA_ROWS = {"AZ-COMET-C01-001": "AZ-ZOCA-C15-002"}
+
+# Quests whose text pointed to lines the game no longer has, so the quest book showed a raw code (WizQst..._000000NN).
+# Since v0.10.593 the server swaps them at boot (QuestTextKeys.ReplaceMissingKeys). Found by scanning every quest
+# against the game's Locale/en-US text (Root.wad), 2026-10-28.
+RAW_TEXT = {
+    "AR-PreLM-MAIN-003": "a step's text", "DS-LIB3-C01-004": "a step's place", "KT-BAL-C06-001": "the name over a line",
+    "WC-MISC-C01-001": "a dialog page", "WC-PreKR-C02-001": "a dialog page", "WC-PreKR-C03-001": "a dialog page",
+    "WC-PreKR-C03-002": "a dialog page", "WC-PreKR-C04-001": "a dialog page", "WC-PreKR-C04-002": "a dialog page",
+    "WC-PreKR-C05-001": "a dialog page", "WC-PreKR-C06-001": "two dialog pages", "WL-W404-595066559": "a step's text",
+    "AZ-ZOCA-C15-002": "a step's text",
+}
+
+# Kinds of flag for fixes made from v0.10.590 on: the Manager's "Recent fixes" view shows them.
+RECENT_KINDS = {"Text fixed", "Dialog on arrival", "Fight counts now"}
 
 
 def load_json(path):
@@ -216,6 +256,12 @@ def main(lookup, spiraldb, rewards_md, out_path):
 
     # Server main quests the tree doesn't list.
     extra_mains = [q for q in details["Quests"] if q["Main"] and q["Code"] not in placed]
+    for code, after in EXTRA_ROWS.items():
+        for w in worlds:
+            spot = next((i for i, r in enumerate(w["Rows"]) if r["Code"] == after), None)
+            if code in server and spot is not None and code not in placed:
+                w["Rows"].insert(spot + 1, {"Tree": None, "Code": code, "Name": server[code]["Title"], "Area": w["Rows"][spot]["Area"], "Extra": True})
+                placed.add(code)
     pending = list(extra_mains)
     for _ in range(6):
         left = []
@@ -260,8 +306,8 @@ def main(lookup, spiraldb, rewards_md, out_path):
             wiki = (m or {}).get("Wiki")
             flags = []
 
-            def flag(kind, why, check):
-                flags.append({"Kind": kind, "Why": why, "Check": check})
+            def flag(kind, why, check, recent=False):
+                flags.append({"Kind": kind, "Why": why, "Check": check, **({"Recent": True} if recent or kind in RECENT_KINDS else {})})
                 counts[kind] += 1
 
             if not code:
@@ -314,8 +360,9 @@ def main(lookup, spiraldb, rewards_md, out_path):
             dungeon = sorted(z for z in dz if z in dungeon_zones)
             if dungeon:
                 flag("Dungeon", "Goes into " + ", ".join(z.split("/")[-1] for z in dungeon) + ". Where its sigil or door leads came from the game files "
-                     "(v0.10.422), and the sigil only lets you in with this quest (v0.10.486).",
-                     "The sigil or door takes you (and your team) inside, and you come back out where you went in.")
+                     "(v0.10.422), and the sigil only lets you in with this quest (v0.10.486). Since v0.10.590 a sigil you can't use yet stays dark, and "
+                     "since v0.10.604 a sigil whose lock the server can never open (an unknown quest or step) counts as open.",
+                     "The sigil lights up once you have this quest, takes you (and your team) inside, and you come back out where you went in.")
 
             for z in sorted(dz):
                 top = z.split("/")[0]
@@ -323,6 +370,24 @@ def main(lookup, spiraldb, rewards_md, out_path):
                     opened_worlds.add(top)
                     flag("Opens a world", f"The first quest that goes to {ZONE_WORLDS[top]}: having it opens {ZONE_WORLDS[top]} on the Spiral Door for good (v0.10.478).",
                          f"Once you have it, the Spiral Door lists {ZONE_WORLDS[top]}.")
+
+            if code in RAW_TEXT:
+                flag("Text fixed", f"In the quest book, {RAW_TEXT[code]} showed a raw code (like WizQst9D0EA_00000009) because the game no longer "
+                     "has that line. Since v0.10.593 the server puts the place name or the giver's last line there, or leaves the page out.",
+                     "No step, place, name or dialog page shows a code; everything reads as normal words.")
+
+            arrivals = [i for i, x in enumerate(rq.get("m_goals", []), 1) if x.get("m_goalType") == "GOAL_TYPE_WAYPOINT"
+                        and any(d.get("m_dialogEntries") for d in ((x.get("m_dialogList") or {}).get("m_dialogs") or []) if isinstance(d, dict))]
+            if arrivals:
+                flag("Dialog on arrival", f"Step {', '.join(map(str, arrivals))} plays a dialog when you arrive somewhere. These could play late, even when "
+                     "you left again; since v0.10.614 the server waits for the game to finish loading the area first.",
+                     "The dialog plays right as you arrive, not later or when you leave.")
+
+            if src == {"ours"} and any(x.get("m_goalType") == "GOAL_TYPE_BOUNTY"
+                                       and any("-NPC" in a for a in x.get("m_npcAdjectives") or []) for x in rq.get("m_goals", [])):
+                flag("Fight counts now", "A 'defeat' step named the talking NPC instead of the creatures you fight, so no battle counted. "
+                     "Since v0.10.534 beating a creature with that NPC's name counts (found by the quest checker).",
+                     "Winning the fight ticks the defeat step.")
 
             found = set()
             walk_types(rq, found)
@@ -344,11 +409,11 @@ def main(lookup, spiraldb, rewards_md, out_path):
             if m is not None and not wiki:
                 flag("No real-game copy", "Wizard404 has no copy of this quest to check the server's steps and rewards against.",
                      "The steps and rewards look right.")
-            if m is None:
+            if m is None and not r.get("Extra"):
                 flag("Not in the story list", "A main quest on the server that Spiral Tracker doesn't list; it's shown after the quest it needs.",
                      "It's offered after the quest above and fits the story.")
 
-            if not q["GiverName"] and not q["StartsByItself"]:
+            if not q["GiverName"] and not q["StartsByItself"] and not r.get("Extra"):
                 flag("No giver", "No NPC gives this quest on the server and it doesn't start by itself, so the story may stop here.",
                      "It's offered once the quest before is done. If not, press Start.")
             gone = [n for n in q["Needs"] if n not in server]
@@ -357,10 +422,13 @@ def main(lookup, spiraldb, rewards_md, out_path):
                      "It's offered anyway. If not, press Start.")
 
             if code in UNTESTED:
-                flag(*UNTESTED[code])
+                why, check, since = UNTESTED[code]
+                flag("Untested fix", why, check, recent=bool(since))
 
             do = []
-            if q["StartsByItself"]:
+            if r.get("Extra"):
+                do.append("It starts by itself when you walk into " + (q["Goals"][0]["Place"].split(",")[-1] if q["Goals"] else "its area") + ".")
+            elif q["StartsByItself"]:
                 do.append("It starts by itself when the quest before it is done.")
             elif q["GiverName"]:
                 do.append(f"Get it from {q['GiverName']}.")
