@@ -68,10 +68,16 @@ internal static class JewelSockets {
     /// Whether a jewel is No Shatter, so taking it out returns it instead of destroying it. The No Shatter jewels
     /// (the Blackhawk and AM pet jewels: Stuff of Legends Peridot, Lifesaver Jade...) are the jewels marked No Sell,
     /// and carry an extra behavior (DeletedBehavior, or a second PetJewelBehavior on Lifesaver Jade) (Niduus, 2026-10-20).
+    /// Pins are all No Shatter (Niduus, 2026-10-29: "Pins are marked no shatter").
     /// </summary>
     internal static bool IsNoShatter(WizItemTemplate template) {
         if (template is null) {
             return false;
+        }
+
+        if (GetShape(template) is JewelSocketType.SOCKETTYPE_PINSQUAREPIP or JewelSocketType.SOCKETTYPE_PINSQUARESHIELD
+            or JewelSocketType.SOCKETTYPE_PINSQUARESWORD) {
+            return true;
         }
 
         var adjectives = (template.m_adjectiveList ?? []).Select(a => (string) a ?? "").ToList();
