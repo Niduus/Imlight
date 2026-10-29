@@ -939,6 +939,8 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public Wizard PlayerCharacter;
         public CoreObject PlayerObject;
         public int Reinteract = 0; 
+        // The game's RequestedSigilMode of the press (2: a dungeon sigil with the Advanced Mode button on).
+        public uint RequestedSigilMode;
 
     }
 

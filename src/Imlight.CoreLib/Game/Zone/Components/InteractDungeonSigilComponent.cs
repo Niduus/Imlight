@@ -66,6 +66,7 @@ using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Sigils;
 using Imlight.CoreLib.Game.TeamUp;
 using Imlight.CoreLib.Game.WizBang;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -126,6 +127,17 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     private const string DARK_STATE = "Off";
     // Every player in the zone the pad knows of, so a look changed in the Customs tab reaches them all at once.
     private readonly HashSet<IActorRef> _players = [];
+    // Their characters, so the pad glows red for a wizard with `.advanced on` (Game/World/AdvancedMode).
+    private readonly Dictionary<IActorRef, ulong> _charOf = [];
+
+    /// <summary>
+    /// The game's RequestedSigilMode of the press being handled (MSG_INTERACTNPC; 2 with the Advanced Mode button on),
+    /// set by InteractServiceMementoComponent just before OnServiceInteraction.
+    /// </summary>
+    internal uint NextRequestedMode { get; set; }
+
+    // Where the countdown running goes (the owner's choice of the dungeon or its Advanced copy), so the others join it.
+    private string _partyDestination;
     // A changed look is sent once the pad was sent again (RenderComponent's 400 ms), and the last state of a look that
     // goes through another (Red, through Glowy) once more a moment later.
     private static readonly TimeSpan RELIGHT_ALL_DELAY = TimeSpan.FromMilliseconds(1000);
@@ -174,12 +186,23 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         if (TryResolveDestination(out var sigil) && obj is not null && HouseGauntlets.PadOf(obj.m_globalID.Full) is null) {
             TeamUpSigils.Register(obj.m_globalID.Full, Entity.Zone?.ZonePath, obj.m_location.X, obj.m_location.Y,
                 sigil.DestinationZone, sigil.DestinationLoc, sigil.Variant);
-            if (TeamUpBoard.IsEnabled && TeamUpBoard.SigilButton && PartySize() > 1) {
+            var teamUp = TeamUpBoard.IsEnabled && TeamUpBoard.SigilButton && PartySize() > 1;
+            // Advanced Mode (Game/World/AdvancedMode): a dungeon with an Advanced copy offers the game's sigil option
+            // with its Advanced Mode fields, whose window has the button that turns the pad red.
+            var advanced = AdvancedMode.Enabled && AdvancedMode.TryGetAdvanced(sigil.DestinationZone, out var advancedZone)
+                ? new MinigameSigilOptionAdvancedModeFields {
+                    m_successZone = advancedZone,
+                    m_teamUpAllowed = teamUp ? 1 : 0,
+                    m_passedReqs = true,
+                }
+                : null;
+            if (teamUp || advanced is not null) {
                 return [
                     new MinigameSigilOption {
                         m_serviceName = ServiceName,
-                        m_teamUpAllowed = 1,
+                        m_teamUpAllowed = teamUp ? 1 : 0,
                         m_successZone = sigil.DestinationZone,
+                        m_advancedModeFields = advanced,
                     }
                 ];
             }
@@ -192,6 +215,9 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         _players.Add(playerActor);
+        if (playerWizard is not null) {
+            _charOf[playerActor] = playerWizard.CharId;
+        }
         _litFor.Remove(playerActor);
         Show(playerActor, playerWizard, "join");
     }
@@ -201,6 +227,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (playerWizard is not null) {
             _players.Add(playerActor);
+            _charOf[playerActor] = playerWizard.CharId;
             if (_litFor.Add(playerActor)) {
                 Show(playerActor, playerWizard, "first move");
             }
@@ -219,6 +246,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
         _players.Remove(playerActor);
+        _charOf.Remove(playerActor);
         _litFor.Remove(playerActor);
         _darkFor.Remove(playerActor);
         _checkedAt.Remove(playerActor);
@@ -318,6 +346,10 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
         // Red (the Advanced Mode look) is only reached from Glowy in the pad's state set, so it goes through Glowy.
         var look = ZoneObjects.LitStateOf(SigilInfo) ?? LIT_STATE;
+        if (_charOf.TryGetValue(playerActor, out var lookChar) && AdvancedMode.Wants(lookChar)
+            && TryResolveDestination(out var lookSigil) && AdvancedMode.TryGetAdvanced(lookSigil.DestinationZone, out _)) {
+            look = ZoneObjects.SIGIL_ADVANCED_STATE;
+        }
         var path = ZoneObjects.SigilStatePath(look);
         var states = lastOnly ? path[^1..] : path;
         foreach (var state in states) {
@@ -338,6 +370,8 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     }
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        var requestedMode = NextRequestedMode;
+        NextRequestedMode = 0;
         if (!TryResolveDestination(out var sigil) || !MayEnter(playerCharacter)) {
             return;
         }
@@ -400,6 +434,23 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             entry.DestinationZone = _partyZone ?? entry.DestinationZone;
             entry.LogName = $"Housing gauntlet {gauntlet.Gauntlet.TemplateId}";
             HouseGauntlets.Begin(playerCharacter.CharId, gauntlet, entry.DestinationZone);
+        }
+        else {
+            // Advanced Mode (Game/World/AdvancedMode): the player who starts the trip picks the dungeon or its Advanced
+            // copy (the game's button, or `.advanced on`), and the others of the countdown go where they go.
+            if (startsTrip) {
+                _partyDestination = AdvancedMode.DestinationFor(sigil.DestinationZone, requestedMode, playerCharacter.CharId);
+                if (AdvancedMode.IsAdvanced(_partyDestination)) {
+                    Logger.Information("Advanced Mode: character {0} goes into {1} (pressed with mode {2}).",
+                        Logger.Args(playerCharacter.CharId, _partyDestination, requestedMode));
+                    playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                        Message = $"Advanced Mode: {AdvancedMode.NameOf(_partyDestination)}. Its creatures are stronger and cheat more.",
+                        Modal = 0,
+                    });
+                }
+            }
+
+            entry.DestinationZone = _partyDestination ?? entry.DestinationZone;
         }
 
         if (size <= 1 || _party.Count >= size) {
@@ -512,7 +563,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                 SigilScale = Entity.ActiveGameObject.m_fScale,
                 DestinationZone = HouseGauntlets.PadOf(Entity.ActiveGameObject.m_globalID.Full) is not null && _partyZone is not null
                     ? _partyZone
-                    : _resolved.DestinationZone,
+                    : _partyDestination ?? _resolved.DestinationZone,
                 DestinationLoc = _resolved.DestinationLoc,
                 Variant = _resolved.Variant,
                 FaceSlot = member.FaceSlot,

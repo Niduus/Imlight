@@ -241,6 +241,10 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var localIndex = _componentFirstOption.TryGetValue(serviceComponent, out var first)
             ? serviceIndex - (uint) first
             : serviceIndex;
+        if (serviceComponent is InteractDungeonSigilComponent sigil) {
+            sigil.NextRequestedMode = message.RequestedSigilMode;
+        }
+
         serviceComponent.OnServiceInteraction(playerActor, playerCharacter, playerObject, localIndex);
     }
 
