@@ -1015,10 +1015,12 @@ public partial class CombatResolver {
     /// "no global still. if it helps, it's a shadow global").
     /// </summary>
     internal static bool CastsAsInterrupt(CombatAction action) {
-        if (!BossCheats.CastsAsInterrupt) {
-            return false;
-        }
+        return BossCheats.CastsAsInterrupt && InterruptUnlessGlobal(action);
+    }
 
+    // Whether an out-of-turn cast (a cheat's or a pet's) goes as an interrupt: anything but a global with
+    // [BossCheats] GlobalsInTurn on.
+    internal static bool InterruptUnlessGlobal(CombatAction action) {
         if (!BossCheats.GlobalsInTurn || action?.m_spell is not { } spell) {
             return true;
         }
