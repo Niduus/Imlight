@@ -105,6 +105,11 @@ internal sealed partial class ManagerWindow {
 
                             return Task.CompletedTask;
                         }), Dock.Right),
+                        WithDock(WithMargin(Action(Plain("Share or import customs…"), () => {
+                            SelectTab("Share");
+
+                            return Task.CompletedTask;
+                        }), new Thickness(0, 0, 8, 0)), Dock.Right),
                         WithCenter(_customCount),
                     },
                 },

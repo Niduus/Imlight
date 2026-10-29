@@ -130,6 +130,7 @@ internal static class ManagerTheme {
         ["Player Cheats"] = Color.FromRgb(232, 170, 40),
         ["Boss Test"] = Color.FromRgb(217, 101, 59),
         ["Customs"] = BLOCK_DO,
+        ["Share"] = Color.FromRgb(64, 160, 220),
         ["Guides"] = Color.FromRgb(46, 160, 140),
         ["Server"] = Color.FromRgb(63, 167, 160),
         ["Announcements"] = Color.FromRgb(224, 128, 72),
@@ -400,6 +401,8 @@ internal static class ManagerTheme {
         ["Put back the game's values"] = "undo", ["Put back the game's deck"] = "undo", ["Put back the game's cheats"] = "undo",
         ["New password"] = "key", ["Rename"] = "pencil", ["Show"] = "eye", ["Hide"] = "eyeoff", ["Lock"] = "lock", ["Unlock"] = "unlock",
         ["Learn on my wizard"] = "sparkle", ["What's new"] = "sparkle", ["Send to my gifts"] = "gift",
+        ["Export ticked…"] = "download", ["Open a customs file…"] = "file", ["Import ticked"] = "check", ["Undo last import"] = "undo",
+        ["Open backups folder"] = "folder", ["Tick all"] = "check", ["Share or import customs…"] = "link",
     };
 
     /// <summary>A button with its label's icon. Primary ones are filled with the accent colour.</summary>
