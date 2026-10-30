@@ -161,7 +161,7 @@
       "m_zoneExit": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -174,16 +174,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "For a Clue",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Quest_Prison_Posters_01.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "PL_PrisonPoster"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -191,11 +193,11 @@
       "m_locationName": "The Basstille",
       "m_goalName": "5_WizardQuestGoals00000008",
       "m_goalTitle": "WizardQuestGoals_00000008",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Polaris/Interiors/Z01_CellblockB_02",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "PL_PrisonPoster.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",

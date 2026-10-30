@@ -219,13 +219,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_MarleymiteCrates.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "MB_WeaponCrate",
-        "CL_Crate",
-        "WC_WeaponCrate",
-        "MB_KL_Crate",
-        "KT_Crate_Unique",
-        "MB_Crate_Unique",
-        "MB_Crate_Police"
+        "PL_MarleymiteCrate"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -238,13 +232,7 @@
       "m_goalTitle": "WizardQuestGoals_00000058",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "MB_WeaponCrate.AdjRef",
-        "CL_Crate.AdjRef",
-        "WC_WeaponCrate.AdjRef",
-        "MB_KL_Crate.AdjRef",
-        "KT_Crate_Unique.AdjRef",
-        "MB_Crate_Unique.AdjRef",
-        "MB_Crate_Police.AdjRef"
+        "PL_MarleymiteCrate.AdjRef"
       ],
       "m_itemTotal": 1
     },

@@ -237,8 +237,8 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_Dynamite.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "WC-Dynamite",
-        "Raid_Bomb_NotCollectable"
+        "EM-BlastingRods",
+        "EM-BlastingRods-Object"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -251,8 +251,8 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "WC-Dynamite.AdjRef",
-        "Raid_Bomb_NotCollectable.AdjRef"
+        "EM-BlastingRods.AdjRef",
+        "EM-BlastingRods-Object.AdjRef"
       ],
       "m_itemTotal": 1
     },

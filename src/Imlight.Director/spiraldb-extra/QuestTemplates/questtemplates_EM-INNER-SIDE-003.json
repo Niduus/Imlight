@@ -125,7 +125,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-OUTER-NPC22_Persona",
+            "m_personaName": "EM-INNER-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -137,12 +137,12 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/MorwenMisteyes_EMP_01.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1391570,
+            "m_actorTemplateID": 1413158,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-OUTER-NPC22_Persona",
+            "m_personaName": "EM-INNER-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -154,12 +154,12 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/MorwenMisteyes_EMP_02.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1391570,
+            "m_actorTemplateID": 1413158,
             "m_cameraName": ""
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-OUTER-NPC22_Persona",
+            "m_personaName": "EM-INNER-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -171,7 +171,7 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/MorwenMisteyes_EMP_03.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1391570,
+            "m_actorTemplateID": 1413158,
             "m_cameraName": ""
           }
         ]
@@ -181,7 +181,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "EM-OUTER-NPC22_Persona",
+            "m_personaName": "EM-INNER-NPC12_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -193,7 +193,7 @@
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/MorwenMisteyes_EMP_04.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 1391570,
+            "m_actorTemplateID": 1413158,
             "m_cameraName": ""
           }
         ]
