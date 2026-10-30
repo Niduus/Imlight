@@ -1,0 +1,20 @@
+{
+  "Name": "WC-LIFE-C03-004",
+  "Description": "WizardCity quest The Missing Gem (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 90,
+  "MaxGold": 90,
+  "ExperienceAmount": 480,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160413",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

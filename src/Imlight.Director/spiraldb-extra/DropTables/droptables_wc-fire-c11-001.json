@@ -1,0 +1,20 @@
+{
+  "Name": "WC-FIRE-C11-001",
+  "Description": "WizardCity quest Firestarter (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 650,
+  "MaxGold": 650,
+  "ExperienceAmount": 32350,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "589633",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

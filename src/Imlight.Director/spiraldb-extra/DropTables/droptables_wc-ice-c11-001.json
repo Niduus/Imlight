@@ -1,0 +1,20 @@
+{
+  "Name": "WC-ICE-C11-001",
+  "Description": "WizardCity quest Misery (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 830,
+  "MaxGold": 830,
+  "ExperienceAmount": 40975,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "589634",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

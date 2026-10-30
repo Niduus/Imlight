@@ -301,8 +301,27 @@ internal static class QuestMadlibs {
             const string suffix = "_Persona";
             var objectName = name.EndsWith(suffix, StringComparison.Ordinal) ? name[..^suffix.Length] : name;
 
-            return TemplatesByFileName().GetValueOrDefault(objectName);
+            return TemplatesByFileName().GetValueOrDefault(objectName) is var id and not 0 ? id : TemplateOfObjectInFile(objectName);
         });
+    }
+
+    /// <summary>
+    /// An NPC whose object name is longer than its file's: WC-ST05-NPC05-OK (Anna Flamewright, Oil Rush) is
+    /// ObjectData/WC/WC-ST05-NPC05.xml. The longest file name the object name starts with, when that file's object
+    /// has the name; 0 otherwise. Without it the quest book said "Talk to WC-ST05-NPC05-OK_Persona".
+    /// </summary>
+    private static uint TemplateOfObjectInFile(string objectName) {
+        var byFile = TemplatesByFileName();
+        for (var length = objectName.Length - 1; length >= 4; length--) {
+            if (!byFile.TryGetValue(objectName[..length], out var id)) {
+                continue;
+            }
+
+            return CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate template
+                && string.Equals((string) template.m_objectName, objectName, StringComparison.OrdinalIgnoreCase) ? id : 0;
+        }
+
+        return 0;
     }
 
     private static readonly object s_fileNamesLock = new();

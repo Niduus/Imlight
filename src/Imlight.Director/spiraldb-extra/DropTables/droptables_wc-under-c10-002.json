@@ -1,0 +1,20 @@
+{
+  "Name": "WC-UNDER-C10-002",
+  "Description": "WizardCity quest Coming Up For Air (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20,
+  "MaxGold": 20,
+  "ExperienceAmount": 210,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "346745",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WC-LIFE-C12-002",
+  "Description": "WizardCity quest Sight for Saur Eyes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 540,
+  "MaxGold": 540,
+  "ExperienceAmount": 41230,
+  "TrainingPoints": 0,
+  "Items": []
+}

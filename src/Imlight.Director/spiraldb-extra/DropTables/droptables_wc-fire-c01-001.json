@@ -1,0 +1,20 @@
+{
+  "Name": "WC-FIRE-C01-001",
+  "Description": "WizardCity quest Introduction to Fire (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 36,
+  "MaxGold": 36,
+  "ExperienceAmount": 190,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160421",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}
