@@ -286,6 +286,85 @@ internal static class ItemSources {
         }
     }
 
+    internal const string TABLE_USERS_NAME = "drop-table-users.json";
+
+    private sealed record UserNpc(uint Id, string Name, List<string> Zones, bool Boss);
+
+    private sealed record UserQuest(string Code, string Title);
+
+    private sealed record TableUsers(List<int> Creatures, List<int> Quests);
+
+    private sealed record TableUsersFile(List<UserNpc> Creatures, List<UserQuest> Quests, Dictionary<string, TableUsers> Tables);
+
+    /// <summary>
+    /// Writes drop-table-users.json beside ids.csv for the Manager's drop table search (Niduus, 2026-10-30: "become
+    /// transparent about drop tables about from which mob/boss when searched"): for every drop table, the creatures that
+    /// drop it (with where they stand and whether the game lists them as a boss) and the quests that give it.
+    /// </summary>
+    internal static void WriteTableUsers(string folder) {
+        try {
+            var bossIds = LocationIds("BossLocationData.xml") ?? [];
+            var (zoneNames, zonesOf) = Imlight.CoreLib.Game.Tools.VendorGuide.LoadZones();
+            var creatures = new List<UserNpc>();
+            var quests = new List<UserQuest>();
+            var tables = new Dictionary<string, TableUsers>(StringComparer.OrdinalIgnoreCase);
+            TableUsers Entry(string table) => tables.TryGetValue(table, out var known) ? known : tables[table] = new TableUsers([], []);
+
+            foreach (var (npcId, drops) in SpiralDB.NpcDropTables.OrderBy(p => p.Key)) {
+                var names = (drops.DropTableNames ?? []).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                if (names.Count == 0) {
+                    continue;
+                }
+
+                var id = (uint) npcId;
+                var name = "";
+                if (CoreObjectFactory.GetCoreTemplate(npcId) is GameObjectTemplate template) {
+                    string key = template.m_displayName;
+                    name = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+                    if (string.IsNullOrEmpty(name)) {
+                        name = (string) template.m_objectName ?? "";
+                    }
+                }
+
+                var zones = zonesOf.TryGetValue(id, out var at)
+                    ? at.Where(i => i >= 0 && i < zoneNames.Count).Select(i => zoneNames[i][0] + "|" + zoneNames[i][1]).Distinct().Take(3).ToList()
+                    : [];
+                var index = creatures.Count;
+                creatures.Add(new UserNpc(id, name, zones, bossIds.Contains(id)));
+                foreach (var table in names) {
+                    Entry(table).Creatures.Add(index);
+                }
+            }
+
+            foreach (var quest in SpiralDB.QuestTemplates.Where(q => q is not null && !q.m_outdated && !string.IsNullOrEmpty(q.m_questName))
+                         .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase).Select(g => g.First())) {
+                var names = (quest.m_endResults?.m_results ?? []).OfType<ResDropTable>().Select(r => (string) r.m_tableName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                if (names.Count == 0) {
+                    continue;
+                }
+
+                string titleKey = quest.m_questTitle;
+                var title = string.IsNullOrEmpty(titleKey) ? "" : Locale.GetEnglishName(titleKey);
+                var index = quests.Count;
+                quests.Add(new UserQuest(quest.m_questName, string.IsNullOrEmpty(title) ? quest.m_questName : title));
+                foreach (var table in names) {
+                    Entry(table).Quests.Add(index);
+                }
+            }
+
+            Directory.CreateDirectory(folder);
+            var path = System.IO.Path.Combine(folder, TABLE_USERS_NAME);
+            File.WriteAllText(path + ".tmp", System.Text.Json.JsonSerializer.Serialize(new TableUsersFile(creatures, quests, tables)));
+            File.Move(path + ".tmp", path, overwrite: true);
+            Logger.Information("Drop table users for the Manager: {0} tables, used by {1} creatures and {2} quests.",
+                Logger.Args(tables.Count, creatures.Count, quests.Count));
+        }
+        catch (Exception exception) {
+            Logger.Warning("Drop table users for the Manager could not be written: {0}", Logger.Args(exception.Message));
+        }
+    }
+
     private static List<uint> ItemsOf(string tableName, Dictionary<string, List<uint>> cache) {
         if (string.IsNullOrWhiteSpace(tableName)) {
             return [];

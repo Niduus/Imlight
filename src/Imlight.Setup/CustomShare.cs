@@ -198,10 +198,13 @@ internal static class CustomShare {
     // ---------------------------------------------------------------------
 
     /// <summary>Every custom on this PC, by kind. Files that cannot be read are left out.</summary>
-    internal static List<ShareItem> Mine(ServerManager manager) {
+    internal static List<ShareItem> Mine(ServerManager manager) => Mine(manager, null);
+
+    /// <summary>The customs of one kind on this PC (such as "drops"), or of every kind when it is null.</summary>
+    internal static List<ShareItem> Mine(ServerManager manager, string? kindId) {
         var shipped = ShippedExtraFiles.Load(manager.ServerFolder);
         var items = new List<ShareItem>();
-        foreach (var kind in s_kinds) {
+        foreach (var kind in s_kinds.Where(k => kindId is null || k.Id.Equals(kindId, StringComparison.OrdinalIgnoreCase))) {
             try {
                 items.AddRange(MineOf(manager, kind, shipped));
             }

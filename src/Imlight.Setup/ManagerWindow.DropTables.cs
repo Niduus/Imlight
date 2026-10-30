@@ -284,15 +284,13 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>Opens a table in the editor: an app-made one as it is, any other as a copy (its file stays as it is).</summary>
     private void EditDropTable(DropTableInfo table) {
-        var draft = DropDraft.Load(table.File);
         if (!table.AppMade) {
-            draft.CopiedFrom = draft.Name;
-            draft.Name = UniqueTableName(draft.Name + "-Copy");
-            draft.File = null;
-            Say($"{draft.CopiedFrom} is one of the server's tables, so you are changing a copy named {draft.Name}. Save the table to keep it.");
+            CopyDropTable(table);
+
+            return;
         }
 
-        OpenDropEditor(draft);
+        OpenDropEditor(DropDraft.Load(table.File));
     }
 
     private string UniqueTableName(string name) {
@@ -546,6 +544,15 @@ internal sealed partial class ManagerWindow {
             })));
         }
 
+        // Who drops it (Niduus, 2026-10-30: "become transparent about drop tables about from which mob/boss"); a copy
+        // says who drops the table it was copied from, which keeps dropping that one until you swap it.
+        var usersOf = AllDropUsers().TryGetValue(draft.File is null ? draft.CopiedFrom : draft.OldName, out var dropping) ? dropping : null;
+        var droppedBy = new TextBlock {
+            Text = draft.File is null && draft.CopiedFrom.Length == 0 ? "Nothing drops it yet: save it, then Use it on a creature."
+                : (draft.File is null ? $"{draft.CopiedFrom} is dropped by: " : "Dropped by: ") + DropUsersLine(usersOf, 4),
+            Foreground = BlockColors.Accent("drops"), FontSize = 12, TextWrapping = TextWrapping.Wrap,
+        };
+        ToolTip.SetTip(droppedBy, DropUsersTip(usersOf));
         var title = draft.File is null ? (draft.CopiedFrom.Length > 0 ? $"A copy of {draft.CopiedFrom}" : "New drop table") : $"Drop table {draft.Name}";
         var where = draft.File is null ? "Nothing is kept until you press Save the table."
             : $"Saved as spiraldb-extra/DropTables/{Path.GetFileName(draft.File)}.";
@@ -604,6 +611,7 @@ internal sealed partial class ManagerWindow {
                                 Children = {
                                     new TextBlock { Text = title, FontSize = 17, FontWeight = FontWeight.SemiBold },
                                     Sub("Each wizard rolls this table once in every battle won against a creature that drops it. " + where),
+                                    droppedBy,
                                 },
                             },
                         },
