@@ -60,7 +60,7 @@ internal sealed partial class ManagerWindow {
 
     private static readonly IBrush SPELL_PICKED = ManagerTheme.Brush(ManagerTheme.ACCENT);
 
-    private static readonly string[] s_spellKinds = ["All cards", "Spells (no treasure cards)", "Treasure cards", "Item cards", "Pet cards", "Fusion spells", "Fusion materials"];
+    private static readonly string[] s_spellKinds = ["All cards", "Spells (no treasure cards)", "Treasure cards", "Item cards", "Pet cards"];
 
     private static readonly string[] s_spellSorts = [
         "Name", "Pip cost (low first)", "Pip cost (high first)", "School", "Accuracy (high first)", "Type", "Template ID",
@@ -323,8 +323,6 @@ internal sealed partial class ManagerWindow {
                 2 => s.Treasure,
                 3 => s.Item,
                 4 => s.Source == "Pet",
-                5 => s.FusionRecipe != 0,
-                6 => book.FusionsWith(s).Count > 0,
                 _ => true,
             }
             && InFilterRange(s.Accuracy, _spellsAccuracyMin, _spellsAccuracyMax)
@@ -524,53 +522,6 @@ internal sealed partial class ManagerWindow {
         ShowSpellsDetails(_spellsShown[at + by]);
     }
 
-    /// <summary>
-    /// Spell Fusion (Niduus, 2026-10-30: "more clear on the materials"): a fused spell shows the two material cards it
-    /// is made from, and a material card shows what it fuses with and into. Each card name opens that card.
-    /// </summary>
-    private void ShowFusionDetails(SpellBook book, SpellCard card) {
-        Control CardLink(SpellCard? target, string fallback) => target is null
-            ? new TextBlock { Text = fallback, VerticalAlignment = VerticalAlignment.Center }
-            : Action(Plain(target.Name), () => { ShowSpellsDetails(target); return Task.CompletedTask; });
-
-        string Material(string adjective) => adjective.StartsWith("Fusion_", StringComparison.OrdinalIgnoreCase) ? adjective[7..] : adjective;
-
-        void Heading(string text)
-            => _spellsDetails.Children.Add(WithMargin(new TextBlock { Text = text, FontWeight = FontWeight.SemiBold }, new Thickness(0, 8, 0, 0)));
-
-        void Line(params Control[] parts) {
-            var row = new WrapPanel();
-            foreach (var part in parts) {
-                row.Children.Add(Spaced(part));
-            }
-
-            _spellsDetails.Children.Add(row);
-        }
-
-        TextBlock Words(string text) => new() { Text = text, VerticalAlignment = VerticalAlignment.Center };
-
-        if (card.FusionRecipe != 0 && book.Fusions.FirstOrDefault(f => f.Id == card.FusionRecipe) is { } made) {
-            Heading("Spell Fusion: this is a fused spell");
-            Line(Words("Materials:"), CardLink(book.MainCardOf(made.Primary), Material(made.Primary)), Words("+"),
-                CardLink(book.MainCardOf(made.Secondary), Material(made.Secondary)));
-            _spellsDetails.Children.Add(Sub("Learn this spell (the Fusion Formula), put both materials in your deck, and in battle drag one " +
-                "material onto the other when both are in your hand. Any tier, pet or amulet version of a material counts too: " +
-                $"{string.Join(", ", book.CardsWith(made.Primary).Concat(book.CardsWith(made.Secondary)).Where(c => !c.Hidden).Select(c => c.Name).Distinct())}."));
-        }
-
-        var uses = book.FusionsWith(card);
-        if (uses.Count > 0) {
-            Heading("Spell Fusion: this card is a fusion material");
-            foreach (var fusion in uses) {
-                var other = card.Adjectives.Contains(fusion.Primary, StringComparer.OrdinalIgnoreCase) ? fusion.Secondary : fusion.Primary;
-                var fused = fusion.Fused.OrderBy(f => f.Name.Contains("(tier", StringComparison.Ordinal) ? 1 : 0).FirstOrDefault();
-                Line(Words("+"), CardLink(book.MainCardOf(other), Material(other)), Words("="), CardLink(fused, "a fused spell"));
-            }
-
-            _spellsDetails.Children.Add(Sub("You need the fused spell learned (its Fusion Formula) for a fusion to work."));
-        }
-    }
-
     /// <summary>Shows a card big in the pop-up with everything about it.</summary>
     private void ShowSpellsDetails(SpellCard? card) {
         if (_spellsPopup is not null) {
@@ -664,8 +615,6 @@ internal sealed partial class ManagerWindow {
         Fact("Art", card.ImageName);
         Fact("Game's name", card.Code);
         Fact("File", card.File);
-
-        ShowFusionDetails(book, card);
 
         if (card.Effects.Count > 0) {
             _spellsDetails.Children.Add(WithMargin(new TextBlock { Text = "Effects", FontWeight = FontWeight.SemiBold }, new Thickness(0, 8, 0, 0)));

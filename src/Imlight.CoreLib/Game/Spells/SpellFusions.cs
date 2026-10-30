@@ -78,8 +78,6 @@ internal static class SpellFusions {
     private static readonly object s_lock = new();
     private static List<Recipe> s_recipes;
     private static Dictionary<uint, Recipe> s_recipeOfOutput;
-    // Ingredient adjective -> every card with it (template ID, internal name).
-    private static Dictionary<string, List<(uint Id, string Name)>> s_cardsByAdjective;
 
     /// <summary>Every recipe the game has.</summary>
     internal static IReadOnlyList<Recipe> Recipes {
@@ -132,21 +130,8 @@ internal static class SpellFusions {
                 }
 
                 var outputs = new Dictionary<uint, Recipe>();
-                var adjectives = new HashSet<string>(recipes.SelectMany(r => new[] { r.Primary, r.Secondary }), StringComparer.OrdinalIgnoreCase);
-                var cards = new Dictionary<string, List<(uint Id, string Name)>>(StringComparer.OrdinalIgnoreCase);
                 foreach (var (_, spell) in SpellFactory.AllSpellTemplates()) {
-                    if (spell is null) {
-                        continue;
-                    }
-
-                    foreach (var adjective in spell.m_adjectives?.Select(a => (string) a).Where(adjectives.Contains) ?? []) {
-                        var cardId = SpellFactory.TemplateIdOf(spell);
-                        if (cardId != 0) {
-                            (cards.TryGetValue(adjective, out var list) ? list : cards[adjective] = []).Add((cardId, (string) spell.m_name));
-                        }
-                    }
-
-                    if (spell.m_spellFusion == 0 || !byId.TryGetValue(spell.m_spellFusion, out var recipe)) {
+                    if (spell is null || spell.m_spellFusion == 0 || !byId.TryGetValue(spell.m_spellFusion, out var recipe)) {
                         continue;
                     }
 
@@ -160,65 +145,15 @@ internal static class SpellFusions {
                 }
 
                 s_recipeOfOutput = outputs;
-                s_cardsByAdjective = cards;
                 Logger.Information("Spell Fusion: {0} recipes, {1} fused spells.", Logger.Args(recipes.Count, outputs.Count));
             }
             catch (Exception ex) {
                 Logger.Error("Spell Fusion: could not read the recipes: {0}", Logger.Args(ex));
                 s_recipeOfOutput ??= [];
-                s_cardsByAdjective ??= [];
             }
 
             s_recipes = recipes;
         }
-    }
-
-    /// <summary>Every card that is this ingredient (template IDs): all tiers, pet and amulet versions.</summary>
-    internal static IReadOnlyList<uint> CardsOf(string adjective) {
-        EnsureLoaded();
-
-        return s_cardsByAdjective.TryGetValue(adjective ?? "", out var list) ? [.. list.Select(c => c.Id)] : [];
-    }
-
-    /// <summary>
-    /// The card an ingredient is known by: the plain spell a wizard trains (not a pet, amulet, treasure card or
-    /// upgraded tier), as the card shows its name.
-    /// </summary>
-    internal static uint MainCardOf(string adjective) {
-        EnsureLoaded();
-        if (!s_cardsByAdjective.TryGetValue(adjective ?? "", out var list) || list.Count == 0) {
-            return 0;
-        }
-
-        static int Rank(string name) {
-            var rank = 0;
-            foreach (var word in new[] { "Pet", "Amulet", "TC", "Treasure", " - T0", "MOB", "Boss", "Jewel", "Item", "Shadow Creature", "Lightbane", "Morganthe" }) {
-                if (name.Contains(word, StringComparison.OrdinalIgnoreCase)) {
-                    rank += word == " - T0" ? 1 : 3;
-                }
-            }
-
-            // "Barbarians Saga - T01 - Base" is the trained tier one.
-            if (name.Contains("T01 - Base", StringComparison.OrdinalIgnoreCase)) {
-                rank--;
-            }
-
-            return rank;
-        }
-
-        return list.OrderBy(c => Rank(c.Name)).ThenBy(c => c.Name.Length).First().Id;
-    }
-
-    /// <summary>The name the card shows ("Scarab"), or its internal name.</summary>
-    internal static string CardName(SpellTemplate template) {
-        if (template is null) {
-            return null;
-        }
-
-        string display = template.m_displayName;
-        var shown = string.IsNullOrEmpty(display) ? null : Locale.GetEnglishName(display);
-
-        return string.IsNullOrEmpty(shown) ? (string) template.m_name : shown;
     }
 
     /// <summary>Whether a spell template has the adjective.</summary>
